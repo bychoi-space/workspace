@@ -12,13 +12,13 @@
 @./AGENTS.md
 
 ## 🛠️ 전문 작업별 스킬 지침
-@./.agents/skills/lf-editor-engine/SKILL.md
+@./.agents/skills/workspace-editor-engine/SKILL.md
 
-@./.agents/skills/lf-editor-ui-components/SKILL.md
+@./.agents/skills/workspace-editor-ui-components/SKILL.md
 
-@./.agents/skills/lf-editor-browser-verification/SKILL.md
+@./.agents/skills/workspace-editor-browser-verification/SKILL.md
 
-@./.agents/skills/lf-editor-flowchart/SKILL.md
+@./.agents/skills/workspace-editor-flowchart/SKILL.md
 
-@./.agents/skills/lf-editor-safety-process/SKILL.md
+@./.agents/skills/workspace-editor-safety-process/SKILL.md
 

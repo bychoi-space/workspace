@@ -1,9 +1,9 @@
 ---
-name: lf-editor-safety-process
-description: Use before risky LF Editor changes, broad refactors, metadata.json edits or merges, rollback-sensitive work, GitHub main deployment, folder moves, deletes, architecture changes, verification planning, anti-pattern checks, or post-work reporting.
+name: workspace-editor-safety-process
+description: Use before risky Workspace Editor changes, broad refactors, metadata.json edits or merges, rollback-sensitive work, GitHub main deployment, folder moves, deletes, architecture changes, verification planning, anti-pattern checks, or post-work reporting.
 ---
 
-# LF Editor Safety Process
+# Workspace Editor Safety Process
 
 ## Five-Step Flow
 1. Ponder: identify the requested outcome and possible system impact.

@@ -1,9 +1,9 @@
 ---
-name: lf-editor-engine
-description: Use when editing LF Editor engine files, vctrl_core.js, vctrl_inspector.js, vctrl_grouping.js, vctrl_v3.js, MessageHub, SmartGuide, iframe scripts, DOM registries, init functions, listener wiring, selection, grouping, canvas, zoom, pan, annotations, or module boundaries.
+name: workspace-editor-engine
+description: Use when editing Workspace Editor engine files, vctrl_core.js, vctrl_inspector.js, vctrl_grouping.js, vctrl_v3.js, MessageHub, SmartGuide, iframe scripts, DOM registries, init functions, listener wiring, selection, grouping, canvas, zoom, pan, annotations, or module boundaries.
 ---
 
-# LF Editor Engine
+# Workspace Editor Engine
 
 ## Core Boundaries & Architecture
 - Keep the engine modular. Add a dedicated JS file for a large new feature instead of swelling an existing file.

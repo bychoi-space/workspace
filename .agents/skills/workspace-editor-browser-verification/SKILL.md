@@ -1,9 +1,9 @@
 ---
-name: lf-editor-browser-verification
-description: Use when verifying LF Editor in a browser, opening viewer.html, checking file protocol URLs, preserving project and file query parameters, inspecting console errors, testing screen add, save all, sidebar toggle, cache refresh, or post-change UI behavior.
+name: workspace-editor-browser-verification
+description: Use when verifying Workspace Editor in a browser, opening viewer.html, checking file protocol URLs, preserving project and file query parameters, inspecting console errors, testing screen add, save all, sidebar toggle, cache refresh, or post-change UI behavior.
 ---
 
-# LF Editor Code & System Verification Policy
+# Workspace Editor Code & System Verification Policy
 
 > [!CAUTION]
 > **[브라우저 직접 검증 금지 원칙]**

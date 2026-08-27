@@ -1,6 +1,14 @@
 {
   "title": "상품 상세 - 리뉴얼 2차",
-  "screens": {},
+  "screens": {
+    "00_Cover_63.html": {
+      "title": "00_Cover_63",
+      "type": "cover",
+      "updatedAt": "2026-08-27T05:45:44.238Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.08.27(목) ~ 2026.09.11(금)",

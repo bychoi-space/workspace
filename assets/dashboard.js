@@ -51,63 +51,77 @@ const context = {
     isCreateMode: false
 };
 
-// Premium Card Themes Config
+// Premium Card Themes Config (Renewed Modern Palette & Professional Icons)
 const PREMIUM_THEMES = [
     {
-        name: "Indigo Breeze",
-        gradient: "linear-gradient(135deg, #4f46e5, #818cf8)",
+        name: "Cyber Indigo (Core & Platform)",
+        gradient: "linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #818cf8 100%)",
         iconColor: "#ffffff",
-        glowColor: "rgba(99, 102, 241, 0.4)",
-        icon: "folder"
+        glowColor: "rgba(99, 102, 241, 0.5)",
+        icon: "hub"
     },
     {
-        name: "Sunset Glow",
-        gradient: "linear-gradient(135deg, #f97316, #fca5a5)",
+        name: "Electric Cyan (Web & UI Devices)",
+        gradient: "linear-gradient(135deg, #0369a1 0%, #06b6d4 50%, #38bdf8 100%)",
         iconColor: "#ffffff",
-        glowColor: "rgba(249, 115, 22, 0.4)",
-        icon: "insights"
+        glowColor: "rgba(6, 182, 212, 0.5)",
+        icon: "devices"
     },
     {
-        name: "Emerald Forest",
-        gradient: "linear-gradient(135deg, #10b981, #6ee7b7)",
+        name: "Emerald Aurora (Logic & Flowchart)",
+        gradient: "linear-gradient(135deg, #047857 0%, #10b981 50%, #34d399 100%)",
         iconColor: "#ffffff",
-        glowColor: "rgba(16, 185, 129, 0.4)",
+        glowColor: "rgba(16, 185, 129, 0.5)",
         icon: "account_tree"
     },
     {
-        name: "Oceanic Teal",
-        gradient: "linear-gradient(135deg, #06b6d4, #67e8f9)",
+        name: "Sunset Tangerine (Launch & Feature)",
+        gradient: "linear-gradient(135deg, #c2410c 0%, #f97316 50%, #fb923c 100%)",
         iconColor: "#ffffff",
-        glowColor: "rgba(6, 182, 212, 0.4)",
-        icon: "database"
+        glowColor: "rgba(249, 115, 22, 0.5)",
+        icon: "rocket_launch"
     },
     {
-        name: "Rose Plum",
-        gradient: "linear-gradient(135deg, #db2777, #fbcfe8)",
+        name: "Cosmic Violet (Design System & Layers)",
+        gradient: "linear-gradient(135deg, #6d28d9 0%, #8b5cf6 50%, #c4b5fd 100%)",
         iconColor: "#ffffff",
-        glowColor: "rgba(219, 39, 119, 0.4)",
-        icon: "dashboard"
-    },
-    {
-        name: "Royal Violet",
-        gradient: "linear-gradient(135deg, #7c3aed, #c4b5fd)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(124, 58, 237, 0.4)",
-        icon: "grid_view"
-    },
-    {
-        name: "Amber Sunset",
-        gradient: "linear-gradient(135deg, #d97706, #fde047)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(217, 119, 6, 0.4)",
-        icon: "calendar_month"
-    },
-    {
-        name: "Cyber Coral",
-        gradient: "linear-gradient(135deg, #f43f5e, #fda4af)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(244, 63, 94, 0.4)",
+        glowColor: "rgba(139, 92, 246, 0.5)",
         icon: "layers"
+    },
+    {
+        name: "Neon Magenta (Creative & Sparkle)",
+        gradient: "linear-gradient(135deg, #be185d 0%, #ec4899 50%, #f472b6 100%)",
+        iconColor: "#ffffff",
+        glowColor: "rgba(236, 72, 153, 0.5)",
+        icon: "auto_awesome"
+    },
+    {
+        name: "Golden Amber (Milestone & Strategy)",
+        gradient: "linear-gradient(135deg, #b45309 0%, #f59e0b 50%, #fde047 100%)",
+        iconColor: "#ffffff",
+        glowColor: "rgba(245, 158, 11, 0.5)",
+        icon: "flag"
+    },
+    {
+        name: "Rose Crimson (Analytics & Insights)",
+        gradient: "linear-gradient(135deg, #be123c 0%, #f43f5e 50%, #fda4af 100%)",
+        iconColor: "#ffffff",
+        glowColor: "rgba(244, 63, 94, 0.5)",
+        icon: "insights"
+    },
+    {
+        name: "Midnight Sapphire (Enterprise & Security)",
+        gradient: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #60a5fa 100%)",
+        iconColor: "#ffffff",
+        glowColor: "rgba(37, 99, 235, 0.5)",
+        icon: "verified"
+    },
+    {
+        name: "Obsidian Slate (Spec & Document)",
+        gradient: "linear-gradient(135deg, #1e293b 0%, #475569 50%, #94a3b8 100%)",
+        iconColor: "#ffffff",
+        glowColor: "rgba(148, 163, 184, 0.4)",
+        icon: "description"
     }
 ];
 
@@ -127,13 +141,13 @@ function renderThemePresets(selectedThemeIndex) {
     if (!container) return;
     container.innerHTML = '';
     
-    // Auto-select option (uses deterministic hash background)
+    // Auto-select option (Holographic deep-space background)
     const autoDiv = document.createElement('div');
     autoDiv.className = `theme-preset-item ${selectedThemeIndex === -1 ? 'active' : ''}`;
     autoDiv.dataset.index = "-1";
-    autoDiv.style.background = "linear-gradient(135deg, #1e293b, #0f172a)";
-    autoDiv.title = "자동 지정 (Deterministic Theme)";
-    autoDiv.innerHTML = `<span class="material-icons-outlined" style="font-size: 16px; color: #fff;">auto_awesome</span>`;
+    autoDiv.style.background = "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)";
+    autoDiv.title = "자동 지정 (Deterministic Auto-Theme)";
+    autoDiv.innerHTML = `<span class="material-icons-outlined" style="font-size: 17px; color: #a5b4fc;">auto_awesome</span>`;
     container.appendChild(autoDiv);
 
     PREMIUM_THEMES.forEach((t, idx) => {
@@ -142,7 +156,7 @@ function renderThemePresets(selectedThemeIndex) {
         item.dataset.index = idx.toString();
         item.style.background = t.gradient;
         item.title = t.name;
-        item.innerHTML = `<span class="material-icons-outlined" style="font-size: 14px; color: ${t.iconColor};">${t.icon}</span>`;
+        item.innerHTML = `<span class="material-icons-outlined" style="font-size: 16px; color: ${t.iconColor}; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${t.icon}</span>`;
         container.appendChild(item);
     });
 

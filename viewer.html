@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bychoi workspace - Editor</title>
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    
+    <!-- Quill.js Library (Rich Text Editor) -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <link rel="stylesheet" href="assets/style.css?v=V307_PLACEHOLDER_ALIGN_FIX">
+    <link rel="stylesheet" href="assets/theme.css?v=V307_PLACEHOLDER_ALIGN_FIX">
+    <link rel="stylesheet" href="enhanced_v4/style_v4.css">
+    <!-- Flatpickr (Date Picker) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    <link rel="stylesheet" href="assets/viewer.css?v=V307_PLACEHOLDER_ALIGN_FIX">
+    <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="assets/vctrl_pdf_exporter.js?v=V302_MOBILE_FRAME_BG_FIX"></script>
+    <script>
+        // --- Console Log Auto-Clearing Guard (Disabled console.clear for better debugging visibility) ---
+        (function() {
+            let logCount = 0;
+            const originalLog = console.log;
+            console.log = function(...args) {
+                logCount++;
+                if (logCount > 1500) { // Bump limit
+                    // console.clear(); // Keep logs preserved
+                    originalLog("[LF Editor] Logger limit reached, preservation active.");
+                    logCount = 0;
+                }
+                originalLog.apply(console, args);
+            };
+        })();
+
+        window.onerror = function(msg, url, line, col, error) {
+            const dc = document.getElementById('debug-console');
+            if (dc) { 
+                dc.style.display = 'block'; 
+                const fileName = url ? url.split('/').pop() : 'inline';
+                dc.innerText = `[ERROR] ${msg} (${fileName}:${line}:${col})`;
+                if (error && error.stack) console.error(error.stack);
+            }
+            return false;
+        };
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const loader = document.getElementById('loading-overlay');
+                if (loader && !loader.classList.contains('fade-out')) {
+                    loader.classList.add('fade-out');
+                }
+            }, 4000);
+        });
+    </script>
+</head>
+<body class="dark-mode">
+    <div id="debug-console"></div>
+    <!-- Premium Loading Screen Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner-wrapper">
+            <span class="material-icons-outlined loading-spinner-icon">sync</span>
+        </div>
+        <div class="loading-bar-container">
+            <div class="loading-bar-progress"></div>
+        </div>
+        <div class="loading-text">Loading Project</div>
+    </div>
+
+    <header class="toolbar">
+        <div class="brand">
+            <a href="index.html" class="tool-btn" id="btn-back" title="목록으로 돌아가기 (Esc)">
+                <span class="material-icons-outlined">arrow_back</span>
+            </a>
+            <div class="toolbar-divider"></div>
+            <img src="assets/logo.svg" class="brand-logo" alt="Logo" loading="lazy">
+            <span class="brand-name">bychoi workspace</span>
+            <span class="toolbar-file-name" id="file-name-display">Loading...</span>
+        </div>
+        
+        <!-- Center: Project Metadata (Horizontal & Compact) -->
+        <div class="header-metadata" id="top-metadata-panel">
+            <div class="empty-text toolbar-meta-loading">Loading metadata...</div>
+        </div>
+
+        <div class="actions">
+            <div class="action-pill-group">
+                <!-- Zoom Controls -->
+                <div class="zoom-controls">
+                    <button class="tool-btn" onclick="adjustZoom(-0.1)" title="축소 (Ctrl + -)">
+                        <span class="material-icons-outlined">remove</span>
+                    </button>
+                    <span class="zoom-level" id="zoom-txt">100%</span>
+                    <button class="tool-btn" onclick="adjustZoom(0.1)" title="확대 (Ctrl + +)">
+                        <span class="material-icons-outlined">add</span>
+                    </button>
+                </div>
+
+                <div class="toolbar-divider action-divider"></div>
+
+                <button class="tool-btn" onclick="centerView()" title="가운데 맞춤 (Home)">
+                    <span class="material-icons-outlined">filter_center_focus</span>
+                </button>
+                <button class="tool-btn" id="btn-fullscreen-toggle" title="전체보기 (F)">
+                    <span class="material-icons-outlined">fullscreen</span>
+                </button>
+            </div>
+
+            <button id="btn-export-project-pdf" class="btn-secondary btn-export-pdf" title="현재 프로젝트의 모든 스크린을 PDF로 내려받기">
+                <span class="material-icons-outlined btn-icon-sm">picture_as_pdf</span>
+                <span>PDF 다운로드</span>
+            </button>
+            <button id="btn-global-save" class="btn-accent btn-global-save">전체 저장</button>
+        </div>
+    </header>
+
+    <!-- bottom-updated span: kept for JS compatibility, hidden -->
+    <span id="bottom-updated" style="display:none;"><span></span></span>
+
+    <div id="workspace-view">
+        <!-- Left Sidebar: Project & Screens -->
+        <aside class="sidebar sidebar-left" id="sidebar-left">
+            <div class="sidebar-handle handle-left" id="btn-toggle-left" title="Toggle Metadata (L)">
+                <span class="material-icons-outlined">chevron_left</span>
+            </div>
+            <div class="panel-header">
+                <span>PROJECT SCREENS</span>
+                <button class="btn-add-action" id="btn-add-screen" title="새 화면 추가">
+                    <span class="material-icons-outlined">add_circle</span>
+                </button>
+            </div>
+            <div id="screens-list">
+                <div class="empty-text">Loading screens...</div>
+            </div>
+            
+            <!-- Sidebar Footer for Metadata Info -->
+            <div class="sidebar-footer" id="sidebar-footer">
+                <div class="v4-meta-updated" id="meta-bar-updated">
+                    <div class="meta-txt-wrapper">
+                        <span class="material-icons-outlined meta-history-icon">history</span>
+                        <span id="meta-updated-txt" class="meta-updated-txt">최종 업데이트: -</span>
+                    </div>
+                    <button id="btn-show-history" class="btn-secondary btn-show-history" title="재개정 이력 보기">
+                        <span class="material-icons-outlined meta-visibility-icon">visibility</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center: Canvas & Bottom Bar -->
+        <div class="center-content">
+            <main class="canvas" id="canvas">
+                <div class="stage" id="stage">
+                    <div class="artboard-wrapper" id="artboard-wrapper">
+                        <iframe id="main-iframe" class="artboard-iframe" style="width: 1440px; height: 900px; display: none;" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" loading="lazy"></iframe>
+                        <div class="pins-layer" id="pins-layer"></div>
+                        <svg id="guide-layer" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10002;"></svg>
+                    </div>
+                </div>
+
+                <!-- Absolute Centered Placeholder -->
+                <div class="placeholder-card" id="placeholder">
+                    <span class="material-icons-outlined placeholder-icon">add_to_photos</span>
+                    <h2 id="placeholder-txt" class="placeholder-title">프로젝트 스크린을 추가해주세요.</h2>
+                    <p class="placeholder-subtitle">왼쪽 프로젝트 스크린 패널에서 '+' 버튼을 눌러 시작하세요.</p>
+                </div>
+
+                <!-- Floating Inspector Card (Option B) -->
+                <div id="floating-inspector-card" class="floating-inspector-card" style="display: none;">
+                    <div class="floating-inspector-header">
+                        <div class="floating-inspector-title-group">
+                            <span class="material-icons-outlined floating-inspector-icon">tune</span>
+                            <span class="floating-inspector-title">OBJECT PROPERTIES</span>
+                        </div>
+                        <button id="btn-floating-minimize" title="최소화" class="floating-inspector-minimize-btn">
+                            <span class="material-icons-outlined">keyboard_arrow_down</span>
+                        </button>
+                    </div>
+                    <!-- Storage Container for Dynamically Injected Inspector Panels -->
+                    <div id="inspector-panels-storage" style="display: none;"></div>
+
+                    <div class="floating-inspector-body" id="floating-inspector-body">
+                        <!-- Selection Actions (Dynamic Stacked Layout) -->
+                        <div id="selection-actions-bar" class="selection-actions-bar" style="display: none;">
+                            <div class="selection-count-group">
+                                <span class="material-icons-outlined selection-count-icon">info</span>
+                                <span id="selection-count" class="selection-count-txt">
+                                    <span id="selection-number" class="selection-count-number">0</span> <span id="selection-label">OBJECT</span> SELECTED
+                                </span>
+                            </div>
+                            <div class="selection-btn-stack">
+                                <div class="selection-btn-row">
+                                    <button id="btn-group-action" class="v4-inspector-btn btn-accent" style="display: none;">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                        GROUP
+                                    </button>
+                                    <button id="btn-ungroup-action" class="v4-inspector-btn btn-secondary" style="display: none;">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                                        UNGROUP
+                                    </button>
+                                </div>
+                                <button id="btn-add-molecules-action" class="v4-inspector-btn btn-primary">
+                                    <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+                                    ADD TO MOLECULES
+                                </button>
+                                <div class="selection-btn-row">
+                                    <button id="btn-bring-front-action" class="v4-inspector-btn btn-secondary">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+                                        BRING FRONT
+                                    </button>
+                                    <button id="btn-send-back-action" class="v4-inspector-btn btn-secondary">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><polyline points="17 13 12 18 7 13"></polyline><polyline points="17 6 12 11 7 6"></polyline></svg>
+                                        SEND BACK
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Alignment Section -->
+                            <div id="selection-align-bar" class="v4-inspector-panel selection-align-panel" style="display: none;">
+                                <div class="selection-align-header">
+                                    <span class="selection-align-title">ALIGNMENT</span>
+                                </div>
+                                <div class="selection-align-grid-3">
+                                    <button id="btn-align-left" class="v4-inspector-btn btn-secondary selection-align-btn" title="Left">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M4 2v20M8 6h12v4H8zM8 14h8v4H8z"/></svg>
+                                    </button>
+                                    <button id="btn-align-center" class="v4-inspector-btn btn-secondary selection-align-btn" title="Center">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 2v2M12 20v2M8 4h8v6H8zM6 14h12v6H6z"/></svg>
+                                    </button>
+                                    <button id="btn-align-right" class="v4-inspector-btn btn-secondary selection-align-btn" title="Right">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M20 2v20M4 6h12v4H4zM8 14h12v4H8z"/></svg>
+                                    </button>
+                                </div>
+                                <div class="selection-align-grid-3">
+                                    <button id="btn-align-top" class="v4-inspector-btn btn-secondary selection-align-btn" title="Top">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 4h20M6 8v12h4V8zM14 8v8h4V8z"/></svg>
+                                    </button>
+                                    <button id="btn-align-middle" class="v4-inspector-btn btn-secondary selection-align-btn" title="Middle">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 12h2M20 12h2M4 8h6v8H4zM14 6h6v12h-6z"/></svg>
+                                    </button>
+                                    <button id="btn-align-bottom" class="v4-inspector-btn btn-secondary selection-align-btn" title="Bottom">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 20h20M6 4v12h4V4zM14 8v8h4V8z"/></svg>
+                                    </button>
+                                </div>
+                                <div class="selection-align-grid-2">
+                                    <button id="btn-align-distribute-h" class="v4-inspector-btn btn-secondary selection-align-btn" title="Distribute Horizontally">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <line x1="4" y1="2" x2="4" y2="22"></line>
+                                            <line x1="20" y1="2" x2="20" y2="22"></line>
+                                            <rect x="9" y="6" width="6" height="12" rx="1"></rect>
+                                        </svg>
+                                    </button>
+                                    <button id="btn-align-distribute-v" class="v4-inspector-btn btn-secondary selection-align-btn" title="Distribute Vertically">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <line x1="2" y1="4" x2="22" y2="4"></line>
+                                            <line x1="20" y1="2" x2="20" y2="20"></line>
+                                            <rect x="6" y="9" width="12" height="6" rx="1"></rect>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Inspector Sections Will Be Dynamically Mounted Here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Right Sidebar: Description & Asset Library -->
+        <aside class="sidebar sidebar-right" id="sidebar-right">
+            <div class="sidebar-handle handle-right" id="btn-toggle-right" title="Toggle Sidebar (R)">
+                <span class="material-icons-outlined">chevron_right</span>
+            </div>
+            
+            <div class="sidebar-tabs">
+                <button class="tab-btn active" data-tab="editor" title="라이브러리 도구 (E)">
+                    <span class="material-icons-outlined">widgets</span>
+                    Library
+                </button>
+                <button class="tab-btn" data-tab="description" title="상세 설명 (D)">
+                    <span class="material-icons-outlined">description</span>
+                    Description
+                </button>
+            </div>
+
+            <!-- Tab: Description -->
+            <div id="tab-description" class="tab-pane">
+                <div class="panel-header">
+                    <span class="panel-header-subtitle">SCENE ANNOTATIONS</span>
+                    <button class="btn-add-action" id="btn-add-description" title="새 행 추가 (화면 클릭)">
+                        <span class="material-icons-outlined">add_circle</span>
+                    </button>
+                </div>
+                <div class="description-container">
+                    <div id="description-list">
+                        <!-- Dynamic rows here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Library (V4 Asset & Component Library) -->
+            <div id="tab-editor" class="tab-pane active">
+                <div class="sidebar-search-container">
+                    <div class="v4-search-wrapper">
+                        <span class="material-icons-outlined search-icon">search</span>
+                        <input type="text" id="sidebar-search-input" placeholder="검색어를 입력하세요...">
+                        <span id="sidebar-search-clear" class="material-icons-outlined">close</span>
+                    </div>
+                </div>
+
+                <!-- Empty Search State -->
+                <div id="sidebar-search-empty">
+                    <span class="material-icons-outlined search-empty-icon">search_off</span>
+                    <div class="search-empty-title">검색 결과가 없습니다.</div>
+                    <div class="search-empty-desc">다른 검색어를 입력해 보세요.</div>
+                </div>
+
+                <!-- Part 1: COMPONENTS -->
+                <div id="v4-shapes-header" class="panel-header header-shapes">
+                    <span class="panel-header-title title-shapes">SHAPE</span>
+                </div>
+                <div id="v4-shapes-body" class="components-body">
+                    <div id="v4-shapes-container" class="component-grid">
+                        <!-- Dynamic shapes will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Part 2: ATOMIC LIBRARY -->
+                <div id="atomic-library-header" class="panel-header header-atomic">
+                    <span class="panel-header-title title-atomic">ATOMIC LIBRARY</span>
+                </div>
+                <div id="atomic-library-body" class="components-body">
+                    <div id="atomic-library-container" class="component-grid">
+                        <!-- Extracted dynamically -->
+                    </div>
+                </div>
+
+                <!-- Part 3: ICON LIBRARY -->
+                <div id="icon-library-header" class="panel-header header-icon">
+                    <span class="panel-header-title title-icon">ICON LIBRARY</span>
+                </div>
+                <div id="icon-library-body" class="components-body">
+                    <div id="icon-library-container" class="component-grid">
+                        <!-- Dynamic icons rendered here -->
+                    </div>
+                </div>
+                <!-- Part 4: MOLECULES -->
+                <div id="molecules-header" class="panel-header header-molecules">
+                    <span id="molecules-header-text" class="panel-header-title title-molecules">COMPONENTS</span>
+                </div>
+                <div id="molecules-body" class="components-body">
+                    <div id="custom-molecules-container" class="v4-tool-grid">
+                        <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'LFmall Header')">LFmall Header</button>
+                        <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'LFmall MO Header (Detail)')">LFmall MO Header (Detail)</button>
+                    </div>
+                </div>
+                </div> <!-- Close #tab-editor -->
+         </aside>
+    </div>
+
+    <!-- Fullscreen Exit Button (floating, visible only in fullscreen mode) -->
+    <button id="btn-fullscreen-exit" title="전체보기 취소 (F / ESC)">
+        <span class="material-icons-outlined">fullscreen_exit</span>
+        전체보기 취소
+    </button>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-card modal-card-narrow">
+            <div class="modal-header">
+                <h3 class="modal-title">에디터 인증</h3>
+                <p class="modal-subtitle">관리 권한이 필요한 작업입니다.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">GitHub Personal Access Token</label>
+                    <input type="password" id="modal-gh-token" class="form-input" placeholder="ghp_...">
+                    <p id="modal-auth-status" class="form-notice"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-modal-auth-cancel" class="btn-secondary">닫기</button>
+                <button id="btn-modal-auth-submit" class="btn-primary">인증하기</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals extracted dynamically -->
+
+    <!-- Revision History Modal -->
+    <div id="history-modal" class="modal-overlay history-dialog-overlay" style="display: none;">
+        <div class="dialog-card history-dialog-card">
+            <div class="history-dialog-header">
+                <div class="history-dialog-title-group">
+                    <span class="material-icons-outlined">history</span>
+                    <h3 class="history-dialog-title">프로젝트 재개정 이력</h3>
+                </div>
+                <button id="btn-close-history" class="history-dialog-close" title="닫기"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div id="history-popup-list" class="history-dialog-list">
+                <!-- Dynamic history entries here -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Script modularization: Pure Vanilla V3 Migration -->
+    <script src="assets/vctrl_typography.js?v=V300_TYPOGRAPHY_UNIFIED"></script>
+    <!-- Dynamic UI Library for Inspectors, Library Icons & Modals -->
+    <script src="assets/vctrl_ui_library.js?v=V258_ASYNC_LIBRARY"></script>
+    <script src="assets/templates.js?v=V199_DYNAMIC_TEMPLATES"></script>
+    <script src="assets/app.js?v=V187_NOTIFICATION_ALIGN_FIX"></script>
+    
+    <!-- Modularized Engine -->
+    <script src="assets/vctrl_undo.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_text_measurer.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_ui_atoms.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_design_system.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_shortcuts.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_common.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_object_text.js?v=V103_SHAPE_TEXT_ALIGN_FIX"></script>
+    <script src="assets/vctrl_object_shape.js?v=V107_PATTERN_DEBUG"></script>
+    <script src="assets/vctrl_object_table.js?v=V101_POPULATED"></script>
+    <script src="assets/vctrl_object_connector.js?v=V101_POPULATED"></script>
+    <script src="assets/vctrl_iframe_styles.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_iframe_script.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_iframe_grid.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_iframe_accordion.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_iframe_drag.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_iframe_ports.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_presentation_pen.js?v=V103_TOOLTIP_GUIDE"></script>
+    <script src="assets/vctrl_core.js?v=V241_PDF_EXPORT_FIX"></script>
+    <script src="assets/vctrl_smartguide.js?v=V196_DEBUG_TOGGLE"></script>
+    <script src="assets/vctrl_grouping.js?v=V182_MARQUEE_CLEANUP_FIX"></script>
+    <script src="assets/vctrl_inspector.js?v=V247_LIVE_LOOKUP"></script>
+    <script src="assets/vctrl_v3.js?v=V157_PIN_SYNC"></script>
+    <script src="assets/vctrl_properties.js?v=V207_ALL_DIMENSIONS"></script>
+    <script src="assets/vctrl_connectors.js?v=V116_PRECISION_SNAP_AND_SYNC_FIX"></script>
+    
+    <!-- V4 Premium Addons -->
+    <script src="enhanced_v4/component_library_v4.js?v=V233_POPUP"></script>
+    <script src="assets/vctrl_table.js?v=V144_CELL_MERGE"></script>
+    <script src="assets/vctrl_component_inserter.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_floating_inspector.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_v4_addon.js?v=V300_REFATCORED"></script>
+</body>
+</html>

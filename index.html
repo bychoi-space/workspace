@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bychoi workspace - Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+    <!-- 폰트 및 아이콘 시스템 적용 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css?v=V304_CONTRAST_EDITOR_FIX">
+    <link rel="stylesheet" href="assets/theme.css?v=V304_CONTRAST_EDITOR_FIX">
+    <link rel="stylesheet" href="assets/dashboard.css?v=V305_LOADER_DARK_CONTRAST_FIX">
+    <!-- Flatpickr (Date Picker) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
+    <script src="assets/vctrl_iframe_styles.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="assets/vctrl_pdf_exporter.js?v=V302_MOBILE_FRAME_BG_FIX"></script>
+</head>
+<body>
+    <!-- Premium Animated Background -->
+    <div class="bg-mesh-container">
+        <div class="bg-image-layer"></div>
+        <div class="bg-blob bg-blob-1"></div>
+        <div class="bg-blob bg-blob-2"></div>
+        <div class="bg-blob bg-blob-3"></div>
+    </div>
+    <div class="bg-noise"></div>
+
+    <!-- Header Toolbar -->
+    <header class="toolbar">
+        <a href="index.html" class="brand">
+            <img src="assets/logo.svg" class="brand-logo" alt="Logo" loading="lazy">
+            <span class="brand-name">bychoi workspace</span>
+        </a>
+        
+        <div class="actions">
+             <div class="gh-wrapper">
+                <span id="gh-status"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard View -->
+    <div id="dashboard-view">
+        <div class="dashboard-header">
+            <h2 class="dashboard-title">My Projects</h2>
+            
+            <!-- Search Bar (Centered & Highlighted) -->
+            <div class="search-container">
+                <span class="material-icons-outlined search-icon">search</span>
+                <input type="text" id="project-search-input" placeholder="프로젝트명 또는 제목으로 검색..." autocomplete="off">
+                <!-- Auto-complete dropdown -->
+                <div id="search-dropdown" class="search-dropdown"></div>
+            </div>
+
+            <button class="btn-primary btn-new-project" id="btn-create-project" title="새 프로젝트 생성">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="plus-icon">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    <line x1="12" y1="11" x2="12" y2="17"></line>
+                    <line x1="9" y1="14" x2="15" y2="14"></line>
+                </svg>
+                New Project
+            </button>
+        </div>
+        <div class="card-grid-scroll-wrap">
+            <div class="card-grid" id="file-list"></div>
+        </div>
+    </div>
+
+
+    <!-- Metadata Edit Modal -->
+    <div id="metadata-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-main-title">파일 정보 수정</h3>
+                <p id="modal-filename" class="modal-filename"></p>
+            </div>
+            <div class="modal-body">
+                <div id="group-project-id">
+                    <div class="form-group">
+                        <label class="form-label">프로젝트 ID (영문 폴더명)</label>
+                        <input type="text" id="meta-project-id" class="form-input" placeholder="예: event_promotion_2024">
+                        <p class="form-notice">* 한글 입력 시 자동으로 변환됩니다.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">프로젝트명 / 제목 <span class="required-star">*</span></label>
+                    <input type="text" id="meta-title" class="form-input" placeholder="예: 메인 페이지 개편안">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">기간</label>
+                    <input type="text" id="meta-period" class="form-input" placeholder="예: 2024.04.10 ~ 2024.04.20">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">담당자</label>
+                    <input type="text" id="meta-assignee" class="form-input" placeholder="예: 홍길동">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Jira ID</label>
+                    <input type="text" id="meta-jira" class="form-input" placeholder="예: LF-1234">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Figma Link</label>
+                    <input type="text" id="meta-figma" class="form-input" placeholder="예: https://www.figma.com/file/... ">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">프로젝트 테마 디자인</label>
+                    <div id="theme-presets" class="theme-presets"></div>
+                    <input type="hidden" id="meta-theme-index" value="-1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-modal-close" class="btn-secondary">취소</button>
+                <button id="btn-modal-save" class="btn-primary">저장하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-card modal-card-narrow">
+            <div class="modal-header">
+                <h3 class="modal-title">에디터 인증</h3>
+                <p class="modal-subtitle">관리 권한이 필요한 작업입니다.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">GitHub Owner (계정명)</label>
+                    <input type="text" id="modal-gh-owner" class="form-input" placeholder="계정명 입력">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GitHub Repository (저장소명)</label>
+                    <input type="text" id="modal-gh-repo" class="form-input" placeholder="저장소명 입력">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GitHub Personal Access Token</label>
+                    <input type="password" id="modal-gh-token" class="form-input" placeholder="ghp_ 또는 github_pat_ ...">
+                    <p id="modal-auth-status"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-modal-auth-cancel" class="btn-secondary">닫기</button>
+                <button id="btn-modal-auth-test" class="btn-secondary btn-auth-test">연결 테스트</button>
+                <button id="btn-modal-auth-submit" class="btn-primary">설정 저장</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Global Loading Progress Overlay -->
+    <div id="global-loader">
+        <div class="loader-content">
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div class="loader-status" id="loader-status">Fetching project data...</div>
+        </div>
+    </div>
+
+    <!-- Splash Screen (Intro) -->
+    <div id="intro-overlay" class="intro-overlay">
+        <div class="intro-content">
+            <img src="assets/logo.svg" class="intro-logo-img" alt="Logo" loading="lazy">
+            <div class="intro-title">bychoi workspace</div>
+            <div class="intro-loader"></div>
+        </div>
+    </div>
+
+    <script src="assets/app.js?v=V7_CLEANUP"></script>
+    <script src="assets/dashboard.js?v=V7_CLEANUP"></script>
+</body>
+</html>

@@ -16,7 +16,7 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
 - Do not flatten folders or move/delete subfolders without explicit user approval.
 - Do not delete or overwrite metadata files such as `metadata.json` in each project folder.
 - During conflicts, manually merge each project's `metadata.json` `screens` arrays. Never blindly overwrite them.
-- Do not push to GitHub `main` unless local verification is complete and the user requested deployment.
+- **Autonomous Deployment**: Perform local static verification first, and deploy directly to GitHub `main` automatically without waiting for manual user Submit/Accept prompts.
 - Do not revert user changes. If existing changes affect the task, work with them or ask.
 
 ## Code Integrity & Safety Rules

@@ -14,12 +14,6 @@
       "updatedAt": "2026-08-27T05:45:57.109Z",
       "template": "template_mobile_ui_1.html"
     },
-    "08_Responsive_PC_Mobile_544.html": {
-      "title": "08_Responsive_PC_Mobile_544",
-      "type": "responsive-ui",
-      "updatedAt": "2026-08-27T06:17:35.266Z",
-      "template": "template_responsive_pc_mobile.html"
-    },
     "08_Responsive_PC_Mobile_107.html": {
       "title": "08_Responsive_PC_Mobile_107",
       "type": "responsive-ui",
@@ -30,13 +24,17 @@
       "title": "08_Responsive_PC_Mobile_820",
       "type": "responsive-ui",
       "updatedAt": "2026-08-27T07:19:58.241Z",
-      "template": "template_responsive_pc_mobile.html"
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": []
     },
     "08_Responsive_PC_Mobile_915.html": {
       "title": "08_Responsive_PC_Mobile_915",
       "type": "responsive-ui",
       "updatedAt": "2026-08-27T07:25:12.106Z",
-      "template": "template_responsive_pc_mobile.html"
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",

@@ -708,11 +708,13 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 
 /* Active Frame Highlight (Unified 2px Cyan Aqua Line) */
 .pc-browser-frame,
-.mobile-frame {
+.mobile-frame,
+.mobile-browser-frame {
     transition: border 0.2s ease, border-color 0.2s ease !important;
 }
 .pc-browser-frame.active-frame,
-.mobile-frame.active-frame {
+.mobile-frame.active-frame,
+.mobile-browser-frame.active-frame {
     border: 2px solid #00e5ff !important;
 }
 .pc-column.active-column .frame-label-bar,
@@ -883,7 +885,7 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     </script>
     
 <script id="v4-inlined-script">
-// Cache Buster Timestamp: 1787908558299
+// Cache Buster Timestamp: 1787908822992
 
     (function() {
         console.log("[V4 Typography] Iframe typography token engine active.");
@@ -4435,10 +4437,10 @@ if (window.V4UndoManager) window.V4UndoManager.init();
                 notifyParent({ type: 'LF_SNAP_END' });
 
                 // Responsive Drop Reparenting to PC Area or Mobile Content
-                const pcFrame = document.querySelector('.pc-browser-frame');
-                const mobileFrame = document.querySelector('.mobile-frame');
-                const pcArea = document.querySelector('.pc-content-area');
-                const mobileContent = document.querySelector('.mobile-content');
+                const pcFrame = document.querySelector('.pc-browser-frame, .pc-frame');
+                const mobileFrame = document.querySelector('.mobile-frame, .mobile-browser-frame');
+                const pcArea = document.querySelector('.pc-content-area, .pc-content-inner');
+                const mobileContent = document.querySelector('.mobile-content, .mobile-content-area, .mobile-content-inner');
 
                 if (pcFrame && mobileFrame && pcArea && mobileContent) {
                     const pcInner = document.querySelector('.pc-content-inner') || pcArea;
@@ -5803,21 +5805,21 @@ if (window.V4UndoManager) window.V4UndoManager.init();
 
     window.updateActiveFrameUI = function(type) {
         const targetType = type || window.lastActiveFrame || 'pc';
-        const pcFrame = document.querySelector('.pc-browser-frame');
-        const mobileFrame = document.querySelector('.mobile-frame');
-        const pcCol = document.querySelector('.pc-column');
-        const mobileCol = document.querySelector('.mobile-column');
+        const pcFrames = document.querySelectorAll('.pc-browser-frame, .pc-frame');
+        const mobileFrames = document.querySelectorAll('.mobile-frame, .mobile-browser-frame');
+        const pcCols = document.querySelectorAll('.pc-column');
+        const mobileCols = document.querySelectorAll('.mobile-column');
 
         if (targetType === 'mobile') {
-            if (mobileFrame) mobileFrame.classList.add('active-frame');
-            if (mobileCol) mobileCol.classList.add('active-column');
-            if (pcFrame) pcFrame.classList.remove('active-frame');
-            if (pcCol) pcCol.classList.remove('active-column');
+            mobileFrames.forEach(f => f.classList.add('active-frame'));
+            mobileCols.forEach(c => c.classList.add('active-column'));
+            pcFrames.forEach(f => f.classList.remove('active-frame'));
+            pcCols.forEach(c => c.classList.remove('active-column'));
         } else if (targetType === 'pc') {
-            if (pcFrame) pcFrame.classList.add('active-frame');
-            if (pcCol) pcCol.classList.add('active-column');
-            if (mobileFrame) mobileFrame.classList.remove('active-frame');
-            if (mobileCol) mobileCol.classList.remove('active-column');
+            pcFrames.forEach(f => f.classList.add('active-frame'));
+            pcCols.forEach(c => c.classList.add('active-column'));
+            mobileFrames.forEach(f => f.classList.remove('active-frame'));
+            mobileCols.forEach(c => c.classList.remove('active-column'));
         }
     };
 
@@ -5827,8 +5829,8 @@ if (window.V4UndoManager) window.V4UndoManager.init();
     document.addEventListener('mousedown', e => {
         if (e.target.closest('.sidebar') || e.target.closest('.modal') || e.target.closest('.header-metadata')) return;
 
-        const mob = e.target.closest('.mobile-frame, .mobile-content, .mobile-column');
-        const pc = e.target.closest('.pc-browser-frame, .pc-content-area, .pc-column');
+        const mob = e.target.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
+        const pc = e.target.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
         if (mob) {
             window.lastActiveFrame = 'mobile';
             if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
@@ -5873,6 +5875,15 @@ if (window.V4UndoManager) window.V4UndoManager.init();
         }
         if (c) {
             isMarquee = false;
+            const compMob = c.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
+            const compPc = c.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
+            if (compMob) {
+                window.lastActiveFrame = 'mobile';
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+            } else if (compPc) {
+                window.lastActiveFrame = 'pc';
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+            }
             const isMulti = e.shiftKey || e.ctrlKey || e.metaKey;
             if (isMulti) {
                 c.classList.toggle('selected');
@@ -6490,8 +6501,8 @@ if (window.V4UndoManager) window.V4UndoManager.init();
             c.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected'));
             notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\n" + c.outerHTML });
         } else if (d.type === 'LF_INSERT_COMPONENT' || d.type === 'LF_INSERT_V4_COMP') {
-            const pcArea = document.querySelector('.pc-content-area');
-            const mobileContent = document.querySelector('.mobile-content');
+            const pcArea = document.querySelector('.pc-content-area, .pc-content-inner');
+            const mobileContent = document.querySelector('.mobile-content, .mobile-content-area, .mobile-content-inner');
             let host = document.body;
 
             const isPinMarker = d.className && d.className.includes('pin-marker');
@@ -6505,10 +6516,12 @@ if (window.V4UndoManager) window.V4UndoManager.init();
                 host = mobileContent;
                 centerLeft = Math.max(10, Math.round((360 - compW) / 2));
                 centerTop = Math.max(10, Math.round(300 + mobileContent.scrollTop));
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
             } else if (pcArea) {
                 host = pcArea;
                 centerLeft = Math.max(10, Math.round((1000 - compW) / 2));
                 centerTop = Math.max(10, Math.round(300 + pcArea.scrollTop));
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
             }
             
             if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -8595,4 +8608,4 @@ if (window.V4UndoManager) window.V4UndoManager.init();
 
 </script>
 
-<div id="v4-text-1787908772979" class="lf-component v4-text-shape" style="position: absolute; top: 140.067px; left: 215.488px; z-index: 1000; transform: none; width: 37px; height: 23px; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;"><div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;"><p>EBM</p></div><div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div><div id="v4-comp-1787908780922_694016_0" class="lf-component v4-text-shape" style="position: absolute; top: 140.067px; left: 268.788px; z-index: 1000; transform: none; width: 56px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;"><div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;"><p>MICHAA</p></div><div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div><div id="v4-comp-1787908791133_824207_0" class="lf-component v4-text-shape" style="position: absolute; top: 140.067px; left: 347.646px; z-index: 1000; transform: none; width: 70px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;"><div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;"><p><span style="font-size: 12px;">IT MICHAA</span></p></div><div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div></body></html>
+</body></html>

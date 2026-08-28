@@ -33,6 +33,12 @@
       "type": "responsive-ui",
       "updatedAt": "2026-08-28T01:09:52.666Z",
       "template": "template_responsive_pc_mobile.html"
+    },
+    "08_Responsive_PC_Mobile_546.html": {
+      "title": "08_Responsive_PC_Mobile_546",
+      "type": "responsive-ui",
+      "updatedAt": "2026-08-28T01:14:39.916Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "최범열",

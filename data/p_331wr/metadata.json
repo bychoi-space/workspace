@@ -15,6 +15,12 @@
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": []
+    },
+    "08_Responsive_PC_Mobile_153.html": {
+      "title": "08_Responsive_PC_Mobile_153",
+      "type": "responsive-ui",
+      "updatedAt": "2026-08-28T02:34:57.784Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "최범열",

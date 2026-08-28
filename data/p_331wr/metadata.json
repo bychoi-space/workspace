@@ -8,14 +8,6 @@
       "template": "template_cover.html",
       "version": 0.1
     },
-    "08_Responsive_PC_Mobile_915.html": {
-      "title": "08_Responsive_PC_Mobile_915",
-      "type": "responsive-ui",
-      "updatedAt": "2026-08-27T07:32:27.644Z",
-      "template": "template_responsive_pc_mobile.html",
-      "description": [],
-      "connectors": []
-    },
     "08_Responsive_PC_Mobile_975.html": {
       "title": "08_Responsive_PC_Mobile_975",
       "type": "responsive-ui",
@@ -38,7 +30,9 @@
       "title": "08_Responsive_PC_Mobile_546",
       "type": "responsive-ui",
       "updatedAt": "2026-08-28T01:14:39.916Z",
-      "template": "template_responsive_pc_mobile.html"
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": []
     },
     "08_Responsive_PC_Mobile_130.html": {
       "title": "08_Responsive_PC_Mobile_130",

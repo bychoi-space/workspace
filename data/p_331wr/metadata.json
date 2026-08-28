@@ -11,7 +11,7 @@
     "08_Responsive_PC_Mobile_490.html": {
       "title": "08_Responsive_PC_Mobile_490",
       "type": "responsive-ui",
-      "updatedAt": "2026-08-28T02:20:42.828Z",
+      "updatedAt": "2026-08-28T02:34:10.337Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": []
@@ -21,6 +21,6 @@
   "developer": "",
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
   "themeIndex": -1,
-  "updated": "2026-08-28 10:46:58",
+  "updated": "2026-08-28 11:34:10",
   "jira": ""
 }

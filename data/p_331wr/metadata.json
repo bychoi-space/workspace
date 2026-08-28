@@ -45,14 +45,16 @@
     "08_Responsive_PC_Mobile_865.html": {
       "title": "08_Responsive_PC_Mobile_865",
       "type": "responsive-ui",
-      "updatedAt": "2026-08-28T01:46:24.691Z",
-      "template": "template_responsive_pc_mobile.html"
+      "updatedAt": "2026-08-28T01:46:58.031Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
   "themeIndex": -1,
-  "updated": "2026-08-28 10:39:30",
+  "updated": "2026-08-28 10:46:58",
   "jira": ""
 }

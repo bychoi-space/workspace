@@ -8,12 +8,6 @@
       "template": "template_cover.html",
       "version": 0.1
     },
-    "08_Responsive_PC_Mobile_703.html": {
-      "title": "08_Responsive_PC_Mobile_703",
-      "type": "responsive-ui",
-      "updatedAt": "2026-08-28T01:54:28.762Z",
-      "template": "template_responsive_pc_mobile.html"
-    },
     "08_Responsive_PC_Mobile_759.html": {
       "title": "08_Responsive_PC_Mobile_759",
       "type": "responsive-ui",

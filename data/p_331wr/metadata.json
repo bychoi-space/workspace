@@ -3,7 +3,8 @@
   "screenOrder": [
     "00_Cover_63.html",
     "08_Responsive_PC_Mobile_486.html",
-    "99_Blank_120.html"
+    "99_Blank_120.html",
+    "99_Blank_892.html"
   ],
   "screens": {
     "00_Cover_63.html": {
@@ -32,6 +33,12 @@
       "version": 0.1,
       "description": [],
       "connectors": []
+    },
+    "99_Blank_892.html": {
+      "title": "99_Blank_892",
+      "type": "blank",
+      "updatedAt": "2026-08-31T06:27:50.958Z",
+      "template": "template_blank.html"
     }
   },
   "assignee": "최범열",

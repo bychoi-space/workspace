@@ -6,18 +6,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
         :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; --v4-text: #0f172a; --v4-subtext: #475569; --v4-border-color: #cbd5e1; --v4-header-bg: #f8fafc; }
-        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--v4-text); background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
-        .page { width: 1440px; height: 900px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.5); overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 32px; padding: 0 16px; box-sizing: border-box; }
-        .frame-column { display: flex; flex-direction: column; align-items: stretch; position: relative; }
-        .frame-label-bar { display: flex; align-items: center; justify-content: space-between; padding: 5px 14px; background: rgba(255, 255, 255, 0.08); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #f8fafc; font-size: 12px; font-weight: 700; box-sizing: border-box; margin-bottom: 10px; backdrop-filter: blur(10px); user-select: none; }
-        .frame-label-title { display: flex; align-items: center; gap: 6px; color: #f1f5f9; letter-spacing: -0.2px; }
-        .frame-title-input { background: transparent; border: 1.6px solid transparent; border-radius: 6px; color: #f1f5f9; font-size: 12px; font-weight: 700; font-family: inherit; padding: 2px 8px; width: 160px; outline: none; transition: all 0.2s; }
-        .frame-title-input:hover { border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.06); }
-        .frame-title-input:focus { border-color: var(--v4-accent); background: rgba(15, 23, 42, 0.85); box-shadow: 0 0 8px rgba(0, 229, 255, 0.35); }
-        .frame-label-height-control { display: flex; align-items: center; gap: 6px; color: #94a3b8; font-size: 11px; }
-        .frame-label-input { width: 58px; height: 22px; border-radius: 6px; border: 1.6px solid rgba(255, 255, 255, 0.25); background: rgba(15, 23, 42, 0.8); color: var(--v4-accent); font-size: 11px; font-weight: 800; text-align: center; outline: none; padding: 0; transition: all 0.2s; }
-        .frame-label-input:focus { border-color: var(--v4-accent); box-shadow: 0 0 8px rgba(0, 229, 255, 0.4); }
-        .page { width: 1440px; height: 900px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.5); overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 16px; padding: 0 16px; box-sizing: border-box; }
+        body { margin: 0; padding: 0; background: transparent !important; font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--v4-text); }
+        .page { width: 1440px; height: 900px; position: relative; background: transparent !important; box-shadow: none !important; border: none !important; overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 16px; padding: 0 16px; box-sizing: border-box; }
         .frame-column { display: flex; flex-direction: column; align-items: stretch; position: relative; }
         .frame-label-bar { display: flex; align-items: center; justify-content: space-between; padding: 5px 14px; background: rgba(255, 255, 255, 0.08); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #f8fafc; font-size: 12px; font-weight: 700; box-sizing: border-box; margin-bottom: 10px; backdrop-filter: blur(10px); user-select: none; }
         .frame-label-title { display: flex; align-items: center; gap: 6px; color: #f1f5f9; letter-spacing: -0.2px; }

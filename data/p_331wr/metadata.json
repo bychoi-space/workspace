@@ -17,13 +17,15 @@
       "connectors": []
     },
     "08_Responsive_PC_Mobile_486.html": {
-      "title": "08_Responsive_PC_Mobile_486",
-      "type": "screen",
-      "updatedAt": "2026-08-31T07:52:07.396Z",
+      "title": "상품 상세",
+      "type": "ui",
+      "updatedAt": "2026-08-31T07:54:08.151Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [],
-      "connectors": []
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": ""
     },
     "99_Blank_120.html": {
       "title": "99_Blank_120",

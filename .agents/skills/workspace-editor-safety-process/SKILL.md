@@ -17,7 +17,7 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
 - Do not flatten folders or move/delete subfolders without explicit user approval.
 - Do not delete or overwrite metadata files such as `metadata.json` in each project folder.
 - During conflicts, manually merge each project's `metadata.json` `screens` arrays. Never blindly overwrite them.
-- **On-Demand Deployment**: Do NOT push to GitHub automatically on every change. Only commit and push to the remote repository when explicitly requested by the user, ensuring local verification is complete first.
+- **On-Demand Auto Deployment**: Do NOT push to GitHub automatically on everyday small changes. When explicitly requested by the user ("배포해줘", "푸시해줘", etc.), automatically commit and push to the remote repository immediately without asking for extra confirmation.
 - Do not revert user changes. If existing changes affect the task, work with them or ask.
 
 ## Code Integrity & Safety Rules

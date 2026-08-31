@@ -11,16 +11,18 @@
     "08_Responsive_Design_1_542.html": {
       "title": "08_Responsive_Design_1_542",
       "type": "responsive-ui",
-      "updatedAt": "2026-08-31T01:28:25.324Z",
-      "template": "template_responsive_pc_mobile.html",
-      "description": [],
-      "connectors": []
+      "updatedAt": "2026-08-27T06:12:00.000Z",
+      "template": "template_responsive_pc_mobile.html"
+    },
+    "08_Responsive_PC_Mobile_240.html": {
+      "title": "08_Responsive_PC_Mobile_240",
+      "type": "responsive-ui",
+      "updatedAt": "2026-08-31T01:39:37.006Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
-  "themeIndex": -1,
-  "jira": "",
-  "updated": "2026-08-31 10:28:25"
+  "themeIndex": -1
 }

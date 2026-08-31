@@ -1,7 +1,8 @@
 # bychoi workspace를 위한 Antigravity / Gemini 에이전트 제약 조건
 
 ## 🤖 Gemini 3.7 Flash / Antigravity 에이전트 가이드라인
-- **자율 실행 및 로컬 자체 완결 (Autonomous Local Execution)**: 사용자의 수동 승인(Accept / Submit) 절차를 최소화하고 작업 속도를 극대화하기 위해, 코드 수정, 파일 생성, 정적 검증, 디버깅 등의 일상 작업은 중간 질문이나 불필요한 승인 대기 없이 에이전트가 자체 판단하여 로컬에서 끝까지 완결 후 결과만 명확히 보고합니다.
+- **자율 실행 및 로컬 자체 완결 (Autonomous Local Execution)**: 사용자의 수동 승인(Accept / Submit / Run Confirm) 절차를 완전히 배제하고 작업 속도를 극대화하기 위해, PowerShell 명령어 실행(`run_command`), 코드 수정, 파일 생성, 정적 검증, 디버깅 등의 모든 작업은 중간 질문이나 사용자 확인 대기 없이 에이전트가 자체 판단하여 무조건 자동으로 즉시 실행하고 로컬에서 끝까지 완결 후 결과만 명확히 보고합니다.
+- **PowerShell / 터미널 작업 무조건 자동 실행 (Unconditional Auto-Run)**: 터미널 명령어나 검증 스크립트 실행 시 사용자에게 확인을 요청하지 않고 자율적으로 즉시 구동하여 신속하게 문제 해결 및 검증을 완료합니다.
 - **온디맨드 자동 GitHub 배포 (Automated On-Demand Deployment)**: GitHub 원격 저장소(`main`)로의 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 즉시 자동으로 커밋 및 푸시하여 동기화를 완료합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지합니다.)
 - **엄격한 규칙 이행**: 사용자가 지정한 아키텍처 규칙, SSOT(Single Source of Truth), 인코딩 및 마스킹 표준을 예외 없이 100% 준수해야 합니다.
 - **정밀 심층 분석**: 코드를 수정하기 전 관련 모듈(`vctrl_*.js`)과 템플릿, 스타일시트를 전수 분석하여 예기치 못한 사이드이펙트를 원천 차단합니다.
@@ -59,8 +60,12 @@
   - 최하위 티어 항목(1 Depth의 개별 항목 또는 2 Depth의 2티어 항목)의 왼쪽에는 라디오 버튼(`.v4-accordion-radio`)이 표시되며, 활성화(선택)된 항목은 텍스트 밑에 밑줄(`text-decoration: underline`)이 실시간 표시됩니다.
   - 계층 데이터 및 선택 상태는 단일 진실 공급원(SSOT)인 `data-hierarchy` 속성에 JSON 배열 형태로 저장 및 복구되어야 합니다.
 - **캔버스 크기**: 에디터 화면(`lf-canvas` 또는 `page`)의 크기는 레이아웃 틀어짐을 방지하기 위해 'Cover' 화면 크기(예: 1440x900)와 완벽하게 일치해야 합니다.
-- **타이포그래피 가이드 (폰트 크기 표준)**: 가독성 확보를 위해 다음 기준을 따르세요.
-  - 대분류 타이틀: `18px` ~ `20px` / 중분류 헤더: `15px` ~ `16px` / 본문: `14px` ~ `15px` / 부가 설명: `13px` / 최소 단위: `12px`
+- **타이포그래피 가이드 및 텍스트 100% 선명도 유지 원칙 (Crisp Typography & Subpixel Integrity Protocol)**:
+  - **폰트 크기 표준**: 대분류 타이틀: `18px` ~ `20px` / 중분류 헤더: `15px` ~ `16px` / 본문: `14px` ~ `15px` / 부가 설명: `13px` / 최소 단위: `12px`
+  - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 합니다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단합니다.
+  - **정수 픽셀 정렬 (`Math.round`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `Math.round()`를 거쳐 소수점 픽셀(`translate(12.35px)`)을 완전 제거하고 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 합니다.
+  - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 유지하여 12px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장합니다.
+  - **블러 필터 지양**: `backdrop-filter: blur(...)`와 같이 캔버스 줌/스케일 환경에서 텍스트 래스터화를 뭉개는 필터 속성은 텍스트 영역에 사용을 금지합니다.
 - **도형 배경색 반투명 조절 (Opacity 0% ~ 100%)**: 도형 자체에 `opacity`를 입힐 경우 내부 텍스트의 가독성이 무너지므로, 반드시 배경색의 알파값(`rgba`)만을 조합 및 추출하여 배경 투명도를 표현해야 합니다. 투명도 슬라이더와 컬러 피커는 상호 상태를 유지하며 갱신되어야 하고, 투명(None) 버튼 클릭 시 투명도는 0%로 강제 동기화되어야 합니다.
 - **도형 코너 스타일 설정**: Rect 도형 선택 시 코너 라운드 반경(Radius 0px ~ 100px 슬라이더) 제어 및 직각/라운드(0px / 8px 적용) 변환 원터치 컨트롤을 제공해야 합니다.
 - **다중 선택 텍스트 긁힘 방지 (User Selection Prevention)**: 캔버스를 드래그(Marquee)하여 다중 선택할 때 브라우저 텍스트 Selection 하이라이트가 무관한 요소들에 잡히지 않도록, `body` 및 `.lf-component`에 `user-select: none` 속성을 필수로 강제하고, 드래그 `mousemove` 루프 내에서 `window.getSelection()?.removeAllRanges()`를 매프레임 호출하여 이중으로 차단해야 합니다. 단, `contenteditable` 영역은 `user-select: text`를 부여해 정상 편집을 허용합니다.
@@ -178,6 +183,25 @@
 - **템플릿 리터럴 내 문자열 이스케이프 및 결합 표준**: `vctrl_iframe_script.js`와 같이 파일 전체가 큰 백틱(`` ` ``) 템플릿 문자열로 감싸진 채 부모 측 브라우저에서 동적으로 평가(eval)되는 파일의 경우, 내부 코드에서 또다시 백틱(`` ` ``)이나 변수 보간(`${}`) 구문을 사용하면 문법 충돌(SyntaxError)이 일어나 작동이 중단됩니다. 이를 방지하기 위해 내부 문자열 표현은 반드시 표준적인 따옴표(싱글/더블)와 덧셈 연산자(`"Sub Item " + (i + 1)`)를 활용해 문자열을 결합해야 합니다.
 - **신규 아톰 추가 시 옵션 프로퍼티 플로팅 카드 통합 규칙**: 신규 아톰의 설정 패널을 디자인할 때는 우측 사이드바가 아닌 옵션 프로퍼티 플로팅 카드(`Object Properties Floating Card`)에 노출되도록 `vctrl_inspector.js` 내의 `DOM` 매핑 등록, `restorePropertiesSections` 복원 대상 등록, `updateProperties`의 보이기/숨기기 처리 및 선택 해제(Deselect) 시 숨김 처리를 빠짐없이 세트로 적용하여 사이드바에 옵션 패널이 잔존하는 버그를 원천 차단해야 합니다.
 - **이벤트 핸들러 연쇄 차단 방지 (Non-Blocking Event Listener Flow)**: `mouseup` 또는 `mousemove`와 같은 전역 통합 이벤트 리스너를 수정할 때, 개별 조건문(예: `isConnectorDragging`) 처리 후 `return;`으로 조기 종료를 남용하지 마세요. 조기 종료가 남용되면 하위의 `isMarquee` 상태 해제(`LF_MARQUEE_END`) 및 선택 박스(`.v4-marquee-box`) 제거 로직이 차단되어 클릭 시 캔버스에 파란색 점 잔상이 생성되거나 다중선택 드래그가 마비되는 사이드 이펙트가 발생합니다. 모든 상태 해제 연산은 상호 간섭이 없도록 독립 순차 구문으로 전개해야 합니다.
+
+## 📱 [반응형] 템플릿(PC & Mobile) 전용 아키텍처 및 개발 표준 (Responsive Specification)
+- **1. 레이아웃 및 2단 독립 프레임 규격 (Layout & Containers)**:
+  - 반응형 스크린은 1440x900 규격 내에 좌측 **PC 프레임(`1000px`)**과 우측 **Mobile 프레임(`360px`)**이 병렬 배치된 2단 독립 스크롤 구조를 갖는다.
+  - **PC 프레임 계층**: `.pc-column` ➔ `.frame-label-bar` (상단 라벨바) + `.pc-browser-frame` ➔ `.pc-browser-header` + `.pc-content-area` (스크롤 컨테이너) ➔ `.pc-content-inner` (실제 오브젝트가 위치하는 절대좌표 캔버스).
+  - **Mobile 프레임 계층**: `.mobile-column` ➔ `.frame-label-bar` (상단 라벨바) + `.mobile-frame` ➔ `.mobile-top-bar` + `.mobile-content-area` (스크롤 컨테이너) ➔ `.mobile-content-inner` (실제 오브젝트가 위치하는 절대좌표 캔버스).
+- **2. 비반응형 일반 템플릿과의 100% 완전 분기 격리 (Strict Isolation Guard)**:
+  - 반응형 전용 기능(크로스 클립보드, 마키 좌표 보정 등)을 개발/수정할 때는 반드시 `const isResponsiveTemplate = !!(document.querySelector('.pc-content-inner') || document.querySelector('.mobile-content-inner'));` 가드를 엄격히 적용해야 한다.
+  - 일반 비반응형 화면에서는 기존의 `document.body` 기반 단일 캔버스 파이프라인이 100% 원본 그대로 실행되어야 하며 어떠한 부작용도 발생해서는 안 된다.
+- **3. PC ↔ Mobile 양방향 크로스 복사/붙여넣기 및 뷰포트 정중앙 안착 (Cross-Frame Clipboard & Viewport-Center Paste)**:
+  - **활성 프레임 감지**: 사용자가 클릭한 프레임(`window.lastActiveFrame` / `.active-column`)을 최우선 타겟 컨테이너(`mobileInner` 또는 `pcInner`)로 라우팅한다.
+  - **PC → Mobile 복사 시**: Mobile 프레임 폭(`360px`)을 초과하는 대형 컴포넌트는 `width: 330px`로 자동 클램핑되고 `left` 좌표가 내부로 안전하게 보정된다.
+  - **Mobile → PC 복사 시**: 1000px 너비의 넓은 PC 캔버스에 원본 비율과 오프셋을 유지하며 매끄럽게 안착된다.
+  - **뷰포트 정중앙 계산**: 복사된 오브젝트(또는 다중 선택 그룹)의 바운딩 박스 중심을 계산하여, 현재 스크롤 위치(`scrollTop`)와 뷰포트 높이(`clientHeight`)의 정중앙에 정확히 배치하며 내부 상대 좌표를 1:1로 보존한다.
+- **4. 상단 라벨바(`.frame-label-bar`) 폰트 번짐 방지 및 다크 테마 표준**:
+  - `backdrop-filter: blur(...)` 속성은 캔버스 줌/스케일 환경에서 GPU 서브픽셀 래스터화 블러를 유발하므로 절대 사용하지 않는다.
+  - 배경은 `#141720` 솔리드 다크 테마를 사용하고, 폰트 두께는 가독성을 극대화한 `600 (SemiBold)`과 `-webkit-font-smoothing: antialiased`를 필수 적용한다.
+- **5. 파일 동기화 수칙 (Dual File Synchronization)**:
+  - 반응형 프레임 스타일은 `assets/responsive_frame.js` (`window.responsiveFrameStyles`)와 `assets/responsive_frame.css` 두 파일에 분리 관리되므로, 스타일 수정 시 반드시 두 파일을 100% 동일하게 동기화해야 한다.
 
 ## 🚀 작업 프로세스 및 안정성 대원칙 (CRITICAL)
 1. **고민 (Pondering)** -> 2. **분석 (Analysis)** -> 3. **설계 (Design)** -> 4. **실행 (Execution)** -> 5. **확인 (Verification)** 단계를 엄격히 준수합니다.

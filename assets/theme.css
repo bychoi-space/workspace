@@ -48,6 +48,9 @@ body {
     backdrop-filter: blur(var(--glass-blur)) !important;
     border-right: 1px solid var(--border-color) !important;
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+    position: relative !important;
+    z-index: 100 !important;
+    overflow: visible !important;
 }
 
 .sidebar-right {
@@ -55,6 +58,9 @@ body {
     backdrop-filter: blur(var(--glass-blur)) !important;
     border-left: 1px solid var(--border-color) !important;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+    position: relative !important;
+    z-index: 100 !important;
+    overflow: visible !important;
 }
 
 /* 3. Navigation Accent (Left Sidebar Specifics) */

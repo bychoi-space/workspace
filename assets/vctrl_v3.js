@@ -176,15 +176,19 @@ window.centerView = function() {
     if (!DOM || !DOM.canvas || !DOM.iframe || !state) return;
     var iw = parseInt(DOM.iframe.style.width) || 1440, ih = parseInt(DOM.iframe.style.height) || 900;
     var cw = DOM.canvas.clientWidth, ch = DOM.canvas.clientHeight;
-    var s = Math.min((cw * 0.99) / iw, (ch * 0.99) / ih, 1);
-    state.transform = { x: (cw - (iw * s)) / 2, y: (ch - (ih * s)) / 2, scale: s };
+    var s = 1; // 무조건 100% 1:1 픽셀 매핑 고정 (텍스트 서브픽셀 블러 원천 차단)
+    var x = Math.round((cw - iw) / 2);
+    var y = Math.round((ch - ih) / 2);
+    state.transform = { x: x, y: y, scale: s };
     updateTransform();
 };
 
 window.updateTransform = function() {
     var DOM = window.DOM, state = window.state;
     if (!DOM || !state) return;
-    if (DOM.stage) DOM.stage.style.transform = 'translate(' + state.transform.x + 'px, ' + state.transform.y + 'px) scale(' + state.transform.scale + ')';
+    var x = Math.round(state.transform.x);
+    var y = Math.round(state.transform.y);
+    if (DOM.stage) DOM.stage.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + state.transform.scale + ')';
     if (DOM.zoomTxt) DOM.zoomTxt.innerText = Math.round(state.transform.scale * 100) + '%';
 };
 

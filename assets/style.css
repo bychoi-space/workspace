@@ -46,7 +46,7 @@
     margin-bottom: 12px !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    overflow: hidden !important;
+    overflow: visible !important;
 }
 
 #content-editor-label {
@@ -215,7 +215,27 @@
     padding: 4px !important;
     z-index: 10000 !important;
     min-width: 80px !important;
+    max-height: 180px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
 }
+
+/* Custom Scrollbar for Size Picker Popup Options */
+.ql-snow .ql-picker.ql-size .ql-picker-options::-webkit-scrollbar {
+    width: 5px !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-options::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 4px !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-options::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.5) !important;
+    border-radius: 4px !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-options::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.8) !important;
+}
+
 .ql-snow .ql-picker.ql-size .ql-picker-item {
     color: #cbd5e1 !important;
     font-size: 12px !important;
@@ -223,6 +243,7 @@
     border-radius: 4px !important;
     width: auto !important;
     height: auto !important;
+    cursor: pointer !important;
 }
 .ql-snow .ql-picker.ql-size .ql-picker-item::before {
     color: #cbd5e1 !important;
@@ -244,15 +265,43 @@
 .ql-snow .ql-picker.ql-background.ql-expanded .ql-picker-options {
     display: flex !important;
     flex-wrap: wrap !important;
-    width: 148px !important;
-    padding: 6px !important;
+    width: 172px !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 8px !important;
     gap: 4px !important;
     background: #1e293b !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
-    border-radius: 8px !important;
-    z-index: 10000 !important;
+    border: 1.6px solid rgba(99, 102, 241, 0.4) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.75) !important;
+    border-radius: 10px !important;
+    z-index: 10005 !important;
 }
+
+/* Custom Scrollbar for Color Palette Popup Options */
+.ql-snow .ql-color-picker .ql-picker-options::-webkit-scrollbar,
+.ql-snow .ql-picker.ql-color .ql-picker-options::-webkit-scrollbar,
+.ql-snow .ql-picker.ql-background .ql-picker-options::-webkit-scrollbar {
+    width: 5px !important;
+}
+.ql-snow .ql-color-picker .ql-picker-options::-webkit-scrollbar-track,
+.ql-snow .ql-picker.ql-color .ql-picker-options::-webkit-scrollbar-track,
+.ql-snow .ql-picker.ql-background .ql-picker-options::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 4px !important;
+}
+.ql-snow .ql-color-picker .ql-picker-options::-webkit-scrollbar-thumb,
+.ql-snow .ql-picker.ql-color .ql-picker-options::-webkit-scrollbar-thumb,
+.ql-snow .ql-picker.ql-background .ql-picker-options::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.6) !important;
+    border-radius: 4px !important;
+}
+.ql-snow .ql-color-picker .ql-picker-options::-webkit-scrollbar-thumb:hover,
+.ql-snow .ql-picker.ql-color .ql-picker-options::-webkit-scrollbar-thumb:hover,
+.ql-snow .ql-picker.ql-background .ql-picker-options::-webkit-scrollbar-thumb:hover {
+    background: #818cf8 !important;
+}
+
 .ql-snow .ql-color-picker .ql-picker-item,
 .ql-snow .ql-picker.ql-color .ql-picker-item,
 .ql-snow .ql-picker.ql-background .ql-picker-item {
@@ -263,7 +312,9 @@
     border-radius: 4px !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     cursor: pointer !important;
-    transition: transform 0.1s ease;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    transition: transform 0.1s ease, border-color 0.1s ease;
 }
 .ql-snow .ql-color-picker .ql-picker-item:hover,
 .ql-snow .ql-picker.ql-color .ql-picker-item:hover,
@@ -271,12 +322,68 @@
     transform: scale(1.25) !important;
     border-color: #ffffff !important;
     z-index: 10 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
 }
 .ql-snow .ql-color-picker .ql-picker-item.ql-selected,
 .ql-snow .ql-picker.ql-color .ql-picker-item.ql-selected,
 .ql-snow .ql-picker.ql-background .ql-picker-item.ql-selected {
     border: 2px solid #818cf8 !important;
     box-shadow: 0 0 6px rgba(129, 140, 248, 0.8) !important;
+}
+
+/* Custom Color Footer for Color Pickers */
+.ql-custom-color-footer {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    margin-top: 6px !important;
+    padding-top: 6px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+}
+.ql-custom-color-action {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    height: 24px !important;
+    background: rgba(99, 102, 241, 0.2) !important;
+    border: 1px solid rgba(99, 102, 241, 0.4) !important;
+    border-radius: 4px !important;
+    color: #cbd5e1 !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    user-select: none !important;
+}
+.ql-custom-color-action:hover {
+    background: rgba(99, 102, 241, 0.4) !important;
+    border-color: #818cf8 !important;
+    color: #fff !important;
+}
+.ql-custom-color-reset {
+    width: 24px !important;
+    height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 4px !important;
+    color: #94a3b8 !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: all 0.15s ease !important;
+}
+.ql-custom-color-reset:hover {
+    background: rgba(239, 68, 68, 0.2) !important;
+    border-color: #ef4444 !important;
+    color: #f87171 !important;
 }
 
 /* Editor Body (.ql-container.ql-snow) */
@@ -387,6 +494,9 @@ body {
     overflow: hidden !important;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* ----------------------------------------------------
@@ -942,7 +1052,7 @@ body {
 
 
 
-.sidebar.collapsed {
+#sidebar-right.collapsed {
     width: 0 !important;
     min-width: 0 !important;
     padding: 0 !important;
@@ -2786,10 +2896,138 @@ svg.lf-icon {
     opacity: 1;
 }
 .v4-toast.hide {
-    transform: translateY(-20px);
+    transform: translateY(20px);
     opacity: 0;
-    pointer-events: none;
 }
+
+/* V4 Global Color Palette Popover (Shared between Content Editor, Shape Editor, and all Inspectors) */
+#v4-global-color-palette-popover {
+    position: fixed;
+    z-index: 100010;
+    width: 172px;
+    background: #1e293b;
+    border: 1.6px solid rgba(99, 102, 241, 0.4);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+    display: none;
+    flex-direction: column;
+    animation: v4PaletteFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#v4-global-color-palette-popover.active {
+    display: flex;
+}
+@keyframes v4PaletteFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.v4-palette-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-height: 180px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 2px;
+}
+.v4-palette-grid::-webkit-scrollbar {
+    width: 5px;
+}
+.v4-palette-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+.v4-palette-grid::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.6);
+    border-radius: 4px;
+}
+.v4-palette-grid::-webkit-scrollbar-thumb:hover {
+    background: #818cf8;
+}
+
+.v4-palette-item {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    transition: transform 0.1s ease, border-color 0.1s ease;
+}
+.v4-palette-item:hover {
+    transform: scale(1.25);
+    border-color: #ffffff !important;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.v4-palette-item.selected {
+    border: 2px solid #818cf8 !important;
+    box-shadow: 0 0 6px rgba(129, 140, 248, 0.8) !important;
+}
+
+.v4-palette-footer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+.v4-palette-custom-action {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 24px;
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 4px;
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+.v4-palette-custom-action:hover {
+    background: rgba(99, 102, 241, 0.4);
+    border-color: #818cf8;
+    color: #fff;
+}
+.v4-palette-reset-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    color: #f87171;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.15s ease;
+}
+.v4-palette-reset-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+}
+
+/* Color Wrapper Click Intercept */
+.v4-color-wrapper {
+    cursor: pointer !important;
+}
+.v4-color-wrapper input[type="color"] {
+    pointer-events: none !important;
+}
+
 .v4-toast-icon {
     font-size: 20px !important;
     line-height: 1;

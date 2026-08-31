@@ -143,41 +143,26 @@ async function fetchFileContent(path, isRoot = false) {
     window.fileContentCache = window.fileContentCache || {};
     const fullPath = isRoot ? path : `${ghConfig.dataDir}${path}`;
     
-    // 1. Return in-memory cache if available
+    // 1. Return in-memory cache if available in current session
     if (window.fileContentCache[path]) {
         return window.fileContentCache[path];
     }
 
-    // 2. On file:// protocol, check pre-bound authentic stores first
-    if (window.location.protocol === 'file:') {
-        const filename = path.split('/').pop();
-        if (path.endsWith('metadata.json')) {
-            const project = path.split('/')[0] || 'p_331wr';
-            if (window.PROJECT_METADATA_STORE && window.PROJECT_METADATA_STORE[project]) {
-                return JSON.stringify(window.PROJECT_METADATA_STORE[project]);
+    // 2. On http/https protocol, perform local server fetch
+    if (window.location.protocol !== 'file:') {
+        try {
+            const localRes = await fetch(fullPath + '?t=' + Date.now());
+            if (localRes.ok) {
+                const localText = await localRes.text();
+                if (localText && localText.trim().length > 0) {
+                    window.fileContentCache[path] = localText;
+                    return localText;
+                }
             }
-        }
-        if (filename === 'global_components.json' && window.GLOBAL_COMPONENTS_STORE) {
-            return JSON.stringify(window.GLOBAL_COMPONENTS_STORE);
-        }
-        if (window.PROJECT_SCREEN_STORE && window.PROJECT_SCREEN_STORE[filename]) {
-            return window.PROJECT_SCREEN_STORE[filename];
-        }
-        // If not in pre-bound stores on file://, fall through to GitHub API
+        } catch (e) {}
     }
 
-    // 3. On http/https protocol, perform local fetch
-    try {
-        const localRes = await fetch(fullPath + '?t=' + Date.now());
-        if (localRes.ok) {
-            const localText = await localRes.text();
-            if (localText && localText.trim().length > 0) {
-                window.fileContentCache[path] = localText;
-                return localText;
-            }
-        }
-    } catch (e) {}
-
+    // 3. GitHub API Remote Fetch - Single Source of Truth for all screens
     const safePath = fullPath.split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16))).join('/');
     const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}?t=${Date.now()}`;
     
@@ -209,7 +194,7 @@ async function fetchFileContent(path, isRoot = false) {
                     await new Promise(resolve => setTimeout(resolve, 500));
                     continue;
                 }
-                return null;
+                break; // Fall through to offline fallback
             }
             const data = await res.json();
             if (data && data.content) {
@@ -219,9 +204,9 @@ async function fetchFileContent(path, isRoot = false) {
                     const decoded = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
                     window.fileContentCache[path] = decoded; // Cache successful fetch in-memory
                     return decoded;
-                } catch(e) { return null; }
+                } catch(e) { break; }
             }
-            return null;
+            break;
         } catch (e) {
             clearTimeout(timeoutId);
             console.warn(`[API] fetchFileContent for ${path} failed or timed out (attempt ${attempt}/${maxRetries + 1}):`, e.message);
@@ -229,9 +214,27 @@ async function fetchFileContent(path, isRoot = false) {
                 await new Promise(resolve => setTimeout(resolve, 500));
                 continue;
             }
-            return null;
+            break;
         }
     }
+
+    // 4. Offline Fallback (only when GitHub API / Network fails)
+    if (window.location.protocol === 'file:') {
+        const filename = path.split('/').pop();
+        if (path.endsWith('metadata.json')) {
+            const project = path.split('/')[0] || 'p_331wr';
+            if (window.PROJECT_METADATA_STORE && window.PROJECT_METADATA_STORE[project]) {
+                return JSON.stringify(window.PROJECT_METADATA_STORE[project]);
+            }
+        }
+        if (filename === 'global_components.json' && window.GLOBAL_COMPONENTS_STORE) {
+            return JSON.stringify(window.GLOBAL_COMPONENTS_STORE);
+        }
+        if (window.PROJECT_SCREEN_STORE && window.PROJECT_SCREEN_STORE[filename]) {
+            return window.PROJECT_SCREEN_STORE[filename];
+        }
+    }
+
     return null;
 }
 
@@ -481,6 +484,12 @@ async function uploadToProject(project, filename, content, statusCallback, isBin
             window.fileContentCache = window.fileContentCache || {};
             if (!isBinary) {
                 window.fileContentCache[cacheKey] = content;
+                if (window.PROJECT_SCREEN_STORE && filename.endsWith('.html')) {
+                    window.PROJECT_SCREEN_STORE[filename] = content;
+                }
+                if (window.PROJECT_METADATA_STORE && filename === 'metadata.json') {
+                    try { window.PROJECT_METADATA_STORE[project] = JSON.parse(content); } catch(e) {}
+                }
             } else {
                 delete window.fileContentCache[cacheKey];
             }

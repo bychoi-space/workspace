@@ -39,6 +39,10 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - Keep component `id`, `selectedIds`, and `.selected` class state synchronized across core and grouping logic.
 - **SmartGuide Anchor Compensation**: For `.text-marker`, all objects are now Top-Left oriented. When calculating `calculateSnap()` bounding boxes, coordinates are relative to the component's top-left corner without the legacy center-offset transform.
 - **데이터 기반 정밀 연산 (Pure Data / No-Measure Strategy)**: 다중 선택 그룹화, 이동, 정렬 시 브라우저의 `getBoundingClientRect()`는 줌이나 테두리에 의해 오차가 발생할 수 있으므로 가급적 지양한다. 대신 객체의 **`style.left/top` 데이터**를 직접 읽어와 산술 연산하는 방식을 우선한다.
+- **캔버스 1:1 픽셀 매핑 및 텍스트 100% 선명도 보장 원칙 (Crisp Typography & Subpixel Integrity)**:
+  - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_v3.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 한다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단한다.
+  - **정수 픽셀 정렬 (`Math.round`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `Math.round()`를 거쳐 소수점 픽셀(`translate(12.35px)`)을 완전 제거하고 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 한다.
+  - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 유지하여 12px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장한다.
 - **Group-Aware State Sync**: 요소가 그룹화되어 계층 구조가 변경되더라도 `metadata.json`에 저장되는 데이터는 항상 **전체 스크린(body) 기준의 절대 좌표(px)**를 유지해야 한다. 그룹 내 자식 요소의 뷰포트 좌표를 실시간 역산하여 전역 데이터로 동기화(`LF_UPDATE_PIN_POS` 등)해야 한다.
 
 - **MessageHub Nudge/Align/Undo**: Use MessageHub (`LF_NUDGE`, `LF_ALIGN_COMPONENTS`, `LF_SAVE_UNDO`) to synchronize keyboard movements and alignments from the parent window to the iframe components seamlessly.
@@ -73,3 +77,19 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **Auto-Migration Strategy**: 스크린 로드 시 `%` 좌표가 발견되면 `enforceDesignSystem`을 통해 현재 화면 크기 기준의 **절대 픽셀(`px`)**로 즉시 자동 변환한다. 이는 그룹화 엔진이 `style.left/top` 데이터를 안전하게 산술 연산하기 위한 전제 조건이다.
 - **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.lf-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
 - **Persistence**: 저장 시 HTML DOM 스냅샷이 주체(SSOT)가 된다. 텍스트 마커의 경우 호환성을 위해 `metadata.json`의 `description` 리스트를 유지하지만, 이 또한 항상 `body` 기준의 절대 픽셀 좌표로 동기화되어야 한다.
+
+## 📱 Responsive PC & Mobile Template Engine Architecture
+- **Dedicated Multi-Selection Interceptor (`vctrl_responsive_multiselect.js`)**:
+  - 반응형 스크린의 중첩 스크롤 컨테이너(`.pc-content-inner`, `.mobile-content-inner`) 내부 요소들은 마키 드래그 시 좌표 오차가 발생하므로, `LF_MARQUEE_START` 발생 시 `isResponsiveScreen()` 가드를 통해 실시간 Bounding Rect를 재계산(`recalculateTargetsForResponsive`)하여 정밀 스냅을 보장한다.
+- **Cross-Frame Clipboard Pipeline (`vctrl_shortcuts.js`)**:
+  - `isResponsiveTemplate` 엄격 가드를 통해 비반응형 템플릿과 100% 분리 실행.
+  - `window.lastActiveFrame` (`'pc'` / `'mobile'`) 및 `.active-column`을 감지하여 타겟 컨테이너(`mobileInner` / `pcInner`)로 자동 라우팅.
+  - PC → Mobile 복사 시 가로폭 330px 자동 클램핑 및 안전 여백 보정.
+  - Mobile → PC 복사 시 1000px 캔버스 맞춤 안착.
+- **Viewport-Center Paste Algorithm (`pasteCopiedObjectsFromData`)**:
+  - 반응형 화면: 활성 프레임의 현재 스크롤(`scrollTop`)과 뷰포트 높이(`clientHeight`)를 기반으로 현재 시야 정중앙(`viewCenterY = scrollTop + clientHeight/2`)에 바운딩 박스 중심을 정렬.
+  - 일반 화면: 캔버스 줌/팬 좌표(`state.transform`)를 역연산하여 사용자 화면 중심에 정렬.
+  - 다중 선택 및 그룹의 상대 좌표 간격(`relX`, `relY`)을 1:1로 온전히 보존.
+- **Canvas Subpixel Jitter Protection (`vctrl_v3.js`)**:
+  - `centerView()` 연산 시 100% 배율 근처(0.96x 이상)는 정확히 `scale: 1.0`으로 스냅하고, `translate` 좌표를 `Math.round()` 정수 픽셀로 고정하여 iframe 내부 텍스트의 래스터화 블러를 원천 방지한다.
+

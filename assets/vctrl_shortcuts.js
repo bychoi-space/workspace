@@ -119,8 +119,10 @@ window.v4ShortcutsScript = `
                 html: clone.innerHTML,
                 className: cleanClasses,
                 styleCssText: el.style.cssText,
-                left: parseFloat(el.style.left) || 0,
-                top: parseFloat(el.style.top) || 0,
+                left: parseFloat(el.style.left) || el.offsetLeft || 0,
+                top: parseFloat(el.style.top) || el.offsetTop || 0,
+                width: parseFloat(el.style.width) || el.offsetWidth || 120,
+                height: parseFloat(el.style.height) || el.offsetHeight || 30,
                 frameContainer: frameContainer,
                 isGroup: el.classList.contains('lf-group'),
                 isPinMarker: el.classList.contains('pin-marker'),
@@ -237,6 +239,93 @@ window.v4ShortcutsScript = `
             const connectorItems = clipboardData.filter(item => item.isConnector);
             const idMap = {};
 
+            // Calculate bounding box of copied components
+            let minLeft = Infinity, minTop = Infinity, maxRight = -Infinity, maxBottom = -Infinity;
+            componentItems.forEach(item => {
+                const l = typeof item.left === 'number' ? item.left : (parseFloat(item.left) || 0);
+                const t = typeof item.top === 'number' ? item.top : (parseFloat(item.top) || 0);
+                const w = typeof item.width === 'number' ? item.width : (parseFloat(item.width) || 120);
+                const h = typeof item.height === 'number' ? item.height : (parseFloat(item.height) || 30);
+                if (l < minLeft) minLeft = l;
+                if (t < minTop) minTop = t;
+                if (l + w > maxRight) maxRight = l + w;
+                if (t + h > maxBottom) maxBottom = t + h;
+            });
+            if (minLeft === Infinity) { minLeft = 0; minTop = 0; maxRight = 120; maxBottom = 30; }
+            const groupW = Math.max(10, maxRight - minLeft);
+            const groupH = Math.max(10, maxBottom - minTop);
+
+            // Responsive Screen Cross-Frame Routing & Viewport Center Calculation:
+            let targetFrame = 'root';
+            let targetHost = document.body;
+            let baseLeft = 0;
+            let baseTop = 0;
+
+            if (isResponsiveTemplate) {
+                targetFrame = window.lastActiveFrame;
+                if (!targetFrame) {
+                    const currentlySelected = document.querySelector('.lf-component.selected');
+                    if (currentlySelected) {
+                        if (currentlySelected.closest('.mobile-content-inner, .mobile-content-area, .mobile-content, .mobile-frame, .mobile-browser-frame')) {
+                            targetFrame = 'mobile';
+                        } else if (currentlySelected.closest('.pc-content-inner, .pc-content-area, .pc-frame, .pc-browser-frame')) {
+                            targetFrame = 'pc';
+                        }
+                    }
+                }
+                if (!targetFrame) {
+                    if (document.querySelector('.mobile-column.active-column')) targetFrame = 'mobile';
+                    else if (document.querySelector('.pc-column.active-column')) targetFrame = 'pc';
+                }
+                if (!targetFrame) {
+                    targetFrame = componentItems.some(i => i.frameContainer === 'mobile') ? 'mobile' : 'pc';
+                }
+
+                targetHost = (targetFrame === 'mobile' && mobileInner) ? mobileInner : (pcInner || document.body);
+
+                const scrollArea = targetFrame === 'mobile' 
+                    ? document.querySelector('.mobile-content-area, .mobile-content')
+                    : document.querySelector('.pc-content-area');
+
+                const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
+                const visibleH = scrollArea ? (scrollArea.clientHeight || 772) : 772;
+                const visibleW = targetFrame === 'mobile' ? 360 : 1000;
+
+                const viewCenterX = visibleW / 2;
+                const viewCenterY = scrollTop + (visibleH / 2);
+
+                baseLeft = Math.round(viewCenterX - (groupW / 2));
+                baseTop = Math.round(viewCenterY - (groupH / 2));
+
+                if (targetFrame === 'mobile') {
+                    baseLeft = Math.max(15, Math.min(baseLeft, 360 - groupW - 15));
+                } else {
+                    baseLeft = Math.max(15, Math.min(baseLeft, 1000 - groupW - 15));
+                }
+                baseTop = Math.max(15, baseTop);
+            } else {
+                // Non-responsive screen: center in current visible viewport canvas coordinates
+                let viewCenterX = 720;
+                let viewCenterY = 450;
+                try {
+                    const parentState = window.parent && window.parent.state;
+                    const parentDOM = window.parent && window.parent.DOM;
+                    if (parentState && parentState.transform && parentDOM && parentDOM.canvas) {
+                        const t = parentState.transform;
+                        const cw = parentDOM.canvas.clientWidth || 1440;
+                        const ch = parentDOM.canvas.clientHeight || 900;
+                        const s = t.scale || 1;
+                        viewCenterX = Math.round(((cw / 2) - t.x) / s);
+                        viewCenterY = Math.round(((ch / 2) - t.y) / s);
+                    }
+                } catch(e) {}
+
+                baseLeft = Math.round(viewCenterX - (groupW / 2));
+                baseTop = Math.round(viewCenterY - (groupH / 2));
+                baseLeft = Math.max(15, Math.min(baseLeft, 1440 - groupW - 15));
+                baseTop = Math.max(15, Math.min(baseTop, 900 - groupH - 15));
+            }
+
             componentItems.forEach((item, idx) => {
                 const v = document.createElement('div');
                 const randSuffix = Math.floor(Math.random() * 1000000) + '_' + idx;
@@ -244,8 +333,28 @@ window.v4ShortcutsScript = `
                 v.id = newId;
                 v.className = item.className + ' selected';
                 v.style.cssText = item.styleCssText;
-                v.style.left = (item.left + offset) + 'px';
-                v.style.top = (item.top + offset) + 'px';
+
+                const relX = (typeof item.left === 'number' ? item.left : (parseFloat(item.left) || 0)) - minLeft;
+                const relY = (typeof item.top === 'number' ? item.top : (parseFloat(item.top) || 0)) - minTop;
+                let posX = baseLeft + relX;
+                let posY = baseTop + relY;
+
+                if (isResponsiveTemplate) {
+                    if (targetFrame === 'mobile') {
+                        const curW = parseFloat(v.style.width);
+                        if (curW && curW > 330) {
+                            v.style.width = '330px';
+                        }
+                    }
+                    v.style.left = posX + 'px';
+                    v.style.top = posY + 'px';
+                    targetHost.appendChild(v);
+                } else {
+                    v.style.left = posX + 'px';
+                    v.style.top = posY + 'px';
+                    document.body.appendChild(v);
+                }
+
                 v.innerHTML = item.html;
 
                 if (item.attributes && item.attributes.id) {
@@ -295,19 +404,6 @@ window.v4ShortcutsScript = `
                 v.querySelectorAll('.lf-component').forEach(child => child.classList.remove('selected'));
                 v.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(el => el.remove());
                 
-                let host = document.body;
-                if (isResponsiveTemplate) {
-                    if (item.frameContainer === 'mobile' && mobileInner) {
-                        host = mobileInner;
-                    } else if (item.frameContainer === 'pc' && pcInner) {
-                        host = pcInner;
-                    } else if (window.lastActiveFrame === 'mobile' && mobileInner) {
-                        host = mobileInner;
-                    } else if (pcInner) {
-                        host = pcInner;
-                    }
-                }
-                host.appendChild(v);
                 newSelectedIds.push(newId);
             });
 

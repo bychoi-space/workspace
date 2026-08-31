@@ -68,7 +68,7 @@ window.v4TextMeasurerScript = `
     const measureCellTextDimensions = (cell, targetDoc) => {
         let fontTarget = cell;
         let maxFs = parseFloat(window.getComputedStyle(cell).fontSize) || 14;
-        const subEls = cell.querySelectorAll('span, font, strong, b, em, i, p');
+        const subEls = cell.querySelectorAll('span, font, strong, b, em, i, p, s, strike, del, u');
         subEls.forEach(el => {
             const fs = parseFloat(window.getComputedStyle(el).fontSize) || 0;
             if (fs > maxFs) {
@@ -131,6 +131,7 @@ window.v4TextMeasurerScript = `
                 measureContainer.querySelectorAll('*').forEach(child => {
                     child.style.setProperty('white-space', 'nowrap', 'important');
                     child.style.setProperty('display', 'inline', 'important');
+                    child.style.setProperty('line-height', '1', 'important');
                 });
                 const w = Math.ceil(measureContainer.scrollWidth || measureContainer.offsetWidth);
                 const h = Math.ceil(measureContainer.offsetHeight || measureContainer.scrollHeight);
@@ -150,6 +151,7 @@ window.v4TextMeasurerScript = `
                 measureContainer.querySelectorAll('*').forEach(child => {
                     child.style.setProperty('white-space', 'nowrap', 'important');
                     child.style.setProperty('display', 'inline', 'important');
+                    child.style.setProperty('line-height', '1', 'important');
                 });
                 const w = Math.ceil(measureContainer.scrollWidth || measureContainer.offsetWidth);
                 const h = Math.ceil(measureContainer.offsetHeight || measureContainer.scrollHeight);
@@ -159,7 +161,8 @@ window.v4TextMeasurerScript = `
         }
 
         const fsPxFallback = parseFloat(compStyle.fontSize) || 14;
-        const singleLineH = Math.max(maxLineH, Math.ceil(fsPxFallback * 1.2));
+        const fontBasedH = Math.ceil(fsPxFallback * 1.25);
+        const singleLineH = Math.max(maxLineH, fontBasedH);
         
         const textW = maxLineW;
         const normalizedText = rawText.replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n');

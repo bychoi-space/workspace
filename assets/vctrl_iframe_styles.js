@@ -14,8 +14,20 @@ window.v4Styles = `
     --v4-font-family: inherit;
     --v4-placeholder-color: #94a3b8;
 }
-body, .lf-component { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; font-family: inherit; }
-.v4-editable-cell, [contenteditable="true"] { -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; font-family: inherit; }
+body, .lf-component { 
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
+    font-family: inherit; 
+    -webkit-font-smoothing: antialiased !important; 
+    -moz-osx-font-smoothing: grayscale !important; 
+    text-rendering: optimizeLegibility !important; 
+}
+.v4-editable-cell, [contenteditable="true"] { 
+    -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; 
+    font-family: inherit; 
+    -webkit-font-smoothing: antialiased !important; 
+    -moz-osx-font-smoothing: grayscale !important; 
+    text-rendering: optimizeLegibility !important; 
+}
 .lf-component { 
     position: absolute; cursor: pointer; transition: outline 0.2s; 
     box-sizing: border-box; z-index: 100;

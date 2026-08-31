@@ -44,8 +44,8 @@
 
         const isIcon = item.id.includes('icon') || (item.html && (item.html.includes('<img') || item.html.includes('lf-icon')));
         const style = { 
-            width: item.width || (isIcon ? '40px' : '120px'), 
-            height: item.height || (isIcon ? '40px' : '40px') 
+            width: item.width || (isIcon ? '30px' : '120px'), 
+            height: item.height || (isIcon ? '30px' : '40px') 
         };
         if (item.id === 'v4-search-bar' || item.id === 'v4-premium-gnb') {
             style.width = '100%';

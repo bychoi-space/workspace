@@ -131,4 +131,25 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **신규 아톰 추가 시 옵션 프로퍼티 플로팅 카드 통합 규칙 (Floating Card Registry Unification)**:
   - 신규 아톰의 설정 패널을 디자인할 때는 우측 사이드바가 아닌 옵션 프로퍼티 플로팅 카드(`Object Properties Floating Card`)에 노출되도록 `vctrl_inspector.js` 내의 `DOM` 매핑 등록, `restorePropertiesSections` 복원 대상 등록, `updateProperties`의 보이기/숨기기 처리 및 선택 해제(Deselect) 시 숨김 처리를 빠짐없이 세트로 적용하여 사이드바에 옵션 패널이 잔존하는 버그를 원천 차단해야 합니다.
 
+## 📱 Responsive Frame UI Components, Styling & Typography
+- **PC & Mobile Frame Specs**:
+  - **PC Frame**: 너비 `1000px`, 브라우저 헤더(`.pc-browser-header`) + 3단 도트 + Mac 스타일 URL 탭. 내부 스크롤 컨테이너(`.pc-content-area`) + 캔버스(`.pc-content-inner`).
+  - **Mobile Frame**: 너비 `360px`, 스마트폰 탑바(`.mobile-top-bar`) + 노치/상태바. 내부 스크롤 컨테이너(`.mobile-content-area`) + 캔버스(`.mobile-content-inner`).
+- **Frame Label Bar Standards (`.frame-label-bar`)**:
+  - 배경: `#141720` 솔리드 다크 테마 (절대 `backdrop-filter: blur` 금지).
+  - 보더: `1.6px solid rgba(255, 255, 255, 0.12)`.
+  - 높이: `36px`, 패딩 `0 14px`, 둥글기 `8px`.
+  - 화면명 입력창(`.frame-title-input`): `font-size: 12px; font-weight: 600; color: #f8fafc;`.
+  - 높이 제어창(`.frame-label-input`): `width: 54px; height: 22px; background: #0f131a; border: 1.2px solid rgba(0, 229, 255, 0.35); color: #38bdf8; font-weight: 600; font-size: 11px; font-family: 'Inter', monospace;`.
+  - 폰트 안티앨리어싱: `-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;`.
+- **Dual File Sync Rule**:
+  - `assets/responsive_frame.js`와 `assets/responsive_frame.css`를 항상 100% 동일하게 유지해야 한다.
+
+## 🔤 Typography & Subpixel Sharpness Standards (텍스트 100% 선명도 유지 대원칙)
+- **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: 뷰포트 센터링 및 리사이즈 시 화면 스케일 `s`가 0.96 이상일 때는 소수점 축소로 인한 폰트 다운샘플링 왜곡(Blurring)을 원천 차단하기 위해 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**한다.
+- **정수 픽셀 렌더링 (`Math.round`)**: 캔버스 `stage`의 `translate(x, y)` 연산 시 소수점 픽셀(`12.35px` 등)을 완전 제거하고 `Math.round`로 물리 디스플레이 픽셀 그리드에 1:1로 안착시킨다.
+- **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 컴포넌트, 테이블 셀, 입력 폼, iframe 내부 스타일에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 적용 및 유지한다.
+- **블러 필터 지양**: `backdrop-filter: blur(...)`처럼 캔버스 줌/스케일 환경에서 폰트 서브픽셀 래스터화를 뭉개는 속성은 텍스트 영역에 사용을 금지한다.
+
+
 

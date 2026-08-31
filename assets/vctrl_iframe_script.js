@@ -111,7 +111,7 @@ window.v4Script = `
         // Search Bar Atom Detection
         const isSearchBar = isGroup ? false : (!!c.querySelector('.v4-searchbar-container') || c.classList.contains('v4-searchbar-container'));
         const searchbarContainer = isGroup ? null : (c.querySelector('.v4-searchbar-container') || (isSearchBar ? c : null));
-        const searchbarPlaceholder = searchbarContainer ? (searchbarContainer.querySelector('.v4-searchbar-text')?.getAttribute('data-placeholder') || "원스피어 통합검색") : "원스피어 통합검색";
+        const searchbarPlaceholder = searchbarContainer ? (searchbarContainer.querySelector('.v4-searchbar-text')?.getAttribute('data-placeholder') || "\uC6D0\uC2A4\uD53C\uC5B4 \uD1B5\uD569\uAC80\uC0C9") : "\uC6D0\uC2A4\uD53C\uC5B4 \uD1B5\uD569\uAC80\uC0C9";
 
         // Stepper Atom Detection
         const isStepper = isGroup ? false : (!!c.querySelector('.v4-stepper-container') || c.classList.contains('v4-stepper-container'));
@@ -120,13 +120,13 @@ window.v4Script = `
         const maxVal = stepperContainer ? parseInt(stepperContainer.getAttribute('data-max')) || 99 : 99;
         const stepperVal = stepperContainer ? parseInt(stepperContainer.getAttribute('data-val')) || minVal : minVal;
         const stepperBtnEnabled = stepperContainer ? stepperContainer.getAttribute('data-btn-enabled') !== 'false' : true;
-        const stepperBtnText = stepperContainer ? stepperContainer.getAttribute('data-btn-text') || "적용" : "적용";
+        const stepperBtnText = stepperContainer ? (stepperContainer.getAttribute('data-btn-text') || "\uC801\uC6A9") : "\uC801\uC6A9";
         const stepperDisabled = stepperContainer ? stepperContainer.getAttribute('data-disabled') === 'true' : false;
         
         // Selectbox Atom Detection
         const isSelectbox = isGroup ? false : (!!c.querySelector('.v4-selectbox-container') || c.classList.contains('v4-selectbox-container'));
         const selectboxContainer = isGroup ? null : (c.querySelector('.v4-selectbox-container') || (isSelectbox ? c : null));
-        const selectboxDefaultText = selectboxContainer ? (selectboxContainer.getAttribute('data-default-text') || "선택하세요") : "선택하세요";
+        const selectboxDefaultText = selectboxContainer ? (selectboxContainer.getAttribute('data-default-text') || "\uC120\uD0DD\uD558\uC138\uC694") : "\uC120\uD0DD\uD558\uC138\uC694";
         const selectboxDropdownActive = selectboxContainer ? selectboxContainer.getAttribute('data-dropdown-active') === 'true' : false;
         const selectboxOptionsRaw = selectboxContainer ? (selectboxContainer.getAttribute('data-options') || "Option 1,Option 2,Option 3") : "Option 1,Option 2,Option 3";
         const selectboxOptions = selectboxOptionsRaw.split(',').map(s => s.trim()).filter(Boolean);
@@ -136,27 +136,27 @@ window.v4Script = `
         const fileuploadContainer = isGroup ? null : (c.querySelector('.v4-fileupload-container') || (isFileUpload ? c : null));
         const fileSelected = fileuploadContainer ? fileuploadContainer.getAttribute('data-selected') === 'true' : false;
         const fileName = fileuploadContainer ? (fileuploadContainer.getAttribute('data-file-name') || "") : "";
-        const fileButtonText = fileuploadContainer ? (fileuploadContainer.getAttribute('data-button-text') || "파일첨부") : "파일첨부";
-        const filePlaceholder = fileuploadContainer ? (fileuploadContainer.getAttribute('data-placeholder') || "선택된 파일 없음") : "선택된 파일 없음";
+        const fileButtonText = fileuploadContainer ? (fileuploadContainer.getAttribute('data-button-text') || "\uD30C\uC77C\uCCA8\uBD80") : "\uD30C\uC77C\uCCA8\uBD80";
+        const filePlaceholder = fileuploadContainer ? (fileuploadContainer.getAttribute('data-placeholder') || "\uC120\uD0DD\uB41C \uD30C\uC77C \uC5C6\uC74C") : "\uC120\uD0DD\uB41C \uD30C\uC77C \uC5C6\uC74C";
 
         // Alert Atom Detection
         const isAlert = isGroup ? false : (!!c.querySelector('.v4-alert-container') || c.classList.contains('v4-alert-container'));
         const alertContainer = isGroup ? null : (c.querySelector('.v4-alert-container') || (isAlert ? c : null));
-        const alertMessage = alertContainer ? (alertContainer.getAttribute('data-message') || "얼럿 메시지 입력 표시") : "얼럿 메시지 입력 표시";
+        const alertMessage = alertContainer ? (alertContainer.getAttribute('data-message') || "\uC5BC\uB7FF \uBA54\uC2DC\uC9C0 \uC785\uB825 \uC608\uC2DC") : "\uC5BC\uB7FF \uBA54\uC2DC\uC9C0 \uC785\uB825 \uC608\uC2DC";
         const alertBtnCount = alertContainer ? parseInt(alertContainer.getAttribute('data-btn-count')) || 1 : 1;
-        const alertBtnText1 = alertContainer ? (alertContainer.getAttribute('data-btn-text-1') || "확인") : "확인";
-        const alertBtnText2 = alertContainer ? (alertContainer.getAttribute('data-btn-text-2') || "취소") : "취소";
-        const alertBtnText3 = alertContainer ? (alertContainer.getAttribute('data-btn-text-3') || "저장") : "저장";
+        const alertBtnText1 = alertContainer ? (alertContainer.getAttribute('data-btn-text-1') || "\uD655\uC778") : "\uD655\uC778";
+        const alertBtnText2 = alertContainer ? (alertContainer.getAttribute('data-btn-text-2') || "\uCDE8\uC18C") : "\uCDE8\uC18C";
+        const alertBtnText3 = alertContainer ? (alertContainer.getAttribute('data-btn-text-3') || "\uB2EB\uAE30") : "\uB2EB\uAE30";
         const alertBtnStyle1 = alertContainer ? (alertContainer.getAttribute('data-btn-style-1') || "normal") : "normal";
         const alertBtnStyle2 = alertContainer ? (alertContainer.getAttribute('data-btn-style-2') || "normal") : "normal";
         const alertBtnStyle3 = alertContainer ? (alertContainer.getAttribute('data-btn-style-3') || "normal") : "normal";
         const alertShowDesc = alertContainer ? alertContainer.getAttribute('data-show-desc') === 'true' : false;
-        const alertDesc = alertContainer ? (alertContainer.getAttribute('data-desc') || "어떤어떤 경우에 얼럿이 표시됨") : "어떤어떤 경우에 얼럿이 표시됨";
+        const alertDesc = alertContainer ? (alertContainer.getAttribute('data-desc') || "\uC5B4\uB5A4\uC5B4\uB5A4 \uACBD\uC6B0\uC5D0 \uC5BC\uB7FF\uC774 \uD45C\uC2DC\uB428") : "\uC5B4\uB5A4\uC5B4\uB5A4 \uACBD\uC6B0\uC5D0 \uC5BC\uB7FF\uC774 \uD45C\uC2DC\uB428";
 
         // Button Atom Detection
         const isButton = isGroup ? false : (!!c.querySelector('.v4-btn-container') || c.classList.contains('v4-btn-container'));
         const btnContainer = isGroup ? null : (c.querySelector('.v4-btn-container') || (isButton ? c : null));
-        const buttonText = btnContainer ? (btnContainer.getAttribute('data-text') || "버튼") : "버튼";
+        const buttonText = btnContainer ? (btnContainer.getAttribute('data-text') || "\uBC84\uD2BC") : "\uBC84\uD2BC";
         const buttonStyle = btnContainer ? (btnContainer.getAttribute('data-btn-style') || "normal") : "normal";
         const buttonRadius = btnContainer ? (btnContainer.getAttribute('data-btn-radius') || "6") : "6";
 
@@ -209,13 +209,13 @@ window.v4Script = `
                         var type = 'text';
                         if (cell.classList.contains('v4-grid-check-col') || cell.querySelector('input[type="checkbox"]')) {
                             type = 'checkbox';
-                        } else if (name === '번호') {
+                        } else if (name === '\uBC88\uD638') {
                             type = 'number';
-                        } else if (name === '방송상태') {
+                        } else if (name === '\uBC29\uC1A1\uC0C1\uD0DC') {
                             type = 'status';
-                        } else if (name === '등록/수정자' || name === '등록자' || name === '수정자') {
+                        } else if (name === '\uB4F1\uB85D/\uC218\uC815\uC790' || name === '\uB4F1\uB85D\uC790' || name === '\uC218\uC815\uC790') {
                             type = 'author';
-                        } else if (name.indexOf('일시') >= 0 || name.indexOf('일자') >= 0) {
+                        } else if (name.indexOf('\uC77C\uC2DC') >= 0 || name.indexOf('\uC77C\uC790') >= 0) {
                             type = 'datetime';
                         }
                         return { name: name, type: type, width: width };
@@ -229,13 +229,13 @@ window.v4Script = `
                         let type = 'text';
                         if (cell.classList.contains('v4-grid-check-col') || cell.querySelector('input[type="checkbox"]')) {
                             type = 'checkbox';
-                        } else if (name === '번호') {
+                        } else if (name === '\uBC88\uD638') {
                             type = 'number';
-                        } else if (name === '방송상태') {
+                        } else if (name === '\uBC29\uC1A1\uC0C1\uD0DC') {
                             type = 'status';
-                        } else if (name === '등록/수정자' || name === '등록자' || name === '수정자') {
+                        } else if (name === '\uB4F1\uB85D/\uC218\uC815\uC790' || name === '\uB4F1\uB85D\uC790' || name === '\uC218\uC815\uC790') {
                             type = 'author';
-                        } else if (name.indexOf('일시') >= 0 || name.indexOf('일자') >= 0) {
+                        } else if (name.indexOf('\uC77C\uC2DC') >= 0 || name.indexOf('\uC77C\uC790') >= 0) {
                             type = 'datetime';
                         }
                         return { name: name, type: type, width: width };
@@ -250,7 +250,7 @@ window.v4Script = `
         const adminRowCount = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row-count')) || 3 : 3;
         
         const adminShowGroupHeader = adminSettingsContainer ? adminSettingsContainer.getAttribute('data-show-group-header') === 'true' : false;
-        const adminGroupHeaderTitle = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-title') || '그룹명') : '그룹명';
+        const adminGroupHeaderTitle = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-title') || '\uADF8\uB8F9\uBA85') : '\uADF8\uB8F9\uBA85';
         const adminGroupHeaderBg = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-bg') || '#73829c') : '#73829c';
         const adminGroupHeaderColor = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-color') || '#ffffff') : '#ffffff';
         const firstLabel = adminSettingsContainer ? adminSettingsContainer.querySelector('.v4-admin-label-cell') : null;
@@ -1193,8 +1193,10 @@ window.v4Script = `
             if (inlinedScript) inlinedScript.innerHTML = '/* Dynamic scripts injected */';
             const inlinedStyle = c.querySelector('#v4-inlined-style');
             if (inlinedStyle) inlinedStyle.remove();
+            const responsiveStyle = c.querySelector('#v4-responsive-frame-style');
+            if (responsiveStyle) responsiveStyle.remove();
 
-            notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\n" + c.outerHTML });
+            notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
         } else if (d.type === 'LF_INSERT_COMPONENT' || d.type === 'LF_INSERT_V4_COMP') {
             const pcArea = document.querySelector('.pc-content-area, .pc-content-inner');
             const mobileContent = document.querySelector('.mobile-content, .mobile-content-area, .mobile-content-inner');
@@ -1559,10 +1561,10 @@ window.v4Script = `
                 if (!currentCols || currentCols.length === 0) {
                     currentCols = [
                         { name: '', type: 'checkbox', width: '50px' },
-                        { name: '번호', type: 'number', width: '100px' },
-                        { name: '라이브 방송명', type: 'text', width: '1fr' },
-                        { name: '방송상태', type: 'status', width: '120px' },
-                        { name: '등록/수정자', type: 'author', width: '120px' }
+                        { name: '\uBC88\uD638', type: 'number', width: '100px' },
+                        { name: '\uB77C\uC774\uBE0C \uBC29\uC1A1\uBA85', type: 'text', width: '1fr' },
+                        { name: '\uBC29\uC1A1\uC0C1\uD0DC', type: 'status', width: '120px' },
+                        { name: '\uB4F1\uB85D/\uC218\uC815\uC790', type: 'author', width: '120px' }
                     ];
                 }
                 
@@ -1779,7 +1781,7 @@ window.v4Script = `
                 
                 const isSel = container.getAttribute('data-selected') === 'true';
                 const fName = container.getAttribute('data-file-name') || '';
-                const placeholder = container.getAttribute('data-placeholder') || '선택된 파일 없음';
+                const placeholder = container.getAttribute('data-placeholder') || '\uC120\uD0DD\uB41C \uD30C\uC77C \uC5C6\uC74C';
                 const txt = container.querySelector('.v4-fileupload-textbox');
                 if (txt) {
                     txt.innerText = isSel ? fName : placeholder;
@@ -2056,7 +2058,7 @@ window.v4Script = `
                         headerEl.className = 'v4-admin-group-header';
                         container.insertBefore(headerEl, container.firstChild);
                     }
-                    const titleText = container.getAttribute('data-group-header-title') || '그룹명';
+                    const titleText = container.getAttribute('data-group-header-title') || '\uADF8\uB8F9\uBA85';
                     const bgCol = container.getAttribute('data-group-header-bg') || '#73829c';
                     const textCol = container.getAttribute('data-group-header-color') || '#ffffff';
                     
@@ -2094,7 +2096,7 @@ window.v4Script = `
                     tableDiv.innerHTML = '';
                     
                     for (let i = 1; i <= totalRows; i++) {
-                        const labelAttr = container.getAttribute('data-row' + i + '-label') || ('항목 ' + i);
+                        const labelAttr = container.getAttribute('data-row' + i + '-label') || ('\uD56D\uBAA9 ' + i);
                         const colsAttr = parseInt(container.getAttribute('data-row' + i + '-cols')) || 1;
                         const typeAttr = container.getAttribute('data-row' + i + '-type') || 'textbox';
                         const specificHeight = parseInt(container.getAttribute('data-row' + i + '-height')) || globalRowHeight;
@@ -2973,10 +2975,10 @@ window.v4Script = `
                 if (!currentCols || currentCols.length === 0) {
                     currentCols = [
                         { name: '', type: 'checkbox', width: '50px' },
-                        { name: '번호', type: 'number', width: '100px' },
-                        { name: '라이브 방송명', type: 'text', width: '200px' },
-                        { name: '방송상태', type: 'status', width: '120px' },
-                        { name: '등록/수정자', type: 'author', width: '120px' }
+                        { name: '\uBC88\uD638', type: 'number', width: '100px' },
+                        { name: '\uB77C\uC774\uBE0C \uBC29\uC1A1\uBA85', type: 'text', width: '200px' },
+                        { name: '\uBC29\uC1A1\uC0C1\uD0DC', type: 'status', width: '120px' },
+                        { name: '\uB4F1\uB85D/\uC218\uC815\uC790', type: 'author', width: '120px' }
                     ];
                 }
                 
@@ -2989,7 +2991,7 @@ window.v4Script = `
                     }
                 } else if (act === 'add-col' || act === 'add_col') {
                     if (currentCols.length < 10) {
-                        currentCols.push({ name: '새 항목', type: 'text', width: '150px' });
+                        currentCols.push({ name: '\uC0C8 \uD56D\uBAA9', type: 'text', width: '150px' });
                         window.renderGrid(gridContainer, currentCols, rowCount, pagination, rowHeight);
                     }
                 } else if (act === 'del-col' || act === 'del_col') {

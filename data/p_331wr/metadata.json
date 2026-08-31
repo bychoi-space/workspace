@@ -9,6 +9,12 @@
       "version": 0.1,
       "description": [],
       "connectors": []
+    },
+    "07_PC_Design_273.html": {
+      "title": "07_PC_Design_273",
+      "type": "default",
+      "updatedAt": "2026-08-31T02:02:15.279Z",
+      "template": "template_pc_ui.html"
     }
   },
   "assignee": "최범열",

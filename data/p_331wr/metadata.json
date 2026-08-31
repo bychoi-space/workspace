@@ -1,6 +1,15 @@
 {
   "title": "상품 상세 - 리뉴얼 2차",
   "screens": {
+    "08_Responsive_PC_Mobile_486.html": {
+      "title": "08_Responsive_PC_Mobile_486",
+      "type": "screen",
+      "updatedAt": "2026-08-31T02:22:13.509Z",
+      "template": "template_responsive_pc_mobile.html",
+      "version": 0.1,
+      "description": [],
+      "connectors": []
+    },
     "00_Cover_63.html": {
       "title": "00_Cover_63",
       "type": "cover",
@@ -9,16 +18,15 @@
       "version": 0.1,
       "description": [],
       "connectors": []
-    },
-    "08_Responsive_PC_Mobile_486.html": {
-      "description": [],
-      "updatedAt": "2026-08-31T02:22:13.509Z"
     }
   },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
   "themeIndex": -1,
-  "jira": "",
-  "updated": "2026-08-31 11:22:13"
+  "screenOrder": [
+    "00_Cover_63.html",
+    "08_Responsive_PC_Mobile_486.html",
+    "99_Blank_120.html"
+  ]
 }

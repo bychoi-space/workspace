@@ -1185,9 +1185,16 @@ window.v4Script = `
         }
         else if (d.type === 'LF_REQUEST_SAVE_CONTENT') {
             const c = document.documentElement.cloneNode(true);
-            c.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle').forEach(el => el.remove());
-            c.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected'));
-            notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
+            c.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, svg.v4-responsive-guide-layer').forEach(el => el.remove());
+            c.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected', 'dragging-now'));
+            
+            // Clean dynamic runtime engine scripts & inlined styles before saving to disk
+            const inlinedScript = c.querySelector('#v4-inlined-script');
+            if (inlinedScript) inlinedScript.innerHTML = '/* Dynamic scripts injected */';
+            const inlinedStyle = c.querySelector('#v4-inlined-style');
+            if (inlinedStyle) inlinedStyle.remove();
+
+            notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\n" + c.outerHTML });
         } else if (d.type === 'LF_INSERT_COMPONENT' || d.type === 'LF_INSERT_V4_COMP') {
             const pcArea = document.querySelector('.pc-content-area, .pc-content-inner');
             const mobileContent = document.querySelector('.mobile-content, .mobile-content-area, .mobile-content-inner');

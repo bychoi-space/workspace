@@ -356,37 +356,10 @@ th.v4-editable-cell:focus, td.v4-editable-cell:focus { outline-offset: -2px !imp
     background-color: rgba(99, 102, 241, 0.08) !important;
 }
 .lf-icon { 
-    background-image: url("https://img.lfmall.co.kr/file/WAS/display/lf2022/mobile/gnb_fnb_sp_v0.1.png"); 
-    background-size: 500% 400%; 
     width: 100%; height: 100%; 
     display: inline-block; 
-    background-repeat: no-repeat; 
     pointer-events: none; 
 }
-.lf-icon-home { background-position: 50% 0%; }
-.lf-icon-category { background-position: 0% 0%; }
-.lf-icon-my { background-position: 75% 0%; }
-.lf-icon-heart { background-position: 100% 0%; }
-.lf-icon-search { background-position: 50% 33.33%; }
-.lf-icon-cart { background-position: 75% 33.33%; }
-.lf-icon-brand { background-position: 25% 0%; }
-.lf-icon-bell { background-position: 25% 33.33%; }
-.lf-icon-back { background-position: 0% 33.33%; }
-.lf-cust-gift, .lf-cust-1to1, .lf-cust-chatbot, .lf-cust-faq, .lf-cust-truck {
-    background-image: url("https://img.lfmall.co.kr/file/WAS/apps/2023/mfront/customer/icon_customer_my_btn.png") !important;
-    background-size: 300% 200% !important;
-}
-.lf-cust-gift { background-position: 0% 0% !important; }
-.lf-cust-1to1 { background-position: 50% 0% !important; }
-.lf-cust-chatbot { background-position: 100% 0% !important; }
-.lf-cust-faq { background-position: 0% 100% !important; }
-.lf-cust-truck { background-position: 50% 100% !important; }
-.lf-rv-write, .lf-rv-my {
-    background-image: url("https://img.lfmall.co.kr/file/WAS/apps/2021/front/review_new/m/icon_rv_mp.png") !important;
-    background-size: 200% 100% !important;
-}
-.lf-rv-write { background-position: 0% 0% !important; }
-.lf-rv-my { background-position: 100% 0% !important; }
 .v4-logo-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; display: block; }
 img.lf-icon { width: 100%; height: 100%; padding: 8px; box-sizing: border-box; object-fit: contain; }
 .v4-shape-triangle, .v4-directional-shape { transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; transform-origin: center center !important; }
@@ -432,7 +405,6 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
     pointer-events: none;
     display: block;
 }
-.lf-icon[class*="lf-icon-"] { background-image: url("https://img.lfmall.co.kr/file/WAS/display/lf2022/mobile/gnb_fnb_sp_v0.1.png") !important; }
 /* Unified Disabled State for 11 Target Atoms (Shape BG: #c8c8c8, Text/Control: #969696, Border: #969696 / #b0b0b0) */
 
 /* 1. Reset outer containers so background does not fill outer bounding boxes */
@@ -804,7 +776,9 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
                 </div>
                 <div class="pc-content-area">
                     <div class="pc-content-inner" style="min-height: 774px;">
-                        <div id="v4-comp-1787884100425" class="lf-component v4-text-shape" style="top: 20px; left: 20px; width: 146px; height: 31.6px; z-index: 500;">
+                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                        
+                    <div id="v4-comp-1787884100425" class="lf-component v4-text-shape" style="top: 19.8594px; left: 20.4844px; width: 146px; height: 31.6px; z-index: 500;">
                             
                             
                             <div class="v4-shape v4-shape-rect" style="background: transparent; border: 1.6px solid transparent;">
@@ -812,8 +786,7 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
                                     <p style="margin: 0; padding: 0;"><span style="font-size: 20px; font-weight: 800; color: rgb(15, 23, 42);">SISUN.COM</span></p>
                                 </div>
                             </div>
-                        <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div>
-                    </div>
+                        <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div></div>
                 </div>
             </div>
         </div>
@@ -843,11 +816,14 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
                     </div>
                 </div>
                 <div class="mobile-content-area">
-                    <div class="mobile-content-inner" style="min-height: 774px;"><div id="lf-comp-1788136185091" class="lf-component" style="position: absolute; top: 24px; left: 20px; z-index: 1000; transform: none; width: 120px; height: 24px; color: rgb(0, 0, 0);"><svg viewBox="0 0 200 40" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg><div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div></div>
+                    <div class="mobile-content-inner" style="min-height: 774px;">
+                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                    <div id="lf-comp-1788139650095" class="lf-component" style="position: absolute; top: 15.8281px; left: 16.9531px; z-index: 1000; transform: none; width: 120px; height: 24px; color: rgb(0, 0, 0);"><svg viewBox="0 0 200 40" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg><div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div></div>
                 </div>
             </div>
         </div>
     </div>
+    <script src="../../assets/vctrl_responsive_smartguide.js"></script>
     <script>
         (function() {
             function initHeightControls() {
@@ -885,7 +861,7 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     </script>
     
 <script id="v4-inlined-script">
-// Cache Buster Timestamp: 1788133270579
+// Cache Buster Timestamp: 1788139628405
 
     (function() {
         console.log("[V4 Typography] Iframe typography token engine active.");
@@ -4342,7 +4318,7 @@ if (window.V4UndoManager) window.V4UndoManager.init();
 
                     // Responsive Drag Lift: Un-parent from scroll container during drag so component can cross frames
                     if (window.activeEl) {
-                        const parentContainer = window.activeEl.closest('.pc-content-area, .mobile-content');
+                        const parentContainer = window.activeEl.closest('.pc-content-area, .mobile-content, .mobile-content-area');
                         if (parentContainer) {
                             const bodyRect = document.body.getBoundingClientRect();
                             const compRect = window.activeEl.getBoundingClientRect();
@@ -4355,6 +4331,11 @@ if (window.V4UndoManager) window.V4UndoManager.init();
                             window.activeEl.style.top = absTop + 'px';
                             startLeft = absLeft;
                             startTop = absTop;
+                        }
+
+                        if (window.ResponsiveSmartGuide) {
+                            const ctx = window.ResponsiveSmartGuide.getContainerContext(window.activeEl);
+                            if (ctx) window.ResponsiveSmartGuide.findSnapTargets(ctx, window.activeEl);
                         }
                     }
                 }
@@ -4373,7 +4354,35 @@ if (window.V4UndoManager) window.V4UndoManager.init();
                 const logicalX = startLeft + dx / scale;
                 const logicalY = startTop + dy / scale;
 
-                notifyParent({ type: 'LF_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight });
+                window.activeEl.style.left = logicalX + 'px';
+                window.activeEl.style.top = logicalY + 'px';
+
+                if (window.ResponsiveSmartGuide) {
+                    const ctx = window.ResponsiveSmartGuide.getContainerContext(window.activeEl);
+                    if (ctx) {
+                        const bodyRect = document.body.getBoundingClientRect();
+                        const innerRect = ctx.inner.getBoundingClientRect();
+                        const relLeft = logicalX - ((innerRect.left - bodyRect.left) / scale);
+                        const relTop = logicalY - ((innerRect.top - bodyRect.top) / scale);
+                        const w = window.activeEl.offsetWidth || 100;
+                        const h = window.activeEl.offsetHeight || 40;
+
+                        const snap = window.ResponsiveSmartGuide.calculateSnap(relLeft, relTop, w, h, false, window.activeEl.id);
+                        window.ResponsiveSmartGuide.drawGuides(ctx, snap);
+
+                        // Snap-adjusted positioning
+                        if (snap.snapXData) {
+                            const adjustedLeft = ((innerRect.left - bodyRect.left) / scale) + snap.x;
+                            window.activeEl.style.left = adjustedLeft + 'px';
+                        }
+                        if (snap.snapYData) {
+                            const adjustedTop = ((innerRect.top - bodyRect.top) / scale) + snap.y;
+                            window.activeEl.style.top = adjustedTop + 'px';
+                        }
+                    }
+                } else {
+                    notifyParent({ type: 'LF_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight });
+                }
                 markDirty();
             }
             else if (isResizing && window.activeEl) {
@@ -4435,6 +4444,9 @@ if (window.V4UndoManager) window.V4UndoManager.init();
         handleMouseUp: function() {
             if (isDragging && window.activeEl) {
                 notifyParent({ type: 'LF_SNAP_END' });
+                if (window.ResponsiveSmartGuide) {
+                    window.ResponsiveSmartGuide.clearGuides(true);
+                }
 
                 // Responsive Drop Reparenting to PC Area or Mobile Content
                 const pcFrame = document.querySelector('.pc-browser-frame, .pc-frame');

@@ -7,6 +7,12 @@
       "updatedAt": "2026-08-27T05:45:44.238Z",
       "template": "template_cover.html",
       "version": 0.1
+    },
+    "08_Responsive_Design_1_542.html": {
+      "title": "08_Responsive_Design_1_542",
+      "type": "responsive-ui",
+      "updatedAt": "2026-08-27T06:12:00.000Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "최범열",

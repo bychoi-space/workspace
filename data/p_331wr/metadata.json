@@ -19,7 +19,7 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "08_Responsive_PC_Mobile_486",
       "type": "screen",
-      "updatedAt": "2026-08-31T07:48:01.071Z",
+      "updatedAt": "2026-08-31T07:48:58.594Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [],
@@ -46,5 +46,5 @@
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
   "themeIndex": -1,
   "jira": "",
-  "updated": "2026-08-31 16:48:01"
+  "updated": "2026-08-31 16:48:58"
 }

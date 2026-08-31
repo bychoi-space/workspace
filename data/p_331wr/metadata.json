@@ -9,6 +9,16 @@
       "version": 0.1,
       "description": [],
       "connectors": []
+    },
+    "08_Responsive_Design_1_542.html": {
+      "title": "08_Responsive_Design_1_542",
+      "type": "",
+      "updatedAt": "2026-08-31T01:59:27.510Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

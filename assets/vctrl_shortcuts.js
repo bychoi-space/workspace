@@ -111,12 +111,17 @@ window.v4ShortcutsScript = `
             const clone = el.cloneNode(true);
             clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(h => h.remove());
 
+            const isInsideMobile = !!el.closest('.mobile-content-inner, .mobile-content-area, .mobile-content');
+            const isInsidePc = !!el.closest('.pc-content-inner, .pc-content-area');
+            const frameContainer = isInsideMobile ? 'mobile' : (isInsidePc ? 'pc' : 'root');
+
             clipboardData.push({
                 html: clone.innerHTML,
                 className: cleanClasses,
                 styleCssText: el.style.cssText,
                 left: parseFloat(el.style.left) || 0,
                 top: parseFloat(el.style.top) || 0,
+                frameContainer: frameContainer,
                 isGroup: el.classList.contains('lf-group'),
                 isPinMarker: el.classList.contains('pin-marker'),
                 isTextMarker: el.classList.contains('text-marker'),
@@ -204,7 +209,13 @@ window.v4ShortcutsScript = `
         try {
             if (window.V4UndoManager) window.V4UndoManager.saveState();
             document.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected'));
-            const host = document.body;
+            
+            // Responsive Screen Container Isolation:
+            // Check if responsive PC/Mobile containers exist in current document
+            const pcInner = document.querySelector('.pc-content-inner');
+            const mobileInner = document.querySelector('.mobile-content-inner');
+            const isResponsiveTemplate = !!(pcInner || mobileInner);
+
             const newSelectedIds = [];
             const selectedIdsIsGroupMap = {};
             const isCutOperation = clipboardData.some(item => item.isCut === true);
@@ -283,6 +294,19 @@ window.v4ShortcutsScript = `
 
                 v.querySelectorAll('.lf-component').forEach(child => child.classList.remove('selected'));
                 v.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(el => el.remove());
+                
+                let host = document.body;
+                if (isResponsiveTemplate) {
+                    if (item.frameContainer === 'mobile' && mobileInner) {
+                        host = mobileInner;
+                    } else if (item.frameContainer === 'pc' && pcInner) {
+                        host = pcInner;
+                    } else if (window.lastActiveFrame === 'mobile' && mobileInner) {
+                        host = mobileInner;
+                    } else if (pcInner) {
+                        host = pcInner;
+                    }
+                }
                 host.appendChild(v);
                 newSelectedIds.push(newId);
             });

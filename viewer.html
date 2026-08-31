@@ -33,7 +33,7 @@
                 logCount++;
                 if (logCount > 1500) { // Bump limit
                     // console.clear(); // Keep logs preserved
-                    originalLog("[LF Editor] Logger limit reached, preservation active.");
+                    originalLog("[Workspace Editor] Logger limit reached, preservation active.");
                     logCount = 0;
                 }
                 originalLog.apply(console, args);
@@ -357,8 +357,8 @@
                 </div>
                 <div id="molecules-body" class="components-body">
                     <div id="custom-molecules-container" class="v4-tool-grid">
-                        <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'LFmall Header')">LFmall Header</button>
-                        <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'LFmall MO Header (Detail)')">LFmall MO Header (Detail)</button>
+                        <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'Workspace Header')">Workspace Header</button>
+                        <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'Workspace MO Header (Detail)')">Workspace MO Header (Detail)</button>
                     </div>
                 </div>
                 </div> <!-- Close #tab-editor -->
@@ -414,6 +414,7 @@
     <!-- Script modularization: Pure Vanilla V3 Migration -->
     <script src="assets/vctrl_typography.js?v=V300_TYPOGRAPHY_UNIFIED"></script>
     <!-- Dynamic UI Library for Inspectors, Library Icons & Modals -->
+    <script src="assets/ui_library_fallback.js?v=V258_ASYNC_LIBRARY"></script>
     <script src="assets/vctrl_ui_library.js?v=V258_ASYNC_LIBRARY"></script>
     <script src="assets/templates.js?v=V199_DYNAMIC_TEMPLATES"></script>
     <script src="assets/app.js?v=V187_NOTIFICATION_ALIGN_FIX"></script>
@@ -423,7 +424,7 @@
     <script src="assets/vctrl_text_measurer.js?v=V300_REFATCORED"></script>
     <script src="assets/vctrl_ui_atoms.js?v=V300_REFATCORED"></script>
     <script src="assets/vctrl_design_system.js?v=V300_REFATCORED"></script>
-    <script src="assets/vctrl_shortcuts.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_shortcuts.js?v=V309_PERFECT_SYNC"></script>
     <script src="assets/vctrl_common.js?v=V300_REFATCORED"></script>
     <script src="assets/vctrl_object_text.js?v=V103_SHAPE_TEXT_ALIGN_FIX"></script>
     <script src="assets/vctrl_object_shape.js?v=V107_PATTERN_DEBUG"></script>
@@ -433,11 +434,12 @@
     <script src="assets/vctrl_iframe_script.js?v=V300_REFATCORED"></script>
     <script src="assets/vctrl_iframe_grid.js?v=V300_REFATCORED"></script>
     <script src="assets/vctrl_iframe_accordion.js?v=V300_REFATCORED"></script>
-    <script src="assets/vctrl_iframe_drag.js?v=V300_REFATCORED"></script>
+    <script src="assets/vctrl_iframe_drag.js?v=V309_PERFECT_SYNC"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V300_REFATCORED"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V103_TOOLTIP_GUIDE"></script>
-    <script src="assets/vctrl_core.js?v=V241_PDF_EXPORT_FIX"></script>
+    <script src="assets/vctrl_core.js?v=V309_PERFECT_SYNC"></script>
     <script src="assets/vctrl_smartguide.js?v=V196_DEBUG_TOGGLE"></script>
+    <script src="assets/vctrl_responsive_smartguide.js?v=V309_PERFECT_SYNC"></script>
     <script src="assets/vctrl_grouping.js?v=V182_MARQUEE_CLEANUP_FIX"></script>
     <script src="assets/vctrl_inspector.js?v=V247_LIVE_LOOKUP"></script>
     <script src="assets/vctrl_v3.js?v=V157_PIN_SYNC"></script>

@@ -141,11 +141,43 @@ async function listRepoRoot() {
 
 async function fetchFileContent(path, isRoot = false) {
     window.fileContentCache = window.fileContentCache || {};
+    const fullPath = isRoot ? path : `${ghConfig.dataDir}${path}`;
+    
+    // 1. Return in-memory cache if available
     if (window.fileContentCache[path]) {
-        console.log("[Cache] Returning cached content for:", path);
         return window.fileContentCache[path];
     }
-    const fullPath = isRoot ? path : `${ghConfig.dataDir}${path}`;
+
+    // 2. On file:// protocol, check pre-bound authentic stores first
+    if (window.location.protocol === 'file:') {
+        const filename = path.split('/').pop();
+        if (path.endsWith('metadata.json')) {
+            const project = path.split('/')[0] || 'p_331wr';
+            if (window.PROJECT_METADATA_STORE && window.PROJECT_METADATA_STORE[project]) {
+                return JSON.stringify(window.PROJECT_METADATA_STORE[project]);
+            }
+        }
+        if (filename === 'global_components.json' && window.GLOBAL_COMPONENTS_STORE) {
+            return JSON.stringify(window.GLOBAL_COMPONENTS_STORE);
+        }
+        if (window.PROJECT_SCREEN_STORE && window.PROJECT_SCREEN_STORE[filename]) {
+            return window.PROJECT_SCREEN_STORE[filename];
+        }
+        // If not in pre-bound stores on file://, fall through to GitHub API
+    }
+
+    // 3. On http/https protocol, perform local fetch
+    try {
+        const localRes = await fetch(fullPath + '?t=' + Date.now());
+        if (localRes.ok) {
+            const localText = await localRes.text();
+            if (localText && localText.trim().length > 0) {
+                window.fileContentCache[path] = localText;
+                return localText;
+            }
+        }
+    } catch (e) {}
+
     const safePath = fullPath.split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16))).join('/');
     const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}?t=${Date.now()}`;
     
@@ -473,16 +505,45 @@ async function deleteFileFromGitHub(path, sha, isRoot = false) {
     const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}`;
     
     try {
+        const token = ghConfig.token;
+        const headers = { 
+            'Authorization': `token ${token}`, 
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json' 
+        };
+
+        // If SHA is missing, attempt to pre-fetch current file SHA from GitHub
+        if (!sha) {
+            try {
+                const checkRes = await fetch(url + `?t=${Date.now()}`, { 
+                    headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': `token ${token}` },
+                    credentials: 'omit'
+                });
+                if (checkRes.status === 404) {
+                    // File already does not exist on GitHub (e.g. local-only file or already deleted)
+                    return true;
+                }
+                if (checkRes.ok) {
+                    const checkData = await checkRes.json();
+                    sha = checkData.sha;
+                }
+            } catch(fetchErr) {
+                console.warn("[API] Failed to pre-fetch SHA for delete:", fetchErr);
+            }
+        }
+
+        if (!sha) {
+            // If still no SHA, file is not found on remote; treat as already removed remotely
+            return true;
+        }
+
         const res = await fetch(url, {
             method: 'DELETE',
-            headers: { 
-                'Authorization': `token ${ghConfig.token}`, 
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json' 
-            },
+            headers,
             body: JSON.stringify({ message: `Delete ${path}`, sha: sha })
         });
         if (res.status === 401) localStorage.removeItem('gh_token');
+        if (res.status === 404) return true;
         return res.ok;
     } catch (e) {
         console.error("[API] deleteFileFromGitHub failed:", e);
@@ -598,12 +659,15 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
         if (!content) {
             try {
                 const fetchName = templateName.endsWith('.html') ? templateName : `${templateName}.html`;
-                const response = await fetch(`assets/templates/${fetchName}`);
-                if (response.ok) {
-                    content = await response.text();
-                    window.LF_TEMPLATES = window.LF_TEMPLATES || {};
-                    window.LF_TEMPLATES[templateName] = content;
-                    window.LF_TEMPLATES[fetchName] = content;
+                const templateUrl = `assets/templates/${fetchName}`;
+                if (window.location.protocol !== 'file:') {
+                    const response = await fetch(templateUrl);
+                    if (response.ok) content = await response.text();
+                    if (content) {
+                        window.LF_TEMPLATES = window.LF_TEMPLATES || {};
+                        window.LF_TEMPLATES[templateName] = content;
+                        window.LF_TEMPLATES[fetchName] = content;
+                    }
                 }
             } catch (e) {
                 console.warn("[Templates] Dynamic fetch failed, falling back to window.LF_TEMPLATES:", e);
@@ -633,6 +697,7 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
             else if (templateName.includes('plan_delivery')) type = 'plan-delivery';
             else if (templateName.includes('plan')) type = 'plan';
             else if (templateName.includes('front_ui')) type = 'ui';
+            else if (templateName.includes('responsive') || templateName.includes('pc_mobile')) type = 'responsive-ui';
             else if (templateName.includes('mobile_ui')) type = 'mobile-ui';
             else if (templateName.includes('nbos')) type = 'admin-nbos';
             else if (templateName.includes('onesphere')) type = 'admin-onesphere';

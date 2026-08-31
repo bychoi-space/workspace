@@ -1,10 +1,576 @@
 /**
- * LFmall Design Studio - Embedded Templates (COMPLETE BUNDLE)
+ * bychoi workspace - Embedded Templates (COMPLETE BUNDLE)
  * This file contains the HTML structure of all templates to ensure 
  * they can be loaded reliably under file:// protocol without fetch/CORS restrictions.
  */
 
 window.LF_TEMPLATES = window.LF_TEMPLATES || {};
+window.PROJECT_METADATA_STORE = window.PROJECT_METADATA_STORE || {};
+window.PROJECT_SCREEN_STORE = window.PROJECT_SCREEN_STORE || {};
+
+window.GLOBAL_COMPONENTS_STORE = [];
+
+window.PROJECT_METADATA_STORE['p_331wr'] = {
+  "title": "상품 상세 - 리뉴얼 2차",
+  "screens": {
+    "00_Cover_63.html": {
+      "title": "00_Cover_63",
+      "type": "cover",
+      "updatedAt": "2026-08-27T05:45:44.238Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    },
+    "08_Responsive_Design_1_542.html": {
+      "title": "08_Responsive_Design_1_542",
+      "type": "responsive-ui",
+      "updatedAt": "2026-08-27T06:12:00.000Z",
+      "template": "template_responsive_pc_mobile.html"
+    }
+  },
+  "assignee": "최범열",
+  "developer": "",
+  "period": "2026.08.27(목) ~ 2026.09.11(금)",
+  "themeIndex": -1
+};
+
+window.PROJECT_SCREEN_STORE['00_Cover_63.html'] = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Cover - 상품 상세 - 리뉴얼 2차</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            --v4-primary: #1a1a1a;
+            --v4-accent: #e60012;
+            --v4-bg: #ffffff;
+            --v4-surface: #f8f9fa;
+            --v4-border: #e1e3e5;
+            --v4-text: #1a1c1e;
+            --v4-text-sub: #6d7175;
+            --v4-text-main: #1a1c1e;
+        }
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'Inter', sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; background: var(--v4-surface); 
+            overflow: hidden; color: var(--v4-text);
+        }
+        .page { 
+            width: 1440px; height: 900px; 
+            position: relative; 
+            background: #ffffff;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(230, 0, 18, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.04) 0%, transparent 50%);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        .lf-component { position: absolute !important; box-sizing: border-box !important; transition: outline 0.1s; z-index: 500; }
+        .lf-component:hover { outline: 2px solid var(--v4-accent) !important; cursor: move !important; }
+        .lf-component.selected { outline: 2px solid var(--v4-accent) !important; z-index: 10001 !important; }
+        .lf-drag-handle { position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: var(--v4-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; z-index: 100; opacity: 0; transition: opacity 0.2s; }
+        .lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; }
+        .v4-card { background: #fff; border: 1px solid var(--v4-border); border-radius: 16px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .logo-area { display: flex; align-items: center; gap: 14px; }
+        .logo-img { height: 32px; width: auto; object-fit: contain; }
+        .logo-text { font-size: 18px; font-weight: 800; color: var(--v4-text); letter-spacing: -0.5px; }
+        .logo-sub { font-size: 13px; font-weight: 500; color: var(--v4-text-sub); margin-left: 4px; }
+        .v4-editable-cell { outline: none; transition: background 0.2s; }
+        .v4-editable-cell:focus { background: #f0f1f2; border-radius: 4px; }
+        .cover-info-premium-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #ffffff !important; }
+        .cover-info-premium-table th { background: #f4f6f8; text-align: left; padding: 12px 20px; border-bottom: 2px solid #c0c4c9; color: #6d7175; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .cover-info-premium-table td { padding: 14px 20px; border-bottom: 1px solid #c0c4c9; background: #fff; line-height: 1.5; color: #1a1c1e !important; font-size: 14px; }
+        .cover-info-premium-table tr:last-child td { border-bottom: none; }
+        .accent-bar { position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: var(--v4-accent); }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="accent-bar"></div>
+        <div style="position: absolute; top: 60px; left: 80px;">
+            <div class="logo-area">
+                <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img">
+                    <rect x="15" y="22" width="55" height="14" rx="7" fill="#1a1a1a" />
+                    <rect x="25" y="43" width="55" height="14" rx="7" fill="#1a1a1a" opacity="0.7" />
+                    <rect x="35" y="64" width="55" height="14" rx="7" fill="#1a1a1a" opacity="0.4" />
+                </svg>
+                <div style="width: 1px; height: 24px; background: #ddd; margin: 0 4px;"></div>
+                <div class="logo-text">bychoi workspace <span class="logo-sub" style="margin-left: 4px;">Design System</span></div>
+            </div>
+        </div>
+        <div id="cover-title" class="lf-component" style="top: 220px; left: 80px; min-width: 800px;">
+            <div class="lf-drag-handle"><span class="material-icons-outlined" style="font-size:14px;">drag_indicator</span></div>
+            <div class="lf-delete-trigger">×</div>
+            <div id="cover-project-title" contenteditable="true" class="v4-editable-cell" style="font-size: 48px; font-weight: 900; line-height: 1.15; letter-spacing: -2px; color: var(--v4-text); margin-bottom: 28px;">상품 상세 - 리뉴얼 2차</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 40px; height: 3px; background: var(--v4-accent);"></div>
+                <div contenteditable="true" class="v4-editable-cell" style="font-size: 18px; color: var(--v4-text-sub); font-weight: 500; letter-spacing: 1px; text-transform: uppercase;">Technical Design Specification</div>
+            </div>
+        </div>
+        <div id="cover-version" class="lf-component" style="top: 500px; left: 80px;">
+            <div class="lf-drag-handle"><span class="material-icons-outlined" style="font-size:14px;">drag_indicator</span></div>
+            <div class="lf-delete-trigger">×</div>
+            <div style="display: flex; align-items: center; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 12px; font-weight: 800; color: var(--v4-text-sub);">DOCUMENT VERSION</span>
+                    <div id="cover-version-val" contenteditable="true" class="v4-editable-cell" style="font-size: 22px; font-weight: 800; color: var(--v4-accent);">v0.1</div>
+                </div>
+                <div style="width: 1px; height: 40px; background: var(--v4-border);"></div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 12px; font-weight: 800; color: var(--v4-text-sub);">JIRA IDENTIFIER</span>
+                    <div id="cover-jira-id" contenteditable="true" class="v4-editable-cell" style="font-size: 22px; font-weight: 800; color: var(--v4-text);">-</div>
+                </div>
+            </div>
+        </div>
+        <div id="cover-info-table" class="lf-component v4-card" style="bottom: 80px; right: 80px; width: 540px; padding: 0; overflow: hidden;">
+            <div class="lf-drag-handle"><span class="material-icons-outlined" style="font-size:14px;">drag_indicator</span></div>
+            <div class="lf-delete-trigger">×</div>
+            <table class="cover-info-premium-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Information Entity</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: 600; color: #6d7175;">Lead Designer / Author</td>
+                        <td id="cover-author" contenteditable="true" class="v4-editable-cell" style="font-weight: 700; color: #1a1c1e !important;">최범열</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600; color: #6d7175;">Publication Date</td>
+                        <td id="cover-date" contenteditable="true" class="v4-editable-cell" style="font-weight: 700; color: #1a1c1e !important;">2026.08.27(목) ~ 2026.09.11(금)</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600; color: #6d7175;">System Context</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="color: #1a1c1e !important;">bychoi workspace</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>`;
+
+window.PROJECT_SCREEN_STORE['08_Responsive_Design_1_542.html'] = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive PC & Mobile - 상품 상세 - 리뉴얼 2차</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            --v4-primary: #6366f1;
+            --v4-accent: #00e5ff;
+            --v4-bg: #1e293b;
+            --v4-frame-bg: #ffffff;
+            --v4-text: #0f172a;
+            --v4-subtext: #475569;
+            --v4-border-color: #cbd5e1;
+            --v4-header-bg: #f8fafc;
+        }
+        body {
+            margin: 0; padding: 0;
+            background: var(--v4-bg);
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden; color: var(--v4-text);
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .page {
+            width: 1440px; height: 900px;
+            position: relative;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            gap: 16px;
+            padding: 0 16px;
+            box-sizing: border-box;
+        }
+
+        /* Frame Column Layout & External Header Label Bars */
+        .frame-column {
+            display: flex; flex-direction: column;
+            align-items: stretch;
+            position: relative;
+        }
+        .frame-label-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 5px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.6px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: #f8fafc;
+            font-size: 12px; font-weight: 700;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            backdrop-filter: blur(10px);
+            user-select: none;
+        }
+        .frame-label-title {
+            display: flex; align-items: center; gap: 6px;
+            color: #f1f5f9; letter-spacing: -0.2px;
+        }
+        .frame-title-input {
+            background: transparent;
+            border: 1.6px solid transparent;
+            border-radius: 6px;
+            color: #f1f5f9;
+            font-size: 12px; font-weight: 700;
+            font-family: inherit;
+            padding: 2px 8px;
+            width: 160px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .frame-title-input:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .frame-title-input:focus {
+            border-color: var(--v4-accent);
+            background: rgba(15, 23, 42, 0.85);
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+        }
+        .frame-label-height-control {
+            display: flex; align-items: center; gap: 6px;
+            color: #94a3b8; font-size: 11px;
+        }
+        .frame-label-input {
+            width: 58px; height: 22px;
+            border-radius: 6px;
+            border: 1.6px solid rgba(255, 255, 255, 0.25);
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--v4-accent);
+            font-size: 11px; font-weight: 800; text-align: center;
+            outline: none; padding: 0;
+            transition: all 0.2s;
+        }
+        .frame-label-input:focus {
+            border-color: var(--v4-accent);
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+        }
+
+        /* 100% Chrome Web Browser Standard Vertical Scrollbars for PC & Mobile */
+        .pc-content-area,
+        .mobile-content-area {
+            overflow-y: scroll !important;
+            overflow-x: hidden !important;
+            scrollbar-gutter: stable;
+            scroll-behavior: smooth;
+            isolation: isolate;
+            flex: 1;
+            position: relative;
+            background: #ffffff;
+        }
+        .pc-content-area::-webkit-scrollbar,
+        .mobile-content-area::-webkit-scrollbar {
+            width: 12px !important;
+            height: 12px !important;
+            display: block !important;
+        }
+        .pc-content-area::-webkit-scrollbar-track,
+        .mobile-content-area::-webkit-scrollbar-track {
+            background: #edf2f7 !important;
+            border-left: 1.6px solid #cbd5e1 !important;
+            display: block !important;
+        }
+        .pc-content-area::-webkit-scrollbar-thumb,
+        .mobile-content-area::-webkit-scrollbar-thumb {
+            background: #94a3b8 !important;
+            border-radius: 6px !important;
+            border: 2px solid #edf2f7 !important;
+            min-height: 40px !important;
+            display: block !important;
+        }
+        .pc-content-area::-webkit-scrollbar-thumb:hover,
+        .mobile-content-area::-webkit-scrollbar-thumb:hover {
+            background: #64748b !important;
+        }
+        .pc-content-area::-webkit-scrollbar-thumb:active,
+        .mobile-content-area::-webkit-scrollbar-thumb:active {
+            background: #475569 !important;
+        }
+
+        /* Unified 20px Rounded Frame Window Style for BOTH PC & Mobile */
+        .pc-browser-frame,
+        .mobile-browser-frame {
+            height: 810px;
+            background: #ffffff;
+            display: flex; flex-direction: column;
+            border-radius: 20px;
+            border: 1.6px solid var(--v4-border-color) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            overflow: hidden !important;
+            position: relative;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            z-index: 1;
+            transition: border 0.2s ease, border-color 0.2s ease !important;
+        }
+
+        .pc-browser-frame {
+            width: 980px;
+        }
+
+        .mobile-browser-frame {
+            width: 390px;
+        }
+
+        /* Active Frame Highlight (Unified 2px Cyan Aqua Line) */
+        .pc-browser-frame.active-frame,
+        .mobile-browser-frame.active-frame {
+            border: 2px solid #00e5ff !important;
+        }
+        .pc-column.active-column .frame-label-bar,
+        .mobile-column.active-column .frame-label-bar {
+            border-color: rgba(0, 229, 255, 0.5) !important;
+        }
+
+        /* PC Header Bar (38px Height) */
+        .pc-browser-header {
+            height: 38px;
+            background: var(--v4-header-bg);
+            padding: 0 16px;
+            display: flex; align-items: center;
+            border-bottom: 1.6px solid var(--v4-border-color) !important;
+            user-select: none;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        .pc-browser-top-bar {
+            display: flex; align-items: center; gap: 12px; width: 100%;
+        }
+        .browser-dots {
+            display: flex; gap: 8px;
+        }
+        .browser-dot {
+            width: 11px; height: 11px; border-radius: 50%;
+        }
+        .browser-dot.red { background: #ff5f56; }
+        .browser-dot.yellow { background: #ffbd2e; }
+        .browser-dot.green { background: #27c93f; }
+
+        .browser-tabs {
+            display: flex; align-items: flex-end; margin-left: 4px;
+        }
+        .browser-tab {
+            background: #ffffff;
+            border-radius: 8px 8px 0 0;
+            padding: 5px 14px;
+            font-size: 12px; font-weight: 600;
+            color: var(--v4-subtext);
+            display: flex; align-items: center; gap: 8px;
+            height: 30px;
+            border: 1.6px solid var(--v4-border-color);
+            border-bottom: none;
+            box-sizing: border-box;
+        }
+
+        .browser-address-bar {
+            flex: 1; height: 26px;
+            background: #ffffff;
+            border: 1.6px solid var(--v4-border-color);
+            border-radius: 6px;
+            display: flex; align-items: center;
+            padding: 0 10px; gap: 8px;
+            font-size: 11px; color: var(--v4-subtext);
+        }
+
+        /* Samsung Galaxy Mobile Status Bar Header (38px Height Alignment) */
+        .mobile-browser-header {
+            height: 38px;
+            background: #ffffff;
+            border-bottom: 1.6px solid var(--v4-border-color) !important;
+            padding: 0 16px;
+            display: flex; align-items: center;
+            user-select: none;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        .galaxy-status-bar {
+            width: 100%;
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 12px; font-weight: 700; color: #0f172a;
+        }
+        .galaxy-time {
+            font-size: 12px; font-weight: 800; color: #0f172a; font-family: 'Inter', sans-serif;
+        }
+        .galaxy-punch-hole {
+            width: 10px; height: 10px;
+            background: #1e293b;
+            border-radius: 50%;
+            box-shadow: inset 0 0 2px rgba(0,0,0,0.8);
+        }
+        .galaxy-icons {
+            display: flex; align-items: center; gap: 6px;
+            color: #0f172a;
+        }
+
+        /* Usable Object Canvas Areas */
+        .pc-content-inner {
+            width: 100%;
+            min-height: calc(100% + 2px);
+            position: relative;
+            background-color: #ffffff;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            box-sizing: border-box;
+        }
+        .mobile-content-inner {
+            width: 100%;
+            min-height: calc(100% + 2px);
+            position: relative;
+            background-color: #ffffff;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            box-sizing: border-box;
+        }
+
+        .lf-component { position: absolute !important; box-sizing: border-box !important; transition: outline 0.1s; z-index: 500; }
+        .lf-component:hover { outline: 2px solid var(--v4-accent) !important; cursor: move !important; }
+        .lf-component.selected { outline: 2px solid var(--v4-accent) !important; z-index: 10001 !important; }
+        .lf-drag-handle { position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: var(--v4-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; z-index: 100; opacity: 0; transition: opacity 0.2s; }
+        .lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; }
+        .v4-editable-cell { outline: none; transition: background 0.2s; }
+        .v4-editable-cell:focus { background: #f0f1f2; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="frame-column pc-column active-column">
+            <div class="frame-label-bar">
+                <div class="frame-label-title">
+                    <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">desktop_windows</span>
+                    <input type="text" class="frame-title-input pc-title-input" value="PC Web Screen" placeholder="프레임명 입력...">
+                </div>
+                <div class="frame-label-height-control">
+                    <span>Height:</span>
+                    <input type="number" class="frame-label-input pc-height-input" value="772" min="772" step="10">
+                    <span>px</span>
+                </div>
+            </div>
+            <div class="pc-browser-frame active-frame">
+                <div class="pc-browser-header">
+                    <div class="pc-browser-top-bar">
+                        <div class="browser-dots">
+                            <div class="browser-dot red"></div>
+                            <div class="browser-dot yellow"></div>
+                            <div class="browser-dot green"></div>
+                        </div>
+                        <div class="browser-tabs">
+                            <div class="browser-tab">
+                                <span class="material-icons-outlined" style="font-size: 13px; color: #6366f1;">shopping_bag</span>
+                                <span>SISUN.COM | PC Web</span>
+                            </div>
+                        </div>
+                        <div class="browser-address-bar">
+                            <span class="material-icons-outlined" style="font-size: 13px; color: #64748b;">lock</span>
+                            <span style="font-weight: 600; color: #334155;">https://www.sisun.com/pc</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pc-content-area">
+                    <div class="pc-content-inner">
+                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                        <div id="v4-comp-1787884100425" class="lf-component v4-text-shape" style="top: 20px; left: 20px; width: 146px; height: 31.6px; z-index: 500;">
+                            <div class="lf-drag-handle"><span class="material-icons-outlined" style="font-size:14px;">drag_indicator</span></div>
+                            <div class="lf-delete-trigger">×</div>
+                            <div class="v4-shape v4-shape-rect" style="background: transparent; border: 1.6px solid transparent;">
+                                <div class="v4-shape-text-content" style="padding: 4px; box-sizing: border-box;">
+                                    <p style="margin: 0; padding: 0;"><span style="font-size: 20px; font-weight: 800; color: rgb(15, 23, 42);">SISUN.COM</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="frame-column mobile-column">
+            <div class="frame-label-bar">
+                <div class="frame-label-title">
+                    <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">smartphone</span>
+                    <input type="text" class="frame-title-input mobile-title-input" value="Mobile App Screen" placeholder="프레임명 입력...">
+                </div>
+                <div class="frame-label-height-control">
+                    <span>Height:</span>
+                    <input type="number" class="frame-label-input mobile-height-input" value="772" min="772" step="10">
+                    <span>px</span>
+                </div>
+            </div>
+            <div class="mobile-browser-frame">
+                <div class="mobile-browser-header">
+                    <div class="galaxy-status-bar">
+                        <div class="galaxy-time">12:30</div>
+                        <div class="galaxy-punch-hole"></div>
+                        <div class="galaxy-icons">
+                            <span class="material-icons-outlined" style="font-size: 14px;">signal_cellular_4_bar</span>
+                            <span style="font-size: 11px; font-weight: 800; letter-spacing: -0.5px;">5G</span>
+                            <span class="material-icons-outlined" style="font-size: 14px;">wifi</span>
+                            <span class="material-icons-outlined" style="font-size: 16px;">battery_full</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile-content-area">
+                    <div class="mobile-content-inner">
+                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../assets/vctrl_responsive_smartguide.js"></script>
+    <script>
+        (function() {
+            function initHeightControls() {
+                const pcInput = document.querySelector('.pc-height-input');
+                const pcInner = document.querySelector('.pc-content-inner');
+                if (pcInput && pcInner) {
+                    const updatePc = () => {
+                        const val = Math.max(772, parseInt(pcInput.value) || 772);
+                        pcInner.style.minHeight = (val + 2) + 'px';
+                        pcInput.setAttribute('value', val);
+                    };
+                    pcInput.addEventListener('input', updatePc);
+                    pcInput.addEventListener('change', updatePc);
+                    updatePc();
+                }
+                const mobileInput = document.querySelector('.mobile-height-input');
+                const mobileInner = document.querySelector('.mobile-content-inner');
+                if (mobileInput && mobileInner) {
+                    const updateMobile = () => {
+                        const val = Math.max(772, parseInt(mobileInput.value) || 772);
+                        mobileInner.style.minHeight = (val + 2) + 'px';
+                        mobileInput.setAttribute('value', val);
+                    };
+                    mobileInput.addEventListener('input', updateMobile);
+                    mobileInput.addEventListener('change', updateMobile);
+                    updateMobile();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initHeightControls);
+            } else {
+                initHeightControls();
+            }
+        })();
+    </script>
+    <script id="v4-inlined-script">
+        /* Dynamic scripts injected */
+    </script>
+</body>
+</html>`;
 
 // 1. Cover Template
 window.LF_TEMPLATES['template_cover.html'] = `<!DOCTYPE html>
@@ -66,9 +632,13 @@ window.LF_TEMPLATES['template_cover.html'] = `<!DOCTYPE html>
         <div class="accent-bar"></div>
         <div style="position: absolute; top: 60px; left: 80px;">
             <div class="logo-area">
-                <img src="https://img.lfmall.co.kr/file/WAS/apps/2024/mfront/logo/lf_logo_mo.png" class="logo-img" alt="LF Logo">
+                <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img">
+                    <rect x="15" y="22" width="55" height="14" rx="7" fill="#1a1a1a" />
+                    <rect x="25" y="43" width="55" height="14" rx="7" fill="#1a1a1a" opacity="0.7" />
+                    <rect x="35" y="64" width="55" height="14" rx="7" fill="#1a1a1a" opacity="0.4" />
+                </svg>
                 <div style="width: 1px; height: 24px; background: #ddd; margin: 0 4px;"></div>
-                <div class="logo-text"><span class="logo-sub" style="margin-left: 0;">Project Management System</span></div>
+                <div class="logo-text">bychoi workspace <span class="logo-sub" style="margin-left: 4px;">Design System</span></div>
             </div>
         </div>
         <div id="cover-title" class="lf-component" style="top: 220px; left: 80px; min-width: 800px;">
@@ -116,7 +686,7 @@ window.LF_TEMPLATES['template_cover.html'] = `<!DOCTYPE html>
                     </tr>
                     <tr>
                         <td style="font-weight: 600; color: #6d7175;">System Context</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="color: #1a1c1e !important;">LF E-commerce Platform</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="color: #1a1c1e !important;">bychoi workspace</td>
                     </tr>
                 </tbody>
             </table>
@@ -190,7 +760,7 @@ window.LF_TEMPLATES['template_plan.html'] = `<!DOCTYPE html>
             </tbody>
         </table>
         <div class="footer">
-            <div class="logo-area"><div class="logo-symbol">LF</div><div class="logo-text">LF</div></div>
+            <div class="logo-area"><div class="logo-text" style="font-weight: 800; color: #1a1c1e;">bychoi workspace</div></div>
             <div class="page-num">3</div>
         </div>
     </div>
@@ -293,14 +863,14 @@ window.LF_TEMPLATES['template_pc_ui.html'] = `<!DOCTYPE html>
                 <div class="chrome-top-bar">
                     <div class="chrome-dots"><div class="chrome-dot red"></div><div class="chrome-dot yellow"></div><div class="chrome-dot green"></div></div>
                     <div class="chrome-tabs">
-                        <div class="chrome-tab"><span class="material-icons-outlined" style="font-size: 14px; color: #6366f1;">shopping_bag</span><span>LFmall | Premium Design</span></div>
+                        <div class="chrome-tab"><span class="material-icons-outlined" style="font-size: 14px; color: #6366f1;">shopping_bag</span><span>bychoi workspace | Design System</span></div>
                     </div>
                 </div>
                 <div class="chrome-nav-bar">
                     <span class="material-icons-outlined" style="font-size: 18px; color: #5f6368;">arrow_back</span>
                     <span class="material-icons-outlined" style="font-size: 18px; color: #5f6368;">arrow_forward</span>
                     <span class="material-icons-outlined" style="font-size: 18px; color: #5f6368;">refresh</span>
-                    <div class="chrome-url-bar"><span class="material-icons-outlined" style="font-size: 14px; color: #10b981;">lock</span><span>https://www.lfmall.co.kr</span></div>
+                    <div class="chrome-url-bar"><span class="material-icons-outlined" style="font-size: 14px; color: #10b981;">lock</span><span>https://bychoi.workspace.com</span></div>
                 </div>
             </div>
             <div class="chrome-content-area"></div>
@@ -446,6 +1016,211 @@ window.LF_TEMPLATES['template_blank.html'] = `<!DOCTYPE html>
 </body>
 </html>`;
 
+// 10. Responsive PC & Mobile Template
+window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive PC & Mobile - {{PROJECT_NAME}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; --v4-text: #0f172a; --v4-subtext: #475569; --v4-border-color: #cbd5e1; --v4-header-bg: #f8fafc; }
+        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--v4-text); background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
+        .page { width: 1440px; height: 900px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.5); overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 32px; padding: 0 16px; box-sizing: border-box; }
+        .frame-column { display: flex; flex-direction: column; align-items: stretch; position: relative; }
+        .frame-label-bar { display: flex; align-items: center; justify-content: space-between; padding: 5px 14px; background: rgba(255, 255, 255, 0.08); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #f8fafc; font-size: 12px; font-weight: 700; box-sizing: border-box; margin-bottom: 10px; backdrop-filter: blur(10px); user-select: none; }
+        .frame-label-title { display: flex; align-items: center; gap: 6px; color: #f1f5f9; letter-spacing: -0.2px; }
+        .frame-title-input { background: transparent; border: 1.6px solid transparent; border-radius: 6px; color: #f1f5f9; font-size: 12px; font-weight: 700; font-family: inherit; padding: 2px 8px; width: 160px; outline: none; transition: all 0.2s; }
+        .frame-title-input:hover { border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.06); }
+        .frame-title-input:focus { border-color: var(--v4-accent); background: rgba(15, 23, 42, 0.85); box-shadow: 0 0 8px rgba(0, 229, 255, 0.35); }
+        .frame-label-height-control { display: flex; align-items: center; gap: 6px; color: #94a3b8; font-size: 11px; }
+        .frame-label-input { width: 58px; height: 22px; border-radius: 6px; border: 1.6px solid rgba(255, 255, 255, 0.25); background: rgba(15, 23, 42, 0.8); color: var(--v4-accent); font-size: 11px; font-weight: 800; text-align: center; outline: none; padding: 0; transition: all 0.2s; }
+        .frame-label-input:focus { border-color: var(--v4-accent); box-shadow: 0 0 8px rgba(0, 229, 255, 0.4); }
+        .page { width: 1440px; height: 900px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.5); overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 16px; padding: 0 16px; box-sizing: border-box; }
+        .frame-column { display: flex; flex-direction: column; align-items: stretch; position: relative; }
+        .frame-label-bar { display: flex; align-items: center; justify-content: space-between; padding: 5px 14px; background: rgba(255, 255, 255, 0.08); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #f8fafc; font-size: 12px; font-weight: 700; box-sizing: border-box; margin-bottom: 10px; backdrop-filter: blur(10px); user-select: none; }
+        .frame-label-title { display: flex; align-items: center; gap: 6px; color: #f1f5f9; letter-spacing: -0.2px; }
+        .frame-title-input { background: transparent; border: 1.6px solid transparent; border-radius: 6px; color: #f1f5f9; font-size: 12px; font-weight: 700; font-family: inherit; padding: 2px 8px; width: 160px; outline: none; transition: all 0.2s; }
+        .frame-title-input:hover { border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.06); }
+        .frame-title-input:focus { border-color: var(--v4-accent); background: rgba(15, 23, 42, 0.85); box-shadow: 0 0 8px rgba(0, 229, 255, 0.35); }
+        .frame-label-height-control { display: flex; align-items: center; gap: 6px; color: #94a3b8; font-size: 11px; }
+        .frame-label-input { width: 58px; height: 22px; border-radius: 6px; border: 1.6px solid rgba(255, 255, 255, 0.25); background: rgba(15, 23, 42, 0.8); color: var(--v4-accent); font-size: 11px; font-weight: 800; text-align: center; outline: none; padding: 0; transition: all 0.2s; }
+        .frame-label-input:focus { border-color: var(--v4-accent); box-shadow: 0 0 8px rgba(0, 229, 255, 0.4); }
+        .pc-content-area, .mobile-content { overflow-y: scroll !important; overflow-x: hidden !important; scrollbar-gutter: stable; scroll-behavior: smooth; isolation: isolate; }
+        .pc-content-area::-webkit-scrollbar, .mobile-content::-webkit-scrollbar { width: 12px !important; height: 12px !important; display: block !important; }
+        .pc-content-area::-webkit-scrollbar-track, .mobile-content::-webkit-scrollbar-track { background: #edf2f7 !important; border-left: 1.6px solid #cbd5e1 !important; display: block !important; }
+        .pc-content-area::-webkit-scrollbar-thumb, .mobile-content::-webkit-scrollbar-thumb { background: #94a3b8 !important; border-radius: 6px !important; border: 2px solid #edf2f7 !important; min-height: 40px !important; display: block !important; }
+        .pc-content-area::-webkit-scrollbar-thumb:hover, .mobile-content::-webkit-scrollbar-thumb:hover { background: #64748b !important; }
+        .pc-content-area::-webkit-scrollbar-thumb:active, .mobile-content::-webkit-scrollbar-thumb:active { background: #475569 !important; }
+        .pc-browser-frame, .mobile-frame, .mobile-browser-frame { transition: border 0.2s ease, border-color 0.2s ease !important; }
+        .pc-browser-frame.active-frame, .mobile-frame.active-frame, .mobile-browser-frame.active-frame { border: 2px solid #00e5ff !important; }
+        .pc-column.active-column .frame-label-bar, .mobile-column.active-column .frame-label-bar { border-color: rgba(0, 229, 255, 0.5) !important; }
+        .pc-content-inner { width: 1000px; min-height: calc(100% + 2px); position: relative; background-color: #ffffff; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; box-sizing: border-box; }
+        .mobile-content-inner { width: 360px; min-height: calc(100% + 2px); position: relative; background-color: #ffffff; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; box-sizing: border-box; }
+        .pc-browser-frame { width: 1012px; height: 810px; background: #ffffff; display: flex; flex-direction: column; border-radius: 20px; border: 1.6px solid var(--v4-border-color) !important; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); overflow: hidden !important; position: relative; box-sizing: border-box; flex-shrink: 0; z-index: 1; }
+        .pc-browser-header { height: 38px; background: var(--v4-header-bg); padding: 0 16px; display: flex; align-items: center; border-bottom: 1.6px solid var(--v4-border-color) !important; user-select: none; box-sizing: border-box; flex-shrink: 0; z-index: 100; }
+        .pc-browser-top-bar { display: flex; align-items: center; gap: 12px; width: 100%; }
+        .pc-browser-dots { display: flex; gap: 8px; }
+        .pc-browser-dot { width: 11px; height: 11px; border-radius: 50%; }
+        .pc-browser-dot.red { background: #ff5f56; }
+        .pc-browser-dot.yellow { background: #ffbd2e; }
+        .pc-browser-dot.green { background: #27c93f; }
+        .pc-browser-tabs { display: flex; align-items: flex-end; margin-left: 8px; }
+        .pc-browser-tab { background: #ffffff; border-radius: 8px 8px 0 0; padding: 5px 14px; font-size: 12px; font-weight: 600; color: var(--v4-subtext); display: flex; align-items: center; gap: 8px; height: 30px; border: 1.6px solid var(--v4-border-color); border-bottom: none; box-sizing: border-box; }
+        .pc-content-area { width: 1012px; height: 772px; position: relative; }
+        .mobile-frame { width: 382px; height: 810px; background: #ffffff; display: flex; flex-direction: column; border-radius: 28px; position: relative; border: 1.6px solid var(--v4-border-color) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.25); overflow: hidden !important; box-sizing: border-box; flex-shrink: 0; z-index: 1; }
+        .mobile-top-bar { height: 38px; background: var(--v4-header-bg); border-bottom: 1.6px solid var(--v4-border-color) !important; position: relative; user-select: none; box-sizing: border-box; flex-shrink: 0; z-index: 100; }
+        .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 110px; height: 20px; background: #1e293b; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; z-index: 1000; pointer-events: none; }
+        .mobile-statusbar { position: absolute; top: 10px; left: 16px; right: 16px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: var(--v4-subtext); font-size: 11px; font-weight: 700; z-index: 1001; pointer-events: none; white-space: nowrap; }
+        .mobile-content { width: 372px; height: 772px; position: absolute; top: 38px; left: 5px; border: none !important; border-radius: 0 0 12px 12px; }
+        .mobile-home-indicator { position: absolute; bottom: 6px; left: 50%; width: 120px; height: 4px; border-radius: 999px; background: #94a3b8; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
+        .lf-component { position: absolute !important; box-sizing: border-box !important; z-index: 500; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="frame-column pc-column active-column">
+            <div class="frame-label-bar">
+                <div class="frame-label-title"><span class="material-icons-outlined" style="font-size: 16px; color: var(--v4-accent);">desktop_windows</span><input type="text" class="pc-title-input frame-title-input" value="PC Web Screen" placeholder="화면명 입력"></div>
+                <div class="frame-label-height-control"><span>Height:</span><input type="number" class="pc-height-input frame-label-input" value="772" min="772" max="10000" step="100"><span>px</span></div>
+            </div>
+            <div class="pc-browser-frame active-frame">
+                <div class="pc-browser-header">
+                    <div class="pc-browser-top-bar">
+                        <div class="pc-browser-dots"><div class="pc-browser-dot red"></div><div class="pc-browser-dot yellow"></div><div class="pc-browser-dot green"></div></div>
+                        <div class="pc-browser-tabs"><div class="pc-browser-tab"><span class="material-icons-outlined" style="font-size: 14px; color: #6366f1;">shopping_bag</span><span style="font-family: inherit;">SISUN.COM | PC Web</span></div></div>
+                    </div>
+                </div>
+                <div class="pc-content-area">
+                    <div class="pc-content-inner">
+                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="frame-column mobile-column">
+            <div class="frame-label-bar">
+                <div class="frame-label-title"><span class="material-icons-outlined" style="font-size: 16px; color: var(--v4-accent);">smartphone</span><input type="text" class="mobile-title-input frame-title-input" value="Mobile App Screen" placeholder="화면명 입력"></div>
+                <div class="frame-label-height-control"><span>Height:</span><input type="number" class="mobile-height-input frame-label-input" value="772" min="772" max="10000" step="100"><span>px</span></div>
+            </div>
+            <div class="mobile-frame">
+                <div class="mobile-top-bar">
+                    <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                    <div class="mobile-header-notch"></div>
+                </div>
+                <div class="mobile-content">
+                    <div class="mobile-content-inner">
+                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                    </div>
+                </div>
+                <div class="mobile-home-indicator"></div>
+            </div>
+        </div>
+    </div>
+    <script src="../../assets/vctrl_responsive_smartguide.js"></script>
+    <script>
+        (function() {
+            function initHeightControls() {
+                const pcInput = document.querySelector('.pc-height-input');
+                const pcInner = document.querySelector('.pc-content-inner');
+                if (pcInput && pcInner) {
+                    const updatePc = () => {
+                        const val = Math.max(772, parseInt(pcInput.value) || 772);
+                        pcInner.style.minHeight = (val + 2) + 'px';
+                        pcInput.setAttribute('value', val);
+                    };
+                    pcInput.addEventListener('input', updatePc);
+                    pcInput.addEventListener('change', updatePc);
+                    updatePc();
+                }
+
+                const mobileInput = document.querySelector('.mobile-height-input');
+                const mobileInner = document.querySelector('.mobile-content-inner');
+                if (mobileInput && mobileInner) {
+                    const updateMobile = () => {
+                        const val = Math.max(772, parseInt(mobileInput.value) || 772);
+                        mobileInner.style.minHeight = (val + 2) + 'px';
+                        mobileInput.setAttribute('value', val);
+                    };
+                    mobileInput.addEventListener('input', updateMobile);
+                    mobileInput.addEventListener('change', updateMobile);
+                    updateMobile();
+                }
+            }
+
+            function initTitleInputs() {
+                const pcTitleInput = document.querySelector('.pc-title-input');
+                if (pcTitleInput) {
+                    pcTitleInput.addEventListener('input', function() {
+                        this.setAttribute('value', this.value);
+                    });
+                }
+                const mobileTitleInput = document.querySelector('.mobile-title-input');
+                if (mobileTitleInput) {
+                    mobileTitleInput.addEventListener('input', function() {
+                        this.setAttribute('value', this.value);
+                    });
+                }
+            }
+
+            function routeResponsiveComponents() {
+                if (window.V4DragResizeEngine && (window.V4DragResizeEngine.isDragging || window.V4DragResizeEngine.isPendingDrag || window.V4DragResizeEngine.isResizing)) return;
+                if (document.querySelector('.lf-component.dragging-now')) return;
+
+                const pcInner = document.querySelector('.pc-content-inner');
+                const mobileInner = document.querySelector('.mobile-content-inner');
+                const pcArea = document.querySelector('.pc-content-area');
+                const mobileContent = document.querySelector('.mobile-content, .mobile-content-area');
+                if (!pcInner || !mobileInner || !pcArea || !mobileContent) return;
+
+                const pcFrame = document.querySelector('.pc-browser-frame, .pc-frame');
+                const mobileFrame = document.querySelector('.mobile-frame, .mobile-browser-frame');
+                if (!pcFrame || !mobileFrame) return;
+
+                const pcRect = pcFrame.getBoundingClientRect();
+                const pcAreaRect = pcArea.getBoundingClientRect();
+                const mobileRect = mobileFrame.getBoundingClientRect();
+                const mobileContentRect = mobileContent.getBoundingClientRect();
+
+                const outerComps = Array.from(document.querySelectorAll('body > .lf-component, .page > .lf-component, .pc-content-area > .lf-component, .mobile-content > .lf-component'));
+                outerComps.forEach(comp => {
+                    const compRect = comp.getBoundingClientRect();
+                    const compCenterX = compRect.left + compRect.width / 2;
+
+                    if (compCenterX >= pcRect.left && compCenterX <= pcRect.right) {
+                        const relativeTop = compRect.top - pcAreaRect.top + pcArea.scrollTop;
+                        const relativeLeft = compRect.left - pcAreaRect.left + pcArea.scrollLeft;
+                        comp.style.top = Math.max(0, relativeTop) + 'px';
+                        comp.style.left = Math.max(0, relativeLeft) + 'px';
+                        pcInner.appendChild(comp);
+                    } else if (compCenterX >= mobileRect.left && compCenterX <= mobileRect.right) {
+                        const relativeTop = compRect.top - mobileContentRect.top + mobileContent.scrollTop;
+                        const relativeLeft = compRect.left - mobileContentRect.left + mobileContent.scrollLeft;
+                        comp.style.top = Math.max(0, relativeTop) + 'px';
+                        comp.style.left = Math.max(0, relativeLeft) + 'px';
+                        mobileInner.appendChild(comp);
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initHeightControls();
+                    initTitleInputs();
+                    routeResponsiveComponents();
+                });
+            } else {
+                initHeightControls();
+                initTitleInputs();
+                routeResponsiveComponents();
+            }
+            setInterval(routeResponsiveComponents, 250);
+        })();
+    </script>
+</body>
+</html>`;
+
 // Alias key mappings for instant synchronous resolution across all template options
 window.LF_TEMPLATES['cover'] = window.LF_TEMPLATES['template_cover.html'];
 window.LF_TEMPLATES['plan'] = window.LF_TEMPLATES['template_plan.html'];
@@ -457,6 +1232,10 @@ window.LF_TEMPLATES['mobile_ui_1'] = window.LF_TEMPLATES['template_mobile_ui_1.h
 window.LF_TEMPLATES['mobile_ui_2'] = window.LF_TEMPLATES['template_mobile_ui_2.html'];
 window.LF_TEMPLATES['mobile_ui_3'] = window.LF_TEMPLATES['template_mobile_ui_3.html'];
 window.LF_TEMPLATES['mobile_ui'] = window.LF_TEMPLATES['template_mobile_ui_1.html'];
+window.LF_TEMPLATES['responsive_pc_mobile'] = window.LF_TEMPLATES['template_responsive_pc_mobile.html'];
+window.LF_TEMPLATES['pc_mobile'] = window.LF_TEMPLATES['template_responsive_pc_mobile.html'];
+window.LF_TEMPLATES['responsive'] = window.LF_TEMPLATES['template_responsive_pc_mobile.html'];
 window.LF_TEMPLATES['onesphere'] = window.LF_TEMPLATES['template_onesphere.html'];
 window.LF_TEMPLATES['admin_onesphere'] = window.LF_TEMPLATES['template_onesphere.html'];
 window.LF_TEMPLATES['blank'] = window.LF_TEMPLATES['template_blank.html'];
+

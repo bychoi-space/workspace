@@ -133,7 +133,7 @@ window.VCTRL_UI_FALLBACK_ICON = `
         </div>
         <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Share Premium')" data-ko="공유 공유하기" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
             <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
-                <div class="lf-icon lf-icon-share" style="width: 20px; height: 20px; background-image: url('https://img.lfmall.co.kr/file/WAS/apps/2023/mfront/product/iconShare@2x.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-origin: content-box; filter: brightness(0) invert(1);"></div>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 20px; height: 20px; color: white;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
             </div>
             <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Share</span>
         </div>
@@ -235,11 +235,13 @@ window.VCTRL_UI_FALLBACK_ICON = `
         </div>
 
         <!-- Group 4: Authentication & Brand -->
-        <div class="component-item v4-card" onclick="insertAtomicComponent('image', 'LF Logo')" data-ko="엘에프 로고 심볼" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
+        <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'SISUN Logo')" data-ko="시선 로고 심볼 시선닷컴 sisun.com sisun" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
             <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
-                <div class="v4-logo-img lf-icon" style="width: 20px; height: 20px; background-image: url('https://img.lfmall.co.kr/file/WAS/apps/2024/mfront/logo/lf_logo_mo.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-origin: content-box; filter: brightness(0) invert(1);"></div>
+                <svg viewBox="0 0 200 40" fill="none" stroke="#ffffff" stroke-width="0" class="lf-icon v4-logo-img" style="width:24px; height:24px; box-sizing:border-box; background-image: none !important;">
+                    <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="#ffffff">SISUN.COM</text>
+                </svg>
             </div>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">LF Logo</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">SISUN Logo</span>
         </div>
         <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Login')" data-ko="로그인 login 접속" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
             <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
@@ -1655,6 +1657,14 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             </div>
                             <div class="template-name">PC UI (Chrome Frame)</div>
                             <div class="template-badge">PC</div>
+                        </div>
+                        <div class="template-card" data-template="template_responsive_pc_mobile.html" data-default-name="08_Responsive_PC_Mobile">
+                            <div class="template-thumb">
+                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">devices</span>
+                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            </div>
+                            <div class="template-name">반응형 (PC + Mobile)</div>
+                            <div class="template-badge">Dual</div>
                         </div>
                         <div class="template-card" data-template="template_blank.html" data-default-name="99_Blank">
                             <div class="template-thumb">

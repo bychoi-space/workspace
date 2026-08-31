@@ -324,15 +324,20 @@ const ProjectMetadataManager = {
             floatingInspector.style.setProperty('display', 'flex', 'important');
             floatingInspector.style.bottom = '24px';
             floatingInspector.style.top = 'auto';
-            if (compStyles && typeof compStyles.x === 'number' && typeof compStyles.w === 'number') {
-                const compCenter = compStyles.x + (compStyles.w / 2);
-                if (compCenter >= 720) {
-                    floatingInspector.style.left = '24px';
-                    floatingInspector.style.right = 'auto';
-                } else {
-                    floatingInspector.style.right = '24px';
-                    floatingInspector.style.left = 'auto';
-                }
+
+            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+            const lastActiveFrame = iframeDoc?.defaultView?.lastActiveFrame;
+            const selectedComp = state.selectedComponent;
+            const isInsideMobile = (selectedComp && selectedComp.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner')) || lastActiveFrame === 'mobile';
+
+            let compCenter = (compStyles && typeof compStyles.x === 'number') ? compStyles.x + ((compStyles.w || 200) / 2) : 0;
+            if (isInsideMobile) {
+                compCenter += 1048; // Mobile frame is positioned at X >= 1048px on the right
+            }
+
+            if (isInsideMobile || compCenter >= 720) {
+                floatingInspector.style.left = '24px';
+                floatingInspector.style.right = 'auto';
             } else {
                 floatingInspector.style.right = '24px';
                 floatingInspector.style.left = 'auto';
@@ -1476,6 +1481,7 @@ function getCategoryBadge(type) {
         'architecture': { label: 'ARCH', class: 'badge-architecture' },
         'plan': { label: 'PLAN', class: 'badge-plan' },
         'ui': { label: 'UI', class: 'badge-ui' },
+        'responsive-ui': { label: 'PC+MO', class: 'badge-responsive-ui' },
         'mobile-ui': { label: 'MOBILE', class: 'badge-mobile-ui' },
         'admin-nbos': { label: 'NBOS', class: 'badge-admin-nbos' },
         'admin-onesphere': { label: '1SPH', class: 'badge-admin-onesphere' }
@@ -1561,8 +1567,9 @@ window.renderAtomicLibrary = function() {
     }
 
     // 2. Custom Components (Molecules) 필터링 및 렌더링
-    const customComps = window.state.globalComponents || [];
-    const filteredCustomComps = query ? customComps.filter(m => m.name.toLowerCase().includes(query)) : customComps;
+    const rawCustomComps = window.state.globalComponents;
+    const customComps = Array.isArray(rawCustomComps) ? rawCustomComps : (rawCustomComps && typeof rawCustomComps === 'object' ? Object.values(rawCustomComps) : []);
+    const filteredCustomComps = query ? customComps.filter(m => m && m.name && m.name.toLowerCase().includes(query)) : customComps;
 
     const compHeader = document.getElementById('molecules-header-text');
     if (compHeader) {
@@ -2007,9 +2014,23 @@ async function ensureHistoryModal() {
         try {
             let html = '';
             try {
-                const response = await fetch('assets/templates/history_modal.html');
-                if (response.ok) {
-                    html = await response.text();
+                if (window.location.protocol === 'file:') {
+                    html = await new Promise((resolve) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('GET', 'assets/templates/history_modal.html?t=' + Date.now(), true);
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState === 4) {
+                                resolve((xhr.status === 200 || xhr.status === 0) ? xhr.responseText : '');
+                            }
+                        };
+                        xhr.onerror = function() { resolve(''); };
+                        xhr.send();
+                    });
+                } else {
+                    const response = await fetch('assets/templates/history_modal.html');
+                    if (response.ok) {
+                        html = await response.text();
+                    }
                 }
             } catch (fetchErr) {
                 console.warn("fetch history_modal.html failed, using inline template fallback:", fetchErr);

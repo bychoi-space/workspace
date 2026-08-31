@@ -66,37 +66,10 @@ th.v4-editable-cell:focus, td.v4-editable-cell:focus { outline-offset: -2px !imp
     background-color: rgba(99, 102, 241, 0.08) !important;
 }
 .lf-icon { 
-    background-image: url("https://img.lfmall.co.kr/file/WAS/display/lf2022/mobile/gnb_fnb_sp_v0.1.png"); 
-    background-size: 500% 400%; 
     width: 100%; height: 100%; 
     display: inline-block; 
-    background-repeat: no-repeat; 
     pointer-events: none; 
 }
-.lf-icon-home { background-position: 50% 0%; }
-.lf-icon-category { background-position: 0% 0%; }
-.lf-icon-my { background-position: 75% 0%; }
-.lf-icon-heart { background-position: 100% 0%; }
-.lf-icon-search { background-position: 50% 33.33%; }
-.lf-icon-cart { background-position: 75% 33.33%; }
-.lf-icon-brand { background-position: 25% 0%; }
-.lf-icon-bell { background-position: 25% 33.33%; }
-.lf-icon-back { background-position: 0% 33.33%; }
-.lf-cust-gift, .lf-cust-1to1, .lf-cust-chatbot, .lf-cust-faq, .lf-cust-truck {
-    background-image: url("https://img.lfmall.co.kr/file/WAS/apps/2023/mfront/customer/icon_customer_my_btn.png") !important;
-    background-size: 300% 200% !important;
-}
-.lf-cust-gift { background-position: 0% 0% !important; }
-.lf-cust-1to1 { background-position: 50% 0% !important; }
-.lf-cust-chatbot { background-position: 100% 0% !important; }
-.lf-cust-faq { background-position: 0% 100% !important; }
-.lf-cust-truck { background-position: 50% 100% !important; }
-.lf-rv-write, .lf-rv-my {
-    background-image: url("https://img.lfmall.co.kr/file/WAS/apps/2021/front/review_new/m/icon_rv_mp.png") !important;
-    background-size: 200% 100% !important;
-}
-.lf-rv-write { background-position: 0% 0% !important; }
-.lf-rv-my { background-position: 100% 0% !important; }
 .v4-logo-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; display: block; }
 img.lf-icon { width: 100%; height: 100%; padding: 8px; box-sizing: border-box; object-fit: contain; }
 .v4-shape-triangle, .v4-directional-shape { transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; transform-origin: center center !important; }
@@ -142,7 +115,6 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
     pointer-events: none;
     display: block;
 }
-.lf-icon[class*="lf-icon-"] { background-image: url("https://img.lfmall.co.kr/file/WAS/display/lf2022/mobile/gnb_fnb_sp_v0.1.png") !important; }
 /* Unified Disabled State for 11 Target Atoms (Shape BG: #c8c8c8, Text/Control: #969696, Border: #969696 / #b0b0b0) */
 
 /* 1. Reset outer containers so background does not fill outer bounding boxes */
@@ -370,5 +342,65 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 .v4-shape-text-content p, .v4-shape-text-overlay p {
     margin: 0 !important;
     padding: 0 !important;
+}
+
+/* 100% High-Contrast Chrome Web Browser Vertical Scrollbars for PC & Mobile Frames */
+.pc-content-area,
+.mobile-content,
+.chrome-content-area {
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    scrollbar-gutter: stable;
+    scroll-behavior: smooth;
+    isolation: isolate;
+}
+.pc-content-area::-webkit-scrollbar,
+.mobile-content::-webkit-scrollbar,
+.chrome-content-area::-webkit-scrollbar {
+    width: 12px !important;
+    height: 12px !important;
+    display: block !important;
+}
+.pc-content-area::-webkit-scrollbar-track,
+.mobile-content::-webkit-scrollbar-track,
+.chrome-content-area::-webkit-scrollbar-track {
+    background: #edf2f7 !important;
+    border-left: 1.6px solid #cbd5e1 !important;
+    display: block !important;
+}
+.pc-content-area::-webkit-scrollbar-thumb,
+.mobile-content::-webkit-scrollbar-thumb,
+.chrome-content-area::-webkit-scrollbar-thumb {
+    background: #94a3b8 !important;
+    border-radius: 6px !important;
+    border: 2px solid #edf2f7 !important;
+    min-height: 40px !important;
+    display: block !important;
+}
+.pc-content-area::-webkit-scrollbar-thumb:hover,
+.mobile-content::-webkit-scrollbar-thumb:hover,
+.chrome-content-area::-webkit-scrollbar-thumb:hover {
+    background: #64748b !important;
+}
+.pc-content-area::-webkit-scrollbar-thumb:active,
+.mobile-content::-webkit-scrollbar-thumb:active,
+.chrome-content-area::-webkit-scrollbar-thumb:active {
+    background: #475569 !important;
+}
+
+/* Active Frame Highlight (Unified 2px Cyan Aqua Line) */
+.pc-browser-frame,
+.mobile-frame,
+.mobile-browser-frame {
+    transition: border 0.2s ease, border-color 0.2s ease !important;
+}
+.pc-browser-frame.active-frame,
+.mobile-frame.active-frame,
+.mobile-browser-frame.active-frame {
+    border: 2px solid #00e5ff !important;
+}
+.pc-column.active-column .frame-label-bar,
+.mobile-column.active-column .frame-label-bar {
+    border-color: rgba(0, 229, 255, 0.5) !important;
 }
 `;

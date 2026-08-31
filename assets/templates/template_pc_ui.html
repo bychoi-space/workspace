@@ -113,6 +113,28 @@
                 linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
             background-size: 20px 20px;
+            overflow-y: scroll !important;
+            overflow-x: hidden !important;
+            scrollbar-gutter: stable;
+            scroll-behavior: smooth;
+        }
+        .chrome-content-area::-webkit-scrollbar {
+            width: 12px;
+        }
+        .chrome-content-area::-webkit-scrollbar-track {
+            background: #f1f3f4;
+            border-left: 1px solid #dadce0;
+        }
+        .chrome-content-area::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 6px;
+            border: 2px solid #f1f3f4;
+        }
+        .chrome-content-area::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        .chrome-content-area::-webkit-scrollbar-thumb:active {
+            background: #787878;
         }
 
         /* V4 Component Base Styles */
@@ -161,7 +183,7 @@
                     <div class="chrome-tabs">
                         <div class="chrome-tab">
                             <span class="material-icons-outlined" style="font-size: 14px; color: #6366f1;">shopping_bag</span>
-                            <span style="font-family: inherit;">LFmall | Premium Design</span>
+                            <span style="font-family: inherit;">bychoi workspace | Design System</span>
                             <span class="chrome-tab-close">×</span>
                         </div>
                     </div>
@@ -172,7 +194,7 @@
                     <span class="material-icons-outlined chrome-nav-btn" style="font-size: 18px;">refresh</span>
                     <div class="chrome-url-bar">
                         <span class="material-icons-outlined" style="font-size: 14px; color: #10b981;">lock</span>
-                        <span>https://www.lfmall.co.kr</span>
+                        <span>https://bychoi.workspace.com</span>
                     </div>
                     <span class="material-icons-outlined chrome-nav-btn" style="font-size: 18px;">more_vert</span>
                 </div>

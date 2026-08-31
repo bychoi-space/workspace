@@ -477,7 +477,9 @@ window.v4ShortcutsScript = `
                 if (window.V4UndoManager && !isArrowMoving) {
                     window.V4UndoManager.saveState();
                     isArrowMoving = true;
-                    notifyParent({ type: 'LF_SNAP_START' });
+                    if (!window.ResponsiveSmartGuide) {
+                        notifyParent({ type: 'LF_SNAP_START' });
+                    }
                 }
                 const step = e.shiftKey ? 10 : 1;
                 let dx = 0, dy = 0;
@@ -522,7 +524,7 @@ window.v4ShortcutsScript = `
                     }
                 });
                 
-                if (activeEl) {
+                if (activeEl && !window.ResponsiveSmartGuide) {
                     const logicalX = parseFloat(activeEl.style.left) || 0;
                     const logicalY = parseFloat(activeEl.style.top) || 0;
                     
@@ -532,7 +534,6 @@ window.v4ShortcutsScript = `
                         y: logicalY, 
                         w: activeEl.offsetWidth, 
                         h: activeEl.offsetHeight,
-                        isArrowKey: true,
                         activeId: activeEl.id
                     });
                 }
@@ -565,7 +566,9 @@ window.v4ShortcutsScript = `
             notifyParent({ type: 'LF_SPACE_UP' });
         } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
             isArrowMoving = false;
-            notifyParent({ type: 'LF_SNAP_END' });
+            if (!window.ResponsiveSmartGuide) {
+                notifyParent({ type: 'LF_SNAP_END' });
+            }
         }
     });
 

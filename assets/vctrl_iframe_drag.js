@@ -42,8 +42,32 @@ window.v4DragResizeScript = `
                     isPendingDrag = false;
                     isDragging = true;
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
-                    notifyParent({ type: 'LF_SNAP_START' });
+                    if (!window.ResponsiveSmartGuide) {
+                        notifyParent({ type: 'LF_SNAP_START' });
+                    }
                     document.querySelectorAll('.lf-component.selected').forEach(s => s.classList.add('dragging-now'));
+
+                    if (window.activeEl) {
+                        if (window.ResponsiveSmartGuide) {
+                            const ctx = window.ResponsiveSmartGuide.getContainerContext(window.activeEl);
+                            if (ctx) window.ResponsiveSmartGuide.findSnapTargets(ctx, window.activeEl);
+                        } else {
+                            const parentContainer = window.activeEl.closest('.pc-content-area, .mobile-content, .mobile-content-area');
+                            if (parentContainer) {
+                                const bodyRect = document.body.getBoundingClientRect();
+                                const compRect = window.activeEl.getBoundingClientRect();
+                                const scale = (window.parent?.state?.transform?.scale) || 1;
+                                const absLeft = (compRect.left - bodyRect.left) / scale;
+                                const absTop = (compRect.top - bodyRect.top) / scale;
+
+                                document.body.appendChild(window.activeEl);
+                                window.activeEl.style.left = absLeft + 'px';
+                                window.activeEl.style.top = absTop + 'px';
+                                startLeft = absLeft;
+                                startTop = absTop;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -60,7 +84,28 @@ window.v4DragResizeScript = `
                 const logicalX = startLeft + dx / scale;
                 const logicalY = startTop + dy / scale;
 
-                notifyParent({ type: 'LF_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight });
+                window.activeEl.style.left = logicalX + 'px';
+                window.activeEl.style.top = logicalY + 'px';
+
+                if (window.ResponsiveSmartGuide) {
+                    const ctx = window.ResponsiveSmartGuide.getContainerContext(window.activeEl);
+                    if (ctx) {
+                        const w = window.activeEl.offsetWidth || 100;
+                        const h = window.activeEl.offsetHeight || 40;
+
+                        const snap = window.ResponsiveSmartGuide.calculateSnap(logicalX, logicalY, w, h, false, window.activeEl.id);
+                        window.ResponsiveSmartGuide.drawGuides(ctx, snap);
+
+                        if (snap.snapXData) {
+                            window.activeEl.style.left = snap.x + 'px';
+                        }
+                        if (snap.snapYData) {
+                            window.activeEl.style.top = snap.y + 'px';
+                        }
+                    }
+                } else {
+                    notifyParent({ type: 'LF_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight });
+                }
                 markDirty();
             }
             else if (isResizing && window.activeEl) {
@@ -122,6 +167,48 @@ window.v4DragResizeScript = `
         handleMouseUp: function() {
             if (isDragging && window.activeEl) {
                 notifyParent({ type: 'LF_SNAP_END' });
+                if (window.ResponsiveSmartGuide) {
+                    window.ResponsiveSmartGuide.clearGuides(true);
+                }
+
+                // Responsive Drop Reparenting to PC Area or Mobile Content
+                const pcFrame = document.querySelector('.pc-browser-frame, .pc-frame');
+                const mobileFrame = document.querySelector('.mobile-frame, .mobile-browser-frame');
+                const pcArea = document.querySelector('.pc-content-area, .pc-content-inner');
+                const mobileContent = document.querySelector('.mobile-content, .mobile-content-area, .mobile-content-inner');
+
+                if (pcFrame && mobileFrame && pcArea && mobileContent) {
+                    const pcInner = document.querySelector('.pc-content-inner') || pcArea;
+                    const mobileInner = document.querySelector('.mobile-content-inner') || mobileContent;
+                    const compRect = window.activeEl.getBoundingClientRect();
+                    const compCenterX = compRect.left + compRect.width / 2;
+                    const mobileRect = mobileFrame.getBoundingClientRect();
+                    const mobileContentRect = mobileContent.getBoundingClientRect();
+                    const pcAreaRect = pcArea.getBoundingClientRect();
+                    const compW = window.activeEl.offsetWidth || 100;
+
+                    if (compCenterX >= mobileRect.left) {
+                        const relTop = compRect.top - mobileContentRect.top + mobileContent.scrollTop;
+                        const relLeft = compRect.left - mobileContentRect.left + mobileContent.scrollLeft;
+                        const clampedLeft = Math.max(0, Math.min(360 - compW, relLeft));
+                        const clampedTop = Math.max(0, relTop);
+
+                        window.activeEl.style.top = clampedTop + 'px';
+                        window.activeEl.style.left = clampedLeft + 'px';
+                        mobileInner.appendChild(window.activeEl);
+                        window.lastActiveFrame = 'mobile';
+                    } else {
+                        const relTop = compRect.top - pcAreaRect.top + pcArea.scrollTop;
+                        const relLeft = compRect.left - pcAreaRect.left + pcArea.scrollLeft;
+                        const clampedLeft = Math.max(0, Math.min(1000 - compW, relLeft));
+                        const clampedTop = Math.max(0, relTop);
+
+                        window.activeEl.style.top = clampedTop + 'px';
+                        window.activeEl.style.left = clampedLeft + 'px';
+                        pcInner.appendChild(window.activeEl);
+                        window.lastActiveFrame = 'pc';
+                    }
+                }
                 
                 if (window.activeEl.classList.contains('text-marker') || window.activeEl.classList.contains('pin-marker')) {
                     const idx = parseInt(window.activeEl.id.replace('v4-pin-', ''));

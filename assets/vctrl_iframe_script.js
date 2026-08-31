@@ -491,11 +491,41 @@ window.v4Script = `
         if (c) window.updateHandles(c);
     });
 
+    window.updateActiveFrameUI = function(type) {
+        const targetType = type || window.lastActiveFrame || 'pc';
+        const pcFrames = document.querySelectorAll('.pc-browser-frame, .pc-frame');
+        const mobileFrames = document.querySelectorAll('.mobile-frame, .mobile-browser-frame');
+        const pcCols = document.querySelectorAll('.pc-column');
+        const mobileCols = document.querySelectorAll('.mobile-column');
+
+        if (targetType === 'mobile') {
+            mobileFrames.forEach(f => f.classList.add('active-frame'));
+            mobileCols.forEach(c => c.classList.add('active-column'));
+            pcFrames.forEach(f => f.classList.remove('active-frame'));
+            pcCols.forEach(c => c.classList.remove('active-column'));
+        } else if (targetType === 'pc') {
+            pcFrames.forEach(f => f.classList.add('active-frame'));
+            pcCols.forEach(c => c.classList.add('active-column'));
+            mobileFrames.forEach(f => f.classList.remove('active-frame'));
+            mobileCols.forEach(c => c.classList.remove('active-column'));
+        }
+    };
+
     let isMarquee = false;
     let isConnectorDragging = false;
     let groupChildrenStart = null;
     document.addEventListener('mousedown', e => {
         if (e.target.closest('.sidebar') || e.target.closest('.modal') || e.target.closest('.header-metadata')) return;
+
+        const mob = e.target.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
+        const pc = e.target.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
+        if (mob) {
+            window.lastActiveFrame = 'mobile';
+            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+        } else if (pc) {
+            window.lastActiveFrame = 'pc';
+            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+        }
 
         let h = e.target.closest('.lf-drag-handle'), r = e.target.closest('.lf-resizer'), d = e.target.closest('.lf-delete-trigger'), c = e.target.closest('.lf-component');
         
@@ -533,6 +563,15 @@ window.v4Script = `
         }
         if (c) {
             isMarquee = false;
+            const compMob = c.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
+            const compPc = c.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
+            if (compMob) {
+                window.lastActiveFrame = 'mobile';
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+            } else if (compPc) {
+                window.lastActiveFrame = 'pc';
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+            }
             const isMulti = e.shiftKey || e.ctrlKey || e.metaKey;
             if (isMulti) {
                 c.classList.toggle('selected');
@@ -888,8 +927,16 @@ window.v4Script = `
             const activeEl = window.activeEl;
             const curLeft = parseInt(activeEl.style.left) || 0;
             const curTop = parseInt(activeEl.style.top) || 0;
-            const snapDx = d.x - curLeft;
-            const snapDy = d.y - curTop;
+            let snapDx = d.x - curLeft;
+            let snapDy = d.y - curTop;
+
+            // Responsive Shield: Suppress cross-frame snap jumps (> 350px) that cause elements to disappear off-screen
+            const isInsideMobileContainer = activeEl.closest('.mobile-content-inner, .mobile-content');
+            const isInsidePcContainer = activeEl.closest('.pc-content-inner, .pc-content-area');
+            if ((isInsideMobileContainer || isInsidePcContainer) && Math.abs(snapDx) > 350) {
+                snapDx = 0;
+            }
+
             if (Math.abs(snapDx) > 0.1 || Math.abs(snapDy) > 0.1) {
                 const comps = document.querySelectorAll('.lf-component.selected');
                 let hasConnectorChanges = false;
@@ -1142,18 +1189,28 @@ window.v4Script = `
             c.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected'));
             notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
         } else if (d.type === 'LF_INSERT_COMPONENT' || d.type === 'LF_INSERT_V4_COMP') {
-            const host = document.body;
-            const vh = window.innerHeight;
-            const vw = window.innerWidth;
-            const sY = window.scrollY;
-            const sX = window.scrollX;
-            
+            const pcArea = document.querySelector('.pc-content-area, .pc-content-inner');
+            const mobileContent = document.querySelector('.mobile-content, .mobile-content-area, .mobile-content-inner');
+            let host = document.body;
+
             const isPinMarker = d.className && d.className.includes('pin-marker');
             const compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);
             const compH = isPinMarker ? 28 : ((d.style && d.style.height) ? parseInt(d.style.height) || 100 : 100);
-            
-            const centerTop = sY + (vh - compH) / 2;
-            const centerLeft = sX + (vw - compW) / 2;
+
+            let centerTop = (window.innerHeight - compH) / 2;
+            let centerLeft = (window.innerWidth - compW) / 2;
+
+            if (window.lastActiveFrame === 'mobile' && mobileContent) {
+                host = mobileContent;
+                centerLeft = Math.max(10, Math.round((360 - compW) / 2));
+                centerTop = Math.max(10, Math.round(300 + mobileContent.scrollTop));
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+            } else if (pcArea) {
+                host = pcArea;
+                centerLeft = Math.max(10, Math.round((1000 - compW) / 2));
+                centerTop = Math.max(10, Math.round(300 + pcArea.scrollTop));
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+            }
             
             if (window.V4UndoManager) window.V4UndoManager.saveState();
             const v = document.createElement('div'); 
@@ -2729,46 +2786,125 @@ window.v4Script = `
                     targets.push({ x: l + w / 2, label: sName, part: 'Center', type: 'h' });
                     targets.push({ y: t + h / 2, label: sName, part: 'Middle', type: 'v' });
 
-                    // Divide mobile screen borders into 4 separate edge walls for proper inner spacing detection
+                    const frameIdStr = 'mobile-frame-' + idx;
                     rects.push({
-                        id: 'mobile-frame-' + idx + '-left',
+                        id: frameIdStr + '-left',
                         label: sName + ' Left',
                         left: leftVal,
                         top: topVal,
                         width: 0,
                         height: h,
                         right: leftVal,
-                        bottom: bottomVal
+                        bottom: bottomVal,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
                     });
                     rects.push({
-                        id: 'mobile-frame-' + idx + '-right',
+                        id: frameIdStr + '-right',
                         label: sName + ' Right',
                         left: rightVal,
                         top: topVal,
                         width: 0,
                         height: h,
                         right: rightVal,
-                        bottom: bottomVal
+                        bottom: bottomVal,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
                     });
                     rects.push({
-                        id: 'mobile-frame-' + idx + '-top',
+                        id: frameIdStr + '-top',
                         label: sName + ' Top',
                         left: leftVal,
                         top: topVal,
                         width: w,
                         height: 0,
                         right: rightVal,
-                        bottom: topVal
+                        bottom: topVal,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
                     });
                     rects.push({
-                        id: 'mobile-frame-' + idx + '-bottom',
+                        id: frameIdStr + '-bottom',
                         label: sName + ' Bottom',
                         left: leftVal,
                         top: bottomVal,
                         width: w,
                         height: 0,
                         right: rightVal,
-                        bottom: bottomVal
+                        bottom: bottomVal,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                }
+            });
+
+            document.querySelectorAll('.pc-browser-frame, .chrome-browser').forEach((f, idx) => {
+                const content = f.querySelector('.pc-content-area, .chrome-content-area') || f;
+                if (content) {
+                    const rect = content.getBoundingClientRect();
+                    const scrollX = window.scrollX || 0;
+                    const scrollY = window.scrollY || 0;
+                    const l = rect.left + scrollX;
+                    const t = rect.top + scrollY;
+                    const w = rect.width;
+                    const h = rect.height;
+                    const sName = 'PC Web Area ' + (idx + 1);
+                    
+                    targets.push({ x: l, label: sName, part: 'Left', type: 'h' });
+                    targets.push({ x: l + w, label: sName, part: 'Right', type: 'h' });
+                    targets.push({ y: t, label: sName, part: 'Top', type: 'v' });
+                    targets.push({ y: t + h, label: sName, part: 'Bottom', type: 'v' });
+                    targets.push({ x: l + w / 2, label: sName, part: 'Center', type: 'h' });
+                    targets.push({ y: t + h / 2, label: sName, part: 'Middle', type: 'v' });
+
+                    const frameIdStr = 'pc-frame-' + idx;
+                    rects.push({
+                        id: frameIdStr + '-left',
+                        label: sName + ' Left',
+                        left: l,
+                        top: t,
+                        width: 0,
+                        height: h,
+                        right: l,
+                        bottom: t + h,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-right',
+                        label: sName + ' Right',
+                        left: l + w,
+                        top: t,
+                        width: 0,
+                        height: h,
+                        right: l + w,
+                        bottom: t + h,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-top',
+                        label: sName + ' Top',
+                        left: l,
+                        top: t,
+                        width: w,
+                        height: 0,
+                        right: l + w,
+                        bottom: t,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-bottom',
+                        label: sName + ' Bottom',
+                        left: l,
+                        top: t + h,
+                        width: w,
+                        height: 0,
+                        right: l + w,
+                        bottom: t + h,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
                     });
                 }
             });

@@ -1114,6 +1114,7 @@ body {
 .badge-architecture { background: #10b981; color: #fff; }
 .badge-plan { background: #f59e0b; color: #fff; }
 .badge-ui { background: #3b82f6; color: #fff; }
+.badge-responsive-ui { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; }
 .badge-mobile-ui { background: #8b5cf6; color: #fff; }
 .badge-admin { background: #6b7280; color: #fff; }
 .badge-admin-nbos { background: #334155; color: #fff; }
@@ -2692,50 +2693,17 @@ body.drag-active #drop-overlay {
     opacity: 1;
 }
 
-/* LFmall Sprite Icons */
+/* Workspace Sprite Icons */
 svg.lf-icon {
     background-image: none !important;
 }
 .lf-icon {
-    background-image: url("https://img.lfmall.co.kr/file/WAS/display/lf2022/mobile/gnb_fnb_sp_v0.1.png");
-    background-size: 200px 160px;
     width: 40px;
     height: 40px;
     display: inline-block;
     background-repeat: no-repeat;
     pointer-events: none;
 }
-.lf-icon-home { background-position: -80px 0; }
-.lf-icon-category { background-position: 0 0; }
-.lf-icon-my { background-position: -120px 0; }
-.lf-icon-heart { background-position: -160px 0; }
-.lf-icon-search { background-position: -80px -40px; }
-.lf-icon-cart { background-position: -120px -40px; }
-.lf-icon-brand { background-position: -40px 0; }
-.lf-icon-back { background-position: 0 -40px; }
-.lf-icon-bell { background-position: -40px -40px; }
-.lf-icon-share { background-position: -160px -40px; }
-.lf-icon-party { background-position: 0 -120px; }
-
-.lf-cust-gift, .lf-cust-1to1, .lf-cust-chatbot, .lf-cust-faq, .lf-cust-truck {
-    background-image: url("https://img.lfmall.co.kr/file/WAS/apps/2023/mfront/customer/icon_customer_my_btn.png") !important;
-    background-size: 300% 200% !important;
-}
-.lf-cust-gift { background-position: 0% 0% !important; }
-.lf-cust-1to1 { background-position: 50% 0% !important; }
-.lf-cust-chatbot { background-position: 100% 0% !important; }
-.lf-cust-faq { background-position: 0% 100% !important; }
-.lf-cust-truck { background-position: 50% 100% !important; }
-
-.lf-rv-write, .lf-rv-my {
-    background-image: url("https://img.lfmall.co.kr/file/WAS/apps/2021/front/review_new/m/icon_rv_mp.png") !important;
-    background-size: 200% 100% !important;
-    background-repeat: no-repeat;
-    width: 40px;
-    height: 40px;
-}
-.lf-rv-write { background-position: 0% 0% !important; }
-.lf-rv-my { background-position: 100% 0% !important; }
 
 
 /* --- Restored Component Handles --- */

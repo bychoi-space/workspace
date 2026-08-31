@@ -1,5 +1,5 @@
 /**
- * LFmall Design Studio V4 - Premium Component Library
+ * bychoi workspace V4 - Premium Component Library
  * Optimized for high-fidelity design reviews.
  */
 
@@ -35,8 +35,8 @@ window.V4_COMPONENT_LIBRARY = {
             category: 'Atoms',
             width: '40px',
             height: '40px',
-            previewHtml: `<div class="lf-icon lf-icon-share" style="width: 24px; height: 24px; background-image: url('https://img.lfmall.co.kr/file/WAS/apps/2023/mfront/product/iconShare@2x.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-origin: content-box; filter: brightness(0) invert(1);"></div>`,
-            html: `<div class="lf-icon" style="width: 100%; height: 100%; background-image: url('https://img.lfmall.co.kr/file/WAS/apps/2023/mfront/product/iconShare@2x.png'); background-size: contain; background-repeat: no-repeat; background-position: center; padding: 8px; box-sizing: border-box; background-origin: content-box; background-clip: content-box; pointer-events: none;"></div>`
+            previewHtml: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 24px; height: 24px; color: white;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
+            html: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; padding: 8px; box-sizing: border-box;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`
         },
         {
             id: 'v4-atom-textbox',

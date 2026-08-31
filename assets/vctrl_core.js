@@ -33,34 +33,35 @@ function getInlinedEngineScript() {
     return '<script id="v4-inlined-script">\n' +
         '// Cache Buster Timestamp: ' + Date.now() + '\n' +
         (window.v4TypographyScript || '') + '\n' +
-        (window.v4UndoScript || '') + '\n' + 
-        (window.v4TableScript || '') + '\n' + 
-        (window.v4TextMeasurerScript || '') + '\n' + 
-        (window.v4UIAtomsScript || '') + '\n' + 
-        (window.v4DesignSystemScript || '') + '\n' + 
-        (window.v4ShortcutsScript || '') + '\n' + 
+        (window.v4UndoScript || '') + '\n' +
+        (window.v4TableScript || '') + '\n' +
+        (window.v4TextMeasurerScript || '') + '\n' +
+        (window.v4UIAtomsScript || '') + '\n' +
+        (window.v4DesignSystemScript || '') + '\n' +
+        (window.v4ShortcutsScript || '') + '\n' +
         (window.v4CommonScript || '') + '\n' +
         (window.v4ObjectTextScript || '') + '\n' +
         (window.v4ObjectShapeScript || '') + '\n' +
         (window.v4ObjectTableScript || '') + '\n' +
         (window.v4ObjectConnectorScript || '') + '\n' +
-        (window.v4DragResizeScript || '') + '\n' + 
-        (window.v4PortConnectorScript || '') + '\n' + 
-        (window.v4GridScript || '') + '\n' + 
-        (window.v4AccordionScript || '') + '\n' + 
+        (window.v4DragResizeScript || '') + '\n' +
+        (window.v4PortConnectorScript || '') + '\n' +
+        (window.v4GridScript || '') + '\n' +
+        (window.v4AccordionScript || '') + '\n' +
+        (window.v4ResponsiveSmartGuideScript || '') + '\n' +
         (window.v4Script || '') + '\n</script>';
 }
 
 // --- Core Logic ---
-window.loadScreen = async function(fileName) {
+window.loadScreen = async function (fileName) {
     const DOM = window.DOM || {};
     if (state.isEditing && typeof window.closeActiveEditor === 'function') {
         window.closeActiveEditor(true);
     }
-    
+
     if (typeof window.showLoading === 'function') window.showLoading("Loading: " + fileName);
     if (DOM.placeholder) DOM.placeholder.style.display = 'none';
-    
+
     const content = await fetchProjectFileContent(state.currentProject, fileName);
     if (!content) {
         if (typeof window.hideLoading === 'function') window.hideLoading();
@@ -70,7 +71,7 @@ window.loadScreen = async function(fileName) {
     }
 
     let finalContent = content;
-    
+
     // Inject/Update Styles
     const styleBlock = '<style id="v4-inlined-style">\n' + window.v4Styles + '\n</style>';
     if (finalContent.includes('id="v4-inlined-style"')) {
@@ -84,7 +85,7 @@ window.loadScreen = async function(fileName) {
 
     // Forcefully strip out any existing inlined scripts of our engine to avoid duplicates or stale code
     finalContent = finalContent.replace(/<script id="v4-inlined-script">[\s\S]*?<\/script>/gi, '');
-    
+
     // Fast and safe script stripping loop to prevent ReDoS / catastrophic backtracking on large HTML screens
     const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
     const keywords = [
@@ -127,7 +128,7 @@ window.loadScreen = async function(fileName) {
             clearTimeout(loadTimeout);
             if (typeof window.hideLoading === 'function') window.hideLoading();
             iframe.onload = null;
-            
+
             // Phase 3: Import legacy description pins ONCE, then render sidebar list
             const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'text' || p.text || p.html);
             if (legacyPins.length > 0 && iframe.contentWindow) {
@@ -136,7 +137,7 @@ window.loadScreen = async function(fileName) {
                 }, 80);
             }
             if (typeof window.renderDescriptionList === 'function') {
-                setTimeout(window.renderDescriptionList, 100); 
+                setTimeout(window.renderDescriptionList, 100);
             }
 
             // [Bug Fix 1] Pre-warm SmartGuide snap targets after iframe DOM is fully rendered.
@@ -167,47 +168,50 @@ window.loadScreen = async function(fileName) {
     }
     if (!scMeta.connectors || !Array.isArray(scMeta.connectors)) scMeta.connectors = [];
 
-    state.activeFile = { 
-        name: fileName, 
+    state.activeFile = {
+        name: fileName,
         size: (content.length / 1024).toFixed(1) + ' KB',
         meta: scMeta
     };
     state.connectors = scMeta.connectors;
-    
+
     const fileNameEl = (DOM && DOM.fileName) || document.getElementById('file-name-display');
     if (fileNameEl) fileNameEl.innerText = state.projectMetadata.title || state.currentProject;
-    
-    if (typeof window.updateProperties === 'function') window.updateProperties(); 
-    
+
+    if (typeof window.updateProperties === 'function') window.updateProperties();
+
     if (scMeta.defaultTab === 'description') {
         if (typeof window.switchSidebarTab === 'function') window.switchSidebarTab('description');
     } else {
-        if (typeof window.switchSidebarTab === 'function') window.switchSidebarTab('editor'); 
+        if (typeof window.switchSidebarTab === 'function') window.switchSidebarTab('editor');
     }
-    
+
     setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 150);
 };
 
-window.handleDeleteScreen = async function(name, sha) {
+window.handleDeleteScreen = async function (name, sha) {
     if (state.isReadOnly) return window.showAuthModal?.();
     const confirmed = await Notification.confirm(
-        `'${name}' 스크린을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`, 
-        "스크린 삭제", 
+        `'${name}' 스크린을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
+        "스크린 삭제",
         "warning"
     );
     if (!confirmed) return;
-    
+
     if (typeof window.showLoading === 'function') window.showLoading("Deleting: " + name);
-    
-    const success = await deleteFileFromGitHub(`${state.currentProject}/${name}`, sha);
+
+    let success = await deleteFileFromGitHub(`${state.currentProject}/${name}`, sha);
+    if (!success && window.location.protocol === 'file:') {
+        success = true;
+    }
     if (success) {
         state.screens = state.screens.filter(s => s.name !== name);
         if (state.projectMetadata.screens) delete state.projectMetadata.screens[name];
         if (state.projectMetadata.screenOrder) {
             state.projectMetadata.screenOrder = state.projectMetadata.screenOrder.filter(n => n !== name);
         }
-        await saveProjectMetadata(state.currentProject, state.projectMetadata, () => {});
-        
+        await saveProjectMetadata(state.currentProject, state.projectMetadata, () => { });
+
         if (state.activeFile && state.activeFile.name === name) {
             location.href = `viewer.html?project=${state.currentProject}`;
         } else {
@@ -221,21 +225,21 @@ window.handleDeleteScreen = async function(name, sha) {
 
 
 
-window.insertAtomicComponent = function(type, name) {
+window.insertAtomicComponent = function (type, name) {
     if (state.isReadOnly) return window.showAuthModal?.();
     if (!state.activeFile) return window.Notification?.alert("Please select a screen first.", "Notice", "warning");
-    
+
     let contentHtml = '';
     const id = `lf-comp-${Date.now()}`;
     let defaultStyle = { width: '120px', height: '100px' };
 
-    if (name === 'LF Logo') {
-        contentHtml = `<div class="v4-logo-img lf-icon" style="width:100%; height:100%; background-image: url('https://img.lfmall.co.kr/file/WAS/apps/2024/mfront/logo/lf_logo_mo.png'); background-size: contain; background-position: center; background-repeat: no-repeat; pointer-events: none;"></div>`;
-        defaultStyle = { width: '40px', height: '40px' };
+    if (name === 'SISUN Logo' || name === 'Workspace Logo') {
+        contentHtml = `<svg viewBox="0 0 200 40" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>`;
+        defaultStyle = { width: '120px', height: '24px', color: '#000000' };
     } else if (name === 'Primary Button') {
         contentHtml = `<div style="background:#00e5ff; color:#0f172a; border:none; width:100%; height:100%; display:flex; align-items:center; justify-content:center; border-radius:8px; font-weight:400; font-size:12px; font-family:inherit; box-shadow:0 4px 15px rgba(0,229,255,0.3); pointer-events:none;">BUTTON</div>`;
         defaultStyle = { width: '120px', height: '36px' };
-    } else if (name === 'LF Discount') {
+    } else if (name === 'LF Discount' || name === 'Special Discount') {
         contentHtml = `<div style="color:#E02020; font-size:24px; font-weight:800; font-family:sans-serif; text-align:center; pointer-events:none; line-height:1.2;">20%</div>`;
         defaultStyle = { width: '60px', height: '30px' };
     } else if (name === 'Check Box') {
@@ -248,7 +252,7 @@ window.insertAtomicComponent = function(type, name) {
         contentHtml = `<div class="v4-accordion-container" data-expanded="false" data-sub-count="3" style="width:100%; height:100%; display:flex; flex-direction:column; background:rgb(30, 41, 59); border:1.6px solid rgb(255, 255, 255); border-radius:8px; overflow:hidden; box-sizing:border-box;"><div class="v4-accordion-header" style="height:36px; padding:0 12px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; background:rgba(255, 255, 255, 0.05); user-select:none; border-bottom:1.6px solid rgba(255,255,255,0.1); box-sizing:border-box; width:100%; flex-shrink:0;"><span class="v4-accordion-title-text" style="color:#ffffff; font-size:12px; font-weight:400; font-family:inherit; pointer-events:none;">Accordion Header</span><span class="v4-accordion-chevron" style="color:#ffffff; font-size:10px; pointer-events:none; transition:transform 0.2s;">▼</span></div><div class="v4-accordion-body" style="display:none; flex-direction:column; width:100%; box-sizing:border-box; background:rgba(0,0,0,0.15);"><div class="v4-accordion-item v4-editable-cell" contenteditable="true" style="padding:8px 12px; font-size:12px; font-weight:400; color:#cccccc; border-bottom:1.6px solid rgba(255,255,255,0.05); font-family:inherit; outline:none; -webkit-user-select:text; user-select:text;">Sub Item 1</div><div class="v4-accordion-item v4-editable-cell" contenteditable="true" style="padding:8px 12px; font-size:12px; font-weight:400; color:#cccccc; border-bottom:1.6px solid rgba(255,255,255,0.05); font-family:inherit; outline:none; -webkit-user-select:text; user-select:text;">Sub Item 2</div><div class="v4-accordion-item v4-editable-cell" contenteditable="true" style="padding:8px 12px; font-size:12px; font-weight:400; color:#cccccc; font-family:inherit; outline:none; -webkit-user-select:text; user-select:text;">Sub Item 3</div></div></div>`;
         defaultStyle = { width: '180px', height: '36px' };
     } else if (name === 'Grid UI') {
-        contentHtml = `<div class="v4-grid-container" data-pagination="true" data-row-count="5" data-columns="[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;checkbox&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;번호&quot;,&quot;type&quot;:&quot;number&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;라이브 방송명&quot;,&quot;type&quot;:&quot;text&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;방송상태&quot;,&quot;type&quot;:&quot;status&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;등록/수정자&quot;,&quot;type&quot;:&quot;author&quot;,&quot;width&quot;:&quot;100px&quot;}]" style="width:100%; height:100%; display:flex; flex-direction:column; background:#ffffff; border:1.6px solid rgb(226,232,240); border-radius:8px; overflow:hidden; box-sizing:border-box;"><div class="v4-grid-table-wrapper" style="width:100%; height:calc(100% - 36px); overflow:auto; box-sizing:border-box;"><table style="width:max-content; table-layout:fixed; border-collapse:collapse; background:#ffffff; box-sizing:border-box;"><colgroup><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"></colgroup><thead><tr style="height:40px; background:#f8fafc; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box;"><th class="v4-grid-cell v4-grid-check-col" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0; font-weight:normal;"><input type="checkbox"></th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">번호 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">라이브 방송명 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">방송상태 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">등록/수정자 ⇅</th></tr></thead><tbody style="box-sizing:border-box;"><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1024</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[헤지스] 여름 맞이 린넨 셔츠 특가 라이브</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(52,211,153,0.15); color:#10b981; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송중</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">김엘에프</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1023</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[닥스] 프리미엄 실크 타이 단독 런칭 쇼</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(251,191,36,0.15); color:#d97706; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송예정</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">이닥스</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1022</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[라푸마] 아웃도어 바람막이 클리어런스 세일</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(239,68,68,0.1); color:#ef4444; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송종료</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">박라푸마</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1021</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[질스튜어트] 봄 신상 스니커즈 한정 라이브</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(52,211,153,0.15); color:#10b981; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송중</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">최질스</td></tr><tr style="height:40px; border-bottom:none; box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1020</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[바네사브루노] 가을 컬렉션 룩북 공개 생방송</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(251,191,36,0.15); color:#d97706; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송예정</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">정바네</td></tr></tbody></table></div><div class="v4-grid-footer" style="height:36px; padding:0 12px; display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border-top:1.6px solid rgb(226,232,240); box-sizing:border-box; width:100%; flex-shrink:0;"><span style="font-size:11px; color:#64748b; font-family:inherit;">1/27</span><div class="v4-grid-pages" style="font-size:11px; color:#64748b; cursor:pointer; font-family:inherit;">◀ 1 2 3 4 5 ▶</div><span style="font-size:11px; color:#64748b; font-family:inherit;">Page Size 100</span></div></div>`;
+        contentHtml = `<div class="v4-grid-container" data-pagination="true" data-row-count="5" data-columns="[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;checkbox&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;번호&quot;,&quot;type&quot;:&quot;number&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;라이브 방송명&quot;,&quot;type&quot;:&quot;text&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;방송상태&quot;,&quot;type&quot;:&quot;status&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;등록/수정자&quot;,&quot;type&quot;:&quot;author&quot;,&quot;width&quot;:&quot;100px&quot;}]" style="width:100%; height:100%; display:flex; flex-direction:column; background:#ffffff; border:1.6px solid rgb(226,232,240); border-radius:8px; overflow:hidden; box-sizing:border-box;"><div class="v4-grid-table-wrapper" style="width:100%; height:calc(100% - 36px); overflow:auto; box-sizing:border-box;"><table style="width:max-content; table-layout:fixed; border-collapse:collapse; background:#ffffff; box-sizing:border-box;"><colgroup><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"></colgroup><thead><tr style="height:40px; background:#f8fafc; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box;"><th class="v4-grid-cell v4-grid-check-col" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0; font-weight:normal;"><input type="checkbox"></th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">번호 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">라이브 방송명 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">방송상태 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">등록/수정자 ⇅</th></tr></thead><tbody style="box-sizing:border-box;"><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1024</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[기획전] 여름 맞이 린넨 셔츠 특가 라이브</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(52,211,153,0.15); color:#10b981; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송중</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">홍길동</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1023</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[프리미엄] 프리미엄 실크 타이 단독 런칭 쇼</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(251,191,36,0.15); color:#d97706; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송예정</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">이영희</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1022</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[아웃도어] 아웃도어 바람막이 클리어런스 세일</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(239,68,68,0.1); color:#ef4444; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송종료</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">박민수</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1021</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[신상품] 봄 신상 스니커즈 한정 라이브</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(52,211,153,0.15); color:#10b981; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송중</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">최현우</td></tr><tr style="height:40px; border-bottom:none; box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1020</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[컬렉션] 가을 컬렉션 룩북 공개 생방송</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(251,191,36,0.15); color:#d97706; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송예정</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">정수진</td></tr></tbody></table></div><div class="v4-grid-footer" style="height:36px; padding:0 12px; display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border-top:1.6px solid rgb(226,232,240); box-sizing:border-box; width:100%; flex-shrink:0;"><span style="font-size:11px; color:#64748b; font-family:inherit;">1/27</span><div class="v4-grid-pages" style="font-size:11px; color:#64748b; cursor:pointer; font-family:inherit;">◀ 1 2 3 4 5 ▶</div><span style="font-size:11px; color:#64748b; font-family:inherit;">Page Size 100</span></div></div>`;
         defaultStyle = { width: '500px', height: '336px' };
     } else if (name === 'Search Bar') {
         contentHtml = `<div class="v4-searchbar-container" data-placeholder="원스피어 통합검색" style="display:flex; align-items:center; justify-content:space-between; width:100%; height:100%; background:rgb(255, 255, 255); border:1.6px solid rgb(200, 200, 200); border-radius:9999px; padding:0 12px 0 16px; box-sizing:border-box; overflow:hidden; pointer-events:auto;"><div class="v4-searchbar-text v4-editable-cell" contenteditable="true" data-placeholder="원스피어 통합검색" style="flex:1; border:none; outline:none; background:transparent; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; min-width:0; padding:0; line-height:1.2; -webkit-user-select:text; user-select:text; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;"></div><div class="v4-searchbar-icon-wrap" style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; flex-shrink:0; margin-left:8px; pointer-events:none;"><svg viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; background-image:none !important;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div></div>`;
@@ -269,13 +273,16 @@ window.insertAtomicComponent = function(type, name) {
         } else if (name === 'Download') {
             contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:8px; box-sizing:border-box; background-image: none !important;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>`;
         } else if (name === 'Share Premium') {
-            contentHtml = `<div class="lf-icon" style="width:100%; height:100%; background-image: url('https://img.lfmall.co.kr/file/WAS/apps/2023/mfront/product/iconShare@2x.png'); background-size: contain; background-position: center; background-repeat: no-repeat; padding: 8px; box-sizing: border-box; background-origin: content-box; background-clip: content-box; pointer-events: none;"></div>`;
+            contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:8px; box-sizing:border-box;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`;
         } else if (name === 'Logout') {
             contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:8px; box-sizing:border-box;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>`;
         } else if (name === 'Login') {
             contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:8px; box-sizing:border-box;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="10 17 5 12 10 7"></polyline><line x1="21" y1="12" x2="5" y2="12"></line></svg>`;
         } else if (name === 'Sign Up') {
             contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:8px; box-sizing:border-box;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="17" y1="11" x2="23" y2="11"></line></svg>`;
+        } else if (name === 'SISUN Logo') {
+            contentHtml = `<svg viewBox="0 0 200 40" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>`;
+            defaultStyle = { width: '120px', height: '24px', color: '#000000' };
         } else if (name.startsWith('Cust ')) {
             const iconClass = 'lf-' + name.toLowerCase().replace(' ', '-');
             contentHtml = `<div class="lf-icon ${iconClass}"></div>`;
@@ -296,7 +303,7 @@ window.insertAtomicComponent = function(type, name) {
 
 // Note: insertV4ComponentById is now handled by vctrl_v4_addon.js for modularity.
 
-window.getCascadedPosition = function(startX = 120, startY = 300) {
+window.getCascadedPosition = function (startX = 120, startY = 300) {
     let x = startX, y = startY;
     const step = 25;
     const list = state.activeFile?.meta.description || [];
@@ -311,14 +318,14 @@ window.getCascadedPosition = function(startX = 120, startY = 300) {
 
 
 
-window.handleTextCreation = function() {
+window.handleTextCreation = function () {
     if (state.isReadOnly) return window.showAuthModal?.();
     if (!state.activeFile) return window.Notification?.alert("스크린을 선택해주세요.", "알림", "warning");
-    
+
     if (!state.activeFile.meta.description) {
         state.activeFile.meta.description = [];
     }
-    
+
     const newIdx = state.activeFile.meta.description.length;
     state.activeFile.meta.description.push({
         text: "Edit Text",
@@ -327,11 +334,11 @@ window.handleTextCreation = function() {
         y: 430,
         standardized: true
     });
-    
+
     if (typeof window.renderDescriptionList === 'function') {
         window.renderDescriptionList();
     }
-    
+
     if (typeof window.insertV4ComponentById === 'function') {
         window.insertV4ComponentById('v4-tool-text', newIdx);
     } else {
@@ -341,10 +348,10 @@ window.handleTextCreation = function() {
 };
 
 // Textbox Creation (NOT a description pin - pure editable text box on canvas)
-window.handleTextboxCreation = function() {
+window.handleTextboxCreation = function () {
     if (state.isReadOnly) return window.showAuthModal?.();
     if (!state.activeFile) return window.Notification?.alert("스크린을 선택해주세요.", "알림", "warning");
-    
+
     if (typeof window.insertV4ComponentById === 'function') {
         window.insertV4ComponentById('v4-tool-text');
     } else {
@@ -353,9 +360,9 @@ window.handleTextboxCreation = function() {
     markAsDirty();
 };
 
-window.getIframeHTML = async function() {
+window.getIframeHTML = async function () {
     const isFileProtocol = window.location.protocol === 'file:';
-    
+
     if (!isFileProtocol) {
         try {
             if (DOM.iframe && DOM.iframe.contentDocument) {
@@ -391,18 +398,18 @@ window.getIframeHTML = async function() {
     });
 };
 
-window.handleGlobalSave = async function() {
+window.handleGlobalSave = async function () {
     const btn = document.getElementById('btn-global-save');
     if (!btn || btn.disabled) return;
 
     if (state.isReadOnly) return window.showAuthModal?.();
-    
+
     // 1. Get revision history message with Prompt (Default "")
     let changeMsg = "";
     if (window.Notification && typeof window.Notification.prompt === 'function') {
         const res = await window.Notification.prompt(
-            "이번 재개정(저장)의 상세 변경 사유를 입력해주세요. (입력하지 않으면 이력이 기록되지 않습니다.)", 
-            "", 
+            "이번 재개정(저장)의 상세 변경 사유를 입력해주세요. (입력하지 않으면 이력이 기록되지 않습니다.)",
+            "",
             "재개정 이력 기록"
         );
         if (res === null) {
@@ -432,7 +439,7 @@ window.handleGlobalSave = async function() {
         btn.style.position = 'relative';
         btn.style.overflow = 'hidden';
         btn.innerHTML = `<span class="material-icons-outlined" style="font-size:15px;">save</span> 저장 중..<span id="save-loading-bar" style="position:absolute; left:0; bottom:0; height:3px; width:0%; background:rgba(255,255,255,0.9); border-radius:0 0 8px 8px; transition:width 2.5s cubic-bezier(0.4,0,0.2,1);"></span>`;
-        
+
         requestAnimationFrame(() => {
             const bar = document.getElementById('save-loading-bar');
             if (bar) bar.style.width = '90%';
@@ -461,25 +468,25 @@ window.handleGlobalSave = async function() {
         };
 
         let htmlContent = await getIframeHTML();
-        
+
         let nextVer = undefined;
         const activeFileName = state.activeFile ? state.activeFile.name : null;
         const isCoverScreenSave = activeFileName && ((state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]?.type === 'cover') || (htmlContent && (htmlContent.includes('cover-version') || htmlContent.includes('cover-jira-id'))));
-        
+
         if (htmlContent && isCoverScreenSave) {
             // Parse current version to determine next version
             let currentVer = 0.1;
-            const verMatch = htmlContent.match(/(<div[^>]*id="cover-version-val"[^>]*>v?)([\d.]+)(<\/div>)/i) || 
-                             htmlContent.match(/(<div[^>]*id="cover-version"[^>]*>[\s\S]*?<div[^>]*class="v4-editable-cell"[^>]*>v?)([\d.]+)(<\/div>)/i);
-            
+            const verMatch = htmlContent.match(/(<div[^>]*id="cover-version-val"[^>]*>v?)([\d.]+)(<\/div>)/i) ||
+                htmlContent.match(/(<div[^>]*id="cover-version"[^>]*>[\s\S]*?<div[^>]*class="v4-editable-cell"[^>]*>v?)([\d.]+)(<\/div>)/i);
+
             if (verMatch && verMatch[2]) {
                 currentVer = parseFloat(verMatch[2]);
             } else if (state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]?.version !== undefined) {
                 currentVer = parseFloat(state.projectMetadata.screens[activeFileName].version);
             }
-            
+
             nextVer = parseFloat((currentVer + 0.1).toFixed(1));
-            
+
             // Sync all cover metadata and auto-increment version
             htmlContent = syncCoverMetadata(htmlContent, Object.assign({}, state.projectMetadata, projectMeta), true, activeFileName);
         } else if (htmlContent && htmlContent.includes('cover-jira-id')) {
@@ -487,13 +494,13 @@ window.handleGlobalSave = async function() {
             htmlContent = htmlContent.replace(/(<div[^>]*id="cover-jira-id"[^>]*>)[^<]*(<\/div>)/i, `$1${jiraValue}$2`);
         }
 
-        const success = await updateScreenMetadata(state.currentProject, activeFileName, { 
-            projectMeta, 
+        const success = await updateScreenMetadata(state.currentProject, activeFileName, {
+            projectMeta,
             htmlContent,
             version: nextVer,
             description: state.activeFile ? state.activeFile.meta.description : [],
             existingMetadata: state.projectMetadata
-        }, () => {});
+        }, () => { });
 
         const bar = document.getElementById('save-loading-bar');
         if (bar) { bar.style.transition = 'width 0.3s ease'; bar.style.width = '100%'; }
@@ -510,13 +517,13 @@ window.handleGlobalSave = async function() {
             markAsClean();
             Object.assign(state.projectMetadata, projectMeta);
             if (projectMeta.title && DOM.fileName) DOM.fileName.innerText = projectMeta.title;
-            
+
             // 실시간 좌측 하단 UI 업데이트
             const updatedTxt = document.getElementById('meta-updated-txt');
             if (updatedTxt) {
                 updatedTxt.innerText = `최종 업데이트: ${updatedTimeStr}`;
             }
-            
+
             if (typeof window.showToast === 'function') {
                 window.showToast("저장이 성공적으로 완료되었습니다.", "success");
             }
@@ -545,7 +552,7 @@ window.handleGlobalSave = async function() {
             } catch (err) {
                 console.error("Failed to append project revision history:", err);
             }
-            
+
             btn.style.setProperty('background', 'linear-gradient(135deg, #22c55e, #16a34a)', 'important');
             btn.innerHTML = `<span class="material-icons-outlined" style="font-size:15px;">check_circle</span> 저장 완료`;
             setTimeout(() => {
@@ -583,7 +590,7 @@ window.handleGlobalSave = async function() {
 // --- State Management ---
 window.MessageHub = {
     handlers: {},
-    
+
     // Support multiple subscribers for the same message type
     subscribe(type, callback) {
         if (!this.handlers[type]) this.handlers[type] = [];
@@ -607,7 +614,7 @@ window.MessageHub = {
         window.addEventListener('message', (e) => {
             const data = e.data;
             if (!data || !data.type) return;
-            
+
             if (window.DEBUG_MODE) {
                 console.log(`%c[MessageHub] IN: ${data.type}`, "color: #10b981;", data);
             }
@@ -655,13 +662,13 @@ window.MessageHub = {
                     if (typeof window.renderDescriptionList === 'function') {
                         window.renderDescriptionList(window.state.activeFile.meta.description);
                     }
-                    
+
                     // Trigger child iframe to re-order and re-index all remaining text-markers
                     const DOM = window.DOM;
                     if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
                         MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { pins: window.state.activeFile.meta.description });
                     }
-                    
+
                     markAsDirty();
                 }
             } else if (data.type === 'LF_TABLE_SIZE_CHANGED') {
@@ -684,11 +691,11 @@ window.MessageHub = {
                 }
                 const activeEl = document.activeElement;
                 const isTyping = activeEl && (
-                    activeEl.tagName === 'INPUT' || 
-                    activeEl.tagName === 'TEXTAREA' || 
-                    activeEl.tagName === 'SELECT' || 
-                    activeEl.isContentEditable || 
-                    activeEl.closest('#floating-inspector-card') !== null || 
+                    activeEl.tagName === 'INPUT' ||
+                    activeEl.tagName === 'TEXTAREA' ||
+                    activeEl.tagName === 'SELECT' ||
+                    activeEl.isContentEditable ||
+                    activeEl.closest('#floating-inspector-card') !== null ||
                     activeEl.closest('#sidebar-right') !== null
                 );
 
@@ -702,11 +709,11 @@ window.MessageHub = {
                 } else {
                     state.isEditing = true;
                     state.editingIndex = data.id;
-                    
+
                     if (window.GroupingManager) {
                         let selectedIds = (typeof window.GroupingManager.getSelectedIds === 'function') ? [...window.GroupingManager.getSelectedIds()] : [];
                         let selectedIdsIsGroupMap = (typeof window.GroupingManager.getSelectedIdsIsGroupMap === 'function') ? { ...window.GroupingManager.getSelectedIdsIsGroupMap() } : {};
-                        
+
                         if (data.shiftKey) {
                             if (selectedIds.includes(data.id)) {
                                 selectedIds = selectedIds.filter(id => id !== data.id);
@@ -723,7 +730,7 @@ window.MessageHub = {
                                 selectedIdsIsGroupMap = { [data.id]: !!data.isGroup };
                             }
                         }
-                        
+
                         if (typeof window.GroupingManager.setSelectedIds === 'function') {
                             window.GroupingManager.setSelectedIds(selectedIds);
                         }
@@ -733,16 +740,16 @@ window.MessageHub = {
                         if (typeof window.GroupingManager.updateSelectionUI === 'function') {
                             window.GroupingManager.updateSelectionUI();
                         }
-                        
+
                         if (window.state) {
                             window.state.selectedIds = [...selectedIds];
                         }
-                        
+
                         // Sync selection state back to iframe DOM to prevent local desync
                         if (DOM.iframe && DOM.iframe.contentWindow) {
                             MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
                         }
-                        
+
                         if (!isTyping) {
                             if (selectedIds.length === 1) {
                                 if (typeof window.updateProperties === 'function') window.updateProperties(data);
@@ -757,15 +764,15 @@ window.MessageHub = {
             } else if (data.type === 'LF_PASTE_COMPLETED') {
                 try {
                     if (window.SmartGuide) {
-                        try { window.SmartGuide.findSnapTargets(); } catch(e) {}
+                        try { window.SmartGuide.findSnapTargets(); } catch (e) { }
                     }
                     const activeEl = document.activeElement;
                     const isTyping = activeEl && (
-                        activeEl.tagName === 'INPUT' || 
-                        activeEl.tagName === 'TEXTAREA' || 
-                        activeEl.tagName === 'SELECT' || 
-                        activeEl.isContentEditable || 
-                        activeEl.closest('#floating-inspector-card') !== null || 
+                        activeEl.tagName === 'INPUT' ||
+                        activeEl.tagName === 'TEXTAREA' ||
+                        activeEl.tagName === 'SELECT' ||
+                        activeEl.isContentEditable ||
+                        activeEl.closest('#floating-inspector-card') !== null ||
                         activeEl.closest('#sidebar-right') !== null
                     );
                     state.isEditing = true;
@@ -777,7 +784,7 @@ window.MessageHub = {
                     }
 
                     if (DOM.iframe && DOM.iframe.contentWindow) {
-                        try { DOM.iframe.contentWindow.focus(); } catch(e) {}
+                        try { DOM.iframe.contentWindow.focus(); } catch (e) { }
                     }
 
                     if (window.GroupingManager) {
@@ -788,7 +795,7 @@ window.MessageHub = {
                             window.GroupingManager.setSelectedIdsIsGroupMap(groupMap);
                         }
                         if (typeof window.GroupingManager.updateSelectionUI === 'function') {
-                            try { window.GroupingManager.updateSelectionUI(); } catch(e) {}
+                            try { window.GroupingManager.updateSelectionUI(); } catch (e) { }
                         }
                         if (window.state) {
                             window.state.selectedIds = [...newIds];
@@ -799,17 +806,17 @@ window.MessageHub = {
                         if (!isTyping) {
                             if (newIds.length === 1 && data.firstCompStyles) {
                                 if (typeof window.updateProperties === 'function') {
-                                    try { window.updateProperties(data.firstCompStyles); } catch(e) {}
+                                    try { window.updateProperties(data.firstCompStyles); } catch (e) { }
                                 }
                             } else {
                                 if (typeof window.updateProperties === 'function') {
-                                    try { window.updateProperties(); } catch(e) {}
+                                    try { window.updateProperties(); } catch (e) { }
                                 }
                             }
                         }
                     } else {
                         if (!isTyping && typeof window.updateProperties === 'function') {
-                            try { window.updateProperties(data.firstCompStyles || {}); } catch(e) {}
+                            try { window.updateProperties(data.firstCompStyles || {}); } catch (e) { }
                         }
                     }
                 } catch (pasteErr) {
@@ -831,15 +838,15 @@ window.MessageHub = {
                     const iframeRect = DOM.iframe.getBoundingClientRect();
                     const parentClientX = data.clientX + iframeRect.left;
                     const parentClientY = data.clientY + iframeRect.top;
-                    
+
                     const canvasRect = DOM.canvas.getBoundingClientRect();
                     const mx = parentClientX - canvasRect.left;
                     const my = parentClientY - canvasRect.top;
-                    
+
                     const state = window.state;
                     const s = state.transform.scale;
                     const ns = Math.max(0.1, Math.min(s * (1 + (data.deltaY > 0 ? -0.1 : 0.1)), 20));
-                    
+
                     state.transform.x = mx - (mx - state.transform.x) * (ns / s);
                     state.transform.y = my - (my - state.transform.y) * (ns / s);
                     state.transform.scale = ns;
@@ -877,13 +884,13 @@ window.MessageHub = {
 
 // --- Virtual Undo Manager Proxy (Parent to Child bridge) ---
 window.V4UndoManager = {
-    saveState: function() {
+    saveState: function () {
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
             MessageHub.send(iframe.contentWindow, 'LF_SAVE_UNDO');
         }
     },
-    undo: function() {
+    undo: function () {
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
             MessageHub.send(iframe.contentWindow, 'LF_TRIGGER_UNDO');
@@ -892,7 +899,7 @@ window.V4UndoManager = {
 };
 
 // 3. Central Event Helpers
-window.markAsDirty = function() {
+window.markAsDirty = function () {
     // Sync connectors to iframe for Undo support
     const iframe = document.getElementById('main-iframe');
     if (iframe && iframe.contentWindow && window.state && window.state.connectors) {
@@ -911,7 +918,7 @@ window.markAsDirty = function() {
 };
 
 
-window.markAsClean = function() {
+window.markAsClean = function () {
     state.hasUnsavedChanges = false;
     const btnSave = document.getElementById('btn-global-save');
     if (btnSave) {
@@ -919,7 +926,7 @@ window.markAsClean = function() {
     }
 };
 
-window.checkUnsavedChanges = async function() {
+window.checkUnsavedChanges = async function () {
     if (!state.hasUnsavedChanges) return true;
     const confirmed = await Notification.confirm("저장되지 않은 수정사항이 있습니다. 무시하고 이동하시겠습니까?", "알림", "warning");
     if (confirmed) {
@@ -939,13 +946,13 @@ window.addEventListener('beforeunload', (e) => {
 
 
 // 6. Initial Bootstrap
-window.checkEnvironment = function() {
+window.checkEnvironment = function () {
     if (window.location.protocol === 'file:') {
         console.warn("[ENV] Running on file:// protocol. Direct iframe DOM access is blocked. Using MessageHub.");
     }
 };
 
-window.init = async function() {
+window.init = async function () {
     try {
         const DOM = window.DOM || {};
         console.log("[INIT] Initialization started...");
@@ -983,7 +990,7 @@ window.init = async function() {
         });
 
         state.screens = initialScreens;
-        
+
         if (!fileName && state.screens.length > 0) {
             fileName = state.screens[0].name;
             const newUrl = new URL(window.location);
@@ -1044,8 +1051,8 @@ window.init = async function() {
         document.addEventListener('click', async (e) => {
             // 0. PDF Export Button
             if (e.target && e.target.closest('#btn-export-project-pdf')) {
-                const currentProj = (typeof state !== 'undefined' && state && state.currentProject) 
-                    ? state.currentProject 
+                const currentProj = (typeof state !== 'undefined' && state && state.currentProject)
+                    ? state.currentProject
                     : new URLSearchParams(window.location.search).get('project');
                 if (currentProj) {
                     if (typeof exportProjectToPDF === 'function') {
@@ -1069,13 +1076,13 @@ window.init = async function() {
             if (e.target && e.target.closest('#btn-add-screen-submit')) {
                 e.preventDefault();
                 const btnSubmit = e.target.closest('#btn-add-screen-submit');
-                
+
                 const selectedCard = document.querySelector('.template-card.selected');
                 if (!selectedCard) {
                     window.Notification?.alert("템플릿을 선택해주세요.", "알림", "warning");
                     return;
                 }
-                
+
                 const inputName = document.getElementById('new-screen-name');
                 const screenName = inputName?.value?.trim();
                 if (!screenName) {
@@ -1095,13 +1102,14 @@ window.init = async function() {
                     JIRA: state.projectMetadata.jira || '-',
                     AUTHOR: state.projectMetadata.assignee || '-',
                     DATE: state.projectMetadata.period || new Date().toLocaleDateString('ko-KR')
-                }, msg => { 
+                }, msg => {
                     const placeholderTxt = document.getElementById('placeholder-txt');
-                    if (placeholderTxt) placeholderTxt.innerText = msg; 
+                    if (placeholderTxt) placeholderTxt.innerText = msg;
                 });
 
                 if (success) {
-                    location.reload();
+                    const targetFilename = screenName.endsWith('.html') ? screenName : `${screenName}.html`;
+                    window.location.href = `viewer.html?project=${encodeURIComponent(state.currentProject)}&file=${encodeURIComponent(targetFilename)}`;
                 } else {
                     window.Notification?.alert("화면 생성에 실패했습니다.", "오류", "error");
                     btnSubmit.disabled = false;
@@ -1119,7 +1127,7 @@ window.init = async function() {
                 });
                 card.classList.add('selected');
                 card.classList.add('active');
-                
+
                 const inputName = document.getElementById('new-screen-name');
                 if (inputName) {
                     const defaultName = card.dataset.defaultName || "new_screen";
@@ -1145,18 +1153,18 @@ window.init = async function() {
         document.addEventListener('keydown', (e) => {
             if (state.isReadOnly) return;
             // Ignore if typing in editable areas, input, select, textarea, ql-editor
-            const isInput = e.target.isContentEditable || 
-                            ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) ||
-                            !!(e.target.closest && e.target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
+            const isInput = e.target.isContentEditable ||
+                ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) ||
+                !!(e.target.closest && e.target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
             if (isInput) return;
-            
+
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
                 e.preventDefault();
                 console.log("[V4 Core] Parent Ctrl+Z caught. Triggering child undo.");
                 if (window.V4UndoManager) window.V4UndoManager.undo();
             }
         });
-        
+
         if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => {
             const collapsed = DOM.sidebarLeft.classList.toggle('collapsed');
             DOM.btnToggleLeft.querySelector('span').innerText = collapsed ? 'chevron_right' : 'chevron_left';
@@ -1193,7 +1201,7 @@ window.init = async function() {
                 }
             });
         }
-        
+
         // RESTORED: Top Bar Tool Buttons
         if (DOM.btnSelect) DOM.btnSelect.onclick = () => window.setTool?.('select');
         if (DOM.btnHand) DOM.btnHand.onclick = () => window.setTool?.('hand');
@@ -1212,13 +1220,13 @@ window.init = async function() {
                 if (realModal) realModal.classList.remove('active');
             };
         }
-        
+
         window.addEventListener('keydown', (e) => {
             const isF2 = e.key === 'F2' || e.code === 'F2';
-            const isInput = e.target.isContentEditable || 
-                            ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) ||
-                            !!(e.target.closest && e.target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
-            
+            const isInput = e.target.isContentEditable ||
+                ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) ||
+                !!(e.target.closest && e.target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
+
             if (isInput && !isF2) return;
 
             if (isF2) {
@@ -1230,7 +1238,7 @@ window.init = async function() {
                 }
                 const activeIframe = (window.DOM && window.DOM.iframe) || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
                 if (activeIframe && activeIframe.contentWindow) {
-                    try { activeIframe.contentWindow.focus(); } catch(err) {}
+                    try { activeIframe.contentWindow.focus(); } catch (err) { }
                     activeIframe.contentWindow.postMessage({ type: 'LF_TRIGGER_F2' }, '*');
                 }
             }
@@ -1240,7 +1248,7 @@ window.init = async function() {
         window.addEventListener('keydown', (e) => {
             const isF2 = e.key === 'F2' || e.code === 'F2';
             const isInput = e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
-            
+
             if (isInput && !isF2) return;
 
             if (isF2) {
@@ -1259,9 +1267,9 @@ window.init = async function() {
 
 
             const isS = e.key.toLowerCase() === 's' || e.code === 'KeyS';
-            if ((e.ctrlKey || e.metaKey) && isS) { 
-                e.preventDefault(); 
-                handleGlobalSave(); 
+            if ((e.ctrlKey || e.metaKey) && isS) {
+                e.preventDefault();
+                handleGlobalSave();
                 return;
             }
 
@@ -1280,19 +1288,19 @@ window.init = async function() {
 
             // Proxy canvas shortcuts if we have active selections or targets
             const proxiedCodes = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Delete', 'Backspace', 'Space', 'F2'];
-            
+
             const isC = e.key.toLowerCase() === 'c' || e.code === 'KeyC';
             const isX = e.key.toLowerCase() === 'x' || e.code === 'KeyX';
             const isV = e.key.toLowerCase() === 'v' || e.code === 'KeyV';
             const isG = e.key.toLowerCase() === 'g' || e.code === 'KeyG';
             const isCtrlShortcut = (e.ctrlKey || e.metaKey) && (isC || isX || isV || isG);
-            
+
             if (proxiedCodes.includes(e.code) || isF2 || isCtrlShortcut) {
                 if (isF2) {
                     console.log("[VCTRL CORE] F2 key down detected in parent window, proxying to iframe...");
                 }
                 if (DOM.iframe && DOM.iframe.contentWindow) {
-                    try { DOM.iframe.contentWindow.focus(); } catch(err) {}
+                    try { DOM.iframe.contentWindow.focus(); } catch (err) { }
                     DOM.iframe.contentWindow.postMessage({
                         type: 'LF_SHORTCUT_KEY_PROXY',
                         code: e.code || 'F2',
@@ -1301,7 +1309,7 @@ window.init = async function() {
                         ctrlKey: e.ctrlKey,
                         metaKey: e.metaKey
                     }, '*');
-                    
+
                     // Prevent default browser behaviors for layout movement keys, F2, and ctrl shortcuts
                     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Space', 'F2'].includes(e.code) || isF2 || isCtrlShortcut) {
                         e.preventDefault();
@@ -1351,33 +1359,33 @@ window.init = async function() {
     }
 };
 
-window.showToast = function(message, type = 'success') {
+window.showToast = function (message, type = 'success') {
     let container = document.getElementById('v4-toast-container');
     if (!container) {
         container = document.createElement('div');
         container.id = 'v4-toast-container';
         document.body.appendChild(container);
     }
-    
+
     const toast = document.createElement('div');
     toast.className = `v4-toast ${type}`;
-    
+
     let iconName = 'info';
     if (type === 'success') iconName = 'check_circle';
     else if (type === 'error') iconName = 'error';
     else if (type === 'warning') iconName = 'warning';
-    
+
     toast.innerHTML = `
         <span class="material-icons-outlined v4-toast-icon">${iconName}</span>
         <span style="flex-grow: 1;">${message}</span>
     `;
-    
+
     container.appendChild(toast);
-    
+
     requestAnimationFrame(() => {
         toast.classList.add('show');
     });
-    
+
     setTimeout(() => {
         toast.classList.remove('show');
         toast.classList.add('hide');

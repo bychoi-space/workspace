@@ -62,18 +62,16 @@
         // Check if fallback script is already loaded, otherwise dynamically load it
         if (window.VCTRL_UI_FALLBACK_INSPECTOR) {
             applyFallbackData(res1, res2, res3, res4);
-
-            // Trigger inspector rebinding to cache newly injected HTML elements
             triggerAllV4Bindings();
+            if (typeof window.renderAtomicLibrary === 'function') window.renderAtomicLibrary();
         } else {
             const script = document.createElement('script');
-            // Cache bust query for local script
             script.src = 'assets/ui_library_fallback.js?v=' + Date.now();
             script.onload = function() {
                 console.log("[VCTRL UI LIBRARY] Fallback script loaded. Injecting offline components...");
                 applyFallbackData(res1, res2, res3, res4);
-                // Trigger inspector rebinding to cache newly injected HTML elements after fallback load
                 triggerAllV4Bindings();
+                if (typeof window.renderAtomicLibrary === 'function') window.renderAtomicLibrary();
             };
             script.onerror = function(e) {
                 console.error("[VCTRL UI LIBRARY] Critical error: Fallback script failed to load.", e);
@@ -104,6 +102,7 @@
             // Trigger inspector rebinding after all asynchronous blocks are successfully fetched
             triggerAllV4Bindings();
             syncWindowDOM();
+            if (typeof window.renderAtomicLibrary === 'function') window.renderAtomicLibrary();
         }
     }
 

@@ -148,7 +148,23 @@
             let topMatch = null;
             let bottomMatch = null;
 
-            this.spacingTargets.forEach(t => {
+            // If active element is inside a frame boundary, restrict spacing targets to enclosing frame
+            let targetList = this.spacingTargets;
+            const enclosingFrames = this.spacingTargets.filter(t => t.isFrameBoundary && t.left <= active.left + 5 && t.right >= active.right - 5 && t.top <= active.top + 5 && t.bottom >= active.bottom - 5);
+            if (enclosingFrames.length > 0) {
+                const hostFrameId = enclosingFrames[0].frameId;
+                targetList = this.spacingTargets.filter(t => {
+                    if (t.source === 'canvas') return false;
+                    if (t.isFrameBoundary) return t.frameId === hostFrameId;
+                    const fTop = enclosingFrames.find(ef => ef.id.endsWith('-top'))?.top || 0;
+                    const fBottom = enclosingFrames.find(ef => ef.id.endsWith('-bottom'))?.bottom || Infinity;
+                    const fLeft = enclosingFrames.find(ef => ef.id.endsWith('-left'))?.left || 0;
+                    const fRight = enclosingFrames.find(ef => ef.id.endsWith('-right'))?.right || Infinity;
+                    return (t.left >= fLeft - 10 && t.right <= fRight + 10 && t.top >= fTop - 10 && t.bottom <= fBottom + 10);
+                });
+            }
+
+            targetList.forEach(t => {
                 // Skip the active moving element itself to prevent zero-distance errors
                 if (activeId && t.id === activeId) return;
 
@@ -318,28 +334,32 @@
 
             if (data.snapXData) {
                 const { line, label, part, selfPart } = data.snapXData;
-                html += `<line x1="${line}" y1="0" x2="${line}" y2="100%" stroke="#ff4757" stroke-width="1.5" stroke-dasharray="4,3" />`;
-                
-                const labelText = `${label} ${part} ↔ ${selfPart}`;
-                const textWidth = labelText.length * 6.5 + 12;
-                html += `
-                    <g transform="translate(${line + 8}, 40)">
-                        <rect x="0" y="0" width="${textWidth}" height="22" style="${rectStyle}" />
-                        <text x="6" y="15" style="${labelStyle}">${labelText}</text>
-                    </g>`;
+                const isFrameSnap = label && (label.includes('Area') || label.includes('Canvas') || label.includes('UI'));
+                if (!isFrameSnap) {
+                    html += `<line x1="${line}" y1="0" x2="${line}" y2="100%" stroke="#ff4757" stroke-width="1.5" stroke-dasharray="4,3" />`;
+                    const labelText = `${label} ${part} ↔ ${selfPart}`;
+                    const textWidth = labelText.length * 6.5 + 12;
+                    html += `
+                        <g transform="translate(${line + 8}, 40)">
+                            <rect x="0" y="0" width="${textWidth}" height="22" style="${rectStyle}" />
+                            <text x="6" y="15" style="${labelStyle}">${labelText}</text>
+                        </g>`;
+                }
             }
 
             if (data.snapYData) {
                 const { line, label, part, selfPart } = data.snapYData;
-                html += `<line x1="0" y1="${line}" x2="100%" y2="${line}" stroke="#ff4757" stroke-width="1.5" stroke-dasharray="4,3" />`;
-                
-                const labelText = `${label} ${part} ↔ ${selfPart}`;
-                const textWidth = labelText.length * 6.5 + 12;
-                html += `
-                    <g transform="translate(40, ${line - 32})">
-                        <rect x="0" y="0" width="${textWidth}" height="22" style="${rectStyle}" />
-                        <text x="6" y="15" style="${labelStyle}">${labelText}</text>
-                    </g>`;
+                const isFrameSnap = label && (label.includes('Area') || label.includes('Canvas') || label.includes('UI'));
+                if (!isFrameSnap) {
+                    html += `<line x1="0" y1="${line}" x2="100%" y2="${line}" stroke="#ff4757" stroke-width="1.5" stroke-dasharray="4,3" />`;
+                    const labelText = `${label} ${part} ↔ ${selfPart}`;
+                    const textWidth = labelText.length * 6.5 + 12;
+                    html += `
+                        <g transform="translate(40, ${line - 32})">
+                            <rect x="0" y="0" width="${textWidth}" height="22" style="${rectStyle}" />
+                            <text x="6" y="15" style="${labelStyle}">${labelText}</text>
+                        </g>`;
+                }
             }
 
             const htmlList = [html];

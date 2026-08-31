@@ -13,10 +13,11 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
 5. Verify: check browser/console or the smallest reliable substitute.
 
 ## Data And Git Safety
+- **Strict Production Integrity & Prohibition of Dummy/Fake Fallbacks**: This system is an active production workspace editor. Never inject hardcoded dummy data, fake metadata objects, or fake fallback HTML/JSON to bypass errors or CORS warnings. Dummy fallbacks corrupt real production data (`metadata.json`, saved screen HTMLs). Always rely solely on authentic disk reading and true system error recovery pipelines.
 - Do not flatten folders or move/delete subfolders without explicit user approval.
 - Do not delete or overwrite metadata files such as `metadata.json` in each project folder.
 - During conflicts, manually merge each project's `metadata.json` `screens` arrays. Never blindly overwrite them.
-- **Autonomous Deployment**: Perform local static verification first, and deploy directly to GitHub `main` automatically without waiting for manual user Submit/Accept prompts.
+- **On-Demand Deployment**: Do NOT push to GitHub automatically on every change. Only commit and push to the remote repository when explicitly requested by the user, ensuring local verification is complete first.
 - Do not revert user changes. If existing changes affect the task, work with them or ask.
 
 ## Code Integrity & Safety Rules

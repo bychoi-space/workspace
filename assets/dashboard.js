@@ -682,14 +682,24 @@ async function openEditProjectModal(projectName) {
     DOM.modalMainTitle.innerText = "프로젝트 정보 수정";
     DOM.groupIdField.style.display = "none";
     updateStatusUI('메타데이터 로딩 중... ⏳', '#facc15');
-    const m = await fetchProjectMetadata(projectName);
+    
+    let m = null;
+    try {
+        m = await fetchProjectMetadata(projectName);
+    } catch(e) {
+        console.warn("[Dashboard] fetchProjectMetadata fallback for modal:", e);
+        const existing = (state.projects || []).find(p => p.name === projectName);
+        m = (existing && existing.meta) ? existing.meta : { title: projectName, screens: {} };
+    }
+    updateStatusUI('', '');
+
     DOM.modalFilenameDisplay.innerText = `Project: ${projectName}`;
-    DOM.metaTitle.value = m.title || '';
-    DOM.metaPeriod.value = m.period || '';
-    DOM.metaAssignee.value = m.assignee || '';
-    DOM.metaJira.value = m.jira || '';
-    DOM.metaFigma.value = m.figmaUrl || '';
-    initDatePicker(m.period);
+    DOM.metaTitle.value = (m && m.title) || projectName;
+    DOM.metaPeriod.value = (m && m.period) || '';
+    DOM.metaAssignee.value = (m && m.assignee) || '';
+    DOM.metaJira.value = (m && m.jira) || '';
+    DOM.metaFigma.value = (m && m.figmaUrl) || '';
+    initDatePicker(m ? m.period : '');
     
     // Load existing theme index, fallback to -1
     const themeIndex = (m && m.themeIndex !== undefined) ? parseInt(m.themeIndex) : -1;

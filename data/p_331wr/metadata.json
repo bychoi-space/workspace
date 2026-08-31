@@ -25,5 +25,10 @@
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
   "themeIndex": -1,
   "jira": "",
-  "updated": "2026-08-31 12:01:00"
+  "updated": "2026-08-31 12:01:00",
+  "screenOrder": [
+    "00_Cover_63.html",
+    "08_Responsive_PC_Mobile_486.html",
+    "99_Blank_120.html"
+  ]
 }

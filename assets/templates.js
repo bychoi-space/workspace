@@ -606,8 +606,8 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
         :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; --v4-text: #0f172a; --v4-subtext: #475569; --v4-border-color: #cbd5e1; --v4-header-bg: #f8fafc; }
-        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--v4-text); background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
-        .page { width: 1440px; height: 900px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.5); overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 32px; padding: 0 16px; box-sizing: border-box; }
+        body { margin: 0; padding: 0; background: transparent !important; font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--v4-text); }
+        .page { width: 1440px; height: 900px; position: relative; background: transparent !important; box-shadow: none !important; border: none !important; overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 16px; padding: 0 16px; box-sizing: border-box; }
         .frame-column { display: flex; flex-direction: column; align-items: stretch; position: relative; }
         .frame-label-bar { display: flex; align-items: center; justify-content: space-between; padding: 5px 14px; background: rgba(255, 255, 255, 0.08); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #f8fafc; font-size: 12px; font-weight: 700; box-sizing: border-box; margin-bottom: 10px; backdrop-filter: blur(10px); user-select: none; }
         .frame-label-title { display: flex; align-items: center; gap: 6px; color: #f1f5f9; letter-spacing: -0.2px; }

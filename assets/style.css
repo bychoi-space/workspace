@@ -1197,6 +1197,13 @@ body {
     animation: fadeInSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
+.artboard-iframe.borderless-artboard,
+.artboard-wrapper.borderless-artboard .artboard-iframe {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 .placeholder-card {
     position: absolute;
     top: 50%;

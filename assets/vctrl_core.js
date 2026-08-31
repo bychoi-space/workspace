@@ -114,9 +114,19 @@ window.loadScreen = async function (fileName) {
         finalContent = syncCoverMetadata(finalContent, state.projectMetadata, false, fileName);
     }
 
+    const isResponsiveScreen = (state.projectMetadata && state.projectMetadata.screens && (
+        state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
+        state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html'
+    )) || finalContent.includes('pc-browser-frame') || finalContent.includes('template_responsive_pc_mobile.html');
+
     const iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe');
     if (iframe) {
         if (window.DOM && !window.DOM.iframe) window.DOM.iframe = iframe;
+        if (isResponsiveScreen) {
+            iframe.classList.add('borderless-artboard');
+        } else {
+            iframe.classList.remove('borderless-artboard');
+        }
         iframe.srcdoc = finalContent;
         iframe.style.display = 'block';
 

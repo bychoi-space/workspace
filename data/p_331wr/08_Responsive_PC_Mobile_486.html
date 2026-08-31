@@ -4,381 +4,7 @@
     <title>Responsive PC &amp; Mobile - 상품 상세 - 리뉴얼 2차</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+KR:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    
 
-    <style>
-/* ==========================================================================
-   Responsive PC & Mobile Frame Stylesheet
-   Shared CSS for PC & Mobile split-view screens and templates
-   ========================================================================== */
-
-:root {
-    --v4-primary: #6366f1;
-    --v4-accent: #00e5ff;
-    --v4-bg: #1e293b;
-    --v4-frame-bg: #ffffff;
-    --v4-text: #0f172a;
-    --v4-subtext: #475569;
-    --v4-border-color: #cbd5e1;
-    --v4-header-bg: #f8fafc;
-}
-
-body {
-    margin: 0;
-    padding: 0;
-    background: transparent !important;
-    font-family: 'Inter', 'Noto Sans KR', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-    color: var(--v4-text);
-}
-
-.page {
-    width: 1440px;
-    height: 900px;
-    position: relative;
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-    padding: 0 16px;
-    box-sizing: border-box;
-}
-
-/* --- Frame Column Layout & External Header Label Bars --- */
-.frame-column {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    position: relative;
-}
-
-.frame-label-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 5px 14px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1.6px solid rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    color: #f8fafc;
-    font-size: 12px;
-    font-weight: 700;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-    backdrop-filter: blur(10px);
-    user-select: none;
-}
-
-.frame-label-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #f1f5f9;
-    letter-spacing: -0.2px;
-}
-
-.frame-title-input {
-    background: transparent;
-    border: 1.6px solid transparent;
-    border-radius: 6px;
-    color: #f1f5f9;
-    font-size: 12px;
-    font-weight: 700;
-    font-family: inherit;
-    padding: 2px 8px;
-    width: 160px;
-    outline: none;
-    transition: all 0.2s;
-}
-
-.frame-title-input:hover {
-    border-color: rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.frame-title-input:focus {
-    border-color: var(--v4-accent);
-    background: rgba(15, 23, 42, 0.85);
-    box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
-}
-
-.frame-label-height-control {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #94a3b8;
-    font-size: 11px;
-}
-
-.frame-label-input {
-    width: 58px;
-    height: 22px;
-    border-radius: 6px;
-    border: 1.6px solid rgba(255, 255, 255, 0.25);
-    background: rgba(15, 23, 42, 0.8);
-    color: var(--v4-accent);
-    font-size: 11px;
-    font-weight: 800;
-    text-align: center;
-    outline: none;
-    padding: 0;
-    transition: all 0.2s;
-}
-
-.frame-label-input:focus {
-    border-color: var(--v4-accent);
-    box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
-}
-
-/* --- Scrollable Content Containers --- */
-.pc-content-area, .mobile-content {
-    overflow-y: scroll !important;
-    overflow-x: hidden !important;
-    scrollbar-gutter: stable;
-    scroll-behavior: smooth;
-    isolation: isolate;
-}
-
-.pc-content-area::-webkit-scrollbar, .mobile-content::-webkit-scrollbar {
-    width: 12px !important;
-    height: 12px !important;
-    display: block !important;
-}
-
-.pc-content-area::-webkit-scrollbar-track, .mobile-content::-webkit-scrollbar-track {
-    background: #edf2f7 !important;
-    border-left: 1.6px solid #cbd5e1 !important;
-    display: block !important;
-}
-
-.pc-content-area::-webkit-scrollbar-thumb, .mobile-content::-webkit-scrollbar-thumb {
-    background: #94a3b8 !important;
-    border-radius: 6px !important;
-    border: 2px solid #edf2f7 !important;
-    min-height: 40px !important;
-    display: block !important;
-}
-
-.pc-content-area::-webkit-scrollbar-thumb:hover, .mobile-content::-webkit-scrollbar-thumb:hover {
-    background: #64748b !important;
-}
-
-.pc-content-area::-webkit-scrollbar-thumb:active, .mobile-content::-webkit-scrollbar-thumb:active {
-    background: #475569 !important;
-}
-
-/* --- Active Frame Selection Highlights --- */
-.pc-browser-frame, .mobile-frame, .mobile-browser-frame {
-    transition: border 0.2s ease, border-color 0.2s ease !important;
-}
-
-.pc-browser-frame.active-frame, .mobile-frame.active-frame, .mobile-browser-frame.active-frame {
-    border: 2px solid #00e5ff !important;
-}
-
-.pc-column.active-column .frame-label-bar, .mobile-column.active-column .frame-label-bar {
-    border-color: rgba(0, 229, 255, 0.5) !important;
-}
-
-/* --- Grid Paper Canvas Inner Layers --- */
-.pc-content-inner {
-    width: 1000px;
-    min-height: calc(100% + 2px);
-    position: relative;
-    background-color: #ffffff;
-    background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
-    box-sizing: border-box;
-}
-
-.mobile-content-inner {
-    width: 360px;
-    min-height: calc(100% + 2px);
-    position: relative;
-    background-color: #ffffff;
-    background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
-    box-sizing: border-box;
-}
-
-/* --- PC Browser Frame --- */
-.pc-browser-frame {
-    width: 1012px;
-    height: 810px;
-    background: #ffffff;
-    display: flex;
-    flex-direction: column;
-    border-radius: 20px;
-    border: 1.6px solid var(--v4-border-color) !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-    overflow: hidden !important;
-    position: relative;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    z-index: 1;
-}
-
-.pc-browser-header {
-    height: 38px;
-    background: var(--v4-header-bg);
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1.6px solid var(--v4-border-color) !important;
-    user-select: none;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    z-index: 100;
-}
-
-.pc-browser-top-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-}
-
-.pc-browser-dots {
-    display: flex;
-    gap: 8px;
-}
-
-.pc-browser-dot {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-}
-
-.pc-browser-dot.red { background: #ff5f56; }
-.pc-browser-dot.yellow { background: #ffbd2e; }
-.pc-browser-dot.green { background: #27c93f; }
-
-.pc-browser-tabs {
-    display: flex;
-    align-items: flex-end;
-    margin-left: 8px;
-}
-
-.pc-browser-tab {
-    background: #ffffff;
-    border-radius: 8px 8px 0 0;
-    padding: 5px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--v4-subtext);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 30px;
-    border: 1.6px solid var(--v4-border-color);
-    border-bottom: none;
-    box-sizing: border-box;
-}
-
-.pc-content-area {
-    width: 1012px;
-    height: 772px;
-    position: relative;
-}
-
-/* --- Mobile Browser Frame --- */
-.mobile-frame {
-    width: 382px;
-    height: 810px;
-    background: #ffffff;
-    display: flex;
-    flex-direction: column;
-    border-radius: 28px;
-    position: relative;
-    border: 1.6px solid var(--v4-border-color) !important;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-    overflow: hidden !important;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    z-index: 1;
-}
-
-.mobile-top-bar {
-    height: 38px;
-    background: var(--v4-header-bg);
-    border-bottom: 1.6px solid var(--v4-border-color) !important;
-    position: relative;
-    user-select: none;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    z-index: 100;
-}
-
-.mobile-header-notch {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 110px;
-    height: 20px;
-    background: #1e293b;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    z-index: 1000;
-    pointer-events: none;
-}
-
-.mobile-statusbar {
-    position: absolute;
-    top: 10px;
-    left: 16px;
-    right: 16px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: var(--v4-subtext);
-    font-size: 11px;
-    font-weight: 700;
-    z-index: 1001;
-    pointer-events: none;
-    white-space: nowrap;
-}
-
-.mobile-content {
-    width: 372px;
-    height: 772px;
-    position: absolute;
-    top: 38px;
-    left: 5px;
-    border: none !important;
-    border-radius: 0 0 12px 12px;
-}
-
-.mobile-home-indicator {
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    width: 120px;
-    height: 4px;
-    border-radius: 999px;
-    background: #94a3b8;
-    transform: translateX(-50%);
-    z-index: 1001;
-    pointer-events: none;
-}
-
-/* --- Standard Component Absolute Position --- */
-.lf-component {
-    position: absolute !important;
-    box-sizing: border-box !important;
-    z-index: 500;
-}
-
-    </style>
 
 <style id="v4-typography-rules">:root {
   --v4-text-color: #0f172a;
@@ -462,27 +88,27 @@ body {
                                 <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text>
                             </svg>
                         <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div>
-                        <div id="v4-text-1788141784735" class="lf-component v4-text-shape" style="position: absolute; top: 20.0938px; left: 149.844px; z-index: 1000; transform: none; width: 43px; height: 23px; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;">
+                        <div id="v4-text-1788141784735" class="lf-component v4-text-shape" style="position: absolute; top: 20.0938px; left: 149.844px; z-index: 1000; transform: none; width: 45px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
                             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;">
                                 <p>E.B.M</p>
                             </div>
                         <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div>
-                        <div id="v4-comp-1788141828834_720909_0" class="lf-component v4-text-shape" style="position: absolute; top: 20.0938px; left: 202.844px; z-index: 1000; transform: none; width: 58px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                        <div id="v4-comp-1788141828834_720909_0" class="lf-component v4-text-shape" style="position: absolute; top: 20.0938px; left: 202.844px; z-index: 1000; transform: none; width: 62px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
                             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;">
                                 <p><strong style="font-size: 12px;">MICHAA</strong></p>
                             </div>
                         <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div>
-                        <div id="v4-comp-1788141852552_879445_0" class="lf-component v4-text-shape" style="position: absolute; top: 20.0938px; left: 271.078px; z-index: 1000; transform: none; width: 70px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                        <div id="v4-comp-1788141852552_879445_0" class="lf-component v4-text-shape" style="position: absolute; top: 20.0938px; left: 271.078px; z-index: 1000; transform: none; width: 75px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
                             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;">
                                 <p><span style="font-size: 12px;">IT MICHAA</span></p>
                             </div>
                         <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div>
-                        <div id="v4-text-1788142036978" class="lf-component v4-text-shape" style="position: absolute; top: 64.2656px; left: 19.625px; z-index: 1000; transform: none; width: 38px; height: 23px; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;">
+                        <div id="v4-text-1788142036978" class="lf-component v4-text-shape" style="position: absolute; top: 64.2656px; left: 19.625px; z-index: 1000; transform: none; width: 40px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
                             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;">
                                 <p>NEW</p>
                             </div>
                         <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div>
-                        <div id="v4-comp-1788142063509_815682_0" class="lf-component v4-text-shape" style="position: absolute; top: 64.2656px; left: 67.7031px; z-index: 1000; transform: none; width: 41px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                        <div id="v4-comp-1788142063509_815682_0" class="lf-component v4-text-shape" style="position: absolute; top: 64.2656px; left: 67.7031px; z-index: 1000; transform: none; width: 42px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
                             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;">
                                 <p>BEST</p>
                             </div>
@@ -512,14 +138,20 @@ body {
                                 <p>데님</p>
                             </div>
                         <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div>
-                        <div id="v4-comp-1788142889134_611738_3" class="lf-component v4-text-shape" style="position: absolute; top: 64.2656px; left: 434.281px; z-index: 1000; transform: none; width: 34px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                        <div id="v4-comp-1788142889134_611738_3" class="lf-component v4-text-shape" style="position: absolute; top: 64.2656px; left: 434.281px; z-index: 1000; transform: none; width: 37px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
                             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;">
                                 <p>ACC</p>
                             </div>
                         <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div>
-                    <div id="v4-comp-1788146438545" class="lf-component" style="position: absolute; top: 142.688px; left: 51.3438px; z-index: 1000; transform: none; width: 50px; height: 60px; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;" data-resized="true">
+                    <div id="v4-comp-1788146903189" class="lf-component" style="position: absolute; top: 121.141px; left: 19.625px; z-index: 1000; transform: none; width: 50px; height: 60px; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;" data-resized="true">
             <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08)), linear-gradient(-45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08)) !important; background-position: initial; background-size: 12px 12px !important; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
                 <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px !important; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"><p>Image 1</p></div>
+            </div><div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div><div id="v4-comp-1788146924987_230180_0" class="lf-component" data-resized="true" style="position: absolute; top: 196.328px; left: 19.625px; z-index: 1000; transform: none; width: 50px; height: 60px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08)), linear-gradient(-45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08)) !important; background-position: initial; background-size: 12px 12px !important; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px !important; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"><p><span style="font-size: 12px;">Image 2</span></p></div>
+            </div><div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div><div id="v4-comp-1788146929322_995479_0" class="lf-component" data-resized="true" style="position: absolute; top: 271.328px; left: 19.625px; z-index: 1000; transform: none; width: 50px; height: 60px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08)), linear-gradient(-45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08)) !important; background-position: initial; background-size: 12px 12px !important; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px !important; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"><p><span style="font-size: 12px;">Image 3</span></p></div>
             </div><div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div></div></div>
                 </div>
             </div>

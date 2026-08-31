@@ -4,7 +4,7 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "08_Responsive_PC_Mobile_486",
       "type": "screen",
-      "updatedAt": "2026-08-31T03:01:00.635Z",
+      "updatedAt": "2026-08-31T03:03:41.890Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [],
@@ -25,7 +25,7 @@
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
   "themeIndex": -1,
   "jira": "",
-  "updated": "2026-08-31 12:01:00",
+  "updated": "2026-08-31 12:03:41",
   "screenOrder": [
     "00_Cover_63.html",
     "08_Responsive_PC_Mobile_486.html",

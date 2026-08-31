@@ -10,15 +10,14 @@
       "description": [],
       "connectors": []
     },
-    "99_Blank_120.html": {
-      "title": "99_Blank_120",
-      "type": "blank",
-      "updatedAt": "2026-08-31T02:09:51.774Z",
-      "template": "template_blank.html"
+    "08_Responsive_PC_Mobile_486.html": {
+      "description": [],
+      "updatedAt": "2026-08-31T02:12:11.464Z"
     }
   },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
-  "themeIndex": -1
+  "themeIndex": -1,
+  "updated": "2026-08-31 11:12:11"
 }

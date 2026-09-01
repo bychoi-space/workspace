@@ -116,6 +116,11 @@
     }
 
     function updateAllInputs(w, h) {
+        const groupDimWidth = document.getElementById('group-dim-width');
+        const groupDimHeight = document.getElementById('group-dim-height');
+        if (groupDimWidth && w !== undefined) groupDimWidth.innerText = Math.round(w) + 'px';
+        if (groupDimHeight && h !== undefined) groupDimHeight.innerText = Math.round(h) + 'px';
+
         const inputs = document.querySelectorAll('.v4-prop-input');
         inputs.forEach(input => {
             if (input.id === 'prop-width-icon' || input.id === 'prop-height-icon') return;

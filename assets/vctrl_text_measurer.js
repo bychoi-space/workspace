@@ -263,7 +263,7 @@ window.v4TextMeasurerScript = `
         const origW = c.style.width;
         const origH = c.style.height;
 
-        const targetPadding = isShapeText ? '0px' : '4px';
+        const targetPadding = isShapeText ? '5px 10px' : '4px';
         if (cell.style.padding !== targetPadding) {
             cell.style.setProperty('padding', targetPadding, 'important');
         }

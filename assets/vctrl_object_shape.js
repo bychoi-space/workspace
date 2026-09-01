@@ -72,23 +72,29 @@ window.v4ObjectShapeScript = `
                         const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : (key === 'justifyContent' ? 'justify-content' : 'border-radius'));
                         t.style.setProperty(cssKey, val, 'important');
                         
-                        if (key === 'textAlign') {
-                            // Apply padding offset for left/right alignment (10px) to prevent sticking to borders
-                            const padLeft = val === 'left' ? '10px' : '0px';
-                            const padRight = val === 'right' ? '10px' : '0px';
-                            t.style.setProperty('padding-left', padLeft, 'important');
-                            t.style.setProperty('padding-right', padRight, 'important');
+                        if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent') {
+                            // Uniform margin/padding standard: top/bottom 5px, left/right 10px
+                            t.style.setProperty('padding', '5px 10px', 'important');
+                            t.style.setProperty('box-sizing', 'border-box', 'important');
                             
-                            // Propagate alignment to children (p, span, ql-editor, ql-editor p) to keep absolute consistency
-                            t.querySelectorAll('p, span, .ql-editor, .ql-editor p').forEach(child => {
-                                child.style.setProperty(cssKey, val, 'important');
-                                child.style.setProperty('padding-left', padLeft, 'important');
-                                child.style.setProperty('padding-right', padRight, 'important');
-                            });
-                        } else if (key === 'justifyContent' || key === 'alignItems') {
-                            t.querySelectorAll('p, span, .ql-editor, .ql-editor p, .v4-shape-text-content, .v4-editable-cell').forEach(child => {
-                                child.style.setProperty(cssKey, val, 'important');
-                            });
+                            if (key === 'textAlign') {
+                                // Propagate alignment to children while clearing duplicate padding/margin
+                                t.querySelectorAll('p, span, .ql-editor, .ql-editor p').forEach(child => {
+                                    child.style.setProperty('text-align', val, 'important');
+                                    child.style.setProperty('padding', '0px', 'important');
+                                    child.style.setProperty('margin', '0px', 'important');
+                                });
+                            } else if (key === 'alignItems') {
+                                t.querySelectorAll('p, span, .ql-editor, .ql-editor p, .v4-shape-text-content, .v4-editable-cell').forEach(child => {
+                                    child.style.setProperty('align-items', val, 'important');
+                                    child.style.setProperty('padding', '0px', 'important');
+                                    child.style.setProperty('margin', '0px', 'important');
+                                });
+                            } else if (key === 'justifyContent') {
+                                t.querySelectorAll('p, span, .ql-editor, .ql-editor p, .v4-shape-text-content, .v4-editable-cell').forEach(child => {
+                                    child.style.setProperty('justify-content', val, 'important');
+                                });
+                            }
                         }
                     } else {
                         t.style[key] = val;

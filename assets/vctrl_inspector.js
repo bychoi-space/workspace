@@ -711,6 +711,9 @@ const ProjectMetadataManager = {
         const btnUngroup = document.getElementById('btn-ungroup-action');
         const btnAddToMolecules = document.getElementById('btn-add-molecules-action');
         const alignBar = document.getElementById('selection-align-bar');
+        const groupDimBar = document.getElementById('group-dimension-bar');
+        const groupDimWidth = document.getElementById('group-dim-width');
+        const groupDimHeight = document.getElementById('group-dim-height');
         
         const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
         const isSingleGroup = selIds.length === 1 && compStyles && compStyles.isGroup;
@@ -719,6 +722,29 @@ const ProjectMetadataManager = {
         if (btnUngroup) btnUngroup.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
         if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
         if (alignBar) alignBar.style.setProperty('display', (selIds.length > 1) ? 'block' : 'none', 'important');
+
+        if (groupDimBar) {
+            if (isSingleGroup) {
+                groupDimBar.style.setProperty('display', 'flex', 'important');
+                let wVal = 0;
+                let hVal = 0;
+                if (compStyles && typeof compStyles.w === 'number') {
+                    wVal = Math.round(compStyles.w);
+                    hVal = Math.round(compStyles.h);
+                } else if (selIds.length === 1) {
+                    const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+                    const groupEl = iframeDoc?.getElementById(selIds[0]);
+                    if (groupEl) {
+                        wVal = Math.round(parseFloat(groupEl.style.width) || groupEl.offsetWidth || 0);
+                        hVal = Math.round(parseFloat(groupEl.style.height) || groupEl.offsetHeight || 0);
+                    }
+                }
+                if (groupDimWidth) groupDimWidth.innerText = wVal + 'px';
+                if (groupDimHeight) groupDimHeight.innerText = hVal + 'px';
+            } else {
+                groupDimBar.style.setProperty('display', 'none', 'important');
+            }
+        }
 
 
         // CONTENT EDITOR 헤더 레이블 동적 변경 (통합 레이블 제공)
@@ -837,6 +863,8 @@ const ProjectMetadataManager = {
         state.isEditing = false;
         state.editingIndex = -1;
         if (DOM.selectionBar) DOM.selectionBar.style.display = 'none';
+        const groupDimBar = document.getElementById('group-dimension-bar');
+        if (groupDimBar) groupDimBar.style.setProperty('display', 'none', 'important');
     }
 };
 
@@ -1687,7 +1715,7 @@ window.renderAtomicLibrary = function() {
 
     const iconsPane = document.getElementById('pane-icons');
     if (iconsPane) {
-        const icons = ['Home', 'Category', 'My', 'Heart', 'Search', 'Cart', 'Brand', 'Back', 'Bell', 'Share', 'Party', 'New Window', 'Download'];
+        const icons = ['Home', 'Category', 'My', 'Heart', 'Search', 'Cart', 'Brand', 'Back', 'Bell', 'Share', 'Party', 'New Window', 'Download', 'Zoom', 'Copy', 'Global', 'Camera', 'Recent'];
         iconsPane.innerHTML = icons.map(i => `
             <div class="library-item" onclick="insertAtomicComponent('icon', '${i}')" style="flex: 0 0 calc(25% - 8px); height:60px;">
                 <div class="item-preview"><div class="lf-icon lf-icon-${i.toLowerCase().replace(' ', '-')}" style="background-image:none !important; transform: scale(0.6);"></div></div>

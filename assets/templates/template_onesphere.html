@@ -235,8 +235,12 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     stroke: #3b82f6 !important;
     filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.8));
 }
-.v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding: 4px !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; width: 100% !important; height: 100% !important; flex-direction: column !important; }
-.v4-shape-text-content p, .v4-shape-text-overlay p, .v4-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1 !important; text-align: center !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
+.v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding: 5px 10px !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; flex-direction: column !important; }
+.v4-shape-rect > .v4-editable-cell, .v4-shape-circle > .v4-editable-cell, .v4-shape-pattern-grid > .v4-editable-cell, .v4-shape-wave > .v4-editable-cell { width: 100% !important; height: 100% !important; }
+.v4-shape-diamond > .v4-editable-cell { width: 60% !important; height: 60% !important; }
+.v4-shape-arrow > .v4-editable-cell { width: 50% !important; height: 40% !important; }
+.v4-shape-triangle > .v4-editable-cell { width: 100% !important; height: 60% !important; }
+.v4-shape-text-content p, .v4-shape-text-overlay p, .v4-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1 !important; text-align: inherit !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
 .v4-shape-text-content span, .v4-shape-text-overlay span, .v4-shape .v4-editable-cell span { line-height: 1 !important; display: inline-block !important; }
 /* Unify Grid UI Table Cell Typography and Colors */
 .v4-grid-container td.v4-grid-cell {

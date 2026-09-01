@@ -1761,11 +1761,11 @@ window.initV4GlobalColorPalette = function() {
         popover.innerHTML = `
             <div class="v4-palette-grid"></div>
             <div class="v4-palette-footer">
-                <label class="v4-palette-custom-action" title="원하는 색상 직접 선택">
-                    <input type="color" class="v4-palette-native-input" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;">
-                    <span class="material-icons-outlined" style="font-size: 13px;">palette</span>
-                    <span>직접 선택</span>
-                </label>
+                <div class="v4-palette-custom-action" title="원하는 색상 직접 선택" style="position: relative; overflow: hidden; cursor: pointer;">
+                    <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">palette</span>
+                    <span style="pointer-events: none;">직접 선택</span>
+                    <input type="color" class="v4-palette-native-input" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; margin: 0; z-index: 2;">
+                </div>
                 <button type="button" class="v4-palette-reset-btn" title="투명 / 색상 제거">
                     <span class="material-icons-outlined" style="font-size: 13px;">block</span>
                 </button>
@@ -1795,15 +1795,6 @@ window.initV4GlobalColorPalette = function() {
             currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
             if (currentActiveWrapper) currentActiveWrapper.classList.remove('transparent-active');
             window.closeV4ColorPalette();
-        });
-
-        // Custom color action
-        customAction.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (currentTargetInput) {
-                nativeInput.value = currentTargetInput.value || '#ffffff';
-            }
-            nativeInput.click();
         });
 
         nativeInput.addEventListener('input', (e) => {
@@ -1846,6 +1837,9 @@ window.initV4GlobalColorPalette = function() {
             if (!currentTargetInput) return;
 
             const curVal = (currentTargetInput.value || '#ffffff').toLowerCase();
+            if (nativeInput) {
+                nativeInput.value = (curVal.startsWith('#') && (curVal.length === 7 || curVal.length === 4)) ? curVal : '#ffffff';
+            }
             popover.querySelectorAll('.v4-palette-item').forEach(it => {
                 if (it.dataset.color.toLowerCase() === curVal) {
                     it.classList.add('selected');
@@ -1969,24 +1963,18 @@ window.initQuillEditor = function() {
         const footer = document.createElement('div');
         footer.className = 'ql-custom-color-footer';
         footer.innerHTML = `
-            <label class="ql-custom-color-action" title="원하는 색상 직접 선택">
-                <input type="color" class="ql-custom-color-input" value="${formatType === 'color' ? '#6366f1' : '#facc15'}" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;">
-                <span class="material-icons-outlined" style="font-size: 13px;">palette</span>
-                <span>직접 선택</span>
-            </label>
+            <div class="ql-custom-color-action" title="원하는 색상 직접 선택" style="position: relative; overflow: hidden; cursor: pointer;">
+                <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">palette</span>
+                <span style="pointer-events: none;">직접 선택</span>
+                <input type="color" class="ql-custom-color-input" value="${formatType === 'color' ? '#6366f1' : '#facc15'}" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; margin: 0; z-index: 2;">
+            </div>
             <button type="button" class="ql-custom-color-reset" title="색상 제거 / 기본값">
                 <span class="material-icons-outlined" style="font-size: 13px;">format_color_reset</span>
             </button>
         `;
 
         const input = footer.querySelector('.ql-custom-color-input');
-        const label = footer.querySelector('.ql-custom-color-action');
         const resetBtn = footer.querySelector('.ql-custom-color-reset');
-
-        label.addEventListener('click', (e) => {
-            e.stopPropagation();
-            input.click();
-        });
 
         input.addEventListener('input', (e) => {
             if (window.quillEditor) {

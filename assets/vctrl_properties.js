@@ -54,7 +54,6 @@
             }
             updateAllInputs(data.w, data.h);
             syncAllColors(data.currentStyles || {});
-            hidePalettePopup();
 
             if (data.boxW !== undefined) {
                 const wIconInp = document.getElementById('prop-width-icon');
@@ -100,7 +99,6 @@
             activeImageRatio = null;
             updateAllInputs(0, 0);
             syncAllColors({});
-            hidePalettePopup();
 
             const wIconInp = document.getElementById('prop-width-icon');
             const hIconInp = document.getElementById('prop-height-icon');
@@ -353,139 +351,6 @@
             if (window.markAsDirty) window.markAsDirty();
         }
     });
-
-    // Custom Color Palette System - Extended Spectrum with Soft Pastel & Light Tones
-    const PALETTE_COLORS = [
-        // Row 1: Soft Pastel & Water Light Tones (연한 파스텔 & 수채화 톤)
-        '#ffffff', '#f8fafc', '#fef2f2', '#fff7ed', '#fefce8', '#f0fdf4', '#ecfeff', '#f0f9ff',
-        // Row 2: Light Delicate Tones (화사한 연한 톤)
-        '#f5f3ff', '#fdf2f8', '#f1f5f9', '#e2e8f0', '#fecdd3', '#ffedd5', '#fef08a', '#dcfce7',
-        // Row 3: Soft Medium Tones (부드러운 중간 톤)
-        '#cff4fc', '#dbeafe', '#e0e7ff', '#f3e8ff', '#fce7f3', '#cbd5e1', '#fda4af', '#fed7aa',
-        // Row 4: Bright Fresh Tones (선명하고 밝은 톤)
-        '#86efac', '#67e8f9', '#93c5fd', '#a5b4fc', '#c084fc', '#f472b6', '#94a3b8', '#64748b',
-        // Row 5: Vivid Standard Tones (표준 비비드 톤)
-        '#ef4444', '#f97316', '#eab308', '#10b981', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6',
-        // Row 6: Deep Rich Tones (중후한 딥 톤)
-        '#ec4899', '#dc2626', '#ea580c', '#ca8a04', '#059669', '#0891b2', '#2563eb', '#4f46e5',
-        // Row 7: Dark Neutral & Grayscale Tones (다크 & 무채색 톤)
-        '#7c3aed', '#db2777', '#334155', '#1e293b', '#0f172a', '#18181b', '#3f3f46', '#000000'
-    ];
-
-    let activePaletteInput = null;
-    let palettePopup = null;
-
-    function createPalettePopup() {
-        if (palettePopup) return;
-
-        palettePopup = document.createElement('div');
-        palettePopup.id = 'lf-color-palette-popup';
-        palettePopup.className = 'lf-color-palette-popup';
-        palettePopup.style.display = 'none';
-
-        // Grid of colors
-        const grid = document.createElement('div');
-        grid.className = 'lf-palette-grid';
-
-        PALETTE_COLORS.forEach(color => {
-            const swatch = document.createElement('div');
-            swatch.className = 'lf-palette-swatch';
-            swatch.style.backgroundColor = color;
-            swatch.title = color;
-            swatch.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (activePaletteInput) {
-                    activePaletteInput.value = color;
-                    // Trigger input and change events
-                    activePaletteInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    activePaletteInput.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-                hidePalettePopup();
-            });
-            grid.appendChild(swatch);
-        });
-
-        palettePopup.appendChild(grid);
-
-        // Custom setting button
-        const customBtn = document.createElement('button');
-        customBtn.className = 'lf-palette-custom-btn';
-        customBtn.innerHTML = `
-            <span class="material-icons-outlined" style="font-size: 14px;">palette</span>
-            <span>직접 설정하기</span>
-        `;
-        customBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (activePaletteInput) {
-                const targetInput = activePaletteInput;
-                targetInput.__show_native = true;
-                targetInput.click();
-                setTimeout(() => {
-                    targetInput.__show_native = false;
-                }, 100);
-            }
-            hidePalettePopup();
-        });
-        palettePopup.appendChild(customBtn);
-
-        document.body.appendChild(palettePopup);
-
-        // Close on clicking outside
-        document.addEventListener('click', (e) => {
-            if (palettePopup.style.display !== 'none' && !palettePopup.contains(e.target)) {
-                hidePalettePopup();
-            }
-        });
-    }
-
-    function showPalettePopup(input) {
-        createPalettePopup();
-        activePaletteInput = input;
-
-        // Position popup near the wrapper or the input
-        const rect = input.getBoundingClientRect();
-        
-        // Align popup nicely below or above the input
-        let top = rect.bottom + 6;
-        let left = rect.left;
-
-        // Keep inside viewport bounds for 8-column layout
-        const popupWidth = 230;
-        const popupHeight = 240; // approximate height for 7 rows
-        if (left + popupWidth > window.innerWidth) {
-            left = window.innerWidth - popupWidth - 12;
-        }
-        if (top + popupHeight > window.innerHeight) {
-            top = rect.top - popupHeight - 6;
-        }
-
-        palettePopup.style.top = top + 'px';
-        palettePopup.style.left = left + 'px';
-        palettePopup.style.display = 'flex';
-    }
-
-    function hidePalettePopup() {
-        if (palettePopup) {
-            palettePopup.style.display = 'none';
-        }
-        activePaletteInput = null;
-    }
-
-    // Intercept click on any input[type="color"]
-    document.addEventListener('click', (e) => {
-        const input = e.target.closest('input[type="color"]');
-        if (!input) return;
-
-        if (input.__show_native) {
-            // Flag is consumed, let native picker open
-            return;
-        }
-
-        // Intercept and show custom palette
-        e.preventDefault();
-        e.stopPropagation();
-        showPalettePopup(input);
-    }, true); // Use capture phase to intercept early
 
     function applyStyle(prop, value) {
         const iframeEl = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) 

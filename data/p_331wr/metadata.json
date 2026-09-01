@@ -21,7 +21,7 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-01T06:55:47.710Z",
+      "updatedAt": "2026-09-01T07:06:43.727Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
@@ -40,7 +40,7 @@
     "99_Blank_120.html": {
       "title": "99_Blank_120",
       "type": "etc",
-      "updatedAt": "2026-09-01T07:02:27.590Z",
+      "updatedAt": "2026-08-31T03:26:33.000Z",
       "template": "template_blank.html",
       "version": 0.1,
       "description": [],
@@ -60,5 +60,5 @@
   "period": "2026.08.27(목) ~ 2026.09.11(금)",
   "themeIndex": -1,
   "jira": "",
-  "updated": "2026-09-01 16:02:27"
+  "updated": "2026-09-01 16:06:43"
 }

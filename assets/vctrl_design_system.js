@@ -105,6 +105,39 @@ window.v4DesignSystemScript = `
         }
 
         try {
+            // Enforce Slim Line (1.2) for all SVG icons
+            document.querySelectorAll('.lf-component > svg.lf-icon:not(.v4-logo-img), .lf-component .v4-searchbar-icon-wrap svg').forEach(svg => {
+                if (svg.getAttribute('stroke-width') && svg.getAttribute('stroke-width') !== '1.2') {
+                    svg.setAttribute('stroke-width', '1.2');
+                }
+                svg.querySelectorAll('path, circle, rect, line, polyline, polygon').forEach(shape => {
+                    if (shape.getAttribute('stroke-width') && shape.getAttribute('stroke-width') !== '1.2') {
+                        shape.setAttribute('stroke-width', '1.2');
+                    }
+                    if (shape.style.strokeWidth && shape.style.strokeWidth !== '1.2' && shape.style.strokeWidth !== '1.2px') {
+                        shape.style.strokeWidth = '1.2';
+                    }
+                });
+            });
+        } catch(e) {
+            console.error("Error in icon stroke-width enforcement:", e);
+        }
+
+        try {
+            // Enforce balanced bounding box for SISUN Logo (aligned with standard icon breathing room)
+            document.querySelectorAll('.lf-component > svg.v4-logo-img').forEach(svg => {
+                const vb = svg.getAttribute('viewBox');
+                if (vb === '0 0 200 40' || vb === '0 0 156 26') {
+                    svg.setAttribute('viewBox', '0 0 176 32');
+                    const text = svg.querySelector('text');
+                    if (text) text.setAttribute('y', '54%');
+                }
+            });
+        } catch(e) {
+            console.error("Error in SISUN logo viewBox enforcement:", e);
+        }
+
+        try {
             document.querySelectorAll('.v4-admin-group-header').forEach(header => {
                 const container = header.closest('.v4-admin-settings-container');
                 if (container) {
@@ -428,15 +461,18 @@ window.v4DesignSystemScript = `
                 const btn = btnContainer.querySelector('.v4-custom-btn');
                 if (btn) {
                     const style = btnContainer.getAttribute('data-btn-style') || 'normal';
-                    const text = btnContainer.getAttribute('data-text') || '버튼';
+                    const text = btnContainer.getAttribute('data-text') !== null ? btnContainer.getAttribute('data-text') : (btn.innerText || '버튼');
                     const radius = btnContainer.getAttribute('data-btn-radius') || '6';
+                    const fontSize = parseInt(btnContainer.getAttribute('data-font-size')) || 12;
                     
                     const targetClass = 'v4-custom-btn style-' + style;
                     const targetRadius = radius + 'px';
+                    const targetFontSize = fontSize + 'px';
                     
                     if (btn.className !== targetClass) btn.className = targetClass;
                     if (btn.style.borderRadius !== targetRadius) btn.style.borderRadius = targetRadius;
                     if (btn.innerText !== text) btn.innerText = text;
+                    if (btn.style.fontSize !== targetFontSize) btn.style.setProperty('font-size', targetFontSize, 'important');
 
                     if (style !== 'custom') {
                         if (btn.style.backgroundColor !== '') btn.style.backgroundColor = '';
@@ -944,8 +980,30 @@ window.v4DesignSystemScript = `
 
     let dsObserver = null;
     let enforceQueued = false;
-    const runEnforceSafe = () => {
+    const runEnforceSafe = (mutationsList) => {
         if (enforceQueued) return;
+
+        // Skip mutation if caused solely by SmartGuide overlays, drag handles, or resizers
+        if (mutationsList && Array.isArray(mutationsList) && mutationsList.length > 0) {
+            const isOnlyOverlayMutation = mutationsList.every(m => {
+                const target = m.target;
+                if (!target) return true;
+                const el = target.nodeType === 1 ? target : target.parentElement;
+                if (!el) return true;
+                return !!(
+                    el.closest('.v4-responsive-guide-layer') ||
+                    el.closest('.pc-guide-layer') ||
+                    el.closest('.mobile-guide-layer') ||
+                    el.closest('.lf-drag-handle') ||
+                    el.closest('.lf-resizer') ||
+                    el.classList.contains('v4-responsive-guide-layer') ||
+                    el.classList.contains('pc-guide-layer') ||
+                    el.classList.contains('mobile-guide-layer')
+                );
+            });
+            if (isOnlyOverlayMutation) return;
+        }
+
         enforceQueued = true;
         window.requestAnimationFrame(() => {
             if (dsObserver) dsObserver.disconnect();
@@ -976,7 +1034,7 @@ window.v4DesignSystemScript = `
     };
 
     if (typeof window.enforceDesignSystem === 'function') {
-        dsObserver = new MutationObserver(runEnforceSafe);
+        dsObserver = new MutationObserver((mutations) => runEnforceSafe(mutations));
         runEnforceSafe();
         setTimeout(runEnforceSafe, 500);
     }

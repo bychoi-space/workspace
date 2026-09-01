@@ -42,13 +42,14 @@ window.v4DragResizeScript = `
                     isPendingDrag = false;
                     isDragging = true;
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
-                    if (!window.ResponsiveSmartGuide) {
+                    const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
+                    if (!isResp) {
                         notifyParent({ type: 'LF_SNAP_START' });
                     }
                     document.querySelectorAll('.lf-component.selected').forEach(s => s.classList.add('dragging-now'));
 
                     if (window.activeEl) {
-                        if (window.ResponsiveSmartGuide) {
+                        if (isResp) {
                             const ctx = window.ResponsiveSmartGuide.getContainerContext(window.activeEl);
                             if (ctx) window.ResponsiveSmartGuide.findSnapTargets(ctx, window.activeEl);
                         } else {
@@ -87,7 +88,8 @@ window.v4DragResizeScript = `
                 window.activeEl.style.left = logicalX + 'px';
                 window.activeEl.style.top = logicalY + 'px';
 
-                if (window.ResponsiveSmartGuide) {
+                const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
+                if (isResp) {
                     const ctx = window.ResponsiveSmartGuide.getContainerContext(window.activeEl);
                     if (ctx) {
                         const w = window.activeEl.offsetWidth || 100;
@@ -166,9 +168,11 @@ window.v4DragResizeScript = `
         
         handleMouseUp: function() {
             if (isDragging && window.activeEl) {
-                notifyParent({ type: 'LF_SNAP_END' });
-                if (window.ResponsiveSmartGuide) {
+                const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
+                if (isResp) {
                     window.ResponsiveSmartGuide.clearGuides(true);
+                } else {
+                    notifyParent({ type: 'LF_SNAP_END' });
                 }
 
                 // Responsive Drop Reparenting to PC Area or Mobile Content

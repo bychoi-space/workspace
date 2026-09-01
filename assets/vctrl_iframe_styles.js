@@ -29,7 +29,7 @@ body, .lf-component {
     text-rendering: optimizeLegibility !important; 
 }
 .lf-component { 
-    position: absolute; cursor: pointer; transition: outline 0.2s; 
+    position: absolute; cursor: pointer;
     box-sizing: border-box; z-index: 100;
     transform: none !important; /* Kill legacy centering drift */
 }
@@ -46,10 +46,10 @@ body, .lf-component {
 .v4-text-shape > .lf-resizer,
 .v4-text-box > .lf-resizer,
 .text-marker > .lf-resizer { display: none !important; }
-.lf-drag-handle { position: absolute; top: -9px; left: -9px; width: 18px; height: 18px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; opacity: 0; transition: all 0.2s; border: 1.6px solid #fff; z-index: 10002; }
+.lf-drag-handle { position: absolute; top: -16px; left: -16px; width: 18px; height: 18px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; opacity: 0; transition: opacity 0.15s ease; border: 1.6px solid #fff; z-index: 10002; }
 .lf-drag-handle svg { width: 10px !important; height: 10px !important; }
-.lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; top: -12px; left: -12px; }
-.lf-resizer { position: absolute; bottom: -5px; right: -5px; width: 12px; height: 12px; background: #6366f1; cursor: nwse-resize; border-radius: 50%; border: 2px solid #fff; opacity: 0; transition: 0.2s; z-index: 10002; }
+.lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; }
+.lf-resizer { position: absolute; bottom: -5px; right: -5px; width: 12px; height: 12px; background: #6366f1; cursor: nwse-resize; border-radius: 50%; border: 2px solid #fff; opacity: 0; transition: opacity 0.15s ease; z-index: 10002; }
 .lf-component:hover .lf-resizer, .lf-component.selected .lf-resizer { opacity: 1; }
 .lf-delete-trigger { position: absolute; top: -12px; right: -12px; width: 24px; height: 24px; background: #ef4444; color: #fff; border-radius: 50%; display: none !important; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; z-index: 10002; font-size: 14px; font-weight: bold; }
 .lf-component:hover .lf-delete-trigger, .lf-component.selected .lf-delete-trigger { display: none !important; }
@@ -121,6 +121,18 @@ img.lf-icon { width: 100%; height: 100%; padding: 8px; box-sizing: border-box; o
 }
 /* Reset background for new SVG/Custom atoms to prevent sprite leakage */
 svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: none !important; }
+/* Slim Line Icon Standard (stroke-width 1.2) */
+svg.lf-icon:not(.v4-logo-img),
+svg.lf-icon:not(.v4-logo-img) path,
+svg.lf-icon:not(.v4-logo-img) circle,
+svg.lf-icon:not(.v4-logo-img) rect,
+svg.lf-icon:not(.v4-logo-img) line,
+svg.lf-icon:not(.v4-logo-img) polyline,
+svg.lf-icon:not(.v4-logo-img) polygon,
+.v4-searchbar-icon-wrap svg,
+.v4-searchbar-icon-wrap svg * {
+    stroke-width: 1.2 !important;
+}
 .v4-searchbar-text:empty::before {
     content: attr(data-placeholder);
     color: #94a3b8 !important;
@@ -305,7 +317,7 @@ html, body { position: relative !important; min-height: 100vh; margin: 0; paddin
 .v4-custom-btn {
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18) !important;
     transition: all 0.2s ease !important;
-    font-size: 12px !important;
+    font-size: 12px;
     font-weight: 400 !important;
     font-family: inherit !important;
 }

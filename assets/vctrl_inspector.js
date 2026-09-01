@@ -677,8 +677,12 @@ const ProjectMetadataManager = {
             // 8. Sync Button Properties
             if (compStyles.isButton) {
                 const txtInput = document.getElementById('prop-button-text');
-                if (txtInput && compStyles.buttonText !== undefined) {
+                if (txtInput && document.activeElement !== txtInput && compStyles.buttonText !== undefined) {
                     txtInput.value = compStyles.buttonText;
+                }
+                const fontInput = document.getElementById('prop-button-font-size');
+                if (fontInput && document.activeElement !== fontInput && compStyles.buttonFontSize !== undefined) {
+                    fontInput.value = compStyles.buttonFontSize;
                 }
                 const selStyle = document.getElementById('prop-button-style');
                 if (selStyle && compStyles.buttonStyle !== undefined) {
@@ -690,9 +694,10 @@ const ProjectMetadataManager = {
                 }
                 const radiusSlider = document.getElementById('prop-button-border-radius');
                 const radiusTxt = document.getElementById('txt-button-border-radius');
-                if (radiusSlider && compStyles.buttonRadius !== undefined) {
-                    radiusSlider.value = compStyles.buttonRadius;
-                    if (radiusTxt) radiusTxt.innerText = compStyles.buttonRadius;
+                if (radiusSlider && document.activeElement !== radiusSlider && compStyles.buttonRadius !== undefined) {
+                    const r = parseInt(compStyles.buttonRadius) || 0;
+                    radiusSlider.value = r;
+                    if (radiusTxt) radiusTxt.innerText = r;
                 }
             }
         } else {

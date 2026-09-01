@@ -39,8 +39,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 16px;
-    padding: 0 16px;
+    gap: 24px;
+    padding: 0 11px;
     box-sizing: border-box;
 }
 
@@ -56,16 +56,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 14px;
-    height: 36px;
+    padding: 0 12px;
+    height: 32px;
     background: #141720;
     border: 1.6px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     color: #f1f5f9;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     box-sizing: border-box;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     user-select: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -75,7 +75,7 @@ body {
 .frame-label-title {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: #f1f5f9;
     font-family: inherit;
     -webkit-font-smoothing: antialiased;
@@ -88,11 +88,11 @@ body {
     border: 1.2px solid transparent;
     border-radius: 5px;
     color: #f8fafc;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     font-family: inherit;
-    padding: 2px 6px;
-    width: 180px;
+    padding: 1px 5px;
+    width: 170px;
     outline: none;
     letter-spacing: -0.2px;
     transition: all 0.2s;
@@ -115,9 +115,9 @@ body {
 .frame-label-height-control {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     color: #94a3b8;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 500;
     font-family: inherit;
     -webkit-font-smoothing: antialiased;
@@ -126,13 +126,13 @@ body {
 }
 
 .frame-label-input {
-    width: 54px;
-    height: 22px;
+    width: 50px;
+    height: 20px;
     border-radius: 5px;
     border: 1.2px solid rgba(0, 229, 255, 0.35);
     background: #0f131a;
     color: #38bdf8;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 600;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, monospace;
     text-align: center;
@@ -220,10 +220,17 @@ body {
     box-sizing: border-box;
 }
 
+body.hide-frame-grid .pc-content-inner,
+body.hide-frame-grid .mobile-content-inner,
+.pc-content-inner.hide-grid,
+.mobile-content-inner.hide-grid {
+    background-image: none !important;
+}
+
 /* --- PC Browser Frame --- */
 .pc-browser-frame {
     width: 1012px;
-    height: 810px;
+    height: 848px;
     background: #ffffff;
     display: flex;
     flex-direction: column;
@@ -296,14 +303,14 @@ body {
 
 .pc-content-area {
     width: 1012px;
-    height: 772px;
+    height: 810px;
     position: relative;
 }
 
 /* --- Mobile Browser Frame --- */
 .mobile-frame {
     width: 382px;
-    height: 810px;
+    height: 848px;
     background: #ffffff;
     display: flex;
     flex-direction: column;
@@ -361,7 +368,7 @@ body {
 
 .mobile-content {
     width: 372px;
-    height: 772px;
+    height: 810px;
     position: absolute;
     top: 38px;
     left: 5px;

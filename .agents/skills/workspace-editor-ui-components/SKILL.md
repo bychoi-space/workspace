@@ -34,7 +34,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 ## Icon And Atom Rules
 - Include `.lf-icon` on every icon and atom component, including SVGs.
 - Use inline SVG for button icons to avoid font ligature issues.
-- Use `stroke-width="1.6"` for SVG atoms unless existing context requires otherwise.
+- Use `stroke-width="1.2"` for SVG atoms (library icons and canvas-inserted SVG atoms) unless existing context requires otherwise.
 - Add `background-image: none !important;` when `.lf-icon` is applied to new SVG/custom atoms to avoid sprite interference.
 
 ## V4 Border Rule

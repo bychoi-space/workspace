@@ -156,9 +156,10 @@ window.v4Script = `
         // Button Atom Detection
         const isButton = isGroup ? false : (!!c.querySelector('.v4-btn-container') || c.classList.contains('v4-btn-container'));
         const btnContainer = isGroup ? null : (c.querySelector('.v4-btn-container') || (isButton ? c : null));
-        const buttonText = btnContainer ? (btnContainer.getAttribute('data-text') || "\uBC84\uD2BC") : "\uBC84\uD2BC";
+        const buttonText = btnContainer ? (btnContainer.getAttribute('data-text') !== null ? btnContainer.getAttribute('data-text') : (btnContainer.querySelector('.v4-custom-btn')?.innerText ?? "\uBC84\uD2BC")) : "\uBC84\uD2BC";
         const buttonStyle = btnContainer ? (btnContainer.getAttribute('data-btn-style') || "normal") : "normal";
         const buttonRadius = btnContainer ? (btnContainer.getAttribute('data-btn-radius') || "6") : "6";
+        const buttonFontSize = btnContainer ? (parseInt(btnContainer.getAttribute('data-font-size')) || (btnContainer.querySelector('.v4-custom-btn') ? parseInt(window.getComputedStyle(btnContainer.querySelector('.v4-custom-btn')).fontSize) : 12) || 12) : 12;
 
         // Date Picker Atom Detection
         const isDatePicker = isGroup ? false : (!!c.querySelector('.v4-datepicker-container') || c.classList.contains('v4-datepicker-container'));
@@ -408,6 +409,7 @@ window.v4Script = `
             buttonText: buttonText,
             buttonStyle: buttonStyle,
             buttonRadius: buttonRadius,
+            buttonFontSize: buttonFontSize,
             isDatePicker: isDatePicker,
             dpShowPresets: dpShowPresets,
             dpShowEndDate: dpShowEndDate,
@@ -478,18 +480,20 @@ window.v4Script = `
         const l = parseInt(c.style.left) || 0;
         const drag = c.querySelector(':scope > .lf-drag-handle');
         const del = c.querySelector(':scope > .lf-delete-trigger');
-        if (drag) { drag.style.top = t < 16 ? '4px' : '-16px'; drag.style.left = l < 16 ? '4px' : '-16px'; }
+        if (drag) {
+            const targetTop = t < 16 ? '4px' : '-16px';
+            const targetLeft = l < 16 ? '4px' : '-16px';
+            if (drag.style.top !== targetTop) drag.style.top = targetTop;
+            if (drag.style.left !== targetLeft) drag.style.left = targetLeft;
+        }
         if (del) { 
-            del.style.top = t < 16 ? '4px' : '-12px'; 
-            const rightDist = window.innerWidth - (l + c.offsetWidth);
-            del.style.right = rightDist < 16 ? '4px' : '-12px'; 
+            const targetTop = t < 16 ? '4px' : '-12px'; 
+            if (del.style.top !== targetTop) del.style.top = targetTop;
+            const rightDist = window.innerWidth - (l + (c.offsetWidth || 0));
+            const targetRight = rightDist < 16 ? '4px' : '-12px'; 
+            if (del.style.right !== targetRight) del.style.right = targetRight;
         }
     };
-
-    document.addEventListener('mouseover', e => {
-        const c = e.target.closest('.lf-component');
-        if (c) window.updateHandles(c);
-    });
 
     window.updateActiveFrameUI = function(type) {
         const targetType = type || window.lastActiveFrame || 'pc';
@@ -1893,7 +1897,7 @@ window.v4Script = `
                     const fontVal = parseInt(d.buttonFontSize) || 12;
                     container.setAttribute('data-font-size', fontVal);
                     const btn = container.querySelector('.v4-custom-btn');
-                    if (btn) btn.style.fontSize = fontVal + 'px';
+                    if (btn) btn.style.setProperty('font-size', fontVal + 'px', 'important');
                 }
                 
                 if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
@@ -2266,6 +2270,15 @@ window.v4Script = `
             }
         } else if (d.type === 'LF_DESELECT_ALL') {
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
+        } else if (d.type === 'LF_SET_RESPONSIVE_GRID') {
+            const isResponsiveTemplate = !!(document.querySelector('.pc-content-inner') || document.querySelector('.mobile-content-inner') || document.querySelector('.pc-browser-frame'));
+            if (isResponsiveTemplate) {
+                if (d.visible === false) {
+                    document.body.classList.add('hide-frame-grid');
+                } else {
+                    document.body.classList.remove('hide-frame-grid');
+                }
+            }
         } else if (d.type === 'LF_BRING_FRONT') {
             const selected = document.querySelectorAll('.lf-component.selected');
             const topLevelSelected = Array.from(selected).filter(el => {

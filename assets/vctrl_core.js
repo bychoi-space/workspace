@@ -130,6 +130,21 @@ window.loadScreen = async function (fileName) {
         state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html'
     )) || finalContent.includes('pc-browser-frame') || finalContent.includes('template_responsive_pc_mobile.html');
 
+    state.isCurrentResponsiveScreen = isResponsiveScreen;
+
+    const btnResponsiveGrid = document.getElementById('btn-toggle-responsive-grid');
+    if (btnResponsiveGrid) {
+        if (isResponsiveScreen) {
+            btnResponsiveGrid.style.display = 'inline-flex';
+            const isGridVisible = localStorage.getItem('responsive_grid_visible') !== 'false';
+            if (typeof window.updateResponsiveGridBtnUI === 'function') {
+                window.updateResponsiveGridBtnUI(isGridVisible);
+            }
+        } else {
+            btnResponsiveGrid.style.display = 'none';
+        }
+    }
+
     const iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe');
     if (iframe) {
         if (window.DOM && !window.DOM.iframe) window.DOM.iframe = iframe;
@@ -149,6 +164,15 @@ window.loadScreen = async function (fileName) {
             clearTimeout(loadTimeout);
             if (typeof window.hideLoading === 'function') window.hideLoading();
             iframe.onload = null;
+
+            if (isResponsiveScreen && iframe.contentWindow) {
+                const isGridVisible = localStorage.getItem('responsive_grid_visible') !== 'false';
+                setTimeout(() => {
+                    if (window.MessageHub) {
+                        MessageHub.send(iframe.contentWindow, 'LF_SET_RESPONSIVE_GRID', { visible: isGridVisible });
+                    }
+                }, 80);
+            }
 
             // Phase 3: Import legacy description pins ONCE, then render sidebar list
             const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'text' || p.text || p.html);
@@ -255,8 +279,8 @@ window.insertAtomicComponent = function (type, name) {
     let defaultStyle = { width: '120px', height: '100px' };
 
     if (name === 'SISUN Logo' || name === 'Workspace Logo') {
-        contentHtml = `<svg viewBox="0 0 200 40" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>`;
-        defaultStyle = { width: '120px', height: '24px', color: '#000000' };
+        contentHtml = `<svg viewBox="0 0 176 32" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>`;
+        defaultStyle = { width: '120px', height: '22px', color: '#000000' };
     } else if (name === 'Primary Button') {
         contentHtml = `<div style="background:#00e5ff; color:#0f172a; border:none; width:100%; height:100%; display:flex; align-items:center; justify-content:center; border-radius:8px; font-weight:400; font-size:12px; font-family:inherit; box-shadow:0 4px 15px rgba(0,229,255,0.3); pointer-events:none;">BUTTON</div>`;
         defaultStyle = { width: '120px', height: '36px' };
@@ -276,7 +300,7 @@ window.insertAtomicComponent = function (type, name) {
         contentHtml = `<div class="v4-grid-container" data-pagination="true" data-row-count="5" data-columns="[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;checkbox&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;번호&quot;,&quot;type&quot;:&quot;number&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;라이브 방송명&quot;,&quot;type&quot;:&quot;text&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;방송상태&quot;,&quot;type&quot;:&quot;status&quot;,&quot;width&quot;:&quot;100px&quot;},{&quot;name&quot;:&quot;등록/수정자&quot;,&quot;type&quot;:&quot;author&quot;,&quot;width&quot;:&quot;100px&quot;}]" style="width:100%; height:100%; display:flex; flex-direction:column; background:#ffffff; border:1.6px solid rgb(226,232,240); border-radius:8px; overflow:hidden; box-sizing:border-box;"><div class="v4-grid-table-wrapper" style="width:100%; height:calc(100% - 36px); overflow:auto; box-sizing:border-box;"><table style="width:max-content; table-layout:fixed; border-collapse:collapse; background:#ffffff; box-sizing:border-box;"><colgroup><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"><col style="width:100px;"></colgroup><thead><tr style="height:40px; background:#f8fafc; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box;"><th class="v4-grid-cell v4-grid-check-col" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0; font-weight:normal;"><input type="checkbox"></th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">번호 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">라이브 방송명 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">방송상태 ⇅</th><th class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; user-select:none;">등록/수정자 ⇅</th></tr></thead><tbody style="box-sizing:border-box;"><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1024</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[기획전] 여름 맞이 린넨 셔츠 특가 라이브</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(52,211,153,0.15); color:#10b981; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송중</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">홍길동</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1023</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[프리미엄] 프리미엄 실크 타이 단독 런칭 쇼</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(251,191,36,0.15); color:#d97706; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송예정</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">이영희</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1022</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[아웃도어] 아웃도어 바람막이 클리어런스 세일</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(239,68,68,0.1); color:#ef4444; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송종료</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">박민수</td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1021</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[신상품] 봄 신상 스니커즈 한정 라이브</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(52,211,153,0.15); color:#10b981; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송중</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">최현우</td></tr><tr style="height:40px; border-bottom:none; box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;"><input type="checkbox"></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">1020</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;">[컬렉션] 가을 컬렉션 룩북 공개 생방송</td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box;"><span style="background:rgba(251,191,36,0.15); color:#d97706; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:400;">방송예정</span></td><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:left; padding:0 8px; font-size:12px; font-weight:400; color:#64748b; font-family:inherit;">정수진</td></tr></tbody></table></div><div class="v4-grid-footer" style="height:36px; padding:0 12px; display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border-top:1.6px solid rgb(226,232,240); box-sizing:border-box; width:100%; flex-shrink:0;"><span style="font-size:11px; color:#64748b; font-family:inherit;">1/27</span><div class="v4-grid-pages" style="font-size:11px; color:#64748b; cursor:pointer; font-family:inherit;">◀ 1 2 3 4 5 ▶</div><span style="font-size:11px; color:#64748b; font-family:inherit;">Page Size 100</span></div></div>`;
         defaultStyle = { width: '500px', height: '336px' };
     } else if (name === 'Search Bar') {
-        contentHtml = `<div class="v4-searchbar-container" data-placeholder="원스피어 통합검색" style="display:flex; align-items:center; justify-content:space-between; width:100%; height:100%; background:rgb(255, 255, 255); border:1.6px solid rgb(200, 200, 200); border-radius:9999px; padding:0 12px 0 16px; box-sizing:border-box; overflow:hidden; pointer-events:auto;"><div class="v4-searchbar-text v4-editable-cell" contenteditable="true" data-placeholder="원스피어 통합검색" style="flex:1; border:none; outline:none; background:transparent; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; min-width:0; padding:0; line-height:1.2; -webkit-user-select:text; user-select:text; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;"></div><div class="v4-searchbar-icon-wrap" style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; flex-shrink:0; margin-left:8px; pointer-events:none;"><svg viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; background-image:none !important;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div></div>`;
+        contentHtml = `<div class="v4-searchbar-container" data-placeholder="원스피어 통합검색" style="display:flex; align-items:center; justify-content:space-between; width:100%; height:100%; background:rgb(255, 255, 255); border:1.6px solid rgb(200, 200, 200); border-radius:9999px; padding:0 12px 0 16px; box-sizing:border-box; overflow:hidden; pointer-events:auto;"><div class="v4-searchbar-text v4-editable-cell" contenteditable="true" data-placeholder="원스피어 통합검색" style="flex:1; border:none; outline:none; background:transparent; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit; min-width:0; padding:0; line-height:1.2; -webkit-user-select:text; user-select:text; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;"></div><div class="v4-searchbar-icon-wrap" style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; flex-shrink:0; margin-left:8px; pointer-events:none;"><svg viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; background-image:none !important;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div></div>`;
         defaultStyle = { width: '200px', height: '30px' };
     } else if (type === 'icon') {
         const svgMap = {
@@ -338,13 +362,13 @@ window.insertAtomicComponent = function (type, name) {
         };
 
         if (name === 'SISUN Logo' || name === 'Workspace Logo') {
-            contentHtml = `<svg viewBox="0 0 200 40" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>`;
-            defaultStyle = { width: '120px', height: '24px', color: '#000000' };
+            contentHtml = `<svg viewBox="0 0 176 32" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>`;
+            defaultStyle = { width: '120px', height: '22px', color: '#000000' };
         } else if (svgMap[name]) {
-            contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;">${svgMap[name]}</svg>`;
+            contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;">${svgMap[name]}</svg>`;
             defaultStyle = { width: '30px', height: '30px', color: '#000000' };
         } else {
-            contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+            contentHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
             defaultStyle = { width: '30px', height: '30px', color: '#000000' };
         }
     }
@@ -698,6 +722,10 @@ window.MessageHub = {
                 if (window.state && data.connectors) {
                     window.state.connectors = data.connectors;
                     if (window.ConnectorEngine) window.ConnectorEngine.redrawAll();
+                }
+            } else if (data.type === 'LF_TOGGLE_GRID_REQUEST') {
+                if (typeof window.toggleResponsiveGrid === 'function') {
+                    window.toggleResponsiveGrid();
                 }
             } else if (data.type === 'LF_UPDATE_PIN_POS') {
                 if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
@@ -1054,6 +1082,7 @@ window.init = async function () {
         if (typeof renderScreenList === 'function') renderScreenList(state.screens, fileName);
         if (typeof renderAtomicLibrary === 'function') renderAtomicLibrary();
         if (typeof initQuillEditor === 'function') initQuillEditor();
+        if (typeof initResponsiveGridToggle === 'function') initResponsiveGridToggle();
 
         if (fileName) {
             await loadScreen(fileName);
@@ -1258,6 +1287,7 @@ window.init = async function () {
         // RESTORED: Top Bar Tool Buttons
         if (DOM.btnSelect) DOM.btnSelect.onclick = () => window.setTool?.('select');
         if (DOM.btnHand) DOM.btnHand.onclick = () => window.setTool?.('hand');
+        if (typeof window.initResponsiveGridToggle === 'function') window.initResponsiveGridToggle();
 
         // RESTORED: Add Screen Modal Logic
         if (DOM.btnAddScreen) {
@@ -1323,6 +1353,15 @@ window.init = async function () {
             if ((e.ctrlKey || e.metaKey) && isS) {
                 e.preventDefault();
                 handleGlobalSave();
+                return;
+            }
+
+            const isShiftG = !e.ctrlKey && !e.metaKey && e.shiftKey && (e.key === 'G' || e.key === 'g' || e.code === 'KeyG');
+            if (isShiftG && !isInput && state.isCurrentResponsiveScreen) {
+                e.preventDefault();
+                if (typeof window.toggleResponsiveGrid === 'function') {
+                    window.toggleResponsiveGrid();
+                }
                 return;
             }
 
@@ -1446,6 +1485,51 @@ window.showToast = function (message, type = 'success') {
             toast.remove();
         }, 400);
     }, 3500);
+};
+
+window.toggleResponsiveGrid = function () {
+    if (!state.isCurrentResponsiveScreen) return;
+    const isCurrentlyVisible = localStorage.getItem('responsive_grid_visible') !== 'false';
+    const newVisible = !isCurrentlyVisible;
+    localStorage.setItem('responsive_grid_visible', newVisible ? 'true' : 'false');
+
+    const iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe');
+    if (iframe && iframe.contentWindow) {
+        if (window.MessageHub) {
+            MessageHub.send(iframe.contentWindow, 'LF_SET_RESPONSIVE_GRID', { visible: newVisible });
+        } else {
+            iframe.contentWindow.postMessage({ type: 'LF_SET_RESPONSIVE_GRID', visible: newVisible }, '*');
+        }
+    }
+    if (typeof window.updateResponsiveGridBtnUI === 'function') {
+        window.updateResponsiveGridBtnUI(newVisible);
+    }
+};
+
+window.updateResponsiveGridBtnUI = function (visible) {
+    const btn = document.getElementById('btn-toggle-responsive-grid');
+    const icon = document.getElementById('icon-responsive-grid');
+    if (!btn) return;
+    if (visible) {
+        btn.classList.add('active');
+        if (icon) icon.innerText = 'grid_on';
+        btn.title = '격자무늬 끄기 (Shift + G)';
+    } else {
+        btn.classList.remove('active');
+        if (icon) icon.innerText = 'grid_off';
+        btn.title = '격자무늬 켜기 (Shift + G)';
+    }
+};
+
+window.initResponsiveGridToggle = function () {
+    const btn = document.getElementById('btn-toggle-responsive-grid');
+    if (btn) {
+        btn.onclick = () => {
+            if (typeof window.toggleResponsiveGrid === 'function') {
+                window.toggleResponsiveGrid();
+            }
+        };
+    }
 };
 
 window.DEBUG_MODE = false;

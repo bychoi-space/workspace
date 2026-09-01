@@ -411,7 +411,7 @@
                 htmlList.push(`
                     <g>
                         <rect x="${rectX}" y="${rectY}" width="${textWidth}" height="16" rx="3" fill="${badgeBg}" />
-                        <text x="${cx}" y="${y + 4.5}" fill="${textCol}" font-size="9px" font-weight="700" text-anchor="middle" font-family="'Inter', sans-serif">${label}</text>
+                        <text x="${cx}" y="${y + 4}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Inter', -apple-system, sans-serif">${label}</text>
                     </g>
                 `);
             };
@@ -446,7 +446,7 @@
                 htmlList.push(`
                     <g>
                         <rect x="${rectX}" y="${rectY}" width="${textWidth}" height="16" rx="3" fill="${badgeBg}" />
-                        <text x="${x}" y="${cy + 4.5}" fill="${textCol}" font-size="9px" font-weight="700" text-anchor="middle" font-family="'Inter', sans-serif">${label}</text>
+                        <text x="${x}" y="${cy + 4}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Inter', -apple-system, sans-serif">${label}</text>
                     </g>
                 `);
             };

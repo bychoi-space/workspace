@@ -288,7 +288,7 @@ window.v4ShortcutsScript = `
                     : document.querySelector('.pc-content-area');
 
                 const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
-                const visibleH = scrollArea ? (scrollArea.clientHeight || 772) : 772;
+                const visibleH = scrollArea ? (scrollArea.clientHeight || 810) : 810;
                 const visibleW = targetFrame === 'mobile' ? 360 : 1000;
 
                 const viewCenterX = visibleW / 2;
@@ -580,6 +580,12 @@ window.v4ShortcutsScript = `
             return;
         }
 
+        if (!e.ctrlKey && !e.metaKey && e.shiftKey && isG && !inInput) {
+            e.preventDefault();
+            notifyParent({ type: 'LF_TOGGLE_GRID_REQUEST' });
+            return;
+        }
+
         if ((e.ctrlKey || e.metaKey) && isG && !inInput) {
             e.preventDefault();
             notifyParent({
@@ -644,18 +650,23 @@ window.v4ShortcutsScript = `
                     }
                 });
                 
-                if (activeEl && !window.ResponsiveSmartGuide) {
-                    const logicalX = parseFloat(activeEl.style.left) || 0;
-                    const logicalY = parseFloat(activeEl.style.top) || 0;
-                    
-                    notifyParent({ 
-                        type: 'LF_SNAP_REQUEST', 
-                        x: logicalX, 
-                        y: logicalY, 
-                        w: activeEl.offsetWidth, 
-                        h: activeEl.offsetHeight,
-                        activeId: activeEl.id
-                    });
+                if (activeEl) {
+                    if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
+                        window.ResponsiveSmartGuide.onNudge(activeEl);
+                    } else {
+                        const logicalX = parseFloat(activeEl.style.left) || 0;
+                        const logicalY = parseFloat(activeEl.style.top) || 0;
+                        
+                        notifyParent({ 
+                            type: 'LF_SNAP_REQUEST', 
+                            x: logicalX, 
+                            y: logicalY, 
+                            w: activeEl.offsetWidth, 
+                            h: activeEl.offsetHeight,
+                            activeId: activeEl.id,
+                            isArrowKey: true
+                        });
+                    }
                 }
             }
         } else if ((e.code === 'Delete' || e.code === 'Backspace') && !inInput) {
@@ -686,7 +697,9 @@ window.v4ShortcutsScript = `
             notifyParent({ type: 'LF_SPACE_UP' });
         } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
             isArrowMoving = false;
-            if (!window.ResponsiveSmartGuide) {
+            if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
+                window.ResponsiveSmartGuide.onNudgeEnd();
+            } else {
                 notifyParent({ type: 'LF_SNAP_END' });
             }
         }

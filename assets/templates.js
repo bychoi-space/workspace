@@ -1394,7 +1394,7 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
                 </div>
                 <div class="frame-label-height-control">
                     <span>Height:</span>
-                    <input type="number" class="frame-label-input pc-height-input" value="772" min="772" step="10">
+                    <input type="number" class="frame-label-input pc-height-input" value="810" min="810" step="10">
                     <span>px</span>
                 </div>
             </div>
@@ -1433,7 +1433,7 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
                 </div>
                 <div class="frame-label-height-control">
                     <span>Height:</span>
-                    <input type="number" class="frame-label-input mobile-height-input" value="772" min="772" step="10">
+                    <input type="number" class="frame-label-input mobile-height-input" value="810" min="810" step="10">
                     <span>px</span>
                 </div>
             </div>
@@ -1465,7 +1465,7 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
                 const pcInner = document.querySelector('.pc-content-inner');
                 if (pcInput && pcInner) {
                     const updatePc = () => {
-                        const val = Math.max(772, parseInt(pcInput.value) || 772);
+                        const val = Math.max(810, parseInt(pcInput.value) || 810);
                         pcInner.style.minHeight = (val + 2) + 'px';
                         pcInput.setAttribute('value', val);
                     };
@@ -1477,7 +1477,7 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
                 const mobileInner = document.querySelector('.mobile-content-inner');
                 if (mobileInput && mobileInner) {
                     const updateMobile = () => {
-                        const val = Math.max(772, parseInt(mobileInput.value) || 772);
+                        const val = Math.max(810, parseInt(mobileInput.value) || 810);
                         mobileInner.style.minHeight = (val + 2) + 'px';
                         mobileInput.setAttribute('value', val);
                     };

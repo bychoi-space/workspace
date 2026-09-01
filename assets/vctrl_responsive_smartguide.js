@@ -4,7 +4,7 @@
  * [PC & Mobile Scroll] Dedicated Smart Guide System
  * - Strictly isolates PC Frame and Mobile Frame (0% cross-frame guide leak).
  * - Identical logic and rendering for BOTH Mouse Drag and Keyboard Arrow Keys.
- * - Renders Figma-style snapping dashed lines, center lines, and distance (spacing) measurement badges.
+ * - Renders Figma-style snapping dashed lines, center lines, 4-wall distance measurements, and object spacing badges.
  */
 
 window.v4ResponsiveSmartGuideScript = `
@@ -13,12 +13,17 @@ window.v4ResponsiveSmartGuideScript = `
 
     const ResponsiveSmartGuide = {
         threshold: 6,
-        spacingThreshold: 80,
+        spacingThreshold: 200,
+        wallThreshold: 300,
         clearTimer: null,
         activeContext: null,
         
         targets: [],
         spacingTargets: [],
+
+        isResponsive: function() {
+            return !!document.querySelector('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area');
+        },
 
         getContainerContext: function(el) {
             if (!el) {
@@ -32,7 +37,7 @@ window.v4ResponsiveSmartGuideScript = `
             const pcArea = document.querySelector('.pc-content-area');
             const mobileArea = document.querySelector('.mobile-content-area');
 
-            if (pcInner && (pcInner.contains(el) || el.closest('.pc-column') || el.closest('.pc-browser-frame'))) {
+            if (pcInner && (pcInner.contains(el) || el.closest('.pc-column') || el.closest('.pc-browser-frame') || el.closest('.pc-content-area'))) {
                 return {
                     type: 'pc',
                     inner: pcInner,
@@ -40,7 +45,7 @@ window.v4ResponsiveSmartGuideScript = `
                     guideLayer: this.ensureGuideLayer(pcInner, 'pc-guide-layer')
                 };
             }
-            if (mobileInner && (mobileInner.contains(el) || el.closest('.mobile-column') || el.closest('.mobile-browser-frame'))) {
+            if (mobileInner && (mobileInner.contains(el) || el.closest('.mobile-column') || el.closest('.mobile-browser-frame') || el.closest('.mobile-content-area') || el.closest('.mobile-content'))) {
                 return {
                     type: 'mobile',
                     inner: mobileInner,
@@ -56,16 +61,16 @@ window.v4ResponsiveSmartGuideScript = `
                 if (compCenter >= mobileRect.left) {
                     return {
                         type: 'mobile',
-                        inner: mobileInner,
+                        inner: mobileInner || mobileArea,
                         area: mobileArea,
-                        guideLayer: this.ensureGuideLayer(mobileInner, 'mobile-guide-layer')
+                        guideLayer: this.ensureGuideLayer(mobileInner || mobileArea, 'mobile-guide-layer')
                     };
                 } else {
                     return {
                         type: 'pc',
-                        inner: pcInner,
+                        inner: pcInner || pcArea,
                         area: pcArea,
-                        guideLayer: this.ensureGuideLayer(pcInner, 'pc-guide-layer')
+                        guideLayer: this.ensureGuideLayer(pcInner || pcArea, 'pc-guide-layer')
                     };
                 }
             }
@@ -79,6 +84,7 @@ window.v4ResponsiveSmartGuideScript = `
             if (!svg) {
                 svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('class', 'v4-responsive-guide-layer ' + className);
+                svg.setAttribute('data-guide-layer', 'true');
                 svg.style.position = 'absolute';
                 svg.style.top = '0';
                 svg.style.left = '0';
@@ -103,8 +109,8 @@ window.v4ResponsiveSmartGuideScript = `
             this.targets = [];
             this.spacingTargets = [];
 
-            const containerWidth = context.inner.offsetWidth || (context.type === 'pc' ? 980 : 390);
-            const containerHeight = Math.max(context.inner.offsetHeight || 772, context.area ? context.area.clientHeight : 772);
+            const containerWidth = context.inner.offsetWidth || (context.type === 'pc' ? 1000 : 360);
+            const containerHeight = Math.max(context.inner.offsetHeight || 810, context.area ? context.area.clientHeight : 810, 810);
 
             const frameLabel = context.type === 'pc' ? 'PC Frame' : 'Mobile Frame';
             this.targets.push({ x: 0, label: frameLabel, part: 'Left', type: 'h' });
@@ -113,10 +119,12 @@ window.v4ResponsiveSmartGuideScript = `
             this.targets.push({ y: 0, label: frameLabel, part: 'Top', type: 'v' });
             this.targets.push({ y: containerHeight, label: frameLabel, part: 'Bottom', type: 'v' });
 
+            // Register 4-wall boundary spacing targets
             this.spacingTargets.push(
-                { id: context.type + '-wall-left', label: frameLabel + ' Left', left: 0, top: 0, right: 0, bottom: containerHeight, width: 0, height: containerHeight, isWall: true },
-                { id: context.type + '-wall-right', label: frameLabel + ' Right', left: containerWidth, top: 0, right: containerWidth, bottom: containerHeight, width: 0, height: containerHeight, isWall: true },
-                { id: context.type + '-wall-top', label: frameLabel + ' Top', left: 0, top: 0, right: containerWidth, bottom: 0, width: containerWidth, height: 0, isWall: true }
+                { id: context.type + '-wall-left', label: frameLabel + ' Left', left: 0, top: 0, right: 0, bottom: containerHeight, width: 0, height: containerHeight, isWall: true, wallSide: 'left' },
+                { id: context.type + '-wall-right', label: frameLabel + ' Right', left: containerWidth, top: 0, right: containerWidth, bottom: containerHeight, width: 0, height: containerHeight, isWall: true, wallSide: 'right' },
+                { id: context.type + '-wall-top', label: frameLabel + ' Top', left: 0, top: 0, right: containerWidth, bottom: 0, width: containerWidth, height: 0, isWall: true, wallSide: 'top' },
+                { id: context.type + '-wall-bottom', label: frameLabel + ' Bottom', left: 0, top: containerHeight, right: containerWidth, bottom: containerHeight, width: containerWidth, height: 0, isWall: true, wallSide: 'bottom' }
             );
 
             const components = context.inner.querySelectorAll('.lf-component');
@@ -144,7 +152,8 @@ window.v4ResponsiveSmartGuideScript = `
                     width: w,
                     height: h,
                     right: l + w,
-                    bottom: t + h
+                    bottom: t + h,
+                    isWall: false
                 });
             });
         },
@@ -167,50 +176,59 @@ window.v4ResponsiveSmartGuideScript = `
             let topMatch = null;
             let bottomMatch = null;
 
-            const overlapBuffer = 20;
+            const overlapBuffer = 30;
 
             this.spacingTargets.forEach(t => {
                 if (activeId && t.id === activeId) return;
 
+                const effectiveThresh = t.isWall ? this.wallThreshold : thresh;
+
+                // Leftward measurement (Target on Left, Active on Right)
                 if (t.right <= active.left) {
-                    const overlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                    const overlapY = t.isWall ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
                     if (overlapY) {
                         const dist = Math.round(active.left - t.right);
-                        if (dist >= 0 && dist <= thresh) {
-                            if (!leftMatch || dist < leftMatch.dist) {
+                        if (dist >= 0 && dist <= effectiveThresh) {
+                            if (!leftMatch || dist < leftMatch.dist || (!t.isWall && leftMatch.target.isWall && dist <= leftMatch.dist + 40)) {
                                 leftMatch = { target: t, dist: dist };
                             }
                         }
                     }
                 }
+
+                // Rightward measurement (Active on Left, Target on Right)
                 if (t.left >= active.right) {
-                    const overlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                    const overlapY = t.isWall ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
                     if (overlapY) {
                         const dist = Math.round(t.left - active.right);
-                        if (dist >= 0 && dist <= thresh) {
-                            if (!rightMatch || dist < rightMatch.dist) {
+                        if (dist >= 0 && dist <= effectiveThresh) {
+                            if (!rightMatch || dist < rightMatch.dist || (!t.isWall && rightMatch.target.isWall && dist <= rightMatch.dist + 40)) {
                                 rightMatch = { target: t, dist: dist };
                             }
                         }
                     }
                 }
+
+                // Upward measurement (Target on Top, Active on Bottom)
                 if (t.bottom <= active.top) {
-                    const overlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                    const overlapX = t.isWall ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
                     if (overlapX) {
                         const dist = Math.round(active.top - t.bottom);
-                        if (dist >= 0 && dist <= thresh) {
-                            if (!topMatch || dist < topMatch.dist) {
+                        if (dist >= 0 && dist <= effectiveThresh) {
+                            if (!topMatch || dist < topMatch.dist || (!t.isWall && topMatch.target.isWall && dist <= topMatch.dist + 40)) {
                                 topMatch = { target: t, dist: dist };
                             }
                         }
                     }
                 }
+
+                // Downward measurement (Active on Top, Target on Bottom)
                 if (t.top >= active.bottom) {
-                    const overlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                    const overlapX = t.isWall ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
                     if (overlapX) {
                         const dist = Math.round(t.top - active.bottom);
-                        if (dist >= 0 && dist <= thresh) {
-                            if (!bottomMatch || dist < bottomMatch.dist) {
+                        if (dist >= 0 && dist <= effectiveThresh) {
+                            if (!bottomMatch || dist < bottomMatch.dist || (!t.isWall && bottomMatch.target.isWall && dist <= bottomMatch.dist + 40)) {
                                 bottomMatch = { target: t, dist: dist };
                             }
                         }
@@ -228,50 +246,52 @@ window.v4ResponsiveSmartGuideScript = `
             let snapXData = null, snapYData = null;
             const thresh = this.threshold;
 
-            if (!isArrowKey) {
-                const pointsX = [
-                    { val: x, part: 'Left' },
-                    { val: x + w / 2, part: 'Center' },
-                    { val: x + w, part: 'Right' }
-                ];
+            const pointsX = [
+                { val: x, part: 'Left' },
+                { val: x + w / 2, part: 'Center' },
+                { val: x + w, part: 'Right' }
+            ];
 
-                for (let i = 0; i < this.targets.length; i++) {
-                    const t = this.targets[i];
-                    if (activeId && t.id === activeId) continue;
-                    if (t.x === undefined) continue;
+            for (let i = 0; i < this.targets.length; i++) {
+                const t = this.targets[i];
+                if (activeId && t.id === activeId) continue;
+                if (t.x === undefined) continue;
 
-                    for (let j = 0; j < pointsX.length; j++) {
-                        const p = pointsX[j];
-                        if (Math.abs(p.val - t.x) < thresh) {
+                for (let j = 0; j < pointsX.length; j++) {
+                    const p = pointsX[j];
+                    if (Math.abs(p.val - t.x) < thresh) {
+                        if (!isArrowKey) {
                             snappedX = x + (t.x - p.val);
-                            snapXData = { line: t.x, label: t.label, part: t.part, selfPart: p.part };
-                            break;
                         }
+                        snapXData = { line: t.x, label: t.label, part: t.part, selfPart: p.part };
+                        break;
                     }
-                    if (snapXData) break;
                 }
+                if (snapXData) break;
+            }
 
-                const pointsY = [
-                    { val: y, part: 'Top' },
-                    { val: y + h / 2, part: 'Middle' },
-                    { val: y + h, part: 'Bottom' }
-                ];
+            const pointsY = [
+                { val: y, part: 'Top' },
+                { val: y + h / 2, part: 'Middle' },
+                { val: y + h, part: 'Bottom' }
+            ];
 
-                for (let i = 0; i < this.targets.length; i++) {
-                    const t = this.targets[i];
-                    if (activeId && t.id === activeId) continue;
-                    if (t.y === undefined) continue;
+            for (let i = 0; i < this.targets.length; i++) {
+                const t = this.targets[i];
+                if (activeId && t.id === activeId) continue;
+                if (t.y === undefined) continue;
 
-                    for (let j = 0; j < pointsY.length; j++) {
-                        const p = pointsY[j];
-                        if (Math.abs(p.val - t.y) < thresh) {
+                for (let j = 0; j < pointsY.length; j++) {
+                    const p = pointsY[j];
+                    if (Math.abs(p.val - t.y) < thresh) {
+                        if (!isArrowKey) {
                             snappedY = y + (t.y - p.val);
-                            snapYData = { line: t.y, label: t.label, part: t.part, selfPart: p.part };
-                            break;
                         }
+                        snapYData = { line: t.y, label: t.label, part: t.part, selfPart: p.part };
+                        break;
                     }
-                    if (snapYData) break;
                 }
+                if (snapYData) break;
             }
 
             const spacing = this.calculateSpacing(snappedX, snappedY, w, h, this.spacingThreshold, activeId);
@@ -291,7 +311,7 @@ window.v4ResponsiveSmartGuideScript = `
 
             const snapLineColor = '#00e5ff';
             const badgeBgColor = '#ec4899';
-            const labelStyle = 'fill: #00e5ff; font-size: 11px; font-weight: 700; font-family: sans-serif;';
+            const labelStyle = 'fill: #00e5ff; font-size: 11px; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, sans-serif;';
             const rectStyle = 'fill: rgba(15, 23, 42, 0.95); stroke: #00e5ff; stroke-width: 1; rx: 4;';
 
             if (snapData.snapXData) {
@@ -344,20 +364,24 @@ window.v4ResponsiveSmartGuideScript = `
                 const x2 = side === 'left' ? active.left : target.left;
 
                 let y = active.centerY;
-                if (y < target.top) y = target.top + 6;
-                if (y > target.bottom) y = target.bottom - 6;
+                if (!target.isWall) {
+                    if (y < target.top) y = target.top + 6;
+                    if (y > target.bottom) y = target.bottom - 6;
+                }
 
+                // Main measurement line
                 htmlList.push('<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '" stroke="' + lineCol + '" stroke-width="1.2" />');
-                htmlList.push('<line x1="' + x1 + '" y1="' + (y - 4) + '" x2="' + x1 + '" y2="' + (y + 4) + '" stroke="' + lineCol + '" stroke-width="1.2" />');
-                htmlList.push('<line x1="' + x2 + '" y1="' + (y - 4) + '" x2="' + x2 + '" y2="' + (y + 4) + '" stroke="' + lineCol + '" stroke-width="1.2" />');
+                // T-ticks at both ends
+                htmlList.push('<line x1="' + x1 + '" y1="' + (y - 5) + '" x2="' + x1 + '" y2="' + (y + 5) + '" stroke="' + lineCol + '" stroke-width="1.2" />');
+                htmlList.push('<line x1="' + x2 + '" y1="' + (y - 5) + '" x2="' + x2 + '" y2="' + (y + 5) + '" stroke="' + lineCol + '" stroke-width="1.2" />');
 
                 const cx = (x1 + x2) / 2;
                 const label = String(dist);
-                const textWidth = label.length * 6.5 + 10;
+                const textWidth = Math.max(22, label.length * 7 + 10);
                 htmlList.push(
                     '<g>' +
-                    '<rect x="' + (cx - textWidth / 2) + '" y="' + (y - 8) + '" width="' + textWidth + '" height="16" rx="3" fill="' + badgeBg + '" />' +
-                    '<text x="' + cx + '" y="' + (y + 4) + '" fill="' + textCol + '" font-size="9px" font-weight="800" text-anchor="middle" font-family="sans-serif">' + label + '</text>' +
+                    '<rect x="' + (cx - textWidth / 2) + '" y="' + (y - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + badgeBg + '" />' +
+                    '<text x="' + cx + '" y="' + (y + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
                     '</g>'
                 );
             };
@@ -372,20 +396,24 @@ window.v4ResponsiveSmartGuideScript = `
                 const y2 = side === 'top' ? active.top : target.top;
 
                 let x = active.centerX;
-                if (x < target.left) x = target.left + 6;
-                if (x > target.right) x = target.right - 6;
+                if (!target.isWall) {
+                    if (x < target.left) x = target.left + 6;
+                    if (x > target.right) x = target.right - 6;
+                }
 
+                // Main measurement line
                 htmlList.push('<line x1="' + x + '" y1="' + y1 + '" x2="' + x + '" y2="' + y2 + '" stroke="' + lineCol + '" stroke-width="1.2" />');
-                htmlList.push('<line x1="' + (x - 4) + '" y1="' + y1 + '" x2="' + (x + 4) + '" y2="' + y1 + '" stroke="' + lineCol + '" stroke-width="1.2" />');
-                htmlList.push('<line x1="' + (x - 4) + '" y1="' + y2 + '" x2="' + (x + 4) + '" y2="' + y2 + '" stroke="' + lineCol + '" stroke-width="1.2" />');
+                // T-ticks at both ends
+                htmlList.push('<line x1="' + (x - 5) + '" y1="' + y1 + '" x2="' + (x + 5) + '" y2="' + y1 + '" stroke="' + lineCol + '" stroke-width="1.2" />');
+                htmlList.push('<line x1="' + (x - 5) + '" y1="' + y2 + '" x2="' + (x + 5) + '" y2="' + y2 + '" stroke="' + lineCol + '" stroke-width="1.2" />');
 
                 const cy = (y1 + y2) / 2;
                 const label = String(dist);
-                const textWidth = label.length * 6.5 + 10;
+                const textWidth = Math.max(22, label.length * 7 + 10);
                 htmlList.push(
                     '<g>' +
-                    '<rect x="' + (x - textWidth / 2) + '" y="' + (cy - 8) + '" width="' + textWidth + '" height="16" rx="3" fill="' + badgeBg + '" />' +
-                    '<text x="' + x + '" y="' + (cy + 4) + '" fill="' + textCol + '" font-size="9px" font-weight="800" text-anchor="middle" font-family="sans-serif">' + label + '</text>' +
+                    '<rect x="' + (x - textWidth / 2) + '" y="' + (cy - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + badgeBg + '" />' +
+                    '<text x="' + x + '" y="' + (cy + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
                     '</g>'
                 );
             };
@@ -416,49 +444,43 @@ window.v4ResponsiveSmartGuideScript = `
             }, 250);
         },
 
+        /**
+         * Real-time synchronous handler for keyboard nudges from vctrl_shortcuts.js
+         */
+        onNudge: function(activeEl) {
+            if (!activeEl) return;
+            const ctx = this.getContainerContext(activeEl);
+            if (!ctx) return;
+
+            if (this.clearTimer) {
+                clearTimeout(this.clearTimer);
+                this.clearTimer = null;
+            }
+
+            // Self-healing snap targets if empty or frame switched
+            if (!this.activeContext || this.activeContext.type !== ctx.type || this.targets.length === 0) {
+                this.findSnapTargets(ctx, activeEl);
+            }
+
+            const curLeft = parseFloat(activeEl.style.left) || 0;
+            const curTop = parseFloat(activeEl.style.top) || 0;
+            const w = activeEl.offsetWidth || 100;
+            const h = activeEl.offsetHeight || 40;
+
+            const snapResult = this.calculateSnap(curLeft, curTop, w, h, true, activeEl.id);
+            this.drawGuides(ctx, snapResult);
+        },
+
+        onNudgeEnd: function() {
+            this.clearGuides(false);
+        },
+
         initKeyboardEvents: function() {
-            let isArrowMoving = false;
-
-            document.addEventListener('keydown', (e) => {
-                const inInput = e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
-                if (inInput) return;
-
-                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-                    const selected = document.querySelectorAll('.lf-component.selected');
-                    if (selected.length === 0) return;
-
-                    const activeEl = selected[0];
-                    const ctx = this.getContainerContext(activeEl);
-                    if (!ctx) return;
-
-                    if (!isArrowMoving) {
-                        isArrowMoving = true;
-                        this.findSnapTargets(ctx, activeEl);
-                    }
-
-                    requestAnimationFrame(() => {
-                        const curLeft = parseFloat(activeEl.style.left) || 0;
-                        const curTop = parseFloat(activeEl.style.top) || 0;
-                        const w = activeEl.offsetWidth || 100;
-                        const h = activeEl.offsetHeight || 40;
-
-                        const snapResult = this.calculateSnap(curLeft, curTop, w, h, false, activeEl.id);
-                        this.drawGuides(ctx, snapResult);
-                    });
-                }
-            }, true);
-
-            document.addEventListener('keyup', (e) => {
-                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-                    isArrowMoving = false;
-                    this.clearGuides(false);
-                }
-            }, true);
+            // Managed seamlessly via vctrl_shortcuts.js pipeline
         },
 
         init: function() {
-            this.initKeyboardEvents();
-            console.log("[ResponsiveSmartGuide] Initialized successfully with strict frame isolation.");
+            console.log("[ResponsiveSmartGuide] Initialized successfully with strict frame isolation and 4-wall measurement.");
         }
     };
 
@@ -471,3 +493,4 @@ window.v4ResponsiveSmartGuideScript = `
     }
 })();
 `;
+

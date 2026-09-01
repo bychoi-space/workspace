@@ -2814,6 +2814,17 @@ body.drag-active #drop-overlay {
 svg.lf-icon {
     background-image: none !important;
 }
+svg.lf-icon:not(.v4-logo-img),
+svg.lf-icon:not(.v4-logo-img) path,
+svg.lf-icon:not(.v4-logo-img) circle,
+svg.lf-icon:not(.v4-logo-img) rect,
+svg.lf-icon:not(.v4-logo-img) line,
+svg.lf-icon:not(.v4-logo-img) polyline,
+svg.lf-icon:not(.v4-logo-img) polygon,
+.v4-searchbar-icon-wrap svg,
+.v4-searchbar-icon-wrap svg * {
+    stroke-width: 1.2 !important;
+}
 .lf-icon {
     width: 40px;
     height: 40px;

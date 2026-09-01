@@ -92,4 +92,8 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - 다중 선택 및 그룹의 상대 좌표 간격(`relX`, `relY`)을 1:1로 온전히 보존.
 - **Canvas Subpixel Jitter Protection (`vctrl_v3.js`)**:
   - `centerView()` 연산 시 100% 배율 근처(0.96x 이상)는 정확히 `scale: 1.0`으로 스냅하고, `translate` 좌표를 `Math.round()` 정수 픽셀로 고정하여 iframe 내부 텍스트의 래스터화 블러를 원천 방지한다.
+- **Dedicated Responsive SmartGuide Engine (`vctrl_responsive_smartguide.js` & `vctrl_shortcuts.js`)**:
+  - **Frame Boundary 4-Wall Distance**: 프레임 내부 오브젝트 이동 시 상/하/좌/우 4방향 테두리(`wall-left`, `wall-right`, `wall-top`, `wall-bottom`)와의 물리적 거리를 픽셀 단위로 정밀 측정하여 실시간 핑크 뱃지 및 가이드선을 표시한다.
+  - **Expanded Spacing Detection**: 오브젝트 간 사이 간격을 200px 이상 광범위하게 탐지하여 실무 레이아웃 간격을 완벽히 지원한다.
+  - **Synchronous Keyboard Nudge Pipeline**: `vctrl_shortcuts.js`에서 화살표 키(`ArrowUp/Down/Left/Right`, `Shift + Arrow`)로 오브젝트를 이동할 때 `window.ResponsiveSmartGuide.onNudge(activeEl)`를 동기 호출하여 1프레임의 지연 없이 즉각적으로 테두리 및 오브젝트 거리 뱃지를 렌더링한다.
 

@@ -91,18 +91,23 @@ window.GroupingManager = (function() {
                  if (e.shiftKey) ungroupSelected();
                  else groupSelected();
              }
-             if (e.altKey && ['1','2','3','4','5','6'].includes(e.key)) {
-                 e.preventDefault();
-                 const typeMap = {
-                     '1': 'left',
-                     '2': 'center',
-                     '3': 'right',
-                     '4': 'top',
-                     '5': 'middle',
-                     '6': 'bottom'
-                 };
-                 alignSelected(typeMap[e.key]);
-             }
+             const isAlignKey = ['1','2','3','4','5','6'].includes(e.key) || ['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Numpad1','Numpad2','Numpad3','Numpad4','Numpad5','Numpad6'].includes(e.code);
+            const inInput = e.target && (e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || (e.target.closest && e.target.closest('.ql-editor, [contenteditable="true"]')));
+            if ((e.altKey || e.ctrlKey || e.metaKey) && isAlignKey && !inInput) {
+                e.preventDefault();
+                const keyChar = (e.key && ['1','2','3','4','5','6'].includes(e.key)) ? e.key : (e.code ? e.code.replace('Digit', '').replace('Numpad', '') : '1');
+                const typeMap = {
+                    '1': 'left',
+                    '2': 'center',
+                    '3': 'right',
+                    '4': 'top',
+                    '5': 'middle',
+                    '6': 'bottom'
+                };
+                if (typeMap[keyChar]) {
+                    alignSelected(typeMap[keyChar]);
+                }
+            }
          });
      };
  
@@ -367,7 +372,7 @@ window.GroupingManager = (function() {
 
     const alignSelected = (type) => {
         const activeIds = getEffectiveSelectedIds();
-        if (activeIds.length < 2) return;
+        if (activeIds.length < 1) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {

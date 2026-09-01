@@ -691,17 +691,6 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
                 </div>
             </div>
-            <!-- Dimensions -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
-                <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
-                    <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
-                </div>
-                <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
-                    <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
-                </div>
-            </div>
         </div>
 
         <!-- accordion-inspector-section -->
@@ -1051,17 +1040,6 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                         <button id="btn-stepper-disabled-y" class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
                         <button id="btn-stepper-disabled-n" class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
                     </div>
-                </div>
-            </div>
-            <!-- Dimensions -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
-                <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
-                    <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
-                </div>
-                <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
-                    <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
         </div>
@@ -1426,17 +1404,6 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
                 </div>
             </div>
-            <!-- Dimensions -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
-                <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
-                    <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
-                </div>
-                <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
-                    <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
-                </div>
-            </div>
         </div>
 
         <!-- toggle-inspector-section -->
@@ -1469,17 +1436,6 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 <div style="display: flex; gap: 4px;">
                     <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
                     <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
-                </div>
-            </div>
-            <!-- Dimensions -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
-                <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
-                    <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
-                </div>
-                <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
-                    <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
         </div>

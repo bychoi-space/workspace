@@ -1677,7 +1677,7 @@ window.v4Script = `
                     container.setAttribute('data-btn-enabled', d.btnEnabled ? 'true' : 'false');
                     const actBtn = container.querySelector('.v4-stepper-action');
                     if (actBtn) actBtn.style.display = d.btnEnabled ? 'inline-flex' : 'none';
-                    s.style.width = d.btnEnabled ? '154px' : '100px';
+                    s.style.width = d.btnEnabled ? '134px' : '80px';
                 }
                 if (d.btnText !== undefined) {
                     container.setAttribute('data-btn-text', d.btnText);
@@ -2333,7 +2333,7 @@ window.v4Script = `
         } else if (d.type === 'LF_ALIGN_SELECTED') {
             const ids = d.ids || [];
             const alignType = d.alignType || d.type;
-            if (ids.length < 2) return;
+            if (ids.length < 1) return;
             if (window.V4UndoManager) window.V4UndoManager.saveState();
 
             const doc = document;
@@ -2391,7 +2391,96 @@ window.v4Script = `
             });
 
             allHandles.forEach((h, i) => h.style.display = handleStates[i]);
-            if (items.length < 2) return;
+            if (items.length < 1) return;
+
+            // Single Object Alignment: Align to Screen Canvas (1440x900) or Responsive Frame (PC 1000px / Mobile 360px)
+            if (items.length === 1) {
+                const item = items[0];
+                const el = item.el;
+                const isResponsiveTemplate = !!(doc.querySelector('.pc-content-inner') || doc.querySelector('.mobile-content-inner') || doc.querySelector('.pc-browser-frame'));
+                
+                let boundL = 0;
+                let boundT = 0;
+                let boundW = 1440;
+                let boundH = 900;
+
+                if (isResponsiveTemplate) {
+                    const pcInner = doc.querySelector('.pc-content-inner');
+                    const mobileInner = doc.querySelector('.mobile-content-inner');
+                    const isInsideMobile = !!(el && (el.closest('.mobile-content-inner, .mobile-content-area, .mobile-frame, .mobile-browser-frame, .mobile-column, .mobile-content') || (mobileInner && mobileInner.contains(el))));
+                    
+                    if (isInsideMobile) {
+                        const targetContainer = mobileInner || doc.querySelector('.mobile-content-area, .mobile-content');
+                        boundW = targetContainer ? (targetContainer.offsetWidth || 360) : 360;
+                        boundH = targetContainer ? (targetContainer.offsetHeight || targetContainer.clientHeight || 810) : 810;
+                    } else {
+                        const targetContainer = pcInner || doc.querySelector('.pc-content-area');
+                        boundW = targetContainer ? (targetContainer.offsetWidth || 1000) : 1000;
+                        boundH = targetContainer ? (targetContainer.offsetHeight || targetContainer.clientHeight || 810) : 810;
+                    }
+                } else {
+                    const pageEl = doc.querySelector('.page') || doc.body;
+                    boundW = pageEl ? (pageEl.offsetWidth || 1440) : 1440;
+                    boundH = pageEl ? (pageEl.offsetHeight || 900) : 900;
+                }
+
+                let targetL = item.x;
+                let targetT = item.y;
+
+                switch(alignType) {
+                    case 'left':   targetL = boundL; break;
+                    case 'center': targetL = boundL + Math.round((boundW - item.w) / 2); break;
+                    case 'right':  targetL = boundL + (boundW - item.w); break;
+                    case 'top':    targetT = boundT; break;
+                    case 'middle': targetT = boundT + Math.round((boundH - item.h) / 2); break;
+                    case 'bottom': targetT = boundT + (boundH - item.h); break;
+                }
+
+                const dx = targetL - item.x;
+                const dy = targetT - item.y;
+
+                if (dx !== 0 || dy !== 0) {
+                    if (item.type === 'connector') {
+                        if (item.conn) {
+                            item.conn.start.x += dx;
+                            item.conn.start.y += dy;
+                            item.conn.end.x += dx;
+                            item.conn.end.y += dy;
+                            item.conn.start.targetId = null; item.conn.start.side = null;
+                            item.conn.end.targetId = null; item.conn.end.side = null;
+                            if (window.parent && window.parent.ConnectorEngine) {
+                                window.parent.ConnectorEngine.redrawAll();
+                            }
+                            notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent?.state?.connectors });
+                        }
+                    } else {
+                        let parentL = 0;
+                        let parentT = 0;
+                        let parent = item.el.parentElement;
+                        while (parent && parent !== doc.body && !parent.classList.contains('pc-content-inner') && !parent.classList.contains('mobile-content-inner')) {
+                            if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                                parentL += parseFloat(parent.style.left) || 0;
+                                parentT += parseFloat(parent.style.top) || 0;
+                            }
+                            parent = parent.parentElement;
+                        }
+
+                        item.el.style.left = (targetL - parentL) + 'px';
+                        item.el.style.top = (targetT - parentT) + 'px';
+
+                        if (item.type === 'marker') {
+                            const idx = parseInt(item.id.replace('v4-pin-', ''));
+                            notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: targetL, y: targetT });
+                        }
+
+                        if (window.parent && window.parent.ConnectorEngine && typeof window.parent.ConnectorEngine.syncAnchoredPositions === 'function') {
+                            window.parent.ConnectorEngine.syncAnchoredPositions(item.id);
+                        }
+                    }
+                    markDirty();
+                }
+                return;
+            }
 
             let minX = Math.min(...items.map(i => i.x));
             let minY = Math.min(...items.map(i => i.y));

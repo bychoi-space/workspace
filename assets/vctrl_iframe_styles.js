@@ -45,7 +45,25 @@ body, .lf-component {
 .lf-in-group .lf-delete-trigger,
 .v4-text-shape > .lf-resizer,
 .v4-text-box > .lf-resizer,
-.text-marker > .lf-resizer { display: none !important; }
+.text-marker > .lf-resizer,
+.lf-component:has(.v4-stepper-container) > .lf-resizer,
+.lf-component:has(.v4-datepicker-container) > .lf-resizer,
+.lf-component:has(.v4-toggle-container) > .lf-resizer,
+.lf-component:has(.v4-checkbox-container) > .lf-resizer,
+.lf-component:has(.v4-radio-container) > .lf-resizer,
+.lf-component:has(.v4-fileupload-container) > .lf-resizer,
+.lf-component:has(.v4-alert-container) > .lf-resizer,
+.lf-component:has(.v4-btn-container) > .lf-resizer,
+.lf-component:has(.v4-custom-btn) > .lf-resizer,
+.v4-stepper-container ~ .lf-resizer,
+.v4-datepicker-container ~ .lf-resizer,
+.v4-toggle-container ~ .lf-resizer,
+.v4-checkbox-container ~ .lf-resizer,
+.v4-radio-container ~ .lf-resizer,
+.v4-fileupload-container ~ .lf-resizer,
+.v4-alert-container ~ .lf-resizer,
+.v4-btn-container ~ .lf-resizer,
+.v4-custom-btn ~ .lf-resizer { display: none !important; }
 .lf-drag-handle { position: absolute; top: -16px; left: -16px; width: 18px; height: 18px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; opacity: 0; transition: opacity 0.15s ease; border: 1.6px solid #fff; z-index: 10002; }
 .lf-drag-handle svg { width: 10px !important; height: 10px !important; }
 .lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; }
@@ -379,7 +397,6 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     overflow-y: scroll !important;
     overflow-x: hidden !important;
     scrollbar-gutter: stable;
-    scroll-behavior: smooth;
     isolation: isolate;
 }
 .pc-content-area::-webkit-scrollbar,

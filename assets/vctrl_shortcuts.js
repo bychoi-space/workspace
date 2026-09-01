@@ -496,8 +496,11 @@ window.v4ShortcutsScript = `
     }
 
     document.addEventListener('keydown', e => {
-        if (e.altKey && ['1','2','3','4','5','6'].includes(e.key)) {
+        const inInputEarly = isInputActive(e.target) || isInputActive(document.activeElement);
+        const isAlignKey = ['1','2','3','4','5','6'].includes(e.key) || ['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Numpad1','Numpad2','Numpad3','Numpad4','Numpad5','Numpad6'].includes(e.code);
+        if ((e.altKey || e.ctrlKey || e.metaKey) && isAlignKey && !inInputEarly) {
             e.preventDefault();
+            const keyChar = (e.key && ['1','2','3','4','5','6'].includes(e.key)) ? e.key : (e.code ? e.code.replace('Digit', '').replace('Numpad', '') : '1');
             const typeMap = {
                 '1': 'left',
                 '2': 'center',
@@ -506,11 +509,13 @@ window.v4ShortcutsScript = `
                 '5': 'middle',
                 '6': 'bottom'
             };
-            notifyParent({
-                type: 'LF_SHORTCUT_ALIGN',
-                alignType: typeMap[e.key]
-            });
-            return;
+            if (typeMap[keyChar]) {
+                notifyParent({
+                    type: 'LF_SHORTCUT_ALIGN',
+                    alignType: typeMap[keyChar]
+                });
+                return;
+            }
         }
 
         if (e.key === 'F2' || e.code === 'F2') {

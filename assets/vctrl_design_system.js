@@ -311,7 +311,7 @@ window.v4DesignSystemScript = `
             const stepper = c.querySelector('.v4-stepper-container');
             if (stepper) {
                 const btnEnabled = stepper.getAttribute('data-btn-enabled') !== 'false';
-                const targetW = btnEnabled ? '154px' : '100px';
+                const targetW = btnEnabled ? '134px' : '80px';
                 const targetH = '30px';
                 
                 if (c.style.width !== targetW) c.style.width = targetW;

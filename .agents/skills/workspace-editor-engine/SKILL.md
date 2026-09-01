@@ -96,4 +96,13 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - **Frame Boundary 4-Wall Distance**: 프레임 내부 오브젝트 이동 시 상/하/좌/우 4방향 테두리(`wall-left`, `wall-right`, `wall-top`, `wall-bottom`)와의 물리적 거리를 픽셀 단위로 정밀 측정하여 실시간 핑크 뱃지 및 가이드선을 표시한다.
   - **Expanded Spacing Detection**: 오브젝트 간 사이 간격을 200px 이상 광범위하게 탐지하여 실무 레이아웃 간격을 완벽히 지원한다.
   - **Synchronous Keyboard Nudge Pipeline**: `vctrl_shortcuts.js`에서 화살표 키(`ArrowUp/Down/Left/Right`, `Shift + Arrow`)로 오브젝트를 이동할 때 `window.ResponsiveSmartGuide.onNudge(activeEl)`를 동기 호출하여 1프레임의 지연 없이 즉각적으로 테두리 및 오브젝트 거리 뱃지를 렌더링한다.
+- **Smart In-Place Undo & Scroll Preservation Engine (`vctrl_undo.js`)**:
+  - **스크롤 컨테이너 보존 (In-Place DOM Swap)**: 반응형 템플릿의 `undo()` 시 `document.body.innerHTML = ''`를 실행하면 `.pc-content-area`와 `.mobile-content-area` 스크롤 컨테이너 자체가 DOM에서 삭제되어 브라우저가 스크롤을 무조건 `0px`로 리셋한다. 따라서 반드시 `.pc-content-inner`와 `.mobile-content-inner`의 자식 노드(`innerHTML`) 및 `minHeight` 스타일만 핀포인트로 교체하는 In-Place 복원 전략을 수행해야 한다.
+  - **`scroll-behavior: smooth` 제거**: 스크롤 컨테이너에 `scroll-behavior: smooth`가 있으면 JS의 `scrollTop = N` 복원이 비동기 애니메이션 큐에 묶여 무시되거나 리셋되므로, 즉각적인 1:1 반응을 위해 auto 모드를 유지한다.
+  - **실시간 스크롤 캡처 & 다중 프레임 rAF 보정**: 조작 중 `{ passive: true }` 스크롤 리스너로 뷰포트 좌표를 유지하고, Undo 직후 `requestAnimationFrame` 연속 프레임 루프를 통해 레이아웃 비동기 지연에 따른 0px 클램핑을 원천 차단한다.
+- **Single & Multi-Object Alignment Engine (`vctrl_shortcuts.js`, `vctrl_grouping.js`, `vctrl_iframe_script.js`)**:
+  - `Ctrl + 1 ~ 6` 및 `Alt + 1 ~ 6` 단축키를 단일 및 다중 선택 상태 모두에서 완벽 지원한다.
+  - `items.length === 1` 분기: 일반 템플릿은 1440x900 전체 캔버스 기준, 반응형 템플릿은 PC(`1000px`) / Mobile(`360px`) 소속 프레임 내에서 1:1 정수 픽셀(`Math.round`)로 독립 정렬을 수행한다.
+  - `isInputActive` 가드를 적용하여 텍스트 상자, 셀 입력, Quill 에디터 편집 중에는 단축키 간섭을 원천 방지한다.
+
 

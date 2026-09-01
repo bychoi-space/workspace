@@ -138,6 +138,17 @@
   - **5. 도형 텍스트 우측 하단 크기 조절 버튼(.lf-resizer) 완전 미노출 규격**:
     - 도형 텍스트(`.v4-text-shape`, `.v4-text-box`, `.text-marker`)는 폰트 크기 변경에 따른 동적 자동 핏(Fit)을 따르므로 우측 하단의 수동 크기 조절 버튼(`.lf-resizer`)은 완전히 불필요하다.
     - 이를 위해 `assets/vctrl_iframe_styles.js`에 `.v4-text-shape > .lf-resizer, .v4-text-box > .lf-resizer, .text-marker > .lf-resizer { display: none !important; }` CSS 선언부 및 `vctrl_text_measurer.js` 내의 `fitResult.hideResizer` 핸들러 제어 로직을 통해 리사이저 버튼을 완전히 숨겨야 한다.
+  - **6. ATOMIC 컴포넌트 크기 제어 3단계 표준 규격**:
+    - **1단계 (완전 고정형 - Stepper, Date Picker, Toggle Button, Check Box, Radio)**:
+      - 캔버스 크기 조절 점(`.lf-resizer`): **미노출** (`display: none !important`)
+      - 인스펙터 프로퍼티 (`Width / Height`): **미노출** (불필요한 크기 수치 입력창 제거하여 고유 옵션에 집중)
+    - **2단계 (반고정/규격 폼 - File Upload, Alert, Button)**:
+      - 캔버스 크기 조절 점(`.lf-resizer`): **미노출** (마우스 드래그로 인한 비의도적 레이아웃 왜곡 방지)
+      - 인스펙터 프로퍼티 (`Width / Height`): **유지** (그리드나 상위 컨테이너 너비에 맞춘 정밀 픽셀 수치 조정 허용)
+    - **3단계 (완전 가변형 - Textbox, Textarea, Search Bar, Selectbox, Image, Grid, Accordion, Popup, Shape)**:
+      - 캔버스 크기 조절 점(`.lf-resizer`) 및 인스펙터 프로퍼티 (`Width / Height`): **모두 노출 유지**
+
+
 
 
 ## 🛡️ 보안 및 통신 규칙 (매수 중요)
@@ -235,14 +246,23 @@
   - **그룹 내 아톰 예외 처리 (Atom Design-System Bypass)**: 그룹(`.lf-group`) 내부의 컴포넌트는 `enforceDesignSystem()` 등 실시간 디자인 강제화 보정 규칙에서 즉시 제외되어야 합니다. 특히 `closest('.lf-group')` 체크를 통해 스캔 루프를 탈출함으로써 컴포넌트 크기나 구조가 강제로 기본값(예: 버튼 80px, 아코디언 높이 등)으로 덮어씌워져 내부 텍스트 레이아웃이 쪼그라들거나 깨지는 오작동을 차단해야 합니다.
   - **그룹 리사이즈 시 비례적 크기/위치 조절 (Proportional Child Scaling)**: 그룹(`.lf-group`)을 리사이즈할 때 내부의 모든 자식 컴포넌트들의 상대 좌표(`left`, `top`)와 크기(`width`, `height`)를 비례 계산(Scale Factor)하여 실시간 동기화해야 하며, 아톰 컴포넌트의 내부 스케일 요소도 비례 갱신해야 합니다. 또한, 리사이즈 완료 시 자식 요소들에 `data-resized="true"` 플래그를 자동으로 부여하여 그룹 해제나 새로고침 후에도 크기가 무너지지 않도록 보장해야 합니다.
   - **Direct Child Selector 사용을 통한 핸들러 보호 (Direct Child Handle Isolation)**: `updateHandles`와 `initHandles` 등 드래그/리사이즈 조작 인터페이스 갱신 시 반드시 `:scope > .lf-drag-handle`, `:scope > .lf-resizer` 와 같은 직속 자식 셀렉터를 사용하여, 그룹 내부 자식 컴포넌트의 핸들과 오인되어 상위 그룹 전용 핸들이 누락되거나 소실되는 현상을 완벽하게 방지해야 합니다.
-  - **다중 선택 정렬 단축키 (Alignment Shortcuts)**: 다중 선택(`selectedIds.length > 1`) 상태에서 개체 정렬 속도와 조작성 향상을 위해 단축키 **Alt + 1 ~ 6**을 매핑하여 신속한 정렬을 지원해야 합니다.
-    - `Alt + 1`: 좌측 정렬 (Left)
-    - `Alt + 2`: 수평 중앙 정렬 (Center)
-    - `Alt + 3`: 우측 정렬 (Right)
-    - `Alt + 4`: 상단 정렬 (Top)
-    - `Alt + 5`: 수직 중앙 정렬 (Middle)
-    - `Alt + 6`: 하단 정렬 (Bottom)
-    - iframe 내부 포커스 상태에서도 동일하게 키 입력이 감지될 수 있도록 `MessageHub`를 통해 부모(Orchestrator)로 정렬 요청을 프록시 전달해야 합니다.
+- **단일 및 다중 오브젝트 정렬 단축키 및 템플릿별 기준 규격 (Alignment Shortcuts & Container Isolation)**:
+  - **단축키 바인딩**: 단일 선택(`items.length === 1`) 및 다중 선택(`items.length > 1`) 모두에서 **`Ctrl + 1 ~ 6`** 및 **`Alt + 1 ~ 6`**을 완벽 지원한다.
+    - `Ctrl/Alt + 1`: 좌측 정렬 (Left)
+    - `Ctrl/Alt + 2`: 수평 중앙 정렬 (Center)
+    - `Ctrl/Alt + 3`: 우측 정렬 (Right)
+    - `Ctrl/Alt + 4`: 상단 정렬 (Top)
+    - `Ctrl/Alt + 5`: 수직 중앙 정렬 (Middle)
+    - `Ctrl/Alt + 6`: 하단 정렬 (Bottom)
+  - **단일 오브젝트 정렬 기준 분기**:
+    - **일반 템플릿**: 전체 캔버스(`.page` / `document.body`, `1440 x 900px`)를 기준으로 좌/우/중앙/상/하/중단 정렬.
+    - **[반응형] 템플릿**: 소속된 프레임(PC `.pc-content-inner` `1000px` / Mobile `.mobile-content-inner` `360px`) 영역 내에서 독립 정렬하여 프레임 간 좌표 간섭 0%를 보장.
+  - **다중 오브젝트 정렬 기준**: 선택된 오브젝트들의 전체 바운딩 박스(Bounding Box)를 기준으로 상호 상대 정렬 및 균등 분배 정렬을 수행.
+  - **입력 포커스 가드 (`isInputActive`)**: 텍스트 상자, 셀 에디터, 인풋 등에서 타이핑 중일 때는 숫자 1~6 입력이 정렬 단축키로 오작동하지 않도록 철저히 가드 처리.
+- **[반응형] 템플릿 실행 취소(Ctrl+Z / Undo) 스마트 인플레이스 스크롤 보존 아키텍처 (Smart In-Place Scroll Preservation Protocol)**:
+  - **스크롤 컨테이너 DOM 비파괴 원칙**: 반응형 템플릿에서 Undo 실행 시 `document.body.innerHTML = ''`로 DOM 전체를 날려버리면 `.pc-content-area`와 `.mobile-content-area` 스크롤 컨테이너 DOM 자체가 소멸되어 브라우저가 스크롤을 무조건 `0px`로 리셋한다. 따라서 반드시 내부 캔버스인 `.pc-content-inner` 및 `.mobile-content-inner`의 `innerHTML`과 `minHeight`만 인플레이스(In-place)로 교체하여 스크롤 컨테이너를 100% 보존해야 한다.
+  - **`scroll-behavior: smooth` 배제 원칙**: 스크롤 컨테이너에 `scroll-behavior: smooth`가 적용되어 있으면 JS의 `scrollTop = N` 좌표 복원이 비동기 애니메이션으로 지연되다 리셋될 수 있으므로, 스크롤 컨테이너는 브라우저 기본 즉시 스크롤(auto)을 유지해야 한다.
+  - **실시간 스크롤 트래커 & 렌더링 프레임 지속 보정**: 조작 중 실시간 스크롤 리스너(`captureLiveScroll`)로 뷰포트 좌표를 유지하고, Undo 직후 `requestAnimationFrame` 루프를 통해 비동기 리플로우 지연에 따른 0px 클램핑을 원천 방지한다.
 
 
 ## 📊 Grid UI(그리드 UI) 컴포넌트 렌더링 및 스타일링 규칙

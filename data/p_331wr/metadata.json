@@ -19,9 +19,9 @@
       "screenDesc": ""
     },
     "01_Project_Summary_Report_101.html": {
-      "title": "프로젝트 개요 및 마일스톤",
+      "title": "과제 개요 및 일정",
       "type": "plan",
-      "updatedAt": "2026-09-02T02:09:32.083Z",
+      "updatedAt": "2026-09-02T02:11:52.463Z",
       "template": "template_plan.html",
       "version": 0.1,
       "description": [],

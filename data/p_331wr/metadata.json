@@ -4,8 +4,7 @@
     "00_Cover_63.html",
     "01_Project_Summary_Report_101.html",
     "08_Responsive_PC_Mobile_486.html",
-    "99_Blank_892.html",
-    "02_Plan_286.html"
+    "99_Blank_892.html"
   ],
   "screens": {
     "00_Cover_63.html": {
@@ -70,12 +69,6 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
-    },
-    "02_Plan_286.html": {
-      "title": "02_Plan_286",
-      "type": "plan",
-      "updatedAt": "2026-09-02T02:11:18.619Z",
-      "template": "template_plan.html"
     }
   },
   "assignee": "최범열",

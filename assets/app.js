@@ -27,6 +27,51 @@ function slugify(text) {
 
 const _INTERNAL_KEY = 'MXFpYngxZ3FENGp2MklETERBaTMyOHpmRldIQ2xtazZiNkdkX3BoZw=='; // Scancode Bypass Encoded (VERIFIED)
 
+// Robust UTF-8 Base64 Helpers for Large Payload & Multi-Byte Support (TextDecoder / TextEncoder)
+function utf8Base64Decode(base64Str) {
+    if (!base64Str) return '';
+    const clean = base64Str.replace(/\s/g, '');
+    try {
+        const binaryStr = atob(clean);
+        const len = binaryStr.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+        }
+        return new TextDecoder('utf-8').decode(bytes);
+    } catch (e) {
+        try {
+            return decodeURIComponent(escape(atob(clean)));
+        } catch (err) {
+            console.error("[Base64] Decode error:", err);
+            return atob(clean);
+        }
+    }
+}
+window.utf8Base64Decode = utf8Base64Decode;
+
+function utf8Base64Encode(str) {
+    if (typeof str !== 'string') str = String(str || '');
+    try {
+        const bytes = new TextEncoder().encode(str);
+        let binaryStr = '';
+        const chunkSize = 0x8000; // 32KB chunks to prevent max call stack size exceeded
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binaryStr += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binaryStr);
+    } catch (e) {
+        try {
+            return btoa(unescape(encodeURIComponent(str)));
+        } catch (err) {
+            console.error("[Base64] Encode error:", err);
+            return btoa(str);
+        }
+    }
+}
+window.utf8Base64Encode = utf8Base64Encode;
+
+
 const ghConfig = {
     get owner() { return localStorage.getItem('gh_owner') || 'bychoi-space'; },
     set owner(val) { localStorage.setItem('gh_owner', val); },
@@ -197,14 +242,38 @@ async function fetchFileContent(path, isRoot = false) {
                 break; // Fall through to offline fallback
             }
             const data = await res.json();
-            if (data && data.content) {
+            if (data) {
                 window.shaCache = window.shaCache || {};
-                window.shaCache[path] = data.sha;
-                try {
-                    const decoded = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
-                    window.fileContentCache[path] = decoded; // Cache successful fetch in-memory
-                    return decoded;
-                } catch(e) { break; }
+                if (data.sha) window.shaCache[path] = data.sha;
+                
+                // Case 1: Files <= 1MB returned with base64 content
+                if (data.content) {
+                    try {
+                        const decoded = utf8Base64Decode(data.content);
+                        if (decoded) {
+                            window.fileContentCache[path] = decoded; // Cache successful fetch in-memory
+                            return decoded;
+                        }
+                    } catch(e) { 
+                        console.warn(`[API] Base64 decode failed for ${path}:`, e);
+                    }
+                }
+
+                // Case 2: Large files (> 1MB) where GitHub API omits base64 content and provides download_url
+                if (data.download_url) {
+                    try {
+                        const rawRes = await fetch(data.download_url + '?t=' + Date.now());
+                        if (rawRes.ok) {
+                            const rawText = await rawRes.text();
+                            if (rawText && rawText.trim().length > 0) {
+                                window.fileContentCache[path] = rawText;
+                                return rawText;
+                            }
+                        }
+                    } catch(e) {
+                        console.warn(`[API] download_url fetch failed for ${path}:`, e);
+                    }
+                }
             }
             break;
         } catch (e) {
@@ -217,6 +286,19 @@ async function fetchFileContent(path, isRoot = false) {
             break;
         }
     }
+
+    // 3.5. Direct Raw GitHub CDN Fetch (Fallback for large files or rate-limited API)
+    try {
+        const rawCdnUrl = `https://raw.githubusercontent.com/${ghConfig.owner}/${ghConfig.repo}/main/${fullPath}?t=${Date.now()}`;
+        const rawRes = await fetch(rawCdnUrl);
+        if (rawRes.ok) {
+            const rawText = await rawRes.text();
+            if (rawText && rawText.trim().length > 0) {
+                window.fileContentCache[path] = rawText;
+                return rawText;
+            }
+        }
+    } catch (e) {}
 
     // 4. Offline Fallback (only when GitHub API / Network fails)
     if (window.location.protocol === 'file:') {
@@ -352,7 +434,7 @@ async function saveGlobalComponents(components, statusCallback) {
             } catch(e) {}
         }
 
-        const finalContent = btoa(unescape(encodeURIComponent(JSON.stringify(components, null, 2))));
+        const finalContent = utf8Base64Encode(JSON.stringify(components, null, 2));
 
         if (statusCallback) statusCallback('Saving components...', '#facc15');
         const putRes = await fetch(url, {
@@ -421,7 +503,7 @@ async function uploadToProject(project, filename, content, statusCallback, isBin
             }
         }
 
-        const finalContent = isBinary ? content : btoa(unescape(encodeURIComponent(content)));
+        const finalContent = isBinary ? content : utf8Base64Encode(content);
 
         if (statusCallback) statusCallback('Saving...', '#facc15');
         

@@ -4,7 +4,8 @@
     "00_Cover_63.html",
     "01_Project_Summary_Report_101.html",
     "08_Responsive_PC_Mobile_486.html",
-    "99_Blank_892.html"
+    "99_Blank_892.html",
+    "02_Plan_286.html"
   ],
   "screens": {
     "00_Cover_63.html": {
@@ -19,9 +20,9 @@
       "screenDesc": ""
     },
     "01_Project_Summary_Report_101.html": {
-      "title": "과제 개요 및 일정",
+      "title": "프로젝트 개요 및 마일스톤",
       "type": "plan",
-      "updatedAt": "2026-09-02T02:11:08.373Z",
+      "updatedAt": "2026-09-02T02:09:32.083Z",
       "template": "template_plan.html",
       "version": 0.1,
       "description": [],
@@ -69,6 +70,12 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "02_Plan_286.html": {
+      "title": "02_Plan_286",
+      "type": "plan",
+      "updatedAt": "2026-09-02T02:11:18.619Z",
+      "template": "template_plan.html"
     }
   },
   "assignee": "최범열",

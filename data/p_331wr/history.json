@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-09-02 15:07:50",
+    "file": "08_Responsive_PC_Mobile_486.html",
+    "version": 0.1,
+    "assignee": "최범열",
+    "developer": "",
+    "message": "화면설계 초안 완료"
+  },
+  {
     "version": "0.1",
     "date": "2026-08-27 14:44:54",
     "message": "프로젝트 최초 생성",

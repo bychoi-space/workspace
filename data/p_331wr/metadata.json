@@ -91,12 +91,14 @@
       "screenDesc": ""
     },
     "99_Blank_437.html": {
-      "title": "99_Blank_437",
-      "type": "blank",
-      "updatedAt": "2026-09-02T05:51:32.091Z",
+      "title": "오프라인 매장찾기",
+      "type": "case-study",
+      "updatedAt": "2026-09-02T06:03:33.627Z",
       "template": "template_blank.html",
       "description": [],
-      "connectors": []
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

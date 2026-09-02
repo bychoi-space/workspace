@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Case Study - 상품 상세 - 리뉴얼 2차</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --v4-primary: #6366f1;
+            --v4-accent: #00e5ff;
+            --v4-bg: #1e293b;
+            --v4-surface: #f8f9fa;
+            --v4-border: #e1e3e5;
+            --v4-text: #1a1c1e;
+        }
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; background: var(--v4-bg); 
+            overflow: hidden; color: var(--v4-text);
+        }
+        .page { 
+            width: 1440px; height: 900px; 
+            position: relative; 
+            background: #ffffff;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.02) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* V4 Component Base Styles */
+        .lf-component { position: absolute !important; box-sizing: border-box !important; z-index: 500; }
+        .lf-component:hover { outline: 2px dashed var(--v4-primary) !important; cursor: pointer !important; }
+        .lf-component.selected { outline: 2px solid var(--v4-primary) !important; z-index: 10001 !important; }
+
+        .lf-drag-handle { position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: var(--v4-primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; z-index: 100; opacity: 0; transition: opacity 0.2s; border: 2px solid #fff; }
+        .lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; }
+        .lf-resizer { position: absolute; bottom: -6px; right: -6px; width: 12px; height: 12px; background: var(--v4-primary); cursor: nwse-resize; border-radius: 2px; border: 2px solid #fff; opacity: 0; z-index: 100; }
+        .lf-component:hover .lf-resizer, .lf-component.selected .lf-resizer { opacity: 1; }
+        .lf-delete-trigger { position: absolute; top: -12px; right: -12px; width: 24px; height: 24px; background: #ef4444; color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; z-index: 101; font-weight: bold; }
+        .lf-component:hover .lf-delete-trigger, .lf-component.selected .lf-delete-trigger { display: flex; }
+
+        .v4-editable-cell { outline: none; box-sizing: border-box; }
+        .v4-shape { width: 100%; height: 100%; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- [Top Header Bar] Case Study Title & Context -->
+        <div id="cs-header-title" class="lf-component v4-text-shape" style="top: 22px; left: 20px; width: 800px; height: 32px; z-index: 1000;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 18px; font-weight: 800; color: #0f172a; padding: 2px 4px; display: flex; align-items: center; gap: 8px;">
+                <span style="color: #6366f1;">[Case Study]</span> 타사 이커머스 Front UI 벤치마크 및 비교 분석
+            </div>
+        </div>
+        <div id="cs-header-sub" class="lf-component v4-text-shape" style="top: 48px; left: 20px; width: 850px; height: 20px; z-index: 1000;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #64748b; padding: 2px 4px;">
+                국내 주요 패션 이커머스 플랫폼의 상세 페이지 UI/UX 패턴 분석 및 시선닷컴 적용 인사이트/가설 도출
+            </div>
+        </div>
+        <div id="cs-header-badge" class="lf-component" style="top: 24px; left: 1300px; width: 120px; height: 26px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: rgba(99, 102, 241, 0.1); border: 1.6px solid rgba(99, 102, 241, 0.3); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="text-align: center;">
+                    <span style="font-size: 11px; font-weight: 800; color: #6366f1; letter-spacing: 0.5px;">CASE STUDY</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- [Benchmark 5 Columns Area] (Left: 20, 305, 590, 875, 1160) -->
+        <!-- Column 1: 29CM -->
+        <div id="cs-col1-chip" class="lf-component" style="top: 74px; left: 20px; width: 260px; height: 28px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px;">
+                <span style="font-size: 12px; font-weight: 800; color: #0f172a;">29CM</span>
+                <span style="font-size: 11px; font-weight: 600; color: #475569;">미니멀 컬러칩</span>
+            </div>
+        </div>
+        <div id="cs-col1-rect" class="lf-component" style="top: 108px; left: 20px; width: 260px; height: 330px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: rgba(241, 245, 249, 0.6); border: 1.6px dashed #94a3b8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #64748b; padding: 16px; text-align: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="lf-icon" style="width: 32px; height: 32px; opacity: 0.6;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; font-weight: 600; line-height: 1.4;">📷 29CM 상품 상세 UI<br><span style="font-size: 11px; color: #94a3b8; font-weight: 400;">(스크린샷 캡처 또는 Rect 영역)</span></div>
+            </div>
+        </div>
+        <div id="cs-col1-note" class="lf-component" style="top: 446px; left: 20px; width: 260px; height: 224px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #334155; line-height: 1.5;">
+                    <strong style="color: #0f172a; font-size: 12.5px;">[UI/UX 분석 포인트]</strong><br>
+                    • <strong>컬러 표기 :</strong> 썸네일 칩 상단/하단에 색상명 텍스트 상시 노출<br>
+                    • <strong>사용자 반응 :</strong> 옵션 진입 전 즉각적 색상 인지 가능<br>
+                    • <strong>인사이트 :</strong> 단색 Dot보다 실물 원단 질감 표현이 반품률 감소에 기여
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: 무신사 (MUSINSA) -->
+        <div id="cs-col2-chip" class="lf-component" style="top: 74px; left: 305px; width: 260px; height: 28px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px;">
+                <span style="font-size: 12px; font-weight: 800; color: #0f172a;">무신사 (MUSINSA)</span>
+                <span style="font-size: 11px; font-weight: 600; color: #475569;">드롭다운 옵션</span>
+            </div>
+        </div>
+        <div id="cs-col2-rect" class="lf-component" style="top: 108px; left: 305px; width: 260px; height: 330px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: rgba(241, 245, 249, 0.6); border: 1.6px dashed #94a3b8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #64748b; padding: 16px; text-align: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="lf-icon" style="width: 32px; height: 32px; opacity: 0.6;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; font-weight: 600; line-height: 1.4;">📷 무신사 상품 상세 UI<br><span style="font-size: 11px; color: #94a3b8; font-weight: 400;">(스크린샷 캡처 또는 Rect 영역)</span></div>
+            </div>
+        </div>
+        <div id="cs-col2-note" class="lf-component" style="top: 446px; left: 305px; width: 260px; height: 224px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #334155; line-height: 1.5;">
+                    <strong style="color: #0f172a; font-size: 12.5px;">[UI/UX 분석 포인트]</strong><br>
+                    • <strong>옵션 구조 :</strong> 셀렉트 박스 내 재고 수량 및 품절 상태 실시간 뱃지<br>
+                    • <strong>인터랙션 :</strong> 옵션 선택 시 메인 뷰어 썸네일 자동 포커스 연동<br>
+                    • <strong>인사이트 :</strong> 옵션 탐색 단계에서 가격 변동 및 품절 여부 즉각 확인
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 3: W컨셉 (W CONCEPT) -->
+        <div id="cs-col3-chip" class="lf-component" style="top: 74px; left: 590px; width: 260px; height: 28px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px;">
+                <span style="font-size: 12px; font-weight: 800; color: #0f172a;">W컨셉 (W CONCEPT)</span>
+                <span style="font-size: 11px; font-weight: 600; color: #475569;">비주얼 스와치</span>
+            </div>
+        </div>
+        <div id="cs-col3-rect" class="lf-component" style="top: 108px; left: 590px; width: 260px; height: 330px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: rgba(241, 245, 249, 0.6); border: 1.6px dashed #94a3b8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #64748b; padding: 16px; text-align: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="lf-icon" style="width: 32px; height: 32px; opacity: 0.6;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; font-weight: 600; line-height: 1.4;">📷 W컨셉 상품 상세 UI<br><span style="font-size: 11px; color: #94a3b8; font-weight: 400;">(스크린샷 캡처 또는 Rect 영역)</span></div>
+            </div>
+        </div>
+        <div id="cs-col3-note" class="lf-component" style="top: 446px; left: 590px; width: 260px; height: 224px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #334155; line-height: 1.5;">
+                    <strong style="color: #0f172a; font-size: 12.5px;">[UI/UX 분석 포인트]</strong><br>
+                    • <strong>스와치 형태 :</strong> 라운드 직사각형 실물 이미지 칩 채택<br>
+                    • <strong>선택 상태 :</strong> 선택된 칩에 2px 블랙 보더 및 체크마크 인디케이터<br>
+                    • <strong>인사이트 :</strong> 프리미엄 디자이너 브랜드 무드와 높은 가독성 유지
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 4: LFmall -->
+        <div id="cs-col4-chip" class="lf-component" style="top: 74px; left: 875px; width: 260px; height: 28px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px;">
+                <span style="font-size: 12px; font-weight: 800; color: #0f172a;">LFmall</span>
+                <span style="font-size: 11px; font-weight: 600; color: #475569;">표준 컬러칩</span>
+            </div>
+        </div>
+        <div id="cs-col4-rect" class="lf-component" style="top: 108px; left: 875px; width: 260px; height: 330px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: rgba(241, 245, 249, 0.6); border: 1.6px dashed #94a3b8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #64748b; padding: 16px; text-align: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="lf-icon" style="width: 32px; height: 32px; opacity: 0.6;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; font-weight: 600; line-height: 1.4;">📷 LFmall 상품 상세 UI<br><span style="font-size: 11px; color: #94a3b8; font-weight: 400;">(스크린샷 캡처 또는 Rect 영역)</span></div>
+            </div>
+        </div>
+        <div id="cs-col4-note" class="lf-component" style="top: 446px; left: 875px; width: 260px; height: 224px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #334155; line-height: 1.5;">
+                    <strong style="color: #0f172a; font-size: 12.5px;">[UI/UX 분석 포인트]</strong><br>
+                    • <strong>컬러 칩 :</strong> 원형 컬러칩 + 색상명 텍스트 병기 표준화<br>
+                    • <strong>재고 표시 :</strong> 품절 색상에 사선(Slash) 오버레이 및 선택 차단<br>
+                    • <strong>인사이트 :</strong> 종합몰/패션몰 표준에 부합하는 안정적 옵션 구조
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 5: SI빌리지 (S.I.VILLAGE) -->
+        <div id="cs-col5-chip" class="lf-component" style="top: 74px; left: 1160px; width: 260px; height: 28px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px;">
+                <span style="font-size: 12px; font-weight: 800; color: #0f172a;">SI빌리지</span>
+                <span style="font-size: 11px; font-weight: 600; color: #475569;">슬라이드 칩</span>
+            </div>
+        </div>
+        <div id="cs-col5-rect" class="lf-component" style="top: 108px; left: 1160px; width: 260px; height: 330px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: rgba(241, 245, 249, 0.6); border: 1.6px dashed #94a3b8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #64748b; padding: 16px; text-align: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="lf-icon" style="width: 32px; height: 32px; opacity: 0.6;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; font-weight: 600; line-height: 1.4;">📷 SI빌리지 상품 상세 UI<br><span style="font-size: 11px; color: #94a3b8; font-weight: 400;">(스크린샷 캡처 또는 Rect 영역)</span></div>
+            </div>
+        </div>
+        <div id="cs-col5-note" class="lf-component" style="top: 446px; left: 1160px; width: 260px; height: 224px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #334155; line-height: 1.5;">
+                    <strong style="color: #0f172a; font-size: 12.5px;">[UI/UX 분석 포인트]</strong><br>
+                    • <strong>가로 스크롤 :</strong> 다색상 상품의 경우 좌우 스와이프 칩 지원<br>
+                    • <strong>하이엔드 무드 :</strong> 브랜드 로고 및 폰트 위계 강조<br>
+                    • <strong>인사이트 :</strong> 한정된 모바일 영역에서 다수 컬러 노출 최적화
+                </div>
+            </div>
+        </div>
+
+        <!-- [Bottom Board] Insight & Hypotheses Board -->
+        <!-- 메인 카드 배경 -->
+        <div id="v4-insight-main-bg" class="lf-component" style="top: 686px; left: 20px; width: 1400px; height: 194px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);"></div>
+        </div>
+
+        <!-- 헤더 아이콘 -->
+        <div id="v4-insight-icon" class="lf-component" style="top: 698px; left: 38px; width: 22px; height: 22px; z-index: 1001;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path></svg>
+        </div>
+
+        <!-- 헤더 타이틀 -->
+        <div id="v4-insight-title" class="lf-component v4-text-shape" style="top: 697px; left: 66px; width: 450px; height: 24px; z-index: 1001;">
+            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 15px; font-weight: 800; padding: 2px 4px;">
+                💡 Case Study 핵심 인사이트 & 가설 (Key Findings & Hypotheses)
+            </div>
+        </div>
+
+        <!-- 우측 카테고리 뱃지 -->
+        <div id="v4-insight-badge" class="lf-component" style="top: 697px; left: 1270px; width: 134px; height: 24px; z-index: 1001;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: 800; color: #475569;">BENCHMARK & STRATEGY</span>
+            </div>
+        </div>
+
+        <!-- [Column 1] 현황 분석 -->
+        <div id="v4-is1-bg" class="lf-component" style="top: 730px; left: 38px; width: 432px; height: 136px; z-index: 1001;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px;"></div>
+        </div>
+        <div id="v4-is1-badge" class="lf-component" style="top: 742px; left: 52px; width: 72px; height: 22px; z-index: 1002;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: 800; color: #4f46e5;">현황 분석</span>
+            </div>
+        </div>
+        <div id="v4-is1-title" class="lf-component v4-text-shape" style="top: 741px; left: 132px; width: 320px; height: 24px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 13.5px; font-weight: 800; color: #0f172a; padding: 2px;">
+                색상명 텍스트 상시 표기 표준화
+            </div>
+        </div>
+        <div id="v4-is1-txt1" class="lf-component v4-text-shape" style="top: 772px; left: 52px; width: 405px; height: 22px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 12.5px; color: #334155; padding: 2px;">
+                • <strong>주요 타사 공통 :</strong> LFmall, 29CM, SI VILLAGE 모두 컬러명 텍스트 병기
+            </div>
+        </div>
+        <div id="v4-is1-txt2" class="lf-component v4-text-shape" style="top: 798px; left: 52px; width: 405px; height: 42px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #64748b; line-height: 1.4; padding: 2px;">
+                • 옵션 클릭 전에도 색상(ex. 베이지, 퍼플)을 즉각 인지하여 탐색 효율 극대화
+            </div>
+        </div>
+
+        <!-- [Column 2] UI/UX 특징 및 가설 -->
+        <div id="v4-is2-bg" class="lf-component" style="top: 730px; left: 490px; width: 432px; height: 136px; z-index: 1001;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px;"></div>
+        </div>
+        <div id="v4-is2-badge" class="lf-component" style="top: 742px; left: 504px; width: 72px; height: 22px; z-index: 1002;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: 800; color: #0284c7;">가설 도출</span>
+            </div>
+        </div>
+        <div id="v4-is2-title" class="lf-component v4-text-shape" style="top: 741px; left: 584px; width: 320px; height: 24px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 13.5px; font-weight: 800; color: #0f172a; padding: 2px;">
+                실물 썸네일 컬러칩 & 포커스 링 채택
+            </div>
+        </div>
+        <div id="v4-is2-txt1" class="lf-component v4-text-shape" style="top: 772px; left: 504px; width: 405px; height: 22px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 12.5px; color: #334155; padding: 2px;">
+                • <strong>비주얼 칩 :</strong> 단순 단색 원형 대신 원단 패턴/질감 썸네일 제공
+            </div>
+        </div>
+        <div id="v4-is2-txt2" class="lf-component v4-text-shape" style="top: 798px; left: 504px; width: 405px; height: 42px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #64748b; line-height: 1.4; padding: 2px;">
+                • <strong>가설(H1) :</strong> 선택된 컬러칩의 명확한 피드백 제공 시 옵션 오선택률 30% 감소
+            </div>
+        </div>
+
+        <!-- [Column 3] 시선닷컴 적용 과제 -->
+        <div id="v4-is3-bg" class="lf-component" style="top: 730px; left: 942px; width: 462px; height: 136px; z-index: 1001;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px;"></div>
+        </div>
+        <div id="v4-is3-badge" class="lf-component" style="top: 742px; left: 956px; width: 72px; height: 22px; z-index: 1002;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="background: #2563eb; border: 1px solid transparent; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 11px; font-weight: 800; color: #ffffff;">적용 과제</span>
+            </div>
+        </div>
+        <div id="v4-is3-title" class="lf-component v4-text-shape" style="top: 741px; left: 1036px; width: 350px; height: 24px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 13.5px; font-weight: 800; color: #1e40af; padding: 2px;">
+                시선닷컴 PDP 누락 개선에 직접 반영
+            </div>
+        </div>
+        <div id="v4-is3-txt1" class="lf-component v4-text-shape" style="top: 772px; left: 956px; width: 435px; height: 22px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 12.5px; font-weight: 700; color: #1e3a8a; padding: 2px;">
+                • <strong>과제 목표 :</strong> [과제의 목적 (1)] 컬러칩 텍스트 직관적 표현 도입 확정
+            </div>
+        </div>
+        <div id="v4-is3-txt2" class="lf-component v4-text-shape" style="top: 798px; left: 956px; width: 435px; height: 42px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; color: #2563eb; line-height: 1.4; padding: 2px;">
+                • <strong>기대 효과 :</strong> 클릭 전 탐색 피로도 해소 및 옵션 오선택/반품률 획기적 감소
+            </div>
+        </div>
+    </div>
+</body>
+</html>

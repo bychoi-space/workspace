@@ -21,13 +21,13 @@
     "01_Project_Summary_Report_101.html": {
       "title": "프로젝트 개요 및 마일스톤",
       "type": "plan",
-      "updatedAt": "2026-09-02T09:20:00.000Z",
+      "updatedAt": "2026-09-02T09:38:00.000Z",
       "template": "template_plan.html",
       "version": 0.1,
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
-      "screenDesc": "프로젝트 목적, 주요 작업 내용 요약, R&R 및 마일스톤 간트 로드맵 종합 보고서"
+      "screenDesc": "시선닷컴 상품 상세(PDP) 리뉴얼 누락 개선 과제 목적, 작업 범위(Front/Admin), 일정 및 마일스톤 보고서"
     },
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
@@ -71,7 +71,7 @@
   },
   "assignee": "최범열",
   "developer": "",
-  "period": "2026.08.27(목) ~ 2026.09.11(금)",
+  "period": "2026.09.01(화) ~ 2026.10.01(목)",
   "themeIndex": -1,
   "jira": "",
   "updated": "2026-09-02 09:41:24"

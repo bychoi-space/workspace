@@ -4,7 +4,6 @@
     "00_Cover_63.html",
     "01_Project_Summary_Report_101.html",
     "08_Responsive_PC_Mobile_486.html",
-    "99_Blank_120.html",
     "99_Blank_892.html"
   ],
   "screens": {
@@ -61,19 +60,10 @@
       "defaultTab": "editor",
       "screenDesc": ""
     },
-    "99_Blank_120.html": {
-      "title": "99_Blank_120",
-      "type": "etc",
-      "updatedAt": "2026-08-31T03:26:33.000Z",
-      "template": "template_blank.html",
-      "version": 0.1,
-      "description": [],
-      "connectors": []
-    },
     "99_Blank_892.html": {
       "title": "99_Blank_892",
       "type": "blank",
-      "updatedAt": "2026-09-02T00:41:24.366Z",
+      "updatedAt": "2026-08-31T06:27:50.958Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": []

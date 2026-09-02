@@ -82,8 +82,8 @@
     },
     "99_Blank_892.html": {
       "title": "Case Study",
-      "type": "default",
-      "updatedAt": "2026-09-02T04:51:26.115Z",
+      "type": "case-study",
+      "updatedAt": "2026-09-02T06:01:30.888Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],

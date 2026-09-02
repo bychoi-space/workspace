@@ -1,9 +1,12 @@
 $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_responsive_multiselect.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_responsive_pins.js",
     "c:\Users\sisun\ai_work\assets\vctrl_shortcuts.js",
     "c:\Users\sisun\ai_work\assets\vctrl_core.js",
     "c:\Users\sisun\ai_work\assets\vctrl_inspector.js",
     "c:\Users\sisun\ai_work\assets\vctrl_v3.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_drag.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_script.js",
     "c:\Users\sisun\ai_work\assets\vctrl_text_measurer.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_styles.js",
     "c:\Users\sisun\ai_work\assets\responsive_frame.js",

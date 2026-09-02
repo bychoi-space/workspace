@@ -16,6 +16,9 @@ window.v4ShortcutsScript = `
     let isPastingLocked = false;
 
     window.reorderAllPins = () => {
+        if (typeof window.isResponsiveScreen === 'function' && window.isResponsiveScreen() && typeof window.reorderResponsivePins === 'function') {
+            return window.reorderResponsivePins();
+        }
         const pins = document.querySelectorAll('.text-marker, .pin-marker');
         pins.forEach((pin, idx) => {
             pin.id = 'v4-pin-' + idx;
@@ -629,8 +632,12 @@ window.v4ShortcutsScript = `
                     if (typeof window.updateHandles === 'function') window.updateHandles(c);
                     
                     if (c.classList.contains('text-marker') || c.classList.contains('pin-marker')) {
-                        const idx = parseInt(c.id.replace('v4-pin-', ''));
-                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: l + dx, y: t + dy });
+                        const frameType = c.getAttribute('data-frame') || (c.closest && c.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (c.closest && c.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : ''));
+                        let idx = parseInt(c.getAttribute('data-index'));
+                        if (isNaN(idx)) {
+                            idx = parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+                        }
+                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, frame: frameType, x: l + dx, y: t + dy });
                     }
                     
                     if (c.classList.contains('connector-line')) {

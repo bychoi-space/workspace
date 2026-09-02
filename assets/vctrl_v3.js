@@ -37,8 +37,13 @@ window.renderDescriptionList = function() {
         
         // Pin Marker logic removed here...
         
-        // Highlight logic (Simplified for sidebar)
-        var highlight = function(active) { row.classList.toggle('highlight', active); };
+        // Highlight logic (Synchronized with iframe pins)
+        var highlight = function(active) { 
+            row.classList.toggle('highlight', active); 
+            if (DOM && DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
+                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_HIGHLIGHT_PIN', { index: index, active: active });
+            }
+        };
         row.onmouseenter = function() { highlight(true); };
         row.onmouseleave = function() { highlight(false); };
 

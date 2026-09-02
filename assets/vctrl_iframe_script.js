@@ -355,6 +355,14 @@ window.v4Script = `
             isImage: isImage,
             isPin: isPin,
             isDescriptionPin: isDescriptionPin,
+            pinIndex: (function() {
+                if (!isPin && !isDescriptionPin) return -1;
+                const rawIdx = c.getAttribute('data-index');
+                if (rawIdx !== null && rawIdx !== undefined && !isNaN(parseInt(rawIdx))) return parseInt(rawIdx);
+                const parsed = parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+                return isNaN(parsed) ? -1 : parsed;
+            })(),
+            frame: c.getAttribute('data-frame') || (c.closest && c.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (c.closest && c.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : '')),
             isCheckbox: isCheckbox,
             isRadio: isRadio,
             checked: checked,
@@ -554,7 +562,10 @@ window.v4Script = `
                 c.remove();
             }
             else if (c.classList.contains('text-marker') || c.classList.contains('pin-marker')) {
-                const idx = parseInt(c.id.replace('v4-pin-', ''));
+                let idx = parseInt(c.getAttribute('data-index'));
+                if (isNaN(idx)) {
+                    idx = parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+                }
                 notifyParent({ type: 'LF_DELETE_PIN', index: idx });
                 c.remove();
             } else {
@@ -1043,6 +1054,10 @@ window.v4Script = `
             });
         }
         else if (d.type === 'LF_REORDER_PINS') {
+            if (typeof window.isResponsiveScreen === 'function' && window.isResponsiveScreen() && typeof window.reorderResponsivePins === 'function') {
+                window.reorderResponsivePins();
+                return;
+            }
             document.querySelectorAll('.pin-marker, .text-marker').forEach(el => el.remove());
             const host = document.body;
             const pinsList = d.pins || [];

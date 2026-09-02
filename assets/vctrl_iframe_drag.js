@@ -215,10 +215,15 @@ window.v4DragResizeScript = `
                 }
                 
                 if (window.activeEl.classList.contains('text-marker') || window.activeEl.classList.contains('pin-marker')) {
-                    const idx = parseInt(window.activeEl.id.replace('v4-pin-', ''));
+                    const frameType = window.activeEl.getAttribute('data-frame') || (window.activeEl.closest && window.activeEl.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (window.activeEl.closest && window.activeEl.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : ''));
+                    let idx = parseInt(window.activeEl.getAttribute('data-index'));
+                    if (isNaN(idx)) {
+                        idx = parseInt(window.activeEl.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+                    }
                     notifyParent({
                         type: 'LF_UPDATE_PIN_POS',
                         index: idx,
+                        frame: frameType,
                         x: parseFloat(window.activeEl.style.left) || 0,
                         y: parseFloat(window.activeEl.style.top) || 0,
                         standardized: true

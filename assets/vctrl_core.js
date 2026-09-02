@@ -49,6 +49,7 @@ function getInlinedEngineScript() {
         (window.v4GridScript || '') + '\n' +
         (window.v4AccordionScript || '') + '\n' +
         (window.v4ResponsiveSmartGuideScript || '') + '\n' +
+        (window.v4ResponsivePinsScript || '') + '\n' +
         (window.v4Script || '') + '\n' +
         (window.v4ResponsiveMultiselectScript || '') + '\n</script>';
 }
@@ -104,7 +105,7 @@ window.loadScreen = async function (fileName) {
         'v4DesignSystemScript', 'v4TextMeasurerScript', 'v4UIAtomsScript',
         'v4CommonScript', 'v4ObjectTextScript', 'v4ObjectShapeScript',
         'v4ObjectTableScript', 'v4ObjectConnectorScript', 'v4ConnectorScript',
-        'v4GridScript', 'v4AccordionScript',
+        'v4GridScript', 'v4AccordionScript', 'v4ResponsivePinsScript', 'spawnResponsiveDualPins',
         'LF_GROUP_SELECTED', 'GroupingManager', 'renderGrid'
     ];
     finalContent = finalContent.replace(scriptRegex, (match, scriptBody) => {
@@ -175,11 +176,22 @@ window.loadScreen = async function (fileName) {
             }
 
             // Phase 3: Import legacy description pins ONCE, then render sidebar list
-            const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'text' || p.text || p.html);
-            if (legacyPins.length > 0 && iframe.contentWindow) {
-                setTimeout(() => {
-                    iframe.contentWindow.postMessage({ type: 'LF_IMPORT_PINS', pins: legacyPins }, '*');
-                }, 80);
+            if (isResponsiveScreen && iframe.contentWindow) {
+                const descList = state.activeFile?.meta?.description || [];
+                if (descList.length > 0) {
+                    setTimeout(() => {
+                        if (window.MessageHub) {
+                            MessageHub.send(iframe.contentWindow, 'LF_IMPORT_RESPONSIVE_PINS', { pins: descList });
+                        }
+                    }, 80);
+                }
+            } else {
+                const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'text' || p.text || p.html);
+                if (legacyPins.length > 0 && iframe.contentWindow) {
+                    setTimeout(() => {
+                        iframe.contentWindow.postMessage({ type: 'LF_IMPORT_PINS', pins: legacyPins }, '*');
+                    }, 80);
+                }
             }
             if (typeof window.renderDescriptionList === 'function') {
                 setTimeout(window.renderDescriptionList, 100);
@@ -435,23 +447,51 @@ window.handleTextCreation = function () {
         state.activeFile.meta.description = [];
     }
 
+    const isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html'));
     const newIdx = state.activeFile.meta.description.length;
-    state.activeFile.meta.description.push({
-        text: "Edit Text",
-        html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-        x: 670,
-        y: 430,
-        standardized: true
-    });
 
-    if (typeof window.renderDescriptionList === 'function') {
-        window.renderDescriptionList();
-    }
+    if (isResponsive) {
+        state.activeFile.meta.description.push({
+            text: "Edit Text",
+            html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+            x: 500,
+            y: 300,
+            pins: {
+                pc: { x: 500, y: 300, active: true },
+                mobile: { x: 180, y: 300, active: true }
+            },
+            standardized: true
+        });
 
-    if (typeof window.insertV4ComponentById === 'function') {
-        window.insertV4ComponentById('v4-tool-text', newIdx);
+        if (typeof window.renderDescriptionList === 'function') {
+            window.renderDescriptionList();
+        }
+
+        const DOM = window.DOM || {};
+        if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
+            MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_RESPONSIVE_PINS', {
+                index: newIdx,
+                number: newIdx + 1
+            });
+        }
     } else {
-        console.error("[V4 Core] insertV4ComponentById not available for Text Creation.");
+        state.activeFile.meta.description.push({
+            text: "Edit Text",
+            html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+            x: 670,
+            y: 430,
+            standardized: true
+        });
+
+        if (typeof window.renderDescriptionList === 'function') {
+            window.renderDescriptionList();
+        }
+
+        if (typeof window.insertV4ComponentById === 'function') {
+            window.insertV4ComponentById('v4-tool-text', newIdx);
+        } else {
+            console.error("[V4 Core] insertV4ComponentById not available for Text Creation.");
+        }
     }
     markAsDirty();
 };
@@ -763,8 +803,18 @@ window.MessageHub = {
                 if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
                     const pin = window.state.activeFile.meta.description[data.index];
                     if (pin) {
-                        pin.x = data.x;
-                        pin.y = data.y;
+                        if (data.frame === 'mobile') {
+                            if (!pin.pins) pin.pins = { pc: { x: pin.x || 500, y: pin.y || 300, active: true } };
+                            pin.pins.mobile = { x: data.x, y: data.y, active: true };
+                        } else if (data.frame === 'pc') {
+                            if (!pin.pins) pin.pins = { mobile: { x: 180, y: 300, active: true } };
+                            pin.pins.pc = { x: data.x, y: data.y, active: true };
+                            pin.x = data.x;
+                            pin.y = data.y;
+                        } else {
+                            pin.x = data.x;
+                            pin.y = data.y;
+                        }
                         if (data.standardized) pin.standardized = true;
                         markAsDirty();
                     }

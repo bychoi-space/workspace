@@ -93,7 +93,7 @@
     "99_Blank_437.html": {
       "title": "99_Blank_437",
       "type": "blank",
-      "updatedAt": "2026-09-02T05:44:28.057Z",
+      "updatedAt": "2026-09-02T05:44:51.703Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": []
@@ -104,5 +104,5 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-02 14:44:28"
+  "updated": "2026-09-02 14:44:51"
 }

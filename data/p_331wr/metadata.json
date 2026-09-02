@@ -32,7 +32,7 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-02T05:09:56.467Z",
+      "updatedAt": "2026-09-02T05:10:40.371Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
@@ -54,6 +54,25 @@
               "active": true
             }
           }
+        },
+        {
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 25.625,
+          "y": 3310,
+          "pins": {
+            "pc": {
+              "x": 25.625,
+              "y": 3310,
+              "active": true
+            },
+            "mobile": {
+              "x": 0,
+              "y": 3265,
+              "active": true
+            }
+          },
+          "standardized": true
         }
       ],
       "connectors": [],
@@ -76,5 +95,5 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-02 14:09:56"
+  "updated": "2026-09-02 14:10:40"
 }

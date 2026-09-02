@@ -4,7 +4,8 @@
     "00_Cover_63.html",
     "01_Project_Summary_Report_101.html",
     "08_Responsive_PC_Mobile_486.html",
-    "99_Blank_892.html"
+    "99_Blank_892.html",
+    "99_Blank_437.html"
   ],
   "screens": {
     "00_Cover_63.html": {
@@ -88,6 +89,12 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "99_Blank_437.html": {
+      "title": "99_Blank_437",
+      "type": "blank",
+      "updatedAt": "2026-09-02T05:22:38.634Z",
+      "template": "template_blank.html"
     }
   },
   "assignee": "최범열",

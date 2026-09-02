@@ -259,7 +259,31 @@ async function fetchFileContent(path, isRoot = false) {
                     }
                 }
 
-                // Case 2: Large files (> 1MB) where GitHub API omits base64 content and provides download_url
+                // Case 2: Large files (> 1MB) - Fetch Git Blob API directly by immutable SHA
+                // Git Blob API has 0-second CDN caching lag and always returns the real-time latest content
+                const blobUrl = data.git_url || (data.sha ? `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/git/blobs/${data.sha}` : null);
+                if (blobUrl) {
+                    try {
+                        let blobRes = await fetch(blobUrl, { headers, credentials: 'omit' });
+                        if (!blobRes.ok && (blobRes.status === 401 || blobRes.status === 403)) {
+                            blobRes = await fetch(blobUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' }, credentials: 'omit' });
+                        }
+                        if (blobRes.ok) {
+                            const blobData = await blobRes.json();
+                            if (blobData && blobData.content) {
+                                const decoded = utf8Base64Decode(blobData.content);
+                                if (decoded) {
+                                    window.fileContentCache[path] = decoded;
+                                    return decoded;
+                                }
+                            }
+                        }
+                    } catch(e) {
+                        console.warn(`[API] Git Blob API fetch failed for ${path}:`, e);
+                    }
+                }
+
+                // Case 3: Fallback to download_url
                 if (data.download_url) {
                     try {
                         const rawRes = await fetch(data.download_url + '?t=' + Date.now());

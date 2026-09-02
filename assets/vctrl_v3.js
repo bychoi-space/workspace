@@ -28,10 +28,17 @@ window.renderDescriptionList = function() {
         row.draggable = !state.isReadOnly;
         row.dataset.index = index;
         row.innerHTML = `
-            <div class="desc-index">${index + 1}</div>
-            <textarea class="desc-input" rows="1" placeholder="설명을 입력하세요..." ${state.isReadOnly ? 'disabled' : ''}>${item.text || ''}</textarea>
-            <div class="desc-actions">
-                <button class="desc-btn desc-btn-del" data-index="${index}" title="삭제"><span class="material-icons-outlined">remove_circle_outline</span></button>
+            <div class="desc-header">
+                <div class="desc-header-left">
+                    <div class="desc-index">${index + 1}</div>
+                    <span class="desc-header-label">Pin ${index + 1}</span>
+                </div>
+                <div class="desc-actions">
+                    <button class="desc-btn desc-btn-del" data-index="${index}" title="삭제"><span class="material-icons-outlined">delete_outline</span></button>
+                </div>
+            </div>
+            <div class="desc-body">
+                <textarea class="desc-input" rows="1" placeholder="설명을 입력하세요..." ${state.isReadOnly ? 'disabled' : ''}>${item.text || ''}</textarea>
             </div>
         `;
         
@@ -47,9 +54,29 @@ window.renderDescriptionList = function() {
         row.onmouseenter = function() { highlight(true); };
         row.onmouseleave = function() { highlight(false); };
 
+        // Focus & Active state handling (Auto-scroll & pulse in responsive frames)
+        var selectRow = function() {
+            if (DOM && DOM.descriptionList) {
+                DOM.descriptionList.querySelectorAll('.desc-row').forEach(function(r) {
+                    r.classList.remove('active-desc');
+                });
+            }
+            row.classList.add('active-desc');
+            if (DOM && DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
+                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_FOCUS_PIN', { index: index });
+            }
+        };
+        row.onclick = function(e) {
+            if (e.target.closest('.desc-btn-del')) return;
+            selectRow();
+        };
+
         // Input & Row Actions
         var input = row.querySelector('.desc-input');
         var autoResize = function(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; };
+        input.onfocus = function() {
+            selectRow();
+        };
         input.oninput = function() { 
             item.text = input.value; 
             autoResize(input); 
@@ -181,9 +208,19 @@ window.centerView = function() {
     if (!DOM || !DOM.canvas || !DOM.iframe || !state) return;
     var iw = parseInt(DOM.iframe.style.width) || 1440, ih = parseInt(DOM.iframe.style.height) || 900;
     var cw = DOM.canvas.clientWidth, ch = DOM.canvas.clientHeight;
-    var s = 1; // 무조건 100% 1:1 픽셀 매핑 고정 (텍스트 서브픽셀 블러 원천 차단)
-    var x = Math.round((cw - iw) / 2);
-    var y = Math.round((ch - ih) / 2);
+    if (cw <= 0 || ch <= 0) return;
+
+    // 브라우저 캔버스 영역에 맞춘 반응형 가변 배율(Fit Scale) 계산 (상하좌우 2% 안전 여백 반영)
+    var fitScale = Math.min((cw * 0.98) / iw, (ch * 0.98) / ih);
+
+    // 스크린 100%를 온전히 소화할 수 있는 충분한 해상도(cw >= iw && ch >= ih 및 fitScale >= 0.96)일 때만
+    // 텍스트 서브픽셀 블러링을 방지하기 위해 1.0(100%)으로 스냅.
+    // 반대로 화면 공간이 부족한 해상도(작업표시줄 노출, 사이드바 오픈, 노트북 화면 등)에서는
+    // 브라우저 해상도에 맞춰 스크린 전체가 잘림 없이 한눈에 보이도록 가변 축소 배율(fitScale) 적용.
+    var s = (fitScale >= 0.96 && cw >= iw && ch >= ih) ? 1.0 : Math.min(fitScale, 1.0);
+
+    var x = Math.round((cw - (iw * s)) / 2);
+    var y = Math.round((ch - (ih * s)) / 2);
     state.transform = { x: x, y: y, scale: s };
     updateTransform();
 };

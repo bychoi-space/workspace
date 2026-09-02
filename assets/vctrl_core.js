@@ -402,7 +402,15 @@ window.insertAtomicComponent = function (type, name) {
             'Close': '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>',
             'Login': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="10 17 5 12 10 7"></polyline><line x1="21" y1="12" x2="5" y2="12"></line>',
             'Logout': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>',
-            'Sign Up': '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="17" y1="11" x2="23" y2="11"></line>'
+            'Sign Up': '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="17" y1="11" x2="23" y2="11"></line>',
+            'Insight': '<path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9"></path><path d="M9 18h6"></path><path d="M10 22h4"></path>',
+            'insight': '<path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9"></path><path d="M9 18h6"></path><path d="M10 22h4"></path>',
+            '인사이트': '<path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9"></path><path d="M9 18h6"></path><path d="M10 22h4"></path>',
+            'Hypothesis': '<path d="M10 2v7.31L4.15 18.5A2 2 0 0 0 5.86 21.5h12.28a2 2 0 0 0 1.71-3L14 9.31V2"></path><path d="M8.5 2h7"></path><path d="M7 16h10"></path>',
+            'hypothesis': '<path d="M10 2v7.31L4.15 18.5A2 2 0 0 0 5.86 21.5h12.28a2 2 0 0 0 1.71-3L14 9.31V2"></path><path d="M8.5 2h7"></path><path d="M7 16h10"></path>',
+            'Hypotheses': '<path d="M10 2v7.31L4.15 18.5A2 2 0 0 0 5.86 21.5h12.28a2 2 0 0 0 1.71-3L14 9.31V2"></path><path d="M8.5 2h7"></path><path d="M7 16h10"></path>',
+            'hypotheses': '<path d="M10 2v7.31L4.15 18.5A2 2 0 0 0 5.86 21.5h12.28a2 2 0 0 0 1.71-3L14 9.31V2"></path><path d="M8.5 2h7"></path><path d="M7 16h10"></path>',
+            '가설': '<path d="M10 2v7.31L4.15 18.5A2 2 0 0 0 5.86 21.5h12.28a2 2 0 0 0 1.71-3L14 9.31V2"></path><path d="M8.5 2h7"></path><path d="M7 16h10"></path>'
         };
 
         if (name === 'SISUN Logo' || name === 'Workspace Logo') {
@@ -612,7 +620,6 @@ window.handleGlobalSave = async function () {
             assignee: document.getElementById('viewer-meta-assignee')?.value || '',
             developer: document.getElementById('viewer-meta-developer')?.value || '',
             period: document.getElementById('viewer-meta-period')?.value || '',
-            jira: document.getElementById('viewer-meta-jira')?.value || '',
             updated: updatedTimeStr
         };
 
@@ -686,7 +693,6 @@ window.handleGlobalSave = async function () {
                         version: nextVer || (state.projectMetadata.screens?.[activeFileName]?.version || '0.1'),
                         assignee: projectMeta.assignee,
                         developer: projectMeta.developer,
-                        jira: projectMeta.jira,
                         message: changeMsg
                     };
 
@@ -1263,7 +1269,6 @@ window.init = async function () {
                     PROJECT_NAME: state.projectMetadata.title || '',
                     SCREEN_NAME: screenName,
                     VERSION: '0.1',
-                    JIRA: state.projectMetadata.jira || '-',
                     AUTHOR: state.projectMetadata.assignee || '-',
                     DATE: state.projectMetadata.period || new Date().toLocaleDateString('ko-KR')
                 }, msg => {

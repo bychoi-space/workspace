@@ -277,32 +277,15 @@ const ProjectMetadataManager = {
                     <label>PERIOD</label>
                     <input type="text" id="viewer-meta-period" value="${pm.period || ''}" placeholder="사업 기간" autocomplete="off">
                 </div>
-                <div class="v4-meta-item" style="flex: 0 0 220px; position: relative;">
-                    <label>JIRA / LINKS</label>
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <input type="text" id="viewer-meta-jira" value="${pm.jira || ''}" placeholder="예) LFML-123456" style="flex: 1;" autocomplete="off">
-                        <a id="btn-jira-link" href="${(pm.jira && typeof pm.jira === 'string') ? 'https://jira.lfcorp.com/browse/' + pm.jira.trim() : '#'}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="display: ${(pm.jira && typeof pm.jira === 'string' && pm.jira.trim()) ? 'flex' : 'none'}; height: 22px; padding: 0 8px; font-size: 11px;">바로가기</a>
-                    </div>
-                </div>
             </div>
         `;
         this.bindEvents();
     },
     bindEvents() {
-        const jiraInput = document.getElementById('viewer-meta-jira');
-        const jiraBtn = document.getElementById('btn-jira-link');
-        if (jiraInput && jiraBtn) {
-            jiraInput.oninput = () => {
-                const val = jiraInput.value.trim();
-                jiraBtn.style.display = val ? 'flex' : 'none';
-                jiraBtn.href = val ? 'https://jira.lfcorp.com/browse/' + val : '#';
-                markAsDirty();
-            };
-        }
+        // Additional metadata bar events can be bound here
     },
     updateFields(pm) {
         const titleIn = document.getElementById('viewer-meta-title'); if (titleIn) titleIn.value = pm.title || '';
-        const jiraIn = document.getElementById('viewer-meta-jira'); if (jiraIn) jiraIn.value = pm.jira || '';
     }
 };
 
@@ -1518,6 +1501,9 @@ function getCategoryBadge(type) {
         'cover': { label: 'COVER', class: 'badge-cover' },
         'architecture': { label: 'ARCH', class: 'badge-architecture' },
         'plan': { label: 'PLAN', class: 'badge-plan' },
+        'plan-delivery': { label: 'PLAN', class: 'badge-plan' },
+        'case-study': { label: 'CASE', class: 'badge-case-study' },
+        'case_study': { label: 'CASE', class: 'badge-case-study' },
         'ui': { label: 'UI', class: 'badge-ui' },
         'responsive-ui': { label: 'PC+MO', class: 'badge-responsive-ui' },
         'mobile-ui': { label: 'MOBILE', class: 'badge-mobile-ui' },
@@ -2261,7 +2247,6 @@ window.renderHistoryPopup = function(history) {
                 </div>
                 <div style="color: #f8fafc; font-size: 15px; font-weight: 600; word-break: break-all; line-height: 1.5; margin: 2px 0;">${item.message || '-'}</div>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; font-size: 13px; color: #94a3b8; align-items: center;">
-                    ${item.jira ? `<span style="background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${item.jira}</span>` : ''}
                     ${item.assignee ? `<span style="font-weight: 500;">담당: ${item.assignee}</span>` : ''}
                     ${item.developer ? `<span style="font-weight: 500;">개발: ${item.developer}</span>` : ''}
                 </div>

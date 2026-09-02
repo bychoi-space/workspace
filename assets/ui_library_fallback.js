@@ -191,6 +191,18 @@ window.VCTRL_UI_FALLBACK_ICON = `
             </div>
             <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Recent</span>
         </div>
+        <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Insight')" data-ko="인사이트 통찰 발견 영감 아이디어 핵심 전구 insight idea inspiration discovery lightbulb bulb" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
+            <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 20px; height: 20px; color: #ffffff; flex-shrink: 0; box-sizing: border-box; background-image: none !important;"><path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+            </div>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Insight</span>
+        </div>
+        <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Hypothesis')" data-ko="가설 가설설정 실험 검증 테스트 연구 hypotheses hypothesis test experiment flask abtest" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
+            <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 20px; height: 20px; color: #ffffff; flex-shrink: 0; box-sizing: border-box; background-image: none !important;"><path d="M10 2v7.31L4.15 18.5A2 2 0 0 0 5.86 21.5h12.28a2 2 0 0 0 1.71-3L14 9.31V2"></path><path d="M8.5 2h7"></path><path d="M7 16h10"></path></svg>
+            </div>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Hypothesis</span>
+        </div>
 
         <!-- Group 2: Customer Support & Review -->
         <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Gift')" data-ko="선물/혜택 선물 혜택 기프트 쿠폰 gift" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
@@ -1538,10 +1550,11 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             <option value="cover">1. Cover</option>
                             <option value="architecture">2. Architecture</option>
                             <option value="plan">3. Plan</option>
-                            <option value="ui">4. Front UI</option>
-                            <option value="mobile-ui">5. Mobile UI 설계</option>
-                            <option value="admin-nbos">6. Admin (NBOS)</option>
-                            <option value="admin-onesphere">7. Admin (Onesphere)</option>
+                            <option value="case-study">4. Case Study</option>
+                            <option value="ui">5. Front UI</option>
+                            <option value="mobile-ui">6. Mobile UI 설계</option>
+                            <option value="admin-nbos">7. Admin (NBOS)</option>
+                            <option value="admin-onesphere">8. Admin (Onesphere)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1655,6 +1668,14 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             </div>
                             <div class="template-name">반응형 (PC + Mobile)</div>
                             <div class="template-badge">Dual</div>
+                        </div>
+                        <div class="template-card" data-template="template_case_study.html" data-default-name="04_Case_Study">
+                            <div class="template-thumb">
+                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">analytics</span>
+                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            </div>
+                            <div class="template-name">Case Study (벤치마크/가설)</div>
+                            <div class="template-badge">Benchmark</div>
                         </div>
                         <div class="template-card" data-template="template_blank.html" data-default-name="99_Blank">
                             <div class="template-thumb">

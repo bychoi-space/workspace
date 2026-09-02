@@ -67,9 +67,11 @@ window.syncCoverMetadata = function(html, metadata, isSave = false, currentActiv
         html = html.replace(/(<div[^>]*id="cover-title"[^>]*>[\s\S]*?<div[^>]*class="v4-editable-cell"[^>]*>)[^<]*(<\/div>)/i, `$1${titleValue}$2`);
     }
     
-    // 2. JIRA
-    const jiraValue = metadata.jira || '-';
-    html = html.replace(/(<div[^>]*id="cover-jira-id"[^>]*>)[^<]*(<\/div>)/i, `$1${jiraValue}$2`);
+    // 2. JIRA (Legacy fallback)
+    const jiraValue = metadata.jira || '';
+    if (html.includes('cover-jira-id')) {
+        html = html.replace(/(<div[^>]*id="cover-jira-id"[^>]*>)[^<]*(<\/div>)/i, `$1${jiraValue}$2`);
+    }
     
     // 3. Author
     const authorValue = metadata.assignee || '-';

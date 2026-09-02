@@ -23,8 +23,8 @@ window.v4ResponsivePinsScript = `
     window.isResponsiveScreen = isResponsiveScreen;
 
     function getFrameContainers() {
-        const pcInner = document.querySelector('.pc-content-inner') || document.querySelector('.pc-content-area');
-        const mobileInner = document.querySelector('.mobile-content-inner') || document.querySelector('.mobile-content-area');
+        const pcInner = document.querySelector('.pc-content-inner') || document.querySelector('.pc-content-area, .pc-content');
+        const mobileInner = document.querySelector('.mobile-content-inner') || document.querySelector('.mobile-content-area, .mobile-content');
         return { pcInner, mobileInner };
     }
 
@@ -40,22 +40,22 @@ window.v4ResponsivePinsScript = `
         pin.setAttribute('data-index', String(index));
         pin.setAttribute('data-pin-num', String(number));
         pin.style.position = 'absolute';
-        pin.style.width = '28px';
-        pin.style.height = '28px';
+        pin.style.width = '20px';
+        pin.style.height = '20px';
         pin.style.zIndex = '1000';
 
         let defaultLeft = 50;
         let defaultTop = 150;
 
         if (frame === 'pc') {
-            const pcArea = document.querySelector('.pc-content-area');
+            const pcArea = document.querySelector('.pc-content-area, .pc-content');
             const scrollY = pcArea ? pcArea.scrollTop : 0;
-            defaultLeft = Math.round((1000 - 28) / 2);
+            defaultLeft = Math.round((1000 - 20) / 2);
             defaultTop = Math.round(250 + scrollY);
         } else {
-            const mobileArea = document.querySelector('.mobile-content-area');
+            const mobileArea = document.querySelector('.mobile-content-area, .mobile-content');
             const scrollY = mobileArea ? mobileArea.scrollTop : 0;
-            defaultLeft = Math.round((360 - 28) / 2);
+            defaultLeft = Math.round((360 - 20) / 2);
             defaultTop = Math.round(250 + scrollY);
         }
 
@@ -66,7 +66,7 @@ window.v4ResponsivePinsScript = `
         pin.style.top = posY + 'px';
 
         pin.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' +
-                        '<div class="pin-number-badge" style="pointer-events:none; font-weight:800; font-size:14px; color:#000;">' + number + '</div>' +
+                        '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + number + '</div>' +
                         '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
 
         if (typeof window.updateHandles === 'function') {
@@ -153,8 +153,8 @@ window.v4ResponsivePinsScript = `
                 ? window.parent.state.activeFile.meta.description
                 : [];
 
-            const pcPins = Array.from(document.querySelectorAll('.pc-content-inner .pin-marker, .pc-content-area .pin-marker, [data-frame="pc"].pin-marker'));
-            const mobilePins = Array.from(document.querySelectorAll('.mobile-content-inner .pin-marker, .mobile-content-area .pin-marker, [data-frame="mobile"].pin-marker'));
+            const pcPins = Array.from(document.querySelectorAll('.pc-content-inner .pin-marker, .pc-content-area .pin-marker, .pc-content .pin-marker, [data-frame="pc"].pin-marker'));
+            const mobilePins = Array.from(document.querySelectorAll('.mobile-content-inner .pin-marker, .mobile-content-area .pin-marker, .mobile-content .pin-marker, [data-frame="mobile"].pin-marker'));
 
             const maxIndex = descList.length;
 
@@ -223,13 +223,43 @@ window.v4ResponsivePinsScript = `
             if (!pin) return;
             if (active) {
                 pin.classList.add('highlight-pin');
-                pin.style.outline = '2px solid #6366f1';
-                pin.style.boxShadow = '0 0 12px rgba(99, 102, 241, 0.6)';
+                pin.style.outline = '2px solid #ef4444';
+                pin.style.boxShadow = '0 0 12px rgba(239, 68, 68, 0.6)';
             } else {
                 pin.classList.remove('highlight-pin');
                 pin.style.outline = '';
                 pin.style.boxShadow = '';
             }
+        });
+    };
+
+    window.focusResponsivePin = function(index) {
+        if (!isResponsiveScreen()) return;
+        const pcArea = document.querySelector('.pc-content-area, .pc-content');
+        const mobArea = document.querySelector('.mobile-content-area, .mobile-content');
+        const pcPin = document.getElementById('v4-pin-pc-' + index) || document.querySelector('[data-frame="pc"][data-index="' + index + '"]');
+        const mobPin = document.getElementById('v4-pin-mobile-' + index) || document.querySelector('[data-frame="mobile"][data-index="' + index + '"]');
+
+        if (pcArea && pcPin) {
+            const pinTop = parseFloat(pcPin.style.top) || pcPin.offsetTop || 0;
+            const targetTop = Math.max(0, pinTop - (pcArea.clientHeight / 2) + 10);
+            pcArea.scrollTo({ top: targetTop, behavior: 'smooth' });
+        }
+
+        if (mobArea && mobPin) {
+            const pinTop = parseFloat(mobPin.style.top) || mobPin.offsetTop || 0;
+            const targetTop = Math.max(0, pinTop - (mobArea.clientHeight / 2) + 10);
+            mobArea.scrollTo({ top: targetTop, behavior: 'smooth' });
+        }
+
+        [pcPin, mobPin].forEach(function(pin) {
+            if (!pin) return;
+            pin.classList.remove('pin-active-pulse');
+            void pin.offsetWidth;
+            pin.classList.add('pin-active-pulse');
+            setTimeout(function() {
+                if (pin) pin.classList.remove('pin-active-pulse');
+            }, 1500);
         });
     };
 
@@ -265,6 +295,8 @@ window.v4ResponsivePinsScript = `
 
         if (d.type === 'LF_INSERT_RESPONSIVE_PINS') {
             window.spawnResponsiveDualPins(d.index, d.number, d.pcPos, d.mobilePos);
+        } else if (d.type === 'LF_FOCUS_PIN') {
+            window.focusResponsivePin(d.index);
         } else if (d.type === 'LF_HIGHLIGHT_PIN') {
             window.highlightResponsivePins(d.index, !!d.active);
         } else if (d.type === 'LF_IMPORT_RESPONSIVE_PINS') {

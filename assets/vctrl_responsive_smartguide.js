@@ -34,8 +34,8 @@ window.v4ResponsiveSmartGuideScript = `
 
             const pcInner = document.querySelector('.pc-content-inner');
             const mobileInner = document.querySelector('.mobile-content-inner');
-            const pcArea = document.querySelector('.pc-content-area');
-            const mobileArea = document.querySelector('.mobile-content-area');
+            const pcArea = document.querySelector('.pc-content-area, .pc-content');
+            const mobileArea = document.querySelector('.mobile-content-area, .mobile-content');
 
             if (pcInner && (pcInner.contains(el) || el.closest('.pc-column') || el.closest('.pc-browser-frame') || el.closest('.pc-content-area'))) {
                 return {

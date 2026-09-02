@@ -94,7 +94,7 @@
       "title": "오프라인 매장찾기",
       "type": "case-study",
       "updatedAt": "2026-09-02T06:03:33.627Z",
-      "template": "template_blank.html",
+      "template": "template_case_study.html",
       "description": [],
       "connectors": [],
       "defaultTab": "editor",

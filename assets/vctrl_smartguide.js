@@ -76,10 +76,10 @@
                         label: name,
                         left: x,
                         top: y,
-                        width: 32, // Pin 기준 크기
-                        height: 32,
-                        right: x + 32,
-                        bottom: y + 32
+                        width: 20, // Pin 기준 크기
+                        height: 20,
+                        right: x + 20,
+                        bottom: y + 20
                     });
                 });
             }

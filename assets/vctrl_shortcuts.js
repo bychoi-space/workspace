@@ -790,5 +790,25 @@ window.v4ShortcutsScript = `
             document.dispatchEvent(event);
         }
     });
+
+    // Ctrl + Mouse Wheel Zoom Interception (Iframe -> Parent Canvas Zoom)
+    window.addEventListener('wheel', function(e) {
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            const msg = {
+                type: 'LF_IFRAME_WHEEL_ZOOM',
+                clientX: e.clientX,
+                clientY: e.clientY,
+                deltaY: e.deltaY
+            };
+            if (typeof window.notifyParent === 'function') {
+                window.notifyParent(msg);
+            } else if (typeof notifyParent === 'function') {
+                notifyParent(msg);
+            } else if (window.parent) {
+                window.parent.postMessage(msg, '*');
+            }
+        }
+    }, { passive: false });
 })();
 `;

@@ -127,39 +127,78 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
 /* Premium Pin Marker Styling */
 .pin-marker {
     position: absolute !important;
-    width: 28px !important;
-    height: 28px !important;
-    background: #fb7185 !important; /* Rose accent matching --accent-data */
-    color: #000000 !important;
+    width: 20px !important;
+    height: 20px !important;
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    color: #ffffff !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border: 2px solid #ffffff !important;
-    box-shadow: 0 4px 12px rgba(251, 113, 133, 0.4) !important;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 800 !important;
-    font-size: 13px !important;
+    border: 1.5px solid #ffffff !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4) !important;
+    font-family: inherit !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
     z-index: 1000 !important;
     cursor: grab !important;
     box-sizing: border-box !important;
 }
+.pin-marker .pin-number-badge {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    font-family: inherit !important;
+    line-height: 1 !important;
+}
 .pin-marker.selected {
-    outline: 2px solid #6366f1 !important;
-    outline-offset: 2px !important;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #ef4444, 0 4px 14px rgba(239, 68, 68, 0.6) !important;
+    z-index: 1001 !important;
 }
 .pin-marker:hover {
-    box-shadow: 0 6px 16px rgba(251, 113, 133, 0.6) !important;
-    background: #fda4af !important; /* Lighter rose color on hover */
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6) !important;
+    background: linear-gradient(135deg, #f87171, #ef4444) !important;
 }
-.pin-marker .lf-drag-handle {
-    top: -14px !important;
-    left: -14px !important;
+.pin-marker .lf-drag-handle,
+.pin-marker .lf-resizer,
+.pin-marker .lf-delete-trigger,
+.pin-marker .lf-connector-port,
+.pin-marker:hover .lf-drag-handle,
+.pin-marker:hover .lf-resizer,
+.pin-marker:hover .lf-delete-trigger,
+.pin-marker:hover .lf-connector-port,
+.pin-marker.selected .lf-drag-handle,
+.pin-marker.selected .lf-resizer,
+.pin-marker.selected .lf-delete-trigger,
+.pin-marker.selected .lf-connector-port {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
-.pin-marker .lf-delete-trigger {
-    top: -14px !important;
-    right: -14px !important;
+.pin-marker.pin-active-pulse {
+    animation: pinActivePulse 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    z-index: 1002 !important;
+}
+@keyframes pinActivePulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8), 0 2px 8px rgba(239, 68, 68, 0.4);
+    }
+    35% {
+        transform: scale(1.35);
+        box-shadow: 0 0 0 12px rgba(239, 68, 68, 0), 0 4px 16px rgba(239, 68, 68, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 16px rgba(239, 68, 68, 0), 0 2px 8px rgba(239, 68, 68, 0.4);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    }
 }
 
 body { position: relative !important; min-height: 100vh; margin: 0; padding: 0; }

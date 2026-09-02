@@ -25,7 +25,6 @@ const DOM = {
     metaTitle: document.getElementById('meta-title'),
     metaPeriod: document.getElementById('meta-period'),
     metaAssignee: document.getElementById('meta-assignee'),
-    metaJira: document.getElementById('meta-jira'),
     metaFigma: document.getElementById('meta-figma'),
     btnModalClose: document.getElementById('btn-modal-close'),
     btnModalSave: document.getElementById('btn-modal-save'),
@@ -450,7 +449,6 @@ async function renderList(projectsToRender = state.projects) {
 
         const hasMeta = (m.assignee && m.assignee.trim()) || 
                         (m.period && m.period.trim()) || 
-                        (m.jira && m.jira.trim()) || 
                         (m.figmaUrl && m.figmaUrl.trim());
 
         let chipsHtml = '';
@@ -470,13 +468,6 @@ async function renderList(projectsToRender = state.projects) {
                     <div class="meta-chip meta-chip-period" title="기간: ${m.period}">
                         <span class="material-icons-outlined">event</span>
                         <span>${displayPeriod}</span>
-                    </div>`;
-            }
-            if (m.jira && m.jira.trim()) {
-                chipsHtml += `
-                    <div class="meta-chip meta-chip-jira" title="Jira ID: ${m.jira}">
-                        <span class="material-icons-outlined">confirmation_number</span>
-                        <span>${m.jira}</span>
                     </div>`;
             }
             if (m.figmaUrl && m.figmaUrl.trim()) {
@@ -661,7 +652,6 @@ DOM.btnCreateProject.onclick = async () => {
     DOM.metaTitle.value = "";
     DOM.metaPeriod.value = "";
     DOM.metaAssignee.value = "";
-    DOM.metaJira.value = "";
     DOM.metaFigma.value = "";
     initDatePicker();
     
@@ -697,7 +687,6 @@ async function openEditProjectModal(projectName) {
     DOM.metaTitle.value = (m && m.title) || projectName;
     DOM.metaPeriod.value = (m && m.period) || '';
     DOM.metaAssignee.value = (m && m.assignee) || '';
-    DOM.metaJira.value = (m && m.jira) || '';
     DOM.metaFigma.value = (m && m.figmaUrl) || '';
     initDatePicker(m ? m.period : '');
     
@@ -739,7 +728,6 @@ DOM.btnModalSave.onclick = async () => {
             title: DOM.metaTitle.value.trim(),
             period: DOM.metaPeriod.value.trim(),
             assignee: DOM.metaAssignee.value.trim(),
-            jira: DOM.metaJira.value.trim(),
             figmaUrl: DOM.metaFigma.value.trim(),
             themeIndex: themeVal
         }
@@ -758,7 +746,6 @@ DOM.btnModalSave.onclick = async () => {
                         message: '프로젝트 최초 생성',
                         assignee: DOM.metaAssignee.value.trim() || '',
                         developer: '',
-                        jira: DOM.metaJira.value.trim() || '',
                         file: 'metadata.json'
                     }];
                     saveProjectHistory(projectName, initialHistory, null).catch(e => console.warn("Failed to save initial history:", e));

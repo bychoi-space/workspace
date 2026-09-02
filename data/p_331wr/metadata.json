@@ -63,7 +63,7 @@
     "99_Blank_892.html": {
       "title": "Case Study",
       "type": "default",
-      "updatedAt": "2026-09-02T01:49:55.156Z",
+      "updatedAt": "2026-09-02T01:55:43.792Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -73,8 +73,8 @@
   },
   "assignee": "최범열",
   "developer": "",
-  "period": "2026.09.01 ~ 2026.10.01",
-  "themeIndex": 0,
+  "period": "2026.09.01(화) ~ 2026.10.01(목)",
+  "themeIndex": -1,
   "jira": "",
-  "updated": "2026-09-02 10:49:55"
+  "updated": "2026-09-02 10:55:43"
 }

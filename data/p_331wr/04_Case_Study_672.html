@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Case Study - 상품 상세 - 리뉴얼 2차</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --v4-primary: #6366f1;
+            --v4-accent: #00e5ff;
+            --v4-bg: #1e293b;
+            --v4-surface: #f8f9fa;
+            --v4-border: #e1e3e5;
+            --v4-text: #1a1c1e;
+        }
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; background: var(--v4-bg); 
+            overflow: hidden; color: var(--v4-text);
+        }
+        .page { 
+            width: 1440px; height: 900px; 
+            position: relative; 
+            background: #ffffff;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.02) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* V4 Component Base Styles */
+        .lf-component { position: absolute !important; box-sizing: border-box !important; z-index: 500; }
+        .lf-component:hover { outline: 2px dashed var(--v4-primary) !important; cursor: pointer !important; }
+        .lf-component.selected { outline: 2px solid var(--v4-primary) !important; z-index: 10001 !important; }
+
+        .lf-drag-handle { position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: var(--v4-primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; z-index: 100; opacity: 0; transition: opacity 0.2s; border: 2px solid #fff; }
+        .lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; }
+        .lf-resizer { position: absolute; bottom: -6px; right: -6px; width: 12px; height: 12px; background: var(--v4-primary); cursor: nwse-resize; border-radius: 2px; border: 2px solid #fff; opacity: 0; z-index: 100; }
+        .lf-component:hover .lf-resizer, .lf-component.selected .lf-resizer { opacity: 1; }
+        .lf-delete-trigger { position: absolute; top: -12px; right: -12px; width: 24px; height: 24px; background: #ef4444; color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; z-index: 101; font-weight: bold; }
+        .lf-component:hover .lf-delete-trigger, .lf-component.selected .lf-delete-trigger { display: flex; }
+
+        .v4-editable-cell { outline: none; box-sizing: border-box; }
+        .v4-shape { width: 100%; height: 100%; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- ======================================================== -->
+        <!-- [Benchmark 5 Columns: Image Placeholders (Rect Shapes)]  -->
+        <!-- ======================================================== -->
+
+        <!-- Col 1 Image Placeholder Rect -->
+        <div id="v4-cs-img-1" class="lf-component" style="position: absolute; top: 20px; left: 20px; width: 260px; height: 418px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #94a3b8;">
+                    <p><span style="font-size: 13px; font-weight: 600; color: #94a3b8;">📷 타사 UI 캡처 #1</span></p>
+                </div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- Col 2 Image Placeholder Rect -->
+        <div id="v4-cs-img-2" class="lf-component" style="position: absolute; top: 20px; left: 305px; width: 260px; height: 450px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #94a3b8;">
+                    <p><span style="font-size: 13px; font-weight: 600; color: #94a3b8;">📷 타사 UI 캡처 #2</span></p>
+                </div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- Col 3 Image Placeholder Rect -->
+        <div id="v4-cs-img-3" class="lf-component" style="position: absolute; top: 20px; left: 590px; width: 260px; height: 418px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #94a3b8;">
+                    <p><span style="font-size: 13px; font-weight: 600; color: #94a3b8;">📷 타사 UI 캡처 #3</span></p>
+                </div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- Col 4 Image Placeholder Rect -->
+        <div id="v4-cs-img-4" class="lf-component" style="position: absolute; top: 20px; left: 875px; width: 260px; height: 404px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #94a3b8;">
+                    <p><span style="font-size: 13px; font-weight: 600; color: #94a3b8;">📷 타사 UI 캡처 #4</span></p>
+                </div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- Col 5 Image Placeholder Rect -->
+        <div id="v4-cs-img-5" class="lf-component" style="position: absolute; top: 20px; left: 1160px; width: 260px; height: 388px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; color: #94a3b8;">
+                    <p><span style="font-size: 13px; font-weight: 600; color: #94a3b8;">📷 타사 UI 캡처 #5</span></p>
+                </div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [Benchmark 5 Columns: Note Boxes (User Created)]         -->
+        <!-- ======================================================== -->
+
+        <!-- Col 1 Note Box -->
+        <div id="v4-comp-1788314034384" class="lf-component" style="position: absolute; top: 450px; left: 20px; z-index: 1000; transform: none; width: 260px; height: 80px;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(234, 88, 12, 0.1); border: 1.6px solid rgb(234, 88, 12); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- Col 2 Note Box -->
+        <div id="v4-comp-1788314097600_535219_0" class="lf-component" data-resized="true" style="position: absolute; top: 482px; left: 305px; z-index: 1000; transform: none; width: 260px; height: 90px;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(234, 88, 12, 0.1); border: 1.6px solid rgb(234, 88, 12); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- Col 3 Note Box -->
+        <div id="v4-comp-1788314109131_716832_0" class="lf-component" data-resized="true" style="position: absolute; top: 450px; left: 590px; z-index: 1000; transform: none; width: 260px; height: 90px;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(234, 88, 12, 0.1); border: 1.6px solid rgb(234, 88, 12); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- Col 4 Note Box -->
+        <div id="v4-comp-1788314113364_24853_0" class="lf-component" data-resized="true" style="position: absolute; top: 436px; left: 875px; z-index: 1000; transform: none; width: 260px; height: 80px;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(234, 88, 12, 0.1); border: 1.6px solid rgb(234, 88, 12); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- Col 5 Note Box -->
+        <div id="v4-comp-1788314126397_827368_0" class="lf-component" data-resized="true" style="position: absolute; top: 420.5px; left: 1160px; z-index: 1000; transform: none; width: 260px; height: 64px;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(234, 88, 12, 0.1); border: 1.6px solid rgb(234, 88, 12); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [Insight Summary Board: Case Study 도출 인사이트]          -->
+        <!-- ======================================================== -->
+
+        <!-- 메인 카드 배경 -->
+        <div id="v4-insight-main-bg" class="lf-component" style="position: absolute; top: 686px; left: 20px; width: 1400px; height: 194px; z-index: 1000;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04); box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+
+        <!-- 헤더 아이콘 -->
+        <div id="v4-insight-icon" class="lf-component" style="position: absolute; top: 698px; left: 38px; width: 22px; height: 22px; z-index: 1001;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path></svg>
+        </div>
+
+        <!-- 헤더 타이틀 -->
+        <div id="v4-insight-title" class="lf-component v4-text-shape" style="position: absolute; top: 697px; left: 66px; width: 350px; height: 24px; z-index: 1001;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; padding: 2px 4px; text-align: left; width: 100%; height: 100%;">
+                <p>💡 Case Study 핵심 인사이트 (Key Findings)</p>
+            </div>
+        </div>
+
+        <!-- 우측 카테고리 뱃지 -->
+        <div id="v4-insight-badge" class="lf-component" style="position: absolute; top: 697px; left: 1300px; width: 104px; height: 24px; z-index: 1001;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 800; color: #475569;">BENCHMARK</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= [Column 1] 색상명 텍스트 상시 노출 ================= -->
+        <!-- Col 1 배경 -->
+        <div id="v4-is1-bg" class="lf-component" style="position: absolute; top: 730px; left: 38px; width: 432px; height: 136px; z-index: 1001;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+        <!-- Col 1 뱃지 -->
+        <div id="v4-is1-badge" class="lf-component" style="position: absolute; top: 742px; left: 52px; width: 72px; height: 22px; z-index: 1002;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 800; color: #4f46e5;">현황 분석</span></p>
+                </div>
+            </div>
+        </div>
+        <!-- Col 1 타이틀 -->
+        <div id="v4-is1-title" class="lf-component v4-text-shape" style="position: absolute; top: 741px; left: 132px; width: 320px; height: 24px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 13.5px; font-weight: 800; color: #0f172a; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>색상명 텍스트 상시 표기 표준화</p>
+            </div>
+        </div>
+        <!-- Col 1 블릿 1 -->
+        <div id="v4-is1-txt1" class="lf-component v4-text-shape" style="position: absolute; top: 772px; left: 52px; width: 405px; height: 22px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 12.5px; color: #334155; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>&bull; <strong>주요 타사 공통 :</strong> LFmall, 29CM, SI VILLAGE 모두 컬러명 텍스트 병기</p>
+            </div>
+        </div>
+        <!-- Col 1 블릿 2 -->
+        <div id="v4-is1-txt2" class="lf-component v4-text-shape" style="position: absolute; top: 798px; left: 52px; width: 405px; height: 42px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 12px; color: #64748b; line-height: 1.4 !important; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>&bull; 옵션 클릭 전에도 색상(ex. 베이지, 퍼플)을 즉각 인지하여 탐색 효율 극대화</p>
+            </div>
+        </div>
+
+        <!-- ================= [Column 2] 시각적 썸네일 칩 연동 ================= -->
+        <!-- Col 2 배경 -->
+        <div id="v4-is2-bg" class="lf-component" style="position: absolute; top: 730px; left: 490px; width: 432px; height: 136px; z-index: 1001;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+        <!-- Col 2 뱃지 -->
+        <div id="v4-is2-badge" class="lf-component" style="position: absolute; top: 742px; left: 504px; width: 72px; height: 22px; z-index: 1002;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 800; color: #0284c7;">UI/UX 특징</span></p>
+                </div>
+            </div>
+        </div>
+        <!-- Col 2 타이틀 -->
+        <div id="v4-is2-title" class="lf-component v4-text-shape" style="position: absolute; top: 741px; left: 584px; width: 320px; height: 24px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 13.5px; font-weight: 800; color: #0f172a; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>실물 썸네일 컬러칩 형태 채택</p>
+            </div>
+        </div>
+        <!-- Col 2 블릿 1 -->
+        <div id="v4-is2-txt1" class="lf-component v4-text-shape" style="position: absolute; top: 772px; left: 504px; width: 405px; height: 22px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 12.5px; color: #334155; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>&bull; <strong>비주얼 칩 :</strong> 단순 단색 원형(Dot) 대신 원단 패턴/질감 썸네일 제공</p>
+            </div>
+        </div>
+        <!-- Col 2 블릿 2 -->
+        <div id="v4-is2-txt2" class="lf-component v4-text-shape" style="position: absolute; top: 798px; left: 504px; width: 405px; height: 42px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 12px; color: #64748b; line-height: 1.4 !important; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>&bull; 선택된 컬러칩 외곽에 볼드한 보더(Focus Ring)로 선택 상태 명확히 구별</p>
+            </div>
+        </div>
+
+        <!-- ================= [Column 3] 시선닷컴 적용 과제 ================= -->
+        <!-- Col 3 배경 -->
+        <div id="v4-is3-bg" class="lf-component" style="position: absolute; top: 730px; left: 942px; width: 462px; height: 136px; z-index: 1001;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+            <div class="lf-connector-port port-top" data-side="top"></div><div class="lf-connector-port port-bottom" data-side="bottom"></div><div class="lf-connector-port port-left" data-side="left"></div><div class="lf-connector-port port-right" data-side="right"></div>
+        </div>
+        <!-- Col 3 뱃지 -->
+        <div id="v4-is3-badge" class="lf-component" style="position: absolute; top: 742px; left: 956px; width: 72px; height: 22px; z-index: 1002;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border: 1px solid transparent; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 800; color: #ffffff;">적용 과제</span></p>
+                </div>
+            </div>
+        </div>
+        <!-- Col 3 타이틀 -->
+        <div id="v4-is3-title" class="lf-component v4-text-shape" style="position: absolute; top: 741px; left: 1036px; width: 350px; height: 24px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 13.5px; font-weight: 800; color: #1e40af; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>시선닷컴 PDP 누락 개선에 직접 반영</p>
+            </div>
+        </div>
+        <!-- Col 3 블릿 1 -->
+        <div id="v4-is3-txt1" class="lf-component v4-text-shape" style="position: absolute; top: 772px; left: 956px; width: 435px; height: 22px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 12.5px; font-weight: 700; color: #1e3a8a; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>&bull; <strong>과제 목표 :</strong> [과제의 목적 (1)] 컬러칩 텍스트 직관적 표현 도입 확정</p>
+            </div>
+        </div>
+        <!-- Col 3 블릿 2 -->
+        <div id="v4-is3-txt2" class="lf-component v4-text-shape" style="position: absolute; top: 798px; left: 956px; width: 435px; height: 42px; z-index: 1002;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 12px; color: #2563eb; line-height: 1.4 !important; padding: 2px; text-align: left; width: 100%; height: 100%;">
+                <p>&bull; 클릭 전 탐색 피로도 해소 및 옵션 오선택/반품률 획기적 감소 기대</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,9 +2,9 @@
   "title": "상품 상세 - 리뉴얼 2차",
   "screenOrder": [
     "00_Cover_63.html",
+    "99_Blank_892.html",
     "01_Project_Summary_Report_101.html",
-    "08_Responsive_PC_Mobile_486.html",
-    "99_Blank_892.html"
+    "08_Responsive_PC_Mobile_486.html"
   ],
   "screens": {
     "00_Cover_63.html": {

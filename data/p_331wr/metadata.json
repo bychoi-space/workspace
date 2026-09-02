@@ -63,7 +63,7 @@
     "99_Blank_892.html": {
       "title": "Case Study",
       "type": "default",
-      "updatedAt": "2026-09-02T01:19:49.006Z",
+      "updatedAt": "2026-09-02T01:49:55.156Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -76,5 +76,5 @@
   "period": "2026.09.01(화) ~ 2026.10.01(목)",
   "themeIndex": -1,
   "jira": "",
-  "updated": "2026-09-02 10:19:48"
+  "updated": "2026-09-02 10:49:55"
 }

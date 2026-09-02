@@ -21,7 +21,7 @@
     "01_Project_Summary_Report_101.html": {
       "title": "프로젝트 개요 및 마일스톤",
       "type": "plan",
-      "updatedAt": "2026-09-02T02:05:44.085Z",
+      "updatedAt": "2026-09-02T02:09:32.083Z",
       "template": "template_plan.html",
       "version": 0.1,
       "description": [],
@@ -76,5 +76,5 @@
   "period": "2026.09.01(화) ~ 2026.10.01(목)",
   "themeIndex": -1,
   "jira": "",
-  "updated": "2026-09-02 11:05:44"
+  "updated": "2026-09-02 11:09:32"
 }

@@ -19,9 +19,9 @@
       "screenDesc": ""
     },
     "01_Project_Summary_Report_101.html": {
-      "title": "프로젝트 개요 및 마일스톤",
+      "title": "과제 개요 및 일정",
       "type": "plan",
-      "updatedAt": "2026-09-02T02:09:32.083Z",
+      "updatedAt": "2026-09-02T02:17:21.224Z",
       "template": "template_plan.html",
       "version": 0.1,
       "description": [],
@@ -30,9 +30,9 @@
       "screenDesc": "시선닷컴 상품 상세(PDP) 리뉴얼 누락 개선 과제 목적, 작업 범위(Front/Admin), 일정 및 마일스톤 보고서"
     },
     "08_Responsive_PC_Mobile_486.html": {
-      "title": "상품 상세1",
+      "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-02T02:12:21.732Z",
+      "updatedAt": "2026-09-02T00:15:07.220Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
@@ -58,12 +58,12 @@
       ],
       "connectors": [],
       "defaultTab": "editor",
-      "screenDesc": "[object Object]"
+      "screenDesc": ""
     },
     "99_Blank_892.html": {
       "title": "Case Study",
       "type": "default",
-      "updatedAt": "2026-09-02T01:49:55.156Z",
+      "updatedAt": "2026-09-02T01:15:44.442Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -76,5 +76,5 @@
   "period": "2026.09.01(화) ~ 2026.10.01(목)",
   "themeIndex": -1,
   "jira": "",
-  "updated": "2026-09-02 11:09:32"
+  "updated": "2026-09-02 10:49:55"
 }

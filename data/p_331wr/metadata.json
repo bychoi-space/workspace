@@ -11,7 +11,7 @@
     "01_Project_Summary_Report_101.html": {
       "title": "과제 개요 및 일정",
       "type": "plan",
-      "updatedAt": "2026-09-03T05:23:18.756Z",
+      "updatedAt": "2026-09-03T03:13:43.245Z",
       "template": "template_plan.html",
       "version": 0.1,
       "description": [],
@@ -22,20 +22,20 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-03T05:04:40.015Z",
+      "updatedAt": "2026-09-03T05:27:51.708Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
         {
           "text": "색상 옵션 하단에 컬러 텍스트 표기\n(기존 UI 에서는 클릭하기 전까지 다른 컬러 확인 불가)",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 829.015625,
-          "y": 392.0625,
+          "x": 580,
+          "y": 436.141,
           "standardized": true,
           "pins": {
             "pc": {
-              "x": 561.516,
-              "y": 417.562,
+              "x": 580,
+              "y": 436.141,
               "active": true
             },
             "mobile": {
@@ -59,6 +59,25 @@
             "mobile": {
               "x": 0,
               "y": 3265,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "PC : 기존 '배송비, 카드혜택, 마일리지' 3개의 항목 기준 1행 구조를, '배송비, 카드혜택, 마일리지, 고시정보' 4개의 항목으로 변경하고 2행 구조로 변경\n기존 순서 (배송비, 카드혜택, 적립금) 를 Mobile 과 통일하여 변경\n\nMO : '정보고시' 항목 추가\n\n공통 : [바로가기] 버튼 클릭 시, 페이지 하단 '상품정보고시' 영역으로 스크롤 이동 및 아코디언 활성화 처리",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 1000,
+          "y": 751.141,
+          "pins": {
+            "pc": {
+              "x": 1000,
+              "y": 751.141,
+              "active": true
+            },
+            "mobile": {
+              "x": 151.719,
+              "y": 1025,
               "active": true
             }
           },
@@ -106,5 +125,5 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-03 14:23:18"
+  "updated": "2026-09-03 14:27:51"
 }

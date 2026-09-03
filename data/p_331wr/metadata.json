@@ -23,7 +23,7 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-03T02:25:10.366Z",
+      "updatedAt": "2026-09-03T02:36:13.978Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
@@ -115,5 +115,5 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-03 11:25:10"
+  "updated": "2026-09-03 11:36:13"
 }

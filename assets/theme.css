@@ -136,7 +136,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 12px !important; /* Matched Left Sidebar */
+    padding: 8px 10px !important; /* Compact spacing */
 }
 
 #description-list {
@@ -148,7 +148,7 @@ body {
 }
 
 .sidebar-right .desc-row {
-    padding: 10px 12px !important;
+    padding: 8px 10px !important;
     background: rgba(255, 255, 255, 0.03) !important;
     border-radius: 8px !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;

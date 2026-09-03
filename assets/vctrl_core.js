@@ -1357,12 +1357,15 @@ window.init = async function () {
 
         if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => {
             const collapsed = DOM.sidebarLeft.classList.toggle('collapsed');
-            DOM.btnToggleLeft.querySelector('span').innerText = collapsed ? 'chevron_right' : 'chevron_left';
+            const icon = DOM.btnToggleLeft.querySelector('span');
+            if (icon) icon.innerText = collapsed ? 'menu_open' : 'chevron_left';
             setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 400);
         };
         if (DOM.btnToggleRight) DOM.btnToggleRight.onclick = () => {
             const collapsed = DOM.sidebarRight.classList.toggle('collapsed');
-            DOM.btnToggleRight.querySelector('span').innerText = collapsed ? 'chevron_left' : 'chevron_right';
+            const icon = DOM.btnToggleRight.querySelector('span');
+            if (icon) icon.innerText = collapsed ? 'chevron_left' : 'chevron_right';
+            DOM.btnToggleRight.classList.toggle('active', !collapsed);
             setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 400);
         };
 

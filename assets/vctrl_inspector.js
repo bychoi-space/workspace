@@ -184,11 +184,12 @@ window.toggleSidebar = function(side, forceOpen = null) {
     
     const btn = side === 'left' ? DOM.btnToggleLeft : DOM.btnToggleRight;
     if (btn) {
-        const icon = btn.querySelector('.material-icons-outlined');
+        const icon = btn.querySelector('.material-icons-outlined, span');
         if (icon) {
-            if (side === 'left') icon.innerText = shouldOpen ? 'chevron_left' : 'chevron_right';
+            if (side === 'left') icon.innerText = shouldOpen ? 'chevron_left' : 'menu_open';
             else icon.innerText = shouldOpen ? 'chevron_right' : 'chevron_left';
         }
+        btn.classList.toggle('active', shouldOpen);
     }
 
     setTimeout(() => {

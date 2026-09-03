@@ -29,10 +29,18 @@ window.v4DragResizeScript = `
             window.activeEl = c;
             startX = e.clientX;
             startY = e.clientY;
-            startTop = parseInt(window.activeEl.style.top) || 0;
-            startLeft = parseInt(window.activeEl.style.left) || 0;
+            
+            let l = parseFloat(window.activeEl.style.left);
+            if (isNaN(l)) l = window.activeEl.offsetLeft || 0;
+            let t = parseFloat(window.activeEl.style.top);
+            if (isNaN(t)) t = window.activeEl.offsetTop || 0;
+            startLeft = l;
+            startTop = t;
             startRect = window.activeEl.getBoundingClientRect();
-            if (h || e.target.closest('.v4-editable-cell')) e.preventDefault();
+
+            if (h || e.target.tagName === 'IMG' || e.target.closest('img') || e.target.closest('.v4-editable-cell')) {
+                e.preventDefault();
+            }
         },
         
         handleMouseMove: function(e) {
@@ -175,42 +183,68 @@ window.v4DragResizeScript = `
                     notifyParent({ type: 'LF_SNAP_END' });
                 }
 
-                // Responsive Drop Reparenting to PC Area or Mobile Content
+                // Responsive Drop: Intelligent In-Frame Preservation & Cross-Frame Reparenting
                 const pcFrame = document.querySelector('.pc-browser-frame, .pc-frame');
                 const mobileFrame = document.querySelector('.mobile-frame, .mobile-browser-frame');
-                const pcArea = document.querySelector('.pc-content-area, .pc-content-inner');
-                const mobileContent = document.querySelector('.mobile-content, .mobile-content-area, .mobile-content-inner');
+                const pcInner = document.querySelector('.pc-content-inner');
+                const mobileInner = document.querySelector('.mobile-content-inner');
 
-                if (pcFrame && mobileFrame && pcArea && mobileContent) {
-                    const pcInner = document.querySelector('.pc-content-inner') || pcArea;
-                    const mobileInner = document.querySelector('.mobile-content-inner') || mobileContent;
+                if (isResp && pcFrame && mobileFrame && pcInner && mobileInner) {
                     const compRect = window.activeEl.getBoundingClientRect();
                     const compCenterX = compRect.left + compRect.width / 2;
                     const mobileRect = mobileFrame.getBoundingClientRect();
-                    const mobileContentRect = mobileContent.getBoundingClientRect();
-                    const pcAreaRect = pcArea.getBoundingClientRect();
+                    const scale = (window.parent?.state?.transform?.scale) || 1;
                     const compW = window.activeEl.offsetWidth || 100;
 
-                    if (compCenterX >= mobileRect.left) {
-                        const relTop = compRect.top - mobileContentRect.top + mobileContent.scrollTop;
-                        const relLeft = compRect.left - mobileContentRect.left + mobileContent.scrollLeft;
-                        const clampedLeft = Math.max(0, Math.min(360 - compW, relLeft));
-                        const clampedTop = Math.max(0, relTop);
+                    const isCurrentlyInMobile = mobileInner.contains(window.activeEl);
+                    const isCurrentlyInPc = pcInner.contains(window.activeEl);
+                    const isDroppedOnMobile = compCenterX >= mobileRect.left;
 
-                        window.activeEl.style.top = clampedTop + 'px';
-                        window.activeEl.style.left = clampedLeft + 'px';
-                        mobileInner.appendChild(window.activeEl);
+                    if (isDroppedOnMobile) {
+                        const mobileMaxW = Math.max(0, (mobileInner.offsetWidth || 360) - compW);
+                        if (!isCurrentlyInMobile) {
+                            // Cross-Frame: PC -> Mobile (Reparenting with scale correction)
+                            const mobileInnerRect = mobileInner.getBoundingClientRect();
+                            const relTop = (compRect.top - mobileInnerRect.top) / scale;
+                            const relLeft = (compRect.left - mobileInnerRect.left) / scale;
+                            const clampedLeft = Math.max(0, Math.min(mobileMaxW, relLeft));
+                            const clampedTop = Math.max(0, relTop);
+
+                            window.activeEl.style.top = clampedTop + 'px';
+                            window.activeEl.style.left = clampedLeft + 'px';
+                            mobileInner.appendChild(window.activeEl);
+                        } else {
+                            // In-Frame: Mobile 내부 드래그는 No-Measure 원칙에 따라 드래그 중 계산된 논리 좌표 유지 + 경계 클램핑만 보정
+                            const curL = parseFloat(window.activeEl.style.left) || 0;
+                            const curT = parseFloat(window.activeEl.style.top) || 0;
+                            window.activeEl.style.left = Math.max(0, Math.min(mobileMaxW, curL)) + 'px';
+                            window.activeEl.style.top = Math.max(0, curT) + 'px';
+                        }
                         window.lastActiveFrame = 'mobile';
+                        if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
                     } else {
-                        const relTop = compRect.top - pcAreaRect.top + pcArea.scrollTop;
-                        const relLeft = compRect.left - pcAreaRect.left + pcArea.scrollLeft;
-                        const clampedLeft = Math.max(0, Math.min(1000 - compW, relLeft));
-                        const clampedTop = Math.max(0, relTop);
+                        const pcFrameWidth = pcInner.offsetWidth || 1160;
+                        const pcMaxW = Math.max(0, pcFrameWidth - compW);
+                        if (!isCurrentlyInPc) {
+                            // Cross-Frame: Mobile -> PC (Reparenting with scale correction)
+                            const pcInnerRect = pcInner.getBoundingClientRect();
+                            const relTop = (compRect.top - pcInnerRect.top) / scale;
+                            const relLeft = (compRect.left - pcInnerRect.left) / scale;
+                            const clampedLeft = Math.max(0, Math.min(pcMaxW, relLeft));
+                            const clampedTop = Math.max(0, relTop);
 
-                        window.activeEl.style.top = clampedTop + 'px';
-                        window.activeEl.style.left = clampedLeft + 'px';
-                        pcInner.appendChild(window.activeEl);
+                            window.activeEl.style.top = clampedTop + 'px';
+                            window.activeEl.style.left = clampedLeft + 'px';
+                            pcInner.appendChild(window.activeEl);
+                        } else {
+                            // In-Frame: PC 내부 드래그는 No-Measure 원칙에 따라 드래그 중 계산된 논리 좌표 유지 + 1160px 경계 클램핑만 보정
+                            const curL = parseFloat(window.activeEl.style.left) || 0;
+                            const curT = parseFloat(window.activeEl.style.top) || 0;
+                            window.activeEl.style.left = Math.max(0, Math.min(pcMaxW, curL)) + 'px';
+                            window.activeEl.style.top = Math.max(0, curT) + 'px';
+                        }
                         window.lastActiveFrame = 'pc';
+                        if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
                     }
                 }
                 

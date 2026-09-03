@@ -701,7 +701,7 @@ window.v4Script = `
         });
     });
 
-    document.addEventListener('mouseup', () => { 
+    document.addEventListener('mouseup', e => { 
         document.querySelectorAll('.lf-component').forEach(comp => comp.classList.remove('near-connector'));
         if (isConnectorDragging) {
             isConnectorDragging = false;
@@ -717,7 +717,7 @@ window.v4Script = `
         }
 
         if (window.V4PortConnectorEngine && window.V4PortConnectorEngine.isDrawingConnector) {
-            window.V4PortConnectorEngine.handleMouseUp();
+            window.V4PortConnectorEngine.handleMouseUp(e);
         }
 
         if (isMarquee) {
@@ -725,7 +725,7 @@ window.v4Script = `
             notifyParent({ type: 'LF_MARQUEE_END' });
         }
         if (window.V4DragResizeEngine && (window.V4DragResizeEngine.isDragging || window.V4DragResizeEngine.isResizing || window.V4DragResizeEngine.isPendingDrag)) {
-            window.V4DragResizeEngine.handleMouseUp();
+            window.V4DragResizeEngine.handleMouseUp(e);
         }
     });
 

@@ -185,13 +185,14 @@ body {
     background: #475569 !important;
 }
 
-/* --- Active Frame Selection Highlights --- */
+/* --- Active Frame Selection Highlights (Zero-Shift) --- */
 .pc-browser-frame, .mobile-frame, .mobile-browser-frame {
-    transition: border 0.2s ease, border-color 0.2s ease !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .pc-browser-frame.active-frame, .mobile-frame.active-frame, .mobile-browser-frame.active-frame {
-    border: 2px solid #00e5ff !important;
+    border: 1.6px solid #00e5ff !important;
+    box-shadow: 0 0 0 0.8px rgba(0, 229, 255, 0.8), 0 20px 40px rgba(0, 0, 0, 0.25) !important;
 }
 
 .pc-column.active-column .frame-label-bar, .mobile-column.active-column .frame-label-bar {

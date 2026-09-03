@@ -17,16 +17,24 @@ window.v4Styles = `
 body, .lf-component { 
     -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
     font-family: inherit; 
-    -webkit-font-smoothing: antialiased !important; 
-    -moz-osx-font-smoothing: grayscale !important; 
-    text-rendering: optimizeLegibility !important; 
+    -webkit-font-smoothing: subpixel-antialiased !important; 
+    text-rendering: geometricPrecision !important; 
+    font-synthesis: none;
+}
+.lf-component img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    pointer-events: auto;
 }
 .v4-editable-cell, [contenteditable="true"] { 
     -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; 
     font-family: inherit; 
-    -webkit-font-smoothing: antialiased !important; 
-    -moz-osx-font-smoothing: grayscale !important; 
-    text-rendering: optimizeLegibility !important; 
+    -webkit-font-smoothing: subpixel-antialiased !important; 
+    text-rendering: geometricPrecision !important; 
+    font-synthesis: none;
 }
 .lf-component { 
     position: absolute; cursor: pointer;
@@ -480,12 +488,13 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 .pc-browser-frame,
 .mobile-frame,
 .mobile-browser-frame {
-    transition: border 0.2s ease, border-color 0.2s ease !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 .pc-browser-frame.active-frame,
 .mobile-frame.active-frame,
 .mobile-browser-frame.active-frame {
-    border: 2px solid #00e5ff !important;
+    border: 1.6px solid #00e5ff !important;
+    box-shadow: 0 0 0 0.8px rgba(0, 229, 255, 0.8), 0 20px 40px rgba(0, 0, 0, 0.25) !important;
 }
 .pc-column.active-column .frame-label-bar,
 .mobile-column.active-column .frame-label-bar {

@@ -203,6 +203,18 @@ window.closeActiveEditor = function(save) {
 };
 
 // 3. Canvas Utilities
+window.toggleCrispView = function() {
+    var state = window.state;
+    if (!state) return;
+    // Toggle between 100% Crisp Mode and Auto-Fit Mode
+    if (state.viewMode === 'crisp' || Math.abs(state.transform.scale - 1.0) < 0.02) {
+        state.viewMode = 'fit';
+    } else {
+        state.viewMode = 'crisp';
+    }
+    window.centerView();
+};
+
 window.centerView = function() {
     var DOM = window.DOM, state = window.state;
     if (!DOM || !DOM.canvas || !DOM.iframe || !state) return;
@@ -210,17 +222,39 @@ window.centerView = function() {
     var cw = DOM.canvas.clientWidth, ch = DOM.canvas.clientHeight;
     if (cw <= 0 || ch <= 0) return;
 
+    var isResponsive = !!(state && state.isCurrentResponsiveScreen);
+
     // 브라우저 캔버스 영역에 맞춘 반응형 가변 배율(Fit Scale) 계산 (상하좌우 2% 안전 여백 반영)
     var fitScale = Math.min((cw * 0.98) / iw, (ch * 0.98) / ih);
 
-    // 스크린 100%를 온전히 소화할 수 있는 충분한 해상도(cw >= iw && ch >= ih 및 fitScale >= 0.96)일 때만
-    // 텍스트 서브픽셀 블러링을 방지하기 위해 1.0(100%)으로 스냅.
-    // 반대로 화면 공간이 부족한 해상도(작업표시줄 노출, 사이드바 오픈, 노트북 화면 등)에서는
-    // 브라우저 해상도에 맞춰 스크린 전체가 잘림 없이 한눈에 보이도록 가변 축소 배율(fitScale) 적용.
-    var s = (fitScale >= 0.96 && cw >= iw && ch >= ih) ? 1.0 : Math.min(fitScale, 1.0);
+    var s;
+    if (state.viewMode === 'crisp') {
+        // [100% 선명 뷰 모드 강제]: 모니터 해상도와 무관하게 1:1 물리 디스플레이 픽셀 선명도 100% 보장
+        s = 1.0;
+    } else {
+        // [화면 맞춤(Fit) 모드]:
+        // 1. 스마트 스냅 밴드 (Smart Snap Band):
+        // 0.95 이상일 때는 1~2% 미세 축소(98%, 97% 등)로 인한 서브픽셀 텍스트 블러링을 방지하기 위해 1.0(100%) 강제 스냅!
+        if (fitScale >= 0.95) {
+            s = 1.0;
+        } else if (cw >= 1700 && ch >= 880) {
+            s = 1.0;
+        } else {
+            // 2. 소형 노트북/저해상도 화면(fitScale < 0.95):
+            // 무한 소수점 보간 블러를 억제하고 물리 픽셀 그리드 정합성을 높이기 위해 5% 단위 그리드 스냅 (0.90, 0.85, 0.80...) 적용
+            s = Math.max(0.2, Math.floor(fitScale * 20) / 20);
+        }
+    }
 
     var x = Math.round((cw - (iw * s)) / 2);
-    var y = Math.round((ch - (ih * s)) / 2);
+    // 세로 높이가 뷰포트를 초과하는 경우(s=1.0인데 ch가 900px보다 작을 때), 상단을 10px 안전 여백으로 배치하여 첫 타이틀부터 자연스럽게 노출
+    var y;
+    if (ih * s > ch) {
+        y = 10;
+    } else {
+        y = Math.round((ch - (ih * s)) / 2);
+    }
+
     state.transform = { x: x, y: y, scale: s };
     updateTransform();
 };
@@ -232,6 +266,22 @@ window.updateTransform = function() {
     var y = Math.round(state.transform.y);
     if (DOM.stage) DOM.stage.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + state.transform.scale + ')';
     if (DOM.zoomTxt) DOM.zoomTxt.innerText = Math.round(state.transform.scale * 100) + '%';
+
+    // 듀얼 뷰포트 토글 버튼 상태 동기화 (100% 선명 뷰 vs 화면 맞춤)
+    var toggleBtn = document.getElementById('btn-crisp-toggle');
+    var toggleIcon = document.getElementById('icon-crisp-toggle');
+    if (toggleBtn && toggleIcon) {
+        var is100 = Math.abs(state.transform.scale - 1.0) < 0.02;
+        if (is100) {
+            toggleIcon.innerText = 'fit_screen';
+            toggleBtn.title = '화면 맞춤으로 전환 (단축키: 1)';
+            toggleBtn.style.color = 'var(--v4-accent, #00e5ff)';
+        } else {
+            toggleIcon.innerText = 'center_focus_strong';
+            toggleBtn.title = '100% 선명 뷰로 전환 (단축키: 1)';
+            toggleBtn.style.color = '';
+        }
+    }
 };
 
 window.adjustZoom = function(delta) {
@@ -321,7 +371,7 @@ function initV3Listeners() {
         DOM.canvas.addEventListener('wheel', function(e) {
             var state = window.state;
             if (!state) return;
-            if (e.ctrlKey) {
+            if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
                 var s = state.transform.scale;
                 var ns = Math.max(0.1, Math.min(s * (1 + (e.deltaY > 0 ? -0.1 : 0.1)), 20));
@@ -330,7 +380,24 @@ function initV3Listeners() {
                 state.transform.x = mx - (mx - state.transform.x) * (ns / s);
                 state.transform.y = my - (my - state.transform.y) * (ns / s);
                 state.transform.scale = ns;
+                state.viewMode = 'custom';
                 updateTransform();
+            } else {
+                // 스크린 크기가 캔버스를 초과할 때 트랙패드/마우스 휠 자연 스크롤 지원
+                var DOM = window.DOM;
+                var ih = (DOM && DOM.iframe && parseInt(DOM.iframe.style.height)) || 900;
+                var iw = (DOM && DOM.iframe && parseInt(DOM.iframe.style.width)) || 1600;
+                var ch = DOM.canvas.clientHeight;
+                var cw = DOM.canvas.clientWidth;
+                var renderedH = ih * state.transform.scale;
+                var renderedW = iw * state.transform.scale;
+
+                if (renderedH > ch || renderedW > cw) {
+                    e.preventDefault();
+                    state.transform.x -= e.deltaX;
+                    state.transform.y -= e.deltaY;
+                    updateTransform();
+                }
             }
         }, { passive: false });
 
@@ -365,6 +432,18 @@ function initV3Listeners() {
 
     window.addEventListener('resize', function() {
         if (window.centerView) window.centerView();
+    });
+
+    window.addEventListener('keydown', function(e) {
+        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.classList.contains('v4-editable-cell'))) {
+            return;
+        }
+        if (e.key === '1' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            if (window.toggleCrispView) {
+                e.preventDefault();
+                window.toggleCrispView();
+            }
+        }
     });
 
     if (DOM && DOM.canvas) {

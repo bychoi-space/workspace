@@ -5,7 +5,8 @@
     "01_Project_Summary_Report_101.html",
     "08_Responsive_PC_Mobile_486.html",
     "99_Blank_892.html",
-    "99_Blank_437.html"
+    "99_Blank_437.html",
+    "00_Cover_227.html"
   ],
   "screens": {
     "00_Cover_63.html": {
@@ -99,6 +100,13 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "00_Cover_227.html": {
+      "title": "00_Cover_227",
+      "type": "cover",
+      "updatedAt": "2026-09-03T00:29:49.439Z",
+      "template": "template_cover.html",
+      "version": 0.1
     }
   },
   "assignee": "최범열",

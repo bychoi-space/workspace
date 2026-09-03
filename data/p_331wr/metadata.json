@@ -5,8 +5,7 @@
     "01_Project_Summary_Report_101.html",
     "08_Responsive_PC_Mobile_486.html",
     "99_Blank_892.html",
-    "99_Blank_437.html",
-    "04_Case_Study_156.html"
+    "99_Blank_437.html"
   ],
   "screens": {
     "01_Project_Summary_Report_101.html": {
@@ -89,14 +88,6 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
-    },
-    "04_Case_Study_156.html": {
-      "title": "04_Case_Study_156",
-      "type": "case-study",
-      "updatedAt": "2026-09-03T00:30:00.679Z",
-      "template": "template_case_study.html",
-      "description": [],
-      "connectors": []
     },
     "00_Cover_466.html": {
       "title": "과제 커버",

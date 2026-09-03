@@ -6,7 +6,8 @@
     "08_Responsive_PC_Mobile_486.html",
     "99_Blank_892.html",
     "99_Blank_437.html",
-    "04_Case_Study_156.html"
+    "04_Case_Study_156.html",
+    "04_Case_Study_662.html"
   ],
   "screens": {
     "01_Project_Summary_Report_101.html": {
@@ -108,6 +109,12 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "04_Case_Study_662.html": {
+      "title": "04_Case_Study_662",
+      "type": "case-study",
+      "updatedAt": "2026-09-03T04:56:32.627Z",
+      "template": "template_case_study.html"
     }
   },
   "assignee": "최범열",

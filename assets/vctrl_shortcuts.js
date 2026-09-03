@@ -292,7 +292,7 @@ window.v4ShortcutsScript = `
 
                 const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
                 const visibleH = scrollArea ? (scrollArea.clientHeight || 810) : 810;
-                const visibleW = targetFrame === 'mobile' ? 360 : 1000;
+                const visibleW = targetFrame === 'mobile' ? 360 : 1160;
 
                 const viewCenterX = visibleW / 2;
                 const viewCenterY = scrollTop + (visibleH / 2);
@@ -303,19 +303,19 @@ window.v4ShortcutsScript = `
                 if (targetFrame === 'mobile') {
                     baseLeft = Math.max(15, Math.min(baseLeft, 360 - groupW - 15));
                 } else {
-                    baseLeft = Math.max(15, Math.min(baseLeft, 1000 - groupW - 15));
+                    baseLeft = Math.max(15, Math.min(baseLeft, 1160 - groupW - 15));
                 }
                 baseTop = Math.max(15, baseTop);
             } else {
                 // Non-responsive screen: center in current visible viewport canvas coordinates
-                let viewCenterX = 720;
+                let viewCenterX = 800;
                 let viewCenterY = 450;
                 try {
                     const parentState = window.parent && window.parent.state;
                     const parentDOM = window.parent && window.parent.DOM;
                     if (parentState && parentState.transform && parentDOM && parentDOM.canvas) {
                         const t = parentState.transform;
-                        const cw = parentDOM.canvas.clientWidth || 1440;
+                        const cw = parentDOM.canvas.clientWidth || 1600;
                         const ch = parentDOM.canvas.clientHeight || 900;
                         const s = t.scale || 1;
                         viewCenterX = Math.round(((cw / 2) - t.x) / s);
@@ -325,7 +325,7 @@ window.v4ShortcutsScript = `
 
                 baseLeft = Math.round(viewCenterX - (groupW / 2));
                 baseTop = Math.round(viewCenterY - (groupH / 2));
-                baseLeft = Math.max(15, Math.min(baseLeft, 1440 - groupW - 15));
+                baseLeft = Math.max(15, Math.min(baseLeft, 1600 - groupW - 15));
                 baseTop = Math.max(15, Math.min(baseTop, 900 - groupH - 15));
             }
 

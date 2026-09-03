@@ -708,6 +708,10 @@ window.v4DesignSystemScript = `
             updateUI();
         });
         
+        const targetPageEl = document.querySelector('.page') || document.querySelector('.artboard') || document.body;
+        const curCanvasW = targetPageEl ? (targetPageEl.offsetWidth || 1600) : 1600;
+        const curCanvasH = targetPageEl ? (targetPageEl.offsetHeight || 900) : 900;
+
         document.querySelectorAll('.lf-component').forEach(c => {
             if (c.parentElement !== document.body) return;
             const lStr = c.style.left || "";
@@ -715,13 +719,13 @@ window.v4DesignSystemScript = `
             
             if (lStr.includes('%')) {
                 const val = parseFloat(lStr);
-                const px = (val / 100) * 1440;
+                const px = (val / 100) * curCanvasW;
                 c.style.left = px + 'px';
                 console.log("[V4 Migration] Migrated " + c.id + " left: " + lStr + " -> " + c.style.left);
             }
             if (tStr.includes('%')) {
                 const val = parseFloat(tStr);
-                const px = (val / 100) * 900;
+                const px = (val / 100) * curCanvasH;
                 c.style.top = px + 'px';
                 console.log("[V4 Migration] Migrated " + c.id + " top: " + tStr + " -> " + c.style.top);
             }

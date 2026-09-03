@@ -2408,7 +2408,7 @@ window.v4Script = `
             allHandles.forEach((h, i) => h.style.display = handleStates[i]);
             if (items.length < 1) return;
 
-            // Single Object Alignment: Align to Screen Canvas (1440x900) or Responsive Frame (PC 1000px / Mobile 360px)
+            // Single Object Alignment: Align to Screen Canvas (1600x900) or Responsive Frame (PC 1160px / Mobile 360px)
             if (items.length === 1) {
                 const item = items[0];
                 const el = item.el;
@@ -2416,7 +2416,7 @@ window.v4Script = `
                 
                 let boundL = 0;
                 let boundT = 0;
-                let boundW = 1440;
+                let boundW = 1600;
                 let boundH = 900;
 
                 if (isResponsiveTemplate) {
@@ -2430,12 +2430,12 @@ window.v4Script = `
                         boundH = targetContainer ? (targetContainer.offsetHeight || targetContainer.clientHeight || 810) : 810;
                     } else {
                         const targetContainer = pcInner || doc.querySelector('.pc-content-area');
-                        boundW = targetContainer ? (targetContainer.offsetWidth || 1000) : 1000;
+                        boundW = targetContainer ? (targetContainer.offsetWidth || 1160) : 1160;
                         boundH = targetContainer ? (targetContainer.offsetHeight || targetContainer.clientHeight || 810) : 810;
                     }
                 } else {
                     const pageEl = doc.querySelector('.page') || doc.body;
-                    boundW = pageEl ? (pageEl.offsetWidth || 1440) : 1440;
+                    boundW = pageEl ? (pageEl.offsetWidth || 1600) : 1600;
                     boundH = pageEl ? (pageEl.offsetHeight || 900) : 900;
                 }
 

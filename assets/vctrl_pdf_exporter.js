@@ -1,6 +1,6 @@
 /**
  * LF Editor - Unified Project PDF Exporter Module (v3 - High Fidelity True-to-Editor Renderer)
- * Handles batch rendering of all screens within a project into a single PDF file (1440x900 Landscape).
+ * Handles batch rendering of all screens within a project into a single PDF file (1600x900 / Dynamic Landscape).
  */
 
 // Global UI Overlay Helpers for PDF Exporting
@@ -221,10 +221,10 @@ function compileScreenHtmlForPdf(rawHtml) {
         .mobile-content {
             background: transparent !important;
         }
-        /* Ensure 1440x900 viewport bounding without breaking internal layout flow */
+        /* Ensure viewport bounding without breaking internal layout flow */
         html, body {
-            width: 1440px !important;
-            height: 900px !important;
+            width: 100% !important;
+            height: 100% !important;
             overflow: hidden !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -243,7 +243,7 @@ function compileScreenHtmlForPdf(rawHtml) {
 
 /**
  * Main PDF Export Function (High Fidelity True-to-Editor Renderer)
- * Batch renders all screens in the given project into a 1440x900 Landscape PDF document.
+ * Batch renders all screens in the given project into a 1600x900 / Dynamic Landscape PDF document.
  */
 async function exportProjectToPDF(projectName, projectMeta = null) {
     if (!projectName) {
@@ -279,14 +279,8 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
         updatePdfProgress(10, `프로젝트 (${screenFiles.length}개 스크린) 변환을 시작합니다...`);
 
         const { jsPDF } = window.jspdf;
-        // Standard 1440x900 aspect ratio landscape PDF
-        const pdf = new jsPDF({
-            orientation: 'landscape',
-            unit: 'px',
-            format: [1440, 900],
-            compress: true
-        });
-
+        // Standard landscape PDF with dynamic screen dimension adaptation (default: 1600x900)
+        let pdf = null;
         let processedCount = 0;
 
         for (let i = 0; i < screenFiles.length; i++) {
@@ -303,6 +297,27 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
                 continue;
             }
 
+            // Dynamic screen dimension detection (default to 1600x900, preserve 1440 for legacy)
+            let screenW = 1600;
+            let screenH = 900;
+            const sizeMatch = rawHtml.match(/(?:\.page|\.artboard)\s*\{[^}]*width:\s*(\d+)px[^}]*height:\s*(\d+)px/i);
+            if (sizeMatch) {
+                screenW = parseInt(sizeMatch[1], 10) || 1600;
+                screenH = parseInt(sizeMatch[2], 10) || 900;
+            } else {
+                const wMatch = rawHtml.match(/(?:\.page|\.artboard)\s*\{[^}]*width:\s*(\d+)px/i);
+                if (wMatch) screenW = parseInt(wMatch[1], 10) || 1600;
+            }
+
+            if (!pdf) {
+                pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'px',
+                    format: [screenW, screenH],
+                    compress: true
+                });
+            }
+
             const compiledHtml = compileScreenHtmlForPdf(rawHtml);
 
             // Create in-viewport hidden iframe to ensure GPU layout and font engines execute completely
@@ -311,8 +326,8 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
                 position: fixed;
                 left: 0;
                 top: 0;
-                width: 1440px;
-                height: 900px;
+                width: ${screenW}px;
+                height: ${screenH}px;
                 border: none;
                 margin: 0;
                 padding: 0;
@@ -325,9 +340,7 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
 
             // Wait for iframe content & CSS to load
             await new Promise((resolve) => {
-                iframe.onload = () => {
-                    setTimeout(resolve, 100);
-                };
+                iframe.onload = () => resolve();
                 iframe.srcdoc = compiledHtml;
             });
 
@@ -380,15 +393,15 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
 
             // Convert iframe content to canvas using html2canvas
             const canvas = await html2canvas(targetEl, {
-                scale: 2, // High resolution (2880x1800)
+                scale: 2, // High resolution
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: targetBg,
                 logging: false,
-                width: 1440,
-                height: 900,
-                windowWidth: 1440,
-                windowHeight: 900,
+                width: screenW,
+                height: screenH,
+                windowWidth: screenW,
+                windowHeight: screenH,
                 x: 0,
                 y: 0,
                 scrollX: 0,
@@ -398,10 +411,10 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
             if (processedCount > 0) {
-                pdf.addPage([1440, 900], 'landscape');
+                pdf.addPage([screenW, screenH], 'landscape');
             }
 
-            pdf.addImage(imgData, 'JPEG', 0, 0, 1440, 900);
+            pdf.addImage(imgData, 'JPEG', 0, 0, screenW, screenH);
             processedCount++;
 
             // Clean up temporary iframe

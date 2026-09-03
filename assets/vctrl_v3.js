@@ -206,7 +206,7 @@ window.closeActiveEditor = function(save) {
 window.centerView = function() {
     var DOM = window.DOM, state = window.state;
     if (!DOM || !DOM.canvas || !DOM.iframe || !state) return;
-    var iw = parseInt(DOM.iframe.style.width) || 1440, ih = parseInt(DOM.iframe.style.height) || 900;
+    var iw = parseInt(DOM.iframe.style.width) || 1600, ih = parseInt(DOM.iframe.style.height) || 900;
     var cw = DOM.canvas.clientWidth, ch = DOM.canvas.clientHeight;
     if (cw <= 0 || ch <= 0) return;
 

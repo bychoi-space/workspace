@@ -30,7 +30,7 @@
             }
             if (!DOM || !DOM.iframe) return;
 
-            const cw = parseInt(DOM.iframe.style.width) || 1440;
+            const cw = parseInt(DOM.iframe.style.width) || 1600;
             const ch = parseInt(DOM.iframe.style.height) || 900;
 
             // 기존 targets 중 iframe이 아닌 로컬(Canvas, Pin 등) 요소만 리셋하고, 비동기 응답 도착 전까지 iframe targets는 보존하여 레이턴시 해결

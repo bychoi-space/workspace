@@ -154,6 +154,27 @@ window.loadScreen = async function (fileName) {
         } else {
             iframe.classList.remove('borderless-artboard');
         }
+
+        // Dynamic Screen-Aware Viewport: detect canvas width/height from screen HTML or fallback to 1600x900
+        let screenW = 1600;
+        let screenH = 900;
+        const pageMatch = finalContent.match(/(?:\.page|\.artboard)\s*\{[^}]*width:\s*(\d+)px[^}]*height:\s*(\d+)px/i);
+        if (pageMatch) {
+            screenW = parseInt(pageMatch[1], 10) || 1600;
+            screenH = parseInt(pageMatch[2], 10) || 900;
+        } else {
+            const widthMatch = finalContent.match(/(?:\.page|\.artboard)\s*\{[^}]*width:\s*(\d+)px/i);
+            if (widthMatch) screenW = parseInt(widthMatch[1], 10) || 1600;
+        }
+
+        iframe.style.width = screenW + 'px';
+        iframe.style.height = screenH + 'px';
+        const wrapper = (DOM && DOM.artboardWrapper) || document.getElementById('artboard-wrapper');
+        if (wrapper) {
+            wrapper.style.width = screenW + 'px';
+            wrapper.style.height = screenH + 'px';
+        }
+
         iframe.srcdoc = finalContent;
         iframe.style.display = 'block';
 

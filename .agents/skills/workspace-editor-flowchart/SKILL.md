@@ -1,12 +1,12 @@
 ---
 name: workspace-editor-flowchart
-description: Use when creating or editing Workspace Editor process screens, flowcharts, 1440x900 absolute-position layouts, nodes, connectors, elbow arrows, straight arrows, diamond decisions, Y/N labels, dividers, swimlane-like sections, or scroll-free process diagrams.
+description: Use when creating or editing Workspace Editor process screens, flowcharts, 1600x900 absolute-position layouts, nodes, connectors, elbow arrows, straight arrows, diamond decisions, Y/N labels, dividers, swimlane-like sections, or scroll-free process diagrams.
 ---
 
 # Workspace Editor Flowchart
 
 ## Canvas
-- Place nodes and connectors with `position: absolute` inside the 1440x900 canvas.
+- Place nodes and connectors with `position: absolute` inside the 1600x900 canvas (legacy 1440x900 supported).
 - Avoid browser scroll by fitting the whole process layout inside the canvas.
 - Keep screen dimensions aligned with the Cover canvas size.
 

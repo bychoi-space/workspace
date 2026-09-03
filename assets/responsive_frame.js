@@ -29,7 +29,7 @@ body {
 }
 
 .page {
-    width: 1440px;
+    width: 1600px;
     height: 900px;
     position: relative;
     background: transparent !important;
@@ -200,7 +200,7 @@ body {
 
 /* --- Grid Paper Canvas Inner Layers --- */
 .pc-content-inner {
-    width: 1000px;
+    width: 1160px;
     min-height: calc(100% + 2px);
     position: relative;
     background-color: #ffffff;
@@ -228,7 +228,7 @@ body.hide-frame-grid .mobile-content-inner,
 
 /* --- PC Browser Frame --- */
 .pc-browser-frame {
-    width: 1012px;
+    width: 1172px;
     height: 848px;
     background: #ffffff;
     display: flex;
@@ -301,7 +301,7 @@ body.hide-frame-grid .mobile-content-inner,
 }
 
 .pc-content-area {
-    width: 1012px;
+    width: 1172px;
     height: 810px;
     position: relative;
 }

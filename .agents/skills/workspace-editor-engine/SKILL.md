@@ -85,7 +85,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - `isResponsiveTemplate` 엄격 가드를 통해 비반응형 템플릿과 100% 분리 실행.
   - `window.lastActiveFrame` (`'pc'` / `'mobile'`) 및 `.active-column`을 감지하여 타겟 컨테이너(`mobileInner` / `pcInner`)로 자동 라우팅.
   - PC → Mobile 복사 시 가로폭 330px 자동 클램핑 및 안전 여백 보정.
-  - Mobile → PC 복사 시 1000px 캔버스 맞춤 안착.
+  - Mobile → PC 복사 시: 1160px 너비의 넓은 PC 캔버스에 원본 비율과 오프셋을 유지하며 매끄럽게 안착된다.
 - **Viewport-Center Paste Algorithm (`pasteCopiedObjectsFromData`)**:
   - 반응형 화면: 활성 프레임의 현재 스크롤(`scrollTop`)과 뷰포트 높이(`clientHeight`)를 기반으로 현재 시야 정중앙(`viewCenterY = scrollTop + clientHeight/2`)에 바운딩 박스 중심을 정렬.
   - 일반 화면: 캔버스 줌/팬 좌표(`state.transform`)를 역연산하여 사용자 화면 중심에 정렬.
@@ -102,7 +102,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - **실시간 스크롤 캡처 & 다중 프레임 rAF 보정**: 조작 중 `{ passive: true }` 스크롤 리스너로 뷰포트 좌표를 유지하고, Undo 직후 `requestAnimationFrame` 연속 프레임 루프를 통해 레이아웃 비동기 지연에 따른 0px 클램핑을 원천 차단한다.
 - **Single & Multi-Object Alignment Engine (`vctrl_shortcuts.js`, `vctrl_grouping.js`, `vctrl_iframe_script.js`)**:
   - `Ctrl + 1 ~ 6` 및 `Alt + 1 ~ 6` 단축키를 단일 및 다중 선택 상태 모두에서 완벽 지원한다.
-  - `items.length === 1` 분기: 일반 템플릿은 1440x900 전체 캔버스 기준, 반응형 템플릿은 PC(`1000px`) / Mobile(`360px`) 소속 프레임 내에서 1:1 정수 픽셀(`Math.round`)로 독립 정렬을 수행한다.
+  - `items.length === 1` 분기: 일반 템플릿은 1600x900 전체 캔버스 기준, 반응형 템플릿은 PC(`1160px`) / Mobile(`360px`) 소속 프레임 내에서 1:1 정수 픽셀(`Math.round`)로 독립 정렬을 수행한다.
   - `isInputActive` 가드를 적용하여 텍스트 상자, 셀 입력, Quill 에디터 편집 중에는 단축키 간섭을 원천 방지한다.
 
 

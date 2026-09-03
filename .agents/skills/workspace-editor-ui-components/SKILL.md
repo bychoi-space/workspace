@@ -28,7 +28,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.lf-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
 - Add `contenteditable="true"` and `.v4-editable-cell` to editor-linked text regions.
 - Inject `.lf-delete-trigger` (`×`) whenever users must be able to delete an object.
-- Keep editor canvas/page dimensions aligned to the Cover screen size, typically 1440x900.
+- Keep editor canvas/page dimensions aligned to the Cover screen size, typically 1600x900 (legacy 1440x900 supported).
 - **사이드바 크기 변경 시 컴포넌트 래퍼 크기 연동**: Textbox/Textarea처럼 내부 컨테이너로 스타일 리디렉션이 발생하는 컴포넌트의 경우, 가로/세로 크기(`width`, `height`)는 내부 컨테이너가 아니라 **최외곽 래퍼인 `.lf-component`**에 직접 할당해야 리사이저 핀과 드래그 핸들이 어긋나지 않는다. 이때 내부 컨테이너의 가로/세로는 `100%`로 지정 및 유지되어 부모 크기 변화에 유연하게 동조되도록 해야 한다.
 
 ## Icon And Atom Rules

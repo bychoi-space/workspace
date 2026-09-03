@@ -93,7 +93,7 @@ window.LF_TEMPLATES['template_blank.html'] = `<!DOCTYPE html>
             overflow: hidden; color: var(--v4-text);
         }
         .page { 
-            width: 1440px; height: 900px; 
+            width: 1600px; height: 900px; 
             position: relative; 
             background: #ffffff;
             background-image: 
@@ -142,7 +142,7 @@ window.LF_TEMPLATES['template_cover.html'] = `<!DOCTYPE html>
             overflow: hidden; color: var(--v4-text);
         }
         .page { 
-            width: 1440px; height: 900px; 
+            width: 1600px; height: 900px; 
             position: relative; 
             background: #ffffff;
             background-image: 
@@ -296,7 +296,7 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `<!DOCTYPE html>
             background-size: 20px 20px;
         }
         .page {
-            width: 1440px; height: 900px;
+            width: 1600px; height: 900px;
             position: relative;
             display: flex; justify-content: center; align-items: center;
             gap: 60px;
@@ -413,7 +413,7 @@ window.LF_TEMPLATES['template_mobile_ui_2.html'] = `<!DOCTYPE html>
     <style>
         :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; }
         body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
-        .page { width: 1440px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 80px; }
+        .page { width: 1600px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 80px; }
         .mobile-frame { width: 375px; height: 838px; background: var(--v4-frame-bg); border-radius: 40px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 8px #111; overflow: hidden; border: 4px solid #334155; z-index: 10; }
         .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 30px; background: #111; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 1000; }
         .mobile-content { width: 360px; height: 800px; position: absolute; top: 30px; left: 7.5px; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; overflow-y: scroll !important; overflow-x: hidden !important; scrollbar-gutter: stable; scroll-behavior: smooth; border: none !important; box-sizing: border-box; }
@@ -486,7 +486,7 @@ window.LF_TEMPLATES['template_mobile_ui_3.html'] = `<!DOCTYPE html>
     <style>
         :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; }
         body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
-        .page { width: 1440px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 40px; }
+        .page { width: 1600px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 40px; }
         .mobile-frame { width: 375px; height: 838px; background: var(--v4-frame-bg); border-radius: 40px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 8px #111; overflow: hidden; border: 4px solid #334155; z-index: 10; }
         .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 30px; background: #111; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 1000; }
         .mobile-content { width: 360px; height: 800px; position: absolute; top: 30px; left: 7.5px; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; overflow-y: scroll !important; overflow-x: hidden !important; scrollbar-gutter: stable; scroll-behavior: smooth; border: none !important; box-sizing: border-box; }
@@ -579,7 +579,7 @@ window.LF_TEMPLATES['template_onesphere.html'] = `<!DOCTYPE html>
             overflow: hidden; color: var(--v4-text);
         }
         .page { 
-            width: 1440px; height: 900px; 
+            width: 1600px; height: 900px; 
             position: relative; 
             background: #ffffff;
             background-image: 
@@ -952,16 +952,16 @@ window.LF_TEMPLATES['template_pc_ui.html'] = `<!DOCTYPE html>
             background-size: 20px 20px;
         }
         .page { 
-            width: 1440px; height: 900px; 
+            width: 1600px; height: 900px; 
             position: relative; 
             box-shadow: 0 40px 100px rgba(0,0,0,0.5);
             overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* Chrome Browser Frame Styling - FULL CANVAS (1440x900) */
+        /* Chrome Browser Frame Styling - FULL CANVAS (1600x900) */
         .chrome-browser {
-            width: 1440px; height: 900px;
+            width: 1600px; height: 900px;
             background: #ffffff;
             display: flex; flex-direction: column;
             border: 1.6px solid rgba(0, 0, 0, 0.12) !important;
@@ -1144,7 +1144,7 @@ window.LF_TEMPLATES['template_plan.html'] = `<!DOCTYPE html>
     <title>Plan - {{PROJECT_NAME}}</title>
     <style>
         body { margin: 0; padding: 0; font-family: 'Malgun Gothic', sans-serif; background: #333; }
-        .page { width: 1440px; height: 900px; background: #fff; margin: 0 auto; position: relative; padding: 0; box-sizing: border-box; }
+        .page { width: 1600px; height: 900px; background: #fff; margin: 0 auto; position: relative; padding: 0; box-sizing: border-box; }
         .header-bar { height: 40px; background: #3c3c3c; color: #fff; display: flex; align-items: center; padding: 0 20px; font-size: 14px; }
         .screen-title-overlay { margin: 20px 40px; background: #4b4b4b; color: #fff; display: inline-block; padding: 10px 40px; border-radius: 6px; font-size: 15px; font-weight: bold; }
         
@@ -1226,7 +1226,7 @@ window.LF_TEMPLATES['template_plan_delivery.html'] = `<!DOCTYPE html>
             --cell-peach: #fef2f2; --cell-green: #f0fdf4; --cell-gray: #6b7280;
         }
         body { margin:0; padding:0; background:#2d2d2d; font-family:'Inter','Noto Sans KR',sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; }
-        .artboard { width:1440px; height:900px; background:#fff; position:relative; box-shadow:0 30px 60px rgba(0,0,0,0.4); overflow:hidden; }
+        .artboard { width:1600px; height:900px; background:#fff; position:relative; box-shadow:0 30px 60px rgba(0,0,0,0.4); overflow:hidden; }
         .lf-component { position:absolute; transition:all 0.2s cubic-bezier(0.4,0,0.2,1); box-sizing:border-box; }
         .lf-component:hover { outline:2px dashed var(--v4-accent); outline-offset:2px; }
         .lf-component.selected { outline:2px solid var(--v4-accent); z-index:100; }
@@ -1566,7 +1566,7 @@ window.LF_TEMPLATES['template_case_study.html'] = `<!DOCTYPE html>
             overflow: hidden; color: var(--v4-text);
         }
         .page { 
-            width: 1440px; height: 900px; 
+            width: 1600px; height: 900px; 
             position: relative; 
             background: #ffffff;
             background-image: 

@@ -23,7 +23,7 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-03T03:18:54.364Z",
+      "updatedAt": "2026-09-03T04:55:19.715Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
@@ -93,7 +93,7 @@
     "04_Case_Study_156.html": {
       "title": "04_Case_Study_156",
       "type": "case-study",
-      "updatedAt": "2026-09-03T04:52:14.662Z",
+      "updatedAt": "2026-09-03T00:30:00.679Z",
       "template": "template_case_study.html",
       "description": [],
       "connectors": []
@@ -115,5 +115,5 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-03 13:52:14"
+  "updated": "2026-09-03 13:55:19"
 }

@@ -73,7 +73,7 @@
     "99_Blank_892.html": {
       "title": "컬러칩 텍스트",
       "type": "case-study",
-      "updatedAt": "2026-09-03T03:23:15.142Z",
+      "updatedAt": "2026-09-03T03:27:52.723Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -115,5 +115,5 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-03 12:23:15"
+  "updated": "2026-09-03 12:27:52"
 }

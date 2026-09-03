@@ -12,7 +12,7 @@
     "01_Project_Summary_Report_101.html": {
       "title": "과제 개요 및 일정",
       "type": "plan",
-      "updatedAt": "2026-09-03T03:22:35.605Z",
+      "updatedAt": "2026-09-03T03:13:43.245Z",
       "template": "template_plan.html",
       "version": 0.1,
       "description": [],
@@ -73,7 +73,7 @@
     "99_Blank_892.html": {
       "title": "컬러칩 텍스트",
       "type": "case-study",
-      "updatedAt": "2026-09-02T06:03:15.424Z",
+      "updatedAt": "2026-09-03T03:23:15.142Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -115,5 +115,5 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-03 12:22:35"
+  "updated": "2026-09-03 12:23:15"
 }

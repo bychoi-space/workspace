@@ -21,6 +21,12 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "06_Mobile_Design_2_192.html": {
+      "title": "06_Mobile_Design_2_192",
+      "type": "mobile-ui",
+      "updatedAt": "2026-09-03T06:55:04.902Z",
+      "template": "template_mobile_ui_2.html"
     }
   },
   "assignee": "최범열",

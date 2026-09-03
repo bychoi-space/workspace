@@ -2,7 +2,6 @@
   "title": "상품 상세 - 리뉴얼 2차",
   "screenOrder": [
     "00_Cover_466.html",
-    "00_Cover_63.html",
     "01_Project_Summary_Report_101.html",
     "08_Responsive_PC_Mobile_486.html",
     "99_Blank_892.html",
@@ -10,17 +9,6 @@
     "04_Case_Study_156.html"
   ],
   "screens": {
-    "00_Cover_63.html": {
-      "title": "과제 커버",
-      "type": "cover",
-      "updatedAt": "2026-08-31T07:54:20.822Z",
-      "template": "template_cover.html",
-      "version": 0.1,
-      "description": [],
-      "connectors": [],
-      "defaultTab": "editor",
-      "screenDesc": ""
-    },
     "01_Project_Summary_Report_101.html": {
       "title": "과제 개요 및 일정",
       "type": "plan",

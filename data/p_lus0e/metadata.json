@@ -1,6 +1,14 @@
 {
   "title": "기획전 템플릿화",
-  "screens": {},
+  "screens": {
+    "00_Cover_802.html": {
+      "title": "00_Cover_802",
+      "type": "cover",
+      "updatedAt": "2026-09-03T06:00:23.507Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.09.03(목) ~ 2026.10.30(금)",

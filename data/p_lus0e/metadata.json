@@ -11,7 +11,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "08_Responsive_PC_Mobile_730",
       "type": "responsive-ui",
-      "updatedAt": "2026-09-03T06:30:59.854Z",
+      "updatedAt": "2026-09-03T06:37:48.128Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": []
@@ -20,5 +20,6 @@
   "assignee": "최범열",
   "developer": "",
   "period": "2026.09.03(목) ~ 2026.10.30(금)",
-  "themeIndex": 2
+  "themeIndex": 2,
+  "updated": "2026-09-03 15:37:48"
 }

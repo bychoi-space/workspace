@@ -475,7 +475,7 @@
     --accent-hover: #818cf8;
     --hover-bg: rgba(255, 255, 255, 0.08);
     --selected-bg: rgba(99, 102, 241, 0.12);
-    --font-main: 'Inter', -apple-system, sans-serif;
+    --font-main: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
     --box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
@@ -2864,7 +2864,7 @@ body.drag-active #drop-overlay {
     position: absolute;
     color: #1e293b;
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: 0px !important;
     border: 1.6px solid transparent;
     font-size: 14px;
     line-height: 1.2;
@@ -2873,7 +2873,7 @@ body.drag-active #drop-overlay {
     pointer-events: auto;
     z-index: 100;
     transform: translate(-50%, -50%);
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+    transition: box-shadow 0.2s, background 0.2s;
     min-width: unset;
 }
 
@@ -2885,12 +2885,13 @@ body.drag-active #drop-overlay {
 
 .text-marker:hover, .text-marker.highlight {
     transform: translate(-50%, -50%);
-    border-color: var(--accent);
+    border-color: transparent !important;
     background: transparent;
     z-index: 1000;
 }
 
 .text-marker.active {
+    border-color: transparent !important;
     outline: 2px solid var(--accent);
     box-shadow: none;
     z-index: 1001;

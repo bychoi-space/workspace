@@ -180,7 +180,7 @@ body.fullscreen-mode .canvas {
     color: #f8fafc;
     font-size: 12px;
     font-weight: 600;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-main, 'Pretendard Variable', sans-serif);
     cursor: pointer;
     gap: 6px;
     align-items: center;
@@ -556,14 +556,14 @@ body.fullscreen-mode #btn-fullscreen-exit {
 /* Unify Grid UI Table Cell Typography and Colors */
 .v4-grid-container td.v4-grid-cell {
     font-size: 12px;
-    font-family: 'Inter', sans-serif;
+    font-family: inherit;
     color: #0f172a;
     font-weight: 500;
 }
 
 .v4-grid-container th.v4-grid-cell {
     font-size: 12px;
-    font-family: 'Inter', sans-serif;
+    font-family: inherit;
     color: #0f172a;
     font-weight: 500;
     position: sticky !important;
@@ -1505,7 +1505,7 @@ body.fullscreen-mode .stage {
     font-size: 12px;
     font-weight: 600;
     color: #f8fafc;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-main, 'Pretendard Variable', sans-serif);
 }
 .group-dim-divider {
     width: 1px;

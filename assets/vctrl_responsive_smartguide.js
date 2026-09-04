@@ -345,7 +345,7 @@ window.v4ResponsiveSmartGuideScript = `
 
             const snapLineColor = '#00e5ff';
             const badgeBgColor = '#ec4899';
-            const labelStyle = 'fill: #00e5ff; font-size: 11px; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, sans-serif;';
+            const labelStyle = 'fill: #00e5ff; font-size: 11px; font-weight: 700; font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;';
             const rectStyle = 'fill: rgba(15, 23, 42, 0.95); stroke: #00e5ff; stroke-width: 1; rx: 4;';
 
             if (snapData.snapXData) {
@@ -415,7 +415,7 @@ window.v4ResponsiveSmartGuideScript = `
                 htmlList.push(
                     '<g>' +
                     '<rect x="' + (cx - textWidth / 2) + '" y="' + (y - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + badgeBg + '" />' +
-                    '<text x="' + cx + '" y="' + (y + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
+                    '<text x="' + cx + '" y="' + (y + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
                     '</g>'
                 );
             };
@@ -447,7 +447,7 @@ window.v4ResponsiveSmartGuideScript = `
                 htmlList.push(
                     '<g>' +
                     '<rect x="' + (x - textWidth / 2) + '" y="' + (cy - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + badgeBg + '" />' +
-                    '<text x="' + x + '" y="' + (cy + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
+                    '<text x="' + x + '" y="' + (cy + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
                     '</g>'
                 );
             };

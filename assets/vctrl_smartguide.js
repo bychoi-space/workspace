@@ -339,7 +339,7 @@
             if (!DOM || !DOM.guideLayer) return;
 
             let html = '';
-            const labelStyle = `fill: #ff4757; font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif;`;
+            const labelStyle = `fill: #ff4757; font-size: 11px; font-weight: 600; font-family: 'Pretendard Variable', Pretendard, sans-serif;`;
             const rectStyle = `fill: rgba(31, 35, 41, 0.9); stroke: #ff4757; stroke-width: 0.5; rx: 4;`;
 
             if (data.snapXData) {
@@ -421,7 +421,7 @@
                 htmlList.push(`
                     <g>
                         <rect x="${rectX}" y="${rectY}" width="${textWidth}" height="16" rx="3" fill="${badgeBg}" />
-                        <text x="${cx}" y="${y + 4}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Inter', -apple-system, sans-serif">${label}</text>
+                        <text x="${cx}" y="${y + 4}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Pretendard Variable', Pretendard, sans-serif">${label}</text>
                     </g>
                 `);
             };
@@ -456,7 +456,7 @@
                 htmlList.push(`
                     <g>
                         <rect x="${rectX}" y="${rectY}" width="${textWidth}" height="16" rx="3" fill="${badgeBg}" />
-                        <text x="${x}" y="${cy + 4}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Inter', -apple-system, sans-serif">${label}</text>
+                        <text x="${x}" y="${cy + 4}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Pretendard Variable', Pretendard, sans-serif">${label}</text>
                     </g>
                 `);
             };

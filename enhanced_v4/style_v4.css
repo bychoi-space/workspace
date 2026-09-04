@@ -216,7 +216,7 @@
     background: rgba(255, 255, 255, 0.02);
     backdrop-filter: blur(10px);
     border: 1px solid var(--v4-border);
-    font-family: 'Inter', sans-serif;
+    font-family: inherit;
 }
 
 .v4-premium-table th {

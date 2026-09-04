@@ -11,14 +11,15 @@ window.v4Styles = `
     --v4-text-color: #0f172a;
     --v4-font-size: 12px;
     --v4-font-weight: 400;
-    --v4-font-family: inherit;
+    --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
     --v4-placeholder-color: #94a3b8;
 }
-body, .lf-component { 
+body, .page, .lf-component { 
     -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
-    font-family: inherit; 
-    -webkit-font-smoothing: subpixel-antialiased !important; 
-    text-rendering: geometricPrecision !important; 
+    font-family: var(--v4-font-family) !important; 
+    -webkit-font-smoothing: antialiased !important; 
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important; 
     font-synthesis: none;
 }
 .lf-component img {
@@ -31,9 +32,10 @@ body, .lf-component {
 }
 .v4-editable-cell, [contenteditable="true"] { 
     -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; 
-    font-family: inherit; 
-    -webkit-font-smoothing: subpixel-antialiased !important; 
-    text-rendering: geometricPrecision !important; 
+    font-family: inherit !important; 
+    -webkit-font-smoothing: antialiased !important; 
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important; 
     font-synthesis: none;
 }
 .lf-component { 
@@ -240,10 +242,10 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 
 /* Text Marker Integration - Unified px Top-Left (same as shapes/atoms) */
 .text-marker, .v4-text-box, .v4-text-shape { 
-    position: absolute; padding: 0 !important; border-radius: 4px; 
+    position: absolute; padding: 0 !important; border-radius: 0px !important; 
     border: 1.6px solid transparent; font-size: 12px; font-weight: 400; font-family: inherit; line-height: 1.2; 
     white-space: normal; cursor: grab; pointer-events: auto; z-index: 100; 
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s, outline 0.2s;
+    transition: box-shadow 0.2s, background 0.2s;
     min-width: unset; min-height: unset; background: transparent; 
     box-shadow: none; box-sizing: border-box;
     color: var(--v4-text-color, #0f172a); text-align: left;
@@ -251,8 +253,8 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 }
 .text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: 4px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; }
 .text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
-.text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: var(--v4-primary); background: transparent; box-shadow: none; }
-.text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: var(--v4-primary); outline: 2px solid var(--v4-primary); box-shadow: none; z-index: 10001; }
+.text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: transparent !important; background: transparent; box-shadow: none; }
+.text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
 
 /* Premium Pin Marker Styling */
 .pin-marker {

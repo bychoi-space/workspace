@@ -19,7 +19,7 @@ body {
     margin: 0; padding: 0;
     background: var(--bg-base) !important;
     background-image: none !important;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-main, 'Pretendard Variable', sans-serif);
     color: var(--text-primary);
     height: 100vh;
     width: 100vw;

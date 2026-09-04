@@ -8,11 +8,13 @@
     console.log("[VCTRL TYPOGRAPHY] Initializing unified typography module...");
 
     // 1. Single Source of Truth (SSOT) Constants
+    const DEFAULT_FONT_FAMILY = "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif";
+
     window.V4_TYPOGRAPHY = {
         COLOR: '#0f172a',
         FONT_SIZE: '12px',
         FONT_WEIGHT: '400',
-        FONT_FAMILY: 'inherit',
+        FONT_FAMILY: DEFAULT_FONT_FAMILY,
         PLACEHOLDER_COLOR: '#94a3b8',
         MUTED_COLOR: '#64748b',
         
@@ -41,12 +43,12 @@
     // 3. Iframe-Side Injection Script (Compiled via vctrl_core.js)
     window.v4TypographyScript = `
     (function() {
-        console.log("[V4 Typography] Iframe typography token engine active.");
+        console.log("[V4 Typography] Iframe typography token engine active with Pretendard.");
         window.V4_TYPOGRAPHY = window.V4_TYPOGRAPHY || {
             COLOR: '#0f172a',
             FONT_SIZE: '12px',
             FONT_WEIGHT: '400',
-            FONT_FAMILY: 'inherit',
+            FONT_FAMILY: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif",
             PLACEHOLDER_COLOR: '#94a3b8'
         };
 
@@ -66,8 +68,11 @@
                 '  --v4-text-color: #0f172a;',
                 '  --v4-font-size: 12px;',
                 '  --v4-font-weight: 400;',
-                '  --v4-font-family: inherit;',
+                "  --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;",
                 '  --v4-placeholder-color: #94a3b8;',
+                '}',
+                'body, .page, .lf-component {',
+                '  font-family: var(--v4-font-family) !important;',
                 '}',
                 '.v4-editable-cell, .v4-shape, .v4-shape-rect, .v4-shape-circle, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-arrow, .v4-shape-pattern-grid, .v4-shape-wave, .text-marker, .v4-text-box, .v4-text-shape {',
                 '  color: var(--v4-text-color, #0f172a);',

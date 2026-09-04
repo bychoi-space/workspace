@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: inherit; --v4-placeholder-color: #94a3b8;"><head>
+<html style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
     <meta charset="utf-8">
     <title>Syntax Check</title>
     <!-- Mock required global libraries -->

@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Mobile UI (2) - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; }
-        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
+        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
         .page { width: 1600px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 80px; }
         .mobile-frame { width: 375px; height: 838px; background: var(--v4-frame-bg); border-radius: 40px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 8px #111; overflow: hidden; border: 4px solid #334155; z-index: 10; }
         .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 30px; background: #111; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 1000; }
@@ -38,7 +39,7 @@
 
         /* Text Marker Integration */
         .text-marker { 
-            position: absolute; padding: 2px 6px; border-radius: 4px; 
+            position: absolute; padding: 2px 6px; border-radius: 0px !important; 
             border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
             white-space: normal; cursor: grab; pointer-events: auto; z-index: 1000; 
             transform: translate(-50%, -50%); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -46,8 +47,8 @@
             box-shadow: none;
             color: #1e293b;
         }
-        .text-marker:hover { border-color: var(--v4-primary); background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
-        .text-marker.selected { border-color: var(--v4-primary); outline: 2px solid var(--v4-primary); box-shadow: none; z-index: 1001; }
+        .text-marker:hover { border-color: transparent !important; background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
+        .text-marker.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 1001; }
         .text-marker .lf-drag-handle { top: -14px; left: 50%; transform: translateX(-50%); }
         .text-marker .lf-delete-trigger { top: -14px; right: -14px; }
     </style>

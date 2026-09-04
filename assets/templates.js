@@ -75,6 +75,7 @@ window.LF_TEMPLATES['template_blank.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>Blank Screen - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -87,7 +88,7 @@ window.LF_TEMPLATES['template_blank.html'] = `<!DOCTYPE html>
         }
         body { 
             margin: 0; padding: 0; 
-            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; 
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; background: var(--v4-bg); 
             overflow: hidden; color: var(--v4-text);
@@ -121,6 +122,7 @@ window.LF_TEMPLATES['template_cover.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>Cover - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
@@ -136,7 +138,7 @@ window.LF_TEMPLATES['template_cover.html'] = `<!DOCTYPE html>
         }
         body { 
             margin: 0; padding: 0; 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Pretendard Variable', Pretendard, 'Inter', sans-serif; 
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; background: var(--v4-surface); 
             overflow: hidden; color: var(--v4-text);
@@ -277,6 +279,7 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>Mobile UI (1) - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -289,7 +292,7 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `<!DOCTYPE html>
         body {
             margin: 0; padding: 0;
             background: var(--v4-bg);
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif;
             display: flex; justify-content: center; align-items: center;
             height: 100vh; overflow: hidden;
             background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
@@ -353,7 +356,7 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `<!DOCTYPE html>
         }
         .mobile-statusbar { position: absolute; top: 10px; left: 24px; right: 24px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: #111827; font-size: 12px; font-weight: 800; z-index: 1001; pointer-events: none; white-space: nowrap; }
         .mobile-home-indicator { position: absolute; bottom: 8px; left: 50%; width: 132px; height: 5px; border-radius: 999px; background: #111827; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
-        .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+        .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; }
         .mobile-ui-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: #fff; border-bottom: 1px solid #e5e7eb; }
         .mobile-ui-card { padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #111827, #334155); color: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18); }
         .mobile-ui-list { padding: 16px; border-radius: 18px; background: #f8fafc; border: 1px solid #e5e7eb; }
@@ -378,7 +381,7 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `<!DOCTYPE html>
 
         /* Text Marker Integration */
         .text-marker { 
-            position: absolute; padding: 2px 6px; border-radius: 4px; 
+            position: absolute; padding: 2px 6px; border-radius: 0px !important; 
             border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
             white-space: normal; cursor: grab; pointer-events: auto; z-index: 1000; 
             transform: translate(-50%, -50%); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -386,8 +389,8 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `<!DOCTYPE html>
             box-shadow: none;
             color: #1e293b;
         }
-        .text-marker:hover { border-color: var(--v4-primary); background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
-        .text-marker.selected { border-color: var(--v4-primary); outline: 2px solid var(--v4-primary); box-shadow: none; z-index: 1001; }
+        .text-marker:hover { border-color: transparent !important; background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
+        .text-marker.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 1001; }
         .text-marker .lf-drag-handle { top: -14px; left: 50%; transform: translateX(-50%); }
         .text-marker .lf-delete-trigger { top: -14px; right: -14px; }
     </style>
@@ -409,10 +412,11 @@ window.LF_TEMPLATES['template_mobile_ui_2.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>Mobile UI (2) - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; }
-        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
+        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
         .page { width: 1600px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 80px; }
         .mobile-frame { width: 375px; height: 838px; background: var(--v4-frame-bg); border-radius: 40px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 8px #111; overflow: hidden; border: 4px solid #334155; z-index: 10; }
         .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 30px; background: #111; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 1000; }
@@ -424,7 +428,7 @@ window.LF_TEMPLATES['template_mobile_ui_2.html'] = `<!DOCTYPE html>
         .mobile-content::-webkit-scrollbar-thumb:active { background: #787878; }
         .mobile-statusbar { position: absolute; top: 10px; left: 24px; right: 24px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: #111827; font-size: 12px; font-weight: 800; z-index: 1001; pointer-events: none; white-space: nowrap; }
         .mobile-home-indicator { position: absolute; bottom: 8px; left: 50%; width: 132px; height: 5px; border-radius: 999px; background: #111827; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
-        .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+        .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; }
         .mobile-ui-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: #fff; border-bottom: 1px solid #e5e7eb; }
         .mobile-ui-card { padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #111827, #334155); color: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18); }
         .mobile-ui-list { padding: 16px; border-radius: 18px; background: #f8fafc; border: 1px solid #e5e7eb; }
@@ -444,7 +448,7 @@ window.LF_TEMPLATES['template_mobile_ui_2.html'] = `<!DOCTYPE html>
 
         /* Text Marker Integration */
         .text-marker { 
-            position: absolute; padding: 2px 6px; border-radius: 4px; 
+            position: absolute; padding: 2px 6px; border-radius: 0px !important; 
             border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
             white-space: normal; cursor: grab; pointer-events: auto; z-index: 1000; 
             transform: translate(-50%, -50%); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -452,8 +456,8 @@ window.LF_TEMPLATES['template_mobile_ui_2.html'] = `<!DOCTYPE html>
             box-shadow: none;
             color: #1e293b;
         }
-        .text-marker:hover { border-color: var(--v4-primary); background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
-        .text-marker.selected { border-color: var(--v4-primary); outline: 2px solid var(--v4-primary); box-shadow: none; z-index: 1001; }
+        .text-marker:hover { border-color: transparent !important; background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
+        .text-marker.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 1001; }
         .text-marker .lf-drag-handle { top: -14px; left: 50%; transform: translateX(-50%); }
         .text-marker .lf-delete-trigger { top: -14px; right: -14px; }
     </style>
@@ -482,10 +486,11 @@ window.LF_TEMPLATES['template_mobile_ui_3.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>Mobile UI (3) - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; }
-        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
+        body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
         .page { width: 1600px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 40px; }
         .mobile-frame { width: 375px; height: 838px; background: var(--v4-frame-bg); border-radius: 40px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 8px #111; overflow: hidden; border: 4px solid #334155; z-index: 10; }
         .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 30px; background: #111; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 1000; }
@@ -497,7 +502,7 @@ window.LF_TEMPLATES['template_mobile_ui_3.html'] = `<!DOCTYPE html>
         .mobile-content::-webkit-scrollbar-thumb:active { background: #787878; }
         .mobile-statusbar { position: absolute; top: 10px; left: 24px; right: 24px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: #111827; font-size: 12px; font-weight: 800; z-index: 1001; pointer-events: none; white-space: nowrap; }
         .mobile-home-indicator { position: absolute; bottom: 8px; left: 50%; width: 132px; height: 5px; border-radius: 999px; background: #111827; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
-        .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+        .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; }
         .mobile-ui-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: #fff; border-bottom: 1px solid #e5e7eb; }
         .mobile-ui-card { padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #111827, #334155); color: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18); }
         .mobile-ui-list { padding: 16px; border-radius: 18px; background: #f8fafc; border: 1px solid #e5e7eb; }
@@ -517,7 +522,7 @@ window.LF_TEMPLATES['template_mobile_ui_3.html'] = `<!DOCTYPE html>
 
         /* Text Marker Integration */
         .text-marker { 
-            position: absolute; padding: 2px 6px; border-radius: 4px; 
+            position: absolute; padding: 2px 6px; border-radius: 0px !important; 
             border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
             white-space: normal; cursor: grab; pointer-events: auto; z-index: 1000; 
             transform: translate(-50%, -50%); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -525,8 +530,8 @@ window.LF_TEMPLATES['template_mobile_ui_3.html'] = `<!DOCTYPE html>
             box-shadow: none;
             color: #1e293b;
         }
-        .text-marker:hover { border-color: var(--v4-primary); background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
-        .text-marker.selected { border-color: var(--v4-primary); outline: 2px solid var(--v4-primary); box-shadow: none; z-index: 1001; }
+        .text-marker:hover { border-color: transparent !important; background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
+        .text-marker.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 1001; }
         .text-marker .lf-drag-handle { top: -14px; left: 50%; transform: translateX(-50%); }
         .text-marker .lf-delete-trigger { top: -14px; right: -14px; }
     </style>
@@ -561,6 +566,7 @@ window.LF_TEMPLATES['template_onesphere.html'] = `<!DOCTYPE html>
 <html lang="ko"><head>
     <meta charset="UTF-8">
     <title>Admin Onesphere - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
     <style>
         :root {
@@ -573,7 +579,7 @@ window.LF_TEMPLATES['template_onesphere.html'] = `<!DOCTYPE html>
         }
         body { 
             margin: 0; padding: 0; 
-            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; 
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; background: var(--v4-bg); 
             overflow: hidden; color: var(--v4-text);
@@ -669,10 +675,10 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
 
 /* Text Marker Integration - Unified px Top-Left (same as shapes/atoms) */
 .text-marker, .v4-text-box, .v4-text-shape { 
-    position: absolute; padding: 0 !important; border-radius: 4px; 
+    position: absolute; padding: 0 !important; border-radius: 0px !important; 
     border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
     white-space: normal; cursor: grab; pointer-events: auto; z-index: 100; 
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s, outline 0.2s;
+    transition: box-shadow 0.2s, background 0.2s;
     min-width: unset; min-height: unset; background: transparent; 
     box-shadow: none; box-sizing: border-box;
     color: #1e293b; text-align: left;
@@ -680,8 +686,8 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
 }
 .text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: 4px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; }
 .text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
-.text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: var(--v4-primary); background: transparent; box-shadow: none; }
-.text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: var(--v4-primary); outline: 2px solid var(--v4-primary); box-shadow: none; z-index: 10001; }
+.text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: transparent !important; background: transparent; box-shadow: none; }
+.text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
 
 /* Premium Pin Marker Styling */
 .pin-marker {
@@ -932,6 +938,7 @@ window.LF_TEMPLATES['template_pc_ui.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>PC UI Chrome - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
@@ -944,7 +951,7 @@ window.LF_TEMPLATES['template_pc_ui.html'] = `<!DOCTYPE html>
         }
         body { 
             margin: 0; padding: 0; 
-            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; 
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; background: var(--v4-bg); 
             overflow: hidden; color: var(--v4-text);
@@ -1082,7 +1089,7 @@ window.LF_TEMPLATES['template_pc_ui.html'] = `<!DOCTYPE html>
 
         /* Text Marker Integration */
         .text-marker { 
-            position: absolute; padding: 2px 6px; border-radius: 4px; 
+            position: absolute; padding: 2px 6px; border-radius: 0px !important; 
             border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
             white-space: normal; cursor: grab; pointer-events: auto; z-index: 1000; 
             transform: translate(-50%, -50%); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -1090,8 +1097,8 @@ window.LF_TEMPLATES['template_pc_ui.html'] = `<!DOCTYPE html>
             box-shadow: none;
             color: #1e293b;
         }
-        .text-marker:hover { border-color: var(--v4-primary); background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
-        .text-marker.selected { border-color: var(--v4-primary); outline: 2px solid var(--v4-primary); box-shadow: none; z-index: 1001; }
+        .text-marker:hover { border-color: transparent !important; background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
+        .text-marker.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 1001; }
         .text-marker .lf-drag-handle { top: -14px; left: 50%; transform: translateX(-50%); }
     </style>
     <style id="v4-inlined-style">
@@ -1142,8 +1149,9 @@ window.LF_TEMPLATES['template_plan.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>Plan - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <style>
-        body { margin: 0; padding: 0; font-family: 'Malgun Gothic', sans-serif; background: #333; }
+        body { margin: 0; padding: 0; font-family: 'Pretendard Variable', Pretendard, 'Malgun Gothic', sans-serif; background: #333; }
         .page { width: 1600px; height: 900px; background: #fff; margin: 0 auto; position: relative; padding: 0; box-sizing: border-box; }
         .header-bar { height: 40px; background: #3c3c3c; color: #fff; display: flex; align-items: center; padding: 0 20px; font-size: 14px; }
         .screen-title-overlay { margin: 20px 40px; background: #4b4b4b; color: #fff; display: inline-block; padding: 10px 40px; border-radius: 6px; font-size: 15px; font-weight: bold; }
@@ -1217,6 +1225,7 @@ window.LF_TEMPLATES['template_plan_delivery.html'] = `<!DOCTYPE html>
 <html lang="ko"><head>
     <meta charset="UTF-8">
     <title>배송예정일 설정 - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1225,7 +1234,7 @@ window.LF_TEMPLATES['template_plan_delivery.html'] = `<!DOCTYPE html>
             --header-dark: #374151; --header-blue: #1e3a8a; --header-red: #b91c1c;
             --cell-peach: #fef2f2; --cell-green: #f0fdf4; --cell-gray: #6b7280;
         }
-        body { margin:0; padding:0; background:#2d2d2d; font-family:'Inter','Noto Sans KR',sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; }
+        body { margin:0; padding:0; background:#2d2d2d; font-family:'Pretendard Variable', Pretendard, 'Inter','Noto Sans KR',sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; }
         .artboard { width:1600px; height:900px; background:#fff; position:relative; box-shadow:0 30px 60px rgba(0,0,0,0.4); overflow:hidden; }
         .lf-component { position:absolute; transition:all 0.2s cubic-bezier(0.4,0,0.2,1); box-sizing:border-box; }
         .lf-component:hover { outline:2px dashed var(--v4-accent); outline-offset:2px; }
@@ -1424,6 +1433,7 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>Responsive PC & Mobile - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 </head>
@@ -1536,6 +1546,7 @@ window.LF_TEMPLATES['template_case_study.html'] = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>Case Study - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1548,7 +1559,7 @@ window.LF_TEMPLATES['template_case_study.html'] = `<!DOCTYPE html>
         }
         body { 
             margin: 0; padding: 0; 
-            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; 
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; background: var(--v4-bg); 
             overflow: hidden; color: var(--v4-text);

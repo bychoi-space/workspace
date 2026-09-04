@@ -84,6 +84,12 @@ window.loadScreen = async function (fileName) {
 
     let finalContent = content;
 
+    // Ensure Pretendard Variable WebFont CDN is loaded in iframe head
+    const pretendardCdnTag = '<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">';
+    if (!finalContent.includes('pretendard') && finalContent.includes('</head>')) {
+        finalContent = finalContent.replace('</head>', pretendardCdnTag + '\n</head>');
+    }
+
     // Inject/Update Styles
     const styleBlock = '<style id="v4-inlined-style">\n' + window.v4Styles + '\n</style>';
     if (finalContent.includes('id="v4-inlined-style"')) {

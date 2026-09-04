@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
     <meta charset="UTF-8">
     <title>Mobile UI (2) - 기획전 템플릿화</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap" rel="stylesheet">
     <style>
         :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; }
         body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
@@ -38,7 +37,7 @@
 
         /* Text Marker Integration */
         .text-marker { 
-            position: absolute; padding: 2px 6px; border-radius: 0px !important; 
+            position: absolute; padding: 2px 6px; border-radius: 4px; 
             border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
             white-space: normal; cursor: grab; pointer-events: auto; z-index: 1000; 
             transform: translate(-50%, -50%); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -46,28 +45,78 @@
             box-shadow: none;
             color: #1e293b;
         }
-        .text-marker:hover { border-color: transparent !important; background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
-        .text-marker.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 1001; }
+        .text-marker:hover { border-color: var(--v4-primary); background: transparent; transform: translate(-50%, -50%); box-shadow: none; }
+        .text-marker.selected { border-color: var(--v4-primary); outline: 2px solid var(--v4-primary); box-shadow: none; z-index: 1001; }
         .text-marker .lf-drag-handle { top: -14px; left: 50%; transform: translateX(-50%); }
         .text-marker .lf-delete-trigger { top: -14px; right: -14px; }
     </style>
-</head>
+<link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+
+<style id="v4-typography-rules">:root {
+  --v4-text-color: #0f172a;
+  --v4-font-size: 12px;
+  --v4-font-weight: 400;
+  --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --v4-placeholder-color: #94a3b8;
+}
+body, .page, .lf-component {
+  font-family: var(--v4-font-family) !important;
+}
+.v4-editable-cell, .v4-shape, .v4-shape-rect, .v4-shape-circle, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-arrow, .v4-shape-pattern-grid, .v4-shape-wave, .text-marker, .v4-text-box, .v4-text-shape {
+  color: var(--v4-text-color, #0f172a);
+  font-size: var(--v4-font-size, 12px);
+  font-weight: var(--v4-font-weight, 400);
+  font-family: var(--v4-font-family, inherit);
+}
+.v4-premium-table th, .v4-premium-table td, .v4-grid-container td.v4-grid-cell, .v4-grid-container th.v4-grid-cell {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: var(--v4-text-color, #0f172a) !important;
+  font-family: inherit !important;
+}
+.v4-checkbox-text, .v4-radio-text {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: var(--v4-text-color, #0f172a) !important;
+  font-family: inherit !important;
+}
+.v4-dp-preset-btn {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-alert-desc-badge, .v4-alert-title, .v4-alert-message, .v4-alert-btn {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-admin-group-header, .v4-admin-label-cell {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-popup-title, .v4-stepper-value, .v4-stepper-action, .v4-stepper-dec, .v4-stepper-inc, .v4-textbox-counter, .v4-textarea-counter {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}</style></head>
 <body>
     <div class="page">
         <!-- Screen 1 -->
-        <div class="mobile-frame">
+        <div class="mobile-frame active-frame">
             <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
             <div class="mobile-header-notch"></div>
             <div class="mobile-content">
             </div>
         </div>
         <!-- Screen 2 -->
-        <div class="mobile-frame">
+        <div class="mobile-frame active-frame">
             <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
             <div class="mobile-header-notch"></div>
             <div class="mobile-content">
             </div>
         </div>
     </div>
-</body>
-</html>
+<script id="v4-inlined-script">/* Dynamic scripts injected */</script>
+
+<div id="v4-text-1788490158164" class="lf-component v4-text-shape" style="position: absolute; top: 298.5px; left: 559px; z-index: 1000; transform: none; width: 59px; height: 23px; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;"><div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;">Edit Text</div></div><div id="v4-comp-1788490163981_852479_0" class="lf-component v4-text-shape" style="position: absolute; top: 334.25px; left: 555px; z-index: 1000; transform: none; width: 67px; height: 26px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;"><div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;"><p><span style="font-size: 14px;">Edit Text</span></p></div></div><div id="v4-comp-1788490170480_775571_0" class="lf-component v4-text-shape" style="position: absolute; top: 373px; left: 543.5px; z-index: 1000; transform: none; width: 90px; height: 33px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;"><div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;"><p><span style="font-size: 20px;">Edit Text</span></p></div></div><div id="v4-comp-1788490176261_40171_0" class="lf-component v4-text-shape" style="position: absolute; top: 262.75px; left: 563px; z-index: 1000; transform: none; width: 51px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;"><div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;"><p><span style="font-size: 10px;">Edit Text</span></p></div></div><div id="v4-comp-1788490182914_846815_0" class="lf-component v4-text-shape" style="position: absolute; top: 227px; left: 567px; z-index: 1000; transform: none; width: 43px; height: 23px; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;"><div class="v4-editable-cell" contenteditable="true" style="outline: none; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 4px !important; display: block; text-align: left; width: 100%; height: 100%;"><p><span style="font-size: 8px;">Edit Text</span></p></div></div></body></html>

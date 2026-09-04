@@ -9,6 +9,28 @@
  * 3. If you must use a backtick, it MUST be escaped as \` to avoid syntax errors.
  */
 
+window.EditorBus = {
+    sendToIframe(payload) {
+        const iframe = (window.DOM && window.DOM.iframe) || 
+                       document.getElementById('main-iframe') || 
+                       document.getElementById('screen-iframe');
+        if (iframe && iframe.contentWindow) {
+            const data = (typeof payload === 'object' && payload !== null) ? { ...payload } : payload;
+            if (data && typeof data === 'object' && !data.id && window.activeCompId) {
+                data.id = window.activeCompId;
+            }
+            iframe.contentWindow.postMessage(data, '*');
+        } else {
+            console.warn("[EditorBus] Active iframe contentWindow not found for payload:", payload ? payload.type : null);
+        }
+    },
+    sendToParent(payload) {
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage(payload, '*');
+        }
+    }
+};
+
 window.rgbToHex = function(rgb) {
     if (!rgb || rgb === "transparent" || rgb === "none" || rgb.includes("rgba(0, 0, 0, 0)")) return null;
     if (rgb.startsWith('#')) return rgb;
@@ -165,6 +187,9 @@ window.v4CommonScript = `
     // Core shared message helpers
     window.notifyParent = function(data) { if (window.parent) window.parent.postMessage(data, '*'); };
     window.markDirty = function() { window.notifyParent({ type: 'LF_DIRTY' }); };
+    window.EditorBus = {
+        sendToParent: function(data) { window.notifyParent(data); }
+    };
 
     // Universal RGB to HEX Converter
     window.rgbToHex = function(rgb) {

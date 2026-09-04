@@ -10,6 +10,15 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_text_measurer.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_styles.js",
     "c:\Users\sisun\ai_work\assets\responsive_frame.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_common.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_component_inserter.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_v4_addon.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_floating_inspector.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_grid.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_accordion.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_object_table.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_properties.js",
+    "c:\Users\sisun\ai_work\assets\inspector_grid.js",
     "c:\Users\sisun\ai_work\viewer.html"
 )
 

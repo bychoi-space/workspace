@@ -4,11 +4,13 @@
  */
 (function() {
     function notifyIframe(data) {
-        const activeIframe = document.getElementById('main-iframe');
-        if (activeIframe && activeIframe.contentWindow) {
-            activeIframe.contentWindow.postMessage(data, '*');
+        if (window.EditorBus) {
+            window.EditorBus.sendToIframe(data);
         } else {
-            console.warn("[V4 Component Inserter] notifyIframe failed: activeIframe or contentWindow not found.");
+            const activeIframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+            if (activeIframe && activeIframe.contentWindow) {
+                activeIframe.contentWindow.postMessage(data, '*');
+            }
         }
     }
 

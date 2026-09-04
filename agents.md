@@ -211,12 +211,12 @@
 - **4. 상단 라벨바(`.frame-label-bar`) 폰트 번짐 방지 및 다크 테마 표준**:
   - `backdrop-filter: blur(...)` 속성은 캔버스 줌/스케일 환경에서 GPU 서브픽셀 래스터화 블러를 유발하므로 절대 사용하지 않는다.
   - 배경은 `#141720` 솔리드 다크 테마를 사용하고, 폰트 두께는 가독성을 극대화한 `600 (SemiBold)`과 `-webkit-font-smoothing: antialiased`를 필수 적용한다.
-- **5. 파일 동기화 수칙 (Dual File Synchronization)**:
-  - 반응형 프레임 스타일은 `assets/responsive_frame.js` (`window.responsiveFrameStyles`)와 `assets/responsive_frame.css` 두 파일에 분리 관리되므로, 스타일 수정 시 반드시 두 파일을 100% 동일하게 동기화해야 한다.
+- **5. 반응형 프레임 스타일 단일 SSOT 수칙 (Single Source of Truth)**:
+  - 반응형 프레임 런타임 스타일의 단일 진실 공급원(SSOT)은 `assets/responsive_frame.js` (`window.responsiveFrameStyles`)이다. Iframe 주입 및 렌더링은 이 스크립트 기반으로 동작하며, `assets/responsive_frame.css`는 정적 참조/미러 산출물 역할을 수행한다. 스타일 확장 시 런타임 SSOT인 `responsive_frame.js`를 우선 갱신한다.
 
 ## 🚀 작업 프로세스 및 안정성 대원칙 (CRITICAL)
 1. **고민 (Pondering)** -> 2. **분석 (Analysis)** -> 3. **설계 (Design)** -> 4. **실행 (Execution)** -> 5. **확인 (Verification)** 단계를 엄격히 준수합니다.
-- **[브라우저 검증 금지]**: 시간 효율을 위해 코드 분석을 통한 무결성 확보에 집중합니다.
+- **[AI 브라우저 직접 검증 절대 금지]**: 에이전트(AI)가 브라우저 자동화 도구(`browser_subagent` 등)를 실행하여 직접 브라우저를 열고 조작/검증하는 행위는 원천 금지합니다. 작업 속도와 리소스 효율을 위해 정밀 소스코드 심층 분석, 브래킷/구문 검사(`check_syntax.ps1` / `node -c`)를 통한 정적 무결성 확보에 집중하며, 브라우저 상의 UI 동작 검증은 사용자가 직접 확인할 수 있도록 점검 절차와 가이드만을 제공합니다.
 - **[무조건적 원복 규칙]**: 논리적 에러나 구문 오류 발견 시 즉시 모든 작업을 중단하고 작업 전 상태로 되돌립니다.
 - **[요청 시 배포 규칙]**: 깃허브(GitHub) 배포(Push)는 반드시 사용자가 명시적으로 배포를 요청할 때만 수행해야 합니다. 개발 안정성 및 롤백 유연성 확보를 위해 임의의 자동 배포는 절대 금지합니다.
 

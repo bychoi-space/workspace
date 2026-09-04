@@ -1227,8 +1227,26 @@ window.v4Script = `
         }
         else if (d.type === 'LF_REQUEST_SAVE_CONTENT') {
             const c = document.documentElement.cloneNode(true);
-            c.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, svg.v4-responsive-guide-layer').forEach(el => el.remove());
-            c.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected', 'dragging-now'));
+            // 1. Remove runtime UI helpers (ports, handles, guide layers, marquee box)
+            c.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line').forEach(el => el.remove());
+            // 2. Remove active state classes
+            c.querySelectorAll('.lf-component, .v4-shape').forEach(el => el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped'));
+
+            // 3. Clean empty inline style rules created by browser DOM serialization
+            c.querySelectorAll('[style]').forEach(el => {
+                const s = el.getAttribute('style');
+                if (!s) return;
+                const rules = s.split(';').map(r => r.trim()).filter(r => {
+                    if (!r) return false;
+                    const idx = r.indexOf(':');
+                    return idx !== -1 && r.substring(idx + 1).trim().length > 0;
+                });
+                if (rules.length > 0) {
+                    el.setAttribute('style', rules.join('; ') + ';');
+                } else {
+                    el.removeAttribute('style');
+                }
+            });
             
             // Clean dynamic runtime engine scripts & inlined styles before saving to disk
             const inlinedScript = c.querySelector('#v4-inlined-script');
@@ -1517,140 +1535,13 @@ window.v4Script = `
             }
         }
         else if (d.type === 'LF_UPDATE_ACCORDION_PROPERTIES') {
-            const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return;
-            const container = s.querySelector('.v4-accordion-container') || (s.classList.contains('v4-accordion-container') ? s : null);
-            if (container) {
-                if (window.V4UndoManager) window.V4UndoManager.saveState();
-                
-                if (d.width !== undefined) {
-                    s.style.width = d.width + 'px';
-                    if (typeof window.updateHandles === 'function') window.updateHandles(s);
-                }
-                
-                if (d.itemHeight !== undefined) {
-                    container.setAttribute('data-item-height', d.itemHeight);
-                    const header = container.querySelector('.v4-accordion-header');
-                    if (header) {
-                        header.style.height = d.itemHeight + 'px';
-                    }
-                    container.querySelectorAll('.v4-accordion-item').forEach(item => {
-                        item.style.setProperty('height', d.itemHeight + 'px', 'important');
-                        item.style.setProperty('line-height', d.itemHeight + 'px', 'important');
-                        item.style.setProperty('display', 'flex', 'important');
-                        item.style.setProperty('align-items', 'center', 'important');
-                        item.style.setProperty('box-sizing', 'border-box', 'important');
-                        item.style.setProperty('padding-top', '0', 'important');
-                        item.style.setProperty('padding-bottom', '0', 'important');
-                    });
-                }
-                
-                if (d.headerText !== undefined) {
-                    const titleText = container.querySelector('.v4-accordion-title-text');
-                    if (titleText && titleText.innerText !== d.headerText) {
-                        titleText.innerText = d.headerText;
-                    }
-                }
-                
-                if (d.expanded !== undefined) {
-                    container.setAttribute('data-expanded', d.expanded ? 'true' : 'false');
-                }
-                
-                if (d.depthType !== undefined) {
-                    container.setAttribute('data-depth-type', d.depthType);
-                }
-                if (d.hierarchy !== undefined) {
-                    container.setAttribute('data-hierarchy', typeof d.hierarchy === 'string' ? d.hierarchy : JSON.stringify(d.hierarchy));
-                }
-                if (d.subCount !== undefined) {
-                    container.setAttribute('data-sub-count', d.subCount);
-                }
-                
-                // Call unified hierarchical renderer
-                window.renderAccordionBody(container);
-                
-                if (d.bg !== undefined) {
-                    container.style.backgroundColor = d.bg;
-                }
-                if (d.border !== undefined) {
-                    container.style.borderColor = d.border;
-                }
-                
-                if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
-                markDirty();
-                
-                if (typeof window._getCompStyles === 'function') {
-                    window.parent.postMessage({
-                        type: 'LF_COMP_SELECTED',
-                        ...window._getCompStyles(s)
-                    }, '*');
-                }
+            if (window.v4MessageHandlers && window.v4MessageHandlers['LF_UPDATE_ACCORDION_PROPERTIES']) {
+                window.v4MessageHandlers['LF_UPDATE_ACCORDION_PROPERTIES'](d);
             }
         }
         else if (d.type === 'LF_UPDATE_GRID_PROPERTIES') {
-            const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return;
-            const container = s.querySelector('.v4-grid-container') || (s.classList.contains('v4-grid-container') ? s : null);
-            if (container) {
-                if (window.V4UndoManager) window.V4UndoManager.saveState();
-                
-                var currentCols = [];
-                var rawCols = container.getAttribute('data-columns');
-                if (rawCols) {
-                    try {
-                        currentCols = JSON.parse(rawCols);
-                    } catch(e) {}
-                }
-                if (!currentCols || currentCols.length === 0) {
-                    currentCols = [
-                        { name: '', type: 'checkbox', width: '50px' },
-                        { name: '\uBC88\uD638', type: 'number', width: '100px' },
-                        { name: '\uB77C\uC774\uBE0C \uBC29\uC1A1\uBA85', type: 'text', width: '1fr' },
-                        { name: '\uBC29\uC1A1\uC0C1\uD0DC', type: 'status', width: '120px' },
-                        { name: '\uB4F1\uB85D/\uC218\uC815\uC790', type: 'author', width: '120px' }
-                    ];
-                }
-                
-                var rowCount = parseInt(container.getAttribute('data-row-count')) || 5;
-                var showPagination = container.getAttribute('data-pagination') !== 'false';
-                
-                if (d.columns !== undefined) {
-                    currentCols = d.columns;
-                }
-                if (d.headers !== undefined) {
-                    d.headers.forEach(function(headerText, index) {
-                        if (currentCols[index]) {
-                            currentCols[index].name = headerText;
-                        }
-                    });
-                }
-                if (d.rowCount !== undefined) {
-                    rowCount = Math.min(20, Math.max(1, parseInt(d.rowCount) || 5));
-                }
-                if (d.pagination !== undefined) {
-                    showPagination = !!d.pagination;
-                }
-                if (d.bg !== undefined) {
-                    container.style.backgroundColor = d.bg;
-                }
-                if (d.border !== undefined) {
-                    container.style.borderColor = d.border;
-                }
-                
-                if (d.rowHeight !== undefined) {
-                    container.setAttribute('data-row-height', d.rowHeight);
-                }
-                if (window.renderGrid) {
-                    window.renderGrid(container, currentCols, rowCount, showPagination, d.rowHeight);
-                }
-                
-                if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
-                markDirty();
-                
-                if (typeof window._getCompStyles === 'function') {
-                    window.parent.postMessage({
-                        type: 'LF_COMP_SELECTED',
-                        ...window._getCompStyles(s)
-                    }, '*');
-                }
+            if (window.v4MessageHandlers && window.v4MessageHandlers['LF_UPDATE_GRID_PROPERTIES']) {
+                window.v4MessageHandlers['LF_UPDATE_GRID_PROPERTIES'](d);
             }
         }
         else if (d.type === 'LF_UPDATE_ATOM_TEXT_ENABLED') {
@@ -3300,24 +3191,9 @@ window.v4Script = `
             }
             markDirty();
             setTimeout(window.syncTableComponentSize, 50);
-        } else if (d.type === 'LF_UPDATE_CELL_STYLE') {
-            if (window.TableManager) {
-                window.TableManager.updateSelectedCellsStyle(d.style);
-            }
-        } else if (d.type === 'LF_UPDATE_CELL_DIMENSION') {
-            if (window.TableManager) {
-                if (d.width !== undefined) {
-                    window.TableManager.updateSelectedColumnWidth(d.width);
-                }
-                if (d.height !== undefined) {
-                    window.TableManager.updateSelectedRowHeight(d.height);
-                }
-                markDirty();
-                setTimeout(window.syncTableComponentSize, 50);
-            }
-        } else if (d.type === 'LF_UPDATE_CELL_BORDER') {
-            if (window.TableManager && window.TableManager.updateSelectedCellsBorder) {
-                window.TableManager.updateSelectedCellsBorder(d.borderType, d.color);
+        } else if (d.type === 'LF_UPDATE_CELL_STYLE' || d.type === 'LF_UPDATE_CELL_DIMENSION' || d.type === 'LF_UPDATE_CELL_BORDER') {
+            if (window.v4MessageHandlers && window.v4MessageHandlers[d.type]) {
+                window.v4MessageHandlers[d.type](d);
             }
         }
     });

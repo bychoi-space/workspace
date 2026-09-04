@@ -317,7 +317,10 @@ const ProjectMetadataManager = {
             const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
             const lastActiveFrame = iframeDoc?.defaultView?.lastActiveFrame;
             const selectedComp = state.selectedComponent;
-            const isInsideMobile = (selectedComp && selectedComp.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner')) || lastActiveFrame === 'mobile';
+            const compEl = (selectedComp && typeof selectedComp.closest === 'function')
+                ? selectedComp
+                : (iframeDoc?.getElementById(selectedComp?.id || state.editingIndex || window.activeCompId));
+            const isInsideMobile = (compEl && typeof compEl.closest === 'function' && compEl.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner')) || (compStyles && compStyles.frame === 'mobile') || lastActiveFrame === 'mobile';
 
             let compCenter = (compStyles && typeof compStyles.x === 'number') ? compStyles.x + ((compStyles.w || 200) / 2) : 0;
             if (isInsideMobile) {
@@ -1259,45 +1262,14 @@ function _syncAccordionProps(comp) {
 }
 
 function _syncGridProps(comp) {
+    if (window.InspectorGrid && typeof window.InspectorGrid.sync === 'function') {
+        window.InspectorGrid.sync(comp);
+        return;
+    }
     const rowCountInp = document.getElementById('prop-grid-row-count');
-    const paginationY = document.getElementById('btn-grid-pagination-y');
-    const paginationN = document.getElementById('btn-grid-pagination-n');
-    
-    if (rowCountInp && comp.gridRowCount !== undefined) {
-        rowCountInp.value = comp.gridRowCount;
-    }
-    
+    if (rowCountInp && comp.gridRowCount !== undefined) rowCountInp.value = comp.gridRowCount;
     const rowHeightInp = document.getElementById('prop-grid-row-height');
-    if (rowHeightInp && comp.gridRowHeight !== undefined) {
-        rowHeightInp.value = comp.gridRowHeight;
-    }
-    
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
-    if (paginationY && paginationN) {
-        highlightActive(paginationY, comp.gridShowPagination === true);
-        highlightActive(paginationN, comp.gridShowPagination === false);
-    }
-    
-    if (typeof window.syncGridHeaderInputs === 'function') {
-        window.syncGridHeaderInputs(comp.gridColumns || [], comp.gridHeaders || []);
-    }
-    
-    const s = comp.currentStyles || {};
-    const syncColor = (id, wrapperId, color, isTransparent) => {
-        const picker = document.getElementById(id);
-        const wrapper = document.getElementById(wrapperId);
-        if (picker && color) picker.value = color;
-        if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
-    };
-    syncColor('grid-bg-color', 'grid-bg-wrapper', s.bg, s.isBgTransparent);
-    syncColor('grid-border-color', 'grid-border-wrapper', s.border, s.isBorderTransparent);
+    if (rowHeightInp && comp.gridRowHeight !== undefined) rowHeightInp.value = comp.gridRowHeight;
 }
 
 function _syncCheckboxRadioProps(comp) {

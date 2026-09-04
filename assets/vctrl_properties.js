@@ -111,6 +111,68 @@
             if (ratioRow) ratioRow.style.display = 'none';
             if (chk) chk.checked = false;
         });
+
+        // Synchronize target component and inputs on paste completion
+        MessageHub.subscribe('LF_PASTE_COMPLETED', (data) => {
+            const newIds = data.ids || [];
+            if (newIds.length > 0) {
+                const targetId = newIds[0];
+                activeCompId = targetId;
+                window.activeCompId = targetId;
+                if (window.GroupingManager && typeof window.GroupingManager.setSelectedIds === 'function') {
+                    window.GroupingManager.setSelectedIds(newIds);
+                    if (typeof window.GroupingManager.updateSelectionUI === 'function') {
+                        window.GroupingManager.updateSelectionUI();
+                    }
+                }
+            }
+
+            if (data.firstCompStyles) {
+                updateAllInputs(data.firstCompStyles.w, data.firstCompStyles.h);
+                syncAllColors(data.firstCompStyles.currentStyles || {});
+
+                if (data.firstCompStyles.boxW !== undefined) {
+                    const wIconInp = document.getElementById('prop-width-icon');
+                    if (wIconInp && document.activeElement !== wIconInp) wIconInp.value = Math.round(data.firstCompStyles.boxW);
+                }
+                if (data.firstCompStyles.boxH !== undefined) {
+                    const hIconInp = document.getElementById('prop-height-icon');
+                    if (hIconInp && document.activeElement !== hIconInp) hIconInp.value = Math.round(data.firstCompStyles.boxH);
+                }
+
+                const ratioRow = document.getElementById('shape-aspect-ratio-row');
+                const chk = document.getElementById('chk-preserve-aspect-ratio');
+                if (data.firstCompStyles.isImage) {
+                    activeImageRatio = (data.firstCompStyles.h && data.firstCompStyles.h > 0) 
+                        ? (data.firstCompStyles.w / data.firstCompStyles.h) 
+                        : (data.firstCompStyles.imageRatio || null);
+                    if (ratioRow) ratioRow.style.display = 'flex';
+                } else {
+                    activeImageRatio = null;
+                    if (ratioRow) ratioRow.style.display = 'none';
+                    if (chk) chk.checked = false;
+                }
+            }
+        });
+    }
+
+    function getActiveTargetId() {
+        if (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function') {
+            const selIds = window.GroupingManager.getSelectedIds();
+            if (Array.isArray(selIds) && selIds.length > 0) {
+                activeCompId = selIds[0];
+                window.activeCompId = selIds[0];
+                return selIds[0];
+            }
+        }
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const domSelectedId = iframeWin?.document?.querySelector('.lf-component.selected')?.id;
+        if (domSelectedId) {
+            activeCompId = domSelectedId;
+            window.activeCompId = domSelectedId;
+            return domSelectedId;
+        }
+        return activeCompId || window.activeCompId || null;
     }
 
     function updateAllInputs(w, h) {
@@ -201,7 +263,7 @@
 
         if (!iframeEl || !iframeEl.contentWindow) return;
 
-        const targetId = activeCompId || window.activeCompId || (iframeEl.contentWindow.document?.querySelector('.lf-component.selected')?.id);
+        const targetId = getActiveTargetId();
         if (!targetId) return;
 
         activeCompId = targetId;
@@ -266,7 +328,7 @@
         const id = e.target.id;
         if (SPECIAL_STYLE_CONFIGS[id]) {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-            const targetId = activeCompId || window.activeCompId;
+            const targetId = getActiveTargetId();
             if (!targetId || !iframeWin) return;
             const msgCreator = SPECIAL_STYLE_CONFIGS[id];
             const msg = msgCreator(e.target.value);
@@ -338,7 +400,8 @@
         const tBtn = e.target.closest('[id]');
         if (tBtn && TRANSPARENCY_BUTTONS[tBtn.id]) {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-            if (!activeCompId || !iframeWin) return;
+            const targetId = getActiveTargetId();
+            if (!targetId || !iframeWin) return;
             const conf = TRANSPARENCY_BUTTONS[tBtn.id];
             
             const wrapper = document.getElementById(conf.wrapper);
@@ -347,7 +410,7 @@
             if (conf.extra) conf.extra();
             
             const msg = conf.msg();
-            MessageHub.send(iframeWin, msg.type, { ...msg, id: activeCompId });
+            MessageHub.send(iframeWin, msg.type, { ...msg, id: targetId });
             if (window.markAsDirty) window.markAsDirty();
         }
     });
@@ -357,7 +420,8 @@
             ? window.DOM.iframe 
             : (document.getElementById('main-iframe') || document.getElementById('screen-iframe'));
 
-        if (!activeCompId || !iframeEl || !iframeEl.contentWindow) return;
+        const targetId = getActiveTargetId();
+        if (!targetId || !iframeEl || !iframeEl.contentWindow) return;
         
         const style = {};
         if (prop === 'background') {
@@ -368,7 +432,7 @@
         }
         
         MessageHub.send(iframeEl.contentWindow, 'LF_UPDATE_STYLE', {
-            id: activeCompId,
+            id: targetId,
             style: style
         });
         

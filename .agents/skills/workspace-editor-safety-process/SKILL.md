@@ -10,7 +10,7 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
 2. Analyze: inspect existing code and data before editing.
 3. Design: fix scope and method; get approval for broad or destructive changes.
 4. Execute: change only the designed scope.
-5. Verify: check browser/console or the smallest reliable substitute.
+5. Verify: perform static syntax/bracket inspection (check_syntax.ps1) and static code integrity analysis.
 
 ## Data And Git Safety
 - **Strict Production Integrity & Prohibition of Dummy/Fake Fallbacks**: This system is an active production workspace editor. Never inject hardcoded dummy data, fake metadata objects, or fake fallback HTML/JSON to bypass errors or CORS warnings. Dummy fallbacks corrupt real production data (`metadata.json`, saved screen HTMLs). Always rely solely on authentic disk reading and true system error recovery pipelines.

@@ -28,10 +28,19 @@ window.state = {
     editingIndex: -1
 };
 
-// Streamlined Engine Script Assembler
+// Streamlined Engine Script Assembler with In-Memory Caching
+let _cachedEngineScriptBlock = null;
+
+window.invalidateEngineScriptCache = function() {
+    _cachedEngineScriptBlock = null;
+};
+
 function getInlinedEngineScript() {
-    return '<script id="v4-inlined-script">\n' +
-        '// Cache Buster Timestamp: ' + Date.now() + '\n' +
+    if (_cachedEngineScriptBlock && window.__DEV_NO_CACHE__ !== true) {
+        return _cachedEngineScriptBlock;
+    }
+    _cachedEngineScriptBlock = '<script id="v4-inlined-script">\n' +
+        '// Engine Script Initialized: ' + Date.now() + '\n' +
         (window.v4TypographyScript || '') + '\n' +
         (window.v4UndoScript || '') + '\n' +
         (window.v4TableScript || '') + '\n' +
@@ -52,6 +61,7 @@ function getInlinedEngineScript() {
         (window.v4ResponsivePinsScript || '') + '\n' +
         (window.v4Script || '') + '\n' +
         (window.v4ResponsiveMultiselectScript || '') + '\n</script>';
+    return _cachedEngineScriptBlock;
 }
 
 // --- Core Logic ---
@@ -217,16 +227,6 @@ window.loadScreen = async function (fileName) {
             if (typeof window.renderDescriptionList === 'function') {
                 setTimeout(window.renderDescriptionList, 100);
             }
-
-            // [Bug Fix 1] Pre-warm SmartGuide snap targets after iframe DOM is fully rendered.
-            // Without this, the first drag has no iframe targets because the async request
-            // fired on LF_SNAP_START hasn't received a response yet.
-            setTimeout(() => {
-                if (window.SmartGuide) {
-                    window.SmartGuide.findSnapTargets();
-                    console.log('[SmartGuide] Targets pre-warmed after screen load.');
-                }
-            }, 300);
 
             // [Bug Fix 2] Recalculate center scale after layout has fully settled in iframe.
             setTimeout(() => {
@@ -580,8 +580,22 @@ window.getIframeHTML = async function () {
             if (DOM.iframe && DOM.iframe.contentDocument) {
                 const doc = DOM.iframe.contentDocument;
                 const clone = doc.documentElement.cloneNode(true);
-                clone.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle').forEach(el => el.remove());
-                clone.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected'));
+                clone.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line').forEach(el => el.remove());
+                clone.querySelectorAll('.lf-component, .v4-shape').forEach(el => el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped'));
+                clone.querySelectorAll('[style]').forEach(el => {
+                    const s = el.getAttribute('style');
+                    if (!s) return;
+                    const rules = s.split(';').map(r => r.trim()).filter(r => {
+                        if (!r) return false;
+                        const idx = r.indexOf(':');
+                        return idx !== -1 && r.substring(idx + 1).trim().length > 0;
+                    });
+                    if (rules.length > 0) {
+                        el.setAttribute('style', rules.join('; ') + ';');
+                    } else {
+                        el.removeAttribute('style');
+                    }
+                });
                 return "<!DOCTYPE html>\n" + clone.outerHTML;
             }
         } catch (e) {
@@ -1005,6 +1019,7 @@ window.MessageHub = {
 
                     if (newIds.length > 0) {
                         state.editingIndex = newIds[0];
+                        window.activeCompId = newIds[0];
                     }
 
                     if (DOM.iframe && DOM.iframe.contentWindow) {
@@ -1029,10 +1044,12 @@ window.MessageHub = {
                         }
                         if (!isTyping) {
                             if (newIds.length === 1 && data.firstCompStyles) {
+                                state.selectedComponent = { id: newIds[0], ...data.firstCompStyles };
                                 if (typeof window.updateProperties === 'function') {
                                     try { window.updateProperties(data.firstCompStyles); } catch (e) { }
                                 }
                             } else {
+                                state.selectedComponent = null;
                                 if (typeof window.updateProperties === 'function') {
                                     try { window.updateProperties(); } catch (e) { }
                                 }
@@ -1040,6 +1057,9 @@ window.MessageHub = {
                         }
                     } else {
                         if (!isTyping && typeof window.updateProperties === 'function') {
+                            if (newIds.length === 1 && data.firstCompStyles) {
+                                state.selectedComponent = { id: newIds[0], ...data.firstCompStyles };
+                            }
                             try { window.updateProperties(data.firstCompStyles || {}); } catch (e) { }
                         }
                     }

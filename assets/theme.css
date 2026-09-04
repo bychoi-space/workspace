@@ -106,12 +106,6 @@ body {
     border-bottom: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-.sidebar-right .desc-row.highlight {
-    background: rgba(239, 68, 68, 0.12) !important;
-    border-left: 3px solid var(--accent-data);
-    padding-left: 13px;
-}
-
 .sidebar-right .desc-index {
     background: linear-gradient(135deg, #ef4444, #dc2626) !important;
     color: #ffffff !important;
@@ -147,117 +141,6 @@ body {
     gap: 8px;
 }
 
-.sidebar-right .desc-row {
-    padding: 8px 10px !important;
-    background: rgba(255, 255, 255, 0.03) !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    transition: all 0.2s ease !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    box-sizing: border-box !important;
-    cursor: pointer;
-}
-.sidebar-right .desc-row:hover {
-    background: rgba(239, 68, 68, 0.05) !important;
-    border-color: rgba(239, 68, 68, 0.3) !important;
-}
-.sidebar-right .desc-row.active-desc,
-.sidebar-right .desc-row.selected-pin {
-    background: rgba(239, 68, 68, 0.1) !important;
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 16px rgba(239, 68, 68, 0.2) !important;
-}
-
-.desc-header {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    width: 100% !important;
-    min-height: 22px !important;
-}
-
-.desc-header-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-}
-
-.desc-header-label {
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    color: #e2e8f0 !important;
-    letter-spacing: -0.2px !important;
-    font-family: inherit !important;
-    user-select: none !important;
-}
-
-.desc-actions {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-}
-
-.desc-btn {
-    background: transparent !important;
-    border: none !important;
-    color: #94a3b8 !important;
-    cursor: pointer !important;
-    padding: 3px !important;
-    border-radius: 4px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.15s ease !important;
-    opacity: 0.5 !important;
-}
-
-.desc-btn .material-icons-outlined {
-    font-size: 16px !important;
-}
-
-.desc-row:hover .desc-btn {
-    opacity: 1 !important;
-}
-
-.desc-btn:hover {
-    background: rgba(239, 68, 68, 0.15) !important;
-    color: #ef4444 !important;
-}
-
-.desc-body {
-    width: 100% !important;
-    display: flex !important;
-}
-
-.desc-input {
-    width: 100% !important;
-    flex: 1 !important;
-    background: transparent !important;
-    border: none !important;
-    color: #f1f5f9 !important;
-    font-size: 12px !important;
-    font-weight: 400 !important;
-    padding: 2px 0 4px 0 !important;
-    font-family: inherit !important;
-    resize: none !important;
-    overflow: hidden !important;
-    line-height: 1.6 !important;
-    min-height: 20px !important;
-    box-sizing: border-box !important;
-    word-break: break-word !important;
-    white-space: pre-wrap !important;
-}
-
-.desc-input:focus {
-    outline: none !important;
-    color: #ffffff !important;
-}
-
-.desc-input::placeholder {
-    color: #64748b !important;
-}
 
 /* Pins layer update */
 .pin-marker {
@@ -306,23 +189,6 @@ body {
     z-index: 1001 !important;
 }
 
-.pin-marker .lf-drag-handle,
-.pin-marker .lf-resizer,
-.pin-marker .lf-delete-trigger,
-.pin-marker .lf-connector-port,
-.pin-marker:hover .lf-drag-handle,
-.pin-marker:hover .lf-resizer,
-.pin-marker:hover .lf-delete-trigger,
-.pin-marker:hover .lf-connector-port,
-.pin-marker.selected .lf-drag-handle,
-.pin-marker.selected .lf-resizer,
-.pin-marker.selected .lf-delete-trigger,
-.pin-marker.selected .lf-connector-port {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
 
 /* Disable transition during drag to prevent 'lagging' */
 .pin-marker.dragging {
@@ -454,6 +320,7 @@ body {
 .sidebar-right .desc-row.selected-pin {
     background: rgba(251, 113, 133, 0.12) !important;
     border-color: rgba(251, 113, 133, 0.3) !important;
+    border-left: 3px solid var(--accent-data) !important;
     box-shadow: 0 4px 12px rgba(251, 113, 133, 0.1);
 }
 
@@ -808,69 +675,6 @@ body {
     transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s !important;
 }
 
-.loading-spinner-wrapper {
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.loading-spinner-icon {
-    font-size: 28px !important;
-    color: #10b981 !important;
-    animation: loadingSpin 1.2s infinite linear;
-    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
-}
-
-@keyframes loadingSpin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loading-bar-container {
-    width: 220px !important;
-    height: 4px !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 20px !important;
-    overflow: hidden !important;
-    position: relative !important;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15) !important;
-}
-
-.loading-bar-progress {
-    position: absolute !important;
-    top: 0 !important;
-    left: -50% !important;
-    height: 100% !important;
-    width: 45% !important;
-    background: linear-gradient(90deg, transparent, #10b981 40%, #34d399 75%, #a855f7 100%) !important;
-    border-radius: 20px !important;
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.6) !important;
-    animation: loadingMotion 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-@keyframes loadingMotion {
-    0% { left: -50%; width: 30%; }
-    50% { width: 60%; }
-    100% { left: 110%; width: 30%; }
-}
-
-.loading-text {
-    margin-top: 16px !important;
-    font-size: 11px !important;
-    color: #10b981 !important;
-    letter-spacing: 2.5px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3) !important;
-    animation: loadingPulse 1.8s infinite ease-in-out !important;
-}
-
-@keyframes loadingPulse {
-    0%, 100% { opacity: 0.6; transform: scale(0.98); }
-    50% { opacity: 1; transform: scale(1); }
-}
 
 /* ==========================================================================
    5. Add Screen Modal Template Card Selected State Visuals

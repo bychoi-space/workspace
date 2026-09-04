@@ -1,6 +1,8 @@
 /* ==========================================================================
    Responsive PC & Mobile Frame Stylesheet
    Shared CSS for PC & Mobile split-view screens and templates
+   NOTE: The runtime SSOT is `assets/responsive_frame.js` (`window.responsiveFrameStyles`).
+   This CSS file serves as the static reference and external stylesheet mirror.
    ========================================================================== */
 
 :root {

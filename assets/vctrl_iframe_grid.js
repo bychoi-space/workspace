@@ -427,5 +427,74 @@ window.v4GridScript = `
         
         container.innerHTML = tableContainerHtml + footerHtml;
     };
+
+    window.v4MessageHandlers = window.v4MessageHandlers || {};
+    window.v4MessageHandlers['LF_UPDATE_GRID_PROPERTIES'] = function(d) {
+        var s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+        if (!s) return;
+        var container = s.querySelector('.v4-grid-container') || (s.classList.contains('v4-grid-container') ? s : null);
+        if (container) {
+            if (window.V4UndoManager) window.V4UndoManager.saveState();
+            
+            var currentCols = [];
+            var rawCols = container.getAttribute('data-columns');
+            if (rawCols) {
+                try {
+                    currentCols = JSON.parse(rawCols);
+                } catch(e) {}
+            }
+            if (!currentCols || currentCols.length === 0) {
+                currentCols = [
+                    { name: '', type: 'checkbox', width: '50px' },
+                    { name: '\uBC88\uD638', type: 'number', width: '100px' },
+                    { name: '\uB77C\uC774\uBE0C \uBC29\uC1A1\uBA85', type: 'text', width: '1fr' },
+                    { name: '\uBC29\uC1A1\uC0C1\uD0DC', type: 'status', width: '120px' },
+                    { name: '\uB4F1\uB85D/\uC218\uC815\uC790', type: 'author', width: '120px' }
+                ];
+            }
+            
+            var rowCount = parseInt(container.getAttribute('data-row-count')) || 5;
+            var showPagination = container.getAttribute('data-pagination') !== 'false';
+            
+            if (d.columns !== undefined) {
+                currentCols = d.columns;
+            }
+            if (d.headers !== undefined) {
+                d.headers.forEach(function(headerText, index) {
+                    if (currentCols[index]) {
+                        currentCols[index].name = headerText;
+                    }
+                });
+            }
+            if (d.rowCount !== undefined) {
+                rowCount = Math.min(20, Math.max(1, parseInt(d.rowCount) || 5));
+            }
+            if (d.pagination !== undefined) {
+                showPagination = !!d.pagination;
+            }
+            if (d.bg !== undefined) {
+                container.style.backgroundColor = d.bg;
+            }
+            if (d.border !== undefined) {
+                container.style.borderColor = d.border;
+            }
+            
+            if (d.rowHeight !== undefined) {
+                container.setAttribute('data-row-height', d.rowHeight);
+            }
+            if (window.renderGrid) {
+                window.renderGrid(container, currentCols, rowCount, showPagination, d.rowHeight);
+            }
+            
+            if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+            if (typeof window.markDirty === 'function') window.markDirty();
+            
+            if (typeof window._getCompStyles === 'function' && window.parent) {
+                window.parent.postMessage(Object.assign({
+                    type: 'LF_COMP_SELECTED'
+                }, window._getCompStyles(s)), '*');
+            }
+        }
+    };
 })();
 `;

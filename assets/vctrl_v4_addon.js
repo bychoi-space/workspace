@@ -7,29 +7,18 @@
 (function() {
     console.log("%c [V4 ADDON LOADED] ", "background: #6366f1; color: #fff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
-    if (typeof window.rgbToHex !== 'function') {
-        window.rgbToHex = function(rgb) {
-            if (!rgb || rgb === "transparent" || rgb === "none" || rgb.includes("rgba(0, 0, 0, 0)")) return null;
-            if (String(rgb).startsWith('#')) return rgb;
-            const matches = String(rgb).match(/\d+/g);
-            if (!matches || matches.length < 3) return "#ffffff";
-            const r = Math.min(255, parseInt(matches[0])).toString(16).padStart(2, "0");
-            const g = Math.min(255, parseInt(matches[1])).toString(16).padStart(2, "0");
-            const b = Math.min(255, parseInt(matches[2])).toString(16).padStart(2, "0");
-            return "#" + r + g + b;
-        };
-    }
-
     function notifyIframe(data) {
-        const activeIframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-        if (activeIframe && activeIframe.contentWindow) {
-            const payload = { ...data };
-            if (!payload.id && window.activeCompId) {
-                payload.id = window.activeCompId;
-            }
-            activeIframe.contentWindow.postMessage(payload, '*');
+        if (window.EditorBus) {
+            window.EditorBus.sendToIframe(data);
         } else {
-            console.warn("[V4 Addon] notifyIframe failed: activeIframe or contentWindow not found.");
+            const activeIframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+            if (activeIframe && activeIframe.contentWindow) {
+                const payload = { ...data };
+                if (!payload.id && window.activeCompId) {
+                    payload.id = window.activeCompId;
+                }
+                activeIframe.contentWindow.postMessage(payload, '*');
+            }
         }
     }
 
@@ -2125,180 +2114,9 @@
     initAdminSettingsEvents();
 
     const initGridEvents = () => {
-        const rowCountInp = document.getElementById('prop-grid-row-count');
-        const bgColorInp = document.getElementById('grid-bg-color');
-        const bgNoneBtn = document.getElementById('btn-grid-bg-none');
-        const borderColorInp = document.getElementById('grid-border-color');
-        const borderNoneBtn = document.getElementById('btn-grid-border-none');
-        const paginationY = document.getElementById('btn-grid-pagination-y');
-        const paginationN = document.getElementById('btn-grid-pagination-n');
-
-        const colMinusBtn = document.getElementById('btn-grid-col-minus');
-        const colPlusBtn = document.getElementById('btn-grid-col-plus');
-        const colAddBtn = document.getElementById('btn-grid-add-col');
-
-        const notifyGrid = (data) => {
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_GRID_PROPERTIES', data);
-            }
-        };
-
-
-        if (colMinusBtn) {
-            colMinusBtn.onclick = () => {
-                const container = document.getElementById('grid-columns-container');
-                if (!container) return;
-                const nameInputs = Array.from(container.querySelectorAll('.grid-col-name-input'));
-                if (nameInputs.length <= 1) return;
-                
-                const updatedCols = nameInputs.slice(0, -1).map((inp) => {
-                    const idx = inp.getAttribute('data-index');
-                    const typeSel = container.querySelector(`.grid-col-type-select[data-index="${idx}"]`);
-                    const widthInp = container.querySelector(`.grid-col-width-input[data-index="${idx}"]`);
-                    const optionsInp = container.querySelector(`.grid-col-options-input[data-index="${idx}"]`);
-                    const t = typeSel ? typeSel.value : 'text';
-                    const wVal = widthInp ? (parseInt(widthInp.value) || 100) : 100;
-                    const oVal = optionsInp ? optionsInp.value : '';
-                    return { name: inp.value, type: t, width: wVal + 'px', options: oVal };
-                });
-                notifyGrid({ columns: updatedCols });
-                if (typeof syncGridHeaderInputs === 'function') {
-                    syncGridHeaderInputs(updatedCols, []);
-                }
-                const colCountInp = document.getElementById('prop-grid-col-count');
-                if (colCountInp) {
-                    colCountInp.value = updatedCols.length;
-                }
-            };
-        }
-
-        if (colAddBtn) {
-            colAddBtn.onclick = () => {
-                const container = document.getElementById('grid-columns-container');
-                if (!container) return;
-                const nameInputs = Array.from(container.querySelectorAll('.grid-col-name-input'));
-                if (nameInputs.length >= 10) return;
-                
-                const updatedCols = nameInputs.map((inp) => {
-                    const idx = inp.getAttribute('data-index');
-                    const typeSel = container.querySelector(`.grid-col-type-select[data-index="${idx}"]`);
-                    const widthInp = container.querySelector(`.grid-col-width-input[data-index="${idx}"]`);
-                    const optionsInp = container.querySelector(`.grid-col-options-input[data-index="${idx}"]`);
-                    const t = typeSel ? typeSel.value : 'text';
-                    const wVal = widthInp ? (parseInt(widthInp.value) || 100) : 100;
-                    const oVal = optionsInp ? optionsInp.value : '';
-                    return { name: inp.value, type: t, width: wVal + 'px', options: oVal };
-                });
-                updatedCols.push({
-                    name: '새 항목',
-                    type: 'text',
-                    width: '200px'
-                });
-                notifyGrid({ columns: updatedCols });
-                if (typeof syncGridHeaderInputs === 'function') {
-                    syncGridHeaderInputs(updatedCols, []);
-                }
-                const colCountInp = document.getElementById('prop-grid-col-count');
-                if (colCountInp) {
-                    colCountInp.value = updatedCols.length;
-                }
-            };
-        }
-
-        if (colPlusBtn) {
-            colPlusBtn.onclick = () => {
-                const container = document.getElementById('grid-columns-container');
-                if (!container) return;
-                const nameInputs = Array.from(container.querySelectorAll('.grid-col-name-input'));
-                if (nameInputs.length >= 10) return;
-                
-                const updatedCols = nameInputs.map((inp) => {
-                    const idx = inp.getAttribute('data-index');
-                    const typeSel = container.querySelector(`.grid-col-type-select[data-index="${idx}"]`);
-                    const widthInp = container.querySelector(`.grid-col-width-input[data-index="${idx}"]`);
-                    const optionsInp = container.querySelector(`.grid-col-options-input[data-index="${idx}"]`);
-                    const t = typeSel ? typeSel.value : 'text';
-                    const wVal = widthInp ? (parseInt(widthInp.value) || 100) : 100;
-                    const oVal = optionsInp ? optionsInp.value : '';
-                    return { name: inp.value, type: t, width: wVal + 'px', options: oVal };
-                });
-                updatedCols.push({
-                    name: '새 항목',
-                    type: 'text',
-                    width: '200px'
-                });
-                notifyGrid({ columns: updatedCols });
-                if (typeof syncGridHeaderInputs === 'function') {
-                    syncGridHeaderInputs(updatedCols, []);
-                }
-                const colCountInp = document.getElementById('prop-grid-col-count');
-                if (colCountInp) {
-                    colCountInp.value = updatedCols.length;
-                }
-            };
-        }
-
-        if (paginationY) {
-            paginationY.onclick = () => {
-                highlightActive(paginationY, true);
-                highlightActive(paginationN, false);
-                notifyGrid({ pagination: true });
-            };
-        }
-        if (paginationN) {
-            paginationN.onclick = () => {
-                highlightActive(paginationN, true);
-                highlightActive(paginationY, false);
-                notifyGrid({ pagination: false });
-            };
-        }
-
-        if (rowCountInp) {
-            rowCountInp.oninput = () => {
-                const val = parseInt(rowCountInp.value) || 5;
-                notifyGrid({ rowCount: val });
-            };
-        }
-
-        const rowHeightInp = document.getElementById('prop-grid-row-height');
-        if (rowHeightInp) {
-            rowHeightInp.oninput = () => {
-                const val = parseInt(rowHeightInp.value) || 50;
-                notifyGrid({ rowHeight: val });
-            };
-        }
-
-        if (bgColorInp) {
-            bgColorInp.onchange = () => {
-                const wrapper = document.getElementById('grid-bg-wrapper');
-                if (wrapper) wrapper.classList.remove('transparent-active');
-                notifyGrid({ bg: bgColorInp.value });
-            };
-        }
-
-        if (bgNoneBtn) {
-            bgNoneBtn.onclick = () => {
-                const wrapper = document.getElementById('grid-bg-wrapper');
-                if (wrapper) wrapper.classList.add('transparent-active');
-                notifyGrid({ bg: 'transparent' });
-            };
-        }
-
-        if (borderColorInp) {
-            borderColorInp.onchange = () => {
-                const wrapper = document.getElementById('grid-border-wrapper');
-                if (wrapper) wrapper.classList.remove('transparent-active');
-                notifyGrid({ border: borderColorInp.value });
-            };
-        }
-
-        if (borderNoneBtn) {
-            borderNoneBtn.onclick = () => {
-                const wrapper = document.getElementById('grid-border-wrapper');
-                if (wrapper) wrapper.classList.add('transparent-active');
-                notifyGrid({ border: 'transparent' });
-            };
+        if (window.InspectorGrid && typeof window.InspectorGrid.bindEvents === 'function') {
+            window.InspectorGrid.bindEvents();
+            return;
         }
     };
     initGridEvents();
@@ -2363,7 +2181,21 @@
                             w = Math.round(w * ratio);
                             h = Math.round(h * ratio);
                         }
-                        window.insertImageComponent(base64, w + 'px', h + 'px');
+
+                        // Optimize Base64 payload by scaling bitmap to actual component bounds
+                        let optimizedBase64 = base64;
+                        try {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w;
+                            canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+                            optimizedBase64 = canvas.toDataURL('image/png');
+                        } catch (err) {
+                            console.warn("[V4 Addon] Canvas optimization fallback to original:", err);
+                        }
+
+                        window.insertImageComponent(optimizedBase64, w + 'px', h + 'px');
                     };
                     img.src = base64;
                 };

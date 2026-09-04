@@ -265,5 +265,79 @@ window.v4AccordionScript = `
             });
         }
     };
+
+    window.v4MessageHandlers = window.v4MessageHandlers || {};
+    window.v4MessageHandlers['LF_UPDATE_ACCORDION_PROPERTIES'] = function(d) {
+        var s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+        if (!s) return;
+        var container = s.querySelector('.v4-accordion-container') || (s.classList.contains('v4-accordion-container') ? s : null);
+        if (container) {
+            if (window.V4UndoManager) window.V4UndoManager.saveState();
+            
+            if (d.width !== undefined) {
+                s.style.width = d.width + 'px';
+                if (typeof window.updateHandles === 'function') window.updateHandles(s);
+            }
+            
+            if (d.itemHeight !== undefined) {
+                container.setAttribute('data-item-height', d.itemHeight);
+                var header = container.querySelector('.v4-accordion-header');
+                if (header) {
+                    header.style.height = d.itemHeight + 'px';
+                }
+                container.querySelectorAll('.v4-accordion-item').forEach(function(item) {
+                    item.style.setProperty('height', d.itemHeight + 'px', 'important');
+                    item.style.setProperty('line-height', d.itemHeight + 'px', 'important');
+                    item.style.setProperty('display', 'flex', 'important');
+                    item.style.setProperty('align-items', 'center', 'important');
+                    item.style.setProperty('box-sizing', 'border-box', 'important');
+                    item.style.setProperty('padding-top', '0', 'important');
+                    item.style.setProperty('padding-bottom', '0', 'important');
+                });
+            }
+            
+            if (d.headerText !== undefined) {
+                var titleText = container.querySelector('.v4-accordion-title-text');
+                if (titleText && titleText.innerText !== d.headerText) {
+                    titleText.innerText = d.headerText;
+                }
+            }
+            
+            if (d.expanded !== undefined) {
+                container.setAttribute('data-expanded', d.expanded ? 'true' : 'false');
+            }
+            
+            if (d.depthType !== undefined) {
+                container.setAttribute('data-depth-type', d.depthType);
+            }
+            if (d.hierarchy !== undefined) {
+                container.setAttribute('data-hierarchy', typeof d.hierarchy === 'string' ? d.hierarchy : JSON.stringify(d.hierarchy));
+            }
+            if (d.subCount !== undefined) {
+                container.setAttribute('data-sub-count', d.subCount);
+            }
+            
+            // Call unified hierarchical renderer
+            if (typeof window.renderAccordionBody === 'function') {
+                window.renderAccordionBody(container);
+            }
+            
+            if (d.bg !== undefined) {
+                container.style.backgroundColor = d.bg;
+            }
+            if (d.border !== undefined) {
+                container.style.borderColor = d.border;
+            }
+            
+            if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+            if (typeof window.markDirty === 'function') window.markDirty();
+            
+            if (typeof window._getCompStyles === 'function' && window.parent) {
+                window.parent.postMessage(Object.assign({
+                    type: 'LF_COMP_SELECTED'
+                }, window._getCompStyles(s)), '*');
+            }
+        }
+    };
 })();
 `;

@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-04T02:48:59.468Z",
+      "updatedAt": "2026-09-04T02:39:41.519Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -25,7 +25,7 @@
     "06_Mobile_Design_2_192.html": {
       "title": "06_Mobile_Design_2_192",
       "type": "mobile-ui",
-      "updatedAt": "2026-09-03T06:55:04.902Z",
+      "updatedAt": "2026-09-04T02:57:50.602Z",
       "template": "template_mobile_ui_2.html",
       "description": [],
       "connectors": []
@@ -35,5 +35,5 @@
   "developer": "",
   "period": "2026.09.03(목) ~ 2026.10.30(금)",
   "themeIndex": 2,
-  "updated": "2026-09-04 11:48:59"
+  "updated": "2026-09-04 11:57:50"
 }

@@ -49,6 +49,12 @@
       "template": "template_mobile_ui_2.html",
       "description": [],
       "connectors": []
+    },
+    "09_Admin_PC_Scroll_639.html": {
+      "title": "09_Admin_PC_Scroll_639",
+      "type": "default",
+      "updatedAt": "2026-09-04T05:07:16.590Z",
+      "template": "template_admin_pc_scroll.html"
     }
   },
   "assignee": "최범열",

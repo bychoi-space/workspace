@@ -53,7 +53,7 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "09_Admin_PC_Scroll_639",
       "type": "default",
-      "updatedAt": "2026-09-04T09:02:40.108Z",
+      "updatedAt": "2026-09-04T09:03:47.513Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": []
@@ -63,5 +63,5 @@
   "developer": "",
   "period": "2026.09.03(목) ~ 2026.10.30(금)",
   "themeIndex": 2,
-  "updated": "2026-09-04 18:02:40"
+  "updated": "2026-09-04 18:03:47"
 }

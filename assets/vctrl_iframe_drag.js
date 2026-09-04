@@ -62,7 +62,8 @@ window.v4DragResizeScript = `
                             if (ctx) window.ResponsiveSmartGuide.findSnapTargets(ctx, window.activeEl);
                         } else {
                             const parentContainer = window.activeEl.closest('.pc-content-area, .mobile-content, .mobile-content-area');
-                            if (parentContainer) {
+                            const isInsideGroup = !!(window.activeEl.parentElement && window.activeEl.parentElement.closest('.lf-group'));
+                            if (parentContainer && !isInsideGroup) {
                                 const bodyRect = document.body.getBoundingClientRect();
                                 const compRect = window.activeEl.getBoundingClientRect();
                                 const scale = (window.parent?.state?.transform?.scale) || 1;
@@ -120,8 +121,19 @@ window.v4DragResizeScript = `
             }
             else if (isResizing && window.activeEl) {
                 const scale = (window.parent?.state?.transform?.scale) || 1;
-                const nw = Math.max(10, startW + (e.clientX - startX) / scale);
-                const nh = Math.max(10, startH + (e.clientY - startY) / scale);
+                const shapeLine = window.activeEl.querySelector('.v4-shape-line');
+                let nw = Math.max(10, startW + (e.clientX - startX) / scale);
+                let nh = Math.max(10, startH + (e.clientY - startY) / scale);
+                
+                if (shapeLine) {
+                    const isVert = shapeLine.getAttribute('data-line-dir') === 'vertical';
+                    const th = parseFloat(shapeLine.getAttribute('data-line-width')) || 1.6;
+                    if (isVert) {
+                        nw = Math.max(th, 2);
+                    } else {
+                        nh = Math.max(th, 2);
+                    }
+                }
                 
                 const scaleX = nw / startW;
                 const scaleY = nh / startH;
@@ -189,7 +201,8 @@ window.v4DragResizeScript = `
                 const pcInner = document.querySelector('.pc-content-inner');
                 const mobileInner = document.querySelector('.mobile-content-inner');
 
-                if (isResp && pcFrame && mobileFrame && pcInner && mobileInner) {
+                const isInsideGroup = !!(window.activeEl.parentElement && window.activeEl.parentElement.closest('.lf-group'));
+                if (isResp && pcFrame && mobileFrame && pcInner && mobileInner && !isInsideGroup) {
                     const compRect = window.activeEl.getBoundingClientRect();
                     const compCenterX = compRect.left + compRect.width / 2;
                     const mobileRect = mobileFrame.getBoundingClientRect();

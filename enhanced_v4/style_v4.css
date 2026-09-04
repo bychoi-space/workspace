@@ -263,40 +263,23 @@ th.v4-editable-cell:focus, td.v4-editable-cell:focus {
     background: rgba(99, 102, 241, 0.05) !important;
 }
 
-/* Drag Handle & Selection UI */
-.lf-drag-handle {
-    position: absolute;
-    top: -12px;
-    left: -12px;
-    width: 24px;
-    height: 24px;
-    background: #6366f1;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: move;
-    z-index: 10;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
-    opacity: 0;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid #fff;
+/* Drag Handle & Selection UI (Phase 1: Hidden) */
+.lf-drag-handle,
+.lf-resizer {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 .lf-component:hover .lf-drag-handle,
-.text-marker:hover .lf-drag-handle {
-    opacity: 1;
-    top: -16px;
-    left: -16px;
-}
-.lf-drag-handle svg {
-    width: 14px;
-    height: 14px;
-    pointer-events: none;
-}
-.lf-drag-handle:hover {
-    background: #4f46e5;
-    transform: scale(1.1);
+.text-marker:hover .lf-drag-handle,
+.lf-component.selected .lf-drag-handle,
+.lf-component:hover .lf-resizer,
+.lf-component.selected .lf-resizer {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 .lf-delete-trigger {

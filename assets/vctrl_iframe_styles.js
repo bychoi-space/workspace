@@ -43,44 +43,18 @@ body, .lf-component {
 }
 .lf-component.selected { outline: 2px solid #6366f1; }
 .lf-component.lf-group.selected { outline: 2px solid #10b981 !important; }
-.lf-component.lf-group.selected > .lf-drag-handle { background: #10b981 !important; }
-.lf-component.lf-group.selected > .lf-resizer { background: #10b981 !important; }
-.lf-component .lf-component .lf-drag-handle, 
-.lf-component .lf-component .lf-resizer, 
+/* --- Legacy Handle Safety Nullification --- */
+.lf-drag-handle,
+.lf-resizer { 
+    display: none !important; 
+    opacity: 0 !important; 
+    visibility: hidden !important; 
+    pointer-events: none !important; 
+}
 .lf-component .lf-component .lf-delete-trigger,
-.lf-in-group .lf-drag-handle,
-.lf-in-group .lf-resizer,
 .lf-in-group .lf-delete-trigger,
-.v4-text-shape > .lf-resizer,
-.v4-text-box > .lf-resizer,
-.text-marker > .lf-resizer,
-.pin-marker > .lf-drag-handle,
-.pin-marker > .lf-resizer,
 .pin-marker > .lf-delete-trigger,
-.pin-marker > .lf-connector-port,
-.lf-component:has(.v4-stepper-container) > .lf-resizer,
-.lf-component:has(.v4-datepicker-container) > .lf-resizer,
-.lf-component:has(.v4-toggle-container) > .lf-resizer,
-.lf-component:has(.v4-checkbox-container) > .lf-resizer,
-.lf-component:has(.v4-radio-container) > .lf-resizer,
-.lf-component:has(.v4-fileupload-container) > .lf-resizer,
-.lf-component:has(.v4-alert-container) > .lf-resizer,
-.lf-component:has(.v4-btn-container) > .lf-resizer,
-.lf-component:has(.v4-custom-btn) > .lf-resizer,
-.v4-stepper-container ~ .lf-resizer,
-.v4-datepicker-container ~ .lf-resizer,
-.v4-toggle-container ~ .lf-resizer,
-.v4-checkbox-container ~ .lf-resizer,
-.v4-radio-container ~ .lf-resizer,
-.v4-fileupload-container ~ .lf-resizer,
-.v4-alert-container ~ .lf-resizer,
-.v4-btn-container ~ .lf-resizer,
-.v4-custom-btn ~ .lf-resizer { display: none !important; }
-.lf-drag-handle { position: absolute; top: -16px; left: -16px; width: 18px; height: 18px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; opacity: 0; transition: opacity 0.15s ease; border: 1.6px solid #fff; z-index: 10002; }
-.lf-drag-handle svg { width: 10px !important; height: 10px !important; }
-.lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; }
-.lf-resizer { position: absolute; bottom: -5px; right: -5px; width: 12px; height: 12px; background: #6366f1; cursor: nwse-resize; border-radius: 50%; border: 2px solid #fff; opacity: 0; transition: opacity 0.15s ease; z-index: 10002; }
-.lf-component:hover .lf-resizer, .lf-component.selected .lf-resizer { opacity: 1; }
+.pin-marker > .lf-connector-port { display: none !important; }
 .lf-delete-trigger { position: absolute; top: -12px; right: -12px; width: 24px; height: 24px; background: #ef4444; color: #fff; border-radius: 50%; display: none !important; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; z-index: 10002; font-size: 14px; font-weight: bold; }
 .lf-component:hover .lf-delete-trigger, .lf-component.selected .lf-delete-trigger { display: none !important; }
 .v4-premium-table { table-layout: fixed; border-collapse: collapse; border: 1.6px solid #cbd5e1 !important; font-family: inherit; }

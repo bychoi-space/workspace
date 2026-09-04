@@ -172,6 +172,7 @@ window.DOM = {
 
 // --- 2. Sidebar & Tab Management (Unified & Clean) ---
 window.toggleSidebar = function(side, forceOpen = null) {
+    if (typeof window.hideScreenFlyout === 'function') window.hideScreenFlyout(0);
     console.log(`[Inspector] toggleSidebar(${side}, forceOpen: ${forceOpen})`);
     const sidebar = side === 'left' ? DOM.sidebarLeft : DOM.sidebarRight;
     if (!sidebar || !sidebar.classList) return;
@@ -372,6 +373,7 @@ const ProjectMetadataManager = {
             else if (compStyles.isPin && compStyles.pinIndex !== -1) type = 'pin';
             else if (compStyles.isGrid) type = 'grid';
             else if (compStyles.isTable) type = 'table';
+            else if (compStyles.shapeType === 'line' || compStyles.id === 'v4-shape-line') type = 'line';
             else if (compStyles.isShape || compStyles.isPin) type = 'shape';
             else if (compStyles.isConnector) type = 'line';
             else if (compStyles.isTextbox) type = 'textbox';
@@ -444,6 +446,9 @@ const ProjectMetadataManager = {
                 if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'block';
             } else if (state.editingType === 'line') {
                 if (DOM.linePropSection) DOM.linePropSection.style.display = 'block';
+                if (typeof window._syncLineEditorProps === 'function') {
+                    window._syncLineEditorProps(compStyles);
+                }
             } else if (state.editingType === 'icon') {
                 if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'block';
                 if (compStyles.isCheckbox || compStyles.isRadio) {
@@ -1416,7 +1421,141 @@ function _syncDatePickerProps(comp) {
     _syncAtomDisabledProps(comp);
 }
 
+function getCategoryData(type) {
+    const categories = {
+        'cover': { label: 'COVER', code: 'CO', class: 'badge-cover' },
+        'architecture': { label: 'ARCH', code: 'AR', class: 'badge-architecture' },
+        'plan': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
+        'plan-delivery': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
+        'case-study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
+        'case_study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
+        'ui': { label: 'UI', code: 'UI', class: 'badge-ui' },
+        'responsive-ui': { label: 'PC+MO', code: 'PC', class: 'badge-responsive-ui' },
+        'mobile-ui': { label: 'MOBILE', code: 'MO', class: 'badge-mobile-ui' },
+        'admin-nbos': { label: 'NBOS', code: 'NB', class: 'badge-admin-nbos' },
+        'admin-onesphere': { label: '1SPH', code: '1S', class: 'badge-admin-onesphere' }
+    };
+    return categories[type] || { label: 'ETC', code: (type || 'ET').slice(0, 2).toUpperCase(), class: 'badge-default' };
+}
+
+let flyoutHideTimer = null;
+let currentFlyoutScreen = null;
+
+window.showScreenFlyout = function(item, screenData) {
+    if (flyoutHideTimer) {
+        clearTimeout(flyoutHideTimer);
+        flyoutHideTimer = null;
+    }
+    const sidebarLeft = DOM.sidebarLeft || document.getElementById('sidebar-left');
+    if (!sidebarLeft || !sidebarLeft.classList.contains('collapsed')) {
+        window.hideScreenFlyout(0);
+        return;
+    }
+
+    const flyout = document.getElementById('screen-hover-flyout');
+    if (!flyout) return;
+
+    currentFlyoutScreen = screenData;
+    const rect = item.getBoundingClientRect();
+
+    const indexEl = document.getElementById('flyout-index');
+    const badgeEl = document.getElementById('flyout-badge');
+    const resEl = document.getElementById('flyout-res');
+    const titleEl = document.getElementById('flyout-title');
+    const filenameEl = document.getElementById('flyout-filename');
+    const btnEdit = document.getElementById('flyout-btn-edit');
+    const btnDelete = document.getElementById('flyout-btn-delete');
+    const nub = flyout.querySelector('.flyout-nub');
+
+    const itemIndex = screenData.index + 1;
+    const cat = getCategoryData(screenData.type);
+    if (indexEl) indexEl.innerText = `${itemIndex}. ${cat.code}`;
+
+    if (badgeEl) {
+        badgeEl.className = `flyout-badge ${cat.class}`;
+        badgeEl.innerText = cat.label;
+    }
+
+    if (resEl) {
+        resEl.innerText = screenData.resolution || '1600x900';
+    }
+
+    if (titleEl) titleEl.innerText = screenData.title || screenData.name;
+    if (filenameEl) filenameEl.innerText = screenData.name;
+
+    if (btnEdit) {
+        btnEdit.onclick = (e) => {
+            e.stopPropagation();
+            window.hideScreenFlyout(0);
+            if (typeof window.handleEditScreen === 'function') window.handleEditScreen(screenData.name);
+        };
+    }
+    if (btnDelete) {
+        btnDelete.onclick = (e) => {
+            e.stopPropagation();
+            window.hideScreenFlyout(0);
+            if (typeof window.handleDeleteScreen === 'function') window.handleDeleteScreen(screenData.name, screenData.sha);
+        };
+    }
+
+    flyout.onclick = async (e) => {
+        if (e.target.closest('.flyout-btn')) return;
+        window.hideScreenFlyout(0);
+        if (typeof window.checkUnsavedChanges === 'function' && !(await window.checkUnsavedChanges())) return;
+        const url = `viewer.html?project=${state.currentProject}&file=${screenData.name}`;
+        history.pushState(null, '', url);
+        if (typeof window.loadScreen === 'function') window.loadScreen(screenData.name);
+        window.updateActiveScreenInUI(screenData.name);
+    };
+
+    flyout.onmouseenter = () => {
+        if (flyoutHideTimer) {
+            clearTimeout(flyoutHideTimer);
+            flyoutHideTimer = null;
+        }
+    };
+    flyout.onmouseleave = () => {
+        window.hideScreenFlyout(120);
+    };
+
+    flyout.style.display = 'block';
+    const flyoutH = flyout.offsetHeight || 135;
+    const itemCenterY = rect.top + rect.height / 2;
+    let flyoutTop = itemCenterY - flyoutH / 2;
+    const maxTop = window.innerHeight - flyoutH - 12;
+    if (flyoutTop > maxTop) flyoutTop = maxTop;
+    if (flyoutTop < 12) flyoutTop = 12;
+
+    flyout.style.left = '58px';
+    flyout.style.top = `${Math.round(flyoutTop)}px`;
+
+    if (nub) {
+        const nubTop = Math.max(14, Math.min(itemCenterY - flyoutTop, flyoutH - 14));
+        nub.style.top = `${Math.round(nubTop)}px`;
+    }
+};
+
+window.hideScreenFlyout = function(delay = 0) {
+    if (flyoutHideTimer) {
+        clearTimeout(flyoutHideTimer);
+        flyoutHideTimer = null;
+    }
+    if (delay <= 0) {
+        const flyout = document.getElementById('screen-hover-flyout');
+        if (flyout) flyout.style.display = 'none';
+        currentFlyoutScreen = null;
+        return;
+    }
+    flyoutHideTimer = setTimeout(() => {
+        const flyout = document.getElementById('screen-hover-flyout');
+        if (flyout) flyout.style.display = 'none';
+        currentFlyoutScreen = null;
+        flyoutHideTimer = null;
+    }, delay);
+};
+
 window.renderScreenList = function(screens, activeName) {
+    if (typeof window.hideScreenFlyout === 'function') window.hideScreenFlyout(0);
     DOM.screensList.innerHTML = '';
     let activeItem = null;
     
@@ -1425,14 +1564,25 @@ window.renderScreenList = function(screens, activeName) {
         item.className = 'screen-item';
         item.draggable = !state.isReadOnly;
         item.dataset.index = index;
+        item.dataset.screenName = s.name;
+        item.dataset.screenIndex = index + 1;
+        if (index + 1 >= 10) item.dataset.doubleDigit = 'true';
         
         const scMeta = (state.projectMetadata.screens || {})[s.name] || {};
+        const cat = getCategoryData(scMeta.type);
         const badgeHtml = getCategoryBadge(scMeta.type);
         const displayTitle = scMeta.title || s.name;
-        item.title = `${displayTitle} (${s.name})`;
+        const itemIndex = index + 1;
+        item.title = `${itemIndex}. [${cat.code}] ${displayTitle} (${s.name})`;
 
         item.innerHTML = `
             <div style="display:flex; align-items:center; flex:1; overflow:hidden;">
+                <!-- Collapsed Mode Single Crisp Chip: e.g. [1. CO], [2. UI] -->
+                <span class="screen-collapsed-chip ${cat.class}">
+                    <span class="chip-num">${itemIndex}.</span>
+                    <span class="chip-code">${cat.code}</span>
+                </span>
+                <!-- Expanded Mode: Normal Full Badge + Title -->
                 ${badgeHtml}
                 <span class="screen-name" title="${displayTitle} (${s.name})">${displayTitle}</span>
             </div>
@@ -1460,11 +1610,32 @@ window.renderScreenList = function(screens, activeName) {
             const url = `viewer.html?project=${state.currentProject}&file=${s.name}`;
             history.pushState(null, '', url);
             if (typeof window.loadScreen === 'function') window.loadScreen(s.name);
-            updateActiveScreenInUI(s.name);
+            window.updateActiveScreenInUI(s.name);
         };
 
-        item.ondragstart = (e) => { e.dataTransfer.setData('text/plain', index); item.classList.add('dragging'); };
-        item.ondragend = () => { item.classList.remove('dragging'); document.querySelectorAll('.screen-item').forEach(i => i.classList.remove('drag-over')); };
+        item.onmouseenter = () => {
+            window.showScreenFlyout(item, {
+                index: index,
+                name: s.name,
+                sha: s.sha,
+                title: displayTitle,
+                type: scMeta.type,
+                resolution: scMeta.width ? `${scMeta.width}x${scMeta.height || 900}` : '1600x900'
+            });
+        };
+        item.onmouseleave = () => {
+            window.hideScreenFlyout(120);
+        };
+
+        item.ondragstart = (e) => {
+            window.hideScreenFlyout(0);
+            e.dataTransfer.setData('text/plain', index);
+            item.classList.add('dragging');
+        };
+        item.ondragend = () => {
+            item.classList.remove('dragging');
+            document.querySelectorAll('.screen-item').forEach(i => i.classList.remove('drag-over'));
+        };
         item.ondragover = (e) => { e.preventDefault(); item.classList.add('drag-over'); };
         item.ondragleave = () => item.classList.remove('drag-over');
         item.ondrop = async (e) => {
@@ -1483,6 +1654,12 @@ window.renderScreenList = function(screens, activeName) {
         DOM.screensList.appendChild(item);
     });
 
+    if (DOM.screensList) {
+        DOM.screensList.onscroll = () => {
+            if (typeof window.hideScreenFlyout === 'function') window.hideScreenFlyout(0);
+        };
+    }
+
     if (activeItem) {
         setTimeout(() => activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 800);
     }
@@ -1490,28 +1667,17 @@ window.renderScreenList = function(screens, activeName) {
 
 window.updateActiveScreenInUI = function(activeName) {
     document.querySelectorAll('.screen-item').forEach(item => {
-        const name = item.querySelector('.screen-name').title;
-        item.classList.toggle('active', name === activeName);
-        if (name === activeName) item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const screenName = item.dataset.screenName;
+        const nameTitle = item.querySelector('.screen-name')?.title || '';
+        const isActive = (screenName && screenName === activeName) || nameTitle.includes(activeName);
+        item.classList.toggle('active', isActive);
+        if (isActive) item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 };
 
 function getCategoryBadge(type) {
     if (!type || type === 'default') return '<span class="screen-badge badge-default">ETC</span>';
-    const categories = {
-        'cover': { label: 'COVER', class: 'badge-cover' },
-        'architecture': { label: 'ARCH', class: 'badge-architecture' },
-        'plan': { label: 'PLAN', class: 'badge-plan' },
-        'plan-delivery': { label: 'PLAN', class: 'badge-plan' },
-        'case-study': { label: 'CASE', class: 'badge-case-study' },
-        'case_study': { label: 'CASE', class: 'badge-case-study' },
-        'ui': { label: 'UI', class: 'badge-ui' },
-        'responsive-ui': { label: 'PC+MO', class: 'badge-responsive-ui' },
-        'mobile-ui': { label: 'MOBILE', class: 'badge-mobile-ui' },
-        'admin-nbos': { label: 'NBOS', class: 'badge-admin-nbos' },
-        'admin-onesphere': { label: '1SPH', class: 'badge-admin-onesphere' }
-    };
-    const cat = categories[type] || { label: 'ETC', class: 'badge-default' };
+    const cat = getCategoryData(type);
     return `<span class="screen-badge ${cat.class}">${cat.label}</span>`;
 }
 
@@ -2215,16 +2381,23 @@ if (DOM.btnCancelEdit) {
 // Floating Inspector Card Minimize/Maximize Toggle
 const btnFloatingMinimize = document.getElementById('btn-floating-minimize');
 const floatingInspectorCard = document.getElementById('floating-inspector-card');
-if (btnFloatingMinimize && floatingInspectorCard) {
-    btnFloatingMinimize.onclick = (e) => {
+if (floatingInspectorCard) {
+    // Isolate wheel scrolling on object properties panel to prevent canvas dragging/panning
+    floatingInspectorCard.addEventListener('wheel', (e) => {
         e.stopPropagation();
-        const isMin = floatingInspectorCard.classList.toggle('minimized');
-        const icon = btnFloatingMinimize.querySelector('.material-icons-outlined');
-        if (icon) {
-            icon.innerText = isMin ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
-        }
-        btnFloatingMinimize.title = isMin ? '펼치기' : '최소화';
-    };
+    }, { passive: true });
+
+    if (btnFloatingMinimize) {
+        btnFloatingMinimize.onclick = (e) => {
+            e.stopPropagation();
+            const isMin = floatingInspectorCard.classList.toggle('minimized');
+            const icon = btnFloatingMinimize.querySelector('.material-icons-outlined');
+            if (icon) {
+                icon.innerText = isMin ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
+            }
+            btnFloatingMinimize.title = isMin ? '펼치기' : '최소화';
+        };
+    }
 }
 
 // Revision History Rendering & Event Binding
@@ -2385,6 +2558,170 @@ window._syncArrowDirBtns = (currentDir) => {
     });
 };
 
+// Global function to sync Line (Straight) Editor UI
+window._syncLineEditorProps = (compStyles) => {
+    if (!compStyles) return;
+    const dir = compStyles.lineDir || 'horizontal';
+    const style = compStyles.lineStyle || 'solid';
+    const thickness = parseFloat(compStyles.lineThickness) || 1.6;
+    const color = compStyles.lineColor || '#c8c8c8';
+
+    document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
+        const btnDir = b.dataset.dir;
+        if (btnDir === dir) {
+            b.style.background = 'rgba(0, 229, 255, 0.15)';
+            b.style.borderColor = 'rgba(0, 229, 255, 0.4)';
+            b.style.color = '#00e5ff';
+        } else {
+            b.style.background = 'rgba(255, 255, 255, 0.05)';
+            b.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            b.style.color = '#94a3b8';
+        }
+    });
+
+    ['solid', 'dashed', 'dotted'].forEach(s => {
+        const btn = document.getElementById('btn-line-style-' + s);
+        if (btn) {
+            if (s === style) {
+                btn.style.background = 'rgba(0, 229, 255, 0.15)';
+                btn.style.borderColor = 'rgba(0, 229, 255, 0.4)';
+                btn.style.color = '#00e5ff';
+            } else {
+                btn.style.background = 'rgba(255, 255, 255, 0.05)';
+                btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                btn.style.color = '#94a3b8';
+            }
+        }
+    });
+
+    const thickInput = document.getElementById('line-stroke-width');
+    const thickTxt = document.getElementById('txt-line-stroke-width');
+    if (thickInput) thickInput.value = thickness;
+    if (thickTxt) thickTxt.innerText = thickness;
+
+    const colorInput = document.getElementById('line-stroke-color');
+    let hexColor = '#c8c8c8';
+    if (color) {
+        hexColor = (typeof window.rgbToHex === 'function' ? window.rgbToHex(color) : color) || color;
+        if (!hexColor.startsWith('#')) hexColor = '#c8c8c8';
+    }
+    if (colorInput) {
+        colorInput.value = hexColor;
+        const wrapper = colorInput.closest('.v4-color-wrapper');
+        if (wrapper) wrapper.classList.remove('transparent-active');
+    }
+
+    // Dynamic Single Length Control Sync
+    const curW = parseFloat(compStyles.width) || parseFloat(compStyles.w) || (compStyles.style && parseFloat(compStyles.style.width)) || 200;
+    const curH = parseFloat(compStyles.height) || parseFloat(compStyles.h) || (compStyles.style && parseFloat(compStyles.style.height)) || 100;
+    const lengthInput = document.getElementById('prop-line-length');
+    const lengthLabel = document.getElementById('lbl-line-length');
+    if (lengthInput) lengthInput.setAttribute('data-dir', dir);
+    if (dir === 'vertical') {
+        if (lengthLabel) lengthLabel.innerText = 'LENGTH / 세로 길이 (px)';
+        if (lengthInput) lengthInput.value = Math.round(curH > 10 ? curH : (curW > 10 ? curW : 100));
+    } else {
+        if (lengthLabel) lengthLabel.innerText = 'LENGTH / 가로 길이 (px)';
+        if (lengthInput) lengthInput.value = Math.round(curW > 10 ? curW : (curH > 10 ? curH : 200));
+    }
+};
+
+// Line Editor Click & Input Handlers
+document.addEventListener('click', (e) => {
+    const dirBtn = e.target.closest('.v4-line-dir-btn');
+    if (dirBtn) {
+        const dir = dirBtn.dataset.dir;
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { lineDir: dir }
+            });
+            document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
+                const isActive = b.dataset.dir === dir;
+                b.style.background = isActive ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)';
+                b.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
+                b.style.color = isActive ? '#00e5ff' : '#94a3b8';
+            });
+            const lengthLabel = document.getElementById('lbl-line-length');
+            const lengthInput = document.getElementById('prop-line-length');
+            if (lengthLabel) {
+                lengthLabel.innerText = dir === 'vertical' ? 'LENGTH / 세로 길이 (px)' : 'LENGTH / 가로 길이 (px)';
+            }
+            if (lengthInput) {
+                lengthInput.setAttribute('data-dir', dir);
+            }
+        }
+        return;
+    }
+
+    const styleBtn = e.target.closest('.v4-line-style-btn');
+    if (styleBtn) {
+        const st = styleBtn.dataset.style;
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { lineStyle: st }
+            });
+            ['solid', 'dashed', 'dotted'].forEach(s => {
+                const b = document.getElementById('btn-line-style-' + s);
+                if (b) {
+                    const isActive = s === st;
+                    b.style.background = isActive ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)';
+                    b.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
+                    b.style.color = isActive ? '#00e5ff' : '#94a3b8';
+                }
+            });
+        }
+        return;
+    }
+});
+
+const handleLineEditorInputEvent = (e) => {
+    if (e.target.id === 'line-stroke-width') {
+        const val = parseFloat(e.target.value) || 1.6;
+        const txt = document.getElementById('txt-line-stroke-width');
+        if (txt) txt.innerText = val;
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { lineThickness: val }
+            });
+        }
+    } else if (e.target.id === 'line-stroke-color') {
+        const val = e.target.value;
+        const wrapper = e.target.closest('.v4-color-wrapper');
+        if (wrapper) wrapper.classList.remove('transparent-active');
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { lineColor: val }
+            });
+        }
+    } else if (e.target.id === 'prop-line-length') {
+        const val = parseFloat(e.target.value) || 10;
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            const currentDir = e.target.getAttribute('data-dir') || 'horizontal';
+            const prop = currentDir === 'vertical' ? 'height' : 'width';
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { [prop]: val + 'px' }
+            });
+        }
+    }
+};
+
+document.addEventListener('input', handleLineEditorInputEvent);
+document.addEventListener('change', handleLineEditorInputEvent);
 
 window.showLoading = (text) => { const overlay = get('loading-overlay'); if (overlay) { const txt = overlay.querySelector('.loading-text'); if (txt) txt.innerText = text; overlay.classList.remove('fade-out'); } };
 window.hideLoading = () => { const overlay = get('loading-overlay'); if (overlay) overlay.classList.add('fade-out'); setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 600); };

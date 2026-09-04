@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ui_library_fallback.js
  * Fallback data for offline file:// protocol execution.
  * Auto-generated.
@@ -78,7 +78,8 @@ window.VCTRL_UI_FALLBACK_ATOMIC = `
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">picture_in_picture</span>
             <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Popup</span>
         </div>
-    `;
+    
+`;
 
 window.VCTRL_UI_FALLBACK_ICON = `
 
@@ -100,6 +101,12 @@ window.VCTRL_UI_FALLBACK_ICON = `
                 <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 20px; height: 20px; color: #ffffff; flex-shrink: 0; box-sizing: border-box; background-image: none !important;"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
             </div>
             <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Category</span>
+        </div>
+        <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'List')" data-ko="목록 리스트 뷰 삼선 list" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
+            <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 20px; height: 20px; color: #ffffff; flex-shrink: 0; box-sizing: border-box; background-image: none !important;"><line x1="3" y1="6" x2="6" y2="6"></line><line x1="10" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="6" y2="18"></line><line x1="10" y1="18" x2="21" y2="18"></line></svg>
+            </div>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">List</span>
         </div>
         <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Brand')" data-ko="브랜드 브랜드관 알파벳 태그 brand" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
             <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
@@ -289,6 +296,24 @@ window.VCTRL_UI_FALLBACK_ICON = `
             </div>
             <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">SISUN Logo</span>
         </div>
+        <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'MICHAA Logo')" data-ko="미샤 미샤로고 michaa m logo brand" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
+            <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
+                <div class="lf-icon v4-logo-img" style="width: 20px; height: 20px; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVpdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVpdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important;"></div>
+            </div>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">MICHAA</span>
+        </div>
+        <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'EBM Logo')" data-ko="이비엠 ebm e.b.m ebm로고 brand logo" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
+            <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
+                <div class="lf-icon v4-logo-img" style="width: 20px; height: 20px; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important;"></div>
+            </div>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">E.B.M</span>
+        </div>
+        <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'it MICHAA Logo')" data-ko="잇미샤 잇미샤로고 it itmichaa it michaa brand logo" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
+            <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
+                <div class="lf-icon v4-logo-img" style="width: 20px; height: 20px; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important;"></div>
+            </div>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">it MICHAA</span>
+        </div>
         <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Login')" data-ko="로그인 login 접속" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
             <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 20px; height: 20px; color: #ffffff; flex-shrink: 0; box-sizing: border-box; background-image: none !important;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="10 17 5 12 10 7"></polyline><line x1="21" y1="12" x2="5" y2="12"></line></svg>
@@ -307,7 +332,8 @@ window.VCTRL_UI_FALLBACK_ICON = `
             </div>
             <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Sign Up</span>
         </div>
-    `;
+    
+`;
 
 window.VCTRL_UI_FALLBACK_INSPECTOR = `
 
@@ -562,60 +588,64 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
         </div>
 
         <!-- line-editor-section -->
-        <div id="line-editor-section" style="display: none; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+        <div id="line-editor-section" style="display: none; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-                <span style="font-size: 10px; font-weight: 900; color: #3b82f6;">LINE EDITOR</span>
+                <span style="font-size: 10px; font-weight: 900; color: #00e5ff; letter-spacing: 0.8px;">LINE (STRAIGHT) EDITOR</span>
             </div>
-            
+
+            <!-- 1. Direction / Orientation -->
+            <div class="prop-group" style="margin-bottom: 12px;">
+                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">ORIENTATION (방향)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <button id="btn-line-dir-h" class="v4-line-dir-btn" data-dir="horizontal" title="가로선 (Horizontal)" style="height: 30px; background: rgba(0, 229, 255, 0.15); border: 1.6px solid rgba(0, 229, 255, 0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 16px;">horizontal_rule</span>
+                        가로 (H)
+                    </button>
+                    <button id="btn-line-dir-v" class="v4-line-dir-btn" data-dir="vertical" title="세로선 (Vertical)" style="height: 30px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 16px; transform: rotate(90deg);">horizontal_rule</span>
+                        세로 (V)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Line Style (Solid, Dashed, Dotted) -->
+            <div class="prop-group" style="margin-bottom: 12px;">
+                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">LINE STYLE (스타일)</label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+                    <button id="btn-line-style-solid" class="v4-line-style-btn" data-style="solid" title="실선" style="height: 28px; background: rgba(0, 229, 255, 0.15); border: 1.6px solid rgba(0, 229, 255, 0.4); border-radius: 6px; color: #00e5ff; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        Solid
+                    </button>
+                    <button id="btn-line-style-dashed" class="v4-line-style-btn" data-style="dashed" title="대시 점선" style="height: 28px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        Dashed
+                    </button>
+                    <button id="btn-line-style-dotted" class="v4-line-style-btn" data-style="dotted" title="도트 점선" style="height: 28px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        Dotted
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Color & Thickness -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
                 <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Line Color</label>
-                    <div style="width: 100%; height: 26px; background: rgba(0,0,0,0.3); border: 1.6px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 2px; box-sizing: border-box;">
-                        <input type="color" id="line-stroke-color" value="#475569" style="width: 100%; height: 100%; border: none; background: none; padding: 0; cursor: pointer;">
+                    <label class="v4-color-label" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">LINE COLOR</label>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <div class="v4-color-wrapper" id="line-color-wrapper" style="width: 100%; height: 26px; border-radius: 4px; overflow: hidden; border: 1.6px solid rgba(255,255,255,0.15);">
+                            <input type="color" id="line-stroke-color" class="v4-color-input" value="#c8c8c8">
+                        </div>
                     </div>
                 </div>
                 <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Thickness (<span id="txt-line-stroke-width">1.6</span>)</label>
-                    <input type="range" id="line-stroke-width" min="0.5" max="10" step="0.1" value="1.6" style="width:100%; accent-color: #00e5ff; margin-top: 4px;">
+                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">THICKNESS (<span id="txt-line-stroke-width">1.6</span>px)</label>
+                    <input type="number" id="line-stroke-width" min="0.5" max="20" step="0.5" value="1.6" class="v4-prop-input" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none;">
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Start Arrow</label>
-                    <select id="line-marker-start" class="v4-inspector-select" style="width:100%;">
-                        <option value="">None</option>
-                        <option value="marker-arrow-start">Arrow</option>
-                    </select>
-                </div>
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">End Arrow</label>
-                    <select id="line-marker-end" class="v4-inspector-select" style="width:100%;">
-                        <option value="">None</option>
-                        <option value="marker-arrow-end">Arrow</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Row 3: Line Style -->
-            <div class="prop-group">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Line Style</label>
-                <select id="line-dash-array" class="v4-prop-input" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px;">
-                    <option value="">Solid</option>
-                    <option value="5,5">Dashed</option>
-                    <option value="2,2">Dotted</option>
-                </select>
-            </div>
-            
-            <!-- Row 4: Dimensions (Width & Height) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기 (Width px)</label>
-                    <input type="number" id="prop-line-width" value="0" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none;">
-                </div>
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기 (Height px)</label>
-                    <input type="number" id="prop-line-height" value="0" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none;">
+            <!-- 4. Dimension (Single Dynamic Length) -->
+            <div class="prop-group" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <label id="lbl-line-length" style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">LENGTH / 가로 길이 (px)</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" id="prop-line-length" value="200" min="1" step="10" class="v4-prop-input" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; box-sizing: border-box; outline: none;">
+                    <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">px</span>
                 </div>
             </div>
         </div>
@@ -1527,7 +1557,8 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
         </div>
-    `;
+    
+`;
 
 window.VCTRL_UI_FALLBACK_MODALS = `
 
@@ -1693,5 +1724,6 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                 </div>
             </div>
         </div>
-    `;
+    
+`;
 

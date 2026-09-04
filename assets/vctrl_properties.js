@@ -132,7 +132,7 @@
     function syncAllColors(s) {
         const colorInputs = document.querySelectorAll('.v4-color-input');
         colorInputs.forEach(input => {
-            if (input.id === 'prop-admin-group-header-bg' || input.id === 'prop-admin-group-header-color') {
+            if (input.id === 'prop-admin-group-header-bg' || input.id === 'prop-admin-group-header-color' || input.id === 'line-stroke-color') {
                 return;
             }
             const prop = input.dataset.prop;
@@ -165,7 +165,7 @@
 
     // 2. Event Delegation for Input Fields
     document.addEventListener('input', (e) => {
-        if (e.target.classList.contains('v4-prop-input')) {
+        if (e.target.classList.contains('v4-prop-input') && e.target.dataset.prop) {
             applyDimension(e.target.dataset.prop, e.target.value);
         }
     });
@@ -180,7 +180,7 @@
     }, { passive: true });
 
     document.addEventListener('keydown', (e) => {
-        if (e.target.classList.contains('v4-prop-input')) {
+        if (e.target.classList.contains('v4-prop-input') && e.target.dataset.prop) {
             if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
                 e.preventDefault();
                 const step = e.shiftKey ? 10 : 1;

@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Syntax Check</title>
+    <!-- Mock required global libraries -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        window.errors = [];
+        window.onerror = function(msg, url, line, col, error) {
+            window.errors.push({ msg: msg, url: url, line: line, col: col });
+            console.error('[SYNTAX_ERROR]', msg, url, line, col);
+            return false;
+        };
+        // Mock DOM elements that might be accessed on load
+        window.DOM = {};
+    </script>
+    <script src='../assets/vctrl_typography.js'></script>
+<script src='../assets/ui_library_fallback.js'></script>
+<script src='../assets/vctrl_ui_library.js'></script>
+<script src='../assets/templates.js'></script>
+<script src='../assets/app.js'></script>
+<script src='../assets/vctrl_undo.js'></script>
+<script src='../assets/vctrl_text_measurer.js'></script>
+<script src='../assets/vctrl_ui_atoms.js'></script>
+<script src='../assets/vctrl_design_system.js'></script>
+<script src='../assets/vctrl_shortcuts.js'></script>
+<script src='../assets/vctrl_common.js'></script>
+<script src='../assets/vctrl_object_text.js'></script>
+<script src='../assets/vctrl_object_shape.js'></script>
+<script src='../assets/vctrl_object_table.js'></script>
+<script src='../assets/vctrl_object_connector.js'></script>
+<script src='../assets/responsive_frame.js'></script>
+<script src='../assets/vctrl_iframe_styles.js'></script>
+<script src='../assets/vctrl_iframe_script.js'></script>
+<script src='../assets/vctrl_iframe_grid.js'></script>
+<script src='../assets/vctrl_iframe_accordion.js'></script>
+<script src='../assets/vctrl_iframe_drag.js'></script>
+<script src='../assets/vctrl_iframe_ports.js'></script>
+<script src='../assets/vctrl_presentation_pen.js'></script>
+<script src='../assets/vctrl_core.js'></script>
+<script src='../assets/vctrl_smartguide.js'></script>
+<script src='../assets/vctrl_responsive_smartguide.js'></script>
+<script src='../assets/vctrl_responsive_multiselect.js'></script>
+<script src='../assets/vctrl_grouping.js'></script>
+<script src='../assets/vctrl_inspector.js'></script>
+<script src='../assets/vctrl_v3.js'></script>
+<script src='../assets/vctrl_properties.js'></script>
+<script src='../assets/vctrl_connectors.js'></script>
+<script src='../enhanced_v4/component_library_v4.js'></script>
+<script src='../assets/vctrl_table.js'></script>
+<script src='../assets/vctrl_component_inserter.js'></script>
+<script src='../assets/vctrl_floating_inspector.js'></script>
+<script src='../assets/vctrl_v4_addon.js'></script>
+<script src='../assets/dashboard.js'></script>
+<script src='../assets/vctrl_pdf_exporter.js'></script>
+</head>
+<body>
+    <div id="result">Testing...</div>
+    <script>
+        // Check dynamically inlined template scripts for syntax errors
+        const inlinedScripts = [
+            { name: 'v4TypographyScript', code: window.v4TypographyScript },
+            { name: 'v4UndoScript', code: window.v4UndoScript },
+            { name: 'v4TableScript', code: window.v4TableScript },
+            { name: 'v4TextMeasurerScript', code: window.v4TextMeasurerScript },
+            { name: 'v4UIAtomsScript', code: window.v4UIAtomsScript },
+            { name: 'v4DesignSystemScript', code: window.v4DesignSystemScript },
+            { name: 'v4ShortcutsScript', code: window.v4ShortcutsScript },
+            { name: 'v4CommonScript', code: window.v4CommonScript },
+            { name: 'v4ObjectTextScript', code: window.v4ObjectTextScript },
+            { name: 'v4ObjectShapeScript', code: window.v4ObjectShapeScript },
+            { name: 'v4ObjectTableScript', code: window.v4ObjectTableScript },
+            { name: 'v4ObjectConnectorScript', code: window.v4ObjectConnectorScript },
+            { name: 'v4DragResizeScript', code: window.v4DragResizeScript },
+            { name: 'v4PortConnectorScript', code: window.v4PortConnectorScript },
+            { name: 'v4GridScript', code: window.v4GridScript },
+            { name: 'v4AccordionScript', code: window.v4AccordionScript },
+            { name: 'v4ResponsiveSmartGuideScript', code: window.v4ResponsiveSmartGuideScript },
+            { name: 'v4Script', code: window.v4Script },
+            { name: 'v4ResponsiveMultiselectScript', code: window.v4ResponsiveMultiselectScript }
+        ];
+
+        inlinedScripts.forEach(item => {
+            if (item.code) {
+                try {
+                    new Function(item.code);
+                    console.log('[INLINED_OK] ' + item.name);
+                } catch(e) {
+                    console.error('[INLINED_SYNTAX_ERROR] ' + item.name + ':', e.message);
+                    window.errors.push({ msg: 'Inlined Syntax Error in ' + item.name + ': ' + e.message });
+                }
+            } else {
+                console.warn('[INLINED_MISSING] ' + item.name + ' is undefined or empty');
+            }
+        });
+
+        document.getElementById('result').innerText = JSON.stringify(window.errors);
+    </script>
+</body>
+</html>

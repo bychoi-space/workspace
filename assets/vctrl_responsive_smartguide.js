@@ -17,9 +17,27 @@ window.v4ResponsiveSmartGuideScript = `
         wallThreshold: 300,
         clearTimer: null,
         activeContext: null,
+        lastActiveId: null,
         
         targets: [],
         spacingTargets: [],
+
+        invalidateTargets: function() {
+            this.targets = [];
+            this.spacingTargets = [];
+            this.lastActiveId = null;
+        },
+
+        getPureOffset: function(el, container) {
+            let l = 0, t = 0;
+            let curr = el;
+            while (curr && curr !== container && curr !== document.body) {
+                l += parseFloat(curr.style.left) || 0;
+                t += parseFloat(curr.style.top) || 0;
+                curr = curr.parentElement;
+            }
+            return { left: l, top: t };
+        },
 
         isResponsive: function() {
             return !!document.querySelector('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area');
@@ -106,6 +124,7 @@ window.v4ResponsiveSmartGuideScript = `
             if (!context || !context.inner) return;
 
             this.activeContext = context;
+            this.lastActiveId = activeEl ? activeEl.id : null;
             this.targets = [];
             this.spacingTargets = [];
 
@@ -131,8 +150,9 @@ window.v4ResponsiveSmartGuideScript = `
             components.forEach((c, idx) => {
                 if (c === activeEl || c.classList.contains('selected') || c.classList.contains('dragging-now')) return;
 
-                const l = parseFloat(c.style.left) || 0;
-                const t = parseFloat(c.style.top) || 0;
+                const pos = this.getPureOffset(c, context.inner);
+                const l = pos.left;
+                const t = pos.top;
                 const w = c.offsetWidth || 100;
                 const h = c.offsetHeight || 40;
                 const name = c.id ? c.id.replace('v4-comp-', 'Comp ') : ('Item ' + (idx + 1));
@@ -176,7 +196,8 @@ window.v4ResponsiveSmartGuideScript = `
             let topMatch = null;
             let bottomMatch = null;
 
-            const overlapBuffer = 30;
+            // Tightened buffer to prevent separate layout rows from bleeding into horizontal measurements
+            const overlapBuffer = 14;
 
             this.spacingTargets.forEach(t => {
                 if (activeId && t.id === activeId) return;
@@ -184,52 +205,64 @@ window.v4ResponsiveSmartGuideScript = `
                 const effectiveThresh = t.isWall ? this.wallThreshold : thresh;
 
                 // Leftward measurement (Target on Left, Active on Right)
-                if (t.right <= active.left) {
-                    const overlapY = t.isWall ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
-                    if (overlapY) {
-                        const dist = Math.round(active.left - t.right);
-                        if (dist >= 0 && dist <= effectiveThresh) {
-                            if (!leftMatch || dist < leftMatch.dist || (!t.isWall && leftMatch.target.isWall && dist <= leftMatch.dist + 40)) {
-                                leftMatch = { target: t, dist: dist };
+                if (active.left - t.right >= -0.5) {
+                    const directOverlapY = Math.min(active.bottom, t.bottom) - Math.max(active.top, t.top) > 0;
+                    const bufferOverlapY = t.isWall ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                    const candidateTier = t.isWall ? 1 : (directOverlapY ? 3 : (bufferOverlapY ? 2 : 0));
+
+                    if (candidateTier > 0) {
+                        const dist = Math.max(0, Math.round(active.left - t.right));
+                        if (dist <= effectiveThresh) {
+                            if (!leftMatch || candidateTier > leftMatch.tier || (candidateTier === leftMatch.tier && dist < leftMatch.dist)) {
+                                leftMatch = { target: t, dist: dist, tier: candidateTier };
                             }
                         }
                     }
                 }
 
                 // Rightward measurement (Active on Left, Target on Right)
-                if (t.left >= active.right) {
-                    const overlapY = t.isWall ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
-                    if (overlapY) {
-                        const dist = Math.round(t.left - active.right);
-                        if (dist >= 0 && dist <= effectiveThresh) {
-                            if (!rightMatch || dist < rightMatch.dist || (!t.isWall && rightMatch.target.isWall && dist <= rightMatch.dist + 40)) {
-                                rightMatch = { target: t, dist: dist };
+                if (t.left - active.right >= -0.5) {
+                    const directOverlapY = Math.min(active.bottom, t.bottom) - Math.max(active.top, t.top) > 0;
+                    const bufferOverlapY = t.isWall ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                    const candidateTier = t.isWall ? 1 : (directOverlapY ? 3 : (bufferOverlapY ? 2 : 0));
+
+                    if (candidateTier > 0) {
+                        const dist = Math.max(0, Math.round(t.left - active.right));
+                        if (dist <= effectiveThresh) {
+                            if (!rightMatch || candidateTier > rightMatch.tier || (candidateTier === rightMatch.tier && dist < rightMatch.dist)) {
+                                rightMatch = { target: t, dist: dist, tier: candidateTier };
                             }
                         }
                     }
                 }
 
                 // Upward measurement (Target on Top, Active on Bottom)
-                if (t.bottom <= active.top) {
-                    const overlapX = t.isWall ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
-                    if (overlapX) {
-                        const dist = Math.round(active.top - t.bottom);
-                        if (dist >= 0 && dist <= effectiveThresh) {
-                            if (!topMatch || dist < topMatch.dist || (!t.isWall && topMatch.target.isWall && dist <= topMatch.dist + 40)) {
-                                topMatch = { target: t, dist: dist };
+                if (active.top - t.bottom >= -0.5) {
+                    const directOverlapX = Math.min(active.right, t.right) - Math.max(active.left, t.left) > 0;
+                    const bufferOverlapX = t.isWall ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                    const candidateTier = t.isWall ? 1 : (directOverlapX ? 3 : (bufferOverlapX ? 2 : 0));
+
+                    if (candidateTier > 0) {
+                        const dist = Math.max(0, Math.round(active.top - t.bottom));
+                        if (dist <= effectiveThresh) {
+                            if (!topMatch || candidateTier > topMatch.tier || (candidateTier === topMatch.tier && dist < topMatch.dist)) {
+                                topMatch = { target: t, dist: dist, tier: candidateTier };
                             }
                         }
                     }
                 }
 
                 // Downward measurement (Active on Top, Target on Bottom)
-                if (t.top >= active.bottom) {
-                    const overlapX = t.isWall ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
-                    if (overlapX) {
-                        const dist = Math.round(t.top - active.bottom);
-                        if (dist >= 0 && dist <= effectiveThresh) {
-                            if (!bottomMatch || dist < bottomMatch.dist || (!t.isWall && bottomMatch.target.isWall && dist <= bottomMatch.dist + 40)) {
-                                bottomMatch = { target: t, dist: dist };
+                if (t.top - active.bottom >= -0.5) {
+                    const directOverlapX = Math.min(active.right, t.right) - Math.max(active.left, t.left) > 0;
+                    const bufferOverlapX = t.isWall ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                    const candidateTier = t.isWall ? 1 : (directOverlapX ? 3 : (bufferOverlapX ? 2 : 0));
+
+                    if (candidateTier > 0) {
+                        const dist = Math.max(0, Math.round(t.top - active.bottom));
+                        if (dist <= effectiveThresh) {
+                            if (!bottomMatch || candidateTier > bottomMatch.tier || (candidateTier === bottomMatch.tier && dist < bottomMatch.dist)) {
+                                bottomMatch = { target: t, dist: dist, tier: candidateTier };
                             }
                         }
                     }
@@ -294,7 +327,8 @@ window.v4ResponsiveSmartGuideScript = `
                 if (snapYData) break;
             }
 
-            const spacing = this.calculateSpacing(snappedX, snappedY, w, h, this.spacingThreshold, activeId);
+            const spacingThresh = isArrowKey ? Infinity : this.spacingThreshold;
+            const spacing = this.calculateSpacing(snappedX, snappedY, w, h, spacingThresh, activeId);
 
             return { x: snappedX, y: snappedY, snapXData: snapXData, snapYData: snapYData, spacing: spacing };
         },
@@ -457,13 +491,17 @@ window.v4ResponsiveSmartGuideScript = `
                 this.clearTimer = null;
             }
 
-            // Self-healing snap targets if empty or frame switched
-            if (!this.activeContext || this.activeContext.type !== ctx.type || this.targets.length === 0) {
+            // Self-healing snap targets if empty, frame switched, or active element changed
+            if (!this.activeContext || 
+                this.activeContext.type !== ctx.type || 
+                this.lastActiveId !== activeEl.id || 
+                this.targets.length === 0) {
                 this.findSnapTargets(ctx, activeEl);
             }
 
-            const curLeft = parseFloat(activeEl.style.left) || 0;
-            const curTop = parseFloat(activeEl.style.top) || 0;
+            const activePos = this.getPureOffset(activeEl, ctx.inner);
+            const curLeft = activePos.left;
+            const curTop = activePos.top;
             const w = activeEl.offsetWidth || 100;
             const h = activeEl.offsetHeight || 40;
 

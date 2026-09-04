@@ -439,15 +439,22 @@ window.V4_COMPONENT_LIBRARY = {
             </div>`
         },
         {
-            id: 'v4-connector-straight',
+            id: 'v4-shape-line',
             name: 'Line (Straight)',
-            koName: '직선 화살표 선 커넥터',
+            koName: '직선 라인 선 구분선 디바이더 가로선 세로선',
             category: 'Shapes',
-            iconType: 'svg',
-            iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px;"><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
-            cardStyle: 'background: rgba(148, 163, 184, 0.1); border: 1.6px solid rgba(148, 163, 184, 0.2) !important;',
-            previewHtml: `<div style="display: flex; align-items: center; width: 30px;"><div style="flex: 1; height: 2px; background: #3b82f6;"></div><div style="width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid #3b82f6;"></div></div>`,
-            onclick: "window.ConnectorEngine && window.ConnectorEngine.spawnLine('straight')"
+            icon: 'horizontal_rule',
+            iconColor: '#00e5ff',
+            width: '200px',
+            height: '2px',
+            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            previewHtml: `<div style="display: flex; align-items: center; justify-content: center; width: 34px; height: 30px;"><div style="width: 100%; height: 2px; background: #00e5ff; border-radius: 1px;"></div></div>`,
+            html: `
+            <div class="v4-shape v4-shape-line" data-line-dir="horizontal" data-line-style="solid" data-line-width="1.6" data-line-color="#c8c8c8" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; overflow: visible; box-sizing: border-box; position: relative;">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none;">
+                    <line class="v4-line-path" x1="0" y1="50" x2="100" y2="50" style="stroke: #c8c8c8; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
+                </svg>
+            </div>`
         },
         {
             id: 'v4-connector-elbow',

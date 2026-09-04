@@ -371,6 +371,10 @@ function initV3Listeners() {
         DOM.canvas.addEventListener('wheel', function(e) {
             var state = window.state;
             if (!state) return;
+            // Floating Inspector Card, modals, or color pickers: allow native UI scrolling without triggering canvas scroll/zoom
+            if (e.target.closest('#floating-inspector-card, .floating-inspector-card, #inspector-card, .modal-overlay, .v4-color-popover, .v4-picker-dropdown')) {
+                return;
+            }
             if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
                 var s = state.transform.scale;

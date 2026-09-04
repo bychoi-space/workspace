@@ -250,60 +250,64 @@
         </div>
 
         <!-- line-editor-section -->
-        <div id="line-editor-section" style="display: none; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+        <div id="line-editor-section" style="display: none; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-                <span style="font-size: 10px; font-weight: 900; color: #3b82f6;">LINE EDITOR</span>
+                <span style="font-size: 10px; font-weight: 900; color: #00e5ff; letter-spacing: 0.8px;">LINE (STRAIGHT) EDITOR</span>
             </div>
-            
+
+            <!-- 1. Direction / Orientation -->
+            <div class="prop-group" style="margin-bottom: 12px;">
+                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">ORIENTATION (방향)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <button id="btn-line-dir-h" class="v4-line-dir-btn" data-dir="horizontal" title="가로선 (Horizontal)" style="height: 30px; background: rgba(0, 229, 255, 0.15); border: 1.6px solid rgba(0, 229, 255, 0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 16px;">horizontal_rule</span>
+                        가로 (H)
+                    </button>
+                    <button id="btn-line-dir-v" class="v4-line-dir-btn" data-dir="vertical" title="세로선 (Vertical)" style="height: 30px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 16px; transform: rotate(90deg);">horizontal_rule</span>
+                        세로 (V)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Line Style (Solid, Dashed, Dotted) -->
+            <div class="prop-group" style="margin-bottom: 12px;">
+                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">LINE STYLE (스타일)</label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+                    <button id="btn-line-style-solid" class="v4-line-style-btn" data-style="solid" title="실선" style="height: 28px; background: rgba(0, 229, 255, 0.15); border: 1.6px solid rgba(0, 229, 255, 0.4); border-radius: 6px; color: #00e5ff; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        Solid
+                    </button>
+                    <button id="btn-line-style-dashed" class="v4-line-style-btn" data-style="dashed" title="대시 점선" style="height: 28px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        Dashed
+                    </button>
+                    <button id="btn-line-style-dotted" class="v4-line-style-btn" data-style="dotted" title="도트 점선" style="height: 28px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                        Dotted
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Color & Thickness -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
                 <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Line Color</label>
-                    <div style="width: 100%; height: 26px; background: rgba(0,0,0,0.3); border: 1.6px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 2px; box-sizing: border-box;">
-                        <input type="color" id="line-stroke-color" value="#475569" style="width: 100%; height: 100%; border: none; background: none; padding: 0; cursor: pointer;">
+                    <label class="v4-color-label" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">LINE COLOR</label>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <div class="v4-color-wrapper" id="line-color-wrapper" style="width: 100%; height: 26px; border-radius: 4px; overflow: hidden; border: 1.6px solid rgba(255,255,255,0.15);">
+                            <input type="color" id="line-stroke-color" class="v4-color-input" value="#c8c8c8">
+                        </div>
                     </div>
                 </div>
                 <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Thickness (<span id="txt-line-stroke-width">1.6</span>)</label>
-                    <input type="range" id="line-stroke-width" min="0.5" max="10" step="0.1" value="1.6" style="width:100%; accent-color: #00e5ff; margin-top: 4px;">
+                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">THICKNESS (<span id="txt-line-stroke-width">1.6</span>px)</label>
+                    <input type="number" id="line-stroke-width" min="0.5" max="20" step="0.5" value="1.6" class="v4-prop-input" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none;">
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Start Arrow</label>
-                    <select id="line-marker-start" class="v4-inspector-select" style="width:100%;">
-                        <option value="">None</option>
-                        <option value="marker-arrow-start">Arrow</option>
-                    </select>
-                </div>
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">End Arrow</label>
-                    <select id="line-marker-end" class="v4-inspector-select" style="width:100%;">
-                        <option value="">None</option>
-                        <option value="marker-arrow-end">Arrow</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Row 3: Line Style -->
-            <div class="prop-group">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Line Style</label>
-                <select id="line-dash-array" class="v4-prop-input" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px;">
-                    <option value="">Solid</option>
-                    <option value="5,5">Dashed</option>
-                    <option value="2,2">Dotted</option>
-                </select>
-            </div>
-            
-            <!-- Row 4: Dimensions (Width & Height) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기 (Width px)</label>
-                    <input type="number" id="prop-line-width" value="0" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none;">
-                </div>
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기 (Height px)</label>
-                    <input type="number" id="prop-line-height" value="0" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none;">
+            <!-- 4. Dimension (Single Dynamic Length) -->
+            <div class="prop-group" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <label id="lbl-line-length" style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">LENGTH / 가로 길이 (px)</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" id="prop-line-length" value="200" min="1" step="10" class="v4-prop-input" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; box-sizing: border-box; outline: none;">
+                    <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">px</span>
                 </div>
             </div>
         </div>

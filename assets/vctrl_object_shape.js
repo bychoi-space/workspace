@@ -53,8 +53,58 @@ window.v4ObjectShapeScript = `
                     t.setAttribute('data-pattern-type', d.style.patternType);
                 }
 
-                const isSvgContainer = t.classList.contains('v4-shape-diamond') || t.classList.contains('v4-shape-triangle') || t.classList.contains('v4-shape-wave') || t.classList.contains('v4-shape-arrow');
-                const svgShape = t.querySelector('path, polygon, rect, circle') || t.closest('.v4-shape')?.querySelector('path, polygon, rect, circle');
+                if (t.classList.contains('v4-shape-line')) {
+                    const lineEl = t.querySelector('line');
+                    if (d.style.lineDir !== undefined) {
+                        t.setAttribute('data-line-dir', d.style.lineDir);
+                        const curW = parseFloat(s.style.width) || 200;
+                        const curH = parseFloat(s.style.height) || 2;
+                        const curLen = Math.max(curW, curH);
+                        const th = parseFloat(t.getAttribute('data-line-width')) || 1.6;
+                        if (d.style.lineDir === 'vertical') {
+                            s.style.width = Math.max(th, 2) + 'px';
+                            s.style.height = curLen + 'px';
+                            if (lineEl) {
+                                lineEl.setAttribute('x1', '50');
+                                lineEl.setAttribute('y1', '0');
+                                lineEl.setAttribute('x2', '50');
+                                lineEl.setAttribute('y2', '100');
+                            }
+                        } else {
+                            s.style.width = curLen + 'px';
+                            s.style.height = Math.max(th, 2) + 'px';
+                            if (lineEl) {
+                                lineEl.setAttribute('x1', '0');
+                                lineEl.setAttribute('y1', '50');
+                                lineEl.setAttribute('x2', '100');
+                                lineEl.setAttribute('y2', '50');
+                            }
+                        }
+                    }
+                    if (d.style.lineStyle !== undefined) {
+                        t.setAttribute('data-line-style', d.style.lineStyle);
+                        if (lineEl) {
+                            if (d.style.lineStyle === 'dashed') lineEl.style.strokeDasharray = '6 4';
+                            else if (d.style.lineStyle === 'dotted') lineEl.style.strokeDasharray = '2 3';
+                            else lineEl.style.strokeDasharray = 'none';
+                        }
+                    }
+                    if (d.style.lineThickness !== undefined) {
+                        const th = parseFloat(d.style.lineThickness) || 1.6;
+                        t.setAttribute('data-line-width', th);
+                        if (lineEl) lineEl.style.strokeWidth = th;
+                        const isVert = t.getAttribute('data-line-dir') === 'vertical';
+                        if (isVert) s.style.width = Math.max(th, 2) + 'px';
+                        else s.style.height = Math.max(th, 2) + 'px';
+                    }
+                    if (d.style.lineColor !== undefined) {
+                        t.setAttribute('data-line-color', d.style.lineColor);
+                        if (lineEl) lineEl.style.stroke = d.style.lineColor;
+                    }
+                }
+
+                const isSvgContainer = t.classList.contains('v4-shape-diamond') || t.classList.contains('v4-shape-triangle') || t.classList.contains('v4-shape-wave') || t.classList.contains('v4-shape-arrow') || t.classList.contains('v4-shape-line');
+                const svgShape = t.querySelector('path, polygon, rect, circle, line') || t.closest('.v4-shape')?.querySelector('path, polygon, rect, circle, line');
 
                 // Assign styles with override for text alignment and background styling
                 for (const [key, val] of Object.entries(d.style)) {
@@ -102,23 +152,30 @@ window.v4ObjectShapeScript = `
                 }
                 
                 if (svgShape) {
-                    const targetFill = d.style.backgroundColor || d.style.background;
-                    if (targetFill !== undefined) {
-                        svgShape.style.fill = targetFill;
-                    }
-                    if (isSvgContainer) {
-                        t.style.background = 'transparent';
-                        t.style.backgroundColor = 'transparent';
-                    }
-                    if (d.style.borderColor) {
-                        svgShape.style.stroke = d.style.borderColor;
-                    }
-                    if (d.style.borderWidth) {
-                        svgShape.style.strokeWidth = d.style.borderWidth;
+                    if (t.classList.contains('v4-shape-line')) {
+                        const curLineWidth = t.getAttribute('data-line-width') || '1.6';
+                        svgShape.style.strokeWidth = curLineWidth;
+                        svgShape.style.fill = 'none';
+                        svgShape.style.vectorEffect = 'non-scaling-stroke';
                     } else {
-                        svgShape.style.strokeWidth = '1.6';
+                        const targetFill = d.style.backgroundColor || d.style.background;
+                        if (targetFill !== undefined) {
+                            svgShape.style.fill = targetFill;
+                        }
+                        if (isSvgContainer) {
+                            t.style.background = 'transparent';
+                            t.style.backgroundColor = 'transparent';
+                        }
+                        if (d.style.borderColor) {
+                            svgShape.style.stroke = d.style.borderColor;
+                        }
+                        if (d.style.borderWidth) {
+                            svgShape.style.strokeWidth = d.style.borderWidth;
+                        } else {
+                            svgShape.style.strokeWidth = '1.6';
+                        }
+                        svgShape.style.vectorEffect = 'non-scaling-stroke';
                     }
-                    svgShape.style.vectorEffect = 'non-scaling-stroke';
                 }
             }
         });

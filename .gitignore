@@ -1,3 +1,4 @@
 tmp_*.js
 tmp/
 *.tmp
+scratch/

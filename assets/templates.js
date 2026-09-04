@@ -1444,20 +1444,16 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
             <div class="pc-browser-frame active-frame">
                 <div class="pc-browser-header">
                     <div class="pc-browser-top-bar">
-                        <div class="browser-dots">
-                            <div class="browser-dot red"></div>
-                            <div class="browser-dot yellow"></div>
-                            <div class="browser-dot green"></div>
+                        <div class="pc-browser-dots">
+                            <div class="pc-browser-dot red"></div>
+                            <div class="pc-browser-dot yellow"></div>
+                            <div class="pc-browser-dot green"></div>
                         </div>
-                        <div class="browser-tabs">
-                            <div class="browser-tab">
-                                <span class="material-icons-outlined" style="font-size: 13px; color: #6366f1;">shopping_bag</span>
-                                <span>SISUN.COM | PC Web</span>
+                        <div class="pc-browser-tabs">
+                            <div class="pc-browser-tab">
+                                <span class="material-icons-outlined" style="font-size: 14px; color: #6366f1;">shopping_bag</span>
+                                <span style="font-family: inherit;">SISUN.COM | PC Web</span>
                             </div>
-                        </div>
-                        <div class="browser-address-bar">
-                            <span class="material-icons-outlined" style="font-size: 13px; color: #64748b;">lock</span>
-                            <span style="font-weight: 600; color: #334155;">https://www.sisun.com/pc</span>
                         </div>
                     </div>
                 </div>
@@ -1480,20 +1476,12 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
                     <span>px</span>
                 </div>
             </div>
-            <div class="mobile-browser-frame">
-                <div class="mobile-browser-header">
-                    <div class="galaxy-status-bar">
-                        <div class="galaxy-time">12:30</div>
-                        <div class="galaxy-punch-hole"></div>
-                        <div class="galaxy-icons">
-                            <span class="material-icons-outlined" style="font-size: 14px;">signal_cellular_4_bar</span>
-                            <span style="font-size: 11px; font-weight: 800; letter-spacing: -0.5px;">5G</span>
-                            <span class="material-icons-outlined" style="font-size: 14px;">wifi</span>
-                            <span class="material-icons-outlined" style="font-size: 16px;">battery_full</span>
-                        </div>
-                    </div>
+            <div class="mobile-frame">
+                <div class="mobile-top-bar">
+                    <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                    <div class="mobile-header-notch"></div>
                 </div>
-                <div class="mobile-content-area">
+                <div class="mobile-content">
                     <div class="mobile-content-inner">
                         <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
                     </div>

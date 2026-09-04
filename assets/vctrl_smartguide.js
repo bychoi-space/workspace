@@ -171,55 +171,65 @@
                 // In arrow key mode, skip virtual canvas boxes – only show real component distances
                 if (thresh === Infinity && t.source === 'canvas') return;
 
-                // [Bug Fix 3] Add 20px buffer to overlap checks.
-                // Previously, objects had to strictly share Y/X range to trigger spacing guides.
-                // With a buffer, objects nearby but slightly offset in size also show guides (Figma-style).
-                const overlapBuffer = 20;
+                // Tightened buffer to prevent separate layout rows from bleeding into horizontal measurements
+                const overlapBuffer = 14;
 
                 // Left Spacing (Target on the left of active)
-                if (t.right <= active.left) {
-                    const overlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
-                    if (overlapY) {
-                        const dist = Math.round(active.left - t.right);
-                        if (dist >= 0 && dist <= thresh) {
-                            if (!leftMatch || dist < leftMatch.dist) {
-                                leftMatch = { target: t, dist: dist };
+                if (active.left - t.right >= -0.5) {
+                    const directOverlapY = Math.min(active.bottom, t.bottom) - Math.max(active.top, t.top) > 0;
+                    const bufferOverlapY = t.isFrameBoundary ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                    const candidateTier = t.isFrameBoundary ? 1 : (directOverlapY ? 3 : (bufferOverlapY ? 2 : 0));
+
+                    if (candidateTier > 0) {
+                        const dist = Math.max(0, Math.round(active.left - t.right));
+                        if (dist <= thresh) {
+                            if (!leftMatch || candidateTier > leftMatch.tier || (candidateTier === leftMatch.tier && dist < leftMatch.dist)) {
+                                leftMatch = { target: t, dist: dist, tier: candidateTier };
                             }
                         }
                     }
                 }
                 // Right Spacing (Target on the right of active)
-                if (t.left >= active.right) {
-                    const overlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
-                    if (overlapY) {
-                        const dist = Math.round(t.left - active.right);
-                        if (dist >= 0 && dist <= thresh) {
-                            if (!rightMatch || dist < rightMatch.dist) {
-                                rightMatch = { target: t, dist: dist };
+                if (t.left - active.right >= -0.5) {
+                    const directOverlapY = Math.min(active.bottom, t.bottom) - Math.max(active.top, t.top) > 0;
+                    const bufferOverlapY = t.isFrameBoundary ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                    const candidateTier = t.isFrameBoundary ? 1 : (directOverlapY ? 3 : (bufferOverlapY ? 2 : 0));
+
+                    if (candidateTier > 0) {
+                        const dist = Math.max(0, Math.round(t.left - active.right));
+                        if (dist <= thresh) {
+                            if (!rightMatch || candidateTier > rightMatch.tier || (candidateTier === rightMatch.tier && dist < rightMatch.dist)) {
+                                rightMatch = { target: t, dist: dist, tier: candidateTier };
                             }
                         }
                     }
                 }
                 // Top Spacing (Target above active)
-                if (t.bottom <= active.top) {
-                    const overlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
-                    if (overlapX) {
-                        const dist = Math.round(active.top - t.bottom);
-                        if (dist >= 0 && dist <= thresh) {
-                            if (!topMatch || dist < topMatch.dist) {
-                                topMatch = { target: t, dist: dist };
+                if (active.top - t.bottom >= -0.5) {
+                    const directOverlapX = Math.min(active.right, t.right) - Math.max(active.left, t.left) > 0;
+                    const bufferOverlapX = t.isFrameBoundary ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                    const candidateTier = t.isFrameBoundary ? 1 : (directOverlapX ? 3 : (bufferOverlapX ? 2 : 0));
+
+                    if (candidateTier > 0) {
+                        const dist = Math.max(0, Math.round(active.top - t.bottom));
+                        if (dist <= thresh) {
+                            if (!topMatch || candidateTier > topMatch.tier || (candidateTier === topMatch.tier && dist < topMatch.dist)) {
+                                topMatch = { target: t, dist: dist, tier: candidateTier };
                             }
                         }
                     }
                 }
                 // Bottom Spacing (Target below active)
-                if (t.top >= active.bottom) {
-                    const overlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
-                    if (overlapX) {
-                        const dist = Math.round(t.top - active.bottom);
-                        if (dist >= 0 && dist <= thresh) {
-                            if (!bottomMatch || dist < bottomMatch.dist) {
-                                bottomMatch = { target: t, dist: dist };
+                if (t.top - active.bottom >= -0.5) {
+                    const directOverlapX = Math.min(active.right, t.right) - Math.max(active.left, t.left) > 0;
+                    const bufferOverlapX = t.isFrameBoundary ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                    const candidateTier = t.isFrameBoundary ? 1 : (directOverlapX ? 3 : (bufferOverlapX ? 2 : 0));
+
+                    if (candidateTier > 0) {
+                        const dist = Math.max(0, Math.round(t.top - active.bottom));
+                        if (dist <= thresh) {
+                            if (!bottomMatch || candidateTier > bottomMatch.tier || (candidateTier === bottomMatch.tier && dist < bottomMatch.dist)) {
+                                bottomMatch = { target: t, dist: dist, tier: candidateTier };
                             }
                         }
                     }

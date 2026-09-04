@@ -247,17 +247,9 @@ window.v4TextMeasurerScript = `
         const cell = c.querySelector('.v4-editable-cell') || c.querySelector('.v4-shape-text-content') || c.querySelector('.v4-shape-text-overlay');
         if (!cell) return;
 
-        // Zero-Drift Guard: Temporarily hide UI handles before querying bounding dimensions
-        const handle = c.querySelector(':scope > .lf-drag-handle');
-        const resizer = c.querySelector(':scope > .lf-resizer');
+        // Zero-Drift Guard: Temporarily hide delete trigger before querying bounding dimensions
         const delTrigger = c.querySelector(':scope > .lf-delete-trigger');
-        
-        const origHandleDisplay = handle ? handle.style.display : '';
-        const origResizerDisplay = resizer ? resizer.style.display : '';
         const origDelDisplay = delTrigger ? delTrigger.style.display : '';
-        
-        if (handle) handle.style.setProperty('display', 'none', 'important');
-        if (resizer) resizer.style.setProperty('display', 'none', 'important');
         if (delTrigger) delTrigger.style.setProperty('display', 'none', 'important');
 
         const origW = c.style.width;
@@ -307,24 +299,10 @@ window.v4TextMeasurerScript = `
         if (cell.style.width !== '100%') cell.style.width = '100%';
         if (cell.style.height !== '100%') cell.style.height = '100%';
 
-        // Restore UI Handles
-        if (handle) {
-            handle.style.removeProperty('display');
-            if (origHandleDisplay) handle.style.display = origHandleDisplay;
-        }
+        // Restore Delete Trigger
         if (delTrigger) {
             delTrigger.style.removeProperty('display');
             if (origDelDisplay) delTrigger.style.display = origDelDisplay;
-        }
-        
-        if (resizer) {
-            resizer.style.removeProperty('display');
-            const targetDisplay = fitResult.hideResizer ? 'none' : (origResizerDisplay || 'block');
-            if (targetDisplay !== 'none') {
-                resizer.style.setProperty('display', targetDisplay, 'important');
-            } else {
-                resizer.style.setProperty('display', 'none', 'important');
-            }
         }
     };
 

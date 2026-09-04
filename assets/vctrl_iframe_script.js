@@ -345,7 +345,30 @@ window.v4Script = `
             id: c.id,
             x: parseFloat(c.style.left) || 0,
             y: parseFloat(c.style.top) || 0,
-            shapeType: shape ? (shape.classList.contains('v4-shape-pattern-grid') ? 'pattern' : (shape.classList.contains('v4-shape-rect') ? 'rect' : (shape.classList.contains('v4-shape-circle') ? 'circle' : (shape.classList.contains('v4-shape-triangle') ? 'triangle' : (shape.classList.contains('v4-shape-diamond') ? 'diamond' : (shape.classList.contains('v4-shape-arrow') ? 'arrow' : '')))))) : '',
+            shapeType: shape ? (shape.classList.contains('v4-shape-line') ? 'line' : (shape.classList.contains('v4-shape-pattern-grid') ? 'pattern' : (shape.classList.contains('v4-shape-rect') ? 'rect' : (shape.classList.contains('v4-shape-circle') ? 'circle' : (shape.classList.contains('v4-shape-triangle') ? 'triangle' : (shape.classList.contains('v4-shape-diamond') ? 'diamond' : (shape.classList.contains('v4-shape-arrow') ? 'arrow' : ''))))))) : '',
+            lineDir: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-line-dir') || 'horizontal') : 'horizontal',
+            lineStyle: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-line-style') || 'solid') : 'solid',
+            lineThickness: (function() {
+                if (!shape || !shape.classList.contains('v4-shape-line')) return 1.6;
+                const attrWidth = shape.getAttribute('data-line-width');
+                if (attrWidth) return parseFloat(attrWidth) || 1.6;
+                const lineEl = shape.querySelector('line');
+                if (lineEl) {
+                    const sw = lineEl.style.strokeWidth || lineEl.getAttribute('stroke-width');
+                    if (sw) return parseFloat(sw) || 1.6;
+                }
+                return 1.6;
+            })(),
+            lineColor: (function() {
+                if (!shape || !shape.classList.contains('v4-shape-line')) return '#c8c8c8';
+                const lineEl = shape.querySelector('line');
+                let strokeVal = shape.getAttribute('data-line-color');
+                if (!strokeVal && lineEl) {
+                    strokeVal = lineEl.style.stroke || lineEl.getAttribute('stroke');
+                }
+                strokeVal = strokeVal || '#c8c8c8';
+                return (typeof window.rgbToHex === 'function' ? window.rgbToHex(strokeVal) : strokeVal) || '#c8c8c8';
+            })(),
             arrowDir: shape ? (shape.getAttribute('data-arrow-dir') || shape.getAttribute('data-direction') || 'right') : '',
             direction: shape ? (shape.getAttribute('data-direction') || shape.getAttribute('data-arrow-dir') || 'right') : '',
             patternType: shape && shape.classList.contains('v4-shape-pattern-grid') ? (shape.getAttribute('data-pattern-type') || 'grid') : '',
@@ -453,8 +476,10 @@ window.v4Script = `
             pinIndex: isPin ? parseInt(c.id.replace('v4-pin-', '')) : -1,
             html: textCell ? textCell.innerHTML : (shape ? (shape.querySelector('.v4-shape-text-content')?.innerHTML ?? shape.querySelector('.v4-shape-text-overlay')?.innerHTML ?? shape.innerHTML) : (table ? table.innerHTML : "")),
             isGroup: c.classList.contains('lf-group'),
-            w: c.offsetWidth,
-            h: c.offsetHeight,
+            w: parseFloat(c.style.width) || c.offsetWidth || 200,
+            h: parseFloat(c.style.height) || c.offsetHeight || 100,
+            width: parseFloat(c.style.width) || c.offsetWidth || 200,
+            height: parseFloat(c.style.height) || c.offsetHeight || 100,
             boxW: boxEl ? (parseInt(boxEl.style.width) || boxEl.offsetWidth || 20) : (c.offsetWidth || 20),
             boxH: boxEl ? (parseInt(boxEl.style.height) || boxEl.offsetHeight || 20) : (c.offsetHeight || 20),
             currentStyles: {
@@ -486,14 +511,7 @@ window.v4Script = `
         if (!c) return;
         const t = parseInt(c.style.top) || 0;
         const l = parseInt(c.style.left) || 0;
-        const drag = c.querySelector(':scope > .lf-drag-handle');
         const del = c.querySelector(':scope > .lf-delete-trigger');
-        if (drag) {
-            const targetTop = t < 16 ? '4px' : '-16px';
-            const targetLeft = l < 16 ? '4px' : '-16px';
-            if (drag.style.top !== targetTop) drag.style.top = targetTop;
-            if (drag.style.left !== targetLeft) drag.style.left = targetLeft;
-        }
         if (del) { 
             const targetTop = t < 16 ? '4px' : '-12px'; 
             if (del.style.top !== targetTop) del.style.top = targetTop;
@@ -539,17 +557,18 @@ window.v4Script = `
             if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
         }
 
-        let h = e.target.closest('.lf-drag-handle'), r = e.target.closest('.lf-resizer'), d = e.target.closest('.lf-delete-trigger'), c = e.target.closest('.lf-component');
+        let d = e.target.closest('.lf-delete-trigger'), c = e.target.closest('.lf-component');
         
-        if (c && !h && !r && !d) {
-            if (!c.classList.contains('text-marker') && !c.classList.contains('pin-marker')) {
-                let parent = c.parentElement.closest('.lf-component');
+        const isDeepSelect = !!(e.ctrlKey || e.metaKey);
+        const isMulti = !!e.shiftKey;
+
+        if (c && !d) {
+            if (!isDeepSelect && !c.classList.contains('text-marker') && !c.classList.contains('pin-marker')) {
+                let parent = c.parentElement ? c.parentElement.closest('.lf-component') : null;
                 while (parent) {
                     if (parent.classList.contains('text-marker') || parent.classList.contains('pin-marker')) break;
                     c = parent;
-                    // If we've reached a group, stop here — do not bubble past the group
-                    if (c.classList.contains('lf-group')) break;
-                    parent = c.parentElement.closest('.lf-component');
+                    parent = c.parentElement ? c.parentElement.closest('.lf-component') : null;
                 }
             }
         }
@@ -587,7 +606,6 @@ window.v4Script = `
                 window.lastActiveFrame = 'pc';
                 if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
             }
-            const isMulti = e.shiftKey || e.ctrlKey || e.metaKey;
             if (isMulti) {
                 c.classList.toggle('selected');
             } else {
@@ -639,24 +657,33 @@ window.v4Script = `
             });
             notifyParent({ type: 'LF_DESELECT' });
         }
-        if (r) { 
+        if (c && !e.target.closest('td, th')) { 
             if (window.V4DragResizeEngine) {
-                window.V4DragResizeEngine.startResize(e, r);
-            }
-        }
-        else if (h || (c && !e.target.closest('td, th'))) { 
-            if (window.V4DragResizeEngine) {
-                window.V4DragResizeEngine.handleMouseDown(e, h, r, d, c);
+                window.V4DragResizeEngine.handleMouseDown(e, null, null, d, c);
             }
         }
     });
 
-    // Double click to enter text editing mode (PPT-style)
+    // Double click to enter text editing mode (PPT-style) or drill down into child component inside group
     document.addEventListener('dblclick', e => {
-        const editable = e.target.closest('.v4-editable-cell');
+        const editable = e.target.closest('.v4-editable-cell, [contenteditable="true"], .v4-shape-text-content, .v4-shape-text-overlay');
         if (editable) {
             if (window.V4UndoManager) window.V4UndoManager.saveState();
             editable.focus();
+            return;
+        }
+
+        const targetComp = e.target.closest('.lf-component');
+        if (targetComp && !targetComp.classList.contains('lf-delete-trigger')) {
+            window.activeEl = targetComp;
+            document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
+            targetComp.classList.add('selected');
+            window.updateHandles(targetComp);
+            notifyParent({
+                type: "LF_COMP_SELECTED",
+                shiftKey: false,
+                ...window._getCompStyles(targetComp)
+            });
         }
     });
 
@@ -1025,15 +1052,13 @@ window.v4Script = `
                 div.className = 'lf-component ' + (isPinType ? 'pin-marker' : 'text-marker');
                 
                 if (isPinType) {
-                    div.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' +
-                                    '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
+                    div.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
                                     '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
                     div.style.width = '20px';
                     div.style.height = '20px';
                 } else {
-                    div.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' +
-                                    '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:' + (pin.color || '#000') + '">' + (pin.html || pin.text || '') + '</div>' +
-                                    '<div class="lf-resizer"></div><div class="lf-delete-trigger">&times;</div>';
+                    div.innerHTML = '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:' + (pin.color || '#000') + '">' + (pin.html || pin.text || '') + '</div>' +
+                                    '<div class="lf-delete-trigger">&times;</div>';
                     div.style.width = 'fit-content';
                     div.style.height = 'auto';
                 }
@@ -1070,15 +1095,13 @@ window.v4Script = `
                 div.className = 'lf-component ' + (isPinType ? 'pin-marker' : 'text-marker');
                 
                 if (isPinType) {
-                    div.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' +
-                                    '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
+                    div.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
                                     '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
                     div.style.width = '20px';
                     div.style.height = '20px';
                 } else {
-                    div.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' +
-                                    '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:' + (pin.color || '#000') + '">' + (pin.html || pin.text || '') + '</div>' +
-                                    '<div class="lf-resizer"></div><div class="lf-delete-trigger">&times;</div>';
+                    div.innerHTML = '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:' + (pin.color || '#000') + '">' + (pin.html || pin.text || '') + '</div>' +
+                                    '<div class="lf-delete-trigger">&times;</div>';
                     div.style.width = 'fit-content';
                     div.style.height = 'auto';
                 }
@@ -1253,14 +1276,13 @@ window.v4Script = `
                 v.className = 'lf-component pin-marker';
                 v.style.width = '20px';
                 v.style.height = '20px';
-                v.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' +
-                              '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
+                v.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
                               '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
             } else {
                 v.className = 'lf-component' + (d.isGroup ? ' lf-group' : '') + (d.className ? ' ' + d.className : ''); 
                 v.style.transform = 'none';
                 if (d.style) Object.assign(v.style, d.style);
-                v.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' + d.html + '<div class="lf-resizer"></div><div class="lf-delete-trigger">&times;</div>';
+                v.innerHTML = d.html + '<div class="lf-delete-trigger">&times;</div>';
             }
             
             if (window.parent.state && window.parent.state.transform) {
@@ -1318,7 +1340,7 @@ window.v4Script = `
 
                 if (c.style) Object.assign(v.style, c.style);
 
-                v.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' + (c.html || '') + '<div class="lf-resizer"></div><div class="lf-delete-trigger">&times;</div>';
+                v.innerHTML = (c.html || '') + '<div class="lf-delete-trigger">&times;</div>';
                 host.appendChild(v);
                 window.updateHandles(v);
             });
@@ -2755,8 +2777,7 @@ window.v4Script = `
                 background: 'transparent', border: 'none', zIndex: '1000'
             });
 
-            group.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' +
-                              '<div class="lf-resizer"></div><div class="lf-delete-trigger">&times;</div>';
+            group.innerHTML = '<div class="lf-delete-trigger">&times;</div>';
 
 
             items.forEach(item => {
@@ -3342,17 +3363,9 @@ window.v4Script = `
 
     window.initHandles = () => {
         document.querySelectorAll('.lf-component').forEach(c => {
-            if (!c.querySelector(':scope > .lf-drag-handle')) {
-                const h = document.createElement('div');
-                h.className = 'lf-drag-handle';
-                h.innerHTML = '<svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg>';
-                c.appendChild(h);
-            }
-            if (!c.querySelector(':scope > .lf-resizer')) {
-                const r = document.createElement('div');
-                r.className = 'lf-resizer';
-                c.appendChild(r);
-            }
+            // Clean up legacy handles if present from disk HTML
+            c.querySelectorAll(':scope > .lf-drag-handle, :scope > .lf-resizer').forEach(el => el.remove());
+
             if (!c.querySelector(':scope > .lf-delete-trigger')) {
                 const d = document.createElement('div');
                 d.className = 'lf-delete-trigger';

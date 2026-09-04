@@ -15,11 +15,11 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-04T04:25:47.564Z",
+      "updatedAt": "2026-09-04T05:06:57.796Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
-          "text": "어드민에서 등록하는 '상단 비주얼 이미지' 호출하여 표현하는 영역\nPC / MO 각각 개별 이미지",
+          "text": "어드민에서 등록하는 '상단 비주얼 이미지' 호출하여 표현하는 영역\nPC / MO 각각 개별 이미지로 표현",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 461.943,
           "y": 396,
@@ -55,5 +55,5 @@
   "developer": "",
   "period": "2026.09.03(목) ~ 2026.10.30(금)",
   "themeIndex": 2,
-  "updated": "2026-09-04 13:33:27"
+  "updated": "2026-09-04 14:06:57"
 }

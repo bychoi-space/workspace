@@ -53,13 +53,15 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "09_Admin_PC_Scroll_639",
       "type": "default",
-      "updatedAt": "2026-09-04T05:07:16.590Z",
-      "template": "template_admin_pc_scroll.html"
+      "updatedAt": "2026-09-04T05:08:19.601Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.09.03(목) ~ 2026.10.30(금)",
   "themeIndex": 2,
-  "updated": "2026-09-04 14:06:57"
+  "updated": "2026-09-04 14:08:19"
 }

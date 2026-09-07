@@ -44,8 +44,8 @@
     },
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
-      "type": "default",
-      "updatedAt": "2026-09-07T07:19:45.937Z",
+      "type": "admin",
+      "updatedAt": "2026-09-07T08:09:33.087Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -65,7 +65,9 @@
       "type": "plan",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-09-07T08:00:04.544Z"
+      "updatedAt": "2026-09-07T08:00:04.544Z",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",

@@ -5,7 +5,8 @@
     "01_Project_Summary_Report_101.html",
     "08_Responsive_PC_Mobile_486.html",
     "99_Blank_892.html",
-    "99_Blank_437.html"
+    "99_Blank_437.html",
+    "09_Admin_PC_Scroll_639_copy.html"
   ],
   "screens": {
     "01_Project_Summary_Report_101.html": {
@@ -118,6 +119,14 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "09_Admin_PC_Scroll_639_copy.html": {
+      "title": "복사 테스트",
+      "type": "default",
+      "updatedAt": "2026-09-07T06:45:56.051Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",

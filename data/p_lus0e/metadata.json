@@ -43,12 +43,14 @@
       "screenDesc": ""
     },
     "09_Admin_PC_Scroll_639.html": {
-      "title": "09_Admin_PC_Scroll_639",
+      "title": "기획전 목록",
       "type": "default",
-      "updatedAt": "2026-09-07T05:53:40.573Z",
+      "updatedAt": "2026-09-07T07:16:05.701Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
-      "connectors": []
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": ""
     },
     "09_Admin_PC_Scroll_639_copy.html": {
       "title": "기획전 등록",

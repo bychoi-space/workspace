@@ -1252,7 +1252,7 @@ body {
 .badge-ui { background: #3b82f6; color: #fff; }
 .badge-responsive-ui { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; }
 .badge-mobile-ui { background: #8b5cf6; color: #fff; }
-.badge-admin { background: #6b7280; color: #fff; }
+.badge-admin { background: #475569; color: #fff; }
 .badge-admin-nbos { background: #334155; color: #fff; }
 .badge-admin-onesphere { background: #9333ea; color: #fff; }
 .badge-default { background: rgba(255,255,255,0.1); color: var(--text-secondary); }

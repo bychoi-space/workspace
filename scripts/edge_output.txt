@@ -121,8 +121,7 @@
                             <option value="case-study">4. Case Study</option>
                             <option value="ui">5. Front UI</option>
                             <option value="mobile-ui">6. Mobile UI 설계</option>
-                            <option value="admin-nbos">7. Admin (NBOS)</option>
-                            <option value="admin-onesphere">8. Admin (Onesphere)</option>
+                            <option value="admin">7. Admin</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -140,6 +139,47 @@
                 <div class="modal-footer">
                     <button id="btn-edit-screen-cancel" class="btn-secondary">취소</button>
                     <button id="btn-edit-screen-submit" class="btn-primary">변경사항 저장</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copy Screen Modal -->
+        <div id="copy-screen-modal" class="modal-overlay">
+            <div class="modal-card modal-card-screen">
+                <div class="modal-header">
+                    <h3 class="modal-title">화면 복사 (Duplicate Screen)</h3>
+                    <p class="modal-subtitle" id="copy-screen-source-info">-</p>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">복사 대상 프로젝트 (Target Project)</label>
+                        <select id="copy-screen-target-project" class="form-input">
+                            <option value="">불러오는 중...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">새 화면 명칭 (Display Title)</label>
+                        <input type="text" id="copy-screen-title" class="form-input" placeholder="새 화면 제목">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">새 파일명 (Filename)</label>
+                        <input type="text" id="copy-screen-filename" class="form-input" placeholder="예: screen_copy.html">
+                        <p id="copy-screen-filename-notice" class="form-notice" style="color:#94a3b8; font-size:11px; margin-top:4px;">* 대상 프로젝트 내에 이미 존재하는 파일명이면 자동으로 번호가 증가합니다.</p>
+                    </div>
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px; margin-top:12px; padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:6px;">
+                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-main, #ffffff); cursor:pointer;">
+                            <input type="checkbox" id="copy-screen-open-after" checked="" style="cursor:pointer;">
+                            <span>복사 완료 후 해당 프로젝트의 복사된 화면으로 즉시 이동</span>
+                        </label>
+                        <label id="copy-screen-move-group" style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-dim, #94a3b8); cursor:pointer;">
+                            <input type="checkbox" id="copy-screen-is-move" style="cursor:pointer;">
+                            <span>원본 프로젝트에서 삭제하고 이전 (이동 모드)</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-copy-screen-cancel" class="btn-secondary">취소</button>
+                    <button id="btn-copy-screen-submit" class="btn-primary">복사하기</button>
                 </div>
             </div>
         </div>
@@ -173,6 +213,14 @@
                             <div class="template-name">프로젝트 커버</div>
                             <div class="template-badge">Cover</div>
                         </div>
+                        <div class="template-card" data-template="template_project_summary.html" data-default-name="01_Project_Summary">
+                            <div class="template-thumb">
+                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">summarize</span>
+                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            </div>
+                            <div class="template-name">과제 개요</div>
+                            <div class="template-badge">Summary</div>
+                        </div>
                         <div class="template-card" data-template="template_plan.html" data-default-name="02_Plan">
                             <div class="template-thumb">
                                 <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">event_note</span>
@@ -181,14 +229,7 @@
                             <div class="template-name">진행 일정</div>
                             <div class="template-badge">Plan</div>
                         </div>
-                        <div class="template-card" data-template="template_plan_delivery.html" data-default-name="03_Delivery_Notice">
-                            <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">local_shipping</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                            </div>
-                            <div class="template-name">배송예정일 설정</div>
-                            <div class="template-badge">Plan</div>
-                        </div>
+
                         <div class="template-card" data-template="template_mobile_ui_1.html" data-default-name="06_Mobile_Design_1">
                             <div class="template-thumb">
                                 <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">smartphone</span>

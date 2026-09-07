@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ui_library_fallback.js
  * Fallback data for offline file:// protocol execution.
  * Auto-generated.
@@ -1648,8 +1648,7 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             <option value="case-study">4. Case Study</option>
                             <option value="ui">5. Front UI</option>
                             <option value="mobile-ui">6. Mobile UI 설계</option>
-                            <option value="admin-nbos">7. Admin (NBOS)</option>
-                            <option value="admin-onesphere">8. Admin (Onesphere)</option>
+                            <option value="admin">7. Admin</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1741,6 +1740,14 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             <div class="template-name">프로젝트 커버</div>
                             <div class="template-badge">Cover</div>
                         </div>
+                        <div class="template-card" data-template="template_project_summary.html" data-default-name="01_Project_Summary">
+                            <div class="template-thumb">
+                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">summarize</span>
+                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            </div>
+                            <div class="template-name">과제 개요</div>
+                            <div class="template-badge">Summary</div>
+                        </div>
                         <div class="template-card" data-template="template_plan.html" data-default-name="02_Plan">
                             <div class="template-thumb">
                                 <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">event_note</span>
@@ -1749,14 +1756,7 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             <div class="template-name">진행 일정</div>
                             <div class="template-badge">Plan</div>
                         </div>
-                        <div class="template-card" data-template="template_plan_delivery.html" data-default-name="03_Delivery_Notice">
-                            <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">local_shipping</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                            </div>
-                            <div class="template-name">배송예정일 설정</div>
-                            <div class="template-badge">Plan</div>
-                        </div>
+
                         <div class="template-card" data-template="template_mobile_ui_1.html" data-default-name="06_Mobile_Design_1">
                             <div class="template-thumb">
                                 <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">smartphone</span>

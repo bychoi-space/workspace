@@ -153,23 +153,24 @@ window.V4UndoManager = (function() {
                 temp.innerHTML = prevState.html;
                 temp.querySelectorAll('script').forEach(el => el.remove());
 
-                const currentPcInner = document.querySelector('.pc-content-inner');
-                const currentMobileInner = document.querySelector('.mobile-content-inner');
-                const tempPcInner = temp.querySelector('.pc-content-inner');
-                const tempMobileInner = temp.querySelector('.mobile-content-inner');
+                // Smart In-Place Restoration for Responsive / Admin PC templates
+                const currentPcArea = document.querySelector('.pc-content-area');
+                const tempPcArea = temp.querySelector('.pc-content-area');
+                const currentMobileArea = document.querySelector('.mobile-content-area, .mobile-content');
+                const tempMobileArea = temp.querySelector('.mobile-content-area, .mobile-content');
 
-                // Case 1: Authentic Responsive Template -> In-place update preserving scroll containers
-                if (currentPcInner && tempPcInner) {
-                    currentPcInner.innerHTML = tempPcInner.innerHTML;
-                    if (tempPcInner.getAttribute('style')) {
-                        currentPcInner.setAttribute('style', tempPcInner.getAttribute('style'));
+                if (currentPcArea && tempPcArea) {
+                    currentPcArea.innerHTML = tempPcArea.innerHTML;
+                    if (currentMobileArea && tempMobileArea) {
+                        currentMobileArea.innerHTML = tempMobileArea.innerHTML;
                     }
-                    if (currentMobileInner && tempMobileInner) {
-                        currentMobileInner.innerHTML = tempMobileInner.innerHTML;
-                        if (tempMobileInner.getAttribute('style')) {
-                            currentMobileInner.setAttribute('style', tempMobileInner.getAttribute('style'));
-                        }
-                    }
+
+                    // Sync body-level components (connectors, pins, temporary body-dragged objects)
+                    const curBodyComps = document.body.querySelectorAll(':scope > .lf-component');
+                    curBodyComps.forEach(el => el.remove());
+                    const tempBodyComps = temp.querySelectorAll(':scope > .lf-component');
+                    tempBodyComps.forEach(el => document.body.appendChild(el.cloneNode(true)));
+
                     // Sync height inputs if changed
                     const tempPcInput = temp.querySelector('.pc-height-input');
                     const curPcInput = document.querySelector('.pc-height-input');
@@ -179,7 +180,7 @@ window.V4UndoManager = (function() {
                     const curMobInput = document.querySelector('.mobile-height-input');
                     if (tempMobInput && curMobInput && tempMobInput.value) curMobInput.value = tempMobInput.value;
                 } else {
-                    // Case 2: Standard Template -> Replace body contents while preserving scripts
+                    // Case 2: Standard Template (Cover, Plan, Summary, UI, Blank, etc.) -> Replace body contents while preserving scripts
                     const currentScripts = Array.from(document.body.querySelectorAll('script'));
                     document.body.innerHTML = '';
                     while (temp.firstChild) {
@@ -221,11 +222,27 @@ window.V4UndoManager = (function() {
             setTimeout(bindScrollListeners, 300);
             
             document.addEventListener('keydown', (e) => {
-                if (e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || (e.target.closest && e.target.closest('.v4-editable-cell, .ql-editor, [contenteditable="true"]'))) return;
-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-                    e.preventDefault();
-                    window.V4UndoManager.undo();
+                const isZ = e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ';
+                if (!isZ || (!e.ctrlKey && !e.metaKey)) return;
+
+                // Native input elements protection (input, textarea, select, Quill editor)
+                const targetTag = e.target ? e.target.tagName : '';
+                if (['INPUT', 'TEXTAREA', 'SELECT'].includes(targetTag)) return;
+                if (e.target && e.target.closest && e.target.closest('.ql-editor')) return;
+
+                // When typing actively in contenteditable cell, allow browser text undo
+                const isCell = e.target && (e.target.isContentEditable || (e.target.closest && e.target.closest('.v4-editable-cell, [contenteditable="true"]')));
+                if (isCell) {
+                    const sel = window.getSelection();
+                    const hasActiveCaret = sel && sel.anchorNode && (sel.anchorNode === e.target || e.target.contains(sel.anchorNode));
+                    const isExplicitEditing = e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true' && document.activeElement === e.target;
+                    if (isExplicitEditing && hasActiveCaret && e.target.closest && !e.target.closest('.lf-component.selected')) {
+                        return;
+                    }
                 }
+
+                e.preventDefault();
+                window.V4UndoManager.undo();
             });
             window.addEventListener('message', (e) => {
                 if (e.data && e.data.type === 'LF_SYNC_CONNECTORS') {

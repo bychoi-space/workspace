@@ -809,14 +809,14 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
             let type = 'default';
             if (templateName.includes('cover')) type = 'cover';
             else if (templateName.includes('architecture')) type = 'architecture';
+            else if (templateName.includes('project_summary') || templateName.includes('summary')) type = 'plan';
             else if (templateName.includes('plan_delivery')) type = 'plan-delivery';
             else if (templateName.includes('plan')) type = 'plan';
             else if (templateName.includes('case_study') || templateName.includes('case-study')) type = 'case-study';
             else if (templateName.includes('front_ui')) type = 'ui';
             else if (templateName.includes('responsive') || templateName.includes('pc_mobile')) type = 'responsive-ui';
             else if (templateName.includes('mobile_ui')) type = 'mobile-ui';
-            else if (templateName.includes('nbos')) type = 'admin-nbos';
-            else if (templateName.includes('onesphere')) type = 'admin-onesphere';
+            else if (templateName.includes('nbos') || templateName.includes('onesphere') || templateName.includes('admin')) type = 'admin';
             else if (templateName.includes('blank')) type = 'blank';
 
             meta.screens[filename] = { 

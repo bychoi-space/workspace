@@ -1456,8 +1456,9 @@ function getCategoryData(type) {
         'ui': { label: 'UI', code: 'UI', class: 'badge-ui' },
         'responsive-ui': { label: 'PC+MO', code: 'PC', class: 'badge-responsive-ui' },
         'mobile-ui': { label: 'MOBILE', code: 'MO', class: 'badge-mobile-ui' },
-        'admin-nbos': { label: 'NBOS', code: 'NB', class: 'badge-admin-nbos' },
-        'admin-onesphere': { label: '1SPH', code: '1S', class: 'badge-admin-onesphere' }
+        'admin': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
+        'admin-nbos': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
+        'admin-onesphere': { label: 'ADMIN', code: 'AD', class: 'badge-admin' }
     };
     return categories[type] || { label: 'ETC', code: (type || 'ET').slice(0, 2).toUpperCase(), class: 'badge-default' };
 }
@@ -2414,7 +2415,11 @@ window.handleEditScreen = async function(fileName) {
     
     if (editFilename) editFilename.innerText = fileName;
     if (editTitle) editTitle.value = meta.title || "";
-    if (editType) editType.value = meta.type || "default";
+    let screenType = meta.type || "default";
+    if (screenType === 'admin-nbos' || screenType === 'admin-onesphere') {
+        screenType = 'admin';
+    }
+    if (editType) editType.value = screenType;
     if (editDefaultTab) editDefaultTab.value = meta.defaultTab || "editor";
     if (editDesc) editDesc.value = meta.screenDesc || meta.description || "";
     if (editModal) editModal.classList.add('active');

@@ -494,9 +494,26 @@ window.v4ShortcutsScript = `
 
     function isInputActive(target) {
         if (!target) return false;
-        return target.isContentEditable || 
-               ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
-               !!(target.closest && target.closest('.v4-editable-cell, .ql-editor, [contenteditable="true"]'));
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return true;
+        if (target.closest && target.closest('.ql-editor')) return true;
+
+        const activeEl = document.activeElement;
+        const isTargetInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl ? activeEl.tagName : '');
+        if (isTargetInput) return true;
+
+        // Contenteditable is only active when activeElement is actually editing text
+        const editable = (target && target.isContentEditable) ? target : (target && target.closest ? target.closest('.v4-editable-cell, [contenteditable="true"]') : null);
+        if (editable && (activeEl === editable || (activeEl && editable.contains(activeEl)))) {
+            const sel = window.getSelection();
+            if (sel && sel.anchorNode && editable.contains(sel.anchorNode)) {
+                const comp = editable.closest('.lf-component');
+                if (comp && comp.classList.contains('selected') && !editable.classList.contains('active-cell-editing')) {
+                    return false;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     document.addEventListener('keydown', e => {
@@ -572,7 +589,18 @@ window.v4ShortcutsScript = `
         const isX = e.key === 'x' || e.key === 'X' || e.code === 'KeyX';
         const isV = e.key === 'v' || e.key === 'V' || e.code === 'KeyV';
         const isG = e.key === 'g' || e.key === 'G' || e.code === 'KeyG';
-        const inInput = isInputActive(e.target);
+        const isZ = e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ';
+        const inInput = isInputActive(e.target) || isInputActive(document.activeElement);
+
+        if ((e.ctrlKey || e.metaKey) && isZ && !inInput) {
+            e.preventDefault();
+            if (window.V4UndoManager && typeof window.V4UndoManager.undo === 'function') {
+                window.V4UndoManager.undo();
+            } else if (typeof notifyParent === 'function') {
+                notifyParent({ type: 'LF_TRIGGER_UNDO' });
+            }
+            return;
+        }
 
         if ((e.ctrlKey || e.metaKey) && isS) {
             e.preventDefault();

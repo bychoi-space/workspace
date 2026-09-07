@@ -70,6 +70,12 @@
       "updatedAt": "2026-09-07T08:22:45.537Z",
       "description": [],
       "connectors": []
+    },
+    "01_Project_Summary_898.html": {
+      "title": "01_Project_Summary_898",
+      "type": "plan",
+      "updatedAt": "2026-09-07T08:30:28.012Z",
+      "template": "template_project_summary.html"
     }
   },
   "assignee": "최범열",
@@ -82,6 +88,7 @@
     "01_Project_Summary_Report_101_copy.html",
     "08_Responsive_PC_Mobile_730.html",
     "09_Admin_PC_Scroll_639.html",
-    "09_Admin_PC_Scroll_639_copy.html"
+    "09_Admin_PC_Scroll_639_copy.html",
+    "01_Project_Summary_898.html"
   ]
 }

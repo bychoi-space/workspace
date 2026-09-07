@@ -42,14 +42,6 @@
       "defaultTab": "editor",
       "screenDesc": ""
     },
-    "06_Mobile_Design_2_192.html": {
-      "title": "06_Mobile_Design_2_192",
-      "type": "mobile-ui",
-      "updatedAt": "2026-09-04T04:33:27.921Z",
-      "template": "template_mobile_ui_2.html",
-      "description": [],
-      "connectors": []
-    },
     "09_Admin_PC_Scroll_639.html": {
       "title": "09_Admin_PC_Scroll_639",
       "type": "default",

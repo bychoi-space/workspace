@@ -96,6 +96,11 @@
         if (isShiftPressed && isDrawingPen && currentStroke) {
             currentStroke.push(lastMousePos);
         }
+
+        // Show tooltip when hovering near bottom-right corner
+        if (window.innerHeight - absY < 80 && window.innerWidth - absX < 260) {
+            showTooltip();
+        }
     };
 
     window.__lf_proxy_keydown__ = function(e) {
@@ -107,6 +112,7 @@
             if (canvas) {
                 canvas.style.pointerEvents = 'auto';
             }
+            showTooltip();
         }
     };
 
@@ -130,6 +136,7 @@
             if (canvas) {
                 canvas.style.pointerEvents = 'auto';
             }
+            showTooltip();
         }
 
         // Clear drawings on ESC or 'C' key
@@ -177,6 +184,11 @@
         if (isShiftPressed && isDrawingPen && currentStroke) {
             currentStroke.push(pos);
         }
+
+        // Show tooltip when hovering near bottom-right corner
+        if (window.innerHeight - e.clientY < 80 && window.innerWidth - e.clientX < 260) {
+            showTooltip();
+        }
     }
 
     function handleMouseUp() {
@@ -206,6 +218,42 @@
     }
 
     let tooltip = null;
+    let fadeTimeout = null;
+
+    function showTooltip(autoHide = true) {
+        initTooltip();
+        if (!tooltip) return;
+
+        if (fadeTimeout) {
+            clearTimeout(fadeTimeout);
+            fadeTimeout = null;
+        }
+
+        tooltip.style.display = 'flex';
+        requestAnimationFrame(() => {
+            if (tooltip) {
+                tooltip.style.opacity = '1';
+                tooltip.style.transform = 'translateY(0)';
+            }
+        });
+
+        if (autoHide) {
+            fadeTimeout = setTimeout(() => {
+                hideTooltip();
+            }, 3500);
+        }
+    }
+
+    function hideTooltip() {
+        if (!tooltip) return;
+        if (fadeTimeout) {
+            clearTimeout(fadeTimeout);
+            fadeTimeout = null;
+        }
+        tooltip.style.opacity = '0';
+        tooltip.style.transform = 'translateY(8px)';
+    }
+
     function initTooltip() {
         if (tooltip) return;
         tooltip = document.createElement('div');
@@ -224,22 +272,25 @@
         
         Object.assign(tooltip.style, {
             position: 'fixed',
-            top: '16px',
-            left: '16px',
+            bottom: '20px',
+            right: '24px',
             zIndex: '99998',
             display: 'none',
             alignItems: 'center',
             gap: '12px',
             padding: '8px 16px',
-            background: 'rgba(15, 23, 42, 0.75)',
-            backdropFilter: 'blur(8px)',
-            webkitBackdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            background: 'rgba(15, 23, 42, 0.82)',
+            backdropFilter: 'blur(10px)',
+            webkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
             borderRadius: '20px',
-            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
             pointerEvents: 'none',
             fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            userSelect: 'none'
+            userSelect: 'none',
+            opacity: '0',
+            transform: 'translateY(8px)',
+            transition: 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
         });
         
         document.body.appendChild(tooltip);
@@ -254,10 +305,7 @@
             if (isFullscreen) {
                 // Entering Fullscreen Presentation Mode
                 resizeCanvas();
-                initTooltip();
-                if (tooltip) {
-                    tooltip.style.display = 'flex';
-                }
+                showTooltip();
                 
                 // Programmatically hide properties card immediately if open
                 const card = document.getElementById('floating-inspector-card');
@@ -267,7 +315,12 @@
             } else {
                 // Exiting Fullscreen Presentation Mode
                 clearDrawings();
+                if (fadeTimeout) {
+                    clearTimeout(fadeTimeout);
+                    fadeTimeout = null;
+                }
                 if (tooltip) {
+                    tooltip.style.opacity = '0';
                     tooltip.style.display = 'none';
                 }
                 if (canvas) {

@@ -186,10 +186,12 @@ window.v4DesignSystemScript = `
                 if (comp) {
                     const hasGroupHeader = container.getAttribute('data-show-group-header') === 'true';
                     const headerHeight = hasGroupHeader ? 40 : 0;
+                    const hasActionBar = container.getAttribute('data-show-action-bar') === 'true';
+                    const actionBarHeight = hasActionBar ? 44 : 0;
                     const totalRows = parseInt(container.getAttribute('data-row-count')) || 1;
-                    const globalRowHeight = parseInt(container.getAttribute('data-row-height')) || 40;
+                    const globalRowHeight = parseInt(container.getAttribute('data-row-height')) || 44;
                     
-                    let expectedHeight = headerHeight;
+                    let expectedHeight = headerHeight + actionBarHeight;
                     for (let i = 1; i <= totalRows; i++) {
                         const specificHeight = parseInt(container.getAttribute('data-row' + i + '-height')) || globalRowHeight;
                         expectedHeight += specificHeight;

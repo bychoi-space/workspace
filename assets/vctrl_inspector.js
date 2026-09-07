@@ -41,6 +41,10 @@ window.rebindInspectorDOM = function() {
     DOM.btnGroup = get('btn-group-action');
     DOM.btnUngroup = get('btn-ungroup-action');
     DOM.btnAddToMolecules = get('btn-add-molecules-action');
+
+    if (typeof window.initUnifiedLabels === 'function') {
+        window.initUnifiedLabels();
+    }
 };
 
 window.restorePropertiesSections = function() {
@@ -345,7 +349,7 @@ const ProjectMetadataManager = {
         // Hide all sections first & return active sections to storage
         window.restorePropertiesSections();
         const activeEl = document.activeElement;
-        const isTypingInAdminProps = activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
+        const isTypingInAdminProps = activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number' || activeEl.id === 'prop-admin-action-bar-enable' || activeEl.id === 'prop-admin-action-align');
         const isTyping = activeEl && (
             activeEl.tagName === 'INPUT' || 
             activeEl.tagName === 'TEXTAREA' || 
@@ -506,7 +510,7 @@ const ProjectMetadataManager = {
                 if (DOM.adminSettingsPropSection) DOM.adminSettingsPropSection.style.display = 'block';
                 // Focus guard: Do not rebuild the inputs if the user is actively typing in one of them
                 const activeEl = document.activeElement;
-                const isTypingInAdminProps = activeEl && (activeEl.closest('#admin-settings-inspector-section') || activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
+                const isTypingInAdminProps = activeEl && (activeEl.closest('#admin-settings-inspector-section') || activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number' || activeEl.id === 'prop-admin-action-bar-enable' || activeEl.id === 'prop-admin-action-align');
                 if (!isTypingInAdminProps) {
                     _syncAdminSettingsProps(compStyles);
                 }
@@ -1484,6 +1488,7 @@ window.showScreenFlyout = function(item, screenData) {
     const titleEl = document.getElementById('flyout-title');
     const filenameEl = document.getElementById('flyout-filename');
     const btnEdit = document.getElementById('flyout-btn-edit');
+    const btnCopy = document.getElementById('flyout-btn-copy');
     const btnDelete = document.getElementById('flyout-btn-delete');
     const nub = flyout.querySelector('.flyout-nub');
 
@@ -1508,6 +1513,13 @@ window.showScreenFlyout = function(item, screenData) {
             e.stopPropagation();
             window.hideScreenFlyout(0);
             if (typeof window.handleEditScreen === 'function') window.handleEditScreen(screenData.name);
+        };
+    }
+    if (btnCopy) {
+        btnCopy.onclick = (e) => {
+            e.stopPropagation();
+            window.hideScreenFlyout(0);
+            if (typeof window.handleCopyScreen === 'function') window.handleCopyScreen(screenData.name);
         };
     }
     if (btnDelete) {
@@ -1608,6 +1620,7 @@ window.renderScreenList = function(screens, activeName) {
             </div>
             <div class="screen-actions" style="display:flex; gap:4px;">
                 <button class="screen-edit-btn" title="속성 편집"><span class="material-icons-outlined" style="font-size:16px;">edit</span></button>
+                <button class="screen-copy-btn" title="화면 복사"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></button>
                 <button class="screen-delete-btn" title="화면 삭제"><span class="material-icons-outlined" style="font-size:16px;">delete</span></button>
             </div>
         `;
@@ -1620,6 +1633,10 @@ window.renderScreenList = function(screens, activeName) {
         item.onclick = async (e) => {
             if (e.target.closest('.screen-delete-btn')) {
                 if (typeof window.handleDeleteScreen === 'function') window.handleDeleteScreen(s.name, s.sha);
+                return;
+            }
+            if (e.target.closest('.screen-copy-btn')) {
+                if (typeof window.handleCopyScreen === 'function') window.handleCopyScreen(s.name);
                 return;
             }
             if (e.target.closest('.screen-edit-btn')) {
@@ -2447,6 +2464,384 @@ window.handleEditScreen = async function(fileName) {
     }
 };
 
+window.handleCopyScreen = async function(sourceFileName) {
+    const state = window.state || {};
+    if (state.isReadOnly) {
+        if (typeof window.showAuthModal === 'function') window.showAuthModal();
+        return;
+    }
+
+    const modal = document.getElementById('copy-screen-modal');
+    const sourceInfoEl = document.getElementById('copy-screen-source-info');
+    const targetProjectSelect = document.getElementById('copy-screen-target-project');
+    const titleInput = document.getElementById('copy-screen-title');
+    const filenameInput = document.getElementById('copy-screen-filename');
+    const noticeEl = document.getElementById('copy-screen-filename-notice');
+    const openAfterCheck = document.getElementById('copy-screen-open-after');
+    const isMoveCheck = document.getElementById('copy-screen-is-move');
+    const moveGroup = document.getElementById('copy-screen-move-group');
+    const btnSubmit = document.getElementById('btn-copy-screen-submit');
+    const btnCancel = document.getElementById('btn-copy-screen-cancel');
+
+    if (!modal) return;
+
+    const sourceProject = state.currentProject;
+    const sourceScreenMeta = (state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[sourceFileName]) || {};
+    const sourceTitle = sourceScreenMeta.title || sourceFileName.replace(/\.html$/i, '');
+
+    if (sourceInfoEl) {
+        sourceInfoEl.innerText = `현재: [${sourceProject}] ${sourceFileName} (${sourceTitle})`;
+    }
+
+    if (titleInput) {
+        titleInput.value = `${sourceTitle} (복사본)`;
+    }
+
+    const generateUniqueFilename = (baseName, existingFiles) => {
+        const cleanName = baseName.replace(/\.html$/i, '');
+        const rootName = cleanName.replace(/_copy\d*$/i, '');
+        let candidate = `${rootName}_copy.html`;
+        let counter = 2;
+        while (existingFiles && existingFiles.includes(candidate)) {
+            candidate = `${rootName}_copy${counter}.html`;
+            counter++;
+        }
+        return candidate;
+    };
+
+    const projectScreensCache = {};
+
+    if (targetProjectSelect) {
+        targetProjectSelect.innerHTML = '<option value="">프로젝트 목록 불러오는 중...</option>';
+        targetProjectSelect.disabled = true;
+
+        try {
+            let folders = [];
+            if (typeof listContents === 'function') {
+                const rootItems = await listContents('');
+                if (Array.isArray(rootItems)) {
+                    const ignored = ['assets', 'scripts', '.github', '.agents', '.gemini', 'node_modules', '.git'];
+                    folders = rootItems.filter(i => i.type === 'dir' && !ignored.includes(i.name));
+                }
+            }
+
+            if (sourceProject && !folders.find(f => f.name === sourceProject)) {
+                folders.unshift({ name: sourceProject, type: 'dir' });
+            }
+
+            targetProjectSelect.innerHTML = '';
+            for (const folder of folders) {
+                const opt = document.createElement('option');
+                opt.value = folder.name;
+                opt.textContent = folder.name === sourceProject
+                    ? `${folder.name} (현재 프로젝트)`
+                    : `${folder.name}`;
+                if (folder.name === sourceProject) {
+                    opt.selected = true;
+                }
+                targetProjectSelect.appendChild(opt);
+            }
+            targetProjectSelect.disabled = false;
+
+            const currentFiles = (state.screens || []).map(s => s.name);
+            projectScreensCache[sourceProject] = currentFiles;
+
+            if (filenameInput) {
+                filenameInput.value = generateUniqueFilename(sourceFileName, currentFiles);
+            }
+
+            // Async load project titles to enhance options
+            (async () => {
+                for (const folder of folders) {
+                    try {
+                        const meta = (folder.name === sourceProject && state.projectMetadata) 
+                            ? state.projectMetadata 
+                            : (typeof fetchProjectMetadata === 'function' ? await fetchProjectMetadata(folder.name) : null);
+                        if (meta && meta.title && meta.title !== folder.name) {
+                            const opt = targetProjectSelect.querySelector(`option[value="${folder.name}"]`);
+                            if (opt) {
+                                opt.textContent = folder.name === sourceProject
+                                    ? `${meta.title} (${folder.name}) - 현재 프로젝트`
+                                    : `${meta.title} (${folder.name})`;
+                            }
+                        }
+                    } catch (e) {}
+                }
+            })();
+
+        } catch (err) {
+            console.error("[CopyScreen] Failed to list projects:", err);
+            targetProjectSelect.innerHTML = `<option value="${sourceProject}">${sourceProject} (현재 프로젝트)</option>`;
+            targetProjectSelect.disabled = false;
+            const currentFiles = (state.screens || []).map(s => s.name);
+            projectScreensCache[sourceProject] = currentFiles;
+            if (filenameInput) {
+                filenameInput.value = generateUniqueFilename(sourceFileName, currentFiles);
+            }
+        }
+    }
+
+    const onTargetProjectChange = async () => {
+        const targetProj = targetProjectSelect ? targetProjectSelect.value : sourceProject;
+        const isSameProject = targetProj === sourceProject;
+
+        if (moveGroup && isMoveCheck) {
+            if (isSameProject) {
+                isMoveCheck.checked = false;
+                moveGroup.style.opacity = '0.5';
+                isMoveCheck.disabled = true;
+            } else {
+                moveGroup.style.opacity = '1';
+                isMoveCheck.disabled = false;
+            }
+        }
+
+        let targetFiles = projectScreensCache[targetProj];
+        if (!targetFiles) {
+            try {
+                if (noticeEl) {
+                    noticeEl.innerText = '대상 프로젝트 파일 목록 확인 중...';
+                    noticeEl.style.color = '#94a3b8';
+                }
+                const targetMeta = typeof fetchProjectMetadata === 'function' ? await fetchProjectMetadata(targetProj) : null;
+                targetFiles = targetMeta && targetMeta.screens ? Object.keys(targetMeta.screens) : [];
+                projectScreensCache[targetProj] = targetFiles;
+            } catch (e) {
+                targetFiles = [];
+            }
+        }
+
+        if (filenameInput) {
+            const currentVal = filenameInput.value.trim();
+            if (!currentVal || targetFiles.includes(currentVal)) {
+                filenameInput.value = generateUniqueFilename(sourceFileName, targetFiles);
+            }
+        }
+        if (noticeEl) {
+            noticeEl.innerText = `* 대상 프로젝트: [${targetProj}] (총 ${targetFiles.length}개 화면)`;
+            noticeEl.style.color = '#94a3b8';
+        }
+    };
+
+    if (targetProjectSelect) {
+        targetProjectSelect.onchange = onTargetProjectChange;
+        onTargetProjectChange();
+    }
+
+    if (filenameInput) {
+        filenameInput.oninput = () => {
+            const val = filenameInput.value.trim();
+            const targetProj = targetProjectSelect ? targetProjectSelect.value : sourceProject;
+            const targetFiles = projectScreensCache[targetProj] || [];
+            if (noticeEl) {
+                if (targetFiles.includes(val)) {
+                    noticeEl.innerText = '⚠️ 이미 존재하는 파일명입니다. 덮어쓰지 않도록 다른 파일명을 권장합니다.';
+                    noticeEl.style.color = '#f87171';
+                } else {
+                    noticeEl.innerText = '* 사용 가능한 파일명입니다.';
+                    noticeEl.style.color = '#4ade80';
+                }
+            }
+        };
+    }
+
+    modal.classList.add('active');
+
+    if (btnCancel) {
+        btnCancel.onclick = () => {
+            modal.classList.remove('active');
+        };
+    }
+
+    if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = '복사하기';
+        btnSubmit.onclick = async () => {
+            const targetProject = targetProjectSelect ? targetProjectSelect.value : sourceProject;
+            const newTitle = titleInput ? titleInput.value.trim() : '';
+            let newFilename = filenameInput ? filenameInput.value.trim() : '';
+            const openAfter = openAfterCheck ? openAfterCheck.checked : true;
+            const isMove = isMoveCheck ? isMoveCheck.checked : false;
+
+            if (!targetProject) {
+                alert('복사 대상 프로젝트를 선택해주세요.');
+                return;
+            }
+            if (!newTitle) {
+                alert('화면 명칭을 입력해주세요.');
+                return;
+            }
+            if (!newFilename) {
+                alert('새 파일명을 입력해주세요.');
+                return;
+            }
+            if (!newFilename.toLowerCase().endsWith('.html')) {
+                newFilename += '.html';
+            }
+
+            const targetFiles = projectScreensCache[targetProject] || [];
+            if (targetFiles.includes(newFilename)) {
+                const confirmed = confirm(`대상 프로젝트에 '${newFilename}' 파일이 이미 존재합니다.\n덮어쓰시겠습니까?`);
+                if (!confirmed) return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = isMove ? '이동 중...' : '복사 중...';
+
+            await window.executeCopyScreen({
+                sourceProject,
+                sourceFileName,
+                targetProject,
+                newFilename,
+                newTitle,
+                openAfter,
+                isMove,
+                modal,
+                btnSubmit
+            });
+        };
+    }
+};
+
+window.executeCopyScreen = async function(opts) {
+    const {
+        sourceProject,
+        sourceFileName,
+        targetProject,
+        newFilename,
+        newTitle,
+        openAfter,
+        isMove,
+        modal,
+        btnSubmit
+    } = opts;
+
+    const state = window.state || {};
+    const isSameProject = sourceProject === targetProject;
+
+    try {
+        if (typeof window.showLoading === 'function') {
+            window.showLoading(isMove ? `화면 이동 중... (${newFilename})` : `화면 복사 중... (${newFilename})`);
+        }
+
+        // 1. Fetch source screen HTML content
+        let content = null;
+        if (typeof fetchProjectFileContent === 'function') {
+            content = await fetchProjectFileContent(sourceProject, sourceFileName);
+        }
+        if (!content) {
+            throw new Error(`원본 화면(${sourceFileName}) 파일 내용을 불러오지 못했습니다.`);
+        }
+
+        // 2. Fetch target project's metadata
+        let targetMeta = null;
+        if (isSameProject && state.projectMetadata) {
+            targetMeta = state.projectMetadata;
+        } else if (typeof fetchProjectMetadata === 'function') {
+            targetMeta = await fetchProjectMetadata(targetProject);
+        } else {
+            targetMeta = { title: targetProject, screens: {} };
+        }
+        if (!targetMeta.screens) targetMeta.screens = {};
+
+        // 3. Upload content to target project
+        const uploadSuccess = await uploadToProject(targetProject, newFilename, content);
+        if (!uploadSuccess && window.location.protocol !== 'file:') {
+            throw new Error(`대상 프로젝트(${targetProject})에 파일 업로드를 실패했습니다.`);
+        }
+
+        // 4. Clone and adapt screen metadata
+        const sourceMetaScreens = (state.projectMetadata && state.projectMetadata.screens) || {};
+        const sourceScreenMeta = sourceMetaScreens[sourceFileName] || {};
+
+        const clonedScreenMeta = JSON.parse(JSON.stringify(sourceScreenMeta));
+        clonedScreenMeta.title = newTitle;
+        clonedScreenMeta.updatedAt = new Date().toISOString();
+
+        targetMeta.screens[newFilename] = clonedScreenMeta;
+
+        // 5. Update screenOrder in target metadata
+        if (!targetMeta.screenOrder) {
+            targetMeta.screenOrder = Object.keys(targetMeta.screens);
+        } else {
+            if (isSameProject) {
+                const sourceIdx = targetMeta.screenOrder.indexOf(sourceFileName);
+                if (sourceIdx !== -1) {
+                    if (!targetMeta.screenOrder.includes(newFilename)) {
+                        targetMeta.screenOrder.splice(sourceIdx + 1, 0, newFilename);
+                    }
+                } else {
+                    if (!targetMeta.screenOrder.includes(newFilename)) {
+                        targetMeta.screenOrder.push(newFilename);
+                    }
+                }
+            } else {
+                if (!targetMeta.screenOrder.includes(newFilename)) {
+                    targetMeta.screenOrder.push(newFilename);
+                }
+            }
+        }
+
+        // 6. Save target project metadata
+        if (typeof saveProjectMetadata === 'function') {
+            await saveProjectMetadata(targetProject, targetMeta);
+        }
+
+        // 7. If isMove is true (and different project), delete source file
+        if (isMove && !isSameProject) {
+            const sourceSha = (state.screens && state.screens.find(s => s.name === sourceFileName) || {}).sha;
+            if (typeof deleteFileFromGitHub === 'function') {
+                await deleteFileFromGitHub(`${sourceProject}/${sourceFileName}`, sourceSha);
+            }
+            if (state.projectMetadata && state.projectMetadata.screens) {
+                delete state.projectMetadata.screens[sourceFileName];
+                if (state.projectMetadata.screenOrder) {
+                    state.projectMetadata.screenOrder = state.projectMetadata.screenOrder.filter(n => n !== sourceFileName);
+                }
+                if (typeof saveProjectMetadata === 'function') {
+                    await saveProjectMetadata(sourceProject, state.projectMetadata);
+                }
+            }
+        }
+
+        // 8. Cleanup and Navigation
+        if (modal) modal.classList.remove('active');
+        if (typeof window.hideLoading === 'function') window.hideLoading();
+
+        if (openAfter) {
+            window.location.href = `viewer.html?project=${encodeURIComponent(targetProject)}&file=${encodeURIComponent(newFilename)}`;
+        } else {
+            if (isSameProject) {
+                window.location.reload();
+            } else {
+                if (window.Notification && typeof window.Notification.alert === 'function') {
+                    window.Notification.alert(
+                        `'${newFilename}' 화면이 [${targetProject}] 프로젝트로 성공적으로 ${isMove ? '이동' : '복사'}되었습니다.`,
+                        "완료",
+                        "info"
+                    );
+                } else {
+                    alert(`'${newFilename}' 화면이 [${targetProject}] 프로젝트로 성공적으로 ${isMove ? '이동' : '복사'}되었습니다.`);
+                }
+            }
+        }
+
+    } catch (err) {
+        console.error("[CopyScreen] executeCopyScreen error:", err);
+        if (typeof window.hideLoading === 'function') window.hideLoading();
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = isMove ? '이동하기' : '복사하기';
+        }
+        if (window.Notification && typeof window.Notification.alert === 'function') {
+            window.Notification.alert(err.message || "화면 복사 중 오류가 발생했습니다.", "오류", "error");
+        } else {
+            alert(err.message || "화면 복사 중 오류가 발생했습니다.");
+        }
+    }
+};
+
+
 // --- 5. Init Events & Listeners ---
 if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => window.toggleSidebar('left');
 if (DOM.btnToggleRight) DOM.btnToggleRight.onclick = () => window.toggleSidebar('right');
@@ -2919,6 +3314,18 @@ function _syncAdminSettingsProps(comp) {
         colorInp.value = comp.adminGroupHeaderColor;
     }
 
+    // Sync Action Bar Inputs
+    const enableActionBarChk = document.getElementById('prop-admin-action-bar-enable');
+    const actionAlignSel = document.getElementById('prop-admin-action-align');
+    const configActionBarSub = document.getElementById('admin-action-bar-config-sub');
+    if (enableActionBarChk) {
+        enableActionBarChk.checked = comp.adminShowActionBar === true;
+        if (configActionBarSub) configActionBarSub.style.display = enableActionBarChk.checked ? 'flex' : 'none';
+    }
+    if (actionAlignSel && comp.adminActionAlign !== undefined) {
+        actionAlignSel.value = comp.adminActionAlign;
+    }
+
     const container = document.getElementById('admin-rows-configuration-container');
     if (!container) return;
     const activeEl = document.activeElement;
@@ -2945,7 +3352,7 @@ function _syncAdminSettingsProps(comp) {
             let lbl = comp[`adminRow${r}Label`] || '';
             let cCount = comp[`adminRow${r}Cols`] || 1;
             let rType = comp[`adminRow${r}Type`] || 'textbox';
-            let rH = comp[`adminRow${r}Height`] || 50;
+            let rH = comp[`adminRow${r}Height`] || 44;
 
             if (containerEl) {
                 lbl = containerEl.getAttribute(`data-row${r}-label`) || lbl;
@@ -2962,7 +3369,7 @@ function _syncAdminSettingsProps(comp) {
                 const colsSel = rowBlock.querySelector('.admin-row-cols');
                 if (colsSel) cCount = parseInt(colsSel.value) || 1;
                 const hInp = rowBlock.querySelector('.admin-row-height-input');
-                if (hInp) rH = parseInt(hInp.value) || 50;
+                if (hInp) rH = parseInt(hInp.value) || 44;
             }
 
             currentRows.push({
@@ -2994,7 +3401,7 @@ function _syncAdminSettingsProps(comp) {
                         containerEl.setAttribute(`data-row${r}-label`, rowData.label);
                         containerEl.setAttribute(`data-row${r}-cols`, rowData.cols);
                         containerEl.setAttribute(`data-row${r}-type`, rowData.type || 'textbox');
-                        containerEl.setAttribute(`data-row${r}-height`, rowData.height || 50);
+                        containerEl.setAttribute(`data-row${r}-height`, rowData.height || 44);
                     } else {
                         containerEl.removeAttribute(`data-row${r}-label`);
                         containerEl.removeAttribute(`data-row${r}-cols`);
@@ -3020,14 +3427,16 @@ function _syncAdminSettingsProps(comp) {
             adminShowGroupHeader: comp.adminShowGroupHeader,
             adminGroupHeaderTitle: comp.adminGroupHeaderTitle,
             adminGroupHeaderBg: comp.adminGroupHeaderBg,
-            adminGroupHeaderColor: comp.adminGroupHeaderColor
+            adminGroupHeaderColor: comp.adminGroupHeaderColor,
+            adminShowActionBar: comp.adminShowActionBar,
+            adminActionAlign: comp.adminActionAlign
         };
         for (let r = 1; r <= 10; r++) {
             if (r <= newRowCount) {
                 syncData[`adminRow${r}Label`] = rowsArray[r - 1].label;
                 syncData[`adminRow${r}Cols`] = rowsArray[r - 1].cols;
                 syncData[`adminRow${r}Type`] = rowsArray[r - 1].type || 'textbox';
-                syncData[`adminRow${r}Height`] = rowsArray[r - 1].height || 50;
+                syncData[`adminRow${r}Height`] = rowsArray[r - 1].height || 44;
             }
         }
 
@@ -3038,7 +3447,7 @@ function _syncAdminSettingsProps(comp) {
     for (let i = 1; i <= rowCount; i++) {
         const labelsVal = comp[`adminRow${i}Label`] || '';
         const colsVal = comp[`adminRow${i}Cols`] || 1;
-        const specificHeightVal = comp[`adminRow${i}Height`] || 50;
+        const specificHeightVal = comp[`adminRow${i}Height`] || 44;
 
         // Split current labels
         const labelsArr = labelsVal.split(',').map(l => l.trim());
@@ -3141,7 +3550,7 @@ function _syncAdminSettingsProps(comp) {
                     label: getMergedLabels(),
                     cols: parseInt(colSelect.value) || 1,
                     rowType: 'textbox',
-                    rowSpecificHeight: parseInt(heightInp.value) || 50
+                    rowSpecificHeight: parseInt(heightInp.value) || 44
                 });
             }
         };
@@ -3202,16 +3611,25 @@ function _syncAdminSettingsProps(comp) {
                                 containerEl.setAttribute(`data-row${newCount}-label`, `조회 항목 ${newCount}`);
                                 containerEl.setAttribute(`data-row${newCount}-cols`, '1');
                                 containerEl.setAttribute(`data-row${newCount}-type`, 'textbox');
+                                containerEl.setAttribute(`data-row${newCount}-height`, '44');
                             }
                             const syncData = {
                                 id: activeId,
                                 editingType: 'admin-settings',
-                                adminRowCount: newCount
+                                adminRowCount: newCount,
+                                adminLabelWidth: comp.adminLabelWidth,
+                                adminShowGroupHeader: comp.adminShowGroupHeader,
+                                adminGroupHeaderTitle: comp.adminGroupHeaderTitle,
+                                adminGroupHeaderBg: comp.adminGroupHeaderBg,
+                                adminGroupHeaderColor: comp.adminGroupHeaderColor,
+                                adminShowActionBar: comp.adminShowActionBar,
+                                adminActionAlign: comp.adminActionAlign
                             };
                             for (let r = 1; r <= 10; r++) {
                                 syncData[`adminRow${r}Label`] = containerEl.getAttribute(`data-row${r}-label`) || '';
                                 syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
                                 syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
+                                syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
                             }
                             _syncAdminSettingsProps(syncData);
                         }
@@ -3240,12 +3658,20 @@ function _syncAdminSettingsProps(comp) {
                             const syncData = {
                                 id: activeId,
                                 editingType: 'admin-settings',
-                                adminRowCount: newCount
+                                adminRowCount: newCount,
+                                adminLabelWidth: comp.adminLabelWidth,
+                                adminShowGroupHeader: comp.adminShowGroupHeader,
+                                adminGroupHeaderTitle: comp.adminGroupHeaderTitle,
+                                adminGroupHeaderBg: comp.adminGroupHeaderBg,
+                                adminGroupHeaderColor: comp.adminGroupHeaderColor,
+                                adminShowActionBar: comp.adminShowActionBar,
+                                adminActionAlign: comp.adminActionAlign
                             };
                             for (let r = 1; r <= 10; r++) {
                                 syncData[`adminRow${r}Label`] = containerEl.getAttribute(`data-row${r}-label`) || '';
                                 syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
                                 syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
+                                syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
                             }
                             _syncAdminSettingsProps(syncData);
                         }

@@ -362,10 +362,10 @@
             </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="color" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">ICON COLOR</label>
+                    <label class="v4-color-label" data-prop="iconColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">아이콘색 (Icon)</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="icon-color-wrapper">
-                            <input type="color" id="icon-color" class="v4-color-input" data-prop="color" value="#000000">
+                            <input type="color" id="icon-color" class="v4-color-input" data-prop="iconColor" value="#000000">
                         </div>
                     </div>
                 </div>
@@ -1252,6 +1252,23 @@
             <!-- Row Configurations -->
             <div id="admin-rows-configuration-container" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <!-- Dynamic Row Configs will be loaded here -->
+            </div>
+
+            <!-- Action Bar Configuration -->
+            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <label style="font-size: 9px; color: #94a3b8; display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 6px;">
+                    <input type="checkbox" id="prop-admin-action-bar-enable" style="cursor: pointer; accent-color: var(--accent);">
+                    하단 액션 버튼(초기화/검색) 표시
+                </label>
+                <div id="admin-action-bar-config-sub" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <div class="prop-group">
+                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">버튼 정렬</label>
+                        <select id="prop-admin-action-align" class="v4-prop-input" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px; height: 23px; box-sizing: border-box;">
+                            <option value="center">중앙 정렬 (Center)</option>
+                            <option value="right">우측 정렬 (Right)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <!-- Dimensions -->

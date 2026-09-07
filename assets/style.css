@@ -1209,6 +1209,31 @@ body {
     border-color: var(--accent);
 }
 
+.screen-copy-btn {
+    display: none;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #38bdf8;
+    transition: all 0.2s;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+.screen-item:hover .screen-copy-btn {
+    opacity: 1;
+}
+.screen-copy-btn:hover {
+    opacity: 1 !important;
+    background: #0ea5e9;
+    color: #fff;
+    border-color: #0ea5e9;
+}
+
+
 /* Screen Categorical Badges */
 .screen-badge {
     font-size: 9px;

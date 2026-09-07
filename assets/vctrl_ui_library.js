@@ -136,6 +136,9 @@
         window.DOM.addScreenModal = get('add-screen-modal');
         window.DOM.btnCancelAdd = get('btn-add-screen-cancel');
         window.DOM.btnSubmitAdd = get('btn-add-screen-submit');
+        window.DOM.copyScreenModal = get('copy-screen-modal');
+        window.DOM.btnCancelCopy = get('btn-copy-screen-cancel');
+        window.DOM.btnSubmitCopy = get('btn-copy-screen-submit');
     }
 
     // Run initialization

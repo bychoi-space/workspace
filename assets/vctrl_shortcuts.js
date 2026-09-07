@@ -539,6 +539,12 @@ window.v4ShortcutsScript = `
                                      targetComp.querySelector('.v4-shape-text-content, .v4-shape-text-overlay, .v4-text-shape-content');
                     if (editable) {
                         console.log("[VCTRL SHORTCUTS] Entering inline text editing mode via F2.");
+                        if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
+                            window.ResponsiveSmartGuide.clearGuides(true);
+                        }
+                        if (typeof notifyParent === 'function') {
+                            notifyParent({ type: 'LF_CLEAR_SMARTGUIDE' });
+                        }
                         if (typeof window.focusEditableCell === 'function') {
                             window.focusEditableCell(editable);
                         } else {

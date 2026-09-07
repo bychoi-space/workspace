@@ -14,6 +14,7 @@
         background: '배경색 (BG)',
         borderColor: '테두리색 (Border)',
         color: '글자색 (Text)',
+        iconColor: '아이콘색 (Icon)',
         width: '가로 크기 (Width)',
         height: '세로 크기 (Height)'
     };
@@ -26,6 +27,7 @@
             }
         });
     }
+    window.initUnifiedLabels = initLabels;
     
     // Run immediately or on DOMContentLoaded
     if (document.readyState === 'loading') {
@@ -215,6 +217,9 @@
                 isTransparent = s.isBorderTransparent || false;
             } else if (prop === 'color') {
                 val = s.text || '#1f2937';
+                isTransparent = false;
+            } else if (prop === 'iconColor') {
+                val = s.iconColor || '#000000';
                 isTransparent = false;
             }
             

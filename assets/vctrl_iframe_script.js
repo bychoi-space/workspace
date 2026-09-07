@@ -27,11 +27,13 @@ window.v4Script = `
         const table = s.querySelector('table');
         if (!table) return;
         
-        const isGrid = s.classList.contains('v4-grid-container') || s.querySelector('.v4-grid-container');
+        const isGrid = s.classList.contains('v4-grid-container') || !!s.querySelector('.v4-grid-container');
         
         let newWidth, newHeight;
         if (isGrid) {
-            newWidth = table.offsetWidth;
+            // [Grid UI SSOT] Keep the user-defined component width; do not expand to table.offsetWidth!
+            const curW = parseFloat(s.style.width) || s.offsetWidth || 800;
+            newWidth = curW;
             newHeight = table.offsetHeight + 36;
         } else {
             const colgroup = table.querySelector('colgroup');
@@ -56,7 +58,8 @@ window.v4Script = `
             type: 'LF_TABLE_SIZE_CHANGED',
             compId: s.id,
             width: newWidth,
-            height: newHeight
+            height: newHeight,
+            isGrid: isGrid
         });
     };
 
@@ -254,6 +257,8 @@ window.v4Script = `
         const adminGroupHeaderTitle = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-title') || '\uADF8\uB8F9\uBA85') : '\uADF8\uB8F9\uBA85';
         const adminGroupHeaderBg = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-bg') || '#73829c') : '#73829c';
         const adminGroupHeaderColor = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-color') || '#ffffff') : '#ffffff';
+        const adminShowActionBar = adminSettingsContainer ? adminSettingsContainer.getAttribute('data-show-action-bar') === 'true' : false;
+        const adminActionAlign = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-action-align') || 'center') : 'center';
         const firstLabel = adminSettingsContainer ? adminSettingsContainer.querySelector('.v4-admin-label-cell') : null;
         const adminLabelWidth = firstLabel ? (parseInt(firstLabel.style.width) || parseInt(window.getComputedStyle(firstLabel).width) || 140) : 140;
 
@@ -262,7 +267,7 @@ window.v4Script = `
             adminRowData['adminRow' + i + 'Label'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-label') || '') : '';
             adminRowData['adminRow' + i + 'Cols'] = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row' + i + '-cols')) || 1 : 1;
             adminRowData['adminRow' + i + 'Type'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-type') || 'textbox') : 'textbox';
-            adminRowData['adminRow' + i + 'Height'] = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row' + i + '-height')) || (adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row-height')) || 50 : 50) : 50;
+            adminRowData['adminRow' + i + 'Height'] = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row' + i + '-height')) || (adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row-height')) || 44 : 44) : 44;
         }
 
         // Toggle Button Detection
@@ -467,9 +472,11 @@ window.v4Script = `
             adminGroupHeaderTitle: adminGroupHeaderTitle,
             adminGroupHeaderBg: adminGroupHeaderBg,
             adminGroupHeaderColor: adminGroupHeaderColor,
+            adminShowActionBar: adminShowActionBar,
+            adminActionAlign: adminActionAlign,
             adminLabelWidth: adminLabelWidth,
             ...adminRowData,
-            adminRowHeight: adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row-height')) || 50 : 50,
+            adminRowHeight: adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row-height')) || 44 : 44,
             isToggle: isToggle,
             toggleChecked: toggleChecked,
             toggleColor: toggleColor,
@@ -649,21 +656,32 @@ window.v4Script = `
                 window.lastActiveFrame = 'pc';
                 if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
             }
+            const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
             if (isMulti) {
                 c.classList.toggle('selected');
+                if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
+                    window.ResponsiveSmartGuide.clearGuides(true);
+                }
             } else {
                 document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
                 c.classList.add('selected');
+                if (isResp) {
+                    window.ResponsiveSmartGuide.onSelect(c, 2000);
+                }
             }
             window.updateHandles(c);
             notifyParent({ 
                 type: "LF_COMP_SELECTED", 
                 shiftKey: isMulti,
+                isResponsive: !!isResp,
                 ...window._getCompStyles(c)
             });
         } else {
             isMarquee = true;
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
+            if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
+                window.ResponsiveSmartGuide.clearGuides(true);
+            }
             
             const targets = [];
             document.querySelectorAll('.lf-component:not(.connector-line)').forEach(c => {
@@ -712,6 +730,10 @@ window.v4Script = `
         const editable = e.target.closest('.v4-editable-cell, [contenteditable="true"], .v4-shape-text-content, .v4-shape-text-overlay');
         if (editable) {
             if (window.V4UndoManager) window.V4UndoManager.saveState();
+            if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
+                window.ResponsiveSmartGuide.clearGuides(true);
+            }
+            notifyParent({ type: 'LF_CLEAR_SMARTGUIDE' });
             editable.focus();
             return;
         }
@@ -721,10 +743,15 @@ window.v4Script = `
             window.activeEl = targetComp;
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
             targetComp.classList.add('selected');
+            const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
+            if (isResp) {
+                window.ResponsiveSmartGuide.onSelect(targetComp, 2000);
+            }
             window.updateHandles(targetComp);
             notifyParent({
                 type: "LF_COMP_SELECTED",
                 shiftKey: false,
+                isResponsive: !!isResp,
                 ...window._getCompStyles(targetComp)
             });
         }
@@ -982,7 +1009,10 @@ window.v4Script = `
             });
         }
         if (typeof window.syncTableComponentSize === 'function') {
-            window.syncTableComponentSize();
+            const isGrid = s.classList.contains('v4-grid-container') || !!s.querySelector('.v4-grid-container');
+            if (!isGrid) {
+                window.syncTableComponentSize();
+            }
         }
         window.updateHandles(s);
         markDirty();
@@ -2061,8 +2091,14 @@ window.v4Script = `
                 if (d.groupHeaderBg !== undefined) container.setAttribute('data-group-header-bg', d.groupHeaderBg);
                 if (d.groupHeaderColor !== undefined) container.setAttribute('data-group-header-color', d.groupHeaderColor);
 
+                // Update Action Bar Attributes
+                if (d.showActionBar !== undefined) container.setAttribute('data-show-action-bar', d.showActionBar ? 'true' : 'false');
+                if (d.actionAlign !== undefined) container.setAttribute('data-action-align', d.actionAlign);
+
                 const hasGroupHeader = container.getAttribute('data-show-group-header') === 'true';
                 const headerHeight = hasGroupHeader ? 40 : 0;
+                const hasActionBar = container.getAttribute('data-show-action-bar') === 'true';
+                const actionBarHeight = hasActionBar ? 44 : 0;
 
                 // Dynamically render Group Header
                 let headerEl = container.querySelector('.v4-admin-group-header');
@@ -2092,10 +2128,10 @@ window.v4Script = `
                 }
 
                 const totalRows = parseInt(container.getAttribute('data-row-count')) || 1;
-                const globalRowHeight = parseInt(container.getAttribute('data-row-height')) || 40;
+                const globalRowHeight = parseInt(container.getAttribute('data-row-height')) || 44;
                 
-                // Automatically resize component height: sum of specific row heights + headerHeight
-                let newHeight = headerHeight;
+                // Automatically resize component height: sum of specific row heights + headerHeight + actionBarHeight
+                let newHeight = headerHeight + actionBarHeight;
                 for (let i = 1; i <= totalRows; i++) {
                     const specificHeight = parseInt(container.getAttribute('data-row' + i + '-height')) || globalRowHeight;
                     newHeight += specificHeight;
@@ -2116,7 +2152,7 @@ window.v4Script = `
                         const specificHeight = parseInt(container.getAttribute('data-row' + i + '-height')) || globalRowHeight;
                         
                         const isLastRow = (i === totalRows);
-                        const rowBorder = isLastRow ? 'none' : '1.6px solid rgb(226, 232, 240)';
+                        const rowBorder = (isLastRow && !hasActionBar) ? 'none' : '1.6px solid rgb(226, 232, 240)';
                         
                         const rowEl = document.createElement('div');
                         rowEl.className = 'v4-admin-row';
@@ -2130,33 +2166,61 @@ window.v4Script = `
                             
                             const labelWidth = container.getAttribute('data-label-width') || '140';
                             
-                            // Label cell
+                            // Label cell with inline contenteditable editing support
                             const labelCell = document.createElement('div');
-                            labelCell.className = 'v4-admin-label-cell';
-                            labelCell.style.cssText = 'width: ' + labelWidth + 'px; background: #f1f5f9; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); font-family: inherit; border-right: 1.6px solid rgb(226, 232, 240); box-sizing: border-box; flex-shrink: 0;';
+                            labelCell.className = 'v4-admin-label-cell v4-editable-cell';
+                            labelCell.contentEditable = 'true';
+                            labelCell.style.cssText = 'width: ' + labelWidth + 'px; background: #f1f5f9; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); font-family: inherit; border-right: 1.6px solid rgb(226, 232, 240); box-sizing: border-box; flex-shrink: 0; outline: none; cursor: text; user-select: text; -webkit-user-select: text;';
                             labelCell.innerText = colLabel;
+
+                            if (!labelCell.dataset.inputBound) {
+                                labelCell.dataset.inputBound = 'true';
+                                labelCell.oninput = () => {
+                                    const rowLabels = Array.from(rowEl.querySelectorAll('.v4-admin-label-cell')).map(lc => lc.innerText.trim());
+                                    container.setAttribute('data-row' + i + '-label', rowLabels.join(', '));
+                                    markDirty();
+                                    if (typeof window._getCompStyles === 'function') {
+                                        window.parent.postMessage({
+                                            type: 'LF_COMP_SELECTED',
+                                            ...window._getCompStyles(s)
+                                        }, '*');
+                                    }
+                                };
+                            }
                             rowEl.appendChild(labelCell);
                             
-                            // Content cell
+                            // Content cell with equal flex: 1 1 0% width across all columns
                             const contentCell = document.createElement('div');
                             contentCell.className = 'v4-admin-content-cell';
                             
-                            // Determine style and width of content cell based on columns
-                            let cellStyle = 'flex: 1; display: flex; align-items: center; padding: 0 16px; box-sizing: border-box;';
+                            let cellStyle = 'flex: 1 1 0%; min-width: 0; display: flex; align-items: center; padding: 0 16px; box-sizing: border-box;';
                             if (c < colsAttr - 1) {
-                                cellStyle += ' border-right: 1.6px solid rgb(226, 232, 240); flex-shrink: 0;';
-                                if (colsAttr === 2) cellStyle += ' width: 30%;';
-                                else if (colsAttr === 3) cellStyle += ' width: 25%;';
-                                else cellStyle += ' width: 20%;';
+                                cellStyle += ' border-right: 1.6px solid rgb(226, 232, 240);';
                             }
                             contentCell.style.cssText = cellStyle;
-                            
-                            // Render content based on type (leaving it empty so user can place components)
                             contentCell.innerHTML = '';
                             rowEl.appendChild(contentCell);
                         }
                         tableDiv.appendChild(rowEl);
                     }
+                }
+
+                // Render Action Bar Footer
+                let actionEl = container.querySelector('.v4-admin-action-bar');
+                if (hasActionBar) {
+                    if (!actionEl) {
+                        actionEl = document.createElement('div');
+                        actionEl.className = 'v4-admin-action-bar';
+                        container.appendChild(actionEl);
+                    }
+                    const align = container.getAttribute('data-action-align') || 'center';
+                    actionEl.style.cssText = 'height: 44px; display: flex; align-items: center; justify-content: ' + (align === 'right' ? 'flex-end' : 'center') + '; gap: 8px; padding: 0 16px; border-top: 1.6px solid rgb(226, 232, 240); background: #f8fafc; box-sizing: border-box; width: 100%; flex-shrink: 0 !important;';
+                    actionEl.innerHTML = '<button class="v4-custom-btn" style="height: 28px; padding: 0 14px; border-radius: 6px; background: #ffffff; border: 1.6px solid rgb(203, 213, 225); color: #475569; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: inherit;">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 13px; height: 13px;"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>\uCD08\uAE30\uD654</button>' +
+                        '<button class="v4-custom-btn" style="height: 28px; padding: 0 16px; border-radius: 6px; background: var(--v4-primary, #3b82f6); border: 1.6px solid var(--v4-primary, #3b82f6); color: #ffffff; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: inherit;">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 13px; height: 13px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>\uAC80\uC0C9</button>';
+                } else {
+                    if (actionEl) actionEl.remove();
                 }
                 
                 if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
@@ -3217,9 +3281,11 @@ window.v4Script = `
                         window.renderGrid(gridContainer, currentCols, rowCount - 1, pagination, rowHeight);
                     }
                 } else if (act === 'add-col' || act === 'add_col') {
-                    if (currentCols.length < 10) {
-                        currentCols.push({ name: '\uC0C8 \uD56D\uBAA9', type: 'text', width: '150px' });
+                    if (currentCols.length < 20) {
+                        currentCols.push({ name: '새 항목', type: 'text', width: '150px' });
                         window.renderGrid(gridContainer, currentCols, rowCount, pagination, rowHeight);
+                    } else {
+                        alert('열은 최대 20개까지 추가할 수 있습니다.');
                     }
                 } else if (act === 'del-col' || act === 'del_col') {
                     if (currentCols.length > 1) {

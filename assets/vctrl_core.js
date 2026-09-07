@@ -66,6 +66,7 @@ function getInlinedEngineScript() {
 
 // --- Core Logic ---
 window.loadScreen = async function (fileName) {
+    window.invalidateEngineScriptCache();
     const DOM = window.DOM || {};
     if (state.isEditing && typeof window.closeActiveEditor === 'function') {
         window.closeActiveEditor(true);
@@ -852,6 +853,7 @@ window.MessageHub = {
 
             // Internal engine hooks
             if (data.type === 'LF_FOCUS_PARENT_QUILL') {
+                if (window.SmartGuide) window.SmartGuide.clearGuides(true);
                 if (window.quillEditor) {
                     window.quillEditor.focus();
                     // Put cursor at the end of the text
@@ -859,7 +861,12 @@ window.MessageHub = {
                     window.quillEditor.setSelection(length, 0);
                 }
             } else if (data.type === 'LF_SNAP_START') {
-                if (window.SmartGuide) window.SmartGuide.findSnapTargets();
+                if (window.SmartGuide) {
+                    window.SmartGuide.clearGuides(true);
+                    window.SmartGuide.findSnapTargets();
+                }
+            } else if (data.type === 'LF_CLEAR_SMARTGUIDE') {
+                if (window.SmartGuide) window.SmartGuide.clearGuides(true);
             } else if (data.type === 'LF_SNAP_REQUEST') {
                 const DOM = window.DOM;
                 const targetWindow = (DOM && DOM.iframe && DOM.iframe.contentWindow) || e.source;
@@ -921,7 +928,10 @@ window.MessageHub = {
                 if (DOM && DOM.iframe) {
                     const comp = DOM.iframe.contentWindow?.document?.getElementById(data.compId);
                     if (comp) {
-                        comp.style.setProperty('width', data.width + 'px', 'important');
+                        const isGrid = data.isGrid || comp.classList.contains('v4-grid-container') || !!comp.querySelector('.v4-grid-container');
+                        if (!isGrid) {
+                            comp.style.setProperty('width', data.width + 'px', 'important');
+                        }
                         comp.style.setProperty('height', data.height + 'px', 'important');
                         const frameWin = DOM.iframe.contentWindow;
                         if (frameWin && typeof frameWin.updateHandles === 'function') {
@@ -931,8 +941,13 @@ window.MessageHub = {
                     }
                 }
             } else if (data.type === 'LF_COMP_SELECTED') {
+                const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html'));
                 if (window.SmartGuide) {
-                    window.SmartGuide.findSnapTargets();
+                    if (isResponsive) {
+                        window.SmartGuide.clearGuides(true);
+                    } else {
+                        window.SmartGuide.findSnapTargets();
+                    }
                 }
                 const activeEl = document.activeElement;
                 const isTyping = activeEl && (
@@ -990,6 +1005,19 @@ window.MessageHub = {
                             window.state.selectedIds = [...selectedIds];
                         }
 
+                        // SmartGuide 2-second selection guide trigger (non-responsive single object only)
+                        if (window.SmartGuide) {
+                            if (isResponsive) {
+                                window.SmartGuide.clearGuides(true);
+                            } else if (selectedIds.length === 1 && !data.isConnector && data.id) {
+                                const compW = data.w || data.width || 100;
+                                const compH = data.h || data.height || 40;
+                                window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 2000);
+                            } else if (selectedIds.length > 1) {
+                                window.SmartGuide.clearGuides(true);
+                            }
+                        }
+
                         // Sync selection state back to iframe DOM to prevent local desync
                         if (DOM.iframe && DOM.iframe.contentWindow) {
                             MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
@@ -1003,6 +1031,15 @@ window.MessageHub = {
                             }
                         }
                     } else {
+                        if (window.SmartGuide) {
+                            if (isResponsive) {
+                                window.SmartGuide.clearGuides(true);
+                            } else if (!data.shiftKey && !data.isConnector && data.id) {
+                                const compW = data.w || data.width || 100;
+                                const compH = data.h || data.height || 40;
+                                window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 2000);
+                            }
+                        }
                         if (!isTyping && typeof window.updateProperties === 'function') window.updateProperties(data);
                     }
                 }
@@ -1399,6 +1436,13 @@ window.init = async function () {
                 const addModal = document.getElementById('add-screen-modal');
                 if (addModal) addModal.classList.remove('active');
             }
+
+            // 6. Cancel Copy Screen Button
+            if (e.target && e.target.closest('#btn-copy-screen-cancel')) {
+                e.preventDefault();
+                const copyModal = document.getElementById('copy-screen-modal');
+                if (copyModal) copyModal.classList.remove('active');
+            }
         });
 
         document.addEventListener('keydown', (e) => {
@@ -1544,6 +1588,8 @@ window.init = async function () {
                 }
                 const addModal = document.getElementById('add-screen-modal');
                 if (addModal) addModal.classList.remove('active');
+                const copyModal = document.getElementById('copy-screen-modal');
+                if (copyModal) copyModal.classList.remove('active');
                 const editModal = document.getElementById('edit-screen-modal');
                 if (editModal) editModal.classList.remove('active');
                 if (typeof window.hideAuthModal === 'function') window.hideAuthModal();

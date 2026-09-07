@@ -68,20 +68,6 @@ window.v4GridScript = `
             table.style.setProperty('height', 'auto', 'important');
             var colgroup = table.querySelector('colgroup');
             if (colgroup) {
-                colgroup.innerHTML = '';
-                columns.forEach(function(col) {
-                    var w = col.width || '100px';
-                    if (/^\d+$/.test(w.trim()) || /^\d*\.\d+$/.test(w.trim())) {
-                        w = w.trim() + 'px';
-                    }
-                    var colEl = document.createElement('col');
-                    colEl.style.width = w;
-                    colgroup.appendChild(colEl);
-                });
-            }
-            
-            var colgroup = table.querySelector('colgroup');
-            if (colgroup) {
                 var cols = Array.from(colgroup.querySelectorAll('col'));
                 while (cols.length < columns.length) {
                     var newCol = document.createElement('col');
@@ -110,6 +96,7 @@ window.v4GridScript = `
                 var headerRow = thead.querySelector('tr');
                 if (headerRow) {
                     headerRow.style.setProperty('height', rowHeightVal, 'important');
+                    headerRow.style.setProperty('min-height', rowHeightVal, 'important');
                     var ths = Array.from(headerRow.querySelectorAll('th'));
                     while (ths.length < columns.length) {
                         var newTh = document.createElement('th');
@@ -141,6 +128,8 @@ window.v4GridScript = `
                         th.style.fontWeight = '500';
                         th.style.color = '#334155';
                         th.style.setProperty('height', rowHeightVal, 'important');
+                        th.style.setProperty('min-height', rowHeightVal, 'important');
+                        th.style.setProperty('vertical-align', 'middle', 'important');
 
                         if (col.type === 'checkbox') {
                             th.className = 'v4-grid-cell v4-grid-check-col';
@@ -216,6 +205,7 @@ window.v4GridScript = `
                 while (rows.length < rowCount) {
                     var newRow = document.createElement('tr');
                     newRow.style.setProperty('height', rowHeightVal, 'important');
+                    newRow.style.setProperty('min-height', rowHeightVal, 'important');
                     newRow.style.background = '#ffffff';
                     newRow.style.boxSizing = 'border-box';
                     tbody.appendChild(newRow);
@@ -228,6 +218,7 @@ window.v4GridScript = `
                 rows.forEach(function(row, rIdx) {
                     row.style.borderBottom = '1.6px solid rgb(226,232,240)';
                     row.style.setProperty('height', rowHeightVal, 'important');
+                    row.style.setProperty('min-height', rowHeightVal, 'important');
                     
                     var tds = Array.from(row.querySelectorAll('td'));
                     while (tds.length < columns.length) {
@@ -249,7 +240,24 @@ window.v4GridScript = `
                         var td = tds[cIdx];
                         td.style.borderRight = '1.6px solid rgb(226,232,240)';
                         td.style.setProperty('height', rowHeightVal, 'important');
+                        td.style.setProperty('min-height', rowHeightVal, 'important');
+                        td.style.setProperty('vertical-align', 'middle', 'important');
+                        td.style.setProperty('box-sizing', 'border-box', 'important');
                         td.style.setProperty('padding', col.type === 'checkbox' ? '0' : '0 8px', 'important');
+
+                        var isClickable = !!col.clickable && col.type !== 'checkbox';
+                        td.setAttribute('data-clickable', isClickable ? 'true' : 'false');
+                        if (isClickable) {
+                            td.classList.add('v4-grid-clickable-cell');
+                            td.style.setProperty('color', '#2563eb', 'important');
+                            td.style.setProperty('cursor', 'pointer', 'important');
+                        } else {
+                            td.classList.remove('v4-grid-clickable-cell');
+                            td.style.removeProperty('cursor');
+                            if (td.style.color === 'rgb(37, 99, 235)' || td.style.color === '#2563eb') {
+                                td.style.removeProperty('color');
+                            }
+                        }
 
                         var prevType = td.getAttribute('data-type');
                         if (!prevType && (td.classList.contains('v4-grid-check-col') || td.querySelector('input[type="checkbox"]'))) {
@@ -355,6 +363,15 @@ window.v4GridScript = `
                 wrapper.style.height = showPagination ? 'calc(100% - 36px)' : '100%';
             }
             
+            var compEl = container.closest('.lf-component');
+            if (compEl) {
+                var rowHNum = parseInt(rowHeightVal) || 50;
+                var headerH = 40;
+                var footerH = showPagination ? 36 : 0;
+                var calculatedHeight = headerH + (rowCount * rowHNum) + footerH;
+                compEl.style.height = calculatedHeight + 'px';
+                if (window.updateHandles) window.updateHandles(compEl);
+            }
             return;
         }
 
@@ -393,20 +410,24 @@ window.v4GridScript = `
             
             columns.forEach(function(col, colIndex) {
                 var borderRight = ' border-right:1.6px solid rgb(226,232,240);';
-                var heightStyle = ' height:' + rowHeightVal + ' !important;';
+                var heightStyle = ' height:' + rowHeightVal + ' !important; min-height:' + rowHeightVal + ' !important; vertical-align:middle !important; box-sizing:border-box !important;';
+                var isClickable = !!col.clickable && col.type !== 'checkbox';
+                var clickableAttr = ' data-clickable="' + (isClickable ? 'true' : 'false') + '"';
+                var clickableClass = isClickable ? ' v4-grid-clickable-cell' : '';
+                var clickableStyle = isClickable ? ' color:#2563eb !important; cursor:pointer !important;' : '';
                 
                 if (col.type === 'checkbox') {
-                    bodyHtml += '<td class="v4-grid-cell" data-type="checkbox" style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + ' box-sizing:border-box; padding:0;"><input type="checkbox"></td>';
+                    bodyHtml += '<td class="v4-grid-cell" data-type="checkbox"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + ' padding:0;"><input type="checkbox"></td>';
                 } else if (col.type === 'number') {
-                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell" contenteditable="true" data-type="number" style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' box-sizing:border-box; font-size:12px; color:#0f172a; font-weight:500;">' + (1024 - i) + '</td>';
+                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + '" contenteditable="true" data-type="number"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' font-size:12px; ' + (isClickable ? clickableStyle : 'color:#0f172a; font-weight:500;') + '">' + (1024 - i) + '</td>';
                 } else if (col.type === 'status') {
-                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell" contenteditable="true" data-type="status" style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' box-sizing:border-box;"><span style="background:' + data.statusBg + '; color:' + data.statusColor + '; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600;">' + data.status + '</span></td>';
+                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + '" contenteditable="true" data-type="status"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + clickableStyle + '"><span style="background:' + data.statusBg + '; color:' + data.statusColor + '; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:600;' + (isClickable ? ' cursor:pointer;' : '') + '">' + data.status + '</span></td>';
                 } else if (col.type === 'author') {
-                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell" contenteditable="true" data-type="author" style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' box-sizing:border-box; font-size:12px; color:#0f172a; font-weight:500;">' + data.author + '</td>';
+                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + '" contenteditable="true" data-type="author"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' font-size:12px; ' + (isClickable ? clickableStyle : 'color:#0f172a; font-weight:500;') + '">' + data.author + '</td>';
                 } else if (col.type === 'datetime') {
-                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell" contenteditable="true" data-type="datetime" style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' box-sizing:border-box; font-size:12px; color:#0f172a; font-weight:500;">' + data.date + '</td>';
+                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + '" contenteditable="true" data-type="datetime"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' font-size:12px; ' + (isClickable ? clickableStyle : 'color:#0f172a; font-weight:500;') + '">' + data.date + '</td>';
                 } else {
-                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell" contenteditable="true" data-type="text" style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' box-sizing:border-box; font-size:12px; color:#0f172a; font-weight:500;">' + data.name + '</td>';
+                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + '" contenteditable="true" data-type="text"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:left;' + heightStyle + ' padding:0 8px;' + borderRight + ' font-size:12px; ' + (isClickable ? clickableStyle : 'color:#0f172a; font-weight:500;') + '">' + data.name + '</td>';
                 }
             });
             bodyHtml += '</tr>';
@@ -426,74 +447,98 @@ window.v4GridScript = `
         var footerHtml = '<div class="v4-grid-footer" style="height:36px; padding:0 12px; display:' + displayFooter + '; align-items:center; justify-content:space-between; background:#f8fafc; border-top:1.6px solid rgb(226,232,240); box-sizing:border-box; width:100%; flex-shrink:0;"><span style="font-size:11px; color:#64748b; font-family:Inter,sans-serif;">1/27</span><div class="v4-grid-pages" style="font-size:11px; color:#64748b; cursor:pointer; font-family:Inter,sans-serif;">◀ 1 2 3 4 5 ▶</div><span style="font-size:11px; color:#64748b; font-family:Inter,sans-serif;">Page Size 100</span></div>';
         
         container.innerHTML = tableContainerHtml + footerHtml;
+
+        var compEl = container.closest('.lf-component');
+        if (compEl) {
+            var rowHNum = parseInt(rowHeightVal) || 50;
+            var headerH = 40;
+            var footerH = showPagination ? 36 : 0;
+            var calculatedHeight = headerH + (rowCount * rowHNum) + footerH;
+            compEl.style.height = calculatedHeight + 'px';
+            if (window.updateHandles) window.updateHandles(compEl);
+        }
     };
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};
     window.v4MessageHandlers['LF_UPDATE_GRID_PROPERTIES'] = function(d) {
-        var s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+        var s = null;
+        if (d && d.id) {
+            var el = document.getElementById(d.id);
+            if (el) {
+                s = el.closest('.lf-component') || el;
+            }
+        }
+        if (!s) {
+            s = document.querySelector('.lf-component.selected') || 
+                (document.querySelector('.selected-cell') ? document.querySelector('.selected-cell').closest('.lf-component') : null);
+        }
         if (!s) return;
-        var container = s.querySelector('.v4-grid-container') || (s.classList.contains('v4-grid-container') ? s : null);
-        if (container) {
-            if (window.V4UndoManager) window.V4UndoManager.saveState();
-            
-            var currentCols = [];
-            var rawCols = container.getAttribute('data-columns');
-            if (rawCols) {
-                try {
-                    currentCols = JSON.parse(rawCols);
-                } catch(e) {}
-            }
-            if (!currentCols || currentCols.length === 0) {
-                currentCols = [
-                    { name: '', type: 'checkbox', width: '50px' },
-                    { name: '\uBC88\uD638', type: 'number', width: '100px' },
-                    { name: '\uB77C\uC774\uBE0C \uBC29\uC1A1\uBA85', type: 'text', width: '1fr' },
-                    { name: '\uBC29\uC1A1\uC0C1\uD0DC', type: 'status', width: '120px' },
-                    { name: '\uB4F1\uB85D/\uC218\uC815\uC790', type: 'author', width: '120px' }
-                ];
-            }
-            
-            var rowCount = parseInt(container.getAttribute('data-row-count')) || 5;
-            var showPagination = container.getAttribute('data-pagination') !== 'false';
-            
-            if (d.columns !== undefined) {
-                currentCols = d.columns;
-            }
-            if (d.headers !== undefined) {
-                d.headers.forEach(function(headerText, index) {
-                    if (currentCols[index]) {
-                        currentCols[index].name = headerText;
-                    }
-                });
-            }
-            if (d.rowCount !== undefined) {
-                rowCount = Math.min(20, Math.max(1, parseInt(d.rowCount) || 5));
-            }
-            if (d.pagination !== undefined) {
-                showPagination = !!d.pagination;
-            }
-            if (d.bg !== undefined) {
-                container.style.backgroundColor = d.bg;
-            }
-            if (d.border !== undefined) {
-                container.style.borderColor = d.border;
-            }
-            
-            if (d.rowHeight !== undefined) {
-                container.setAttribute('data-row-height', d.rowHeight);
-            }
-            if (window.renderGrid) {
-                window.renderGrid(container, currentCols, rowCount, showPagination, d.rowHeight);
-            }
-            
-            if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
-            if (typeof window.markDirty === 'function') window.markDirty();
-            
-            if (typeof window._getCompStyles === 'function' && window.parent) {
-                window.parent.postMessage(Object.assign({
-                    type: 'LF_COMP_SELECTED'
-                }, window._getCompStyles(s)), '*');
-            }
+        var container = s.classList.contains('v4-grid-container') ? s : (s.querySelector('.v4-grid-container') || s.closest('.v4-grid-container'));
+        if (!container) return;
+        var comp = container.closest('.lf-component') || s;
+
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+        
+        var currentCols = [];
+        var rawCols = container.getAttribute('data-columns');
+        if (rawCols) {
+            try {
+                currentCols = JSON.parse(rawCols);
+            } catch(e) {}
+        }
+        if (!currentCols || currentCols.length === 0) {
+            currentCols = [
+                { name: '', type: 'checkbox', width: '50px' },
+                { name: '\uBC88\uD638', type: 'number', width: '100px' },
+                { name: '\uB77C\uC774\uBE0C \uBC29\uC1A1\uBA85', type: 'text', width: '1fr' },
+                { name: '\uBC29\uC1A1\uC0C1\uD0DC', type: 'status', width: '120px' },
+                { name: '\uB4F1\uB85D/\uC218\uC815\uC790', type: 'author', width: '120px' }
+            ];
+        }
+        
+        var rowCount = parseInt(container.getAttribute('data-row-count')) || 5;
+        var showPagination = container.getAttribute('data-pagination') !== 'false';
+        
+        if (d.columns !== undefined) {
+            currentCols = d.columns;
+        }
+        if (d.headers !== undefined) {
+            d.headers.forEach(function(headerText, index) {
+                if (currentCols[index]) {
+                    currentCols[index].name = headerText;
+                }
+            });
+        }
+        if (d.rowCount !== undefined) {
+            rowCount = Math.min(20, Math.max(1, parseInt(d.rowCount) || 5));
+        }
+        if (d.pagination !== undefined) {
+            showPagination = !!d.pagination;
+        }
+        if (d.bg !== undefined) {
+            container.style.backgroundColor = d.bg;
+        }
+        if (d.border !== undefined) {
+            container.style.borderColor = d.border;
+        }
+        
+        var targetRowHeight = d.rowHeight;
+        if (targetRowHeight !== undefined) {
+            container.setAttribute('data-row-height', targetRowHeight);
+        } else {
+            targetRowHeight = container.getAttribute('data-row-height');
+        }
+        if (window.renderGrid) {
+            window.renderGrid(container, currentCols, rowCount, showPagination, targetRowHeight);
+        }
+        
+        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+        if (typeof window.markDirty === 'function') window.markDirty();
+        
+        if (typeof window._getCompStyles === 'function' && window.parent) {
+            window.parent.postMessage(Object.assign({
+                type: 'LF_COMP_SELECTED'
+            }, window._getCompStyles(comp)), '*');
         }
     };
 })();

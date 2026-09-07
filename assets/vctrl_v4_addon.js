@@ -1975,6 +1975,7 @@
 
         colsList.forEach((col, index) => {
             const isCheckbox = (col.type === 'checkbox');
+            const isClickable = !isCheckbox && (col.clickable === true);
             const parsedW = parseInt(col.width);
             const numericWidth = isNaN(parsedW) ? (isCheckbox ? 50 : (col.type === 'text' ? 200 : 100)) : parsedW;
             
@@ -1987,6 +1988,8 @@
             ` : '';
 
             const div = document.createElement('div');
+            div.className = 'grid-col-card';
+            div.setAttribute('data-clickable', isClickable ? 'true' : 'false');
             div.style.cssText = 'display:flex; flex-direction:column; gap:6px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;';
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2019,6 +2022,13 @@
                     </div>
                     ${statusOptionsHtml}
                 </div>
+                <div class="grid-clickable-wrapper" style="display:${isCheckbox ? 'none' : 'flex'}; align-items:center; justify-content:space-between; margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06);">
+                    <label style="font-size: 8px; color: #94a3b8;">Clickable (링크 스타일)</label>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="v4-inspector-btn btn-col-clickable-y" data-index="${index}" style="height: 18px; width: 28px; border-radius: 9px; font-size: 9px; padding: 0; cursor: pointer; ${isClickable ? 'background:rgba(0, 229, 255, 0.25); border:1px solid rgba(0, 229, 255, 0.6); color:#00e5ff; font-weight:bold;' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">Y</button>
+                        <button class="v4-inspector-btn btn-col-clickable-n" data-index="${index}" style="height: 18px; width: 28px; border-radius: 9px; font-size: 9px; padding: 0; cursor: pointer; ${!isClickable ? 'background:rgba(0, 229, 255, 0.25); border:1px solid rgba(0, 229, 255, 0.6); color:#00e5ff; font-weight:bold;' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">N</button>
+                    </div>
+                </div>
             `;
             container.appendChild(div);
 
@@ -2028,34 +2038,79 @@
             const optionsInp = div.querySelector('.grid-col-options-input');
             const btnUp = div.querySelector('.btn-move-col-up');
             const btnDown = div.querySelector('.btn-move-col-down');
+            const clickableWrap = div.querySelector('.grid-clickable-wrapper');
+            const btnClickableY = div.querySelector('.btn-col-clickable-y');
+            const btnClickableN = div.querySelector('.btn-col-clickable-n');
 
             const getCurrentColsFromInputs = () => {
                 const nameInputs = Array.from(container.querySelectorAll('.grid-col-name-input'));
                 return nameInputs.map((inp) => {
                     const idx = inp.getAttribute('data-index');
+                    const cardDiv = inp.closest('.grid-col-card');
                     const tSel = container.querySelector(`.grid-col-type-select[data-index="${idx}"]`);
                     const wInp = container.querySelector(`.grid-col-width-input[data-index="${idx}"]`);
                     const oInp = container.querySelector(`.grid-col-options-input[data-index="${idx}"]`);
                     const t = tSel ? tSel.value : 'text';
                     const wVal = wInp ? (parseInt(wInp.value) || 100) : 100;
                     const oVal = oInp ? oInp.value : '';
+                    const clickableVal = cardDiv ? (cardDiv.getAttribute('data-clickable') === 'true') : false;
                     return {
                         name: t === 'checkbox' ? '' : inp.value,
                         type: t,
                         width: wVal + 'px',
-                        options: oVal
+                        options: oVal,
+                        clickable: t === 'checkbox' ? false : clickableVal
                     };
                 });
             };
 
             const triggerColUpdateWithCols = (cols) => {
-                const iframe = document.getElementById('main-iframe');
-                if (iframe && iframe.contentWindow && window.MessageHub) {
-                    window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_GRID_PROPERTIES', {
-                        columns: cols
-                    });
+                const targetId = (window.state && window.state.selectedComponent && window.state.selectedComponent.id) ||
+                                 (window.state && window.state.editingIndex) ||
+                                 window.activeCompId || null;
+                const payload = { type: 'LF_UPDATE_GRID_PROPERTIES', columns: cols };
+                if (targetId) payload.id = targetId;
+
+                if (window.EditorBus) {
+                    window.EditorBus.sendToIframe(payload);
+                } else {
+                    const iframe = document.getElementById('main-iframe');
+                    if (iframe && iframe.contentWindow && window.MessageHub) {
+                        window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_GRID_PROPERTIES', payload);
+                    }
                 }
             };
+
+            if (btnClickableY && btnClickableN) {
+                btnClickableY.onclick = () => {
+                    div.setAttribute('data-clickable', 'true');
+                    btnClickableY.style.background = 'rgba(0, 229, 255, 0.25)';
+                    btnClickableY.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+                    btnClickableY.style.color = '#00e5ff';
+                    btnClickableY.style.fontWeight = 'bold';
+
+                    btnClickableN.style.background = 'rgba(255, 255, 255, 0.05)';
+                    btnClickableN.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    btnClickableN.style.color = '#94a3b8';
+                    btnClickableN.style.fontWeight = 'normal';
+
+                    triggerColUpdate();
+                };
+                btnClickableN.onclick = () => {
+                    div.setAttribute('data-clickable', 'false');
+                    btnClickableN.style.background = 'rgba(0, 229, 255, 0.25)';
+                    btnClickableN.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+                    btnClickableN.style.color = '#00e5ff';
+                    btnClickableN.style.fontWeight = 'bold';
+
+                    btnClickableY.style.background = 'rgba(255, 255, 255, 0.05)';
+                    btnClickableY.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    btnClickableY.style.color = '#94a3b8';
+                    btnClickableY.style.fontWeight = 'normal';
+
+                    triggerColUpdate();
+                };
+            }
 
             if (btnUp && index > 0) {
                 btnUp.onclick = () => {
@@ -2117,11 +2172,14 @@
                     nameInp.style.background = 'rgba(0,0,0,0.15)';
                     nameInp.style.borderColor = 'rgba(255,255,255,0.05)';
                     nameInp.style.color = '#64748b';
+                    if (clickableWrap) clickableWrap.style.display = 'none';
+                    div.setAttribute('data-clickable', 'false');
                 } else {
                     nameInp.disabled = false;
                     nameInp.style.background = 'rgba(0,0,0,0.3)';
                     nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
                     nameInp.style.color = '#fff';
+                    if (clickableWrap) clickableWrap.style.display = 'flex';
                 }
                 
                 // Trigger update and redraw inputs immediately to show/hide status options config input
@@ -2137,47 +2195,28 @@
 
 
     const initAdminSettingsEvents = () => {
-        const rowCountSelect = document.getElementById('prop-admin-row-count');
-        if (rowCountSelect) {
-            rowCountSelect.onchange = () => {
-                const iframe = document.getElementById('main-iframe');
-                if (iframe && iframe.contentWindow && window.MessageHub) {
-                    const val = parseInt(rowCountSelect.value) || 3;
-                    window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
-                        rowCount: val
-                    });
-                    
-                    // Re-sync inspector UI to match the new row count
-                    const activeId = window.state?.editingIndex;
-                    if (activeId) {
-                        const activeEl = iframe.contentWindow.document.getElementById(activeId);
-                        if (activeEl) {
-                            const container = activeEl.querySelector('.v4-admin-settings-container') || activeEl;
-                            // Pre-fill labels/cols/type for newly visible rows if empty
-                            for (let i = 1; i <= val; i++) {
-                                if (!container.getAttribute(`data-row${i}-label`)) {
-                                    container.setAttribute(`data-row${i}-label`, `항목 ${i}`);
-                                    container.setAttribute(`data-row${i}-cols`, '1');
-                                    container.setAttribute(`data-row${i}-type`, 'textbox');
-                                }
-                            }
-                            // Trigger sync again
-                            const compStyles = window.state.activeFile.components?.find(c => c.id === activeId) || {};
-                            const syncData = {
-                                id: activeId,
-                                editingType: 'admin-settings',
-                                adminRowCount: val
-                            };
-                            for (let i = 1; i <= 10; i++) {
-                                syncData[`adminRow${i}Label`] = container.getAttribute(`data-row${i}-label`) || '';
-                                syncData[`adminRow${i}Cols`] = parseInt(container.getAttribute(`data-row${i}-cols`)) || 1;
-                                syncData[`adminRow${i}Type`] = container.getAttribute(`data-row${i}-type`) || 'textbox';
-                            }
-                            window._syncAdminSettingsProps(syncData);
-                        }
-                    }
-                }
-            };
+        // Initialize Action Bar Configuration Event Listeners
+        const enableActionBarChk = document.getElementById('prop-admin-action-bar-enable');
+        const actionAlignSel = document.getElementById('prop-admin-action-align');
+        const configActionBarSub = document.getElementById('admin-action-bar-config-sub');
+
+        const updateActionBar = () => {
+            const iframe = document.getElementById('main-iframe');
+            if (iframe && iframe.contentWindow && window.MessageHub && enableActionBarChk) {
+                const alignVal = actionAlignSel ? actionAlignSel.value : 'center';
+                window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
+                    showActionBar: enableActionBarChk.checked,
+                    actionAlign: alignVal
+                });
+                if (configActionBarSub) configActionBarSub.style.display = enableActionBarChk.checked ? 'flex' : 'none';
+            }
+        };
+
+        if (enableActionBarChk) {
+            enableActionBarChk.onchange = updateActionBar;
+        }
+        if (actionAlignSel) {
+            actionAlignSel.onchange = updateActionBar;
         }
 
         // Initialize Group Title Configuration Event Listeners

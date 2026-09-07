@@ -169,11 +169,95 @@ async function fetchScreenHtmlForPdf(projectName, screenFileName) {
 }
 
 /**
- * Compiles raw screen HTML by preserving original layout and injecting necessary fonts and cleanup rules
+ * Helper to detect whether a screen HTML represents a Responsive PC/Mobile or Full-Width Admin screen
  */
-function compileScreenHtmlForPdf(rawHtml) {
+function isResponsiveScreenHtml(rawHtml, screenFileName = '') {
+    const fn = (screenFileName || '').toLowerCase();
+    if (fn.includes('responsive') || fn.includes('admin_pc_scroll')) return true;
+    if (!rawHtml) return false;
+    return rawHtml.includes('pc-browser-frame') ||
+           rawHtml.includes('pc-content-area') ||
+           rawHtml.includes('frame-column') ||
+           rawHtml.includes('full-pc-page') ||
+           rawHtml.includes('template_responsive') ||
+           rawHtml.includes('template_admin_pc_scroll');
+}
+
+/**
+ * Detects the required content height for responsive screens.
+ * Inspects frame height inputs, inner min-height styles, and absolute top/height of components.
+ */
+function detectResponsiveContentHeight(rawHtml) {
+    if (!rawHtml) return 0;
+    let maxContentH = 0;
+
+    // 1. Check pc-height-input & mobile-height-input values
+    const pcInputMatch = rawHtml.match(/pc-height-input[^>]*value=["'](\d+)["']/i);
+    if (pcInputMatch) {
+        const v = parseInt(pcInputMatch[1], 10);
+        if (v > maxContentH) maxContentH = v;
+    }
+    const mobInputMatch = rawHtml.match(/mobile-height-input[^>]*value=["'](\d+)["']/i);
+    if (mobInputMatch) {
+        const v = parseInt(mobInputMatch[1], 10);
+        if (v > maxContentH) maxContentH = v;
+    }
+
+    // 2. Check inline min-height in pc-content-inner or mobile-content-inner
+    const innerMinHeights = rawHtml.matchAll(/(?:pc-content-inner|mobile-content-inner)[^>]*style=["'][^"']*min-height:\s*([\d.]+)px/gi);
+    for (const m of innerMinHeights) {
+        const v = parseFloat(m[1]);
+        if (v > maxContentH) maxContentH = v;
+    }
+
+    // 3. Check inline top and height of elements
+    const styleMatches = rawHtml.matchAll(/style=["']([^"']*top:\s*[\d.]+px[^"']*)["']/gi);
+    for (const s of styleMatches) {
+        const str = s[1];
+        const topM = str.match(/top:\s*([\d.]+)px/i);
+        if (topM) {
+            const topVal = parseFloat(topM[1]) || 0;
+            const hM = str.match(/height:\s*([\d.]+)px/i);
+            const hVal = hM ? (parseFloat(hM[1]) || 0) : 30;
+            if (topVal + hVal > maxContentH) {
+                maxContentH = topVal + hVal;
+            }
+        }
+    }
+
+    return Math.round(maxContentH);
+}
+
+/**
+ * Ensures responsiveFrameStyles are loaded into window.responsiveFrameStyles
+ */
+async function ensureResponsiveStylesLoaded() {
+    if (window.responsiveFrameStyles && window.responsiveFrameStyles.trim().length > 0) {
+        return window.responsiveFrameStyles;
+    }
+    try {
+        const res = await fetch('assets/responsive_frame.css?t=' + Date.now());
+        if (res.ok) {
+            window.responsiveFrameStyles = await res.text();
+            return window.responsiveFrameStyles;
+        }
+    } catch (e) {
+        console.warn("[PDF Exporter] Fallback fetch for responsive_frame.css failed:", e);
+    }
+    return '';
+}
+
+/**
+ * Compiles raw screen HTML by preserving original layout and injecting necessary fonts, responsive styles, and cleanup rules
+ */
+function compileScreenHtmlForPdf(rawHtml, screenFileName = '', dynamicContentH = 0) {
     if (!rawHtml) return '';
     let compiled = rawHtml;
+    const isResponsive = isResponsiveScreenHtml(compiled, screenFileName);
+    const isLongPage = isResponsive && (dynamicContentH > 850);
+    const contentH = Math.round(dynamicContentH);
+    const frameH = contentH + 38;
+    const pageH = frameH + 38 + 24; // contentH + 100
 
     // 1. Ensure v4Styles are injected/updated
     const styleBlock = '<style id="v4-inlined-style">\n' + (window.v4Styles || '') + '\n</style>';
@@ -185,7 +269,82 @@ function compileScreenHtmlForPdf(rawHtml) {
         compiled = `<head>${styleBlock}</head>\n` + compiled;
     }
 
-    // 2. Inject standard fonts & PDF export clean-up overrides
+    // 2. Inject Scoped Responsive Frame Styles if authentic responsive screen
+    if (isResponsive && window.responsiveFrameStyles) {
+        const responsiveBlock = '<style id="v4-responsive-frame-style">\n' + window.responsiveFrameStyles + '\n</style>';
+        compiled = compiled.replace(/<style id="v4-responsive-frame-style">[\s\S]*?<\/style>/gi, '');
+        if (compiled.includes('</head>')) {
+            compiled = compiled.replace('</head>', responsiveBlock + '\n</head>');
+        } else {
+            compiled = `<head>${responsiveBlock}</head>\n` + compiled;
+        }
+    }
+
+    // 3. Inject standard fonts & PDF export clean-up overrides
+    const responsiveOverrides = isResponsive ? `
+        /* Responsive PDF Canvas & Frame Overrides (Match Editor Canvas #0f1115) */
+        html, body {
+            background: #0f1115 !important;
+            background-color: #0f1115 !important;
+            ${isLongPage ? `height: ${pageH}px !important; min-height: ${pageH}px !important; overflow: hidden !important;` : ''}
+        }
+        .page {
+            background: #0f1115 !important;
+            background-color: #0f1115 !important;
+            ${isLongPage ? `
+            height: ${pageH}px !important;
+            min-height: ${pageH}px !important;
+            align-items: flex-start !important;
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            box-sizing: border-box !important;
+            ` : ''}
+        }
+        ${isLongPage ? `
+        /* Long-Canvas Full Vertical Expansion */
+        .pc-browser-frame, .mobile-frame, .mobile-browser-frame {
+            height: ${frameH}px !important;
+            min-height: ${frameH}px !important;
+        }
+        .pc-content-area, .mobile-content {
+            height: ${contentH}px !important;
+            min-height: ${contentH}px !important;
+            overflow: visible !important;
+            overflow-y: visible !important;
+        }
+        .pc-content-inner, .mobile-content-inner {
+            min-height: 100% !important;
+            height: auto !important;
+            background-color: #ffffff !important;
+        }
+        ` : ''}
+        /* Restore clean border on responsive mobile frame without thick mockup outline */
+        .frame-column .mobile-frame {
+            outline: none !important;
+            border: 1.6px solid #cbd5e1 !important;
+        }
+        /* Hide height adjustment controls in final presentation PDF */
+        .frame-label-height-control {
+            display: none !important;
+        }
+        /* Hide responsive SVG guide layers & pins */
+        .v4-responsive-guide-layer, .pc-guide-layer, .mobile-guide-layer, .responsive-pins-layer, .vctrl-pins-overlay {
+            display: none !important;
+        }
+    ` : `
+        /* Fix html2canvas inset box-shadow rendering bug on legacy mobile mockup frames */
+        .mobile-frame {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4) !important;
+            outline: 8px solid #111111 !important;
+            outline-offset: -8px !important;
+        }
+        .mobile-content {
+            background: transparent !important;
+        }
+    `;
+
     const pdfCleanOverride = `
     <!-- PDF Exporter Base Fonts & Non-Destructive Clean Overrides -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -210,21 +369,11 @@ function compileScreenHtmlForPdf(rawHtml) {
             width: 0 !important;
             height: 0 !important;
         }
-        /* Fix html2canvas inset box-shadow rendering bug on mobile frames */
-        .mobile-frame {
-            background: #ffffff !important;
-            background-color: #ffffff !important;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4) !important;
-            outline: 8px solid #111111 !important;
-            outline-offset: -8px !important;
-        }
-        .mobile-content {
-            background: transparent !important;
-        }
+        ${responsiveOverrides}
         /* Ensure viewport bounding without breaking internal layout flow */
         html, body {
             width: 100% !important;
-            height: 100% !important;
+            ${isLongPage ? `height: ${pageH}px !important; min-height: ${pageH}px !important;` : 'height: 100% !important;'}
             overflow: hidden !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -260,6 +409,9 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
     showPdfProgressModal(projectName);
 
     try {
+        // Ensure responsive styles are readily available in memory before compiling screens
+        await ensureResponsiveStylesLoaded();
+
         let meta = projectMeta;
         if (!meta || !meta.screens || Object.keys(meta.screens).length === 0) {
             updatePdfProgress(5, "프로젝트 상세 정보를 확인하는 중...");
@@ -267,7 +419,22 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
         }
 
         const screensObj = meta.screens || meta.files || {};
-        const screenFiles = Object.keys(screensObj);
+        let screenFiles = Object.keys(screensObj);
+
+        // Sort screenFiles according to user-defined screenOrder (matching vctrl_core.js)
+        const order = Array.isArray(meta.screenOrder) ? meta.screenOrder : [];
+        if (order.length > 0) {
+            screenFiles.sort((a, b) => {
+                const indexA = order.indexOf(a);
+                const indexB = order.indexOf(b);
+                if (indexA === -1 && indexB === -1) return a.localeCompare(b, undefined, { numeric: true });
+                if (indexA === -1) return 1;
+                if (indexB === -1) return -1;
+                return indexA - indexB;
+            });
+        } else {
+            screenFiles.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+        }
 
         if (screenFiles.length === 0) {
             hidePdfProgressModal();
@@ -297,28 +464,29 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
                 continue;
             }
 
-            // Dynamic screen dimension detection (default to 1600x900, preserve 1440 for legacy)
+            const isResponsive = isResponsiveScreenHtml(rawHtml, screenFileName);
+            const dynamicContentH = isResponsive ? detectResponsiveContentHeight(rawHtml) : 0;
+            const isLongPage = isResponsive && (dynamicContentH > 850);
+
+            // Dynamic screen dimension detection (default to 1600x900, adapt for long-canvas responsive screens)
             let screenW = 1600;
             let screenH = 900;
-            const sizeMatch = rawHtml.match(/(?:\.page|\.artboard)\s*\{[^}]*width:\s*(\d+)px[^}]*height:\s*(\d+)px/i);
-            if (sizeMatch) {
-                screenW = parseInt(sizeMatch[1], 10) || 1600;
-                screenH = parseInt(sizeMatch[2], 10) || 900;
+            if (isLongPage) {
+                screenH = Math.round(dynamicContentH + 100);
             } else {
-                const wMatch = rawHtml.match(/(?:\.page|\.artboard)\s*\{[^}]*width:\s*(\d+)px/i);
-                if (wMatch) screenW = parseInt(wMatch[1], 10) || 1600;
+                const sizeRegex = new RegExp("(?:\\.page|\\.artboard)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px[^\\u007D]*height:\\s*(\\d+)px", "i");
+                const sizeMatch = rawHtml.match(sizeRegex);
+                if (sizeMatch) {
+                    screenW = parseInt(sizeMatch[1], 10) || 1600;
+                    screenH = parseInt(sizeMatch[2], 10) || 900;
+                } else {
+                    const wRegex = new RegExp("(?:\\.page|\\.artboard)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px", "i");
+                    const wMatch = rawHtml.match(wRegex);
+                    if (wMatch) screenW = parseInt(wMatch[1], 10) || 1600;
+                }
             }
 
-            if (!pdf) {
-                pdf = new jsPDF({
-                    orientation: 'landscape',
-                    unit: 'px',
-                    format: [screenW, screenH],
-                    compress: true
-                });
-            }
-
-            const compiledHtml = compileScreenHtmlForPdf(rawHtml);
+            const compiledHtml = compileScreenHtmlForPdf(rawHtml, screenFileName, dynamicContentH);
 
             // Create in-viewport hidden iframe to ensure GPU layout and font engines execute completely
             const iframe = document.createElement('iframe');
@@ -377,23 +545,56 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
                 }));
             }
 
-            // 3. Wait for layout settling and final paint tick
+            // 3. Check actual inner DOM scrollHeight inside iframe for responsive screens
+            if (isResponsive) {
+                try {
+                    const pcInner = iframeDoc.querySelector('.pc-content-inner') || iframeDoc.querySelector('.pc-content-area');
+                    const mobInner = iframeDoc.querySelector('.mobile-content-inner') || iframeDoc.querySelector('.mobile-content');
+                    let actualDomH = 0;
+                    if (pcInner) actualDomH = Math.max(actualDomH, pcInner.scrollHeight || 0, pcInner.offsetHeight || 0);
+                    if (mobInner) actualDomH = Math.max(actualDomH, mobInner.scrollHeight || 0, mobInner.offsetHeight || 0);
+
+                    if (actualDomH > 850 && actualDomH > dynamicContentH) {
+                        const newScreenH = Math.round(actualDomH + 100);
+                        if (newScreenH > screenH) {
+                            screenH = newScreenH;
+                            iframe.style.height = `${screenH}px`;
+                            const pageEl = iframeDoc.querySelector('.page');
+                            if (pageEl) {
+                                pageEl.style.height = `${screenH}px`;
+                                pageEl.style.minHeight = `${screenH}px`;
+                            }
+                        }
+                    }
+                } catch (domMeasureErr) {
+                    console.warn("[PDF Exporter] DOM measurement fallback warning:", domMeasureErr);
+                }
+            }
+
+            // 4. Wait for layout settling and final paint tick
             await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
             await new Promise(r => setTimeout(r, 200));
 
-            // Detect accurate background color from source document
+            // Detect accurate background color from source document, preventing pure black JPEG artifacts
             const computedBodyBg = iframeDoc.defaultView?.getComputedStyle(iframeDoc.body)?.backgroundColor;
             const computedHtmlBg = iframeDoc.defaultView?.getComputedStyle(iframeDoc.documentElement)?.backgroundColor;
             let targetBg = null;
-            if (computedBodyBg && computedBodyBg !== 'rgba(0, 0, 0, 0)' && computedBodyBg !== 'transparent') {
+            if (isResponsive) {
+                targetBg = '#0f1115';
+            } else if (computedBodyBg && computedBodyBg !== 'rgba(0, 0, 0, 0)' && computedBodyBg !== 'transparent') {
                 targetBg = computedBodyBg;
             } else if (computedHtmlBg && computedHtmlBg !== 'rgba(0, 0, 0, 0)' && computedHtmlBg !== 'transparent') {
                 targetBg = computedHtmlBg;
+            } else {
+                targetBg = '#ffffff';
             }
+
+            // High-DPI scale adaptation (use 1.5 for tall pages >2200px to maintain performance and avoid GPU memory limits)
+            const renderScale = screenH > 2200 ? 1.5 : 2;
 
             // Convert iframe content to canvas using html2canvas
             const canvas = await html2canvas(targetEl, {
-                scale: 2, // High resolution
+                scale: renderScale,
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: targetBg,
@@ -410,8 +611,16 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-            if (processedCount > 0) {
-                pdf.addPage([screenW, screenH], 'landscape');
+            const orientation = screenW >= screenH ? 'landscape' : 'portrait';
+            if (!pdf) {
+                pdf = new jsPDF({
+                    orientation: orientation,
+                    unit: 'px',
+                    format: [screenW, screenH],
+                    compress: true
+                });
+            } else if (processedCount > 0) {
+                pdf.addPage([screenW, screenH], orientation);
             }
 
             pdf.addImage(imgData, 'JPEG', 0, 0, screenW, screenH);

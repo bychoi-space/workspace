@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ui_library_fallback.js
  * Fallback data for offline file:// protocol execution.
  * Auto-generated.
@@ -700,10 +700,10 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="color" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">ICON COLOR</label>
+                    <label class="v4-color-label" data-prop="iconColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">아이콘색 (Icon)</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="icon-color-wrapper">
-                            <input type="color" id="icon-color" class="v4-color-input" data-prop="color" value="#000000">
+                            <input type="color" id="icon-color" class="v4-color-input" data-prop="iconColor" value="#000000">
                         </div>
                     </div>
                 </div>
@@ -1592,6 +1592,23 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 <!-- Dynamic Row Configs will be loaded here -->
             </div>
 
+            <!-- Action Bar Configuration -->
+            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <label style="font-size: 9px; color: #94a3b8; display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 6px;">
+                    <input type="checkbox" id="prop-admin-action-bar-enable" style="cursor: pointer; accent-color: var(--accent);">
+                    하단 액션 버튼(초기화/검색) 표시
+                </label>
+                <div id="admin-action-bar-config-sub" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <div class="prop-group">
+                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">버튼 정렬</label>
+                        <select id="prop-admin-action-align" class="v4-prop-input" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px; height: 23px; box-sizing: border-box;">
+                            <option value="center">중앙 정렬 (Center)</option>
+                            <option value="right">우측 정렬 (Right)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- Dimensions -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
                 <div class="prop-group">
@@ -1650,6 +1667,47 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                 <div class="modal-footer">
                     <button id="btn-edit-screen-cancel" class="btn-secondary">취소</button>
                     <button id="btn-edit-screen-submit" class="btn-primary">변경사항 저장</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copy Screen Modal -->
+        <div id="copy-screen-modal" class="modal-overlay">
+            <div class="modal-card modal-card-screen">
+                <div class="modal-header">
+                    <h3 class="modal-title">화면 복사 (Duplicate Screen)</h3>
+                    <p class="modal-subtitle" id="copy-screen-source-info">-</p>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">복사 대상 프로젝트 (Target Project)</label>
+                        <select id="copy-screen-target-project" class="form-input">
+                            <option value="">불러오는 중...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">새 화면 명칭 (Display Title)</label>
+                        <input type="text" id="copy-screen-title" class="form-input" placeholder="새 화면 제목">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">새 파일명 (Filename)</label>
+                        <input type="text" id="copy-screen-filename" class="form-input" placeholder="예: screen_copy.html">
+                        <p id="copy-screen-filename-notice" class="form-notice" style="color:#94a3b8; font-size:11px; margin-top:4px;">* 대상 프로젝트 내에 이미 존재하는 파일명이면 자동으로 번호가 증가합니다.</p>
+                    </div>
+                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px; margin-top:12px; padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:6px;">
+                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-main, #ffffff); cursor:pointer;">
+                            <input type="checkbox" id="copy-screen-open-after" checked style="cursor:pointer;">
+                            <span>복사 완료 후 해당 프로젝트의 복사된 화면으로 즉시 이동</span>
+                        </label>
+                        <label id="copy-screen-move-group" style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-dim, #94a3b8); cursor:pointer;">
+                            <input type="checkbox" id="copy-screen-is-move" style="cursor:pointer;">
+                            <span>원본 프로젝트에서 삭제하고 이전 (이동 모드)</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-copy-screen-cancel" class="btn-secondary">취소</button>
+                    <button id="btn-copy-screen-submit" class="btn-primary">복사하기</button>
                 </div>
             </div>
         </div>

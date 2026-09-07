@@ -14,6 +14,8 @@
         spacingThreshold: 50, // 50px 간격 임계값
         activeLines: { x: null, y: null },
         clearTimer: null,
+        selectionTimer: null,
+        pendingSelection: null,
 
         /**
          * Collects snapping targets and spacing targets from canvas and requests from iframe.
@@ -24,8 +26,8 @@
                 this.clearTimer = null;
             }
             const DOM = window.DOM;
-            // Clean up any residual guide lines immediately when re-warm/discovery happens without drawing
-            if (DOM && DOM.guideLayer) {
+            // Clean up any residual guide lines immediately when re-warm/discovery happens without active selection
+            if (DOM && DOM.guideLayer && !this.selectionTimer) {
                 DOM.guideLayer.innerHTML = '';
             }
             if (!DOM || !DOM.iframe) return;
@@ -123,6 +125,12 @@
             if (window.DEBUG_MODE) {
                 console.log(`[SmartGuide] Total targets synchronized: snap=${this.targets.length}, spacing=${this.spacingTargets.length}`);
             }
+
+            if (this.pendingSelection) {
+                const s = this.pendingSelection;
+                const snap = this.calculateSnap(s.x, s.y, s.w, s.h, false, s.activeId);
+                this.drawGuides(snap);
+            }
         },
 
         /**
@@ -143,192 +151,170 @@
                 centerY: y + h / 2
             };
 
-            let leftMatch = null;
-            let rightMatch = null;
-            let topMatch = null;
-            let bottomMatch = null;
+            // 1. Direct Enclosing Container Detection (Figma Style)
+            let container = null;
+            let minContainerArea = Infinity;
 
-            // If active element is inside a frame boundary, restrict spacing targets to enclosing frame
-            let targetList = this.spacingTargets;
-            const enclosingFrames = this.spacingTargets.filter(t => t.isFrameBoundary && t.left <= active.left + 5 && t.right >= active.right - 5 && t.top <= active.top + 5 && t.bottom >= active.bottom - 5);
-            if (enclosingFrames.length > 0) {
-                const hostFrameId = enclosingFrames[0].frameId;
-                targetList = this.spacingTargets.filter(t => {
-                    if (t.source === 'canvas') return false;
-                    if (t.isFrameBoundary) return t.frameId === hostFrameId;
-                    const fTop = enclosingFrames.find(ef => ef.id.endsWith('-top'))?.top || 0;
-                    const fBottom = enclosingFrames.find(ef => ef.id.endsWith('-bottom'))?.bottom || Infinity;
-                    const fLeft = enclosingFrames.find(ef => ef.id.endsWith('-left'))?.left || 0;
-                    const fRight = enclosingFrames.find(ef => ef.id.endsWith('-right'))?.right || Infinity;
-                    return (t.left >= fLeft - 10 && t.right <= fRight + 10 && t.top >= fTop - 10 && t.bottom <= fBottom + 10);
-                });
+            for (let i = 0; i < this.spacingTargets.length; i++) {
+                const t = this.spacingTargets[i];
+                if (t.isFrameBoundary || t.source === 'canvas') continue;
+                if (activeId && t.id === activeId) continue;
+                if (!t.width || !t.height) continue;
+
+                const isEdgeContained = (
+                    t.left <= active.left + 6 &&
+                    t.right >= active.right - 6 &&
+                    t.top <= active.top + 6 &&
+                    t.bottom >= active.bottom - 6 &&
+                    (t.width > active.width + 4 || t.height > active.height + 4)
+                );
+                const isCenterContained = (
+                    t.left <= active.centerX &&
+                    t.right >= active.centerX &&
+                    t.top <= active.centerY &&
+                    t.bottom >= active.centerY &&
+                    t.width >= active.width &&
+                    t.height >= active.height &&
+                    (t.width > active.width + 4 || t.height > active.height + 4)
+                );
+
+                if (isEdgeContained || isCenterContained) {
+                    const area = t.width * t.height;
+                    if (area < minContainerArea) {
+                        minContainerArea = area;
+                        container = t;
+                    }
+                }
             }
 
-            targetList.forEach(t => {
-                // Skip the active moving element itself to prevent zero-distance errors
-                if (activeId && t.id === activeId) return;
+            const DOM = window.DOM;
+            const cw = (DOM && DOM.iframe) ? (parseInt(DOM.iframe.style.width) || 1600) : 1600;
+            const ch = (DOM && DOM.iframe) ? (parseInt(DOM.iframe.style.height) || 900) : 900;
 
-                // In arrow key mode, skip virtual canvas boxes – only show real component distances
-                if (thresh === Infinity && t.source === 'canvas') return;
+            if (!container) {
+                container = {
+                    id: 'canvas-bounds',
+                    label: 'Canvas',
+                    left: 0,
+                    top: 0,
+                    right: cw,
+                    bottom: ch,
+                    width: cw,
+                    height: ch,
+                    isFrameBoundary: true
+                };
+            }
 
-                // Tightened buffer to prevent separate layout rows from bleeding into horizontal measurements
-                const overlapBuffer = 14;
+            // 2. Base Distances: Inner Padding to Container 4 Walls
+            const distLeftToWall = Math.max(0, Math.round(active.left - container.left));
+            const distRightToWall = Math.max(0, Math.round(container.right - active.right));
+            const distTopToWall = Math.max(0, Math.round(active.top - container.top));
+            const distBottomToWall = Math.max(0, Math.round(container.bottom - active.bottom));
 
-                // Left Spacing (Target on the left of active)
-                if (active.left - t.right >= -0.5) {
-                    const directOverlapY = Math.min(active.bottom, t.bottom) - Math.max(active.top, t.top) > 0;
-                    const bufferOverlapY = t.isFrameBoundary ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
-                    const candidateTier = t.isFrameBoundary ? 1 : (directOverlapY ? 3 : (bufferOverlapY ? 2 : 0));
+            const maxWallThresh = container.isFrameBoundary ? 350 : Infinity;
 
-                    if (candidateTier > 0) {
+            let leftMatch = (distLeftToWall <= maxWallThresh) ? { target: container, dist: distLeftToWall, isInner: true } : null;
+            let rightMatch = (distRightToWall <= maxWallThresh) ? { target: container, dist: distRightToWall, isInner: true } : null;
+            let topMatch = (distTopToWall <= maxWallThresh) ? { target: container, dist: distTopToWall, isInner: true } : null;
+            let bottomMatch = (distBottomToWall <= maxWallThresh) ? { target: container, dist: distBottomToWall, isInner: true } : null;
+
+            // 3. Sibling Raycast (Threshold: 250px)
+            const overlapBuffer = 12;
+            const MAX_NEIGHBOR_DIST = 250;
+
+            for (let i = 0; i < this.spacingTargets.length; i++) {
+                const t = this.spacingTargets[i];
+                if (activeId && t.id === activeId) continue;
+                if (t.id === container.id) continue;
+                if (t.source === 'canvas') continue;
+
+                if (!container.isFrameBoundary) {
+                    const tCenterX = t.left + t.width / 2;
+                    const tCenterY = t.top + t.height / 2;
+                    const isInside = (
+                        tCenterX >= container.left - 6 && tCenterX <= container.right + 6 &&
+                        tCenterY >= container.top - 6 && tCenterY <= container.bottom + 6
+                    );
+                    if (!isInside) continue;
+                }
+
+                // Leftward Raycast
+                if (t.right <= active.left + 1) {
+                    const hasOverlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                    if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(active.left - t.right));
-                        if (dist <= thresh) {
-                            if (!leftMatch || candidateTier > leftMatch.tier || (candidateTier === leftMatch.tier && dist < leftMatch.dist)) {
-                                leftMatch = { target: t, dist: dist, tier: candidateTier };
+                        if (dist <= MAX_NEIGHBOR_DIST) {
+                            if (!leftMatch || dist < leftMatch.dist) {
+                                leftMatch = { target: t, dist: dist, isInner: false };
                             }
                         }
                     }
                 }
-                // Right Spacing (Target on the right of active)
-                if (t.left - active.right >= -0.5) {
-                    const directOverlapY = Math.min(active.bottom, t.bottom) - Math.max(active.top, t.top) > 0;
-                    const bufferOverlapY = t.isFrameBoundary ? true : !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
-                    const candidateTier = t.isFrameBoundary ? 1 : (directOverlapY ? 3 : (bufferOverlapY ? 2 : 0));
 
-                    if (candidateTier > 0) {
+                // Rightward Raycast
+                if (t.left >= active.right - 1) {
+                    const hasOverlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                    if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(t.left - active.right));
-                        if (dist <= thresh) {
-                            if (!rightMatch || candidateTier > rightMatch.tier || (candidateTier === rightMatch.tier && dist < rightMatch.dist)) {
-                                rightMatch = { target: t, dist: dist, tier: candidateTier };
+                        if (dist <= MAX_NEIGHBOR_DIST) {
+                            if (!rightMatch || dist < rightMatch.dist) {
+                                rightMatch = { target: t, dist: dist, isInner: false };
                             }
                         }
                     }
                 }
-                // Top Spacing (Target above active)
-                if (active.top - t.bottom >= -0.5) {
-                    const directOverlapX = Math.min(active.right, t.right) - Math.max(active.left, t.left) > 0;
-                    const bufferOverlapX = t.isFrameBoundary ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
-                    const candidateTier = t.isFrameBoundary ? 1 : (directOverlapX ? 3 : (bufferOverlapX ? 2 : 0));
 
-                    if (candidateTier > 0) {
+                // Upward Raycast
+                if (t.bottom <= active.top + 1) {
+                    const hasOverlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                    if (hasOverlapX) {
                         const dist = Math.max(0, Math.round(active.top - t.bottom));
-                        if (dist <= thresh) {
-                            if (!topMatch || candidateTier > topMatch.tier || (candidateTier === topMatch.tier && dist < topMatch.dist)) {
-                                topMatch = { target: t, dist: dist, tier: candidateTier };
+                        if (dist <= MAX_NEIGHBOR_DIST) {
+                            if (!topMatch || dist < topMatch.dist) {
+                                topMatch = { target: t, dist: dist, isInner: false };
                             }
                         }
                     }
                 }
-                // Bottom Spacing (Target below active)
-                if (t.top - active.bottom >= -0.5) {
-                    const directOverlapX = Math.min(active.right, t.right) - Math.max(active.left, t.left) > 0;
-                    const bufferOverlapX = t.isFrameBoundary ? true : !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
-                    const candidateTier = t.isFrameBoundary ? 1 : (directOverlapX ? 3 : (bufferOverlapX ? 2 : 0));
 
-                    if (candidateTier > 0) {
+                // Downward Raycast
+                if (t.top >= active.bottom - 1) {
+                    const hasOverlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                    if (hasOverlapX) {
                         const dist = Math.max(0, Math.round(t.top - active.bottom));
-                        if (dist <= thresh) {
-                            if (!bottomMatch || candidateTier > bottomMatch.tier || (candidateTier === bottomMatch.tier && dist < bottomMatch.dist)) {
-                                bottomMatch = { target: t, dist: dist, tier: candidateTier };
+                        if (dist <= MAX_NEIGHBOR_DIST) {
+                            if (!bottomMatch || dist < bottomMatch.dist) {
+                                bottomMatch = { target: t, dist: dist, isInner: false };
                             }
                         }
                     }
                 }
-            });
+            }
 
-            return { leftMatch, rightMatch, topMatch, bottomMatch, active };
+            return { leftMatch, rightMatch, topMatch, bottomMatch, active, canvasWidth: cw, canvasHeight: ch };
         },
 
         /**
-         * Core snapping calculation logic.
-         * @param {boolean} isArrowKey - Arrow-key mode: show nearest component distance without threshold
-         * @param {string|null} activeId - The ID of the currently moving active element
+         * Core snapping calculation logic (SmartGuide 2.0).
+         * Note: Per user specification, complex align lines (Top/Middle/Bottom) are completely removed.
+         * Coordinates remain smooth and 1:1 without arbitrary jumping or cross-screen dashed lines.
          */
         calculateSnap(x, y, w = 0, h = 0, isArrowKey = false, activeId = null) {
-            let snappedX = x, snappedY = y;
-            let snapXData = null, snapYData = null;
-            const thresh = this.threshold;
+            const spacingThresh = isArrowKey ? Infinity : (this.spacingThreshold || 120);
+            const spacing = this.calculateSpacing(x, y, w, h, spacingThresh, activeId);
 
-            // Arrow key mode: skip alignment snapping (distracting for 1px moves)
-            if (!isArrowKey) {
-                // Prioritize targets: Put Row and Col targets first so they snap first
-                const sortedTargets = [...this.targets].sort((a, b) => {
-                    const aIsRowCol = a.label && (a.label.includes('Row ') || a.label.includes('Col '));
-                    const bIsRowCol = b.label && (b.label.includes('Row ') || b.label.includes('Col '));
-                    if (aIsRowCol && !bIsRowCol) return -1;
-                    if (!aIsRowCol && bIsRowCol) return 1;
-                    return 0;
-                });
-
-                // X-axis Points to check (Left, Center, Right)
-                const pointsX = [
-                    { val: x, part: 'Left' },
-                    { val: x + w / 2, part: 'Center' },
-                    { val: x + w, part: 'Right' }
-                ];
-
-                for (const t of sortedTargets) {
-                    // Skip targets belonging to the active moving element itself
-                    if (activeId && t.id === activeId) continue;
-                    
-                    if (t.x === undefined) continue;
-                    // Apply distance-based filtering (reduced to 150px radius for cleaner dragging, except Canvas)
-                    if (t.label !== 'Canvas' && !(t.label && t.label.includes('UI Area'))) {
-                        const activeCenterX = x + w / 2;
-                        const isRowCol = t.label && (t.label.includes('Row ') || t.label.includes('Col '));
-                        const maxRadius = isRowCol ? 250 : 150; // Allow slightly wider radius for query items
-                        if (Math.abs(t.x - activeCenterX) > maxRadius) continue;
-                    }
-                    for (const p of pointsX) {
-                        if (Math.abs(p.val - t.x) < thresh) {
-                            snappedX = x + (t.x - p.val);
-                            snapXData = { line: t.x, label: t.label, part: t.part, selfPart: p.part };
-                            break;
-                        }
-                    }
-                    if (snapXData) break;
-                }
-
-                // Y-axis Points to check (Top, Middle, Bottom)
-                const pointsY = [
-                    { val: y, part: 'Top' },
-                    { val: y + h / 2, part: 'Middle' },
-                    { val: y + h, part: 'Bottom' }
-                ];
-
-                for (const t of sortedTargets) {
-                    // Skip targets belonging to the active moving element itself
-                    if (activeId && t.id === activeId) continue;
-
-                    if (t.y === undefined) continue;
-                    // Apply distance-based filtering
-                    if (t.label !== 'Canvas' && !(t.label && t.label.includes('UI Area'))) {
-                        const activeCenterY = y + h / 2;
-                        const isRowCol = t.label && (t.label.includes('Row ') || t.label.includes('Col '));
-                        const maxRadius = isRowCol ? 250 : 150;
-                        if (Math.abs(t.y - activeCenterY) > maxRadius) continue;
-                    }
-                    for (const p of pointsY) {
-                        if (Math.abs(p.val - t.y) < thresh) {
-                            snappedY = y + (t.y - p.val);
-                            snapYData = { line: t.y, label: t.label, part: t.part, selfPart: p.part };
-                            break;
-                        }
-                    }
-                    if (snapYData) break;
-                }
-            }
-
-            // Arrow key mode: unlimited spacing threshold, real components only (no canvas virtual boxes)
-            // Normal mode: 50px threshold
-            const spacingThresh = isArrowKey ? Infinity : undefined;
-            const spacing = this.calculateSpacing(snappedX, snappedY, w, h, spacingThresh, activeId);
-
-            return { x: snappedX, y: snappedY, snapXData, snapYData, spacing };
+            return {
+                x: x,
+                y: y,
+                snapXData: null,
+                snapYData: null,
+                spacing: spacing
+            };
         },
 
         /**
          * Renders guide lines and labels on the SVG layer.
+         * SmartGuide 2.0: Only clean spacing guides and badges are displayed.
          */
         drawGuides(data) {
             if (this.clearTimer) {
@@ -338,42 +324,8 @@
             const DOM = window.DOM;
             if (!DOM || !DOM.guideLayer) return;
 
-            let html = '';
-            const labelStyle = `fill: #ff4757; font-size: 11px; font-weight: 600; font-family: 'Pretendard Variable', Pretendard, sans-serif;`;
-            const rectStyle = `fill: rgba(31, 35, 41, 0.9); stroke: #ff4757; stroke-width: 0.5; rx: 4;`;
-
-            if (data.snapXData) {
-                const { line, label, part, selfPart } = data.snapXData;
-                const isFrameSnap = label && (label.includes('Area') || label.includes('Canvas') || label.includes('UI'));
-                if (!isFrameSnap) {
-                    html += `<line x1="${line}" y1="0" x2="${line}" y2="100%" stroke="#ff4757" stroke-width="1.5" stroke-dasharray="4,3" />`;
-                    const labelText = `${label} ${part} ↔ ${selfPart}`;
-                    const textWidth = labelText.length * 6.5 + 12;
-                    html += `
-                        <g transform="translate(${line + 8}, 40)">
-                            <rect x="0" y="0" width="${textWidth}" height="22" style="${rectStyle}" />
-                            <text x="6" y="15" style="${labelStyle}">${labelText}</text>
-                        </g>`;
-                }
-            }
-
-            if (data.snapYData) {
-                const { line, label, part, selfPart } = data.snapYData;
-                const isFrameSnap = label && (label.includes('Area') || label.includes('Canvas') || label.includes('UI'));
-                if (!isFrameSnap) {
-                    html += `<line x1="0" y1="${line}" x2="100%" y2="${line}" stroke="#ff4757" stroke-width="1.5" stroke-dasharray="4,3" />`;
-                    const labelText = `${label} ${part} ↔ ${selfPart}`;
-                    const textWidth = labelText.length * 6.5 + 12;
-                    html += `
-                        <g transform="translate(40, ${line - 32})">
-                            <rect x="0" y="0" width="${textWidth}" height="22" style="${rectStyle}" />
-                            <text x="6" y="15" style="${labelStyle}">${labelText}</text>
-                        </g>`;
-                }
-            }
-
-            const htmlList = [html];
-            if (data.spacing) {
+            const htmlList = [];
+            if (data && data.spacing) {
                 this.drawSpacingGuides(data.spacing, htmlList);
             }
 
@@ -386,6 +338,9 @@
         drawSpacingGuides(spacing, htmlList) {
             if (!spacing) return;
             const { leftMatch, rightMatch, topMatch, bottomMatch, active } = spacing;
+            const DOM = window.DOM;
+            const cw = spacing.canvasWidth || (DOM && DOM.iframe ? (parseInt(DOM.iframe.style.width) || 1600) : 1600);
+            const ch = spacing.canvasHeight || (DOM && DOM.iframe ? (parseInt(DOM.iframe.style.height) || 900) : 900);
             
             const lineCol = "#ec4899";
             const badgeBg = "#ec4899";
@@ -397,13 +352,25 @@
                 const dist = match.dist;
                 if (dist <= 0) return;
                 
-                const x1 = side === 'left' ? target.right : active.right;
-                const x2 = side === 'left' ? active.left : target.left;
+                const isInner = !!match.isInner;
+                let x1, x2;
+                if (isInner) {
+                    x1 = (side === 'left') ? target.left : active.right;
+                    x2 = (side === 'left') ? active.left : target.right;
+                } else {
+                    x1 = (side === 'left') ? target.right : active.right;
+                    x2 = (side === 'left') ? active.left : target.left;
+                }
                 
                 let y = active.centerY;
-                if (y < target.top) y = target.top + 6;
-                if (y > target.bottom) y = target.bottom - 6;
+                if (!target.isFrameBoundary) {
+                    if (y < target.top + 6) y = target.top + 6;
+                    if (y > target.bottom - 6) y = target.bottom - 6;
+                }
                 
+                // Clamping y within canvas bounds
+                y = Math.max(10, Math.min(ch - 10, y));
+
                 // Connection line
                 htmlList.push(`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${lineCol}" stroke-width="1.2" />`);
                 
@@ -412,9 +379,10 @@
                 htmlList.push(`<line x1="${x2}" y1="${y - 4}" x2="${x2}" y2="${y + 4}" stroke="${lineCol}" stroke-width="1.2" />`);
                 
                 // Measurement badge
-                const cx = (x1 + x2) / 2;
+                let cx = (x1 + x2) / 2;
                 const label = `${dist}`;
                 const textWidth = label.length * 6.5 + 8;
+                cx = Math.max(textWidth / 2 + 4, Math.min(cw - textWidth / 2 - 4, cx));
                 const rectX = cx - textWidth / 2;
                 const rectY = y - 8;
                 
@@ -432,12 +400,22 @@
                 const dist = match.dist;
                 if (dist <= 0) return;
                 
-                const y1 = side === 'top' ? target.bottom : active.bottom;
-                const y2 = side === 'top' ? active.top : target.top;
+                const isInner = !!match.isInner;
+                let y1, y2;
+                if (isInner) {
+                    y1 = (side === 'top') ? target.top : active.bottom;
+                    y2 = (side === 'top') ? active.top : target.bottom;
+                } else {
+                    y1 = (side === 'top') ? target.bottom : active.bottom;
+                    y2 = (side === 'top') ? active.top : target.top;
+                }
                 
                 let x = active.centerX;
-                if (x < target.left) x = target.left + 6;
-                if (x > target.right) x = target.right - 6;
+                if (!target.isFrameBoundary) {
+                    if (x < target.left + 6) x = target.left + 6;
+                    if (x > target.right - 6) x = target.right - 6;
+                }
+                x = Math.max(16, Math.min(cw - 16, x));
                 
                 // Connection line
                 htmlList.push(`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${lineCol}" stroke-width="1.2" />`);
@@ -447,9 +425,11 @@
                 htmlList.push(`<line x1="${x - 4}" y1="${y2}" x2="${x + 4}" y2="${y2}" stroke="${lineCol}" stroke-width="1.2" />`);
                 
                 // Measurement badge
-                const cy = (y1 + y2) / 2;
+                let cy = (y1 + y2) / 2;
                 const label = `${dist}`;
                 const textWidth = label.length * 6.5 + 8;
+                // Critical Clamping: Ensure badge NEVER clips out of the top/bottom boundary
+                cy = Math.max(11, Math.min(ch - 11, cy));
                 const rectX = x - textWidth / 2;
                 const rectY = cy - 8;
                 
@@ -468,10 +448,46 @@
         },
 
         /**
+         * Shows smart guide for selected component with auto-dismiss timer.
+         * @param {number} x Component left
+         * @param {number} y Component top
+         * @param {number} w Component width
+         * @param {number} h Component height
+         * @param {string} activeId Component id
+         * @param {number} [autoDismissMs=2000] Auto dismiss delay in ms
+         */
+        showSelectionGuide(x, y, w, h, activeId, autoDismissMs = 2000) {
+            if (this.clearTimer) {
+                clearTimeout(this.clearTimer);
+                this.clearTimer = null;
+            }
+            if (this.selectionTimer) {
+                clearTimeout(this.selectionTimer);
+                this.selectionTimer = null;
+            }
+
+            this.pendingSelection = { x, y, w, h, activeId };
+
+            const snap = this.calculateSnap(x, y, w, h, false, activeId);
+            this.drawGuides(snap);
+
+            this.selectionTimer = setTimeout(() => {
+                this.clearGuides(false);
+                this.selectionTimer = null;
+                this.pendingSelection = null;
+            }, autoDismissMs);
+        },
+
+        /**
          * Clears all guide lines from the SVG layer.
          * @param {boolean} [forceImmediate=false] If true, clears DOM instantly without delay timer.
          */
         clearGuides(forceImmediate = false) {
+            if (this.selectionTimer) {
+                clearTimeout(this.selectionTimer);
+                this.selectionTimer = null;
+            }
+            this.pendingSelection = null;
             if (this.clearTimer) {
                 clearTimeout(this.clearTimer);
                 this.clearTimer = null;
@@ -488,7 +504,7 @@
                     DOM.guideLayer.innerHTML = '';
                 }
                 this.clearTimer = null;
-            }, 250); // 250ms 쾌적한 가이드라인 소멸 피드백
+            }, 250); // 250ms smooth fadeout feedback
         }
     };
 

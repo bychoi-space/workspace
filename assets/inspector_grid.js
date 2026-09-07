@@ -48,6 +48,20 @@
             };
             syncColor('grid-bg-color', 'grid-bg-wrapper', s.bg, s.isBgTransparent);
             syncColor('grid-border-color', 'grid-border-wrapper', s.border, s.isBorderTransparent);
+
+            const sec = document.getElementById('grid-inspector-section');
+            if (sec) {
+                const wInp = sec.querySelector('.v4-prop-input[data-prop="width"]');
+                const hInp = sec.querySelector('.v4-prop-input[data-prop="height"]');
+                const curW = comp.w !== undefined ? comp.w : (comp.width !== undefined ? comp.width : undefined);
+                const curH = comp.h !== undefined ? comp.h : (comp.height !== undefined ? comp.height : undefined);
+                if (wInp && curW !== undefined && document.activeElement !== wInp) {
+                    wInp.value = Math.round(curW);
+                }
+                if (hInp && curH !== undefined && document.activeElement !== hInp) {
+                    hInp.value = Math.round(curH);
+                }
+            }
         },
 
         bindEvents: function() {
@@ -64,12 +78,19 @@
             const colAddBtn = document.getElementById('btn-grid-add-col');
 
             const notifyGrid = (data) => {
+                const targetId = (window.state && window.state.selectedComponent && window.state.selectedComponent.id) ||
+                                 (window.state && window.state.editingIndex) ||
+                                 window.activeCompId || null;
+                const payload = Object.assign({ type: 'LF_UPDATE_GRID_PROPERTIES' }, data);
+                if (targetId && !payload.id) {
+                    payload.id = targetId;
+                }
                 if (window.EditorBus) {
-                    window.EditorBus.sendToIframe(Object.assign({ type: 'LF_UPDATE_GRID_PROPERTIES' }, data));
+                    window.EditorBus.sendToIframe(payload);
                 } else {
                     const iframe = document.getElementById('main-iframe');
                     if (iframe && iframe.contentWindow && window.MessageHub) {
-                        window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_GRID_PROPERTIES', data);
+                        window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_GRID_PROPERTIES', payload);
                     }
                 }
             };
@@ -91,13 +112,15 @@
                     
                     const updatedCols = nameInputs.slice(0, -1).map((inp) => {
                         const idx = inp.getAttribute('data-index');
+                        const cardDiv = inp.closest('.grid-col-card');
                         const typeSel = container.querySelector('.grid-col-type-select[data-index="' + idx + '"]');
                         const widthInp = container.querySelector('.grid-col-width-input[data-index="' + idx + '"]');
                         const optionsInp = container.querySelector('.grid-col-options-input[data-index="' + idx + '"]');
                         const t = typeSel ? typeSel.value : 'text';
                         const wVal = widthInp ? (parseInt(widthInp.value) || 100) : 100;
                         const oVal = optionsInp ? optionsInp.value : '';
-                        return { name: inp.value, type: t, width: wVal + 'px', options: oVal };
+                        const clickableVal = cardDiv ? (cardDiv.getAttribute('data-clickable') === 'true') : false;
+                        return { name: inp.value, type: t, width: wVal + 'px', options: oVal, clickable: t === 'checkbox' ? false : clickableVal };
                     });
                     notifyGrid({ columns: updatedCols });
                     if (typeof window.syncGridHeaderInputs === 'function') {
@@ -115,22 +138,28 @@
                     const container = document.getElementById('grid-columns-container');
                     if (!container) return;
                     const nameInputs = Array.from(container.querySelectorAll('.grid-col-name-input'));
-                    if (nameInputs.length >= 10) return;
+                    if (nameInputs.length >= 20) {
+                        alert('열은 최대 20개까지 추가할 수 있습니다.');
+                        return;
+                    }
                     
                     const updatedCols = nameInputs.map((inp) => {
                         const idx = inp.getAttribute('data-index');
+                        const cardDiv = inp.closest('.grid-col-card');
                         const typeSel = container.querySelector('.grid-col-type-select[data-index="' + idx + '"]');
                         const widthInp = container.querySelector('.grid-col-width-input[data-index="' + idx + '"]');
                         const optionsInp = container.querySelector('.grid-col-options-input[data-index="' + idx + '"]');
                         const t = typeSel ? typeSel.value : 'text';
                         const wVal = widthInp ? (parseInt(widthInp.value) || 100) : 100;
                         const oVal = optionsInp ? optionsInp.value : '';
-                        return { name: inp.value, type: t, width: wVal + 'px', options: oVal };
+                        const clickableVal = cardDiv ? (cardDiv.getAttribute('data-clickable') === 'true') : false;
+                        return { name: inp.value, type: t, width: wVal + 'px', options: oVal, clickable: t === 'checkbox' ? false : clickableVal };
                     });
                     updatedCols.push({
                         name: '새 항목',
                         type: 'text',
-                        width: '200px'
+                        width: '200px',
+                        clickable: false
                     });
                     notifyGrid({ columns: updatedCols });
                     if (typeof window.syncGridHeaderInputs === 'function') {
@@ -148,22 +177,28 @@
                     const container = document.getElementById('grid-columns-container');
                     if (!container) return;
                     const nameInputs = Array.from(container.querySelectorAll('.grid-col-name-input'));
-                    if (nameInputs.length >= 10) return;
+                    if (nameInputs.length >= 20) {
+                        alert('열은 최대 20개까지 추가할 수 있습니다.');
+                        return;
+                    }
                     
                     const updatedCols = nameInputs.map((inp) => {
                         const idx = inp.getAttribute('data-index');
+                        const cardDiv = inp.closest('.grid-col-card');
                         const typeSel = container.querySelector('.grid-col-type-select[data-index="' + idx + '"]');
                         const widthInp = container.querySelector('.grid-col-width-input[data-index="' + idx + '"]');
                         const optionsInp = container.querySelector('.grid-col-options-input[data-index="' + idx + '"]');
                         const t = typeSel ? typeSel.value : 'text';
                         const wVal = widthInp ? (parseInt(widthInp.value) || 100) : 100;
                         const oVal = optionsInp ? optionsInp.value : '';
-                        return { name: inp.value, type: t, width: wVal + 'px', options: oVal };
+                        const clickableVal = cardDiv ? (cardDiv.getAttribute('data-clickable') === 'true') : false;
+                        return { name: inp.value, type: t, width: wVal + 'px', options: oVal, clickable: t === 'checkbox' ? false : clickableVal };
                     });
                     updatedCols.push({
                         name: '새 항목',
                         type: 'text',
-                        width: '200px'
+                        width: '200px',
+                        clickable: false
                     });
                     notifyGrid({ columns: updatedCols });
                     if (typeof window.syncGridHeaderInputs === 'function') {
@@ -192,18 +227,22 @@
             }
 
             if (rowCountInp) {
-                rowCountInp.oninput = () => {
+                const updateRowCount = () => {
                     const val = parseInt(rowCountInp.value) || 5;
                     notifyGrid({ rowCount: val });
                 };
+                rowCountInp.oninput = updateRowCount;
+                rowCountInp.onchange = updateRowCount;
             }
 
             const rowHeightInp = document.getElementById('prop-grid-row-height');
             if (rowHeightInp) {
-                rowHeightInp.oninput = () => {
+                const updateRowHeight = () => {
                     const val = parseInt(rowHeightInp.value) || 50;
                     notifyGrid({ rowHeight: val });
                 };
+                rowHeightInp.oninput = updateRowHeight;
+                rowHeightInp.onchange = updateRowHeight;
             }
 
             if (bgColorInp) {

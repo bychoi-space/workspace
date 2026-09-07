@@ -235,18 +235,18 @@ window.V4_COMPONENT_LIBRARY = {
             name: 'Query Item',
             koName: '조회 항목',
             category: 'Atoms',
-            width: '1180px',
-            height: '40px',
+            width: '1160px',
+            height: '44px',
             previewHtml: `<div style="display:flex; align-items:center; border:1px solid #ccc; background:#f8fafc; padding:4px; width:80px; height:40px; box-sizing:border-box;"><div style="width:25px; height:100%; background:#e2e8f0; border-right:1px solid #ccc;"></div><div style="flex:1; height:100%; background:#fff;"></div></div>`,
             html: `
-            <div class="v4-admin-settings-container" data-row-count="1" data-row-height="40"
-                 data-row1-label="조회 항목" data-row1-cols="1" data-row1-type="textbox"
+            <div class="v4-admin-settings-container" data-row-count="1" data-row-height="44"
+                 data-row1-label="조회 항목" data-row1-cols="1" data-row1-type="textbox" data-row1-height="44"
                  style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background: #ffffff; border: 1.6px solid rgb(226, 232, 240); border-radius: 8px; font-family: inherit; display: flex; flex-direction: column; overflow: hidden; pointer-events: auto;">
                 <div class="v4-admin-settings-table" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
                     <!-- Row 1 -->
-                    <div class="v4-admin-row" style="display: flex; width: 100%; box-sizing: border-box; height: 40px;">
-                        <div class="v4-admin-label-cell" style="width: 140px; background: #f1f5f9; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); border-right: 1.6px solid rgb(226, 232, 240); box-sizing: border-box; flex-shrink: 0; font-family: inherit;">조회 항목</div>
-                        <div class="v4-admin-content-cell" style="flex: 1; display: flex; align-items: center; padding: 0 16px; box-sizing: border-box;"></div>
+                    <div class="v4-admin-row" style="display: flex; width: 100%; box-sizing: border-box; height: 44px;">
+                        <div class="v4-admin-label-cell v4-editable-cell" contenteditable="true" style="width: 140px; background: #f1f5f9; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); border-right: 1.6px solid rgb(226, 232, 240); box-sizing: border-box; flex-shrink: 0; font-family: inherit; outline: none; cursor: text; user-select: text; -webkit-user-select: text;">조회 항목</div>
+                        <div class="v4-admin-content-cell" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; padding: 0 16px; box-sizing: border-box;"></div>
                     </div>
                 </div>
             </div>`

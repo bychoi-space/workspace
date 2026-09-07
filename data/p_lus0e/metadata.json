@@ -59,6 +59,13 @@
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": []
+    },
+    "01_Project_Summary_Report_101_copy.html": {
+      "title": "과제 개요 및 일정",
+      "type": "plan",
+      "defaultTab": "editor",
+      "screenDesc": "",
+      "updatedAt": "2026-09-07T08:00:04.544Z"
     }
   },
   "assignee": "최범열",

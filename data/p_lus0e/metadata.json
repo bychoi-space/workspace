@@ -62,20 +62,13 @@
       "defaultTab": "editor",
       "screenDesc": ""
     },
-    "01_Project_Summary_Report_101_copy.html": {
-      "title": "과제 개요 및 일정",
-      "type": "plan",
-      "defaultTab": "editor",
-      "screenDesc": "",
-      "updatedAt": "2026-09-07T08:22:45.537Z",
-      "description": [],
-      "connectors": []
-    },
     "01_Project_Summary_898.html": {
       "title": "01_Project_Summary_898",
       "type": "plan",
       "updatedAt": "2026-09-07T08:30:28.012Z",
-      "template": "template_project_summary.html"
+      "template": "template_project_summary.html",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",
@@ -85,7 +78,6 @@
   "updated": "2026-09-07 17:22:45",
   "screenOrder": [
     "00_Cover_802.html",
-    "01_Project_Summary_Report_101_copy.html",
     "08_Responsive_PC_Mobile_730.html",
     "09_Admin_PC_Scroll_639.html",
     "09_Admin_PC_Scroll_639_copy.html",

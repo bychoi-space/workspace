@@ -22,15 +22,15 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-04T04:54:51.519Z",
+      "updatedAt": "2026-09-07T05:54:30.456Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
         {
           "text": "색상 옵션 하단에 컬러 텍스트 표기\n(기존 UI 에서는 클릭하기 전까지 다른 컬러 확인 불가)",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 580,
-          "y": 436.141,
+          "x": 681.21875,
+          "y": 492.046875,
           "standardized": true,
           "pins": {
             "pc": {
@@ -125,5 +125,5 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-04 13:54:51"
+  "updated": "2026-09-07 14:54:30"
 }

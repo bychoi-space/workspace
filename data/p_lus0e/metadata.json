@@ -45,7 +45,7 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
       "type": "default",
-      "updatedAt": "2026-09-07T07:38:48.279Z",
+      "updatedAt": "2026-09-07T07:19:45.937Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -55,7 +55,7 @@
     "09_Admin_PC_Scroll_639_copy.html": {
       "title": "기획전 등록",
       "type": "default",
-      "updatedAt": "2026-09-07T07:15:49.835Z",
+      "updatedAt": "2026-09-07T07:39:00.730Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": []
@@ -65,7 +65,7 @@
   "developer": "",
   "period": "2026.09.03(목) ~ 2026.10.30(금)",
   "themeIndex": 2,
-  "updated": "2026-09-07 16:38:48",
+  "updated": "2026-09-07 16:39:00",
   "screenOrder": [
     "00_Cover_802.html",
     "08_Responsive_PC_Mobile_730.html",

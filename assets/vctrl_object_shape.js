@@ -106,9 +106,47 @@ window.v4ObjectShapeScript = `
                 const isSvgContainer = t.classList.contains('v4-shape-diamond') || t.classList.contains('v4-shape-triangle') || t.classList.contains('v4-shape-wave') || t.classList.contains('v4-shape-arrow') || t.classList.contains('v4-shape-line');
                 const svgShape = t.querySelector('path, polygon, rect, circle, line') || t.closest('.v4-shape')?.querySelector('path, polygon, rect, circle, line');
 
+                // Dedicated Shape Text Padding Handler
+                if (d.style.padTop !== undefined || d.style.paddingTop !== undefined || d.style.padding !== undefined) {
+                    const pt = d.style.padTop !== undefined ? parseInt(d.style.padTop) : (parseInt(d.style.paddingTop) || 0);
+                    const pb = d.style.padBottom !== undefined ? parseInt(d.style.padBottom) : (parseInt(d.style.paddingBottom) || 0);
+                    const pl = d.style.padLeft !== undefined ? parseInt(d.style.padLeft) : (parseInt(d.style.paddingLeft) || 0);
+                    const pr = d.style.padRight !== undefined ? parseInt(d.style.padRight) : (parseInt(d.style.paddingRight) || 0);
+
+                    const targetCells = [t];
+                    if (!t.classList.contains('v4-editable-cell') && !t.classList.contains('v4-shape-text-content') && !t.classList.contains('v4-shape-text-overlay')) {
+                        const subCells = t.querySelectorAll('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
+                        if (subCells.length > 0) targetCells.push(...Array.from(subCells));
+                    }
+
+                    targetCells.forEach(cell => {
+                        cell.style.setProperty('padding-top', pt + 'px', 'important');
+                        cell.style.setProperty('padding-right', pr + 'px', 'important');
+                        cell.style.setProperty('padding-bottom', pb + 'px', 'important');
+                        cell.style.setProperty('padding-left', pl + 'px', 'important');
+                        cell.style.setProperty('padding', pt + 'px ' + pr + 'px ' + pb + 'px ' + pl + 'px', 'important');
+                        cell.style.setProperty('box-sizing', 'border-box', 'important');
+                        cell.setAttribute('data-pad-top', pt);
+                        cell.setAttribute('data-pad-bottom', pb);
+                        cell.setAttribute('data-pad-left', pl);
+                        cell.setAttribute('data-pad-right', pr);
+                    });
+
+                    if (shape) {
+                        shape.setAttribute('data-pad-top', pt);
+                        shape.setAttribute('data-pad-bottom', pb);
+                        shape.setAttribute('data-pad-left', pl);
+                        shape.setAttribute('data-pad-right', pr);
+                        shape.style.setProperty('--v4-shape-pad-top', pt + 'px');
+                        shape.style.setProperty('--v4-shape-pad-bottom', pb + 'px');
+                        shape.style.setProperty('--v4-shape-pad-left', pl + 'px');
+                        shape.style.setProperty('--v4-shape-pad-right', pr + 'px');
+                    }
+                }
+
                 // Assign styles with override for text alignment and background styling
                 for (const [key, val] of Object.entries(d.style)) {
-                    if (key === 'width' || key === 'height' || key === 'html' || key === 'patternType') continue;
+                    if (key === 'width' || key === 'height' || key === 'html' || key === 'patternType' || key === 'padTop' || key === 'padBottom' || key === 'padLeft' || key === 'padRight' || key === 'paddingTop' || key === 'paddingBottom' || key === 'paddingLeft' || key === 'paddingRight' || key === 'padding') continue;
                     
                     if (key === 'background' || key === 'backgroundColor') {
                         if (isSvgContainer) {
@@ -123,8 +161,22 @@ window.v4ObjectShapeScript = `
                         t.style.setProperty(cssKey, val, 'important');
                         
                         if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent') {
-                            // Uniform margin/padding standard: top/bottom 5px, left/right 10px
-                            t.style.setProperty('padding', '5px 10px', 'important');
+                            // Preserve existing custom padding if present; only fallback to 5px 10px if not set
+                            const curPadTop = t.getAttribute('data-pad-top') || shape.getAttribute('data-pad-top') || (parseInt(t.style.paddingTop) || 5);
+                            const curPadRight = t.getAttribute('data-pad-right') || shape.getAttribute('data-pad-right') || (parseInt(t.style.paddingRight) || 10);
+                            const curPadBottom = t.getAttribute('data-pad-bottom') || shape.getAttribute('data-pad-bottom') || (parseInt(t.style.paddingBottom) || 5);
+                            const curPadLeft = t.getAttribute('data-pad-left') || shape.getAttribute('data-pad-left') || (parseInt(t.style.paddingLeft) || 10);
+
+                            const pt = (curPadTop !== null && curPadTop !== undefined && !isNaN(parseInt(curPadTop))) ? parseInt(curPadTop) : 5;
+                            const pr = (curPadRight !== null && curPadRight !== undefined && !isNaN(parseInt(curPadRight))) ? parseInt(curPadRight) : 10;
+                            const pb = (curPadBottom !== null && curPadBottom !== undefined && !isNaN(parseInt(curPadBottom))) ? parseInt(curPadBottom) : 5;
+                            const pl = (curPadLeft !== null && curPadLeft !== undefined && !isNaN(parseInt(curPadLeft))) ? parseInt(curPadLeft) : 10;
+
+                            t.style.setProperty('padding-top', pt + 'px', 'important');
+                            t.style.setProperty('padding-right', pr + 'px', 'important');
+                            t.style.setProperty('padding-bottom', pb + 'px', 'important');
+                            t.style.setProperty('padding-left', pl + 'px', 'important');
+                            t.style.setProperty('padding', pt + 'px ' + pr + 'px ' + pb + 'px ' + pl + 'px', 'important');
                             t.style.setProperty('box-sizing', 'border-box', 'important');
                             
                             if (key === 'textAlign') {

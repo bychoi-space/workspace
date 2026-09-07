@@ -267,17 +267,20 @@ const ProjectMetadataManager = {
         DOM.metadataPanel.innerHTML = `
             <div class="v4-meta-horizontal">
                 <input type="hidden" id="viewer-meta-title" value="${pm.title || ''}">
-                <div class="v4-meta-item" style="flex: 0 0 80px;">
-                    <label>ASSIGNEE</label>
-                    <input type="text" id="viewer-meta-assignee" value="${pm.assignee || ''}" placeholder="담당자" autocomplete="off">
+                <div class="v4-meta-chip meta-chip-assignee" title="담당자 (Assignee)">
+                    <span class="meta-chip-label">ASSIGNEE</span>
+                    <span class="meta-chip-divider"></span>
+                    <input type="text" id="viewer-meta-assignee" class="meta-chip-input" value="${pm.assignee || ''}" placeholder="담당자" autocomplete="off">
                 </div>
-                <div class="v4-meta-item" style="flex: 0 0 80px;">
-                    <label>DEVELOPER</label>
-                    <input type="text" id="viewer-meta-developer" value="${pm.developer || ''}" placeholder="개발자" autocomplete="off">
+                <div class="v4-meta-chip meta-chip-developer" title="개발자 (Developer)">
+                    <span class="meta-chip-label">DEV</span>
+                    <span class="meta-chip-divider"></span>
+                    <input type="text" id="viewer-meta-developer" class="meta-chip-input" value="${pm.developer || ''}" placeholder="개발자" autocomplete="off">
                 </div>
-                <div class="v4-meta-item" style="flex: 0 0 200px;">
-                    <label>PERIOD</label>
-                    <input type="text" id="viewer-meta-period" value="${pm.period || ''}" placeholder="사업 기간" autocomplete="off">
+                <div class="v4-meta-chip meta-chip-period" title="사업 기간 (Period)">
+                    <span class="meta-chip-label">PERIOD</span>
+                    <span class="meta-chip-divider"></span>
+                    <input type="text" id="viewer-meta-period" class="meta-chip-input" value="${pm.period || ''}" placeholder="사업 기간" autocomplete="off">
                 </div>
             </div>
         `;
@@ -288,6 +291,9 @@ const ProjectMetadataManager = {
     },
     updateFields(pm) {
         const titleIn = document.getElementById('viewer-meta-title'); if (titleIn) titleIn.value = pm.title || '';
+        const assigneeIn = document.getElementById('viewer-meta-assignee'); if (assigneeIn && document.activeElement !== assigneeIn) assigneeIn.value = pm.assignee || '';
+        const devIn = document.getElementById('viewer-meta-developer'); if (devIn && document.activeElement !== devIn) devIn.value = pm.developer || '';
+        const periodIn = document.getElementById('viewer-meta-period'); if (periodIn && document.activeElement !== periodIn) periodIn.value = pm.period || '';
     }
 };
 
@@ -370,10 +376,11 @@ const ProjectMetadataManager = {
 
         if (compStyles) {
             state.isEditing = true;
-            state.editingIndex = (compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1) ? compStyles.pinIndex : compStyles.id;
+            const hasValidPinIndex = compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex);
+            state.editingIndex = hasValidPinIndex ? compStyles.pinIndex : compStyles.id;
             let type = 'comp';
             if (compStyles.isGroup) type = 'group';
-            else if (compStyles.isPin && compStyles.pinIndex !== -1) type = 'pin';
+            else if (compStyles.isPin && hasValidPinIndex) type = 'pin';
             else if (compStyles.isGrid) type = 'grid';
             else if (compStyles.isTable) type = 'table';
             else if (compStyles.shapeType === 'line' || compStyles.id === 'v4-shape-line') type = 'line';
@@ -593,6 +600,25 @@ const ProjectMetadataManager = {
                 window._syncVAlignBtns(s.justifyContent);
             }
 
+            // 4-B. Sync Shape Text Padding
+            if (typeof window._syncShapePaddingInputs === 'function') {
+                window._syncShapePaddingInputs({
+                    padTop: s.padTop !== undefined ? s.padTop : 5,
+                    padBottom: s.padBottom !== undefined ? s.padBottom : 5,
+                    padLeft: s.padLeft !== undefined ? s.padLeft : 10,
+                    padRight: s.padRight !== undefined ? s.padRight : 10
+                });
+            } else {
+                const inPadTop = document.getElementById('shape-pad-top');
+                const inPadBottom = document.getElementById('shape-pad-bottom');
+                const inPadLeft = document.getElementById('shape-pad-left');
+                const inPadRight = document.getElementById('shape-pad-right');
+                if (inPadTop && s.padTop !== undefined && document.activeElement !== inPadTop) inPadTop.value = s.padTop;
+                if (inPadBottom && s.padBottom !== undefined && document.activeElement !== inPadBottom) inPadBottom.value = s.padBottom;
+                if (inPadLeft && s.padLeft !== undefined && document.activeElement !== inPadLeft) inPadLeft.value = s.padLeft;
+                if (inPadRight && s.padRight !== undefined && document.activeElement !== inPadRight) inPadRight.value = s.padRight;
+            }
+
             // 5. Sync Textbox / Textarea Properties
             if (compStyles.isTextbox || compStyles.isTextarea) {
                 const phInput = document.getElementById('prop-input-placeholder');
@@ -690,6 +716,9 @@ const ProjectMetadataManager = {
                     const r = parseInt(compStyles.buttonRadius) || 0;
                     radiusSlider.value = r;
                     if (radiusTxt) radiusTxt.innerText = r;
+                    if (typeof window._syncButtonCornerBtns === 'function') {
+                        window._syncButtonCornerBtns(r);
+                    }
                 }
             }
         } else {
@@ -745,18 +774,70 @@ const ProjectMetadataManager = {
             editorLabel.innerText = 'CONTENT EDITOR';
         }
 
-        // Load content to Quill
-        if (compStyles && state.editingType === 'pin' && compStyles.html !== undefined && window.quillEditor) {
-            let cleanHtml = compStyles.html || '';
-            const hasExplicitFontSize = cleanHtml.includes('font-size') || cleanHtml.includes('fontSize');
-            if (!hasExplicitFontSize && compStyles.currentStyles && compStyles.currentStyles.fontSize) {
-                const fs = compStyles.currentStyles.fontSize;
-                const fsPx = typeof fs === 'number' ? fs + 'px' : (fs.endsWith('px') ? fs : fs + 'px');
-                cleanHtml = `<span style="font-size: ${fsPx};">${cleanHtml}</span>`;
+        // Helper: 정규화된 HTML을 생성하여 Quill 클립보드가 인라인 font-size 및 서식을 온전히 파싱하도록 보장
+        function normalizeHtmlForQuill(rawHtml, fallbackFontSize) {
+            if (!rawHtml) return '<p><br></p>';
+            const parser = new DOMParser();
+            const parsed = parser.parseFromString(rawHtml, 'text/html');
+            const textContent = parsed.querySelector('.v4-shape-text-content') || 
+                                parsed.querySelector('.v4-shape-text-overlay') || 
+                                parsed.querySelector('.v4-editable-cell');
+            let clean = textContent ? textContent.innerHTML.trim() : rawHtml.trim();
+            if (!clean) return '<p><br></p>';
+
+            // p나 div 블록 태그가 전혀 없으면 <p>로 감싸기
+            if (!clean.includes('<p') && !clean.includes('<div')) {
+                clean = `<p>${clean}</p>`;
             }
+
+            // 인라인 font-size가 전혀 없는 경우, p 태그 내부 콘텐츠에 안전하게 font-size span을 주입
+            const hasExplicitFontSize = clean.includes('font-size') || clean.includes('fontSize');
+            if (!hasExplicitFontSize && fallbackFontSize) {
+                const fsPx = typeof fallbackFontSize === 'number' ? fallbackFontSize + 'px' : (fallbackFontSize.endsWith('px') ? fallbackFontSize : fallbackFontSize + 'px');
+                const doc = parser.parseFromString(clean, 'text/html');
+                const blocks = doc.body.querySelectorAll('p, div');
+                if (blocks.length > 0) {
+                    blocks.forEach(b => {
+                        if (b.innerHTML.trim() && !b.querySelector('[style*="font-size"]')) {
+                            b.innerHTML = `<span style="font-size: ${fsPx};">${b.innerHTML}</span>`;
+                        }
+                    });
+                    clean = doc.body.innerHTML;
+                } else {
+                    clean = `<p><span style="font-size: ${fsPx};">${doc.body.innerHTML}</span></p>`;
+                }
+            }
+            return clean;
+        }
+        window.normalizeHtmlForQuill = normalizeHtmlForQuill;
+
+        // Load content to Quill
+        if (compStyles && (state.editingType === 'pin' || state.editingType === 'shape') && window.quillEditor) {
+            const fallbackFs = compStyles.currentStyles && compStyles.currentStyles.fontSize;
+            const fallbackColor = compStyles.currentStyles && compStyles.currentStyles.text;
+            const cleanHtml = normalizeHtmlForQuill(compStyles.html, fallbackFs);
+
+            // 초기 로드 중에는 text-change 역류를 방지하는 가드 설정
+            state._isLoadingShapeContent = true;
             const wasQuillFocused = document.activeElement === window.quillEditor.root;
+
             setTimeout(() => {
                 window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
+
+                // Sticky Format 동기화 (오브젝트 고유 기본 스타일 캐싱)
+                if (!window._currentStickyFormat) window._currentStickyFormat = {};
+                if (fallbackFs) {
+                    const fsPx = typeof fallbackFs === 'number' ? fallbackFs + 'px' : (fallbackFs.endsWith('px') ? fallbackFs : fallbackFs + 'px');
+                    window._currentStickyFormat.size = fsPx;
+                }
+                if (fallbackColor) {
+                    window._currentStickyFormat.color = fallbackColor;
+                }
+                const curFmt = window.quillEditor.getFormat();
+                if (curFmt && Object.keys(curFmt).length > 0) {
+                    window._currentStickyFormat = { ...window._currentStickyFormat, ...curFmt };
+                }
+
                 if (wasQuillFocused) {
                     window.quillEditor.setSelection(0, 0);
                 } else {
@@ -767,49 +848,13 @@ const ProjectMetadataManager = {
                         iframe.contentWindow.focus();
                     }
                 }
+
+                // 다음 틱에 가드 해제 (text-change 이벤트 차단 완료 후 복구)
+                requestAnimationFrame(() => {
+                    state._isLoadingShapeContent = false;
+                });
             }, 50);
-        } else if (state.editingType === 'shape' && window.quillEditor) {
-                // shape 내부 텍스트를 Quill에 로드 (wrapper div 벗겨내기)
-                const rawHtml = compStyles.html || '';
-                const parser = new DOMParser();
-                const parsed = parser.parseFromString(rawHtml, 'text/html');
-                const textContent = parsed.querySelector('.v4-shape-text-content') || parsed.querySelector('.v4-shape-text-overlay') || parsed.querySelector('.v4-editable-cell');
-                let cleanHtml = textContent ? textContent.innerHTML : rawHtml;
-
-                // 만약 텍스트에 명시적인 font-size 스타일이 없다면, 컴포넌트의 기본 폰트 크기를 적용하여 Quill에 전달
-                const hasExplicitFontSize = cleanHtml.includes('font-size') || cleanHtml.includes('fontSize');
-                if (!hasExplicitFontSize && compStyles.currentStyles && compStyles.currentStyles.fontSize) {
-                    const fs = compStyles.currentStyles.fontSize;
-                    const fsPx = typeof fs === 'number' ? fs + 'px' : (fs.endsWith('px') ? fs : fs + 'px');
-                    cleanHtml = `<span style="font-size: ${fsPx};">${cleanHtml}</span>`;
-                }
-
-                // 초기 로드 중에는 text-change → LF_UPDATE_SHAPE_TEXT 루프를 방지
-                state._isLoadingShapeContent = true;
-                setTimeout(() => {
-                    // Prevent Quill focus hijacking
-                    const wasQuillFocused = document.activeElement === window.quillEditor.root;
-                    
-                    window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
-                    
-                    if (wasQuillFocused) {
-                        window.quillEditor.setSelection(0, 0);
-                    } else {
-                        // Clear Quill selection/focus and restore focus back to the iframe
-                        window.quillEditor.blur();
-                        window.quillEditor.setSelection(null);
-                        const iframe = document.getElementById('main-iframe');
-                        if (iframe && iframe.contentWindow) {
-                            iframe.contentWindow.focus();
-                        }
-                    }
-                    
-                    // 다음 틱에 가드 해제 (text-change가 먼저 발사된 후 해제)
-                    requestAnimationFrame(() => {
-                        state._isLoadingShapeContent = false;
-                    });
-                }, 50);
-            }
+        }
 
         // Dynamically move active panels into floating inspector card body
         const floatingBody = document.getElementById('floating-inspector-body');
@@ -1087,6 +1132,9 @@ function _syncButtonProps(comp) {
         const r = parseInt(comp.buttonRadius) || 0;
         radiusSlider.value = r;
         if (radiusTxt) radiusTxt.innerText = r;
+        if (typeof window._syncButtonCornerBtns === 'function') {
+            window._syncButtonCornerBtns(r);
+        }
     }
 
     if (comp.buttonStyle === 'custom' && comp.currentStyles) {
@@ -1710,9 +1758,9 @@ window.renderV4Shapes = function() {
         const cardStyle = item.cardStyle ? item.cardStyle : '';
 
         return `
-            <div class="${classList}" ${onclickAttr} ${dataAttrs} title="${titleAttr}" style="${cardStyle} border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+            <div class="${classList}" ${onclickAttr} ${dataAttrs} title="${titleAttr}" style="${cardStyle} border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
                 ${iconHtml}
-                <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">${item.name}</span>
+                <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">${item.name}</span>
             </div>
         `;
     }).join('');
@@ -1761,7 +1809,7 @@ window.renderAtomicLibrary = function() {
     if (atomicContainer) {
         const cards = atomicContainer.querySelectorAll('.component-item');
         cards.forEach(card => {
-            const nameSpan = card.querySelector('span');
+            const nameSpan = card.querySelector('span:not(.material-icons-outlined)') || card.querySelector('span');
             const nameText = nameSpan ? nameSpan.innerText : '';
             const koText = card.getAttribute('data-ko') || '';
             const isMatch = nameText.toLowerCase().includes(query) || koText.toLowerCase().includes(query);
@@ -2034,10 +2082,18 @@ window.initQuillEditor = function() {
     if (!container) return;
 
     const Size = Quill.import('attributors/style/size');
-    Size.whitelist = ['8px', '10px', '12px', '14px', '16px', '18px', '20px', '24px', '30px', '36px', '48px', '64px'];
+    Size.whitelist = ['8px', '9px', '10px', '11px', '12px', '13px', '14px', '15px', '16px', '18px', '20px', '22px', '24px', '28px', '30px', '36px', '48px', '64px'];
     Quill.register(Size, true);
     const Align = Quill.import('attributors/style/align');
     Quill.register(Align, true);
+
+    // Sticky Format Cache: 텍스트 삭제 후에도 사용자가 직전에 설정한 타이포그래피 서식을 기억
+    if (!window._currentStickyFormat) {
+        window._currentStickyFormat = {
+            size: '14px',
+            color: '#000000'
+        };
+    }
 
     // Register distinct intuitive icons for Text Color (Letter A) and Background Color (Paint Bucket / Fill)
     const icons = Quill.import('ui/icons');
@@ -2104,12 +2160,16 @@ window.initQuillEditor = function() {
         input.addEventListener('input', (e) => {
             if (window.quillEditor) {
                 window.quillEditor.format(formatType, e.target.value);
+                if (!window._currentStickyFormat) window._currentStickyFormat = {};
+                window._currentStickyFormat[formatType] = e.target.value;
             }
         });
 
         input.addEventListener('change', (e) => {
             if (window.quillEditor) {
                 window.quillEditor.format(formatType, e.target.value);
+                if (!window._currentStickyFormat) window._currentStickyFormat = {};
+                window._currentStickyFormat[formatType] = e.target.value;
             }
             pickerEl.classList.remove('ql-expanded');
         });
@@ -2118,6 +2178,9 @@ window.initQuillEditor = function() {
             e.stopPropagation();
             if (window.quillEditor) {
                 window.quillEditor.format(formatType, false);
+                if (window._currentStickyFormat) {
+                    delete window._currentStickyFormat[formatType];
+                }
             }
             pickerEl.classList.remove('ql-expanded');
         });
@@ -2163,8 +2226,51 @@ window.initQuillEditor = function() {
         }
     }, 0);
 
+    // Selection change: 빈 에디터 진입 시 Sticky Format 유지 및 커서 서식 갱신
+    window.quillEditor.on('selection-change', (range) => {
+        if (!range || state._isLoadingShapeContent) return;
+        const plainText = window.quillEditor.getText().replace(/\n/g, '').trim();
+        if (plainText.length === 0 && window._currentStickyFormat) {
+            Object.keys(window._currentStickyFormat).forEach(key => {
+                const val = window._currentStickyFormat[key];
+                if (val !== undefined && val !== false && val !== null) {
+                    window.quillEditor.format(key, val, 'silent');
+                }
+            });
+        } else if (plainText.length > 0) {
+            const curFormat = window.quillEditor.getFormat(range);
+            if (curFormat && Object.keys(curFormat).length > 0) {
+                window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
+            }
+        }
+    });
+
     window.quillEditor.on('text-change', () => {
         if (!state.isEditing || state.editingIndex === -1 || state._isLoadingShapeContent) return;
+        
+        // Sticky Format 유지 관리
+        const plainText = window.quillEditor.getText().replace(/\n/g, '').trim();
+        if (plainText.length > 0) {
+            const curFormat = window.quillEditor.getFormat();
+            if (curFormat && Object.keys(curFormat).length > 0) {
+                window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
+            }
+        } else {
+            // 텍스트를 모두 지운 경우: 마지막 서식이 소멸하지 않도록 에디터 커서에 지속 서식 재적용
+            if (window._currentStickyFormat) {
+                requestAnimationFrame(() => {
+                    if (window.quillEditor && window.quillEditor.getText().replace(/\n/g, '').trim().length === 0) {
+                        Object.keys(window._currentStickyFormat).forEach(key => {
+                            const val = window._currentStickyFormat[key];
+                            if (val !== undefined && val !== false && val !== null) {
+                                window.quillEditor.format(key, val, 'silent');
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
         const html = window.quillEditor.root.innerHTML;
         if (state.editingType === 'pin') {
             // Update description array (legacy compat)
@@ -2217,13 +2323,10 @@ if (window.MessageHub) {
             state._isLoadingShapeContent = true;
             
             const rawHtml = data.html || '';
-            let cleanHtml = rawHtml;
-            if (data.isShape) {
-                const parser = new DOMParser();
-                const parsed = parser.parseFromString(rawHtml, 'text/html');
-                const textContent = parsed.querySelector('.v4-shape-text-content') || parsed.querySelector('.v4-shape-text-overlay') || parsed.querySelector('.v4-editable-cell');
-                cleanHtml = textContent ? textContent.innerHTML : rawHtml;
-            }
+            const fallbackFs = state.selectedComponent?.currentStyles?.fontSize;
+            let cleanHtml = (typeof window.normalizeHtmlForQuill === 'function')
+                ? window.normalizeHtmlForQuill(rawHtml, fallbackFs)
+                : rawHtml;
             
             // Sync to description list metadata if it's a description pin
             if (state.editingType === 'pin' && typeof state.editingIndex === 'number') {
@@ -2240,6 +2343,16 @@ if (window.MessageHub) {
             
             window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
             
+            // Sticky Format 갱신
+            if (fallbackFs) {
+                const fsPx = typeof fallbackFs === 'number' ? fallbackFs + 'px' : (fallbackFs.endsWith('px') ? fallbackFs : fallbackFs + 'px');
+                window._currentStickyFormat = { ...window._currentStickyFormat, size: fsPx };
+            }
+            const curFmt = window.quillEditor.getFormat();
+            if (curFmt && Object.keys(curFmt).length > 0) {
+                window._currentStickyFormat = { ...window._currentStickyFormat, ...curFmt };
+            }
+
             if (wasQuillFocused) {
                 window.quillEditor.setSelection(0, 0);
             }

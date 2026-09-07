@@ -110,6 +110,10 @@
             const chk = document.getElementById('chk-preserve-aspect-ratio');
             if (ratioRow) ratioRow.style.display = 'none';
             if (chk) chk.checked = false;
+
+            if (typeof window._syncShapePaddingInputs === 'function') {
+                window._syncShapePaddingInputs({ padTop: 5, padBottom: 5, padLeft: 10, padRight: 10 });
+            }
         });
 
         // Synchronize target component and inputs on paste completion

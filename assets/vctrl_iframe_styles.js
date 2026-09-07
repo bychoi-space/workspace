@@ -69,7 +69,7 @@ body, .page, .lf-component {
 .v4-grid-container td.v4-grid-cell { font-size: 12px !important; font-family: inherit !important; color: var(--v4-text-color, #0f172a) !important; font-weight: 400 !important; }
 .v4-grid-container th.v4-grid-cell { font-size: 12px !important; font-family: inherit !important; color: var(--v4-text-color, #0f172a) !important; font-weight: 400 !important; position: sticky !important; top: 0 !important; z-index: 10 !important; background: #f8fafc !important; }
 .v4-shape { position: relative; border-width: 1.6px !important; border-style: solid !important; border-color: rgb(200, 200, 200); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgb(255, 255, 255); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; }
-.v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding: 5px 10px !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; flex-direction: column !important; }
+.v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding-top: var(--v4-shape-pad-top, 5px) !important; padding-right: var(--v4-shape-pad-right, 10px) !important; padding-bottom: var(--v4-shape-pad-bottom, 5px) !important; padding-left: var(--v4-shape-pad-left, 10px) !important; padding: var(--v4-shape-pad-top, 5px) var(--v4-shape-pad-right, 10px) var(--v4-shape-pad-bottom, 5px) var(--v4-shape-pad-left, 10px) !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; flex-direction: column !important; }
 .v4-shape-rect > .v4-editable-cell, .v4-shape-circle > .v4-editable-cell, .v4-shape-pattern-grid > .v4-editable-cell, .v4-shape-wave > .v4-editable-cell { width: 100% !important; height: 100% !important; }
 .v4-shape-diamond > .v4-editable-cell { width: 60% !important; height: 60% !important; }
 .v4-shape-arrow > .v4-editable-cell { width: 50% !important; height: 40% !important; }
@@ -244,15 +244,16 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .text-marker, .v4-text-box, .v4-text-shape { 
     position: absolute; padding: 0 !important; border-radius: 0px !important; 
     border: 1.6px solid transparent; font-size: 12px; font-weight: 400; font-family: inherit; line-height: 1.2; 
-    white-space: normal; cursor: grab; pointer-events: auto; z-index: 100; 
+    white-space: nowrap !important; cursor: grab; pointer-events: auto; z-index: 100; 
     transition: box-shadow 0.2s, background 0.2s;
     min-width: unset; min-height: unset; background: transparent; 
     box-shadow: none; box-sizing: border-box;
     color: var(--v4-text-color, #0f172a); text-align: left;
     width: auto;
 }
-.text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: 4px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; }
-.text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
+.text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: var(--v4-text-shape-pad-y, 2px) 3px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; white-space: nowrap !important; }
+.text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; white-space: nowrap !important; }
+.text-marker .v4-editable-cell *, .v4-text-box .v4-editable-cell *, .v4-text-shape .v4-editable-cell * { white-space: nowrap !important; }
 .text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: transparent !important; background: transparent; box-shadow: none; }
 .text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
 

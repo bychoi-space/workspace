@@ -113,15 +113,16 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
 .text-marker, .v4-text-box, .v4-text-shape { 
     position: absolute; padding: 0 !important; border-radius: 0px !important; 
     border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
-    white-space: normal; cursor: grab; pointer-events: auto; z-index: 100; 
+    white-space: nowrap !important; cursor: grab; pointer-events: auto; z-index: 100; 
     transition: box-shadow 0.2s, background 0.2s;
     min-width: unset; min-height: unset; background: transparent; 
     box-shadow: none; box-sizing: border-box;
     color: #1e293b; text-align: left;
     width: auto;
 }
-.text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: 4px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; }
-.text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
+.text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: var(--v4-text-shape-pad-y, 2px) 3px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; white-space: nowrap !important; }
+.text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; white-space: nowrap !important; }
+.text-marker .v4-editable-cell *, .v4-text-box .v4-editable-cell *, .v4-text-shape .v4-editable-cell * { white-space: nowrap !important; }
 .text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: transparent !important; background: transparent; box-shadow: none; }
 .text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
 

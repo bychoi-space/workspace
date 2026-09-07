@@ -286,8 +286,9 @@ body {
 }
 
 #viewer-meta-title { width: 220px !important; }
-#viewer-meta-assignee { width: 100px !important; }
-#viewer-meta-period { width: 200px !important; }
+.meta-chip-assignee .meta-chip-input { width: 60px !important; }
+.meta-chip-developer .meta-chip-input { width: 60px !important; }
+.meta-chip-period .meta-chip-input { width: 190px !important; }
 #viewer-meta-figma { width: 180px !important; }
 #viewer-meta-pub { width: 180px !important; }
 
@@ -652,6 +653,7 @@ body {
     border-radius: 10px !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    text-align: center !important;
 }
 
 .component-grid > div:hover,
@@ -660,6 +662,14 @@ body {
     border-color: rgba(255, 255, 255, 0.3) !important;
     transform: translateY(-3px) !important;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3), 0 0 12px rgba(255, 255, 255, 0.1) !important;
+}
+
+.component-grid > div > span:not(.material-icons-outlined),
+.component-grid .component-item > span:not(.material-icons-outlined) {
+    text-align: center !important;
+    display: block;
+    width: 100%;
+    line-height: 1.2;
 }
 
 

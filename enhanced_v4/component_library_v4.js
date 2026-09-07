@@ -315,7 +315,7 @@ window.V4_COMPONENT_LIBRARY = {
             icon: 'title',
             iconColor: 'var(--accent)',
             cardStyle: 'background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.1) !important;',
-            html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;">Edit Text</div>'
+            html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; white-space:nowrap;">Edit Text</div>'
         },
         {
             id: 'v4-data-table',

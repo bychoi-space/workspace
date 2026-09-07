@@ -389,6 +389,35 @@ body.hide-frame-grid .mobile-content-inner,
     pointer-events: none;
 }
 
+/* --- Full-Width Admin PC Screen Layout (.full-pc-page) --- */
+.page.full-pc-page {
+    padding: 0 14px !important;
+    gap: 0 !important;
+    justify-content: center !important;
+}
+
+.full-pc-page .pc-column,
+.pc-column.full-width {
+    width: 1572px !important;
+}
+
+.full-pc-page .pc-browser-frame,
+.pc-browser-frame.full-width {
+    width: 1572px !important;
+}
+
+.full-pc-page .pc-browser-header {
+    width: 1572px !important;
+}
+
+.full-pc-page .pc-content-area {
+    width: 1572px !important;
+}
+
+.full-pc-page .pc-content-inner {
+    width: 1560px !important;
+}
+
 /* --- Standard Component Absolute Position --- */
 .lf-component {
     position: absolute !important;

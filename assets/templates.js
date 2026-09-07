@@ -677,15 +677,16 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
 .text-marker, .v4-text-box, .v4-text-shape { 
     position: absolute; padding: 0 !important; border-radius: 0px !important; 
     border: 1.6px solid transparent; font-size: 14px; line-height: 1.2; 
-    white-space: normal; cursor: grab; pointer-events: auto; z-index: 100; 
+    white-space: nowrap !important; cursor: grab; pointer-events: auto; z-index: 100; 
     transition: box-shadow 0.2s, background 0.2s;
     min-width: unset; min-height: unset; background: transparent; 
     box-shadow: none; box-sizing: border-box;
     color: #1e293b; text-align: left;
     width: auto;
 }
-.text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: 4px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; }
-.text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
+.text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: var(--v4-text-shape-pad-y, 2px) 3px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; white-space: nowrap !important; }
+.text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; white-space: nowrap !important; }
+.text-marker .v4-editable-cell *, .v4-text-box .v4-editable-cell *, .v4-text-shape .v4-editable-cell * { white-space: nowrap !important; }
 .text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: transparent !important; background: transparent; box-shadow: none; }
 .text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
 
@@ -839,7 +840,7 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     stroke: #3b82f6 !important;
     filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.8));
 }
-.v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding: 5px 10px !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; flex-direction: column !important; }
+.v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding-top: var(--v4-shape-pad-top, 5px) !important; padding-right: var(--v4-shape-pad-right, 10px) !important; padding-bottom: var(--v4-shape-pad-bottom, 5px) !important; padding-left: var(--v4-shape-pad-left, 10px) !important; padding: var(--v4-shape-pad-top, 5px) var(--v4-shape-pad-right, 10px) var(--v4-shape-pad-bottom, 5px) var(--v4-shape-pad-left, 10px) !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; flex-direction: column !important; }
 .v4-shape-rect > .v4-editable-cell, .v4-shape-circle > .v4-editable-cell, .v4-shape-pattern-grid > .v4-editable-cell, .v4-shape-wave > .v4-editable-cell { width: 100% !important; height: 100% !important; }
 .v4-shape-diamond > .v4-editable-cell { width: 60% !important; height: 60% !important; }
 .v4-shape-arrow > .v4-editable-cell { width: 50% !important; height: 40% !important; }
@@ -1541,6 +1542,83 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `<!DOCTYPE html>
 </html>
 `;
 
+window.LF_TEMPLATES['template_admin_pc_scroll.html'] = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin PC Web - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <div class="page full-pc-page">
+        <div class="frame-column pc-column active-column full-width">
+            <div class="frame-label-bar">
+                <div class="frame-label-title">
+                    <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">admin_panel_settings</span>
+                    <input type="text" class="frame-title-input pc-title-input" value="Admin PC Screen" placeholder="프레임명 입력...">
+                </div>
+                <div class="frame-label-height-control">
+                    <span>Height:</span>
+                    <input type="number" class="frame-label-input pc-height-input" value="810" min="810" step="10">
+                    <span>px</span>
+                </div>
+            </div>
+            <div class="pc-browser-frame active-frame full-width">
+                <div class="pc-browser-header">
+                    <div class="pc-browser-top-bar">
+                        <div class="pc-browser-dots">
+                            <div class="pc-browser-dot red"></div>
+                            <div class="pc-browser-dot yellow"></div>
+                            <div class="pc-browser-dot green"></div>
+                        </div>
+                        <div class="pc-browser-tabs">
+                            <div class="pc-browser-tab">
+                                <span class="material-icons-outlined" style="font-size: 14px; color: #6366f1;">admin_panel_settings</span>
+                                <span style="font-family: inherit;">ADMIN CONSOLE | PC Web</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pc-content-area">
+                    <div class="pc-content-inner">
+                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function() {
+            function initHeightControls() {
+                const pcInput = document.querySelector('.pc-height-input');
+                const pcInner = document.querySelector('.pc-content-inner');
+                if (pcInput && pcInner) {
+                    const updatePc = () => {
+                        const val = Math.max(810, parseInt(pcInput.value) || 810);
+                        pcInner.style.minHeight = (val + 2) + 'px';
+                        pcInput.setAttribute('value', val);
+                    };
+                    pcInput.addEventListener('input', updatePc);
+                    pcInput.addEventListener('change', updatePc);
+                    updatePc();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initHeightControls);
+            } else {
+                initHeightControls();
+            }
+        })();
+    </script>
+    <script id="v4-inlined-script">
+        /* Dynamic scripts injected */
+    </script>
+</body>
+</html>
+`;
+
 window.LF_TEMPLATES['template_case_study.html'] = `<!DOCTYPE html>
 <html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: inherit; --v4-placeholder-color: #94a3b8;">
 <head>
@@ -1706,4 +1784,7 @@ window.LF_TEMPLATES['onesphere'] = window.LF_TEMPLATES['template_onesphere.html'
 window.LF_TEMPLATES['admin_onesphere'] = window.LF_TEMPLATES['template_onesphere.html'];
 window.LF_TEMPLATES['case_study'] = window.LF_TEMPLATES['template_case_study.html'];
 window.LF_TEMPLATES['blank'] = window.LF_TEMPLATES['template_blank.html'];
+window.LF_TEMPLATES['admin_pc_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];
+window.LF_TEMPLATES['admin_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];
+window.LF_TEMPLATES['pc_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];
 

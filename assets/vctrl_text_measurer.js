@@ -65,17 +65,62 @@ window.v4TextMeasurerScript = `
     };
 
     // 2. Pure Off-Screen Measurement Core
-    const measureCellTextDimensions = (cell, targetDoc) => {
+    // 2. Pure Off-Screen Measurement Core
+    const measureCellTextDimensions = (cell, targetDoc, isStandaloneTextShape) => {
+        const isStandalone = isStandaloneTextShape || 
+            (cell.closest && cell.closest('.v4-text-shape') && !cell.closest('.text-marker') && !cell.closest('.pin-marker'));
+
         let fontTarget = cell;
-        let maxFs = parseFloat(window.getComputedStyle(cell).fontSize) || 14;
+        let detectedFs = 0;
+        if (cell.style && cell.style.fontSize) {
+            const directFs = parseFloat(cell.style.fontSize);
+            if (!isNaN(directFs) && directFs > 0) {
+                detectedFs = directFs;
+            }
+        }
+
+        // Pass 1: Look for explicit inline font-size on sub-elements (Quill formatted text spans)
         const subEls = cell.querySelectorAll('span, font, strong, b, em, i, p, s, strike, del, u');
+        let explicitFs = 0;
+        let explicitTarget = null;
+
         subEls.forEach(el => {
-            const fs = parseFloat(window.getComputedStyle(el).fontSize) || 0;
-            if (fs > maxFs) {
-                maxFs = fs;
-                fontTarget = el;
+            const hasText = el.textContent && el.textContent.trim().length > 0;
+            if (hasText && el.style && el.style.fontSize) {
+                const parsed = parseFloat(el.style.fontSize);
+                if (!isNaN(parsed) && parsed > 0) {
+                    if (parsed > explicitFs) {
+                        explicitFs = parsed;
+                        explicitTarget = el;
+                    }
+                }
             }
         });
+
+        let maxFs;
+        if (explicitFs > 0) {
+            // Explicit font-size formatted on text spans (e.g., Quill size 8px, 10px, etc.)
+            maxFs = explicitFs;
+            fontTarget = explicitTarget;
+        } else if (detectedFs > 0) {
+            // Explicit font-size directly on cell container
+            maxFs = detectedFs;
+            fontTarget = cell;
+        } else {
+            // Fallback to computed font size of inner elements or cell
+            let computedMax = 0;
+            subEls.forEach(el => {
+                const hasText = el.textContent && el.textContent.trim().length > 0;
+                if (hasText) {
+                    const fs = parseFloat(window.getComputedStyle(el).fontSize) || 0;
+                    if (fs > computedMax) {
+                        computedMax = fs;
+                        fontTarget = el;
+                    }
+                }
+            });
+            maxFs = computedMax > 0 ? computedMax : (parseFloat(window.getComputedStyle(cell).fontSize) || 12);
+        }
         const compStyle = window.getComputedStyle(fontTarget);
         
         let hasBold = cell.querySelector('strong, b') || false;
@@ -160,9 +205,14 @@ window.v4TextMeasurerScript = `
             });
         }
 
-        const fsPxFallback = parseFloat(compStyle.fontSize) || 14;
+        const fsPxFallback = maxFs || parseFloat(compStyle.fontSize) || 14;
         const fontBasedH = Math.ceil(fsPxFallback * 1.25);
-        const singleLineH = Math.max(maxLineH, fontBasedH);
+        let singleLineH;
+        if (isStandalone) {
+            singleLineH = Math.ceil(fsPxFallback * 1.18);
+        } else {
+            singleLineH = Math.max(maxLineH, fontBasedH);
+        }
         
         const textW = maxLineW;
         const normalizedText = rawText.replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n');
@@ -183,11 +233,34 @@ window.v4TextMeasurerScript = `
 
     // Strategy 3-A: Standalone Text Shape (.v4-text-shape)
     const fitStandaloneTextShape = (c, measured, origW, origH) => {
-        const addedW = 12; // 6px left + 6px right
-        const addedH = 8;  // 4px top + 4px bottom
+        const addedW = 10; // 5px left + 5px right (Guarantees 1-line text integrity across all browsers)
+        
+        let addedH = 6;
+        let padY = '3px';
+        if (measured.fsPx <= 9) {
+            addedH = 2; // 1px top + 1px bottom for ultra-small 8-9px text
+            padY = '1px';
+        } else if (measured.fsPx <= 11) {
+            addedH = 3; // 1.5px top + 1.5px bottom for 10-11px text
+            padY = '1.5px';
+        } else if (measured.fsPx <= 15) {
+            addedH = 4; // 2px top + 2px bottom for 12-15px text
+            padY = '2px';
+        }
+        c.style.setProperty('--v4-text-shape-pad-y', padY);
+        c.style.setProperty('white-space', 'nowrap', 'important');
+        const cell = c.querySelector('.v4-editable-cell');
+        if (cell) {
+            cell.style.setProperty('padding', padY + ' 3px', 'important');
+            cell.style.setProperty('white-space', 'nowrap', 'important');
+            cell.querySelectorAll('p, span, font, strong, b, em, i, u, s').forEach(child => {
+                child.style.setProperty('white-space', 'nowrap', 'important');
+            });
+        }
+
         const targetW = measured.textW + addedW;
         const targetH = measured.lineCount > 1 
-            ? (measured.fsPx * 1.2 * measured.lineCount) + addedH 
+            ? Math.round(measured.fsPx * 1.2 * measured.lineCount) + addedH 
             : measured.textH + addedH;
 
         const finalW = targetW + 'px';
@@ -255,9 +328,36 @@ window.v4TextMeasurerScript = `
         const origW = c.style.width;
         const origH = c.style.height;
 
-        const targetPadding = isShapeText ? '5px 10px' : '4px';
-        if (cell.style.padding !== targetPadding) {
-            cell.style.setProperty('padding', targetPadding, 'important');
+        const compType = getComponentType(c, isShapeText);
+        const isStandalone = compType === COMP_TYPES.STANDALONE_TEXT_SHAPE;
+        const isShape = isShapeText || compType === COMP_TYPES.SHAPE_TEXT || !!c.querySelector('.v4-shape') || c.classList.contains('v4-shape');
+
+        if (!isStandalone) {
+            if (isShape) {
+                const shapeContainer = c.querySelector('.v4-shape') || (c.classList.contains('v4-shape') ? c : null);
+                const pt = cell.getAttribute('data-pad-top') || (shapeContainer && shapeContainer.getAttribute('data-pad-top'));
+                const pb = cell.getAttribute('data-pad-bottom') || (shapeContainer && shapeContainer.getAttribute('data-pad-bottom'));
+                const pl = cell.getAttribute('data-pad-left') || (shapeContainer && shapeContainer.getAttribute('data-pad-left'));
+                const pr = cell.getAttribute('data-pad-right') || (shapeContainer && shapeContainer.getAttribute('data-pad-right'));
+
+                if (pt !== null || pb !== null || pl !== null || pr !== null) {
+                    const top = pt !== null ? pt : '5';
+                    const bot = pb !== null ? pb : '5';
+                    const left = pl !== null ? pl : '10';
+                    const right = pr !== null ? pr : '10';
+                    const customPadding = top + 'px ' + right + 'px ' + bot + 'px ' + left + 'px';
+                    if (cell.style.padding !== customPadding) {
+                        cell.style.setProperty('padding', customPadding, 'important');
+                    }
+                } else if (!cell.style.padding) {
+                    cell.style.setProperty('padding', '5px 10px', 'important');
+                }
+            } else {
+                const targetPadding = '4px';
+                if (cell.style.padding !== targetPadding) {
+                    cell.style.setProperty('padding', targetPadding, 'important');
+                }
+            }
         }
 
         if (c.style.minWidth !== 'unset') c.style.setProperty('min-width', 'unset', 'important');
@@ -265,14 +365,12 @@ window.v4TextMeasurerScript = `
 
         // Pure Measurement
         const targetDoc = c.ownerDocument || document;
-        const measured = measureCellTextDimensions(cell, targetDoc);
+        const measured = measureCellTextDimensions(cell, targetDoc, isStandalone);
 
         // Zero-Offset Calibration: Micro-adjust small text rendering
         const adjustY = measured.fsPx <= 11 ? '-0.6px' : '0px';
         c.style.setProperty('--v4-text-adjust-y', adjustY);
 
-        // Component Dispatching
-        const compType = getComponentType(c, isShapeText);
         let fitResult = { hideResizer: false };
 
         switch (compType) {

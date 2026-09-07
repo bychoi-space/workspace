@@ -6,77 +6,77 @@
 
 window.VCTRL_UI_FALLBACK_ATOMIC = `
 
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-textbox')" data-ko="텍스트박스 텍스트 입력창" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-textbox')" data-ko="텍스트박스 텍스트 입력창" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">input</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Textbox</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Textbox</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-textarea')" data-ko="텍스트에어리어 입력상자 긴글" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-textarea')" data-ko="텍스트에어리어 입력상자 긴글" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">notes</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Textarea</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Textarea</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-stepper')" data-ko="수량선택기 수량 스텝퍼 증감" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-stepper')" data-ko="수량선택기 수량 스텝퍼 증감" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">unfold_more</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Stepper</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Stepper</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-selectbox')" data-ko="셀렉트박스 셀렉트 드롭다운 옵션" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-selectbox')" data-ko="셀렉트박스 셀렉트 드롭다운 옵션" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">arrow_drop_down_circle</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Selectbox</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Selectbox</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-fileupload')" data-ko="파일업로드 파일 업로드 첨부파일" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-fileupload')" data-ko="파일업로드 파일 업로드 첨부파일" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">file_upload</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">File Upload</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">File Upload</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-alert')" data-ko="얼럿창 얼럿 경고 팝업 모달" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-alert')" data-ko="얼럿창 얼럿 경고 팝업 모달" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">report_problem</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Alert</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Alert</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-button')" data-ko="버튼 클릭 실행" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-button')" data-ko="버튼 클릭 실행" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">smart_button</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Button</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Button</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-datepicker')" data-ko="날짜선택 날짜 캘린더 달력 데이트피커" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-datepicker')" data-ko="날짜선택 날짜 캘린더 달력 데이트피커" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Date Picker</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Date Picker</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-toggle')" data-ko="토글 스위치 토글버튼 On Off toggle" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-toggle')" data-ko="토글 스위치 토글버튼 On Off toggle" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">toggle_on</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Toggle Button</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Toggle Button</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-accordion')" data-ko="아코디언 아코디언ui 드롭다운 리스트 계층" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-accordion')" data-ko="아코디언 아코디언ui 드롭다운 리스트 계층" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">menu_open</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Accordion</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Accordion</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-checkbox')" data-ko="체크박스 체크 선택 체크형" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-checkbox')" data-ko="체크박스 체크 선택 체크형" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <div style="width:16px; height:16px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.3) !important; border-radius:3px; display:flex; align-items:center; justify-content:center; box-sizing: border-box;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:10px; height:10px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Check Box</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Check Box</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-radio')" data-ko="라디오 라디오버튼 단일선택" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-radio')" data-ko="라디오 라디오버튼 단일선택" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <div style="width:16px; height:16px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.3) !important; border-radius:50%; display:flex; align-items:center; justify-content:center; box-sizing: border-box;">
                 <div style="width:6px; height:6px; background:#34d399; border-radius:50%;"></div>
             </div>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Radio</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Radio</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-grid')" data-ko="그리드 grid 테이블 table 표 데이터 리스트 aggrid" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-grid')" data-ko="그리드 grid 테이블 table 표 데이터 리스트 aggrid" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">grid_on</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Grid UI</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Grid UI</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-searchbar')" data-ko="검색창 검색 인풋 입력란 통합검색" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-searchbar')" data-ko="검색창 검색 인풋 입력란 통합검색" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">search</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Search Bar</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Search Bar</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-image')" data-ko="이미지 사진 첨부 업로드 파일 그림 png jpg" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-image')" data-ko="이미지 사진 첨부 업로드 파일 그림 png jpg" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">image</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Image</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Image</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-admin-settings')" data-ko="조회항목 어드민 검색 조건 설정 항목 admin조회" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-admin-settings')" data-ko="조회항목 어드민 검색 조건 설정 항목 admin조회" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">tune</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Query Item</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Query Item</span>
         </div>
-        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-popup')" data-ko="팝업 팝업창 모달 다이얼로그 레이어 popup" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;">
+        <div class="component-item v4-card" onclick="insertV4ComponentById('v4-atom-popup')" data-ko="팝업 팝업창 모달 다이얼로그 레이어 popup" style="background: rgba(52, 211, 153, 0.05); border: 1.6px solid rgba(52, 211, 153, 0.1) !important; border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
             <span class="material-icons-outlined" style="font-size: 18px; color: #34d399;">picture_in_picture</span>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary);">Popup</span>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">Popup</span>
         </div>
     
 `;
@@ -350,16 +350,21 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
                 <span style="font-size: 10px; font-weight: 900; color: #818cf8;">TABLE EDITOR</span>
             </div>
-            <div class="v4-tool-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
-                <button id="btn-add-row" class="v4-inspector-btn" style="font-size: 11px;">Row+</button>
-                <button id="btn-add-col" class="v4-inspector-btn" style="font-size: 11px;">Col+</button>
-                <button id="btn-del-row" class="v4-inspector-btn danger" style="font-size: 11px;">Row-</button>
-                <button id="btn-del-col" class="v4-inspector-btn danger" style="font-size: 11px;">Col-</button>
+            <div class="prop-group" style="margin-bottom: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">행 / 열 조작</label>
+                <div class="v4-tool-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                    <button id="btn-add-row" class="v4-inspector-btn" style="height: 26px; font-size: 10px; padding: 0;" title="행 추가">+행</button>
+                    <button id="btn-del-row" class="v4-inspector-btn danger" style="height: 26px; font-size: 10px; padding: 0;" title="행 삭제">-행</button>
+                    <button id="btn-add-col" class="v4-inspector-btn" style="height: 26px; font-size: 10px; padding: 0;" title="열 추가">+열</button>
+                    <button id="btn-del-col" class="v4-inspector-btn danger" style="height: 26px; font-size: 10px; padding: 0;" title="열 삭제">-열</button>
+                </div>
             </div>
             
-            <div class="v4-tool-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
-                <button id="btn-merge-cells" class="v4-inspector-btn" style="font-size: 11px; opacity: 0.5; cursor: not-allowed;" disabled>셀 병합</button>
-                <button id="btn-split-cells" class="v4-inspector-btn" style="font-size: 11px; opacity: 0.5; cursor: not-allowed;" disabled>셀 분할</button>
+            <div class="prop-group" style="margin-bottom: 8px;">
+                <div class="v4-tool-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
+                    <button id="btn-merge-cells" class="v4-inspector-btn" style="height: 26px; font-size: 10px; padding: 0; opacity: 0.5; cursor: not-allowed;" disabled>셀 병합</button>
+                    <button id="btn-split-cells" class="v4-inspector-btn" style="height: 26px; font-size: 10px; padding: 0; opacity: 0.5; cursor: not-allowed;" disabled>셀 분할</button>
+                </div>
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 8px;">
@@ -415,23 +420,23 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
                 <div class="prop-group" style="margin-bottom: 8px;">
                     <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">셀 테두리 설정 (CELL BORDERS)</label>
-                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                        <button id="btn-cell-border-all" title="All Borders" style="flex: 1; min-width: 28px; height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;">
+                        <button id="btn-cell-border-all" title="전체 테두리" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0;">
                             <span class="material-icons-outlined" style="font-size: 14px;">border_all</span>
                         </button>
-                        <button id="btn-cell-border-none" title="No Borders" style="flex: 1; min-width: 28px; height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <button id="btn-cell-border-none" title="테두리 없음" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0;">
                             <span class="material-icons-outlined" style="font-size: 14px;">border_clear</span>
                         </button>
-                        <button id="btn-cell-border-top" title="Top Border" style="flex: 1; min-width: 28px; height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <button id="btn-cell-border-top" title="상단 테두리" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0;">
                             <span class="material-icons-outlined" style="font-size: 14px;">border_top</span>
                         </button>
-                        <button id="btn-cell-border-bottom" title="Bottom Border" style="flex: 1; min-width: 28px; height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <button id="btn-cell-border-bottom" title="하단 테두리" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0;">
                             <span class="material-icons-outlined" style="font-size: 14px;">border_bottom</span>
                         </button>
-                        <button id="btn-cell-border-left" title="Left Border" style="flex: 1; min-width: 28px; height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <button id="btn-cell-border-left" title="좌측 테두리" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0;">
                             <span class="material-icons-outlined" style="font-size: 14px;">border_left</span>
                         </button>
-                        <button id="btn-cell-border-right" title="Right Border" style="flex: 1; min-width: 28px; height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <button id="btn-cell-border-right" title="우측 테두리" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.1) !important; border-radius: 6px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0;">
                             <span class="material-icons-outlined" style="font-size: 14px;">border_right</span>
                         </button>
                     </div>
@@ -454,11 +459,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">WIDTH (px)</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" id="prop-width-table" value="0" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">HEIGHT (px)</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" id="prop-height-table" value="0" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
             </div>
@@ -485,7 +490,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
                 <div class="prop-group" id="shape-bg-color-group">
-                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">BG</label>
+                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="shape-bg-wrapper">
                             <input type="color" id="shape-bg-color" class="v4-color-input" data-prop="background" value="#ffffff">
@@ -494,7 +499,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     </div>
                 </div>
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">Border</label>
+                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="shape-border-wrapper">
                             <input type="color" id="shape-border-color" class="v4-color-input" data-prop="borderColor" value="#c8c8c8">
@@ -509,11 +514,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">WIDTH (px)</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" id="prop-width" value="0" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">HEIGHT (px)</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" id="prop-height" value="0" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
             </div>
@@ -527,47 +532,85 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
 
             <div class="prop-group" style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">HORIZONTAL ALIGN</label>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px;">
-                    <button id="btn-shape-align-left" title="Align Left" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
-                        <span class="material-icons-outlined" style="font-size: 14px;">format_align_left</span>
+                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">TEXT ALIGN</label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 4px;">
+                    <button id="btn-shape-align-left" title="Align Left" style="height: 26px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 13px;">format_align_left</span>
                         좌측
                     </button>
-                    <button id="btn-shape-align-center" title="Align Center" style="height: 28px; background: rgba(0,229,255,0.15); border: 1.6px solid rgba(0,229,255,0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
-                        <span class="material-icons-outlined" style="font-size: 14px;">format_align_center</span>
+                    <button id="btn-shape-align-center" title="Align Center" style="height: 26px; background: rgba(0,229,255,0.15); border: 1.6px solid rgba(0,229,255,0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 13px;">format_align_center</span>
                         중앙
                     </button>
-                    <button id="btn-shape-align-right" title="Align Right" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
-                        <span class="material-icons-outlined" style="font-size: 14px;">format_align_right</span>
+                    <button id="btn-shape-align-right" title="Align Right" style="height: 26px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 13px;">format_align_right</span>
                         우측
                     </button>
                 </div>
-
-                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">VERTICAL ALIGN</label>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px;">
-                    <button id="btn-shape-valign-top" title="Align Top" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
-                        <span class="material-icons-outlined" style="font-size: 14px;">vertical_align_top</span>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+                    <button id="btn-shape-valign-top" title="Align Top" style="height: 26px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 13px;">vertical_align_top</span>
                         상단
                     </button>
-                    <button id="btn-shape-valign-middle" title="Align Middle" style="height: 28px; background: rgba(0,229,255,0.15); border: 1.6px solid rgba(0,229,255,0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
-                        <span class="material-icons-outlined" style="font-size: 14px;">vertical_align_center</span>
+                    <button id="btn-shape-valign-middle" title="Align Middle" style="height: 26px; background: rgba(0,229,255,0.15); border: 1.6px solid rgba(0,229,255,0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 13px;">vertical_align_center</span>
                         센터
                     </button>
-                    <button id="btn-shape-valign-bottom" title="Align Bottom" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
-                        <span class="material-icons-outlined" style="font-size: 14px;">vertical_align_bottom</span>
+                    <button id="btn-shape-valign-bottom" title="Align Bottom" style="height: 26px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;">
+                        <span class="material-icons-outlined" style="font-size: 13px;">vertical_align_bottom</span>
                         하단
                     </button>
+                </div>
+            </div>
+
+            <div id="shape-padding-group" class="prop-group" style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; margin: 0;">TEXT PADDING (안쪽 여백)</label>
+                    <div style="display: flex; gap: 4px;">
+                        <button id="btn-shape-pad-default" title="기본 여백 (상하 5px / 좌우 10px)" style="padding: 2px 6px; height: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; color: #94a3b8; font-size: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;">기본</button>
+                        <button id="btn-shape-pad-zero" title="여백 없음 (0px)" style="padding: 2px 6px; height: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; color: #94a3b8; font-size: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;">0px</button>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 5px; padding: 3px 6px;">
+                        <span style="font-size: 10px; color: #94a3b8; font-weight: 600; flex-shrink: 0;">상단</span>
+                        <div style="position: relative; display: flex; align-items: center; width: 62px;">
+                            <input type="number" id="shape-pad-top" min="0" max="500" value="5" class="v4-prop-input" style="width: 100%; height: 22px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 2px 18px 2px 5px; border-radius: 4px; font-size: 10px; box-sizing: border-box; text-align: right;">
+                            <span style="position: absolute; right: 4px; font-size: 9px; color: #64748b; pointer-events: none;">px</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 5px; padding: 3px 6px;">
+                        <span style="font-size: 10px; color: #94a3b8; font-weight: 600; flex-shrink: 0;">하단</span>
+                        <div style="position: relative; display: flex; align-items: center; width: 62px;">
+                            <input type="number" id="shape-pad-bottom" min="0" max="500" value="5" class="v4-prop-input" style="width: 100%; height: 22px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 2px 18px 2px 5px; border-radius: 4px; font-size: 10px; box-sizing: border-box; text-align: right;">
+                            <span style="position: absolute; right: 4px; font-size: 9px; color: #64748b; pointer-events: none;">px</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 5px; padding: 3px 6px;">
+                        <span style="font-size: 10px; color: #94a3b8; font-weight: 600; flex-shrink: 0;">좌측</span>
+                        <div style="position: relative; display: flex; align-items: center; width: 62px;">
+                            <input type="number" id="shape-pad-left" min="0" max="500" value="10" class="v4-prop-input" style="width: 100%; height: 22px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 2px 18px 2px 5px; border-radius: 4px; font-size: 10px; box-sizing: border-box; text-align: right;">
+                            <span style="position: absolute; right: 4px; font-size: 9px; color: #64748b; pointer-events: none;">px</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 5px; padding: 3px 6px;">
+                        <span style="font-size: 10px; color: #94a3b8; font-weight: 600; flex-shrink: 0;">우측</span>
+                        <div style="position: relative; display: flex; align-items: center; width: 62px;">
+                            <input type="number" id="shape-pad-right" min="0" max="500" value="10" class="v4-prop-input" style="width: 100%; height: 22px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 2px 18px 2px 5px; border-radius: 4px; font-size: 10px; box-sizing: border-box; text-align: right;">
+                            <span style="position: absolute; right: 4px; font-size: 9px; color: #64748b; pointer-events: none;">px</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div id="shape-corner-style-group" class="prop-group" style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 8px;">CORNER STYLE</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
-                    <button id="btn-shape-corner-sharp" title="Sharp Corners" style="height: 28px; background: rgba(0,229,255,0.15); border: 1.6px solid rgba(0,229,255,0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
+                    <button id="btn-shape-corner-sharp" title="Sharp Corners" style="height: 26px; background: rgba(0,229,255,0.15); border: 1.6px solid rgba(0,229,255,0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
                         <svg viewBox="0 0 16 16" style="width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linejoin:round;"><rect x="2" y="2" width="12" height="12"/></svg>
                         직각
                     </button>
-                    <button id="btn-shape-corner-round" title="Rounded Corners" style="height: 28px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
+                    <button id="btn-shape-corner-round" title="Rounded Corners" style="height: 26px; background: rgba(255,255,255,0.05); border: 1.6px solid rgba(255,255,255,0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;">
                         <svg viewBox="0 0 16 16" style="width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linejoin:round;"><rect x="2" y="2" width="12" height="12" rx="4"/></svg>
                         라운드
                     </button>
@@ -589,19 +632,19 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
 
         <!-- line-editor-section -->
         <div id="line-editor-section" style="display: none; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                 <span style="font-size: 10px; font-weight: 900; color: #00e5ff; letter-spacing: 0.8px;">LINE (STRAIGHT) EDITOR</span>
             </div>
 
             <!-- 1. Direction / Orientation -->
-            <div class="prop-group" style="margin-bottom: 12px;">
-                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">ORIENTATION (방향)</label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                    <button id="btn-line-dir-h" class="v4-line-dir-btn" data-dir="horizontal" title="가로선 (Horizontal)" style="height: 30px; background: rgba(0, 229, 255, 0.15); border: 1.6px solid rgba(0, 229, 255, 0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+            <div class="prop-group" style="margin-bottom: 8px;">
+                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 4px;">선 방향 (ORIENTATION)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                    <button id="btn-line-dir-h" class="v4-line-dir-btn" data-dir="horizontal" title="가로선 (Horizontal)" style="height: 28px; background: rgba(0, 229, 255, 0.15); border: 1.6px solid rgba(0, 229, 255, 0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
                         <span class="material-icons-outlined" style="font-size: 16px;">horizontal_rule</span>
                         가로 (H)
                     </button>
-                    <button id="btn-line-dir-v" class="v4-line-dir-btn" data-dir="vertical" title="세로선 (Vertical)" style="height: 30px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                    <button id="btn-line-dir-v" class="v4-line-dir-btn" data-dir="vertical" title="세로선 (Vertical)" style="height: 28px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
                         <span class="material-icons-outlined" style="font-size: 16px; transform: rotate(90deg);">horizontal_rule</span>
                         세로 (V)
                     </button>
@@ -609,25 +652,25 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
 
             <!-- 2. Line Style (Solid, Dashed, Dotted) -->
-            <div class="prop-group" style="margin-bottom: 12px;">
-                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">LINE STYLE (스타일)</label>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-                    <button id="btn-line-style-solid" class="v4-line-style-btn" data-style="solid" title="실선" style="height: 28px; background: rgba(0, 229, 255, 0.15); border: 1.6px solid rgba(0, 229, 255, 0.4); border-radius: 6px; color: #00e5ff; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+            <div class="prop-group" style="margin-bottom: 8px;">
+                <label style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 4px;">선 스타일 (STYLE)</label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+                    <button id="btn-line-style-solid" class="v4-line-style-btn" data-style="solid" title="실선" style="height: 26px; background: rgba(0, 229, 255, 0.15); border: 1.6px solid rgba(0, 229, 255, 0.4); border-radius: 6px; color: #00e5ff; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
                         Solid
                     </button>
-                    <button id="btn-line-style-dashed" class="v4-line-style-btn" data-style="dashed" title="대시 점선" style="height: 28px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                    <button id="btn-line-style-dashed" class="v4-line-style-btn" data-style="dashed" title="대시 점선" style="height: 26px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
                         Dashed
                     </button>
-                    <button id="btn-line-style-dotted" class="v4-line-style-btn" data-style="dotted" title="도트 점선" style="height: 28px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                    <button id="btn-line-style-dotted" class="v4-line-style-btn" data-style="dotted" title="도트 점선" style="height: 26px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
                         Dotted
                     </button>
                 </div>
             </div>
 
             <!-- 3. Color & Thickness -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                 <div class="prop-group">
-                    <label class="v4-color-label" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">LINE COLOR</label>
+                    <label class="v4-color-label" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">선 색상</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper" id="line-color-wrapper" style="width: 100%; height: 26px; border-radius: 4px; overflow: hidden; border: 1.6px solid rgba(255,255,255,0.15);">
                             <input type="color" id="line-stroke-color" class="v4-color-input" value="#c8c8c8">
@@ -635,16 +678,16 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     </div>
                 </div>
                 <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">THICKNESS (<span id="txt-line-stroke-width">1.6</span>px)</label>
+                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">선 두께 (<span id="txt-line-stroke-width">1.6</span>px)</label>
                     <input type="number" id="line-stroke-width" min="0.5" max="20" step="0.5" value="1.6" class="v4-prop-input" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none;">
                 </div>
             </div>
 
             <!-- 4. Dimension (Single Dynamic Length) -->
-            <div class="prop-group" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label id="lbl-line-length" style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">LENGTH / 가로 길이 (px)</label>
+            <div class="prop-group" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label id="lbl-line-length" style="font-size: 9px; color: #00e5ff; font-weight: 800; letter-spacing: 0.8px; display: block; margin-bottom: 4px;">길이 (px)</label>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <input type="number" id="prop-line-length" value="200" min="1" step="10" class="v4-prop-input" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; box-sizing: border-box; outline: none;">
+                    <input type="number" id="prop-line-length" value="200" min="1" step="10" class="v4-prop-input" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; box-sizing: border-box; outline: none;">
                     <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">px</span>
                 </div>
             </div>
@@ -665,11 +708,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     </div>
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">WIDTH (px)</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" id="prop-width-icon" value="0" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">HEIGHT (px)</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" id="prop-height-icon" value="0" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
             </div>
@@ -706,7 +749,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">BG COLOR</label>
+                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="atom-bg-wrapper">
                             <input type="color" id="atom-bg-color" class="v4-color-input" data-prop="background" value="#1e293b">
@@ -716,7 +759,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">BORDER COLOR</label>
+                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="atom-border-wrapper">
                             <input type="color" id="atom-border-color" class="v4-color-input" data-prop="borderColor" value="#ffffff">
@@ -726,11 +769,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
             <!-- Atom Disabled Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
         </div>
@@ -754,7 +797,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px;">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">BG COLOR</label>
+                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-bg-wrapper">
                             <input type="color" id="accordion-bg-color" class="v4-color-input" data-prop="background" value="#1e293b">
@@ -764,7 +807,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">BORDER COLOR</label>
+                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-border-wrapper">
                             <input type="color" id="accordion-border-color" class="v4-color-input" data-prop="borderColor" value="#ffffff">
@@ -776,21 +819,21 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <!-- Width -->
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">WIDTH (전체 가로폭 px)</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" id="prop-accordion-width" min="10" max="2000" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
                 <!-- Height -->
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">HEIGHT (개별 세로폭)</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" id="prop-accordion-height" min="10" max="500" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
             </div>
             <!-- Atom Disabled Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
             <!-- Depth Type -->
@@ -852,7 +895,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경 컬러</label>
+                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="grid-bg-wrapper">
                             <input type="color" id="grid-bg-color" class="v4-color-input" data-prop="background" value="#ffffff">
@@ -862,7 +905,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리 컬러</label>
+                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="grid-border-wrapper">
                             <input type="color" id="grid-border-color" class="v4-color-input" data-prop="borderColor" value="#e2e8f0">
@@ -875,11 +918,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <!-- Dimensions -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
@@ -920,17 +963,17 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
             <!-- Atom Disabled Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경 컬러</label>
+                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="input-bg-wrapper">
                             <input type="color" id="input-bg-color" class="v4-color-input" data-prop="background" value="#fafaf2">
@@ -940,7 +983,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">보더 컬러</label>
+                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="input-border-wrapper">
                             <input type="color" id="input-border-color" class="v4-color-input" data-prop="borderColor" value="#cccccc">
@@ -952,12 +995,12 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
                 <!-- Width -->
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기 (px)</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
                 <!-- Height -->
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기 (px)</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
@@ -994,7 +1037,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경 컬러</label>
+                    <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="searchbar-bg-wrapper">
                             <input type="color" id="searchbar-bg-color" class="v4-color-input" data-prop="background" value="#ffffff">
@@ -1004,7 +1047,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">보더 컬러</label>
+                    <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리색</label>
                     <div style="display: flex; gap: 4px; align-items: center;">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="searchbar-border-wrapper">
                             <input type="color" id="searchbar-border-color" class="v4-color-input" data-prop="borderColor" value="#cccccc">
@@ -1014,22 +1057,22 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
             <!-- Atom Disabled Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
                 <!-- Width -->
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기 (px)</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
                 <!-- Height -->
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기 (px)</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
@@ -1074,14 +1117,12 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     <input type="text" id="prop-stepper-btn-text" value="적용" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <!-- Stepper Disabled Toggle -->
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                    <div style="display: flex; gap: 4px;">
-                        <button id="btn-stepper-disabled-y" class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                        <button id="btn-stepper-disabled-n" class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
-                    </div>
+            <!-- Stepper Disabled Toggle -->
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button id="btn-stepper-disabled-y" class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button id="btn-stepper-disabled-n" class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
         </div>
@@ -1124,21 +1165,21 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
             <!-- Atom Disabled Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
             <!-- Dimensions -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
@@ -1181,21 +1222,21 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
             <!-- Atom Disabled Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
             <!-- Dimensions -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
@@ -1203,35 +1244,35 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
 
         <!-- alert-inspector-section -->
         <div id="alert-inspector-section" style="display: none; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 12px; padding: 14px; margin-top: 12px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                 <span style="font-size: 10px; font-weight: 900; color: #00e5ff;">ALERT PROPERTIES</span>
             </div>
             <!-- Show Description Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">설명문구 활성화</label>
-                <div style="display: flex; gap: 4px; width: 100px;">
-                    <button id="btn-alert-desc-y" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button id="btn-alert-desc-n" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">설명문구 활성화</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button id="btn-alert-desc-y" class="v4-inspector-btn" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button id="btn-alert-desc-n" class="v4-inspector-btn" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
             <!-- Description Text -->
-            <div class="prop-group" style="margin-bottom: 12px;">
+            <div class="prop-group" style="margin-bottom: 8px;">
                 <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">설명문구 내용</label>
-                <input type="text" id="prop-alert-desc" value="얼럿 노출 케이스" placeholder="예: 로그인 체크" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
+                <input type="text" id="prop-alert-desc" value="얼럿 노출 케이스" placeholder="예: 로그인 체크" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
             </div>
-            <div class="prop-group" style="margin-bottom: 12px;">
+            <div class="prop-group" style="margin-bottom: 8px;">
                 <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">얼럿 메시지</label>
-                <textarea id="prop-alert-message" rows="3" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit; resize: vertical;"></textarea>
+                <textarea id="prop-alert-message" rows="2" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit; resize: vertical;"></textarea>
             </div>
-            <div class="prop-group" style="margin-bottom: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">버튼 개수 설정 (1~3개)</label>
+            <div class="prop-group" style="margin-bottom: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">버튼 개수 설정 (1~3개)</label>
                 <div style="display: flex; gap: 4px;">
-                    <button id="btn-alert-count-1" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">1개</button>
-                    <button id="btn-alert-count-2" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">2개</button>
-                    <button id="btn-alert-count-3" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">3개</button>
+                    <button id="btn-alert-count-1" class="v4-inspector-btn" style="flex: 1; height: 24px; border-radius: 12px; font-size: 10px; padding: 0;">1개</button>
+                    <button id="btn-alert-count-2" class="v4-inspector-btn" style="flex: 1; height: 24px; border-radius: 12px; font-size: 10px; padding: 0;">2개</button>
+                    <button id="btn-alert-count-3" class="v4-inspector-btn" style="flex: 1; height: 24px; border-radius: 12px; font-size: 10px; padding: 0;">3개</button>
                 </div>
             </div>
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+            <div class="prop-group" style="margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
                 <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">버튼 설정</label>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -1281,11 +1322,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <!-- Dimensions -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
@@ -1317,7 +1358,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div id="prop-button-custom-colors" style="display: none; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px; margin-bottom: 12px;">
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
                     <div class="prop-group">
-                        <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색 (BG)</label>
+                        <label class="v4-color-label" data-prop="background" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                         <div style="display: flex; gap: 4px; align-items: center;">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="button-bg-wrapper">
                                 <input type="color" id="prop-button-bg-color" class="v4-color-input" data-prop="background" value="#ffffff">
@@ -1326,7 +1367,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                         </div>
                     </div>
                     <div class="prop-group">
-                        <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리색 (Border)</label>
+                        <label class="v4-color-label" data-prop="borderColor" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">테두리색</label>
                         <div style="display: flex; gap: 4px; align-items: center;">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="button-border-wrapper">
                                 <input type="color" id="prop-button-border-color" class="v4-color-input" data-prop="borderColor" value="#cbd5e1">
@@ -1335,7 +1376,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                         </div>
                     </div>
                     <div class="prop-group">
-                        <label class="v4-color-label" data-prop="color" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">글자색 (Text)</label>
+                        <label class="v4-color-label" data-prop="color" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">글자색</label>
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="button-text-wrapper">
                             <input type="color" id="prop-button-text-color" class="v4-color-input" data-prop="color" value="#1f2937">
                         </div>
@@ -1343,20 +1384,26 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
             <div class="prop-group" style="margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <label style="font-size: 9px; color: #94a3b8;">둥근 모서리 (Radius)</label>
                     <span id="txt-button-border-radius" style="font-size: 10px; font-weight: bold; color: #00e5ff;">6</span>
+                </div>
+                <!-- 원터치 코너 프리셋 버튼 -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 6px;">
+                    <button id="btn-button-corner-sharp" class="v4-inspector-btn btn-btn-corner" data-radius="0" style="height: 24px; font-size: 10px; padding: 0;">직각 (0px)</button>
+                    <button id="btn-button-corner-round" class="v4-inspector-btn btn-btn-corner" data-radius="6" style="height: 24px; font-size: 10px; padding: 0;">라운드 (6px)</button>
+                    <button id="btn-button-corner-pill" class="v4-inspector-btn btn-btn-corner" data-radius="20" style="height: 24px; font-size: 10px; padding: 0;">알약 (Pill)</button>
                 </div>
                 <input type="range" id="prop-button-border-radius" min="0" max="100" value="6" style="width:100%; cursor: pointer;">
             </div>
             <!-- Button Dimensions -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기 (WIDTH px)</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" id="prop-width-button" value="0" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기 (HEIGHT px)</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" id="prop-height-button" value="0" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
                 </div>
             </div>
@@ -1364,13 +1411,13 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
 
         <!-- datepicker-inspector-section -->
         <div id="datepicker-inspector-section" style="display: none; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 12px; padding: 14px; margin-top: 12px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                 <span style="font-size: 10px; font-weight: 900; color: #00e5ff;">DATE PICKER PROPERTIES</span>
             </div>
 
             <!-- Date Picker Mode Selector -->
-            <div class="prop-group" style="margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">데이트피커 타입</label>
+            <div class="prop-group" style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">데이트피커 타입</label>
                 <div style="display: flex; gap: 4px;">
                     <button id="btn-dp-mode-simple" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">조회용 (간이형)</button>
                     <button id="btn-dp-mode-detailed" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">기간/시간 설정용 (상세형)</button>
@@ -1378,55 +1425,55 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
 
             <!-- Show Presets Toggle -->
-            <div id="dp-presets-toggle-wrapper" class="prop-group" style="margin-bottom: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">&#48240;&#47476; &#49440;&#53469; &#48260;&#53948; &#54364;&#49884;</label>
-                <div style="display: flex; gap: 4px;">
-                    <button id="btn-dp-presets-y" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button id="btn-dp-presets-n" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div id="dp-presets-toggle-wrapper" class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">빠른 선택 버튼 표시</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button id="btn-dp-presets-y" class="v4-inspector-btn" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button id="btn-dp-presets-n" class="v4-inspector-btn" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
 
             <!-- Show End Date Toggle -->
-            <div id="dp-show-end-toggle-wrapper" class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">종료일자 표시 여부</label>
+            <div id="dp-show-end-toggle-wrapper" class="prop-group" style="margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">종료일자 표시 여부</label>
                 <div style="display: flex; gap: 4px;">
-                    <button id="btn-dp-show-end-y" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">종료일자 포함</button>
-                    <button id="btn-dp-show-end-n" class="v4-inspector-btn" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">시작일자만</button>
+                    <button id="btn-dp-show-end-y" class="v4-inspector-btn" style="flex: 1; height: 24px; border-radius: 12px; font-size: 10px; padding: 0;">종료일자 포함</button>
+                    <button id="btn-dp-show-end-n" class="v4-inspector-btn" style="flex: 1; height: 24px; border-radius: 12px; font-size: 10px; padding: 0;">시작일자만</button>
                 </div>
             </div>
 
             <!-- Default Preset Selection -->
-            <div id="dp-default-preset-wrapper" class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 8px;">&#44592;&#48376; &#44592;&#44036; &#49440;&#53469; (Default Preset)</label>
+            <div id="dp-default-preset-wrapper" class="prop-group" style="margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">기본 기간 선택 (Default Preset)</label>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-                    <button id="btn-dp-default-none" class="v4-inspector-btn" style="height: 26px; font-size: 10px; border-radius: 6px;">&#51204;&#52404; &#54644;&#51228;</button>
-                    <button id="btn-dp-default-1D" class="v4-inspector-btn" style="height: 26px; font-size: 10px; border-radius: 6px;">1D</button>
-                    <button id="btn-dp-default-1W" class="v4-inspector-btn" style="height: 26px; font-size: 10px; border-radius: 6px;">1W</button>
-                    <button id="btn-dp-default-1M" class="v4-inspector-btn" style="height: 26px; font-size: 10px; border-radius: 6px;">1M</button>
-                    <button id="btn-dp-default-6M" class="v4-inspector-btn" style="height: 26px; font-size: 10px; border-radius: 6px;">6M</button>
-                    <button id="btn-dp-default-all" class="v4-inspector-btn" style="height: 26px; font-size: 10px; border-radius: 6px;">&#51204;&#52404;</button>
+                    <button id="btn-dp-default-none" class="v4-inspector-btn" style="height: 24px; font-size: 10px; border-radius: 4px; padding: 0;">전체 해제</button>
+                    <button id="btn-dp-default-1D" class="v4-inspector-btn" style="height: 24px; font-size: 10px; border-radius: 4px; padding: 0;">1D</button>
+                    <button id="btn-dp-default-1W" class="v4-inspector-btn" style="height: 24px; font-size: 10px; border-radius: 4px; padding: 0;">1W</button>
+                    <button id="btn-dp-default-1M" class="v4-inspector-btn" style="height: 24px; font-size: 10px; border-radius: 4px; padding: 0;">1M</button>
+                    <button id="btn-dp-default-6M" class="v4-inspector-btn" style="height: 24px; font-size: 10px; border-radius: 4px; padding: 0;">6M</button>
+                    <button id="btn-dp-default-all" class="v4-inspector-btn" style="height: 24px; font-size: 10px; border-radius: 4px; padding: 0;">전체</button>
                 </div>
-                <p style="font-size: 9px; color: #64748b; margin-top: 6px;">&#48260;&#53948; &#51204;&#53469; &#49884; &#54644;&#45817; &#44592;&#44036;&#51004;&#47196; &#49884;&#51089;/&#51333;&#47308; &#51068;&#51088;&#44032; &#51088;&#46041; &#44228;&#49328;&#46429;&#45768;&#45796;.</p>
+                <p style="font-size: 9px; color: #64748b; margin-top: 4px; margin-bottom: 0;">버튼 선택 시 해당 기간으로 시작/종료 일자가 자동 계산됩니다.</p>
             </div>
 
             <!-- Direct Date Input -->
-            <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 8px;">&#45216;&#51676; &#51649;&#51217; &#51077;&#47141; (YYYY/MM/DD)</label>
+            <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin-bottom: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">날짜 직접 입력 (YYYY/MM/DD)</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <div class="prop-group">
-                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">&#49884;&#51089; &#51068;&#51088;</label>
+                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">시작 일자</label>
                         <input type="text" id="prop-dp-start-date" placeholder="YYYY/MM/DD" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                     </div>
                     <div class="prop-group">
-                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">&#51333;&#47308; &#51068;&#51088;</label>
+                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">종료 일자</label>
                         <input type="text" id="prop-dp-end-date" placeholder="YYYY/MM/DD" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                     </div>
                 </div>
             </div>
 
             <!-- Direct Time Input (Only for Detailed Mode) -->
-            <div id="dp-time-inputs-wrapper" style="display: none; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 8px;">시간 직접 입력 (HH:MM:SS)</label>
+            <div id="dp-time-inputs-wrapper" style="display: none; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">시간 직접 입력 (HH:MM:SS)</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <div class="prop-group">
                         <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">시작 시간</label>
@@ -1439,11 +1486,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
             <!-- Atom Disabled Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
         </div>
@@ -1473,11 +1520,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
 
             <!-- Atom Disabled Toggle -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 6px;">DISABLE (비활성화)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 26px; border-radius: 13px; font-size: 11px;">N</button>
+            <div class="prop-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                <label style="font-size: 9px; color: #94a3b8; margin: 0;">비활성화 (DISABLE)</label>
+                <div style="display: flex; gap: 4px; width: 84px;">
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="true" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled" data-disabled="false" style="flex: 1; height: 22px; border-radius: 11px; font-size: 10px; padding: 0;">N</button>
                 </div>
             </div>
         </div>
@@ -1501,7 +1548,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <!-- Label Width Configuration -->
             <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
                 <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">항목명 가로 넓이</label>
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: align-items: center; gap: 8px; display: flex;">
                     <input type="range" id="prop-admin-label-width-slider" min="60" max="300" step="5" value="140" style="flex: 1; accent-color: #00e5ff; height: 23px; cursor: pointer;">
                     <input type="number" id="prop-admin-label-width-number" min="60" max="300" value="140" style="width: 55px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px; text-align: center; box-sizing: border-box; outline: none; height: 23px; font-family: inherit;">
                     <span style="font-size: 11px; color: #94a3b8;">px</span>
@@ -1522,7 +1569,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <div class="prop-group">
-                            <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경 컬러</label>
+                            <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                             <div style="display: flex; gap: 4px; align-items: center;">
                                 <div class="v4-color-wrapper v4-checkerboard-bg" id="admin-group-header-bg-wrapper">
                                     <input type="color" id="prop-admin-group-header-bg" class="v4-color-input" data-prop="background" value="#73829c">
@@ -1531,7 +1578,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                             </div>
                         </div>
                         <div class="prop-group">
-                            <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">텍스트 컬러</label>
+                            <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">글자색</label>
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="admin-group-header-color-wrapper">
                                 <input type="color" id="prop-admin-group-header-color" class="v4-color-input" data-prop="color" value="#ffffff">
                             </div>
@@ -1548,11 +1595,11 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <!-- Dimensions -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 12px;">
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 크기</label>
+                    <label class="v4-unified-label" data-prop="width" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">가로 (W)</label>
                     <input type="number" class="v4-prop-input" data-prop="width" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 크기</label>
+                    <label class="v4-unified-label" data-prop="height" style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">세로 (H)</label>
                     <input type="number" class="v4-prop-input" data-prop="height" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit;">
                 </div>
             </div>
@@ -1699,6 +1746,14 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             </div>
                             <div class="template-name">반응형 (PC + Mobile)</div>
                             <div class="template-badge">Dual</div>
+                        </div>
+                        <div class="template-card" data-template="template_admin_pc_scroll.html" data-default-name="09_Admin_PC_Scroll">
+                            <div class="template-thumb">
+                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">admin_panel_settings</span>
+                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            </div>
+                            <div class="template-name">Admin PC (세로 스크롤)</div>
+                            <div class="template-badge">Admin</div>
                         </div>
                         <div class="template-card" data-template="template_case_study.html" data-default-name="04_Case_Study">
                             <div class="template-thumb">

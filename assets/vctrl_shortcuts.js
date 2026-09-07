@@ -292,7 +292,8 @@ window.v4ShortcutsScript = `
 
                 const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
                 const visibleH = scrollArea ? (scrollArea.clientHeight || 810) : 810;
-                const visibleW = targetFrame === 'mobile' ? 360 : 1160;
+                const pcW = pcInner ? (pcInner.offsetWidth || 1160) : 1160;
+                const visibleW = targetFrame === 'mobile' ? 360 : pcW;
 
                 const viewCenterX = visibleW / 2;
                 const viewCenterY = scrollTop + (visibleH / 2);
@@ -303,7 +304,7 @@ window.v4ShortcutsScript = `
                 if (targetFrame === 'mobile') {
                     baseLeft = Math.max(15, Math.min(baseLeft, 360 - groupW - 15));
                 } else {
-                    baseLeft = Math.max(15, Math.min(baseLeft, 1160 - groupW - 15));
+                    baseLeft = Math.max(15, Math.min(baseLeft, pcW - groupW - 15));
                 }
                 baseTop = Math.max(15, baseTop);
             } else {

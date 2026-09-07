@@ -144,8 +144,9 @@ window.loadScreen = async function (fileName) {
 
     const isResponsiveScreen = (state.projectMetadata && state.projectMetadata.screens && (
         state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
-        state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html'
-    )) || finalContent.includes('pc-browser-frame') || finalContent.includes('template_responsive_pc_mobile.html');
+        state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
+        state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html'
+    )) || finalContent.includes('pc-browser-frame') || finalContent.includes('template_responsive_pc_mobile.html') || finalContent.includes('template_admin_pc_scroll.html');
 
     state.isCurrentResponsiveScreen = isResponsiveScreen;
 
@@ -516,7 +517,7 @@ window.handleTextCreation = function () {
         state.activeFile.meta.description = [];
     }
 
-    const isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html'));
+    const isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html'));
     const newIdx = state.activeFile.meta.description.length;
 
     if (isResponsive) {

@@ -326,33 +326,24 @@
     const _applyCornerRadius = (val) => {
         const slider = document.getElementById('shape-border-radius');
         const txt = document.getElementById('txt-shape-border-radius');
-        if (slider) slider.value = val;
+        if (slider) {
+            slider.value = val;
+            // Dispatch input event so vctrl_properties.js handles targetId, MessageHub and markAsDirty automatically
+            slider.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+            const targetId = (typeof getActiveTargetId === 'function') ? getActiveTargetId() : null;
+            notifyIframe({
+                type: 'LF_UPDATE_STYLE',
+                id: targetId,
+                selector: '.v4-shape-rect',
+                style: { borderRadius: val + 'px' }
+            });
+            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+        }
         if (txt) txt.innerText = val;
         _syncCornerBtns(val);
-        notifyIframe({
-            type: 'LF_UPDATE_STYLE',
-            selector: '.v4-shape-rect',
-            style: { borderRadius: val + 'px' }
-        });
     };
-
-    const btnSharp = document.getElementById('btn-shape-corner-sharp');
-    if (btnSharp) {
-        btnSharp.onclick = () => _applyCornerRadius(0);
-    }
-
-    const btnRound = document.getElementById('btn-shape-corner-round');
-    if (btnRound) {
-        btnRound.onclick = () => _applyCornerRadius(8);
-    }
-
-    // Also sync button states when slider changes
-    const radiusSlider = document.getElementById('shape-border-radius');
-    if (radiusSlider) {
-        radiusSlider.addEventListener('input', function() {
-            _syncCornerBtns(this.value);
-        });
-    }
+    window._applyCornerRadius = _applyCornerRadius;
 
     // Text Align Presets Sync
     window._syncAlignBtns = (alignVal) => {
@@ -408,9 +399,11 @@
     const _applyTextAlign = (align) => {
         _syncAlignBtns(align);
         const horizontalAlign = align === 'left' ? 'flex-start' : (align === 'right' ? 'flex-end' : 'center');
+        const targetId = (typeof getActiveTargetId === 'function') ? getActiveTargetId() : null;
         
         notifyIframe({
             type: 'LF_UPDATE_STYLE',
+            id: targetId,
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell',
             style: {
                 alignItems: horizontalAlign,
@@ -418,39 +411,197 @@
                 boxSizing: 'border-box'
             }
         });
+        if (typeof window.markAsDirty === 'function') window.markAsDirty();
     };
+    window._applyTextAlign = _applyTextAlign;
 
     const _applyVerticalAlign = (vAlign) => {
         _syncVAlignBtns(vAlign);
         const verticalJustify = vAlign === 'top' ? 'flex-start' : (vAlign === 'bottom' ? 'flex-end' : 'center');
+        const targetId = (typeof getActiveTargetId === 'function') ? getActiveTargetId() : null;
         
         notifyIframe({
             type: 'LF_UPDATE_STYLE',
+            id: targetId,
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell',
             style: {
                 justifyContent: verticalJustify,
                 boxSizing: 'border-box'
             }
         });
+        if (typeof window.markAsDirty === 'function') window.markAsDirty();
+    };
+    window._applyVerticalAlign = _applyVerticalAlign;
+
+    // Shape Text Padding Logic
+    window._applyShapePadding = (topVal, bottomVal, leftVal, rightVal) => {
+        const top = Math.max(0, parseInt(topVal) || 0);
+        const bottom = Math.max(0, parseInt(bottomVal) || 0);
+        const left = Math.max(0, parseInt(leftVal) || 0);
+        const right = Math.max(0, parseInt(rightVal) || 0);
+
+        const inTop = document.getElementById('shape-pad-top');
+        const inBottom = document.getElementById('shape-pad-bottom');
+        const inLeft = document.getElementById('shape-pad-left');
+        const inRight = document.getElementById('shape-pad-right');
+        if (inTop && inTop.value != top) inTop.value = top;
+        if (inBottom && inBottom.value != bottom) inBottom.value = bottom;
+        if (inLeft && inLeft.value != left) inLeft.value = left;
+        if (inRight && inRight.value != right) inRight.value = right;
+
+        const targetId = (typeof getActiveTargetId === 'function') ? getActiveTargetId() : null;
+        notifyIframe({
+            type: 'LF_UPDATE_STYLE',
+            id: targetId,
+            selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell',
+            style: {
+                padTop: top,
+                padBottom: bottom,
+                padLeft: left,
+                padRight: right,
+                paddingTop: top + 'px',
+                paddingBottom: bottom + 'px',
+                paddingLeft: left + 'px',
+                paddingRight: right + 'px',
+                padding: top + 'px ' + right + 'px ' + bottom + 'px ' + left + 'px',
+                boxSizing: 'border-box'
+            }
+        });
+        if (typeof window.markAsDirty === 'function') window.markAsDirty();
+    };
+    const _applyShapePadding = window._applyShapePadding;
+
+    window._syncShapePaddingInputs = (padObj) => {
+        const inTop = document.getElementById('shape-pad-top');
+        const inBottom = document.getElementById('shape-pad-bottom');
+        const inLeft = document.getElementById('shape-pad-left');
+        const inRight = document.getElementById('shape-pad-right');
+
+        const top = padObj && padObj.padTop !== undefined ? padObj.padTop : 5;
+        const bottom = padObj && padObj.padBottom !== undefined ? padObj.padBottom : 5;
+        const left = padObj && padObj.padLeft !== undefined ? padObj.padLeft : 10;
+        const right = padObj && padObj.padRight !== undefined ? padObj.padRight : 10;
+
+        if (inTop && document.activeElement !== inTop) inTop.value = top;
+        if (inBottom && document.activeElement !== inBottom) inBottom.value = bottom;
+        if (inLeft && document.activeElement !== inLeft) inLeft.value = left;
+        if (inRight && document.activeElement !== inRight) inRight.value = right;
     };
 
-    const btnAlignLeft = document.getElementById('btn-shape-align-left');
-    if (btnAlignLeft) btnAlignLeft.onclick = () => _applyTextAlign('left');
+    // Global Event Delegation for Shape Controls (Resilient to DOM re-renders and Floating Cards)
+    document.addEventListener('click', (e) => {
+        // Corner Sharp / Round
+        if (e.target.closest('#btn-shape-corner-sharp')) {
+            _applyCornerRadius(0);
+            return;
+        }
+        if (e.target.closest('#btn-shape-corner-round')) {
+            _applyCornerRadius(8);
+            return;
+        }
 
-    const btnAlignCenter = document.getElementById('btn-shape-align-center');
-    if (btnAlignCenter) btnAlignCenter.onclick = () => _applyTextAlign('center');
+        // Horizontal Align
+        if (e.target.closest('#btn-shape-align-left')) {
+            _applyTextAlign('left');
+            return;
+        }
+        if (e.target.closest('#btn-shape-align-center')) {
+            _applyTextAlign('center');
+            return;
+        }
+        if (e.target.closest('#btn-shape-align-right')) {
+            _applyTextAlign('right');
+            return;
+        }
 
-    const btnAlignRight = document.getElementById('btn-shape-align-right');
-    if (btnAlignRight) btnAlignRight.onclick = () => _applyTextAlign('right');
+        // Vertical Align
+        if (e.target.closest('#btn-shape-valign-top')) {
+            _applyVerticalAlign('top');
+            return;
+        }
+        if (e.target.closest('#btn-shape-valign-middle')) {
+            _applyVerticalAlign('middle');
+            return;
+        }
+        if (e.target.closest('#btn-shape-valign-bottom')) {
+            _applyVerticalAlign('bottom');
+            return;
+        }
 
-    const btnVAlignTop = document.getElementById('btn-shape-valign-top');
-    if (btnVAlignTop) btnVAlignTop.onclick = () => _applyVerticalAlign('top');
+        // Padding Presets
+        if (e.target.closest('#btn-shape-pad-default')) {
+            _applyShapePadding(5, 5, 10, 10);
+            return;
+        }
+        if (e.target.closest('#btn-shape-pad-zero')) {
+            _applyShapePadding(0, 0, 0, 0);
+            return;
+        }
 
-    const btnVAlignMiddle = document.getElementById('btn-shape-valign-middle');
-    if (btnVAlignMiddle) btnVAlignMiddle.onclick = () => _applyVerticalAlign('middle');
+        // Button Corner Presets
+        const btnBtnCorner = e.target.closest('.btn-btn-corner');
+        if (btnBtnCorner) {
+            const r = parseInt(btnBtnCorner.getAttribute('data-radius')) || 0;
+            const radiusSlider = document.getElementById('prop-button-border-radius');
+            const radiusTxt = document.getElementById('txt-button-border-radius');
+            if (radiusSlider) {
+                radiusSlider.value = r;
+                if (radiusTxt) radiusTxt.innerText = r;
+                radiusSlider.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            if (typeof window._syncButtonCornerBtns === 'function') {
+                window._syncButtonCornerBtns(r);
+            }
+            return;
+        }
+    });
 
-    const btnVAlignBottom = document.getElementById('btn-shape-valign-bottom');
-    if (btnVAlignBottom) btnVAlignBottom.onclick = () => _applyVerticalAlign('bottom');
+    window._syncButtonCornerBtns = function(val) {
+        const r = parseInt(val) || 0;
+        document.querySelectorAll('.btn-btn-corner').forEach(btn => {
+            const br = parseInt(btn.getAttribute('data-radius')) || 0;
+            if (br === r) {
+                btn.classList.add('primary');
+                btn.style.borderColor = '#00e5ff';
+                btn.style.color = '#00e5ff';
+                btn.style.background = 'rgba(0, 229, 255, 0.15)';
+            } else {
+                btn.classList.remove('primary');
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                btn.style.background = '';
+            }
+        });
+    };
+
+    // Global input & change delegation for Shape and Button controls
+    const _handleShapePaddingInputEvent = (e) => {
+        const id = e.target.id;
+        if (id === 'shape-border-radius') {
+            _syncCornerBtns(e.target.value);
+            return;
+        }
+        if (id === 'prop-button-border-radius') {
+            if (typeof window._syncButtonCornerBtns === 'function') {
+                window._syncButtonCornerBtns(e.target.value);
+            }
+            return;
+        }
+        if (['shape-pad-top', 'shape-pad-bottom', 'shape-pad-left', 'shape-pad-right'].includes(id)) {
+            const inPadTop = document.getElementById('shape-pad-top');
+            const inPadBottom = document.getElementById('shape-pad-bottom');
+            const inPadLeft = document.getElementById('shape-pad-left');
+            const inPadRight = document.getElementById('shape-pad-right');
+            const t = inPadTop ? inPadTop.value : 5;
+            const b = inPadBottom ? inPadBottom.value : 5;
+            const l = inPadLeft ? inPadLeft.value : 10;
+            const r = inPadRight ? inPadRight.value : 10;
+            _applyShapePadding(t, b, l, r);
+        }
+    };
+    document.addEventListener('input', _handleShapePaddingInputEvent);
+    document.addEventListener('change', _handleShapePaddingInputEvent);
+    window._bindShapePaddingEvents = () => {};
 
     // Text and Icon style properties are mapped dynamically via loop
 
@@ -2293,6 +2444,10 @@
         const btnVBottom = document.getElementById('btn-shape-valign-bottom');
         if (btnVBottom) {
             btnVBottom.onclick = () => _applyVerticalAlign('bottom');
+        }
+
+        if (typeof window._bindShapePaddingEvents === 'function') {
+            window._bindShapePaddingEvents();
         }
 
         // 6. Table Actions

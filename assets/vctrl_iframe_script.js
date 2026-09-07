@@ -473,7 +473,6 @@ window.v4Script = `
             isToggle: isToggle,
             toggleChecked: toggleChecked,
             toggleColor: toggleColor,
-            pinIndex: isPin ? parseInt(c.id.replace('v4-pin-', '')) : -1,
             html: textCell ? textCell.innerHTML : (shape ? (shape.querySelector('.v4-shape-text-content')?.innerHTML ?? shape.querySelector('.v4-shape-text-overlay')?.innerHTML ?? shape.innerHTML) : (table ? table.innerHTML : "")),
             isGroup: c.classList.contains('lf-group'),
             w: parseFloat(c.style.width) || c.offsetWidth || 200,
@@ -502,7 +501,51 @@ window.v4Script = `
                     return !colorVal || colorVal === "transparent" || colorVal === "none" || colorVal.includes("rgba(0, 0, 0, 0)");
                 })(),
                 textAlign: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content'), 'textAlign') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'textAlign') || 'center'),
-                justifyContent: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content'), 'justifyContent') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'justifyContent') || 'center')
+                justifyContent: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content'), 'justifyContent') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'justifyContent') || 'center'),
+                padTop: (() => {
+                    if (!shape) return 5;
+                    const el = shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
+                    const attr = (el && el.getAttribute('data-pad-top')) || shape.getAttribute('data-pad-top');
+                    if (attr !== null && attr !== undefined && !isNaN(parseInt(attr))) return parseInt(attr);
+                    if (el) {
+                        const parsed = parseInt(window.getComputedStyle(el).paddingTop);
+                        if (!isNaN(parsed)) return parsed;
+                    }
+                    return 5;
+                })(),
+                padBottom: (() => {
+                    if (!shape) return 5;
+                    const el = shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
+                    const attr = (el && el.getAttribute('data-pad-bottom')) || shape.getAttribute('data-pad-bottom');
+                    if (attr !== null && attr !== undefined && !isNaN(parseInt(attr))) return parseInt(attr);
+                    if (el) {
+                        const parsed = parseInt(window.getComputedStyle(el).paddingBottom);
+                        if (!isNaN(parsed)) return parsed;
+                    }
+                    return 5;
+                })(),
+                padLeft: (() => {
+                    if (!shape) return 10;
+                    const el = shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
+                    const attr = (el && el.getAttribute('data-pad-left')) || shape.getAttribute('data-pad-left');
+                    if (attr !== null && attr !== undefined && !isNaN(parseInt(attr))) return parseInt(attr);
+                    if (el) {
+                        const parsed = parseInt(window.getComputedStyle(el).paddingLeft);
+                        if (!isNaN(parsed)) return parsed;
+                    }
+                    return 10;
+                })(),
+                padRight: (() => {
+                    if (!shape) return 10;
+                    const el = shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
+                    const attr = (el && el.getAttribute('data-pad-right')) || shape.getAttribute('data-pad-right');
+                    if (attr !== null && attr !== undefined && !isNaN(parseInt(attr))) return parseInt(attr);
+                    if (el) {
+                        const parsed = parseInt(window.getComputedStyle(el).paddingRight);
+                        if (!isNaN(parsed)) return parsed;
+                    }
+                    return 10;
+                })()
             }
         };
     };
@@ -767,6 +810,10 @@ window.v4Script = `
                         window.resizeAtomToFitText(comp);
                     } else if (typeof window.enforceDesignSystem === 'function') {
                         window.enforceDesignSystem();
+                    }
+                } else if (comp.classList.contains('v4-text-shape') || comp.classList.contains('v4-text-box')) {
+                    if (typeof window.resizeToFitText === 'function') {
+                        window.resizeToFitText(comp);
                     }
                 }
                 // Notify parent of text changes to sync the Quill editor in real-time
@@ -1331,6 +1378,9 @@ window.v4Script = `
             host.appendChild(v);
             document.querySelectorAll('.lf-component').forEach(c => c.classList.remove('selected'));
             v.classList.add('selected');
+            if (v.classList.contains('v4-text-shape') && typeof window.resizeToFitText === 'function') {
+                window.resizeToFitText(v);
+            }
             const styles = window._getCompStyles(v);
             notifyParent({ 
                 type: 'LF_COMP_SELECTED', 
@@ -1387,6 +1437,9 @@ window.v4Script = `
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
                     cell.innerHTML = d.html;
                     markDirty();
+                    if (typeof window.resizeToFitText === 'function') {
+                        window.resizeToFitText(comp);
+                    }
                 }
             }
         }
@@ -1394,7 +1447,18 @@ window.v4Script = `
             const s = document.querySelector('.lf-component.selected'); 
             if (!s) return;
             const shape = s.querySelector('.v4-shape');
-            if (!shape) return;
+            if (!shape) {
+                const cell = s.querySelector('.v4-editable-cell');
+                if (cell) {
+                    if (window.V4UndoManager) window.V4UndoManager.saveState();
+                    cell.innerHTML = d.html;
+                    markDirty();
+                    if (typeof window.resizeToFitText === 'function') {
+                        window.resizeToFitText(s);
+                    }
+                }
+                return;
+            }
 
             const activeCell = shape.querySelector('.v4-editable-cell') || shape.querySelector('.v4-shape-text-content') || shape.querySelector('.v4-shape-text-overlay');
             if (activeCell && document.activeElement && (activeCell === document.activeElement || activeCell.contains(document.activeElement))) {
@@ -1427,7 +1491,25 @@ window.v4Script = `
                         const existingContent = shape.innerHTML;
                         textContainer = document.createElement('div');
                         textContainer.className = 'v4-shape-text-content';
-                        textContainer.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;box-sizing:border-box;overflow:hidden;';
+
+                        const pt = shape.getAttribute('data-pad-top');
+                        const pb = shape.getAttribute('data-pad-bottom');
+                        const pl = shape.getAttribute('data-pad-left');
+                        const pr = shape.getAttribute('data-pad-right');
+                        let initialPad = 'padding:8px;';
+                        if (pt !== null || pb !== null || pl !== null || pr !== null) {
+                            const top = pt !== null ? pt : '5';
+                            const bot = pb !== null ? pb : '5';
+                            const left = pl !== null ? pl : '10';
+                            const right = pr !== null ? pr : '10';
+                            initialPad = 'padding:' + top + 'px ' + right + 'px ' + bot + 'px ' + left + 'px !important;';
+                            if (pt !== null) textContainer.setAttribute('data-pad-top', pt);
+                            if (pb !== null) textContainer.setAttribute('data-pad-bottom', pb);
+                            if (pl !== null) textContainer.setAttribute('data-pad-left', pl);
+                            if (pr !== null) textContainer.setAttribute('data-pad-right', pr);
+                        }
+
+                        textContainer.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;' + initialPad + 'box-sizing:border-box;overflow:hidden;';
                         shape.innerHTML = '';
                         textContainer.innerHTML = existingContent;
                         shape.appendChild(textContainer);
@@ -1437,7 +1519,7 @@ window.v4Script = `
             }
             markDirty();
             if (typeof window.resizeToFitText === 'function') {
-                window.resizeToFitText(s);
+                window.resizeToFitText(s, true);
             }
         }
         else if (d.type === 'LF_UPDATE_ARROW_DIRECTION') {
@@ -2208,9 +2290,15 @@ window.v4Script = `
                 }
             }
         } else if (d.type === 'LF_BRING_FRONT') {
-            const selected = document.querySelectorAll('.lf-component.selected');
-            const topLevelSelected = Array.from(selected).filter(el => {
-                let parent = el.parentElement;
+            var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+            if (selected.length === 0 && d.id) {
+                var singleTarget = document.getElementById(d.id);
+                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                    selected.push(singleTarget);
+                }
+            }
+            var topLevelSelected = selected.filter(function(el) {
+                var parent = el.parentElement;
                 while (parent && parent !== document.body) {
                     if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
                     parent = parent.parentElement;
@@ -2219,21 +2307,71 @@ window.v4Script = `
             });
             if (topLevelSelected.length > 0) {
                 if (window.V4UndoManager) window.V4UndoManager.saveState();
-                const firstScript = document.body.querySelector('script');
-                topLevelSelected.forEach(el => {
-                    if (firstScript) {
-                        document.body.insertBefore(el, firstScript);
-                    } else {
-                        document.body.appendChild(el);
+                
+                var parentMap = new Map();
+                topLevelSelected.forEach(function(el) {
+                    var p = el.parentElement;
+                    if (!p) return;
+                    if (!parentMap.has(p)) {
+                        parentMap.set(p, []);
                     }
+                    parentMap.get(p).push(el);
                 });
+
+                parentMap.forEach(function(items, parent) {
+                    items.sort(function(a, b) {
+                        var pos = a.compareDocumentPosition(b);
+                        return (pos & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
+                    });
+
+                    var siblingComps = Array.from(parent.children).filter(function(c) {
+                        return c.classList.contains('lf-component');
+                    });
+
+                    var maxZ = 1000;
+                    var hasZ = false;
+                    siblingComps.forEach(function(c) {
+                        var z = parseInt(c.style.zIndex, 10);
+                        if (isNaN(z)) {
+                            var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                            z = isNaN(compZ) ? 1000 : compZ;
+                        }
+                        if (!hasZ) {
+                            maxZ = z;
+                            hasZ = true;
+                        } else if (z > maxZ) {
+                            maxZ = z;
+                        }
+                    });
+
+                    var trailingRef = Array.from(parent.children).find(function(c) {
+                        return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+                    });
+
+                    var targetZ = maxZ + 10;
+                    items.forEach(function(el) {
+                        el.style.zIndex = String(targetZ);
+                        if (trailingRef && trailingRef.parentNode === parent) {
+                            parent.insertBefore(el, trailingRef);
+                        } else {
+                            parent.appendChild(el);
+                        }
+                    });
+                });
+
                 markDirty();
                 if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
             }
         } else if (d.type === 'LF_SEND_BACK') {
-            const selected = document.querySelectorAll('.lf-component.selected');
-            const topLevelSelected = Array.from(selected).filter(el => {
-                let parent = el.parentElement;
+            var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+            if (selected.length === 0 && d.id) {
+                var singleTarget = document.getElementById(d.id);
+                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                    selected.push(singleTarget);
+                }
+            }
+            var topLevelSelected = selected.filter(function(el) {
+                var parent = el.parentElement;
                 while (parent && parent !== document.body) {
                     if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
                     parent = parent.parentElement;
@@ -2241,17 +2379,77 @@ window.v4Script = `
                 return true;
             });
             if (topLevelSelected.length > 0) {
-                const firstUnselected = Array.from(document.body.children).find(el => {
-                    return el.classList.contains('lf-component') && !el.classList.contains('selected');
+                if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+                var parentMap = new Map();
+                topLevelSelected.forEach(function(el) {
+                    var p = el.parentElement;
+                    if (!p) return;
+                    if (!parentMap.has(p)) {
+                        parentMap.set(p, []);
+                    }
+                    parentMap.get(p).push(el);
                 });
-                if (firstUnselected) {
-                    if (window.V4UndoManager) window.V4UndoManager.saveState();
-                    topLevelSelected.forEach(el => {
-                        document.body.insertBefore(el, firstUnselected);
+
+                parentMap.forEach(function(items, parent) {
+                    items.sort(function(a, b) {
+                        var pos = a.compareDocumentPosition(b);
+                        return (pos & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
                     });
-                    markDirty();
-                    if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
-                }
+
+                    var siblingComps = Array.from(parent.children).filter(function(c) {
+                        return c.classList.contains('lf-component');
+                    });
+
+                    var minZ = 1000;
+                    var hasZ = false;
+                    siblingComps.forEach(function(c) {
+                        var z = parseInt(c.style.zIndex, 10);
+                        if (isNaN(z)) {
+                            var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                            z = isNaN(compZ) ? 1000 : compZ;
+                        }
+                        if (!hasZ) {
+                            minZ = z;
+                            hasZ = true;
+                        } else if (z < minZ) {
+                            minZ = z;
+                        }
+                    });
+
+                    var targetZ = minZ - 10;
+                    if (targetZ < 1) {
+                        var shift = Math.abs(targetZ) + 10;
+                        siblingComps.forEach(function(c) {
+                            var curZ = parseInt(c.style.zIndex, 10);
+                            if (isNaN(curZ)) {
+                                var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                                curZ = isNaN(compZ) ? 1000 : compZ;
+                            }
+                            c.style.zIndex = String(curZ + shift);
+                        });
+                        targetZ = 1;
+                    }
+
+                    var firstUnselectedComp = siblingComps.find(function(c) {
+                        return !items.includes(c);
+                    });
+
+                    items.forEach(function(el) {
+                        el.style.zIndex = String(targetZ);
+                        if (firstUnselectedComp && firstUnselectedComp.parentNode === parent) {
+                            parent.insertBefore(el, firstUnselectedComp);
+                        } else {
+                            var firstChild = parent.firstElementChild;
+                            if (firstChild && firstChild !== el) {
+                                parent.insertBefore(el, firstChild);
+                            }
+                        }
+                    });
+                });
+
+                markDirty();
+                if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
             }
         } else if (d.type === 'LF_UPDATE_MARQUEE_SELECTION') {
             const ids = d.ids || [];

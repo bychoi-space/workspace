@@ -40,6 +40,11 @@ window.v4ObjectTextScript = `
                     t.querySelectorAll('p, span').forEach(child => {
                         child.style.setProperty(cssKey, val, 'important');
                     });
+                } else if (key === 'fontSize') {
+                    t.style.fontSize = val;
+                    t.querySelectorAll('p, span, font, strong, b, em, i, u, s').forEach(child => {
+                        child.style.fontSize = val;
+                    });
                 } else {
                     t.style[key] = val;
                 }

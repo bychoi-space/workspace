@@ -73,7 +73,7 @@
   },
   "assignee": "최범열",
   "developer": "",
-  "period": "2026.09.03(목) ~ 2026.10.30(금)",
+  "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
   "updated": "2026-09-08 09:33:46",
   "screenOrder": [
@@ -82,5 +82,7 @@
     "08_Responsive_PC_Mobile_730.html",
     "09_Admin_PC_Scroll_639.html",
     "09_Admin_PC_Scroll_639_copy.html"
-  ]
+  ],
+  "figmaUrl": "",
+  "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link"
 }

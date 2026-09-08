@@ -179,7 +179,10 @@
                 );
 
                 if (isEdgeContained || isCenterContained) {
-                    const area = t.width * t.height;
+                    let area = t.width * t.height;
+                    if (t.isRowContainer) {
+                        area = area * 0.1;
+                    }
                     if (area < minContainerArea) {
                         minContainerArea = area;
                         container = t;
@@ -213,7 +216,7 @@
 
             const maxWallThresh = container.isFrameBoundary ? 600 : Infinity;
 
-            const minPadding = container.isFrameBoundary ? 1 : 3;
+            const minPadding = 0;
 
             let leftMatch = (distLeftToWall >= minPadding && distLeftToWall <= maxWallThresh) ? { target: container, dist: distLeftToWall, isInner: true } : null;
             let rightMatch = (distRightToWall >= minPadding && distRightToWall <= maxWallThresh) ? { target: container, dist: distRightToWall, isInner: true } : null;
@@ -230,9 +233,15 @@
                 if (activeId && t.id === activeId) continue;
                 if (t.id === container.id) continue;
                 if (t.source === 'canvas') continue;
+                if (t.isAncestor) continue;
+
+                // If inside a row container, skip other rows of the same table and the table itself
+                if (container.isRowContainer) {
+                    if (t.isRowContainer || t.id === container.tableId || t.isTableContainer) continue;
+                }
 
                 // Leftward Raycast
-                if (t.right <= active.left + 4) {
+                if (t.right <= active.left + 0.5) {
                     const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(active.left - t.right));
@@ -245,7 +254,7 @@
                 }
 
                 // Rightward Raycast
-                if (t.left >= active.right - 4) {
+                if (t.left >= active.right - 0.5) {
                     const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(t.left - active.right));
@@ -258,39 +267,45 @@
                 }
 
                 // Upward Raycast
-                if (t.bottom <= active.top + 4) {
-                    const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
-                    if (hasOverlapX) {
-                        const dist = Math.max(0, Math.round(active.top - t.bottom));
-                        if (dist <= MAX_NEIGHBOR_DIST) {
-                            if (!topMatch || dist < topMatch.dist) {
-                                topMatch = { target: t, dist: dist, isInner: false };
+                if (!container.isRowContainer) {
+                    if (t.bottom <= active.top + 0.5) {
+                        const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
+                        if (hasOverlapX) {
+                            const dist = Math.max(0, Math.round(active.top - t.bottom));
+                            if (dist <= MAX_NEIGHBOR_DIST) {
+                                if (!topMatch || dist < topMatch.dist) {
+                                    topMatch = { target: t, dist: dist, isInner: false };
+                                }
                             }
                         }
                     }
                 }
 
                 // Downward Raycast
-                if (t.top >= active.bottom - 4) {
-                    const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
-                    if (hasOverlapX) {
-                        const dist = Math.max(0, Math.round(t.top - active.bottom));
-                        if (dist <= MAX_NEIGHBOR_DIST) {
-                            if (!bottomMatch || dist < bottomMatch.dist) {
-                                bottomMatch = { target: t, dist: dist, isInner: false };
+                if (!container.isRowContainer) {
+                    if (t.top >= active.bottom - 0.5) {
+                        const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
+                        if (hasOverlapX) {
+                            const dist = Math.max(0, Math.round(t.top - active.bottom));
+                            if (dist <= MAX_NEIGHBOR_DIST) {
+                                if (!bottomMatch || dist < bottomMatch.dist) {
+                                    bottomMatch = { target: t, dist: dist, isInner: false };
+                                }
                             }
                         }
                     }
                 }
             }
 
-            // 4. Equal Spacing Detection
+            // 4. Equal Spacing Detection (Figma Style)
+            // Left vs Right equal spacing (regardless of inner container wall or outer sibling)
             let isEqualH = false;
-            if (leftMatch && rightMatch && !leftMatch.isInner && !rightMatch.isInner) {
+            if (leftMatch && rightMatch) {
                 if (Math.abs(leftMatch.dist - rightMatch.dist) <= 1) isEqualH = true;
             }
+            // Top vs Bottom equal spacing (e.g. top: 7, bottom: 7 vertical centering)
             let isEqualV = false;
-            if (topMatch && bottomMatch && !topMatch.isInner && !bottomMatch.isInner) {
+            if (topMatch && bottomMatch) {
                 if (Math.abs(topMatch.dist - bottomMatch.dist) <= 1) isEqualV = true;
             }
 

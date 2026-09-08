@@ -3305,6 +3305,8 @@ window.v4Script = `
                 targets.push({ y: t + h / 2, label: name, part: 'Middle', type: 'v' });
                 targets.push({ y: t + h, label: name, part: 'Bottom', type: 'v' });
                 
+                const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table');
+                
                 rects.push({
                     id: c.id,
                     label: name,
@@ -3313,7 +3315,34 @@ window.v4Script = `
                     width: w,
                     height: h,
                     right: l + w,
-                    bottom: t + h
+                    bottom: t + h,
+                    isTableContainer: isTable
+                });
+            });
+
+            // Virtual row containers for multi-row tables
+            document.querySelectorAll('.v4-admin-settings-table .v4-admin-row').forEach((row, rIdx) => {
+                const parentComp = row.closest('.lf-component');
+                const parentLeft = parentComp ? (parseFloat(parentComp.style.left) || 0) : 0;
+                const parentTop = parentComp ? (parseFloat(parentComp.style.top) || 0) : 0;
+                const l = parentLeft + (row.offsetLeft || 0);
+                const t = parentTop + (row.offsetTop || 0);
+                const w = row.offsetWidth;
+                const h = row.offsetHeight;
+                if (w < 10 || h < 5) return;
+                const tableId = parentComp ? parentComp.id : ('table-' + rIdx);
+
+                rects.push({
+                    id: row.id || ('v4-row-' + rIdx),
+                    label: 'Row ' + (rIdx + 1),
+                    left: l,
+                    top: t,
+                    width: w,
+                    height: h,
+                    right: l + w,
+                    bottom: t + h,
+                    isRowContainer: true,
+                    tableId: tableId
                 });
             });
 

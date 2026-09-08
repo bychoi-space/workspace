@@ -159,7 +159,9 @@ window.v4ResponsiveSmartGuideScript = `
 
             components.forEach((c, idx) => {
                 if (c === activeEl || c.classList.contains('dragging-now')) return;
-                if (activeEl && (activeEl.contains(c) || c.contains(activeEl))) return;
+                // Allow container ancestors to be included as container candidates (excluded from sibling raycast)
+                const isAncestor = activeEl && c.contains(activeEl);
+                if (activeEl && activeEl.contains(c)) return;
 
                 const pos = this.getPureOffset(c, context.inner);
                 const l = pos.left;
@@ -168,6 +170,8 @@ window.v4ResponsiveSmartGuideScript = `
                 const h = pos.height || c.offsetHeight || parseFloat(c.style.height) || 40;
                 if (w < 10 || h < 10) return;
                 const name = c.id ? c.id.replace('v4-comp-', 'Comp ') : ('Item ' + (idx + 1));
+
+                const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table');
 
                 this.spacingTargets.push({
                     id: c.id || ('comp-' + idx),
@@ -178,7 +182,40 @@ window.v4ResponsiveSmartGuideScript = `
                     height: h,
                     right: l + w,
                     bottom: t + h,
-                    isWall: false
+                    isWall: false,
+                    isAncestor: isAncestor,
+                    isTableContainer: isTable
+                });
+            });
+
+            // Register Virtual Row Containers for multi-row tables (e.g., Query Item .v4-admin-row)
+            const rows = rootScope.querySelectorAll('.v4-admin-settings-table .v4-admin-row');
+            rows.forEach((row, rIdx) => {
+                if (row === activeEl) return;
+                const pos = this.getPureOffset(row, context.inner);
+                const l = pos.left;
+                const t = pos.top;
+                const w = pos.width || row.offsetWidth || parseFloat(row.style.width) || 100;
+                const h = pos.height || row.offsetHeight || parseFloat(row.style.height) || 36;
+                if (w < 10 || h < 5) return;
+
+                const parentComp = row.closest('.lf-component');
+                const tableId = parentComp ? parentComp.id : ('table-' + rIdx);
+                const isAncestor = activeEl ? row.contains(activeEl) : false;
+
+                this.spacingTargets.push({
+                    id: row.id || ('v4-row-' + rIdx),
+                    label: 'Row ' + (rIdx + 1),
+                    left: l,
+                    top: t,
+                    width: w,
+                    height: h,
+                    right: l + w,
+                    bottom: t + h,
+                    isWall: false,
+                    isRowContainer: true,
+                    tableId: tableId,
+                    isAncestor: isAncestor
                 });
             });
         },
@@ -231,7 +268,11 @@ window.v4ResponsiveSmartGuideScript = `
                 );
 
                 if (isEdgeContained || isCenterContained) {
-                    const area = t.width * t.height;
+                    let area = t.width * t.height;
+                    // Prioritize row container if it contains active
+                    if (t.isRowContainer) {
+                        area = area * 0.1;
+                    }
                     if (area < minContainerArea) {
                         minContainerArea = area;
                         container = t;
@@ -261,14 +302,14 @@ window.v4ResponsiveSmartGuideScript = `
             const distBottomToWall = Math.max(0, Math.round(container.bottom - active.bottom));
 
             const maxWallThresh = container.isFrame ? MAX_WALL_DIST : Infinity;
-            const minPadding = container.isFrame ? 1 : 3;
+            const minPadding = 0;
 
             let leftMatch = (distLeftToWall >= minPadding && distLeftToWall <= maxWallThresh) ? { target: container, dist: distLeftToWall, isInner: true } : null;
             let rightMatch = (distRightToWall >= minPadding && distRightToWall <= maxWallThresh) ? { target: container, dist: distRightToWall, isInner: true } : null;
             let topMatch = (distTopToWall >= minPadding && distTopToWall <= maxWallThresh) ? { target: container, dist: distTopToWall, isInner: true } : null;
             let bottomMatch = (distBottomToWall >= minPadding && distBottomToWall <= maxWallThresh) ? { target: container, dist: distBottomToWall, isInner: true } : null;
 
-            // 3. Sibling Raycast: Search ALL nearest siblings without container isolation lock!
+            // 3. Sibling Raycast: Search nearest siblings without container isolation lock!
             // Strict Y overlap for horizontal (same row only), and moderate X overlap for vertical (facing columns)
             const overlapBufferY = 16;
             const overlapBufferX = 24;
@@ -277,9 +318,15 @@ window.v4ResponsiveSmartGuideScript = `
                 const t = this.spacingTargets[i];
                 if (activeId && t.id === activeId) continue;
                 if (t.id === container.id) continue;
+                if (t.isAncestor) continue;
+
+                // If active is inside a row container, skip other rows of the same table and the table itself
+                if (container.isRowContainer) {
+                    if (t.isRowContainer || t.id === container.tableId || t.isTableContainer) continue;
+                }
 
                 // Leftward Raycast (t is on the left of active)
-                if (t.right <= active.left + 4) {
+                if (t.right <= active.left + 0.5) {
                     const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(active.left - t.right));
@@ -292,7 +339,7 @@ window.v4ResponsiveSmartGuideScript = `
                 }
 
                 // Rightward Raycast (t is on the right of active)
-                if (t.left >= active.right - 4) {
+                if (t.left >= active.right - 0.5) {
                     const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(t.left - active.right));
@@ -305,26 +352,32 @@ window.v4ResponsiveSmartGuideScript = `
                 }
 
                 // Upward Raycast (t is above active)
-                if (t.bottom <= active.top + 4) {
-                    const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
-                    if (hasOverlapX) {
-                        const dist = Math.max(0, Math.round(active.top - t.bottom));
-                        if (dist <= MAX_NEIGHBOR_DIST) {
-                            if (!topMatch || dist < topMatch.dist) {
-                                topMatch = { target: t, dist: dist, isInner: false };
+                // If inside row container, preserve top wall padding without raycasting outside row!
+                if (!container.isRowContainer) {
+                    if (t.bottom <= active.top + 0.5) {
+                        const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
+                        if (hasOverlapX) {
+                            const dist = Math.max(0, Math.round(active.top - t.bottom));
+                            if (dist <= MAX_NEIGHBOR_DIST) {
+                                if (!topMatch || dist < topMatch.dist) {
+                                    topMatch = { target: t, dist: dist, isInner: false };
+                                }
                             }
                         }
                     }
                 }
 
                 // Downward Raycast (t is below active)
-                if (t.top >= active.bottom - 4) {
-                    const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
-                    if (hasOverlapX) {
-                        const dist = Math.max(0, Math.round(t.top - active.bottom));
-                        if (dist <= MAX_NEIGHBOR_DIST) {
-                            if (!bottomMatch || dist < bottomMatch.dist) {
-                                bottomMatch = { target: t, dist: dist, isInner: false };
+                // If inside row container, preserve bottom wall padding without raycasting outside row!
+                if (!container.isRowContainer) {
+                    if (t.top >= active.bottom - 0.5) {
+                        const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
+                        if (hasOverlapX) {
+                            const dist = Math.max(0, Math.round(t.top - active.bottom));
+                            if (dist <= MAX_NEIGHBOR_DIST) {
+                                if (!bottomMatch || dist < bottomMatch.dist) {
+                                    bottomMatch = { target: t, dist: dist, isInner: false };
+                                }
                             }
                         }
                     }
@@ -332,12 +385,14 @@ window.v4ResponsiveSmartGuideScript = `
             }
 
             // 4. Equal Spacing Detection (Figma Style)
+            // Left vs Right equal spacing (regardless of inner container wall or outer sibling)
             let isEqualH = false;
-            if (leftMatch && rightMatch && !leftMatch.isInner && !rightMatch.isInner) {
+            if (leftMatch && rightMatch) {
                 if (Math.abs(leftMatch.dist - rightMatch.dist) <= 1) isEqualH = true;
             }
+            // Top vs Bottom equal spacing (e.g. top: 7, bottom: 7 vertical centering)
             let isEqualV = false;
-            if (topMatch && bottomMatch && !topMatch.isInner && !bottomMatch.isInner) {
+            if (topMatch && bottomMatch) {
                 if (Math.abs(topMatch.dist - bottomMatch.dist) <= 1) isEqualV = true;
             }
 

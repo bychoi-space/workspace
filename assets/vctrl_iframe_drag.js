@@ -190,7 +190,7 @@ window.v4DragResizeScript = `
             if (isDragging && window.activeEl) {
                 const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
                 if (isResp) {
-                    window.ResponsiveSmartGuide.clearGuides(true);
+                    window.ResponsiveSmartGuide.onSelect(window.activeEl, 2000);
                 } else {
                     notifyParent({ type: 'LF_SNAP_END' });
                 }

@@ -159,6 +159,7 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .v4-checkbox-container[data-disabled="true"],
 .v4-radio-container[data-disabled="true"],
 .v4-stepper-container[data-disabled="true"],
+.v4-datepicker-container[data-disabled="true"],
 .lf-component[data-disabled="true"] {
     background: transparent !important;
     background-color: transparent !important;
@@ -177,7 +178,8 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .v4-selectbox-container[data-disabled="true"] .v4-selectbox-header,
 .v4-fileupload-button[data-disabled="true"],
 .v4-fileupload-container[data-disabled="true"] .v4-fileupload-button,
-.v4-datepicker-container[data-disabled="true"],
+.v4-datepicker-container[data-disabled="true"] .v4-dp-fields,
+.v4-datepicker-container[data-disabled="true"] .v4-dp-preset-btn,
 .v4-toggle-track[data-disabled="true"],
 .v4-toggle-container[data-disabled="true"] .v4-toggle-track,
 .v4-accordion-container[data-disabled="true"],
@@ -207,9 +209,18 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 [data-disabled="true"] .v4-radio-dot,
 [data-disabled="true"] .v4-checkbox-check,
 [data-disabled="true"] .v4-toggle-knob,
-[data-disabled="true"] .v4-toggle-thumb {
+[data-disabled="true"] .v4-toggle-thumb,
+[data-disabled="true"] .v4-dp-date-field,
+[data-disabled="true"] .v4-dp-time-field,
+[data-disabled="true"] .v4-dp-separator,
+[data-disabled="true"] .v4-dp-preset-btn {
     color: #969696 !important;
     border-color: #969696 !important;
+}
+
+.v4-datepicker-container[data-disabled="true"] {
+    pointer-events: none !important;
+    cursor: not-allowed !important;
 }
 
 [data-disabled="true"] .v4-radio-dot,
@@ -367,7 +378,24 @@ html, body { position: relative !important; min-height: 100vh; margin: 0; paddin
 .v4-alert-desc-badge { font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
 .v4-admin-group-header { font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
 .v4-admin-label-cell { font-size: 12px !important; font-weight: 400 !important; color: var(--v4-text-color, #0f172a) !important; font-family: inherit !important; }
-.v4-dp-preset-btn { font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
+.v4-dp-preset-btn {
+    border: 1.6px solid #cccccc !important;
+    border-radius: 8px !important;
+    background: #ffffff;
+    color: var(--v4-text-color, #0f172a);
+    box-sizing: border-box !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    font-family: inherit !important;
+    outline: none !important;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.v4-dp-preset-btn.v4-dp-preset-active {
+    background: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+    color: #ffffff !important;
+}
 .v4-custom-btn {
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18) !important;
     transition: all 0.2s ease !important;

@@ -1477,7 +1477,7 @@
                 highlightActive(modeSimpleBtn, false);
                 if (timeInputsWrapper) timeInputsWrapper.style.display = 'block';
                 if (presetsToggleWrapper) presetsToggleWrapper.style.display = 'none';
-                if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'none';
+                if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
                 if (defaultPresetWrapper) defaultPresetWrapper.style.display = 'none';
                 notifyIframeDp({ type: 'LF_UPDATE_DATEPICKER', mode: 'detailed' });
             };

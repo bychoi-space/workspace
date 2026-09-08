@@ -191,9 +191,20 @@
                             <span class="material-icons-outlined floating-inspector-icon">tune</span>
                             <span class="floating-inspector-title">OBJECT PROPERTIES</span>
                         </div>
-                        <button id="btn-floating-minimize" title="최소화" class="floating-inspector-minimize-btn">
-                            <span class="material-icons-outlined">keyboard_arrow_down</span>
-                        </button>
+                        <div class="floating-header-btn-group">
+                            <button id="btn-floating-swap" title="좌/우 위치 전환" class="floating-inspector-header-btn">
+                                <span class="material-icons-outlined">swap_horiz</span>
+                            </button>
+                            <button id="btn-floating-dock" title="우측 사이드바로 도킹" class="floating-inspector-header-btn">
+                                <span class="material-icons-outlined">dock</span>
+                            </button>
+                            <button id="btn-floating-minimize" title="최소화" class="floating-inspector-header-btn floating-inspector-minimize-btn">
+                                <span class="material-icons-outlined">keyboard_arrow_down</span>
+                            </button>
+                            <button id="btn-floating-close" title="속성 닫기 / 선택 해제 (Esc)" class="floating-inspector-header-btn">
+                                <span class="material-icons-outlined">close</span>
+                            </button>
+                        </div>
                     </div>
                     <!-- Storage Container for Dynamically Injected Inspector Panels -->
                     <div id="inspector-panels-storage" style="display: none;"></div>
@@ -300,7 +311,7 @@
 
         <!-- Right Sidebar: Description & Asset Library -->
         <aside class="sidebar sidebar-right" id="sidebar-right">
-            <div class="sidebar-tabs">
+            <div class="sidebar-tabs" id="sidebar-tabs-bar">
                 <button class="tab-btn active" data-tab="editor" title="라이브러리 도구 (E)">
                     <span class="material-icons-outlined">widgets</span>
                     Library
@@ -309,6 +320,22 @@
                     <span class="material-icons-outlined">description</span>
                     Description
                 </button>
+            </div>
+
+            <!-- Smart Contextual Inspector Header (Visible when object selected in docked mode) -->
+            <div id="sidebar-inspector-header" class="sidebar-inspector-header" style="display: none;">
+                <div class="sidebar-inspector-title-group">
+                    <span class="material-icons-outlined sidebar-inspector-icon">tune</span>
+                    <span class="sidebar-inspector-title">OBJECT PROPERTIES</span>
+                </div>
+                <div class="sidebar-inspector-actions">
+                    <button id="btn-sidebar-popout" class="sidebar-header-btn" title="캔버스 플로팅 카드로 꺼내기 (팝아웃)">
+                        <span class="material-icons-outlined">open_in_new</span>
+                    </button>
+                    <button id="btn-sidebar-close-props" class="sidebar-header-btn" title="속성 닫기 / 라이브러리로 복귀">
+                        <span class="material-icons-outlined">close</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Tab: Description -->
@@ -383,6 +410,13 @@
                     </div>
                 </div>
                 </div> <!-- Close #tab-editor -->
+
+                <!-- Tab / Container: Smart Inspector (Docked Object Properties) -->
+                <div id="tab-inspector" class="tab-pane sidebar-inspector-pane" style="display: none;">
+                    <div class="sidebar-inspector-body" id="sidebar-inspector-body">
+                        <!-- Dynamic Selection Actions & Active Sections will be injected here -->
+                    </div>
+                </div>
          </aside>
     </div>
 

@@ -26,6 +26,7 @@ const DOM = {
     metaPeriod: document.getElementById('meta-period'),
     metaAssignee: document.getElementById('meta-assignee'),
     metaFigma: document.getElementById('meta-figma'),
+    metaNotion: document.getElementById('meta-notion'),
     btnModalClose: document.getElementById('btn-modal-close'),
     btnModalSave: document.getElementById('btn-modal-save'),
     
@@ -449,7 +450,8 @@ async function renderList(projectsToRender = state.projects) {
 
         const hasMeta = (m.assignee && m.assignee.trim()) || 
                         (m.period && m.period.trim()) || 
-                        (m.figmaUrl && m.figmaUrl.trim());
+                        (m.figmaUrl && m.figmaUrl.trim()) ||
+                        (m.notionUrl && m.notionUrl.trim());
 
         let chipsHtml = '';
         if (hasMeta) {
@@ -472,9 +474,18 @@ async function renderList(projectsToRender = state.projects) {
             }
             if (m.figmaUrl && m.figmaUrl.trim()) {
                 chipsHtml += `
-                    <a href="${m.figmaUrl}" target="_blank" class="meta-chip meta-chip-figma" title="Figma 바로가기">
+                    <a href="${m.figmaUrl}" target="_blank" rel="noopener noreferrer" class="meta-chip meta-chip-figma" title="Figma 바로가기">
                         <span class="material-icons-outlined">brush</span>
                         <span>Figma</span>
+                    </a>`;
+            }
+            if (m.notionUrl && m.notionUrl.trim()) {
+                chipsHtml += `
+                    <a href="${m.notionUrl}" target="_blank" rel="noopener noreferrer" class="meta-chip meta-chip-notion" title="Notion 바로가기">
+                        <svg class="meta-chip-svg" viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                            <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.373-.747.934zm14.337.747.093 10.92-2.147.14-.093-7.56-3.267 7.7-1.727.093-3.174-7.514v7.7l-2.007.14V7.942l2.613-.187 3.5 7.98 3.314-7.887z"/>
+                        </svg>
+                        <span>Notion</span>
                     </a>`;
             }
             chipsHtml += `</div>`;
@@ -537,6 +548,7 @@ document.addEventListener('click', async (e) => {
     const delBtn = e.target.closest('.delete-btn-card');
     const editBtn = e.target.closest('.edit-btn-card');
     const figmaLink = e.target.closest('.meta-chip-figma');
+    const notionLink = e.target.closest('.meta-chip-notion');
     const addCta = e.target.closest('.meta-chip-add-cta');
 
     if (pdfBtn) {
@@ -546,7 +558,7 @@ document.addEventListener('click', async (e) => {
         exportProjectToPDF(projName, targetProj ? targetProj.meta : null);
     }
 
-    if (figmaLink) {
+    if (figmaLink || notionLink) {
         e.stopPropagation();
     }
 
@@ -653,6 +665,7 @@ DOM.btnCreateProject.onclick = async () => {
     DOM.metaPeriod.value = "";
     DOM.metaAssignee.value = "";
     DOM.metaFigma.value = "";
+    DOM.metaNotion.value = "";
     initDatePicker();
     
     // Initialize theme presets to Auto (-1)
@@ -688,6 +701,7 @@ async function openEditProjectModal(projectName) {
     DOM.metaPeriod.value = (m && m.period) || '';
     DOM.metaAssignee.value = (m && m.assignee) || '';
     DOM.metaFigma.value = (m && m.figmaUrl) || '';
+    DOM.metaNotion.value = (m && m.notionUrl) || '';
     initDatePicker(m ? m.period : '');
     
     // Load existing theme index, fallback to -1
@@ -729,6 +743,7 @@ DOM.btnModalSave.onclick = async () => {
             period: DOM.metaPeriod.value.trim(),
             assignee: DOM.metaAssignee.value.trim(),
             figmaUrl: DOM.metaFigma.value.trim(),
+            notionUrl: DOM.metaNotion.value.trim(),
             themeIndex: themeVal
         }
     };

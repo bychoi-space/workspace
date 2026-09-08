@@ -512,19 +512,31 @@ window.v4DesignSystemScript = `
                 return y + '/' + m + '/' + d2;
             };
 
+            const isDis = (dp.getAttribute('data-disabled') === 'true' || c.getAttribute('data-disabled') === 'true');
             const showPresets = dp.getAttribute('data-show-presets') !== 'false';
             const presetsDiv = dp.querySelector('.v4-dp-presets');
-            if (presetsDiv) {
-                const targetDisplay = showPresets ? 'inline-flex' : 'none';
-                if (presetsDiv.style.display !== targetDisplay) presetsDiv.style.display = targetDisplay;
-            }
-
             const showEndDate = dp.getAttribute('data-show-end-date') !== 'false';
             const sep = dp.querySelector('.v4-dp-separator');
             const groups = dp.querySelectorAll('.v4-dp-input-group');
             const mode = dp.getAttribute('data-mode') || 'simple';
+            const isDetailed = mode === 'detailed';
+
+            const startEl = dp.querySelector('.v4-dp-start');
+            const endEl = dp.querySelector('.v4-dp-end');
+            const startTimeEl = dp.querySelector('.v4-dp-start-time');
+            const endTimeEl = dp.querySelector('.v4-dp-end-time');
             
-            if (mode !== 'detailed') {
+            const storedStart = dp.getAttribute('data-start-date');
+            const storedEnd = dp.getAttribute('data-end-date');
+            const storedStartTime = dp.getAttribute('data-start-time');
+            const storedEndTime = dp.getAttribute('data-end-time');
+            
+            const defaultPreset = dp.getAttribute('data-default-preset') || 'none';
+
+            if (isDetailed) {
+                if (presetsDiv && presetsDiv.style.display !== 'none') presetsDiv.style.display = 'none';
+                if (startTimeEl && startTimeEl.style.display !== 'inline-block') startTimeEl.style.display = 'inline-block';
+                if (endTimeEl && endTimeEl.style.display !== 'inline-block') endTimeEl.style.display = 'inline-block';
                 if (sep) {
                     const targetDisplay = showEndDate ? 'inline-flex' : 'none';
                     if (sep.style.display !== targetDisplay) sep.style.display = targetDisplay;
@@ -533,54 +545,53 @@ window.v4DesignSystemScript = `
                     const targetDisplay = showEndDate ? 'inline-flex' : 'none';
                     if (groups[1].style.display !== targetDisplay) groups[1].style.display = targetDisplay;
                 }
-            }
-
-            const startEl = dp.querySelector('.v4-dp-start');
-            const endEl = dp.querySelector('.v4-dp-end');
-            const startTimeEl = dp.querySelector('.v4-dp-start-time');
-            const endTimeEl = dp.querySelector('.v4-dp-end-time');
-            
-            const storedStart = dp.getAttribute('data-start-date') || '';
-            const storedEnd = dp.getAttribute('data-end-date') || '';
-            const storedStartTime = dp.getAttribute('data-start-time') || '10:00:00';
-            const storedEndTime = dp.getAttribute('data-end-time') || '12:00:00';
-            
-            const defaultPreset = dp.getAttribute('data-default-preset') || 'none';
-
-            if (startEl && storedStart && startEl.innerText !== storedStart) startEl.innerText = storedStart;
-            if (endEl && storedEnd && endEl.innerText !== storedEnd) endEl.innerText = storedEnd;
-            if (startTimeEl && storedStartTime && startTimeEl.innerText !== storedStartTime) startTimeEl.innerText = storedStartTime;
-            if (endTimeEl && storedEndTime && endTimeEl.innerText !== storedEndTime) endTimeEl.innerText = storedEndTime;
-
-            if (startEl && !startEl.innerText && defaultPreset && defaultPreset !== 'none') {
-                const today = new Date();
-                let startDt = null;
-                let endDt = today;
-                if (defaultPreset === '1D') { startDt = new Date(today); startDt.setDate(today.getDate() - 1); }
-                else if (defaultPreset === '1W') { startDt = new Date(today); startDt.setDate(today.getDate() - 7); }
-                else if (defaultPreset === '1M') { startDt = new Date(today); startDt.setMonth(today.getMonth() - 1); }
-                else if (defaultPreset === '6M') { startDt = new Date(today); startDt.setMonth(today.getMonth() - 6); }
-                if (startDt) {
-                    const s = _fmtDate(startDt);
-                    const e = endDt ? _fmtDate(endDt) : '';
-                    if (startEl.innerText !== s) startEl.innerText = s;
-                    if (endEl && endEl.innerText !== e) endEl.innerText = e;
+            } else {
+                if (startTimeEl && startTimeEl.style.display !== 'none') startTimeEl.style.display = 'none';
+                if (endTimeEl && endTimeEl.style.display !== 'none') endTimeEl.style.display = 'none';
+                if (sep) {
+                    const targetDisplay = showEndDate ? 'inline-flex' : 'none';
+                    if (sep.style.display !== targetDisplay) sep.style.display = targetDisplay;
+                }
+                if (groups && groups.length > 1) {
+                    const targetDisplay = showEndDate ? 'inline-flex' : 'none';
+                    if (groups[1].style.display !== targetDisplay) groups[1].style.display = targetDisplay;
+                }
+                if (presetsDiv) {
+                    const targetDisplay = showPresets ? 'inline-flex' : 'none';
+                    if (presetsDiv.style.display !== targetDisplay) presetsDiv.style.display = targetDisplay;
                 }
             }
 
-            dp.querySelectorAll('.v4-dp-preset-btn').forEach(btn => {
-                const isActive = btn.getAttribute('data-preset') === defaultPreset;
-                const targetBg = isActive ? '#1d4ed8' : '#ffffff';
-                const targetBc = isActive ? '#1d4ed8' : '#cccccc';
-                const targetColor = isActive ? '#ffffff' : '#0f172a';
-                const targetFw = '400';
-                if (btn.style.background !== targetBg) btn.style.background = targetBg;
-                if (btn.style.borderColor !== targetBc) btn.style.borderColor = targetBc;
-                if (btn.style.color !== targetColor) btn.style.color = targetColor;
-                if (btn.style.fontWeight !== targetFw) btn.style.fontWeight = targetFw;
-                if (btn.style.fontSize !== '12px') btn.style.fontSize = '12px';
-                if (btn.style.fontFamily !== 'inherit') btn.style.fontFamily = 'inherit';
-            });
+            const targetStart = (storedStart !== null && storedStart !== undefined) ? storedStart : '';
+            const targetEnd = (storedEnd !== null && storedEnd !== undefined) ? storedEnd : '';
+            const targetStartTime = (storedStartTime !== null && storedStartTime !== undefined) ? storedStartTime : '';
+            const targetEndTime = (storedEndTime !== null && storedEndTime !== undefined) ? storedEndTime : '';
+
+            if (startEl && startEl.innerText !== targetStart) startEl.innerText = targetStart;
+            if (endEl && endEl.innerText !== targetEnd) endEl.innerText = targetEnd;
+            if (startTimeEl && startTimeEl.innerText !== targetStartTime) startTimeEl.innerText = targetStartTime;
+            if (endTimeEl && endTimeEl.innerText !== targetEndTime) endTimeEl.innerText = targetEndTime;
+
+            if (!isDis) {
+                dp.querySelectorAll('.v4-dp-preset-btn').forEach(btn => {
+                    const isActive = btn.getAttribute('data-preset') === defaultPreset;
+                    const targetBg = isActive ? '#1d4ed8' : '#ffffff';
+                    const targetBorder = '1.6px solid ' + (isActive ? '#1d4ed8' : '#cccccc');
+                    const targetColor = isActive ? '#ffffff' : '#0f172a';
+                    const targetFw = '400';
+                    if (btn.style.background !== targetBg) btn.style.background = targetBg;
+                    if (btn.style.border !== targetBorder) btn.style.border = targetBorder;
+                    if (btn.style.color !== targetColor) btn.style.color = targetColor;
+                    if (btn.style.fontWeight !== targetFw) btn.style.fontWeight = targetFw;
+                    if (btn.style.fontSize !== '12px') btn.style.fontSize = '12px';
+                    if (btn.style.fontFamily !== 'inherit') btn.style.fontFamily = 'inherit';
+                    if (isActive) {
+                        if (!btn.classList.contains('v4-dp-preset-active')) btn.classList.add('v4-dp-preset-active');
+                    } else {
+                        if (btn.classList.contains('v4-dp-preset-active')) btn.classList.remove('v4-dp-preset-active');
+                    }
+                });
+            }
 
             if (dp.style.width !== '100%') dp.style.width = '100%';
             if (dp.style.height !== '100%') dp.style.height = '100%';
@@ -591,9 +602,9 @@ window.v4DesignSystemScript = `
             const presetsEl = dp.querySelector('.v4-dp-presets');
             let contentW = 0;
             if (fieldsEl) {
-                contentW += fieldsEl.offsetWidth || (showEndDate ? 266 : 126);
+                contentW += fieldsEl.offsetWidth || (showEndDate ? (isDetailed ? 370 : 266) : (isDetailed ? 190 : 126));
             }
-            if (showPresets && presetsEl) {
+            if (!isDetailed && showPresets && presetsEl) {
                 contentW += 8; // gap
                 contentW += presetsEl.offsetWidth || 204;
             }

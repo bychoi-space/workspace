@@ -199,6 +199,10 @@ window.v4ShortcutsScript = `
             });
         }
 
+        if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
+            try { window.SelectionAdorner.clear(); } catch(adErr) {}
+        }
+
         notifyParent({ type: 'LF_DESELECT' });
         markDirty();
         console.log("[Clipboard Debug] Cut operation complete.");
@@ -330,6 +334,36 @@ window.v4ShortcutsScript = `
                 baseTop = Math.max(15, Math.min(baseTop, 900 - groupH - 15));
             }
 
+            // Calculate base top z-index for pasted items
+            const getHostTopZ = (container) => {
+                if (typeof window.getNextTopZIndex === 'function') {
+                    return window.getNextTopZIndex(container);
+                }
+                let maxZ = 1000;
+                const comps = (container || document.body).querySelectorAll('.lf-component');
+                comps.forEach(c => {
+                    let z = parseInt(c.style.zIndex, 10);
+                    if (isNaN(z)) {
+                        const compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                        z = isNaN(compZ) ? 1000 : compZ;
+                    }
+                    if (z < 9999 && z > maxZ) maxZ = z;
+                });
+                return maxZ + 10;
+            };
+
+            const pasteHost = isResponsiveTemplate ? targetHost : document.body;
+            const baseTopZ = getHostTopZ(pasteHost);
+
+            // Extract original z-indexes to preserve relative layering inside copied group
+            const copiedZs = componentItems.map(item => {
+                const match = (item.styleCssText || '').match(/z-index\s*:\s*(\d+)/i);
+                return match ? parseInt(match[1], 10) : 1000;
+            });
+            const minCopiedZ = copiedZs.length > 0 ? Math.min(...copiedZs) : 1000;
+
+            const trailingRef = Array.from(pasteHost.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+
             componentItems.forEach((item, idx) => {
                 const v = document.createElement('div');
                 const randSuffix = Math.floor(Math.random() * 1000000) + '_' + idx;
@@ -337,6 +371,12 @@ window.v4ShortcutsScript = `
                 v.id = newId;
                 v.className = item.className + ' selected';
                 v.style.cssText = item.styleCssText;
+
+                // Rebase z-index to ensure it sits on top of all existing components while keeping relative order
+                const originalZ = copiedZs[idx] !== undefined ? copiedZs[idx] : 1000;
+                const relOffsetZ = Math.max(0, originalZ - minCopiedZ);
+                const assignedZ = baseTopZ + relOffsetZ;
+                v.style.zIndex = String(assignedZ);
 
                 const relX = (typeof item.left === 'number' ? item.left : (parseFloat(item.left) || 0)) - minLeft;
                 const relY = (typeof item.top === 'number' ? item.top : (parseFloat(item.top) || 0)) - minTop;
@@ -350,13 +390,14 @@ window.v4ShortcutsScript = `
                             v.style.width = '330px';
                         }
                     }
-                    v.style.left = posX + 'px';
-                    v.style.top = posY + 'px';
-                    targetHost.appendChild(v);
+                }
+                v.style.left = posX + 'px';
+                v.style.top = posY + 'px';
+
+                if (trailingRef && trailingRef.parentNode === pasteHost) {
+                    pasteHost.insertBefore(v, trailingRef);
                 } else {
-                    v.style.left = posX + 'px';
-                    v.style.top = posY + 'px';
-                    document.body.appendChild(v);
+                    pasteHost.appendChild(v);
                 }
 
                 v.innerHTML = item.html;
@@ -463,6 +504,14 @@ window.v4ShortcutsScript = `
             if (newSelectedIds.length > 0) {
                 const firstNewEl = document.getElementById(newSelectedIds[0]);
                 const firstStyles = (firstNewEl && typeof window._getCompStyles === 'function') ? window._getCompStyles(firstNewEl) : {};
+                if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                    try {
+                        newSelectedIds.forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) window.SelectionAdorner.update(el);
+                        });
+                    } catch(adErr) {}
+                }
                 notifyParent({
                     type: "LF_PASTE_COMPLETED",
                     ids: newSelectedIds,
@@ -582,6 +631,38 @@ window.v4ShortcutsScript = `
                 }
             }
             return;
+        }
+
+        if (e.key === 'Escape' || e.code === 'Escape') {
+            const activeElement = document.activeElement;
+            const isEditing = isInputActive(activeElement) || isInputActive(e.target);
+
+            if (isEditing) {
+                // Tier 1: User is editing text/input inline -> exit editing mode (blur)
+                e.preventDefault();
+                console.log("[VCTRL SHORTCUTS] Exiting inline text editing mode via Escape.");
+                if (activeElement && typeof activeElement.blur === 'function') {
+                    activeElement.blur();
+                }
+                return;
+            }
+
+            // Tier 2: User has object(s) selected -> deselect all objects and notify parent
+            const selected = document.querySelectorAll('.lf-component.selected');
+            if (selected.length > 0 || window.activeEl) {
+                e.preventDefault();
+                console.log("[VCTRL SHORTCUTS] Deselecting objects via Escape.");
+                selected.forEach(el => el.classList.remove('selected'));
+                window.activeEl = null;
+                if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
+                    window.ResponsiveSmartGuide.clearGuides(true);
+                }
+                if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
+                    try { window.SelectionAdorner.clear(); } catch(adErr) {}
+                }
+                notifyParent({ type: 'LF_DESELECT' });
+                return;
+            }
         }
 
         const isS = e.key === 's' || e.key === 'S' || e.code === 'KeyS';
@@ -734,6 +815,9 @@ window.v4ShortcutsScript = `
                         }
                     });
                     
+                    if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
+                        try { window.SelectionAdorner.clear(); } catch(adErr) {}
+                    }
                     notifyParent({ type: 'LF_DESELECT' });
                     markDirty();
                 }

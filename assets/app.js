@@ -721,7 +721,8 @@ async function updateScreenMetadata(project, screenFilename, data, statusCallbac
         metadata.developer = data.projectMeta.developer !== undefined ? data.projectMeta.developer : (metadata.developer || '');
         metadata.period = data.projectMeta.period || metadata.period;
         metadata.jira = data.projectMeta.jira || metadata.jira;
-        metadata.figmaUrl = data.projectMeta.figmaUrl || metadata.figmaUrl;
+        metadata.figmaUrl = data.projectMeta.figmaUrl !== undefined ? data.projectMeta.figmaUrl : (metadata.figmaUrl || '');
+        metadata.notionUrl = data.projectMeta.notionUrl !== undefined ? data.projectMeta.notionUrl : (metadata.notionUrl || '');
         metadata.pubUrl = data.projectMeta.pubUrl || metadata.pubUrl;
         metadata.themeIndex = data.projectMeta.themeIndex !== undefined ? data.projectMeta.themeIndex : metadata.themeIndex;
         metadata.updated = data.projectMeta.updated || metadata.updated;

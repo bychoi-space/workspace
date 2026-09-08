@@ -25,6 +25,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_ui_library.js",
     "c:\Users\sisun\ai_work\assets\vctrl_presentation_pen.js",
     "c:\Users\sisun\ai_work\assets\vctrl_pdf_exporter.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_design_system.js",
     "c:\Users\sisun\ai_work\viewer.html"
 )
 

@@ -131,6 +131,17 @@ window.DOM = {
     // Description
     btnAddDescription: get('btn-add-description'),
 
+    // Smart Inspector Elements
+    sidebarTabsBar: get('sidebar-tabs-bar'),
+    sidebarInspectorHeader: get('sidebar-inspector-header'),
+    tabInspector: get('tab-inspector'),
+    sidebarInspectorBody: get('sidebar-inspector-body'),
+    btnSidebarPopout: get('btn-sidebar-popout'),
+    btnSidebarCloseProps: get('btn-sidebar-close-props'),
+    btnFloatingSwap: get('btn-floating-swap'),
+    btnFloatingDock: get('btn-floating-dock'),
+    btnFloatingClose: get('btn-floating-close'),
+
     // Properties Sidebar Additions
     textPropSection: get('text-editor-section'),
     tablePropSection: get('table-inspector-section'),
@@ -204,7 +215,42 @@ window.toggleSidebar = function(side, forceOpen = null) {
 
 
 
+window._lastActiveSidebarTab = 'editor';
+
+window.setSidebarInspectorVisible = function(visible) {
+    const tabsBar = document.getElementById('sidebar-tabs-bar');
+    const header = document.getElementById('sidebar-inspector-header');
+    const inspectorPane = document.getElementById('tab-inspector');
+    const sidebarRight = document.getElementById('sidebar-right');
+    const panes = document.querySelectorAll('.tab-pane');
+
+    if (visible) {
+        if (tabsBar) tabsBar.style.display = 'none';
+        if (header) header.style.display = 'flex';
+        panes.forEach(pane => {
+            if (pane.id !== 'tab-inspector') {
+                pane.style.setProperty('display', 'none', 'important');
+            }
+        });
+        if (inspectorPane) inspectorPane.style.setProperty('display', 'flex', 'important');
+    } else {
+        if (tabsBar) tabsBar.style.display = 'flex';
+        if (header) header.style.display = 'none';
+        if (inspectorPane) inspectorPane.style.setProperty('display', 'none', 'important');
+
+        const lastTab = window._lastActiveSidebarTab || 'editor';
+        const activePane = document.getElementById(`tab-${lastTab}`);
+        if (activePane) activePane.style.setProperty('display', 'flex', 'important');
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === lastTab));
+    }
+};
+
 window.switchSidebarTab = function(tabName) {
+    window._lastActiveSidebarTab = tabName;
+    if (typeof window.setSidebarInspectorVisible === 'function') {
+        window.setSidebarInspectorVisible(false);
+    }
     const targetPane = document.getElementById(`tab-${tabName}`);
     const sidebarRight = document.getElementById('sidebar-right');
     const isSidebarOpen = sidebarRight && !sidebarRight.classList.contains('collapsed');
@@ -242,15 +288,12 @@ window.switchSidebarTab = function(tabName) {
 // --- 3. UI Rendering Functions ---
 window.updateProperties = function(compStyles) {
     const activeEl = document.activeElement;
-    const isTypingInInspector = activeEl && (
+    const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+    const isTypingInInspector = !isBtn && activeEl && (
         activeEl.tagName === 'INPUT' ||
         activeEl.tagName === 'TEXTAREA' ||
         activeEl.tagName === 'SELECT' ||
         activeEl.isContentEditable ||
-        activeEl.closest('#floating-inspector-card') !== null ||
-        activeEl.closest('#sidebar-right') !== null ||
-        activeEl.closest('#tab-editor') !== null ||
-        activeEl.closest('#v4-shapes-body') !== null ||
         activeEl.classList.contains('v4-prop-input') ||
         activeEl.classList.contains('admin-col-label-input') ||
         activeEl.classList.contains('grid-col-name-input') ||
@@ -268,6 +311,24 @@ window.updateProperties = function(compStyles) {
 // Project Metadata UI Manager Namespace
 const ProjectMetadataManager = {
     renderBar(pm) {
+        let linksHtml = '';
+        if (pm.figmaUrl && pm.figmaUrl.trim()) {
+            linksHtml += `
+                <a href="${pm.figmaUrl}" target="_blank" rel="noopener noreferrer" class="v4-meta-chip meta-chip-link meta-chip-figma" title="Figma 바로가기 (새 창)">
+                    <span class="material-icons-outlined" style="font-size:13px; line-height:1;">brush</span>
+                    <span>Figma</span>
+                </a>`;
+        }
+        if (pm.notionUrl && pm.notionUrl.trim()) {
+            linksHtml += `
+                <a href="${pm.notionUrl}" target="_blank" rel="noopener noreferrer" class="v4-meta-chip meta-chip-link meta-chip-notion" title="Notion 바로가기 (새 창)">
+                    <svg class="meta-chip-svg" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="flex-shrink:0;">
+                        <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.373-.747.934zm14.337.747.093 10.92-2.147.14-.093-7.56-3.267 7.7-1.727.093-3.174-7.514v7.7l-2.007.14V7.942l2.613-.187 3.5 7.98 3.314-7.887z"/>
+                    </svg>
+                    <span>Notion</span>
+                </a>`;
+        }
+
         DOM.metadataPanel.innerHTML = `
             <div class="v4-meta-horizontal">
                 <input type="hidden" id="viewer-meta-title" value="${pm.title || ''}">
@@ -286,6 +347,7 @@ const ProjectMetadataManager = {
                     <span class="meta-chip-divider"></span>
                     <input type="text" id="viewer-meta-period" class="meta-chip-input" value="${pm.period || ''}" placeholder="사업 기간" autocomplete="off">
                 </div>
+                ${linksHtml}
             </div>
         `;
         this.bindEvents();
@@ -317,40 +379,48 @@ const ProjectMetadataManager = {
     // 2. Update Sidebar Panels based on selected component
     const hasSelection = (window.state && window.state.selectedIds && window.state.selectedIds.length > 0);
     if (compStyles || hasSelection) {
+        if (compStyles) state.selectedComponentStyles = compStyles;
 
+        if (!state.inspectorMode) {
+            try { state.inspectorMode = localStorage.getItem('lf_inspector_mode') || 'docked'; } catch (_) { state.inspectorMode = 'docked'; }
+        }
+        if (!state.floatingSide) {
+            try { state.floatingSide = localStorage.getItem('lf_inspector_floating_side') || 'right'; } catch (_) { state.floatingSide = 'right'; }
+        }
+
+        const isDocked = (state.inspectorMode === 'docked');
         const floatingInspector = document.getElementById('floating-inspector-card');
-        if (floatingInspector) {
-            floatingInspector.style.setProperty('display', 'flex', 'important');
-            floatingInspector.style.bottom = '24px';
-            floatingInspector.style.top = 'auto';
 
-            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-            const lastActiveFrame = iframeDoc?.defaultView?.lastActiveFrame;
-            const selectedComp = state.selectedComponent;
-            const compEl = (selectedComp && typeof selectedComp.closest === 'function')
-                ? selectedComp
-                : (iframeDoc?.getElementById(selectedComp?.id || state.editingIndex || window.activeCompId));
-            const isInsideMobile = (compEl && typeof compEl.closest === 'function' && compEl.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner')) || (compStyles && compStyles.frame === 'mobile') || lastActiveFrame === 'mobile';
-
-            let compCenter = (compStyles && typeof compStyles.x === 'number') ? compStyles.x + ((compStyles.w || 200) / 2) : 0;
-            if (isInsideMobile) {
-                compCenter += 1048; // Mobile frame is positioned at X >= 1048px on the right
+        if (isDocked) {
+            window.toggleSidebar('right', true);
+            window.setSidebarInspectorVisible(true);
+            if (floatingInspector) {
+                floatingInspector.style.setProperty('display', 'none', 'important');
             }
+        } else {
+            window.setSidebarInspectorVisible(false);
+            if (floatingInspector) {
+                floatingInspector.style.setProperty('display', 'flex', 'important');
+                floatingInspector.style.bottom = '24px';
+                floatingInspector.style.top = 'auto';
 
-            if (isInsideMobile || compCenter >= 720) {
-                floatingInspector.style.left = '24px';
-                floatingInspector.style.right = 'auto';
-            } else {
-                floatingInspector.style.right = '24px';
-                floatingInspector.style.left = 'auto';
+                const side = state.floatingSide || 'right';
+                if (side === 'left') {
+                    floatingInspector.style.left = '24px';
+                    floatingInspector.style.right = 'auto';
+                } else {
+                    floatingInspector.style.right = '24px';
+                    floatingInspector.style.left = 'auto';
+                }
             }
         }
 
         // Hide all sections first & return active sections to storage
         window.restorePropertiesSections();
         const activeEl = document.activeElement;
-        const isTypingInAdminProps = activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number' || activeEl.id === 'prop-admin-action-bar-enable' || activeEl.id === 'prop-admin-action-align');
-        const isTyping = activeEl && (
+        const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+        const isTypingInAdminProps = !isBtn && activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
+        const isTyping = !isBtn && activeEl && (
             activeEl.tagName === 'INPUT' || 
             activeEl.tagName === 'TEXTAREA' || 
             activeEl.isContentEditable || 
@@ -510,7 +580,8 @@ const ProjectMetadataManager = {
                 if (DOM.adminSettingsPropSection) DOM.adminSettingsPropSection.style.display = 'block';
                 // Focus guard: Do not rebuild the inputs if the user is actively typing in one of them
                 const activeEl = document.activeElement;
-                const isTypingInAdminProps = activeEl && (activeEl.closest('#admin-settings-inspector-section') || activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number' || activeEl.id === 'prop-admin-action-bar-enable' || activeEl.id === 'prop-admin-action-align');
+                const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+                const isTypingInAdminProps = !isBtn && activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
                 if (!isTypingInAdminProps) {
                     _syncAdminSettingsProps(compStyles);
                 }
@@ -860,13 +931,16 @@ const ProjectMetadataManager = {
             }, 50);
         }
 
-        // Dynamically move active panels into floating inspector card body
-        const floatingBody = document.getElementById('floating-inspector-body');
-        if (floatingBody) {
+        // Dynamically move active panels into target inspector body (Docked or Floating)
+        const targetBody = isDocked 
+            ? document.getElementById('sidebar-inspector-body') 
+            : document.getElementById('floating-inspector-body');
+
+        if (targetBody) {
             const selectionBar = document.getElementById('selection-actions-bar');
             if (selectionBar) {
-                if (selectionBar.parentElement !== floatingBody) {
-                    floatingBody.insertBefore(selectionBar, floatingBody.firstChild);
+                if (selectionBar.parentElement !== targetBody) {
+                    targetBody.insertBefore(selectionBar, targetBody.firstChild);
                 }
                 selectionBar.style.setProperty('display', 'flex', 'important');
             }
@@ -881,7 +955,7 @@ const ProjectMetadataManager = {
             sections.forEach(sec => {
                 if (sec && sec.style.display === 'block') {
                     if (sec instanceof Node) {
-                        floatingBody.appendChild(sec);
+                        targetBody.appendChild(sec);
                     } else {
                         console.warn("[VCTRL INSPECTOR] Skipped appendChild: sec is not a valid DOM Node", sec);
                     }
@@ -893,6 +967,9 @@ const ProjectMetadataManager = {
         }
     } else {
         window.restorePropertiesSections();
+        if (typeof window.setSidebarInspectorVisible === 'function') {
+            window.setSidebarInspectorVisible(false);
+        }
         const floatingInspector = document.getElementById('floating-inspector-card');
         if (floatingInspector) {
             floatingInspector.style.setProperty('display', 'none', 'important');
@@ -1398,7 +1475,7 @@ function _syncDatePickerProps(comp) {
 
     if (timeWrapper) timeWrapper.style.display = mode === 'detailed' ? 'block' : 'none';
     if (presetsToggleWrapper) presetsToggleWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
-    if (showEndToggleWrapper) showEndToggleWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
+    if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
     if (defaultPresetWrapper) defaultPresetWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
 
     // Sync presets show/hide toggle
@@ -1427,10 +1504,10 @@ function _syncDatePickerProps(comp) {
     const startInput = document.getElementById('prop-dp-start-date');
     const endInput = document.getElementById('prop-dp-end-date');
     if (startInput && comp.dpStartDate !== undefined) {
-        if (document.activeElement !== startInput) startInput.value = comp.dpStartDate;
+        if (document.activeElement !== startInput) startInput.value = comp.dpStartDate || '';
     }
     if (endInput && comp.dpEndDate !== undefined) {
-        if (document.activeElement !== endInput) endInput.value = comp.dpEndDate;
+        if (document.activeElement !== endInput) endInput.value = comp.dpEndDate || '';
     }
 
     // Sync time inputs
@@ -2863,9 +2940,15 @@ if (DOM.btnCancelEdit) {
     };
 }
 
-// Floating Inspector Card Minimize/Maximize Toggle
+// Floating & Sidebar Inspector Card Controls
 const btnFloatingMinimize = document.getElementById('btn-floating-minimize');
+const btnFloatingSwap = document.getElementById('btn-floating-swap');
+const btnFloatingDock = document.getElementById('btn-floating-dock');
+const btnFloatingClose = document.getElementById('btn-floating-close');
+const btnSidebarPopout = document.getElementById('btn-sidebar-popout');
+const btnSidebarCloseProps = document.getElementById('btn-sidebar-close-props');
 const floatingInspectorCard = document.getElementById('floating-inspector-card');
+
 if (floatingInspectorCard) {
     // Isolate wheel scrolling on object properties panel to prevent canvas dragging/panning
     floatingInspectorCard.addEventListener('wheel', (e) => {
@@ -2883,6 +2966,123 @@ if (floatingInspectorCard) {
             btnFloatingMinimize.title = isMin ? '펼치기' : '최소화';
         };
     }
+
+    if (btnFloatingSwap) {
+        btnFloatingSwap.onclick = (e) => {
+            e.stopPropagation();
+            const currentSide = state.floatingSide || 'right';
+            const nextSide = (currentSide === 'right') ? 'left' : 'right';
+            state.floatingSide = nextSide;
+            try { localStorage.setItem('lf_inspector_floating_side', nextSide); } catch (_) {}
+            if (nextSide === 'left') {
+                floatingInspectorCard.style.left = '24px';
+                floatingInspectorCard.style.right = 'auto';
+            } else {
+                floatingInspectorCard.style.right = '24px';
+                floatingInspectorCard.style.left = 'auto';
+            }
+        };
+    }
+
+    if (btnFloatingDock) {
+        btnFloatingDock.onclick = (e) => {
+            e.stopPropagation();
+            state.inspectorMode = 'docked';
+            try { localStorage.setItem('lf_inspector_mode', 'docked'); } catch (_) {}
+            window.restorePropertiesSections();
+            floatingInspectorCard.style.setProperty('display', 'none', 'important');
+            if (typeof window.updateProperties === 'function') {
+                window.updateProperties(state.selectedComponentStyles || null);
+            }
+        };
+    }
+}
+
+if (btnSidebarPopout) {
+    btnSidebarPopout.onclick = (e) => {
+        e.stopPropagation();
+        state.inspectorMode = 'floating';
+        try { localStorage.setItem('lf_inspector_mode', 'floating'); } catch (_) {}
+        window.restorePropertiesSections();
+        if (typeof window.setSidebarInspectorVisible === 'function') {
+            window.setSidebarInspectorVisible(false);
+        }
+        if (typeof window.updateProperties === 'function') {
+            window.updateProperties(state.selectedComponentStyles || null);
+        }
+    };
+}
+
+// Central Single Source of Truth for Deselection (Object & Inspector)
+window.deselectAll = function() {
+    // 1. Restore dynamically mounted properties sections to storage container
+    if (typeof window.restorePropertiesSections === 'function') {
+        window.restorePropertiesSections();
+    }
+    // 2. Hide sidebar inspector header & return to Library tab
+    if (typeof window.setSidebarInspectorVisible === 'function') {
+        window.setSidebarInspectorVisible(false);
+    }
+    if (typeof window.switchSidebarTab === 'function') {
+        window.switchSidebarTab('editor');
+    }
+    // 3. Hide floating inspector card if displayed
+    const floatingCard = document.getElementById('floating-inspector-card');
+    if (floatingCard) {
+        floatingCard.style.setProperty('display', 'none', 'important');
+    }
+    // 4. Clear grouping manager selection
+    if (window.GroupingManager) {
+        if (typeof window.GroupingManager.setSelectedIds === 'function') {
+            window.GroupingManager.setSelectedIds([]);
+        }
+        if (typeof window.GroupingManager.updateSelectionUI === 'function') {
+            try { window.GroupingManager.updateSelectionUI(); } catch (_) {}
+        }
+    }
+    // 5. Clear connectors selection
+    if (window.ConnectorEngine && typeof window.ConnectorEngine.clearSelection === 'function') {
+        try { window.ConnectorEngine.clearSelection(); } catch (_) {}
+    }
+    // 6. Clear global state
+    if (window.state) {
+        window.state.selectedIds = [];
+        window.state.isEditing = false;
+        window.state.editingIndex = -1;
+        window.state.selectedComponent = null;
+        window.state.selectedComponentStyles = null;
+    }
+    // 7. Update properties panel to empty/null
+    if (typeof window.updateProperties === 'function') {
+        window.updateProperties(null);
+    }
+    // 8. Clear SmartGuides
+    if (window.SmartGuide && typeof window.SmartGuide.clearGuides === 'function') {
+        window.SmartGuide.clearGuides(true);
+    }
+    // 9. Dispatch LF_DESELECT to parent MessageHub subscribers
+    if (window.MessageHub) {
+        window.MessageHub.send(window, 'LF_DESELECT');
+    }
+    // 10. Notify iframe to clear canvas selection and handles
+    const iframe = document.getElementById('main-iframe') || (window.DOM && window.DOM.iframe);
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'LF_DESELECT' }, '*');
+    }
+};
+
+if (btnSidebarCloseProps) {
+    btnSidebarCloseProps.onclick = (e) => {
+        e.stopPropagation();
+        window.deselectAll();
+    };
+}
+
+if (btnFloatingClose) {
+    btnFloatingClose.onclick = (e) => {
+        e.stopPropagation();
+        window.deselectAll();
+    };
 }
 
 // Revision History Rendering & Event Binding
@@ -3247,7 +3447,7 @@ if (window.MessageHub) {
     });
 }
 
-function _syncAdminSettingsProps(comp) {
+function _syncAdminSettingsProps(comp, forceRebuild = false) {
     const rowCountText = document.getElementById('txt-admin-row-count');
     if (rowCountText && comp.adminRowCount !== undefined) {
         rowCountText.innerText = comp.adminRowCount;
@@ -3334,7 +3534,13 @@ function _syncAdminSettingsProps(comp) {
     const container = document.getElementById('admin-rows-configuration-container');
     if (!container) return;
     const activeEl = document.activeElement;
-    const isTypingInAdminContainer = activeEl && (container.contains(activeEl) || activeEl.closest('#admin-settings-inspector-section'));
+    const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+    const isTypingInAdminContainer = !forceRebuild && !isBtn && activeEl && (
+        activeEl.classList.contains('admin-col-label-input') || 
+        activeEl.classList.contains('admin-row-height-input') || 
+        activeEl.id === 'prop-admin-group-header-title' || 
+        activeEl.id === 'prop-admin-label-width-number'
+    );
     if (isTypingInAdminContainer) return;
     container.innerHTML = '';
 
@@ -3400,7 +3606,7 @@ function _syncAdminSettingsProps(comp) {
             if (activeEl) {
                 const containerEl = activeEl.querySelector('.v4-admin-settings-container') || activeEl;
                 containerEl.setAttribute('data-row-count', newRowCount);
-                for (let r = 1; r <= 10; r++) {
+                for (let r = 1; r <= 20; r++) {
                     if (r <= newRowCount) {
                         const rowData = rowsArray[r - 1];
                         containerEl.setAttribute(`data-row${r}-label`, rowData.label);
@@ -3436,7 +3642,7 @@ function _syncAdminSettingsProps(comp) {
             adminShowActionBar: comp.adminShowActionBar,
             adminActionAlign: comp.adminActionAlign
         };
-        for (let r = 1; r <= 10; r++) {
+        for (let r = 1; r <= 20; r++) {
             if (r <= newRowCount) {
                 syncData[`adminRow${r}Label`] = rowsArray[r - 1].label;
                 syncData[`adminRow${r}Cols`] = rowsArray[r - 1].cols;
@@ -3445,8 +3651,12 @@ function _syncAdminSettingsProps(comp) {
             }
         }
 
-        // 4. Re-sync inspector UI
-        _syncAdminSettingsProps(syncData);
+        if (window.state && window.state.selectedComponentStyles) {
+            Object.assign(window.state.selectedComponentStyles, syncData);
+        }
+
+        // 4. Re-sync inspector UI with forceRebuild = true
+        _syncAdminSettingsProps(syncData, true);
     };
 
     for (let i = 1; i <= rowCount; i++) {
@@ -3600,7 +3810,7 @@ function _syncAdminSettingsProps(comp) {
             const iframe = document.getElementById('main-iframe');
             if (iframe && iframe.contentWindow && window.MessageHub) {
                 const currentCount = parseInt(rowCountText.innerText) || 1;
-                if (currentCount < 10) {
+                if (currentCount < 20) {
                     const newCount = currentCount + 1;
                     window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
                         rowCount: newCount
@@ -3630,13 +3840,16 @@ function _syncAdminSettingsProps(comp) {
                                 adminShowActionBar: comp.adminShowActionBar,
                                 adminActionAlign: comp.adminActionAlign
                             };
-                            for (let r = 1; r <= 10; r++) {
+                            for (let r = 1; r <= 20; r++) {
                                 syncData[`adminRow${r}Label`] = containerEl.getAttribute(`data-row${r}-label`) || '';
                                 syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
                                 syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
                                 syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
                             }
-                            _syncAdminSettingsProps(syncData);
+                            if (window.state && window.state.selectedComponentStyles) {
+                                Object.assign(window.state.selectedComponentStyles, syncData);
+                            }
+                            _syncAdminSettingsProps(syncData, true);
                         }
                     }
                 }
@@ -3672,13 +3885,16 @@ function _syncAdminSettingsProps(comp) {
                                 adminShowActionBar: comp.adminShowActionBar,
                                 adminActionAlign: comp.adminActionAlign
                             };
-                            for (let r = 1; r <= 10; r++) {
+                            for (let r = 1; r <= 20; r++) {
                                 syncData[`adminRow${r}Label`] = containerEl.getAttribute(`data-row${r}-label`) || '';
                                 syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
                                 syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
                                 syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
                             }
-                            _syncAdminSettingsProps(syncData);
+                            if (window.state && window.state.selectedComponentStyles) {
+                                Object.assign(window.state.selectedComponentStyles, syncData);
+                            }
+                            _syncAdminSettingsProps(syncData, true);
                         }
                     }
                 }

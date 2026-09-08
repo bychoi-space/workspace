@@ -15,8 +15,8 @@ window.v4ResponsiveSmartGuideScript = `
 (function() {
     console.log("%c [SMART GUIDE 2.0] Figma Raycast Engine Active ", "background: #ec4899; color: #ffffff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
-    const MAX_WALL_DIST = 350; // Maximum distance to display outer frame walls
-    const MAX_NEIGHBOR_DIST = 250; // Maximum distance for sibling components
+    const MAX_WALL_DIST = 600; // Maximum distance to display outer frame walls
+    const MAX_NEIGHBOR_DIST = 600; // Maximum distance for sibling components
 
     const ResponsiveSmartGuide = {
         clearTimer: null,
@@ -30,21 +30,30 @@ window.v4ResponsiveSmartGuideScript = `
             this.lastActiveId = null;
         },
 
-        getPureOffset: function(el) {
-            let l = 0, t = 0;
-            let curr = el;
-            while (curr && !curr.classList.contains('pc-content-area') && !curr.classList.contains('pc-content-inner') && !curr.classList.contains('mobile-content') && !curr.classList.contains('mobile-content-area') && !curr.classList.contains('mobile-content-inner') && curr !== document.body) {
-                if (curr.style) {
-                    const sl = parseFloat(curr.style.left);
-                    const st = parseFloat(curr.style.top);
-                    if (!isNaN(sl)) l += sl;
-                    else if (curr.offsetLeft) l += curr.offsetLeft;
-                    if (!isNaN(st)) t += st;
-                    else if (curr.offsetTop) t += curr.offsetTop;
-                }
-                curr = curr.parentElement;
+        getPureOffset: function(el, container) {
+            if (!el) return { left: 0, top: 0, width: 0, height: 0 };
+            if (!container) {
+                const ctx = this.getContainerContext(el);
+                container = ctx ? ctx.inner : null;
             }
-            return { left: l, top: t };
+            if (container && typeof container.getBoundingClientRect === 'function' && typeof el.getBoundingClientRect === 'function') {
+                const cRect = container.getBoundingClientRect();
+                const eRect = el.getBoundingClientRect();
+                const scale = (cRect.width > 0 && container.offsetWidth > 0) ? (cRect.width / container.offsetWidth) : 1;
+                return {
+                    left: Math.round(((eRect.left - cRect.left) / scale) + (container.scrollLeft || 0)),
+                    top: Math.round(((eRect.top - cRect.top) / scale) + (container.scrollTop || 0)),
+                    width: Math.round(eRect.width / scale),
+                    height: Math.round(eRect.height / scale)
+                };
+            }
+            let l = parseFloat(el.style && el.style.left);
+            if (isNaN(l)) l = el.offsetLeft || 0;
+            let t = parseFloat(el.style && el.style.top);
+            if (isNaN(t)) t = el.offsetTop || 0;
+            let w = el.offsetWidth || parseFloat(el.style && el.style.width) || 100;
+            let h = el.offsetHeight || parseFloat(el.style && el.style.height) || 40;
+            return { left: l, top: t, width: w, height: h };
         },
 
         isResponsive: function() {
@@ -146,17 +155,18 @@ window.v4ResponsiveSmartGuideScript = `
             // Scope query to the active frame/column or root body so that all elements in the column are included
             const columnSelector = context.type === 'pc' ? '.pc-column, .pc-browser-frame' : '.mobile-column, .mobile-browser-frame';
             const rootScope = context.inner.closest(columnSelector) || context.area || context.inner.parentElement || document.body;
-            const components = rootScope.querySelectorAll('.lf-component');
+            const components = rootScope.querySelectorAll('.lf-component, .v4-admin-label-cell');
 
             components.forEach((c, idx) => {
                 if (c === activeEl || c.classList.contains('dragging-now')) return;
                 if (activeEl && (activeEl.contains(c) || c.contains(activeEl))) return;
 
-                const pos = this.getPureOffset(c);
+                const pos = this.getPureOffset(c, context.inner);
                 const l = pos.left;
                 const t = pos.top;
-                const w = c.offsetWidth || parseFloat(c.style.width) || 100;
-                const h = c.offsetHeight || parseFloat(c.style.height) || 40;
+                const w = pos.width || c.offsetWidth || parseFloat(c.style.width) || 100;
+                const h = pos.height || c.offsetHeight || parseFloat(c.style.height) || 40;
+                if (w < 10 || h < 10) return;
                 const name = c.id ? c.id.replace('v4-comp-', 'Comp ') : ('Item ' + (idx + 1));
 
                 this.spacingTargets.push({
@@ -251,34 +261,26 @@ window.v4ResponsiveSmartGuideScript = `
             const distBottomToWall = Math.max(0, Math.round(container.bottom - active.bottom));
 
             const maxWallThresh = container.isFrame ? MAX_WALL_DIST : Infinity;
+            const minPadding = container.isFrame ? 1 : 3;
 
-            let leftMatch = (distLeftToWall <= maxWallThresh) ? { target: container, dist: distLeftToWall, isInner: true } : null;
-            let rightMatch = (distRightToWall <= maxWallThresh) ? { target: container, dist: distRightToWall, isInner: true } : null;
-            let topMatch = (distTopToWall <= maxWallThresh) ? { target: container, dist: distTopToWall, isInner: true } : null;
-            let bottomMatch = (distBottomToWall <= maxWallThresh) ? { target: container, dist: distBottomToWall, isInner: true } : null;
+            let leftMatch = (distLeftToWall >= minPadding && distLeftToWall <= maxWallThresh) ? { target: container, dist: distLeftToWall, isInner: true } : null;
+            let rightMatch = (distRightToWall >= minPadding && distRightToWall <= maxWallThresh) ? { target: container, dist: distRightToWall, isInner: true } : null;
+            let topMatch = (distTopToWall >= minPadding && distTopToWall <= maxWallThresh) ? { target: container, dist: distTopToWall, isInner: true } : null;
+            let bottomMatch = (distBottomToWall >= minPadding && distBottomToWall <= maxWallThresh) ? { target: container, dist: distBottomToWall, isInner: true } : null;
 
-            // 3. Sibling Raycast: If an adjacent sibling intercepts the ray closer than the wall, hit the sibling!
-            const overlapBuffer = 12;
+            // 3. Sibling Raycast: Search ALL nearest siblings without container isolation lock!
+            // Strict Y overlap for horizontal (same row only), and moderate X overlap for vertical (facing columns)
+            const overlapBufferY = 16;
+            const overlapBufferX = 24;
 
             for (let i = 0; i < this.spacingTargets.length; i++) {
                 const t = this.spacingTargets[i];
                 if (activeId && t.id === activeId) continue;
                 if (t.id === container.id) continue;
 
-                // When inside a component container, only consider siblings inside the container
-                if (!container.isFrame) {
-                    const tCenterX = t.left + t.width / 2;
-                    const tCenterY = t.top + t.height / 2;
-                    const isInside = (
-                        tCenterX >= container.left - 6 && tCenterX <= container.right + 6 &&
-                        tCenterY >= container.top - 6 && tCenterY <= container.bottom + 6
-                    );
-                    if (!isInside) continue;
-                }
-
                 // Leftward Raycast (t is on the left of active)
-                if (t.right <= active.left + 1) {
-                    const hasOverlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                if (t.right <= active.left + 4) {
+                    const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(active.left - t.right));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -290,8 +292,8 @@ window.v4ResponsiveSmartGuideScript = `
                 }
 
                 // Rightward Raycast (t is on the right of active)
-                if (t.left >= active.right - 1) {
-                    const hasOverlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                if (t.left >= active.right - 4) {
+                    const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(t.left - active.right));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -303,8 +305,8 @@ window.v4ResponsiveSmartGuideScript = `
                 }
 
                 // Upward Raycast (t is above active)
-                if (t.bottom <= active.top + 1) {
-                    const hasOverlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                if (t.bottom <= active.top + 4) {
+                    const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
                     if (hasOverlapX) {
                         const dist = Math.max(0, Math.round(active.top - t.bottom));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -316,8 +318,8 @@ window.v4ResponsiveSmartGuideScript = `
                 }
 
                 // Downward Raycast (t is below active)
-                if (t.top >= active.bottom - 1) {
-                    const hasOverlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                if (t.top >= active.bottom - 4) {
+                    const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
                     if (hasOverlapX) {
                         const dist = Math.max(0, Math.round(t.top - active.bottom));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -329,11 +331,23 @@ window.v4ResponsiveSmartGuideScript = `
                 }
             }
 
+            // 4. Equal Spacing Detection (Figma Style)
+            let isEqualH = false;
+            if (leftMatch && rightMatch && !leftMatch.isInner && !rightMatch.isInner) {
+                if (Math.abs(leftMatch.dist - rightMatch.dist) <= 1) isEqualH = true;
+            }
+            let isEqualV = false;
+            if (topMatch && bottomMatch && !topMatch.isInner && !bottomMatch.isInner) {
+                if (Math.abs(topMatch.dist - bottomMatch.dist) <= 1) isEqualV = true;
+            }
+
             return {
                 leftMatch: leftMatch,
                 rightMatch: rightMatch,
                 topMatch: topMatch,
                 bottomMatch: bottomMatch,
+                isEqualH: isEqualH,
+                isEqualV: isEqualV,
                 active: active,
                 containerWidth: containerWidth,
                 containerHeight: containerHeight
@@ -380,14 +394,16 @@ window.v4ResponsiveSmartGuideScript = `
             const active = spacing.active;
             const cWidth = spacing.containerWidth || 1160;
             const cHeight = spacing.containerHeight || 810;
-            const lineCol = badgeBg;
             const textCol = '#ffffff';
+
+            const hBadgeCol = spacing.isEqualH ? '#8b5cf6' : badgeBg;
+            const vBadgeCol = spacing.isEqualV ? '#8b5cf6' : badgeBg;
 
             const drawH = function(match, side) {
                 if (!match) return;
                 const target = match.target;
                 const dist = match.dist;
-                if (dist <= 0) return;
+                if (dist < 0) return;
 
                 const isInner = !!match.isInner;
                 let x1, x2;
@@ -399,22 +415,34 @@ window.v4ResponsiveSmartGuideScript = `
                     x2 = (side === 'left') ? active.left : target.left;
                 }
 
+                // Calculate Y position at the center of vertical overlap between active and target
                 let y = active.centerY;
                 if (!target.isFrame) {
-                    if (y < target.top + 6) y = target.top + 6;
-                    if (y > target.bottom - 6) y = target.bottom - 6;
+                    const overlapTop = Math.max(active.top, target.top);
+                    const overlapBottom = Math.min(active.bottom, target.bottom);
+                    if (overlapTop < overlapBottom) {
+                        y = (overlapTop + overlapBottom) / 2;
+                    }
                 }
 
                 // Clamping y within canvas bounds
                 y = Math.max(10, Math.min(cHeight - 10, y));
 
-                // Main measurement line
-                htmlList.push('<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '" stroke="' + lineCol + '" stroke-width="1.2" />');
-                // T-ticks at both ends
-                htmlList.push('<line x1="' + x1 + '" y1="' + (y - 4) + '" x2="' + x1 + '" y2="' + (y + 4) + '" stroke="' + lineCol + '" stroke-width="1.2" />');
-                htmlList.push('<line x1="' + x2 + '" y1="' + (y - 4) + '" x2="' + x2 + '" y2="' + (y + 4) + '" stroke="' + lineCol + '" stroke-width="1.2" />');
+                const currentLineCol = hBadgeCol;
 
-                let cx = (x1 + x2) / 2;
+                if (dist === 0) {
+                    // Contact boundary line: draw at the contact edge
+                    const contactX = (side === 'left') ? active.left : active.right;
+                    htmlList.push('<line x1="' + contactX + '" y1="' + (y - 10) + '" x2="' + contactX + '" y2="' + (y + 10) + '" stroke="' + currentLineCol + '" stroke-width="1.8" />');
+                } else {
+                    // Main measurement line
+                    htmlList.push('<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '" stroke="' + currentLineCol + '" stroke-width="1.2" />');
+                    // T-ticks at both ends
+                    htmlList.push('<line x1="' + x1 + '" y1="' + (y - 4) + '" x2="' + x1 + '" y2="' + (y + 4) + '" stroke="' + currentLineCol + '" stroke-width="1.2" />');
+                    htmlList.push('<line x1="' + x2 + '" y1="' + (y - 4) + '" x2="' + x2 + '" y2="' + (y + 4) + '" stroke="' + currentLineCol + '" stroke-width="1.2" />');
+                }
+
+                let cx = (dist === 0) ? ((side === 'left') ? active.left : active.right) : ((x1 + x2) / 2);
                 const label = String(dist);
                 const textWidth = Math.max(22, label.length * 7 + 10);
                 // Clamp badge inside visible canvas horizontally
@@ -422,7 +450,7 @@ window.v4ResponsiveSmartGuideScript = `
 
                 htmlList.push(
                     '<g>' +
-                    '<rect x="' + (cx - textWidth / 2) + '" y="' + (y - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + badgeBg + '" />' +
+                    '<rect x="' + (cx - textWidth / 2) + '" y="' + (y - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + currentLineCol + '" />' +
                     '<text x="' + cx + '" y="' + (y + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
                     '</g>'
                 );
@@ -432,7 +460,7 @@ window.v4ResponsiveSmartGuideScript = `
                 if (!match) return;
                 const target = match.target;
                 const dist = match.dist;
-                if (dist <= 0) return;
+                if (dist < 0) return;
 
                 const isInner = !!match.isInner;
                 let y1, y2;
@@ -444,22 +472,34 @@ window.v4ResponsiveSmartGuideScript = `
                     y2 = (side === 'top') ? active.top : target.top;
                 }
 
+                // Calculate X position at the center of horizontal overlap between active and target
                 let x = active.centerX;
                 if (!target.isFrame) {
-                    if (x < target.left + 6) x = target.left + 6;
-                    if (x > target.right - 6) x = target.right - 6;
+                    const overlapLeft = Math.max(active.left, target.left);
+                    const overlapRight = Math.min(active.right, target.right);
+                    if (overlapLeft < overlapRight) {
+                        x = (overlapLeft + overlapRight) / 2;
+                    }
                 }
 
                 // Clamping x within canvas bounds
                 x = Math.max(16, Math.min(cWidth - 16, x));
 
-                // Main measurement line
-                htmlList.push('<line x1="' + x + '" y1="' + y1 + '" x2="' + x + '" y2="' + y2 + '" stroke="' + lineCol + '" stroke-width="1.2" />');
-                // T-ticks at both ends
-                htmlList.push('<line x1="' + (x - 4) + '" y1="' + y1 + '" x2="' + (x + 4) + '" y2="' + y1 + '" stroke="' + lineCol + '" stroke-width="1.2" />');
-                htmlList.push('<line x1="' + (x - 4) + '" y1="' + y2 + '" x2="' + (x + 4) + '" y2="' + y2 + '" stroke="' + lineCol + '" stroke-width="1.2" />');
+                const currentLineCol = vBadgeCol;
 
-                let cy = (y1 + y2) / 2;
+                if (dist === 0) {
+                    // Contact boundary line: draw at the contact edge
+                    const contactY = (side === 'top') ? active.top : active.bottom;
+                    htmlList.push('<line x1="' + (x - 10) + '" y1="' + contactY + '" x2="' + (x + 10) + '" y2="' + contactY + '" stroke="' + currentLineCol + '" stroke-width="1.8" />');
+                } else {
+                    // Main measurement line
+                    htmlList.push('<line x1="' + x + '" y1="' + y1 + '" x2="' + x + '" y2="' + y2 + '" stroke="' + currentLineCol + '" stroke-width="1.2" />');
+                    // T-ticks at both ends
+                    htmlList.push('<line x1="' + (x - 4) + '" y1="' + y1 + '" x2="' + (x + 4) + '" y2="' + y1 + '" stroke="' + currentLineCol + '" stroke-width="1.2" />');
+                    htmlList.push('<line x1="' + (x - 4) + '" y1="' + y2 + '" x2="' + (x + 4) + '" y2="' + y2 + '" stroke="' + currentLineCol + '" stroke-width="1.2" />');
+                }
+
+                let cy = (dist === 0) ? ((side === 'top') ? active.top : active.bottom) : ((y1 + y2) / 2);
                 const label = String(dist);
                 const textWidth = Math.max(22, label.length * 7 + 10);
 
@@ -468,7 +508,7 @@ window.v4ResponsiveSmartGuideScript = `
 
                 htmlList.push(
                     '<g>' +
-                    '<rect x="' + (x - textWidth / 2) + '" y="' + (cy - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + badgeBg + '" />' +
+                    '<rect x="' + (x - textWidth / 2) + '" y="' + (cy - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + currentLineCol + '" />' +
                     '<text x="' + x + '" y="' + (cy + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
                     '</g>'
                 );

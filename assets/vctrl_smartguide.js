@@ -211,16 +211,19 @@
             const distTopToWall = Math.max(0, Math.round(active.top - container.top));
             const distBottomToWall = Math.max(0, Math.round(container.bottom - active.bottom));
 
-            const maxWallThresh = container.isFrameBoundary ? 350 : Infinity;
+            const maxWallThresh = container.isFrameBoundary ? 600 : Infinity;
 
-            let leftMatch = (distLeftToWall <= maxWallThresh) ? { target: container, dist: distLeftToWall, isInner: true } : null;
-            let rightMatch = (distRightToWall <= maxWallThresh) ? { target: container, dist: distRightToWall, isInner: true } : null;
-            let topMatch = (distTopToWall <= maxWallThresh) ? { target: container, dist: distTopToWall, isInner: true } : null;
-            let bottomMatch = (distBottomToWall <= maxWallThresh) ? { target: container, dist: distBottomToWall, isInner: true } : null;
+            const minPadding = container.isFrameBoundary ? 1 : 3;
 
-            // 3. Sibling Raycast (Threshold: 250px)
-            const overlapBuffer = 12;
-            const MAX_NEIGHBOR_DIST = 250;
+            let leftMatch = (distLeftToWall >= minPadding && distLeftToWall <= maxWallThresh) ? { target: container, dist: distLeftToWall, isInner: true } : null;
+            let rightMatch = (distRightToWall >= minPadding && distRightToWall <= maxWallThresh) ? { target: container, dist: distRightToWall, isInner: true } : null;
+            let topMatch = (distTopToWall >= minPadding && distTopToWall <= maxWallThresh) ? { target: container, dist: distTopToWall, isInner: true } : null;
+            let bottomMatch = (distBottomToWall >= minPadding && distBottomToWall <= maxWallThresh) ? { target: container, dist: distBottomToWall, isInner: true } : null;
+
+            // 3. Sibling Raycast: Search ALL nearest siblings without container isolation lock!
+            const overlapBufferY = 16;
+            const overlapBufferX = 24;
+            const MAX_NEIGHBOR_DIST = 600;
 
             for (let i = 0; i < this.spacingTargets.length; i++) {
                 const t = this.spacingTargets[i];
@@ -228,19 +231,9 @@
                 if (t.id === container.id) continue;
                 if (t.source === 'canvas') continue;
 
-                if (!container.isFrameBoundary) {
-                    const tCenterX = t.left + t.width / 2;
-                    const tCenterY = t.top + t.height / 2;
-                    const isInside = (
-                        tCenterX >= container.left - 6 && tCenterX <= container.right + 6 &&
-                        tCenterY >= container.top - 6 && tCenterY <= container.bottom + 6
-                    );
-                    if (!isInside) continue;
-                }
-
                 // Leftward Raycast
-                if (t.right <= active.left + 1) {
-                    const hasOverlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                if (t.right <= active.left + 4) {
+                    const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(active.left - t.right));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -252,8 +245,8 @@
                 }
 
                 // Rightward Raycast
-                if (t.left >= active.right - 1) {
-                    const hasOverlapY = !(t.bottom < active.top - overlapBuffer || t.top > active.bottom + overlapBuffer);
+                if (t.left >= active.right - 4) {
+                    const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(t.left - active.right));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -265,8 +258,8 @@
                 }
 
                 // Upward Raycast
-                if (t.bottom <= active.top + 1) {
-                    const hasOverlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                if (t.bottom <= active.top + 4) {
+                    const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
                     if (hasOverlapX) {
                         const dist = Math.max(0, Math.round(active.top - t.bottom));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -278,8 +271,8 @@
                 }
 
                 // Downward Raycast
-                if (t.top >= active.bottom - 1) {
-                    const hasOverlapX = !(t.right < active.left - overlapBuffer || t.left > active.right + overlapBuffer);
+                if (t.top >= active.bottom - 4) {
+                    const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
                     if (hasOverlapX) {
                         const dist = Math.max(0, Math.round(t.top - active.bottom));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -291,7 +284,17 @@
                 }
             }
 
-            return { leftMatch, rightMatch, topMatch, bottomMatch, active, canvasWidth: cw, canvasHeight: ch };
+            // 4. Equal Spacing Detection
+            let isEqualH = false;
+            if (leftMatch && rightMatch && !leftMatch.isInner && !rightMatch.isInner) {
+                if (Math.abs(leftMatch.dist - rightMatch.dist) <= 1) isEqualH = true;
+            }
+            let isEqualV = false;
+            if (topMatch && bottomMatch && !topMatch.isInner && !bottomMatch.isInner) {
+                if (Math.abs(topMatch.dist - bottomMatch.dist) <= 1) isEqualV = true;
+            }
+
+            return { leftMatch, rightMatch, topMatch, bottomMatch, isEqualH, isEqualV, active, canvasWidth: cw, canvasHeight: ch };
         },
 
         /**
@@ -346,11 +349,14 @@
             const badgeBg = "#ec4899";
             const textCol = "#ffffff";
             
+            const hBadgeCol = spacing.isEqualH ? "#8b5cf6" : badgeBg;
+            const vBadgeCol = spacing.isEqualV ? "#8b5cf6" : badgeBg;
+            
             const drawHorizontalSpacing = (match, side) => {
                 if (!match) return;
                 const target = match.target;
                 const dist = match.dist;
-                if (dist <= 0) return;
+                if (dist < 0) return;
                 
                 const isInner = !!match.isInner;
                 let x1, x2;
@@ -362,34 +368,45 @@
                     x2 = (side === 'left') ? active.left : target.left;
                 }
                 
+                // Calculate Y position at the center of vertical overlap between active and target
                 let y = active.centerY;
                 if (!target.isFrameBoundary) {
-                    if (y < target.top + 6) y = target.top + 6;
-                    if (y > target.bottom - 6) y = target.bottom - 6;
+                    const overlapTop = Math.max(active.top, target.top);
+                    const overlapBottom = Math.min(active.bottom, target.bottom);
+                    if (overlapTop < overlapBottom) {
+                        y = (overlapTop + overlapBottom) / 2;
+                    }
                 }
                 
                 // Clamping y within canvas bounds
                 y = Math.max(10, Math.min(ch - 10, y));
 
-                // Connection line
-                htmlList.push(`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${lineCol}" stroke-width="1.2" />`);
-                
-                // Edge ticks
-                htmlList.push(`<line x1="${x1}" y1="${y - 4}" x2="${x1}" y2="${y + 4}" stroke="${lineCol}" stroke-width="1.2" />`);
-                htmlList.push(`<line x1="${x2}" y1="${y - 4}" x2="${x2}" y2="${y + 4}" stroke="${lineCol}" stroke-width="1.2" />`);
+                const currentLineCol = hBadgeCol;
+
+                if (dist === 0) {
+                    // Contact boundary line: draw at the contact edge
+                    const contactX = (side === 'left') ? active.left : active.right;
+                    htmlList.push(`<line x1="${contactX}" y1="${y - 10}" x2="${contactX}" y2="${y + 10}" stroke="${currentLineCol}" stroke-width="1.8" />`);
+                } else {
+                    // Connection line
+                    htmlList.push(`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${currentLineCol}" stroke-width="1.2" />`);
+                    // Edge ticks
+                    htmlList.push(`<line x1="${x1}" y1="${y - 4}" x2="${x1}" y2="${y + 4}" stroke="${currentLineCol}" stroke-width="1.2" />`);
+                    htmlList.push(`<line x1="${x2}" y1="${y - 4}" x2="${x2}" y2="${y + 4}" stroke="${currentLineCol}" stroke-width="1.2" />`);
+                }
                 
                 // Measurement badge
-                let cx = (x1 + x2) / 2;
+                let cx = (dist === 0) ? ((side === 'left') ? active.left : active.right) : ((x1 + x2) / 2);
                 const label = `${dist}`;
-                const textWidth = label.length * 6.5 + 8;
+                const textWidth = Math.max(22, label.length * 7 + 10);
                 cx = Math.max(textWidth / 2 + 4, Math.min(cw - textWidth / 2 - 4, cx));
                 const rectX = cx - textWidth / 2;
-                const rectY = y - 8;
+                const rectY = y - 9;
                 
                 htmlList.push(`
                     <g>
-                        <rect x="${rectX}" y="${rectY}" width="${textWidth}" height="16" rx="3" fill="${badgeBg}" />
-                        <text x="${cx}" y="${y + 4}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Pretendard Variable', Pretendard, sans-serif">${label}</text>
+                        <rect x="${rectX}" y="${rectY}" width="${textWidth}" height="18" rx="4" fill="${currentLineCol}" />
+                        <text x="${cx}" y="${y + 3.5}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Pretendard Variable', Pretendard, sans-serif">${label}</text>
                     </g>
                 `);
             };
@@ -398,7 +415,7 @@
                 if (!match) return;
                 const target = match.target;
                 const dist = match.dist;
-                if (dist <= 0) return;
+                if (dist < 0) return;
                 
                 const isInner = !!match.isInner;
                 let y1, y2;
@@ -410,33 +427,44 @@
                     y2 = (side === 'top') ? active.top : target.top;
                 }
                 
+                // Calculate X position at the center of horizontal overlap between active and target
                 let x = active.centerX;
                 if (!target.isFrameBoundary) {
-                    if (x < target.left + 6) x = target.left + 6;
-                    if (x > target.right - 6) x = target.right - 6;
+                    const overlapLeft = Math.max(active.left, target.left);
+                    const overlapRight = Math.min(active.right, target.right);
+                    if (overlapLeft < overlapRight) {
+                        x = (overlapLeft + overlapRight) / 2;
+                    }
                 }
                 x = Math.max(16, Math.min(cw - 16, x));
+
+                const currentLineCol = vBadgeCol;
                 
-                // Connection line
-                htmlList.push(`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${lineCol}" stroke-width="1.2" />`);
-                
-                // Edge ticks
-                htmlList.push(`<line x1="${x - 4}" y1="${y1}" x2="${x + 4}" y2="${y1}" stroke="${lineCol}" stroke-width="1.2" />`);
-                htmlList.push(`<line x1="${x - 4}" y1="${y2}" x2="${x + 4}" y2="${y2}" stroke="${lineCol}" stroke-width="1.2" />`);
+                if (dist === 0) {
+                    // Contact boundary line: draw at the contact edge
+                    const contactY = (side === 'top') ? active.top : active.bottom;
+                    htmlList.push(`<line x1="${x - 10}" y1="${contactY}" x2="${x + 10}" y2="${contactY}" stroke="${currentLineCol}" stroke-width="1.8" />`);
+                } else {
+                    // Connection line
+                    htmlList.push(`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${currentLineCol}" stroke-width="1.2" />`);
+                    // Edge ticks
+                    htmlList.push(`<line x1="${x - 4}" y1="${y1}" x2="${x + 4}" y2="${y1}" stroke="${currentLineCol}" stroke-width="1.2" />`);
+                    htmlList.push(`<line x1="${x - 4}" y1="${y2}" x2="${x + 4}" y2="${y2}" stroke="${currentLineCol}" stroke-width="1.2" />`);
+                }
                 
                 // Measurement badge
-                let cy = (y1 + y2) / 2;
+                let cy = (dist === 0) ? ((side === 'top') ? active.top : active.bottom) : ((y1 + y2) / 2);
                 const label = `${dist}`;
-                const textWidth = label.length * 6.5 + 8;
+                const textWidth = Math.max(22, label.length * 7 + 10);
                 // Critical Clamping: Ensure badge NEVER clips out of the top/bottom boundary
                 cy = Math.max(11, Math.min(ch - 11, cy));
                 const rectX = x - textWidth / 2;
-                const rectY = cy - 8;
+                const rectY = cy - 9;
                 
                 htmlList.push(`
                     <g>
-                        <rect x="${rectX}" y="${rectY}" width="${textWidth}" height="16" rx="3" fill="${badgeBg}" />
-                        <text x="${x}" y="${cy + 4}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Pretendard Variable', Pretendard, sans-serif">${label}</text>
+                        <rect x="${rectX}" y="${rectY}" width="${textWidth}" height="18" rx="4" fill="${currentLineCol}" />
+                        <text x="${x}" y="${cy + 3.5}" fill="${textCol}" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="'Pretendard Variable', Pretendard, sans-serif">${label}</text>
                     </g>
                 `);
             };

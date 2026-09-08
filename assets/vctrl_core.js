@@ -588,7 +588,7 @@ window.getIframeHTML = async function () {
             if (DOM.iframe && DOM.iframe.contentDocument) {
                 const doc = DOM.iframe.contentDocument;
                 const clone = doc.documentElement.cloneNode(true);
-                clone.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line').forEach(el => el.remove());
+                clone.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(el => el.remove());
                 clone.querySelectorAll('.lf-component, .v4-shape').forEach(el => el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped'));
                 clone.querySelectorAll('[style]').forEach(el => {
                     const s = el.getAttribute('style');
@@ -697,6 +697,8 @@ window.handleGlobalSave = async function () {
             assignee: document.getElementById('viewer-meta-assignee')?.value || '',
             developer: document.getElementById('viewer-meta-developer')?.value || '',
             period: document.getElementById('viewer-meta-period')?.value || '',
+            figmaUrl: state.projectMetadata?.figmaUrl || '',
+            notionUrl: state.projectMetadata?.notionUrl || '',
             updated: updatedTimeStr
         };
 
@@ -950,13 +952,12 @@ window.MessageHub = {
                     }
                 }
                 const activeEl = document.activeElement;
-                const isTyping = activeEl && (
+                const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+                const isTyping = !isBtn && activeEl && (
                     activeEl.tagName === 'INPUT' ||
                     activeEl.tagName === 'TEXTAREA' ||
                     activeEl.tagName === 'SELECT' ||
-                    activeEl.isContentEditable ||
-                    activeEl.closest('#floating-inspector-card') !== null ||
-                    activeEl.closest('#sidebar-right') !== null
+                    activeEl.isContentEditable
                 );
 
                 if (data.isDescriptionPin) {
@@ -1586,13 +1587,53 @@ window.init = async function () {
                     if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen(true);
                     return;
                 }
+                let closedAnyModal = false;
                 const addModal = document.getElementById('add-screen-modal');
-                if (addModal) addModal.classList.remove('active');
+                if (addModal && addModal.classList.contains('active')) {
+                    addModal.classList.remove('active');
+                    closedAnyModal = true;
+                }
                 const copyModal = document.getElementById('copy-screen-modal');
-                if (copyModal) copyModal.classList.remove('active');
+                if (copyModal && copyModal.classList.contains('active')) {
+                    copyModal.classList.remove('active');
+                    closedAnyModal = true;
+                }
                 const editModal = document.getElementById('edit-screen-modal');
-                if (editModal) editModal.classList.remove('active');
-                if (typeof window.hideAuthModal === 'function') window.hideAuthModal();
+                if (editModal && editModal.classList.contains('active')) {
+                    editModal.classList.remove('active');
+                    closedAnyModal = true;
+                }
+                const historyModal = document.getElementById('history-modal');
+                if (historyModal && historyModal.style.display === 'flex') {
+                    if (typeof window.closeHistoryPopup === 'function') {
+                        window.closeHistoryPopup();
+                    } else {
+                        historyModal.style.display = 'none';
+                    }
+                    closedAnyModal = true;
+                }
+                if (typeof window.hideAuthModal === 'function') {
+                    const authModal = document.getElementById('auth-modal');
+                    if (authModal && authModal.classList.contains('active')) {
+                        window.hideAuthModal();
+                        closedAnyModal = true;
+                    }
+                }
+                if (closedAnyModal) {
+                    return;
+                }
+
+                // If user is currently typing in an input/textarea/quill in parent window, blur it first
+                const activeEl = document.activeElement;
+                if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable || activeEl.classList.contains('ql-editor'))) {
+                    activeEl.blur();
+                    return;
+                }
+
+                // Tier 2: Deselect all objects and hide object properties
+                if (typeof window.deselectAll === 'function') {
+                    window.deselectAll();
+                }
                 return;
             }
 

@@ -612,6 +612,34 @@ body {
     transform: translateY(-1px);
 }
 
+/* 4. Notion Link (Sleek Slate/Light - Interactive) */
+.meta-chip.meta-chip-notion {
+    color: #e2e8f0 !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.meta-chip.meta-chip-notion .meta-chip-svg {
+    flex-shrink: 0;
+    opacity: 0.9;
+    vertical-align: middle;
+}
+.meta-chip.meta-chip-notion:hover {
+    color: #0f172a !important;
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+.meta-chip.meta-chip-notion:hover .meta-chip-svg {
+    fill: #0f172a !important;
+    opacity: 1;
+}
+
 /* 5. 마지막 업데이트 상대 시간 (Slate) */
 .meta-chip.meta-chip-update {
     color: #94a3b8 !important;

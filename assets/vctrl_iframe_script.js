@@ -20,6 +20,23 @@ window.v4Script = `
         };
     })();
 
+    window.getNextTopZIndex = function(container) {
+        var targetParent = container || document.body;
+        var maxZ = 1000;
+        var comps = targetParent.querySelectorAll ? targetParent.querySelectorAll('.lf-component') : [];
+        comps.forEach(function(c) {
+            var rawZ = parseInt(c.style.zIndex, 10);
+            if (isNaN(rawZ)) {
+                var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                rawZ = isNaN(compZ) ? 1000 : compZ;
+            }
+            if (rawZ < 9999 && rawZ > maxZ) {
+                maxZ = rawZ;
+            }
+        });
+        return maxZ + 10;
+    };
+
     window.syncTableComponentSize = function() {
         const s = document.querySelector('.lf-component.selected');
         if (!s) return;
@@ -172,6 +189,9 @@ window.v4Script = `
         const dpDefaultPreset = dpContainer ? (dpContainer.getAttribute('data-default-preset') || 'none') : 'none';
         const dpStartDate = dpContainer ? (dpContainer.getAttribute('data-start-date') || '') : '';
         const dpEndDate = dpContainer ? (dpContainer.getAttribute('data-end-date') || '') : '';
+        const dpMode = dpContainer ? (dpContainer.getAttribute('data-mode') || 'simple') : 'simple';
+        const dpStartTime = dpContainer ? (dpContainer.getAttribute('data-start-time') || '') : '';
+        const dpEndTime = dpContainer ? (dpContainer.getAttribute('data-end-time') || '') : '';
 
         // Accordion Atom Detection
         const isAccordion = isGroup ? false : (!!c.querySelector('.v4-accordion-container') || c.classList.contains('v4-accordion-container'));
@@ -263,7 +283,7 @@ window.v4Script = `
         const adminLabelWidth = firstLabel ? (parseInt(firstLabel.style.width) || parseInt(window.getComputedStyle(firstLabel).width) || 140) : 140;
 
         const adminRowData = {};
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= 20; i++) {
             adminRowData['adminRow' + i + 'Label'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-label') || '') : '';
             adminRowData['adminRow' + i + 'Cols'] = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row' + i + '-cols')) || 1 : 1;
             adminRowData['adminRow' + i + 'Type'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-type') || 'textbox') : 'textbox';
@@ -447,6 +467,9 @@ window.v4Script = `
             buttonRadius: buttonRadius,
             buttonFontSize: buttonFontSize,
             isDatePicker: isDatePicker,
+            dpMode: dpMode,
+            dpStartTime: dpStartTime,
+            dpEndTime: dpEndTime,
             dpShowPresets: dpShowPresets,
             dpShowEndDate: dpShowEndDate,
             dpDefaultPreset: dpDefaultPreset,
@@ -557,6 +580,88 @@ window.v4Script = `
         };
     };
 
+    window.SelectionAdorner = {
+        getContainer: function(comp) {
+            if (!comp) return document.body;
+            return (comp.closest && comp.closest('.pc-content-inner, .pc-content-area, .mobile-content-inner, .mobile-content-area, .mobile-content')) || document.body;
+        },
+        ensureLayer: function(container) {
+            if (!container) return null;
+            var layer = container.querySelector(':scope > .v4-selection-adorner-layer');
+            if (!layer) {
+                layer = document.createElement('div');
+                layer.className = 'v4-selection-adorner-layer';
+                layer.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99998; overflow: visible;';
+                var compStyle = window.getComputedStyle(container);
+                if (compStyle.position === 'static' && container !== document.body) {
+                    container.style.position = 'relative';
+                }
+                var trailingScript = Array.from(container.children).find(function(c) {
+                    return c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script';
+                });
+                if (trailingScript) {
+                    container.insertBefore(layer, trailingScript);
+                } else {
+                    container.appendChild(layer);
+                }
+            }
+            return layer;
+        },
+        update: function(target) {
+            this.clear();
+            var selectedComps = target ? [target] : Array.from(document.querySelectorAll('.lf-component.selected'));
+            if (selectedComps.length === 0) return;
+
+            var self = this;
+            selectedComps.forEach(function(comp) {
+                if (!comp || comp.classList.contains('connector-line')) return;
+                var container = self.getContainer(comp);
+                if (!container) return;
+                var layer = self.ensureLayer(container);
+                if (!layer) return;
+
+                var compRect = comp.getBoundingClientRect();
+                var contRect = container.getBoundingClientRect();
+                var scrollL = (container === document.body) ? (window.pageXOffset || document.documentElement.scrollLeft || 0) : container.scrollLeft;
+                var scrollT = (container === document.body) ? (window.pageYOffset || document.documentElement.scrollTop || 0) : container.scrollTop;
+
+                var l = Math.round((compRect.left - contRect.left) + scrollL);
+                var t = Math.round((compRect.top - contRect.top) + scrollT);
+                var w = Math.round(compRect.width);
+                var h = Math.round(compRect.height);
+
+                if (w <= 0 || h <= 0) return;
+
+                var isGroup = comp.classList.contains('lf-group');
+                var box = document.createElement('div');
+                box.className = 'v4-selection-adorner' + (isGroup ? ' is-group' : '');
+                box.style.position = 'absolute';
+                box.style.left = l + 'px';
+                box.style.top = t + 'px';
+                box.style.width = w + 'px';
+                box.style.height = h + 'px';
+                box.style.pointerEvents = 'none';
+                box.style.boxSizing = 'border-box';
+                box.style.zIndex = '99998';
+
+                var borderColor = isGroup ? '#10b981' : '#6366f1';
+                box.style.outline = '2px solid ' + borderColor;
+                box.style.outlineOffset = '0px';
+                box.style.background = 'transparent';
+                var compRad = comp.style.borderRadius || window.getComputedStyle(comp).borderRadius;
+                if (compRad && compRad !== '0px') {
+                    box.style.borderRadius = compRad;
+                }
+                layer.appendChild(box);
+            });
+        },
+        clear: function() {
+            document.querySelectorAll('.v4-selection-adorner-layer').forEach(function(l) {
+                l.innerHTML = '';
+            });
+        }
+    };
+
     window.updateHandles = (c) => {
         if (!c) return;
         const t = parseInt(c.style.top) || 0;
@@ -568,6 +673,9 @@ window.v4Script = `
             const rightDist = window.innerWidth - (l + (c.offsetWidth || 0));
             const targetRight = rightDist < 16 ? '4px' : '-12px'; 
             if (del.style.right !== targetRight) del.style.right = targetRight;
+        }
+        if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+            window.SelectionAdorner.update();
         }
     };
 
@@ -679,6 +787,9 @@ window.v4Script = `
         } else {
             isMarquee = true;
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
+            if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
+                window.SelectionAdorner.clear();
+            }
             if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
                 window.ResponsiveSmartGuide.clearGuides(true);
             }
@@ -830,6 +941,13 @@ window.v4Script = `
         const editableCell = e.target.closest('.v4-editable-cell, [contenteditable="true"], .v4-shape-text-content, .v4-shape-text-overlay');
         if (editableCell) {
             markDirty();
+            const dp = editableCell.closest('.v4-datepicker-container');
+            if (dp) {
+                if (editableCell.classList.contains('v4-dp-start')) dp.setAttribute('data-start-date', editableCell.innerText);
+                else if (editableCell.classList.contains('v4-dp-end')) dp.setAttribute('data-end-date', editableCell.innerText);
+                else if (editableCell.classList.contains('v4-dp-start-time')) dp.setAttribute('data-start-time', editableCell.innerText);
+                else if (editableCell.classList.contains('v4-dp-end-time')) dp.setAttribute('data-end-time', editableCell.innerText);
+            }
             const comp = editableCell.closest('.lf-component');
             if (comp) {
                 if (comp.querySelector('.v4-checkbox-container') || comp.querySelector('.v4-radio-container')) {
@@ -1304,8 +1422,8 @@ window.v4Script = `
         }
         else if (d.type === 'LF_REQUEST_SAVE_CONTENT') {
             const c = document.documentElement.cloneNode(true);
-            // 1. Remove runtime UI helpers (ports, handles, guide layers, marquee box)
-            c.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line').forEach(el => el.remove());
+            // 1. Remove runtime UI helpers (ports, handles, guide layers, marquee box, selection adorners)
+            c.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(el => el.remove());
             // 2. Remove active state classes
             c.querySelectorAll('.lf-component, .v4-shape').forEach(el => el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped'));
 
@@ -1335,8 +1453,8 @@ window.v4Script = `
 
             notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
         } else if (d.type === 'LF_INSERT_COMPONENT' || d.type === 'LF_INSERT_V4_COMP') {
-            const pcArea = document.querySelector('.pc-content-area, .pc-content-inner');
-            const mobileContent = document.querySelector('.mobile-content, .mobile-content-area, .mobile-content-inner');
+            const pcArea = document.querySelector('.pc-content-inner') || document.querySelector('.pc-content-area');
+            const mobileContent = document.querySelector('.mobile-content-inner') || document.querySelector('.mobile-content-area, .mobile-content');
             let host = document.body;
 
             const isPinMarker = d.className && d.className.includes('pin-marker');
@@ -1364,7 +1482,8 @@ window.v4Script = `
             v.style.position = 'absolute'; 
             v.style.top = centerTop + 'px'; 
             v.style.left = centerLeft + 'px'; 
-            v.style.zIndex = '1000';
+            const nextZ = (typeof window.getNextTopZIndex === 'function') ? window.getNextTopZIndex(host) : 1010;
+            v.style.zIndex = String(nextZ);
 
             if (isPinMarker) {
                 const idx = parseInt(d.id.replace('v4-pin-', '')) || 0;
@@ -1376,7 +1495,12 @@ window.v4Script = `
             } else {
                 v.className = 'lf-component' + (d.isGroup ? ' lf-group' : '') + (d.className ? ' ' + d.className : ''); 
                 v.style.transform = 'none';
-                if (d.style) Object.assign(v.style, d.style);
+                if (d.style) {
+                    Object.assign(v.style, d.style);
+                    if (!d.style.zIndex || parseInt(d.style.zIndex, 10) <= 1000) {
+                        v.style.zIndex = String(nextZ);
+                    }
+                }
                 v.innerHTML = d.html + '<div class="lf-delete-trigger">&times;</div>';
             }
             
@@ -1405,7 +1529,12 @@ window.v4Script = `
                 }
             }
             
-            host.appendChild(v);
+            const trailingRef = Array.from(host.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+            if (trailingRef && trailingRef.parentNode === host) {
+                host.insertBefore(v, trailingRef);
+            } else {
+                host.appendChild(v);
+            }
             document.querySelectorAll('.lf-component').forEach(c => c.classList.remove('selected'));
             v.classList.add('selected');
             if (v.classList.contains('v4-text-shape') && typeof window.resizeToFitText === 'function') {
@@ -1423,6 +1552,8 @@ window.v4Script = `
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
             
             if (window.V4UndoManager) window.V4UndoManager.saveState();
+            let currentTopZ = (typeof window.getNextTopZIndex === 'function') ? window.getNextTopZIndex(host) : 1010;
+            const trailingRef = Array.from(host.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
             comps.forEach(c => {
                 const v = document.createElement('div');
                 v.id = c.id || ('v4-comp-' + Date.now() + Math.random());
@@ -1433,13 +1564,23 @@ window.v4Script = `
                 v.style.top = (parseFloat(c.y) || 0) + 'px';
                 v.style.width = c.width || '200px';
                 v.style.height = c.height || '100px';
-                v.style.zIndex = '1000';
+                v.style.zIndex = String(currentTopZ);
                 v.style.transform = 'none !important';
 
-                if (c.style) Object.assign(v.style, c.style);
+                if (c.style) {
+                    Object.assign(v.style, c.style);
+                    if (!c.style.zIndex || parseInt(c.style.zIndex, 10) <= 1000) {
+                        v.style.zIndex = String(currentTopZ);
+                    }
+                }
+                currentTopZ += 10;
 
                 v.innerHTML = (c.html || '') + '<div class="lf-delete-trigger">&times;</div>';
-                host.appendChild(v);
+                if (trailingRef && trailingRef.parentNode === host) {
+                    host.insertBefore(v, trailingRef);
+                } else {
+                    host.appendChild(v);
+                }
                 window.updateHandles(v);
             });
             markDirty();
@@ -1702,6 +1843,19 @@ window.v4Script = `
             const disabledStr = d.disabled ? 'true' : 'false';
             s.setAttribute('data-disabled', disabledStr);
             if (container && container !== s) container.setAttribute('data-disabled', disabledStr);
+            
+            // Toggle contentEditable on editable cells inside container
+            container.querySelectorAll('.v4-editable-cell').forEach(cell => {
+                cell.contentEditable = d.disabled ? 'false' : 'true';
+            });
+            
+            markDirty();
+            if (typeof window._getCompStyles === 'function') {
+                notifyParent({
+                    type: 'LF_COMP_STYLES_RESPONSE',
+                    ...window._getCompStyles(s)
+                });
+            }
         }
         else if (d.type === 'LF_UPDATE_STEPPER_PROPERTIES') {
             const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return;
@@ -1992,12 +2146,84 @@ window.v4Script = `
                     }
                 }
 
+                if (d.mode !== undefined) {
+                    container.setAttribute('data-mode', d.mode);
+                    const presetsDiv = container.querySelector('.v4-dp-presets');
+                    const groups = container.querySelectorAll('.v4-dp-input-group');
+                    const startGroup = groups[0];
+                    const endGroup = groups.length > 1 ? groups[1] : null;
+
+                    if (d.mode === 'detailed') {
+                        if (presetsDiv) presetsDiv.style.display = 'none';
+
+                        // Ensure start time field exists
+                        let startTimeEl = container.querySelector('.v4-dp-start-time');
+                        if (!startTimeEl && startGroup) {
+                            startTimeEl = document.createElement('div');
+                            startTimeEl.className = 'v4-dp-time-field v4-dp-start-time v4-editable-cell';
+                            startTimeEl.contentEditable = container.getAttribute('data-disabled') === 'true' ? 'false' : 'true';
+                            startTimeEl.style.cssText = 'font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); outline: none; white-space: nowrap; font-family: inherit; margin-left: 6px; -webkit-user-select: text; user-select: text; min-width: 50px;';
+                            const icon = startGroup.querySelector('svg');
+                            if (icon) startGroup.insertBefore(startTimeEl, icon);
+                            else startGroup.appendChild(startTimeEl);
+                        }
+                        if (startTimeEl) {
+                            startTimeEl.style.display = 'inline-block';
+                            startTimeEl.innerText = container.getAttribute('data-start-time') || '';
+                        }
+
+                        // Ensure end time field exists
+                        let endTimeEl = container.querySelector('.v4-dp-end-time');
+                        if (!endTimeEl && endGroup) {
+                            endTimeEl = document.createElement('div');
+                            endTimeEl.className = 'v4-dp-time-field v4-dp-end-time v4-editable-cell';
+                            endTimeEl.contentEditable = container.getAttribute('data-disabled') === 'true' ? 'false' : 'true';
+                            endTimeEl.style.cssText = 'font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); outline: none; white-space: nowrap; font-family: inherit; margin-left: 6px; -webkit-user-select: text; user-select: text; min-width: 50px;';
+                            const icon = endGroup.querySelector('svg');
+                            if (icon) endGroup.insertBefore(endTimeEl, icon);
+                            else endGroup.appendChild(endTimeEl);
+                        }
+                        if (endTimeEl) {
+                            endTimeEl.style.display = 'inline-block';
+                            endTimeEl.innerText = container.getAttribute('data-end-time') || '';
+                        }
+
+                        // Also respect showEndDate in detailed mode
+                        const showEndDate = container.getAttribute('data-show-end-date') !== 'false';
+                        const sep = container.querySelector('.v4-dp-separator');
+                        if (sep) sep.style.display = showEndDate ? 'inline-flex' : 'none';
+                        if (endGroup) endGroup.style.display = showEndDate ? 'inline-flex' : 'none';
+                    } else {
+                        // Simple mode
+                        const showPresets = container.getAttribute('data-show-presets') !== 'false';
+                        if (presetsDiv) presetsDiv.style.display = showPresets ? 'inline-flex' : 'none';
+
+                        const startTimeEl = container.querySelector('.v4-dp-start-time');
+                        if (startTimeEl) startTimeEl.style.display = 'none';
+                        const endTimeEl = container.querySelector('.v4-dp-end-time');
+                        if (endTimeEl) endTimeEl.style.display = 'none';
+                    }
+                }
+
+                if (d.startTime !== undefined) {
+                    const val = d.startTime || '';
+                    container.setAttribute('data-start-time', val);
+                    const el = container.querySelector('.v4-dp-start-time');
+                    if (el && el.innerText !== val) el.innerText = val;
+                }
+                if (d.endTime !== undefined) {
+                    const val = d.endTime || '';
+                    container.setAttribute('data-end-time', val);
+                    const el = container.querySelector('.v4-dp-end-time');
+                    if (el && el.innerText !== val) el.innerText = val;
+                }
+
                 if (d.defaultPreset !== undefined) {
                     container.setAttribute('data-default-preset', d.defaultPreset);
                     container.querySelectorAll('.v4-dp-preset-btn').forEach(btn => {
                         const isActive = btn.getAttribute('data-preset') === d.defaultPreset;
                         btn.style.background = isActive ? '#1d4ed8' : '#ffffff';
-                        btn.style.borderColor = isActive ? '#1d4ed8' : '#cccccc';
+                        btn.style.border = '1.6px solid ' + (isActive ? '#1d4ed8' : '#cccccc');
                         btn.style.color = isActive ? '#ffffff' : '#0f172a';
                         btn.style.fontWeight = '400';
                         btn.style.fontSize = '12px';
@@ -2017,14 +2243,16 @@ window.v4Script = `
                 }
 
                 if (d.startDate !== undefined) {
-                    container.setAttribute('data-start-date', d.startDate);
+                    const val = d.startDate || '';
+                    container.setAttribute('data-start-date', val);
                     const startEl = container.querySelector('.v4-dp-start');
-                    if (startEl && startEl.innerText !== d.startDate) startEl.innerText = d.startDate;
+                    if (startEl && startEl.innerText !== val) startEl.innerText = val;
                 }
                 if (d.endDate !== undefined) {
-                    container.setAttribute('data-end-date', d.endDate);
+                    const val = d.endDate || '';
+                    container.setAttribute('data-end-date', val);
                     const endEl = container.querySelector('.v4-dp-end');
-                    if (endEl && endEl.innerText !== d.endDate) endEl.innerText = d.endDate;
+                    if (endEl && endEl.innerText !== val) endEl.innerText = val;
                 }
 
                 markDirty();
@@ -2077,7 +2305,7 @@ window.v4Script = `
                         if (rData.height !== undefined) container.setAttribute('data-row' + rNum + '-height', rData.height);
                     });
                     // Clean up trailing unused row attributes if rows count decreased
-                    for (let rNum = d.rows.length + 1; rNum <= 10; rNum++) {
+                    for (let rNum = d.rows.length + 1; rNum <= 20; rNum++) {
                         container.removeAttribute('data-row' + rNum + '-label');
                         container.removeAttribute('data-row' + rNum + '-cols');
                         container.removeAttribute('data-row' + rNum + '-type');
@@ -2342,8 +2570,18 @@ window.v4Script = `
                 markDirty(); 
                 notifyParent({ type: 'LF_DESELECT' });
             }
-        } else if (d.type === 'LF_DESELECT_ALL') {
+        } else if (d.type === 'LF_DESELECT_ALL' || d.type === 'LF_DESELECT') {
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
+            window.activeEl = null;
+            if (document.activeElement && (document.activeElement.classList?.contains('v4-editable-cell') || document.activeElement.isContentEditable)) {
+                try { document.activeElement.blur(); } catch (_) {}
+            }
+            if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
+                window.ResponsiveSmartGuide.clearGuides(true);
+            }
+            if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
+                window.SelectionAdorner.clear();
+            }
         } else if (d.type === 'LF_SET_RESPONSIVE_GRID') {
             const isResponsiveTemplate = !!(document.querySelector('.pc-content-inner') || document.querySelector('.mobile-content-inner') || document.querySelector('.pc-browser-frame'));
             if (isResponsiveTemplate) {
@@ -2400,11 +2638,13 @@ window.v4Script = `
                             var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                             z = isNaN(compZ) ? 1000 : compZ;
                         }
-                        if (!hasZ) {
-                            maxZ = z;
-                            hasZ = true;
-                        } else if (z > maxZ) {
-                            maxZ = z;
+                        if (z < 9999) {
+                            if (!hasZ) {
+                                maxZ = z;
+                                hasZ = true;
+                            } else if (z > maxZ) {
+                                maxZ = z;
+                            }
                         }
                     });
 
@@ -2520,6 +2760,9 @@ window.v4Script = `
             document.querySelectorAll('.lf-component').forEach(x => {
                 x.classList.toggle('selected', ids.includes(x.id));
             });
+            if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                window.SelectionAdorner.update();
+            }
         } else if (d.type === 'LF_ALIGN_SELECTED') {
             const ids = d.ids || [];
             const alignType = d.alignType || d.type;
@@ -2916,22 +3159,20 @@ window.v4Script = `
                 group.setAttribute('data-connectors', JSON.stringify(groupedConnectorIds));
             }
             
-            // Insert the group exactly before the topmost selected component in the DOM to preserve layer depth
             const topmostComp = comps[comps.length - 1] || (items.length > 0 ? items[items.length - 1].el : null);
-            if (topmostComp) {
-                topmostComp.parentNode.insertBefore(group, topmostComp);
-            } else {
-                host.appendChild(group);
-            }
+            const groupParent = (topmostComp && topmostComp.parentNode) ? topmostComp.parentNode : host;
+
+            const targetGroupZ = (typeof window.getNextTopZIndex === 'function')
+                ? window.getNextTopZIndex(groupParent)
+                : 1010;
 
             Object.assign(group.style, {
                 position: 'absolute', left: groupBaseL + 'px', top: groupBaseT + 'px',
                 width: groupBaseW + 'px', height: groupBaseH + 'px',
-                background: 'transparent', border: 'none', zIndex: '1000'
+                background: 'transparent', border: 'none', zIndex: String(targetGroupZ)
             });
 
             group.innerHTML = '<div class="lf-delete-trigger">&times;</div>';
-
 
             items.forEach(item => {
                 if (item.type === 'connector') return; // virtual, don't move into DOM
@@ -2942,6 +3183,14 @@ window.v4Script = `
                 item.el.classList.remove('selected');
                 group.appendChild(item.el);
             });
+
+            // Insert group into parent DOM right before script tag, ensuring both topmost z-index and DOM order
+            const trailingRef = Array.from(groupParent.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+            if (trailingRef && trailingRef.parentNode === groupParent) {
+                groupParent.insertBefore(group, trailingRef);
+            } else {
+                groupParent.appendChild(group);
+            }
 
             // 3. Restore handle states AFTER all children are successfully moved
             allHandles.forEach((h, i) => h.style.display = handleStates[i]);
@@ -2970,11 +3219,14 @@ window.v4Script = `
 
             const groupL = parseFloat(group.style.left) || 0;
             const groupT = parseFloat(group.style.top) || 0;
+            const groupZ = parseInt(group.style.zIndex, 10) || 1010;
 
             const groupedConnectorIdsStr = group.getAttribute('data-connectors');
             const groupedConnectorIds = groupedConnectorIdsStr ? JSON.parse(groupedConnectorIdsStr) : [];
 
             const children = Array.from(group.children).filter(c => c.classList.contains('lf-component'));
+            const childZs = children.map(c => parseInt(c.style.zIndex, 10) || 1000);
+            const minChildZ = childZs.length > 0 ? Math.min(...childZs) : 1000;
             const newIds = [];
 
             children.forEach((c, idx) => {
@@ -2992,6 +3244,11 @@ window.v4Script = `
                 c.style.top = absT + 'px';
                 c.style.width = w + 'px';
                 c.style.height = h + 'px';
+
+                // Rebase children z-index to match group's topmost layer depth
+                const origZ = childZs[idx] || 1000;
+                const relOffset = Math.max(0, origZ - minChildZ);
+                c.style.zIndex = String(groupZ + relOffset);
 
                 const isMarker = c.classList.contains('text-marker');
                 if (isMarker && c.id.startsWith('v4-pin-')) {

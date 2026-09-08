@@ -353,7 +353,8 @@ function compileScreenHtmlForPdf(rawHtml, screenFileName = '', dynamicContentH =
         /* Hide selection boxes, drag handles, resizers, inspector tools during PDF export */
         .selection-box, .resize-handle, .lf-delete-trigger, .lf-drag-handle, .lf-resizer,
         #floating-inspector-card, .smart-guide-line, .lf-connector-port, .guide-layer,
-        .selection-rect, .selection-overlay, .cell-resizer, #guide-layer, .pins-layer {
+        .selection-rect, .selection-overlay, .cell-resizer, #guide-layer, .pins-layer,
+        .v4-selection-adorner-layer, .v4-selection-adorner {
             display: none !important;
             opacity: 0 !important;
             visibility: hidden !important;

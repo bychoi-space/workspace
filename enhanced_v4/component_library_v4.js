@@ -279,8 +279,8 @@ window.V4_COMPONENT_LIBRARY = {
             id: 'v4-atom-grid',
             name: 'Grid UI',
             category: 'Atoms',
-            width: '500px',
-            height: '336px',
+            width: '600px',
+            height: '400px',
             legacyName: 'Grid UI'
         },
         {
@@ -290,6 +290,14 @@ window.V4_COMPONENT_LIBRARY = {
             width: '200px',
             height: '30px',
             legacyName: 'Search Bar'
+        },
+        {
+            id: 'v4-atom-tab',
+            name: 'Tab',
+            category: 'Atoms',
+            width: '360px',
+            height: '40px',
+            legacyName: 'Tab UI'
         }
     ],
     molecules: [

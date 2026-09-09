@@ -952,3 +952,162 @@ try {
 } catch(e) {
     console.warn("Could not overwrite global window.Notification:", e);
 }
+
+// ==========================================
+// Deploy & Short URL Generation & Copy Engine (SSOT)
+// ==========================================
+const _shortUrlCache = new Map();
+
+function getProjectDeployUrl(projectName, screenName = null) {
+    const owner = (window.ghConfig && window.ghConfig.owner) || 'bychoi-space';
+    const repo = (window.ghConfig && window.ghConfig.repo) || 'workspace';
+    let url = `https://${owner}.github.io/${repo}/viewer.html?project=${encodeURIComponent(projectName)}`;
+    if (screenName) {
+        url += `&file=${encodeURIComponent(screenName)}`;
+    }
+    return url;
+}
+
+async function createShortUrl(longUrl) {
+    if (_shortUrlCache.has(longUrl)) {
+        return { shortUrl: _shortUrlCache.get(longUrl), provider: 'cache' };
+    }
+
+    const fetchWithTimeout = (url, options = {}, timeoutMs = 3500) => {
+        return Promise.race([
+            fetch(url, options),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeoutMs))
+        ]);
+    };
+
+    // 1st Attempt: da.gd (Instant 302 direct redirect, no preview/ads, CORS supported)
+    try {
+        const dagdRes = await fetchWithTimeout(`https://da.gd/s?url=${encodeURIComponent(longUrl)}`, { method: 'GET' }, 3500);
+        if (dagdRes.ok) {
+            const shortUrl = (await dagdRes.text()).trim();
+            if (shortUrl.startsWith('http://') || shortUrl.startsWith('https://')) {
+                const secureShortUrl = shortUrl.replace(/^http:\/\//i, 'https://');
+                _shortUrlCache.set(longUrl, secureShortUrl);
+                return { shortUrl: secureShortUrl, provider: 'da.gd' };
+            }
+        }
+    } catch (e) {
+        console.warn("[ShortURL] da.gd attempt failed:", e.message);
+    }
+
+    // 2nd Attempt: Spoo.me (Instant 302 direct redirect, CORS supported)
+    try {
+        const spooRes = await fetchWithTimeout('https://spoo.me/', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `url=${encodeURIComponent(longUrl)}`
+        }, 3500);
+        if (spooRes.ok) {
+            const data = await spooRes.json();
+            if (data && data.short_url) {
+                const secureShortUrl = data.short_url.replace(/^http:\/\//i, 'https://');
+                _shortUrlCache.set(longUrl, secureShortUrl);
+                return { shortUrl: secureShortUrl, provider: 'spoo.me' };
+            }
+        }
+    } catch (e) {
+        console.warn("[ShortURL] Spoo.me attempt failed:", e.message);
+    }
+
+    // 3rd Fallback: Original GitHub Pages URL
+    return { shortUrl: longUrl, provider: 'original' };
+}
+
+async function copyTextToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (e) {
+            console.warn("[Clipboard] navigator.clipboard.writeText failed:", e);
+        }
+    }
+    // Fallback for file:// or unsecure contexts
+    try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return success;
+    } catch (err) {
+        console.error("[Clipboard] execCommand failed:", err);
+        return false;
+    }
+}
+
+function showGlobalToast(message, type = 'success') {
+    if (typeof window.showToast === 'function') {
+        window.showToast(message, type);
+        return;
+    }
+    let container = document.getElementById('v4-toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'v4-toast-container';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = `v4-toast ${type}`;
+    let iconName = 'info';
+    if (type === 'success') iconName = 'check_circle';
+    else if (type === 'error') iconName = 'error';
+    else if (type === 'warning') iconName = 'warning';
+
+    toast.innerHTML = `
+        <span class="material-icons-outlined v4-toast-icon">${iconName}</span>
+        <span style="flex-grow: 1; word-break: break-all; line-height: 1.4;">${message}</span>
+    `;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 400);
+    }, 3500);
+}
+
+async function copyProjectShortUrl(projectName, options = {}) {
+    const screenName = options.screenName || null;
+
+    try {
+        const deployUrl = getProjectDeployUrl(projectName, screenName);
+        const copySuccess = await copyTextToClipboard(deployUrl);
+
+        if (copySuccess) {
+            const toastMsg = screenName
+                ? `스크린 URL이 복사되었습니다.<br><b style="color:var(--accent); word-break:break-all;">${deployUrl}</b>`
+                : `프로젝트 URL이 복사되었습니다.<br><b style="color:var(--accent); word-break:break-all;">${deployUrl}</b>`;
+
+            showGlobalToast(toastMsg, 'success');
+            return deployUrl;
+        } else {
+            showGlobalToast('클립보드 복사에 실패했습니다. 권한을 확인해주세요.', 'error');
+            return null;
+        }
+    } catch (err) {
+        console.error("[URL Copy] Error:", err);
+        showGlobalToast('URL 복사 중 오류가 발생했습니다.', 'error');
+        return null;
+    }
+}
+
+window.getProjectDeployUrl = getProjectDeployUrl;
+window.createShortUrl = createShortUrl;
+window.copyTextToClipboard = copyTextToClipboard;
+window.showGlobalToast = showGlobalToast;
+window.copyProjectShortUrl = copyProjectShortUrl;
+window.copyProjectUrl = copyProjectShortUrl;

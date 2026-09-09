@@ -59,7 +59,7 @@ $htmlContent = @"
     <meta charset="utf-8">
     <title>Syntax Check</title>
     <!-- Mock required global libraries -->
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>window.Quill = function() { return { root: document.createElement('div'), on: function() {} }; };</script>
     <script>
         window.errors = [];
         window.onerror = function(msg, url, line, col, error) {
@@ -122,15 +122,22 @@ $htmlContent = @"
 Write-Host "Test harness generated at: $testHarnessPath"
 
 # Run Edge Headless and dump DOM
-$proc = Start-Process -FilePath $edge -ArgumentList "--headless", "--disable-gpu", "--dump-dom", "$testHarnessPath" -PassThru -NoNewWindow -RedirectStandardOutput "c:\Users\sisun\ai_work\scripts\edge_output.txt"
+$tmpOut = "c:\Users\sisun\ai_work\scripts\edge_output_" + [System.Guid]::NewGuid().ToString("N") + ".txt"
+$proc = Start-Process -FilePath $edge -ArgumentList "--headless", "--disable-gpu", "--dump-dom", "$testHarnessPath" -PassThru -NoNewWindow -RedirectStandardOutput $tmpOut
 $proc.WaitForExit(10000)
+Start-Sleep -Milliseconds 800
 
-if (Test-Path "c:\Users\sisun\ai_work\scripts\edge_output.txt") {
-    $out = [System.IO.File]::ReadAllText("c:\Users\sisun\ai_work\scripts\edge_output.txt", [System.Text.Encoding]::UTF8)
-    if ($out -match '<div id="result">([\s\S]*?)<\/div>') {
-        $resultJson = $matches[1]
-        Write-Host "Result from Browser Engine: $resultJson"
-    } else {
-        Write-Host "Output length: $($out.Length)"
+if (Test-Path $tmpOut) {
+    try {
+        $out = [System.IO.File]::ReadAllText($tmpOut, [System.Text.Encoding]::UTF8)
+        if ($out -match '<div id="result">([\s\S]*?)<\/div>') {
+            $resultJson = $matches[1]
+            Write-Host "Result from Browser Engine: $resultJson"
+        } else {
+            Write-Host "Output length: $($out.Length)"
+        }
+    } finally {
+        Remove-Item $tmpOut -Force -ErrorAction SilentlyContinue
     }
 }
+

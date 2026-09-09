@@ -155,7 +155,7 @@ window.v4ResponsiveSmartGuideScript = `
             // Scope query to the active frame/column or root body so that all elements in the column are included
             const columnSelector = context.type === 'pc' ? '.pc-column, .pc-browser-frame' : '.mobile-column, .mobile-browser-frame';
             const rootScope = context.inner.closest(columnSelector) || context.area || context.inner.parentElement || document.body;
-            const components = rootScope.querySelectorAll('.lf-component, .v4-admin-label-cell');
+            const components = rootScope.querySelectorAll('.lf-component, .v4-admin-label-cell, .v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell');
 
             components.forEach((c, idx) => {
                 if (c === activeEl || c.classList.contains('dragging-now')) return;
@@ -169,9 +169,10 @@ window.v4ResponsiveSmartGuideScript = `
                 const w = pos.width || c.offsetWidth || parseFloat(c.style.width) || 100;
                 const h = pos.height || c.offsetHeight || parseFloat(c.style.height) || 40;
                 if (w < 10 || h < 10) return;
-                const name = c.id ? c.id.replace('v4-comp-', 'Comp ') : ('Item ' + (idx + 1));
+                const isGridCell = c.classList.contains('v4-grid-cell');
+                const name = c.id ? c.id.replace('v4-comp-', 'Comp ') : (isGridCell ? ((c.tagName.toLowerCase() === 'th' ? 'Col ' : 'Cell ') + (idx + 1)) : ('Item ' + (idx + 1)));
 
-                const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table');
+                const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table') || c.classList.contains('v4-grid-container') || !!c.querySelector('.v4-grid-container');
 
                 this.spacingTargets.push({
                     id: c.id || ('comp-' + idx),
@@ -184,12 +185,13 @@ window.v4ResponsiveSmartGuideScript = `
                     bottom: t + h,
                     isWall: false,
                     isAncestor: isAncestor,
-                    isTableContainer: isTable
+                    isTableContainer: isTable,
+                    isGridCell: isGridCell
                 });
             });
 
-            // Register Virtual Row Containers for multi-row tables (e.g., Query Item .v4-admin-row)
-            const rows = rootScope.querySelectorAll('.v4-admin-settings-table .v4-admin-row');
+            // Register Virtual Row Containers for multi-row tables (e.g., Query Item .v4-admin-row & Grid UI tr)
+            const rows = rootScope.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr');
             rows.forEach((row, rIdx) => {
                 if (row === activeEl) return;
                 const pos = this.getPureOffset(row, context.inner);
@@ -247,6 +249,7 @@ window.v4ResponsiveSmartGuideScript = `
             for (let i = 0; i < this.spacingTargets.length; i++) {
                 const t = this.spacingTargets[i];
                 if (activeId && t.id === activeId) continue;
+                if (t.isGridCell) continue;
                 if (!t.width || !t.height) continue;
 
                 // Enclosure test (Case A: 4-edge enclosure with 6px tolerance; Case B: Center-point containment for underlying Rect shape/card)

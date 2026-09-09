@@ -1,4 +1,4 @@
-﻿/**
+/**
  * bychoi workspace - Embedded Templates (COMPLETE BUNDLE)
  * This file contains the HTML structure of all templates to ensure 
  * they can be loaded reliably under file:// protocol without fetch/CORS restrictions.
@@ -806,9 +806,9 @@ body { position: relative !important; min-height: 100vh; margin: 0; padding: 0; 
     transform: translateY(0.8px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15) !important;
 }
-.v4-custom-btn.style-primary { background: #4f46e5 !important; border-color: #4f46e5 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important; }
-.v4-custom-btn.style-primary:hover { box-shadow: 0 6px 18px rgba(79, 70, 229, 0.5) !important; }
-.v4-custom-btn.style-negative { background: #e2e8f0 !important; border-color: #cbd5e1 !important; color: #475569 !important; }
+.v4-custom-btn.style-primary { background: #18181b !important; border-color: #18181b !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important; }
+.v4-custom-btn.style-primary:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important; }
+.v4-custom-btn.style-negative { background: #e2e8f0 !important; border-color: #cbd5e1 !important; color: #000000 !important; }
 .v4-custom-btn.style-normal { background: #ffffff !important; border-color: rgb(150, 150, 150) !important; color: #1f2937 !important; font-weight: normal !important; }
 .lf-connector-port {
     position: absolute;

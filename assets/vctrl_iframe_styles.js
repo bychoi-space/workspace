@@ -61,17 +61,28 @@ body, .page, .lf-component {
 .lf-component:hover .lf-delete-trigger, .lf-component.selected .lf-delete-trigger { display: none !important; }
 .v4-premium-table { table-layout: fixed; border-collapse: collapse; border: 1.6px solid #cbd5e1 !important; font-family: inherit; }
 .v4-premium-table th { padding: 14px 16px; text-align: left; border: 1.6px solid #cbd5e1 !important; font-weight: 400; font-size: 12px; color: var(--v4-text-color, #0f172a); white-space: nowrap; }
-.v4-premium-table td { padding: 14px 16px; border: 1.6px solid #cbd5e1 !important; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); }
+.v4-grid-table-wrapper { width: 100% !important; overflow-x: auto !important; overflow-y: auto !important; box-sizing: border-box !important; }
+.v4-grid-container table { table-layout: fixed !important; border-collapse: collapse !important; box-sizing: border-box !important; }
+.v4-grid-table-wrapper::-webkit-scrollbar { width: 6px; height: 6px; }
+.v4-grid-table-wrapper::-webkit-scrollbar-track { background: #f1f5f9; }
+.v4-grid-table-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.v4-grid-table-wrapper::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 .v4-grid-container table th, .v4-grid-container table td { border-right: 1.6px solid rgb(226, 232, 240) !important; line-height: 1.2 !important; padding: 0 8px !important; vertical-align: middle !important; box-sizing: border-box !important; }
 .v4-grid-container table td[data-type="checkbox"], .v4-grid-container table th[data-type="checkbox"], .v4-grid-container table td.v4-grid-check-col, .v4-grid-container table th.v4-grid-check-col { padding: 0 !important; text-align: center !important; }
 .v4-grid-container table td[data-type="checkbox"] input[type="checkbox"], .v4-grid-container table th[data-type="checkbox"] input[type="checkbox"] { width: 14px !important; height: 14px !important; margin: auto !important; vertical-align: middle !important; cursor: pointer !important; }
 .v4-grid-container table td *, .v4-grid-container table th * { margin: 0 !important; padding: 0 !important; line-height: inherit !important; }
-.v4-grid-container table tr { border-bottom: 1.6px solid rgb(226, 232, 240) !important; }
+.v4-grid-container table tr { border-bottom: 1.6px solid rgb(226, 232, 240) !important; transition: background-color 0.15s ease !important; }
+.v4-grid-container[data-zebra="true"] table tbody tr:nth-child(even) { background-color: #f8fafc !important; }
+.v4-grid-container table tbody tr:hover { background-color: rgba(241, 245, 249, 0.7) !important; }
+.v4-grid-container table tbody tr.v4-grid-row-selected { background-color: rgba(239, 246, 255, 0.9) !important; }
 .v4-grid-container td.v4-grid-cell { font-size: 12px !important; font-family: inherit !important; color: var(--v4-text-color, #0f172a) !important; font-weight: 400 !important; }
 .v4-grid-container table td[data-clickable="true"], .v4-grid-container table td.v4-grid-clickable-cell { color: #2563eb !important; cursor: pointer !important; }
 .v4-grid-container table td[data-clickable="true"]:hover, .v4-grid-container table td.v4-grid-clickable-cell:hover { color: #1d4ed8 !important; text-decoration: underline !important; }
 .v4-grid-container table td[data-clickable="true"] *, .v4-grid-container table td.v4-grid-clickable-cell * { cursor: pointer !important; }
 .v4-grid-container th.v4-grid-cell { font-size: 12px !important; font-family: inherit !important; color: var(--v4-text-color, #0f172a) !important; font-weight: 400 !important; position: sticky !important; top: 0 !important; z-index: 10 !important; background: #f8fafc !important; }
+.v4-grid-action-btn { display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 2px 8px !important; border-radius: 12px !important; font-size: 11px !important; border: 1.2px solid rgb(203, 213, 225) !important; background: #ffffff !important; cursor: pointer !important; color: #334155 !important; font-family: inherit !important; line-height: 1.2 !important; box-sizing: border-box !important; }
+.v4-grid-action-btn:hover { background: #f1f5f9 !important; border-color: #94a3b8 !important; }
+.v4-grid-badge { display: inline-block !important; padding: 2px 6px !important; border-radius: 4px !important; font-size: 11px !important; font-weight: 600 !important; line-height: 1.2 !important; }
 .v4-shape { position: relative; border-width: 1.6px !important; border-style: solid !important; border-color: rgb(200, 200, 200); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgb(255, 255, 255); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; }
 .v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding-top: var(--v4-shape-pad-top, 5px) !important; padding-right: var(--v4-shape-pad-right, 10px) !important; padding-bottom: var(--v4-shape-pad-bottom, 5px) !important; padding-left: var(--v4-shape-pad-left, 10px) !important; padding: var(--v4-shape-pad-top, 5px) var(--v4-shape-pad-right, 10px) var(--v4-shape-pad-bottom, 5px) var(--v4-shape-pad-left, 10px) !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; flex-direction: column !important; }
 .v4-shape-rect > .v4-editable-cell, .v4-shape-circle > .v4-editable-cell, .v4-shape-pattern-grid > .v4-editable-cell, .v4-shape-wave > .v4-editable-cell { width: 100% !important; height: 100% !important; }
@@ -153,6 +164,72 @@ svg.lf-icon:not(.v4-logo-img) polygon,
     pointer-events: none;
     display: block;
 }
+
+/* --- Tab Atom Component Styles --- */
+.v4-tab-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    background: #ffffff;
+    border: 1.6px solid rgb(226, 232, 240) !important;
+    border-radius: 8px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+.v4-tab-item {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    box-sizing: border-box;
+    border-right: 1.6px solid rgb(226, 232, 240);
+    background: #f8fafc;
+    transition: background-color 0.15s ease;
+    padding: 0 8px;
+    user-select: none;
+}
+.v4-tab-item:last-child {
+    border-right: none !important;
+}
+.v4-tab-item:hover:not(.active) {
+    background: #f1f5f9;
+}
+.v4-tab-item.active {
+    background: #ffffff;
+}
+.v4-tab-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #2563eb;
+    display: none;
+    border-radius: 2px 2px 0 0;
+}
+.v4-tab-item.active .v4-tab-indicator {
+    display: block;
+}
+.v4-tab-text {
+    font-size: 12px;
+    font-family: inherit;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    outline: none;
+    pointer-events: auto;
+}
+.v4-tab-item.active .v4-tab-text {
+    color: #0f172a;
+    font-weight: 600;
+}
+
 /* Unified Disabled State for 11 Target Atoms (Shape BG: #c8c8c8, Text/Control: #969696, Border: #969696 / #b0b0b0) */
 
 /* 1. Reset outer containers so background does not fill outer bounding boxes */
@@ -412,9 +489,10 @@ html, body { position: relative !important; min-height: 100vh; margin: 0; paddin
     transform: translateY(0.8px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15) !important;
 }
-.v4-custom-btn.style-primary { background: #4f46e5 !important; border-color: #4f46e5 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important; }
-.v4-custom-btn.style-primary:hover { box-shadow: 0 6px 18px rgba(79, 70, 229, 0.5) !important; }
-.v4-custom-btn.style-negative { background: #e2e8f0 !important; border-color: #cbd5e1 !important; color: #475569 !important; }
+.v4-custom-btn.style-primary { background: #18181b !important; border-color: #18181b !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important; }
+.v4-custom-btn.style-primary:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important; }
+.v4-custom-btn.style-negative { background: #e2e8f0 !important; border-color: #cbd5e1 !important; color: #000000 !important; }
+.v4-custom-btn.style-normal { background: #ffffff !important; border-color: rgb(150, 150, 150) !important; color: #1f2937 !important; font-weight: normal !important; }
 .lf-connector-port {
     position: absolute;
     width: 8px;

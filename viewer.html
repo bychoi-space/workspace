@@ -119,6 +119,30 @@
                 </button>
             </div>
 
+            <div class="url-copy-dropdown-wrapper" id="url-copy-dropdown-wrapper">
+                <button id="btn-copy-project-url" class="btn-secondary btn-copy-url" title="URL 복사 메뉴 열기">
+                    <span class="material-icons-outlined btn-icon-sm">link</span>
+                    <span class="btn-copy-url-text">URL 복사</span>
+                    <span class="material-icons-outlined dropdown-arrow-icon">arrow_drop_down</span>
+                </button>
+                <div class="url-copy-menu" id="url-copy-menu" style="display: none;">
+                    <div class="url-copy-menu-item" id="menu-copy-project-url">
+                        <span class="material-icons-outlined menu-item-icon">folder</span>
+                        <div class="menu-item-text-group">
+                            <span class="menu-item-title">프로젝트 URL 복사</span>
+                            <span class="menu-item-sub">프로젝트 전체 시작 화면</span>
+                        </div>
+                    </div>
+                    <div class="url-copy-menu-divider"></div>
+                    <div class="url-copy-menu-item" id="menu-copy-screen-url">
+                        <span class="material-icons-outlined menu-item-icon">description</span>
+                        <div class="menu-item-text-group">
+                            <span class="menu-item-title">스크린 URL 복사</span>
+                            <span class="menu-item-sub" id="menu-screen-name-sub">현재 열려 있는 화면</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <button id="btn-export-project-pdf" class="btn-secondary btn-export-pdf" title="현재 프로젝트의 모든 스크린을 PDF로 내려받기">
                 <span class="material-icons-outlined btn-icon-sm">picture_as_pdf</span>
                 <span>PDF 다운로드</span>
@@ -516,6 +540,7 @@
     <script src="assets/vctrl_iframe_script.js?v=V327_RAYCAST_CONTAINER_FIX"></script>
     <script src="assets/vctrl_iframe_grid.js?v=V327_RAYCAST_CONTAINER_FIX"></script>
     <script src="assets/vctrl_iframe_accordion.js?v=V327_RAYCAST_CONTAINER_FIX"></script>
+    <script src="assets/vctrl_iframe_tab.js?v=V327_RAYCAST_CONTAINER_FIX"></script>
     <script src="assets/vctrl_iframe_drag.js?v=V327_RAYCAST_CONTAINER_FIX"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V327_RAYCAST_CONTAINER_FIX"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V327_RAYCAST_CONTAINER_FIX"></script>
@@ -536,6 +561,10 @@
     <script src="assets/vctrl_component_inserter.js?v=V326_SMARTGUIDE_CLEAN"></script>
     <script src="assets/vctrl_floating_inspector.js?v=V326_SMARTGUIDE_CLEAN"></script>
     <script src="assets/inspector_grid.js?v=V326_SMARTGUIDE_CLEAN"></script>
+    <script src="assets/inspector_accordion.js?v=V331_MODULAR"></script>
+    <script src="assets/inspector_tab.js?v=V331_MODULAR"></script>
+    <script src="assets/inspector_shapes.js?v=V331_MODULAR"></script>
+    <script src="assets/inspector_atoms.js?v=V331_MODULAR"></script>
     <script src="assets/vctrl_v4_addon.js?v=V326_SMARTGUIDE_CLEAN"></script>
 </body>
 </html>

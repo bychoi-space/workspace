@@ -45,31 +45,28 @@ window.v4Script = `
         if (!table) return;
         
         const isGrid = s.classList.contains('v4-grid-container') || !!s.querySelector('.v4-grid-container');
+        if (isGrid) {
+            // [Grid UI SSOT] Grid UI maintains its user-defined frame size (width & height) with internal scrolling!
+            return;
+        }
         
         let newWidth, newHeight;
-        if (isGrid) {
-            // [Grid UI SSOT] Keep the user-defined component width; do not expand to table.offsetWidth!
-            const curW = parseFloat(s.style.width) || s.offsetWidth || 800;
-            newWidth = curW;
-            newHeight = table.offsetHeight + 36;
+        const colgroup = table.querySelector('colgroup');
+        if (colgroup && colgroup.children.length > 0) {
+            let totalWidth = 0;
+            Array.from(colgroup.children).forEach(col => {
+                const wStr = col.style.width || col.getAttribute('width') || '100px';
+                totalWidth += parseInt(wStr) || 100;
+            });
+            newWidth = totalWidth;
         } else {
-            const colgroup = table.querySelector('colgroup');
-            if (colgroup && colgroup.children.length > 0) {
-                let totalWidth = 0;
-                Array.from(colgroup.children).forEach(col => {
-                    const wStr = col.style.width || col.getAttribute('width') || '100px';
-                    totalWidth += parseInt(wStr) || 100;
-                });
-                newWidth = totalWidth;
-            } else {
-                newWidth = table.offsetWidth;
-            }
-            
-            const origHeight = table.style.height;
-            table.style.height = 'auto';
-            newHeight = table.offsetHeight;
-            table.style.height = origHeight || '100%';
+            newWidth = table.offsetWidth;
         }
+        
+        const origHeight = table.style.height;
+        table.style.height = 'auto';
+        newHeight = table.offsetHeight;
+        table.style.height = origHeight || '100%';
         
         notifyParent({
             type: 'LF_TABLE_SIZE_CHANGED',
@@ -204,6 +201,29 @@ window.v4Script = `
         const accordionDepthType = accordionContainer ? (accordionContainer.getAttribute('data-depth-type') || '1depth') : '1depth';
         const accordionHierarchy = accordionContainer ? (accordionContainer.getAttribute('data-hierarchy') || '') : '';
 
+        // Tab UI Atom Detection
+        const isTab = isGroup ? false : (!!c.querySelector('.v4-tab-container') || c.classList.contains('v4-tab-container'));
+        const tabContainer = isGroup ? null : (c.querySelector('.v4-tab-container') || (isTab ? c : null));
+        const tabCount = tabContainer ? (parseInt(tabContainer.getAttribute('data-tab-count')) || (tabContainer.querySelectorAll('.v4-tab-item').length || 3)) : 3;
+        const tabActiveIndex = tabContainer ? (parseInt(tabContainer.getAttribute('data-active-index')) || 0) : 0;
+        const tabAccentColor = tabContainer ? (tabContainer.getAttribute('data-accent-color') || '#2563eb') : '#2563eb';
+        let tabItemsList = [];
+        if (tabContainer) {
+            const rawTabs = tabContainer.getAttribute('data-tabs');
+            if (rawTabs) {
+                try {
+                    tabItemsList = JSON.parse(rawTabs);
+                } catch(e) {}
+            }
+            if (!tabItemsList || tabItemsList.length === 0) {
+                const domItems = Array.from(tabContainer.querySelectorAll('.v4-tab-item'));
+                tabItemsList = domItems.map((it, idx) => ({
+                    name: it.querySelector('.v4-tab-text')?.innerText || ('Tab ' + (idx + 1)),
+                    active: it.classList.contains('active') || idx === tabActiveIndex
+                }));
+            }
+        }
+
         // Grid UI Atom Detection
         const isGrid = isGroup ? false : (!!c.querySelector('.v4-grid-container') || c.classList.contains('v4-grid-container'));
         const gridContainer = isGroup ? null : (c.querySelector('.v4-grid-container') || (isGrid ? c : null));
@@ -211,6 +231,7 @@ window.v4Script = `
         const gridRowCount = gridContainer ? (parseInt(gridContainer.getAttribute('data-row-count')) || 0) : 0;
         const gridShowPagination = gridContainer ? gridContainer.getAttribute('data-pagination') !== 'false' : true;
         const gridRowHeight = gridContainer ? (parseInt(gridContainer.getAttribute('data-row-height')) || 50) : 50;
+        const gridZebra = gridContainer ? (gridContainer.getAttribute('data-zebra') === 'true') : false;
         
         let gridColumns = [];
         if (gridContainer) {
@@ -222,7 +243,14 @@ window.v4Script = `
                     console.error("Error parsing data-columns", e);
                 }
             }
-            if (!gridColumns || gridColumns.length === 0) {
+            if (Array.isArray(gridColumns) && gridColumns.length > 0) {
+                gridColumns.forEach(col => {
+                    if (!col.align) {
+                        col.align = (col.type === 'number' || col.type === 'currency') ? 'right' : 
+                                    (col.type === 'checkbox' || col.type === 'status' || col.type === 'action') ? 'center' : 'left';
+                    }
+                });
+            } else {
                 var tableCols = Array.from(gridContainer.querySelectorAll('colgroup col'));
                 var tableHeaders = Array.from(gridContainer.querySelectorAll('thead th'));
                 if (tableHeaders.length > 0) {
@@ -230,19 +258,26 @@ window.v4Script = `
                         var name = cell.innerText.replace(' ⇅', '').trim();
                         var colEl = tableCols[index];
                         var width = colEl ? (colEl.style.width || colEl.getAttribute('width') || '120px') : '120px';
-                        var type = 'text';
-                        if (cell.classList.contains('v4-grid-check-col') || cell.querySelector('input[type="checkbox"]')) {
-                            type = 'checkbox';
-                        } else if (name === '\uBC88\uD638') {
-                            type = 'number';
-                        } else if (name === '\uBC29\uC1A1\uC0C1\uD0DC') {
-                            type = 'status';
-                        } else if (name === '\uB4F1\uB85D/\uC218\uC815\uC790' || name === '\uB4F1\uB85D\uC790' || name === '\uC218\uC815\uC790') {
-                            type = 'author';
-                        } else if (name.indexOf('\uC77C\uC2DC') >= 0 || name.indexOf('\uC77C\uC790') >= 0) {
-                            type = 'datetime';
+                        var type = cell.getAttribute('data-type') || 'text';
+                        if (!cell.getAttribute('data-type')) {
+                            if (cell.classList.contains('v4-grid-check-col') || cell.querySelector('input[type="checkbox"]')) {
+                                type = 'checkbox';
+                            } else if (name === '\uBC88\uD638') {
+                                type = 'number';
+                            } else if (name === '\uBC29\uC1A1\uC0C1\uD0DC' || name === '\uC804\uC2DC\uC0C1\uD0DC' || name === '\uC0C1\uD0DC') {
+                                type = 'status';
+                            } else if (name === '\uB4F1\uB85D/\uC218\uC815\uC790' || name === '\uB4F1\uB85D\uC790' || name === '\uC218\uC815\uC790') {
+                                type = 'author';
+                            } else if (name.indexOf('\uC77C\uC2DC') >= 0 || name.indexOf('\uC77C\uC790') >= 0) {
+                                type = 'datetime';
+                            } else if (name.indexOf('\uAE08\uC561') >= 0 || name.indexOf('\uAC00\uACA9') >= 0) {
+                                type = 'currency';
+                            } else if (name === '\uAD00\uB9AC') {
+                                type = 'action';
+                            }
                         }
-                        return { name: name, type: type, width: width };
+                        var align = cell.getAttribute('data-align') || cell.style.textAlign || ((type === 'number' || type === 'currency') ? 'right' : ((type === 'checkbox' || type === 'status' || type === 'action') ? 'center' : 'left'));
+                        return { name: name, type: type, width: width, align: align };
                     });
                 } else {
                     const headerCells = Array.from(gridContainer.querySelectorAll('.v4-grid-header-row .v4-grid-cell'));
@@ -262,7 +297,7 @@ window.v4Script = `
                         } else if (name.indexOf('\uC77C\uC2DC') >= 0 || name.indexOf('\uC77C\uC790') >= 0) {
                             type = 'datetime';
                         }
-                        return { name: name, type: type, width: width };
+                        return { name: name, type: type, width: width, align: (type === 'checkbox' || type === 'status') ? 'center' : (type === 'number' ? 'right' : 'left') };
                     });
                 }
             }
@@ -483,12 +518,18 @@ window.v4Script = `
             accordionItemHeight: accordionItemHeight,
             accordionDepthType: accordionDepthType,
             accordionHierarchy: accordionHierarchy,
+            isTab: isTab,
+            tabCount: tabCount,
+            tabActiveIndex: tabActiveIndex,
+            tabAccentColor: tabAccentColor,
+            tabs: tabItemsList,
             isGrid: isGrid,
             gridHeaders: gridHeaders,
             gridColumns: gridColumns,
             gridRowCount: gridRowCount,
             gridShowPagination: gridShowPagination,
             gridRowHeight: gridRowHeight,
+            gridZebra: gridZebra,
             isAdminSettings: isAdminSettings,
             adminRowCount: adminRowCount,
             adminShowGroupHeader: adminShowGroupHeader,
@@ -702,6 +743,17 @@ window.v4Script = `
     let isMarquee = false;
     let isConnectorDragging = false;
     let groupChildrenStart = null;
+    document.addEventListener('wheel', e => {
+        const mob = e.target.closest && e.target.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
+        const pc = e.target.closest && e.target.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
+        if (mob && window.lastActiveFrame !== 'mobile') {
+            window.lastActiveFrame = 'mobile';
+            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+        } else if (pc && window.lastActiveFrame !== 'pc') {
+            window.lastActiveFrame = 'pc';
+            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+        }
+    }, { passive: true });
     document.addEventListener('mousedown', e => {
         if (e.target.closest('.sidebar') || e.target.closest('.modal') || e.target.closest('.header-metadata')) return;
 
@@ -1453,27 +1505,80 @@ window.v4Script = `
 
             notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
         } else if (d.type === 'LF_INSERT_COMPONENT' || d.type === 'LF_INSERT_V4_COMP') {
-            const pcArea = document.querySelector('.pc-content-inner') || document.querySelector('.pc-content-area');
-            const mobileContent = document.querySelector('.mobile-content-inner') || document.querySelector('.mobile-content-area, .mobile-content');
-            let host = document.body;
+            const pcScrollArea = document.querySelector('.pc-content-area');
+            const pcInner = document.querySelector('.pc-content-inner');
+            const mobileScrollArea = document.querySelector('.mobile-content-area, .mobile-content');
+            const mobileInner = document.querySelector('.mobile-content-inner');
+            const isResponsiveTemplate = !!(pcInner || mobileInner);
 
             const isPinMarker = d.className && d.className.includes('pin-marker');
             const compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);
             const compH = isPinMarker ? 28 : ((d.style && d.style.height) ? parseInt(d.style.height) || 100 : 100);
 
-            let centerTop = (window.innerHeight - compH) / 2;
-            let centerLeft = (window.innerWidth - compW) / 2;
+            let host = document.body;
+            let centerTop = Math.round((window.innerHeight - compH) / 2);
+            let centerLeft = Math.round((window.innerWidth - compW) / 2);
 
-            if (window.lastActiveFrame === 'mobile' && mobileContent) {
-                host = mobileContent;
-                centerLeft = Math.max(10, Math.round((360 - compW) / 2));
-                centerTop = Math.max(10, Math.round(300 + mobileContent.scrollTop));
-                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
-            } else if (pcArea) {
-                host = pcArea;
-                centerLeft = Math.max(10, Math.round((1000 - compW) / 2));
-                centerTop = Math.max(10, Math.round(300 + pcArea.scrollTop));
-                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+            if (isResponsiveTemplate) {
+                let activeFrame = window.lastActiveFrame;
+                if (!mobileScrollArea && pcScrollArea) activeFrame = 'pc';
+                if (!pcScrollArea && mobileScrollArea) activeFrame = 'mobile';
+                if (!activeFrame) {
+                    const currentlySelected = document.querySelector('.lf-component.selected');
+                    if (currentlySelected) {
+                        if (currentlySelected.closest('.mobile-content-inner, .mobile-content-area, .mobile-content, .mobile-frame, .mobile-browser-frame')) {
+                            activeFrame = 'mobile';
+                        } else if (currentlySelected.closest('.pc-content-inner, .pc-content-area, .pc-frame, .pc-browser-frame')) {
+                            activeFrame = 'pc';
+                        }
+                    }
+                }
+                if (!activeFrame) {
+                    if (document.querySelector('.mobile-column.active-column')) activeFrame = 'mobile';
+                    else if (document.querySelector('.pc-column.active-column')) activeFrame = 'pc';
+                }
+                if (!activeFrame) {
+                    activeFrame = (pcScrollArea || pcInner) ? 'pc' : 'mobile';
+                }
+
+                if (activeFrame === 'mobile' && (mobileScrollArea || mobileInner)) {
+                    host = mobileInner || mobileScrollArea;
+                    const scrollContainer = mobileScrollArea || mobileInner;
+                    const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
+                    const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
+                    const hostW = host ? (host.offsetWidth || 360) : 360;
+                    centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                    centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                    if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+                } else if (pcScrollArea || pcInner) {
+                    host = pcInner || pcScrollArea;
+                    const scrollContainer = pcScrollArea || pcInner;
+                    const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
+                    const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
+                    const hostW = host ? (host.offsetWidth || 1160) : 1160;
+                    centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                    centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                    if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+                }
+            } else {
+                try {
+                    const parentState = window.parent && window.parent.state;
+                    const parentDOM = window.parent && window.parent.DOM;
+                    if (parentState && parentState.transform && parentDOM && parentDOM.canvas) {
+                        const t = parentState.transform;
+                        const cw = parentDOM.canvas.clientWidth || 1600;
+                        const ch = parentDOM.canvas.clientHeight || 900;
+                        const s = t.scale || 1;
+                        const viewCenterX = Math.round(((cw / 2) - t.x) / s);
+                        const viewCenterY = Math.round(((ch / 2) - t.y) / s);
+                        centerLeft = Math.round(viewCenterX - (compW / 2));
+                        centerTop = Math.round(viewCenterY - (compH / 2));
+                        const maxW = Math.max(1600, document.body.scrollWidth, document.documentElement.scrollWidth);
+                        const maxH = Math.max(900, document.body.scrollHeight, document.documentElement.scrollHeight);
+                        centerLeft = Math.max(15, Math.min(centerLeft, maxW - compW - 15));
+                        centerTop = Math.max(15, Math.min(centerTop, maxH - compH - 15));
+                    }
+                } catch(e) {}
             }
             
             if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -1787,16 +1892,6 @@ window.v4Script = `
                 }
             }
         }
-        else if (d.type === 'LF_UPDATE_ACCORDION_PROPERTIES') {
-            if (window.v4MessageHandlers && window.v4MessageHandlers['LF_UPDATE_ACCORDION_PROPERTIES']) {
-                window.v4MessageHandlers['LF_UPDATE_ACCORDION_PROPERTIES'](d);
-            }
-        }
-        else if (d.type === 'LF_UPDATE_GRID_PROPERTIES') {
-            if (window.v4MessageHandlers && window.v4MessageHandlers['LF_UPDATE_GRID_PROPERTIES']) {
-                window.v4MessageHandlers['LF_UPDATE_GRID_PROPERTIES'](d);
-            }
-        }
         else if (d.type === 'LF_UPDATE_ATOM_TEXT_ENABLED') {
             const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return;
             if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -1838,7 +1933,7 @@ window.v4Script = `
         }
         else if (d.type === 'LF_UPDATE_ATOM_DISABLED') {
             const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return;
-            const container = s.querySelector('.v4-textbox-container, .v4-textarea-container, .v4-stepper-container, .v4-selectbox-container, .v4-fileupload-container, .v4-datepicker-container, .v4-toggle-container, .v4-accordion-container, .v4-checkbox-container, .v4-radio-container, .v4-searchbar-container') || s;
+            const container = s.querySelector('.v4-textbox-container, .v4-textarea-container, .v4-stepper-container, .v4-selectbox-container, .v4-fileupload-container, .v4-datepicker-container, .v4-toggle-container, .v4-accordion-container, .v4-checkbox-container, .v4-radio-container, .v4-searchbar-container, .v4-tab-container') || s;
             if (window.V4UndoManager) window.V4UndoManager.saveState();
             const disabledStr = d.disabled ? 'true' : 'false';
             s.setAttribute('data-disabled', disabledStr);
@@ -2097,6 +2192,36 @@ window.v4Script = `
                 if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
                 markDirty();
                 
+                if (typeof window._getCompStyles === 'function') {
+                    window.parent.postMessage({
+                        type: 'LF_COMP_SELECTED',
+                        ...window._getCompStyles(s)
+                    }, '*');
+                }
+            }
+        }
+        else if (d.type === 'LF_FIT_BUTTON_TO_TEXT') {
+            const s = document.querySelector('.lf-component.selected'); if (!s) return;
+            const container = s.querySelector('.v4-btn-container') || (s.classList.contains('v4-btn-container') ? s : null);
+            if (container) {
+                if (window.V4UndoManager) window.V4UndoManager.saveState();
+                const btn = container.querySelector('.v4-custom-btn');
+                const text = container.getAttribute('data-text') !== null ? container.getAttribute('data-text') : (btn ? btn.innerText : '\uBC84\uD2BC');
+                const fontSize = parseInt(container.getAttribute('data-font-size')) || 12;
+
+                const canvas = window.__btnMeasurerCanvas || (window.__btnMeasurerCanvas = document.createElement('canvas'));
+                const ctx = canvas.getContext('2d');
+                ctx.font = '400 ' + fontSize + 'px "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                const metrics = ctx.measureText(text || ' ');
+                const textWidth = Math.ceil(metrics.width);
+
+                const optimalWidth = Math.max(60, textWidth + 32);
+                s.style.width = optimalWidth + 'px';
+
+                if (typeof window.updateHandles === 'function') window.updateHandles(s);
+                if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+                markDirty();
+
                 if (typeof window._getCompStyles === 'function') {
                     window.parent.postMessage({
                         type: 'LF_COMP_SELECTED',
@@ -3305,7 +3430,7 @@ window.v4Script = `
                 targets.push({ y: t + h / 2, label: name, part: 'Middle', type: 'v' });
                 targets.push({ y: t + h, label: name, part: 'Bottom', type: 'v' });
                 
-                const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table');
+                const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table') || c.classList.contains('v4-grid-container') || !!c.querySelector('.v4-grid-container');
                 
                 rects.push({
                     id: c.id,
@@ -3320,17 +3445,20 @@ window.v4Script = `
                 });
             });
 
-            // Virtual row containers for multi-row tables
-            document.querySelectorAll('.v4-admin-settings-table .v4-admin-row').forEach((row, rIdx) => {
+            // Virtual row containers for multi-row tables (Query Item & Grid UI)
+            document.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr').forEach((row, rIdx) => {
                 const parentComp = row.closest('.lf-component');
-                const parentLeft = parentComp ? (parseFloat(parentComp.style.left) || 0) : 0;
-                const parentTop = parentComp ? (parseFloat(parentComp.style.top) || 0) : 0;
-                const l = parentLeft + (row.offsetLeft || 0);
-                const t = parentTop + (row.offsetTop || 0);
-                const w = row.offsetWidth;
-                const h = row.offsetHeight;
+                if (!parentComp) return;
+                const parentLeft = parseFloat(parentComp.style.left) || 0;
+                const parentTop = parseFloat(parentComp.style.top) || 0;
+                const cRect = parentComp.getBoundingClientRect();
+                const rRect = row.getBoundingClientRect();
+                const l = parentLeft + (rRect.left - cRect.left);
+                const t = parentTop + (rRect.top - cRect.top);
+                const w = rRect.width || row.offsetWidth;
+                const h = rRect.height || row.offsetHeight;
                 if (w < 10 || h < 5) return;
-                const tableId = parentComp ? parentComp.id : ('table-' + rIdx);
+                const tableId = parentComp.id || ('table-' + rIdx);
 
                 rects.push({
                     id: row.id || ('v4-row-' + rIdx),
@@ -3343,6 +3471,34 @@ window.v4Script = `
                     bottom: t + h,
                     isRowContainer: true,
                     tableId: tableId
+                });
+            });
+
+            // Grid UI Cells for column line distances
+            document.querySelectorAll('.v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell').forEach((cell, cIdx) => {
+                const parentComp = cell.closest('.lf-component');
+                if (!parentComp) return;
+                const parentLeft = parseFloat(parentComp.style.left) || 0;
+                const parentTop = parseFloat(parentComp.style.top) || 0;
+                const cRect = parentComp.getBoundingClientRect();
+                const cellRect = cell.getBoundingClientRect();
+                const l = parentLeft + (cellRect.left - cRect.left);
+                const t = parentTop + (cellRect.top - cRect.top);
+                const w = cellRect.width || cell.offsetWidth;
+                const h = cellRect.height || cell.offsetHeight;
+                if (w < 10 || h < 10) return;
+
+                const isTh = cell.tagName.toLowerCase() === 'th';
+                rects.push({
+                    id: cell.id || ('grid-cell-' + cIdx),
+                    label: (isTh ? 'Col ' : 'Cell ') + (cIdx + 1),
+                    left: l,
+                    top: t,
+                    width: w,
+                    height: h,
+                    right: l + w,
+                    bottom: t + h,
+                    isGridCell: true
                 });
             });
 

@@ -32,6 +32,7 @@ window.rebindInspectorDOM = function() {
     DOM.accordionPropSection = get('accordion-inspector-section');
     DOM.gridPropSection = get('grid-inspector-section');
     DOM.adminSettingsPropSection = get('admin-settings-inspector-section');
+    DOM.tabPropSection = get('tab-inspector-section');
 
     DOM.textColorPicker = get('text-color-picker');
     DOM.selectionBar = get('selection-actions-bar');
@@ -59,7 +60,7 @@ window.restorePropertiesSections = function() {
         DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
         DOM.fileuploadPropSection, DOM.alertPropSection, DOM.buttonPropSection,
         DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
-        DOM.adminSettingsPropSection
+        DOM.adminSettingsPropSection, DOM.tabPropSection
     ];
 
     sections.forEach(sec => {
@@ -162,6 +163,7 @@ window.DOM = {
     accordionPropSection: get('accordion-inspector-section'),
     gridPropSection: get('grid-inspector-section'),
     adminSettingsPropSection: get('admin-settings-inspector-section'),
+    tabPropSection: get('tab-inspector-section'),
     textColorPicker: get('text-color-picker'),
     colorPresets: document.querySelectorAll('.color-preset'),
 
@@ -472,12 +474,16 @@ const ProjectMetadataManager = {
             else if (compStyles.isToggle) type = 'toggle';
             else if (compStyles.isAccordion) type = 'accordion';
             else if (compStyles.isAdminSettings) type = 'admin-settings';
+            else if (compStyles.isTab) type = 'tab';
             else if (compStyles.isIcon) type = 'icon';
             state.editingType = type;
 
             // Show relevant section
             if (state.editingType === 'pin' || state.editingType === 'shape') {
                 if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'block';
+                if (window.InspectorShapes && typeof window.InspectorShapes.sync === 'function') {
+                    window.InspectorShapes.sync(compStyles);
+                }
                 // Shape 및 Pin (텍스트 마커) 모두 CONTENT EDITOR 공유 사용 (단, 이미지 도형인 경우 텍스트 편집기 표시 제외)
                 if (DOM.textPropSection && !compStyles.isImage) {
                     DOM.textPropSection.style.display = 'block';
@@ -596,6 +602,14 @@ const ProjectMetadataManager = {
             } else if (state.editingType === 'toggle') {
                 if (DOM.togglePropSection) DOM.togglePropSection.style.display = 'block';
                 _syncToggleProps(compStyles);
+            } else if (state.editingType === 'tab') {
+                if (DOM.tabPropSection) DOM.tabPropSection.style.display = 'block';
+                if (window.InspectorTab && typeof window.InspectorTab.sync === 'function') {
+                    window.InspectorTab.sync(compStyles);
+                }
+                if (window.InspectorTab && typeof window.InspectorTab.bindEvents === 'function') {
+                    window.InspectorTab.bindEvents();
+                }
             }
 
             // Sync Property Controls
@@ -950,7 +964,7 @@ const ProjectMetadataManager = {
                 DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
                 DOM.fileuploadPropSection, DOM.alertPropSection, DOM.buttonPropSection,
                 DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
-                DOM.adminSettingsPropSection
+                DOM.adminSettingsPropSection, DOM.tabPropSection
             ];
             sections.forEach(sec => {
                 if (sec && sec.style.display === 'block') {
@@ -987,248 +1001,38 @@ const ProjectMetadataManager = {
 };
 
 function _syncStepperProps(comp) {
-    const activeY = document.getElementById('btn-stepper-btn-y');
-    const activeN = document.getElementById('btn-stepper-btn-n');
-    const disabledY = document.getElementById('btn-stepper-disabled-y');
-    const disabledN = document.getElementById('btn-stepper-disabled-n');
-    
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
-    if (activeY && activeN) {
-        highlightActive(activeY, comp.btnEnabled === true);
-        highlightActive(activeN, comp.btnEnabled === false);
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncStepper === 'function') {
+        window.InspectorAtoms.syncStepper(comp);
     }
-    if (disabledY && disabledN) {
-        highlightActive(disabledY, comp.disabled === true || comp.disabled === 'true');
-        highlightActive(disabledN, comp.disabled === false || comp.disabled === 'false');
-    }
-    
-    const minInput = document.getElementById('prop-stepper-min');
-    if (minInput && comp.minVal !== undefined) {
-        minInput.value = comp.minVal;
-    }
-    
-    const maxInput = document.getElementById('prop-stepper-max');
-    if (maxInput && comp.maxVal !== undefined) {
-        maxInput.value = comp.maxVal;
-    }
-    
-    const btnTextInput = document.getElementById('prop-stepper-btn-text');
-    if (btnTextInput && comp.btnText !== undefined) {
-        btnTextInput.value = comp.btnText;
-    }
-
-    _syncAtomDisabledProps(comp);
 }
 
 function _syncAtomDisabledProps(comp) {
-    if (!comp) return;
-    const isDis = (comp.disabled === true || comp.disabled === 'true');
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
-    document.querySelectorAll('.btn-atom-disabled').forEach(btn => {
-        const btnIsDis = btn.dataset.disabled === 'true';
-        highlightActive(btn, isDis === btnIsDis);
-    });
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncDisabled === 'function') {
+        window.InspectorAtoms.syncDisabled(comp);
+    }
 }
 
 function _syncSelectboxProps(comp) {
-    const activeY = document.getElementById('btn-selectbox-dropdown-y');
-    const activeN = document.getElementById('btn-selectbox-dropdown-n');
-    
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
-    const isDropdown = comp.selectboxDropdownActive === true;
-
-    if (activeY && activeN) {
-        highlightActive(activeY, isDropdown);
-        highlightActive(activeN, !isDropdown);
-    }
-
-    const defaultControls = document.getElementById('selectbox-default-controls');
-    const dropdownControls = document.getElementById('selectbox-dropdown-controls');
-    if (defaultControls) defaultControls.style.display = isDropdown ? 'none' : 'block';
-    if (dropdownControls) dropdownControls.style.display = isDropdown ? 'block' : 'none';
-
-    const defaultTextInput = document.getElementById('prop-selectbox-default-text');
-    if (defaultTextInput && document.activeElement !== defaultTextInput && comp.selectboxDefaultText !== undefined) {
-        defaultTextInput.value = comp.selectboxDefaultText;
-    }
-
-    const options = comp.selectboxOptions || [];
-    const countInput = document.getElementById('prop-selectbox-option-count');
-    if (countInput) {
-        countInput.value = options.length;
-    }
-
-    const inputsContainer = document.getElementById('selectbox-options-inputs-container');
-    if (inputsContainer) {
-        const activeEl = document.activeElement;
-        const isTypingSelectboxOption = activeEl && inputsContainer.contains(activeEl);
-        if (!isTypingSelectboxOption) {
-            inputsContainer.innerHTML = options.map((optText, idx) => {
-                return `
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 10px; color: #94a3b8; width: 45px; flex-shrink: 0;">Item ${idx + 1}</span>
-                    <input type="text" class="selectbox-option-input" data-index="${idx}" value="${optText}" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">
-                </div>`;
-            }).join('');
-        }
-    }
-    _syncAtomDisabledProps(comp);
-    if (comp.w !== undefined && comp.h !== undefined) {
-        const sec = DOM.selectboxPropSection || document.getElementById('selectbox-inspector-section');
-        if (sec) {
-            const wInp = sec.querySelector('.v4-prop-input[data-prop="width"]');
-            const hInp = sec.querySelector('.v4-prop-input[data-prop="height"]');
-            if (wInp && document.activeElement !== wInp) wInp.value = Math.round(comp.w);
-            if (hInp && document.activeElement !== hInp) hInp.value = Math.round(comp.h);
-        }
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSelectbox === 'function') {
+        window.InspectorAtoms.syncSelectbox(comp);
     }
 }
 
 function _syncFileuploadProps(comp) {
-    const activeY = document.getElementById('btn-fileupload-selected-y');
-    const activeN = document.getElementById('btn-fileupload-selected-n');
-    
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
-    const isSelected = comp.fileSelected === true;
-
-    if (activeY && activeN) {
-        highlightActive(activeY, isSelected);
-        highlightActive(activeN, !isSelected);
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncFileupload === 'function') {
+        window.InspectorAtoms.syncFileupload(comp);
     }
-
-    const nameControls = document.getElementById('fileupload-name-controls');
-    const placeholderControls = document.getElementById('fileupload-placeholder-controls');
-    if (nameControls) nameControls.style.display = isSelected ? 'block' : 'none';
-    if (placeholderControls) placeholderControls.style.display = isSelected ? 'none' : 'block';
-
-    const nameInput = document.getElementById('prop-fileupload-file-name');
-    if (nameInput && document.activeElement !== nameInput && comp.fileName !== undefined) {
-        nameInput.value = comp.fileName;
-    }
-
-    const placeholderInput = document.getElementById('prop-fileupload-placeholder');
-    if (placeholderInput && document.activeElement !== placeholderInput && comp.filePlaceholder !== undefined) {
-        placeholderInput.value = comp.filePlaceholder;
-    }
-
-    const btnTextInput = document.getElementById('prop-fileupload-btn-text');
-    if (btnTextInput && document.activeElement !== btnTextInput && comp.fileButtonText !== undefined) {
-        btnTextInput.value = comp.fileButtonText;
-    }
-    _syncAtomDisabledProps(comp);
 }
 
 function _syncAlertProps(comp) {
-    const msgText = document.getElementById('prop-alert-message');
-    if (msgText && document.activeElement !== msgText && comp.alertMessage !== undefined) {
-        msgText.value = comp.alertMessage;
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncAlert === 'function') {
+        window.InspectorAtoms.syncAlert(comp);
     }
-    
-    const count = comp.alertBtnCount || 1;
-    for (let i = 1; i <= 3; i++) {
-        const btn = document.getElementById('btn-alert-count-' + i);
-        if (btn) {
-            const isActive = count === i;
-            btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-            btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-            btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-            btn.style.fontWeight = isActive ? 'bold' : 'normal';
-        }
-    }
-    
-    const btn1 = document.getElementById('prop-alert-btn-1');
-    if (btn1 && document.activeElement !== btn1 && comp.alertBtnText1 !== undefined) btn1.value = comp.alertBtnText1;
-    const style1 = comp.alertBtnStyle1 || 'normal';
-    const sel1 = document.getElementById('prop-alert-btn-style-1');
-    if (sel1) sel1.value = style1;
-    
-    const btn2 = document.getElementById('prop-alert-btn-2');
-    if (btn2 && document.activeElement !== btn2 && comp.alertBtnText2 !== undefined) btn2.value = comp.alertBtnText2;
-    const style2 = comp.alertBtnStyle2 || 'normal';
-    const sel2 = document.getElementById('prop-alert-btn-style-2');
-    if (sel2) sel2.value = style2;
-    const btn2Container = document.getElementById('prop-alert-btn-2-container');
-    if (btn2Container) btn2Container.style.display = count >= 2 ? 'flex' : 'none';
-    
-    const btn3 = document.getElementById('prop-alert-btn-3');
-    if (btn3 && document.activeElement !== btn3 && comp.alertBtnText3 !== undefined) btn3.value = comp.alertBtnText3;
-    const style3 = comp.alertBtnStyle3 || 'normal';
-    const sel3 = document.getElementById('prop-alert-btn-style-3');
-    if (sel3) sel3.value = style3;
-    const btn3Container = document.getElementById('prop-alert-btn-3-container');
-    if (btn3Container) btn3Container.style.display = count >= 3 ? 'flex' : 'none';
 }
 
 function _syncButtonProps(comp) {
-    const txtInput = document.getElementById('prop-button-text');
-    if (txtInput && document.activeElement !== txtInput && comp.buttonText !== undefined) {
-        txtInput.value = comp.buttonText;
-    }
-    
-    const fontInput = document.getElementById('prop-button-font-size');
-    if (fontInput && document.activeElement !== fontInput && comp.buttonFontSize !== undefined) {
-        fontInput.value = comp.buttonFontSize;
-    }
-    
-    const selStyle = document.getElementById('prop-button-style');
-    if (selStyle && comp.buttonStyle !== undefined) {
-        selStyle.value = comp.buttonStyle;
-        const customColorsDiv = document.getElementById('prop-button-custom-colors');
-        if (customColorsDiv) {
-            customColorsDiv.style.display = (comp.buttonStyle === 'custom') ? 'block' : 'none';
-        }
-    }
-    
-    const radiusSlider = document.getElementById('prop-button-border-radius');
-    const radiusTxt = document.getElementById('txt-button-border-radius');
-    if (radiusSlider && document.activeElement !== radiusSlider && comp.buttonRadius !== undefined) {
-        const r = parseInt(comp.buttonRadius) || 0;
-        radiusSlider.value = r;
-        if (radiusTxt) radiusTxt.innerText = r;
-        if (typeof window._syncButtonCornerBtns === 'function') {
-            window._syncButtonCornerBtns(r);
-        }
-    }
-
-    if (comp.buttonStyle === 'custom' && comp.currentStyles) {
-        const s = comp.currentStyles;
-        const syncColorLocal = (id, wrapperId, color, isTransparent) => {
-            const picker = document.getElementById(id);
-            const wrapper = document.getElementById(wrapperId);
-            if (picker && color) picker.value = color;
-            if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
-        };
-        syncColorLocal('prop-button-bg-color', 'button-bg-wrapper', s.bg, s.isBgTransparent);
-        syncColorLocal('prop-button-border-color', 'button-border-wrapper', s.border, s.isBorderTransparent);
-        syncColorLocal('prop-button-text-color', 'button-text-wrapper', s.text, false);
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncButton === 'function') {
+        window.InspectorAtoms.syncButton(comp);
     }
 }
 
@@ -1310,85 +1114,13 @@ function _syncSearchBarProps(comp) {
 }
 
 function _syncAccordionProps(comp) {
-    const headerTextInp = document.getElementById('prop-accordion-header-text');
-    const subCountInp = document.getElementById('prop-accordion-sub-count');
-    const expandY = document.getElementById('btn-accordion-expand-y');
-    const expandN = document.getElementById('btn-accordion-expand-n');
-    
-    if (headerTextInp && document.activeElement !== headerTextInp && comp.accordionHeaderText !== undefined) {
-        headerTextInp.value = comp.accordionHeaderText;
+    if (window.InspectorAccordion && typeof window.InspectorAccordion.sync === 'function') {
+        window.InspectorAccordion.sync(comp);
+        _syncAtomDisabledProps(comp);
+        return;
     }
-    
-    if (subCountInp && document.activeElement !== subCountInp && comp.accordionSubCount !== undefined) {
-        subCountInp.value = comp.accordionSubCount;
-    }
-
-    const widthInp = document.getElementById('prop-accordion-width');
-    if (widthInp && document.activeElement !== widthInp && comp.w !== undefined) {
-        widthInp.value = comp.w;
-    }
-
-    const heightInp = document.getElementById('prop-accordion-height');
-    if (heightInp && document.activeElement !== heightInp && comp.accordionItemHeight !== undefined) {
-        heightInp.value = comp.accordionItemHeight;
-    }
-    
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
-    if (expandY && expandN) {
-        highlightActive(expandY, comp.accordionExpanded === true);
-        highlightActive(expandN, comp.accordionExpanded === false);
-    }
-
-    // Sync Depth Type Buttons & Section Visibility
-    const depthType = comp.accordionDepthType || '1depth';
-    const depth1Btn = document.getElementById('btn-accordion-depth-1');
-    const depth2Btn = document.getElementById('btn-accordion-depth-2');
-    const settings1D = document.getElementById('accordion-1depth-settings');
-    const settings2D = document.getElementById('accordion-2depth-settings');
-
-    if (depth1Btn && depth2Btn) {
-        highlightActive(depth1Btn, depthType === '1depth');
-        highlightActive(depth2Btn, depthType === '2depth');
-    }
-    if (settings1D) settings1D.style.display = depthType === '1depth' ? 'block' : 'none';
-    if (settings2D) settings2D.style.display = depthType === '2depth' ? 'block' : 'none';
-    
-    if (depthType === '1depth') {
-        if (typeof window.syncAccordionSubItemInputs === 'function') {
-            window.syncAccordionSubItemInputs(comp.accordionSubTexts || []);
-        }
-    } else {
-        if (typeof window.syncAccordionHierarchyInputs === 'function') {
-            let hierarchy = [];
-            try {
-                if (comp.accordionHierarchy) {
-                    hierarchy = typeof comp.accordionHierarchy === 'string' ? JSON.parse(comp.accordionHierarchy) : comp.accordionHierarchy;
-                }
-            } catch (e) {
-                console.error("[Inspector] Failed to parse accordionHierarchy:", e);
-            }
-            window.syncAccordionHierarchyInputs(hierarchy);
-        }
-    }
-    
-    const s = comp.currentStyles || {};
-    const syncColor = (id, wrapperId, color, isTransparent) => {
-        const picker = document.getElementById(id);
-        const wrapper = document.getElementById(wrapperId);
-        if (picker && color) picker.value = color;
-        if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
-    };
-    syncColor('accordion-bg-color', 'accordion-bg-wrapper', s.bg, s.isBgTransparent);
-    syncColor('accordion-border-color', 'accordion-border-wrapper', s.border, s.isBorderTransparent);
-    _syncAtomDisabledProps(comp);
 }
+
 
 function _syncGridProps(comp) {
     if (window.InspectorGrid && typeof window.InspectorGrid.sync === 'function') {
@@ -3455,9 +3187,9 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
 
     const labelWidthSlider = document.getElementById('prop-admin-label-width-slider');
     const labelWidthNum = document.getElementById('prop-admin-label-width-number');
-    if (labelWidthSlider && labelWidthNum) {
+    if (labelWidthNum) {
         if (comp.adminLabelWidth !== undefined) {
-            labelWidthSlider.value = comp.adminLabelWidth;
+            if (labelWidthSlider) labelWidthSlider.value = comp.adminLabelWidth;
             labelWidthNum.value = comp.adminLabelWidth;
         }
         
@@ -3470,17 +3202,19 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             }
         };
 
-        labelWidthSlider.oninput = (e) => {
-            const val = parseInt(e.target.value) || 140;
-            labelWidthNum.value = val;
-            updateWidth(val);
-        };
+        if (labelWidthSlider) {
+            labelWidthSlider.oninput = (e) => {
+                const val = parseInt(e.target.value) || 140;
+                labelWidthNum.value = val;
+                updateWidth(val);
+            };
+        }
 
         labelWidthNum.oninput = (e) => {
             let val = parseInt(e.target.value) || 140;
             // Allow loose typing but constrain values on final update
             if (val >= 60 && val <= 300) {
-                labelWidthSlider.value = val;
+                if (labelWidthSlider) labelWidthSlider.value = val;
                 updateWidth(val);
             }
         };
@@ -3490,7 +3224,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             if (val < 60) val = 60;
             if (val > 300) val = 300;
             labelWidthNum.value = val;
-            labelWidthSlider.value = val;
+            if (labelWidthSlider) labelWidthSlider.value = val;
             updateWidth(val);
         };
     }

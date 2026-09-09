@@ -159,6 +159,7 @@
                 const t = this.spacingTargets[i];
                 if (t.isFrameBoundary || t.source === 'canvas') continue;
                 if (activeId && t.id === activeId) continue;
+                if (t.isGridCell) continue;
                 if (!t.width || !t.height) continue;
 
                 const isEdgeContained = (

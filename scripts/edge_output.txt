@@ -3,7 +3,7 @@
     <meta charset="utf-8">
     <title>Syntax Check</title>
     <!-- Mock required global libraries -->
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>window.Quill = function() { return { root: document.createElement('div'), on: function() {} }; };</script>
     <script>
         window.errors = [];
         window.onerror = function(msg, url, line, col, error) {
@@ -311,7 +311,7 @@
             </div>
         </div>
     
-<canvas id="presentation-pen-canvas" width="756" height="488" style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999;"></canvas><div id="v4-global-color-palette-popover">
+<canvas id="presentation-pen-canvas" width="754" height="487" style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999;"></canvas><div id="v4-global-color-palette-popover">
             <div class="v4-palette-grid">
             <div class="v4-palette-item" data-color="#000000" style="background-color: #000000;" title="#000000"></div>
         

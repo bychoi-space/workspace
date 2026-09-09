@@ -508,6 +508,9 @@ async function renderList(projectsToRender = state.projects) {
         }
 
         card.innerHTML = `
+            <div class="copy-url-btn-card" data-project="${p.name}" title="프로젝트 단축 URL 복사">
+                <span class="material-icons-outlined">link</span>
+            </div>
             <div class="pdf-btn-card" data-project="${p.name}" title="프로젝트 전체 스크린 PDF 다운로드">
                 <span class="material-icons-outlined">picture_as_pdf</span>
             </div>
@@ -544,12 +547,24 @@ async function renderList(projectsToRender = state.projects) {
 }
 
 document.addEventListener('click', async (e) => {
+    const copyUrlBtn = e.target.closest('.copy-url-btn-card');
     const pdfBtn = e.target.closest('.pdf-btn-card');
     const delBtn = e.target.closest('.delete-btn-card');
     const editBtn = e.target.closest('.edit-btn-card');
     const figmaLink = e.target.closest('.meta-chip-figma');
     const notionLink = e.target.closest('.meta-chip-notion');
     const addCta = e.target.closest('.meta-chip-add-cta');
+
+    if (copyUrlBtn) {
+        e.preventDefault(); e.stopPropagation();
+        const projName = copyUrlBtn.dataset.project;
+        if (typeof copyProjectShortUrl === 'function') {
+            copyProjectShortUrl(projName);
+        } else {
+            alert("단축 URL 엔진이 로드되지 않았습니다.");
+        }
+        return;
+    }
 
     if (pdfBtn) {
         e.preventDefault(); e.stopPropagation();

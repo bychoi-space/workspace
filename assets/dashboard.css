@@ -272,8 +272,8 @@ body {
     box-shadow: 0 22px 45px -8px rgba(0, 0, 0, 0.7), 0 0 28px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Edit / Delete / PDF Buttons on Hover (Card) */
-.edit-btn-card, .delete-btn-card, .pdf-btn-card {
+/* Edit / Delete / PDF / Copy URL Buttons on Hover (Card) */
+.edit-btn-card, .delete-btn-card, .pdf-btn-card, .copy-url-btn-card {
     position: absolute !important;
     top: 12px;
     z-index: 20;
@@ -285,15 +285,18 @@ body {
     opacity: 0;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
 }
+.copy-url-btn-card { right: 132px; color: #38bdf8; }
 .pdf-btn-card { right: 92px; color: #818cf8; }
 .edit-btn-card { right: 52px; color: var(--accent); }
 .delete-btn-card { right: 12px; color: #ef4444; }
+.copy-url-btn-card:hover { background: #0284c7; color: #fff; transform: scale(1.05); }
 .pdf-btn-card:hover { background: #6366f1; color: #fff; transform: scale(1.05); }
 .edit-btn-card:hover { background: var(--accent); color: #fff; transform: scale(1.05); }
 .delete-btn-card:hover { background: #ef4444; color: #fff; transform: scale(1.05); }
-.file-card:hover .pdf-btn-card, .file-card:hover .edit-btn-card, .file-card:hover .delete-btn-card { opacity: 1; }
-.dashboard-header .pdf-btn-card, .dashboard-header .edit-btn-card, .dashboard-header .delete-btn-card { display: none !important; }
+.file-card:hover .copy-url-btn-card, .file-card:hover .pdf-btn-card, .file-card:hover .edit-btn-card, .file-card:hover .delete-btn-card { opacity: 1; }
+.dashboard-header .copy-url-btn-card, .dashboard-header .pdf-btn-card, .dashboard-header .edit-btn-card, .dashboard-header .delete-btn-card { display: none !important; }
 
 /* Metadata & Auth Modal overlay */
 .modal-overlay {

@@ -240,7 +240,7 @@ window.v4DesignSystemScript = `
             '.v4-alert-container', '.v4-btn-container',
             '.v4-datepicker-container', '.v4-accordion-container',
             '.v4-grid-container', '.v4-admin-settings-container',
-            '.v4-toggle-container'
+            '.v4-toggle-container', '.v4-tab-container'
         ].join(', ');
 
         document.querySelectorAll('.lf-component').forEach(c => {

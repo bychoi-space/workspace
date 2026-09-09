@@ -269,7 +269,12 @@ window.v4ShortcutsScript = `
             let baseTop = 0;
 
             if (isResponsiveTemplate) {
+                const pcScrollArea = document.querySelector('.pc-content-area');
+                const mobileScrollArea = document.querySelector('.mobile-content-area, .mobile-content');
+
                 targetFrame = window.lastActiveFrame;
+                if (!mobileScrollArea && pcScrollArea) targetFrame = 'pc';
+                if (!pcScrollArea && mobileScrollArea) targetFrame = 'mobile';
                 if (!targetFrame) {
                     const currentlySelected = document.querySelector('.lf-component.selected');
                     if (currentlySelected) {
@@ -287,17 +292,19 @@ window.v4ShortcutsScript = `
                 if (!targetFrame) {
                     targetFrame = componentItems.some(i => i.frameContainer === 'mobile') ? 'mobile' : 'pc';
                 }
+                if (!mobileScrollArea && pcScrollArea) targetFrame = 'pc';
+                if (!pcScrollArea && mobileScrollArea) targetFrame = 'mobile';
 
                 targetHost = (targetFrame === 'mobile' && mobileInner) ? mobileInner : (pcInner || document.body);
 
-                const scrollArea = targetFrame === 'mobile' 
-                    ? document.querySelector('.mobile-content-area, .mobile-content')
-                    : document.querySelector('.pc-content-area');
+                const scrollArea = (targetFrame === 'mobile' && mobileScrollArea)
+                    ? mobileScrollArea
+                    : (pcScrollArea || mobileScrollArea);
 
                 const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
                 const visibleH = scrollArea ? (scrollArea.clientHeight || 810) : 810;
                 const pcW = pcInner ? (pcInner.offsetWidth || 1160) : 1160;
-                const visibleW = targetFrame === 'mobile' ? 360 : pcW;
+                const visibleW = targetFrame === 'mobile' ? (mobileInner ? (mobileInner.offsetWidth || 360) : 360) : pcW;
 
                 const viewCenterX = visibleW / 2;
                 const viewCenterY = scrollTop + (visibleH / 2);
@@ -306,7 +313,7 @@ window.v4ShortcutsScript = `
                 baseTop = Math.round(viewCenterY - (groupH / 2));
 
                 if (targetFrame === 'mobile') {
-                    baseLeft = Math.max(15, Math.min(baseLeft, 360 - groupW - 15));
+                    baseLeft = Math.max(15, Math.min(baseLeft, visibleW - groupW - 15));
                 } else {
                     baseLeft = Math.max(15, Math.min(baseLeft, pcW - groupW - 15));
                 }
@@ -330,8 +337,10 @@ window.v4ShortcutsScript = `
 
                 baseLeft = Math.round(viewCenterX - (groupW / 2));
                 baseTop = Math.round(viewCenterY - (groupH / 2));
-                baseLeft = Math.max(15, Math.min(baseLeft, 1600 - groupW - 15));
-                baseTop = Math.max(15, Math.min(baseTop, 900 - groupH - 15));
+                const maxW = Math.max(1600, document.body.scrollWidth || 0, document.documentElement.scrollWidth || 0);
+                const maxH = Math.max(900, document.body.scrollHeight || 0, document.documentElement.scrollHeight || 0);
+                baseLeft = Math.max(15, Math.min(baseLeft, maxW - groupW - 15));
+                baseTop = Math.max(15, Math.min(baseTop, maxH - groupH - 15));
             }
 
             // Calculate base top z-index for pasted items
@@ -553,14 +562,10 @@ window.v4ShortcutsScript = `
         // Contenteditable is only active when activeElement is actually editing text
         const editable = (target && target.isContentEditable) ? target : (target && target.closest ? target.closest('.v4-editable-cell, [contenteditable="true"]') : null);
         if (editable && (activeEl === editable || (activeEl && editable.contains(activeEl)))) {
-            const sel = window.getSelection();
-            if (sel && sel.anchorNode && editable.contains(sel.anchorNode)) {
-                const comp = editable.closest('.lf-component');
-                if (comp && comp.classList.contains('selected') && !editable.classList.contains('active-cell-editing')) {
-                    return false;
-                }
-                return true;
-            }
+            return true;
+        }
+        if (activeEl && (activeEl.isContentEditable || (activeEl.closest && activeEl.closest('.v4-editable-cell, [contenteditable="true"]')))) {
+            return true;
         }
         return false;
     }

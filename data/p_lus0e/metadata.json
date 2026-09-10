@@ -55,7 +55,7 @@
     "09_Admin_PC_Scroll_639_copy.html": {
       "title": "기획전 등록 - 기본값",
       "type": "admin",
-      "updatedAt": "2026-09-10T08:22:47.741Z",
+      "updatedAt": "2026-09-10T09:00:09.567Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -73,7 +73,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-10T08:59:53.312Z",
+      "updatedAt": "2026-09-10T08:50:10.318Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -85,7 +85,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-10 17:59:53",
+  "updated": "2026-09-10 18:00:09",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

@@ -53,9 +53,9 @@
       "screenDesc": ""
     },
     "09_Admin_PC_Scroll_639_copy.html": {
-      "title": "기획전 등록",
+      "title": "기획전 등록 - 기본값",
       "type": "admin",
-      "updatedAt": "2026-09-10T08:16:39.163Z",
+      "updatedAt": "2026-09-10T08:17:43.521Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],

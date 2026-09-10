@@ -71,9 +71,9 @@
       "connectors": []
     },
     "09_Admin_PC_Scroll_639_copy2.html": {
-      "title": "기획전 등록 (복사본)",
+      "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-10T08:17:20.370Z",
+      "updatedAt": "2026-09-10T08:17:59.357Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],

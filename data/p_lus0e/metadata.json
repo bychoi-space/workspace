@@ -55,7 +55,7 @@
     "09_Admin_PC_Scroll_639_copy.html": {
       "title": "기획전 등록",
       "type": "admin",
-      "updatedAt": "2026-09-10T07:43:20.801Z",
+      "updatedAt": "2026-09-10T07:45:12.982Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -75,7 +75,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-10 16:43:20",
+  "updated": "2026-09-10 16:45:12",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

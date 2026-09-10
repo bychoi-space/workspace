@@ -69,6 +69,16 @@
       "template": "template_project_summary.html",
       "description": [],
       "connectors": []
+    },
+    "09_Admin_PC_Scroll_639_copy2.html": {
+      "title": "기획전 등록 (복사본)",
+      "type": "admin",
+      "updatedAt": "2026-09-10T08:17:20.370Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [],
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",
@@ -81,7 +91,8 @@
     "01_Project_Summary_898.html",
     "08_Responsive_PC_Mobile_730.html",
     "09_Admin_PC_Scroll_639.html",
-    "09_Admin_PC_Scroll_639_copy.html"
+    "09_Admin_PC_Scroll_639_copy.html",
+    "09_Admin_PC_Scroll_639_copy2.html"
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link"

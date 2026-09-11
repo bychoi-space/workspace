@@ -73,7 +73,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T00:53:22.039Z",
+      "updatedAt": "2026-09-11T00:55:11.623Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -98,12 +98,12 @@
         {
           "text": "2. 상단 비주얼 관리 영역\n- [이미지 등록 (PC)], [이미지 등록 (MO] 2가지 File Uploader 기능으로 구성",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 36,
-          "y": 802,
+          "x": 42,
+          "y": 691,
           "pins": {
             "pc": {
-              "x": 36,
-              "y": 802,
+              "x": 42,
+              "y": 691,
               "active": true
             },
             "mobile": {
@@ -124,7 +124,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 09:53:22",
+  "updated": "2026-09-11 09:55:11",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

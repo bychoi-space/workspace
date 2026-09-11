@@ -73,7 +73,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T02:18:54.716Z",
+      "updatedAt": "2026-09-11T02:25:12.298Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -117,7 +117,7 @@
           "type": "pin"
         },
         {
-          "text": "3. 쿠폰 관리 영역\n- 쿠폰 사용 여부 = Y 일 경우 [쿠폰 설정] [쿠폰 유의사항] 항목 노출\n- [쿠폰등록] 버튼 클릭 시, 공통 '쿠폰등록' 팝업 호출\n- [선택삭제] 버튼 클릭 시, 그리드 선택항목 체크 (얼럿)",
+          "text": "3. 쿠폰 관리 영역\n- [쿠폰 사용 여부] = Y 일 경우 [쿠폰 설정] [쿠폰 유의사항] 항목 노출\n- [쿠폰등록] 버튼 클릭 시, 공통 '쿠폰등록' 팝업 호출\n- [선택삭제] 버튼 클릭 시, 그리드 선택항목 체크 (얼럿)",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 44,
           "y": 792,
@@ -176,7 +176,7 @@
           "standardized": true
         },
         {
-          "text": "연관 기획전 영역",
+          "text": "4. 연관 기획전 영역\n- [연관 기획전 사용 여부] = Y 일 경우 [기획전 설정] 항목 노출\n- [기획전등록] 버튼 클릭 시, 공통 '기획전등록' 팝업호출",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 40,
           "y": 2121,
@@ -204,7 +204,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 11:18:54",
+  "updated": "2026-09-11 11:25:12",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

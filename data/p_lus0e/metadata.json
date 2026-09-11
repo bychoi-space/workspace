@@ -302,7 +302,7 @@
     "10_Product_Ranking_Rules_850.html": {
       "title": "상품 랭킹 산정 룰",
       "type": "plan",
-      "updatedAt": "2026-09-11T06:51:38.206Z",
+      "updatedAt": "2026-09-11T06:52:12.383Z",
       "template": "template_project_summary.html",
       "version": 0.1,
       "description": [],
@@ -315,7 +315,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 15:51:38",
+  "updated": "2026-09-11 15:52:12",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

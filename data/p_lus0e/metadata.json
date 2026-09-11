@@ -45,9 +45,29 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
       "type": "admin",
-      "updatedAt": "2026-09-07T08:09:33.087Z",
+      "updatedAt": "2026-09-11T03:16:59.530Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "text": "[기획전등록] 버튼 신규",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 1180,
+          "y": 350,
+          "pins": {
+            "pc": {
+              "x": 1180,
+              "y": 350,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
+        }
+      ],
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
@@ -73,7 +93,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T03:15:24.538Z",
+      "updatedAt": "2026-09-11T03:02:53.175Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -204,7 +224,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 12:15:24",
+  "updated": "2026-09-11 12:16:59",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

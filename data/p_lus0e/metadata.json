@@ -73,7 +73,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T02:02:38.594Z",
+      "updatedAt": "2026-09-11T02:18:54.716Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -93,7 +93,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "2. 상단 비주얼 관리 영역\n- [이미지 등록 (PC)], [이미지 등록 (MO] 2가지 File Uploader 기능으로 구성\n- 이미지 파일 용량 제한 30MB\n- 이미지 파일 유형 제한 (jpg, jpeg, png, bmp, gif 등)",
@@ -112,7 +113,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "3. 쿠폰 관리 영역\n- 쿠폰 사용 여부 = Y 일 경우 [쿠폰 설정] [쿠폰 유의사항] 항목 노출\n- [쿠폰등록] 버튼 클릭 시, 공통 '쿠폰등록' 팝업 호출\n- [선택삭제] 버튼 클릭 시, 그리드 선택항목 체크 (얼럿)",
@@ -131,7 +133,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "3. 상품 그룹 관리 영역\n- 기본 구조는 기존 '기획전 등록/상세' 기능과 동일하나, 상위 개념으로 '영역' 을 추가\n- [상품 표현 영역] 에서 STEPPER 설정 시, 하단의 '상품 영역 1~5' 가 가변적으로 동작",
@@ -142,6 +145,45 @@
             "pc": {
               "x": 41,
               "y": 1244,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "type": "pin"
+        },
+        {
+          "text": "[표현 방법] = 랭킹 목록형 선택 할 경우, [영역 타이틀], [영역 설명문구] 미노출",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 396,
+          "y": 1351,
+          "pins": {
+            "pc": {
+              "x": 396,
+              "y": 1351,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "연관 기획전 영역",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 40,
+          "y": 2121,
+          "pins": {
+            "pc": {
+              "x": 40,
+              "y": 2121,
               "active": true
             },
             "mobile": {
@@ -162,7 +204,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 11:02:38",
+  "updated": "2026-09-11 11:18:54",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

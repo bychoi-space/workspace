@@ -125,18 +125,18 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
       "type": "admin",
-      "updatedAt": "2026-09-11T09:17:37.555Z",
+      "updatedAt": "2026-09-11T09:24:28.655Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
-          "text": "[기획전등록] 버튼 신규",
+          "text": "기획전 관리 페이지\n- 기능과 구조 모두 현상 유지",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 1180,
-          "y": 350,
+          "x": 273,
+          "y": 330,
           "pins": {
             "pc": {
-              "x": 1180,
-              "y": 350,
+              "x": 273,
+              "y": 330,
               "active": true
             },
             "mobile": {
@@ -315,7 +315,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 18:17:37",
+  "updated": "2026-09-11 18:24:28",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

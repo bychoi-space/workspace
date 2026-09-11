@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-11T05:28:55.304Z",
+      "updatedAt": "2026-09-11T05:33:18.129Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -30,12 +30,13 @@
               "active": true
             },
             "mobile": {
-              "x": 170,
-              "y": 250,
+              "x": 567,
+              "y": 1277,
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "어드민에서 설정된 쿠폰 표현\n- 설정된 Hexcode 컬러로 쿠폰의 BG Color 와 Text Color 를 표현\n- 쿠폰 우측 [다운로드] 버튼을 클릭하여 개별로 다운로드 가능\n- 하단 [쿠폰 한번에 받기] 버튼 클릭하여 전체 쿠폰 일괄 다운로드 가능",
@@ -49,12 +50,13 @@
               "active": true
             },
             "mobile": {
-              "x": 5,
-              "y": 554,
+              "x": 170,
+              "y": 250,
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "어드민에서 등록된 유의사항 표현\n- Text 로만 구성\n- 어드민 입력 방법 Textarea\n- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리",
@@ -68,15 +70,16 @@
               "active": true
             },
             "mobile": {
-              "x": 1,
-              "y": 833,
+              "x": 5,
+              "y": 554,
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
-          "text": "어드민에서 설정된 상품 영역 표현\n- \n",
+          "text": "어드민에서 설정된 상품 영역 표현\n- [표현 방법] = 랭킹 목록형 설정된 케이스\n- 타이틀 우측 (07.15 업데이트) 표시는 시스템의 '랭킹' 배치 적용 일자로 자동 표현",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 10,
           "y": 992,
@@ -87,8 +90,28 @@
               "active": true
             },
             "mobile": {
-              "x": 3,
-              "y": 961,
+              "x": 12,
+              "y": 960,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "type": "pin"
+        },
+        {
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 10,
+          "y": 1044,
+          "pins": {
+            "pc": {
+              "x": 10,
+              "y": 1044,
+              "active": true
+            },
+            "mobile": {
+              "x": 225,
+              "y": 1031,
               "active": true
             }
           },
@@ -292,7 +315,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 14:28:55",
+  "updated": "2026-09-11 14:33:18",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

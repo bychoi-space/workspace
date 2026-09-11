@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-11T05:14:25.773Z",
+      "updatedAt": "2026-09-11T05:25:08.318Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -77,8 +77,8 @@
         }
       ],
       "connectors": [],
-      "defaultTab": "editor",
-      "screenDesc": ""
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object],[object Object]"
     },
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
@@ -260,7 +260,7 @@
     "10_Product_Ranking_Rules_850.html": {
       "title": "상품 랭킹 산정 룰",
       "type": "plan",
-      "updatedAt": "2026-09-11T05:14:41.427Z",
+      "updatedAt": "2026-09-11T04:40:00.000Z",
       "template": "template_project_summary.html",
       "version": 0.1,
       "description": [],

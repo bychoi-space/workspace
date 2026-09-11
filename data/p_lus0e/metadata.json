@@ -15,11 +15,11 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-11T05:25:08.318Z",
+      "updatedAt": "2026-09-11T05:28:55.304Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
-          "text": "어드민에서 등록하는 상단 비주얼 이미지 표현 영역\n- PC / MO 각각 개별 이미지로 표현\n- PC : 1920 * Auto\n- MO : 720 * Auto",
+          "text": "어드민에서 등록하는 상단 비주얼 이미지 표현\n- PC / MO 각각 개별 이미지로 표현\n- PC : 1920 * Auto\n- MO : 720 * Auto",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 461.943,
           "y": 396,
@@ -38,7 +38,7 @@
           "standardized": true
         },
         {
-          "text": "어드민에서 설정된 쿠폰 표현 영역\n- 설정된 Hexcode 컬러로 쿠폰의 BG Color 와 Text Color 를 표현\n- 쿠폰 우측 [다운로드] 버튼을 클릭하여 개별로 다운로드 가능\n- 하단 [쿠폰 한번에 받기] 버튼 클릭하여 전체 쿠폰 일괄 다운로드 가능",
+          "text": "어드민에서 설정된 쿠폰 표현\n- 설정된 Hexcode 컬러로 쿠폰의 BG Color 와 Text Color 를 표현\n- 쿠폰 우측 [다운로드] 버튼을 클릭하여 개별로 다운로드 가능\n- 하단 [쿠폰 한번에 받기] 버튼 클릭하여 전체 쿠폰 일괄 다운로드 가능",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 230,
           "y": 625,
@@ -57,7 +57,7 @@
           "standardized": true
         },
         {
-          "text": "어드민에서 등록된 유의사항 표현 영역\n- Text 로만 구성\n- 어드민 입력 방법 Textarea",
+          "text": "어드민에서 등록된 유의사항 표현\n- Text 로만 구성\n- 어드민 입력 방법 Textarea\n- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 402,
           "y": 869,
@@ -70,6 +70,25 @@
             "mobile": {
               "x": 1,
               "y": 833,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "어드민에서 설정된 상품 영역 표현\n- \n",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 10,
+          "y": 992,
+          "pins": {
+            "pc": {
+              "x": 10,
+              "y": 992,
+              "active": true
+            },
+            "mobile": {
+              "x": 3,
+              "y": 961,
               "active": true
             }
           },
@@ -273,7 +292,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 14:14:41",
+  "updated": "2026-09-11 14:28:55",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

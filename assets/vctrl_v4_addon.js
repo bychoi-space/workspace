@@ -203,9 +203,14 @@
             }
             
             const rgbaColor = hexToRgba(colorHex, opacityVal);
+            const targetIds = (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function')
+                ? window.GroupingManager.getSelectedIds()
+                : [];
             
             notifyIframe({
                 type: 'LF_UPDATE_STYLE',
+                id: targetIds[0] || undefined,
+                ids: targetIds.length > 0 ? targetIds : undefined,
                 selector: '.v4-shape',
                 style: { background: rgbaColor, backgroundColor: rgbaColor }
             });
@@ -220,9 +225,14 @@
             const colorPicker = document.getElementById('shape-bg-color');
             const colorHex = (colorPicker && colorPicker.value) ? colorPicker.value : '#ffffff';
             const rgbaColor = hexToRgba(colorHex, opacityVal);
+            const targetIds = (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function')
+                ? window.GroupingManager.getSelectedIds()
+                : [];
             
             notifyIframe({
                 type: 'LF_UPDATE_STYLE',
+                id: targetIds[0] || undefined,
+                ids: targetIds.length > 0 ? targetIds : undefined,
                 selector: '.v4-shape',
                 style: { background: rgbaColor, backgroundColor: rgbaColor }
             });

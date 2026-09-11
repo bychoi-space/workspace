@@ -759,16 +759,24 @@ window.MessageHub = {
                 }
                 const activeEl = document.activeElement;
                 const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-                const isTyping = !isBtn && activeEl && (
+                let isTyping = !isBtn && activeEl && (
                     activeEl.tagName === 'INPUT' ||
                     activeEl.tagName === 'TEXTAREA' ||
                     activeEl.tagName === 'SELECT' ||
                     activeEl.isContentEditable
                 );
 
+                // If a different component is selected, release residual parent focus to allow property synchronization
+                const isNewSelection = Boolean(data.id && data.id !== state.editingIndex);
+                if (isNewSelection && activeEl && typeof activeEl.blur === 'function') {
+                    activeEl.blur();
+                    isTyping = false;
+                }
+
                 if (data.isDescriptionPin) {
                     state.isEditing = false;
                     state.editingIndex = -1;
+                    if (window.state) window.state.selectedComponent = null;
                     if (!isTyping && typeof window.switchSidebarTab === 'function') window.switchSidebarTab('description');
                     if (typeof window.focusDescriptionRow === 'function') {
                         window.focusDescriptionRow(data.pinIndex);
@@ -776,6 +784,9 @@ window.MessageHub = {
                 } else {
                     state.isEditing = true;
                     state.editingIndex = data.id;
+                    if (window.state) {
+                        window.state.selectedComponent = { id: data.id, ...data };
+                    }
 
                     if (window.GroupingManager) {
                         let selectedIds = (typeof window.GroupingManager.getSelectedIds === 'function') ? [...window.GroupingManager.getSelectedIds()] : [];
@@ -849,6 +860,22 @@ window.MessageHub = {
                         }
                         if (!isTyping && typeof window.updateProperties === 'function') window.updateProperties(data);
                     }
+                }
+            } else if (data.type === 'LF_MULTI_SELECTION_STYLES') {
+                if (window.state) {
+                    window.state.selectedComponent = { id: data.id, ...data };
+                    window.state.selectedComponentStyles = data;
+                }
+                const activeEl = document.activeElement;
+                const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+                const isTyping = !isBtn && activeEl && (
+                    activeEl.tagName === 'INPUT' ||
+                    activeEl.tagName === 'TEXTAREA' ||
+                    activeEl.tagName === 'SELECT' ||
+                    activeEl.isContentEditable
+                );
+                if (!isTyping && typeof window.updateProperties === 'function') {
+                    window.updateProperties(data);
                 }
             } else if (data.type === 'LF_PASTE_COMPLETED') {
                 try {
@@ -1409,7 +1436,8 @@ window.init = async function () {
                 !!(e.target.closest && e.target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
 
             // 1. Global Save Shortcut (Ctrl+S / Cmd+S): Universally intercepted with highest priority across all inputs, editors, and sidebars
-            const isS = e.key.toLowerCase() === 's' || e.code === 'KeyS';
+            const keyChar = (e.key || '').toLowerCase();
+            const isS = keyChar === 's' || e.code === 'KeyS';
             if ((e.ctrlKey || e.metaKey) && isS) {
                 e.preventDefault();
                 console.log("[VCTRL CORE] Global Ctrl+S caught in parent window. isInput:", isInput);
@@ -1539,10 +1567,11 @@ window.init = async function () {
 
             // 6. Proxy Canvas Shortcuts to Iframe
             const proxiedCodes = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Delete', 'Backspace', 'Space'];
-            const isC = e.key.toLowerCase() === 'c' || e.code === 'KeyC';
-            const isX = e.key.toLowerCase() === 'x' || e.code === 'KeyX';
-            const isV = e.key.toLowerCase() === 'v' || e.code === 'KeyV';
-            const isG = e.key.toLowerCase() === 'g' || e.code === 'KeyG';
+            const keyCharProxy = (e.key || '').toLowerCase();
+            const isC = keyCharProxy === 'c' || e.code === 'KeyC';
+            const isX = keyCharProxy === 'x' || e.code === 'KeyX';
+            const isV = keyCharProxy === 'v' || e.code === 'KeyV';
+            const isG = keyCharProxy === 'g' || e.code === 'KeyG';
             const isCtrlShortcut = (e.ctrlKey || e.metaKey) && (isC || isX || isV || isG);
 
             if (proxiedCodes.includes(e.code) || isCtrlShortcut) {

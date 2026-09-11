@@ -40,6 +40,7 @@
     if (window.MessageHub) {
         MessageHub.subscribe('LF_COMP_SELECTED', (data) => {
             const targetId = data.id || window.activeCompId || (window.state && window.state.selectedComponent && window.state.selectedComponent.id) || null;
+            const isTargetChanged = Boolean(targetId && targetId !== activeCompId);
             if (targetId) {
                 activeCompId = targetId;
                 window.activeCompId = targetId;
@@ -53,16 +54,16 @@
                     }
                 }
             }
-            updateAllInputs(data.w, data.h);
+            updateAllInputs(data.w, data.h, isTargetChanged);
             syncAllColors(data.currentStyles || {});
 
             if (data.boxW !== undefined) {
                 const wIconInp = document.getElementById('prop-width-icon');
-                if (wIconInp && document.activeElement !== wIconInp) wIconInp.value = Math.round(data.boxW);
+                if (wIconInp && (isTargetChanged || document.activeElement !== wIconInp)) wIconInp.value = Math.round(data.boxW);
             }
             if (data.boxH !== undefined) {
                 const hIconInp = document.getElementById('prop-height-icon');
-                if (hIconInp && document.activeElement !== hIconInp) hIconInp.value = Math.round(data.boxH);
+                if (hIconInp && (isTargetChanged || document.activeElement !== hIconInp)) hIconInp.value = Math.round(data.boxH);
             }
 
             // Show/hide Preserve Aspect Ratio row depending on whether this is an image
@@ -179,7 +180,18 @@
         return activeCompId || window.activeCompId || null;
     }
 
-    function updateAllInputs(w, h) {
+    function getActiveTargetIds() {
+        if (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function') {
+            const selIds = window.GroupingManager.getSelectedIds();
+            if (Array.isArray(selIds) && selIds.length > 0) {
+                return selIds;
+            }
+        }
+        const singleId = getActiveTargetId();
+        return singleId ? [singleId] : [];
+    }
+
+    function updateAllInputs(w, h, force) {
         const groupDimWidth = document.getElementById('group-dim-width');
         const groupDimHeight = document.getElementById('group-dim-height');
         if (groupDimWidth && w !== undefined) groupDimWidth.innerText = Math.round(w) + 'px';
@@ -188,7 +200,7 @@
         const inputs = document.querySelectorAll('.v4-prop-input');
         inputs.forEach(input => {
             if (input.id === 'prop-width-icon' || input.id === 'prop-height-icon') return;
-            if (input === document.activeElement) return;
+            if (!force && input === document.activeElement) return;
             const prop = input.dataset.prop;
             if (prop === 'width') input.value = Math.round(w);
             if (prop === 'height') input.value = Math.round(h);
@@ -270,11 +282,11 @@
 
         if (!iframeEl || !iframeEl.contentWindow) return;
 
-        const targetId = getActiveTargetId();
-        if (!targetId) return;
+        const targetIds = getActiveTargetIds();
+        if (targetIds.length === 0) return;
 
-        activeCompId = targetId;
-        window.activeCompId = targetId;
+        activeCompId = targetIds[0];
+        window.activeCompId = targetIds[0];
 
         const chk = document.getElementById('chk-preserve-aspect-ratio');
         const shouldLock = chk && chk.checked && activeImageRatio !== null;
@@ -302,7 +314,8 @@
         }
 
         MessageHub.send(iframeEl.contentWindow, 'LF_UPDATE_STYLE', {
-            id: targetId,
+            id: targetIds[0],
+            ids: targetIds,
             style: style
         });
 
@@ -337,11 +350,11 @@
         const id = e.target.id;
         if (SPECIAL_STYLE_CONFIGS[id]) {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-            const targetId = getActiveTargetId();
-            if (!targetId || !iframeWin) return;
+            const targetIds = getActiveTargetIds();
+            if (targetIds.length === 0 || !iframeWin) return;
             const msgCreator = SPECIAL_STYLE_CONFIGS[id];
             const msg = msgCreator(e.target.value);
-            MessageHub.send(iframeWin, msg.type, { ...msg, id: targetId });
+            MessageHub.send(iframeWin, msg.type, { ...msg, id: targetIds[0], ids: targetIds });
             
             const txtEl = document.getElementById('txt-' + id);
             if (txtEl) {
@@ -413,8 +426,8 @@
         const tBtn = e.target.closest('[id]');
         if (tBtn && TRANSPARENCY_BUTTONS[tBtn.id]) {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-            const targetId = getActiveTargetId();
-            if (!targetId || !iframeWin) return;
+            const targetIds = getActiveTargetIds();
+            if (targetIds.length === 0 || !iframeWin) return;
             const conf = TRANSPARENCY_BUTTONS[tBtn.id];
             
             const wrapper = document.getElementById(conf.wrapper);
@@ -423,7 +436,7 @@
             if (conf.extra) conf.extra();
             
             const msg = conf.msg();
-            MessageHub.send(iframeWin, msg.type, { ...msg, id: targetId });
+            MessageHub.send(iframeWin, msg.type, { ...msg, id: targetIds[0], ids: targetIds });
             if (window.markAsDirty) window.markAsDirty();
         }
     });
@@ -433,8 +446,8 @@
             ? window.DOM.iframe 
             : (document.getElementById('main-iframe') || document.getElementById('screen-iframe'));
 
-        const targetId = getActiveTargetId();
-        if (!targetId || !iframeEl || !iframeEl.contentWindow) return;
+        const targetIds = getActiveTargetIds();
+        if (targetIds.length === 0 || !iframeEl || !iframeEl.contentWindow) return;
         
         const style = {};
         if (prop === 'background') {
@@ -445,7 +458,8 @@
         }
         
         MessageHub.send(iframeEl.contentWindow, 'LF_UPDATE_STYLE', {
-            id: targetId,
+            id: targetIds[0],
+            ids: targetIds,
             style: style
         });
         

@@ -76,12 +76,25 @@ window.v4ResponsiveMultiselectScript = `
 
     window.v4MessageHandlers['LF_UPDATE_MARQUEE_SELECTION'] = function(d) {
         const ids = d.ids || [];
-                    document.querySelectorAll('.lf-component').forEach(x => {
-                        x.classList.toggle('selected', ids.includes(x.id));
-                    });
-                    if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
-                        window.SelectionAdorner.update();
-                    }
+        document.querySelectorAll('.lf-component').forEach(x => {
+            x.classList.toggle('selected', ids.includes(x.id));
+        });
+        if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+            window.SelectionAdorner.update();
+        }
+        if (ids.length > 1 && typeof window.getHomogeneousSelectionInfo === 'function' && typeof window.notifyParent === 'function') {
+            const homoInfo = window.getHomogeneousSelectionInfo();
+            if (homoInfo && homoInfo.isMultiSame) {
+                window.notifyParent({
+                    type: 'LF_MULTI_SELECTION_STYLES',
+                    isMultiSameType: true,
+                    commonType: homoInfo.commonType,
+                    selectedCount: homoInfo.count,
+                    selectedIds: homoInfo.ids,
+                    ...(homoInfo.primaryStyles || {})
+                });
+            }
+        }
     };
 
     window.v4MessageHandlers['LF_ALIGN_SELECTED'] = function(d) {

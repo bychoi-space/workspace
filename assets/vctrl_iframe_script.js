@@ -812,6 +812,10 @@ window.v4Script = `
             return; 
         }
         if (c) {
+            if (!c.id) {
+                const isPin = c.classList.contains('pin-marker') || c.classList.contains('text-marker');
+                c.id = (isPin ? 'v4-pin-' : 'v4-comp-') + Date.now() + '-' + Math.floor(Math.random() * 10000);
+            }
             isMarquee = false;
             const compMob = c.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
             const compPc = c.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
@@ -868,6 +872,10 @@ window.v4Script = `
             
             const targets = [];
             document.querySelectorAll('.lf-component:not(.connector-line)').forEach(c => {
+                if (!c.id) {
+                    const isPin = c.classList.contains('pin-marker') || c.classList.contains('text-marker');
+                    c.id = (isPin ? 'v4-pin-' : 'v4-comp-') + Date.now() + '-' + Math.floor(Math.random() * 10000);
+                }
                 let absL = parseFloat(c.style.left) || 0;
                 let absT = parseFloat(c.style.top) || 0;
                 let isChild = false;
@@ -1086,46 +1094,95 @@ window.v4Script = `
     });
 
 
-    window.v4GlobalStyleHandler = function(d) {
-        if (!d) return;
-        const s = (d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); 
-        if (!s) return;
-        
-        // Route to modular helpers first
-        if (window.v4ObjectText && typeof window.v4ObjectText.handleUpdateStyle === 'function') {
-            if (window.v4ObjectText.handleUpdateStyle(d)) return;
-        }
-        if (window.v4ObjectShape && typeof window.v4ObjectShape.handleUpdateStyle === 'function') {
-            if (window.v4ObjectShape.handleUpdateStyle(d)) return;
+    window.getHomogeneousSelectionInfo = function() {
+        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        if (selected.length <= 1) {
+            return { isMultiSame: false, count: selected.length, ids: selected.map(function(el) { return el.id; }) };
         }
 
-        if (window.V4UndoManager) window.V4UndoManager.saveState();
-        
-        let t = d.selector ? s.querySelector(d.selector) : s;
+        var types = selected.map(function(el) {
+            if (el.classList.contains('lf-group')) return 'group';
+            var pinIdx = el.getAttribute('data-index');
+            if (el.classList.contains('pin-marker') || (el.classList.contains('text-marker') && pinIdx !== null && pinIdx !== undefined)) return 'pin';
+            if (el.classList.contains('v4-text-shape') || el.classList.contains('v4-text-box')) return 'shape-text';
+            var shape = el.querySelector('.v4-shape');
+            if (shape || el.classList.contains('v4-shape')) {
+                if (shape && shape.classList.contains('v4-shape-line')) return 'line';
+                if (shape && shape.classList.contains('v4-shape-arrow')) return 'shape-arrow';
+                if (shape && shape.classList.contains('v4-shape-triangle')) return 'shape-triangle';
+                if (shape && shape.classList.contains('v4-shape-circle')) return 'shape-circle';
+                if (shape && shape.classList.contains('v4-shape-diamond')) return 'shape-diamond';
+                if (shape && shape.classList.contains('v4-shape-pattern-grid')) return 'shape-pattern';
+                return 'shape-rect';
+            }
+            if (el.querySelector('.v4-btn-container') || el.classList.contains('v4-btn-container')) return 'button';
+            if (el.querySelector('.v4-checkbox-container') || el.classList.contains('v4-checkbox-container')) return 'checkbox';
+            if (el.querySelector('.v4-radio-container') || el.classList.contains('v4-radio-container')) return 'radio';
+            if (el.querySelector('.v4-textbox-container') || el.classList.contains('v4-textbox-container')) return 'textbox';
+            if (el.querySelector('.v4-textarea-container') || el.classList.contains('v4-textarea-container')) return 'textarea';
+            if (el.querySelector('.v4-searchbar-container') || el.classList.contains('v4-searchbar-container')) return 'searchbar';
+            if (el.querySelector('.v4-stepper-container') || el.classList.contains('v4-stepper-container')) return 'stepper';
+            if (el.querySelector('.v4-selectbox-container') || el.classList.contains('v4-selectbox-container')) return 'selectbox';
+            if (el.querySelector('.v4-fileupload-container') || el.classList.contains('v4-fileupload-container')) return 'fileupload';
+            if (el.querySelector('.v4-alert-container') || el.classList.contains('v4-alert-container')) return 'alert';
+            if (el.querySelector('.v4-datepicker-container') || el.classList.contains('v4-datepicker-container')) return 'datepicker';
+            if (el.querySelector('.v4-accordion-container') || el.classList.contains('v4-accordion-container')) return 'accordion';
+            if (el.querySelector('.v4-tab-container') || el.classList.contains('v4-tab-container')) return 'tab';
+            if (el.querySelector('.v4-admin-settings-container') || el.classList.contains('v4-admin-settings-container')) return 'admin-settings';
+            if (el.querySelector('table')) return 'table';
+            if (el.querySelector('.lf-icon') || el.querySelector('svg') || el.classList.contains('lf-icon')) return 'icon';
+            return 'other';
+        });
+
+        // Group shapes together if they belong to general vector family (rect, circle, triangle, diamond, text)
+        var normalizedTypes = types.map(function(t) {
+            if (t === 'shape-rect' || t === 'shape-circle' || t === 'shape-triangle' || t === 'shape-diamond' || t === 'shape-arrow' || t === 'shape-text') {
+                return 'shape';
+            }
+            return t;
+        });
+
+        var firstType = normalizedTypes[0];
+        var isAllSame = (firstType !== 'other' && firstType !== 'group') && normalizedTypes.every(function(t) { return t === firstType; });
+
+        var ids = selected.map(function(el) { return el.id; });
+        var primaryStyles = (isAllSame && typeof window._getCompStyles === 'function') 
+            ? window._getCompStyles(selected[0]) 
+            : null;
+
+        return {
+            isMultiSame: isAllSame,
+            commonType: isAllSame ? firstType : null,
+            count: selected.length,
+            ids: ids,
+            primaryStyles: primaryStyles
+        };
+    };
+
+    function _applyStyleToSingleComponent(s, d) {
+        if (!s) return;
+        var alertContainer = s.querySelector('.v4-alert-container');
+        var inputContainer = s.querySelector('.v4-textbox-container, .v4-textarea-container');
+        var searchbarContainer = s.querySelector('.v4-searchbar-container');
+        var selectboxContainer = s.querySelector('.v4-selectbox-container');
+        var buttonContainer = s.querySelector('.v4-btn-container');
+        var customBtn = s.querySelector('.v4-custom-btn');
+
+        var t = d.selector ? s.querySelector(d.selector) : s;
         if (!t && s.classList.contains('text-marker')) {
             t = s.querySelector('.v4-editable-cell') || s;
         }
-        const shape = s.querySelector('.v4-shape');
+        var shape = s.querySelector('.v4-shape');
         if (shape && !d.selector) t = shape;
-        const boxEl = s.querySelector('.v4-checkbox, .v4-radio');
+        var boxEl = s.querySelector('.v4-checkbox, .v4-radio');
         if (boxEl && !d.selector) t = boxEl;
-        
-        const inputContainer = s.querySelector('.v4-textbox-container, .v4-textarea-container');
         if (inputContainer && !d.selector) t = inputContainer;
-        
-        const searchbarContainer = s.querySelector('.v4-searchbar-container');
         if (searchbarContainer && !d.selector) t = searchbarContainer;
-        
-        const selectboxContainer = s.querySelector('.v4-selectbox-container');
         if (selectboxContainer && !d.selector) t = selectboxContainer;
-        
-        const buttonContainer = s.querySelector('.v4-btn-container');
-        const customBtn = s.querySelector('.v4-custom-btn');
         if (buttonContainer && customBtn && !d.selector) t = customBtn;
 
-        const adminSettings = s.querySelector('.v4-admin-settings-container') || (s.classList.contains('v4-admin-settings-container') ? s : null);
+        var adminSettings = s.querySelector('.v4-admin-settings-container') || (s.classList.contains('v4-admin-settings-container') ? s : null);
         if (adminSettings && !d.selector) {
-            // For Admin Settings (Query Item), do NOT apply generic component background/colors to .lf-component wrapper!
             if (s.style.background && s.style.background !== 'transparent') s.style.background = 'transparent';
             if (s.style.backgroundColor && s.style.backgroundColor !== 'transparent') s.style.backgroundColor = 'transparent';
             if (d.style) {
@@ -1133,7 +1190,6 @@ window.v4Script = `
                 if (d.style.height !== undefined) s.style.height = typeof d.style.height === 'number' ? d.style.height + 'px' : d.style.height;
             }
             window.updateHandles(s);
-            markDirty();
             return;
         }
 
@@ -1145,10 +1201,10 @@ window.v4Script = `
             }
             if (d.style.html !== undefined) t.innerHTML = d.style.html;
             
-            const isInnerBox = t.classList.contains('v4-checkbox') || t.classList.contains('v4-radio');
+            var isInnerBox = t.classList.contains('v4-checkbox') || t.classList.contains('v4-radio');
             
             if (d.style.width !== undefined) {
-                const wVal = typeof d.style.width === 'number' ? d.style.width + 'px' : d.style.width;
+                var wVal = typeof d.style.width === 'number' ? d.style.width + 'px' : d.style.width;
                 if (isInnerBox) {
                     t.style.width = wVal;
                 } else {
@@ -1159,15 +1215,15 @@ window.v4Script = `
                     if (selectboxContainer) {
                         s.setAttribute('data-resized', 'true');
                         selectboxContainer.style.setProperty('width', '100%', 'important');
-                        const header = selectboxContainer.querySelector('.v4-selectbox-header');
-                        const optionsList = selectboxContainer.querySelector('.v4-selectbox-options');
+                        var header = selectboxContainer.querySelector('.v4-selectbox-header');
+                        var optionsList = selectboxContainer.querySelector('.v4-selectbox-options');
                         if (header) header.style.setProperty('width', '100%', 'important');
                         if (optionsList) optionsList.style.setProperty('width', '100%', 'important');
                     }
                 }
             }
             if (d.style.height !== undefined) {
-                const hVal = typeof d.style.height === 'number' ? d.style.height + 'px' : d.style.height;
+                var hVal = typeof d.style.height === 'number' ? d.style.height + 'px' : d.style.height;
                 if (isInnerBox) {
                     t.style.height = hVal;
                 } else {
@@ -1177,51 +1233,88 @@ window.v4Script = `
                     if (buttonContainer) buttonContainer.style.height = '100%';
                     if (selectboxContainer) {
                         selectboxContainer.style.height = '100%';
-                        const header = selectboxContainer.querySelector('.v4-selectbox-header');
-                        if (header) header.style.height = '100%';
+                        var headerH = selectboxContainer.querySelector('.v4-selectbox-header');
+                        if (headerH) headerH.style.height = '100%';
                     }
                 }
             }
 
-            const styleToAssign = { ...d.style };
+            var styleToAssign = Object.assign({}, d.style);
             if (!isInnerBox) {
                 delete styleToAssign.width;
                 delete styleToAssign.height;
             }
             
-            const targets = d.selector ? [t] : [t, s.querySelector('.v4-shape-text-content'), s.querySelector('.v4-shape-text-overlay')].filter(Boolean);
-            targets.forEach(target => {
+            var targets = d.selector ? [t] : [t, s.querySelector('.v4-shape-text-content'), s.querySelector('.v4-shape-text-overlay')].filter(Boolean);
+            targets.forEach(function(target) {
                 Object.assign(target.style, styleToAssign);
-                for (const [key, val] of Object.entries(styleToAssign)) {
-                    if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'borderRadius') {
-                        const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : (key === 'justifyContent' ? 'justify-content' : 'border-radius'));
-                        target.style.setProperty(cssKey, val, 'important');
+                for (var key in styleToAssign) {
+                    if (styleToAssign.hasOwnProperty(key)) {
+                        var val = styleToAssign[key];
+                        if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'borderRadius') {
+                            var cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : (key === 'justifyContent' ? 'justify-content' : 'border-radius'));
+                            target.style.setProperty(cssKey, val, 'important');
+                        }
                     }
                 }
             });
         }
         
         if (d.subSelector && d.subStyle) {
-            t.querySelectorAll(d.subSelector).forEach(sub => {
-                Object.keys(d.subStyle).forEach(key => {
-                    const cssKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+            t.querySelectorAll(d.subSelector).forEach(function(sub) {
+                Object.keys(d.subStyle).forEach(function(key) {
+                    var cssKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
                     sub.style.setProperty(cssKey, d.subStyle[key], 'important');
                 });
             });
         }
         if (typeof window.syncTableComponentSize === 'function') {
-            const isGrid = s.classList.contains('v4-grid-container') || !!s.querySelector('.v4-grid-container');
+            var isGrid = s.classList.contains('v4-grid-container') || !!s.querySelector('.v4-grid-container');
             if (!isGrid) {
                 window.syncTableComponentSize();
             }
         }
         window.updateHandles(s);
+    }
+
+    window.v4GlobalStyleHandler = function(d) {
+        if (!d) return;
+
+        // Route to modular helpers first
+        if (window.v4ObjectText && typeof window.v4ObjectText.handleUpdateStyle === 'function') {
+            if (window.v4ObjectText.handleUpdateStyle(d)) return;
+        }
+        if (window.v4ObjectShape && typeof window.v4ObjectShape.handleUpdateStyle === 'function') {
+            if (window.v4ObjectShape.handleUpdateStyle(d)) return;
+        }
+
+        // Collect target elements (Multi targets if d.ids provided, else single)
+        var targetEls = [];
+        if (d.ids && Array.isArray(d.ids) && d.ids.length > 0) {
+            d.ids.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el && el.classList.contains('lf-component')) targetEls.push(el);
+            });
+        }
+        if (targetEls.length === 0) {
+            var single = (d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+            if (single) targetEls.push(single);
+        }
+        if (targetEls.length === 0) return;
+
+        // Atomic single Undo transaction: saveState ONCE before applying loop
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        targetEls.forEach(function(compEl) {
+            _applyStyleToSingleComponent(compEl, d);
+        });
+
         markDirty();
 
-        if (typeof window._getCompStyles === 'function') {
+        if (targetEls.length > 0 && typeof window._getCompStyles === 'function') {
             notifyParent({
                 type: 'LF_COMP_RESIZED',
-                ...window._getCompStyles(s)
+                ...window._getCompStyles(targetEls[0])
             });
         }
     };

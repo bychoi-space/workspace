@@ -86,7 +86,8 @@ window.GroupingManager = (function() {
          // Keyboard Shortcuts
          window.addEventListener('keydown', (e) => {
              if (window.state && window.state.isReadOnly) return;
-             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') {
+             const keyChar = (e.key || '').toLowerCase();
+             if ((e.ctrlKey || e.metaKey) && keyChar === 'g') {
                  e.preventDefault();
                  if (e.shiftKey) ungroupSelected();
                  else groupSelected();
@@ -248,8 +249,8 @@ window.GroupingManager = (function() {
              const iframe = document.getElementById('main-iframe');
              if (selectedIds.length === 1 && iframe && iframe.contentWindow) {
                  window.MessageHub.send(iframe.contentWindow, 'LF_SELECT_ID', { id: selectedIds[0] });
-             } else if (selectedIds.length > 1) {
-                 if (typeof window.updateProperties === 'function') window.updateProperties();
+             } else if (selectedIds.length > 1 && iframe && iframe.contentWindow) {
+                 window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
              }
          }
          document.querySelectorAll('.v4-marquee-box').forEach(el => el.remove());

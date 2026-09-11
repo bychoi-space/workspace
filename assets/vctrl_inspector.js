@@ -49,7 +49,7 @@ window.rebindInspectorDOM = function() {
     }
 };
 
-window.restorePropertiesSections = function() {
+window.restorePropertiesSections = function(force) {
     const storage = document.getElementById('inspector-panels-storage');
     if (!storage) return;
 
@@ -66,7 +66,7 @@ window.restorePropertiesSections = function() {
 
     sections.forEach(sec => {
         if (sec && sec instanceof Node) {
-            if (activeEl && sec.contains(activeEl)) {
+            if (!force && activeEl && sec.contains(activeEl)) {
                 return;
             }
             sec.style.display = 'none';
@@ -292,22 +292,30 @@ window.switchSidebarTab = function(tabName) {
 window.updateProperties = function(compStyles) {
     const activeEl = document.activeElement;
     const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-    const isTypingInInspector = !isBtn && activeEl && (
-        activeEl.tagName === 'INPUT' ||
-        activeEl.tagName === 'TEXTAREA' ||
-        activeEl.tagName === 'SELECT' ||
-        activeEl.isContentEditable ||
-        activeEl.classList.contains('v4-prop-input') ||
-        activeEl.classList.contains('admin-col-label-input') ||
-        activeEl.classList.contains('grid-col-name-input') ||
-        activeEl.classList.contains('accordion-sub-input')
+    const isNewComp = Boolean(compStyles && compStyles.id && compStyles.id !== state.editingIndex);
+
+    // If selecting a different component, clear residual parent focus to ensure immediate synchronization
+    if (isNewComp && activeEl && typeof activeEl.blur === 'function') {
+        activeEl.blur();
+    }
+
+    const currentActiveEl = document.activeElement;
+    const isTypingInInspector = !isBtn && currentActiveEl && !isNewComp && (
+        currentActiveEl.tagName === 'INPUT' ||
+        currentActiveEl.tagName === 'TEXTAREA' ||
+        currentActiveEl.tagName === 'SELECT' ||
+        currentActiveEl.isContentEditable ||
+        currentActiveEl.classList.contains('v4-prop-input') ||
+        currentActiveEl.classList.contains('admin-col-label-input') ||
+        currentActiveEl.classList.contains('grid-col-name-input') ||
+        currentActiveEl.classList.contains('accordion-sub-input')
     );
     
     if (isTypingInInspector) {
         return;
     }
     
-    window.restorePropertiesSections();
+    window.restorePropertiesSections(isNewComp);
     const pm = state.projectMetadata || {};
     if (!DOM.metadataPanel) return;
 
@@ -382,7 +390,10 @@ const ProjectMetadataManager = {
     // 2. Update Sidebar Panels based on selected component
     const hasSelection = (window.state && window.state.selectedIds && window.state.selectedIds.length > 0);
     if (compStyles || hasSelection) {
-        if (compStyles) state.selectedComponentStyles = compStyles;
+        if (compStyles) {
+            state.selectedComponent = { id: compStyles.id, ...compStyles };
+            state.selectedComponentStyles = compStyles;
+        }
 
         if (!state.inspectorMode) {
             try { state.inspectorMode = localStorage.getItem('lf_inspector_mode') || 'docked'; } catch (_) { state.inspectorMode = 'docked'; }
@@ -419,7 +430,7 @@ const ProjectMetadataManager = {
         }
 
         // Hide all sections first & return active sections to storage
-        window.restorePropertiesSections();
+        window.restorePropertiesSections(isNewComp);
         const activeEl = document.activeElement;
         const isBtn = activeEl && activeEl.tagName === 'BUTTON';
         const isTypingInAdminProps = !isBtn && activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
@@ -485,8 +496,8 @@ const ProjectMetadataManager = {
                 if (window.InspectorShapes && typeof window.InspectorShapes.sync === 'function') {
                     window.InspectorShapes.sync(compStyles);
                 }
-                // Shape 및 Pin (텍스트 마커) 모두 CONTENT EDITOR 공유 사용 (단, 이미지 도형인 경우 텍스트 편집기 표시 제외)
-                if (DOM.textPropSection && !compStyles.isImage) {
+                // Shape 및 Pin (텍스트 마커) 모두 CONTENT EDITOR 공유 사용 (단, 이미지 도형이거나 동일 유형 다중 선택인 경우 텍스트 편집기 표시 제외)
+                if (DOM.textPropSection && !compStyles.isImage && !compStyles.isMultiSameType) {
                     DOM.textPropSection.style.display = 'block';
                 }
 
@@ -871,16 +882,23 @@ const ProjectMetadataManager = {
         window.normalizeHtmlForQuill = normalizeHtmlForQuill;
 
         // Load content to Quill
-        if (compStyles && (state.editingType === 'pin' || state.editingType === 'shape') && window.quillEditor) {
+        if (compStyles && !compStyles.isMultiSameType && (state.editingType === 'pin' || state.editingType === 'shape') && window.quillEditor) {
             const fallbackFs = compStyles.currentStyles && compStyles.currentStyles.fontSize;
             const fallbackColor = compStyles.currentStyles && compStyles.currentStyles.text;
             const cleanHtml = normalizeHtmlForQuill(compStyles.html, fallbackFs);
+
+            // Cancel any pending debounced paste timer to avoid collision between rapid selections
+            if (window._shapeQuillTimer) {
+                clearTimeout(window._shapeQuillTimer);
+                window._shapeQuillTimer = null;
+            }
 
             // 초기 로드 중에는 text-change 역류를 방지하는 가드 설정
             state._isLoadingShapeContent = true;
             const wasQuillFocused = document.activeElement === window.quillEditor.root;
 
-            setTimeout(() => {
+            window._shapeQuillTimer = setTimeout(() => {
+                window._shapeQuillTimer = null;
                 window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
 
                 // Sticky Format 동기화 (오브젝트 고유 기본 스타일 캐싱)
@@ -912,7 +930,7 @@ const ProjectMetadataManager = {
                 requestAnimationFrame(() => {
                     state._isLoadingShapeContent = false;
                 });
-            }, 50);
+            }, 30);
         }
 
         // Dynamically move active panels into target inspector body (Docked or Floating)

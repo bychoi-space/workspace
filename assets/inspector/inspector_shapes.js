@@ -9,9 +9,22 @@
     const notifyIframe = (data) => window.notifyIframe(data);
 
     const getActiveTargetId = () => {
+        if (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function') {
+            const selIds = window.GroupingManager.getSelectedIds();
+            if (Array.isArray(selIds) && selIds.length > 0) return selIds[0];
+        }
         return (window.state && window.state.selectedComponent && window.state.selectedComponent.id) ||
                (window.state && window.state.editingIndex) ||
                window.activeCompId || null;
+    };
+
+    const getActiveTargetIds = () => {
+        if (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function') {
+            const selIds = window.GroupingManager.getSelectedIds();
+            if (Array.isArray(selIds) && selIds.length > 0) return selIds;
+        }
+        const singleId = getActiveTargetId();
+        return singleId ? [singleId] : [];
     };
 
     // --- State Synchronization (Read) ---
@@ -111,14 +124,17 @@
             slider.value = val;
             slider.dispatchEvent(new Event('input', { bubbles: true }));
         } else {
-            const targetId = getActiveTargetId();
-            notifyIframe({
-                type: 'LF_UPDATE_STYLE',
-                id: targetId,
-                selector: '.v4-shape-rect',
-                style: { borderRadius: val + 'px' }
-            });
-            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            const targetIds = getActiveTargetIds();
+            if (targetIds.length > 0) {
+                notifyIframe({
+                    type: 'LF_UPDATE_STYLE',
+                    id: targetIds[0],
+                    ids: targetIds,
+                    selector: '.v4-shape-rect',
+                    style: { borderRadius: val + 'px' }
+                });
+                if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            }
         }
         if (txt) txt.innerText = val;
         syncCornerBtns(val);
@@ -127,11 +143,13 @@
     const applyTextAlign = (align) => {
         syncAlignBtns(align);
         const horizontalAlign = align === 'left' ? 'flex-start' : (align === 'right' ? 'flex-end' : 'center');
-        const targetId = getActiveTargetId();
+        const targetIds = getActiveTargetIds();
+        if (targetIds.length === 0) return;
         
         notifyIframe({
             type: 'LF_UPDATE_STYLE',
-            id: targetId,
+            id: targetIds[0],
+            ids: targetIds,
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell',
             style: {
                 alignItems: horizontalAlign,
@@ -145,11 +163,13 @@
     const applyVerticalAlign = (vAlign) => {
         syncVAlignBtns(vAlign);
         const verticalJustify = vAlign === 'top' ? 'flex-start' : (vAlign === 'bottom' ? 'flex-end' : 'center');
-        const targetId = getActiveTargetId();
+        const targetIds = getActiveTargetIds();
+        if (targetIds.length === 0) return;
         
         notifyIframe({
             type: 'LF_UPDATE_STYLE',
-            id: targetId,
+            id: targetIds[0],
+            ids: targetIds,
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell',
             style: {
                 justifyContent: verticalJustify,
@@ -174,10 +194,13 @@
         if (inLeft && inLeft.value != left) inLeft.value = left;
         if (inRight && inRight.value != right) inRight.value = right;
 
-        const targetId = getActiveTargetId();
+        const targetIds = getActiveTargetIds();
+        if (targetIds.length === 0) return;
+
         notifyIframe({
             type: 'LF_UPDATE_STYLE',
-            id: targetId,
+            id: targetIds[0],
+            ids: targetIds,
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell',
             style: {
                 padTop: top,

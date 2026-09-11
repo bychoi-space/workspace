@@ -125,7 +125,7 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
       "type": "admin",
-      "updatedAt": "2026-09-11T08:21:29.187Z",
+      "updatedAt": "2026-09-11T09:17:37.555Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -315,7 +315,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 17:21:29",
+  "updated": "2026-09-11 18:17:37",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 13px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
     <meta charset="UTF-8">
     <title>시선닷컴 상품 랭킹 산정 룰 (Ranking Algorithm Policy)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
@@ -44,6 +44,7 @@
             word-break: keep-all;
         }
     </style>
+
 </head>
 <body>
     <div class="page" id="canvas-page">
@@ -62,25 +63,25 @@
         <!-- 헤더 아이콘 박스 -->
         <div id="rk-hdr-icon" class="lf-component" style="position: absolute; top: 26px; left: 45px; width: 32px; height: 32px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #3b82f6; border: 1.6px solid transparent; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ffffff; box-sizing: border-box;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 18px; height: 18px; background-image: none !important;"><path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 18px; height: 18px; background-image: none !important;"><path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path><path d="M9 18h6" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path><path d="M10 22h4" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path></svg>
             </div>
         </div>
 
         <!-- 헤더 타이틀 -->
         
         <!-- Text Shape: rk-hdr-title -->
-        <div id="rk-hdr-title" class="lf-component v4-text-shape" style="position: absolute; top: 29px; left: 88px; width: 540px; height: 26px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #f8fafc; font-size: 16px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="white-space:nowrap;"><span style="font-size:16px; font-weight:800; color:#f8fafc;">시선닷컴 상품 랭킹 산정 룰 (Ranking Algorithm Policy)</span></p>
+        <div id="rk-hdr-title" class="lf-component v4-text-shape" style="position: absolute; top: 29px; left: 88px; width: 386px; height: 25px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(248, 250, 252); font-size: 16px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 16px; font-weight: 800; color: rgb(248, 250, 252); white-space: nowrap !important;">시선닷컴 상품 랭킹 산정 룰 (Ranking Algorithm Policy)</span></p>
             </div>
         </div>
 
         <!-- 헤더 서브 타이틀 -->
         
         <!-- Text Shape: rk-hdr-sub -->
-        <div id="rk-hdr-sub" class="lf-component v4-text-shape" style="position: absolute; top: 33px; left: 610px; width: 340px; height: 20px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #94a3b8; font-size: 12px; font-weight: 500; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="white-space:nowrap;"><span style="font-size:12px; font-weight:500; color:#94a3b8;">3대 패션 브랜드(MICHAA · it MICHAA · E.B.M) 복합 밸런싱 모델</span></p>
+        <div id="rk-hdr-sub" class="lf-component v4-text-shape" style="position: absolute; top: 33px; left: 610px; width: 327px; height: 19px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(148, 163, 184); font-size: 12px; font-weight: 500; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 500; color: rgb(148, 163, 184); white-space: nowrap !important;">3대 패션 브랜드(MICHAA · it MICHAA · E.B.M) 복합 밸런싱 모델</span></p>
             </div>
         </div>
 
@@ -95,7 +96,7 @@
         
         <!-- Logo Shape: rk-hdr-b1-logo -->
         <div id="rk-hdr-b1-logo" class="lf-component" style="position: absolute; top: 29px; left: 1140px; width: 88px; height: 26px; z-index: 102;" data-resized="true">
-            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png; mask-image: url('data:image/png; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
         </div>
 
         
@@ -108,7 +109,7 @@
         
         <!-- Logo Shape: rk-hdr-b2-logo -->
         <div id="rk-hdr-b2-logo" class="lf-component" style="position: absolute; top: 29px; left: 1236px; width: 88px; height: 26px; z-index: 102;" data-resized="true">
-            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png; mask-image: url('data:image/png; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
         </div>
 
         
@@ -121,7 +122,7 @@
         
         <!-- Logo Shape: rk-hdr-b3-logo -->
         <div id="rk-hdr-b3-logo" class="lf-component" style="position: absolute; top: 29px; left: 1332px; width: 88px; height: 26px; z-index: 102;" data-resized="true">
-            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png; mask-image: url('data:image/png; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
         </div>
 
         <!-- 버전 뱃지 -->
@@ -150,13 +151,13 @@
 
         <!-- 카드 1 헤더 아이콘 -->
         <div id="rk-c1-icon" class="lf-component" style="position: absolute; top: 96px; left: 46px; width: 22px; height: 22px; z-index: 101;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
         </div>
         
         <!-- Text Shape: rk-c1-title -->
-        <div id="rk-c1-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 74px; width: 280px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="white-space:nowrap;"><span style="font-size:15px; font-weight:800; color:#0f172a;">1. 3대 브랜드 포트폴리오 &amp; 원칙</span></p>
+        <div id="rk-c1-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 74px; width: 199px; height: 22px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 15px; font-weight: 800; color: rgb(15, 23, 42); white-space: nowrap !important;">1. 3대 브랜드 포트폴리오 &amp; 원칙</span></p>
             </div>
         </div>
         
@@ -180,7 +181,7 @@
         
         <!-- Logo Shape: rk-b1-logo -->
         <div id="rk-b1-logo" class="lf-component" style="position: absolute; top: 138px; left: 56px; width: 90px; height: 30px; z-index: 102;" data-resized="true">
-            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png; mask-image: url('data:image/png; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
         </div>
         
         <!-- Badge: rk-b1-price -->
@@ -193,9 +194,9 @@
         </div>
         
         <!-- Text Shape: rk-b1-desc -->
-        <div id="rk-b1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 174px; left: 56px; width: 400px; height: 50px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p>• <span style="font-weight:700; color:#0f172a;">포지션</span>: 하이엔드 럭셔리 여성 정장 · 시그니처 코트</p><p>• <span style="font-weight:700; color:#1e40af;">랭킹 룰</span>: <strong>주문금액(35%)</strong> 가중치로 고가 프리미엄 랭킹 진입 보장</p>
+        <div id="rk-b1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 174px; left: 56px; width: 321px; height: 33px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">• <span style="font-weight: 700; color: rgb(15, 23, 42); white-space: nowrap !important;">포지션</span>: 하이엔드 럭셔리 여성 정장 · 시그니처 코트</p><p style="white-space: nowrap !important;">• <span style="font-weight: 700; color: rgb(30, 64, 175); white-space: nowrap !important;">랭킹 룰</span>: <strong style="white-space: nowrap !important;">주문금액(35%)</strong> 가중치로 고가 프리미엄 랭킹 진입 보장</p>
             </div>
         </div>
 
@@ -210,7 +211,7 @@
         
         <!-- Logo Shape: rk-b2-logo -->
         <div id="rk-b2-logo" class="lf-component" style="position: absolute; top: 252px; left: 56px; width: 90px; height: 30px; z-index: 102;" data-resized="true">
-            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png; mask-image: url('data:image/png; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
         </div>
         
         <!-- Badge: rk-b2-price -->
@@ -223,9 +224,9 @@
         </div>
         
         <!-- Text Shape: rk-b2-desc -->
-        <div id="rk-b2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 288px; left: 56px; width: 400px; height: 50px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p>• <span style="font-weight:700; color:#0f172a;">포지션</span>: 2030 영 컨템포러리 &amp; 페미닌 트렌드 데일리웨어</p><p>• <span style="font-weight:700; color:#b91c1c;">랭킹 룰</span>: <strong>판매수량(25%) + 장바구니(15%)</strong> 결합 대중 인기 검증</p>
+        <div id="rk-b2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 288px; left: 56px; width: 320px; height: 33px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">• <span style="font-weight: 700; color: rgb(15, 23, 42); white-space: nowrap !important;">포지션</span>: 2030 영 컨템포러리 &amp; 페미닌 트렌드 데일리웨어</p><p style="white-space: nowrap !important;">• <span style="font-weight: 700; color: rgb(185, 28, 28); white-space: nowrap !important;">랭킹 룰</span>: <strong style="white-space: nowrap !important;">판매수량(25%) + 장바구니(15%)</strong> 결합 대중 인기 검증</p>
             </div>
         </div>
 
@@ -240,7 +241,7 @@
         
         <!-- Logo Shape: rk-b3-logo -->
         <div id="rk-b3-logo" class="lf-component" style="position: absolute; top: 366px; left: 56px; width: 90px; height: 30px; z-index: 102;" data-resized="true">
-            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png; mask-image: url('data:image/png; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
         </div>
         
         <!-- Badge: rk-b3-price -->
@@ -253,9 +254,9 @@
         </div>
         
         <!-- Text Shape: rk-b3-desc -->
-        <div id="rk-b3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 402px; left: 56px; width: 400px; height: 50px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p>• <span style="font-weight:700; color:#0f172a;">포지션</span>: 스타일리시 캐주얼 &amp; 모던 젠더리스 트렌드 룩</p><p>• <span style="font-weight:700; color:#047857;">랭킹 룰</span>: <strong>신상품 3단계 부스팅(1.5x)</strong>으로 빠른 상품 회전 지원</p>
+        <div id="rk-b3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 402px; left: 56px; width: 303px; height: 33px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">• <span style="font-weight: 700; color: rgb(15, 23, 42); white-space: nowrap !important;">포지션</span>: 스타일리시 캐주얼 &amp; 모던 젠더리스 트렌드 룩</p><p style="white-space: nowrap !important;">• <span style="font-weight: 700; color: rgb(4, 120, 87); white-space: nowrap !important;">랭킹 룰</span>: <strong style="white-space: nowrap !important;">신상품 3단계 부스팅(1.5x)</strong>으로 빠른 상품 회전 지원</p>
             </div>
         </div>
 
@@ -269,16 +270,16 @@
         </div>
         
         <!-- Text Shape: rk-b-balance-title -->
-        <div id="rk-b-balance-title" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 56px; width: 400px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e40af; font-size: 11.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:11.5px; font-weight:800; color:#1e40af;">⚖️ 브랜드별 객단가 정규화 밸런서 (Brand Normalization)</span></p>
+        <div id="rk-b-balance-title" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 56px; width: 289px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 64, 175); font-size: 11.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 800; color: rgb(30, 64, 175); white-space: nowrap !important;">⚖️ 브랜드별 객단가 정규화 밸런서 (Brand Normalization)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-b-balance-desc -->
-        <div id="rk-b-balance-desc" class="lf-component v4-text-shape" style="position: absolute; top: 502px; left: 56px; width: 400px; height: 42px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; line-height:1.4;">미샤(90만원)와 잇미샤(20만원) 간의 가격 격차를 브랜드 평균치로 정규화하여 통합 랭킹에서의 공정성을 수학적으로 보정합니다.</p>
+        <div id="rk-b-balance-desc" class="lf-component v4-text-shape" style="position: absolute; top: 502px; left: 56px; width: 563px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); line-height: 1.4; white-space: nowrap !important;">미샤(90만원)와 잇미샤(20만원) 간의 가격 격차를 브랜드 평균치로 정규화하여 통합 랭킹에서의 공정성을 수학적으로 보정합니다.</p>
             </div>
         </div>
 
@@ -293,9 +294,9 @@
         </div>
         
         <!-- Text Shape: rk-c1-sub-title -->
-        <div id="rk-c1-sub-title" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 46px; width: 290px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="white-space:nowrap;"><span style="font-size:14px; font-weight:800; color:#0f172a;">단순 판매량 집계 한계 극복 (Before / After)</span></p>
+        <div id="rk-c1-sub-title" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 46px; width: 260px; height: 21px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 800; color: rgb(15, 23, 42); white-space: nowrap !important;">단순 판매량 집계 한계 극복 (Before / After)</span></p>
             </div>
         </div>
         
@@ -318,16 +319,16 @@
         </div>
         
         <!-- Text Shape: rk-box-before-title -->
-        <div id="rk-box-before-title" class="lf-component v4-text-shape" style="position: absolute; top: 634px; left: 56px; width: 400px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 11px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:11px; font-weight:800; color:#b91c1c;">⚠️ BEFORE (현행 단순 주문수 랭킹 집계 시)</span></p>
+        <div id="rk-box-before-title" class="lf-component v4-text-shape" style="position: absolute; top: 634px; left: 56px; width: 207px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(185, 28, 28); font-size: 11px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 11px; font-weight: 800; color: rgb(185, 28, 28); white-space: nowrap !important;">⚠️ BEFORE (현행 단순 주문수 랭킹 집계 시)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-box-before-desc -->
-        <div id="rk-box-before-desc" class="lf-component v4-text-shape" style="position: absolute; top: 656px; left: 56px; width: 400px; height: 76px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11.5px; color:#334155; line-height:1.45;">• <strong>3만원 기본 티셔츠 100건</strong> ➔ <span style="color:#b91c1c; font-weight:800;">랭킹 1위 독점</span></p><p style="font-size:11.5px; color:#334155; line-height:1.45;">• <strong>90만원 미샤 코트 10건(매출 900만)</strong> ➔ <span style="color:#64748b; font-weight:700;">랭킹 48위 탈락</span></p><p style="font-size:10.5px; color:#991b1b; margin-top:3px;">※ 치명적 결함: 고가 주력 상품 소외, 자사몰 저가 잡화 쇼핑몰화</p>
+        <div id="rk-box-before-desc" class="lf-component v4-text-shape" style="position: absolute; top: 656px; left: 56px; width: 290px; height: 45px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 11.5px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11.5px; color: rgb(51, 65, 85); line-height: 1.45; white-space: nowrap !important;">• <strong style="white-space: nowrap !important;">3만원 기본 티셔츠 100건</strong> ➔ <span style="color: rgb(185, 28, 28); font-weight: 800; white-space: nowrap !important;">랭킹 1위 독점</span></p><p style="font-size: 11.5px; color: rgb(51, 65, 85); line-height: 1.45; white-space: nowrap !important;">• <strong style="white-space: nowrap !important;">90만원 미샤 코트 10건(매출 900만)</strong> ➔ <span style="color: rgb(100, 116, 139); font-weight: 700; white-space: nowrap !important;">랭킹 48위 탈락</span></p><p style="font-size: 10.5px; color: rgb(153, 27, 27); margin-top: 3px; white-space: nowrap !important;">※ 치명적 결함: 고가 주력 상품 소외, 자사몰 저가 잡화 쇼핑몰화</p>
             </div>
         </div>
 
@@ -341,16 +342,16 @@
         </div>
         
         <!-- Text Shape: rk-box-after-title -->
-        <div id="rk-box-after-title" class="lf-component v4-text-shape" style="position: absolute; top: 760px; left: 56px; width: 400px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #15803d; font-size: 11px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:11px; font-weight:800; color:#15803d;">✅ AFTER (신규 6대 복합 랭킹 룰 적용 시)</span></p>
+        <div id="rk-box-after-title" class="lf-component v4-text-shape" style="position: absolute; top: 760px; left: 56px; width: 201px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(21, 128, 61); font-size: 11px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 11px; font-weight: 800; color: rgb(21, 128, 61); white-space: nowrap !important;">✅ AFTER (신규 6대 복합 랭킹 룰 적용 시)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-box-after-desc -->
-        <div id="rk-box-after-desc" class="lf-component v4-text-shape" style="position: absolute; top: 782px; left: 56px; width: 400px; height: 76px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11.5px; color:#334155; line-height:1.45;">• <strong>미샤 코트</strong>: 매출(35%) + 찜/카트 ➔ <span style="color:#15803d; font-weight:800;">종합 2위 안착</span></p><p style="font-size:11.5px; color:#334155; line-height:1.45;">• <strong>3만원 티셔츠</strong>: 수량(25%) 우세하나 Log 정규화 ➔ <span style="color:#047857; font-weight:700;">종합 5위 균형</span></p><p style="font-size:10.5px; color:#166534; margin-top:3px;">※ 기대 효과: 프리미엄 가치 보존 + 대중적 볼륨의 완벽한 공존 달성</p>
+        <div id="rk-box-after-desc" class="lf-component v4-text-shape" style="position: absolute; top: 782px; left: 56px; width: 313px; height: 45px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 11.5px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11.5px; color: rgb(51, 65, 85); line-height: 1.45; white-space: nowrap !important;">• <strong style="white-space: nowrap !important;">미샤 코트</strong>: 매출(35%) + 찜/카트 ➔ <span style="color: rgb(21, 128, 61); font-weight: 800; white-space: nowrap !important;">종합 2위 안착</span></p><p style="font-size: 11.5px; color: rgb(51, 65, 85); line-height: 1.45; white-space: nowrap !important;">• <strong style="white-space: nowrap !important;">3만원 티셔츠</strong>: 수량(25%) 우세하나 Log 정규화 ➔ <span style="color: rgb(4, 120, 87); font-weight: 700; white-space: nowrap !important;">종합 5위 균형</span></p><p style="font-size: 10.5px; color: rgb(22, 101, 52); margin-top: 3px; white-space: nowrap !important;">※ 기대 효과: 프리미엄 가치 보존 + 대중적 볼륨의 완벽한 공존 달성</p>
             </div>
         </div>
 
@@ -368,13 +369,13 @@
 
         <!-- 카드 2 헤더 아이콘 -->
         <div id="rk-c2-icon" class="lf-component" style="position: absolute; top: 96px; left: 516px; width: 22px; height: 22px; z-index: 101;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         </div>
         
         <!-- Text Shape: rk-c2-title -->
-        <div id="rk-c2-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 544px; width: 400px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="white-space:nowrap;"><span style="font-size:15px; font-weight:800; color:#0f172a;">2. 6대 지표 가중치 매트릭스 (Total Weights 100%)</span></p>
+        <div id="rk-c2-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 544px; width: 336px; height: 22px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 15px; font-weight: 800; color: rgb(15, 23, 42); white-space: nowrap !important;">2. 6대 지표 가중치 매트릭스 (Total Weights 100%)</span></p>
             </div>
         </div>
         
@@ -391,35 +392,35 @@
         <div id="rk-donut-chart" class="lf-component" style="position: absolute; top: 130px; left: 520px; width: 210px; height: 210px; z-index: 101;" data-resized="true">
             <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; transform: rotate(-90deg);">
                 <!-- Track -->
-                <circle cx="100" cy="100" r="70" fill="none" stroke="#f1f5f9" stroke-width="26"></circle>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#f1f5f9" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
                 <!-- 1: 매출 35% (153.94) -->
-                <circle cx="100" cy="100" r="70" fill="none" stroke="#3b82f6" stroke-width="26" stroke-dasharray="153.94 285.88" stroke-dashoffset="0"></circle>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#3b82f6" stroke-width="1.6" stroke-dasharray="153.94 285.88" stroke-dashoffset="0" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
                 <!-- 2: 수량 25% (109.96) -->
-                <circle cx="100" cy="100" r="70" fill="none" stroke="#06b6d4" stroke-width="26" stroke-dasharray="109.96 329.86" stroke-dashoffset="-153.94"></circle>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#06b6d4" stroke-width="1.6" stroke-dasharray="109.96 329.86" stroke-dashoffset="-153.94" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
                 <!-- 3: 장바구니 15% (65.97) -->
-                <circle cx="100" cy="100" r="70" fill="none" stroke="#8b5cf6" stroke-width="26" stroke-dasharray="65.97 373.85" stroke-dashoffset="-263.90"></circle>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#8b5cf6" stroke-width="1.6" stroke-dasharray="65.97 373.85" stroke-dashoffset="-263.90" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
                 <!-- 4: 위시리스트 10% (43.98) -->
-                <circle cx="100" cy="100" r="70" fill="none" stroke="#ec4899" stroke-width="26" stroke-dasharray="43.98 395.84" stroke-dashoffset="-329.87"></circle>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#ec4899" stroke-width="1.6" stroke-dasharray="43.98 395.84" stroke-dashoffset="-329.87" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
                 <!-- 5: UV 10% (43.98) -->
-                <circle cx="100" cy="100" r="70" fill="none" stroke="#f59e0b" stroke-width="26" stroke-dasharray="43.98 395.84" stroke-dashoffset="-373.85"></circle>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="43.98 395.84" stroke-dashoffset="-373.85" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
                 <!-- 6: PV 5% (21.99) -->
-                <circle cx="100" cy="100" r="70" fill="none" stroke="#64748b" stroke-width="26" stroke-dasharray="21.99 417.83" stroke-dashoffset="-417.83"></circle>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#64748b" stroke-width="1.6" stroke-dasharray="21.99 417.83" stroke-dashoffset="-417.83" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
             </svg>
         </div>
 
         <!-- 도넛 중앙 독립 텍스트 -->
         
         <!-- Text Shape: rk-donut-val -->
-        <div id="rk-donut-val" class="lf-component v4-text-shape" style="position: absolute; top: 205px; left: 565px; width: 120px; height: 36px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 28px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:28px; font-weight:900; color:#0f172a; line-height:1;">100%</span></p>
+        <div id="rk-donut-val" class="lf-component v4-text-shape" style="position: absolute; top: 205px; left: 565px; width: 92px; height: 40px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 28px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 28px; font-weight: 900; color: rgb(15, 23, 42); line-height: 1; white-space: nowrap !important;">100%</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-donut-sub -->
-        <div id="rk-donut-sub" class="lf-component v4-text-shape" style="position: absolute; top: 240px; left: 565px; width: 120px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 10px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:10px; font-weight:700; color:#64748b; letter-spacing:0.5px;">TOTAL WEIGHTS</span></p>
+        <div id="rk-donut-sub" class="lf-component v4-text-shape" style="position: absolute; top: 240px; left: 565px; width: 96px; height: 15px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 10px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 10px; font-weight: 700; color: rgb(100, 116, 139); letter-spacing: 0.5px; white-space: nowrap !important;">TOTAL WEIGHTS</span></p>
             </div>
         </div>
 
@@ -441,16 +442,16 @@
         </div>
         
         <!-- Text Shape: rk-leg1-lbl -->
-        <div id="rk-leg1-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:700; color:#1e3a8a;">주문금액 (매출 기여도)</span></p>
+        <div id="rk-leg1-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 774px; width: 118px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 58, 138); font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 700; color: rgb(30, 58, 138); white-space: nowrap !important;">주문금액 (매출 기여도)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-leg1-val -->
-        <div id="rk-leg1-val" class="lf-component v4-text-shape" style="position: absolute; top: 135px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1d4ed8; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#1d4ed8;">35%</span></p>
+        <div id="rk-leg1-val" class="lf-component v4-text-shape" style="position: absolute; top: 135px; left: 1025px; width: 43px; height: 21px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(29, 78, 216); font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 900; color: rgb(29, 78, 216); white-space: nowrap !important;">35%</span></p>
             </div>
         </div>
 
@@ -471,16 +472,16 @@
         </div>
         
         <!-- Text Shape: rk-leg2-lbl -->
-        <div id="rk-leg2-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 174px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #065f46; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:700; color:#065f46;">주문수량 (순수 주문건수)</span></p>
+        <div id="rk-leg2-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 174px; left: 774px; width: 129px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(6, 95, 70); font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 700; color: rgb(6, 95, 70); white-space: nowrap !important;">주문수량 (순수 주문건수)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-leg2-val -->
-        <div id="rk-leg2-val" class="lf-component v4-text-shape" style="position: absolute; top: 173px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0e7490; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#0e7490;">25%</span></p>
+        <div id="rk-leg2-val" class="lf-component v4-text-shape" style="position: absolute; top: 173px; left: 1025px; width: 42px; height: 21px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(14, 116, 144); font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 900; color: rgb(14, 116, 144); white-space: nowrap !important;">25%</span></p>
             </div>
         </div>
 
@@ -501,16 +502,16 @@
         </div>
         
         <!-- Text Shape: rk-leg3-lbl -->
-        <div id="rk-leg3-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #5b21b6; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:700; color:#5b21b6;">장바구니 (고관여 구매의향)</span></p>
+        <div id="rk-leg3-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 774px; width: 139px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(91, 33, 182); font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 700; color: rgb(91, 33, 182); white-space: nowrap !important;">장바구니 (고관여 구매의향)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-leg3-val -->
-        <div id="rk-leg3-val" class="lf-component v4-text-shape" style="position: absolute; top: 211px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #6d28d9; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#6d28d9;">15%</span></p>
+        <div id="rk-leg3-val" class="lf-component v4-text-shape" style="position: absolute; top: 211px; left: 1025px; width: 40px; height: 21px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(109, 40, 217); font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 900; color: rgb(109, 40, 217); white-space: nowrap !important;">15%</span></p>
             </div>
         </div>
 
@@ -531,16 +532,16 @@
         </div>
         
         <!-- Text Shape: rk-leg4-lbl -->
-        <div id="rk-leg4-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 250px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #9d174d; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:700; color:#9d174d;">위시리스트 (찜·선호도)</span></p>
+        <div id="rk-leg4-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 250px; left: 774px; width: 119px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(157, 23, 77); font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 700; color: rgb(157, 23, 77); white-space: nowrap !important;">위시리스트 (찜·선호도)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-leg4-val -->
-        <div id="rk-leg4-val" class="lf-component v4-text-shape" style="position: absolute; top: 249px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #be185d; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#be185d;">10%</span></p>
+        <div id="rk-leg4-val" class="lf-component v4-text-shape" style="position: absolute; top: 249px; left: 1025px; width: 41px; height: 21px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(190, 24, 93); font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 900; color: rgb(190, 24, 93); white-space: nowrap !important;">10%</span></p>
             </div>
         </div>
 
@@ -561,16 +562,16 @@
         </div>
         
         <!-- Text Shape: rk-leg5-lbl -->
-        <div id="rk-leg5-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 288px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #92400e; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:700; color:#92400e;">순수방문자 UV (어뷰징 방지)</span></p>
+        <div id="rk-leg5-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 288px; left: 774px; width: 148px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(146, 64, 14); font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 700; color: rgb(146, 64, 14); white-space: nowrap !important;">순수방문자 UV (어뷰징 방지)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-leg5-val -->
-        <div id="rk-leg5-val" class="lf-component v4-text-shape" style="position: absolute; top: 287px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b45309; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#b45309;">10%</span></p>
+        <div id="rk-leg5-val" class="lf-component v4-text-shape" style="position: absolute; top: 287px; left: 1025px; width: 41px; height: 21px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(180, 83, 9); font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 900; color: rgb(180, 83, 9); white-space: nowrap !important;">10%</span></p>
             </div>
         </div>
 
@@ -591,16 +592,16 @@
         </div>
         
         <!-- Text Shape: rk-leg6-lbl -->
-        <div id="rk-leg6-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 326px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:700; color:#334155;">페이지뷰 PV (트래픽 총량)</span></p>
+        <div id="rk-leg6-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 326px; left: 774px; width: 137px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 700; color: rgb(51, 65, 85); white-space: nowrap !important;">페이지뷰 PV (트래픽 총량)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-leg6-val -->
-        <div id="rk-leg6-val" class="lf-component v4-text-shape" style="position: absolute; top: 325px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#475569;">5%</span></p>
+        <div id="rk-leg6-val" class="lf-component v4-text-shape" style="position: absolute; top: 325px; left: 1025px; width: 33px; height: 21px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 900; color: rgb(71, 85, 105); white-space: nowrap !important;">5%</span></p>
             </div>
         </div>
 
@@ -616,23 +617,23 @@
         </div>
         
         <!-- Text Shape: rk-m1-title -->
-        <div id="rk-m1-title" class="lf-component v4-text-shape" style="position: absolute; top: 370px; left: 528px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:13px; font-weight:800; color:#1e3a8a;">주문금액 (S_rev)</span></p>
+        <div id="rk-m1-title" class="lf-component v4-text-shape" style="position: absolute; top: 370px; left: 528px; width: 103px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 58, 138); font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 13px; font-weight: 800; color: rgb(30, 58, 138); white-space: nowrap !important;">주문금액 (S_rev)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m1-val -->
-        <div id="rk-m1-val" class="lf-component v4-text-shape" style="position: absolute; top: 366px; left: 724px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #3b82f6; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#3b82f6;">35%</span></p>
+        <div id="rk-m1-val" class="lf-component v4-text-shape" style="position: absolute; top: 366px; left: 724px; width: 61px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(59, 130, 246); font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 22px; font-weight: 900; color: rgb(59, 130, 246); white-space: nowrap !important;">35%</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m1-desc -->
-        <div id="rk-m1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 400px; left: 528px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#1e40af;">log10(금액+1) 정규화</span><br>• 역할: 고가 명품·코트 매출 기여도 인정</p>
+        <div id="rk-m1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 400px; left: 528px; width: 180px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); line-height: 1.4; white-space: nowrap !important;">• 산식: <span style="font-family: monospace; color: rgb(30, 64, 175); white-space: nowrap !important;">log10(금액+1) 정규화</span><br>• 역할: 고가 명품·코트 매출 기여도 인정</p>
             </div>
         </div>
 
@@ -646,23 +647,23 @@
         </div>
         
         <!-- Text Shape: rk-m2-title -->
-        <div id="rk-m2-title" class="lf-component v4-text-shape" style="position: absolute; top: 370px; left: 816px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #065f46; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:13px; font-weight:800; color:#065f46;">주문수량 (S_vol)</span></p>
+        <div id="rk-m2-title" class="lf-component v4-text-shape" style="position: absolute; top: 370px; left: 816px; width: 100px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(6, 95, 70); font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 13px; font-weight: 800; color: rgb(6, 95, 70); white-space: nowrap !important;">주문수량 (S_vol)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m2-val -->
-        <div id="rk-m2-val" class="lf-component v4-text-shape" style="position: absolute; top: 366px; left: 1012px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #06b6d4; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#06b6d4;">25%</span></p>
+        <div id="rk-m2-val" class="lf-component v4-text-shape" style="position: absolute; top: 366px; left: 1012px; width: 61px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(6, 182, 212); font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 22px; font-weight: 900; color: rgb(6, 182, 212); white-space: nowrap !important;">25%</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m2-desc -->
-        <div id="rk-m2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 400px; left: 816px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#065f46;">주문건수 / MaxVol</span><br>• 역할: 실구매 고객 대중적 선호도 검증</p>
+        <div id="rk-m2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 400px; left: 816px; width: 178px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); line-height: 1.4; white-space: nowrap !important;">• 산식: <span style="font-family: monospace; color: rgb(6, 95, 70); white-space: nowrap !important;">주문건수 / MaxVol</span><br>• 역할: 실구매 고객 대중적 선호도 검증</p>
             </div>
         </div>
 
@@ -676,23 +677,23 @@
         </div>
         
         <!-- Text Shape: rk-m3-title -->
-        <div id="rk-m3-title" class="lf-component v4-text-shape" style="position: absolute; top: 484px; left: 528px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #5b21b6; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:13px; font-weight:800; color:#5b21b6;">장바구니 (S_cart)</span></p>
+        <div id="rk-m3-title" class="lf-component v4-text-shape" style="position: absolute; top: 484px; left: 528px; width: 108px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(91, 33, 182); font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 13px; font-weight: 800; color: rgb(91, 33, 182); white-space: nowrap !important;">장바구니 (S_cart)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m3-val -->
-        <div id="rk-m3-val" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 724px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #8b5cf6; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#8b5cf6;">15%</span></p>
+        <div id="rk-m3-val" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 724px; width: 58px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(139, 92, 246); font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 22px; font-weight: 900; color: rgb(139, 92, 246); white-space: nowrap !important;">15%</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m3-desc -->
-        <div id="rk-m3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 514px; left: 528px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#5b21b6;">장바구니 담김 / Max</span><br>• 역할: 구매 직전 강력한 전환 의향(High Intent)</p>
+        <div id="rk-m3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 514px; left: 528px; width: 220px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); line-height: 1.4; white-space: nowrap !important;">• 산식: <span style="font-family: monospace; color: rgb(91, 33, 182); white-space: nowrap !important;">장바구니 담김 / Max</span><br>• 역할: 구매 직전 강력한 전환 의향(High Intent)</p>
             </div>
         </div>
 
@@ -706,23 +707,23 @@
         </div>
         
         <!-- Text Shape: rk-m4-title -->
-        <div id="rk-m4-title" class="lf-component v4-text-shape" style="position: absolute; top: 484px; left: 816px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #9d174d; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:13px; font-weight:800; color:#9d174d;">위시리스트 (S_wish)</span></p>
+        <div id="rk-m4-title" class="lf-component v4-text-shape" style="position: absolute; top: 484px; left: 816px; width: 124px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(157, 23, 77); font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 13px; font-weight: 800; color: rgb(157, 23, 77); white-space: nowrap !important;">위시리스트 (S_wish)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m4-val -->
-        <div id="rk-m4-val" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 1012px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ec4899; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#ec4899;">10%</span></p>
+        <div id="rk-m4-val" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 1012px; width: 59px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(236, 72, 153); font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 22px; font-weight: 900; color: rgb(236, 72, 153); white-space: nowrap !important;">10%</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m4-desc -->
-        <div id="rk-m4-desc" class="lf-component v4-text-shape" style="position: absolute; top: 514px; left: 816px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#9d174d;">위시 찜수 / MaxWish</span><br>• 역할: 잠재 고객 선호도 및 브랜드 충성도</p>
+        <div id="rk-m4-desc" class="lf-component v4-text-shape" style="position: absolute; top: 514px; left: 816px; width: 190px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); line-height: 1.4; white-space: nowrap !important;">• 산식: <span style="font-family: monospace; color: rgb(157, 23, 77); white-space: nowrap !important;">위시 찜수 / MaxWish</span><br>• 역할: 잠재 고객 선호도 및 브랜드 충성도</p>
             </div>
         </div>
 
@@ -736,23 +737,23 @@
         </div>
         
         <!-- Text Shape: rk-m5-title -->
-        <div id="rk-m5-title" class="lf-component v4-text-shape" style="position: absolute; top: 598px; left: 528px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #92400e; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:13px; font-weight:800; color:#92400e;">순수방문자 (S_uv)</span></p>
+        <div id="rk-m5-title" class="lf-component v4-text-shape" style="position: absolute; top: 598px; left: 528px; width: 109px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(146, 64, 14); font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 13px; font-weight: 800; color: rgb(146, 64, 14); white-space: nowrap !important;">순수방문자 (S_uv)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m5-val -->
-        <div id="rk-m5-val" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 724px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #f59e0b; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#f59e0b;">10%</span></p>
+        <div id="rk-m5-val" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 724px; width: 59px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(245, 158, 11); font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 22px; font-weight: 900; color: rgb(245, 158, 11); white-space: nowrap !important;">10%</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m5-desc -->
-        <div id="rk-m5-desc" class="lf-component v4-text-shape" style="position: absolute; top: 628px; left: 528px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#92400e;">Unique Visitors / MaxUV</span><br>• 역할: 어뷰징 배제 순수 모객 파워 측정</p>
+        <div id="rk-m5-desc" class="lf-component v4-text-shape" style="position: absolute; top: 628px; left: 528px; width: 181px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); line-height: 1.4; white-space: nowrap !important;">• 산식: <span style="font-family: monospace; color: rgb(146, 64, 14); white-space: nowrap !important;">Unique Visitors / MaxUV</span><br>• 역할: 어뷰징 배제 순수 모객 파워 측정</p>
             </div>
         </div>
 
@@ -766,23 +767,23 @@
         </div>
         
         <!-- Text Shape: rk-m6-title -->
-        <div id="rk-m6-title" class="lf-component v4-text-shape" style="position: absolute; top: 598px; left: 816px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:13px; font-weight:800; color:#334155;">페이지뷰 (S_pv)</span></p>
+        <div id="rk-m6-title" class="lf-component v4-text-shape" style="position: absolute; top: 598px; left: 816px; width: 99px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 13px; font-weight: 800; color: rgb(51, 65, 85); white-space: nowrap !important;">페이지뷰 (S_pv)</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m6-val -->
-        <div id="rk-m6-val" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 1012px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#64748b;">5%</span></p>
+        <div id="rk-m6-val" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 1012px; width: 47px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 22px; font-weight: 900; color: rgb(100, 116, 139); white-space: nowrap !important;">5%</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-m6-desc -->
-        <div id="rk-m6-desc" class="lf-component v4-text-shape" style="position: absolute; top: 628px; left: 816px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#334155;">PV (1인 1일 3회 캡)</span><br>• 역할: 매크로 클릭 차단 트래픽 총량</p>
+        <div id="rk-m6-desc" class="lf-component v4-text-shape" style="position: absolute; top: 628px; left: 816px; width: 168px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); line-height: 1.4; white-space: nowrap !important;">• 산식: <span style="font-family: monospace; color: rgb(51, 65, 85); white-space: nowrap !important;">PV (1인 1일 3회 캡)</span><br>• 역할: 매크로 클릭 차단 트래픽 총량</p>
             </div>
         </div>
 
@@ -796,9 +797,9 @@
         </div>
         
         <!-- Text Shape: rk-fml-title -->
-        <div id="rk-fml-title" class="lf-component v4-text-shape" style="position: absolute; top: 714px; left: 530px; width: 420px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #60a5fa; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:13px; font-weight:800; color:#60a5fa;">📐 종합 랭킹 점수 승산 수식 (Multiplicative Model)</span></p>
+        <div id="rk-fml-title" class="lf-component v4-text-shape" style="position: absolute; top: 714px; left: 530px; width: 294px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(96, 165, 250); font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 13px; font-weight: 800; color: rgb(96, 165, 250); white-space: nowrap !important;">📐 종합 랭킹 점수 승산 수식 (Multiplicative Model)</span></p>
             </div>
         </div>
         
@@ -820,17 +821,17 @@
         </div>
         
         <!-- Text Shape: rk-fml-chip-text -->
-        <div id="rk-fml-chip-text" class="lf-component v4-text-shape" style="position: absolute; top: 748px; left: 530px; width: 538px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #38bdf8; font-size: 13px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center; font-family:monospace; font-size:13px; font-weight:700; color:#38bdf8; margin:0;">Total Score = [ Base Score (100%) ] × F_freshness × F_decay × F_stock × F_brand</p>
+        <div id="rk-fml-chip-text" class="lf-component v4-text-shape" style="position: absolute; top: 748px; left: 530px; width: 504px; height: 20px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(56, 189, 248); font-size: 13px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; font-family: monospace; font-size: 13px; font-weight: 700; color: rgb(56, 189, 248); margin: 0px; white-space: nowrap !important;">Total Score = [ Base Score (100%) ] × F_freshness × F_decay × F_stock × F_brand</p>
             </div>
         </div>
 
         
         <!-- Text Shape: rk-fml-desc -->
-        <div id="rk-fml-desc" class="lf-component v4-text-shape" style="position: absolute; top: 786px; left: 530px; width: 538px; height: 68px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #94a3b8; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#94a3b8; line-height:1.45;">• <span style="color:#e2e8f0; font-weight:600;">Base Score</span> = 0.35·S_rev + 0.25·S_vol + 0.15·S_cart + 0.10·S_wish + 0.10·S_uv + 0.05·S_pv<br>• 기본 가중치 합산 점수에 신상품 부스트, 시간 감쇠, 재고 페널티, 브랜드 보정을 순차 승산하여 결정</p>
+        <div id="rk-fml-desc" class="lf-component v4-text-shape" style="position: absolute; top: 786px; left: 530px; width: 456px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(148, 163, 184); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(148, 163, 184); line-height: 1.45; white-space: nowrap !important;">• <span style="color: rgb(226, 232, 240); font-weight: 600; white-space: nowrap !important;">Base Score</span> = 0.35·S_rev + 0.25·S_vol + 0.15·S_cart + 0.10·S_wish + 0.10·S_uv + 0.05·S_pv<br>• 기본 가중치 합산 점수에 신상품 부스트, 시간 감쇠, 재고 페널티, 브랜드 보정을 순차 승산하여 결정</p>
             </div>
         </div>
 
@@ -849,13 +850,13 @@
 
         <!-- 카드 1 아이콘 -->
         <div id="rk-c3-icon" class="lf-component" style="position: absolute; top: 96px; left: 1136px; width: 22px; height: 22px; z-index: 101;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         </div>
         
         <!-- Text Shape: rk-c3-title -->
-        <div id="rk-c3-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 1164px; width: 260px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="white-space:nowrap;"><span style="font-size:15px; font-weight:800; color:#0f172a;">3. 신상품 3단계 부스팅 룰</span></p>
+        <div id="rk-c3-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 1164px; width: 163px; height: 22px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 15px; font-weight: 800; color: rgb(15, 23, 42); white-space: nowrap !important;">3. 신상품 3단계 부스팅 룰</span></p>
             </div>
         </div>
         
@@ -879,30 +880,30 @@
         </div>
         
         <!-- Text Shape: rk-bst1-period -->
-        <div id="rk-bst1-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1136px; width: 132px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #be185d; font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:11px; font-weight:700; color:#be185d;">출시 1 ~ 7일차</span></p>
+        <div id="rk-bst1-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1136px; width: 74px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(190, 24, 93); font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 11px; font-weight: 700; color: rgb(190, 24, 93); white-space: nowrap !important;">출시 1 ~ 7일차</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst1-rate -->
-        <div id="rk-bst1-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1136px; width: 132px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #9d174d; font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:24px; font-weight:900; color:#9d174d;">× 1.50</span></p>
+        <div id="rk-bst1-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1136px; width: 82px; height: 35px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(157, 23, 77); font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 24px; font-weight: 900; color: rgb(157, 23, 77); white-space: nowrap !important;">× 1.50</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst1-name -->
-        <div id="rk-bst1-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1136px; width: 132px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #831843; font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:10.5px; font-weight:700; color:#831843;">슈퍼 부스트</span></p>
+        <div id="rk-bst1-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1136px; width: 58px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(131, 24, 67); font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 10.5px; font-weight: 700; color: rgb(131, 24, 67); white-space: nowrap !important;">슈퍼 부스트</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst1-desc -->
-        <div id="rk-bst1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1136px; width: 132px; height: 16px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #be185d; font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:9.5px; color:#be185d;">콜드스타트 극복</span></p>
+        <div id="rk-bst1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1136px; width: 70px; height: 15px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(190, 24, 93); font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 9.5px; color: rgb(190, 24, 93); white-space: nowrap !important;">콜드스타트 극복</span></p>
             </div>
         </div>
 
@@ -916,30 +917,30 @@
         </div>
         
         <!-- Text Shape: rk-bst2-period -->
-        <div id="rk-bst2-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1278px; width: 132px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1d4ed8; font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:11px; font-weight:700; color:#1d4ed8;">출시 8 ~ 14일차</span></p>
+        <div id="rk-bst2-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1278px; width: 82px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(29, 78, 216); font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 11px; font-weight: 700; color: rgb(29, 78, 216); white-space: nowrap !important;">출시 8 ~ 14일차</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst2-rate -->
-        <div id="rk-bst2-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1278px; width: 132px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e40af; font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:24px; font-weight:900; color:#1e40af;">× 1.30</span></p>
+        <div id="rk-bst2-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1278px; width: 82px; height: 35px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 64, 175); font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 24px; font-weight: 900; color: rgb(30, 64, 175); white-space: nowrap !important;">× 1.30</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst2-name -->
-        <div id="rk-bst2-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1278px; width: 132px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:10.5px; font-weight:700; color:#1e3a8a;">성장 부스트</span></p>
+        <div id="rk-bst2-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1278px; width: 58px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 58, 138); font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 10.5px; font-weight: 700; color: rgb(30, 58, 138); white-space: nowrap !important;">성장 부스트</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst2-desc -->
-        <div id="rk-bst2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1278px; width: 132px; height: 16px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1d4ed8; font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:9.5px; color:#1d4ed8;">장바구니 반응 검증</span></p>
+        <div id="rk-bst2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1278px; width: 80px; height: 15px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(29, 78, 216); font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 9.5px; color: rgb(29, 78, 216); white-space: nowrap !important;">장바구니 반응 검증</span></p>
             </div>
         </div>
 
@@ -953,39 +954,39 @@
         </div>
         
         <!-- Text Shape: rk-bst3-period -->
-        <div id="rk-bst3-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1420px; width: 134px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:11px; font-weight:700; color:#334155;">출시 15 ~ 30일차</span></p>
+        <div id="rk-bst3-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1420px; width: 89px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 11px; font-weight: 700; color: rgb(51, 65, 85); white-space: nowrap !important;">출시 15 ~ 30일차</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst3-rate -->
-        <div id="rk-bst3-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1420px; width: 134px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:24px; font-weight:900; color:#0f172a;">× 1.15</span></p>
+        <div id="rk-bst3-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1420px; width: 75px; height: 35px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 24px; font-weight: 900; color: rgb(15, 23, 42); white-space: nowrap !important;">× 1.15</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst3-name -->
-        <div id="rk-bst3-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1420px; width: 134px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:10.5px; font-weight:700; color:#475569;">안착 부스트</span></p>
+        <div id="rk-bst3-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1420px; width: 58px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 10.5px; font-weight: 700; color: rgb(71, 85, 105); white-space: nowrap !important;">안착 부스트</span></p>
             </div>
         </div>
         
         <!-- Text Shape: rk-bst3-desc -->
-        <div id="rk-bst3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1420px; width: 134px; height: 16px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center;"><span style="font-size:9.5px; color:#64748b;">자연 랭킹 전환</span></p>
+        <div id="rk-bst3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1420px; width: 64px; height: 15px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; white-space: nowrap !important;"><span style="font-size: 9.5px; color: rgb(100, 116, 139); white-space: nowrap !important;">자연 랭킹 전환</span></p>
             </div>
         </div>
 
         <!-- 부스팅 안내 문구 -->
         
         <!-- Text Shape: rk-bst-info -->
-        <div id="rk-bst-info" class="lf-component v4-text-shape" style="position: absolute; top: 255px; left: 1136px; width: 418px; height: 45px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#64748b; line-height:1.4;">• 30일 초과 상품은 기본 배율(1.00x)로 자동 전환됩니다.<br>• 신규 등록 패션 상품의 1주차 노출을 보장하여 고객 탐색 풀을 다변화합니다.</p>
+        <div id="rk-bst-info" class="lf-component v4-text-shape" style="position: absolute; top: 255px; left: 1136px; width: 339px; height: 16px; z-index: 101; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(100, 116, 139); line-height: 1.4; white-space: nowrap !important;">• 30일 초과 상품은 기본 배율(1.00x)로 자동 전환됩니다.<br>• 신규 등록 패션 상품의 1주차 노출을 보장하여 고객 탐색 풀을 다변화합니다.</p>
             </div>
         </div>
 
@@ -1000,9 +1001,9 @@
         </div>
         
         <!-- Text Shape: rk-decay-title -->
-        <div id="rk-decay-title" class="lf-component v4-text-shape" style="position: absolute; top: 338px; left: 1136px; width: 300px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="white-space:nowrap;"><span style="font-size:14px; font-weight:800; color:#0f172a;">4. 14일 반감기 시간 감쇠 (Time Decay)</span></p>
+        <div id="rk-decay-title" class="lf-component v4-text-shape" style="position: absolute; top: 338px; left: 1136px; width: 241px; height: 21px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 800; color: rgb(15, 23, 42); white-space: nowrap !important;">4. 14일 반감기 시간 감쇠 (Time Decay)</span></p>
             </div>
         </div>
         
@@ -1025,9 +1026,9 @@
         </div>
         
         <!-- Text Shape: rk-decay-fml-text -->
-        <div id="rk-decay-fml-text" class="lf-component v4-text-shape" style="position: absolute; top: 376px; left: 1136px; width: 418px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e40af; font-size: 12px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:center; font-family:monospace; font-size:12px; font-weight:700; color:#1e40af; margin:0;">F_decay(t) = 0.5 ^ ( t / 14 )</p>
+        <div id="rk-decay-fml-text" class="lf-component v4-text-shape" style="position: absolute; top: 376px; left: 1136px; width: 156px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 64, 175); font-size: 12px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: center; font-family: monospace; font-size: 12px; font-weight: 700; color: rgb(30, 64, 175); margin: 0px; white-space: nowrap !important;">F_decay(t) = 0.5 ^ ( t / 14 )</p>
             </div>
         </div>
 
@@ -1035,9 +1036,9 @@
         <!-- 최근 7일 (100%) -->
         
         <!-- Text Shape: rk-dbar1-lbl -->
-        <div id="rk-dbar1-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 412px; left: 1136px; width: 90px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:11.5px; font-weight:600; color:#334155;">최근 7일 실적</span></p>
+        <div id="rk-dbar1-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 412px; left: 1136px; width: 72px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 600; color: rgb(51, 65, 85); white-space: nowrap !important;">최근 7일 실적</span></p>
             </div>
         </div>
         
@@ -1056,18 +1057,18 @@
         </div>
         
         <!-- Text Shape: rk-dbar1-val -->
-        <div id="rk-dbar1-val" class="lf-component v4-text-shape" style="position: absolute; top: 412px; left: 1475px; width: 75px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1d4ed8; font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:11.5px; font-weight:800; color:#1d4ed8;">100%</span></p>
+        <div id="rk-dbar1-val" class="lf-component v4-text-shape" style="position: absolute; top: 412px; left: 1475px; width: 43px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(29, 78, 216); font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 800; color: rgb(29, 78, 216); white-space: nowrap !important;">100%</span></p>
             </div>
         </div>
 
         <!-- 8~14일 (75%) -->
         
         <!-- Text Shape: rk-dbar2-lbl -->
-        <div id="rk-dbar2-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 438px; left: 1136px; width: 90px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:11.5px; font-weight:600; color:#334155;">8 ~ 14일 전</span></p>
+        <div id="rk-dbar2-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 438px; left: 1136px; width: 65px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 600; color: rgb(51, 65, 85); white-space: nowrap !important;">8 ~ 14일 전</span></p>
             </div>
         </div>
         
@@ -1086,18 +1087,18 @@
         </div>
         
         <!-- Text Shape: rk-dbar2-val -->
-        <div id="rk-dbar2-val" class="lf-component v4-text-shape" style="position: absolute; top: 438px; left: 1475px; width: 75px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0e7490; font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:11.5px; font-weight:800; color:#0e7490;">75%</span></p>
+        <div id="rk-dbar2-val" class="lf-component v4-text-shape" style="position: absolute; top: 438px; left: 1475px; width: 35px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(14, 116, 144); font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 800; color: rgb(14, 116, 144); white-space: nowrap !important;">75%</span></p>
             </div>
         </div>
 
         <!-- 15~30일 (50%) -->
         
         <!-- Text Shape: rk-dbar3-lbl -->
-        <div id="rk-dbar3-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 464px; left: 1136px; width: 90px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:11.5px; font-weight:600; color:#334155;">15 ~ 30일 전</span></p>
+        <div id="rk-dbar3-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 464px; left: 1136px; width: 72px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 600; color: rgb(51, 65, 85); white-space: nowrap !important;">15 ~ 30일 전</span></p>
             </div>
         </div>
         
@@ -1116,18 +1117,18 @@
         </div>
         
         <!-- Text Shape: rk-dbar3-val -->
-        <div id="rk-dbar3-val" class="lf-component v4-text-shape" style="position: absolute; top: 464px; left: 1475px; width: 75px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b45309; font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:11.5px; font-weight:800; color:#b45309;">50%</span></p>
+        <div id="rk-dbar3-val" class="lf-component v4-text-shape" style="position: absolute; top: 464px; left: 1475px; width: 37px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(180, 83, 9); font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 800; color: rgb(180, 83, 9); white-space: nowrap !important;">50%</span></p>
             </div>
         </div>
 
         <!-- 31일 이후 (25%) -->
         
         <!-- Text Shape: rk-dbar4-lbl -->
-        <div id="rk-dbar4-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 490px; left: 1136px; width: 90px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:11.5px; font-weight:600; color:#334155;">31일 이후</span></p>
+        <div id="rk-dbar4-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 490px; left: 1136px; width: 55px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 600; color: rgb(51, 65, 85); white-space: nowrap !important;">31일 이후</span></p>
             </div>
         </div>
         
@@ -1146,9 +1147,9 @@
         </div>
         
         <!-- Text Shape: rk-dbar4-val -->
-        <div id="rk-dbar4-val" class="lf-component v4-text-shape" style="position: absolute; top: 490px; left: 1475px; width: 75px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="text-align:right;"><span style="font-size:11.5px; font-weight:800; color:#64748b;">25% 이하</span></p>
+        <div id="rk-dbar4-val" class="lf-component v4-text-shape" style="position: absolute; top: 490px; left: 1475px; width: 58px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="text-align: right; white-space: nowrap !important;"><span style="font-size: 11.5px; font-weight: 800; color: rgb(100, 116, 139); white-space: nowrap !important;">25% 이하</span></p>
             </div>
         </div>
 
@@ -1162,9 +1163,9 @@
         </div>
         
         <!-- Text Shape: rk-decay-bnf-text -->
-        <div id="rk-decay-bnf-text" class="lf-component v4-text-shape" style="position: absolute; top: 532px; left: 1146px; width: 398px; height: 26px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #166534; font-size: 11px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:11px; font-weight:700; color:#166534;">💡 효과: 과거 누적 판매에 기댄 고인물 상품의 상위 독점 차단 &amp; 트렌드 순환</span></p>
+        <div id="rk-decay-bnf-text" class="lf-component v4-text-shape" style="position: absolute; top: 532px; left: 1146px; width: 335px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(22, 101, 52); font-size: 11px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 11px; font-weight: 700; color: rgb(22, 101, 52); white-space: nowrap !important;">💡 효과: 과거 누적 판매에 기댄 고인물 상품의 상위 독점 차단 &amp; 트렌드 순환</span></p>
             </div>
         </div>
 
@@ -1179,9 +1180,9 @@
         </div>
         
         <!-- Text Shape: rk-pnl-title -->
-        <div id="rk-pnl-title" class="lf-component v4-text-shape" style="position: absolute; top: 602px; left: 1136px; width: 300px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="white-space:nowrap;"><span style="font-size:14px; font-weight:800; color:#0f172a;">5. 품질 · 재고 페널티 정책 (Governance)</span></p>
+        <div id="rk-pnl-title" class="lf-component v4-text-shape" style="position: absolute; top: 602px; left: 1136px; width: 247px; height: 21px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 14px; font-weight: 800; color: rgb(15, 23, 42); white-space: nowrap !important;">5. 품질 · 재고 페널티 정책 (Governance)</span></p>
             </div>
         </div>
         
@@ -1204,9 +1205,9 @@
         </div>
         
         <!-- Text Shape: rk-pnl1-title -->
-        <div id="rk-pnl1-title" class="lf-component v4-text-shape" style="position: absolute; top: 642px; left: 1148px; width: 220px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:800; color:#b91c1c;">📦 재고 품절 페널티 (F_stock)</span></p>
+        <div id="rk-pnl1-title" class="lf-component v4-text-shape" style="position: absolute; top: 642px; left: 1148px; width: 164px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(185, 28, 28); font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 800; color: rgb(185, 28, 28); white-space: nowrap !important;">📦 재고 품절 페널티 (F_stock)</span></p>
             </div>
         </div>
         
@@ -1220,9 +1221,9 @@
         </div>
         
         <!-- Text Shape: rk-pnl1-desc -->
-        <div id="rk-pnl1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 666px; left: 1148px; width: 395px; height: 30px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; margin:0;">• 부분 결품(주요 사이즈 품절) 시 <strong style="color:#b91c1c;">× 0.70 (30% 감점)</strong> 적용 ➔ 헛걸음 이탈 방지</p>
+        <div id="rk-pnl1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 666px; left: 1148px; width: 355px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); margin: 0px; white-space: nowrap !important;">• 부분 결품(주요 사이즈 품절) 시 <strong style="color: rgb(185, 28, 28); white-space: nowrap !important;">× 0.70 (30% 감점)</strong> 적용 ➔ 헛걸음 이탈 방지</p>
             </div>
         </div>
 
@@ -1236,9 +1237,9 @@
         </div>
         
         <!-- Text Shape: rk-pnl2-title -->
-        <div id="rk-pnl2-title" class="lf-component v4-text-shape" style="position: absolute; top: 720px; left: 1148px; width: 220px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #c2410c; font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:800; color:#c2410c;">↩️ 반품·취소율 페널티 (F_return)</span></p>
+        <div id="rk-pnl2-title" class="lf-component v4-text-shape" style="position: absolute; top: 720px; left: 1148px; width: 179px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(194, 65, 12); font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 800; color: rgb(194, 65, 12); white-space: nowrap !important;">↩️ 반품·취소율 페널티 (F_return)</span></p>
             </div>
         </div>
         
@@ -1252,9 +1253,9 @@
         </div>
         
         <!-- Text Shape: rk-pnl2-desc -->
-        <div id="rk-pnl2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 744px; left: 1148px; width: 395px; height: 30px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; margin:0;">• 반품율 15% 초과 시 초과분 비례 감점 ➔ 실물 불만족 및 불량 미끼상품 퇴출</p>
+        <div id="rk-pnl2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 744px; left: 1148px; width: 343px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); margin: 0px; white-space: nowrap !important;">• 반품율 15% 초과 시 초과분 비례 감점 ➔ 실물 불만족 및 불량 미끼상품 퇴출</p>
             </div>
         </div>
 
@@ -1268,9 +1269,9 @@
         </div>
         
         <!-- Text Shape: rk-pnl3-title -->
-        <div id="rk-pnl3-title" class="lf-component v4-text-shape" style="position: absolute; top: 798px; left: 1148px; width: 220px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p><span style="font-size:12px; font-weight:800; color:#334155;">🛡️ 어뷰징 차단 캡 (Anti-Abuse)</span></p>
+        <div id="rk-pnl3-title" class="lf-component v4-text-shape" style="position: absolute; top: 798px; left: 1148px; width: 176px; height: 19px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="font-size: 12px; font-weight: 800; color: rgb(51, 65, 85); white-space: nowrap !important;">🛡️ 어뷰징 차단 캡 (Anti-Abuse)</span></p>
             </div>
         </div>
         
@@ -1284,12 +1285,13 @@
         </div>
         
         <!-- Text Shape: rk-pnl3-desc -->
-        <div id="rk-pnl3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 822px; left: 1148px; width: 395px; height: 30px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
-                <p style="font-size:11px; color:#475569; margin:0;">• 동일 IP/계정 1일 PV 최대 3회 인정 + 매크로 장바구니/위시 원천 차단</p>
+        <div id="rk-pnl3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 822px; left: 1148px; width: 316px; height: 16px; z-index: 102; --v4-text-adjust-y: -0.6px; --v4-text-shape-pad-y: 1.5px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; box-sizing: border-box; padding: 1.5px 3px !important; white-space: nowrap !important;">
+                <p style="font-size: 11px; color: rgb(71, 85, 105); margin: 0px; white-space: nowrap !important;">• 동일 IP/계정 1일 PV 최대 3회 인정 + 매크로 장바구니/위시 원천 차단</p>
             </div>
         </div>
 
     </div>
-</body>
-</html>
+<script id="v4-inlined-script">/* Dynamic scripts injected */</script>
+
+</body></html>

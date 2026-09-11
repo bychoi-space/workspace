@@ -73,7 +73,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T01:49:39.260Z",
+      "updatedAt": "2026-09-11T01:55:36.346Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -98,12 +98,12 @@
         {
           "text": "2. 상단 비주얼 관리 영역\n- [이미지 등록 (PC)], [이미지 등록 (MO] 2가지 File Uploader 기능으로 구성\n- 이미지 파일 용량 제한 30MB\n- 이미지 파일 유형 제한 (jpg, jpeg, png, bmp, gif 등)",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 42,
-          "y": 691,
+          "x": 46,
+          "y": 692,
           "pins": {
             "pc": {
-              "x": 42,
-              "y": 691,
+              "x": 46,
+              "y": 692,
               "active": true
             },
             "mobile": {
@@ -132,6 +132,25 @@
             }
           },
           "standardized": true
+        },
+        {
+          "text": "3. 상품 그룹 관리 영역\n- 기본 구조는 기존 '기획전 등록/상세' 기능과 동일하나, 상위 개념으로 '영역' 을 추가\n- [상품 표현 영역] 에서 ",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 41,
+          "y": 1244,
+          "pins": {
+            "pc": {
+              "x": 41,
+              "y": 1244,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
         }
       ],
       "connectors": [],
@@ -143,7 +162,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 10:49:39",
+  "updated": "2026-09-11 10:55:36",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

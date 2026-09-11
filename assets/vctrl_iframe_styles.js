@@ -366,9 +366,10 @@ svg.lf-icon:not(.v4-logo-img) polygon,
     font-weight: 500 !important;
     font-size: 12px !important;
     line-height: 1 !important;
-    z-index: 1000 !important;
+    z-index: 200000 !important;
     cursor: grab !important;
     box-sizing: border-box !important;
+    pointer-events: auto !important;
 }
 .pin-marker .pin-number-badge {
     color: #ffffff !important;
@@ -380,11 +381,12 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .pin-marker.selected {
     outline: none !important;
     box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #ef4444, 0 4px 14px rgba(239, 68, 68, 0.6) !important;
-    z-index: 1001 !important;
+    z-index: 200005 !important;
 }
 .pin-marker:hover {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6) !important;
     background: linear-gradient(135deg, #f87171, #ef4444) !important;
+    z-index: 200005 !important;
 }
 .pin-marker .lf-drag-handle,
 .pin-marker .lf-resizer,
@@ -405,7 +407,7 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 }
 .pin-marker.pin-active-pulse {
     animation: pinActivePulse 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    z-index: 1002 !important;
+    z-index: 200010 !important;
 }
 @keyframes pinActivePulse {
     0% {
@@ -451,6 +453,8 @@ html, body { position: relative !important; min-height: 100vh; margin: 0; paddin
 }
 .v4-alert-btn.style-primary { background: #4f46e5 !important; border-color: #4f46e5 !important; color: #ffffff !important; font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
 .v4-alert-btn.style-normal { background: #ffffff !important; border-color: #cbd5e1 !important; color: var(--v4-text-color, #0f172a) !important; font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
+.v4-alert-btn.style-negative { background: #e2e8f0 !important; border-color: #cbd5e1 !important; color: #475569 !important; font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
+.v4-alert-btn.style-negative:hover { background: #cbd5e1 !important; }
 .v4-admin-settings-container {
     border-radius: 8px !important;
     overflow: hidden !important;
@@ -656,5 +660,19 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     color: var(--v4-placeholder-color, #94a3b8) !important;
     user-select: none !important;
     flex-shrink: 0 !important;
+}
+
+/* Query Item (Admin Settings): Required Row Indicator */
+.v4-admin-label-cell.is-required::after {
+    content: " *";
+    color: #ef4444 !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    margin-left: 2px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+    display: inline-block !important;
+    pointer-events: none !important;
+    user-select: none !important;
 }
 `;

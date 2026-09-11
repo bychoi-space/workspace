@@ -528,40 +528,52 @@ window.v4UIAtomsScript = `
                     if (container) {
                         if (window.V4UndoManager) window.V4UndoManager.saveState();
                         
-                        if (d.messageText !== undefined) {
-                            container.setAttribute('data-message', d.messageText);
+                        const msg = d.messageText !== undefined ? d.messageText : d.alertMessage;
+                        if (msg !== undefined) {
+                            container.setAttribute('data-message', msg);
                             const msgEl = container.querySelector('.v4-alert-message');
-                            if (msgEl) msgEl.innerHTML = d.messageText.replace(/\\n/g, '<br>');
+                            if (msgEl) msgEl.innerHTML = String(msg).replace(/\\n/g, '<br>');
                         }
-                        if (d.showDesc !== undefined) {
-                            container.setAttribute('data-show-desc', d.showDesc ? 'true' : 'false');
+                        const showDesc = d.showDesc !== undefined ? d.showDesc : d.alertShowDesc;
+                        if (showDesc !== undefined) {
+                            const isShow = (showDesc === true || showDesc === 'true');
+                            container.setAttribute('data-show-desc', isShow ? 'true' : 'false');
                             const descWrapper = container.querySelector('.v4-alert-desc-wrapper');
-                            if (descWrapper) descWrapper.style.display = d.showDesc ? 'flex' : 'none';
+                            if (descWrapper) descWrapper.style.display = isShow ? 'flex' : 'none';
                         }
-                        if (d.descText !== undefined) {
-                            container.setAttribute('data-desc', d.descText);
+                        const desc = d.descText !== undefined ? d.descText : d.alertDesc;
+                        if (desc !== undefined) {
+                            container.setAttribute('data-desc', desc);
                             const descBadge = container.querySelector('.v4-alert-desc-badge');
-                            if (descBadge) descBadge.innerText = d.descText;
+                            if (descBadge) descBadge.innerText = desc;
                         }
-                        if (d.btnCount !== undefined) container.setAttribute('data-btn-count', d.btnCount);
-                        if (d.btnText1 !== undefined) {
-                            container.setAttribute('data-btn-text-1', d.btnText1);
+                        const btnCount = d.btnCount !== undefined ? d.btnCount : d.alertBtnCount;
+                        if (btnCount !== undefined) container.setAttribute('data-btn-count', btnCount);
+                        
+                        const btnText1 = d.btnText1 !== undefined ? d.btnText1 : d.alertBtnText1;
+                        if (btnText1 !== undefined) {
+                            container.setAttribute('data-btn-text-1', btnText1);
                             const btn = container.querySelector('.v4-alert-btn-1');
-                            if (btn) btn.innerText = d.btnText1;
+                            if (btn) btn.innerText = btnText1;
                         }
-                        if (d.btnText2 !== undefined) {
-                            container.setAttribute('data-btn-text-2', d.btnText2);
+                        const btnText2 = d.btnText2 !== undefined ? d.btnText2 : d.alertBtnText2;
+                        if (btnText2 !== undefined) {
+                            container.setAttribute('data-btn-text-2', btnText2);
                             const btn = container.querySelector('.v4-alert-btn-2');
-                            if (btn) btn.innerText = d.btnText2;
+                            if (btn) btn.innerText = btnText2;
                         }
-                        if (d.btnText3 !== undefined) {
-                            container.setAttribute('data-btn-text-3', d.btnText3);
+                        const btnText3 = d.btnText3 !== undefined ? d.btnText3 : d.alertBtnText3;
+                        if (btnText3 !== undefined) {
+                            container.setAttribute('data-btn-text-3', btnText3);
                             const btn = container.querySelector('.v4-alert-btn-3');
-                            if (btn) btn.innerText = d.btnText3;
+                            if (btn) btn.innerText = btnText3;
                         }
-                        if (d.btnStyle1 !== undefined) container.setAttribute('data-btn-style-1', d.btnStyle1);
-                        if (d.btnStyle2 !== undefined) container.setAttribute('data-btn-style-2', d.btnStyle2);
-                        if (d.btnStyle3 !== undefined) container.setAttribute('data-btn-style-3', d.btnStyle3);
+                        const btnStyle1 = d.btnStyle1 !== undefined ? d.btnStyle1 : d.alertBtnStyle1;
+                        if (btnStyle1 !== undefined) container.setAttribute('data-btn-style-1', btnStyle1);
+                        const btnStyle2 = d.btnStyle2 !== undefined ? d.btnStyle2 : d.alertBtnStyle2;
+                        if (btnStyle2 !== undefined) container.setAttribute('data-btn-style-2', btnStyle2);
+                        const btnStyle3 = d.btnStyle3 !== undefined ? d.btnStyle3 : d.alertBtnStyle3;
+                        if (btnStyle3 !== undefined) container.setAttribute('data-btn-style-3', btnStyle3);
                         
                         const count = parseInt(container.getAttribute('data-btn-count')) || 1;
                         const btn1 = container.querySelector('.v4-alert-btn-1');
@@ -823,6 +835,7 @@ window.v4UIAtomsScript = `
                             if (d.cols !== undefined) container.setAttribute('data-row' + rNum + '-cols', d.cols);
                             if (d.rowType !== undefined) container.setAttribute('data-row' + rNum + '-type', d.rowType);
                             if (d.rowSpecificHeight !== undefined) container.setAttribute('data-row' + rNum + '-height', d.rowSpecificHeight);
+                            if (d.required !== undefined) container.setAttribute('data-row' + rNum + '-required', String(d.required));
                         }
         
                         // Support Bulk Rows Array (Reordering / Deletion)
@@ -833,6 +846,7 @@ window.v4UIAtomsScript = `
                                 if (rData.cols !== undefined) container.setAttribute('data-row' + rNum + '-cols', rData.cols);
                                 if (rData.type !== undefined) container.setAttribute('data-row' + rNum + '-type', rData.type);
                                 if (rData.height !== undefined) container.setAttribute('data-row' + rNum + '-height', rData.height);
+                                if (rData.required !== undefined) container.setAttribute('data-row' + rNum + '-required', String(rData.required));
                             });
                             // Clean up trailing unused row attributes if rows count decreased
                             for (let rNum = d.rows.length + 1; rNum <= 20; rNum++) {
@@ -840,6 +854,7 @@ window.v4UIAtomsScript = `
                                 container.removeAttribute('data-row' + rNum + '-cols');
                                 container.removeAttribute('data-row' + rNum + '-type');
                                 container.removeAttribute('data-row' + rNum + '-height');
+                                container.removeAttribute('data-row' + rNum + '-required');
                             }
                         }
         
@@ -914,7 +929,7 @@ window.v4UIAtomsScript = `
                         if (tableDiv) {
                             tableDiv.style.cssText = 'display: flex; flex-direction: column; width: 100%; flex: 1 !important; height: auto !important;';
                             
-                            const needsRebuildRows = (d.rowCount !== undefined || d.rowNum !== undefined || d.rows !== undefined || d.labelWidth !== undefined);
+                            const needsRebuildRows = (d.rowCount !== undefined || d.rowNum !== undefined || d.rows !== undefined || d.labelWidth !== undefined || d.required !== undefined);
                             if (needsRebuildRows) {
                                 tableDiv.innerHTML = '';
                                 
@@ -923,6 +938,8 @@ window.v4UIAtomsScript = `
                                     const colsAttr = parseInt(container.getAttribute('data-row' + i + '-cols')) || 1;
                                     const typeAttr = container.getAttribute('data-row' + i + '-type') || 'textbox';
                                     const specificHeight = parseInt(container.getAttribute('data-row' + i + '-height')) || globalRowHeight;
+                                    const reqRaw = container.getAttribute('data-row' + i + '-required') || '';
+                                    const reqArr = reqRaw.split(',').map(v => v.trim() === 'true');
                                     
                                     const isLastRow = (i === totalRows);
                                     const rowBorder = isLastRow ? 'none' : '1.6px solid rgb(226, 232, 240)';
@@ -936,12 +953,13 @@ window.v4UIAtomsScript = `
                                     
                                     for (let c = 0; c < colsAttr; c++) {
                                         const colLabel = labels[c] || (labels[0] + (c > 0 ? ' ' + (c + 1) : ''));
+                                        const isColRequired = reqArr[c] === true;
                                         
                                         const labelWidth = container.getAttribute('data-label-width') || '140';
                                         
                                         // Label cell with inline contenteditable editing support
                                         const labelCell = document.createElement('div');
-                                        labelCell.className = 'v4-admin-label-cell v4-editable-cell';
+                                        labelCell.className = 'v4-admin-label-cell v4-editable-cell' + (isColRequired ? ' is-required' : '');
                                         labelCell.contentEditable = 'true';
                                         let labelRadius = '';
                                         if (c === 0) {

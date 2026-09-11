@@ -60,22 +60,6 @@ window.v4DragResizeScript = `
                         if (isResp) {
                             const ctx = window.ResponsiveSmartGuide.getContainerContext(window.activeEl);
                             if (ctx) window.ResponsiveSmartGuide.findSnapTargets(ctx, window.activeEl);
-                        } else {
-                            const parentContainer = window.activeEl.closest('.pc-content-area, .mobile-content, .mobile-content-area');
-                            const isInsideGroup = !!(window.activeEl.parentElement && window.activeEl.parentElement.closest('.lf-group'));
-                            if (parentContainer && !isInsideGroup) {
-                                const bodyRect = document.body.getBoundingClientRect();
-                                const compRect = window.activeEl.getBoundingClientRect();
-                                const scale = (window.parent?.state?.transform?.scale) || 1;
-                                const absLeft = (compRect.left - bodyRect.left) / scale;
-                                const absTop = (compRect.top - bodyRect.top) / scale;
-
-                                document.body.appendChild(window.activeEl);
-                                window.activeEl.style.left = absLeft + 'px';
-                                window.activeEl.style.top = absTop + 'px';
-                                startLeft = absLeft;
-                                startTop = absTop;
-                            }
                         }
                     }
                 }

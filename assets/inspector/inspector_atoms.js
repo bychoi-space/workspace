@@ -294,17 +294,34 @@
     // --- Alert Component ---
     const syncAlert = (comp) => {
         if (!comp) return;
+
+        // Show Description (Y/N)
+        const isShowDesc = comp.alertShowDesc !== undefined ? (comp.alertShowDesc === true || comp.alertShowDesc === 'true') : false;
+        const btnDescY = document.getElementById('btn-alert-desc-y');
+        const btnDescN = document.getElementById('btn-alert-desc-n');
+        if (btnDescY) highlightActive(btnDescY, isShowDesc);
+        if (btnDescN) highlightActive(btnDescN, !isShowDesc);
+
+        // Description Text
+        const descInput = document.getElementById('prop-alert-desc');
+        if (descInput && document.activeElement !== descInput && comp.alertDesc !== undefined) {
+            descInput.value = comp.alertDesc;
+        }
+
+        // Alert Message
         const msgText = document.getElementById('prop-alert-message');
         if (msgText && document.activeElement !== msgText && comp.alertMessage !== undefined) {
             msgText.value = comp.alertMessage;
         }
         
+        // Button Count
         const count = comp.alertBtnCount || 1;
         for (let i = 1; i <= 3; i++) {
             const btn = document.getElementById('btn-alert-count-' + i);
             if (btn) highlightActive(btn, count === i);
         }
         
+        // Buttons 1~3 Text and Style
         const btn1 = document.getElementById('prop-alert-btn-1');
         if (btn1 && document.activeElement !== btn1 && comp.alertBtnText1 !== undefined) btn1.value = comp.alertBtnText1;
         const sel1 = document.getElementById('prop-alert-btn-style-1');
@@ -326,12 +343,57 @@
     };
 
     const bindAlertEvents = () => {
+        // Description Toggle (Y / N)
+        const btnDescY = document.getElementById('btn-alert-desc-y');
+        const btnDescN = document.getElementById('btn-alert-desc-n');
+        if (btnDescY) {
+            btnDescY.onclick = () => {
+                highlightActive(btnDescY, true);
+                if (btnDescN) highlightActive(btnDescN, false);
+                notifyIframe({
+                    type: 'LF_UPDATE_ALERT_PROPERTIES',
+                    showDesc: true,
+                    alertShowDesc: true
+                });
+            };
+        }
+        if (btnDescN) {
+            btnDescN.onclick = () => {
+                if (btnDescY) highlightActive(btnDescY, false);
+                highlightActive(btnDescN, true);
+                notifyIframe({
+                    type: 'LF_UPDATE_ALERT_PROPERTIES',
+                    showDesc: false,
+                    alertShowDesc: false
+                });
+            };
+        }
+
+        // Description Text
+        const descInp = document.getElementById('prop-alert-desc');
+        if (descInp) {
+            descInp.oninput = () => {
+                notifyIframe({
+                    type: 'LF_UPDATE_ALERT_PROPERTIES',
+                    descText: descInp.value,
+                    alertDesc: descInp.value
+                });
+            };
+        }
+
+        // Alert Message
         const msgInp = document.getElementById('prop-alert-message');
         if (msgInp) {
             msgInp.oninput = () => {
-                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', alertMessage: msgInp.value });
+                notifyIframe({
+                    type: 'LF_UPDATE_ALERT_PROPERTIES',
+                    messageText: msgInp.value,
+                    alertMessage: msgInp.value
+                });
             };
         }
+
+        // Button Count (1 ~ 3)
         for (let i = 1; i <= 3; i++) {
             const countBtn = document.getElementById('btn-alert-count-' + i);
             if (countBtn) {
@@ -344,13 +406,18 @@
                     const c3 = document.getElementById('prop-alert-btn-3-container');
                     if (c2) c2.style.display = i >= 2 ? 'flex' : 'none';
                     if (c3) c3.style.display = i >= 3 ? 'flex' : 'none';
-                    notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', alertBtnCount: i });
+                    notifyIframe({
+                        type: 'LF_UPDATE_ALERT_PROPERTIES',
+                        btnCount: i,
+                        alertBtnCount: i
+                    });
                 };
             }
             const txt = document.getElementById('prop-alert-btn-' + i);
             if (txt) {
                 txt.oninput = () => {
                     const payload = { type: 'LF_UPDATE_ALERT_PROPERTIES' };
+                    payload['btnText' + i] = txt.value;
                     payload['alertBtnText' + i] = txt.value;
                     notifyIframe(payload);
                 };
@@ -359,6 +426,7 @@
             if (sel) {
                 sel.onchange = () => {
                     const payload = { type: 'LF_UPDATE_ALERT_PROPERTIES' };
+                    payload['btnStyle' + i] = sel.value;
                     payload['alertBtnStyle' + i] = sel.value;
                     notifyIframe(payload);
                 };

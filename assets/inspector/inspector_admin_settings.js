@@ -195,12 +195,16 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             let cCount = comp[`adminRow${r}Cols`] || 1;
             let rType = comp[`adminRow${r}Type`] || 'textbox';
             let rH = comp[`adminRow${r}Height`] || 44;
+            let rReq = comp[`adminRow${r}Required`] !== undefined ? comp[`adminRow${r}Required`] : 'false';
 
             if (containerEl) {
                 lbl = containerEl.getAttribute(`data-row${r}-label`) || lbl;
                 cCount = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || cCount;
                 rType = containerEl.getAttribute(`data-row${r}-type`) || rType;
                 rH = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || rH;
+                if (containerEl.hasAttribute(`data-row${r}-required`)) {
+                    rReq = containerEl.getAttribute(`data-row${r}-required`);
+                }
             }
 
             if (rowBlock) {
@@ -212,13 +216,18 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                 if (colsSel) cCount = parseInt(colsSel.value) || 1;
                 const hInp = rowBlock.querySelector('.admin-row-height-input');
                 if (hInp) rH = parseInt(hInp.value) || 44;
+                const reqChks = rowBlock.querySelectorAll('.admin-col-required-chk');
+                if (reqChks.length > 0) {
+                    rReq = Array.from(reqChks).map(chk => chk.checked ? 'true' : 'false').join(', ');
+                }
             }
 
             currentRows.push({
                 label: lbl || `조회 항목 ${r}`,
                 cols: cCount,
                 type: rType,
-                height: rH
+                height: rH,
+                required: rReq
             });
         }
         return currentRows;
@@ -245,11 +254,13 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                             containerEl.setAttribute(`data-row${r}-cols`, rowData.cols);
                             containerEl.setAttribute(`data-row${r}-type`, rowData.type || 'textbox');
                             containerEl.setAttribute(`data-row${r}-height`, rowData.height || 44);
+                            containerEl.setAttribute(`data-row${r}-required`, String(rowData.required || 'false'));
                         } else {
                             containerEl.removeAttribute(`data-row${r}-label`);
                             containerEl.removeAttribute(`data-row${r}-cols`);
                             containerEl.removeAttribute(`data-row${r}-type`);
                             containerEl.removeAttribute(`data-row${r}-height`);
+                            containerEl.removeAttribute(`data-row${r}-required`);
                         }
                     }
                 }
@@ -279,6 +290,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                 syncData[`adminRow${r}Cols`] = rowsArray[r - 1].cols;
                 syncData[`adminRow${r}Type`] = rowsArray[r - 1].type || 'textbox';
                 syncData[`adminRow${r}Height`] = rowsArray[r - 1].height || 44;
+                syncData[`adminRow${r}Required`] = String(rowsArray[r - 1].required || 'false');
             }
         }
 
@@ -294,6 +306,8 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
         const labelsVal = comp[`adminRow${i}Label`] || '';
         const colsVal = comp[`adminRow${i}Cols`] || 1;
         const specificHeightVal = comp[`adminRow${i}Height`] || 44;
+        const reqRaw = comp[`adminRow${i}Required`] !== undefined ? comp[`adminRow${i}Required`] : '';
+        const reqArr = typeof reqRaw === 'boolean' ? [reqRaw] : String(reqRaw).split(',').map(v => v.trim() === 'true');
 
         // Split current labels
         const labelsArr = labelsVal.split(',').map(l => l.trim());
@@ -329,12 +343,19 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             <div class="admin-row-labels-container" style="display: flex; flex-direction: column; gap: 8px;">
         `;
 
-        // Render input field for each column
+        // Render input field and required checkbox for each column
         for (let c = 0; c < colsVal; c++) {
             const currentLabel = labelsArr[c] || `조회 항목 ${i}${c > 0 ? ' ' + (c + 1) : ''}`;
+            const isColReq = reqArr[c] === true;
             htmlContent += `
                 <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">컬럼 ${c + 1} 항목명</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label style="font-size: 9px; color: #94a3b8; margin: 0;">컬럼 ${c + 1} 항목명</label>
+                        <label title="필수값 (*)" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; font-size: 9px; color: #f87171; font-weight: 600; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 4px; padding: 1px 6px; user-select: none;">
+                            <input type="checkbox" class="admin-col-required-chk" data-col-idx="${c}" ${isColReq ? 'checked' : ''} style="cursor: pointer; accent-color: #ef4444; margin: 0; width: 12px; height: 12px;">
+                            필수 (*)
+                        </label>
+                    </div>
                     <input type="text" class="v4-prop-input admin-col-label-input" data-col-idx="${c}" value="${currentLabel}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box;">
                 </div>
             `;
@@ -388,48 +409,73 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             return vals.join(', ');
         };
 
+        const getMergedRequired = () => {
+            const chks = labelsContainer.querySelectorAll('.admin-col-required-chk');
+            return Array.from(chks).map(chk => chk.checked ? 'true' : 'false').join(', ');
+        };
+
         const updateConfig = () => {
             const iframe = document.getElementById('main-iframe');
+            const reqStr = getMergedRequired();
+            if (comp) comp[`adminRow${i}Required`] = reqStr;
+            if (window.state && window.state.selectedComponentStyles) {
+                window.state.selectedComponentStyles[`adminRow${i}Required`] = reqStr;
+            }
             if (iframe && iframe.contentWindow && window.MessageHub) {
                 window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
                     rowNum: i,
                     label: getMergedLabels(),
                     cols: parseInt(colSelect.value) || 1,
                     rowType: 'textbox',
-                    rowSpecificHeight: parseInt(heightInp.value) || 44
+                    rowSpecificHeight: parseInt(heightInp.value) || 44,
+                    required: reqStr
                 });
             }
         };
 
-        // If Column Count changes, re-render the label inputs for this row
+        // Bind input events to height input & initial labels/checkboxes
+        if (heightInp) heightInp.oninput = updateConfig;
+        labelsContainer.querySelectorAll('.admin-col-label-input').forEach(inp => {
+            inp.oninput = updateConfig;
+        });
+        labelsContainer.querySelectorAll('.admin-col-required-chk').forEach(chk => {
+            chk.onchange = updateConfig;
+        });
+
+        // If Column Count changes, re-render the label inputs & checkboxes for this row
         colSelect.onchange = () => {
             const newColsVal = parseInt(colSelect.value) || 1;
+            const currentReqArr = Array.from(labelsContainer.querySelectorAll('.admin-col-required-chk')).map(c => c.checked);
             labelsContainer.innerHTML = '';
             let newHtml = '';
             for (let c = 0; c < newColsVal; c++) {
                 const currentLabel = labelsArr[c] || `조회 항목 ${i}${c > 0 ? ' ' + (c + 1) : ''}`;
+                const isColReq = currentReqArr[c] !== undefined ? currentReqArr[c] : (reqArr[c] === true);
                 newHtml += `
                     <div class="prop-group">
-                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">컬럼 ${c + 1} 항목명</label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <label style="font-size: 9px; color: #94a3b8; margin: 0;">컬럼 ${c + 1} 항목명</label>
+                            <label title="필수값 (*)" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; font-size: 9px; color: #f87171; font-weight: 600; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 4px; padding: 1px 6px; user-select: none;">
+                                <input type="checkbox" class="admin-col-required-chk" data-col-idx="${c}" ${isColReq ? 'checked' : ''} style="cursor: pointer; accent-color: #ef4444; margin: 0; width: 12px; height: 12px;">
+                                필수 (*)
+                            </label>
+                        </div>
                         <input type="text" class="v4-prop-input admin-col-label-input" data-col-idx="${c}" value="${currentLabel}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box;">
                     </div>
                 `;
             }
             labelsContainer.innerHTML = newHtml;
 
-            // Bind input events to new inputs
+            // Bind input & change events to new elements
             labelsContainer.querySelectorAll('.admin-col-label-input').forEach(inp => {
                 inp.oninput = updateConfig;
+            });
+            labelsContainer.querySelectorAll('.admin-col-required-chk').forEach(chk => {
+                chk.onchange = updateConfig;
             });
 
             updateConfig();
         };
-
-        // Bind input events to height input & initial labels
-        if (heightInp) heightInp.oninput = updateConfig;
-        labelsContainer.querySelectorAll('.admin-col-label-input').forEach(inp => {
-            inp.oninput = updateConfig;
-        });
     }
 
     // Initialize row count +/- button click event listeners
@@ -459,6 +505,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                                     containerEl.setAttribute(`data-row${newCount}-cols`, '1');
                                     containerEl.setAttribute(`data-row${newCount}-type`, 'textbox');
                                     containerEl.setAttribute(`data-row${newCount}-height`, '44');
+                                    containerEl.setAttribute(`data-row${newCount}-required`, 'false');
                                 }
                                 const syncData = {
                                     id: activeId,
@@ -475,6 +522,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                                     syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
                                     syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
                                     syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
+                                    syncData[`adminRow${r}Required`] = containerEl.getAttribute(`data-row${r}-required`) || 'false';
                                 }
                                 if (window.state && window.state.selectedComponentStyles) {
                                     Object.assign(window.state.selectedComponentStyles, syncData);
@@ -520,6 +568,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                                     syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
                                     syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
                                     syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
+                                    syncData[`adminRow${r}Required`] = containerEl.getAttribute(`data-row${r}-required`) || 'false';
                                 }
                                 if (window.state && window.state.selectedComponentStyles) {
                                     Object.assign(window.state.selectedComponentStyles, syncData);

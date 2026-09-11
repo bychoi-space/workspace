@@ -143,9 +143,10 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
     font-weight: 500 !important;
     font-size: 12px !important;
     line-height: 1 !important;
-    z-index: 1000 !important;
+    z-index: 200000 !important;
     cursor: grab !important;
     box-sizing: border-box !important;
+    pointer-events: auto !important;
 }
 .pin-marker .pin-number-badge {
     color: #ffffff !important;
@@ -157,11 +158,12 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
 .pin-marker.selected {
     outline: none !important;
     box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #ef4444, 0 4px 14px rgba(239, 68, 68, 0.6) !important;
-    z-index: 1001 !important;
+    z-index: 200005 !important;
 }
 .pin-marker:hover {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6) !important;
     background: linear-gradient(135deg, #f87171, #ef4444) !important;
+    z-index: 200005 !important;
 }
 .pin-marker .lf-drag-handle,
 .pin-marker .lf-resizer,
@@ -182,7 +184,7 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
 }
 .pin-marker.pin-active-pulse {
     animation: pinActivePulse 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    z-index: 1002 !important;
+    z-index: 200010 !important;
 }
 @keyframes pinActivePulse {
     0% {

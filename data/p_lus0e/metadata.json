@@ -218,20 +218,32 @@
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
+    },
+    "10_Product_Ranking_Rules_850.html": {
+      "title": "상품 랭킹 산정 룰",
+      "type": "plan",
+      "updatedAt": "2026-09-11T04:40:00.000Z",
+      "template": "template_project_summary.html",
+      "version": 0.1,
+      "description": [],
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": "시선닷컴 3개 브랜드(MICHAA, it MICHAA, E.B.M)를 위한 상품 종합 랭킹(Ranking Score) 산정 룰 및 알고리즘 정책"
     }
   },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 12:16:59",
+  "updated": "2026-09-11 14:00:00",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",
     "08_Responsive_PC_Mobile_730.html",
     "09_Admin_PC_Scroll_639.html",
     "09_Admin_PC_Scroll_639_copy.html",
-    "09_Admin_PC_Scroll_639_copy2.html"
+    "09_Admin_PC_Scroll_639_copy2.html",
+    "10_Product_Ranking_Rules_850.html"
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link"

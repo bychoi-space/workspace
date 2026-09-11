@@ -746,47 +746,7 @@ const ProjectMetadataManager = {
 
             // 7. Sync Alert Properties
             if (compStyles.isAlert) {
-                const activeDescY = document.getElementById('btn-alert-desc-y');
-                const activeDescN = document.getElementById('btn-alert-desc-n');
-                const descInput = document.getElementById('prop-alert-desc');
-                if (activeDescY && activeDescN && compStyles.alertShowDesc !== undefined && typeof window.highlightActive === 'function') {
-                    window.highlightActive(activeDescY, compStyles.alertShowDesc === true);
-                    window.highlightActive(activeDescN, compStyles.alertShowDesc === false);
-                }
-                if (descInput && compStyles.alertDesc !== undefined) {
-                    descInput.value = compStyles.alertDesc;
-                }
-                const msgInput = document.getElementById('prop-alert-message');
-                if (msgInput && compStyles.alertMessage !== undefined) {
-                    msgInput.value = compStyles.alertMessage;
-                }
-                const count = compStyles.alertBtnCount || 1;
-                for (let i = 1; i <= 3; i++) {
-                    const btn = document.getElementById('btn-alert-count-' + i);
-                    if (btn) {
-                        const isActive = count === i;
-                        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-                        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-                        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-                        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-                    }
-                }
-                const btn1 = document.getElementById('prop-alert-btn-1');
-                if (btn1 && compStyles.alertBtnText1 !== undefined) btn1.value = compStyles.alertBtnText1;
-                const sel1 = document.getElementById('prop-alert-btn-style-1');
-                if (sel1 && compStyles.alertBtnStyle1 !== undefined) sel1.value = compStyles.alertBtnStyle1;
-                const btn2 = document.getElementById('prop-alert-btn-2');
-                if (btn2 && compStyles.alertBtnText2 !== undefined) btn2.value = compStyles.alertBtnText2;
-                const sel2 = document.getElementById('prop-alert-btn-style-2');
-                if (sel2 && compStyles.alertBtnStyle2 !== undefined) sel2.value = compStyles.alertBtnStyle2;
-                const btn2Container = document.getElementById('prop-alert-btn-2-container');
-                if (btn2Container) btn2Container.style.display = count >= 2 ? 'flex' : 'none';
-                const btn3 = document.getElementById('prop-alert-btn-3');
-                if (btn3 && compStyles.alertBtnText3 !== undefined) btn3.value = compStyles.alertBtnText3;
-                const sel3 = document.getElementById('prop-alert-btn-style-3');
-                if (sel3 && compStyles.alertBtnStyle3 !== undefined) sel3.value = compStyles.alertBtnStyle3;
-                const btn3Container = document.getElementById('prop-alert-btn-3-container');
-                if (btn3Container) btn3Container.style.display = count >= 3 ? 'flex' : 'none';
+                _syncAlertProps(compStyles);
             }
 
             // 8. Sync Button Properties
@@ -1884,11 +1844,11 @@ window._syncArrowDirBtns = (currentDir) => {
 };
 
 // Global function to sync Line (Straight) Editor UI (Delegated to vctrl_connectors.js)
-window._syncLineEditorProps = (compStyles) => {
-    if (typeof window._syncLineEditorProps === 'function') {
-        // vctrl_connectors.js handles implementation
-    }
-};
+if (typeof window._syncLineEditorProps !== 'function') {
+    window._syncLineEditorProps = (compStyles) => {
+        // Delegated to vctrl_connectors.js once loaded
+    };
+}
 
 window.showLoading = (text) => { const overlay = get('loading-overlay'); if (overlay) { const txt = overlay.querySelector('.loading-text'); if (txt) txt.innerText = text; overlay.classList.remove('fade-out'); } };
 window.hideLoading = () => { const overlay = get('loading-overlay'); if (overlay) overlay.classList.add('fade-out'); setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 600); };

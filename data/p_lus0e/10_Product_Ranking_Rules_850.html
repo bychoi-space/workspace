@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
+    <meta charset="UTF-8">
+    <title>시선닷컴 상품 랭킹 산정 룰 및 알고리즘 정책</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <style id="v4-typography-rules">
+        :root {
+            --v4-text-color: #0f172a;
+            --v4-font-size: 13px;
+            --v4-font-weight: 400;
+            --v4-font-family: 'Pretendard Variable', 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --v4-primary: #4f46e5;
+            --v4-accent: #2563eb;
+            --v4-border: #e2e8f0;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+            font-family: var(--v4-font-family);
+            color: var(--v4-text-color);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        .page {
+            width: 1600px;
+            height: 900px;
+            background: #f8fafc;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .lf-component {
+            box-sizing: border-box;
+        }
+        .v4-shape {
+            box-sizing: border-box;
+        }
+        .v4-editable-cell {
+            outline: none;
+            word-break: keep-all;
+        }
+        .v4-premium-table th, .v4-premium-table td {
+            box-sizing: border-box !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="page" id="canvas-page">
+
+        <!-- ========================================== -->
+        <!-- [1] 상단 통합 헤더 영역                      -->
+        <!-- ========================================== -->
+        <!-- 헤더 배경 카드 -->
+        <div id="rk-hdr-bg" class="lf-component" style="position: absolute; top: 16px; left: 30px; width: 1540px; height: 52px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- 헤더 아이콘 박스 -->
+        <div id="rk-hdr-icon" class="lf-component" style="position: absolute; top: 26px; left: 45px; width: 32px; height: 32px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #4f46e5; border: 1.6px solid transparent; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ffffff; box-sizing: border-box;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 18px; height: 18px; background-image: none !important;"><path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+            </div>
+        </div>
+
+        <!-- 헤더 타이틀 텍스트 -->
+        <div id="rk-hdr-title" class="lf-component v4-text-shape" style="position: absolute; top: 29px; left: 88px; width: 570px; height: 26px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(248, 250, 252); font-size: 16px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 16px; color: rgb(248, 250, 252); white-space: nowrap !important;">시선닷컴 상품 종합 랭킹(Ranking Score) 산정 룰 및 알고리즘 정책</span></p></div>
+        </div>
+
+        <!-- 헤더 서브 텍스트 -->
+        <div id="rk-hdr-sub" class="lf-component v4-text-shape" style="position: absolute; top: 33px; left: 670px; width: 330px; height: 20px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(148, 163, 184); font-size: 12px; font-weight: 500; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 12px; color: rgb(148, 163, 184); white-space: nowrap !important;">3대 패션 브랜드(MICHAA · it MICHAA · E.B.M) 복합 밸런싱 모델</span></p></div>
+        </div>
+
+        <!-- 헤더 우측 뱃지 1: ALGORITHM V2.0 -->
+        <div id="rk-hdr-b1" class="lf-component" style="position: absolute; top: 28px; left: 1290px; width: 125px; height: 28px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(99, 102, 241, 0.2); border: 1.6px solid #6366f1; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 700; color: #a5b4fc;">ALGORITHM V2.0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 헤더 우측 뱃지 2: SISUN D2C MALL -->
+        <div id="rk-hdr-b2" class="lf-component" style="position: absolute; top: 28px; left: 1425px; width: 130px; height: 28px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 700; color: #f8fafc;">SISUN.COM ECO</span></p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- [2] ZONE 1 (좌측 상단): 1. 산정 배경 및 한계    -->
+        <!-- ========================================== -->
+        <!-- Zone 1 카드 배경 -->
+        <div id="rk-c1-bg" class="lf-component" style="position: absolute; top: 80px; left: 30px; width: 480px; height: 385px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 1 헤더 아이콘 -->
+        <div id="rk-c1-icon" class="lf-component" style="position: absolute; top: 94px; left: 46px; width: 22px; height: 22px; z-index: 101;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+
+        <!-- Zone 1 헤더 타이틀 -->
+        <div id="rk-c1-title" class="lf-component v4-text-shape" style="position: absolute; top: 92px; left: 74px; width: 310px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">1. 랭킹 산정 배경 및 단순 판매량의 한계</span></p></div>
+        </div>
+
+        <!-- Zone 1 뱃지 -->
+        <div id="rk-c1-badge" class="lf-component" style="position: absolute; top: 93px; left: 400px; width: 95px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fee2e2; border: 1.6px solid #fca5a5; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #b91c1c;">LIMITATION</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 1 문제점 진단 박스 배경 -->
+        <div id="rk-c1-pbox-bg" class="lf-component" style="position: absolute; top: 125px; left: 44px; width: 452px; height: 58px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #fecaca; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 1 문제점 텍스트 -->
+        <div id="rk-c1-pbox-txt" class="lf-component v4-text-shape" style="position: absolute; top: 130px; left: 54px; width: 432px; height: 48px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 12px; font-weight: 500; color: rgb(153, 27, 27); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.5;"><p>• <span style="font-weight:700;">저단가 소품 독점</span>: 2~3만원대 티셔츠·잡화가 건수 우세로 랭킹 1위 장악</p><p>• <span style="font-weight:700;">고가 메인 매출 소외</span>: MICHAA 100만원대 코트가 랭킹에서 탈락하는 왜곡 발생</p></div>
+        </div>
+
+        <!-- Zone 1 3대 브랜드 특성 비교 표 -->
+        <div id="rk-c1-tbl" class="lf-component" style="position: absolute; top: 192px; left: 44px; width: 452px; height: 110px; z-index: 101;" data-resized="true">
+            <table class="v4-premium-table" style="background: #ffffff; border: 1.6px solid var(--v4-border, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box; font-size: 11px;">
+                <colgroup>
+                    <col style="width: 80px;">
+                    <col style="width: 105px;">
+                    <col style="width: 95px;">
+                    <col style="width: 172px;">
+                </colgroup>
+                <thead>
+                    <tr style="height: 26px; background: #f8fafc;">
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">브랜드</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">타깃 / 포지션</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">평균 객단가</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">랭킹 산정 반영 전략</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="height: 26px;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center; color: #1e3a8a;">MICHAA</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">하이엔드 럭셔리</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">80만 ~ 150만원</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">주문금액(매출) 가중치 필수 부여</td>
+                    </tr>
+                    <tr style="height: 26px; background: #fafafa;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center; color: #b91c1c;">it MICHAA</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">영 컨템포러리</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">15만 ~ 35만원</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">장바구니 담기 및 구매건수 밸런스</td>
+                    </tr>
+                    <tr style="height: 26px;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center; color: #047857;">E.B.M</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">스타일리시 캐주얼</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">10만 ~ 25만원</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">신상품 부스팅 및 빠른 시간감쇠 반영</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Zone 1 해결방향 솔루션 박스 배경 -->
+        <div id="rk-c1-sbox-bg" class="lf-component" style="position: absolute; top: 310px; left: 44px; width: 452px; height: 140px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 1 해결방향 텍스트 -->
+        <div id="rk-c1-sbox-txt" class="lf-component v4-text-shape" style="position: absolute; top: 316px; left: 54px; width: 432px; height: 128px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(22, 101, 52); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.55;"><p><span style="font-weight:700; color:#15803d;">[시선닷컴 랭킹 4대 복합 전략]</span></p><p>① <span style="font-weight:700;">매출(35%) + 건수(25%) 분리</span>: Log 스케일링으로 박리다매 왜곡 차단</p><p>② <span style="font-weight:700;">구매 전환 신호 반영</span>: 장바구니(15%) &amp; 위시리스트(10%) 가중</p><p>③ <span style="font-weight:700;">어뷰징 방지</span>: 순수 방문자(UV 10%) 중심 모객력 평가</p><p>④ <span style="font-weight:700;">신상품 부스트(1.5x) &amp; 14일 반감기</span>: 고착화 방지 노출 선순환</p></div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- [3] ZONE 2 (중앙 상단): 2. 종합 랭킹 산정 공식 -->
+        <!-- ========================================== -->
+        <!-- Zone 2 카드 배경 -->
+        <div id="rk-c2-bg" class="lf-component" style="position: absolute; top: 80px; left: 525px; width: 540px; height: 385px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 2 헤더 아이콘 -->
+        <div id="rk-c2-icon" class="lf-component" style="position: absolute; top: 94px; left: 541px; width: 22px; height: 22px; z-index: 101;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+
+        <!-- Zone 2 헤더 타이틀 -->
+        <div id="rk-c2-title" class="lf-component v4-text-shape" style="position: absolute; top: 92px; left: 569px; width: 350px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">2. 종합 랭킹 점수(Total Score) 산정 공식</span></p></div>
+        </div>
+
+        <!-- Zone 2 뱃지 -->
+        <div id="rk-c2-badge" class="lf-component" style="position: absolute; top: 93px; left: 955px; width: 95px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #1d4ed8;">WEIGHTS 100%</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 2 종합 수식 박스 배경 -->
+        <div id="rk-c2-eq-bg" class="lf-component" style="position: absolute; top: 125px; left: 539px; width: 512px; height: 58px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 2 수식 텍스트 -->
+        <div id="rk-c2-eq-txt" class="lf-component v4-text-shape" style="position: absolute; top: 130px; left: 549px; width: 492px; height: 48px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 700; color: rgb(15, 23, 42); display: block; text-align: center; width: 100%; height: 100%; line-height: 1.5;"><p style="color:#1d4ed8;">Score = [ Base Score (100%) ] × F_freshness(신상품) × F_decay(감쇠) × F_stock(재고)</p><p style="color:#475569; font-size: 11px;">Base Score = 0.35·S_rev + 0.25·S_vol + 0.15·S_cart + 0.10·S_wish + 0.10·S_uv + 0.05·S_pv</p></div>
+        </div>
+
+        <!-- Zone 2 6대 지표 가중치 표 -->
+        <div id="rk-c2-tbl" class="lf-component" style="position: absolute; top: 192px; left: 539px; width: 512px; height: 228px; z-index: 101;" data-resized="true">
+            <table class="v4-premium-table" style="background: #ffffff; border: 1.6px solid var(--v4-border, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box; font-size: 11px;">
+                <colgroup>
+                    <col style="width: 100px;">
+                    <col style="width: 55px;">
+                    <col style="width: 145px;">
+                    <col style="width: 212px;">
+                </colgroup>
+                <thead>
+                    <tr style="height: 28px; background: #f8fafc;">
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">평가 지표</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">가중치</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">정규화 산식 (Normalize)</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">역할 및 설계 목적</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="height: 33px;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #1e40af;">[주문금액] S_rev</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #1e40af; background: #eff6ff;">35%</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">log10(금액+1) / MaxLog</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">매출 기여도 최우선 인정 &amp; 초고가 독점 완화</td>
+                    </tr>
+                    <tr style="height: 33px; background: #fafafa;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #047857;">[주문갯수] S_vol</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #047857; background: #ecfdf5;">25%</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">주문건수 / MaxVol</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">실구매 대중성 검증 (순수 주문건수 기준)</td>
+                    </tr>
+                    <tr style="height: 33px;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #b45309;">[장바구니] S_cart</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #b45309; background: #fef3c7;">15%</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">장바구니 담김 / MaxCart</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">구매 직전 고관여 전환 의향(High Intent)</td>
+                    </tr>
+                    <tr style="height: 33px; background: #fafafa;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #db2777;">[위시리스트] S_wish</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #db2777; background: #fdf2f8;">10%</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">위시 담김 / MaxWish</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">잠재 고객 선호도 및 브랜드 관심도 반영</td>
+                    </tr>
+                    <tr style="height: 33px;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #4338ca;">[순수방문자] S_uv</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #4338ca; background: #e0e7ff;">10%</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">Unique Visitors / MaxUV</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">단일 고객 반복 클릭 배제한 순수 모객력</td>
+                    </tr>
+                    <tr style="height: 33px; background: #fafafa;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #64748b;">[페이지뷰] S_pv</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #64748b; background: #f1f5f9;">5%</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">Page Views(인당 3회 캡)</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">트래픽 총량 반영 (매크로 어뷰징 방지 캡)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Zone 2 하단 합계 요약 텍스트 -->
+        <div id="rk-c2-sum-txt" class="lf-component v4-text-shape" style="position: absolute; top: 428px; left: 542px; width: 500px; height: 20px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 11px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 11px; color: rgb(100, 116, 139); white-space: nowrap !important;">※ 6대 지표 가중치 합계 = 100% (매출 35% + 수량 25% + 장바구니 15% + 찜 10% + UV 10% + PV 5%)</span></p></div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- [4] ZONE 3 (우측 상단): 3. 신상품 부스트 & 감쇠 -->
+        <!-- ========================================== -->
+        <!-- Zone 3 카드 배경 -->
+        <div id="rk-c3-bg" class="lf-component" style="position: absolute; top: 80px; left: 1080px; width: 490px; height: 385px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 3 헤더 아이콘 -->
+        <div id="rk-c3-icon" class="lf-component" style="position: absolute; top: 94px; left: 1096px; width: 22px; height: 22px; z-index: 101;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><polyline points="7.5 7.5 12 13 17 10"></polyline></svg>
+        </div>
+
+        <!-- Zone 3 헤더 타이틀 -->
+        <div id="rk-c3-title" class="lf-component v4-text-shape" style="position: absolute; top: 92px; left: 1124px; width: 330px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">3. 신상품 부스트 &amp; 시간 감쇠(Time Decay)</span></p></div>
+        </div>
+
+        <!-- Zone 3 뱃지 -->
+        <div id="rk-c3-badge" class="lf-component" style="position: absolute; top: 93px; left: 1470px; width: 85px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef3c7; border: 1.6px solid #fde68a; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #b45309;">LIFECYCLE</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 3 신상품 부스팅 3단계: Step 1 슈퍼 부스트 -->
+        <div id="rk-c3-s1" class="lf-component" style="position: absolute; top: 125px; left: 1094px; width: 148px; height: 72px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fdf2f8; border: 1.6px solid #fbcfe8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 4px;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #be185d;">출시 1 ~ 7일차</span></p>
+                    <p><span style="font-size: 14px; font-weight: 900; color: #9d174d;">× 1.50 Boost</span></p>
+                    <p><span style="font-size: 9.5px; color: #831843;">콜드스타트 극복 노출</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 3 신상품 부스팅 3단계: Step 2 성장 부스트 -->
+        <div id="rk-c3-s2" class="lf-component" style="position: absolute; top: 125px; left: 1251px; width: 148px; height: 72px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 4px;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #1d4ed8;">출시 8 ~ 14일차</span></p>
+                    <p><span style="font-size: 14px; font-weight: 900; color: #1e40af;">× 1.30 Boost</span></p>
+                    <p><span style="font-size: 9.5px; color: #1e3a8a;">장바구니·위시 반응 검증</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 3 신상품 부스팅 3단계: Step 3 안착 부스트 -->
+        <div id="rk-c3-s3" class="lf-component" style="position: absolute; top: 125px; left: 1408px; width: 148px; height: 72px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 4px;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #334155;">출시 15 ~ 30일차</span></p>
+                    <p><span style="font-size: 14px; font-weight: 900; color: #0f172a;">× 1.15 Boost</span></p>
+                    <p><span style="font-size: 9.5px; color: #475569;">자연 랭킹 전환 구간</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 3 시간 감쇠(Time Decay) 박스 배경 -->
+        <div id="rk-c3-dec-bg" class="lf-component" style="position: absolute; top: 206px; left: 1094px; width: 462px; height: 140px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 3 시간 감쇠 텍스트 -->
+        <div id="rk-c3-dec-txt" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1106px; width: 440px; height: 128px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(15, 23, 42); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.55;"><p><span style="font-weight:700; color:#b45309;">[지수 시간 감쇠 (Exponential Time Decay)]</span></p><p style="font-family:monospace; color:#1e40af; font-size:11px;">F_decay(t) = 0.5 ^ ( t / 14 )  (반감기 T_half = 14일)</p><p>• <span style="font-weight:700;">최근 7일 데이터</span>: 100% 반영 (가중 계수 1.00)</p><p>• <span style="font-weight:700;">8 ~ 14일 전 데이터</span>: 75% 반영 (가중 계수 0.75)</p><p>• <span style="font-weight:700;">15 ~ 30일 전 데이터</span>: 50% 반영 (가중 계수 0.50)</p><p>• <span style="font-weight:700;">31일 이후 데이터</span>: 25% 이하 자연 수렴 (오래된 상품 독점 차단)</p></div>
+        </div>
+
+        <!-- Zone 3 기대효과 박스 배경 -->
+        <div id="rk-c3-eff-bg" class="lf-component" style="position: absolute; top: 355px; left: 1094px; width: 462px; height: 95px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 3 기대효과 텍스트 -->
+        <div id="rk-c3-eff-txt" class="lf-component v4-text-shape" style="position: absolute; top: 361px; left: 1106px; width: 440px; height: 83px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(22, 101, 52); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.5;"><p><span style="font-weight:700; color:#15803d;">[랭킹 선순환 기대 효과]</span></p><p>• 과거 누적 데이터에 기댄 '고인물 베스트셀러'의 영구 상위 독점 원천 방지</p><p>• 트렌드 반응이 빠른 신규 룩북 상품이 자연스럽게 상위로 진입하는 다이내믹 랭킹 보장</p></div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- [5] ZONE 4 (좌측 하단): 4. 브랜드 보정 & 페널티 -->
+        <!-- ========================================== -->
+        <!-- Zone 4 카드 배경 -->
+        <div id="rk-c4-bg" class="lf-component" style="position: absolute; top: 480px; left: 30px; width: 750px; height: 400px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 4 헤더 아이콘 -->
+        <div id="rk-c4-icon" class="lf-component" style="position: absolute; top: 494px; left: 46px; width: 22px; height: 22px; z-index: 101;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+        </div>
+
+        <!-- Zone 4 헤더 타이틀 -->
+        <div id="rk-c4-title" class="lf-component v4-text-shape" style="position: absolute; top: 492px; left: 74px; width: 450px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">4. 브랜드별 객단가 보정 &amp; 품질/재고 페널티 정책</span></p></div>
+        </div>
+
+        <!-- Zone 4 뱃지 -->
+        <div id="rk-c4-badge" class="lf-component" style="position: absolute; top: 493px; left: 660px; width: 105px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ede9fe; border: 1.6px solid #ddd6fe; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #6d28d9;">GOVERNANCE</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 4 브랜드 객단가 정규화 박스 배경 -->
+        <div id="rk-c4-norm-bg" class="lf-component" style="position: absolute; top: 525px; left: 44px; width: 722px; height: 75px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 4 브랜드 정규화 텍스트 -->
+        <div id="rk-c4-norm-txt" class="lf-component v4-text-shape" style="position: absolute; top: 531px; left: 56px; width: 700px; height: 63px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(15, 23, 42); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.55;"><p><span style="font-weight:700; color:#4338ca;">[브랜드별 객단가 정규화 공식 (Brand Price Normalization)]</span>: <span style="font-family:monospace; color:#1e40af;">F_brand = 1 + α · ((Price - P_brand_avg) / P_brand_avg)</span></p><p>• 미샤(평균 90만원)와 잇미샤(평균 20만원) 간의 가격 편차를 브랜드별 평균치로 정규화하여 통합 랭킹 왜곡을 방지합니다.</p><p>• 브랜드별 단독 랭킹(Brand Best)과 시선닷컴 통합 랭킹(Total Best)에 차등 가중치를 적용하여 공정성을 보장합니다.</p></div>
+        </div>
+
+        <!-- Zone 4 3대 페널티 카드 1: 재고 품절 -->
+        <div id="rk-c4-p1" class="lf-component" style="position: absolute; top: 610px; left: 44px; width: 232px; height: 165px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecaca; border-radius: 8px; box-sizing: border-box; padding: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
+                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #b91c1c;">재고 품절 페널티 (Stock)</span></p>
+                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#b91c1c;">전체 품절</span>: 랭킹 즉시 0점 (완전 제외)</p>
+                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#b45309;">부분 품절</span>: 점수 <span style="font-weight:700;">× 0.70</span> (30% 감점)</p>
+                    <p style="font-size: 10px; line-height: 1.4; color: #64748b; margin-top:4px;">※ 고객이 클릭 후 구매 불가로 이탈하는 헛걸음 경험을 원천 차단</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 4 3대 페널티 카드 2: 반품/취소율 -->
+        <div id="rk-c4-p2" class="lf-component" style="position: absolute; top: 610px; left: 289px; width: 232px; height: 165px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fed7aa; border-radius: 8px; box-sizing: border-box; padding: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
+                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #c2410c;">반품·취소율 페널티 (Return)</span></p>
+                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#c2410c;">임계 기준치</span>: 패션 평균 15%</p>
+                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#c2410c;">15% 초과 시</span>: 초과분에 비례 감점</p>
+                    <p style="font-size: 10px; line-height: 1.4; color: #64748b; margin-top:4px;">※ 이미지 과장광고, 실물 불만족 및 불량 미끼상품의 랭킹 독점 방지</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 4 3대 페널티 카드 3: 어뷰징 차단 -->
+        <div id="rk-c4-p3" class="lf-component" style="position: absolute; top: 610px; left: 534px; width: 232px; height: 165px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; padding: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
+                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #4338ca;">어뷰징 차단 정책 (Anti-Abuse)</span></p>
+                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#4338ca;">PV 인정 상한</span>: 1인당 일일 최대 3회</p>
+                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#4338ca;">매크로 방지</span>: 비정상 위시·장바구니 컷</p>
+                    <p style="font-size: 10px; line-height: 1.4; color: #64748b; margin-top:4px;">※ 특정 세력의 클릭 어뷰징을 원천 차단하고 순수 고객 모객력(UV) 중심 평가</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 4 하단 운영 가이드 요약 바 -->
+        <div id="rk-c4-ftr-bg" class="lf-component" style="position: absolute; top: 785px; left: 44px; width: 722px; height: 80px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 4 하단 가이드 텍스트 -->
+        <div id="rk-c4-ftr-txt" class="lf-component v4-text-shape" style="position: absolute; top: 791px; left: 56px; width: 700px; height: 68px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(30, 64, 175); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.5;"><p>• <span style="font-weight:700;">운영 튜닝 정책</span>: 모든 가중치($w_1 \sim w_6$)와 감쇠 파라미터는 백오피스 어드민에서 계절(SS/FW) 및 프로모션에 따라 On-Demand 조정 가능</p><p>• <span style="font-weight:700;">배치 집계 주기</span>: 실시간 랭킹(1시간 주기 갱신) / 일간 랭킹(자정 배치 갱신) / 주간 랭킹(매주 월요일 갱신) 3개 트랙 병행 운영</p></div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- [6] ZONE 5 (우측 하단): 5. 플랫폼 벤치마킹 & 시뮬레이션 -->
+        <!-- ========================================== -->
+        <!-- Zone 5 카드 배경 -->
+        <div id="rk-c5-bg" class="lf-component" style="position: absolute; top: 480px; left: 800px; width: 770px; height: 400px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <!-- Zone 5 헤더 아이콘 -->
+        <div id="rk-c5-icon" class="lf-component" style="position: absolute; top: 494px; left: 816px; width: 22px; height: 22px; z-index: 101;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><line x1="3" y1="6" x2="6" y2="6"></line><line x1="10" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="6" y2="18"></line><line x1="10" y1="18" x2="21" y2="18"></line></svg>
+        </div>
+
+        <!-- Zone 5 헤더 타이틀 -->
+        <div id="rk-c5-title" class="lf-component v4-text-shape" style="position: absolute; top: 492px; left: 844px; width: 460px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">5. 이커머스 대표 플랫폼 벤치마킹 &amp; 시뮬레이션 비교</span></p></div>
+        </div>
+
+        <!-- Zone 5 뱃지 -->
+        <div id="rk-c5-badge" class="lf-component" style="position: absolute; top: 493px; left: 1450px; width: 105px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #a7f3d0; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #047857;">BENCHMARK</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 5 벤치마킹 비교 표 -->
+        <div id="rk-c5-tbl" class="lf-component" style="position: absolute; top: 525px; left: 814px; width: 742px; height: 135px; z-index: 101;" data-resized="true">
+            <table class="v4-premium-table" style="background: #ffffff; border: 1.6px solid var(--v4-border, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box; font-size: 11px;">
+                <colgroup>
+                    <col style="width: 85px;">
+                    <col style="width: 175px;">
+                    <col style="width: 145px;">
+                    <col style="width: 145px;">
+                    <col style="width: 192px;">
+                </colgroup>
+                <thead>
+                    <tr style="height: 27px; background: #f8fafc;">
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">플랫폼</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">주요 반영 지표 (Features)</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">신상품 보정 방식</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">시간 감쇠(Decay) 주기</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">브랜드 / 객단가 보정</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="height: 27px;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">무신사</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">판매량 + 금액 + 조회수 + 후기</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">실시간(3h) / 일간 분리 운영</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">단기 지수감쇠 (1~7일)</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">스트릿 브랜드 중심 플랫 가중치</td>
+                    </tr>
+                    <tr style="height: 27px; background: #fafafa;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">29CM / W컨셉</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">결제금액 + 하트(찜) + 체류시간</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">룩북/기획전 14일 집중 노출</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">시즌 기준 30일 반감기</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">디자이너 브랜드 객단가 보정</td>
+                    </tr>
+                    <tr style="height: 27px;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">지그재그</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">Z결제 + AI추천 + 즐겨찾기</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">신규 소호몰 탐색 슬롯 할당</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">실시간 반응형 감쇠</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">소호몰 vs 브랜드관 분리 정규화</td>
+                    </tr>
+                    <tr style="height: 27px; background: #eff6ff;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 800; padding: 2px 6px; text-align: center; color: #1d4ed8;">시선닷컴 (안)</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 700; padding: 2px 6px; text-align: left; color: #1d4ed8;">매출35+수량25+카트15+찜10+UV10+PV5</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 700; padding: 2px 6px; text-align: left; color: #1d4ed8;">1~7일(1.5x), 8~14일(1.3x)</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 700; padding: 2px 6px; text-align: left; color: #1d4ed8;">14일 반감기 지수감쇠</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 700; padding: 2px 6px; text-align: left; color: #1d4ed8;">미샤·잇미샤·EBM 3사 객단가 밸런서</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Zone 5 시뮬레이션 비교 카드 1 (현행 단순집계 왜곡) -->
+        <div id="rk-c5-sim1" class="lf-component" style="position: absolute; top: 672px; left: 814px; width: 360px; height: 193px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #fecaca; border-radius: 8px; box-sizing: border-box; padding: 10px;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
+                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #b91c1c;">[CASE A] 현행 단순 주문수 랭킹 집계 시</span></p>
+                    <p style="font-size: 11px; line-height: 1.5; color: #334155;">• <span style="font-weight:700;">3만원 기본 티셔츠 100건 판매</span> ➔ <span style="font-weight:800; color:#b91c1c;">랭킹 1위 장악</span></p>
+                    <p style="font-size: 11px; line-height: 1.5; color: #334155;">• <span style="font-weight:700;">90만원 미샤 코트 10건 판매</span> ➔ <span style="font-weight:800; color:#64748b;">랭킹 48위 탈락</span></p>
+                    <p style="font-size: 10.5px; line-height: 1.45; color: #7f1d1d; margin-top:6px; background:#fee2e2; padding:4px 6px; border-radius:4px;">※ 결과: 매출 900만원인 주력 코트가 300만원 티셔츠에 밀려 하위권 추락. 자사몰 브랜드 고급화 실패 및 마진 악화</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone 5 시뮬레이션 비교 카드 2 (신규 복합 룰 적용) -->
+        <div id="rk-c5-sim2" class="lf-component" style="position: absolute; top: 672px; left: 1184px; width: 372px; height: 193px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px; box-sizing: border-box; padding: 10px;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
+                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #15803d;">[CASE B] 신규 복합 랭킹 룰 적용 시</span></p>
+                    <p style="font-size: 11px; line-height: 1.5; color: #334155;">• <span style="font-weight:700;">미샤 코트</span>: 매출(35%) + 장바구니/찜 고득점 ➔ <span style="font-weight:800; color:#15803d;">종합 2위 안착</span></p>
+                    <p style="font-size: 11px; line-height: 1.5; color: #334155;">• <span style="font-weight:700;">3만원 티셔츠</span>: 수량(25%) 우세하나 Log 정규화 ➔ <span style="font-weight:800; color:#0f766e;">종합 5위 균형</span></p>
+                    <p style="font-size: 10.5px; line-height: 1.45; color: #14532d; margin-top:6px; background:#dcfce7; padding:4px 6px; border-radius:4px;">※ 결과: 프리미엄 룩북(미샤)과 데일리 회전 상품(잇미샤)이 상호 균형을 이루며 최적의 전환율 및 객단가 극대화 실현!</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

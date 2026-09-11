@@ -25,6 +25,7 @@ window.v4Script = `
         var maxZ = 1000;
         var comps = targetParent.querySelectorAll ? targetParent.querySelectorAll('.lf-component') : [];
         comps.forEach(function(c) {
+            if (c.classList.contains('pin-marker')) return;
             var rawZ = parseInt(c.style.zIndex, 10);
             if (isNaN(rawZ)) {
                 var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
@@ -68,6 +69,14 @@ window.v4Script = `
         newHeight = table.offsetHeight;
         table.style.height = origHeight || '100%';
         
+        if (!isGrid) {
+            s.style.setProperty('width', newWidth + 'px', 'important');
+            s.style.setProperty('height', newHeight + 'px', 'important');
+            if (typeof window.updateHandles === 'function') {
+                window.updateHandles(s);
+            }
+        }
+
         notifyParent({
             type: 'LF_TABLE_SIZE_CHANGED',
             compId: s.id,
@@ -321,6 +330,7 @@ window.v4Script = `
             adminRowData['adminRow' + i + 'Cols'] = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row' + i + '-cols')) || 1 : 1;
             adminRowData['adminRow' + i + 'Type'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-type') || 'textbox') : 'textbox';
             adminRowData['adminRow' + i + 'Height'] = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row' + i + '-height')) || (adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row-height')) || 44 : 44) : 44;
+            adminRowData['adminRow' + i + 'Required'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-required') || 'false') : 'false';
         }
 
         // Toggle Button Detection
@@ -815,12 +825,26 @@ window.v4Script = `
             const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
             if (isMulti) {
                 c.classList.toggle('selected');
+                if (c.classList.contains('pin-marker')) {
+                    const pinIdx = c.getAttribute('data-index');
+                    if (pinIdx !== null && pinIdx !== undefined) {
+                        const partnerPin = document.querySelector('.pin-marker[data-index="' + pinIdx + '"]:not(#' + c.id + ')');
+                        if (partnerPin) partnerPin.classList.toggle('selected', c.classList.contains('selected'));
+                    }
+                }
                 if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
                     window.ResponsiveSmartGuide.clearGuides(true);
                 }
             } else {
                 document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
                 c.classList.add('selected');
+                if (c.classList.contains('pin-marker')) {
+                    const pinIdx = c.getAttribute('data-index');
+                    if (pinIdx !== null && pinIdx !== undefined) {
+                        const partnerPin = document.querySelector('.pin-marker[data-index="' + pinIdx + '"]:not(#' + c.id + ')');
+                        if (partnerPin) partnerPin.classList.add('selected');
+                    }
+                }
                 if (isResp) {
                     window.ResponsiveSmartGuide.onSelect(c, 2000);
                 }
@@ -1415,6 +1439,7 @@ window.v4Script = `
                 v.className = 'lf-component pin-marker';
                 v.style.width = '20px';
                 v.style.height = '20px';
+                v.style.zIndex = '200000';
                 v.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
                               '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
             } else {
@@ -1597,6 +1622,7 @@ window.v4Script = `
                     var maxZ = 1000;
                     var hasZ = false;
                     siblingComps.forEach(function(c) {
+                        if (c.classList.contains('pin-marker')) return;
                         var z = parseInt(c.style.zIndex, 10);
                         if (isNaN(z)) {
                             var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
@@ -1689,6 +1715,7 @@ window.v4Script = `
                     if (targetZ < 1) {
                         var shift = Math.abs(targetZ) + 10;
                         siblingComps.forEach(function(c) {
+                            if (c.classList.contains('pin-marker')) return;
                             var curZ = parseInt(c.style.zIndex, 10);
                             if (isNaN(curZ)) {
                                 var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);

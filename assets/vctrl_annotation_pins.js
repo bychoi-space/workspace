@@ -51,9 +51,19 @@
                 if (DOM && DOM.descriptionList) {
                     DOM.descriptionList.querySelectorAll('.desc-row').forEach(function(r) {
                         r.classList.remove('active-desc');
+                        r.classList.remove('selected-pin');
                     });
                 }
                 row.classList.add('active-desc');
+                row.classList.add('selected-pin');
+                if (window.GroupingManager && typeof window.GroupingManager.clearSelection === 'function') {
+                    window.GroupingManager.clearSelection();
+                }
+                if (window.state) {
+                    window.state.isEditing = false;
+                    window.state.editingIndex = -1;
+                    window.state.selectedIds = [];
+                }
                 if (DOM && DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
                     window.MessageHub.send(DOM.iframe.contentWindow, 'LF_FOCUS_PIN', { index: index });
                 }
@@ -116,19 +126,17 @@
         
         DOM.descriptionList.querySelectorAll('.desc-row').forEach(function(row) {
             row.classList.remove('selected-pin');
+            row.classList.remove('active-desc');
         });
         
         var row = DOM.descriptionList.querySelector(`.desc-row[data-index="${index}"]`);
         if (row) {
             row.classList.add('selected-pin');
+            row.classList.add('active-desc');
             row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             
-            var input = row.querySelector('.desc-input');
-            if (input) {
-                input.focus();
-                if (typeof window.autoResizeDescriptionInputs === 'function') {
-                    window.autoResizeDescriptionInputs();
-                }
+            if (typeof window.autoResizeDescriptionInputs === 'function') {
+                window.autoResizeDescriptionInputs();
             }
         }
     };

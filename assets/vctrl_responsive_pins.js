@@ -42,7 +42,7 @@ window.v4ResponsivePinsScript = `
         pin.style.position = 'absolute';
         pin.style.width = '20px';
         pin.style.height = '20px';
-        pin.style.zIndex = '1000';
+        pin.style.zIndex = '200000';
 
         let defaultLeft = 50;
         let defaultTop = 150;
@@ -232,23 +232,52 @@ window.v4ResponsivePinsScript = `
         });
     };
 
-    window.focusResponsivePin = function(index) {
-        if (!isResponsiveScreen()) return;
+    window.focusResponsivePin = function(index, shouldScroll) {
+        document.querySelectorAll('.lf-component.selected').forEach(function(el) {
+            el.classList.remove('selected');
+        });
+
+        if (!isResponsiveScreen()) {
+            const singlePin = document.getElementById('v4-pin-' + index);
+            if (singlePin) {
+                singlePin.classList.add('selected');
+                window.activeEl = singlePin;
+                if (typeof window.updateHandles === 'function') window.updateHandles(singlePin);
+            }
+            return;
+        }
+
         const pcArea = document.querySelector('.pc-content-area, .pc-content');
         const mobArea = document.querySelector('.mobile-content-area, .mobile-content');
         const pcPin = document.getElementById('v4-pin-pc-' + index) || document.querySelector('[data-frame="pc"][data-index="' + index + '"]');
         const mobPin = document.getElementById('v4-pin-mobile-' + index) || document.querySelector('[data-frame="mobile"][data-index="' + index + '"]');
 
-        if (pcArea && pcPin) {
-            const pinTop = parseFloat(pcPin.style.top) || pcPin.offsetTop || 0;
-            const targetTop = Math.max(0, pinTop - (pcArea.clientHeight / 2) + 10);
-            pcArea.scrollTo({ top: targetTop, behavior: 'smooth' });
+        if (pcPin) pcPin.classList.add('selected');
+        if (mobPin) mobPin.classList.add('selected');
+
+        const activePin = (window.lastActiveFrame === 'mobile' ? mobPin : pcPin) || pcPin || mobPin;
+        if (activePin) {
+            window.activeEl = activePin;
+            if (typeof window.updateHandles === 'function') {
+                window.updateHandles(activePin);
+            }
         }
 
-        if (mobArea && mobPin) {
-            const pinTop = parseFloat(mobPin.style.top) || mobPin.offsetTop || 0;
-            const targetTop = Math.max(0, pinTop - (mobArea.clientHeight / 2) + 10);
-            mobArea.scrollTo({ top: targetTop, behavior: 'smooth' });
+        const isDragging = window.V4DragResizeEngine && (window.V4DragResizeEngine.isDragging || window.V4DragResizeEngine.isPendingDrag);
+        const allowScroll = (shouldScroll !== false) && !isDragging;
+
+        if (allowScroll) {
+            if (pcArea && pcPin) {
+                const pinTop = parseFloat(pcPin.style.top) || pcPin.offsetTop || 0;
+                const targetTop = Math.max(0, pinTop - (pcArea.clientHeight / 2) + 10);
+                pcArea.scrollTo({ top: targetTop, behavior: 'smooth' });
+            }
+
+            if (mobArea && mobPin) {
+                const pinTop = parseFloat(mobPin.style.top) || mobPin.offsetTop || 0;
+                const targetTop = Math.max(0, pinTop - (mobArea.clientHeight / 2) + 10);
+                mobArea.scrollTo({ top: targetTop, behavior: 'smooth' });
+            }
         }
 
         [pcPin, mobPin].forEach(function(pin) {
@@ -318,7 +347,7 @@ window.v4ResponsivePinsScript = `
                 div.style.width = 'fit-content';
                 div.style.height = 'auto';
             }
-            div.style.zIndex = '1000';
+            div.style.zIndex = '200000';
 
             let xVal = parseFloat(pin.x) || 0;
             let yVal = parseFloat(pin.y) || 0;
@@ -362,7 +391,7 @@ window.v4ResponsivePinsScript = `
                 div.style.width = 'fit-content';
                 div.style.height = 'auto';
             }
-            div.style.zIndex = '1000';
+            div.style.zIndex = '200000';
 
             let xVal = parseFloat(pin.x) || 0;
             let yVal = parseFloat(pin.y) || 0;
@@ -404,7 +433,7 @@ window.v4ResponsivePinsScript = `
         if (d.type === 'LF_INSERT_RESPONSIVE_PINS') {
             window.spawnResponsiveDualPins(d.index, d.number, d.pcPos, d.mobilePos);
         } else if (d.type === 'LF_FOCUS_PIN') {
-            window.focusResponsivePin(d.index);
+            window.focusResponsivePin(d.index, d.scroll !== false);
         } else if (d.type === 'LF_HIGHLIGHT_PIN') {
             window.highlightResponsivePins(d.index, !!d.active);
         } else if (d.type === 'LF_IMPORT_RESPONSIVE_PINS') {

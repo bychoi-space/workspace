@@ -351,6 +351,7 @@ window.v4ShortcutsScript = `
                 let maxZ = 1000;
                 const comps = (container || document.body).querySelectorAll('.lf-component');
                 comps.forEach(c => {
+                    if (c.classList.contains('pin-marker')) return;
                     let z = parseInt(c.style.zIndex, 10);
                     if (isNaN(z)) {
                         const compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
@@ -382,10 +383,14 @@ window.v4ShortcutsScript = `
                 v.style.cssText = item.styleCssText;
 
                 // Rebase z-index to ensure it sits on top of all existing components while keeping relative order
-                const originalZ = copiedZs[idx] !== undefined ? copiedZs[idx] : 1000;
-                const relOffsetZ = Math.max(0, originalZ - minCopiedZ);
-                const assignedZ = baseTopZ + relOffsetZ;
-                v.style.zIndex = String(assignedZ);
+                if (item.isPinMarker) {
+                    v.style.zIndex = '200000';
+                } else {
+                    const originalZ = copiedZs[idx] !== undefined ? copiedZs[idx] : 1000;
+                    const relOffsetZ = Math.max(0, originalZ - minCopiedZ);
+                    const assignedZ = baseTopZ + relOffsetZ;
+                    v.style.zIndex = String(assignedZ);
+                }
 
                 const relX = (typeof item.left === 'number' ? item.left : (parseFloat(item.left) || 0)) - minLeft;
                 const relY = (typeof item.top === 'number' ? item.top : (parseFloat(item.top) || 0)) - minTop;
@@ -676,9 +681,20 @@ window.v4ShortcutsScript = `
         const isV = e.key === 'v' || e.key === 'V' || e.code === 'KeyV';
         const isG = e.key === 'g' || e.key === 'G' || e.code === 'KeyG';
         const isZ = e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ';
+        const isY = e.key === 'y' || e.key === 'Y' || e.code === 'KeyY';
         const inInput = isInputActive(e.target) || isInputActive(document.activeElement);
 
-        if ((e.ctrlKey || e.metaKey) && isZ && !inInput) {
+        if ((e.ctrlKey || e.metaKey) && ((isZ && e.shiftKey) || isY) && !inInput) {
+            e.preventDefault();
+            if (window.V4UndoManager && typeof window.V4UndoManager.redo === 'function') {
+                window.V4UndoManager.redo();
+            } else if (typeof notifyParent === 'function') {
+                notifyParent({ type: 'LF_TRIGGER_REDO' });
+            }
+            return;
+        }
+
+        if ((e.ctrlKey || e.metaKey) && isZ && !e.shiftKey && !inInput) {
             e.preventDefault();
             if (window.V4UndoManager && typeof window.V4UndoManager.undo === 'function') {
                 window.V4UndoManager.undo();

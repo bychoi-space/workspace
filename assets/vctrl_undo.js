@@ -13,6 +13,7 @@ window.v4UndoScript = `
 window.V4UndoManager = (function() {
     const MAX_HISTORY = 15;
     let undoStack = [];
+    let redoStack = [];
     let currentConnectors = [];
     let liveScrollState = {
         pcScrollTop: 0,
@@ -113,6 +114,86 @@ window.V4UndoManager = (function() {
         apply();
     }
 
+    function applySnapshot(snapshotObj) {
+        const currentLive = captureLiveScroll();
+        const savedScroll = snapshotObj.scrollState || {};
+
+        const targetScroll = {
+            pcScrollTop: (currentLive.pcScrollTop > 0) ? currentLive.pcScrollTop : (savedScroll.pcScrollTop || 0),
+            pcScrollLeft: (currentLive.pcScrollLeft > 0) ? currentLive.pcScrollLeft : (savedScroll.pcScrollLeft || 0),
+            mobileScrollTop: (currentLive.mobileScrollTop > 0) ? currentLive.mobileScrollTop : (savedScroll.mobileScrollTop || 0),
+            mobileScrollLeft: (currentLive.mobileScrollLeft > 0) ? currentLive.mobileScrollLeft : (savedScroll.mobileScrollLeft || 0),
+            bodyScrollTop: (currentLive.bodyScrollTop > 0) ? currentLive.bodyScrollTop : (savedScroll.bodyScrollTop || 0),
+            bodyScrollLeft: (currentLive.bodyScrollLeft > 0) ? currentLive.bodyScrollLeft : (savedScroll.bodyScrollLeft || 0)
+        };
+
+        const temp = document.createElement('div');
+        temp.innerHTML = snapshotObj.html;
+        temp.querySelectorAll('script').forEach(el => el.remove());
+
+        // Smart In-Place Restoration for Responsive / Admin PC templates
+        const currentPcArea = document.querySelector('.pc-content-area');
+        const tempPcArea = temp.querySelector('.pc-content-area');
+        const currentMobileArea = document.querySelector('.mobile-content-area, .mobile-content');
+        const tempMobileArea = temp.querySelector('.mobile-content-area, .mobile-content');
+
+        if (currentPcArea && tempPcArea) {
+            currentPcArea.innerHTML = tempPcArea.innerHTML;
+            if (currentMobileArea && tempMobileArea) {
+                currentMobileArea.innerHTML = tempMobileArea.innerHTML;
+            }
+
+            // Sync body-level components (connectors, pins, temporary body-dragged objects)
+            const curBodyComps = document.body.querySelectorAll(':scope > .lf-component');
+            curBodyComps.forEach(el => el.remove());
+            const tempBodyComps = temp.querySelectorAll(':scope > .lf-component');
+            tempBodyComps.forEach(el => document.body.appendChild(el.cloneNode(true)));
+
+            // Sync height inputs if changed
+            const tempPcInput = temp.querySelector('.pc-height-input');
+            const curPcInput = document.querySelector('.pc-height-input');
+            if (tempPcInput && curPcInput && tempPcInput.value) curPcInput.value = tempPcInput.value;
+
+            const tempMobInput = temp.querySelector('.mobile-height-input');
+            const curMobInput = document.querySelector('.mobile-height-input');
+            if (tempMobInput && curMobInput && tempMobInput.value) curMobInput.value = tempMobInput.value;
+        } else {
+            // Case 2: Standard Template (Cover, Plan, Summary, UI, Blank, etc.) -> Replace body contents while preserving scripts
+            const currentScripts = Array.from(document.body.querySelectorAll('script'));
+            document.body.innerHTML = '';
+            while (temp.firstChild) {
+                document.body.appendChild(temp.firstChild);
+            }
+            currentScripts.forEach(script => {
+                document.body.appendChild(script);
+            });
+        }
+
+        if (snapshotObj.connectors) {
+            currentConnectors = snapshotObj.connectors;
+            if (typeof notifyParent === 'function') notifyParent({ type: 'LF_RESTORE_CONNECTORS', connectors: snapshotObj.connectors });
+        }
+        if (typeof window.initHandles === 'function') window.initHandles();
+        if (typeof window.markDirty === 'function') window.markDirty();
+
+        // Re-bind height controls if in responsive template
+        const pcInput = document.querySelector('.pc-height-input');
+        const pcInner = document.querySelector('.pc-content-inner');
+        if (pcInput && pcInner) {
+            const val = Math.max(810, parseInt(pcInput.value) || 810);
+            pcInner.style.minHeight = (val + 2) + 'px';
+        }
+        const mobileInput = document.querySelector('.mobile-height-input');
+        const mobileInner = document.querySelector('.mobile-content-inner');
+        if (mobileInput && mobileInner) {
+            const val = Math.max(810, parseInt(mobileInput.value) || 810);
+            mobileInner.style.minHeight = (val + 2) + 'px';
+        }
+
+        // Restore Scroll State continuously across reflow frames
+        restoreScrollState(targetScroll);
+    }
+
     return {
         saveState: function() {
             try {
@@ -130,91 +211,40 @@ window.V4UndoManager = (function() {
                 }
                 undoStack.push(currentState);
                 if (undoStack.length > MAX_HISTORY) undoStack.shift();
+                redoStack = []; // Clear redo stack on any new user action
             } catch (e) { console.warn("[V4 Undo] Save failed:", e); }
         },
         undo: function() {
             try {
                 if (undoStack.length === 0) return;
-                const currentLive = captureLiveScroll();
+                
+                // Save current live state into redoStack before reverting
+                const currentHTML = getCleanHTML();
+                const currentConns = JSON.parse(JSON.stringify(currentConnectors));
+                const currentScroll = captureLiveScroll();
+                const currentLiveState = JSON.stringify({ html: currentHTML, connectors: currentConns, scrollState: currentScroll });
+                redoStack.push(currentLiveState);
+                if (redoStack.length > MAX_HISTORY) redoStack.shift();
+
                 const prevState = JSON.parse(undoStack.pop());
-                const savedScroll = prevState.scrollState || {};
-
-                // Use current live scroll if user is scrolled down, otherwise fallback to saved scroll
-                const targetScroll = {
-                    pcScrollTop: (currentLive.pcScrollTop > 0) ? currentLive.pcScrollTop : (savedScroll.pcScrollTop || 0),
-                    pcScrollLeft: (currentLive.pcScrollLeft > 0) ? currentLive.pcScrollLeft : (savedScroll.pcScrollLeft || 0),
-                    mobileScrollTop: (currentLive.mobileScrollTop > 0) ? currentLive.mobileScrollTop : (savedScroll.mobileScrollTop || 0),
-                    mobileScrollLeft: (currentLive.mobileScrollLeft > 0) ? currentLive.mobileScrollLeft : (savedScroll.mobileScrollLeft || 0),
-                    bodyScrollTop: (currentLive.bodyScrollTop > 0) ? currentLive.bodyScrollTop : (savedScroll.bodyScrollTop || 0),
-                    bodyScrollLeft: (currentLive.bodyScrollLeft > 0) ? currentLive.bodyScrollLeft : (savedScroll.bodyScrollLeft || 0)
-                };
-
-                const temp = document.createElement('div');
-                temp.innerHTML = prevState.html;
-                temp.querySelectorAll('script').forEach(el => el.remove());
-
-                // Smart In-Place Restoration for Responsive / Admin PC templates
-                const currentPcArea = document.querySelector('.pc-content-area');
-                const tempPcArea = temp.querySelector('.pc-content-area');
-                const currentMobileArea = document.querySelector('.mobile-content-area, .mobile-content');
-                const tempMobileArea = temp.querySelector('.mobile-content-area, .mobile-content');
-
-                if (currentPcArea && tempPcArea) {
-                    currentPcArea.innerHTML = tempPcArea.innerHTML;
-                    if (currentMobileArea && tempMobileArea) {
-                        currentMobileArea.innerHTML = tempMobileArea.innerHTML;
-                    }
-
-                    // Sync body-level components (connectors, pins, temporary body-dragged objects)
-                    const curBodyComps = document.body.querySelectorAll(':scope > .lf-component');
-                    curBodyComps.forEach(el => el.remove());
-                    const tempBodyComps = temp.querySelectorAll(':scope > .lf-component');
-                    tempBodyComps.forEach(el => document.body.appendChild(el.cloneNode(true)));
-
-                    // Sync height inputs if changed
-                    const tempPcInput = temp.querySelector('.pc-height-input');
-                    const curPcInput = document.querySelector('.pc-height-input');
-                    if (tempPcInput && curPcInput && tempPcInput.value) curPcInput.value = tempPcInput.value;
-
-                    const tempMobInput = temp.querySelector('.mobile-height-input');
-                    const curMobInput = document.querySelector('.mobile-height-input');
-                    if (tempMobInput && curMobInput && tempMobInput.value) curMobInput.value = tempMobInput.value;
-                } else {
-                    // Case 2: Standard Template (Cover, Plan, Summary, UI, Blank, etc.) -> Replace body contents while preserving scripts
-                    const currentScripts = Array.from(document.body.querySelectorAll('script'));
-                    document.body.innerHTML = '';
-                    while (temp.firstChild) {
-                        document.body.appendChild(temp.firstChild);
-                    }
-                    currentScripts.forEach(script => {
-                        document.body.appendChild(script);
-                    });
-                }
-
-                if (prevState.connectors) {
-                    currentConnectors = prevState.connectors;
-                    if (typeof notifyParent === 'function') notifyParent({ type: 'LF_RESTORE_CONNECTORS', connectors: prevState.connectors });
-                }
-                if (typeof window.initHandles === 'function') window.initHandles();
-                if (typeof window.markDirty === 'function') window.markDirty();
-
-                // Re-bind height controls if in responsive template
-                const pcInput = document.querySelector('.pc-height-input');
-                const pcInner = document.querySelector('.pc-content-inner');
-                if (pcInput && pcInner) {
-                    const val = Math.max(810, parseInt(pcInput.value) || 810);
-                    pcInner.style.minHeight = (val + 2) + 'px';
-                }
-                const mobileInput = document.querySelector('.mobile-height-input');
-                const mobileInner = document.querySelector('.mobile-content-inner');
-                if (mobileInput && mobileInner) {
-                    const val = Math.max(810, parseInt(mobileInput.value) || 810);
-                    mobileInner.style.minHeight = (val + 2) + 'px';
-                }
-
-                // Restore Scroll State continuously across reflow frames
-                restoreScrollState(targetScroll);
+                applySnapshot(prevState);
             } catch (e) { console.warn("[V4 Undo] Undo failed:", e); }
+        },
+        redo: function() {
+            try {
+                if (redoStack.length === 0) return;
+
+                // Save current live state into undoStack before applying redo
+                const currentHTML = getCleanHTML();
+                const currentConns = JSON.parse(JSON.stringify(currentConnectors));
+                const currentScroll = captureLiveScroll();
+                const currentLiveState = JSON.stringify({ html: currentHTML, connectors: currentConns, scrollState: currentScroll });
+                undoStack.push(currentLiveState);
+                if (undoStack.length > MAX_HISTORY) undoStack.shift();
+
+                const nextState = JSON.parse(redoStack.pop());
+                applySnapshot(nextState);
+            } catch (e) { console.warn("[V4 Undo] Redo failed:", e); }
         },
         init: function() {
             bindScrollListeners();
@@ -223,7 +253,9 @@ window.V4UndoManager = (function() {
             
             document.addEventListener('keydown', (e) => {
                 const isZ = e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ';
-                if (!isZ || (!e.ctrlKey && !e.metaKey)) return;
+                const isY = e.key === 'y' || e.key === 'Y' || e.code === 'KeyY';
+                if (!e.ctrlKey && !e.metaKey) return;
+                if (!isZ && !isY) return;
 
                 // Native input elements protection (input, textarea, select, Quill editor)
                 const targetTag = e.target ? e.target.tagName : '';
@@ -241,8 +273,13 @@ window.V4UndoManager = (function() {
                     }
                 }
 
-                e.preventDefault();
-                window.V4UndoManager.undo();
+                if ((isZ && e.shiftKey) || isY) {
+                    e.preventDefault();
+                    window.V4UndoManager.redo();
+                } else if (isZ && !e.shiftKey) {
+                    e.preventDefault();
+                    window.V4UndoManager.undo();
+                }
             });
             window.addEventListener('message', (e) => {
                 if (e.data && e.data.type === 'LF_SYNC_CONNECTORS') {
@@ -251,6 +288,8 @@ window.V4UndoManager = (function() {
                     window.V4UndoManager.saveState();
                 } else if (e.data && e.data.type === 'LF_TRIGGER_UNDO') {
                     window.V4UndoManager.undo();
+                } else if (e.data && e.data.type === 'LF_TRIGGER_REDO') {
+                    window.V4UndoManager.redo();
                 }
             });
         }

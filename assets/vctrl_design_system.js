@@ -19,6 +19,7 @@ window.v4DesignSystemScript = `
         
         try {
             document.querySelectorAll('.lf-component').forEach(c => {
+                if (c.closest && c.closest('.lf-group')) return;
                 const shapeText = c.querySelector('.v4-shape-text');
                 const hasText = c.querySelector('.v4-shape-text-content') || c.querySelector('.v4-shape-text-overlay') || c.querySelector('.v4-editable-cell') || (shapeText && shapeText.querySelector('p'));
                 if (shapeText && hasText) {
@@ -41,6 +42,7 @@ window.v4DesignSystemScript = `
                 }
             });
             document.querySelectorAll('.text-marker, .v4-text-box, .v4-text-shape').forEach(c => {
+                if (c.closest && c.closest('.lf-group')) return;
                 if (c.querySelector('.v4-shape')) return; // Exclude Shape components from text marker auto-sizing loop
                 const isManualResized = c.getAttribute('data-resized') === 'true';
                 if (!isManualResized) {
@@ -262,6 +264,13 @@ window.v4DesignSystemScript = `
                 console.log("[V4 Self-healing] Deduplicated ID from: " + oldId + " to: " + c.id);
             }
             seenIds.add(c.id);
+
+            // [Description Pin SSOT] Ensure all description pins strictly stay at topmost 200000 z-index tier
+            if (c.classList.contains('pin-marker')) {
+                if (c.style.zIndex !== '200000') {
+                    c.style.zIndex = '200000';
+                }
+            }
         });
         
         document.querySelectorAll('.lf-component').forEach(c => {
@@ -662,6 +671,7 @@ window.v4DesignSystemScript = `
         });
 
         document.querySelectorAll('.v4-textbox-container, .v4-textarea-container').forEach(container => {
+            if (container.closest && container.closest('.lf-group')) return;
             const isTextarea = container.classList.contains('v4-textarea-container');
             const input = container.querySelector(isTextarea ? '.v4-textarea-input' : '.v4-textbox-input');
             const placeholder = container.querySelector(isTextarea ? '.v4-textarea-placeholder' : '.v4-textbox-placeholder');

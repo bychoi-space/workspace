@@ -390,10 +390,17 @@
 .ql-container.ql-snow {
     position: relative !important;
     transform: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
     border-top: none !important;
     border-radius: 0 0 8px 8px !important;
-    background: #11141d !important;
+    background-color: #273142 !important;
+    background-image: 
+        linear-gradient(45deg, #424e60 25%, transparent 25%), 
+        linear-gradient(-45deg, #424e60 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #424e60 75%), 
+        linear-gradient(-45deg, transparent 75%, #424e60 75%) !important;
+    background-size: 16px 16px !important;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px !important;
     color: #f8fafc !important;
     font-family: 'Inter', sans-serif !important;
     min-height: 72px !important;
@@ -402,7 +409,7 @@
     box-sizing: border-box !important;
     margin: 0 !important;
     padding: 0 !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35) !important;
     overflow: hidden !important;
 }
 .ql-editor {
@@ -416,8 +423,12 @@
     box-sizing: border-box !important;
     width: 100% !important;
 }
+.ql-editor ::selection {
+    background: rgba(99, 102, 241, 0.6) !important;
+    color: #ffffff !important;
+}
 .ql-editor.ql-blank::before {
-    color: rgba(255, 255, 255, 0.35) !important;
+    color: rgba(255, 255, 255, 0.45) !important;
     font-style: normal !important;
     font-size: 13px !important;
     line-height: 1.5 !important;

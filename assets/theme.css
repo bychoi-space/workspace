@@ -180,13 +180,13 @@ body {
     color: #ffffff !important;
     border-color: #ffffff !important;
     box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.35), 0 0 20px rgba(239, 68, 68, 0.6) !important;
-    z-index: 1000;
+    z-index: 200005 !important;
 }
 
 .pin-marker.selected {
     outline: none !important;
     box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #ef4444, 0 4px 14px rgba(239, 68, 68, 0.6) !important;
-    z-index: 1001 !important;
+    z-index: 200005 !important;
 }
 
 
@@ -194,7 +194,7 @@ body {
 .pin-marker.dragging {
     transition: none !important;
     cursor: grabbing !important;
-    z-index: 1001;
+    z-index: 200010 !important;
 }
 
 /* 5. Tool Overrides */

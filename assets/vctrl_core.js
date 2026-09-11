@@ -747,23 +747,7 @@ window.MessageHub = {
                     markAsDirty();
                 }
             } else if (data.type === 'LF_TABLE_SIZE_CHANGED') {
-                const DOM = window.DOM;
-                if (DOM && DOM.iframe) {
-                    const comp = DOM.iframe.contentWindow?.document?.getElementById(data.compId);
-                    if (comp) {
-                        const isGrid = data.isGrid || comp.classList.contains('v4-grid-container') || !!comp.querySelector('.v4-grid-container');
-                        if (isGrid) {
-                            return;
-                        }
-                        comp.style.setProperty('width', data.width + 'px', 'important');
-                        comp.style.setProperty('height', data.height + 'px', 'important');
-                        const frameWin = DOM.iframe.contentWindow;
-                        if (frameWin && typeof frameWin.updateHandles === 'function') {
-                            frameWin.updateHandles(comp);
-                        }
-                        markAsDirty();
-                    }
-                }
+                markAsDirty();
             } else if (data.type === 'LF_COMP_SELECTED') {
                 const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html'));
                 if (window.SmartGuide) {
@@ -1354,20 +1338,6 @@ window.init = async function () {
             }
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (state.isReadOnly) return;
-            // Ignore if typing in editable areas, input, select, textarea, ql-editor
-            const isInput = e.target.isContentEditable ||
-                ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) ||
-                !!(e.target.closest && e.target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
-            if (isInput) return;
-
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-                e.preventDefault();
-                console.log("[V4 Core] Parent Ctrl+Z caught. Triggering child undo.");
-                if (window.V4UndoManager) window.V4UndoManager.undo();
-            }
-        });
 
         if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => {
             const collapsed = DOM.sidebarLeft.classList.toggle('collapsed');
@@ -1429,14 +1399,28 @@ window.init = async function () {
             };
         }
 
+        // Unified Global Keyboard Shortcuts & Event Proxying to Canvas Iframe (Single SSOT Listener)
         window.addEventListener('keydown', (e) => {
+            if (state.isReadOnly) return;
+
             const isF2 = e.key === 'F2' || e.code === 'F2';
             const isInput = e.target.isContentEditable ||
                 ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) ||
                 !!(e.target.closest && e.target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
 
-            if (isInput && !isF2) return;
+            // 1. Global Save Shortcut (Ctrl+S / Cmd+S): Universally intercepted with highest priority across all inputs, editors, and sidebars
+            const isS = e.key.toLowerCase() === 's' || e.code === 'KeyS';
+            if ((e.ctrlKey || e.metaKey) && isS) {
+                e.preventDefault();
+                console.log("[VCTRL CORE] Global Ctrl+S caught in parent window. isInput:", isInput);
+                if (isInput && document.activeElement && typeof document.activeElement.blur === 'function') {
+                    try { document.activeElement.blur(); } catch (err) { }
+                }
+                handleGlobalSave();
+                return;
+            }
 
+            // 2. F2 Mode Switch: Highest priority, even when isInput is true
             if (isF2) {
                 if (e.isComposing) return;
                 e.preventDefault();
@@ -1444,45 +1428,52 @@ window.init = async function () {
                 if (isInput && typeof e.target.blur === 'function') {
                     e.target.blur();
                 }
-                const activeIframe = (window.DOM && window.DOM.iframe) || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+                const DOM = window.DOM || {};
+                const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
                 if (activeIframe && activeIframe.contentWindow) {
                     try { activeIframe.contentWindow.focus(); } catch (err) { }
-                    activeIframe.contentWindow.postMessage({ type: 'LF_TRIGGER_F2' }, '*');
+                    activeIframe.contentWindow.postMessage({
+                        type: 'LF_SHORTCUT_KEY_PROXY',
+                        code: 'F2',
+                        key: 'F2',
+                        shiftKey: !!e.shiftKey,
+                        ctrlKey: !!e.ctrlKey,
+                        metaKey: !!e.metaKey
+                    }, '*');
                 }
-            }
-        });
-
-        // Shortcuts & Key Event Proxying to Canvas Iframe
-        window.addEventListener('keydown', (e) => {
-            const isF2 = e.key === 'F2' || e.code === 'F2';
-            const isInput = e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
-
-            if (isInput && !isF2) return;
-
-            if (isF2) {
-                e.preventDefault();
-                console.log("[VCTRL CORE] F2 key down detected in parent window. isInput:", isInput);
-                if (isInput) {
-                    // Blur the parent editor/input and focus the canvas iframe
-                    e.target.blur();
-                    const DOM = window.DOM || {};
-                    if (DOM.iframe && DOM.iframe.contentWindow) {
-                        DOM.iframe.contentWindow.focus();
-                    }
-                    return;
-                }
-            }
-
-
-            const isS = e.key.toLowerCase() === 's' || e.code === 'KeyS';
-            if ((e.ctrlKey || e.metaKey) && isS) {
-                e.preventDefault();
-                handleGlobalSave();
                 return;
             }
 
+            // If user is typing in any input/textarea/editor, do NOT process parent shortcuts
+            if (isInput) return;
+
+            // 3. Undo / Redo Global Shortcuts
+            const isZ = e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ';
+            const isY = e.key === 'y' || e.key === 'Y' || e.code === 'KeyY';
+            if ((e.ctrlKey || e.metaKey) && ((isZ && e.shiftKey) || isY)) {
+                e.preventDefault();
+                console.log("[V4 Core] Parent Redo (Ctrl+Y / Ctrl+Shift+Z) caught. Triggering child redo.");
+                const DOM = window.DOM || {};
+                if (DOM.iframe && DOM.iframe.contentWindow) {
+                    DOM.iframe.contentWindow.postMessage({ type: 'LF_TRIGGER_REDO' }, '*');
+                }
+                return;
+            }
+            if ((e.ctrlKey || e.metaKey) && isZ && !e.shiftKey) {
+                e.preventDefault();
+                console.log("[V4 Core] Parent Ctrl+Z caught. Triggering child undo.");
+                const DOM = window.DOM || {};
+                if (DOM.iframe && DOM.iframe.contentWindow) {
+                    DOM.iframe.contentWindow.postMessage({ type: 'LF_TRIGGER_UNDO' }, '*');
+                } else if (window.V4UndoManager) {
+                    window.V4UndoManager.undo();
+                }
+                return;
+            }
+
+            // 4. Shift+G Responsive Grid Toggle
             const isShiftG = !e.ctrlKey && !e.metaKey && e.shiftKey && (e.key === 'G' || e.key === 'g' || e.code === 'KeyG');
-            if (isShiftG && !isInput && state.isCurrentResponsiveScreen) {
+            if (isShiftG && state.isCurrentResponsiveScreen) {
                 e.preventDefault();
                 if (typeof window.toggleResponsiveGrid === 'function') {
                     window.toggleResponsiveGrid();
@@ -1490,6 +1481,7 @@ window.init = async function () {
                 return;
             }
 
+            // 5. Escape Key Handling
             if (e.key === 'Escape') {
                 if (document.body.classList.contains('fullscreen-mode')) {
                     if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen(true);
@@ -1531,7 +1523,7 @@ window.init = async function () {
                     return;
                 }
 
-                // If user is currently typing in an input/textarea/quill in parent window, blur it first
+                // If user is currently typing in parent window, blur it
                 const activeEl = document.activeElement;
                 if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable || activeEl.classList.contains('ql-editor'))) {
                     activeEl.blur();
@@ -1545,32 +1537,28 @@ window.init = async function () {
                 return;
             }
 
-            // Proxy canvas shortcuts if we have active selections or targets
-            const proxiedCodes = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Delete', 'Backspace', 'Space', 'F2'];
-
+            // 6. Proxy Canvas Shortcuts to Iframe
+            const proxiedCodes = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Delete', 'Backspace', 'Space'];
             const isC = e.key.toLowerCase() === 'c' || e.code === 'KeyC';
             const isX = e.key.toLowerCase() === 'x' || e.code === 'KeyX';
             const isV = e.key.toLowerCase() === 'v' || e.code === 'KeyV';
             const isG = e.key.toLowerCase() === 'g' || e.code === 'KeyG';
             const isCtrlShortcut = (e.ctrlKey || e.metaKey) && (isC || isX || isV || isG);
 
-            if (proxiedCodes.includes(e.code) || isF2 || isCtrlShortcut) {
-                if (isF2) {
-                    console.log("[VCTRL CORE] F2 key down detected in parent window, proxying to iframe...");
-                }
+            if (proxiedCodes.includes(e.code) || isCtrlShortcut) {
+                const DOM = window.DOM || {};
                 if (DOM.iframe && DOM.iframe.contentWindow) {
                     try { DOM.iframe.contentWindow.focus(); } catch (err) { }
                     DOM.iframe.contentWindow.postMessage({
                         type: 'LF_SHORTCUT_KEY_PROXY',
-                        code: e.code || 'F2',
-                        key: e.key || 'F2',
+                        code: e.code,
+                        key: e.key,
                         shiftKey: e.shiftKey,
                         ctrlKey: e.ctrlKey,
                         metaKey: e.metaKey
                     }, '*');
 
-                    // Prevent default browser behaviors for layout movement keys, F2, and ctrl shortcuts
-                    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Space', 'F2'].includes(e.code) || isF2 || isCtrlShortcut) {
+                    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Space'].includes(e.code) || isCtrlShortcut) {
                         e.preventDefault();
                     }
                 }

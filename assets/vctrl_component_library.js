@@ -7,10 +7,10 @@ window.V4_COMPONENT_LIBRARY = {
     atoms: [
         {
             id: 'v4-btn-primary',
-            name: 'Glass Primary Button',
+            name: 'Pill Action Button',
             category: 'Atoms',
-            previewHtml: `<div class="v4-btn-glass" style="background: var(--v4-primary); border:none; box-shadow: 0 4px 12px var(--v4-primary-glow);">Click Me</div>`,
-            html: `<button class="v4-btn-glass" style="background: #6366f1; border:none; color:white; padding: 12px 24px; border-radius: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);">Primary Action</button>`
+            previewHtml: `<div class="v4-btn-glass" style="background: var(--v4-primary, #6366f1); border:none; height: 28px; border-radius: 14px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; box-shadow: 0 4px 12px var(--v4-primary-glow, rgba(99, 102, 241, 0.4));">Action</div>`,
+            html: `<button class="v4-btn-glass" style="background: #6366f1; border:none; color:white; height: 28px; padding: 0 18px; border-radius: 14px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; outline: none;">Primary Action</button>`
         },
         {
             id: 'v4-badge-new',
@@ -240,7 +240,7 @@ window.V4_COMPONENT_LIBRARY = {
             previewHtml: `<div style="display:flex; align-items:center; border:1px solid #ccc; background:#f8fafc; padding:4px; width:80px; height:40px; box-sizing:border-box;"><div style="width:25px; height:100%; background:#e2e8f0; border-right:1px solid #ccc;"></div><div style="flex:1; height:100%; background:#fff;"></div></div>`,
             html: `
             <div class="v4-admin-settings-container" data-row-count="1" data-row-height="44"
-                 data-row1-label="조회 항목" data-row1-cols="1" data-row1-type="textbox" data-row1-height="44"
+                 data-row1-label="조회 항목" data-row1-cols="1" data-row1-type="textbox" data-row1-height="44" data-row1-required="false"
                  style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background: #ffffff; border: 1.6px solid rgb(226, 232, 240); border-radius: 8px; font-family: inherit; display: flex; flex-direction: column; overflow: hidden; isolation: isolate; contain: paint; -webkit-mask-image: -webkit-radial-gradient(white, black); mask-image: radial-gradient(white, black); transform: translateZ(0); pointer-events: auto;">
                 <div class="v4-admin-settings-table" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
                     <!-- Row 1 -->

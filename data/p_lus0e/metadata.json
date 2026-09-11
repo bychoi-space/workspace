@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-11T05:33:18.129Z",
+      "updatedAt": "2026-09-11T05:34:54.755Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -30,8 +30,8 @@
               "active": true
             },
             "mobile": {
-              "x": 567,
-              "y": 1277,
+              "x": 170,
+              "y": 250,
               "active": true
             }
           },
@@ -50,8 +50,8 @@
               "active": true
             },
             "mobile": {
-              "x": 170,
-              "y": 250,
+              "x": 5,
+              "y": 554,
               "active": true
             }
           },
@@ -70,8 +70,8 @@
               "active": true
             },
             "mobile": {
-              "x": 5,
-              "y": 554,
+              "x": 1,
+              "y": 833,
               "active": true
             }
           },
@@ -90,8 +90,8 @@
               "active": true
             },
             "mobile": {
-              "x": 12,
-              "y": 960,
+              "x": 0,
+              "y": 962,
               "active": true
             }
           },
@@ -99,18 +99,18 @@
           "type": "pin"
         },
         {
-          "text": "Edit Text",
+          "text": "어드민 상품 영역의 [그룹] 설정된 데이터 표현\n- 기존 기획전 기능과동일",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 10,
-          "y": 1044,
+          "x": 7,
+          "y": 1046,
           "pins": {
             "pc": {
-              "x": 10,
-              "y": 1044,
+              "x": 7,
+              "y": 1046,
               "active": true
             },
             "mobile": {
-              "x": 225,
+              "x": 230,
               "y": 1031,
               "active": true
             }
@@ -315,7 +315,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 14:33:18",
+  "updated": "2026-09-11 14:34:54",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

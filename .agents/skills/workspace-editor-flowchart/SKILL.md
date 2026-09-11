@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-flowchart
-description: Use when creating or editing Workspace Editor process screens, flowcharts, 1600x900 absolute-position layouts, nodes, connectors, elbow arrows, straight arrows, diamond decisions, Y/N labels, dividers, swimlane-like sections, or scroll-free process diagrams.
+description: Use when creating or editing Workspace Editor process screens, flowcharts, 1600x900 absolute-position layouts, nodes, connectors, straight arrows, diamond decisions, Y/N labels, dividers, swimlane-like sections, or scroll-free process diagrams.
 ---
 
 # Workspace Editor Flowchart
@@ -16,7 +16,7 @@ description: Use when creating or editing Workspace Editor process screens, flow
 - When the actor/system changes, such as Web/App Storefront, Backend/API, OMS/SAP, or POS, use horizontal dotted dividers to separate visual zones.
 
 ## Connector Precision
-- Mix elbow connectors (`v4-connector-elbow`), straight connectors (`v4-connector-straight`), and block arrows (`v4-shape-arrow`) only when it improves readability.
+- Use straight lines (`v4-shape-line`), connectors, and block arrows (`v4-shape-arrow`) appropriately to maintain high visual clarity and readability.
 - Utilize automatic port magnetic snapping (`collectSnapTargets`) and real-time anchoring (`syncAnchoredPositions`) so connectors stay pixel-precisely attached to node edges.
 - Recheck connector positions after moving any node; ensure automatic follow-along logic (`syncAnchoredPositions`) keeps lines smoothly connected.
 

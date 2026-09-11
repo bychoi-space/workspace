@@ -39,8 +39,7 @@
     // 1. Message Listeners
     if (window.MessageHub) {
         MessageHub.subscribe('LF_COMP_SELECTED', (data) => {
-            const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-            const targetId = data.id || (iframeWin && iframeWin.document.querySelector('.lf-component.selected')?.id);
+            const targetId = data.id || window.activeCompId || (window.state && window.state.selectedComponent && window.state.selectedComponent.id) || null;
             if (targetId) {
                 activeCompId = targetId;
                 window.activeCompId = targetId;
@@ -171,12 +170,11 @@
                 return selIds[0];
             }
         }
-        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-        const domSelectedId = iframeWin?.document?.querySelector('.lf-component.selected')?.id;
-        if (domSelectedId) {
-            activeCompId = domSelectedId;
-            window.activeCompId = domSelectedId;
-            return domSelectedId;
+        const stateSelectedId = (window.state && window.state.selectedComponent && window.state.selectedComponent.id) || null;
+        if (stateSelectedId) {
+            activeCompId = stateSelectedId;
+            window.activeCompId = stateSelectedId;
+            return stateSelectedId;
         }
         return activeCompId || window.activeCompId || null;
     }
@@ -334,6 +332,8 @@
     };
 
     document.addEventListener('input', (e) => {
+        if (e.target.closest('#admin-settings-inspector-section')) return;
+
         const id = e.target.id;
         if (SPECIAL_STYLE_CONFIGS[id]) {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
@@ -369,6 +369,8 @@
     });
 
     document.addEventListener('change', (e) => {
+        if (e.target.closest('#admin-settings-inspector-section')) return;
+
         if (e.target.classList.contains('v4-prop-input')) {
             const prop = e.target.dataset.prop;
             const value = e.target.value;
@@ -394,6 +396,8 @@
     };
 
     document.addEventListener('click', (e) => {
+        if (e.target.closest('#admin-settings-inspector-section')) return;
+
         const btn = e.target.closest('.v4-color-none-btn');
         if (btn) {
             const prop = btn.dataset.prop;

@@ -288,6 +288,115 @@ window.v4ResponsivePinsScript = `
         });
     };
 
+    window.v4MessageHandlers = window.v4MessageHandlers || {};
+
+    window.v4MessageHandlers['LF_IMPORT_PINS'] = function(d) {
+        if (isResponsiveScreen()) {
+            window.importResponsivePins(d.pins);
+            return;
+        }
+        const host = document.body;
+        (d.pins || []).forEach(function(pin, idx) {
+            let div = document.getElementById('v4-pin-' + idx);
+            if (div) return;
+            
+            div = document.createElement('div');
+            div.id = 'v4-pin-' + idx;
+            host.appendChild(div);
+            
+            const isPinType = (pin.type === 'pin' || pin.type === undefined);
+            div.className = 'lf-component ' + (isPinType ? 'pin-marker' : 'text-marker');
+            
+            if (isPinType) {
+                div.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
+                                '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
+                div.style.width = '20px';
+                div.style.height = '20px';
+            } else {
+                div.innerHTML = '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:' + (pin.color || '#000') + '">' + (pin.html || pin.text || '') + '</div>' +
+                                '<div class="lf-delete-trigger">&times;</div>';
+                div.style.width = 'fit-content';
+                div.style.height = 'auto';
+            }
+            div.style.zIndex = '1000';
+
+            let xVal = parseFloat(pin.x) || 0;
+            let yVal = parseFloat(pin.y) || 0;
+            
+            if (!pin.standardized && xVal <= 100 && yVal <= 100) {
+                xVal = xVal * 14.4;
+                yVal = yVal * 9.0;
+            }
+
+            div.style.left = xVal + 'px';
+            div.style.top = yVal + 'px';
+            
+            if (typeof window.updateHandles === 'function') window.updateHandles(div);
+        });
+    };
+
+    window.v4MessageHandlers['LF_REORDER_PINS'] = function(d) {
+        if (isResponsiveScreen()) {
+            window.reorderResponsivePins();
+            return;
+        }
+        document.querySelectorAll('.pin-marker, .text-marker').forEach(function(el) { el.remove(); });
+        const host = document.body;
+        const pinsList = d.pins || [];
+        pinsList.forEach(function(pin, idx) {
+            const div = document.createElement('div');
+            div.id = 'v4-pin-' + idx;
+            host.appendChild(div);
+            
+            const isPinType = (pin.type === 'pin' || pin.type === undefined);
+            div.className = 'lf-component ' + (isPinType ? 'pin-marker' : 'text-marker');
+            
+            if (isPinType) {
+                div.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
+                                '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
+                div.style.width = '20px';
+                div.style.height = '20px';
+            } else {
+                div.innerHTML = '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:' + (pin.color || '#000') + '">' + (pin.html || pin.text || '') + '</div>' +
+                                '<div class="lf-delete-trigger">&times;</div>';
+                div.style.width = 'fit-content';
+                div.style.height = 'auto';
+            }
+            div.style.zIndex = '1000';
+
+            let xVal = parseFloat(pin.x) || 0;
+            let yVal = parseFloat(pin.y) || 0;
+            
+            if (!pin.standardized && xVal <= 100 && yVal <= 100) {
+                xVal = xVal * 14.4;
+                yVal = yVal * 9.0;
+            }
+
+            div.style.left = xVal + 'px';
+            div.style.top = yVal + 'px';
+            
+            if (typeof window.updateHandles === 'function') window.updateHandles(div);
+        });
+    };
+
+    window.v4MessageHandlers['LF_UPDATE_PIN_CONTENT'] = function(d) {
+        const comp = (d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+        if (comp) {
+            const cell = comp.querySelector('.v4-editable-cell') || (comp.classList.contains('v4-editable-cell') ? comp : null);
+            if (cell) {
+                if (document.activeElement && (cell === document.activeElement || cell.contains(document.activeElement))) {
+                    return;
+                }
+                if (window.V4UndoManager) window.V4UndoManager.saveState();
+                cell.innerHTML = d.html;
+                if (typeof window.markDirty === 'function') window.markDirty();
+                if (typeof window.resizeToFitText === 'function') {
+                    window.resizeToFitText(comp);
+                }
+            }
+        }
+    };
+
     window.addEventListener('message', function(e) {
         const d = e.data;
         if (!d || typeof d !== 'object') return;

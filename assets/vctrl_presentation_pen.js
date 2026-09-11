@@ -23,6 +23,7 @@
     function initPenCanvas() {
         // Create and inject canvas if not exists directly to body
         canvas = document.getElementById('presentation-pen-canvas');
+        const isFullscreen = document.body.classList.contains('fullscreen-mode');
         if (!canvas) {
             canvas = document.createElement('canvas');
             canvas.id = 'presentation-pen-canvas';
@@ -33,10 +34,13 @@
                 width: '100vw',
                 height: '100vh',
                 pointerEvents: 'none',
+                display: isFullscreen ? 'block' : 'none',
                 zIndex: '99999' // Topmost layer
             });
             document.body.appendChild(canvas);
             console.log("[Presentation Pen] Dynamic fixed Canvas injected to body successfully.");
+        } else {
+            canvas.style.display = isFullscreen ? 'block' : 'none';
         }
 
         ctx = canvas.getContext('2d');
@@ -53,6 +57,14 @@
         window.addEventListener('mousedown', handleMouseDown);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('mouseleave', () => { lastMousePos = null; });
+        document.addEventListener('mouseleave', () => { lastMousePos = null; });
+        window.addEventListener('blur', () => {
+            lastMousePos = null;
+            isShiftPressed = false;
+            isDrawingPen = false;
+            currentStroke = null;
+        });
 
         // Start drawing frame loop
         startDrawLoop();
@@ -212,10 +224,12 @@
         penStrokes = [];
         currentStroke = null;
         laserPoints = [];
+        lastMousePos = null;
         if (ctx && canvas) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
     }
+    window.clearPresentationPen = clearDrawings;
 
     let tooltip = null;
     let fadeTimeout = null;
@@ -305,6 +319,9 @@
             if (isFullscreen) {
                 // Entering Fullscreen Presentation Mode
                 resizeCanvas();
+                if (canvas) {
+                    canvas.style.display = 'block';
+                }
                 showTooltip();
                 
                 // Programmatically hide properties card immediately if open
@@ -326,7 +343,9 @@
                 if (canvas) {
                     canvas.style.pointerEvents = 'none';
                     canvas.style.cursor = 'default';
+                    canvas.style.display = 'none';
                 }
+                lastMousePos = null;
                 isShiftPressed = false;
                 isDrawingPen = false;
             }
@@ -349,6 +368,22 @@
             if (!canvas || !ctx) {
                 animationFrameId = requestAnimationFrame(drawFrame);
                 return;
+            }
+
+            const isFullscreen = document.body.classList.contains('fullscreen-mode');
+            if (!isFullscreen) {
+                if (lastMousePos !== null || laserPoints.length > 0 || penStrokes.length > 0) {
+                    clearDrawings();
+                }
+                if (canvas.style.display !== 'none') {
+                    canvas.style.display = 'none';
+                }
+                animationFrameId = requestAnimationFrame(drawFrame);
+                return;
+            }
+
+            if (canvas.style.display === 'none') {
+                canvas.style.display = 'block';
             }
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -400,7 +435,7 @@
             }
 
             // Draw Shiny Laser Pointer Head
-            if (lastMousePos) {
+            if (lastMousePos && isFullscreen) {
                 ctx.beginPath();
                 ctx.arc(lastMousePos.x, lastMousePos.y, 6, 0, Math.PI * 2);
                 ctx.fillStyle = '#ef4444';

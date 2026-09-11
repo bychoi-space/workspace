@@ -4,15 +4,9 @@
  * Encapsulates state synchronization (Read), event handling (Write), and column rendering.
  */
 (function() {
-    console.log("[Inspector Grid] Domain module loaded.");
+    console.log("[Inspector Grid] Domain module loaded v334 (with column data reordering).");
 
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
+    const highlightActive = window.highlightActive;
 
     const notifyGrid = (data) => {
         const targetId = (window.state && window.state.selectedComponent && window.state.selectedComponent.id) ||
@@ -22,14 +16,7 @@
         if (targetId && !payload.id) {
             payload.id = targetId;
         }
-        if (window.EditorBus) {
-            window.EditorBus.sendToIframe(payload);
-        } else {
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_GRID_PROPERTIES', payload);
-            }
-        }
+        window.notifyIframe(payload);
     };
 
     window.InspectorGrid = {
@@ -66,7 +53,7 @@
             }
             
             if (typeof this.renderColumnCards === 'function') {
-                this.renderColumnCards(comp.gridColumns || [], comp.gridHeaders || []);
+                this.renderColumnCards(comp.gridColumns || [], comp.gridHeaders || [], true);
             }
             
             const s = comp.currentStyles || {};
@@ -94,12 +81,21 @@
             }
         },
 
-        renderColumnCards: function(columns, headers) {
+        renderColumnCards: function(columns, headers, force) {
             const container = document.getElementById('grid-columns-container');
             if (!container) return;
-            const activeEl = document.activeElement;
-            const isTyping = activeEl && (container.contains(activeEl) || activeEl.classList.contains('grid-col-name-input') || activeEl.classList.contains('grid-col-width-input') || activeEl.classList.contains('grid-col-options-input'));
-            if (isTyping) return;
+            if (!force) {
+                const activeEl = document.activeElement;
+                const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+                const isTyping = !isBtn && activeEl && (
+                    activeEl.classList.contains('grid-col-name-input') || 
+                    activeEl.classList.contains('grid-col-width-input') || 
+                    activeEl.classList.contains('grid-col-options-input') ||
+                    (activeEl.tagName === 'INPUT' && container.contains(activeEl)) ||
+                    (activeEl.tagName === 'TEXTAREA' && container.contains(activeEl))
+                );
+                if (isTyping) return;
+            }
             container.innerHTML = '';
             
             let colsList = [];
@@ -287,22 +283,32 @@
                 if (btnUp && index > 0) {
                     btnUp.onclick = () => {
                         const currentCols = getCurrentColsFromInputs();
-                        const temp = currentCols[index];
-                        currentCols[index] = currentCols[index - 1];
-                        currentCols[index - 1] = temp;
-                        this.renderColumnCards(currentCols);
-                        notifyGrid({ columns: currentCols });
+                        const fromIdx = index;
+                        const toIdx = index - 1;
+                        const temp = currentCols[fromIdx];
+                        currentCols[fromIdx] = currentCols[toIdx];
+                        currentCols[toIdx] = temp;
+                        this.renderColumnCards(currentCols, null, true);
+                        notifyGrid({ 
+                            columns: currentCols,
+                            moveColumn: { from: fromIdx, to: toIdx }
+                        });
                     };
                 }
 
                 if (btnDown && index < colsList.length - 1) {
                     btnDown.onclick = () => {
                         const currentCols = getCurrentColsFromInputs();
-                        const temp = currentCols[index];
-                        currentCols[index] = currentCols[index + 1];
-                        currentCols[index + 1] = temp;
-                        this.renderColumnCards(currentCols);
-                        notifyGrid({ columns: currentCols });
+                        const fromIdx = index;
+                        const toIdx = index + 1;
+                        const temp = currentCols[fromIdx];
+                        currentCols[fromIdx] = currentCols[toIdx];
+                        currentCols[toIdx] = temp;
+                        this.renderColumnCards(currentCols, null, true);
+                        notifyGrid({ 
+                            columns: currentCols,
+                            moveColumn: { from: fromIdx, to: toIdx }
+                        });
                     };
                 }
 
@@ -311,8 +317,11 @@
                         const currentCols = getCurrentColsFromInputs();
                         if (currentCols.length <= 1) return;
                         currentCols.splice(index, 1);
-                        this.renderColumnCards(currentCols);
-                        notifyGrid({ columns: currentCols });
+                        this.renderColumnCards(currentCols, null, true);
+                        notifyGrid({ 
+                            columns: currentCols,
+                            deleteColumn: index
+                        });
                         if (colCountInp) colCountInp.value = currentCols.length;
                     };
                 }
@@ -454,7 +463,7 @@
                         return { name: inp ? inp.value : '', type: t, width: wVal + 'px', options: oVal, clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal, align: colAlign };
                     });
                     notifyGrid({ columns: updatedCols });
-                    this.renderColumnCards(updatedCols);
+                    this.renderColumnCards(updatedCols, null, true);
                     const colCountInp = document.getElementById('prop-grid-col-count');
                     if (colCountInp) colCountInp.value = updatedCols.length;
                 };
@@ -490,7 +499,7 @@
                         align: 'center'
                     });
                     notifyGrid({ columns: updatedCols });
-                    this.renderColumnCards(updatedCols);
+                    this.renderColumnCards(updatedCols, null, true);
                     const colCountInp = document.getElementById('prop-grid-col-count');
                     if (colCountInp) colCountInp.value = updatedCols.length;
                 };

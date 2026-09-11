@@ -60,10 +60,10 @@ window.V4_COMPONENT_LIBRARY = {
             height: '60px',
             previewHtml: `<div style="width: 80px; height: 30px; background: var(--v4-input-bg, #fafaf2); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 4px; padding: 2px; font-size: 8px; color: var(--v4-placeholder-color, #a3a3a3); box-sizing: border-box; font-family: inherit;">Placeholder</div>`,
             html: `
-            <div class="v4-textarea-container" style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background-color: var(--v4-input-bg, #fafaf2); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; display: flex; flex-direction: column; padding: 10px 12px; pointer-events: auto;">
+            <div class="v4-textarea-container" style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background-color: var(--v4-input-bg, #fafaf2); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; display: flex; flex-direction: column; padding: 10px 12px 6px 12px; pointer-events: auto;">
                 <div class="v4-textarea-placeholder" style="position: absolute; left: 12px; top: 10px; color: var(--v4-placeholder-color, #a3a3a3); pointer-events: none; font-size: 12px; font-weight: 400; user-select: none; font-family: inherit;">Placeholder</div>
-                <div contenteditable="true" class="v4-editable-cell v4-textarea-input" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; resize: none; overflow-y: auto; padding: 0 0 20px 0; word-break: break-all; white-space: pre-wrap; box-sizing: border-box; font-family: inherit;"></div>
-                <div class="v4-textarea-counter" style="position: absolute; right: 12px; bottom: 8px; font-size: 12px; font-weight: 400; color: var(--v4-placeholder-color, #a3a3a3); user-select: none; display: none; font-family: inherit;">0/100</div>
+                <div contenteditable="true" class="v4-editable-cell v4-textarea-input" style="width: 100%; flex: 1 1 auto; min-height: 0; border: none; outline: none; background: transparent; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; resize: none; overflow-y: auto; padding: 0 4px 0 0; word-break: break-all; white-space: pre-wrap; box-sizing: border-box; font-family: inherit;"></div>
+                <div class="v4-textarea-counter" style="align-self: flex-end; margin-top: 4px; font-size: 11px; line-height: 1; font-weight: 400; color: var(--v4-placeholder-color, #a3a3a3); user-select: none; display: none; font-family: inherit; flex-shrink: 0;">0/100</div>
             </div>`
         },
         {
@@ -241,11 +241,11 @@ window.V4_COMPONENT_LIBRARY = {
             html: `
             <div class="v4-admin-settings-container" data-row-count="1" data-row-height="44"
                  data-row1-label="조회 항목" data-row1-cols="1" data-row1-type="textbox" data-row1-height="44"
-                 style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background: #ffffff; border: 1.6px solid rgb(226, 232, 240); border-radius: 8px; font-family: inherit; display: flex; flex-direction: column; overflow: hidden; pointer-events: auto;">
+                 style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background: #ffffff; border: 1.6px solid rgb(226, 232, 240); border-radius: 8px; font-family: inherit; display: flex; flex-direction: column; overflow: hidden; isolation: isolate; contain: paint; -webkit-mask-image: -webkit-radial-gradient(white, black); mask-image: radial-gradient(white, black); transform: translateZ(0); pointer-events: auto;">
                 <div class="v4-admin-settings-table" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
                     <!-- Row 1 -->
                     <div class="v4-admin-row" style="display: flex; width: 100%; box-sizing: border-box; height: 44px;">
-                        <div class="v4-admin-label-cell v4-editable-cell" contenteditable="true" style="width: 140px; background: #f1f5f9; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); border-right: 1.6px solid rgb(226, 232, 240); box-sizing: border-box; flex-shrink: 0; font-family: inherit; outline: none; cursor: text; user-select: text; -webkit-user-select: text;">조회 항목</div>
+                        <div class="v4-admin-label-cell v4-editable-cell" contenteditable="true" style="width: 140px; background: #f1f5f9; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); border-right: 1.6px solid rgb(226, 232, 240); border-top-left-radius: 6.4px; border-bottom-left-radius: 6.4px; box-sizing: border-box; flex-shrink: 0; font-family: inherit; outline: none; cursor: text; user-select: text; -webkit-user-select: text;">조회 항목</div>
                         <div class="v4-admin-content-cell" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; padding: 0 16px; box-sizing: border-box;"></div>
                     </div>
                 </div>
@@ -463,17 +463,6 @@ window.V4_COMPONENT_LIBRARY = {
                     <line class="v4-line-path" x1="0" y1="50" x2="100" y2="50" style="stroke: #c8c8c8; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
                 </svg>
             </div>`
-        },
-        {
-            id: 'v4-connector-elbow',
-            name: 'Line (Elbow)',
-            koName: '꺾인선 화살표 선 커넥터',
-            category: 'Shapes',
-            iconType: 'svg',
-            iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px;"><polyline points="9 10 9 19 18 19"></polyline></svg>',
-            cardStyle: 'background: rgba(148, 163, 184, 0.1); border: 1.6px solid rgba(148, 163, 184, 0.2) !important;',
-            previewHtml: `<div style="width: 24px; height: 24px; border-left: 2px solid #3b82f6; border-bottom: 2px solid #3b82f6; position: relative;"><div style="position: absolute; right: -6px; bottom: -4px; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid #3b82f6;"></div></div>`,
-            onclick: "window.ConnectorEngine && window.ConnectorEngine.spawnLine('elbow')"
         },
         {
             id: 'v4-shape-pattern-grid',

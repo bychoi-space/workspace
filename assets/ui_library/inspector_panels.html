@@ -1378,15 +1378,15 @@
                             <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">배경색</label>
                             <div style="display: flex; gap: 4px; align-items: center;">
                                 <div class="v4-color-wrapper v4-checkerboard-bg" id="admin-group-header-bg-wrapper">
-                                    <input type="color" id="prop-admin-group-header-bg" class="v4-color-input" data-prop="background" value="#73829c">
+                                    <input type="color" id="prop-admin-group-header-bg" class="v4-admin-header-color-input" data-admin-prop="background" value="#73829c">
                                 </div>
-                                <button id="btn-admin-group-header-bg-none" class="v4-color-none-btn" data-prop="background" title="Transparent BG" style="width: 24px; height: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #f87171; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-sizing: border-box;"><span class="material-icons-outlined" style="font-size: 14px;">block</span></button>
+                                <button id="btn-admin-group-header-bg-none" class="v4-admin-header-none-btn" data-admin-prop="background" title="Transparent BG" style="width: 24px; height: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #f87171; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-sizing: border-box;"><span class="material-icons-outlined" style="font-size: 14px;">block</span></button>
                             </div>
                         </div>
                         <div class="prop-group">
                             <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">글자색</label>
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="admin-group-header-color-wrapper">
-                                <input type="color" id="prop-admin-group-header-color" class="v4-color-input" data-prop="color" value="#ffffff">
+                                <input type="color" id="prop-admin-group-header-color" class="v4-admin-header-color-input" data-admin-prop="color" value="#ffffff">
                             </div>
                         </div>
                     </div>
@@ -1398,22 +1398,7 @@
                 <!-- Dynamic Row Configs will be loaded here -->
             </div>
 
-            <!-- Action Bar Configuration -->
-            <div class="prop-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                <label style="font-size: 9px; color: #94a3b8; display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 6px;">
-                    <input type="checkbox" id="prop-admin-action-bar-enable" style="cursor: pointer; accent-color: var(--accent);">
-                    하단 액션 버튼(초기화/검색) 표시
-                </label>
-                <div id="admin-action-bar-config-sub" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px;">
-                    <div class="prop-group">
-                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">버튼 정렬</label>
-                        <select id="prop-admin-action-align" class="v4-prop-input" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px; height: 23px; box-sizing: border-box;">
-                            <option value="center">중앙 정렬 (Center)</option>
-                            <option value="right">우측 정렬 (Right)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+
 
             
         </div>

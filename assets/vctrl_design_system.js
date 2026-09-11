@@ -156,6 +156,16 @@ window.v4DesignSystemScript = `
                     if (header.style.outline !== 'none') header.style.outline = 'none';
                     if (header.style.borderBottom !== '1.6px solid rgb(226, 232, 240)') header.style.borderBottom = '1.6px solid rgb(226, 232, 240)';
                     if (header.style.flexShrink !== '0') header.style.flexShrink = '0';
+                    if (header.style.borderTopLeftRadius !== '6.4px') header.style.borderTopLeftRadius = '6.4px';
+                    if (header.style.borderTopRightRadius !== '6.4px') header.style.borderTopRightRadius = '6.4px';
+                    if (header.style.borderBottomLeftRadius !== '0px') header.style.borderBottomLeftRadius = '0px';
+                    if (header.style.borderBottomRightRadius !== '0px') header.style.borderBottomRightRadius = '0px';
+                    if (header.style.overflow !== 'hidden') header.style.overflow = 'hidden';
+                    if (!header.style.clipPath || !header.style.clipPath.includes('round 6.4px')) {
+                        header.style.clipPath = 'inset(0 0 0 0 round 6.4px 6.4px 0 0)';
+                        header.style.webkitClipPath = 'inset(0 0 0 0 round 6.4px 6.4px 0 0)';
+                    }
+                    if (header.style.backgroundClip !== 'padding-box') header.style.backgroundClip = 'padding-box';
                     
                     if (header.getAttribute('data-enforced-bg') !== bgCol) {
                         header.style.backgroundColor = bgCol;
@@ -177,21 +187,54 @@ window.v4DesignSystemScript = `
             });
 
             document.querySelectorAll('.v4-admin-settings-container').forEach(container => {
+                const comp = container.closest('.lf-component');
+                if (comp) {
+                    if (comp.style.background && comp.style.background !== 'transparent') comp.style.background = 'transparent';
+                    if (comp.style.backgroundColor && comp.style.backgroundColor !== 'transparent') comp.style.backgroundColor = 'transparent';
+                }
+                if (container.style.overflow !== 'hidden') container.style.overflow = 'hidden';
+                if (container.style.borderRadius !== '8px') container.style.borderRadius = '8px';
+                if (container.style.isolation !== 'isolate') container.style.isolation = 'isolate';
+                if (container.style.contain !== 'paint') container.style.contain = 'paint';
+                if (!container.style.webkitMaskImage) container.style.webkitMaskImage = '-webkit-radial-gradient(white, black)';
+                if (container.style.maskImage !== 'radial-gradient(white, black)') container.style.maskImage = 'radial-gradient(white, black)';
+                if (container.style.transform !== 'translateZ(0px)' && !container.style.transform.includes('translateZ')) container.style.transform = 'translateZ(0)';
+
+                // Auto cleanup legacy action bar if present
+                container.querySelectorAll('.v4-admin-action-bar').forEach(ab => ab.remove());
+                container.removeAttribute('data-show-action-bar');
+                container.removeAttribute('data-action-align');
+
+                const hasGroupHeader = container.getAttribute('data-show-group-header') === 'true';
+                const rows = container.querySelectorAll('.v4-admin-row');
+                if (rows.length > 0) {
+                    const firstRowFirstLabel = rows[0].querySelector('.v4-admin-label-cell');
+                    if (firstRowFirstLabel) {
+                        const expectedTLR = hasGroupHeader ? '0px' : '6.4px';
+                        if (firstRowFirstLabel.style.borderTopLeftRadius !== expectedTLR) {
+                            firstRowFirstLabel.style.borderTopLeftRadius = expectedTLR;
+                        }
+                    }
+                    const lastRowFirstLabel = rows[rows.length - 1].querySelector('.v4-admin-label-cell');
+                    if (lastRowFirstLabel) {
+                        if (lastRowFirstLabel.style.borderBottomLeftRadius !== '6.4px') {
+                            lastRowFirstLabel.style.borderBottomLeftRadius = '6.4px';
+                        }
+                    }
+                }
+
                 const table = container.querySelector('.v4-admin-settings-table');
                 if (table) {
                     if (table.style.flex !== '1 1 0%' && table.style.flex !== '1') table.style.flex = '1';
                     if (table.style.height !== 'auto') table.style.height = 'auto';
                 }
-                const comp = container.closest('.lf-component');
                 if (comp) {
                     const hasGroupHeader = container.getAttribute('data-show-group-header') === 'true';
                     const headerHeight = hasGroupHeader ? 40 : 0;
-                    const hasActionBar = container.getAttribute('data-show-action-bar') === 'true';
-                    const actionBarHeight = hasActionBar ? 44 : 0;
                     const totalRows = parseInt(container.getAttribute('data-row-count')) || 1;
                     const globalRowHeight = parseInt(container.getAttribute('data-row-height')) || 44;
                     
-                    let expectedHeight = headerHeight + actionBarHeight;
+                    let expectedHeight = headerHeight;
                     for (let i = 1; i <= totalRows; i++) {
                         const specificHeight = parseInt(container.getAttribute('data-row' + i + '-height')) || globalRowHeight;
                         expectedHeight += specificHeight;

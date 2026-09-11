@@ -11,7 +11,7 @@
 
 window.v4GridScript = `
 (function() {
-    console.log("[V4 Grid] Module loaded.");
+    console.log("[V4 Grid] Module loaded v334 (with column data reordering).");
 
     var MOCK_LIST = [
         { no: "1024", name: "[\uD574\uC9C0\uC2A4] \uC5EC\uB984 \uB9DE\uC774 \uB9B0\uB128 \uC154\uCE20 \uD2B9\uAC00 \uB77C\uC774\uBE0C", status: "\uBC29\uC1A1\uC811", statusColor: "#10b981", statusBg: "rgba(52,211,153,0.15)", author: "\uAE40\uC5D8\uC5D0\uD504", date: "2026-07-01 11:00:00", price: "89,000\uC680", category: "\uC758\uB958", badge: "BEST", orderNo: "ORD-20260701-01", userId: "user01" },
@@ -113,6 +113,19 @@ window.v4GridScript = `
         return "left";
     };
 
+    var swapChildren = function(parent, idxA, idxB) {
+        if (!parent) return;
+        var children = Array.from(parent.children);
+        if (idxA === idxB || idxA < 0 || idxB < 0 || idxA >= children.length || idxB >= children.length) return;
+        var minIdx = Math.min(idxA, idxB);
+        var maxIdx = Math.max(idxA, idxB);
+        var minNode = children[minIdx];
+        var maxNode = children[maxIdx];
+        var nextOfMax = maxNode.nextSibling;
+        parent.insertBefore(maxNode, minNode);
+        parent.insertBefore(minNode, nextOfMax);
+    };
+
     var bindGridCellEvents = function(cell, isHeader, colIdx) {
         if (!cell || cell.dataset.eventsBound) return;
         cell.dataset.eventsBound = "true";
@@ -180,9 +193,10 @@ window.v4GridScript = `
                 try {
                     var gridContainer = cell.closest(".v4-grid-container");
                     if (gridContainer) {
+                        var currentIdx = cell.parentNode ? Array.from(cell.parentNode.children).indexOf(cell) : colIdx;
                         var cols = JSON.parse(gridContainer.getAttribute("data-columns") || "[]");
-                        if (cols[colIdx]) {
-                            cols[colIdx].name = cell.innerText.replace(" \u21C5", "").trim();
+                        if (currentIdx >= 0 && cols[currentIdx]) {
+                            cols[currentIdx].name = cell.innerText.replace(" \u21C5", "").trim();
                             gridContainer.setAttribute("data-columns", JSON.stringify(cols));
                         }
                     }
@@ -332,7 +346,19 @@ window.v4GridScript = `
                         var fontSize = th.style.fontSize;
                         var fontFamily = th.style.fontFamily;
                         var align = getResolvedAlign(col);
+                        var w = col.width;
+                        if (!w) {
+                            w = (col.type === "checkbox" ? "50px" : (col.type === "number" || col.type === "action" ? "80px" : "120px"));
+                        } else {
+                            w = w.trim();
+                            if (/^\\d+$/.test(w) || /^\\d*\\.\\d+$/.test(w)) {
+                                w = w + "px";
+                            }
+                        }
 
+                        th.style.setProperty("width", w, "important");
+                        th.style.setProperty("min-width", w, "important");
+                        th.style.setProperty("max-width", w, "important");
                         th.style.borderRight = "1.6px solid rgb(226, 232, 240)";
                         th.style.setProperty("text-align", align, "important");
                         th.style.setProperty("padding", col.type === "checkbox" ? "0" : "0 8px", "important");
@@ -745,6 +771,57 @@ window.v4GridScript = `
         } else {
             targetRowHeight = container.getAttribute("data-row-height");
         }
+
+        if (typeof d.deleteColumn === "number") {
+            var delIdx = d.deleteColumn;
+            var tblDel = container.querySelector("table");
+            if (tblDel) {
+                var colgrpDel = tblDel.querySelector("colgroup");
+                if (colgrpDel && colgrpDel.children[delIdx]) colgrpDel.removeChild(colgrpDel.children[delIdx]);
+                var thdDel = tblDel.querySelector("thead tr");
+                if (thdDel && thdDel.children[delIdx]) thdDel.removeChild(thdDel.children[delIdx]);
+                var tbdDel = tblDel.querySelector("tbody");
+                if (tbdDel) {
+                    var rwsDel = Array.from(tbdDel.querySelectorAll("tr"));
+                    rwsDel.forEach(function(rw) {
+                        if (rw.children[delIdx]) rw.removeChild(rw.children[delIdx]);
+                    });
+                }
+            }
+        }
+
+        if (d.moveColumn && typeof d.moveColumn.from === "number" && typeof d.moveColumn.to === "number") {
+            var fromIdx = d.moveColumn.from;
+            var toIdx = d.moveColumn.to;
+            var tbl = container.querySelector("table");
+            if (tbl) {
+                var reorderChildren = function(parent) {
+                    if (!parent) return;
+                    var oldChildren = Array.from(parent.children);
+                    if (fromIdx < 0 || toIdx < 0 || fromIdx >= oldChildren.length || toIdx >= oldChildren.length) return;
+                    var targetOrder = [];
+                    for (var i = 0; i < oldChildren.length; i++) targetOrder.push(i);
+                    var temp = targetOrder[fromIdx];
+                    targetOrder[fromIdx] = targetOrder[toIdx];
+                    targetOrder[toIdx] = temp;
+                    targetOrder.forEach(function(idx) {
+                        if (oldChildren[idx]) parent.appendChild(oldChildren[idx]);
+                    });
+                };
+                var colgrp = tbl.querySelector("colgroup");
+                if (colgrp) reorderChildren(colgrp);
+                var thd = tbl.querySelector("thead tr");
+                if (thd) reorderChildren(thd);
+                var tbd = tbl.querySelector("tbody");
+                if (tbd) {
+                    var rws = Array.from(tbd.querySelectorAll("tr"));
+                    rws.forEach(function(rw) {
+                        reorderChildren(rw);
+                    });
+                }
+            }
+        }
+
         if (window.renderGrid) {
             window.renderGrid(container, currentCols, rowCount, showPagination, targetRowHeight, showZebra, fillMock);
         }

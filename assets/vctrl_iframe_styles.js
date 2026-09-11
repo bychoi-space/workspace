@@ -451,9 +451,37 @@ html, body { position: relative !important; min-height: 100vh; margin: 0; paddin
 }
 .v4-alert-btn.style-primary { background: #4f46e5 !important; border-color: #4f46e5 !important; color: #ffffff !important; font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
 .v4-alert-btn.style-normal { background: #ffffff !important; border-color: #cbd5e1 !important; color: var(--v4-text-color, #0f172a) !important; font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
-.v4-alert-btn.style-negative { background: #e2e8f0 !important; border-color: #cbd5e1 !important; color: #475569 !important; font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
-.v4-alert-desc-badge { font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
-.v4-admin-group-header { font-size: 12px !important; font-weight: 400 !important; font-family: inherit !important; }
+.v4-admin-settings-container {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+    contain: paint !important;
+    -webkit-mask-image: -webkit-radial-gradient(white, black) !important;
+    mask-image: radial-gradient(white, black) !important;
+    transform: translateZ(0) !important;
+}
+.v4-admin-group-header {
+    border-top-left-radius: 6.4px !important;
+    border-top-right-radius: 6.4px !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    overflow: hidden !important;
+    clip-path: inset(0 0 0 0 round 6.4px 6.4px 0 0) !important;
+    -webkit-clip-path: inset(0 0 0 0 round 6.4px 6.4px 0 0) !important;
+    background-clip: padding-box !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    font-family: inherit !important;
+}
+.v4-admin-settings-container:not([data-show-group-header="true"]) .v4-admin-settings-table .v4-admin-row:first-child .v4-admin-label-cell:first-child {
+    border-top-left-radius: 6.4px !important;
+}
+.v4-admin-settings-container[data-show-group-header="true"] .v4-admin-settings-table .v4-admin-row:first-child .v4-admin-label-cell:first-child {
+    border-top-left-radius: 0 !important;
+}
+.v4-admin-settings-container .v4-admin-settings-table .v4-admin-row:last-child .v4-admin-label-cell:first-child {
+    border-bottom-left-radius: 6.4px !important;
+}
 .v4-admin-label-cell { font-size: 12px !important; font-weight: 400 !important; color: var(--v4-text-color, #0f172a) !important; font-family: inherit !important; }
 .v4-dp-preset-btn {
     border: 1.6px solid #cccccc !important;
@@ -586,5 +614,47 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 .pc-column.active-column .frame-label-bar,
 .mobile-column.active-column .frame-label-bar {
     border-color: rgba(0, 229, 255, 0.5) !important;
+}
+
+/* Textarea Atom: Scrollbar & Character Counter Flexbox Isolation Standard */
+.v4-textarea-container {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 10px 12px 6px 12px !important;
+    box-sizing: border-box !important;
+}
+.v4-textarea-input {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    width: 100% !important;
+    overflow-y: auto !important;
+    padding: 0 4px 0 0 !important;
+    box-sizing: border-box !important;
+    word-break: break-all !important;
+    white-space: pre-wrap !important;
+}
+.v4-textarea-input::-webkit-scrollbar {
+    width: 5px !important;
+}
+.v4-textarea-input::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+.v4-textarea-input::-webkit-scrollbar-thumb {
+    background: #cbd5e1 !important;
+    border-radius: 3px !important;
+}
+.v4-textarea-input::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8 !important;
+}
+.v4-textarea-counter {
+    position: static !important;
+    align-self: flex-end !important;
+    margin-top: 4px !important;
+    line-height: 1 !important;
+    font-size: 11px !important;
+    color: var(--v4-placeholder-color, #94a3b8) !important;
+    user-select: none !important;
+    flex-shrink: 0 !important;
 }
 `;

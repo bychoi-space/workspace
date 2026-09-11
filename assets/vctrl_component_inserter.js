@@ -3,16 +3,7 @@
  * Manages V4 component library insertion, image upload handlers, and atomic component injection.
  */
 (function() {
-    function notifyIframe(data) {
-        if (window.EditorBus) {
-            window.EditorBus.sendToIframe(data);
-        } else {
-            const activeIframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-            if (activeIframe && activeIframe.contentWindow) {
-                activeIframe.contentWindow.postMessage(data, '*');
-            }
-        }
-    }
+    const notifyIframe = (data) => window.notifyIframe(data);
 
     window.insertV4ComponentById = function(id, customIdx) {
         if (id === 'v4-atom-image') {

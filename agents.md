@@ -3,7 +3,7 @@
 ## 🤖 Gemini 3.7 Flash / Antigravity 에이전트 가이드라인
 - **자율 실행 및 로컬 자체 완결 (Autonomous Local Execution)**: 사용자의 수동 승인(Accept / Submit / Run Confirm) 절차를 완전히 배제하고 작업 속도를 극대화하기 위해, PowerShell 명령어 실행(`run_command`), 코드 수정, 파일 생성, 정적 검증, 디버깅 등의 모든 작업은 중간 질문이나 사용자 확인 대기 없이 에이전트가 자체 판단하여 무조건 자동으로 즉시 실행하고 로컬에서 끝까지 완결 후 결과만 명확히 보고합니다.
 - **PowerShell / 터미널 작업 무조건 자동 실행 (Unconditional Auto-Run)**: 터미널 명령어나 검증 스크립트 실행 시 사용자에게 확인을 요청하지 않고 자율적으로 즉시 구동하여 신속하게 문제 해결 및 검증을 완료합니다.
-- **온디맨드 자동 GitHub 배포 (Automated On-Demand Deployment)**: GitHub 원격 저장소(`main`)로의 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 즉시 자동으로 커밋 및 푸시하여 동기화를 완료합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지합니다.)
+- **온디맨드 자동 GitHub 배포 (Automated On-Demand Deployment)**: GitHub 원격 저장소(`main`)로의 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 즉시 자동으로 커밋 및 푸시하여 동기화를 완료합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지하며, 브라우저 UI 측의 자동 저장 커밋으로 인한 충돌을 방지하기 위해 푸시 전 항상 `git pull --rebase origin main`을 선행하여 안전하게 동기화합니다.)
 - **엄격한 규칙 이행**: 사용자가 지정한 아키텍처 규칙, SSOT(Single Source of Truth), 인코딩 및 마스킹 표준을 예외 없이 100% 준수해야 합니다.
 - **정밀 심층 분석**: 코드를 수정하기 전 관련 모듈(`vctrl_*.js`)과 템플릿, 스타일시트를 전수 분석하여 예기치 못한 사이드이펙트를 원천 차단합니다.
 - **오류 자가 검증**: 대량 수정 후에는 브래킷 매칭, SyntaxError, ReferenceError 발생 여부를 엄격히 확인합니다.
@@ -235,10 +235,10 @@
   - **기본 치수 및 프레임 최적화**: 기본 너비는 **`1160px`**(반응형 PC 프레임 `.pc-content-inner` 너비와 100% 일치하여 오버플로우 방지), 기본 높이는 **`44px`**(1행 기준), 행 단위 세로 크기는 **`44px`**(엔터프라이즈 폼 표준 높이)입니다.
   - **다중 컬럼 균등 분할 (Equal Flex Division)**: 컬럼 개수(1~3개)에 따라 각 컬럼의 입력 영역(`.v4-admin-content-cell`)은 `flex: 1 1 0%; min-width: 0;`으로 완전 균등 분할되어 비대칭 왜곡 없이 1:1 (2컬럼) 또는 1:1:1 (3컬럼) 배치가 보장됩니다.
   - **캔버스 인라인 레이블 편집 (Direct Canvas Label Editing)**: 항목명 레이블 셀(`.v4-admin-label-cell`)에 `contenteditable="true"` 및 `v4-editable-cell` 클래스를 부여하여 사용자가 캔버스 위에서 직접 더블클릭/포커스로 라벨명을 편집할 수 있으며, `data-row{i}-label` 속성 및 우측 인스펙터 입력란과 실시간 양방향 동기화됩니다.
-  - **액션 버튼 바 (Action Buttons Bar)**: 인스펙터에서 조회 버튼 바 활성화(`adminShowActionBar: true/false`) 및 정렬(`adminActionAlign: center/right`)을 설정할 수 있으며, 활성화 시 하단에 `44px` 높이의 액션 바(`.v4-admin-action-bar`, `[초기화]` + `[검색]` SVG 버튼)가 렌더링됩니다.
+  - **그룹 타이틀 (Group Header)**: 인스펙터에서 그룹 타이틀(대제목) 표시 활성화(`adminShowGroupHeader: true/false`), 타이틀 텍스트, 배경색 및 글자색을 커스텀 설정할 수 있으며, 활성화 시 상단에 `40px` 높이의 헤더(`.v4-admin-group-header`, 캔버스 인라인 직접 편집 지원)가 렌더링됩니다.
   - **행 개수 및 동적 높이 계산**:
     - 행 개수(Row Count) 조절은 인스펙터의 **`[- 행 삭제]` / `[+ 행 추가]`** 물리 버튼으로 수행합니다.
-    - 컴포넌트의 전체 높이는 **`(행 개수 * 44px) + (액션 바 활성화 시 44px)`** 공식에 따라 실시간으로 자동 확장/축소(가변 처리)됩니다.
+    - 컴포넌트의 전체 높이는 **`(각 행별 높이 합산) + (그룹 타이틀 활성화 시 40px)`** 공식에 따라 실시간으로 자동 확장/축소(가변 처리)됩니다.
   - `Query Item` 아톰은 내부 조회 조건 영역(`.v4-admin-content-cell`)이 비어 있는 채로 생성되며, 사용자가 캔버스의 다른 아톰(인풋, 셀렉트박스, 데이트피커 등)을 자유롭게 끌어다 올리는 방식으로 조립합니다.
 - **인스펙터 타이핑 포커스 유지 (Focus Guard)**:
   - 사용자가 항목명을 입력하는 동안에는 `updateProperties`의 `restorePropertiesSections()` 및 `floatingBody.innerHTML` 비우기 등의 DOM 탈착 작업을 건너뛰어(Focus Guard) 연속적인 타이핑 중 활성화가 풀리는 문제를 완벽하게 차단해야 합니다.
@@ -280,6 +280,12 @@
   - Grid UI 하단에 원인 모를 36px 여백이 발생하거나 마지막 로우가 잘리는 현상을 차단하기 위해, 푸터가 활성화(`showPagination === true`)되어 있을 때의 테이블 영역 높이는 `calc(100% - 36px)`로 정확히 지정하고, 푸터가 꺼져 있을 때는 `100%`를 온전히 사용해야 합니다. (이전의 `-72px` 및 `-36px` 보정치는 36px 여백을 발생시키는 버그이므로 절대 금지합니다.)
 - **최상단 헤더 로우 스타일 보존 (Header Row Background Preservation)**:
   - partial update 시점에 최상단 헤더 로우(`thead tr`)의 배경을 강제로 `#ffffff`로 덮어쓰는 코드는 사용자가 작성해 둔 커스텀 헤더 배경 스타일을 파괴하므로 절대 배제해야 하며, 원래의 스타일을 그대로 유지하도록 보호해야 합니다.
+- **복합 테이블/그리드 스마트 가이드 이원화 아키텍처 (Row Container vs Cell Sibling Raycast)**:
+  - **행(Row)과 셀(Cell)의 역할 분리**: Grid UI(`table tr`) 및 Query Item(`.v4-admin-row`)처럼 2차원 표 구조를 가진 컴포넌트 위로 다른 오브젝트를 배치할 때, 행(`tr`)은 가상 행 컨테이너(`isRowContainer: true`)로, 각 셀(`td`, `th`)은 열 구분선 타겟(`isGridCell: true`)으로 엄격히 역할을 이원화해야 합니다.
+  - **컨테이너 인클로저 셀 제외 원칙 (`if (t.isGridCell) continue;`)**: 컨테이너 탐색 루프(`calculateSpacing`)에서 셀이 직속 컨테이너로 잘못 잡히면 행(`isRowContainer`) 우선순위가 무너져 상/하 레이캐스트가 외부로 튀는 버그가 발생합니다. 따라서 셀은 컨테이너 후보에서 배제하여 **컨테이너는 무조건 행(Row)으로만 잡히도록 강제**하고, 셀들은 동일 행 내부의 수평 레이캐스트(열 구분선 거리 측정) 전용 타겟으로만 동작하게 해야 합니다.
+  - **중첩 테이블 픽셀 퍼펙트 오프셋 계산 (`getBoundingClientRect` 상대차)**: `tr` 및 `td`는 `wrapper > table > tbody`로 다중 중첩되어 단순 `offsetLeft/offsetTop` 누적 시 1.6px 테두리 두께, 헤더 높이, `overflow: auto` 스크롤 등에 의해 좌표 오차가 발생합니다. 타겟 좌표 수집 시 반드시 부모 컴포넌트와 타겟 요소의 `getBoundingClientRect()` 간 상대차(`parentLeft + (cellRect.left - compRect.left)`)를 연산하거나 `getPureOffset`을 사용하여 100% 픽셀 퍼펙트 정합성을 보장해야 합니다.
+  - **컴포넌트 자체 이동 시 내부 타겟 자동 격리**: Grid UI 또는 Query Item 컴포넌트 전체를 선택하여 드래그할 때는 `activeEl.contains(c)` 가드를 통해 내부의 행/셀들이 타겟에서 100% 자동 스킵되도록 하여, 내부 가이드선 간섭 없이 캔버스 및 외부 형제 요소들과만 깔끔하게 가이드가 잡히도록 해야 합니다.
+
 ## 📱 반응형(PC & Mobile) 템플릿 스마트 가이드 및 키보드 이동 표준 규칙
 - **프레임 4방향 테두리(Wall) 픽셀 거리 정밀 측정**:
   - `vctrl_responsive_smartguide.js`는 반응형 컨테이너(`.pc-content-inner`, `.mobile-content-inner`) 내 오브젝트 이동 시 상/하/좌/우 4방향 테두리(`wall-left`, `wall-right`, `wall-top`, `wall-bottom`)와의 물리적 거리를 픽셀 단위로 정밀 측정하여 실시간 핑크 뱃지 및 가이드선을 표시합니다.

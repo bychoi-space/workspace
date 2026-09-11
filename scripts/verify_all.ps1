@@ -20,15 +20,14 @@ $jsFiles = @(
     "assets/vctrl_design_system.js",
     "assets/vctrl_shortcuts.js",
     "assets/vctrl_common.js",
-    "assets/vctrl_object_text.js",
     "assets/vctrl_object_shape.js",
-    "assets/vctrl_object_table.js",
     "assets/vctrl_object_connector.js",
     "assets/responsive_frame.js",
     "assets/vctrl_iframe_styles.js",
     "assets/vctrl_iframe_script.js",
     "assets/vctrl_iframe_grid.js",
     "assets/vctrl_iframe_accordion.js",
+    "assets/vctrl_iframe_tab.js",
     "assets/vctrl_iframe_drag.js",
     "assets/vctrl_iframe_ports.js",
     "assets/vctrl_presentation_pen.js",
@@ -36,21 +35,28 @@ $jsFiles = @(
     "assets/vctrl_smartguide.js",
     "assets/vctrl_responsive_smartguide.js",
     "assets/vctrl_responsive_multiselect.js",
+    "assets/vctrl_responsive_pins.js",
     "assets/vctrl_grouping.js",
+    "assets/vctrl_color_picker.js",
     "assets/vctrl_inspector.js",
-    "assets/vctrl_v3.js",
+    "assets/vctrl_screen_manager.js",
+    "assets/vctrl_annotation_pins.js",
+    "assets/vctrl_canvas_viewport.js",
     "assets/vctrl_properties.js",
     "assets/vctrl_connectors.js",
-    "enhanced_v4/component_library_v4.js",
+    "assets/vctrl_component_library.js",
     "assets/vctrl_table.js",
     "assets/vctrl_component_inserter.js",
-    "assets/vctrl_floating_inspector.js",
-    "assets/vctrl_v4_addon.js",
-    "assets/dashboard.js",
-    "assets/vctrl_pdf_exporter.js"
+    "assets/inspector/inspector_grid.js",
+    "assets/inspector/inspector_accordion.js",
+    "assets/inspector/inspector_tab.js",
+    "assets/inspector/inspector_shapes.js",
+    "assets/inspector/inspector_atoms.js",
+    "assets/inspector/inspector_admin_settings.js",
+    "assets/vctrl_v4_addon.js"
 )
 
-$scriptsTags = ($jsFiles | ForEach-Object { "<script src='../$_'></script>" }) -join "`n"
+$scriptsTags = ($jsFiles | ForEach-Object { "<script src='../$_' onerror=`"window.errors.push({ script: '$_' })`"></script>" }) -join "`n"
 
 $htmlContent = @"
 <!DOCTYPE html>
@@ -85,17 +91,17 @@ $htmlContent = @"
             { name: 'v4DesignSystemScript', code: window.v4DesignSystemScript },
             { name: 'v4ShortcutsScript', code: window.v4ShortcutsScript },
             { name: 'v4CommonScript', code: window.v4CommonScript },
-            { name: 'v4ObjectTextScript', code: window.v4ObjectTextScript },
             { name: 'v4ObjectShapeScript', code: window.v4ObjectShapeScript },
-            { name: 'v4ObjectTableScript', code: window.v4ObjectTableScript },
             { name: 'v4ObjectConnectorScript', code: window.v4ObjectConnectorScript },
             { name: 'v4DragResizeScript', code: window.v4DragResizeScript },
             { name: 'v4PortConnectorScript', code: window.v4PortConnectorScript },
             { name: 'v4GridScript', code: window.v4GridScript },
             { name: 'v4AccordionScript', code: window.v4AccordionScript },
+            { name: 'v4TabScript', code: window.v4TabScript },
             { name: 'v4ResponsiveSmartGuideScript', code: window.v4ResponsiveSmartGuideScript },
             { name: 'v4Script', code: window.v4Script },
-            { name: 'v4ResponsiveMultiselectScript', code: window.v4ResponsiveMultiselectScript }
+            { name: 'v4ResponsiveMultiselectScript', code: window.v4ResponsiveMultiselectScript },
+            { name: 'v4ResponsivePinsScript', code: window.v4ResponsivePinsScript }
         ];
 
         inlinedScripts.forEach(item => {
@@ -123,7 +129,7 @@ Write-Host "Test harness generated at: $testHarnessPath"
 
 # Run Edge Headless and dump DOM
 $tmpOut = "c:\Users\sisun\ai_work\scripts\edge_output_" + [System.Guid]::NewGuid().ToString("N") + ".txt"
-$proc = Start-Process -FilePath $edge -ArgumentList "--headless", "--disable-gpu", "--dump-dom", "$testHarnessPath" -PassThru -NoNewWindow -RedirectStandardOutput $tmpOut
+$proc = Start-Process -FilePath $edge -ArgumentList "--headless", "--disable-gpu", "--allow-file-access-from-files", "--dump-dom", "$testHarnessPath" -PassThru -NoNewWindow -RedirectStandardOutput $tmpOut
 $proc.WaitForExit(10000)
 Start-Sleep -Milliseconds 800
 
@@ -138,6 +144,9 @@ if (Test-Path $tmpOut) {
         }
     } finally {
         Remove-Item $tmpOut -Force -ErrorAction SilentlyContinue
+        Remove-Item $testHarnessPath -Force -ErrorAction SilentlyContinue
     }
+} else {
+    Remove-Item $testHarnessPath -Force -ErrorAction SilentlyContinue
 }
 

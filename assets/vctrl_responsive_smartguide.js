@@ -669,6 +669,281 @@ window.v4ResponsiveSmartGuideScript = `
             this.clearGuides(false);
         },
 
+
+        collectSnapTargets: function() {
+            const targets = [];
+            const rects = [];
+            document.querySelectorAll('.lf-component:not(.selected)').forEach(c => {
+                const l = parseFloat(c.style.left) || 0;
+                const t = parseFloat(c.style.top) || 0;
+                const w = c.offsetWidth;
+                const h = c.offsetHeight;
+                const name = c.id.replace('v4-comp-', 'Comp ');
+                targets.push({ x: l, label: name, part: 'Left', type: 'h' });
+                targets.push({ x: l + w / 2, label: name, part: 'Center', type: 'h' });
+                targets.push({ x: l + w, label: name, part: 'Right', type: 'h' });
+                targets.push({ y: t, label: name, part: 'Top', type: 'v' });
+                targets.push({ y: t + h / 2, label: name, part: 'Middle', type: 'v' });
+                targets.push({ y: t + h, label: name, part: 'Bottom', type: 'v' });
+                
+                const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table') || c.classList.contains('v4-grid-container') || !!c.querySelector('.v4-grid-container');
+                
+                rects.push({
+                    id: c.id,
+                    label: name,
+                    left: l,
+                    top: t,
+                    width: w,
+                    height: h,
+                    right: l + w,
+                    bottom: t + h,
+                    isTableContainer: isTable
+                });
+            });
+
+            // Virtual row containers for multi-row tables (Query Item & Grid UI)
+            document.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr').forEach((row, rIdx) => {
+                const parentComp = row.closest('.lf-component');
+                if (!parentComp) return;
+                const parentLeft = parseFloat(parentComp.style.left) || 0;
+                const parentTop = parseFloat(parentComp.style.top) || 0;
+                const cRect = parentComp.getBoundingClientRect();
+                const rRect = row.getBoundingClientRect();
+                const l = parentLeft + (rRect.left - cRect.left);
+                const t = parentTop + (rRect.top - cRect.top);
+                const w = rRect.width || row.offsetWidth;
+                const h = rRect.height || row.offsetHeight;
+                if (w < 10 || h < 5) return;
+                const tableId = parentComp.id || ('table-' + rIdx);
+
+                rects.push({
+                    id: row.id || ('v4-row-' + rIdx),
+                    label: 'Row ' + (rIdx + 1),
+                    left: l,
+                    top: t,
+                    width: w,
+                    height: h,
+                    right: l + w,
+                    bottom: t + h,
+                    isRowContainer: true,
+                    tableId: tableId
+                });
+            });
+
+            // Grid UI Cells for column line distances
+            document.querySelectorAll('.v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell').forEach((cell, cIdx) => {
+                const parentComp = cell.closest('.lf-component');
+                if (!parentComp) return;
+                const parentLeft = parseFloat(parentComp.style.left) || 0;
+                const parentTop = parseFloat(parentComp.style.top) || 0;
+                const cRect = parentComp.getBoundingClientRect();
+                const cellRect = cell.getBoundingClientRect();
+                const l = parentLeft + (cellRect.left - cRect.left);
+                const t = parentTop + (cellRect.top - cRect.top);
+                const w = cellRect.width || cell.offsetWidth;
+                const h = cellRect.height || cell.offsetHeight;
+                if (w < 10 || h < 10) return;
+
+                const isTh = cell.tagName.toLowerCase() === 'th';
+                rects.push({
+                    id: cell.id || ('grid-cell-' + cIdx),
+                    label: (isTh ? 'Col ' : 'Cell ') + (cIdx + 1),
+                    left: l,
+                    top: t,
+                    width: w,
+                    height: h,
+                    right: l + w,
+                    bottom: t + h,
+                    isGridCell: true
+                });
+            });
+
+            document.querySelectorAll('.mobile-frame').forEach((f, idx) => {
+                const content = f.querySelector('.mobile-content');
+                if (content) {
+                    const rect = content.getBoundingClientRect();
+                    const scrollX = window.scrollX || 0;
+                    const scrollY = window.scrollY || 0;
+                    const l = rect.left + scrollX;
+                    const t = rect.top + scrollY;
+                    const w = rect.width;
+                    const h = rect.height;
+                    
+                    const sName = 'UI Area ' + (idx + 1);
+                    const bezel = 0;
+                    
+                    const leftVal = l + bezel;
+                    const rightVal = l + w - bezel;
+                    const topVal = t + bezel;
+                    const bottomVal = t + h - bezel;
+                    
+                    targets.push({ x: leftVal, label: sName, part: 'Left', type: 'h' });
+                    targets.push({ x: rightVal, label: sName, part: 'Right', type: 'h' });
+                    targets.push({ y: topVal, label: sName, part: 'Top', type: 'v' });
+                    targets.push({ y: bottomVal, label: sName, part: 'Bottom', type: 'v' });
+                    targets.push({ x: l + w / 2, label: sName, part: 'Center', type: 'h' });
+                    targets.push({ y: t + h / 2, label: sName, part: 'Middle', type: 'v' });
+
+                    const frameIdStr = 'mobile-frame-' + idx;
+                    rects.push({
+                        id: frameIdStr + '-left',
+                        label: sName + ' Left',
+                        left: leftVal,
+                        top: topVal,
+                        width: 0,
+                        height: h,
+                        right: leftVal,
+                        bottom: bottomVal,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-right',
+                        label: sName + ' Right',
+                        left: rightVal,
+                        top: topVal,
+                        width: 0,
+                        height: h,
+                        right: rightVal,
+                        bottom: bottomVal,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-top',
+                        label: sName + ' Top',
+                        left: leftVal,
+                        top: topVal,
+                        width: w,
+                        height: 0,
+                        right: rightVal,
+                        bottom: topVal,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-bottom',
+                        label: sName + ' Bottom',
+                        left: leftVal,
+                        top: bottomVal,
+                        width: w,
+                        height: 0,
+                        right: rightVal,
+                        bottom: bottomVal,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                }
+            });
+
+            document.querySelectorAll('.pc-browser-frame, .chrome-browser').forEach((f, idx) => {
+                const content = f.querySelector('.pc-content-area, .chrome-content-area') || f;
+                if (content) {
+                    const rect = content.getBoundingClientRect();
+                    const scrollX = window.scrollX || 0;
+                    const scrollY = window.scrollY || 0;
+                    const l = rect.left + scrollX;
+                    const t = rect.top + scrollY;
+                    const w = rect.width;
+                    const h = rect.height;
+                    const sName = 'PC Web Area ' + (idx + 1);
+                    
+                    targets.push({ x: l, label: sName, part: 'Left', type: 'h' });
+                    targets.push({ x: l + w, label: sName, part: 'Right', type: 'h' });
+                    targets.push({ y: t, label: sName, part: 'Top', type: 'v' });
+                    targets.push({ y: t + h, label: sName, part: 'Bottom', type: 'v' });
+                    targets.push({ x: l + w / 2, label: sName, part: 'Center', type: 'h' });
+                    targets.push({ y: t + h / 2, label: sName, part: 'Middle', type: 'v' });
+
+                    const frameIdStr = 'pc-frame-' + idx;
+                    rects.push({
+                        id: frameIdStr + '-left',
+                        label: sName + ' Left',
+                        left: l,
+                        top: t,
+                        width: 0,
+                        height: h,
+                        right: l,
+                        bottom: t + h,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-right',
+                        label: sName + ' Right',
+                        left: l + w,
+                        top: t,
+                        width: 0,
+                        height: h,
+                        right: l + w,
+                        bottom: t + h,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-top',
+                        label: sName + ' Top',
+                        left: l,
+                        top: t,
+                        width: w,
+                        height: 0,
+                        right: l + w,
+                        bottom: t,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                    rects.push({
+                        id: frameIdStr + '-bottom',
+                        label: sName + ' Bottom',
+                        left: l,
+                        top: t + h,
+                        width: w,
+                        height: 0,
+                        right: l + w,
+                        bottom: t + h,
+                        isFrameBoundary: true,
+                        frameId: frameIdStr
+                    });
+                }
+            });
+
+            // Add snapping targets for Query Item (Admin Settings) rows & inner cells
+            document.querySelectorAll('.v4-admin-settings-container').forEach(container => {
+                const comp = container.closest('.lf-component');
+                if (!comp || comp.classList.contains('selected')) return;
+
+                // Get absolute bounding rect of the component relative to the document
+                const compRect = comp.getBoundingClientRect();
+                const scrollX = window.scrollX || 0;
+                const scrollY = window.scrollY || 0;
+                const compLeft = compRect.left + scrollX;
+                const compTop = compRect.top + scrollY;
+
+                container.querySelectorAll('.v4-admin-row').forEach((row, rIdx) => {
+                    const rowRect = row.getBoundingClientRect();
+                    const rowTop = rowRect.top + scrollY;
+                    const rowHeight = rowRect.height;
+                    const rowYCenter = rowTop + rowHeight / 2;
+
+                    // Snap to the vertical center of the row
+                    targets.push({ id: comp.id, y: rowYCenter, label: 'Row ' + (rIdx + 1), part: 'Middle', type: 'v' });
+
+                    // Find content cells and calculate offset + 10px snap points
+                    const contentCells = row.querySelectorAll('.v4-admin-content-cell');
+
+                    contentCells.forEach((cell, cIdx) => {
+                        const cellRect = cell.getBoundingClientRect();
+                        const cellLeft = cellRect.left + scrollX;
+                        const snapX = cellLeft + 10; // 10px padding from the label border
+
+                        targets.push({ id: comp.id, x: snapX, label: 'Row ' + (rIdx + 1) + ' Col ' + (cIdx + 1) + ' Start', part: 'Left', type: 'h' });
+                    });
+                });
+            });
+
+            return { targets: targets, rects: rects };
+        },
+
         init: function() {
             console.log("[ResponsiveSmartGuide 2.0] Raycast engine loaded.");
         }

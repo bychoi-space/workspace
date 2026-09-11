@@ -10,16 +10,24 @@
  */
 
 window.EditorBus = {
-    sendToIframe(payload) {
+    getIframeWindow() {
         const iframe = (window.DOM && window.DOM.iframe) || 
                        document.getElementById('main-iframe') || 
                        document.getElementById('screen-iframe');
-        if (iframe && iframe.contentWindow) {
+        return (iframe && iframe.contentWindow) ? iframe.contentWindow : null;
+    },
+    sendToIframe(payload) {
+        const iframeWin = this.getIframeWindow();
+        if (iframeWin) {
             const data = (typeof payload === 'object' && payload !== null) ? { ...payload } : payload;
             if (data && typeof data === 'object' && !data.id && window.activeCompId) {
                 data.id = window.activeCompId;
             }
-            iframe.contentWindow.postMessage(data, '*');
+            if (window.MessageHub && data && data.type) {
+                MessageHub.send(iframeWin, data.type, data);
+            } else {
+                iframeWin.postMessage(data, '*');
+            }
         } else {
             console.warn("[EditorBus] Active iframe contentWindow not found for payload:", payload ? payload.type : null);
         }
@@ -31,6 +39,20 @@ window.EditorBus = {
     }
 };
 
+window.notifyIframe = function(data) {
+    if (window.EditorBus) {
+        window.EditorBus.sendToIframe(data);
+    }
+};
+
+window.highlightActive = function(btn, isActive) {
+    if (!btn) return;
+    btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
+    btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
+    btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
+    btn.style.fontWeight = isActive ? 'bold' : 'normal';
+};
+
 window.rgbToHex = function(rgb) {
     if (!rgb || rgb === "transparent" || rgb === "none" || rgb.includes("rgba(0, 0, 0, 0)")) return null;
     if (rgb.startsWith('#')) return rgb;
@@ -40,6 +62,19 @@ window.rgbToHex = function(rgb) {
     const g = Math.min(255, parseInt(matches[1])).toString(16).padStart(2, "0");
     const b = Math.min(255, parseInt(matches[2])).toString(16).padStart(2, "0");
     return "#" + r + g + b;
+};
+
+window.hexToRgb = function(hex) {
+    if (!hex || hex === 'transparent') return null;
+    let c = hex.replace('#', '');
+    if (c.length === 3) c = c.split('').map(function(x) { return x + x; }).join('');
+    const num = parseInt(c, 16);
+    if (isNaN(num)) return null;
+    return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+    };
 };
 
 window.hexToRgba = function(hex, opacity) {
@@ -58,6 +93,44 @@ window.hexToRgba = function(hex, opacity) {
     const g = (num >> 8) & 255;
     const b = num & 255;
     return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
+};
+
+window.EditorBus.rgbToHex = window.rgbToHex;
+window.EditorBus.hexToRgb = window.hexToRgb;
+window.EditorBus.hexToRgba = window.hexToRgba;
+
+window.showToast = function(message, type = 'success') {
+    let container = document.getElementById('v4-toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'v4-toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'v4-toast ' + type;
+
+    let iconName = 'info';
+    if (type === 'success') iconName = 'check_circle';
+    else if (type === 'error') iconName = 'error';
+    else if (type === 'warning') iconName = 'warning';
+
+    toast.innerHTML = '<span class="material-icons-outlined v4-toast-icon">' + iconName + '</span>' +
+                      '<span style="flex-grow: 1;">' + message + '</span>';
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+        setTimeout(() => {
+            toast.remove();
+        }, 400);
+    }, 3500);
 };
 
 window.parseColorWithOpacity = function(colorStr) {

@@ -237,5 +237,86 @@ window.v4ObjectShapeScript = `
         }
         return true;
     };
+
+    window.v4MessageHandlers = window.v4MessageHandlers || {};
+    window.v4MessageHandlers['LF_UPDATE_SHAPE_TEXT'] = function(d) {
+        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); 
+        if (!s) return;
+        const shape = s.querySelector('.v4-shape');
+        if (!shape) {
+            const cell = s.querySelector('.v4-editable-cell');
+            if (cell) {
+                if (window.V4UndoManager) window.V4UndoManager.saveState();
+                cell.innerHTML = d.html;
+                if (typeof window.markDirty === 'function') window.markDirty();
+                if (typeof window.resizeToFitText === 'function') {
+                    window.resizeToFitText(s);
+                }
+            }
+            return;
+        }
+
+        const activeCell = shape.querySelector('.v4-editable-cell') || shape.querySelector('.v4-shape-text-content') || shape.querySelector('.v4-shape-text-overlay');
+        if (activeCell && document.activeElement && (activeCell === document.activeElement || activeCell.contains(document.activeElement))) {
+            return; // User is actively typing inside this shape text, skip innerHTML overwrite
+        }
+
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        const editableCell = shape.querySelector('.v4-editable-cell');
+        if (editableCell) {
+            editableCell.innerHTML = d.html;
+        } else {
+            const isSvgShape = shape.classList.contains('v4-shape-diamond') || 
+                               shape.classList.contains('v4-shape-triangle') || 
+                               shape.classList.contains('v4-shape-wave');
+
+            if (isSvgShape) {
+                let textOverlay = shape.querySelector('.v4-shape-text-overlay');
+                if (!textOverlay) {
+                    textOverlay = document.createElement('div');
+                    textOverlay.className = 'v4-shape-text-overlay';
+                    textOverlay.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;text-align:center;pointer-events:none;padding:4px;box-sizing:border-box;z-index:2;';
+                    shape.style.position = 'relative';
+                    shape.appendChild(textOverlay);
+                }
+                textOverlay.innerHTML = d.html;
+            } else {
+                let textContainer = shape.querySelector('.v4-shape-text-content');
+                if (!textContainer) {
+                    const existingContent = shape.innerHTML;
+                    textContainer = document.createElement('div');
+                    textContainer.className = 'v4-shape-text-content';
+
+                    const pt = shape.getAttribute('data-pad-top');
+                    const pb = shape.getAttribute('data-pad-bottom');
+                    const pl = shape.getAttribute('data-pad-left');
+                    const pr = shape.getAttribute('data-pad-right');
+                    let initialPad = 'padding:8px;';
+                    if (pt !== null || pb !== null || pl !== null || pr !== null) {
+                        const top = pt !== null ? pt : '5';
+                        const bot = pb !== null ? pb : '5';
+                        const left = pl !== null ? pl : '10';
+                        const right = pr !== null ? pr : '10';
+                        initialPad = 'padding:' + top + 'px ' + right + 'px ' + bot + 'px ' + left + 'px !important;';
+                        if (pt !== null) textContainer.setAttribute('data-pad-top', pt);
+                        if (pb !== null) textContainer.setAttribute('data-pad-bottom', pb);
+                        if (pl !== null) textContainer.setAttribute('data-pad-left', pl);
+                        if (pr !== null) textContainer.setAttribute('data-pad-right', pr);
+                    }
+
+                    textContainer.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;' + initialPad + 'box-sizing:border-box;overflow:hidden;';
+                    shape.innerHTML = '';
+                    textContainer.innerHTML = existingContent;
+                    shape.appendChild(textContainer);
+                }
+                textContainer.innerHTML = d.html;
+            }
+        }
+        if (typeof window.markDirty === 'function') window.markDirty();
+        if (typeof window.resizeToFitText === 'function') {
+            window.resizeToFitText(s, true);
+        }
+    };
 })();
 `;

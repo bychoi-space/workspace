@@ -7,6 +7,7 @@ console.log("%c [VCTRL INSPECTOR] Initializing UI Controller... ", "background: 
 
 // 1. Central DOM Registry
 window.get = (id) => document.getElementById(id) || { style: {}, classList: { add:() => {}, remove:() => {}, toggle:() => {} }, innerText: '', innerHTML: '', onclick: null, oninput: null };
+const highlightActive = (btn, isActive) => window.highlightActive(btn, isActive);
 
 
 window.rebindInspectorDOM = function() {
@@ -290,7 +291,7 @@ window.switchSidebarTab = function(tabName) {
 // --- 3. UI Rendering Functions ---
 window.updateProperties = function(compStyles) {
     const activeEl = document.activeElement;
-    const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+    const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
     const isTypingInInspector = !isBtn && activeEl && (
         activeEl.tagName === 'INPUT' ||
         activeEl.tagName === 'TEXTAREA' ||
@@ -575,7 +576,14 @@ const ProjectMetadataManager = {
             } else if (state.editingType === 'grid') {
                 if (DOM.gridPropSection) DOM.gridPropSection.style.display = 'block';
                 const activeEl = document.activeElement;
-                const isTypingInGrid = activeEl && (activeEl.closest('#grid-inspector-section') || activeEl.classList.contains('grid-col-width-input') || activeEl.classList.contains('grid-col-name-input') || activeEl.classList.contains('grid-col-type-select'));
+                const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+                const isTypingInGrid = !isBtn && activeEl && (
+                    activeEl.classList.contains('grid-col-width-input') || 
+                    activeEl.classList.contains('grid-col-name-input') || 
+                    activeEl.classList.contains('grid-col-options-input') ||
+                    (activeEl.tagName === 'INPUT' && activeEl.closest('#grid-inspector-section')) ||
+                    (activeEl.tagName === 'TEXTAREA' && activeEl.closest('#grid-inspector-section'))
+                );
                 if (!isTypingInGrid) {
                     _syncGridProps(compStyles);
                 }
@@ -842,12 +850,14 @@ const ProjectMetadataManager = {
                     wVal = Math.round(compStyles.w);
                     hVal = Math.round(compStyles.h);
                 } else if (selIds.length === 1) {
-                    const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-                    const groupEl = iframeDoc?.getElementById(selIds[0]);
-                    if (groupEl) {
-                        wVal = Math.round(parseFloat(groupEl.style.width) || groupEl.offsetWidth || 0);
-                        hVal = Math.round(parseFloat(groupEl.style.height) || groupEl.offsetHeight || 0);
-                    }
+                    try {
+                        const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+                        const groupEl = iframeDoc?.getElementById(selIds[0]);
+                        if (groupEl) {
+                            wVal = Math.round(parseFloat(groupEl.style.width) || groupEl.offsetWidth || 0);
+                            hVal = Math.round(parseFloat(groupEl.style.height) || groupEl.offsetHeight || 0);
+                        }
+                    } catch(e) {}
                 }
                 if (groupDimWidth) groupDimWidth.innerText = wVal + 'px';
                 if (groupDimHeight) groupDimHeight.innerText = hVal + 'px';
@@ -1039,14 +1049,6 @@ function _syncButtonProps(comp) {
 function _syncTextboxTextareaProps(comp) {
     const activeY = document.getElementById('btn-input-counter-y');
     const activeN = document.getElementById('btn-input-counter-n');
-    
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
 
     if (activeY && activeN) {
         highlightActive(activeY, comp.showCounter === true);
@@ -1138,14 +1140,6 @@ function _syncCheckboxRadioProps(comp) {
     const activeN = document.getElementById('btn-atom-active-n');
     const textY = document.getElementById('btn-atom-text-y');
     const textN = document.getElementById('btn-atom-text-n');
-    
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
 
     if (activeY && activeN) {
         highlightActive(activeY, comp.checked === true);
@@ -1185,14 +1179,6 @@ function _syncCheckboxRadioProps(comp) {
 }
 
 function _syncDatePickerProps(comp) {
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
     // Sync Mode selector
     const btnModeSimple = document.getElementById('btn-dp-mode-simple');
     const btnModeDetailed = document.getElementById('btn-dp-mode-detailed');
@@ -1275,258 +1261,7 @@ function getCategoryData(type) {
 let flyoutHideTimer = null;
 let currentFlyoutScreen = null;
 
-window.showScreenFlyout = function(item, screenData) {
-    if (flyoutHideTimer) {
-        clearTimeout(flyoutHideTimer);
-        flyoutHideTimer = null;
-    }
-    const sidebarLeft = DOM.sidebarLeft || document.getElementById('sidebar-left');
-    if (!sidebarLeft || !sidebarLeft.classList.contains('collapsed')) {
-        window.hideScreenFlyout(0);
-        return;
-    }
-
-    const flyout = document.getElementById('screen-hover-flyout');
-    if (!flyout) return;
-
-    currentFlyoutScreen = screenData;
-    const rect = item.getBoundingClientRect();
-
-    const indexEl = document.getElementById('flyout-index');
-    const badgeEl = document.getElementById('flyout-badge');
-    const resEl = document.getElementById('flyout-res');
-    const titleEl = document.getElementById('flyout-title');
-    const filenameEl = document.getElementById('flyout-filename');
-    const btnEdit = document.getElementById('flyout-btn-edit');
-    const btnCopy = document.getElementById('flyout-btn-copy');
-    const btnDelete = document.getElementById('flyout-btn-delete');
-    const nub = flyout.querySelector('.flyout-nub');
-
-    const itemIndex = screenData.index + 1;
-    const cat = getCategoryData(screenData.type);
-    if (indexEl) indexEl.innerText = `${itemIndex}. ${cat.code}`;
-
-    if (badgeEl) {
-        badgeEl.className = `flyout-badge ${cat.class}`;
-        badgeEl.innerText = cat.label;
-    }
-
-    if (resEl) {
-        resEl.innerText = screenData.resolution || '1600x900';
-    }
-
-    if (titleEl) titleEl.innerText = screenData.title || screenData.name;
-    if (filenameEl) filenameEl.innerText = screenData.name;
-
-    if (btnEdit) {
-        btnEdit.onclick = (e) => {
-            e.stopPropagation();
-            window.hideScreenFlyout(0);
-            if (typeof window.handleEditScreen === 'function') window.handleEditScreen(screenData.name);
-        };
-    }
-    if (btnCopy) {
-        btnCopy.onclick = (e) => {
-            e.stopPropagation();
-            window.hideScreenFlyout(0);
-            if (typeof window.handleCopyScreen === 'function') window.handleCopyScreen(screenData.name);
-        };
-    }
-    if (btnDelete) {
-        btnDelete.onclick = (e) => {
-            e.stopPropagation();
-            window.hideScreenFlyout(0);
-            if (typeof window.handleDeleteScreen === 'function') window.handleDeleteScreen(screenData.name, screenData.sha);
-        };
-    }
-
-    flyout.onclick = async (e) => {
-        if (e.target.closest('.flyout-btn')) return;
-        window.hideScreenFlyout(0);
-        if (typeof window.checkUnsavedChanges === 'function' && !(await window.checkUnsavedChanges())) return;
-        const url = `viewer.html?project=${state.currentProject}&file=${screenData.name}`;
-        history.pushState(null, '', url);
-        if (typeof window.loadScreen === 'function') window.loadScreen(screenData.name);
-        window.updateActiveScreenInUI(screenData.name);
-    };
-
-    flyout.onmouseenter = () => {
-        if (flyoutHideTimer) {
-            clearTimeout(flyoutHideTimer);
-            flyoutHideTimer = null;
-        }
-    };
-    flyout.onmouseleave = () => {
-        window.hideScreenFlyout(120);
-    };
-
-    flyout.style.display = 'block';
-    const flyoutH = flyout.offsetHeight || 135;
-    const itemCenterY = rect.top + rect.height / 2;
-    let flyoutTop = itemCenterY - flyoutH / 2;
-    const maxTop = window.innerHeight - flyoutH - 12;
-    if (flyoutTop > maxTop) flyoutTop = maxTop;
-    if (flyoutTop < 12) flyoutTop = 12;
-
-    flyout.style.left = '58px';
-    flyout.style.top = `${Math.round(flyoutTop)}px`;
-
-    if (nub) {
-        const nubTop = Math.max(14, Math.min(itemCenterY - flyoutTop, flyoutH - 14));
-        nub.style.top = `${Math.round(nubTop)}px`;
-    }
-};
-
-window.hideScreenFlyout = function(delay = 0) {
-    if (flyoutHideTimer) {
-        clearTimeout(flyoutHideTimer);
-        flyoutHideTimer = null;
-    }
-    if (delay <= 0) {
-        const flyout = document.getElementById('screen-hover-flyout');
-        if (flyout) flyout.style.display = 'none';
-        currentFlyoutScreen = null;
-        return;
-    }
-    flyoutHideTimer = setTimeout(() => {
-        const flyout = document.getElementById('screen-hover-flyout');
-        if (flyout) flyout.style.display = 'none';
-        currentFlyoutScreen = null;
-        flyoutHideTimer = null;
-    }, delay);
-};
-
-window.renderScreenList = function(screens, activeName) {
-    if (typeof window.hideScreenFlyout === 'function') window.hideScreenFlyout(0);
-    DOM.screensList.innerHTML = '';
-    let activeItem = null;
-    
-    screens.forEach((s, index) => {
-        const item = document.createElement('div');
-        item.className = 'screen-item';
-        item.draggable = !state.isReadOnly;
-        item.dataset.index = index;
-        item.dataset.screenName = s.name;
-        item.dataset.screenIndex = index + 1;
-        if (index + 1 >= 10) item.dataset.doubleDigit = 'true';
-        
-        const scMeta = (state.projectMetadata.screens || {})[s.name] || {};
-        const cat = getCategoryData(scMeta.type);
-        const badgeHtml = getCategoryBadge(scMeta.type);
-        const displayTitle = scMeta.title || s.name;
-        const itemIndex = index + 1;
-        item.title = `${itemIndex}. [${cat.code}] ${displayTitle} (${s.name})`;
-
-        item.innerHTML = `
-            <div style="display:flex; align-items:center; flex:1; overflow:hidden;">
-                <!-- Collapsed Mode Single Crisp Chip: e.g. [1. CO], [2. UI] -->
-                <span class="screen-collapsed-chip ${cat.class}">
-                    <span class="chip-num">${itemIndex}.</span>
-                    <span class="chip-code">${cat.code}</span>
-                </span>
-                <!-- Expanded Mode: Normal Full Badge + Title -->
-                ${badgeHtml}
-                <span class="screen-name" title="${displayTitle} (${s.name})">${displayTitle}</span>
-            </div>
-            <div class="screen-actions" style="display:flex; gap:4px;">
-                <button class="screen-edit-btn" title="속성 편집"><span class="material-icons-outlined" style="font-size:16px;">edit</span></button>
-                <button class="screen-copy-btn" title="화면 복사"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></button>
-                <button class="screen-delete-btn" title="화면 삭제"><span class="material-icons-outlined" style="font-size:16px;">delete</span></button>
-            </div>
-        `;
-        
-        if (s.name === activeName) {
-            item.classList.add('active');
-            activeItem = item;
-        }
-
-        item.onclick = async (e) => {
-            if (e.target.closest('.screen-delete-btn')) {
-                if (typeof window.handleDeleteScreen === 'function') window.handleDeleteScreen(s.name, s.sha);
-                return;
-            }
-            if (e.target.closest('.screen-copy-btn')) {
-                if (typeof window.handleCopyScreen === 'function') window.handleCopyScreen(s.name);
-                return;
-            }
-            if (e.target.closest('.screen-edit-btn')) {
-                if (typeof window.handleEditScreen === 'function') window.handleEditScreen(s.name);
-                return;
-            }
-            if (typeof window.checkUnsavedChanges === 'function' && !(await window.checkUnsavedChanges())) return;
-            const url = `viewer.html?project=${state.currentProject}&file=${s.name}`;
-            history.pushState(null, '', url);
-            if (typeof window.loadScreen === 'function') window.loadScreen(s.name);
-            window.updateActiveScreenInUI(s.name);
-        };
-
-        item.onmouseenter = () => {
-            window.showScreenFlyout(item, {
-                index: index,
-                name: s.name,
-                sha: s.sha,
-                title: displayTitle,
-                type: scMeta.type,
-                resolution: scMeta.width ? `${scMeta.width}x${scMeta.height || 900}` : '1600x900'
-            });
-        };
-        item.onmouseleave = () => {
-            window.hideScreenFlyout(120);
-        };
-
-        item.ondragstart = (e) => {
-            window.hideScreenFlyout(0);
-            e.dataTransfer.setData('text/plain', index);
-            item.classList.add('dragging');
-        };
-        item.ondragend = () => {
-            item.classList.remove('dragging');
-            document.querySelectorAll('.screen-item').forEach(i => i.classList.remove('drag-over'));
-        };
-        item.ondragover = (e) => { e.preventDefault(); item.classList.add('drag-over'); };
-        item.ondragleave = () => item.classList.remove('drag-over');
-        item.ondrop = async (e) => {
-            e.preventDefault();
-            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-            const toIndex = parseInt(item.dataset.index);
-            if (fromIndex !== toIndex) {
-                const [movedItem] = state.screens.splice(fromIndex, 1);
-                state.screens.splice(toIndex, 0, movedItem);
-                state.projectMetadata.screenOrder = state.screens.map(s => s.name);
-                if (typeof window.saveProjectMetadata === 'function') await window.saveProjectMetadata(state.currentProject, state.projectMetadata);
-                renderScreenList(state.screens, state.activeFile?.name);
-            }
-        };
-
-        DOM.screensList.appendChild(item);
-    });
-
-    if (DOM.screensList) {
-        DOM.screensList.onscroll = () => {
-            if (typeof window.hideScreenFlyout === 'function') window.hideScreenFlyout(0);
-        };
-    }
-
-    if (activeItem) {
-        setTimeout(() => activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 800);
-    }
-};
-
-window.updateActiveScreenInUI = function(activeName) {
-    document.querySelectorAll('.screen-item').forEach(item => {
-        const screenName = item.dataset.screenName;
-        const nameTitle = item.querySelector('.screen-name')?.title || '';
-        const isActive = (screenName && screenName === activeName) || nameTitle.includes(activeName);
-        item.classList.toggle('active', isActive);
-        if (isActive) item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
-};
-
-function getCategoryBadge(type) {
-    if (!type || type === 'default') return '<span class="screen-badge badge-default">ETC</span>';
-    const cat = getCategoryData(type);
-    return `<span class="screen-badge ${cat.class}">${cat.label}</span>`;
-}
+// Screen list and flyout delegated to vctrl_screen_manager.js
 
 // --- 4. Library & Editor ---
 window.renderV4Shapes = function() {
@@ -1725,185 +1460,12 @@ window.renderAtomicLibrary = function() {
     }
 };
 
-window.V4_COMMON_COLOR_PALETTE = [
-    // 1. Grayscale (7)
-    '#000000', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#d1d5db', '#ffffff',
-    // 2. Red / Coral (7)
-    '#7f1d1d', '#991b1b', '#dc2626', '#ef4444', '#f87171', '#fca5a5', '#fee2e2',
-    // 3. Orange / Amber (7)
-    '#7c2d12', '#9a3412', '#ea580c', '#f97316', '#fb923c', '#fdba74', '#ffedd5',
-    // 4. Yellow / Gold (7)
-    '#713f12', '#854d0e', '#ca8a04', '#eab308', '#facc15', '#fde047', '#fef9c3',
-    // 5. Green / Emerald (7)
-    '#064e3b', '#065f46', '#059669', '#10b981', '#34d399', '#6ee7b7', '#ecfdf5',
-    // 6. Teal / Cyan (7)
-    '#134e4a', '#115e59', '#0d9488', '#14b8a6', '#2dd4bf', '#5eead4', '#f0fdfa',
-    // 7. Blue / Sky (7)
-    '#0c4a6e', '#075985', '#0284c7', '#0ea5e9', '#38bdf8', '#7dd3fc', '#f0f9ff',
-    // 8. Indigo / Violet (7)
-    '#312e81', '#3730a3', '#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#eef2ff',
-    // 9. Purple / Fuchsia (7)
-    '#581c87', '#6b21a8', '#9333ea', '#a855f7', '#c084fc', '#d8b4fe', '#faf5ff',
-    // 10. Pink / Rose (7)
-    '#701a75', '#86198f', '#c026d3', '#d946ef', '#e879f9', '#f0abfc', '#fdf4ff',
-    // 11. Brown / Warm (7)
-    '#451a03', '#78350f', '#92400e', '#b45309', '#d97706', '#f59e0b', '#fef3c7'
-];
-
-window.initV4GlobalColorPalette = function() {
-    if (window._v4ColorPaletteInitialized) return;
-    window._v4ColorPaletteInitialized = true;
-
-    let popover = document.getElementById('v4-global-color-palette-popover');
-    if (!popover) {
-        popover = document.createElement('div');
-        popover.id = 'v4-global-color-palette-popover';
-        popover.innerHTML = `
-            <div class="v4-palette-grid"></div>
-            <div class="v4-palette-footer">
-                <div class="v4-palette-custom-action" title="원하는 색상 직접 선택" style="position: relative; overflow: hidden; cursor: pointer;">
-                    <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">palette</span>
-                    <span style="pointer-events: none;">직접 선택</span>
-                    <input type="color" class="v4-palette-native-input" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; margin: 0; z-index: 2;">
-                </div>
-                <button type="button" class="v4-palette-reset-btn" title="투명 / 색상 제거">
-                    <span class="material-icons-outlined" style="font-size: 13px;">block</span>
-                </button>
-            </div>
-        `;
-        document.body.appendChild(popover);
-
-        const grid = popover.querySelector('.v4-palette-grid');
-        grid.innerHTML = window.V4_COMMON_COLOR_PALETTE.map(c => `
-            <div class="v4-palette-item" data-color="${c}" style="background-color: ${c};" title="${c}"></div>
-        `).join('');
-
-        const nativeInput = popover.querySelector('.v4-palette-native-input');
-        const customAction = popover.querySelector('.v4-palette-custom-action');
-        const resetBtn = popover.querySelector('.v4-palette-reset-btn');
-
-        let currentActiveWrapper = null;
-        let currentTargetInput = null;
-
-        // Swatch click
-        grid.addEventListener('click', (e) => {
-            const item = e.target.closest('.v4-palette-item');
-            if (!item || !currentTargetInput) return;
-            const hex = item.dataset.color;
-            currentTargetInput.value = hex;
-            currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-            currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-            if (currentActiveWrapper) currentActiveWrapper.classList.remove('transparent-active');
-            window.closeV4ColorPalette();
-        });
-
-        nativeInput.addEventListener('input', (e) => {
-            if (!currentTargetInput) return;
-            currentTargetInput.value = e.target.value;
-            currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-            if (currentActiveWrapper) currentActiveWrapper.classList.remove('transparent-active');
-        });
-
-        nativeInput.addEventListener('change', (e) => {
-            if (!currentTargetInput) return;
-            currentTargetInput.value = e.target.value;
-            currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-            currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-            if (currentActiveWrapper) currentActiveWrapper.classList.remove('transparent-active');
-            window.closeV4ColorPalette();
-        });
-
-        // Reset / Transparent
-        resetBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!currentActiveWrapper) return;
-            const propGroup = currentActiveWrapper.closest('.prop-group');
-            const noneBtn = propGroup ? propGroup.querySelector('.v4-color-none-btn') : null;
-            if (noneBtn) {
-                noneBtn.click();
-            } else if (currentTargetInput) {
-                currentTargetInput.value = 'transparent';
-                currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-                currentActiveWrapper.classList.add('transparent-active');
-            }
-            window.closeV4ColorPalette();
-        });
-
-        window.openV4ColorPalette = function(wrapperEl) {
-            if (!wrapperEl) return;
-            currentActiveWrapper = wrapperEl;
-            currentTargetInput = wrapperEl.querySelector('input[type="color"], .v4-color-input');
-            if (!currentTargetInput) return;
-
-            const curVal = (currentTargetInput.value || '#ffffff').toLowerCase();
-            if (nativeInput) {
-                nativeInput.value = (curVal.startsWith('#') && (curVal.length === 7 || curVal.length === 4)) ? curVal : '#ffffff';
-            }
-            popover.querySelectorAll('.v4-palette-item').forEach(it => {
-                if (it.dataset.color.toLowerCase() === curVal) {
-                    it.classList.add('selected');
-                } else {
-                    it.classList.remove('selected');
-                }
-            });
-
-            // Position calculation
-            popover.classList.add('active');
-            const rect = wrapperEl.getBoundingClientRect();
-            const popRect = popover.getBoundingClientRect();
-            
-            let top = rect.bottom + 4;
-            let left = rect.left;
-
-            // Flip top if bottom overflows viewport
-            if (top + popRect.height > window.innerHeight - 10) {
-                top = Math.max(10, rect.top - popRect.height - 4);
-            }
-            // Clamp left
-            if (left + popRect.width > window.innerWidth - 10) {
-                left = Math.max(10, window.innerWidth - popRect.width - 10);
-            }
-
-            popover.style.top = `${top}px`;
-            popover.style.left = `${left}px`;
-        };
-
-        window.closeV4ColorPalette = function() {
-            popover.classList.remove('active');
-            currentActiveWrapper = null;
-            currentTargetInput = null;
-        };
-
-        // Close on outside click
-        document.addEventListener('mousedown', (e) => {
-            if (!popover.classList.contains('active')) return;
-            if (popover.contains(e.target) || e.target.closest('.v4-color-wrapper')) return;
-            window.closeV4ColorPalette();
-        });
-
-        // Close on escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && popover.classList.contains('active')) {
-                window.closeV4ColorPalette();
-            }
-        });
-    }
-
-    // Global event delegation for .v4-color-wrapper clicks
-    document.addEventListener('click', (e) => {
-        const wrapper = e.target.closest('.v4-color-wrapper');
-        if (!wrapper) return;
-        if (wrapper.closest('#v4-global-color-palette-popover')) return;
-        
-        e.preventDefault();
-        e.stopPropagation();
-        window.openV4ColorPalette(wrapper);
-    });
-};
+// Global Color Palette delegated to vctrl_color_picker.js
 
 window.initQuillEditor = function() {
-    window.initV4GlobalColorPalette();
+    if (typeof window.initV4GlobalColorPalette === 'function') {
+        window.initV4GlobalColorPalette();
+    }
     if (window.quillEditor) return;
     const container = document.getElementById('editor-container');
     if (!container) return;
@@ -1914,7 +1476,7 @@ window.initQuillEditor = function() {
     const Align = Quill.import('attributors/style/align');
     Quill.register(Align, true);
 
-    // Sticky Format Cache: 텍스트 삭제 후에도 사용자가 직전에 설정한 타이포그래피 서식을 기억
+    // Sticky Format Cache: 텍스트 삭제 후에도 직전 타이포그래피 서식 기억
     if (!window._currentStickyFormat) {
         window._currentStickyFormat = {
             size: '14px',
@@ -1922,32 +1484,29 @@ window.initQuillEditor = function() {
         };
     }
 
-    // Register distinct intuitive icons for Text Color (Letter A) and Background Color (Paint Bucket / Fill)
+    // Register distinct intuitive icons for Text Color and Background Color
     const icons = Quill.import('ui/icons');
     if (icons) {
-        // Text Color icon: 'A' letter with color underline bar
-        icons['color'] = `<svg viewBox="0 0 18 18">
-            <path class="ql-stroke" d="M5,12.5 L9,3.5 L13,12.5"></path>
-            <path class="ql-stroke" d="M6.5,9 L11.5,9"></path>
-            <line class="ql-stroke ql-color-label" x1="2.5" y1="15.5" x2="15.5" y2="15.5" stroke-width="2.5"></line>
-        </svg>`;
+        icons['color'] = '<svg viewBox="0 0 18 18">' +
+            '<path class="ql-stroke" d="M5,12.5 L9,3.5 L13,12.5"></path>' +
+            '<path class="ql-stroke" d="M6.5,9 L11.5,9"></path>' +
+            '<line class="ql-stroke ql-color-label" x1="2.5" y1="15.5" x2="15.5" y2="15.5" stroke-width="2.5"></line>' +
+        '</svg>';
         
-        // Background Color icon: Paint Bucket / Fill Bucket with color bar
-        icons['background'] = `<svg viewBox="0 0 18 18">
-            <path class="ql-stroke" d="M12.5,3 L15,5.5 L7.5,13 L4,13 L4,9.5 L11.5,2 L12.5,3 Z"></path>
-            <path class="ql-fill" d="M4,9.5 L7.5,13 L4,13 Z"></path>
-            <line class="ql-stroke ql-bg-label" x1="2.5" y1="15.5" x2="15.5" y2="15.5" stroke-width="2.5"></line>
-        </svg>`;
+        icons['background'] = '<svg viewBox="0 0 18 18">' +
+            '<path class="ql-stroke" d="M12.5,3 L15,5.5 L7.5,13 L4,13 L4,9.5 L11.5,2 L12.5,3 Z"></path>' +
+            '<path class="ql-fill" d="M4,9.5 L7.5,13 L4,13 Z"></path>' +
+            '<line class="ql-stroke ql-bg-label" x1="2.5" y1="15.5" x2="15.5" y2="15.5" stroke-width="2.5"></line>' +
+        '</svg>';
 
-        // Strikethrough icon: Letter S with strike line
-        icons['strike'] = `<svg viewBox="0 0 18 18">
-            <line class="ql-stroke" x1="2" y1="9" x2="16" y2="9" stroke-width="1.8"></line>
-            <path class="ql-stroke" d="M6,4.5 C6.5,3.2 8,2.5 9.5,2.5 C12,2.5 13.5,3.8 13.5,5.5 C13.5,6.8 12.5,7.8 11,8.3" stroke-width="1.6" fill="none"></path>
-            <path class="ql-stroke" d="M7,9.7 C5.5,10.2 4.5,11.2 4.5,12.5 C4.5,14.2 6,15.5 8.5,15.5 C11,15.5 12.5,14.5 13,13.2" stroke-width="1.6" fill="none"></path>
-        </svg>`;
+        icons['strike'] = '<svg viewBox="0 0 18 18">' +
+            '<line class="ql-stroke" x1="2" y1="9" x2="16" y2="9" stroke-width="1.8"></line>' +
+            '<path class="ql-stroke" d="M6,4.5 C6.5,3.2 8,2.5 9.5,2.5 C12,2.5 13.5,3.8 13.5,5.5 C13.5,6.8 12.5,7.8 11,8.3" stroke-width="1.6" fill="none"></path>' +
+            '<path class="ql-stroke" d="M7,9.7 C5.5,10.2 4.5,11.2 4.5,12.5 C4.5,14.2 6,15.5 8.5,15.5 C11,15.5 12.5,14.5 13,13.2" stroke-width="1.6" fill="none"></path>' +
+        '</svg>';
     }
 
-    const colorPalette = window.V4_COMMON_COLOR_PALETTE;
+    const colorPalette = window.V4_COMMON_COLOR_PALETTE || [];
 
     window.quillEditor = new Quill('#editor-container', {
         theme: 'snow',
@@ -1962,60 +1521,13 @@ window.initQuillEditor = function() {
         }
     });
 
-    // Helper: attach custom color picker and reset button inside palette options
+    // setupCustomColorPicker delegated to vctrl_color_picker.js
     function setupCustomColorPicker(pickerEl, formatType) {
-        if (!pickerEl) return;
-        const optionsEl = pickerEl.querySelector('.ql-picker-options');
-        if (!optionsEl || optionsEl.querySelector('.ql-custom-color-footer')) return;
-
-        const footer = document.createElement('div');
-        footer.className = 'ql-custom-color-footer';
-        footer.innerHTML = `
-            <div class="ql-custom-color-action" title="원하는 색상 직접 선택" style="position: relative; overflow: hidden; cursor: pointer;">
-                <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">palette</span>
-                <span style="pointer-events: none;">직접 선택</span>
-                <input type="color" class="ql-custom-color-input" value="${formatType === 'color' ? '#6366f1' : '#facc15'}" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; margin: 0; z-index: 2;">
-            </div>
-            <button type="button" class="ql-custom-color-reset" title="색상 제거 / 기본값">
-                <span class="material-icons-outlined" style="font-size: 13px;">format_color_reset</span>
-            </button>
-        `;
-
-        const input = footer.querySelector('.ql-custom-color-input');
-        const resetBtn = footer.querySelector('.ql-custom-color-reset');
-
-        input.addEventListener('input', (e) => {
-            if (window.quillEditor) {
-                window.quillEditor.format(formatType, e.target.value);
-                if (!window._currentStickyFormat) window._currentStickyFormat = {};
-                window._currentStickyFormat[formatType] = e.target.value;
-            }
-        });
-
-        input.addEventListener('change', (e) => {
-            if (window.quillEditor) {
-                window.quillEditor.format(formatType, e.target.value);
-                if (!window._currentStickyFormat) window._currentStickyFormat = {};
-                window._currentStickyFormat[formatType] = e.target.value;
-            }
-            pickerEl.classList.remove('ql-expanded');
-        });
-
-        resetBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (window.quillEditor) {
-                window.quillEditor.format(formatType, false);
-                if (window._currentStickyFormat) {
-                    delete window._currentStickyFormat[formatType];
-                }
-            }
-            pickerEl.classList.remove('ql-expanded');
-        });
-
-        optionsEl.appendChild(footer);
+        if (typeof window.setupCustomColorPicker === 'function') {
+            window.setupCustomColorPicker(pickerEl, formatType);
+        }
     }
 
-    // Add tooltips to Quill toolbar controls & initialize custom color footers
     setTimeout(() => {
         const toolbarEl = container.previousElementSibling || document.querySelector('.ql-toolbar');
         if (toolbarEl) {
@@ -2191,470 +1703,7 @@ if (window.MessageHub) {
     });
 }
 
-window.handleEditScreen = async function(fileName) {
-    const state = window.state || {};
-    if (state.isReadOnly) {
-        if (typeof window.showAuthModal === 'function') window.showAuthModal();
-        return;
-    }
-
-    // Live DOM Lookup to guarantee references even if UI block was injected asynchronously
-    const editModal = document.getElementById('edit-screen-modal');
-    const editFilename = document.getElementById('edit-screen-filename');
-    const editTitle = document.getElementById('edit-screen-title');
-    const editType = document.getElementById('edit-screen-type');
-    const editDefaultTab = document.getElementById('edit-screen-default-tab');
-    const editDesc = document.getElementById('edit-screen-desc');
-    const btnSubmit = document.getElementById('btn-edit-screen-submit');
-    const btnCancel = document.getElementById('btn-edit-screen-cancel');
-
-    // Update window.DOM cache references if window.DOM exists
-    if (window.DOM) {
-        if (editModal) window.DOM.editScreenModal = editModal;
-        if (editFilename) window.DOM.editScreenFilename = editFilename;
-        if (editTitle) window.DOM.editScreenTitle = editTitle;
-        if (editType) window.DOM.editScreenType = editType;
-        if (editDefaultTab) window.DOM.editScreenDefaultTab = editDefaultTab;
-        if (editDesc) window.DOM.editScreenDesc = editDesc;
-        if (btnSubmit) window.DOM.btnSubmitEdit = btnSubmit;
-        if (btnCancel) window.DOM.btnCancelEdit = btnCancel;
-    }
-
-    const meta = (state.projectMetadata.screens || {})[fileName] || {};
-    
-    if (editFilename) editFilename.innerText = fileName;
-    if (editTitle) editTitle.value = meta.title || "";
-    let screenType = meta.type || "default";
-    if (screenType === 'admin-nbos' || screenType === 'admin-onesphere') {
-        screenType = 'admin';
-    }
-    if (editType) editType.value = screenType;
-    if (editDefaultTab) editDefaultTab.value = meta.defaultTab || "editor";
-    if (editDesc) editDesc.value = meta.screenDesc || meta.description || "";
-    if (editModal) editModal.classList.add('active');
-
-    if (btnCancel) {
-        btnCancel.onclick = () => {
-            if (editModal) editModal.classList.remove('active');
-        };
-    }
-    
-    if (btnSubmit) {
-        btnSubmit.onclick = async () => {
-            const newTitle = editTitle ? editTitle.value.trim() : "";
-            const newType = editType ? editType.value : "default";
-            const newDefaultTab = editDefaultTab ? editDefaultTab.value : "editor";
-            const newDesc = editDesc ? editDesc.value.trim() : "";
-            
-            btnSubmit.disabled = true;
-            btnSubmit.innerText = "Saving...";
-            
-            if (!state.projectMetadata.screens) state.projectMetadata.screens = {};
-            state.projectMetadata.screens[fileName] = {
-                ...state.projectMetadata.screens[fileName],
-                title: newTitle,
-                type: newType,
-                defaultTab: newDefaultTab,
-                screenDesc: newDesc,
-                updatedAt: new Date().toISOString()
-            };
-            
-            if (typeof window.saveProjectMetadata === 'function') {
-                const success = await window.saveProjectMetadata(state.currentProject, state.projectMetadata);
-                if (success) {
-                    if (editModal) editModal.classList.remove('active');
-                    location.reload(); 
-                } else {
-                    alert("Failed to save project metadata. Please check authentication token.");
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerText = "Save Changes";
-                }
-            } else {
-                console.error("[Inspector] saveProjectMetadata is not defined on window.");
-                btnSubmit.disabled = false;
-                btnSubmit.innerText = "Save Changes";
-            }
-        };
-    }
-};
-
-window.handleCopyScreen = async function(sourceFileName) {
-    const state = window.state || {};
-    if (state.isReadOnly) {
-        if (typeof window.showAuthModal === 'function') window.showAuthModal();
-        return;
-    }
-
-    const modal = document.getElementById('copy-screen-modal');
-    const sourceInfoEl = document.getElementById('copy-screen-source-info');
-    const targetProjectSelect = document.getElementById('copy-screen-target-project');
-    const titleInput = document.getElementById('copy-screen-title');
-    const filenameInput = document.getElementById('copy-screen-filename');
-    const noticeEl = document.getElementById('copy-screen-filename-notice');
-    const openAfterCheck = document.getElementById('copy-screen-open-after');
-    const isMoveCheck = document.getElementById('copy-screen-is-move');
-    const moveGroup = document.getElementById('copy-screen-move-group');
-    const btnSubmit = document.getElementById('btn-copy-screen-submit');
-    const btnCancel = document.getElementById('btn-copy-screen-cancel');
-
-    if (!modal) return;
-
-    const sourceProject = state.currentProject;
-    const sourceScreenMeta = (state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[sourceFileName]) || {};
-    const sourceTitle = sourceScreenMeta.title || sourceFileName.replace(/\.html$/i, '');
-
-    if (sourceInfoEl) {
-        sourceInfoEl.innerText = `현재: [${sourceProject}] ${sourceFileName} (${sourceTitle})`;
-    }
-
-    if (titleInput) {
-        titleInput.value = `${sourceTitle} (복사본)`;
-    }
-
-    const generateUniqueFilename = (baseName, existingFiles) => {
-        const cleanName = baseName.replace(/\.html$/i, '');
-        const rootName = cleanName.replace(/_copy\d*$/i, '');
-        let candidate = `${rootName}_copy.html`;
-        let counter = 2;
-        while (existingFiles && existingFiles.includes(candidate)) {
-            candidate = `${rootName}_copy${counter}.html`;
-            counter++;
-        }
-        return candidate;
-    };
-
-    const projectScreensCache = {};
-
-    if (targetProjectSelect) {
-        targetProjectSelect.innerHTML = '<option value="">프로젝트 목록 불러오는 중...</option>';
-        targetProjectSelect.disabled = true;
-
-        try {
-            let folders = [];
-            if (typeof listContents === 'function') {
-                const rootItems = await listContents('');
-                if (Array.isArray(rootItems)) {
-                    const ignored = ['assets', 'scripts', '.github', '.agents', '.gemini', 'node_modules', '.git'];
-                    folders = rootItems.filter(i => i.type === 'dir' && !ignored.includes(i.name));
-                }
-            }
-
-            if (sourceProject && !folders.find(f => f.name === sourceProject)) {
-                folders.unshift({ name: sourceProject, type: 'dir' });
-            }
-
-            targetProjectSelect.innerHTML = '';
-            for (const folder of folders) {
-                const opt = document.createElement('option');
-                opt.value = folder.name;
-                opt.textContent = folder.name === sourceProject
-                    ? `${folder.name} (현재 프로젝트)`
-                    : `${folder.name}`;
-                if (folder.name === sourceProject) {
-                    opt.selected = true;
-                }
-                targetProjectSelect.appendChild(opt);
-            }
-            targetProjectSelect.disabled = false;
-
-            const currentFiles = (state.screens || []).map(s => s.name);
-            projectScreensCache[sourceProject] = currentFiles;
-
-            if (filenameInput) {
-                filenameInput.value = generateUniqueFilename(sourceFileName, currentFiles);
-            }
-
-            // Async load project titles to enhance options
-            (async () => {
-                for (const folder of folders) {
-                    try {
-                        const meta = (folder.name === sourceProject && state.projectMetadata) 
-                            ? state.projectMetadata 
-                            : (typeof fetchProjectMetadata === 'function' ? await fetchProjectMetadata(folder.name) : null);
-                        if (meta && meta.title && meta.title !== folder.name) {
-                            const opt = targetProjectSelect.querySelector(`option[value="${folder.name}"]`);
-                            if (opt) {
-                                opt.textContent = folder.name === sourceProject
-                                    ? `${meta.title} (${folder.name}) - 현재 프로젝트`
-                                    : `${meta.title} (${folder.name})`;
-                            }
-                        }
-                    } catch (e) {}
-                }
-            })();
-
-        } catch (err) {
-            console.error("[CopyScreen] Failed to list projects:", err);
-            targetProjectSelect.innerHTML = `<option value="${sourceProject}">${sourceProject} (현재 프로젝트)</option>`;
-            targetProjectSelect.disabled = false;
-            const currentFiles = (state.screens || []).map(s => s.name);
-            projectScreensCache[sourceProject] = currentFiles;
-            if (filenameInput) {
-                filenameInput.value = generateUniqueFilename(sourceFileName, currentFiles);
-            }
-        }
-    }
-
-    const onTargetProjectChange = async () => {
-        const targetProj = targetProjectSelect ? targetProjectSelect.value : sourceProject;
-        const isSameProject = targetProj === sourceProject;
-
-        if (moveGroup && isMoveCheck) {
-            if (isSameProject) {
-                isMoveCheck.checked = false;
-                moveGroup.style.opacity = '0.5';
-                isMoveCheck.disabled = true;
-            } else {
-                moveGroup.style.opacity = '1';
-                isMoveCheck.disabled = false;
-            }
-        }
-
-        let targetFiles = projectScreensCache[targetProj];
-        if (!targetFiles) {
-            try {
-                if (noticeEl) {
-                    noticeEl.innerText = '대상 프로젝트 파일 목록 확인 중...';
-                    noticeEl.style.color = '#94a3b8';
-                }
-                const targetMeta = typeof fetchProjectMetadata === 'function' ? await fetchProjectMetadata(targetProj) : null;
-                targetFiles = targetMeta && targetMeta.screens ? Object.keys(targetMeta.screens) : [];
-                projectScreensCache[targetProj] = targetFiles;
-            } catch (e) {
-                targetFiles = [];
-            }
-        }
-
-        if (filenameInput) {
-            const currentVal = filenameInput.value.trim();
-            if (!currentVal || targetFiles.includes(currentVal)) {
-                filenameInput.value = generateUniqueFilename(sourceFileName, targetFiles);
-            }
-        }
-        if (noticeEl) {
-            noticeEl.innerText = `* 대상 프로젝트: [${targetProj}] (총 ${targetFiles.length}개 화면)`;
-            noticeEl.style.color = '#94a3b8';
-        }
-    };
-
-    if (targetProjectSelect) {
-        targetProjectSelect.onchange = onTargetProjectChange;
-        onTargetProjectChange();
-    }
-
-    if (filenameInput) {
-        filenameInput.oninput = () => {
-            const val = filenameInput.value.trim();
-            const targetProj = targetProjectSelect ? targetProjectSelect.value : sourceProject;
-            const targetFiles = projectScreensCache[targetProj] || [];
-            if (noticeEl) {
-                if (targetFiles.includes(val)) {
-                    noticeEl.innerText = '⚠️ 이미 존재하는 파일명입니다. 덮어쓰지 않도록 다른 파일명을 권장합니다.';
-                    noticeEl.style.color = '#f87171';
-                } else {
-                    noticeEl.innerText = '* 사용 가능한 파일명입니다.';
-                    noticeEl.style.color = '#4ade80';
-                }
-            }
-        };
-    }
-
-    modal.classList.add('active');
-
-    if (btnCancel) {
-        btnCancel.onclick = () => {
-            modal.classList.remove('active');
-        };
-    }
-
-    if (btnSubmit) {
-        btnSubmit.disabled = false;
-        btnSubmit.innerText = '복사하기';
-        btnSubmit.onclick = async () => {
-            const targetProject = targetProjectSelect ? targetProjectSelect.value : sourceProject;
-            const newTitle = titleInput ? titleInput.value.trim() : '';
-            let newFilename = filenameInput ? filenameInput.value.trim() : '';
-            const openAfter = openAfterCheck ? openAfterCheck.checked : true;
-            const isMove = isMoveCheck ? isMoveCheck.checked : false;
-
-            if (!targetProject) {
-                alert('복사 대상 프로젝트를 선택해주세요.');
-                return;
-            }
-            if (!newTitle) {
-                alert('화면 명칭을 입력해주세요.');
-                return;
-            }
-            if (!newFilename) {
-                alert('새 파일명을 입력해주세요.');
-                return;
-            }
-            if (!newFilename.toLowerCase().endsWith('.html')) {
-                newFilename += '.html';
-            }
-
-            const targetFiles = projectScreensCache[targetProject] || [];
-            if (targetFiles.includes(newFilename)) {
-                const confirmed = confirm(`대상 프로젝트에 '${newFilename}' 파일이 이미 존재합니다.\n덮어쓰시겠습니까?`);
-                if (!confirmed) return;
-            }
-
-            btnSubmit.disabled = true;
-            btnSubmit.innerText = isMove ? '이동 중...' : '복사 중...';
-
-            await window.executeCopyScreen({
-                sourceProject,
-                sourceFileName,
-                targetProject,
-                newFilename,
-                newTitle,
-                openAfter,
-                isMove,
-                modal,
-                btnSubmit
-            });
-        };
-    }
-};
-
-window.executeCopyScreen = async function(opts) {
-    const {
-        sourceProject,
-        sourceFileName,
-        targetProject,
-        newFilename,
-        newTitle,
-        openAfter,
-        isMove,
-        modal,
-        btnSubmit
-    } = opts;
-
-    const state = window.state || {};
-    const isSameProject = sourceProject === targetProject;
-
-    try {
-        if (typeof window.showLoading === 'function') {
-            window.showLoading(isMove ? `화면 이동 중... (${newFilename})` : `화면 복사 중... (${newFilename})`);
-        }
-
-        // 1. Fetch source screen HTML content
-        let content = null;
-        if (typeof fetchProjectFileContent === 'function') {
-            content = await fetchProjectFileContent(sourceProject, sourceFileName);
-        }
-        if (!content) {
-            throw new Error(`원본 화면(${sourceFileName}) 파일 내용을 불러오지 못했습니다.`);
-        }
-
-        // 2. Fetch target project's metadata
-        let targetMeta = null;
-        if (isSameProject && state.projectMetadata) {
-            targetMeta = state.projectMetadata;
-        } else if (typeof fetchProjectMetadata === 'function') {
-            targetMeta = await fetchProjectMetadata(targetProject);
-        } else {
-            targetMeta = { title: targetProject, screens: {} };
-        }
-        if (!targetMeta.screens) targetMeta.screens = {};
-
-        // 3. Upload content to target project
-        const uploadSuccess = await uploadToProject(targetProject, newFilename, content);
-        if (!uploadSuccess && window.location.protocol !== 'file:') {
-            throw new Error(`대상 프로젝트(${targetProject})에 파일 업로드를 실패했습니다.`);
-        }
-
-        // 4. Clone and adapt screen metadata
-        const sourceMetaScreens = (state.projectMetadata && state.projectMetadata.screens) || {};
-        const sourceScreenMeta = sourceMetaScreens[sourceFileName] || {};
-
-        const clonedScreenMeta = JSON.parse(JSON.stringify(sourceScreenMeta));
-        clonedScreenMeta.title = newTitle;
-        clonedScreenMeta.updatedAt = new Date().toISOString();
-
-        targetMeta.screens[newFilename] = clonedScreenMeta;
-
-        // 5. Update screenOrder in target metadata
-        if (!targetMeta.screenOrder) {
-            targetMeta.screenOrder = Object.keys(targetMeta.screens);
-        } else {
-            if (isSameProject) {
-                const sourceIdx = targetMeta.screenOrder.indexOf(sourceFileName);
-                if (sourceIdx !== -1) {
-                    if (!targetMeta.screenOrder.includes(newFilename)) {
-                        targetMeta.screenOrder.splice(sourceIdx + 1, 0, newFilename);
-                    }
-                } else {
-                    if (!targetMeta.screenOrder.includes(newFilename)) {
-                        targetMeta.screenOrder.push(newFilename);
-                    }
-                }
-            } else {
-                if (!targetMeta.screenOrder.includes(newFilename)) {
-                    targetMeta.screenOrder.push(newFilename);
-                }
-            }
-        }
-
-        // 6. Save target project metadata
-        if (typeof saveProjectMetadata === 'function') {
-            await saveProjectMetadata(targetProject, targetMeta);
-        }
-
-        // 7. If isMove is true (and different project), delete source file
-        if (isMove && !isSameProject) {
-            const sourceSha = (state.screens && state.screens.find(s => s.name === sourceFileName) || {}).sha;
-            if (typeof deleteFileFromGitHub === 'function') {
-                await deleteFileFromGitHub(`${sourceProject}/${sourceFileName}`, sourceSha);
-            }
-            if (state.projectMetadata && state.projectMetadata.screens) {
-                delete state.projectMetadata.screens[sourceFileName];
-                if (state.projectMetadata.screenOrder) {
-                    state.projectMetadata.screenOrder = state.projectMetadata.screenOrder.filter(n => n !== sourceFileName);
-                }
-                if (typeof saveProjectMetadata === 'function') {
-                    await saveProjectMetadata(sourceProject, state.projectMetadata);
-                }
-            }
-        }
-
-        // 8. Cleanup and Navigation
-        if (modal) modal.classList.remove('active');
-        if (typeof window.hideLoading === 'function') window.hideLoading();
-
-        if (openAfter) {
-            window.location.href = `viewer.html?project=${encodeURIComponent(targetProject)}&file=${encodeURIComponent(newFilename)}`;
-        } else {
-            if (isSameProject) {
-                window.location.reload();
-            } else {
-                if (window.Notification && typeof window.Notification.alert === 'function') {
-                    window.Notification.alert(
-                        `'${newFilename}' 화면이 [${targetProject}] 프로젝트로 성공적으로 ${isMove ? '이동' : '복사'}되었습니다.`,
-                        "완료",
-                        "info"
-                    );
-                } else {
-                    alert(`'${newFilename}' 화면이 [${targetProject}] 프로젝트로 성공적으로 ${isMove ? '이동' : '복사'}되었습니다.`);
-                }
-            }
-        }
-
-    } catch (err) {
-        console.error("[CopyScreen] executeCopyScreen error:", err);
-        if (typeof window.hideLoading === 'function') window.hideLoading();
-        if (btnSubmit) {
-            btnSubmit.disabled = false;
-            btnSubmit.innerText = isMove ? '이동하기' : '복사하기';
-        }
-        if (window.Notification && typeof window.Notification.alert === 'function') {
-            window.Notification.alert(err.message || "화면 복사 중 오류가 발생했습니다.", "오류", "error");
-        } else {
-            alert(err.message || "화면 복사 중 오류가 발생했습니다.");
-        }
-    }
-};
-
+// Screen edit and copy handlers delegated to vctrl_screen_manager.js
 
 // --- 5. Init Events & Listeners ---
 if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => window.toggleSidebar('left');
@@ -2817,148 +1866,7 @@ if (btnFloatingClose) {
     };
 }
 
-// Revision History Rendering & Event Binding
-window.renderHistoryPopup = function(history) {
-    const listContainer = document.getElementById('history-popup-list');
-    if (!listContainer) return;
-    
-    if (!history || history.length === 0) {
-        listContainer.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; text-align: center; color: var(--text-secondary);">
-                <span class="material-icons-outlined" style="font-size: 36px; margin-bottom: 10px; opacity: 0.3;">history</span>
-                <div style="font-size: 14px;">기록된 재개정 이력이 없습니다.</div>
-            </div>
-        `;
-    } else {
-        listContainer.innerHTML = history.map(item => `
-            <div class="history-item-card" style="background: rgba(255, 255, 255, 0.04); border: 1.6px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 14px 16px; font-size: 13px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; margin-bottom: 2px;">
-                    <span style="font-weight: 700; color: #22d3ee; font-size: 12px; background: rgba(34, 211, 238, 0.15); padding: 2px 8px; border-radius: 6px; letter-spacing: 0.3px;">v${item.version || '0.1'}</span>
-                    <span style="color: #94a3b8; font-size: 12px; font-family: monospace;">${item.date}</span>
-                </div>
-                <div style="color: #f8fafc; font-size: 15px; font-weight: 600; word-break: break-all; line-height: 1.5; margin: 2px 0;">${item.message || '-'}</div>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; font-size: 13px; color: #94a3b8; align-items: center;">
-                    ${item.assignee ? `<span style="font-weight: 500;">담당: ${item.assignee}</span>` : ''}
-                    ${item.developer ? `<span style="font-weight: 500;">개발: ${item.developer}</span>` : ''}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    const modal = document.getElementById('history-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        modal.offsetHeight; // Reflow
-        modal.style.opacity = '1';
-        
-        const closeOnEsc = (e) => {
-            if (e.key === 'Escape') {
-                window.closeHistoryPopup();
-                window.removeEventListener('keydown', closeOnEsc);
-            }
-        };
-        window.addEventListener('keydown', closeOnEsc);
-    }
-};
-
-window.closeHistoryPopup = function() {
-    const modal = document.getElementById('history-modal');
-    if (modal) {
-        modal.style.opacity = '0';
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 300);
-    }
-};
-
-async function ensureHistoryModal() {
-    let historyModal = document.getElementById('history-modal');
-    if (!historyModal) {
-        try {
-            let html = '';
-            try {
-                if (window.LF_TEMPLATES && window.LF_TEMPLATES['history_modal.html']) {
-                    html = window.LF_TEMPLATES['history_modal.html'];
-                } else if (window.location.protocol !== 'file:') {
-                    const response = await fetch('assets/templates/history_modal.html');
-                    if (response.ok) {
-                        html = await response.text();
-                    }
-                }
-            } catch (fetchErr) {
-                console.warn("fetch history_modal.html failed, using inline template fallback:", fetchErr);
-            }
-
-            if (!html) {
-                html = `
-                <div id="history-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 17, 21, 0.7); backdrop-filter: blur(8px); z-index: 10005; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
-                    <div class="dialog-card" style="max-width: 560px; width: 92%; max-height: 80vh; display: flex; flex-direction: column; background: rgba(30, 41, 59, 0.95); border: 1.6px solid rgba(255, 255, 255, 0.12); border-radius: 16px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); padding: 24px; box-sizing: border-box; backdrop-filter: blur(20px);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px; margin-bottom: 18px; flex-shrink: 0;">
-                            <div style="display: flex; align-items: center; gap: 10px; color: var(--accent-nav, #22d3ee);">
-                                <span class="material-icons-outlined" style="font-size: 22px;">history</span>
-                                <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.2px;">프로젝트 재개정 이력</h3>
-                            </div>
-                            <button id="btn-close-history" class="btn-secondary" style="width: 32px; height: 32px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); cursor: pointer; color: #cbd5e1; transition: all 0.2s; margin-left: auto;"><span class="material-icons-outlined" style="font-size: 18px;">close</span></button>
-                        </div>
-                        <div id="history-popup-list" style="flex: 1; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 12px; min-height: 140px;">
-                            <!-- Dynamic history entries here -->
-                        </div>
-                    </div>
-                </div>`;
-            }
-            document.body.insertAdjacentHTML('beforeend', html);
-            historyModal = document.getElementById('history-modal');
-        } catch (e) {
-            console.error("Failed to load history modal dynamically:", e);
-            return false;
-        }
-    }
-
-    if (historyModal) {
-        const btnCloseHistory = document.getElementById('btn-close-history');
-        if (btnCloseHistory) {
-            btnCloseHistory.onclick = () => {
-                window.closeHistoryPopup();
-            };
-        }
-        historyModal.onclick = (e) => {
-            if (e.target === historyModal) {
-                window.closeHistoryPopup();
-            }
-        };
-        return true;
-    }
-    return false;
-}
-
-const btnShowHistory = document.getElementById('btn-show-history');
-if (btnShowHistory) {
-    btnShowHistory.onclick = async () => {
-        if (typeof window.showLoading === 'function') window.showLoading("Loading history...");
-        try {
-            const loaded = await ensureHistoryModal();
-            if (!loaded) throw new Error("Failed to initialize history modal");
-
-            const currentProj = (typeof state !== 'undefined' && state && state.currentProject) ? state.currentProject : null;
-            const historyList = (typeof window.fetchProjectHistory === 'function' && currentProj)
-                ? await window.fetchProjectHistory(currentProj)
-                : [];
-            if (typeof window.hideLoading === 'function') window.hideLoading();
-            window.renderHistoryPopup(historyList);
-        } catch (e) {
-            if (typeof window.hideLoading === 'function') window.hideLoading();
-            console.error("Failed to load history:", e);
-            if (window.Notification && typeof window.Notification.alert === 'function') {
-                window.Notification.alert("이력을 불러오는 중 오류가 발생했습니다.", "오류", "error");
-            } else if (typeof window.showToast === 'function') {
-                window.showToast("이력을 불러오는 중 오류가 발생했습니다.", "error");
-            } else {
-                alert("이력을 불러오는 중 오류가 발생했습니다.");
-            }
-        }
-    };
-}
-
+// History popup and handlers delegated to vctrl_screen_manager.js
 
 // Global function to sync Arrow/Triangle Direction Buttons UI
 window._syncArrowDirBtns = (currentDir) => {
@@ -2975,170 +1883,12 @@ window._syncArrowDirBtns = (currentDir) => {
     });
 };
 
-// Global function to sync Line (Straight) Editor UI
+// Global function to sync Line (Straight) Editor UI (Delegated to vctrl_connectors.js)
 window._syncLineEditorProps = (compStyles) => {
-    if (!compStyles) return;
-    const dir = compStyles.lineDir || 'horizontal';
-    const style = compStyles.lineStyle || 'solid';
-    const thickness = parseFloat(compStyles.lineThickness) || 1.6;
-    const color = compStyles.lineColor || '#c8c8c8';
-
-    document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
-        const btnDir = b.dataset.dir;
-        if (btnDir === dir) {
-            b.style.background = 'rgba(0, 229, 255, 0.15)';
-            b.style.borderColor = 'rgba(0, 229, 255, 0.4)';
-            b.style.color = '#00e5ff';
-        } else {
-            b.style.background = 'rgba(255, 255, 255, 0.05)';
-            b.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-            b.style.color = '#94a3b8';
-        }
-    });
-
-    ['solid', 'dashed', 'dotted'].forEach(s => {
-        const btn = document.getElementById('btn-line-style-' + s);
-        if (btn) {
-            if (s === style) {
-                btn.style.background = 'rgba(0, 229, 255, 0.15)';
-                btn.style.borderColor = 'rgba(0, 229, 255, 0.4)';
-                btn.style.color = '#00e5ff';
-            } else {
-                btn.style.background = 'rgba(255, 255, 255, 0.05)';
-                btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                btn.style.color = '#94a3b8';
-            }
-        }
-    });
-
-    const thickInput = document.getElementById('line-stroke-width');
-    const thickTxt = document.getElementById('txt-line-stroke-width');
-    if (thickInput) thickInput.value = thickness;
-    if (thickTxt) thickTxt.innerText = thickness;
-
-    const colorInput = document.getElementById('line-stroke-color');
-    let hexColor = '#c8c8c8';
-    if (color) {
-        hexColor = (typeof window.rgbToHex === 'function' ? window.rgbToHex(color) : color) || color;
-        if (!hexColor.startsWith('#')) hexColor = '#c8c8c8';
-    }
-    if (colorInput) {
-        colorInput.value = hexColor;
-        const wrapper = colorInput.closest('.v4-color-wrapper');
-        if (wrapper) wrapper.classList.remove('transparent-active');
-    }
-
-    // Dynamic Single Length Control Sync
-    const curW = parseFloat(compStyles.width) || parseFloat(compStyles.w) || (compStyles.style && parseFloat(compStyles.style.width)) || 200;
-    const curH = parseFloat(compStyles.height) || parseFloat(compStyles.h) || (compStyles.style && parseFloat(compStyles.style.height)) || 100;
-    const lengthInput = document.getElementById('prop-line-length');
-    const lengthLabel = document.getElementById('lbl-line-length');
-    if (lengthInput) lengthInput.setAttribute('data-dir', dir);
-    if (dir === 'vertical') {
-        if (lengthLabel) lengthLabel.innerText = 'LENGTH / 세로 길이 (px)';
-        if (lengthInput) lengthInput.value = Math.round(curH > 10 ? curH : (curW > 10 ? curW : 100));
-    } else {
-        if (lengthLabel) lengthLabel.innerText = 'LENGTH / 가로 길이 (px)';
-        if (lengthInput) lengthInput.value = Math.round(curW > 10 ? curW : (curH > 10 ? curH : 200));
+    if (typeof window._syncLineEditorProps === 'function') {
+        // vctrl_connectors.js handles implementation
     }
 };
-
-// Line Editor Click & Input Handlers
-document.addEventListener('click', (e) => {
-    const dirBtn = e.target.closest('.v4-line-dir-btn');
-    if (dirBtn) {
-        const dir = dirBtn.dataset.dir;
-        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
-        if (iframeWin && targetId) {
-            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
-                id: targetId,
-                style: { lineDir: dir }
-            });
-            document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
-                const isActive = b.dataset.dir === dir;
-                b.style.background = isActive ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)';
-                b.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
-                b.style.color = isActive ? '#00e5ff' : '#94a3b8';
-            });
-            const lengthLabel = document.getElementById('lbl-line-length');
-            const lengthInput = document.getElementById('prop-line-length');
-            if (lengthLabel) {
-                lengthLabel.innerText = dir === 'vertical' ? 'LENGTH / 세로 길이 (px)' : 'LENGTH / 가로 길이 (px)';
-            }
-            if (lengthInput) {
-                lengthInput.setAttribute('data-dir', dir);
-            }
-        }
-        return;
-    }
-
-    const styleBtn = e.target.closest('.v4-line-style-btn');
-    if (styleBtn) {
-        const st = styleBtn.dataset.style;
-        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
-        if (iframeWin && targetId) {
-            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
-                id: targetId,
-                style: { lineStyle: st }
-            });
-            ['solid', 'dashed', 'dotted'].forEach(s => {
-                const b = document.getElementById('btn-line-style-' + s);
-                if (b) {
-                    const isActive = s === st;
-                    b.style.background = isActive ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)';
-                    b.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
-                    b.style.color = isActive ? '#00e5ff' : '#94a3b8';
-                }
-            });
-        }
-        return;
-    }
-});
-
-const handleLineEditorInputEvent = (e) => {
-    if (e.target.id === 'line-stroke-width') {
-        const val = parseFloat(e.target.value) || 1.6;
-        const txt = document.getElementById('txt-line-stroke-width');
-        if (txt) txt.innerText = val;
-        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
-        if (iframeWin && targetId) {
-            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
-                id: targetId,
-                style: { lineThickness: val }
-            });
-        }
-    } else if (e.target.id === 'line-stroke-color') {
-        const val = e.target.value;
-        const wrapper = e.target.closest('.v4-color-wrapper');
-        if (wrapper) wrapper.classList.remove('transparent-active');
-        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
-        if (iframeWin && targetId) {
-            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
-                id: targetId,
-                style: { lineColor: val }
-            });
-        }
-    } else if (e.target.id === 'prop-line-length') {
-        const val = parseFloat(e.target.value) || 10;
-        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
-        if (iframeWin && targetId) {
-            const currentDir = e.target.getAttribute('data-dir') || 'horizontal';
-            const prop = currentDir === 'vertical' ? 'height' : 'width';
-            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
-                id: targetId,
-                style: { [prop]: val + 'px' }
-            });
-        }
-    }
-};
-
-document.addEventListener('input', handleLineEditorInputEvent);
-document.addEventListener('change', handleLineEditorInputEvent);
 
 window.showLoading = (text) => { const overlay = get('loading-overlay'); if (overlay) { const txt = overlay.querySelector('.loading-text'); if (txt) txt.innerText = text; overlay.classList.remove('fade-out'); } };
 window.hideLoading = () => { const overlay = get('loading-overlay'); if (overlay) overlay.classList.add('fade-out'); setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 600); };
@@ -3147,29 +1897,31 @@ window.hideAuthModal = () => { const modal = get('auth-modal'); if (modal) modal
 
 // --- 6. Search Event Handling ---
 window.editorSearchQuery = '';
-const searchInput = document.getElementById('sidebar-search-input');
-const searchClear = document.getElementById('sidebar-search-clear');
-if (searchInput) {
-    searchInput.oninput = () => {
-        const val = searchInput.value;
-        window.editorSearchQuery = val;
-        if (searchClear) {
-            searchClear.style.setProperty('display', val ? 'block' : 'none', 'important');
-        }
-        window.renderAtomicLibrary();
-    };
-}
-if (searchClear) {
-    searchClear.onclick = () => {
-        if (searchInput) {
-            searchInput.value = '';
-            window.editorSearchQuery = '';
-            searchClear.style.setProperty('display', 'none', 'important');
-            searchInput.focus();
+(function initSidebarSearch() {
+    const searchInput = document.getElementById('sidebar-search-input');
+    const searchClear = document.getElementById('sidebar-search-clear');
+    if (searchInput) {
+        searchInput.oninput = () => {
+            const val = searchInput.value;
+            window.editorSearchQuery = val;
+            if (searchClear) {
+                searchClear.style.setProperty('display', val ? 'block' : 'none', 'important');
+            }
             window.renderAtomicLibrary();
-        }
-    };
-}
+        };
+    }
+    if (searchClear) {
+        searchClear.onclick = () => {
+            if (searchInput) {
+                searchInput.value = '';
+                window.editorSearchQuery = '';
+                searchClear.style.setProperty('display', 'none', 'important');
+                searchInput.focus();
+                window.renderAtomicLibrary();
+            }
+        };
+    }
+})();
 if (window.MessageHub) {
     MessageHub.subscribe('LF_DESELECT', () => {
         if (window.state) {
@@ -3180,472 +1932,12 @@ if (window.MessageHub) {
 }
 
 function _syncAdminSettingsProps(comp, forceRebuild = false) {
-    const rowCountText = document.getElementById('txt-admin-row-count');
-    if (rowCountText && comp.adminRowCount !== undefined) {
-        rowCountText.innerText = comp.adminRowCount;
-    }
-
-    const labelWidthSlider = document.getElementById('prop-admin-label-width-slider');
-    const labelWidthNum = document.getElementById('prop-admin-label-width-number');
-    if (labelWidthNum) {
-        if (comp.adminLabelWidth !== undefined) {
-            if (labelWidthSlider) labelWidthSlider.value = comp.adminLabelWidth;
-            labelWidthNum.value = comp.adminLabelWidth;
-        }
-        
-        const updateWidth = (val) => {
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
-                    labelWidth: val
-                });
-            }
-        };
-
-        if (labelWidthSlider) {
-            labelWidthSlider.oninput = (e) => {
-                const val = parseInt(e.target.value) || 140;
-                labelWidthNum.value = val;
-                updateWidth(val);
-            };
-        }
-
-        labelWidthNum.oninput = (e) => {
-            let val = parseInt(e.target.value) || 140;
-            // Allow loose typing but constrain values on final update
-            if (val >= 60 && val <= 300) {
-                if (labelWidthSlider) labelWidthSlider.value = val;
-                updateWidth(val);
-            }
-        };
-        
-        labelWidthNum.onblur = (e) => {
-            let val = parseInt(e.target.value) || 140;
-            if (val < 60) val = 60;
-            if (val > 300) val = 300;
-            labelWidthNum.value = val;
-            if (labelWidthSlider) labelWidthSlider.value = val;
-            updateWidth(val);
-        };
-    }
-
-    // Sync Group Header Inputs
-    const enableChk = document.getElementById('prop-admin-group-header-enable');
-    const titleInp = document.getElementById('prop-admin-group-header-title');
-    const bgInp = document.getElementById('prop-admin-group-header-bg');
-    const colorInp = document.getElementById('prop-admin-group-header-color');
-    const configSub = document.getElementById('admin-group-header-config-sub');
-    const bgWrapper = document.getElementById('admin-group-header-bg-wrapper');
-
-    if (enableChk) {
-        enableChk.checked = comp.adminShowGroupHeader === true;
-        if (configSub) configSub.style.display = enableChk.checked ? 'flex' : 'none';
-    }
-    if (titleInp && comp.adminGroupHeaderTitle !== undefined) {
-        titleInp.value = comp.adminGroupHeaderTitle;
-    }
-    if (bgInp && comp.adminGroupHeaderBg !== undefined) {
-        const isTransparent = comp.adminGroupHeaderBg === 'transparent';
-        if (bgWrapper) bgWrapper.classList.toggle('transparent-active', isTransparent);
-        if (!isTransparent) bgInp.value = comp.adminGroupHeaderBg;
-    }
-    if (colorInp && comp.adminGroupHeaderColor !== undefined) {
-        colorInp.value = comp.adminGroupHeaderColor;
-    }
-
-    // Sync Action Bar Inputs
-    const enableActionBarChk = document.getElementById('prop-admin-action-bar-enable');
-    const actionAlignSel = document.getElementById('prop-admin-action-align');
-    const configActionBarSub = document.getElementById('admin-action-bar-config-sub');
-    if (enableActionBarChk) {
-        enableActionBarChk.checked = comp.adminShowActionBar === true;
-        if (configActionBarSub) configActionBarSub.style.display = enableActionBarChk.checked ? 'flex' : 'none';
-    }
-    if (actionAlignSel && comp.adminActionAlign !== undefined) {
-        actionAlignSel.value = comp.adminActionAlign;
-    }
-
-    const container = document.getElementById('admin-rows-configuration-container');
-    if (!container) return;
-    const activeEl = document.activeElement;
-    const isBtn = activeEl && activeEl.tagName === 'BUTTON';
-    const isTypingInAdminContainer = !forceRebuild && !isBtn && activeEl && (
-        activeEl.classList.contains('admin-col-label-input') || 
-        activeEl.classList.contains('admin-row-height-input') || 
-        activeEl.id === 'prop-admin-group-header-title' || 
-        activeEl.id === 'prop-admin-label-width-number'
-    );
-    if (isTypingInAdminContainer) return;
-    container.innerHTML = '';
-
-    const rowCount = comp.adminRowCount || 1;
-
-    const getCurrentRowsData = () => {
-        const activeId = window.state?.editingIndex;
-        const iframe = document.getElementById('main-iframe');
-        let containerEl = null;
-        if (iframe && iframe.contentWindow && activeId) {
-            const activeEl = iframe.contentWindow.document.getElementById(activeId);
-            if (activeEl) {
-                containerEl = activeEl.querySelector('.v4-admin-settings-container') || activeEl;
-            }
-        }
-        const currentRows = [];
-        const blocks = container.querySelectorAll('.admin-row-config-block');
-        for (let r = 1; r <= rowCount; r++) {
-            const rowBlock = blocks[r - 1];
-            let lbl = comp[`adminRow${r}Label`] || '';
-            let cCount = comp[`adminRow${r}Cols`] || 1;
-            let rType = comp[`adminRow${r}Type`] || 'textbox';
-            let rH = comp[`adminRow${r}Height`] || 44;
-
-            if (containerEl) {
-                lbl = containerEl.getAttribute(`data-row${r}-label`) || lbl;
-                cCount = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || cCount;
-                rType = containerEl.getAttribute(`data-row${r}-type`) || rType;
-                rH = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || rH;
-            }
-
-            if (rowBlock) {
-                const labelInputs = rowBlock.querySelectorAll('.admin-col-label-input');
-                if (labelInputs.length > 0) {
-                    lbl = Array.from(labelInputs).map(inp => inp.value.trim()).join(', ');
-                }
-                const colsSel = rowBlock.querySelector('.admin-row-cols');
-                if (colsSel) cCount = parseInt(colsSel.value) || 1;
-                const hInp = rowBlock.querySelector('.admin-row-height-input');
-                if (hInp) rH = parseInt(hInp.value) || 44;
-            }
-
-            currentRows.push({
-                label: lbl || `조회 항목 ${r}`,
-                cols: cCount,
-                type: rType,
-                height: rH
-            });
-        }
-        return currentRows;
-    };
-
-    const applyUpdatedRows = (rowsArray) => {
-        const iframe = document.getElementById('main-iframe');
-        const activeId = window.state?.editingIndex;
-        if (!iframe || !iframe.contentWindow || !window.MessageHub) return;
-
-        const newRowCount = rowsArray.length;
-
-        // 1. Update iframe container attributes directly
-        if (activeId) {
-            const activeEl = iframe.contentWindow.document.getElementById(activeId);
-            if (activeEl) {
-                const containerEl = activeEl.querySelector('.v4-admin-settings-container') || activeEl;
-                containerEl.setAttribute('data-row-count', newRowCount);
-                for (let r = 1; r <= 20; r++) {
-                    if (r <= newRowCount) {
-                        const rowData = rowsArray[r - 1];
-                        containerEl.setAttribute(`data-row${r}-label`, rowData.label);
-                        containerEl.setAttribute(`data-row${r}-cols`, rowData.cols);
-                        containerEl.setAttribute(`data-row${r}-type`, rowData.type || 'textbox');
-                        containerEl.setAttribute(`data-row${r}-height`, rowData.height || 44);
-                    } else {
-                        containerEl.removeAttribute(`data-row${r}-label`);
-                        containerEl.removeAttribute(`data-row${r}-cols`);
-                        containerEl.removeAttribute(`data-row${r}-type`);
-                        containerEl.removeAttribute(`data-row${r}-height`);
-                    }
-                }
-            }
-        }
-
-        // 2. Notify iframe via MessageHub
-        window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
-            rowCount: newRowCount,
-            rows: rowsArray
-        });
-
-        // 3. Prepare syncData for inspector refresh
-        const syncData = {
-            id: activeId,
-            editingType: 'admin-settings',
-            adminRowCount: newRowCount,
-            adminLabelWidth: comp.adminLabelWidth,
-            adminShowGroupHeader: comp.adminShowGroupHeader,
-            adminGroupHeaderTitle: comp.adminGroupHeaderTitle,
-            adminGroupHeaderBg: comp.adminGroupHeaderBg,
-            adminGroupHeaderColor: comp.adminGroupHeaderColor,
-            adminShowActionBar: comp.adminShowActionBar,
-            adminActionAlign: comp.adminActionAlign
-        };
-        for (let r = 1; r <= 20; r++) {
-            if (r <= newRowCount) {
-                syncData[`adminRow${r}Label`] = rowsArray[r - 1].label;
-                syncData[`adminRow${r}Cols`] = rowsArray[r - 1].cols;
-                syncData[`adminRow${r}Type`] = rowsArray[r - 1].type || 'textbox';
-                syncData[`adminRow${r}Height`] = rowsArray[r - 1].height || 44;
-            }
-        }
-
-        if (window.state && window.state.selectedComponentStyles) {
-            Object.assign(window.state.selectedComponentStyles, syncData);
-        }
-
-        // 4. Re-sync inspector UI with forceRebuild = true
-        _syncAdminSettingsProps(syncData, true);
-    };
-
-    for (let i = 1; i <= rowCount; i++) {
-        const labelsVal = comp[`adminRow${i}Label`] || '';
-        const colsVal = comp[`adminRow${i}Cols`] || 1;
-        const specificHeightVal = comp[`adminRow${i}Height`] || 44;
-
-        // Split current labels
-        const labelsArr = labelsVal.split(',').map(l => l.trim());
-
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'admin-row-config-block';
-        rowDiv.style.cssText = 'border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 8px;';
-        
-        // Start building HTML
-        let htmlContent = `
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="font-size: 10px; font-weight: bold; color: #00e5ff;">ROW ${i} CONFIG</div>
-                <div style="display: flex; gap: 4px;">
-                    <button class="v4-inspector-btn btn-move-row-up" data-row="${i}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer;" title="위로 이동" ${i === 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>▲</button>
-                    <button class="v4-inspector-btn btn-move-row-down" data-row="${i}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer;" title="아래로 이동" ${i === rowCount ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>▼</button>
-                    <button class="v4-inspector-btn btn-delete-row" data-row="${i}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; cursor: pointer;" title="삭제" ${rowCount <= 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>&times;</button>
-                </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">조회 컬럼 개수</label>
-                    <select class="v4-prop-input admin-row-cols" data-row="${i}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px; height: 23px; box-sizing: border-box;">
-                        <option value="1" ${colsVal === 1 ? 'selected' : ''}>1개 컬럼</option>
-                        <option value="2" ${colsVal === 2 ? 'selected' : ''}>2개 컬럼</option>
-                        <option value="3" ${colsVal === 3 ? 'selected' : ''}>3개 컬럼</option>
-                    </select>
-                </div>
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">행 높이 (Height px)</label>
-                    <input type="number" class="v4-prop-input admin-row-height-input" data-row="${i}" value="${specificHeightVal}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit; height: 23px;">
-                </div>
-            </div>
-            <div class="admin-row-labels-container" style="display: flex; flex-direction: column; gap: 8px;">
-        `;
-
-        // Render input field for each column
-        for (let c = 0; c < colsVal; c++) {
-            const currentLabel = labelsArr[c] || `조회 항목 ${i}${c > 0 ? ' ' + (c + 1) : ''}`;
-            htmlContent += `
-                <div class="prop-group">
-                    <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">컬럼 ${c + 1} 항목명</label>
-                    <input type="text" class="v4-prop-input admin-col-label-input" data-col-idx="${c}" value="${currentLabel}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box;">
-                </div>
-            `;
-        }
-
-        htmlContent += `</div>`;
-        rowDiv.innerHTML = htmlContent;
-        container.appendChild(rowDiv);
-
-        const colSelect = rowDiv.querySelector('.admin-row-cols');
-        const heightInp = rowDiv.querySelector('.admin-row-height-input');
-        const labelsContainer = rowDiv.querySelector('.admin-row-labels-container');
-        const btnUp = rowDiv.querySelector('.btn-move-row-up');
-        const btnDown = rowDiv.querySelector('.btn-move-row-down');
-        const btnDelete = rowDiv.querySelector('.btn-delete-row');
-
-        if (btnUp && i > 1) {
-            btnUp.onclick = () => {
-                const rows = getCurrentRowsData();
-                const idx = i - 1;
-                const temp = rows[idx];
-                rows[idx] = rows[idx - 1];
-                rows[idx - 1] = temp;
-                applyUpdatedRows(rows);
-            };
-        }
-
-        if (btnDown && i < rowCount) {
-            btnDown.onclick = () => {
-                const rows = getCurrentRowsData();
-                const idx = i - 1;
-                const temp = rows[idx];
-                rows[idx] = rows[idx + 1];
-                rows[idx + 1] = temp;
-                applyUpdatedRows(rows);
-            };
-        }
-
-        if (btnDelete && rowCount > 1) {
-            btnDelete.onclick = () => {
-                const rows = getCurrentRowsData();
-                const idx = i - 1;
-                rows.splice(idx, 1);
-                applyUpdatedRows(rows);
-            };
-        }
-
-        const getMergedLabels = () => {
-            const inputs = labelsContainer.querySelectorAll('.admin-col-label-input');
-            const vals = Array.from(inputs).map(inp => inp.value.trim());
-            return vals.join(', ');
-        };
-
-        const updateConfig = () => {
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
-                    rowNum: i,
-                    label: getMergedLabels(),
-                    cols: parseInt(colSelect.value) || 1,
-                    rowType: 'textbox',
-                    rowSpecificHeight: parseInt(heightInp.value) || 44
-                });
-            }
-        };
-
-        // If Column Count changes, re-render the label inputs for this row
-        colSelect.onchange = () => {
-            const newColsVal = parseInt(colSelect.value) || 1;
-            labelsContainer.innerHTML = '';
-            let newHtml = '';
-            for (let c = 0; c < newColsVal; c++) {
-                const currentLabel = labelsArr[c] || `조회 항목 ${i}${c > 0 ? ' ' + (c + 1) : ''}`;
-                newHtml += `
-                    <div class="prop-group">
-                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">컬럼 ${c + 1} 항목명</label>
-                        <input type="text" class="v4-prop-input admin-col-label-input" data-col-idx="${c}" value="${currentLabel}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box;">
-                    </div>
-                `;
-            }
-            labelsContainer.innerHTML = newHtml;
-
-            // Bind input events to new inputs
-            labelsContainer.querySelectorAll('.admin-col-label-input').forEach(inp => {
-                inp.oninput = updateConfig;
-            });
-
-            updateConfig();
-        };
-
-        // Bind input events to height input & initial labels
-        if (heightInp) heightInp.oninput = updateConfig;
-        labelsContainer.querySelectorAll('.admin-col-label-input').forEach(inp => {
-            inp.oninput = updateConfig;
-        });
-    }
-
-    // Initialize row count +/- button click event listeners
-    const btnInc = document.getElementById('btn-admin-row-inc');
-    const btnDec = document.getElementById('btn-admin-row-dec');
-
-    if (btnInc) {
-        btnInc.onclick = () => {
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow && window.MessageHub) {
-                const currentCount = parseInt(rowCountText.innerText) || 1;
-                if (currentCount < 20) {
-                    const newCount = currentCount + 1;
-                    window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
-                        rowCount: newCount
-                    });
-
-                    // Trigger parent side metadata and ui sync
-                    const activeId = window.state?.editingIndex;
-                    if (activeId) {
-                        const activeEl = iframe.contentWindow.document.getElementById(activeId);
-                        if (activeEl) {
-                            const containerEl = activeEl.querySelector('.v4-admin-settings-container') || activeEl;
-                            if (!containerEl.getAttribute(`data-row${newCount}-label`)) {
-                                containerEl.setAttribute(`data-row${newCount}-label`, `조회 항목 ${newCount}`);
-                                containerEl.setAttribute(`data-row${newCount}-cols`, '1');
-                                containerEl.setAttribute(`data-row${newCount}-type`, 'textbox');
-                                containerEl.setAttribute(`data-row${newCount}-height`, '44');
-                            }
-                            const syncData = {
-                                id: activeId,
-                                editingType: 'admin-settings',
-                                adminRowCount: newCount,
-                                adminLabelWidth: comp.adminLabelWidth,
-                                adminShowGroupHeader: comp.adminShowGroupHeader,
-                                adminGroupHeaderTitle: comp.adminGroupHeaderTitle,
-                                adminGroupHeaderBg: comp.adminGroupHeaderBg,
-                                adminGroupHeaderColor: comp.adminGroupHeaderColor,
-                                adminShowActionBar: comp.adminShowActionBar,
-                                adminActionAlign: comp.adminActionAlign
-                            };
-                            for (let r = 1; r <= 20; r++) {
-                                syncData[`adminRow${r}Label`] = containerEl.getAttribute(`data-row${r}-label`) || '';
-                                syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
-                                syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
-                                syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
-                            }
-                            if (window.state && window.state.selectedComponentStyles) {
-                                Object.assign(window.state.selectedComponentStyles, syncData);
-                            }
-                            _syncAdminSettingsProps(syncData, true);
-                        }
-                    }
-                }
-            }
-        };
-    }
-
-    if (btnDec) {
-        btnDec.onclick = () => {
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow && window.MessageHub) {
-                const currentCount = parseInt(rowCountText.innerText) || 1;
-                if (currentCount > 1) {
-                    const newCount = currentCount - 1;
-                    window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
-                        rowCount: newCount
-                    });
-
-                    const activeId = window.state?.editingIndex;
-                    if (activeId) {
-                        const activeEl = iframe.contentWindow.document.getElementById(activeId);
-                        if (activeEl) {
-                            const containerEl = activeEl.querySelector('.v4-admin-settings-container') || activeEl;
-                            const syncData = {
-                                id: activeId,
-                                editingType: 'admin-settings',
-                                adminRowCount: newCount,
-                                adminLabelWidth: comp.adminLabelWidth,
-                                adminShowGroupHeader: comp.adminShowGroupHeader,
-                                adminGroupHeaderTitle: comp.adminGroupHeaderTitle,
-                                adminGroupHeaderBg: comp.adminGroupHeaderBg,
-                                adminGroupHeaderColor: comp.adminGroupHeaderColor,
-                                adminShowActionBar: comp.adminShowActionBar,
-                                adminActionAlign: comp.adminActionAlign
-                            };
-                            for (let r = 1; r <= 20; r++) {
-                                syncData[`adminRow${r}Label`] = containerEl.getAttribute(`data-row${r}-label`) || '';
-                                syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
-                                syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
-                                syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
-                            }
-                            if (window.state && window.state.selectedComponentStyles) {
-                                Object.assign(window.state.selectedComponentStyles, syncData);
-                            }
-                            _syncAdminSettingsProps(syncData, true);
-                        }
-                    }
-                }
-            }
-        };
+    if (typeof window._syncAdminSettingsProps === 'function') {
+        window._syncAdminSettingsProps(comp, forceRebuild);
     }
 }
 
 function _syncToggleProps(comp) {
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
     const btnOn = document.getElementById('btn-toggle-on');
     const btnOff = document.getElementById('btn-toggle-off');
     const isChecked = comp.toggleChecked === true;

@@ -6,16 +6,7 @@
 (function() {
     console.log("[Inspector Shapes] Domain module loaded.");
 
-    const notifyIframe = (data) => {
-        if (window.EditorBus) {
-            window.EditorBus.sendToIframe(data);
-        } else {
-            const activeIframe = (window.DOM && window.DOM.iframe) || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-            if (activeIframe && activeIframe.contentWindow) {
-                activeIframe.contentWindow.postMessage(data, '*');
-            }
-        }
-    };
+    const notifyIframe = (data) => window.notifyIframe(data);
 
     const getActiveTargetId = () => {
         return (window.state && window.state.selectedComponent && window.state.selectedComponent.id) ||

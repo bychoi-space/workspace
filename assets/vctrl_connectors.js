@@ -537,4 +537,171 @@ window.ConnectorEngine = (function() {
         deleteSelected: deleteSelectedLine,
         updateSelectedStyle: window.updateSelectedStyle
     };
+
+    // --- Line (Straight) Inspector Properties Synchronization & Event Handlers ---
+window._syncLineEditorProps = (compStyles) => {
+    if (!compStyles) return;
+    const dir = compStyles.lineDir || 'horizontal';
+    const style = compStyles.lineStyle || 'solid';
+    const thickness = parseFloat(compStyles.lineThickness) || 1.6;
+    const color = compStyles.lineColor || '#c8c8c8';
+
+    document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
+        const btnDir = b.dataset.dir;
+        if (btnDir === dir) {
+            b.style.background = 'rgba(0, 229, 255, 0.15)';
+            b.style.borderColor = 'rgba(0, 229, 255, 0.4)';
+            b.style.color = '#00e5ff';
+        } else {
+            b.style.background = 'rgba(255, 255, 255, 0.05)';
+            b.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            b.style.color = '#94a3b8';
+        }
+    });
+
+    ['solid', 'dashed', 'dotted'].forEach(s => {
+        const btn = document.getElementById('btn-line-style-' + s);
+        if (btn) {
+            if (s === style) {
+                btn.style.background = 'rgba(0, 229, 255, 0.15)';
+                btn.style.borderColor = 'rgba(0, 229, 255, 0.4)';
+                btn.style.color = '#00e5ff';
+            } else {
+                btn.style.background = 'rgba(255, 255, 255, 0.05)';
+                btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                btn.style.color = '#94a3b8';
+            }
+        }
+    });
+
+    const thickInput = document.getElementById('line-stroke-width');
+    const thickTxt = document.getElementById('txt-line-stroke-width');
+    if (thickInput) thickInput.value = thickness;
+    if (thickTxt) thickTxt.innerText = thickness;
+
+    const colorInput = document.getElementById('line-stroke-color');
+    let hexColor = '#c8c8c8';
+    if (color) {
+        hexColor = (typeof window.rgbToHex === 'function' ? window.rgbToHex(color) : color) || color;
+        if (!hexColor.startsWith('#')) hexColor = '#c8c8c8';
+    }
+    if (colorInput) {
+        colorInput.value = hexColor;
+        const wrapper = colorInput.closest('.v4-color-wrapper');
+        if (wrapper) wrapper.classList.remove('transparent-active');
+    }
+
+    // Dynamic Single Length Control Sync
+    const curW = parseFloat(compStyles.width) || parseFloat(compStyles.w) || (compStyles.style && parseFloat(compStyles.style.width)) || 200;
+    const curH = parseFloat(compStyles.height) || parseFloat(compStyles.h) || (compStyles.style && parseFloat(compStyles.style.height)) || 100;
+    const lengthInput = document.getElementById('prop-line-length');
+    const lengthLabel = document.getElementById('lbl-line-length');
+    if (lengthInput) lengthInput.setAttribute('data-dir', dir);
+    if (dir === 'vertical') {
+        if (lengthLabel) lengthLabel.innerText = 'LENGTH / 세로 길이 (px)';
+        if (lengthInput) lengthInput.value = Math.round(curH > 10 ? curH : (curW > 10 ? curW : 100));
+    } else {
+        if (lengthLabel) lengthLabel.innerText = 'LENGTH / 가로 길이 (px)';
+        if (lengthInput) lengthInput.value = Math.round(curW > 10 ? curW : (curH > 10 ? curH : 200));
+    }
+};
+
+// Line Editor Click & Input Handlers
+document.addEventListener('click', (e) => {
+    const dirBtn = e.target.closest('.v4-line-dir-btn');
+    if (dirBtn) {
+        const dir = dirBtn.dataset.dir;
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { lineDir: dir }
+            });
+            document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
+                const isActive = b.dataset.dir === dir;
+                b.style.background = isActive ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)';
+                b.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
+                b.style.color = isActive ? '#00e5ff' : '#94a3b8';
+            });
+            const lengthLabel = document.getElementById('lbl-line-length');
+            const lengthInput = document.getElementById('prop-line-length');
+            if (lengthLabel) {
+                lengthLabel.innerText = dir === 'vertical' ? 'LENGTH / 세로 길이 (px)' : 'LENGTH / 가로 길이 (px)';
+            }
+            if (lengthInput) {
+                lengthInput.setAttribute('data-dir', dir);
+            }
+        }
+        return;
+    }
+
+    const styleBtn = e.target.closest('.v4-line-style-btn');
+    if (styleBtn) {
+        const st = styleBtn.dataset.style;
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { lineStyle: st }
+            });
+            ['solid', 'dashed', 'dotted'].forEach(s => {
+                const b = document.getElementById('btn-line-style-' + s);
+                if (b) {
+                    const isActive = s === st;
+                    b.style.background = isActive ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)';
+                    b.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
+                    b.style.color = isActive ? '#00e5ff' : '#94a3b8';
+                }
+            });
+        }
+        return;
+    }
+});
+
+const handleLineEditorInputEvent = (e) => {
+    if (e.target.id === 'line-stroke-width') {
+        const val = parseFloat(e.target.value) || 1.6;
+        const txt = document.getElementById('txt-line-stroke-width');
+        if (txt) txt.innerText = val;
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { lineThickness: val }
+            });
+        }
+    } else if (e.target.id === 'line-stroke-color') {
+        const val = e.target.value;
+        const wrapper = e.target.closest('.v4-color-wrapper');
+        if (wrapper) wrapper.classList.remove('transparent-active');
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { lineColor: val }
+            });
+        }
+    } else if (e.target.id === 'prop-line-length') {
+        const val = parseFloat(e.target.value) || 10;
+        const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+        const targetId = state.selectedComponent?.id || state.editingIndex || window.activeCompId;
+        if (iframeWin && targetId) {
+            const currentDir = e.target.getAttribute('data-dir') || 'horizontal';
+            const prop = currentDir === 'vertical' ? 'height' : 'width';
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetId,
+                style: { [prop]: val + 'px' }
+            });
+        }
+    }
+};
+
+document.addEventListener('input', handleLineEditorInputEvent);
+document.addEventListener('change', handleLineEditorInputEvent);
+
+
 })();

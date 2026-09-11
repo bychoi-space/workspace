@@ -6,28 +6,8 @@
 (function() {
     console.log("[Inspector Atoms] Domain module loaded.");
 
-    const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
-    };
-
-    const notifyIframe = (data) => {
-        const activeIframe = (window.DOM && window.DOM.iframe) || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-        if (activeIframe && activeIframe.contentWindow) {
-            if (window.MessageHub) {
-                MessageHub.send(activeIframe.contentWindow, data.type, data);
-                return;
-            }
-            if (window.EditorBus) {
-                window.EditorBus.sendToIframe(data);
-                return;
-            }
-            activeIframe.contentWindow.postMessage(data, '*');
-        }
-    };
+    const highlightActive = window.highlightActive;
+    const notifyIframe = (data) => window.notifyIframe(data);
 
     // --- Disabled State Common Sync ---
     const syncDisabled = (comp) => {
@@ -516,6 +496,337 @@
         }
     };
 
+
+    // --- Checkbox & Radio Events (Integrated from vctrl_v4_addon.js) ---
+    const initCheckboxRadioEvents = () => {
+        const activeY = document.getElementById('btn-atom-active-y');
+        const activeN = document.getElementById('btn-atom-active-n');
+        const textY = document.getElementById('btn-atom-text-y');
+        const textN = document.getElementById('btn-atom-text-n');
+        
+
+        if (activeY) {
+            activeY.onclick = () => {
+                highlightActive(activeY, true);
+                highlightActive(activeN, false);
+                notifyIframe({ type: 'LF_UPDATE_ATOM_STATE', checked: true });
+            };
+        }
+        if (activeN) {
+            activeN.onclick = () => {
+                highlightActive(activeN, true);
+                highlightActive(activeY, false);
+                notifyIframe({ type: 'LF_UPDATE_ATOM_STATE', checked: false });
+            };
+        }
+        
+        if (textY) {
+            textY.onclick = () => {
+                highlightActive(textY, true);
+                highlightActive(textN, false);
+                notifyIframe({ type: 'LF_UPDATE_ATOM_TEXT_ENABLED', enabled: true });
+            };
+        }
+        if (textN) {
+            textN.onclick = () => {
+                highlightActive(textN, true);
+                highlightActive(textY, false);
+                notifyIframe({ type: 'LF_UPDATE_ATOM_TEXT_ENABLED', enabled: false });
+            };
+        }
+
+        const labelTextInp = document.getElementById('prop-atom-text-content');
+        if (labelTextInp) {
+            labelTextInp.oninput = function() {
+                notifyIframe({
+                    type: 'LF_UPDATE_ATOM_LABEL_TEXT',
+                    text: this.value
+                });
+            };
+        }
+
+        const widthIconInp = document.getElementById('prop-width-icon');
+        const heightIconInp = document.getElementById('prop-height-icon');
+
+        if (widthIconInp) {
+            widthIconInp.oninput = function() {
+                const val = parseInt(this.value);
+                if (!isNaN(val) && val > 0) {
+                    notifyIframe({
+                        type: 'LF_UPDATE_ATOM_ICON_SIZE',
+                        width: val,
+                        height: heightIconInp ? (parseInt(heightIconInp.value) || val) : val
+                    });
+                }
+            };
+        }
+        if (heightIconInp) {
+            heightIconInp.oninput = function() {
+                const val = parseInt(this.value);
+                if (!isNaN(val) && val > 0) {
+                    notifyIframe({
+                        type: 'LF_UPDATE_ATOM_ICON_SIZE',
+                        width: widthIconInp ? (parseInt(widthIconInp.value) || val) : val,
+                        height: val
+                    });
+                }
+            };
+        }
+    };
+    initCheckboxRadioEvents();
+
+    // Textbox / Textarea Inspector Events
+
+    // --- Textbox & Textarea Events (Integrated from vctrl_v4_addon.js) ---
+    const initTextboxTextareaEvents = () => {
+        const phInput = document.getElementById('prop-input-placeholder');
+        if (phInput) {
+            phInput.oninput = () => {
+                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', placeholderText: phInput.value });
+            };
+        }
+
+        const mlInput = document.getElementById('prop-input-maxlength');
+        if (mlInput) {
+            mlInput.oninput = () => {
+                let val = parseInt(mlInput.value);
+                if (isNaN(val) || val < 1) val = 1;
+                const txt = document.getElementById('txt-input-maxlength');
+                if (txt) txt.innerText = val;
+                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', maxLength: val });
+            };
+        }
+
+        const counterY = document.getElementById('btn-input-counter-y');
+        const counterN = document.getElementById('btn-input-counter-n');
+
+        if (counterY) {
+            counterY.onclick = () => {
+                highlightActive(counterY, true);
+                highlightActive(counterN, false);
+                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', showCounter: true });
+            };
+        }
+        if (counterN) {
+            counterN.onclick = () => {
+                highlightActive(counterN, true);
+                highlightActive(counterY, false);
+                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', showCounter: false });
+            };
+        }
+
+        // Font Size & Font Family Controls
+        const fsInput = document.getElementById('prop-input-fontsize');
+        if (fsInput) {
+            fsInput.oninput = () => {
+                let val = parseInt(fsInput.value);
+                if (isNaN(val) || val < 1) val = 12;
+                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', fontSize: val });
+            };
+        }
+
+        const ffInput = document.getElementById('prop-input-fontfamily');
+        if (ffInput) {
+            ffInput.onchange = () => {
+                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', fontFamily: ffInput.value });
+            };
+        }
+    };
+    initTextboxTextareaEvents();
+
+    // Search Bar Inspector Events
+
+    // --- SearchBar Events (Integrated from vctrl_v4_addon.js) ---
+    const initSearchBarEvents = () => {
+        const phInput = document.getElementById('prop-searchbar-placeholder');
+        if (phInput) {
+            phInput.oninput = () => {
+                notifyIframe({ type: 'LF_UPDATE_SEARCHBAR_PROPERTIES', placeholderText: phInput.value });
+            };
+        }
+
+        const fsInput = document.getElementById('prop-searchbar-fontsize');
+        if (fsInput) {
+            fsInput.oninput = () => {
+                notifyIframe({ type: 'LF_UPDATE_SEARCHBAR_PROPERTIES', fontSize: parseInt(fsInput.value) });
+            };
+        }
+    };
+    initSearchBarEvents();
+
+    // Stepper Inspector Events
+
+    // --- DatePicker Events (Integrated from vctrl_v4_addon.js) ---
+    const initDatePickerEvents = () => {
+        // Show Presets Toggle
+        const presetsY = document.getElementById('btn-dp-presets-y');
+        const presetsN = document.getElementById('btn-dp-presets-n');
+        if (presetsY) {
+            presetsY.onclick = () => {
+                highlightActive(presetsY, true);
+                highlightActive(presetsN, false);
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showPresets: true });
+            };
+        }
+        if (presetsN) {
+            presetsN.onclick = () => {
+                highlightActive(presetsN, true);
+                highlightActive(presetsY, false);
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showPresets: false });
+            };
+        }
+
+        // Show End Date Toggle
+        const showEndY = document.getElementById('btn-dp-show-end-y');
+        const showEndN = document.getElementById('btn-dp-show-end-n');
+        if (showEndY) {
+            showEndY.onclick = () => {
+                highlightActive(showEndY, true);
+                highlightActive(showEndN, false);
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showEndDate: true });
+            };
+        }
+        if (showEndN) {
+            showEndN.onclick = () => {
+                highlightActive(showEndN, true);
+                highlightActive(showEndY, false);
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showEndDate: false });
+            };
+        }
+
+        // Default Preset Buttons
+        const presetKeys = ['none', '1D', '1W', '1M', '6M', 'all'];
+        presetKeys.forEach(key => {
+            const btn = document.getElementById('btn-dp-default-' + key);
+            if (btn) {
+                btn.onclick = () => {
+                    presetKeys.forEach(k => {
+                        const b = document.getElementById('btn-dp-default-' + k);
+                        highlightActive(b, k === key);
+                    });
+                    notifyIframe({ type: 'LF_UPDATE_DATEPICKER', defaultPreset: key });
+                };
+            }
+        });
+
+        // Mode Selector Buttons
+        const modeSimpleBtn = document.getElementById('btn-dp-mode-simple');
+        const modeDetailedBtn = document.getElementById('btn-dp-mode-detailed');
+        const timeInputsWrapper = document.getElementById('dp-time-inputs-wrapper');
+        const presetsToggleWrapper = document.getElementById('dp-presets-toggle-wrapper');
+        const showEndToggleWrapper = document.getElementById('dp-show-end-toggle-wrapper');
+        const defaultPresetWrapper = document.getElementById('dp-default-preset-wrapper');
+        
+        if (modeSimpleBtn) {
+            modeSimpleBtn.onclick = () => {
+                highlightActive(modeSimpleBtn, true);
+                highlightActive(modeDetailedBtn, false);
+                if (timeInputsWrapper) timeInputsWrapper.style.display = 'none';
+                if (presetsToggleWrapper) presetsToggleWrapper.style.display = 'block';
+                if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
+                if (defaultPresetWrapper) defaultPresetWrapper.style.display = 'block';
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', mode: 'simple' });
+            };
+        }
+        if (modeDetailedBtn) {
+            modeDetailedBtn.onclick = () => {
+                highlightActive(modeDetailedBtn, true);
+                highlightActive(modeSimpleBtn, false);
+                if (timeInputsWrapper) timeInputsWrapper.style.display = 'block';
+                if (presetsToggleWrapper) presetsToggleWrapper.style.display = 'none';
+                if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
+                if (defaultPresetWrapper) defaultPresetWrapper.style.display = 'none';
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', mode: 'detailed' });
+            };
+        }
+
+        // Auto-slash formatter for YYYY/MM/DD
+        const formatSlashDate = (value) => {
+            let val = value.replace(/[^0-9]/g, '');
+            let formatted = '';
+            if (val.length > 0) {
+                formatted += val.substring(0, 4);
+                if (val.length > 4) {
+                    formatted += '/' + val.substring(4, 6);
+                    if (val.length > 6) {
+                        formatted += '/' + val.substring(6, 8);
+                    }
+                }
+            }
+            return formatted;
+        };
+
+        // Auto-colon formatter for HH:MM:SS
+        const formatColonTime = (value) => {
+            let val = value.replace(/[^0-9]/g, '');
+            let formatted = '';
+            if (val.length > 0) {
+                formatted += val.substring(0, 2);
+                if (val.length > 2) {
+                    formatted += ':' + val.substring(2, 4);
+                    if (val.length > 4) {
+                        formatted += ':' + val.substring(4, 6);
+                    }
+                }
+            }
+            return formatted;
+        };
+
+        // Start/End Date Direct Input
+        const startInput = document.getElementById('prop-dp-start-date');
+        if (startInput) {
+            startInput.addEventListener('input', function(e) {
+                if (e.inputType !== 'deleteContentBackward') {
+                    this.value = formatSlashDate(this.value);
+                }
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', startDate: this.value });
+            });
+        }
+        const endInput = document.getElementById('prop-dp-end-date');
+        if (endInput) {
+            endInput.addEventListener('input', function(e) {
+                if (e.inputType !== 'deleteContentBackward') {
+                    this.value = formatSlashDate(this.value);
+                }
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', endDate: this.value });
+            });
+        }
+
+        // Start/End Time Direct Input
+        const startTimeInput = document.getElementById('prop-dp-start-time');
+        if (startTimeInput) {
+            startTimeInput.addEventListener('input', function(e) {
+                if (e.inputType !== 'deleteContentBackward') {
+                    this.value = formatColonTime(this.value);
+                }
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', startTime: this.value });
+            });
+        }
+        const endTimeInput = document.getElementById('prop-dp-end-time');
+        if (endTimeInput) {
+            endTimeInput.addEventListener('input', function(e) {
+                if (e.inputType !== 'deleteContentBackward') {
+                    this.value = formatColonTime(this.value);
+                }
+                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', endTime: this.value });
+            });
+        }
+    };
+    initDatePickerEvents();
+
+    window.syncAccordionSubItemInputs = (texts) => {
+        if (window.InspectorAccordion && typeof window.InspectorAccordion.syncSubItemInputs === 'function') {
+            window.InspectorAccordion.syncSubItemInputs(texts);
+        }
+    };
+
+    window.syncAccordionHierarchyInputs = (hierarchy) => {
+        if (window.InspectorAccordion && typeof window.InspectorAccordion.syncHierarchyInputs === 'function') {
+            window.InspectorAccordion.syncHierarchyInputs(hierarchy);
+        }
+    };
+
+
     window.InspectorAtoms = {
         syncStepper: syncStepper,
         syncSelectbox: syncSelectbox,
@@ -530,6 +841,10 @@
         bindAlertEvents: bindAlertEvents,
         bindButtonEvents: bindButtonEvents,
         bindToggleEvents: bindToggleEvents,
+        bindCheckboxRadioEvents: initCheckboxRadioEvents,
+        bindTextboxTextareaEvents: initTextboxTextareaEvents,
+        bindSearchBarEvents: initSearchBarEvents,
+        bindDatePickerEvents: initDatePickerEvents,
         bindAllEvents: function() {
             bindStepperEvents();
             bindSelectboxEvents();
@@ -537,6 +852,16 @@
             bindAlertEvents();
             bindButtonEvents();
             bindToggleEvents();
+            if (typeof initCheckboxRadioEvents === 'function') initCheckboxRadioEvents();
+            if (typeof initTextboxTextareaEvents === 'function') initTextboxTextareaEvents();
+            if (typeof initSearchBarEvents === 'function') initSearchBarEvents();
+            if (typeof initDatePickerEvents === 'function') initDatePickerEvents();
         }
     };
+    
+    // Global alias exports for backwards-compatibility
+    window.initCheckboxRadioEvents = initCheckboxRadioEvents;
+    window.initTextboxTextareaEvents = initTextboxTextareaEvents;
+    window.initSearchbarEvents = initSearchBarEvents;
+    window.initDatePickerEvents = initDatePickerEvents;
 })();

@@ -49,9 +49,7 @@ function getInlinedEngineScript() {
         (window.v4DesignSystemScript || '') + '\n' +
         (window.v4ShortcutsScript || '') + '\n' +
         (window.v4CommonScript || '') + '\n' +
-        (window.v4ObjectTextScript || '') + '\n' +
         (window.v4ObjectShapeScript || '') + '\n' +
-        (window.v4ObjectTableScript || '') + '\n' +
         (window.v4ObjectConnectorScript || '') + '\n' +
         (window.v4DragResizeScript || '') + '\n' +
         (window.v4PortConnectorScript || '') + '\n' +
@@ -96,7 +94,7 @@ window.loadScreen = async function (fileName) {
     const styleBlock = '<style id="v4-inlined-style">\n' + window.v4Styles + '\n</style>';
     if (finalContent.includes('id="v4-inlined-style"')) {
         finalContent = finalContent.replace(/<style id="v4-inlined-style">[\s\S]*?<\/style>/i, styleBlock);
-    } else if (!finalContent.includes('style_v4.css')) {
+    } else if (finalContent.includes('</head>')) {
         finalContent = finalContent.replace('</head>', styleBlock + '\n</head>');
     }
 
@@ -776,7 +774,7 @@ window.MessageHub = {
                     }
                 }
                 const activeEl = document.activeElement;
-                const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+                const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
                 const isTyping = !isBtn && activeEl && (
                     activeEl.tagName === 'INPUT' ||
                     activeEl.tagName === 'TEXTAREA' ||
@@ -1620,41 +1618,43 @@ window.init = async function () {
     }
 };
 
-window.showToast = function (message, type = 'success') {
-    let container = document.getElementById('v4-toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'v4-toast-container';
-        document.body.appendChild(container);
-    }
+if (typeof window.showToast !== 'function') {
+    window.showToast = function (message, type = 'success') {
+        let container = document.getElementById('v4-toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'v4-toast-container';
+            document.body.appendChild(container);
+        }
 
-    const toast = document.createElement('div');
-    toast.className = `v4-toast ${type}`;
+        const toast = document.createElement('div');
+        toast.className = `v4-toast ${type}`;
 
-    let iconName = 'info';
-    if (type === 'success') iconName = 'check_circle';
-    else if (type === 'error') iconName = 'error';
-    else if (type === 'warning') iconName = 'warning';
+        let iconName = 'info';
+        if (type === 'success') iconName = 'check_circle';
+        else if (type === 'error') iconName = 'error';
+        else if (type === 'warning') iconName = 'warning';
 
-    toast.innerHTML = `
-        <span class="material-icons-outlined v4-toast-icon">${iconName}</span>
-        <span style="flex-grow: 1;">${message}</span>
-    `;
+        toast.innerHTML = `
+            <span class="material-icons-outlined v4-toast-icon">${iconName}</span>
+            <span style="flex-grow: 1;">${message}</span>
+        `;
 
-    container.appendChild(toast);
+        container.appendChild(toast);
 
-    requestAnimationFrame(() => {
-        toast.classList.add('show');
-    });
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
 
-    setTimeout(() => {
-        toast.classList.remove('show');
-        toast.classList.add('hide');
         setTimeout(() => {
-            toast.remove();
-        }, 400);
-    }, 3500);
-};
+            toast.classList.remove('show');
+            toast.classList.add('hide');
+            setTimeout(() => {
+                toast.remove();
+            }, 400);
+        }, 3500);
+    };
+}
 
 window.toggleResponsiveGrid = function () {
     if (!state.isCurrentResponsiveScreen) return;

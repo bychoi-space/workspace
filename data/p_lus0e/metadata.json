@@ -83,7 +83,7 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
       "type": "admin",
-      "updatedAt": "2026-09-11T03:16:59.530Z",
+      "updatedAt": "2026-09-11T05:25:17.363Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -107,8 +107,8 @@
         }
       ],
       "connectors": [],
-      "defaultTab": "editor",
-      "screenDesc": ""
+      "defaultTab": "description",
+      "screenDesc": "[object Object]"
     },
     "09_Admin_PC_Scroll_639_copy.html": {
       "title": "기획전 등록 - 기본값",

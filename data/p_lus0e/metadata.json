@@ -73,18 +73,18 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T00:52:40.517Z",
+      "updatedAt": "2026-09-11T00:53:22.039Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
           "text": "1. 기본 정보 영역\n- 모든 항목 기존 '기획전 등록/상세' 기능과 동일하게 설계\n- [타이틀], [서브타이틀] 부분만 사용성 강화를 위해 1개 항목으로 통합",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 47,
-          "y": 143,
+          "x": 42,
+          "y": 146,
           "pins": {
             "pc": {
-              "x": 47,
-              "y": 143,
+              "x": 42,
+              "y": 146,
               "active": true
             },
             "mobile": {
@@ -98,12 +98,12 @@
         {
           "text": "2. 상단 비주얼 관리 영역\n- [이미지 등록 (PC)], [이미지 등록 (MO] 2가지 File Uploader 기능으로 구성",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 42,
-          "y": 688,
+          "x": 36,
+          "y": 802,
           "pins": {
             "pc": {
-              "x": 42,
-              "y": 688,
+              "x": 36,
+              "y": 802,
               "active": true
             },
             "mobile": {
@@ -124,7 +124,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 09:52:40",
+  "updated": "2026-09-11 09:53:22",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

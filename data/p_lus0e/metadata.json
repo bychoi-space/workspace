@@ -73,7 +73,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T03:11:09.324Z",
+      "updatedAt": "2026-09-11T03:13:51.493Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -204,7 +204,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 12:11:09",
+  "updated": "2026-09-11 12:13:51",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

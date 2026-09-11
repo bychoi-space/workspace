@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 13px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
     <meta charset="UTF-8">
-    <title>시선닷컴 상품 랭킹 산정 룰 및 알고리즘 정책</title>
+    <title>시선닷컴 상품 랭킹 산정 룰 (Ranking Algorithm Policy)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
@@ -11,8 +11,7 @@
             --v4-font-size: 13px;
             --v4-font-weight: 400;
             --v4-font-family: 'Pretendard Variable', 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --v4-primary: #4f46e5;
-            --v4-accent: #2563eb;
+            --v4-primary: #3b82f6;
             --v4-border: #e2e8f0;
         }
         * { box-sizing: border-box; }
@@ -44,538 +43,1250 @@
             outline: none;
             word-break: keep-all;
         }
-        .v4-premium-table th, .v4-premium-table td {
-            box-sizing: border-box !important;
-        }
     </style>
 </head>
 <body>
     <div class="page" id="canvas-page">
 
-        <!-- ========================================== -->
-        <!-- [1] 상단 통합 헤더 영역                      -->
-        <!-- ========================================== -->
-        <!-- 헤더 배경 카드 -->
+        <!-- ======================================================== -->
+        <!-- [1] 상단 통합 헤더 바 (Top Header Bar)                    -->
+        <!-- ======================================================== -->
+        
+        <!-- Rect Shape: rk-hdr-bg -->
         <div id="rk-hdr-bg" class="lf-component" style="position: absolute; top: 16px; left: 30px; width: 1540px; height: 52px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 10px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
         <!-- 헤더 아이콘 박스 -->
         <div id="rk-hdr-icon" class="lf-component" style="position: absolute; top: 26px; left: 45px; width: 32px; height: 32px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #4f46e5; border: 1.6px solid transparent; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ffffff; box-sizing: border-box;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 18px; height: 18px; background-image: none !important;"><path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #3b82f6; border: 1.6px solid transparent; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ffffff; box-sizing: border-box;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 18px; height: 18px; background-image: none !important;"><path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
             </div>
         </div>
 
-        <!-- 헤더 타이틀 텍스트 -->
-        <div id="rk-hdr-title" class="lf-component v4-text-shape" style="position: absolute; top: 29px; left: 88px; width: 570px; height: 26px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(248, 250, 252); font-size: 16px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 16px; color: rgb(248, 250, 252); white-space: nowrap !important;">시선닷컴 상품 종합 랭킹(Ranking Score) 산정 룰 및 알고리즘 정책</span></p></div>
+        <!-- 헤더 타이틀 -->
+        
+        <!-- Text Shape: rk-hdr-title -->
+        <div id="rk-hdr-title" class="lf-component v4-text-shape" style="position: absolute; top: 29px; left: 88px; width: 540px; height: 26px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #f8fafc; font-size: 16px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="white-space:nowrap;"><span style="font-size:16px; font-weight:800; color:#f8fafc;">시선닷컴 상품 랭킹 산정 룰 (Ranking Algorithm Policy)</span></p>
+            </div>
         </div>
 
-        <!-- 헤더 서브 텍스트 -->
-        <div id="rk-hdr-sub" class="lf-component v4-text-shape" style="position: absolute; top: 33px; left: 670px; width: 330px; height: 20px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(148, 163, 184); font-size: 12px; font-weight: 500; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 12px; color: rgb(148, 163, 184); white-space: nowrap !important;">3대 패션 브랜드(MICHAA · it MICHAA · E.B.M) 복합 밸런싱 모델</span></p></div>
+        <!-- 헤더 서브 타이틀 -->
+        
+        <!-- Text Shape: rk-hdr-sub -->
+        <div id="rk-hdr-sub" class="lf-component v4-text-shape" style="position: absolute; top: 33px; left: 610px; width: 340px; height: 20px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #94a3b8; font-size: 12px; font-weight: 500; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="white-space:nowrap;"><span style="font-size:12px; font-weight:500; color:#94a3b8;">3대 패션 브랜드(MICHAA · it MICHAA · E.B.M) 복합 밸런싱 모델</span></p>
+            </div>
         </div>
 
-        <!-- 헤더 우측 뱃지 1: ALGORITHM V2.0 -->
-        <div id="rk-hdr-b1" class="lf-component" style="position: absolute; top: 28px; left: 1290px; width: 125px; height: 28px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(99, 102, 241, 0.2); border: 1.6px solid #6366f1; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
-                    <p><span style="font-size: 11px; font-weight: 700; color: #a5b4fc;">ALGORITHM V2.0</span></p>
+        <!-- 헤더 브랜드 로고 뱃지 3종 -->
+        
+        <!-- Rect Shape: rk-hdr-b1-bg -->
+        <div id="rk-hdr-b1-bg" class="lf-component" style="position: absolute; top: 29px; left: 1140px; width: 88px; height: 26px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Logo Shape: rk-hdr-b1-logo -->
+        <div id="rk-hdr-b1-logo" class="lf-component" style="position: absolute; top: 29px; left: 1140px; width: 88px; height: 26px; z-index: 102;" data-resized="true">
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
+        </div>
+
+        
+        <!-- Rect Shape: rk-hdr-b2-bg -->
+        <div id="rk-hdr-b2-bg" class="lf-component" style="position: absolute; top: 29px; left: 1236px; width: 88px; height: 26px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Logo Shape: rk-hdr-b2-logo -->
+        <div id="rk-hdr-b2-logo" class="lf-component" style="position: absolute; top: 29px; left: 1236px; width: 88px; height: 26px; z-index: 102;" data-resized="true">
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
+        </div>
+
+        
+        <!-- Rect Shape: rk-hdr-b3-bg -->
+        <div id="rk-hdr-b3-bg" class="lf-component" style="position: absolute; top: 29px; left: 1332px; width: 88px; height: 26px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Logo Shape: rk-hdr-b3-logo -->
+        <div id="rk-hdr-b3-logo" class="lf-component" style="position: absolute; top: 29px; left: 1332px; width: 88px; height: 26px; z-index: 102;" data-resized="true">
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #ffffff !important; pointer-events: none;"></div>
+        </div>
+
+        <!-- 버전 뱃지 -->
+        
+        <!-- Badge: rk-hdr-ver -->
+        <div id="rk-hdr-ver" class="lf-component" style="position: absolute; top: 29px; left: 1430px; width: 125px; height: 26px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(59, 130, 246, 0.2); border: 1.6px solid #3b82f6; border-radius: 13px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 700; color: #93c5fd;">ALGORITHM V2.0</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- 헤더 우측 뱃지 2: SISUN D2C MALL -->
-        <div id="rk-hdr-b2" class="lf-component" style="position: absolute; top: 28px; left: 1425px; width: 130px; height: 28px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
-                    <p><span style="font-size: 11px; font-weight: 700; color: #f8fafc;">SISUN.COM ECO</span></p>
-                </div>
-            </div>
-        </div>
 
-
-        <!-- ========================================== -->
-        <!-- [2] ZONE 1 (좌측 상단): 1. 산정 배경 및 한계    -->
-        <!-- ========================================== -->
-        <!-- Zone 1 카드 배경 -->
-        <div id="rk-c1-bg" class="lf-component" style="position: absolute; top: 80px; left: 30px; width: 480px; height: 385px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
+        <!-- ======================================================== -->
+        <!-- [2] COLUMN 1 (좌측 450px): 브랜드 포트폴리오 & 전/후 비교    -->
+        <!-- ======================================================== -->
+        <!-- 대형 카드 1 배경 -->
+        
+        <!-- Rect Shape: rk-c1-bg -->
+        <div id="rk-c1-bg" class="lf-component" style="position: absolute; top: 82px; left: 30px; width: 450px; height: 485px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
-        <!-- Zone 1 헤더 아이콘 -->
-        <div id="rk-c1-icon" class="lf-component" style="position: absolute; top: 94px; left: 46px; width: 22px; height: 22px; z-index: 101;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <!-- 카드 1 헤더 아이콘 -->
+        <div id="rk-c1-icon" class="lf-component" style="position: absolute; top: 96px; left: 46px; width: 22px; height: 22px; z-index: 101;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
         </div>
-
-        <!-- Zone 1 헤더 타이틀 -->
-        <div id="rk-c1-title" class="lf-component v4-text-shape" style="position: absolute; top: 92px; left: 74px; width: 310px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">1. 랭킹 산정 배경 및 단순 판매량의 한계</span></p></div>
+        
+        <!-- Text Shape: rk-c1-title -->
+        <div id="rk-c1-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 74px; width: 280px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="white-space:nowrap;"><span style="font-size:15px; font-weight:800; color:#0f172a;">1. 3대 브랜드 포트폴리오 &amp; 원칙</span></p>
+            </div>
         </div>
-
-        <!-- Zone 1 뱃지 -->
-        <div id="rk-c1-badge" class="lf-component" style="position: absolute; top: 93px; left: 400px; width: 95px; height: 22px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fee2e2; border: 1.6px solid #fca5a5; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
-                    <p><span style="font-size: 10px; font-weight: 700; color: #b91c1c;">LIMITATION</span></p>
+        
+        <!-- Badge: rk-c1-badge -->
+        <div id="rk-c1-badge" class="lf-component" style="position: absolute; top: 95px; left: 375px; width: 90px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #1d4ed8;">3 BRANDS</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Zone 1 문제점 진단 박스 배경 -->
-        <div id="rk-c1-pbox-bg" class="lf-component" style="position: absolute; top: 125px; left: 44px; width: 452px; height: 58px; z-index: 101;" data-resized="true">
+        <!-- 브랜드 1: MICHAA -->
+        
+        <!-- Rect Shape: rk-b1-card -->
+        <div id="rk-b1-card" class="lf-component" style="position: absolute; top: 128px; left: 44px; width: 422px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Logo Shape: rk-b1-logo -->
+        <div id="rk-b1-logo" class="lf-component" style="position: absolute; top: 138px; left: 56px; width: 90px; height: 30px; z-index: 102;" data-resized="true">
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNUEzNThGNzZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNUEzNThGODZBNUMxMUVGQTI4ODk2MTFFMjFDQ0I1MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE1QTM1OEY1NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjE1QTM1OEY2NkE1QzExRUZBMjg4OTYxMUUyMUNDQjUwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+V5ZaJgAAAzRJREFUeNrsW19oT1Ecv9c27IGi8KLIEmp5Wp7kyYOotT3KA1GSJyGazZ+GsCVZqy2JBy8eKSVSUl4QIvkTwsoiKQuNMdfn5JS7X7vfc+/5nX/b/X7r07d+53vO+d7POed7z/d7tzhJkqjMMiUquTABTAATwAQwAUwAE8AEMAFMABPABJRSait/iON4R4H+Ipc+g5R62NcDwN/NUDMLdLkOf5/+f4IkGQP5UEXQWTmGK0DWaPi7KT2GiSOwB6vQ4GHla6C6Q4gB04AeD7t/C9AYShBcixVdrj6M8TRC+0tcBqO1TviYC8wLzQCFgJtDlZ/PtSuUO8BLgLiMWC6bwK++giIILcJakNG87BLAg4DvzwExJOCh4y2HpcEvAT6XAZEjNcKtSqjeQg47joGdMqJrQdEPHwd1AlqZ+BW98UpAZjwM9QRRwFxO7A4o034ccrXW6AXeGczIILEWVAHCJOjWIxvXgjAxD+g9lm+IXYAszPaBoH+qMqH0MkGW1L2IirfI2zfAPWa2d4iYIQYe5uG72azweTfzDst3RC7gLqMttfAucjAA1S1A1L9LhH24qg0FFz9lQofNmr6brwekE5QRk0ERMSNWF56suQZcCGoXABsvlAEpCIBcT2wgmjfj/n+mHLcyBGQfefIy5F2QJSJzltijIdik2T09XoExICfZLZWTUAURdkFRHtbYvIPm0zuANlf5AADOgERMlexg24rdo/fHSAJFWlpu2YN8VBEl7g7IgsOG90BcgxB7H3FGM0VfZYBvwn7azlenf53gCRVROjdBWuIosRdQ0V+G75a+zQGEm5CXVEExHb53l8NtY6wvYzx7tpy1PgRSI21VLGtfwJLgEeEjdhNjTnnC+MIpMh9DnWWMJkK3AKWEzYXMc4TWz66+Dp8EKDydaq+P6qoBYRPAFbvo6KcRcl59H81oQlIVXPfF+wzIqvP0YQnIMflaDzpQ7+BSUGAFJG+Ps5p+z3SLHMHS4C8HOX9ptcL+w+TigBJwg2oqwqzIVerL6R2nN9ac/S7U8WcW4Emon1Q9yNHTt8fjKk+8f8MlVyYACaACWACmAAmgAlgApiAsspfAQYABFvFgwXFYI0AAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
+        </div>
+        
+        <!-- Badge: rk-b1-price -->
+        <div id="rk-b1-price" class="lf-component" style="position: absolute; top: 138px; left: 320px; width: 134px; height: 24px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 700; color: #1e40af;">평균 80만 ~ 150만원</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-b1-desc -->
+        <div id="rk-b1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 174px; left: 56px; width: 400px; height: 50px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p>• <span style="font-weight:700; color:#0f172a;">포지션</span>: 하이엔드 럭셔리 여성 정장 · 시그니처 코트</p><p>• <span style="font-weight:700; color:#1e40af;">랭킹 룰</span>: <strong>주문금액(35%)</strong> 가중치로 고가 프리미엄 랭킹 진입 보장</p>
+            </div>
+        </div>
+
+        <!-- 브랜드 2: it MICHAA -->
+        
+        <!-- Rect Shape: rk-b2-card -->
+        <div id="rk-b2-card" class="lf-component" style="position: absolute; top: 242px; left: 44px; width: 422px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Logo Shape: rk-b2-logo -->
+        <div id="rk-b2-logo" class="lf-component" style="position: absolute; top: 252px; left: 56px; width: 90px; height: 30px; z-index: 102;" data-resized="true">
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4QUEyQjUzNzZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4QUEyQjUzODZBNjMxMUVGODVFQkQyNTg2QjlGRDg1MiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjhBQTJCNTM1NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjhBQTJCNTM2NkE2MzExRUY4NUVCRDI1ODZCOUZEODUyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+mFUf1AAAAuNJREFUeNrsm01IFVEUx2fymqk80JQMa1FJm0QKBEX8WBS1aFGLCEyCigIjJHUrgboTDFq5clFu/IigWrRo4cJFtUykxMBE+9i4Cj94kZOv/+Hd1ePN3Kszt3nMPRf+nPfenHc/fnPPvWfgjpvJZBybywHH8sIAGAADYABWF+F3wXVdrQpKhaiC6YMuQXUQN2gamkh7nmeq42i3CGYDOoZ2fu27IsoD8kmzE/XQTyiTR7NQmUEADbKdilhCAA0fgnkN1fq4nIeeGJy9TXGvAZ1QncLnLkAdNQSgI24ArRo+FKcthgBciBtAStOv3ED8N9LiFzeAr5p+qwbu/vVCyANmaBNR+KxAHyK++7R134wdAPbeBZjRAJddqBt+fyO++9eimv5R5AEu9AhK5+QA36FLBmJfQF9y2gqVB7h+g9XNBGXHDsO0yUxwDXqPO//HAIBBmKGcnyvDZIKRAPgfBYO/AvMyT9iGAlDwD0MyzO7j4wsT/RUFPHCK7cvQQ6jZVDu+IVBWXHwO5rbi/w2KRGcH07M9YJC0UHbJryWyrgq5yp+k/mmMYQpSrTfv0I/xvc6A01Cv4Rt9BroVso4bmn57BrAIDSsqpdisCdH5Oahf8cSnGuAApSUKn0UjuwCm8DzMWUXC5IZYBygEnyrckr0LmC4MoMD7V2Q7gBSHAANgAAyAATAABsAAGAADYAAMgAEwAAbAABgAA2AAVgEosR1Aqe0AdmwHsKXhk0oygB8aPuVJBvBRw+dUYgGkPY/OGX5SuHUkeQZQGVFcvyffWUgsgEnoecB1GvwbQKjdT+VBZ4QewBxR/F/nhEjQKZNXmObzymRAiIMwj6Eex//c0DY05mTPDC2g3t2wAD472TM8JssddPSZdlYkBJ1G6YauOv4valDZhJahdeg3RC939KCt5ahnwAlZeVBZCjsDfGAch6l3sqfJqmUouFKehLAtcwkC8RZtbWkD4IchBsAArCj/BBgA+yjaQ12LP0AAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
+        </div>
+        
+        <!-- Badge: rk-b2-price -->
+        <div id="rk-b2-price" class="lf-component" style="position: absolute; top: 252px; left: 320px; width: 134px; height: 24px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #fecaca; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 700; color: #b91c1c;">평균 15만 ~ 35만원</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-b2-desc -->
+        <div id="rk-b2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 288px; left: 56px; width: 400px; height: 50px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p>• <span style="font-weight:700; color:#0f172a;">포지션</span>: 2030 영 컨템포러리 &amp; 페미닌 트렌드 데일리웨어</p><p>• <span style="font-weight:700; color:#b91c1c;">랭킹 룰</span>: <strong>판매수량(25%) + 장바구니(15%)</strong> 결합 대중 인기 검증</p>
+            </div>
+        </div>
+
+        <!-- 브랜드 3: E.B.M -->
+        
+        <!-- Rect Shape: rk-b3-card -->
+        <div id="rk-b3-card" class="lf-component" style="position: absolute; top: 356px; left: 44px; width: 422px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Logo Shape: rk-b3-logo -->
+        <div id="rk-b3-logo" class="lf-component" style="position: absolute; top: 366px; left: 56px; width: 90px; height: 30px; z-index: 102;" data-resized="true">
+            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAydpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmE2YTYzOTY4YSwgMjAyNC8wMy8wNi0xMTo1MjowNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjExIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRBRkI0MDZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRBRkI0MTZBNUMxMUVGOEUwQkZDREM4MUUwRjIzMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEFGQjNFNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEFGQjNGNkE1QzExRUY4RTBCRkNEQzgxRTBGMjMyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Q6jLIgAAAuZJREFUeNrsm89LFGEYx99ZV1374UaUWwchQojADhJ1idiL0B/Q6qFLd49Bh4hQpLNEECl0iKSLN0/dgw7VRS/hQUEPIUph2KqtmdP34X0WpmFmdtd5Z1+neR748s6+M/PuO593nnfeefZZx3VdlWXLqYybABAAAkAACIAsW977wXGcJygmmzyXFhA7vjoH2od+BRxfY/ltDzoIaHsX+sNt1ts+4Pq6PcI65kssArQQqou/ZJY7kAaVvf0/inI+GNToDJNPgx0mMQcsQr8zOQewkY9tQ4WI8+gOofmi6vHRuNbF8hv14zQ0AN2ASkkDyPkmmjAAL+Ax20mPECZmAtwJ9ULnoJvQOHSZ5wHjAFSTDXe24xbleYmeLN9YS2DyAeU0dCIpAE0Nji2/BZMVQHiMza82AVg1QPgkK0EBIAAEgAAQAAJAAAgAASAAsgPA0VaAcrYB/LDEoAyNmmosHwPcQ4zCd6XDZ3FejQst9OMCdBd6h7fBNzYB0HkTSoep40ZlOloA2M3lvO07gCwshteWcMBxAFA12RHPhfnbdNjlOthdjEaijgqA/P6a0jE6kx2qwbf3fbM+xR7PQlegCnRfGYxH5mOM1E90tpr4ve66BHuD9R5APqIs0bPQNZDfk8ag6Bx0kr/fKgA7s5++I4ytQWQpLAAEgAAQAAJAAAgAASAABIAASJXhbfgqdD6TAHDh9DpMKb1DDY7rhnqhIp0TFEqPA2DXwoV3Qf3YfKl0dKgWcewgirfQJr8+L0BjqD/VKB5AQYZGIScKRpTRWLt+G6D+UILkdege1M/1hyEXf1HpNLpbnmpKtHyudHht0htg8CdM9yidKZqGZOnbQQnQsJGIc9ZCk6XZLikDCYiWrRixr6/RHFD5Dx6PUa65FQoAvjOM4oGymAXaooXFNCmV9nPIvldRDZyBnqnj/3+B+gAtB+2Eb69jMMew+RS6w9Wr0BT0+p+G5K+zshQWAAIgy/ZXgAEA7i5IoO7sjdQAAAAASUVORK5CYII='); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: #0f172a !important; pointer-events: none;"></div>
+        </div>
+        
+        <!-- Badge: rk-b3-price -->
+        <div id="rk-b3-price" class="lf-component" style="position: absolute; top: 366px; left: 320px; width: 134px; height: 24px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #a7f3d0; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 11px; font-weight: 700; color: #047857;">평균 10만 ~ 25만원</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-b3-desc -->
+        <div id="rk-b3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 402px; left: 56px; width: 400px; height: 50px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p>• <span style="font-weight:700; color:#0f172a;">포지션</span>: 스타일리시 캐주얼 &amp; 모던 젠더리스 트렌드 룩</p><p>• <span style="font-weight:700; color:#047857;">랭킹 룰</span>: <strong>신상품 3단계 부스팅(1.5x)</strong>으로 빠른 상품 회전 지원</p>
+            </div>
+        </div>
+
+        <!-- 하단 브랜드 밸런서 칩 -->
+        
+        <!-- Rect Shape: rk-b-balance-bg -->
+        <div id="rk-b-balance-bg" class="lf-component" style="position: absolute; top: 472px; left: 44px; width: 422px; height: 80px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-b-balance-title -->
+        <div id="rk-b-balance-title" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 56px; width: 400px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e40af; font-size: 11.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:11.5px; font-weight:800; color:#1e40af;">⚖️ 브랜드별 객단가 정규화 밸런서 (Brand Normalization)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-b-balance-desc -->
+        <div id="rk-b-balance-desc" class="lf-component v4-text-shape" style="position: absolute; top: 502px; left: 56px; width: 400px; height: 42px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; line-height:1.4;">미샤(90만원)와 잇미샤(20만원) 간의 가격 격차를 브랜드 평균치로 정규화하여 통합 랭킹에서의 공정성을 수학적으로 보정합니다.</p>
+            </div>
+        </div>
+
+
+        <!-- 대형 카드 2: 랭킹 개선 전/후 비교 (BEFORE / AFTER) -->
+        
+        <!-- Rect Shape: rk-c1-sub-bg -->
+        <div id="rk-c1-sub-bg" class="lf-component" style="position: absolute; top: 580px; left: 30px; width: 450px; height: 298px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-c1-sub-title -->
+        <div id="rk-c1-sub-title" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 46px; width: 290px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="white-space:nowrap;"><span style="font-size:14px; font-weight:800; color:#0f172a;">단순 판매량 집계 한계 극복 (Before / After)</span></p>
+            </div>
+        </div>
+        
+        <!-- Badge: rk-c1-sub-badge -->
+        <div id="rk-c1-sub-badge" class="lf-component" style="position: absolute; top: 594px; left: 360px; width: 105px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e0e7ff; border: 1.6px solid #c7d2fe; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #4338ca;">COMPARISON</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before 박스 -->
+        
+        <!-- Rect Shape: rk-box-before-bg -->
+        <div id="rk-box-before-bg" class="lf-component" style="position: absolute; top: 626px; left: 44px; width: 422px; height: 114px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #fecaca; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-
-        <!-- Zone 1 문제점 텍스트 -->
-        <div id="rk-c1-pbox-txt" class="lf-component v4-text-shape" style="position: absolute; top: 130px; left: 54px; width: 432px; height: 48px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 12px; font-weight: 500; color: rgb(153, 27, 27); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.5;"><p>• <span style="font-weight:700;">저단가 소품 독점</span>: 2~3만원대 티셔츠·잡화가 건수 우세로 랭킹 1위 장악</p><p>• <span style="font-weight:700;">고가 메인 매출 소외</span>: MICHAA 100만원대 코트가 랭킹에서 탈락하는 왜곡 발생</p></div>
+        
+        <!-- Text Shape: rk-box-before-title -->
+        <div id="rk-box-before-title" class="lf-component v4-text-shape" style="position: absolute; top: 634px; left: 56px; width: 400px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 11px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:11px; font-weight:800; color:#b91c1c;">⚠️ BEFORE (현행 단순 주문수 랭킹 집계 시)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-box-before-desc -->
+        <div id="rk-box-before-desc" class="lf-component v4-text-shape" style="position: absolute; top: 656px; left: 56px; width: 400px; height: 76px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11.5px; color:#334155; line-height:1.45;">• <strong>3만원 기본 티셔츠 100건</strong> ➔ <span style="color:#b91c1c; font-weight:800;">랭킹 1위 독점</span></p><p style="font-size:11.5px; color:#334155; line-height:1.45;">• <strong>90만원 미샤 코트 10건(매출 900만)</strong> ➔ <span style="color:#64748b; font-weight:700;">랭킹 48위 탈락</span></p><p style="font-size:10.5px; color:#991b1b; margin-top:3px;">※ 치명적 결함: 고가 주력 상품 소외, 자사몰 저가 잡화 쇼핑몰화</p>
+            </div>
         </div>
 
-        <!-- Zone 1 3대 브랜드 특성 비교 표 -->
-        <div id="rk-c1-tbl" class="lf-component" style="position: absolute; top: 192px; left: 44px; width: 452px; height: 110px; z-index: 101;" data-resized="true">
-            <table class="v4-premium-table" style="background: #ffffff; border: 1.6px solid var(--v4-border, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box; font-size: 11px;">
-                <colgroup>
-                    <col style="width: 80px;">
-                    <col style="width: 105px;">
-                    <col style="width: 95px;">
-                    <col style="width: 172px;">
-                </colgroup>
-                <thead>
-                    <tr style="height: 26px; background: #f8fafc;">
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">브랜드</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">타깃 / 포지션</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">평균 객단가</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">랭킹 산정 반영 전략</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="height: 26px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center; color: #1e3a8a;">MICHAA</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">하이엔드 럭셔리</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">80만 ~ 150만원</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">주문금액(매출) 가중치 필수 부여</td>
-                    </tr>
-                    <tr style="height: 26px; background: #fafafa;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center; color: #b91c1c;">it MICHAA</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">영 컨템포러리</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">15만 ~ 35만원</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">장바구니 담기 및 구매건수 밸런스</td>
-                    </tr>
-                    <tr style="height: 26px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center; color: #047857;">E.B.M</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">스타일리시 캐주얼</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: center;">10만 ~ 25만원</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">신상품 부스팅 및 빠른 시간감쇠 반영</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Zone 1 해결방향 솔루션 박스 배경 -->
-        <div id="rk-c1-sbox-bg" class="lf-component" style="position: absolute; top: 310px; left: 44px; width: 452px; height: 140px; z-index: 101;" data-resized="true">
+        <!-- After 박스 -->
+        
+        <!-- Rect Shape: rk-box-after-bg -->
+        <div id="rk-box-after-bg" class="lf-component" style="position: absolute; top: 752px; left: 44px; width: 422px; height: 114px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-
-        <!-- Zone 1 해결방향 텍스트 -->
-        <div id="rk-c1-sbox-txt" class="lf-component v4-text-shape" style="position: absolute; top: 316px; left: 54px; width: 432px; height: 128px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(22, 101, 52); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.55;"><p><span style="font-weight:700; color:#15803d;">[시선닷컴 랭킹 4대 복합 전략]</span></p><p>① <span style="font-weight:700;">매출(35%) + 건수(25%) 분리</span>: Log 스케일링으로 박리다매 왜곡 차단</p><p>② <span style="font-weight:700;">구매 전환 신호 반영</span>: 장바구니(15%) &amp; 위시리스트(10%) 가중</p><p>③ <span style="font-weight:700;">어뷰징 방지</span>: 순수 방문자(UV 10%) 중심 모객력 평가</p><p>④ <span style="font-weight:700;">신상품 부스트(1.5x) &amp; 14일 반감기</span>: 고착화 방지 노출 선순환</p></div>
+        
+        <!-- Text Shape: rk-box-after-title -->
+        <div id="rk-box-after-title" class="lf-component v4-text-shape" style="position: absolute; top: 760px; left: 56px; width: 400px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #15803d; font-size: 11px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:11px; font-weight:800; color:#15803d;">✅ AFTER (신규 6대 복합 랭킹 룰 적용 시)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-box-after-desc -->
+        <div id="rk-box-after-desc" class="lf-component v4-text-shape" style="position: absolute; top: 782px; left: 56px; width: 400px; height: 76px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11.5px; color:#334155; line-height:1.45;">• <strong>미샤 코트</strong>: 매출(35%) + 찜/카트 ➔ <span style="color:#15803d; font-weight:800;">종합 2위 안착</span></p><p style="font-size:11.5px; color:#334155; line-height:1.45;">• <strong>3만원 티셔츠</strong>: 수량(25%) 우세하나 Log 정규화 ➔ <span style="color:#047857; font-weight:700;">종합 5위 균형</span></p><p style="font-size:10.5px; color:#166534; margin-top:3px;">※ 기대 효과: 프리미엄 가치 보존 + 대중적 볼륨의 완벽한 공존 달성</p>
+            </div>
         </div>
 
 
-        <!-- ========================================== -->
-        <!-- [3] ZONE 2 (중앙 상단): 2. 종합 랭킹 산정 공식 -->
-        <!-- ========================================== -->
-        <!-- Zone 2 카드 배경 -->
-        <div id="rk-c2-bg" class="lf-component" style="position: absolute; top: 80px; left: 525px; width: 540px; height: 385px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
+        <!-- ======================================================== -->
+        <!-- [3] COLUMN 2 (중앙 600px): 6대 지표 원형 그래프 & 카드    -->
+        <!-- ======================================================== -->
+        
+        <!-- Rect Shape: rk-c2-bg -->
+        <div id="rk-c2-bg" class="lf-component" style="position: absolute; top: 82px; left: 500px; width: 600px; height: 796px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
-        <!-- Zone 2 헤더 아이콘 -->
-        <div id="rk-c2-icon" class="lf-component" style="position: absolute; top: 94px; left: 541px; width: 22px; height: 22px; z-index: 101;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <!-- 카드 2 헤더 아이콘 -->
+        <div id="rk-c2-icon" class="lf-component" style="position: absolute; top: 96px; left: 516px; width: 22px; height: 22px; z-index: 101;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         </div>
-
-        <!-- Zone 2 헤더 타이틀 -->
-        <div id="rk-c2-title" class="lf-component v4-text-shape" style="position: absolute; top: 92px; left: 569px; width: 350px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">2. 종합 랭킹 점수(Total Score) 산정 공식</span></p></div>
+        
+        <!-- Text Shape: rk-c2-title -->
+        <div id="rk-c2-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 544px; width: 400px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="white-space:nowrap;"><span style="font-size:15px; font-weight:800; color:#0f172a;">2. 6대 지표 가중치 매트릭스 (Total Weights 100%)</span></p>
+            </div>
         </div>
-
-        <!-- Zone 2 뱃지 -->
-        <div id="rk-c2-badge" class="lf-component" style="position: absolute; top: 93px; left: 955px; width: 95px; height: 22px; z-index: 101;" data-resized="true">
+        
+        <!-- Badge: rk-c2-badge -->
+        <div id="rk-c2-badge" class="lf-component" style="position: absolute; top: 95px; left: 975px; width: 110px; height: 22px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
-                    <p><span style="font-size: 10px; font-weight: 700; color: #1d4ed8;">WEIGHTS 100%</span></p>
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #1d4ed8;">CORE MATRIX</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Zone 2 종합 수식 박스 배경 -->
-        <div id="rk-c2-eq-bg" class="lf-component" style="position: absolute; top: 125px; left: 539px; width: 512px; height: 58px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+        <!-- 대형 SVG 원형 도넛 그래프 -->
+        <div id="rk-donut-chart" class="lf-component" style="position: absolute; top: 130px; left: 520px; width: 210px; height: 210px; z-index: 101;" data-resized="true">
+            <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                <!-- Track -->
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#f1f5f9" stroke-width="26"></circle>
+                <!-- 1: 매출 35% (153.94) -->
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#3b82f6" stroke-width="26" stroke-dasharray="153.94 285.88" stroke-dashoffset="0"></circle>
+                <!-- 2: 수량 25% (109.96) -->
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#06b6d4" stroke-width="26" stroke-dasharray="109.96 329.86" stroke-dashoffset="-153.94"></circle>
+                <!-- 3: 장바구니 15% (65.97) -->
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#8b5cf6" stroke-width="26" stroke-dasharray="65.97 373.85" stroke-dashoffset="-263.90"></circle>
+                <!-- 4: 위시리스트 10% (43.98) -->
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#ec4899" stroke-width="26" stroke-dasharray="43.98 395.84" stroke-dashoffset="-329.87"></circle>
+                <!-- 5: UV 10% (43.98) -->
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#f59e0b" stroke-width="26" stroke-dasharray="43.98 395.84" stroke-dashoffset="-373.85"></circle>
+                <!-- 6: PV 5% (21.99) -->
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#64748b" stroke-width="26" stroke-dasharray="21.99 417.83" stroke-dashoffset="-417.83"></circle>
+            </svg>
+        </div>
+
+        <!-- 도넛 중앙 독립 텍스트 -->
+        
+        <!-- Text Shape: rk-donut-val -->
+        <div id="rk-donut-val" class="lf-component v4-text-shape" style="position: absolute; top: 205px; left: 565px; width: 120px; height: 36px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 28px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:28px; font-weight:900; color:#0f172a; line-height:1;">100%</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-donut-sub -->
+        <div id="rk-donut-sub" class="lf-component v4-text-shape" style="position: absolute; top: 240px; left: 565px; width: 120px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 10px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:10px; font-weight:700; color:#64748b; letter-spacing:0.5px;">TOTAL WEIGHTS</span></p>
+            </div>
+        </div>
+
+        <!-- 우측 범례 칩 6종 (독립 표준 아톰 분리) -->
+        <!-- 1. 주문금액 -->
+        
+        <!-- Rect Shape: rk-leg1-bg -->
+        <div id="rk-leg1-bg" class="lf-component" style="position: absolute; top: 130px; left: 745px; width: 340px; height: 32px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-leg1-dot -->
+        <div id="rk-leg1-dot" class="lf-component" style="position: absolute; top: 140px; left: 755px; width: 12px; height: 12px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #3b82f6; border: 1.6px solid #2563eb; border-radius: 3px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg1-lbl -->
+        <div id="rk-leg1-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:700; color:#1e3a8a;">주문금액 (매출 기여도)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg1-val -->
+        <div id="rk-leg1-val" class="lf-component v4-text-shape" style="position: absolute; top: 135px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1d4ed8; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#1d4ed8;">35%</span></p>
+            </div>
+        </div>
+
+        <!-- 2. 주문수량 -->
+        
+        <!-- Rect Shape: rk-leg2-bg -->
+        <div id="rk-leg2-bg" class="lf-component" style="position: absolute; top: 168px; left: 745px; width: 340px; height: 32px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #a7f3d0; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-leg2-dot -->
+        <div id="rk-leg2-dot" class="lf-component" style="position: absolute; top: 178px; left: 755px; width: 12px; height: 12px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #06b6d4; border: 1.6px solid #0891b2; border-radius: 3px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg2-lbl -->
+        <div id="rk-leg2-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 174px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #065f46; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:700; color:#065f46;">주문수량 (순수 주문건수)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg2-val -->
+        <div id="rk-leg2-val" class="lf-component v4-text-shape" style="position: absolute; top: 173px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0e7490; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#0e7490;">25%</span></p>
+            </div>
+        </div>
+
+        <!-- 3. 장바구니 -->
+        
+        <!-- Rect Shape: rk-leg3-bg -->
+        <div id="rk-leg3-bg" class="lf-component" style="position: absolute; top: 206px; left: 745px; width: 340px; height: 32px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f5f3ff; border: 1.6px solid #ddd6fe; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-leg3-dot -->
+        <div id="rk-leg3-dot" class="lf-component" style="position: absolute; top: 216px; left: 755px; width: 12px; height: 12px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #8b5cf6; border: 1.6px solid #7c3aed; border-radius: 3px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg3-lbl -->
+        <div id="rk-leg3-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #5b21b6; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:700; color:#5b21b6;">장바구니 (고관여 구매의향)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg3-val -->
+        <div id="rk-leg3-val" class="lf-component v4-text-shape" style="position: absolute; top: 211px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #6d28d9; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#6d28d9;">15%</span></p>
+            </div>
+        </div>
+
+        <!-- 4. 위시리스트 -->
+        
+        <!-- Rect Shape: rk-leg4-bg -->
+        <div id="rk-leg4-bg" class="lf-component" style="position: absolute; top: 244px; left: 745px; width: 340px; height: 32px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fdf2f8; border: 1.6px solid #fbcfe8; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-leg4-dot -->
+        <div id="rk-leg4-dot" class="lf-component" style="position: absolute; top: 254px; left: 755px; width: 12px; height: 12px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ec4899; border: 1.6px solid #db2777; border-radius: 3px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg4-lbl -->
+        <div id="rk-leg4-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 250px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #9d174d; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:700; color:#9d174d;">위시리스트 (찜·선호도)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg4-val -->
+        <div id="rk-leg4-val" class="lf-component v4-text-shape" style="position: absolute; top: 249px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #be185d; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#be185d;">10%</span></p>
+            </div>
+        </div>
+
+        <!-- 5. 순수방문자 UV -->
+        
+        <!-- Rect Shape: rk-leg5-bg -->
+        <div id="rk-leg5-bg" class="lf-component" style="position: absolute; top: 282px; left: 745px; width: 340px; height: 32px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fffbeb; border: 1.6px solid #fde68a; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-leg5-dot -->
+        <div id="rk-leg5-dot" class="lf-component" style="position: absolute; top: 292px; left: 755px; width: 12px; height: 12px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f59e0b; border: 1.6px solid #d97706; border-radius: 3px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg5-lbl -->
+        <div id="rk-leg5-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 288px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #92400e; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:700; color:#92400e;">순수방문자 UV (어뷰징 방지)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg5-val -->
+        <div id="rk-leg5-val" class="lf-component v4-text-shape" style="position: absolute; top: 287px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b45309; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#b45309;">10%</span></p>
+            </div>
+        </div>
+
+        <!-- 6. 페이지뷰 PV -->
+        
+        <!-- Rect Shape: rk-leg6-bg -->
+        <div id="rk-leg6-bg" class="lf-component" style="position: absolute; top: 320px; left: 745px; width: 340px; height: 32px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-leg6-dot -->
+        <div id="rk-leg6-dot" class="lf-component" style="position: absolute; top: 330px; left: 755px; width: 12px; height: 12px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #64748b; border: 1.6px solid #475569; border-radius: 3px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg6-lbl -->
+        <div id="rk-leg6-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 326px; left: 774px; width: 210px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:700; color:#334155;">페이지뷰 PV (트래픽 총량)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-leg6-val -->
+        <div id="rk-leg6-val" class="lf-component v4-text-shape" style="position: absolute; top: 325px; left: 1025px; width: 50px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 14px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:14px; font-weight:900; color:#475569;">5%</span></p>
+            </div>
+        </div>
+
+
+        <!-- 6대 지표 2열 3행 비주얼 카드 (완전 분리 아톰) -->
+        <!-- 1행 좌: 주문금액 (35%) -->
+        
+        <!-- Rect Shape: rk-m1-bg -->
+        <div id="rk-m1-bg" class="lf-component" style="position: absolute; top: 362px; left: 516px; width: 278px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m1-title -->
+        <div id="rk-m1-title" class="lf-component v4-text-shape" style="position: absolute; top: 370px; left: 528px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:13px; font-weight:800; color:#1e3a8a;">주문금액 (S_rev)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m1-val -->
+        <div id="rk-m1-val" class="lf-component v4-text-shape" style="position: absolute; top: 366px; left: 724px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #3b82f6; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#3b82f6;">35%</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m1-desc -->
+        <div id="rk-m1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 400px; left: 528px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#1e40af;">log10(금액+1) 정규화</span><br>• 역할: 고가 명품·코트 매출 기여도 인정</p>
+            </div>
+        </div>
+
+        <!-- 1행 우: 주문수량 (25%) -->
+        
+        <!-- Rect Shape: rk-m2-bg -->
+        <div id="rk-m2-bg" class="lf-component" style="position: absolute; top: 362px; left: 804px; width: 278px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #a7f3d0; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m2-title -->
+        <div id="rk-m2-title" class="lf-component v4-text-shape" style="position: absolute; top: 370px; left: 816px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #065f46; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:13px; font-weight:800; color:#065f46;">주문수량 (S_vol)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m2-val -->
+        <div id="rk-m2-val" class="lf-component v4-text-shape" style="position: absolute; top: 366px; left: 1012px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #06b6d4; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#06b6d4;">25%</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m2-desc -->
+        <div id="rk-m2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 400px; left: 816px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#065f46;">주문건수 / MaxVol</span><br>• 역할: 실구매 고객 대중적 선호도 검증</p>
+            </div>
+        </div>
+
+        <!-- 2행 좌: 장바구니 (15%) -->
+        
+        <!-- Rect Shape: rk-m3-bg -->
+        <div id="rk-m3-bg" class="lf-component" style="position: absolute; top: 476px; left: 516px; width: 278px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #ddd6fe; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m3-title -->
+        <div id="rk-m3-title" class="lf-component v4-text-shape" style="position: absolute; top: 484px; left: 528px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #5b21b6; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:13px; font-weight:800; color:#5b21b6;">장바구니 (S_cart)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m3-val -->
+        <div id="rk-m3-val" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 724px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #8b5cf6; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#8b5cf6;">15%</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m3-desc -->
+        <div id="rk-m3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 514px; left: 528px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#5b21b6;">장바구니 담김 / Max</span><br>• 역할: 구매 직전 강력한 전환 의향(High Intent)</p>
+            </div>
+        </div>
+
+        <!-- 2행 우: 위시리스트 (10%) -->
+        
+        <!-- Rect Shape: rk-m4-bg -->
+        <div id="rk-m4-bg" class="lf-component" style="position: absolute; top: 476px; left: 804px; width: 278px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fbcfe8; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m4-title -->
+        <div id="rk-m4-title" class="lf-component v4-text-shape" style="position: absolute; top: 484px; left: 816px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #9d174d; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:13px; font-weight:800; color:#9d174d;">위시리스트 (S_wish)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m4-val -->
+        <div id="rk-m4-val" class="lf-component v4-text-shape" style="position: absolute; top: 480px; left: 1012px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ec4899; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#ec4899;">10%</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m4-desc -->
+        <div id="rk-m4-desc" class="lf-component v4-text-shape" style="position: absolute; top: 514px; left: 816px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#9d174d;">위시 찜수 / MaxWish</span><br>• 역할: 잠재 고객 선호도 및 브랜드 충성도</p>
+            </div>
+        </div>
+
+        <!-- 3행 좌: 순수방문자 UV (10%) -->
+        
+        <!-- Rect Shape: rk-m5-bg -->
+        <div id="rk-m5-bg" class="lf-component" style="position: absolute; top: 590px; left: 516px; width: 278px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fde68a; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m5-title -->
+        <div id="rk-m5-title" class="lf-component v4-text-shape" style="position: absolute; top: 598px; left: 528px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #92400e; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:13px; font-weight:800; color:#92400e;">순수방문자 (S_uv)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m5-val -->
+        <div id="rk-m5-val" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 724px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #f59e0b; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#f59e0b;">10%</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m5-desc -->
+        <div id="rk-m5-desc" class="lf-component v4-text-shape" style="position: absolute; top: 628px; left: 528px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#92400e;">Unique Visitors / MaxUV</span><br>• 역할: 어뷰징 배제 순수 모객 파워 측정</p>
+            </div>
+        </div>
+
+        <!-- 3행 우: 페이지뷰 PV (5%) -->
+        
+        <!-- Rect Shape: rk-m6-bg -->
+        <div id="rk-m6-bg" class="lf-component" style="position: absolute; top: 590px; left: 804px; width: 278px; height: 104px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m6-title -->
+        <div id="rk-m6-title" class="lf-component v4-text-shape" style="position: absolute; top: 598px; left: 816px; width: 180px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:13px; font-weight:800; color:#334155;">페이지뷰 (S_pv)</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m6-val -->
+        <div id="rk-m6-val" class="lf-component v4-text-shape" style="position: absolute; top: 594px; left: 1012px; width: 60px; height: 28px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 22px; font-weight: 900; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:22px; font-weight:900; color:#64748b;">5%</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-m6-desc -->
+        <div id="rk-m6-desc" class="lf-component v4-text-shape" style="position: absolute; top: 628px; left: 816px; width: 254px; height: 56px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; line-height:1.4;">• 산식: <span style="font-family:monospace; color:#334155;">PV (1인 1일 3회 캡)</span><br>• 역할: 매크로 클릭 차단 트래픽 총량</p>
+            </div>
+        </div>
+
+        <!-- 하단 종합 랭킹 수식 바 -->
+        
+        <!-- Rect Shape: rk-fml-bg -->
+        <div id="rk-fml-bg" class="lf-component" style="position: absolute; top: 704px; left: 516px; width: 566px; height: 160px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 10px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-fml-title -->
+        <div id="rk-fml-title" class="lf-component v4-text-shape" style="position: absolute; top: 714px; left: 530px; width: 420px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #60a5fa; font-size: 13px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:13px; font-weight:800; color:#60a5fa;">📐 종합 랭킹 점수 승산 수식 (Multiplicative Model)</span></p>
+            </div>
+        </div>
+        
+        <!-- Badge: rk-fml-badge -->
+        <div id="rk-fml-badge" class="lf-component" style="position: absolute; top: 714px; left: 980px; width: 90px; height: 20px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #94a3b8;">FINAL SCORE</span></p>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Rect Shape: rk-fml-chip-bg -->
+        <div id="rk-fml-chip-bg" class="lf-component" style="position: absolute; top: 742px; left: 530px; width: 538px; height: 34px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-fml-chip-text -->
+        <div id="rk-fml-chip-text" class="lf-component v4-text-shape" style="position: absolute; top: 748px; left: 530px; width: 538px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #38bdf8; font-size: 13px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center; font-family:monospace; font-size:13px; font-weight:700; color:#38bdf8; margin:0;">Total Score = [ Base Score (100%) ] × F_freshness × F_decay × F_stock × F_brand</p>
+            </div>
+        </div>
+
+        
+        <!-- Text Shape: rk-fml-desc -->
+        <div id="rk-fml-desc" class="lf-component v4-text-shape" style="position: absolute; top: 786px; left: 530px; width: 538px; height: 68px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #94a3b8; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#94a3b8; line-height:1.45;">• <span style="color:#e2e8f0; font-weight:600;">Base Score</span> = 0.35·S_rev + 0.25·S_vol + 0.15·S_cart + 0.10·S_wish + 0.10·S_uv + 0.05·S_pv<br>• 기본 가중치 합산 점수에 신상품 부스트, 시간 감쇠, 재고 페널티, 브랜드 보정을 순차 승산하여 결정</p>
+            </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- [4] COLUMN 3 (우측 450px): 부스트, 시간감쇠, 페널티           -->
+        <!-- ======================================================== -->
+        <!-- 대형 카드 1: 신상품 3단계 부스팅 -->
+        
+        <!-- Rect Shape: rk-c3-b1-bg -->
+        <div id="rk-c3-b1-bg" class="lf-component" style="position: absolute; top: 82px; left: 1120px; width: 450px; height: 230px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
-        <!-- Zone 2 수식 텍스트 -->
-        <div id="rk-c2-eq-txt" class="lf-component v4-text-shape" style="position: absolute; top: 130px; left: 549px; width: 492px; height: 48px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 700; color: rgb(15, 23, 42); display: block; text-align: center; width: 100%; height: 100%; line-height: 1.5;"><p style="color:#1d4ed8;">Score = [ Base Score (100%) ] × F_freshness(신상품) × F_decay(감쇠) × F_stock(재고)</p><p style="color:#475569; font-size: 11px;">Base Score = 0.35·S_rev + 0.25·S_vol + 0.15·S_cart + 0.10·S_wish + 0.10·S_uv + 0.05·S_pv</p></div>
+        <!-- 카드 1 아이콘 -->
+        <div id="rk-c3-icon" class="lf-component" style="position: absolute; top: 96px; left: 1136px; width: 22px; height: 22px; z-index: 101;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         </div>
-
-        <!-- Zone 2 6대 지표 가중치 표 -->
-        <div id="rk-c2-tbl" class="lf-component" style="position: absolute; top: 192px; left: 539px; width: 512px; height: 228px; z-index: 101;" data-resized="true">
-            <table class="v4-premium-table" style="background: #ffffff; border: 1.6px solid var(--v4-border, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box; font-size: 11px;">
-                <colgroup>
-                    <col style="width: 100px;">
-                    <col style="width: 55px;">
-                    <col style="width: 145px;">
-                    <col style="width: 212px;">
-                </colgroup>
-                <thead>
-                    <tr style="height: 28px; background: #f8fafc;">
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">평가 지표</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">가중치</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">정규화 산식 (Normalize)</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">역할 및 설계 목적</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="height: 33px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #1e40af;">[주문금액] S_rev</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #1e40af; background: #eff6ff;">35%</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">log10(금액+1) / MaxLog</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">매출 기여도 최우선 인정 &amp; 초고가 독점 완화</td>
-                    </tr>
-                    <tr style="height: 33px; background: #fafafa;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #047857;">[주문갯수] S_vol</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #047857; background: #ecfdf5;">25%</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">주문건수 / MaxVol</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">실구매 대중성 검증 (순수 주문건수 기준)</td>
-                    </tr>
-                    <tr style="height: 33px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #b45309;">[장바구니] S_cart</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #b45309; background: #fef3c7;">15%</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">장바구니 담김 / MaxCart</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">구매 직전 고관여 전환 의향(High Intent)</td>
-                    </tr>
-                    <tr style="height: 33px; background: #fafafa;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #db2777;">[위시리스트] S_wish</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #db2777; background: #fdf2f8;">10%</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">위시 담김 / MaxWish</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">잠재 고객 선호도 및 브랜드 관심도 반영</td>
-                    </tr>
-                    <tr style="height: 33px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #4338ca;">[순수방문자] S_uv</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #4338ca; background: #e0e7ff;">10%</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">Unique Visitors / MaxUV</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">단일 고객 반복 클릭 배제한 순수 모객력</td>
-                    </tr>
-                    <tr style="height: 33px; background: #fafafa;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left; color: #64748b;">[페이지뷰] S_pv</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 800; padding: 2px 6px; text-align: center; color: #64748b; background: #f1f5f9;">5%</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left; font-family: monospace;">Page Views(인당 3회 캡)</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">트래픽 총량 반영 (매크로 어뷰징 방지 캡)</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Zone 2 하단 합계 요약 텍스트 -->
-        <div id="rk-c2-sum-txt" class="lf-component v4-text-shape" style="position: absolute; top: 428px; left: 542px; width: 500px; height: 20px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 11px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 11px; color: rgb(100, 116, 139); white-space: nowrap !important;">※ 6대 지표 가중치 합계 = 100% (매출 35% + 수량 25% + 장바구니 15% + 찜 10% + UV 10% + PV 5%)</span></p></div>
-        </div>
-
-
-        <!-- ========================================== -->
-        <!-- [4] ZONE 3 (우측 상단): 3. 신상품 부스트 & 감쇠 -->
-        <!-- ========================================== -->
-        <!-- Zone 3 카드 배경 -->
-        <div id="rk-c3-bg" class="lf-component" style="position: absolute; top: 80px; left: 1080px; width: 490px; height: 385px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+        
+        <!-- Text Shape: rk-c3-title -->
+        <div id="rk-c3-title" class="lf-component v4-text-shape" style="position: absolute; top: 94px; left: 1164px; width: 260px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="white-space:nowrap;"><span style="font-size:15px; font-weight:800; color:#0f172a;">3. 신상품 3단계 부스팅 룰</span></p>
             </div>
         </div>
-
-        <!-- Zone 3 헤더 아이콘 -->
-        <div id="rk-c3-icon" class="lf-component" style="position: absolute; top: 94px; left: 1096px; width: 22px; height: 22px; z-index: 101;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><polyline points="7.5 7.5 12 13 17 10"></polyline></svg>
-        </div>
-
-        <!-- Zone 3 헤더 타이틀 -->
-        <div id="rk-c3-title" class="lf-component v4-text-shape" style="position: absolute; top: 92px; left: 1124px; width: 330px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">3. 신상품 부스트 &amp; 시간 감쇠(Time Decay)</span></p></div>
-        </div>
-
-        <!-- Zone 3 뱃지 -->
-        <div id="rk-c3-badge" class="lf-component" style="position: absolute; top: 93px; left: 1470px; width: 85px; height: 22px; z-index: 101;" data-resized="true">
+        
+        <!-- Badge: rk-c3-badge -->
+        <div id="rk-c3-badge" class="lf-component" style="position: absolute; top: 95px; left: 1475px; width: 80px; height: 22px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef3c7; border: 1.6px solid #fde68a; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
-                    <p><span style="font-size: 10px; font-weight: 700; color: #b45309;">LIFECYCLE</span></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Zone 3 신상품 부스팅 3단계: Step 1 슈퍼 부스트 -->
-        <div id="rk-c3-s1" class="lf-component" style="position: absolute; top: 125px; left: 1094px; width: 148px; height: 72px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fdf2f8; border: 1.6px solid #fbcfe8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 4px;">
                 <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
-                    <p><span style="font-size: 10px; font-weight: 700; color: #be185d;">출시 1 ~ 7일차</span></p>
-                    <p><span style="font-size: 14px; font-weight: 900; color: #9d174d;">× 1.50 Boost</span></p>
-                    <p><span style="font-size: 9.5px; color: #831843;">콜드스타트 극복 노출</span></p>
+                    <p><span style="font-size: 10px; font-weight: 700; color: #b45309;">BOOST</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Zone 3 신상품 부스팅 3단계: Step 2 성장 부스트 -->
-        <div id="rk-c3-s2" class="lf-component" style="position: absolute; top: 125px; left: 1251px; width: 148px; height: 72px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 4px;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
-                    <p><span style="font-size: 10px; font-weight: 700; color: #1d4ed8;">출시 8 ~ 14일차</span></p>
-                    <p><span style="font-size: 14px; font-weight: 900; color: #1e40af;">× 1.30 Boost</span></p>
-                    <p><span style="font-size: 9.5px; color: #1e3a8a;">장바구니·위시 반응 검증</span></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Zone 3 신상품 부스팅 3단계: Step 3 안착 부스트 -->
-        <div id="rk-c3-s3" class="lf-component" style="position: absolute; top: 125px; left: 1408px; width: 148px; height: 72px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 4px;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
-                    <p><span style="font-size: 10px; font-weight: 700; color: #334155;">출시 15 ~ 30일차</span></p>
-                    <p><span style="font-size: 14px; font-weight: 900; color: #0f172a;">× 1.15 Boost</span></p>
-                    <p><span style="font-size: 9.5px; color: #475569;">자연 랭킹 전환 구간</span></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Zone 3 시간 감쇠(Time Decay) 박스 배경 -->
-        <div id="rk-c3-dec-bg" class="lf-component" style="position: absolute; top: 206px; left: 1094px; width: 462px; height: 140px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+        <!-- 3단계 게이지 카드 (완전 분리 아톰) -->
+        <!-- Step 1: 1~7일 -->
+        
+        <!-- Rect Shape: rk-bst1-bg -->
+        <div id="rk-bst1-bg" class="lf-component" style="position: absolute; top: 128px; left: 1136px; width: 132px; height: 115px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fdf2f8; border: 1.6px solid #fbcfe8; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-
-        <!-- Zone 3 시간 감쇠 텍스트 -->
-        <div id="rk-c3-dec-txt" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1106px; width: 440px; height: 128px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(15, 23, 42); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.55;"><p><span style="font-weight:700; color:#b45309;">[지수 시간 감쇠 (Exponential Time Decay)]</span></p><p style="font-family:monospace; color:#1e40af; font-size:11px;">F_decay(t) = 0.5 ^ ( t / 14 )  (반감기 T_half = 14일)</p><p>• <span style="font-weight:700;">최근 7일 데이터</span>: 100% 반영 (가중 계수 1.00)</p><p>• <span style="font-weight:700;">8 ~ 14일 전 데이터</span>: 75% 반영 (가중 계수 0.75)</p><p>• <span style="font-weight:700;">15 ~ 30일 전 데이터</span>: 50% 반영 (가중 계수 0.50)</p><p>• <span style="font-weight:700;">31일 이후 데이터</span>: 25% 이하 자연 수렴 (오래된 상품 독점 차단)</p></div>
+        
+        <!-- Text Shape: rk-bst1-period -->
+        <div id="rk-bst1-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1136px; width: 132px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #be185d; font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:11px; font-weight:700; color:#be185d;">출시 1 ~ 7일차</span></p>
+            </div>
         </div>
-
-        <!-- Zone 3 기대효과 박스 배경 -->
-        <div id="rk-c3-eff-bg" class="lf-component" style="position: absolute; top: 355px; left: 1094px; width: 462px; height: 95px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+        
+        <!-- Text Shape: rk-bst1-rate -->
+        <div id="rk-bst1-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1136px; width: 132px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #9d174d; font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:24px; font-weight:900; color:#9d174d;">× 1.50</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-bst1-name -->
+        <div id="rk-bst1-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1136px; width: 132px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #831843; font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:10.5px; font-weight:700; color:#831843;">슈퍼 부스트</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-bst1-desc -->
+        <div id="rk-bst1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1136px; width: 132px; height: 16px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #be185d; font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:9.5px; color:#be185d;">콜드스타트 극복</span></p>
             </div>
         </div>
 
-        <!-- Zone 3 기대효과 텍스트 -->
-        <div id="rk-c3-eff-txt" class="lf-component v4-text-shape" style="position: absolute; top: 361px; left: 1106px; width: 440px; height: 83px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(22, 101, 52); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.5;"><p><span style="font-weight:700; color:#15803d;">[랭킹 선순환 기대 효과]</span></p><p>• 과거 누적 데이터에 기댄 '고인물 베스트셀러'의 영구 상위 독점 원천 방지</p><p>• 트렌드 반응이 빠른 신규 룩북 상품이 자연스럽게 상위로 진입하는 다이내믹 랭킹 보장</p></div>
-        </div>
-
-
-        <!-- ========================================== -->
-        <!-- [5] ZONE 4 (좌측 하단): 4. 브랜드 보정 & 페널티 -->
-        <!-- ========================================== -->
-        <!-- Zone 4 카드 배경 -->
-        <div id="rk-c4-bg" class="lf-component" style="position: absolute; top: 480px; left: 30px; width: 750px; height: 400px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-
-        <!-- Zone 4 헤더 아이콘 -->
-        <div id="rk-c4-icon" class="lf-component" style="position: absolute; top: 494px; left: 46px; width: 22px; height: 22px; z-index: 101;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-        </div>
-
-        <!-- Zone 4 헤더 타이틀 -->
-        <div id="rk-c4-title" class="lf-component v4-text-shape" style="position: absolute; top: 492px; left: 74px; width: 450px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">4. 브랜드별 객단가 보정 &amp; 품질/재고 페널티 정책</span></p></div>
-        </div>
-
-        <!-- Zone 4 뱃지 -->
-        <div id="rk-c4-badge" class="lf-component" style="position: absolute; top: 493px; left: 660px; width: 105px; height: 22px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ede9fe; border: 1.6px solid #ddd6fe; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
-                    <p><span style="font-size: 10px; font-weight: 700; color: #6d28d9;">GOVERNANCE</span></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Zone 4 브랜드 객단가 정규화 박스 배경 -->
-        <div id="rk-c4-norm-bg" class="lf-component" style="position: absolute; top: 525px; left: 44px; width: 722px; height: 75px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-
-        <!-- Zone 4 브랜드 정규화 텍스트 -->
-        <div id="rk-c4-norm-txt" class="lf-component v4-text-shape" style="position: absolute; top: 531px; left: 56px; width: 700px; height: 63px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(15, 23, 42); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.55;"><p><span style="font-weight:700; color:#4338ca;">[브랜드별 객단가 정규화 공식 (Brand Price Normalization)]</span>: <span style="font-family:monospace; color:#1e40af;">F_brand = 1 + α · ((Price - P_brand_avg) / P_brand_avg)</span></p><p>• 미샤(평균 90만원)와 잇미샤(평균 20만원) 간의 가격 편차를 브랜드별 평균치로 정규화하여 통합 랭킹 왜곡을 방지합니다.</p><p>• 브랜드별 단독 랭킹(Brand Best)과 시선닷컴 통합 랭킹(Total Best)에 차등 가중치를 적용하여 공정성을 보장합니다.</p></div>
-        </div>
-
-        <!-- Zone 4 3대 페널티 카드 1: 재고 품절 -->
-        <div id="rk-c4-p1" class="lf-component" style="position: absolute; top: 610px; left: 44px; width: 232px; height: 165px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecaca; border-radius: 8px; box-sizing: border-box; padding: 8px;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
-                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #b91c1c;">재고 품절 페널티 (Stock)</span></p>
-                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#b91c1c;">전체 품절</span>: 랭킹 즉시 0점 (완전 제외)</p>
-                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#b45309;">부분 품절</span>: 점수 <span style="font-weight:700;">× 0.70</span> (30% 감점)</p>
-                    <p style="font-size: 10px; line-height: 1.4; color: #64748b; margin-top:4px;">※ 고객이 클릭 후 구매 불가로 이탈하는 헛걸음 경험을 원천 차단</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Zone 4 3대 페널티 카드 2: 반품/취소율 -->
-        <div id="rk-c4-p2" class="lf-component" style="position: absolute; top: 610px; left: 289px; width: 232px; height: 165px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fed7aa; border-radius: 8px; box-sizing: border-box; padding: 8px;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
-                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #c2410c;">반품·취소율 페널티 (Return)</span></p>
-                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#c2410c;">임계 기준치</span>: 패션 평균 15%</p>
-                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#c2410c;">15% 초과 시</span>: 초과분에 비례 감점</p>
-                    <p style="font-size: 10px; line-height: 1.4; color: #64748b; margin-top:4px;">※ 이미지 과장광고, 실물 불만족 및 불량 미끼상품의 랭킹 독점 방지</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Zone 4 3대 페널티 카드 3: 어뷰징 차단 -->
-        <div id="rk-c4-p3" class="lf-component" style="position: absolute; top: 610px; left: 534px; width: 232px; height: 165px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; padding: 8px;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
-                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #4338ca;">어뷰징 차단 정책 (Anti-Abuse)</span></p>
-                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#4338ca;">PV 인정 상한</span>: 1인당 일일 최대 3회</p>
-                    <p style="font-size: 10.5px; line-height: 1.5; color: #334155;">• <span style="font-weight:700; color:#4338ca;">매크로 방지</span>: 비정상 위시·장바구니 컷</p>
-                    <p style="font-size: 10px; line-height: 1.4; color: #64748b; margin-top:4px;">※ 특정 세력의 클릭 어뷰징을 원천 차단하고 순수 고객 모객력(UV) 중심 평가</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Zone 4 하단 운영 가이드 요약 바 -->
-        <div id="rk-c4-ftr-bg" class="lf-component" style="position: absolute; top: 785px; left: 44px; width: 722px; height: 80px; z-index: 101;" data-resized="true">
+        <!-- Step 2: 8~14일 -->
+        
+        <!-- Rect Shape: rk-bst2-bg -->
+        <div id="rk-bst2-bg" class="lf-component" style="position: absolute; top: 128px; left: 1278px; width: 132px; height: 115px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-
-        <!-- Zone 4 하단 가이드 텍스트 -->
-        <div id="rk-c4-ftr-txt" class="lf-component v4-text-shape" style="position: absolute; top: 791px; left: 56px; width: 700px; height: 68px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; font-size: 11.5px; font-weight: 500; color: rgb(30, 64, 175); display: block; text-align: left; width: 100%; height: 100%; line-height: 1.5;"><p>• <span style="font-weight:700;">운영 튜닝 정책</span>: 모든 가중치($w_1 \sim w_6$)와 감쇠 파라미터는 백오피스 어드민에서 계절(SS/FW) 및 프로모션에 따라 On-Demand 조정 가능</p><p>• <span style="font-weight:700;">배치 집계 주기</span>: 실시간 랭킹(1시간 주기 갱신) / 일간 랭킹(자정 배치 갱신) / 주간 랭킹(매주 월요일 갱신) 3개 트랙 병행 운영</p></div>
+        
+        <!-- Text Shape: rk-bst2-period -->
+        <div id="rk-bst2-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1278px; width: 132px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1d4ed8; font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:11px; font-weight:700; color:#1d4ed8;">출시 8 ~ 14일차</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-bst2-rate -->
+        <div id="rk-bst2-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1278px; width: 132px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e40af; font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:24px; font-weight:900; color:#1e40af;">× 1.30</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-bst2-name -->
+        <div id="rk-bst2-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1278px; width: 132px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:10.5px; font-weight:700; color:#1e3a8a;">성장 부스트</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-bst2-desc -->
+        <div id="rk-bst2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1278px; width: 132px; height: 16px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1d4ed8; font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:9.5px; color:#1d4ed8;">장바구니 반응 검증</span></p>
+            </div>
         </div>
 
-
-        <!-- ========================================== -->
-        <!-- [6] ZONE 5 (우측 하단): 5. 플랫폼 벤치마킹 & 시뮬레이션 -->
-        <!-- ========================================== -->
-        <!-- Zone 5 카드 배경 -->
-        <div id="rk-c5-bg" class="lf-component" style="position: absolute; top: 480px; left: 800px; width: 770px; height: 400px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03); box-sizing: border-box;">
+        <!-- Step 3: 15~30일 -->
+        
+        <!-- Rect Shape: rk-bst3-bg -->
+        <div id="rk-bst3-bg" class="lf-component" style="position: absolute; top: 128px; left: 1420px; width: 134px; height: 115px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-
-        <!-- Zone 5 헤더 아이콘 -->
-        <div id="rk-c5-icon" class="lf-component" style="position: absolute; top: 494px; left: 816px; width: 22px; height: 22px; z-index: 101;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;"><line x1="3" y1="6" x2="6" y2="6"></line><line x1="10" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="6" y2="18"></line><line x1="10" y1="18" x2="21" y2="18"></line></svg>
+        
+        <!-- Text Shape: rk-bst3-period -->
+        <div id="rk-bst3-period" class="lf-component v4-text-shape" style="position: absolute; top: 136px; left: 1420px; width: 134px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:11px; font-weight:700; color:#334155;">출시 15 ~ 30일차</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-bst3-rate -->
+        <div id="rk-bst3-rate" class="lf-component v4-text-shape" style="position: absolute; top: 156px; left: 1420px; width: 134px; height: 32px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 24px; font-weight: 900; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:24px; font-weight:900; color:#0f172a;">× 1.15</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-bst3-name -->
+        <div id="rk-bst3-name" class="lf-component v4-text-shape" style="position: absolute; top: 192px; left: 1420px; width: 134px; height: 18px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 10.5px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:10.5px; font-weight:700; color:#475569;">안착 부스트</span></p>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-bst3-desc -->
+        <div id="rk-bst3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 212px; left: 1420px; width: 134px; height: 16px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 9.5px; font-weight: 400; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center;"><span style="font-size:9.5px; color:#64748b;">자연 랭킹 전환</span></p>
+            </div>
         </div>
 
-        <!-- Zone 5 헤더 타이틀 -->
-        <div id="rk-c5-title" class="lf-component v4-text-shape" style="position: absolute; top: 492px; left: 844px; width: 460px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 3px !important; white-space: nowrap !important;"><p style="white-space: nowrap !important;"><span style="font-size: 14px; white-space: nowrap !important;">5. 이커머스 대표 플랫폼 벤치마킹 &amp; 시뮬레이션 비교</span></p></div>
+        <!-- 부스팅 안내 문구 -->
+        
+        <!-- Text Shape: rk-bst-info -->
+        <div id="rk-bst-info" class="lf-component v4-text-shape" style="position: absolute; top: 255px; left: 1136px; width: 418px; height: 45px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#64748b; line-height:1.4;">• 30일 초과 상품은 기본 배율(1.00x)로 자동 전환됩니다.<br>• 신규 등록 패션 상품의 1주차 노출을 보장하여 고객 탐색 풀을 다변화합니다.</p>
+            </div>
         </div>
 
-        <!-- Zone 5 뱃지 -->
-        <div id="rk-c5-badge" class="lf-component" style="position: absolute; top: 493px; left: 1450px; width: 105px; height: 22px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #a7f3d0; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
-                    <p><span style="font-size: 10px; font-weight: 700; color: #047857;">BENCHMARK</span></p>
+
+        <!-- 대형 카드 2: 14일 반감기 시간 감쇠 -->
+        
+        <!-- Rect Shape: rk-c3-b2-bg -->
+        <div id="rk-c3-b2-bg" class="lf-component" style="position: absolute; top: 326px; left: 1120px; width: 450px; height: 250px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-decay-title -->
+        <div id="rk-decay-title" class="lf-component v4-text-shape" style="position: absolute; top: 338px; left: 1136px; width: 300px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="white-space:nowrap;"><span style="font-size:14px; font-weight:800; color:#0f172a;">4. 14일 반감기 시간 감쇠 (Time Decay)</span></p>
+            </div>
+        </div>
+        
+        <!-- Badge: rk-decay-badge -->
+        <div id="rk-decay-badge" class="lf-component" style="position: absolute; top: 338px; left: 1450px; width: 105px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef3c7; border: 1.6px solid #fde68a; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #d97706;">HALF-LIFE 14D</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Zone 5 벤치마킹 비교 표 -->
-        <div id="rk-c5-tbl" class="lf-component" style="position: absolute; top: 525px; left: 814px; width: 742px; height: 135px; z-index: 101;" data-resized="true">
-            <table class="v4-premium-table" style="background: #ffffff; border: 1.6px solid var(--v4-border, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box; font-size: 11px;">
-                <colgroup>
-                    <col style="width: 85px;">
-                    <col style="width: 175px;">
-                    <col style="width: 145px;">
-                    <col style="width: 145px;">
-                    <col style="width: 192px;">
-                </colgroup>
-                <thead>
-                    <tr style="height: 27px; background: #f8fafc;">
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">플랫폼</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">주요 반영 지표 (Features)</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">신상품 보정 방식</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">시간 감쇠(Decay) 주기</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: #f1f5f9; color: #0f172a; border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: left;">브랜드 / 객단가 보정</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="height: 27px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">무신사</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">판매량 + 금액 + 조회수 + 후기</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">실시간(3h) / 일간 분리 운영</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">단기 지수감쇠 (1~7일)</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">스트릿 브랜드 중심 플랫 가중치</td>
-                    </tr>
-                    <tr style="height: 27px; background: #fafafa;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">29CM / W컨셉</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">결제금액 + 하트(찜) + 체류시간</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">룩북/기획전 14일 집중 노출</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">시즌 기준 30일 반감기</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">디자이너 브랜드 객단가 보정</td>
-                    </tr>
-                    <tr style="height: 27px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; font-weight: 700; padding: 2px 6px; text-align: center;">지그재그</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">Z결제 + AI추천 + 즐겨찾기</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">신규 소호몰 탐색 슬롯 할당</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">실시간 반응형 감쇠</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #cbd5e1; padding: 2px 6px; text-align: left;">소호몰 vs 브랜드관 분리 정규화</td>
-                    </tr>
-                    <tr style="height: 27px; background: #eff6ff;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 800; padding: 2px 6px; text-align: center; color: #1d4ed8;">시선닷컴 (안)</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 700; padding: 2px 6px; text-align: left; color: #1d4ed8;">매출35+수량25+카트15+찜10+UV10+PV5</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 700; padding: 2px 6px; text-align: left; color: #1d4ed8;">1~7일(1.5x), 8~14일(1.3x)</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 700; padding: 2px 6px; text-align: left; color: #1d4ed8;">14일 반감기 지수감쇠</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid #93c5fd; font-weight: 700; padding: 2px 6px; text-align: left; color: #1d4ed8;">미샤·잇미샤·EBM 3사 객단가 밸런서</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- 감쇠 수식 칩 -->
+        
+        <!-- Rect Shape: rk-decay-fml-bg -->
+        <div id="rk-decay-fml-bg" class="lf-component" style="position: absolute; top: 370px; left: 1136px; width: 418px; height: 32px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-decay-fml-text -->
+        <div id="rk-decay-fml-text" class="lf-component v4-text-shape" style="position: absolute; top: 376px; left: 1136px; width: 418px; height: 22px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e40af; font-size: 12px; font-weight: 700; display: block; text-align: center; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:center; font-family:monospace; font-size:12px; font-weight:700; color:#1e40af; margin:0;">F_decay(t) = 0.5 ^ ( t / 14 )</p>
+            </div>
         </div>
 
-        <!-- Zone 5 시뮬레이션 비교 카드 1 (현행 단순집계 왜곡) -->
-        <div id="rk-c5-sim1" class="lf-component" style="position: absolute; top: 672px; left: 814px; width: 360px; height: 193px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #fecaca; border-radius: 8px; box-sizing: border-box; padding: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
-                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #b91c1c;">[CASE A] 현행 단순 주문수 랭킹 집계 시</span></p>
-                    <p style="font-size: 11px; line-height: 1.5; color: #334155;">• <span style="font-weight:700;">3만원 기본 티셔츠 100건 판매</span> ➔ <span style="font-weight:800; color:#b91c1c;">랭킹 1위 장악</span></p>
-                    <p style="font-size: 11px; line-height: 1.5; color: #334155;">• <span style="font-weight:700;">90만원 미샤 코트 10건 판매</span> ➔ <span style="font-weight:800; color:#64748b;">랭킹 48위 탈락</span></p>
-                    <p style="font-size: 10.5px; line-height: 1.45; color: #7f1d1d; margin-top:6px; background:#fee2e2; padding:4px 6px; border-radius:4px;">※ 결과: 매출 900만원인 주력 코트가 300만원 티셔츠에 밀려 하위권 추락. 자사몰 브랜드 고급화 실패 및 마진 악화</p>
+        <!-- 4개 감쇠 프로그레스 바 (완전 분리 아톰) -->
+        <!-- 최근 7일 (100%) -->
+        
+        <!-- Text Shape: rk-dbar1-lbl -->
+        <div id="rk-dbar1-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 412px; left: 1136px; width: 90px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:11.5px; font-weight:600; color:#334155;">최근 7일 실적</span></p>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-dbar1-track -->
+        <div id="rk-dbar1-track" class="lf-component" style="position: absolute; top: 417px; left: 1230px; width: 240px; height: 8px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-dbar1-bar -->
+        <div id="rk-dbar1-bar" class="lf-component" style="position: absolute; top: 417px; left: 1230px; width: 240px; height: 8px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #3b82f6; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-dbar1-val -->
+        <div id="rk-dbar1-val" class="lf-component v4-text-shape" style="position: absolute; top: 412px; left: 1475px; width: 75px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1d4ed8; font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:11.5px; font-weight:800; color:#1d4ed8;">100%</span></p>
+            </div>
+        </div>
+
+        <!-- 8~14일 (75%) -->
+        
+        <!-- Text Shape: rk-dbar2-lbl -->
+        <div id="rk-dbar2-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 438px; left: 1136px; width: 90px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:11.5px; font-weight:600; color:#334155;">8 ~ 14일 전</span></p>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-dbar2-track -->
+        <div id="rk-dbar2-track" class="lf-component" style="position: absolute; top: 443px; left: 1230px; width: 240px; height: 8px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-dbar2-bar -->
+        <div id="rk-dbar2-bar" class="lf-component" style="position: absolute; top: 443px; left: 1230px; width: 180px; height: 8px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #06b6d4; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-dbar2-val -->
+        <div id="rk-dbar2-val" class="lf-component v4-text-shape" style="position: absolute; top: 438px; left: 1475px; width: 75px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0e7490; font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:11.5px; font-weight:800; color:#0e7490;">75%</span></p>
+            </div>
+        </div>
+
+        <!-- 15~30일 (50%) -->
+        
+        <!-- Text Shape: rk-dbar3-lbl -->
+        <div id="rk-dbar3-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 464px; left: 1136px; width: 90px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:11.5px; font-weight:600; color:#334155;">15 ~ 30일 전</span></p>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-dbar3-track -->
+        <div id="rk-dbar3-track" class="lf-component" style="position: absolute; top: 469px; left: 1230px; width: 240px; height: 8px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-dbar3-bar -->
+        <div id="rk-dbar3-bar" class="lf-component" style="position: absolute; top: 469px; left: 1230px; width: 120px; height: 8px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f59e0b; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-dbar3-val -->
+        <div id="rk-dbar3-val" class="lf-component v4-text-shape" style="position: absolute; top: 464px; left: 1475px; width: 75px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b45309; font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:11.5px; font-weight:800; color:#b45309;">50%</span></p>
+            </div>
+        </div>
+
+        <!-- 31일 이후 (25%) -->
+        
+        <!-- Text Shape: rk-dbar4-lbl -->
+        <div id="rk-dbar4-lbl" class="lf-component v4-text-shape" style="position: absolute; top: 490px; left: 1136px; width: 90px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 11.5px; font-weight: 600; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:11.5px; font-weight:600; color:#334155;">31일 이후</span></p>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-dbar4-track -->
+        <div id="rk-dbar4-track" class="lf-component" style="position: absolute; top: 495px; left: 1230px; width: 240px; height: 8px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Rect Shape: rk-dbar4-bar -->
+        <div id="rk-dbar4-bar" class="lf-component" style="position: absolute; top: 495px; left: 1230px; width: 60px; height: 8px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #94a3b8; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-dbar4-val -->
+        <div id="rk-dbar4-val" class="lf-component v4-text-shape" style="position: absolute; top: 490px; left: 1475px; width: 75px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 11.5px; font-weight: 800; display: block; text-align: right; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="text-align:right;"><span style="font-size:11.5px; font-weight:800; color:#64748b;">25% 이하</span></p>
+            </div>
+        </div>
+
+        <!-- 감쇠 효과 칩 -->
+        
+        <!-- Rect Shape: rk-decay-bnf-bg -->
+        <div id="rk-decay-bnf-bg" class="lf-component" style="position: absolute; top: 524px; left: 1136px; width: 418px; height: 40px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 6px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-decay-bnf-text -->
+        <div id="rk-decay-bnf-text" class="lf-component v4-text-shape" style="position: absolute; top: 532px; left: 1146px; width: 398px; height: 26px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #166534; font-size: 11px; font-weight: 700; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:11px; font-weight:700; color:#166534;">💡 효과: 과거 누적 판매에 기댄 고인물 상품의 상위 독점 차단 &amp; 트렌드 순환</span></p>
+            </div>
+        </div>
+
+
+        <!-- 대형 카드 3: 품질 · 재고 페널티 정책 -->
+        
+        <!-- Rect Shape: rk-c3-b3-bg -->
+        <div id="rk-c3-b3-bg" class="lf-component" style="position: absolute; top: 590px; left: 1120px; width: 450px; height: 288px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-pnl-title -->
+        <div id="rk-pnl-title" class="lf-component v4-text-shape" style="position: absolute; top: 602px; left: 1136px; width: 300px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="white-space:nowrap;"><span style="font-size:14px; font-weight:800; color:#0f172a;">5. 품질 · 재고 페널티 정책 (Governance)</span></p>
+            </div>
+        </div>
+        
+        <!-- Badge: rk-pnl-badge -->
+        <div id="rk-pnl-badge" class="lf-component" style="position: absolute; top: 602px; left: 1475px; width: 80px; height: 22px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffe4e6; border: 1.6px solid #fecdd3; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10px; font-weight: 700; color: #be123c;">PENALTY</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Zone 5 시뮬레이션 비교 카드 2 (신규 복합 룰 적용) -->
-        <div id="rk-c5-sim2" class="lf-component" style="position: absolute; top: 672px; left: 1184px; width: 372px; height: 193px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px; box-sizing: border-box; padding: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: left;">
-                    <p style="margin-bottom:6px;"><span style="font-size: 11.5px; font-weight: 800; color: #15803d;">[CASE B] 신규 복합 랭킹 룰 적용 시</span></p>
-                    <p style="font-size: 11px; line-height: 1.5; color: #334155;">• <span style="font-weight:700;">미샤 코트</span>: 매출(35%) + 장바구니/찜 고득점 ➔ <span style="font-weight:800; color:#15803d;">종합 2위 안착</span></p>
-                    <p style="font-size: 11px; line-height: 1.5; color: #334155;">• <span style="font-weight:700;">3만원 티셔츠</span>: 수량(25%) 우세하나 Log 정규화 ➔ <span style="font-weight:800; color:#0f766e;">종합 5위 균형</span></p>
-                    <p style="font-size: 10.5px; line-height: 1.45; color: #14532d; margin-top:6px; background:#dcfce7; padding:4px 6px; border-radius:4px;">※ 결과: 프리미엄 룩북(미샤)과 데일리 회전 상품(잇미샤)이 상호 균형을 이루며 최적의 전환율 및 객단가 극대화 실현!</p>
+        <!-- 페널티 1: 재고 품절 -->
+        
+        <!-- Rect Shape: rk-pnl1-bg -->
+        <div id="rk-pnl1-bg" class="lf-component" style="position: absolute; top: 634px; left: 1136px; width: 418px; height: 68px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecaca; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-pnl1-title -->
+        <div id="rk-pnl1-title" class="lf-component v4-text-shape" style="position: absolute; top: 642px; left: 1148px; width: 220px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:800; color:#b91c1c;">📦 재고 품절 페널티 (F_stock)</span></p>
+            </div>
+        </div>
+        
+        <!-- Badge: rk-pnl1-badge -->
+        <div id="rk-pnl1-badge" class="lf-component" style="position: absolute; top: 642px; left: 1435px; width: 105px; height: 20px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fee2e2; border: 1.6px solid #fecaca; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10.5px; font-weight: 700; color: #b91c1c;">전체품절 = 0점</span></p>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-pnl1-desc -->
+        <div id="rk-pnl1-desc" class="lf-component v4-text-shape" style="position: absolute; top: 666px; left: 1148px; width: 395px; height: 30px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; margin:0;">• 부분 결품(주요 사이즈 품절) 시 <strong style="color:#b91c1c;">× 0.70 (30% 감점)</strong> 적용 ➔ 헛걸음 이탈 방지</p>
+            </div>
+        </div>
+
+        <!-- 페널티 2: 반품·취소율 -->
+        
+        <!-- Rect Shape: rk-pnl2-bg -->
+        <div id="rk-pnl2-bg" class="lf-component" style="position: absolute; top: 712px; left: 1136px; width: 418px; height: 68px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fed7aa; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-pnl2-title -->
+        <div id="rk-pnl2-title" class="lf-component v4-text-shape" style="position: absolute; top: 720px; left: 1148px; width: 220px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #c2410c; font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:800; color:#c2410c;">↩️ 반품·취소율 페널티 (F_return)</span></p>
+            </div>
+        </div>
+        
+        <!-- Badge: rk-pnl2-badge -->
+        <div id="rk-pnl2-badge" class="lf-component" style="position: absolute; top: 720px; left: 1445px; width: 95px; height: 20px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffedd5; border: 1.6px solid #fed7aa; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10.5px; font-weight: 700; color: #c2410c;">기준선 15%</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-pnl2-desc -->
+        <div id="rk-pnl2-desc" class="lf-component v4-text-shape" style="position: absolute; top: 744px; left: 1148px; width: 395px; height: 30px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; margin:0;">• 반품율 15% 초과 시 초과분 비례 감점 ➔ 실물 불만족 및 불량 미끼상품 퇴출</p>
+            </div>
+        </div>
+
+        <!-- 페널티 3: 어뷰징 방지 캡 -->
+        
+        <!-- Rect Shape: rk-pnl3-bg -->
+        <div id="rk-pnl3-bg" class="lf-component" style="position: absolute; top: 790px; left: 1136px; width: 418px; height: 68px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-pnl3-title -->
+        <div id="rk-pnl3-title" class="lf-component v4-text-shape" style="position: absolute; top: 798px; left: 1148px; width: 220px; height: 20px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p><span style="font-size:12px; font-weight:800; color:#334155;">🛡️ 어뷰징 차단 캡 (Anti-Abuse)</span></p>
+            </div>
+        </div>
+        
+        <!-- Badge: rk-pnl3-badge -->
+        <div id="rk-pnl3-badge" class="lf-component" style="position: absolute; top: 798px; left: 1435px; width: 105px; height: 20px; z-index: 102;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><span style="font-size: 10.5px; font-weight: 700; color: #334155;">1일 3회 상한</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Text Shape: rk-pnl3-desc -->
+        <div id="rk-pnl3-desc" class="lf-component v4-text-shape" style="position: absolute; top: 822px; left: 1148px; width: 395px; height: 30px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 11px; font-weight: 400; display: block; text-align: left; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box;">
+                <p style="font-size:11px; color:#475569; margin:0;">• 동일 IP/계정 1일 PV 최대 3회 인정 + 매크로 장바구니/위시 원천 차단</p>
             </div>
         </div>
 

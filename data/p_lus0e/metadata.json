@@ -73,7 +73,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T03:14:30.601Z",
+      "updatedAt": "2026-09-11T03:15:24.538Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -137,7 +137,7 @@
           "type": "pin"
         },
         {
-          "text": "3. 상품 그룹 관리 영역\n- 기본 구조는 기존 '기획전 등록/상세' 기능과 동일하나, 상위 개념으로 '영역' 을 추가\n- [상품 표현 영역] 에서 STEPPER 설정 시, 하단의 '상품 영역 1~5' 가 가변적으로 동작",
+          "text": "3. 상품 그룹 관리 영역\n- 기본 구조는 기존 '기획전 등록/상세' 기능과 동일하나, 상위 개념으로 '영역' 을 추가\n- [상품 표현 영역] 에서 STEPPER 설정 시, 하단의 '상품 영역 1~5' 가 가변적으로 동작\n- STEPPER : Min 1 ~ Max 5",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 41,
           "y": 1244,
@@ -204,7 +204,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-11 12:14:30",
+  "updated": "2026-09-11 12:15:24",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

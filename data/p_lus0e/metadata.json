@@ -73,7 +73,7 @@
     "09_Admin_PC_Scroll_639_copy2.html": {
       "title": "기획전 등록 - 설정 케이스",
       "type": "admin",
-      "updatedAt": "2026-09-11T01:13:28.073Z",
+      "updatedAt": "2026-09-11T01:16:53.531Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -116,8 +116,8 @@
         }
       ],
       "connectors": [],
-      "defaultTab": "editor",
-      "screenDesc": ""
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     }
   },
   "assignee": "최범열",

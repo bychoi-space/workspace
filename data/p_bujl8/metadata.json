@@ -1,6 +1,14 @@
 {
   "title": "[주문] 최대 혜택 쿠폰 자동 적용",
-  "screens": {},
+  "screens": {
+    "00_Cover_291.html": {
+      "title": "00_Cover_291",
+      "type": "cover",
+      "updatedAt": "2026-09-14T08:41:10.352Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.09.14(월) ~ 2026.09.15(화)",

@@ -444,6 +444,17 @@ window.v4Script = `
             isShape: !!shape,
             isIcon: !!icon,
             isImage: isImage,
+            imageRatio: (function() {
+                if (!isImage) return null;
+                const r = c.getAttribute('data-aspect-ratio') || (shape && shape.getAttribute('data-aspect-ratio'));
+                if (r && !isNaN(parseFloat(r))) return parseFloat(r);
+                const nw = parseFloat(c.getAttribute('data-natural-width') || (shape && shape.getAttribute('data-natural-width')));
+                const nh = parseFloat(c.getAttribute('data-natural-height') || (shape && shape.getAttribute('data-natural-height')));
+                if (nw && nh && nh > 0) return nw / nh;
+                return (c.offsetHeight > 0) ? (c.offsetWidth / c.offsetHeight) : 1;
+            })(),
+            naturalWidth: parseFloat(c.getAttribute('data-natural-width') || (shape && shape.getAttribute('data-natural-width'))) || null,
+            naturalHeight: parseFloat(c.getAttribute('data-natural-height') || (shape && shape.getAttribute('data-natural-height'))) || null,
             isPin: isPin,
             isDescriptionPin: isDescriptionPin,
             pinIndex: (function() {
@@ -1589,6 +1600,11 @@ window.v4Script = `
                     }
                 }
                 v.innerHTML = d.html + '<div class="lf-delete-trigger">&times;</div>';
+                if (d.dataset) {
+                    for (let k in d.dataset) {
+                        v.setAttribute('data-' + k.replace(/([A-Z])/g, '-$1').toLowerCase(), d.dataset[k]);
+                    }
+                }
             }
             
             if (window.parent.state && window.parent.state.transform) {
@@ -1597,8 +1613,16 @@ window.v4Script = `
                     const bw = parseInt(v.style.width) || 200;
                     const bh = parseInt(v.style.height) || 100;
                     if (s < 0.8 && !d.isGroup) {
-                        v.style.width = Math.round(bw / s) + 'px';
-                        v.style.height = Math.round(bh / s) + 'px';
+                        const isImg = v.querySelector('.v4-shape-image') || v.getAttribute('data-aspect-ratio');
+                        if (isImg) {
+                            const natRatio = parseFloat(v.getAttribute('data-aspect-ratio')) || (bw / bh);
+                            const newW = Math.round(bw / s);
+                            v.style.width = newW + 'px';
+                            v.style.height = Math.round(newW / natRatio) + 'px';
+                        } else {
+                            v.style.width = Math.round(bw / s) + 'px';
+                            v.style.height = Math.round(bh / s) + 'px';
+                        }
                     }
                 }
             }
@@ -1719,10 +1743,19 @@ window.v4Script = `
             }
         } else if (d.type === 'LF_BRING_FRONT') {
             var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
-            if (selected.length === 0 && d.id) {
-                var singleTarget = document.getElementById(d.id);
-                if (singleTarget && singleTarget.classList.contains('lf-component')) {
-                    selected.push(singleTarget);
+            if (selected.length === 0) {
+                if (d.ids && Array.isArray(d.ids)) {
+                    d.ids.forEach(function(id) {
+                        var el = document.getElementById(id);
+                        if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                            selected.push(el);
+                        }
+                    });
+                } else if (d.id) {
+                    var singleTarget = document.getElementById(d.id);
+                    if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                        selected.push(singleTarget);
+                    }
                 }
             }
             var topLevelSelected = selected.filter(function(el) {
@@ -1795,10 +1828,19 @@ window.v4Script = `
             }
         } else if (d.type === 'LF_SEND_BACK') {
             var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
-            if (selected.length === 0 && d.id) {
-                var singleTarget = document.getElementById(d.id);
-                if (singleTarget && singleTarget.classList.contains('lf-component')) {
-                    selected.push(singleTarget);
+            if (selected.length === 0) {
+                if (d.ids && Array.isArray(d.ids)) {
+                    d.ids.forEach(function(id) {
+                        var el = document.getElementById(id);
+                        if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                            selected.push(el);
+                        }
+                    });
+                } else if (d.id) {
+                    var singleTarget = document.getElementById(d.id);
+                    if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                        selected.push(singleTarget);
+                    }
                 }
             }
             var topLevelSelected = selected.filter(function(el) {
@@ -1867,17 +1909,24 @@ window.v4Script = `
                         return !items.includes(c);
                     });
 
-                    items.forEach(function(el) {
-                        el.style.zIndex = String(targetZ);
-                        if (firstUnselectedComp && firstUnselectedComp.parentNode === parent) {
+                    if (firstUnselectedComp && firstUnselectedComp.parentNode === parent) {
+                        items.forEach(function(el) {
+                            el.style.zIndex = String(targetZ);
                             parent.insertBefore(el, firstUnselectedComp);
-                        } else {
-                            var firstChild = parent.firstElementChild;
-                            if (firstChild && firstChild !== el) {
-                                parent.insertBefore(el, firstChild);
+                        });
+                    } else {
+                        var nonCompAnchor = Array.from(parent.children).find(function(c) {
+                            return !c.classList.contains('lf-component');
+                        });
+                        items.forEach(function(el) {
+                            el.style.zIndex = String(targetZ);
+                            if (nonCompAnchor && nonCompAnchor.parentNode === parent) {
+                                parent.insertBefore(el, nonCompAnchor);
+                            } else {
+                                parent.appendChild(el);
                             }
-                        }
-                    });
+                        });
+                    }
                 });
 
                 markDirty();

@@ -71,6 +71,8 @@ window.GroupingManager = (function() {
              if (DOM.btnGroup) DOM.btnGroup.onclick = groupSelected;
              if (DOM.btnUngroup) DOM.btnUngroup.onclick = ungroupSelected;
              if (DOM.btnAddToMolecules) DOM.btnAddToMolecules.onclick = addToMolecules;
+             if (DOM.btnBringFront) DOM.btnBringFront.onclick = bringFrontSelected;
+             if (DOM.btnSendBack) DOM.btnSendBack.onclick = sendBackSelected;
  
              // Alignment Listeners (RESTORED)
              if (DOM.btnAlignLeft) DOM.btnAlignLeft.onclick = () => alignSelected('left');
@@ -82,6 +84,12 @@ window.GroupingManager = (function() {
              if (DOM.btnAlignDistributeH) DOM.btnAlignDistributeH.onclick = () => alignSelected('distribute_h');
              if (DOM.btnAlignDistributeV) DOM.btnAlignDistributeV.onclick = () => alignSelected('distribute_v');
          }
+
+         // Direct fallback binding to ensure buttons are wired even if window.DOM was delayed
+         const btnBringFrontDirect = document.getElementById('btn-bring-front-action');
+         if (btnBringFrontDirect) btnBringFrontDirect.onclick = bringFrontSelected;
+         const btnSendBackDirect = document.getElementById('btn-send-back-action');
+         if (btnSendBackDirect) btnSendBackDirect.onclick = sendBackSelected;
  
          // Keyboard Shortcuts
          window.addEventListener('keydown', (e) => {
@@ -107,6 +115,17 @@ window.GroupingManager = (function() {
                 };
                 if (typeMap[keyChar]) {
                     alignSelected(typeMap[keyChar]);
+                }
+            }
+
+            // Layer Ordering Shortcuts (Ctrl+] / Ctrl+[)
+            if ((e.ctrlKey || e.metaKey) && !inInput) {
+                if (e.key === ']' || e.code === 'BracketRight') {
+                    e.preventDefault();
+                    bringFrontSelected();
+                } else if (e.key === '[' || e.code === 'BracketLeft') {
+                    e.preventDefault();
+                    sendBackSelected();
                 }
             }
          });
@@ -401,6 +420,32 @@ window.GroupingManager = (function() {
         }
     };
 
+    const bringFrontSelected = () => {
+        let activeIds = getEffectiveSelectedIds();
+        if ((!activeIds || activeIds.length === 0) && window.state && window.state.selectedComponent && window.state.selectedComponent.id) {
+            activeIds = [window.state.selectedComponent.id];
+        }
+        if (!activeIds || activeIds.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+        const iframe = document.getElementById('main-iframe');
+        if (iframe && iframe.contentWindow && window.MessageHub) {
+            window.MessageHub.send(iframe.contentWindow, 'LF_BRING_FRONT', { ids: activeIds, id: activeIds[0] });
+        }
+    };
+
+    const sendBackSelected = () => {
+        let activeIds = getEffectiveSelectedIds();
+        if ((!activeIds || activeIds.length === 0) && window.state && window.state.selectedComponent && window.state.selectedComponent.id) {
+            activeIds = [window.state.selectedComponent.id];
+        }
+        if (!activeIds || activeIds.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+        const iframe = document.getElementById('main-iframe');
+        if (iframe && iframe.contentWindow && window.MessageHub) {
+            window.MessageHub.send(iframe.contentWindow, 'LF_SEND_BACK', { ids: activeIds, id: activeIds[0] });
+        }
+    };
+
     const addToMolecules = async () => {
         const activeIds = getEffectiveSelectedIds();
         if (activeIds.length !== 1) return;
@@ -462,6 +507,8 @@ window.GroupingManager = (function() {
         groupSelected,
         ungroupSelected,
         alignSelected,
+        bringFrontSelected,
+        sendBackSelected,
         addToMolecules,
         deleteMolecule,
         renameMolecule,
@@ -473,6 +520,8 @@ window.GroupingManager = (function() {
 
 window.deleteMolecule = (id, e) => window.GroupingManager.deleteMolecule(id, e);
 window.renameComponent = (id, e) => window.GroupingManager.renameMolecule(id, e);
+window.bringFrontSelected = () => window.GroupingManager.bringFrontSelected();
+window.sendBackSelected = () => window.GroupingManager.sendBackSelected();
 
 // Auto-init when ready
 if (document.readyState === 'loading') {

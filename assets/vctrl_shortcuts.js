@@ -763,6 +763,19 @@ window.v4ShortcutsScript = `
                 type: 'LF_SHORTCUT_TRIGGERED',
                 shortcut: e.shiftKey ? 'ungroup' : 'group'
             });
+            return;
+        }
+
+        if ((e.ctrlKey || e.metaKey) && !inInput) {
+            if (e.key === ']' || e.code === 'BracketRight') {
+                e.preventDefault();
+                window.postMessage({ type: 'LF_BRING_FRONT' }, '*');
+                return;
+            } else if (e.key === '[' || e.code === 'BracketLeft') {
+                e.preventDefault();
+                window.postMessage({ type: 'LF_SEND_BACK' }, '*');
+                return;
+            }
         }
         else if (e.code === 'Space' && !inInput) {
             e.preventDefault();

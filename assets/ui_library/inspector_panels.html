@@ -174,11 +174,12 @@
                     </div>
                 </div>
                 <!-- Preserve Aspect Ratio row: shown only when image selected -->
-                <div id="shape-aspect-ratio-row" style="display: none; align-items: center; gap: 8px; margin-top: 4px;">
+                <div id="shape-aspect-ratio-row" style="display: none; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px;">
                     <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 11px; color: #94a3b8; user-select: none;">
                         <input type="checkbox" id="chk-preserve-aspect-ratio" style="width: 13px; height: 13px; accent-color: #00e5ff; cursor: pointer; flex-shrink: 0;">
                         <span>Preserve Aspect Ratio</span>
                     </label>
+                    <button type="button" id="btn-snap-image-ratio" title="Reset container to image natural ratio (여백 0px 맞춤)" style="background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3); color: #00e5ff; border-radius: 4px; font-size: 10px; padding: 2px 6px; cursor: pointer; white-space: nowrap;">비율 자동 맞춤</button>
                 </div>
             </div>
             <div id="shape-pattern-type-group" class="prop-group" style="display: none; margin-bottom: 12px; margin-top: 4px;">

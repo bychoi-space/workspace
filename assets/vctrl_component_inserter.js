@@ -84,15 +84,27 @@
                     const base64 = evt.target.result;
                     const img = new Image();
                     img.onload = function() {
-                        let w = img.naturalWidth || 200;
-                        let h = img.naturalHeight || 200;
-                        const maxBound = 300;
-                        if (w > maxBound || h > maxBound) {
-                            const ratio = Math.min(maxBound / w, maxBound / h);
-                            w = Math.round(w * ratio);
-                            h = Math.round(h * ratio);
+                        const origW = img.naturalWidth || 200;
+                        const origH = img.naturalHeight || 200;
+                        const naturalRatio = origW / origH;
+                        let w = origW;
+                        let h = origH;
+
+                        // Calculate proportional initial placement size for 1600x900 canvas
+                        if (naturalRatio < 0.65) {
+                            // Tall mobile screenshots: target width 320px, height proportional
+                            w = 320;
+                            h = Math.round(w / naturalRatio);
+                            if (h > 750) {
+                                h = 750;
+                                w = Math.round(h * naturalRatio);
+                            }
+                        } else if (w > 560 || h > 450) {
+                            const scale = Math.min(560 / w, 450 / h);
+                            w = Math.round(w * scale);
+                            h = Math.round(h * scale);
                         }
-                        window.insertImageComponent(base64, w + 'px', h + 'px');
+                        window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
                     };
                     img.src = base64;
                 };
@@ -103,9 +115,12 @@
         input.click();
     }
 
-    window.insertImageComponent = function(base64, width, height) {
+    window.insertImageComponent = function(base64, width, height, naturalWidth, naturalHeight) {
         const targetId = 'v4-img-' + Date.now();
-        const html = '<div class="v4-shape v4-shape-image" style="width: 100%; height: 100%; background-image: url(\'' + base64 + '\'); background-size: contain; background-position: center; background-repeat: no-repeat; box-sizing: border-box; border: 1.6px solid transparent; background-color: transparent !important;"></div>';
+        const natW = naturalWidth || parseInt(width) || 200;
+        const natH = naturalHeight || parseInt(height) || 200;
+        const ratio = (natW && natH) ? (natW / natH).toFixed(4) : '1';
+        const html = '<div class="v4-shape v4-shape-image" data-natural-width="' + natW + '" data-natural-height="' + natH + '" data-aspect-ratio="' + ratio + '" style="width: 100%; height: 100%; background-image: url(\'' + base64 + '\'); background-size: cover; background-position: center; background-repeat: no-repeat; box-sizing: border-box; border: 1.6px solid transparent; background-color: transparent !important;"></div>';
         const finalW = width || '200px';
         const finalH = height || '200px';
         const style = {
@@ -117,7 +132,12 @@
             id: targetId,
             html: html,
             style: style,
-            className: ''
+            className: '',
+            dataset: {
+                naturalWidth: natW,
+                naturalHeight: natH,
+                aspectRatio: ratio
+            }
         });
     };
 

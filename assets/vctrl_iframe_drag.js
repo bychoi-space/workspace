@@ -106,6 +106,9 @@ window.v4DragResizeScript = `
             else if (isResizing && window.activeEl) {
                 const scale = (window.parent?.state?.transform?.scale) || 1;
                 const shapeLine = window.activeEl.querySelector('.v4-shape-line');
+                const shapeImage = window.activeEl.querySelector('.v4-shape-image');
+                const isImage = !!shapeImage || window.activeEl.classList.contains('v4-shape-image') || !!window.activeEl.getAttribute('data-aspect-ratio');
+                
                 let nw = Math.max(10, startW + (e.clientX - startX) / scale);
                 let nh = Math.max(10, startH + (e.clientY - startY) / scale);
                 
@@ -116,6 +119,24 @@ window.v4DragResizeScript = `
                         nw = Math.max(th, 2);
                     } else {
                         nh = Math.max(th, 2);
+                    }
+                } else if (isImage || e.shiftKey) {
+                    let ratio = null;
+                    const attrRatio = window.activeEl.getAttribute('data-aspect-ratio') || (shapeImage && shapeImage.getAttribute('data-aspect-ratio'));
+                    if (attrRatio && !isNaN(parseFloat(attrRatio))) {
+                        ratio = parseFloat(attrRatio);
+                    } else if (startW > 0 && startH > 0) {
+                        ratio = startW / startH;
+                    }
+                    
+                    if (ratio && ratio > 0) {
+                        const deltaW = Math.abs(nw - startW);
+                        const deltaH = Math.abs(nh - startH);
+                        if (deltaW >= deltaH) {
+                            nh = Math.max(10, Math.round(nw / ratio));
+                        } else {
+                            nw = Math.max(10, Math.round(nh * ratio));
+                        }
                     }
                 }
                 

@@ -558,16 +558,25 @@
             const base64 = data.base64;
             const img = new Image();
             img.onload = function() {
-                let w = img.naturalWidth || 200;
-                let h = img.naturalHeight || 200;
-                const maxBound = 300;
-                if (w > maxBound || h > maxBound) {
-                    const ratio = Math.min(maxBound / w, maxBound / h);
-                    w = Math.round(w * ratio);
-                    h = Math.round(h * ratio);
+                const origW = img.naturalWidth || 200;
+                const origH = img.naturalHeight || 200;
+                const naturalRatio = origW / origH;
+                let w = origW;
+                let h = origH;
+                if (naturalRatio < 0.65) {
+                    w = 320;
+                    h = Math.round(w / naturalRatio);
+                    if (h > 750) {
+                        h = 750;
+                        w = Math.round(h * naturalRatio);
+                    }
+                } else if (w > 560 || h > 450) {
+                    const scale = Math.min(560 / w, 450 / h);
+                    w = Math.round(w * scale);
+                    h = Math.round(h * scale);
                 }
                 if (typeof window.insertImageComponent === 'function') {
-                    window.insertImageComponent(base64, w + 'px', h + 'px');
+                    window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
                 }
             };
             img.src = base64;
@@ -676,29 +685,27 @@
                     const base64 = evt.target.result;
                     const img = new Image();
                     img.onload = function() {
-                        let w = img.naturalWidth || 200;
-                        let h = img.naturalHeight || 200;
-                        const maxBound = 300;
-                        if (w > maxBound || h > maxBound) {
-                            const ratio = Math.min(maxBound / w, maxBound / h);
-                            w = Math.round(w * ratio);
-                            h = Math.round(h * ratio);
+                        const origW = img.naturalWidth || 200;
+                        const origH = img.naturalHeight || 200;
+                        const naturalRatio = origW / origH;
+                        let w = origW;
+                        let h = origH;
+                        if (naturalRatio < 0.65) {
+                            w = 320;
+                            h = Math.round(w / naturalRatio);
+                            if (h > 750) {
+                                h = 750;
+                                w = Math.round(h * naturalRatio);
+                            }
+                        } else if (w > 560 || h > 450) {
+                            const scale = Math.min(560 / w, 450 / h);
+                            w = Math.round(w * scale);
+                            h = Math.round(h * scale);
                         }
 
-                        // Optimize Base64 payload by scaling bitmap to actual component bounds
-                        let optimizedBase64 = base64;
-                        try {
-                            const canvas = document.createElement('canvas');
-                            canvas.width = w;
-                            canvas.height = h;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, w, h);
-                            optimizedBase64 = canvas.toDataURL('image/png');
-                        } catch (err) {
-                            console.warn("[V4 Addon] Canvas optimization fallback to original:", err);
+                        if (typeof window.insertImageComponent === 'function') {
+                            window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
                         }
-
-                        window.insertImageComponent(optimizedBase64, w + 'px', h + 'px');
                     };
                     img.src = base64;
                 };

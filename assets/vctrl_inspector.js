@@ -43,6 +43,8 @@ window.rebindInspectorDOM = function() {
     DOM.btnGroup = get('btn-group-action');
     DOM.btnUngroup = get('btn-ungroup-action');
     DOM.btnAddToMolecules = get('btn-add-molecules-action');
+    DOM.btnBringFront = get('btn-bring-front-action');
+    DOM.btnSendBack = get('btn-send-back-action');
 
     if (typeof window.initUnifiedLabels === 'function') {
         window.initUnifiedLabels();
@@ -176,6 +178,8 @@ window.DOM = {
     btnGroup: get('btn-group-action'),
     btnUngroup: get('btn-ungroup-action'),
     btnAddToMolecules: get('btn-add-molecules-action'),
+    btnBringFront: get('btn-bring-front-action'),
+    btnSendBack: get('btn-send-back-action'),
     // Alignment
     alignBar: get('selection-align-bar'),
     btnAlignLeft: get('btn-align-left'),

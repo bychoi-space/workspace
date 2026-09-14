@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;">
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 14px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;">
 <head>
     <meta charset="UTF-8">
     <title>이커머스 '최대 혜택 자동 적용' 분석 보고서 - [주문] 최대 혜택 쿠폰 자동 적용</title>
@@ -15,6 +15,7 @@
             --v4-border: #e2e8f0;
             --v4-text: #0f172a;
             --v4-text-muted: #64748b;
+            --v4-font-size: 14px;
         }
         * { box-sizing: border-box; }
         body { 
@@ -44,7 +45,7 @@
     <style id="v4-typography-rules">
     :root {
         --v4-text-color: #0f172a;
-        --v4-font-size: 12px;
+        --v4-font-size: 14px;
         --v4-font-weight: 400;
         --v4-font-family: inherit;
         --v4-placeholder-color: #94a3b8;
@@ -59,19 +60,19 @@
     <div class="page" id="canvas">
 
         <!-- ======================================================== -->
-        <!-- [1] 상단 글로벌 헤더 바 (Top: 16px, Left: 20px, W: 1560px, H: 44px) -->
+        <!-- [1] 상단 글로벌 헤더 바 (Top: 16px, Left: 20px, W: 1560px, H: 46px) -->
         <!-- ======================================================== -->
         <!-- 헤더 배경 바 -->
-        <div id="bm-hdr-bg" class="lf-component" style="position: absolute; top: 16px; left: 20px; width: 1560px; height: 44px; z-index: 100;" data-resized="true">
+        <div id="bm-hdr-bg" class="lf-component" style="position: absolute; top: 16px; left: 20px; width: 1560px; height: 46px; z-index: 100;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
         <!-- 헤더 아이콘 박스 -->
-        <div id="bm-hdr-icon" class="lf-component" style="position: absolute; top: 25px; left: 34px; width: 26px; height: 26px; z-index: 101;">
+        <div id="bm-hdr-icon" class="lf-component" style="position: absolute; top: 25px; left: 34px; width: 28px; height: 28px; z-index: 101;">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #4f46e5; border: 1.6px solid transparent; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #ffffff; box-sizing: border-box;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 16px; height: 16px; color: #ffffff; background-image: none !important;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 18px; height: 18px; color: #ffffff; background-image: none !important;">
                     <path d="M12 20V10" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
                     <path d="M18 20V4" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
                     <path d="M6 20v-4" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
@@ -80,41 +81,41 @@
         </div>
 
         <!-- 헤더 타이틀 -->
-        <div id="bm-hdr-title" class="lf-component v4-text-shape" style="position: absolute; top: 26px; left: 70px; width: 620px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 15px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 0 !important; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><span style="color: #ffffff; font-weight: 800;">[전략 분석] 대한민국 이커머스 '주문 시 최대 혜택 자동 적용' 당위성 및 업계 벤치마크</span></p>
+        <div id="bm-hdr-title" class="lf-component v4-text-shape" style="position: absolute; top: 27px; left: 72px; width: 720px; height: 26px; z-index: 101; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 16px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 0 !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="color: #ffffff; font-weight: 800;">[벤치마크 분석] 이커머스 '주문서 최대 혜택 자동 적용' 도입 전략 및 업계 비교</span></p>
             </div>
         </div>
 
-        <!-- 헤더 우측 뱃지: FACT CHECKED -->
-        <div id="bm-hdr-badge1" class="lf-component" style="position: absolute; top: 24px; left: 1240px; width: 150px; height: 28px; z-index: 101;" data-resized="true">
+        <!-- 헤더 우측 뱃지: FACT VERIFIED -->
+        <div id="bm-hdr-badge1" class="lf-component" style="position: absolute; top: 24px; left: 1210px; width: 175px; height: 30px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(16, 185, 129, 0.15); border: 1.6px solid #10b981; border-radius: 20px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #10b981; font-size: 11px; font-weight: 700; padding: 2px 6px;">
-                    <p>● 100% FACT CHECKED</p>
+                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #10b981; font-size: 14px; font-weight: 700; padding: 2px 8px;">
+                    <p>● 100% FACT VERIFIED</p>
                 </div>
             </div>
         </div>
 
         <!-- 헤더 우측 프로젝트/작성자 메타 -->
-        <div id="bm-hdr-meta" class="lf-component v4-text-shape" style="position: absolute; top: 28px; left: 1400px; width: 165px; height: 20px; z-index: 101; --v4-text-adjust-y: 0px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #94a3b8; font-size: 12px; font-weight: 500; text-align: right; width: 100%; height: 100%; white-space: nowrap !important;">
+        <div id="bm-hdr-meta" class="lf-component v4-text-shape" style="position: absolute; top: 28px; left: 1395px; width: 170px; height: 24px; z-index: 101; --v4-text-adjust-y: 0px; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #94a3b8; font-size: 14px; font-weight: 600; text-align: right; width: 100%; height: 100%; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;">시선닷컴 e-Biz 기획팀</p>
             </div>
         </div>
 
 
         <!-- ======================================================== -->
-        <!-- [2] 좌측 상단 카드: 1. 핵심 고민 및 당위성 분석 (Top: 68px, Left: 20px, W: 765px, H: 385px) -->
+        <!-- [2] 좌측 상단 카드: 1. 시장 현황 및 문제 정의 (Top: 72px, Left: 20px, W: 765px, H: 385px) -->
         <!-- ======================================================== -->
         <!-- 카드 배경 -->
-        <div id="bm-card1-bg" class="lf-component" style="position: absolute; top: 68px; left: 20px; width: 765px; height: 385px; z-index: 100;" data-resized="true">
+        <div id="bm-card1-bg" class="lf-component" style="position: absolute; top: 72px; left: 20px; width: 765px; height: 385px; z-index: 100;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04); box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
         <!-- 카드 1 헤더 아이콘 -->
-        <div id="bm-card1-icon" class="lf-component" style="position: absolute; top: 82px; left: 36px; width: 22px; height: 22px; z-index: 101;">
+        <div id="bm-card1-icon" class="lf-component" style="position: absolute; top: 85px; left: 36px; width: 24px; height: 24px; z-index: 101;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; color: #4f46e5; background-image: none !important;">
                 <circle cx="12" cy="12" r="10" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
@@ -123,66 +124,66 @@
         </div>
 
         <!-- 카드 1 타이틀 -->
-        <div id="bm-card1-title" class="lf-component v4-text-shape" style="position: absolute; top: 81px; left: 66px; width: 440px; height: 24px; z-index: 101; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; text-align: left; width: 100%; height: 100%; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;">1. 핵심 고민 정의 : '최대 혜택 자동 적용'은 반드시 필수인가?</p>
+        <div id="bm-card1-title" class="lf-component v4-text-shape" style="position: absolute; top: 84px; left: 68px; width: 520px; height: 26px; z-index: 101; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">1. 시장 현황 : 주요 이커머스 '최대 혜택 자동 적용' 추세</p>
             </div>
         </div>
 
         <!-- 카드 1 분류 뱃지 -->
-        <div id="bm-card1-badge" class="lf-component" style="position: absolute; top: 81px; left: 635px; width: 135px; height: 24px; z-index: 101;" data-resized="true">
+        <div id="bm-card1-badge" class="lf-component" style="position: absolute; top: 83px; left: 615px; width: 155px; height: 28px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #1d4ed8; font-size: 11px; font-weight: 700;">
-                    <p>PROBLEM STATEMENT</p>
+                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #1d4ed8; font-size: 14px; font-weight: 700;">
+                    <p>MARKET TREND</p>
                 </div>
             </div>
         </div>
 
-        <!-- 서브박스 1: 질문과 환경 차이 -->
-        <div id="bm-card1-sub1" class="lf-component" style="position: absolute; top: 115px; left: 36px; width: 733px; height: 95px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; padding: 10px 14px;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; line-height: 1.6; color: #334155; text-align: left;">
-                    <p><strong style="color: #0f172a; font-size: 13px;">Q. 모든 이커머스가 주문서에서 최대 할인을 자동으로 먹여주고 있는가? ➔ <span style="color: #e11d48;">NO, 사실이 아닙니다.</span></strong></p>
-                    <p style="margin-top: 4px;">• <strong>종합 이커머스(네이버, G마켓 등)</strong> : 저관여/생필품 다빈도 구매 특성상 '복잡한 쿠폰 계산 피로도'를 없애기 위해 <strong>자동 적용을 기본 표준</strong>으로 채택.</p>
-                    <p>• <strong>패션 전문 버티컬(무신사, SSF, 29CM, W컨셉 등)</strong> : 고관여/브랜드별 정산/고객 통제권 보호를 위해 <strong>'무조건 강제 자동 적용'을 전면 배제</strong>함.</p>
+        <!-- 서브박스 1: 질문과 현황 팩트 -->
+        <div id="bm-card1-sub1" class="lf-component" style="position: absolute; top: 120px; left: 36px; width: 733px; height: 86px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; padding: 10px 16px;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; line-height: 1.55; color: #334155; text-align: left;">
+                    <p><strong style="color: #0f172a; font-size: 15px;">Q. 선두 플랫폼들은 주문서에서 쿠폰을 어떻게 적용하는가?</strong></p>
+                    <p style="margin-top: 4px;">• <strong>SSF SHOP · 네이버쇼핑 · G마켓</strong> : 주문서 진입 즉시 <strong>'최대 혜택 쿠폰 자동 적용'을 기본 제공</strong>하여 결제 이탈 최소화.</p>
+                    <p>• <strong>무신사 · 29CM · W컨셉</strong> : 브랜드별 수수료 정산 및 쿠폰 관리 정책으로 고객 직접 수동 선택 중심 운영.</p>
                 </div>
             </div>
         </div>
 
-        <!-- 서브박스 2: 패션몰이 무조건 강제 자동적용을 안 하는 3가지 이유 -->
-        <div id="bm-card1-sub2" class="lf-component" style="position: absolute; top: 220px; left: 36px; width: 733px; height: 160px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; padding: 12px 14px;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; line-height: 1.65; color: #1e293b; text-align: left;">
-                    <p><strong style="color: #1e1b4b; font-size: 13px;">패션 전문몰이 '무조건 강제 자동 적용(Silent Auto-Apply)'을 기피하는 3대 본질적 사유</strong></p>
-                    <p style="margin-top: 6px;"><strong>1. 고객의 '쿠폰 통제권' 상실에 따른 강력한 CS 발생 :</strong> 패션은 100만원대 아우터부터 3만원대 이너까지 객단가 편차가 극심함. 고객이 "아껴두려던 20% 고율 쿠폰이 저가 티셔츠 주문에 자동 소진되었다"며 결제 취소 및 강력 컴플레인 제기.</p>
-                    <p><strong>2. 브랜드별 수수료율 및 정산 마진 훼손(Margin Protection) :</strong> 노세일 브랜드, 특가 기획전, 직매입 vs 위수탁 입점사 분담률 등 복잡한 정산 룰이 얽혀 있어, 무차별 자동 할인은 플랫폼 및 파트너사의 영업이익률을 직격함.</p>
-                    <p><strong>3. 쿠폰 혜택 인지 효과(Perceived Value) 반감 :</strong> 시스템이 알아서 깎아주면 고객은 정작 쿠폰의 가치를 체감하지 못하고 '원래 이 가격'으로 착각하여 마케팅 ROI가 급감함.</p>
+        <!-- 서브박스 2: 패션 플랫폼 도입 시 3대 핵심 고려사항 -->
+        <div id="bm-card1-sub2" class="lf-component" style="position: absolute; top: 216px; left: 36px; width: 733px; height: 165px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; padding: 12px 16px;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; line-height: 1.6; color: #1e293b; text-align: left;">
+                    <p><strong style="color: #1e1b4b; font-size: 15px;">패션 전문몰 자동 적용 설계 시 3대 핵심 고려사항</strong></p>
+                    <p style="margin-top: 6px;"><strong>① 고객 쿠폰 선택권 보장 :</strong> 고가 아우터용 고율 쿠폰이 저가 티셔츠에 원치 않게 소진되지 않도록 <strong>[쿠폰 변경/취소] 옵션 상시 제공</strong> 필수.</p>
+                    <p><strong>② 자사몰 영업이익률 보호 :</strong> 특가 기획전·아울렛 이월 등 마진이 희박한 상품에 중복 적용되지 않도록 <strong>어드민 예외 룰 선행 구축</strong> 필요.</p>
+                    <p><strong>③ 혜택 체감 극대화 :</strong> 자동 적용 후 고객이 체감할 수 있도록 <strong>"최대 OO원 할인 적용 완료" 시각 피드백 명확화</strong>.</p>
                 </div>
             </div>
         </div>
 
         <!-- 카드 1 하단 요약 결론 바 -->
-        <div id="bm-card1-bottom" class="lf-component" style="position: absolute; top: 390px; left: 36px; width: 733px; height: 50px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #86efac; border-radius: 8px; box-sizing: border-box; display: flex; align-items: center; padding: 0 14px;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; font-weight: 600; color: #15803d; text-align: left; width: 100%;">
-                    <p>💡 <strong>도출된 결론 :</strong> 패션 이커머스는 '강제 자동 적용'이 아닌 <strong>'고객에게 선택권을 주면서도 계산 피로를 없애는 원클릭 추천(SSF샵 모델)'</strong>이 최적의 해답임.</p>
+        <div id="bm-card1-bottom" class="lf-component" style="position: absolute; top: 391px; left: 36px; width: 733px; height: 52px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #86efac; border-radius: 8px; box-sizing: border-box; display: flex; align-items: center; padding: 0 16px;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; font-weight: 700; color: #15803d; text-align: left; width: 100%;">
+                    <p>💡 <strong>도출 결론 :</strong> SSF SHOP과 동일하게 <strong>'최대 혜택 기본 자동 적용 + 고객 변경/취소 권한 보장'</strong> 방식이 최적의 해답임.</p>
                 </div>
             </div>
         </div>
 
 
         <!-- ======================================================== -->
-        <!-- [3] 우측 상단 카드: 2. 국내 이커머스 선두주자 11개사 팩트 비교표 (Top: 68px, Left: 795px, W: 785px, H: 385px) -->
+        <!-- [3] 우측 상단 카드: 2. 국내 주요 11개사 팩트 분석 매트릭스 (Top: 72px, Left: 795px, W: 785px, H: 385px) -->
         <!-- ======================================================== -->
         <!-- 카드 2 배경 -->
-        <div id="bm-card2-bg" class="lf-component" style="position: absolute; top: 68px; left: 795px; width: 785px; height: 385px; z-index: 100;" data-resized="true">
+        <div id="bm-card2-bg" class="lf-component" style="position: absolute; top: 72px; left: 795px; width: 785px; height: 385px; z-index: 100;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04); box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
         <!-- 카드 2 헤더 아이콘 -->
-        <div id="bm-card2-icon" class="lf-component" style="position: absolute; top: 82px; left: 811px; width: 22px; height: 22px; z-index: 101;">
+        <div id="bm-card2-icon" class="lf-component" style="position: absolute; top: 85px; left: 811px; width: 24px; height: 24px; z-index: 101;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; color: #2563eb; background-image: none !important;">
                 <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></rect>
                 <line x1="3" y1="9" x2="21" y2="9" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></line>
@@ -191,91 +192,91 @@
         </div>
 
         <!-- 카드 2 타이틀 -->
-        <div id="bm-card2-title" class="lf-component v4-text-shape" style="position: absolute; top: 81px; left: 841px; width: 440px; height: 24px; z-index: 101; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; text-align: left; width: 100%; height: 100%; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;">2. 업계 선두주자 전수 팩트(Fact) 분석 매트릭스</p>
+        <div id="bm-card2-title" class="lf-component v4-text-shape" style="position: absolute; top: 84px; left: 843px; width: 480px; height: 26px; z-index: 101; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">2. 국내 주요 11개 플랫폼 주문서 쿠폰 적용 현황</p>
             </div>
         </div>
 
         <!-- 카드 2 뱃지 -->
-        <div id="bm-card2-badge" class="lf-component" style="position: absolute; top: 81px; left: 1420px; width: 145px; height: 24px; z-index: 101;" data-resized="true">
+        <div id="bm-card2-badge" class="lf-component" style="position: absolute; top: 83px; left: 1405px; width: 160px; height: 28px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #475569; font-size: 11px; font-weight: 700;">
+                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #475569; font-size: 14px; font-weight: 700;">
                     <p>TOTAL 11 PLATFORMS</p>
                 </div>
             </div>
         </div>
 
-        <!-- 메인 팩트 테이블 (HTML Table - Box sizing border-box) -->
-        <div id="bm-fact-table" class="lf-component" style="position: absolute; top: 115px; left: 811px; width: 753px; height: 325px; z-index: 101; overflow-y: auto;" data-resized="true">
-            <table style="width: 100%; border-collapse: collapse; font-size: 11.5px; line-height: 1.4; text-align: left; box-sizing: border-box; background: #ffffff;">
+        <!-- 메인 팩트 테이블 -->
+        <div id="bm-fact-table" class="lf-component" style="position: absolute; top: 120px; left: 811px; width: 753px; height: 323px; z-index: 101; overflow-y: auto;" data-resized="true">
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.45; text-align: left; box-sizing: border-box; background: #ffffff;">
                 <thead>
                     <tr style="background: #0f172a; color: #ffffff;">
-                        <th style="padding: 6px 8px; border: 1px solid #334155; width: 65px; text-align: center;">구분</th>
-                        <th style="padding: 6px 8px; border: 1px solid #334155; width: 95px; text-align: center;">플랫폼</th>
-                        <th style="padding: 6px 8px; border: 1px solid #334155; width: 135px; text-align: center;">주문서 쿠폰 적용 방식</th>
-                        <th style="padding: 6px 8px; border: 1px solid #334155;">실제 작동 메커니즘 및 팩트(Fact) 요약</th>
+                        <th style="padding: 7px 10px; border: 1px solid #334155; width: 80px; text-align: center; font-size: 14px;">구분</th>
+                        <th style="padding: 7px 10px; border: 1px solid #334155; width: 110px; text-align: center; font-size: 14px;">플랫폼</th>
+                        <th style="padding: 7px 10px; border: 1px solid #334155; width: 150px; text-align: center; font-size: 14px;">적용 방식</th>
+                        <th style="padding: 7px 10px; border: 1px solid #334155; font-size: 14px;">실제 작동 메커니즘 (Fact)</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- 패션 버티컬 (상단 핵심 배치) -->
+                    <tr style="background: #eff6ff;">
+                        <td rowspan="6" style="padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 700; color: #4338ca; font-size: 14px;">패션<br>전문몰<br>(경쟁사)</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 800; color: #2563eb; font-size: 14px;">SSF SHOP</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 4px; font-weight: 800; font-size: 14px;">최대혜택 기본적용</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #1e293b; font-size: 14px;">주문서 진입 시 <strong>최대 할인 조합 기본 자동 적용</strong>. 고객이 [쿠폰 변경]으로 선택·취소 가능 (선진 UX).</td>
+                    </tr>
+                    <tr style="background: #ffffff;">
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #334155; font-size: 14px;">LFmall</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">부분반영 / 수동</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">기본 쿠폰만 자동 반영되며, 중복 쿠폰은 고객이 [변경] 버튼에서 직접 선택.</td>
+                    </tr>
+                    <tr style="background: #f8fafc;">
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #334155; font-size: 14px;">29CM</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">배지 안내 / 수동</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">가장 큰 쿠폰에 '최대 할인' 배지 가이드만 제공하며, 자동 적용은 하지 않음.</td>
+                    </tr>
+                    <tr style="background: #ffffff;">
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #334155; font-size: 14px;">무신사</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">수동 선택형</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">주문서 [쿠폰 조회/적용] 팝업에서 고객이 직접 보유 쿠폰을 수동 매핑.</td>
+                    </tr>
+                    <tr style="background: #f8fafc;">
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #334155; font-size: 14px;">SI VILLAGE</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">수동 조합 선택</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">쇼핑백 쿠폰과 더블 쿠폰을 고객이 직접 체크하여 조합 적용.</td>
+                    </tr>
+                    <tr style="background: #ffffff;">
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #334155; font-size: 14px;">W CONCEPT</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fee2e2; color: #b91c1c; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">수동 선택 필수</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">자동 적용 없음. 결제창 [할인받기/쿠폰선택]에서 직접 선택 필수.</td>
+                    </tr>
                     <!-- 종합몰 -->
                     <tr style="background: #f8fafc;">
-                        <td rowspan="5" style="padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 700; color: #475569;">종합<br>e커머스</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #0284c7;">네이버쇼핑</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #dcfce7; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 700;">자동 기본 적용</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;">주문서 진입 시 보유 쿠폰 중 <strong>최대 할인 쿠폰이 자동 계산 및 기본 적용</strong>됨. 고객이 원할 시 수동 변경 가능.</td>
+                        <td rowspan="5" style="padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 700; color: #0284c7; font-size: 14px;">종합<br>이커머스</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #0284c7; font-size: 14px;">네이버쇼핑</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 4px; font-weight: 800; font-size: 14px;">자동 기본 적용</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">보유 쿠폰 중 <strong>최대 할인 쿠폰이 주문서에 기본 자동 적용</strong>됨.</td>
                     </tr>
                     <tr style="background: #ffffff;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #0284c7;">G마켓 / 옥션</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #dcfce7; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 700;">자동 기본 적용</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;"><strong>'쿠폰 자동적용 서비스'</strong> 전면 운영. 미다운로드 쿠폰도 최적가 사전 계산 후 원클릭 발급/자동 적용.</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #0284c7; font-size: 14px;">G마켓 / 옥션</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 4px; font-weight: 800; font-size: 14px;">자동 기본 적용</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;"><strong>'쿠폰 자동적용 서비스'</strong> 기본 운영. 미보유 쿠폰도 최적가 자동 매핑.</td>
                     </tr>
                     <tr style="background: #f8fafc;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #475569;">쿠팡 (Coupang)</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-weight: 700;">조건부 수동선택</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;">로켓와우 상품 할인은 자동 반영되나, 일반 다운로드형 쿠폰은 <strong>주문서에서 직접 쿠폰 선택 클릭 필수</strong>.</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #334155; font-size: 14px;">쿠팡</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">조건부 수동선택</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">와우 상품 할인은 자동 반영, 다운로드 쿠폰은 수동 선택 필요.</td>
                     </tr>
                     <tr style="background: #ffffff;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #475569;">11번가</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-weight: 700;">수동 선택형</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;">최대할인가 안내는 제공되나, 주문서 단계에서는 <strong>[쿠폰 변경] 팝업에서 고객이 직접 쿠폰을 선택</strong> 적용.</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #334155; font-size: 14px;">11번가</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">수동 선택형</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">최대할인가 안내 제공 후, 주문서 [쿠폰변경] 팝업에서 고객 직접 선택.</td>
                     </tr>
                     <tr style="background: #f8fafc;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #475569;">컬리 (Kurly)</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-weight: 700;">수동 선택 필수</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;"><strong>자동 적용 없음</strong>. 결제 단계에서 고객이 직접 [쿠폰 선택] 버튼을 눌러 보유 쿠폰을 조회하고 선택해야 함.</td>
-                    </tr>
-                    <!-- 패션 전문몰 -->
-                    <tr style="background: #ffffff;">
-                        <td rowspan="6" style="padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 700; color: #6366f1;">패션<br>버티컬<br>(자사 경쟁)</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #4338ca;">SSF SHOP</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #e0e7ff; color: #4338ca; padding: 2px 6px; border-radius: 4px; font-weight: 800;">원클릭 최대혜택</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;">쿠폰창 내 <strong>[최대 할인 혜택 적용하기] 원클릭 버튼</strong> 제공. 보유 쿠폰 중 최적 조합 자동 매핑 (업계 최선진 UX).</td>
-                    </tr>
-                    <tr style="background: #f8fafc;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #0f172a;">29CM</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 2px 6px; border-radius: 4px; font-weight: 700;">배지 가이드/수동</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;">고객이 직접 선택. 가장 유리한 쿠폰에 '최대 할인' 배지를 달아 가이드는 주되, <strong>강제 자동 적용은 하지 않음</strong>.</td>
-                    </tr>
-                    <tr style="background: #ffffff;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #0f172a;">LFmall</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 2px 6px; border-radius: 4px; font-weight: 700;">부분반영/수동변경</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;">기본 쿠폰은 상품가에 자동 반영되나, 추가 혜택 및 중복 쿠폰은 <strong>주문서 [변경] 버튼에서 고객이 직접 선택</strong>.</td>
-                    </tr>
-                    <tr style="background: #f8fafc;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #0f172a;">SI VILLAGE</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-weight: 700;">수동 조합 선택</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;">결제화면에 사용 가능 쿠폰 목록이 노출되나, <strong>쇼핑백 쿠폰과 더블 쿠폰을 고객이 직접 체크</strong>하여 조합 적용.</td>
-                    </tr>
-                    <tr style="background: #ffffff;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #0f172a;">W CONCEPT</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-weight: 700;">수동 선택 필수</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;"><strong>자동 적용 없음</strong>. 결제 단계 [할인받기/쿠폰선택]에서 고객이 직접 조회하여 적용 버튼을 클릭해야 할인 반영.</td>
-                    </tr>
-                    <tr style="background: #f8fafc;">
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #0f172a;">무신사 (Musinsa)</td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 2px 6px; border-radius: 4px; font-weight: 700;">수동 선택/선할인</span></td>
-                        <td style="padding: 5px 8px; border: 1px solid #cbd5e1; color: #334155;">주문서 [쿠폰 조회/적용]에서 고객이 직접 선택. 적립금 선할인 옵션 및 보유 쿠폰 수동 매핑 중심.</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #334155; font-size: 14px;">컬리</td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; text-align: center;"><span style="background: #fee2e2; color: #b91c1c; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 14px;">수동 선택 필수</span></td>
+                        <td style="padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; font-size: 14px;">자동 적용 없음. 결제창 [쿠폰 선택] 클릭 후 직접 적용 필수.</td>
                     </tr>
                 </tbody>
             </table>
@@ -283,17 +284,17 @@
 
 
         <!-- ======================================================== -->
-        <!-- [4] 좌측 하단 카드: 3. 시선닷컴 도입 실익 vs 리스크 분석 (Top: 462px, Left: 20px, W: 765px, H: 420px) -->
+        <!-- [4] 좌측 하단 카드: 3. 시선닷컴 도입 실익 vs 리스크 대응 (Top: 467px, Left: 20px, W: 765px, H: 418px) -->
         <!-- ======================================================== -->
         <!-- 카드 3 배경 -->
-        <div id="bm-card3-bg" class="lf-component" style="position: absolute; top: 462px; left: 20px; width: 765px; height: 420px; z-index: 100;" data-resized="true">
+        <div id="bm-card3-bg" class="lf-component" style="position: absolute; top: 467px; left: 20px; width: 765px; height: 418px; z-index: 100;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04); box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
         <!-- 카드 3 아이콘 -->
-        <div id="bm-card3-icon" class="lf-component" style="position: absolute; top: 476px; left: 36px; width: 22px; height: 22px; z-index: 101;">
+        <div id="bm-card3-icon" class="lf-component" style="position: absolute; top: 480px; left: 36px; width: 24px; height: 24px; z-index: 101;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; color: #059669; background-image: none !important;">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
                 <polyline points="22 4 12 14.01 9 11.01" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polyline>
@@ -301,143 +302,143 @@
         </div>
 
         <!-- 카드 3 타이틀 -->
-        <div id="bm-card3-title" class="lf-component v4-text-shape" style="position: absolute; top: 475px; left: 66px; width: 440px; height: 24px; z-index: 101; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; text-align: left; width: 100%; height: 100%; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;">3. 시선닷컴(자사 패션몰) 도입 실익 및 리스크 정밀 진단</p>
+        <div id="bm-card3-title" class="lf-component v4-text-shape" style="position: absolute; top: 479px; left: 68px; width: 500px; height: 26px; z-index: 101; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">3. 시선닷컴 도입 실익(PROS) 및 리스크 대응(CONS)</p>
             </div>
         </div>
 
         <!-- 카드 3 뱃지 -->
-        <div id="bm-card3-badge" class="lf-component" style="position: absolute; top: 475px; left: 635px; width: 135px; height: 24px; z-index: 101;" data-resized="true">
+        <div id="bm-card3-badge" class="lf-component" style="position: absolute; top: 478px; left: 615px; width: 155px; height: 28px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #a7f3d0; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #047857; font-size: 11px; font-weight: 700;">
-                    <p>SISUN IMPACT MATRIX</p>
+                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #047857; font-size: 14px; font-weight: 700;">
+                    <p>IMPACT & RISK</p>
                 </div>
             </div>
         </div>
 
-        <!-- 카드 3 좌측 서브박스 : 도입 장점 / 기대효과 (PROS) -->
-        <div id="bm-card3-pros" class="lf-component" style="position: absolute; top: 510px; left: 36px; width: 358px; height: 355px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #86efac; border-radius: 8px; box-sizing: border-box; padding: 12px 14px; text-align: left;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 11.5px; line-height: 1.55; color: #166534;">
-                    <p><strong style="font-size: 13px; color: #14532d;">✅ 도입 시 확실한 실익 (PROS)</strong></p>
-                    <p style="margin-top: 8px;"><strong>① 결제 이탈률(Drop-off) 획기적 감소 :</strong> 주문서에서 "쿠폰 받으러 이벤트창으로 되돌아가기"나 "어떤 쿠폰이 더 큰지 하나씩 대입해보는 피로도"를 제거해 <strong>구매 전환율(CVR) 약 3~5% 상승 효과</strong> 기대.</p>
-                    <p style="margin-top: 6px;"><strong>② 결제 취소 후 재주문 악성 CS 예방 :</strong> 주문 완료 직후 "쿠폰이 있었는데 적용을 깜빡했다"며 결제 취소 후 재주문하거나 고객센터에 차액 소급을 요구하는 인입 CS를 원천 차단.</p>
-                    <p style="margin-top: 6px;"><strong>③ 모바일 체크아웃 UX 간소화 :</strong> 작은 화면에서 다중 모달/셀렉트박스를 거치지 않고 최종 결제금액까지의 인터랙션 뎁스를 1-Step으로 단축.</p>
-                    <p style="margin-top: 6px;"><strong>④ VIP 등급 혜택 체감 극대화 :</strong> 미샤/잇미샤 VIP 회원에게 매월 지급되는 등급 쿠폰이 자동으로 최적 계산되어 브랜드 로열티 강화.</p>
+        <!-- 카드 3 좌측 서브박스 : 도입 기대효과 (PROS) -->
+        <div id="bm-card3-pros" class="lf-component" style="position: absolute; top: 516px; left: 36px; width: 358px; height: 350px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #86efac; border-radius: 8px; box-sizing: border-box; padding: 14px 16px; text-align: left;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; line-height: 1.6; color: #166534;">
+                    <p><strong style="font-size: 15px; color: #14532d;">✅ 도입 시 기대효과 (PROS)</strong></p>
+                    <p style="margin-top: 10px;">• <strong>결제 이탈률 감소 :</strong> 쿠폰 찾기 및 계산 피로 제거로 <strong>구매 전환율(CVR) +3.8%p 개선</strong>.</p>
+                    <p style="margin-top: 8px;">• <strong>재주문 CS 차단 :</strong> "쿠폰 깜빡 적용 누락"에 따른 결제 취소 및 차액 환급 요청 <strong>80% 이상 감축</strong>.</p>
+                    <p style="margin-top: 8px;">• <strong>체크아웃 간소화 :</strong> 작은 모바일 화면에서 팝업 없이 1-Step으로 최종 결제 완료.</p>
+                    <p style="margin-top: 8px;">• <strong>VIP 혜택 체감 :</strong> 미샤·잇미샤 VIP 등급 쿠폰 자동 적용으로 고객 로열티 증대.</p>
                 </div>
             </div>
         </div>
 
-        <!-- 카드 3 우측 서브박스 : 리스크 및 전제조건 (CONS & RISKS) -->
-        <div id="bm-card3-cons" class="lf-component" style="position: absolute; top: 510px; left: 410px; width: 358px; height: 355px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fffbeb; border: 1.6px solid #fde68a; border-radius: 8px; box-sizing: border-box; padding: 12px 14px; text-align: left;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 11.5px; line-height: 1.55; color: #92400e;">
-                    <p><strong style="font-size: 13px; color: #78350f;">⚠️ 사전 방어해야 할 핵심 리스크 (CONS)</strong></p>
-                    <p style="margin-top: 8px;"><strong>① [핵심 CS] 고가 아우터 쿠폰 저가 소진 불만 :</strong> 시선인터내셔널의 80~150만원대 미샤 코트에 쓰려던 VIP 20% 쿠폰이 저가 티셔츠에 자동 소진될 경우 고객 불만 폭증. ➔ <strong>원클릭 해제/선택권 보장 필수</strong>.</p>
-                    <p style="margin-top: 6px;"><strong>② 자사몰 영업이익률(마진) 훼손 리스크 :</strong> 기획 특가 상품, 균일가 아울렛 이월 상품 등 마진이 희박한 상품에 쿠폰이 무차별 중복 적용되지 않도록 <strong>어드민 예외 룰 엔진 선행 구축 필수</strong>.</p>
-                    <p style="margin-top: 6px;"><strong>③ 다중 할인 우선순위 알고리즘 복잡도 :</strong> [상품 쿠폰] + [장바구니 쿠폰] + [VIP 등급 할인] + [시선 마일리지] 간의 공제 순서(정률/정액)를 수학적으로 완벽히 정리해야 결제 오류 방지 가능.</p>
+        <!-- 카드 3 우측 서브박스 : 리스크 대응 (CONS & HEDGE) -->
+        <div id="bm-card3-cons" class="lf-component" style="position: absolute; top: 516px; left: 410px; width: 358px; height: 350px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fffbeb; border: 1.6px solid #fde68a; border-radius: 8px; box-sizing: border-box; padding: 14px 16px; text-align: left;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; line-height: 1.6; color: #92400e;">
+                    <p><strong style="font-size: 15px; color: #78350f;">⚠️ 사전 방어 리스크 (CONS)</strong></p>
+                    <p style="margin-top: 10px;">• <strong>고가 쿠폰 자동 소진 불만 방지 :</strong> 100만원대 코트용 쿠폰의 원치 않는 소진 방지 ➔ <strong>[쿠폰 변경 / 취소] 버튼 제공 필수</strong>.</p>
+                    <p style="margin-top: 8px;">• <strong>자사몰 마진 훼손 방지 :</strong> 특가 기획전·아울렛 상품 쿠폰 남용 방지 ➔ <strong>어드민 예외 룰 선행 시스템화</strong>.</p>
+                    <p style="margin-top: 8px;">• <strong>다중 할인 순서 정립 :</strong> [상품 쿠폰] + [장바구니 쿠폰] + [마일리지] 공제 우선순위 알고리즘 확립.</p>
                 </div>
             </div>
         </div>
 
 
         <!-- ======================================================== -->
-        <!-- [5] 우측 하단 카드: 4. 시선닷컴 최적 UX 솔루션 및 제언 (Top: 462px, Left: 795px, W: 785px, H: 420px) -->
+        <!-- [5] 우측 하단 카드: 4. 시선닷컴 최적 실행 전략 (Top: 467px, Left: 795px, W: 785px, H: 418px) -->
         <!-- ======================================================== -->
         <!-- 카드 4 배경 -->
-        <div id="bm-card4-bg" class="lf-component" style="position: absolute; top: 462px; left: 795px; width: 785px; height: 420px; z-index: 100;" data-resized="true">
+        <div id="bm-card4-bg" class="lf-component" style="position: absolute; top: 467px; left: 795px; width: 785px; height: 418px; z-index: 100;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04); box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
         <!-- 카드 4 아이콘 -->
-        <div id="bm-card4-icon" class="lf-component" style="position: absolute; top: 476px; left: 811px; width: 22px; height: 22px; z-index: 101;">
+        <div id="bm-card4-icon" class="lf-component" style="position: absolute; top: 480px; left: 811px; width: 24px; height: 24px; z-index: 101;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; color: #4f46e5; background-image: none !important;">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
             </svg>
         </div>
 
         <!-- 카드 4 타이틀 -->
-        <div id="bm-card4-title" class="lf-component v4-text-shape" style="position: absolute; top: 475px; left: 841px; width: 450px; height: 24px; z-index: 101; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; text-align: left; width: 100%; height: 100%; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;">4. 시선닷컴(자사몰) 최적 실행 전략 및 UX 권고안</p>
+        <div id="bm-card4-title" class="lf-component v4-text-shape" style="position: absolute; top: 479px; left: 843px; width: 480px; height: 26px; z-index: 101; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">4. 시선닷컴 최적 실행 전략 및 3단계 로드맵</p>
             </div>
         </div>
 
         <!-- 카드 4 뱃지 -->
-        <div id="bm-card4-badge" class="lf-component" style="position: absolute; top: 475px; left: 1420px; width: 145px; height: 24px; z-index: 101;" data-resized="true">
+        <div id="bm-card4-badge" class="lf-component" style="position: absolute; top: 478px; left: 1405px; width: 160px; height: 28px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e0e7ff; border: 1.6px solid #c7d2fe; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #3730a3; font-size: 11px; font-weight: 700;">
-                    <p>ACTIONABLE STRATEGY</p>
+                <div class="v4-editable-cell" contenteditable="true" style="text-align: center; color: #3730a3; font-size: 14px; font-weight: 700;">
+                    <p>ACTION PLAN</p>
                 </div>
             </div>
         </div>
 
-        <!-- 카드 4 상단 전략 배너 : SSF샵형 원클릭 모델 추천 -->
-        <div id="bm-card4-banner" class="lf-component" style="position: absolute; top: 510px; left: 811px; width: 753px; height: 68px; z-index: 101;" data-resized="true">
+        <!-- 카드 4 상단 전략 배너 : SSF SHOP 벤치마킹 모델 -->
+        <div id="bm-card4-banner" class="lf-component" style="position: absolute; top: 516px; left: 811px; width: 753px; height: 62px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #3b82f6; border-radius: 8px; box-sizing: border-box; padding: 10px 16px; text-align: left;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 12px; line-height: 1.5; color: #1e3a8a;">
-                    <p><strong style="font-size: 13px; color: #1d4ed8;">🎯 최종 전략 제언 : '무조건 강제 자동'이 아닌 'SSF샵형 원클릭 최대 혜택 버튼' 채택</strong></p>
-                    <p style="margin-top: 2px;">패션 이커머스의 본질(고객의 쿠폰 선택권 통제감 보장 + 마진 훼손 방어)을 충족하면서 주문서 이탈을 방지하는 가장 이상적인 솔루션은 <strong>[최대 할인 혜택 적용하기] 원클릭 스마트 버튼</strong>입니다.</p>
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; line-height: 1.5; color: #1e3a8a;">
+                    <p><strong style="font-size: 15px; color: #1d4ed8;">🎯 실행 전략 : 'SSF SHOP 모델 벤치마킹 (기본 자동 적용 + 변경권 보장)'</strong></p>
+                    <p style="margin-top: 3px;">주문서 진입 즉시 최대 할인을 자동 매핑하고, [쿠폰 변경/취소]를 함께 지원하여 결제 완결성을 극대화합니다.</p>
                 </div>
             </div>
         </div>
 
         <!-- 카드 4 3단계 실행 프로세스 카드 -->
         <!-- Step 1 -->
-        <div id="bm-card4-step1" class="lf-component" style="position: absolute; top: 588px; left: 811px; width: 242px; height: 195px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; padding: 10px 12px; text-align: left;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 11px; line-height: 1.5; color: #334155;">
-                    <p><span style="background: #4f46e5; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">STEP 1</span> <strong style="color: #0f172a; font-size: 12px; margin-left: 4px;">어드민 룰 엔진 정비</strong></p>
-                    <p style="margin-top: 8px;">• 아울렛/특가 상품 쿠폰 적용 제외 플래그 시스템화.</p>
-                    <p>• 상품 쿠폰(정률/정액)과 장바구니 쿠폰의 중복 허용 범위 명확화.</p>
-                    <p>• 최소 주문금액 및 최대 할인한도 룰 엄격 통제.</p>
+        <div id="bm-card4-step1" class="lf-component" style="position: absolute; top: 588px; left: 811px; width: 242px; height: 185px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; padding: 12px 14px; text-align: left;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; line-height: 1.55; color: #334155;">
+                    <p><span style="background: #4f46e5; color: #fff; font-size: 14px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">STEP 1</span> <strong style="color: #0f172a; font-size: 15px; margin-left: 4px;">어드민 룰 정비</strong></p>
+                    <p style="margin-top: 8px;">• 아울렛·특가 제외 룰 시스템화.</p>
+                    <p>• 상품/장바구니 중복 한도 통제.</p>
+                    <p>• 최소 주문금액 기준 명확화.</p>
                 </div>
             </div>
         </div>
 
         <!-- Step 2 -->
-        <div id="bm-card4-step2" class="lf-component" style="position: absolute; top: 588px; left: 1066px; width: 242px; height: 195px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; padding: 10px 12px; text-align: left;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 11px; line-height: 1.5; color: #334155;">
-                    <p><span style="background: #2563eb; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">STEP 2</span> <strong style="color: #0f172a; font-size: 12px; margin-left: 4px;">원클릭 인터랙션 개발</strong></p>
-                    <p style="margin-top: 8px;">• 주문서 쿠폰 영역에 <strong>[최대 할인 혜택 적용하기]</strong> 버튼 배치.</p>
-                    <p>• 클릭 즉시 알고리즘이 보유 쿠폰 중 가장 큰 할인액 조합을 자동 매핑.</p>
-                    <p>• '다른 쿠폰 선택' 및 '적용 취소' 토글 지원.</p>
+        <div id="bm-card4-step2" class="lf-component" style="position: absolute; top: 588px; left: 1066px; width: 242px; height: 185px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; padding: 12px 14px; text-align: left;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; line-height: 1.55; color: #334155;">
+                    <p><span style="background: #2563eb; color: #fff; font-size: 14px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">STEP 2</span> <strong style="color: #0f172a; font-size: 15px; margin-left: 4px;">자동 매핑 개발</strong></p>
+                    <p style="margin-top: 8px;">• 주문서 진입 시 최대 할인 자동 적용.</p>
+                    <p>• [쿠폰 변경 / 적용 취소] 토글 지원.</p>
+                    <p>• 다른 쿠폰 선택 팝업 연동.</p>
                 </div>
             </div>
         </div>
 
         <!-- Step 3 -->
-        <div id="bm-card4-step3" class="lf-component" style="position: absolute; top: 588px; left: 1322px; width: 242px; height: 195px; z-index: 101;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; padding: 10px 12px; text-align: left;">
-                <div class="v4-editable-cell" contenteditable="true" style="font-size: 11px; line-height: 1.5; color: #334155;">
-                    <p><span style="background: #059669; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">STEP 3</span> <strong style="color: #0f172a; font-size: 12px; margin-left: 4px;">체감 혜택 피드백 제공</strong></p>
-                    <p style="margin-top: 8px;">• "고객님께 가장 큰 <strong>총 OO,OOO원 할인</strong>이 적용되었습니다" 시각 배지 강조.</p>
-                    <p>• 시선 마일리지 동시 적용 시 실결제 금액 실시간 대사.</p>
-                    <p>• A/B 테스트를 통한 전환율 상승폭 정밀 측정.</p>
+        <div id="bm-card4-step3" class="lf-component" style="position: absolute; top: 588px; left: 1322px; width: 242px; height: 185px; z-index: 101;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; padding: 12px 14px; text-align: left;">
+                <div class="v4-editable-cell" contenteditable="true" style="font-size: 14px; line-height: 1.55; color: #334155;">
+                    <p><span style="background: #059669; color: #fff; font-size: 14px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">STEP 3</span> <strong style="color: #0f172a; font-size: 15px; margin-left: 4px;">체감 혜택 피드백</strong></p>
+                    <p style="margin-top: 8px;">• "최대 할인 적용 완료" 시각 배지.</p>
+                    <p>• 시선 마일리지와 실시간 연동 대사.</p>
+                    <p>• 전환율 A/B 테스트 성과 측정.</p>
                 </div>
             </div>
         </div>
 
         <!-- 카드 4 하단 기대 성과 KPI 바 -->
-        <div id="bm-card4-kpi" class="lf-component" style="position: absolute; top: 792px; left: 811px; width: 753px; height: 73px; z-index: 101;" data-resized="true">
+        <div id="bm-card4-kpi" class="lf-component" style="position: absolute; top: 783px; left: 811px; width: 753px; height: 83px; z-index: 101;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 8px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-around; padding: 0 16px;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; text-align: center; font-size: 12px;">
-                    <p style="color: #94a3b8; font-size: 11px;">주문서 이탈 방지 및 전환율</p>
-                    <p style="color: #38bdf8; font-size: 15px; font-weight: 800; margin-top: 2px;">CVR +3.8%p 개선</p>
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; text-align: center; font-size: 14px;">
+                    <p style="color: #94a3b8; font-size: 14px;">주문서 이탈 방지 및 전환율</p>
+                    <p style="color: #38bdf8; font-size: 17px; font-weight: 800; margin-top: 2px;">CVR +3.8%p 개선</p>
                 </div>
-                <div style="width: 1px; height: 36px; background: #334155;"></div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; text-align: center; font-size: 12px;">
-                    <p style="color: #94a3b8; font-size: 11px;">쿠폰 미적용 결제취소/재주문 CS</p>
-                    <p style="color: #4ade80; font-size: 15px; font-weight: 800; margin-top: 2px;">악성 인입 80% 이상 감축</p>
+                <div style="width: 1px; height: 42px; background: #334155;"></div>
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; text-align: center; font-size: 14px;">
+                    <p style="color: #94a3b8; font-size: 14px;">쿠폰 미적용 결제취소/재주문 CS</p>
+                    <p style="color: #4ade80; font-size: 17px; font-weight: 800; margin-top: 2px;">악성 인입 80% 이상 감축</p>
                 </div>
-                <div style="width: 1px; height: 36px; background: #334155;"></div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; text-align: center; font-size: 12px;">
-                    <p style="color: #94a3b8; font-size: 11px;">시선닷컴 고객 쇼핑 만족도</p>
-                    <p style="color: #facc15; font-size: 15px; font-weight: 800; margin-top: 2px;">체크아웃 편의성 극대화</p>
+                <div style="width: 1px; height: 42px; background: #334155;"></div>
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; text-align: center; font-size: 14px;">
+                    <p style="color: #94a3b8; font-size: 14px;">시선닷컴 고객 쇼핑 만족도</p>
+                    <p style="color: #facc15; font-size: 17px; font-weight: 800; margin-top: 2px;">체크아웃 편의성 극대화</p>
                 </div>
             </div>
         </div>

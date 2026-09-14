@@ -70,9 +70,12 @@
             const ratioRow = document.getElementById('shape-aspect-ratio-row');
             const chk = document.getElementById('chk-preserve-aspect-ratio');
             if (data.isImage) {
-                // Store current w/h ratio as the lock ratio
-                activeImageRatio = (data.h && data.h > 0) ? (data.w / data.h) : (data.imageRatio || null);
+                // Store natural or current ratio as the lock ratio
+                activeImageRatio = (data.imageRatio && data.imageRatio > 0) 
+                    ? data.imageRatio 
+                    : ((data.h && data.h > 0) ? (data.w / data.h) : null);
                 if (ratioRow) ratioRow.style.display = 'flex';
+                if (chk) chk.checked = true; // Default locked to preserve aspect ratio
             } else {
                 activeImageRatio = null;
                 if (ratioRow) ratioRow.style.display = 'none';
@@ -100,8 +103,8 @@
                     if (lenVal > 0) lineLenInp.value = Math.round(lenVal);
                 }
             }
-            // Update ratio when component is resized externally
-            if (activeImageRatio !== null && data.w && data.h && data.h > 0) {
+            // Update ratio when component is resized externally, but keep natural ratio if known
+            if (activeImageRatio !== null && !data.imageRatio && data.w && data.h && data.h > 0) {
                 activeImageRatio = data.w / data.h;
             }
         });
@@ -162,10 +165,13 @@
                 const ratioRow = document.getElementById('shape-aspect-ratio-row');
                 const chk = document.getElementById('chk-preserve-aspect-ratio');
                 if (data.firstCompStyles.isImage) {
-                    activeImageRatio = (data.firstCompStyles.h && data.firstCompStyles.h > 0) 
-                        ? (data.firstCompStyles.w / data.firstCompStyles.h) 
-                        : (data.firstCompStyles.imageRatio || null);
+                    activeImageRatio = (data.firstCompStyles.imageRatio && data.firstCompStyles.imageRatio > 0) 
+                        ? data.firstCompStyles.imageRatio 
+                        : ((data.firstCompStyles.h && data.firstCompStyles.h > 0) 
+                            ? (data.firstCompStyles.w / data.firstCompStyles.h) 
+                            : null);
                     if (ratioRow) ratioRow.style.display = 'flex';
+                    if (chk) chk.checked = true; // Default locked to preserve aspect ratio
                 } else {
                     activeImageRatio = null;
                     if (ratioRow) ratioRow.style.display = 'none';
@@ -441,6 +447,26 @@
                 if (wrapper) wrapper.classList.add('transparent-active');
             }
             applyStyle(prop, 'transparent');
+            return;
+        }
+
+        const snapBtn = e.target.closest('#btn-snap-image-ratio');
+        if (snapBtn) {
+            const targetIds = getActiveTargetIds();
+            const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+            if (targetIds.length === 0 || !iframeWin || activeImageRatio === null || activeImageRatio <= 0) return;
+            const wInp = document.getElementById('prop-width');
+            const curW = parseFloat(wInp?.value) || 200;
+            const newH = Math.max(10, Math.round(curW / activeImageRatio));
+            const hInp = document.getElementById('prop-height');
+            if (hInp) hInp.value = newH;
+            
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetIds[0],
+                ids: targetIds,
+                style: { height: newH + 'px' }
+            });
+            if (window.markAsDirty) window.markAsDirty();
             return;
         }
 

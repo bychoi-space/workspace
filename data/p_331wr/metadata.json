@@ -11,7 +11,7 @@
     "01_Project_Summary_Report_101.html": {
       "title": "과제 개요 및 일정",
       "type": "plan",
-      "updatedAt": "2026-09-03T05:38:30.894Z",
+      "updatedAt": "2026-09-14T01:51:21.225Z",
       "template": "template_plan.html",
       "version": 0.1,
       "description": [],
@@ -125,7 +125,7 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-07 14:54:30",
+  "updated": "2026-09-14 10:51:21",
   "figmaUrl": "https://www.figma.com/design/5tx1QKw7gAPwrJy4DlC3FD/01.-%EC%83%81%ED%92%88?node-id=2952-36225",
   "notionUrl": "https://app.notion.com/p/2-1-3c2f6986169c8012b18bddd5ffc75c83?source=copy_link"
 }

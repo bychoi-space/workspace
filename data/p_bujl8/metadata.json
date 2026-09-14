@@ -11,7 +11,7 @@
     "04_Case_Study_976.html": {
       "title": "04_Case_Study_976",
       "type": "case-study",
-      "updatedAt": "2026-09-14T10:23:48.079Z",
+      "updatedAt": "2026-09-14T10:24:08.099Z",
       "template": "template_case_study.html",
       "description": [],
       "connectors": [],
@@ -33,7 +33,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-14 19:23:48",
+  "updated": "2026-09-14 19:24:08",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",

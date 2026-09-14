@@ -85,11 +85,11 @@ body, .page, .lf-component {
 .v4-grid-badge { display: inline-block !important; padding: 2px 6px !important; border-radius: 4px !important; font-size: 11px !important; font-weight: 600 !important; line-height: 1.2 !important; }
 .v4-shape { position: relative; border-width: 1.6px !important; border-style: solid !important; border-color: rgb(200, 200, 200); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgb(255, 255, 255); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; }
 .v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding-top: var(--v4-shape-pad-top, 5px) !important; padding-right: var(--v4-shape-pad-right, 10px) !important; padding-bottom: var(--v4-shape-pad-bottom, 5px) !important; padding-left: var(--v4-shape-pad-left, 10px) !important; padding: var(--v4-shape-pad-top, 5px) var(--v4-shape-pad-right, 10px) var(--v4-shape-pad-bottom, 5px) var(--v4-shape-pad-left, 10px) !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; flex-direction: column !important; }
-.v4-shape-rect > .v4-editable-cell, .v4-shape-circle > .v4-editable-cell, .v4-shape-pattern-grid > .v4-editable-cell, .v4-shape-wave > .v4-editable-cell { width: 100% !important; height: 100% !important; }
-.v4-shape-diamond > .v4-editable-cell { width: 60% !important; height: 60% !important; }
-.v4-shape-arrow > .v4-editable-cell { width: 50% !important; height: 40% !important; }
-.v4-shape-triangle > .v4-editable-cell { width: 100% !important; height: 60% !important; }
-.v4-shape-text-content p, .v4-shape-text-overlay p, .v4-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1 !important; text-align: inherit !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
+.v4-shape-rect > .v4-editable-cell, .v4-shape-circle > .v4-editable-cell, .v4-shape-pattern-grid > .v4-editable-cell, .v4-shape-wave > .v4-editable-cell, .v4-shape > .v4-shape-text-content { width: 100% !important; height: 100% !important; }
+.v4-shape-diamond > .v4-editable-cell, .v4-shape-diamond > .v4-shape-text-overlay { width: 60% !important; height: 60% !important; }
+.v4-shape-arrow > .v4-editable-cell, .v4-shape-arrow > .v4-shape-text-overlay { width: 50% !important; height: 40% !important; }
+.v4-shape-triangle > .v4-editable-cell, .v4-shape-triangle > .v4-shape-text-overlay { width: 100% !important; height: 60% !important; }
+.v4-shape-text-content p, .v4-shape-text-overlay p, .v4-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1 !important; text-align: inherit !important; display: block !important; width: 100% !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
 .v4-shape-text-content span, .v4-shape-text-overlay span, .v4-shape .v4-editable-cell span { line-height: 1 !important; display: inline-block !important; }
 .v4-shape-text-content .ql-container { border: none !important; padding: 0 !important; margin: 0 !important; height: 100% !important; width: 100% !important; display: flex !important; align-items: center !important; justify-content: center !important; }
 .v4-shape-text-content .ql-editor { padding: 0 !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important; min-height: unset !important; height: 100% !important; width: 100% !important; line-height: 1 !important; }
@@ -135,6 +135,8 @@ img.lf-icon { width: 100%; height: 100%; padding: 8px; box-sizing: border-box; o
 .v4-directional-shape[data-direction="left"] .v4-editable-cell, .v4-directional-shape[data-direction="left"] .v4-shape-text-overlay { transform: rotate(-270deg) !important; }
 .v4-shape-diamond { border: none !important; }
 .v4-shape-wave { border: none !important; }
+.v4-shape-line { border: none !important; background: transparent !important; overflow: visible !important; }
+.v4-shape-line svg { width: 100% !important; height: 100% !important; overflow: visible !important; pointer-events: none !important; }
 .v4-shape-pattern-grid { 
     background-color: #ffffff !important; 
     background-image: 
@@ -558,6 +560,7 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 .v4-shape-text-content p, .v4-shape-text-overlay p {
     margin: 0 !important;
     padding: 0 !important;
+    width: 100% !important;
 }
 
 /* 100% High-Contrast Chrome Web Browser Vertical Scrollbars for PC & Mobile Frames */

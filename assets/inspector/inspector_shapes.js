@@ -13,6 +13,9 @@
             const selIds = window.GroupingManager.getSelectedIds();
             if (Array.isArray(selIds) && selIds.length > 0) return selIds[0];
         }
+        if (window.state && window.state.selectedIds && Array.isArray(window.state.selectedIds) && window.state.selectedIds.length > 0) {
+            return window.state.selectedIds[0];
+        }
         return (window.state && window.state.selectedComponent && window.state.selectedComponent.id) ||
                (window.state && window.state.editingIndex) ||
                window.activeCompId || null;
@@ -22,6 +25,9 @@
         if (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function') {
             const selIds = window.GroupingManager.getSelectedIds();
             if (Array.isArray(selIds) && selIds.length > 0) return selIds;
+        }
+        if (window.state && window.state.selectedIds && Array.isArray(window.state.selectedIds) && window.state.selectedIds.length > 0) {
+            return window.state.selectedIds;
         }
         const singleId = getActiveTargetId();
         return singleId ? [singleId] : [];
@@ -145,6 +151,11 @@
         const horizontalAlign = align === 'left' ? 'flex-start' : (align === 'right' ? 'flex-end' : 'center');
         const targetIds = getActiveTargetIds();
         if (targetIds.length === 0) return;
+
+        if (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles) {
+            window.state.selectedComponentStyles.currentStyles.textAlign = align;
+            window.state.selectedComponentStyles.currentStyles.alignItems = horizontalAlign;
+        }
         
         notifyIframe({
             type: 'LF_UPDATE_STYLE',
@@ -165,6 +176,10 @@
         const verticalJustify = vAlign === 'top' ? 'flex-start' : (vAlign === 'bottom' ? 'flex-end' : 'center');
         const targetIds = getActiveTargetIds();
         if (targetIds.length === 0) return;
+
+        if (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles) {
+            window.state.selectedComponentStyles.currentStyles.justifyContent = verticalJustify;
+        }
         
         notifyIframe({
             type: 'LF_UPDATE_STYLE',

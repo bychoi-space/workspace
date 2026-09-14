@@ -411,11 +411,41 @@ window.getIframeHTML = async function () {
                 const clone = doc.documentElement.cloneNode(true);
                 clone.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(el => el.remove());
                 clone.querySelectorAll('.lf-component, .v4-shape').forEach(el => el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped'));
+                const splitStyleRules = (str) => {
+                    if (!str) return [];
+                    const rules = [];
+                    let cur = '';
+                    let inParen = 0;
+                    let inQuote = null;
+                    for (let i = 0; i < str.length; i++) {
+                        const ch = str[i];
+                        if (inQuote) {
+                            if (ch === inQuote) inQuote = null;
+                            cur += ch;
+                        } else if (ch === '"' || ch === "'") {
+                            inQuote = ch;
+                            cur += ch;
+                        } else if (ch === '(') {
+                            inParen++;
+                            cur += ch;
+                        } else if (ch === ')') {
+                            if (inParen > 0) inParen--;
+                            cur += ch;
+                        } else if (ch === ';' && inParen === 0 && !inQuote) {
+                            if (cur.trim()) rules.push(cur.trim());
+                            cur = '';
+                        } else {
+                            cur += ch;
+                        }
+                    }
+                    if (cur.trim()) rules.push(cur.trim());
+                    return rules;
+                };
+
                 clone.querySelectorAll('[style]').forEach(el => {
                     const s = el.getAttribute('style');
                     if (!s) return;
-                    const rules = s.split(';').map(r => r.trim()).filter(r => {
-                        if (!r) return false;
+                    const rules = splitStyleRules(s).filter(r => {
                         const idx = r.indexOf(':');
                         return idx !== -1 && r.substring(idx + 1).trim().length > 0;
                     });
@@ -525,26 +555,40 @@ window.handleGlobalSave = async function () {
 
         let htmlContent = await getIframeHTML();
 
-        let nextVer = undefined;
+        // 3. Determine Project Version & Revision auto-increment
+        let historyList = [];
+        if (typeof window.fetchProjectHistory === 'function' && state.currentProject) {
+            try {
+                historyList = await window.fetchProjectHistory(state.currentProject);
+            } catch (err) {
+                console.warn("[Save] Failed to fetch project history for version calculation:", err);
+            }
+        }
+
+        let currentLatestVer = 0.1;
+        if (state.projectMetadata && state.projectMetadata.version !== undefined) {
+            currentLatestVer = parseFloat(state.projectMetadata.version) || 0.1;
+        }
+        if (Array.isArray(historyList) && historyList.length > 0 && historyList[0].version !== undefined) {
+            const parsedHistoryVer = parseFloat(String(historyList[0].version).replace(/[^0-9.]/g, ''));
+            if (!isNaN(parsedHistoryVer) && parsedHistoryVer > 0) {
+                currentLatestVer = Math.max(currentLatestVer, parsedHistoryVer);
+            }
+        }
+
+        let nextVer = currentLatestVer;
+        if (changeMsg) {
+            // 새 재개정 사유가 입력된 경우에만 프로젝트 버전 +0.1 증가
+            nextVer = parseFloat((currentLatestVer + 0.1).toFixed(1));
+        }
+        projectMeta.version = nextVer;
+
         const activeFileName = state.activeFile ? state.activeFile.name : null;
         const isCoverScreenSave = activeFileName && ((state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]?.type === 'cover') || (htmlContent && (htmlContent.includes('cover-version') || htmlContent.includes('cover-jira-id'))));
 
         if (htmlContent && isCoverScreenSave) {
-            // Parse current version to determine next version
-            let currentVer = 0.1;
-            const verMatch = htmlContent.match(/(<div[^>]*id="cover-version-val"[^>]*>v?)([\d.]+)(<\/div>)/i) ||
-                htmlContent.match(/(<div[^>]*id="cover-version"[^>]*>[\s\S]*?<div[^>]*class="v4-editable-cell"[^>]*>v?)([\d.]+)(<\/div>)/i);
-
-            if (verMatch && verMatch[2]) {
-                currentVer = parseFloat(verMatch[2]);
-            } else if (state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]?.version !== undefined) {
-                currentVer = parseFloat(state.projectMetadata.screens[activeFileName].version);
-            }
-
-            nextVer = parseFloat((currentVer + 0.1).toFixed(1));
-
-            // Sync all cover metadata and auto-increment version
-            htmlContent = syncCoverMetadata(htmlContent, Object.assign({}, state.projectMetadata, projectMeta), true, activeFileName);
+            // Sync all cover metadata with unified nextVer
+            htmlContent = syncCoverMetadata(htmlContent, Object.assign({}, state.projectMetadata, projectMeta, { version: nextVer }), false, activeFileName);
         } else if (htmlContent && htmlContent.includes('cover-jira-id')) {
             const jiraValue = projectMeta.jira || '-';
             htmlContent = htmlContent.replace(/(<div[^>]*id="cover-jira-id"[^>]*>)[^<]*(<\/div>)/i, `$1${jiraValue}$2`);
@@ -572,6 +616,10 @@ window.handleGlobalSave = async function () {
         if (success) {
             markAsClean();
             Object.assign(state.projectMetadata, projectMeta);
+            state.projectMetadata.version = nextVer;
+            if (activeFileName && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]) {
+                state.projectMetadata.screens[activeFileName].version = nextVer;
+            }
             if (projectMeta.title && DOM.fileName) DOM.fileName.innerText = projectMeta.title;
 
             // 실시간 좌측 하단 UI 업데이트
@@ -590,14 +638,13 @@ window.handleGlobalSave = async function () {
                     const historyEntry = {
                         date: updatedTimeStr,
                         file: activeFileName || 'n/a',
-                        version: nextVer || (state.projectMetadata.screens?.[activeFileName]?.version || '0.1'),
+                        version: nextVer,
                         assignee: projectMeta.assignee,
                         developer: projectMeta.developer,
                         message: changeMsg
                     };
 
-                    if (typeof window.fetchProjectHistory === 'function' && typeof window.saveProjectHistory === 'function') {
-                        const historyList = await window.fetchProjectHistory(state.currentProject);
+                    if (typeof window.saveProjectHistory === 'function') {
                         historyList.unshift(historyEntry); // 최신이 가장 위로
                         await window.saveProjectHistory(state.currentProject, historyList, null);
                     }
@@ -741,7 +788,7 @@ window.MessageHub = {
                     // Trigger child iframe to re-order and re-index all remaining text-markers
                     const DOM = window.DOM;
                     if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                        MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { pins: window.state.activeFile.meta.description });
+                        MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: data.index, pins: window.state.activeFile.meta.description });
                     }
 
                     markAsDirty();

@@ -577,8 +577,8 @@ window.v4Script = `
                     const colorVal = getCompBorder();
                     return !colorVal || colorVal === "transparent" || colorVal === "none" || colorVal.includes("rgba(0, 0, 0, 0)");
                 })(),
-                textAlign: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content'), 'textAlign') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'textAlign') || 'center'),
-                justifyContent: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content'), 'justifyContent') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'justifyContent') || 'center'),
+                textAlign: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay'), 'textAlign') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'textAlign') || 'center'),
+                justifyContent: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay'), 'justifyContent') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'justifyContent') || 'center'),
                 padTop: (() => {
                     if (!shape) return 5;
                     const el = shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
@@ -1168,10 +1168,24 @@ window.v4Script = `
         var buttonContainer = s.querySelector('.v4-btn-container');
         var customBtn = s.querySelector('.v4-custom-btn');
 
-        var t = d.selector ? s.querySelector(d.selector) : s;
-        if (!t && s.classList.contains('text-marker')) {
-            t = s.querySelector('.v4-editable-cell') || s;
+        var t = null;
+        if (d.selector) {
+            if (s.matches && s.matches(d.selector)) {
+                t = s;
+            } else {
+                t = s.querySelector(d.selector);
+            }
+            if (!t) {
+                if (s.classList.contains('v4-text-shape') || s.classList.contains('v4-text-box') || s.classList.contains('text-marker')) {
+                    t = s.querySelector('.v4-editable-cell') || s;
+                } else if (s.querySelector('.v4-shape') || s.classList.contains('v4-shape')) {
+                    t = s.querySelector('.v4-shape-text-content, .v4-shape-text-overlay, .v4-editable-cell, .v4-shape') || s;
+                }
+            }
+        } else {
+            t = s;
         }
+        if (!t) t = s;
         var shape = s.querySelector('.v4-shape');
         if (shape && !d.selector) t = shape;
         var boxEl = s.querySelector('.v4-checkbox, .v4-radio');
@@ -1417,11 +1431,41 @@ window.v4Script = `
             c.querySelectorAll('.lf-component, .v4-shape').forEach(el => el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped'));
 
             // 3. Clean empty inline style rules created by browser DOM serialization
+            const splitStyleRules = (str) => {
+                if (!str) return [];
+                const rules = [];
+                let cur = '';
+                let inParen = 0;
+                let inQuote = null;
+                for (let i = 0; i < str.length; i++) {
+                    const ch = str[i];
+                    if (inQuote) {
+                        if (ch === inQuote) inQuote = null;
+                        cur += ch;
+                    } else if (ch === '"' || ch === "'") {
+                        inQuote = ch;
+                        cur += ch;
+                    } else if (ch === '(') {
+                        inParen++;
+                        cur += ch;
+                    } else if (ch === ')') {
+                        if (inParen > 0) inParen--;
+                        cur += ch;
+                    } else if (ch === ';' && inParen === 0 && !inQuote) {
+                        if (cur.trim()) rules.push(cur.trim());
+                        cur = '';
+                    } else {
+                        cur += ch;
+                    }
+                }
+                if (cur.trim()) rules.push(cur.trim());
+                return rules;
+            };
+
             c.querySelectorAll('[style]').forEach(el => {
                 const s = el.getAttribute('style');
                 if (!s) return;
-                const rules = s.split(';').map(r => r.trim()).filter(r => {
-                    if (!r) return false;
+                const rules = splitStyleRules(s).filter(r => {
                     const idx = r.indexOf(':');
                     return idx !== -1 && r.substring(idx + 1).trim().length > 0;
                 });
@@ -1452,7 +1496,7 @@ window.v4Script = `
             const compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);
             const compH = isPinMarker ? 28 : ((d.style && d.style.height) ? parseInt(d.style.height) || 100 : 100);
 
-            let host = document.body;
+            let host = document.querySelector('.canvas') || document.body;
             let centerTop = Math.round((window.innerHeight - compH) / 2);
             let centerLeft = Math.round((window.innerWidth - compW) / 2);
 
@@ -1590,7 +1634,7 @@ window.v4Script = `
             });
             markDirty();
         } else if (d.type === 'LF_INSERT_COMPONENTS') {
-            const host = document.body;
+            const host = document.querySelector('.canvas') || document.body;
             const comps = d.components || [];
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
             

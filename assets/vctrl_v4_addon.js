@@ -203,9 +203,9 @@
             }
             
             const rgbaColor = hexToRgba(colorHex, opacityVal);
-            const targetIds = (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function')
+            const targetIds = (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function' && window.GroupingManager.getSelectedIds().length > 0)
                 ? window.GroupingManager.getSelectedIds()
-                : [];
+                : ((window.state && window.state.selectedIds && window.state.selectedIds.length > 0) ? window.state.selectedIds : []);
             
             notifyIframe({
                 type: 'LF_UPDATE_STYLE',
@@ -225,9 +225,9 @@
             const colorPicker = document.getElementById('shape-bg-color');
             const colorHex = (colorPicker && colorPicker.value) ? colorPicker.value : '#ffffff';
             const rgbaColor = hexToRgba(colorHex, opacityVal);
-            const targetIds = (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function')
+            const targetIds = (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function' && window.GroupingManager.getSelectedIds().length > 0)
                 ? window.GroupingManager.getSelectedIds()
-                : [];
+                : ((window.state && window.state.selectedIds && window.state.selectedIds.length > 0) ? window.state.selectedIds : []);
             
             notifyIframe({
                 type: 'LF_UPDATE_STYLE',
@@ -310,6 +310,46 @@
 
     // Global Event Delegation for Button Controls
     document.addEventListener('click', (e) => {
+        // Shape Text Align (Event Delegation)
+        const btnAlignLeft = e.target.closest('#btn-shape-align-left');
+        if (btnAlignLeft) {
+            e.preventDefault();
+            if (typeof _applyTextAlign === 'function') _applyTextAlign('left');
+            return;
+        }
+        const btnAlignCenter = e.target.closest('#btn-shape-align-center');
+        if (btnAlignCenter) {
+            e.preventDefault();
+            if (typeof _applyTextAlign === 'function') _applyTextAlign('center');
+            return;
+        }
+        const btnAlignRight = e.target.closest('#btn-shape-align-right');
+        if (btnAlignRight) {
+            e.preventDefault();
+            if (typeof _applyTextAlign === 'function') _applyTextAlign('right');
+            return;
+        }
+
+        // Shape Vertical Align (Event Delegation)
+        const btnVAlignTop = e.target.closest('#btn-shape-valign-top');
+        if (btnVAlignTop) {
+            e.preventDefault();
+            if (typeof _applyVerticalAlign === 'function') _applyVerticalAlign('top');
+            return;
+        }
+        const btnVAlignMiddle = e.target.closest('#btn-shape-valign-middle');
+        if (btnVAlignMiddle) {
+            e.preventDefault();
+            if (typeof _applyVerticalAlign === 'function') _applyVerticalAlign('middle');
+            return;
+        }
+        const btnVAlignBottom = e.target.closest('#btn-shape-valign-bottom');
+        if (btnVAlignBottom) {
+            e.preventDefault();
+            if (typeof _applyVerticalAlign === 'function') _applyVerticalAlign('bottom');
+            return;
+        }
+
         // Button Corner Presets
         const btnBtnCorner = e.target.closest('.btn-btn-corner');
         if (btnBtnCorner) {
@@ -567,7 +607,11 @@
     const initButtonEvents = () => window.InspectorAtoms?.bindButtonEvents?.();
     const initDatePickerEvents = () => window.InspectorAtoms?.bindDatePickerEvents?.();
     const initAccordionEvents = () => window.InspectorAccordion?.bindAccordionEvents?.();
-    const initAdminSettingsEvents = () => window._syncAdminSettingsProps?.();
+    const initAdminSettingsEvents = () => {
+        if (window.state?.selectedComponentStyles) {
+            window._syncAdminSettingsProps?.(window.state.selectedComponentStyles);
+        }
+    };
     const initToggleEvents = () => window.InspectorAtoms?.bindToggleEvents?.();
 
     const initGridEvents = () => {
@@ -594,25 +638,27 @@
     window.initToggleEvents = initToggleEvents;
 
     window.initAllInspectorEvents = function() {
-        try {
-            if (typeof window.rebindInspectorDOM === 'function') window.rebindInspectorDOM();
-            if (typeof initCheckboxRadioEvents === 'function') initCheckboxRadioEvents();
-            if (typeof initTextboxTextareaEvents === 'function') initTextboxTextareaEvents();
-            if (typeof initSearchBarEvents === 'function') initSearchBarEvents();
-            if (typeof initStepperEvents === 'function') initStepperEvents();
-            if (typeof initSelectboxEvents === 'function') initSelectboxEvents();
-            if (typeof initFileuploadEvents === 'function') initFileuploadEvents();
-            if (typeof initAlertEvents === 'function') initAlertEvents();
-            if (typeof initButtonEvents === 'function') initButtonEvents();
-            if (typeof initDatePickerEvents === 'function') initDatePickerEvents();
-            if (typeof initAccordionEvents === 'function') initAccordionEvents();
-            if (typeof initGridEvents === 'function') initGridEvents();
-            if (typeof initAdminSettingsEvents === 'function') initAdminSettingsEvents();
-            if (typeof initToggleEvents === 'function') initToggleEvents();
-            if (typeof window.initV4AddonEventListeners === 'function') window.initV4AddonEventListeners();
-        } catch (err) {
-            console.warn("[VCTRL INSPECTOR] Error during initAllInspectorEvents:", err);
-        }
+        const safeRun = (fn, name) => {
+            try { if (typeof fn === 'function') fn(); }
+            catch (e) { console.warn("[VCTRL INSPECTOR] " + name + " failed:", e); }
+        };
+
+        safeRun(window.rebindInspectorDOM, 'rebindInspectorDOM');
+        safeRun(initCheckboxRadioEvents, 'initCheckboxRadioEvents');
+        safeRun(initTextboxTextareaEvents, 'initTextboxTextareaEvents');
+        safeRun(initSearchBarEvents, 'initSearchBarEvents');
+        safeRun(initStepperEvents, 'initStepperEvents');
+        safeRun(initSelectboxEvents, 'initSelectboxEvents');
+        safeRun(initFileuploadEvents, 'initFileuploadEvents');
+        safeRun(initAlertEvents, 'initAlertEvents');
+        safeRun(initButtonEvents, 'initButtonEvents');
+        safeRun(initDatePickerEvents, 'initDatePickerEvents');
+        safeRun(initAccordionEvents, 'initAccordionEvents');
+        safeRun(initGridEvents, 'initGridEvents');
+        safeRun(initAdminSettingsEvents, 'initAdminSettingsEvents');
+        safeRun(initToggleEvents, 'initToggleEvents');
+        safeRun(window.initV4AddonEventListeners, 'initV4AddonEventListeners');
+        safeRun(() => window.InspectorShapes?.bindEvents?.(), 'InspectorShapes.bindEvents');
     };
 
     // Parent-side paste event listener for handling pasted image files when parent has focus

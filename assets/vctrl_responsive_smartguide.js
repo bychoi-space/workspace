@@ -57,7 +57,7 @@ window.v4ResponsiveSmartGuideScript = `
         },
 
         isResponsive: function() {
-            return !!document.querySelector('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area');
+            return true;
         },
 
         getContainerContext: function(el) {
@@ -110,6 +110,17 @@ window.v4ResponsiveSmartGuideScript = `
                 }
             }
 
+            // Universal Canvas Context (Standard 1600x900 non-responsive, plan, flowchart screens)
+            const canvasContainer = document.querySelector('.page, .canvas, .artboard') || document.body;
+            if (canvasContainer) {
+                return {
+                    type: 'canvas',
+                    inner: canvasContainer,
+                    area: canvasContainer,
+                    guideLayer: this.ensureGuideLayer(canvasContainer, 'canvas-guide-layer')
+                };
+            }
+
             return null;
         },
 
@@ -144,17 +155,23 @@ window.v4ResponsiveSmartGuideScript = `
             this.lastActiveId = activeEl ? activeEl.id : null;
             this.spacingTargets = [];
 
-            const containerWidth = context.inner.offsetWidth || (context.type === 'pc' ? 1160 : 360);
+            const containerWidth = context.inner.offsetWidth || (context.type === 'pc' ? 1160 : (context.type === 'canvas' ? 1600 : 360));
             const containerHeight = Math.max(
-                context.inner.scrollHeight || 810,
-                parseInt(context.inner.style.minHeight) || 810,
-                context.area ? context.area.clientHeight : 810,
-                810
+                context.inner.scrollHeight || (context.type === 'canvas' ? 900 : 810),
+                parseInt(context.inner.style && context.inner.style.minHeight) || (context.type === 'canvas' ? 900 : 810),
+                context.area ? context.area.clientHeight : (context.type === 'canvas' ? 900 : 810),
+                (context.type === 'canvas' ? 900 : 810)
             );
 
             // Scope query to the active frame/column or root body so that all elements in the column are included
-            const columnSelector = context.type === 'pc' ? '.pc-column, .pc-browser-frame' : '.mobile-column, .mobile-browser-frame';
-            const rootScope = context.inner.closest(columnSelector) || context.area || context.inner.parentElement || document.body;
+            let rootScope = document.body;
+            if (context.type === 'pc') {
+                rootScope = context.inner.closest('.pc-column, .pc-browser-frame') || context.area || context.inner.parentElement || document.body;
+            } else if (context.type === 'mobile') {
+                rootScope = context.inner.closest('.mobile-column, .mobile-browser-frame') || context.area || context.inner.parentElement || document.body;
+            } else {
+                rootScope = context.inner || document.body;
+            }
             const components = rootScope.querySelectorAll('.lf-component, .v4-admin-label-cell, .v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell');
 
             components.forEach((c, idx) => {
@@ -223,12 +240,12 @@ window.v4ResponsiveSmartGuideScript = `
         },
 
         calculateSpacing: function(x, y, w, h, activeId) {
-            const containerWidth = (this.activeContext && this.activeContext.inner) ? (this.activeContext.inner.offsetWidth || 1160) : 1160;
+            const containerWidth = (this.activeContext && this.activeContext.inner) ? (this.activeContext.inner.offsetWidth || (this.activeContext.type === 'canvas' ? 1600 : 1160)) : 1600;
             const containerHeight = (this.activeContext && this.activeContext.inner) ? Math.max(
-                this.activeContext.inner.scrollHeight || 810,
-                parseInt(this.activeContext.inner.style.minHeight) || 810,
-                810
-            ) : 810;
+                this.activeContext.inner.scrollHeight || (this.activeContext.type === 'canvas' ? 900 : 810),
+                parseInt(this.activeContext.inner.style && this.activeContext.inner.style.minHeight) || (this.activeContext.type === 'canvas' ? 900 : 810),
+                (this.activeContext.type === 'canvas' ? 900 : 810)
+            ) : 900;
 
             const active = {
                 left: x,

@@ -741,7 +741,7 @@ window.renderHistoryPopup = function(history) {
         listContainer.innerHTML = history.map(item => `
             <div class="history-item-card" style="background: rgba(255, 255, 255, 0.04); border: 1.6px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 14px 16px; font-size: 13px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; margin-bottom: 2px;">
-                    <span style="font-weight: 700; color: #22d3ee; font-size: 12px; background: rgba(34, 211, 238, 0.15); padding: 2px 8px; border-radius: 6px; letter-spacing: 0.3px;">v${item.version || '0.1'}</span>
+                    <span style="font-weight: 700; color: #22d3ee; font-size: 12px; background: rgba(34, 211, 238, 0.15); padding: 2px 8px; border-radius: 6px; letter-spacing: 0.3px;">v${String(item.version || '0.1').replace(/^v/i, '')}</span>
                     <span style="color: #94a3b8; font-size: 12px; font-family: monospace;">${item.date}</span>
                 </div>
                 <div style="color: #f8fafc; font-size: 15px; font-weight: 600; word-break: break-all; line-height: 1.5; margin: 2px 0;">${item.message || '-'}</div>

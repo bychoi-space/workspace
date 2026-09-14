@@ -90,6 +90,16 @@
                 const hIconInp = document.getElementById('prop-height-icon');
                 if (hIconInp && document.activeElement !== hIconInp) hIconInp.value = Math.round(data.boxH);
             }
+            // Line Editor length input sync
+            const lineLenInp = document.getElementById('prop-line-length');
+            if (lineLenInp && document.activeElement !== lineLenInp) {
+                const isLine = (data && data.shapeType === 'line') || (window.state && window.state.editingType === 'line');
+                if (isLine) {
+                    const dir = lineLenInp.getAttribute('data-dir') || (data && data.lineDir) || 'horizontal';
+                    const lenVal = dir === 'vertical' ? (data.h || data.boxH || 0) : (data.w || data.boxW || 0);
+                    if (lenVal > 0) lineLenInp.value = Math.round(lenVal);
+                }
+            }
             // Update ratio when component is resized externally
             if (activeImageRatio !== null && data.w && data.h && data.h > 0) {
                 activeImageRatio = data.w / data.h;
@@ -106,6 +116,9 @@
             const hIconInp = document.getElementById('prop-height-icon');
             if (wIconInp) wIconInp.value = 0;
             if (hIconInp) hIconInp.value = 0;
+
+            const lineLenInp = document.getElementById('prop-line-length');
+            if (lineLenInp) lineLenInp.value = 200;
 
             // Hide ratio row on deselect
             const ratioRow = document.getElementById('shape-aspect-ratio-row');
@@ -171,6 +184,11 @@
                 return selIds[0];
             }
         }
+        if (window.state && window.state.selectedIds && Array.isArray(window.state.selectedIds) && window.state.selectedIds.length > 0) {
+            activeCompId = window.state.selectedIds[0];
+            window.activeCompId = window.state.selectedIds[0];
+            return window.state.selectedIds[0];
+        }
         const stateSelectedId = (window.state && window.state.selectedComponent && window.state.selectedComponent.id) || null;
         if (stateSelectedId) {
             activeCompId = stateSelectedId;
@@ -186,6 +204,9 @@
             if (Array.isArray(selIds) && selIds.length > 0) {
                 return selIds;
             }
+        }
+        if (window.state && window.state.selectedIds && Array.isArray(window.state.selectedIds) && window.state.selectedIds.length > 0) {
+            return window.state.selectedIds;
         }
         const singleId = getActiveTargetId();
         return singleId ? [singleId] : [];

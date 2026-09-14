@@ -726,6 +726,12 @@ async function updateScreenMetadata(project, screenFilename, data, statusCallbac
         metadata.pubUrl = data.projectMeta.pubUrl || metadata.pubUrl;
         metadata.themeIndex = data.projectMeta.themeIndex !== undefined ? data.projectMeta.themeIndex : metadata.themeIndex;
         metadata.updated = data.projectMeta.updated || metadata.updated;
+        if (data.projectMeta.version !== undefined) {
+            metadata.version = data.projectMeta.version;
+        }
+    }
+    if (data.version !== undefined) {
+        metadata.version = data.version;
     }
     if (screenFilename) {
         metadata.screens = metadata.screens || {};

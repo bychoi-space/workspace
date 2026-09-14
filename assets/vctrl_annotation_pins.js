@@ -96,7 +96,7 @@
                     
                     var DOM = window.DOM;
                     if (DOM && DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-                        window.MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { pins: list });
+                        window.MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: index, pins: list });
                     }
                 }
             };
@@ -147,6 +147,11 @@
         state.activeFile.meta.description.splice(index, 1);
         markAsDirty(); 
         renderDescriptionList();
+        
+        var DOM = window.DOM;
+        if (DOM && DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
+            window.MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: index, pins: state.activeFile.meta.description });
+        }
     };
 
     window.spawnTextEditor = function(x, y, existingIndex) {

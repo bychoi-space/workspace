@@ -115,7 +115,7 @@
       "type": "cover",
       "updatedAt": "2026-09-03T01:43:28.771Z",
       "template": "template_cover.html",
-      "version": 0.1,
+      "version": 0.3,
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
@@ -130,5 +130,5 @@
   "updated": "2026-09-14 14:43:31",
   "figmaUrl": "https://www.figma.com/design/5tx1QKw7gAPwrJy4DlC3FD/01.-%EC%83%81%ED%92%88?node-id=2952-36225",
   "notionUrl": "https://app.notion.com/p/2-1-3c2f6986169c8012b18bddd5ffc75c83?source=copy_link",
-  "version": 0.1
+  "version": 0.3
 }

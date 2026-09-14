@@ -144,7 +144,16 @@ window.v4ResponsivePinsScript = `
         }
     };
 
-    window.reorderResponsivePins = function() {
+    function getPinIdx(pin) {
+        if (!pin) return 999999;
+        let idx = parseInt(pin.getAttribute('data-index'));
+        if (isNaN(idx)) {
+            idx = parseInt((pin.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+        }
+        return isNaN(idx) ? 999999 : idx;
+    }
+
+    window.reorderResponsivePins = function(deletedIndex) {
         if (!isResponsiveScreen()) return;
 
         try {
@@ -152,11 +161,61 @@ window.v4ResponsivePinsScript = `
                 ? window.parent.state.activeFile.meta.description
                 : [];
 
+            const maxIndex = descList.length;
+
+            // Step 1: Explicit deletion if deletedIndex is provided
+            if (deletedIndex !== undefined && deletedIndex !== null && !isNaN(deletedIndex)) {
+                const delIdxNum = Number(deletedIndex);
+                document.querySelectorAll('.pin-marker, [data-pin-num]').forEach(function(pin) {
+                    if (getPinIdx(pin) === delIdxNum) {
+                        pin.remove();
+                    }
+                });
+            } else {
+                // Fallback: If no deletedIndex was provided, but there are more pins in DOM than in descList:
+                const allDomPins = Array.from(document.querySelectorAll('.pc-content-inner .pin-marker, .pc-content-area .pin-marker, .pc-content .pin-marker, [data-frame="pc"].pin-marker'));
+                if (allDomPins.length > maxIndex) {
+                    allDomPins.sort(function(a, b) { return getPinIdx(a) - getPinIdx(b); });
+                    let foundDeletedIdx = -1;
+                    for (let k = 0; k < allDomPins.length; k++) {
+                        const domPin = allDomPins[k];
+                        const domX = parseFloat(domPin.style.left) || 0;
+                        const domY = parseFloat(domPin.style.top) || 0;
+                        const hasMatch = descList.some(function(item) {
+                            const pcPos = (item && item.pins && item.pins.pc) ? item.pins.pc : item;
+                            if (!pcPos) return false;
+                            const ix = parseFloat(pcPos.x) || 0;
+                            const iy = parseFloat(pcPos.y) || 0;
+                            return Math.abs(ix - domX) < 2 && Math.abs(iy - domY) < 2;
+                        });
+                        if (!hasMatch) {
+                            foundDeletedIdx = getPinIdx(domPin);
+                            break;
+                        }
+                    }
+                    if (foundDeletedIdx !== -1) {
+                        document.querySelectorAll('.pin-marker, [data-pin-num]').forEach(function(pin) {
+                            if (getPinIdx(pin) === foundDeletedIdx) {
+                                pin.remove();
+                            }
+                        });
+                    }
+                }
+            }
+
             const pcPins = Array.from(document.querySelectorAll('.pc-content-inner .pin-marker, .pc-content-area .pin-marker, .pc-content .pin-marker, [data-frame="pc"].pin-marker'));
             const mobilePins = Array.from(document.querySelectorAll('.mobile-content-inner .pin-marker, .mobile-content-area .pin-marker, .mobile-content .pin-marker, [data-frame="mobile"].pin-marker'));
 
-            const maxIndex = descList.length;
+            // Step 2: Sort pins strictly by their current numerical index (NEVER arbitrary DOM order!)
+            pcPins.sort(function(a, b) {
+                return getPinIdx(a) - getPinIdx(b);
+            });
 
+            mobilePins.sort(function(a, b) {
+                return getPinIdx(a) - getPinIdx(b);
+            });
+
+            // Step 3: Re-index remaining pins in sequence 0..maxIndex-1
             pcPins.forEach(function(pin, i) {
                 if (i < maxIndex) {
                     pin.id = 'v4-pin-pc-' + i;
@@ -366,7 +425,7 @@ window.v4ResponsivePinsScript = `
 
     window.v4MessageHandlers['LF_REORDER_PINS'] = function(d) {
         if (isResponsiveScreen()) {
-            window.reorderResponsivePins();
+            window.reorderResponsivePins(d ? d.deletedIndex : undefined);
             return;
         }
         document.querySelectorAll('.pin-marker, .text-marker').forEach(function(el) { el.remove(); });
@@ -439,7 +498,7 @@ window.v4ResponsivePinsScript = `
         } else if (d.type === 'LF_IMPORT_RESPONSIVE_PINS') {
             window.importResponsivePins(d.pins);
         } else if (d.type === 'LF_REORDER_RESPONSIVE_PINS') {
-            window.reorderResponsivePins();
+            window.reorderResponsivePins(d ? d.deletedIndex : undefined);
         }
     });
 

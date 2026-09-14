@@ -407,57 +407,74 @@ window.v4TextMeasurerScript = `
     // --- V4 Text Style Update Handler ---
     window.v4ObjectText = window.v4ObjectText || {};
     window.v4ObjectText.handleUpdateStyle = (d) => {
-        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return false;
-        const isText = s.classList.contains('text-marker') || s.classList.contains('v4-text-box') || s.classList.contains('v4-text-shape');
-        if (!isText) {
+        let components = [];
+        if (d && d.ids && Array.isArray(d.ids) && d.ids.length > 0) {
+            components = d.ids.map(id => document.getElementById(id)).filter(Boolean);
+        }
+        if (components.length === 0) {
+            const single = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+            if (single) components = [single];
+        }
+        if (components.length === 0) return false;
+
+        const validComponents = components.filter(c => c.classList.contains('text-marker') || c.classList.contains('v4-text-box') || c.classList.contains('v4-text-shape'));
+        if (validComponents.length === 0) {
             return false;
         }
 
         if (window.V4UndoManager) window.V4UndoManager.saveState();
-        
-        let t = s.querySelector('.v4-editable-cell') || s;
-        if (d.style) {
-            if (d.style.width !== undefined || d.style.height !== undefined) {
-                s.setAttribute('data-resized', 'true');
-            }
-            if (d.style.html !== undefined) {
-                t.innerHTML = d.style.html;
-            }
-            
-            if (d.style.width !== undefined) {
-                s.style.width = d.style.width;
-            }
-            if (d.style.height !== undefined) {
-                s.style.height = d.style.height;
-            }
 
-            const styleToAssign = { ...d.style };
-            delete styleToAssign.width;
-            delete styleToAssign.height;
-            
-            for (const [key, val] of Object.entries(styleToAssign)) {
-                if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent') {
-                    const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : 'justify-content');
-                    t.style.setProperty(cssKey, val, 'important');
-                    t.querySelectorAll('p, span').forEach(child => {
-                        child.style.setProperty(cssKey, val, 'important');
-                    });
-                } else if (key === 'fontSize') {
-                    t.style.fontSize = val;
-                    t.querySelectorAll('p, span, font, strong, b, em, i, u, s').forEach(child => {
-                        child.style.fontSize = val;
-                    });
-                } else {
-                    t.style[key] = val;
+        validComponents.forEach(s => {
+            let t = s.querySelector('.v4-editable-cell') || s;
+            if (d.style) {
+                if (d.style.width !== undefined || d.style.height !== undefined) {
+                    s.setAttribute('data-resized', 'true');
+                }
+                if (d.style.html !== undefined) {
+                    t.innerHTML = d.style.html;
+                }
+                
+                if (d.style.width !== undefined) {
+                    s.style.width = d.style.width;
+                }
+                if (d.style.height !== undefined) {
+                    s.style.height = d.style.height;
+                }
+
+                const styleToAssign = { ...d.style };
+                delete styleToAssign.width;
+                delete styleToAssign.height;
+                
+                for (const [key, val] of Object.entries(styleToAssign)) {
+                    if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent') {
+                        const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : 'justify-content');
+                        t.style.setProperty(cssKey, val, 'important');
+                        t.querySelectorAll('p, span').forEach(child => {
+                            child.style.setProperty(cssKey, val, 'important');
+                        });
+                    } else if (key === 'fontSize') {
+                        t.style.fontSize = val;
+                        t.querySelectorAll('p, span, font, strong, b, em, i, u, s').forEach(child => {
+                            child.style.fontSize = val;
+                        });
+                    } else {
+                        t.style[key] = val;
+                    }
                 }
             }
-        }
+            if (typeof window.resizeToFitText === 'function') {
+                window.resizeToFitText(s);
+            }
+        });
         
+        if (validComponents[0] && typeof window.updateHandles === 'function') {
+            window.updateHandles(validComponents[0]);
+        }
+        if (typeof window.markDirty === 'function') {
+            window.markDirty();
+        }
         if (typeof window.enforceDesignSystem === 'function') {
             window.enforceDesignSystem();
-        }
-        if (typeof window.resizeToFitText === 'function') {
-            window.resizeToFitText(s);
         }
         return true;
     };
@@ -469,4 +486,5 @@ window.v4TextMeasurerScript = `
 `;
 
 // Backwards compatibility stub
+window.v4ObjectText = window.v4ObjectText || {};
 window.v4ObjectTextScript = '';

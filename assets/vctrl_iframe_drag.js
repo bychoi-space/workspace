@@ -99,7 +99,7 @@ window.v4DragResizeScript = `
                         }
                     }
                 } else {
-                    notifyParent({ type: 'LF_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight });
+                    notifyParent({ type: 'LF_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight, activeId: window.activeEl.id });
                 }
                 markDirty();
             }

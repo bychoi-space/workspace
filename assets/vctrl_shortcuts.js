@@ -15,13 +15,35 @@ window.v4ShortcutsScript = `
     let isArrowMoving = false;
     let isPastingLocked = false;
 
-    window.reorderAllPins = () => {
+    window.reorderAllPins = (deletedIndex) => {
         if (typeof window.isResponsiveScreen === 'function' && window.isResponsiveScreen() && typeof window.reorderResponsivePins === 'function') {
-            return window.reorderResponsivePins();
+            return window.reorderResponsivePins(deletedIndex);
         }
-        const pins = document.querySelectorAll('.text-marker, .pin-marker');
+        function getPinIdx(pin) {
+            if (!pin) return 999999;
+            let idx = parseInt(pin.getAttribute('data-index'));
+            if (isNaN(idx)) {
+                idx = parseInt((pin.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+            }
+            return isNaN(idx) ? 999999 : idx;
+        }
+
+        if (deletedIndex !== undefined && deletedIndex !== null && !isNaN(deletedIndex)) {
+            const delIdxNum = Number(deletedIndex);
+            document.querySelectorAll('.text-marker, .pin-marker').forEach(pin => {
+                if (getPinIdx(pin) === delIdxNum) {
+                    pin.remove();
+                }
+            });
+        }
+
+        const pins = Array.from(document.querySelectorAll('.text-marker, .pin-marker'));
+        pins.sort((a, b) => getPinIdx(a) - getPinIdx(b));
+
         pins.forEach((pin, idx) => {
             pin.id = 'v4-pin-' + idx;
+            pin.setAttribute('data-index', String(idx));
+            pin.setAttribute('data-pin-num', String(idx + 1));
             const badge = pin.querySelector('.pin-number-badge');
             if (badge) {
                 badge.innerText = idx + 1;
@@ -30,7 +52,8 @@ window.v4ShortcutsScript = `
         try {
             if (window.parent && window.parent.state && window.parent.state.activeFile) {
                 const descList = window.parent.state.activeFile.meta.description || [];
-                const remainingPins = document.querySelectorAll('.text-marker, .pin-marker');
+                const remainingPins = Array.from(document.querySelectorAll('.text-marker, .pin-marker'));
+                remainingPins.sort((a, b) => getPinIdx(a) - getPinIdx(b));
                 if (descList.length > remainingPins.length) {
                     descList.splice(remainingPins.length);
                 }
@@ -185,7 +208,10 @@ window.v4ShortcutsScript = `
             if (c.classList.contains('connector-line')) {
                 notifyParent({ type: 'LF_DELETE_CONNECTOR', id: c.id });
             } else if (c.classList.contains('text-marker') || c.classList.contains('pin-marker')) {
-                const idx = parseInt(c.id.replace('v4-pin-', ''));
+                let idx = parseInt(c.getAttribute('data-index'));
+                if (isNaN(idx)) {
+                    idx = parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+                }
                 notifyParent({ type: 'LF_DELETE_PIN', index: idx });
                 c.remove();
             } else {
@@ -362,7 +388,7 @@ window.v4ShortcutsScript = `
                 return maxZ + 10;
             };
 
-            const pasteHost = isResponsiveTemplate ? targetHost : document.body;
+            const pasteHost = isResponsiveTemplate ? targetHost : (document.querySelector('.canvas') || document.body);
             const baseTopZ = getHostTopZ(pasteHost);
 
             // Extract original z-indexes to preserve relative layering inside copied group
@@ -748,7 +774,8 @@ window.v4ShortcutsScript = `
                 if (window.V4UndoManager && !isArrowMoving) {
                     window.V4UndoManager.saveState();
                     isArrowMoving = true;
-                    if (!window.ResponsiveSmartGuide) {
+                    const hasRespGuide = !!(window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive());
+                    if (!hasRespGuide) {
                         notifyParent({ type: 'LF_SNAP_START' });
                     }
                 }
@@ -828,7 +855,10 @@ window.v4ShortcutsScript = `
                         if (c.classList.contains('connector-line')) {
                             notifyParent({ type: 'LF_DELETE_CONNECTOR', id: c.id });
                         } else if (c.classList.contains('text-marker') || c.classList.contains('pin-marker')) {
-                            const idx = parseInt(c.id.replace('v4-pin-', ''));
+                            let idx = parseInt(c.getAttribute('data-index'));
+                            if (isNaN(idx)) {
+                                idx = parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+                            }
                             notifyParent({ type: 'LF_DELETE_PIN', index: idx });
                             c.remove();
                         } else {

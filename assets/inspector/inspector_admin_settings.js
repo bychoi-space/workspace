@@ -6,6 +6,7 @@
     console.log("[Inspector Admin Settings] Domain module loaded.");
 
 function _syncAdminSettingsProps(comp, forceRebuild = false) {
+    if (!comp) return;
     const rowCountText = document.getElementById('txt-admin-row-count');
     if (rowCountText && comp.adminRowCount !== undefined) {
         rowCountText.innerText = comp.adminRowCount;

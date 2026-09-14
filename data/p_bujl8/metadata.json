@@ -1,21 +1,41 @@
 {
   "title": "[주문] 최대 혜택 쿠폰 자동 적용",
+  "screenOrder": [
+    "00_Cover_291.html",
+    "01_Benchmark_Report_382.html",
+    "04_Case_Study_976.html"
+  ],
   "screens": {
     "00_Cover_291.html": {
       "title": "00_Cover_291",
       "type": "cover",
       "updatedAt": "2026-09-14T08:41:10.352Z",
       "template": "template_cover.html",
-      "version": 0.1
+      "version": 0.1,
+      "description": [],
+      "connectors": []
     },
-    "04_Case_Study_976.html": {
-      "title": "04_Case_Study_976",
-      "type": "case-study",
-      "updatedAt": "2026-09-14T09:01:45.031Z",
-      "template": "template_case_study.html",
+    "01_Benchmark_Report_382.html": {
+      "title": "01_이커머스_벤치마크_분석",
+      "type": "plan",
+      "updatedAt": "2026-09-14T09:25:00.000Z",
+      "template": "template_plan.html",
+      "version": 0.1,
       "description": [],
       "connectors": [],
-      "version": 0.1
+      "defaultTab": "editor",
+      "screenDesc": "대한민국 이커머스 선두 11개사 최대 혜택 자동 적용 팩트 비교 및 시선닷컴 도입 실익/리스크 전략 보고서"
+    },
+    "04_Case_Study_976.html": {
+      "title": "04_패션_5개사_케이스스터디",
+      "type": "case-study",
+      "updatedAt": "2026-09-14T09:25:00.000Z",
+      "template": "template_case_study.html",
+      "version": 0.1,
+      "description": [],
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": "LFmall, SSF SHOP, SI VILLAGE, 29CM, W CONCEPT 주문서 쿠폰 적용 UX 비교 및 인사이트/가설"
     }
   },
   "assignee": "최범열",
@@ -24,6 +44,6 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-14 18:01:44",
+  "updated": "2026-09-14 18:25:00",
   "version": 0.1
 }

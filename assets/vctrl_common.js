@@ -187,17 +187,21 @@ window.syncCoverMetadata = function(html, metadata, isSave = false, currentActiv
     // 5. Version
     if (currentActiveFile) {
         let currentVer = 0.1;
-        const verMatch = html.match(/(<div[^>]*id="cover-version-val"[^>]*>v?)([\d.]+)(<\/div>)/i) || 
-                         html.match(/(<div[^>]*id="cover-version"[^>]*>[\s\S]*?<div[^>]*class="v4-editable-cell"[^>]*>v?)([\d.]+)(<\/div>)/i);
-        
-        if (verMatch && verMatch[2]) {
-            currentVer = parseFloat(verMatch[2]);
-        } else if (metadata.screens && metadata.screens[currentActiveFile] && metadata.screens[currentActiveFile].version !== undefined) {
-            currentVer = parseFloat(metadata.screens[currentActiveFile].version);
+        if (metadata && metadata.version !== undefined) {
+            currentVer = parseFloat(metadata.version);
+        } else {
+            const verMatch = html.match(/(<div[^>]*id="cover-version-val"[^>]*>v?)([\d.]+)(<\/div>)/i) || 
+                             html.match(/(<div[^>]*id="cover-version"[^>]*>[\s\S]*?<div[^>]*class="v4-editable-cell"[^>]*>v?)([\d.]+)(<\/div>)/i);
+            
+            if (verMatch && verMatch[2]) {
+                currentVer = parseFloat(verMatch[2]);
+            } else if (metadata && metadata.screens && metadata.screens[currentActiveFile] && metadata.screens[currentActiveFile].version !== undefined) {
+                currentVer = parseFloat(metadata.screens[currentActiveFile].version);
+            }
         }
         
         let nextVerStr = currentVer.toFixed(1);
-        if (isSave) {
+        if (isSave && (!metadata || metadata.version === undefined)) {
             nextVerStr = (currentVer + 0.1).toFixed(1);
         }
         

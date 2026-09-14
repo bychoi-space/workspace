@@ -7,6 +7,12 @@
       "updatedAt": "2026-09-14T08:41:10.352Z",
       "template": "template_cover.html",
       "version": 0.1
+    },
+    "04_Case_Study_976.html": {
+      "title": "04_Case_Study_976",
+      "type": "case-study",
+      "updatedAt": "2026-09-14T08:41:23.921Z",
+      "template": "template_case_study.html"
     }
   },
   "assignee": "최범열",

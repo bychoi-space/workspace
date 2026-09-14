@@ -103,7 +103,7 @@
     "99_Blank_437.html": {
       "title": "오프라인 매장찾기",
       "type": "case-study",
-      "updatedAt": "2026-09-14T05:36:56.002Z",
+      "updatedAt": "2026-09-14T05:37:06.553Z",
       "template": "template_case_study.html",
       "description": [],
       "connectors": [],
@@ -127,7 +127,7 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-14 14:36:55",
+  "updated": "2026-09-14 14:37:06",
   "figmaUrl": "https://www.figma.com/design/5tx1QKw7gAPwrJy4DlC3FD/01.-%EC%83%81%ED%92%88?node-id=2952-36225",
   "notionUrl": "https://app.notion.com/p/2-1-3c2f6986169c8012b18bddd5ffc75c83?source=copy_link"
 }

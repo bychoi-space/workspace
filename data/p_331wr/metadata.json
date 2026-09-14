@@ -22,20 +22,20 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-07T05:54:30.456Z",
+      "updatedAt": "2026-09-14T04:32:17.704Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
         {
           "text": "색상 옵션 하단에 컬러 텍스트 표기\n(기존 UI 에서는 클릭하기 전까지 다른 컬러 확인 불가)",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 681.21875,
-          "y": 492.046875,
+          "x": 669.219,
+          "y": 408.062,
           "standardized": true,
           "pins": {
             "pc": {
-              "x": 580,
-              "y": 436.141,
+              "x": 669.219,
+              "y": 408.062,
               "active": true
             },
             "mobile": {
@@ -43,41 +43,23 @@
               "y": 835.5,
               "active": true
             }
-          }
-        },
-        {
-          "text": "오프라인 매장 찾기 버튼\n- 클릭 시, 기존에 존재했던 매장 찾기 팝업 호출\n- '상품 상세 리뉴얼' 전까지 존재했던 기능",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 25.625,
-          "y": 3310,
-          "pins": {
-            "pc": {
-              "x": 25.625,
-              "y": 3310,
-              "active": true
-            },
-            "mobile": {
-              "x": 0,
-              "y": 3265,
-              "active": true
-            }
           },
-          "standardized": true
+          "type": "pin"
         },
         {
           "text": "PC : 기존 '배송비, 카드혜택, 마일리지' 3개의 항목 기준 1행 구조를, '배송비, 카드혜택, 마일리지, 고시정보' 4개의 항목으로 변경하고 2행 구조로 변경\n기존 순서 (배송비, 카드혜택, 적립금) 를 Mobile 과 통일하여 변경\n\nMO : '정보고시' 항목 추가\n\n공통 : [바로가기] 버튼 클릭 시, 페이지 하단 '상품정보고시' 영역으로 스크롤 이동 및 아코디언 활성화 처리",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 1000,
-          "y": 760.141,
+          "x": 997,
+          "y": 764,
           "pins": {
             "pc": {
-              "x": 1000,
-              "y": 760.141,
+              "x": 997,
+              "y": 764,
               "active": true
             },
             "mobile": {
-              "x": 151.719,
-              "y": 1030,
+              "x": 148,
+              "y": 1033,
               "active": true
             }
           },
@@ -125,7 +107,7 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-14 12:19:57",
+  "updated": "2026-09-14 13:32:17",
   "figmaUrl": "https://www.figma.com/design/5tx1QKw7gAPwrJy4DlC3FD/01.-%EC%83%81%ED%92%88?node-id=2952-36225",
   "notionUrl": "https://app.notion.com/p/2-1-3c2f6986169c8012b18bddd5ffc75c83?source=copy_link"
 }

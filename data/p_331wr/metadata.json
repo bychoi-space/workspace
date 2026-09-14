@@ -22,7 +22,7 @@
     "08_Responsive_PC_Mobile_486.html": {
       "title": "상품 상세",
       "type": "ui",
-      "updatedAt": "2026-09-14T05:33:41.606Z",
+      "updatedAt": "2026-09-14T04:32:17.704Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
@@ -103,7 +103,7 @@
     "99_Blank_437.html": {
       "title": "오프라인 매장찾기",
       "type": "case-study",
-      "updatedAt": "2026-09-03T03:30:11.469Z",
+      "updatedAt": "2026-09-14T05:35:22.123Z",
       "template": "template_case_study.html",
       "description": [],
       "connectors": [],
@@ -127,7 +127,7 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-14 14:33:41",
+  "updated": "2026-09-14 14:35:22",
   "figmaUrl": "https://www.figma.com/design/5tx1QKw7gAPwrJy4DlC3FD/01.-%EC%83%81%ED%92%88?node-id=2952-36225",
   "notionUrl": "https://app.notion.com/p/2-1-3c2f6986169c8012b18bddd5ffc75c83?source=copy_link"
 }

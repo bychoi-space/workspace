@@ -37,8 +37,8 @@
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",
-    "01_Benchmark_Report_382.html",
     "04_Case_Study_976.html",
-    "08_Responsive_PC_Mobile_889.html"
+    "08_Responsive_PC_Mobile_889.html",
+    "01_Benchmark_Report_382.html"
   ]
 }

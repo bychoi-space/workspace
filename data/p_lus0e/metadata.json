@@ -325,7 +325,7 @@
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
       "type": "admin",
-      "updatedAt": "2026-09-15T07:12:54.631Z",
+      "updatedAt": "2026-09-15T07:14:00.138Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -453,7 +453,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-15 16:12:53",
+  "updated": "2026-09-15 16:14:00",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

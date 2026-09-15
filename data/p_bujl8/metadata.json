@@ -20,7 +20,7 @@
     "08_Responsive_PC_Mobile_889.html": {
       "title": "08_Responsive_PC_Mobile_889",
       "type": "ui",
-      "updatedAt": "2026-09-15T02:16:25.033Z",
+      "updatedAt": "2026-09-15T01:36:22.886Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -80,7 +80,7 @@
     "08_Responsive_PC_Mobile_889_copy.html": {
       "title": "08_Responsive_PC_Mobile_889 (복사본)",
       "type": "ui",
-      "updatedAt": "2026-09-15T01:38:10.104Z",
+      "updatedAt": "2026-09-15T02:16:39.367Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -116,7 +116,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-15 11:16:25",
+  "updated": "2026-09-15 11:16:39",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",

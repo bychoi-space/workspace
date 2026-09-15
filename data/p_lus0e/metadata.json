@@ -314,31 +314,11 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-15T04:59:06.398Z",
+      "updatedAt": "2026-09-15T04:59:30.959Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [
-        {
-          "text": "기획전 관리 페이지\n- 기능과 구조 모두 현상 유지",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 273,
-          "y": 330,
-          "pins": {
-            "pc": {
-              "x": 273,
-              "y": 330,
-              "active": true
-            },
-            "mobile": {
-              "x": 180,
-              "y": 300,
-              "active": true
-            }
-          },
-          "standardized": true
-        }
-      ],
+      "description": [],
       "connectors": [],
-      "defaultTab": "description",
+      "defaultTab": "editor",
       "screenDesc": "[object Object]"
     }
   },

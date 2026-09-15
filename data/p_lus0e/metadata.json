@@ -310,6 +310,36 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": "시선닷컴 3개 브랜드(MICHAA, it MICHAA, E.B.M)를 위한 상품 종합 랭킹(Ranking Score) 산정 룰 및 알고리즘 정책"
+    },
+    "09_Admin_PC_Scroll_639_copy3.html": {
+      "title": "기획전 등록 (기본값)",
+      "type": "admin",
+      "updatedAt": "2026-09-15T04:59:06.398Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [
+        {
+          "text": "기획전 관리 페이지\n- 기능과 구조 모두 현상 유지",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 273,
+          "y": 330,
+          "pins": {
+            "pc": {
+              "x": 273,
+              "y": 330,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
+        }
+      ],
+      "connectors": [],
+      "defaultTab": "description",
+      "screenDesc": "[object Object]"
     }
   },
   "assignee": "최범열",
@@ -322,6 +352,7 @@
     "01_Project_Summary_898.html",
     "08_Responsive_PC_Mobile_730.html",
     "09_Admin_PC_Scroll_639.html",
+    "09_Admin_PC_Scroll_639_copy3.html",
     "09_Admin_PC_Scroll_639_copy.html",
     "09_Admin_PC_Scroll_639_copy2.html",
     "10_Product_Ranking_Rules_850.html"

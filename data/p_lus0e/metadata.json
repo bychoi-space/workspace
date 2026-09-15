@@ -325,11 +325,11 @@
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
       "type": "admin",
-      "updatedAt": "2026-09-15T05:55:11.456Z",
+      "updatedAt": "2026-09-15T06:36:25.669Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
-      "defaultTab": "editor",
+      "defaultTab": "description",
       "screenDesc": "[object Object]",
       "version": 0.1
     }

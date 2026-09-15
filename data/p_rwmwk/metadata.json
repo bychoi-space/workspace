@@ -1,8 +1,22 @@
 {
   "title": "삭제 스크린 보관함",
-  "screens": {},
+  "screens": {
+    "09_Admin_PC_Scroll_639_copy5.html": {
+      "title": "기획전 등록 - 기본값 (복사본)",
+      "type": "admin",
+      "updatedAt": "2026-09-15T07:20:10.616Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [],
+      "connectors": [],
+      "defaultTab": "description",
+      "screenDesc": ""
+    }
+  },
   "developer": "",
   "figmaUrl": "",
   "notionUrl": "",
-  "themeIndex": 9
+  "themeIndex": 9,
+  "screenOrder": [
+    "09_Admin_PC_Scroll_639_copy5.html"
+  ]
 }

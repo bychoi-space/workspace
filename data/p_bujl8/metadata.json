@@ -20,7 +20,7 @@
     "08_Responsive_PC_Mobile_889.html": {
       "title": "08_Responsive_PC_Mobile_889",
       "type": "ui",
-      "updatedAt": "2026-09-15T01:36:22.886Z",
+      "updatedAt": "2026-09-15T02:16:25.033Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -43,7 +43,7 @@
           "standardized": true
         },
         {
-          "text": "[쿠폰적용] 버튼 컬러 변경\n- 기존 'White' => 변경 'Black'",
+          "text": "버튼 명칭 및 컬러 변경\n- 명칭 : 기존 [쿠폰적용] => 변경 [쿠폰선택]\n- 컬러 : 기존 'White' => 변경 'Black'",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 645,
           "y": 828,
@@ -72,7 +72,7 @@
       "type": "plan",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-09-15T02:15:34.177Z",
+      "updatedAt": "2026-09-15T01:29:17.655Z",
       "description": [],
       "connectors": [],
       "version": 0.1
@@ -116,7 +116,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-15 11:15:34",
+  "updated": "2026-09-15 11:16:25",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",

@@ -314,7 +314,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-15T07:05:55.790Z",
+      "updatedAt": "2026-09-15T07:09:57.952Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -326,6 +326,44 @@
             "pc": {
               "x": 271,
               "y": 379,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "2. 상단 비주얼 관리\n- 영역 구분을 위한 타이틀 추가\n- 이미지 PC, MO 등록 항목만 존재",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 277,
+          "y": 925,
+          "pins": {
+            "pc": {
+              "x": 277,
+              "y": 925,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 274,
+          "y": 1033,
+          "pins": {
+            "pc": {
+              "x": 274,
+              "y": 1033,
               "active": true
             },
             "mobile": {
@@ -473,7 +511,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-15 16:05:55",
+  "updated": "2026-09-15 16:09:57",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

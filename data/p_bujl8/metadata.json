@@ -27,6 +27,11 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "01_Benchmark_Report_382.html": {
+      "description": [],
+      "updatedAt": "2026-09-15T01:15:17.220Z",
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -35,7 +40,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-15 10:13:47",
+  "updated": "2026-09-15 10:15:16",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",

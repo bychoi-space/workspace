@@ -20,9 +20,29 @@
     "08_Responsive_PC_Mobile_889.html": {
       "title": "08_Responsive_PC_Mobile_889",
       "type": "ui",
-      "updatedAt": "2026-09-15T01:36:22.886Z",
+      "updatedAt": "2026-09-15T01:37:46.820Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "text": "[최대 할인 적용] Check Box 도입\n- 최초 주문서 진입 시 '쿠폰 미적용' 상태\n- [최대 할인 적용] 클릭 시, 자동으로 최대 혜택 쿠폰 적용",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 8,
+          "y": 871,
+          "pins": {
+            "pc": {
+              "x": 8,
+              "y": 871,
+              "active": true
+            },
+            "mobile": {
+              "x": 119,
+              "y": 839,
+              "active": true
+            }
+          },
+          "standardized": true
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -45,7 +65,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-15 10:36:03",
+  "updated": "2026-09-15 10:37:46",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",

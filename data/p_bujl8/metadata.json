@@ -8,15 +8,6 @@
       "template": "template_cover.html",
       "version": 0.1
     },
-    "01_Benchmark_Report_382.html": {
-      "title": "01_Benchmark_Report_382",
-      "type": "benchmark-report",
-      "updatedAt": "2026-09-15T09:10:00.000Z",
-      "template": "template_blank.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1
-    },
     "04_Case_Study_976.html": {
       "title": "04_Case_Study_976",
       "type": "case-study",
@@ -29,7 +20,7 @@
     "08_Responsive_PC_Mobile_889.html": {
       "title": "08_Responsive_PC_Mobile_889",
       "type": "ui",
-      "updatedAt": "2026-09-15T00:43:03.319Z",
+      "updatedAt": "2026-09-15T00:50:28.435Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -44,12 +35,12 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-15 09:43:02",
-  "version": 0.2,
+  "updated": "2026-09-15 09:50:28",
+  "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",
-    "01_Benchmark_Report_382.html",
     "04_Case_Study_976.html",
-    "08_Responsive_PC_Mobile_889.html"
+    "08_Responsive_PC_Mobile_889.html",
+    "01_Benchmark_Report_382.html"
   ]
 }

@@ -19,12 +19,14 @@
     },
     "08_Responsive_PC_Mobile_889.html": {
       "title": "08_Responsive_PC_Mobile_889",
-      "type": "responsive-ui",
-      "updatedAt": "2026-09-14T10:32:52.211Z",
+      "type": "ui",
+      "updatedAt": "2026-09-15T00:04:45.280Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
-      "version": 0.1
+      "version": 0.1,
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

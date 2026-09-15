@@ -33,7 +33,10 @@
       "type": "plan",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-09-15T01:27:17.934Z"
+      "updatedAt": "2026-09-15T01:28:39.319Z",
+      "description": [],
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -42,7 +45,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-15 10:25:56",
+  "updated": "2026-09-15 10:28:38",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",

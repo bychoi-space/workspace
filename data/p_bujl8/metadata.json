@@ -20,7 +20,7 @@
     "08_Responsive_PC_Mobile_889.html": {
       "title": "08_Responsive_PC_Mobile_889",
       "type": "ui",
-      "updatedAt": "2026-09-15T01:36:22.886Z",
+      "updatedAt": "2026-09-15T01:45:41.010Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -37,6 +37,25 @@
             "mobile": {
               "x": 119,
               "y": 839,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "[쿠폰적용] 버튼 컬러 변경\n- 기존 'White' => 변경 'Black'",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 645,
+          "y": 828,
+          "pins": {
+            "pc": {
+              "x": 645,
+              "y": 828,
+              "active": true
+            },
+            "mobile": {
+              "x": 240,
+              "y": 783,
               "active": true
             }
           },
@@ -61,7 +80,7 @@
     "08_Responsive_PC_Mobile_889_copy.html": {
       "title": "08_Responsive_PC_Mobile_889 (복사본)",
       "type": "ui",
-      "updatedAt": "2026-09-15T01:44:35.247Z",
+      "updatedAt": "2026-09-15T01:38:10.104Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -96,7 +115,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-15 10:44:34",
+  "updated": "2026-09-15 10:45:40",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",

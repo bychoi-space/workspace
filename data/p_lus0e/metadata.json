@@ -325,7 +325,7 @@
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
       "type": "admin",
-      "updatedAt": "2026-09-15T06:54:38.082Z",
+      "updatedAt": "2026-09-15T06:55:00.023Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -422,6 +422,25 @@
             }
           },
           "standardized": true
+        },
+        {
+          "text": "5. 연관 기획전 영역\n- [연관 기획전 사용 여부] = Y 일 경우 [기획전 설정] 항목 노출\n- [기획전등록] 버튼 클릭 시, 공통 '기획전등록' 팝업호출",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 275,
+          "y": 2364,
+          "pins": {
+            "pc": {
+              "x": 275,
+              "y": 2364,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
         }
       ],
       "connectors": [],
@@ -434,7 +453,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-15 15:54:37",
+  "updated": "2026-09-15 15:54:59",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

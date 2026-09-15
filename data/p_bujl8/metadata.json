@@ -20,7 +20,7 @@
     "08_Responsive_PC_Mobile_889.html": {
       "title": "08_Responsive_PC_Mobile_889",
       "type": "ui",
-      "updatedAt": "2026-09-15T01:13:47.640Z",
+      "updatedAt": "2026-09-15T01:23:42.857Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -35,7 +35,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 9,
-  "updated": "2026-09-15 10:16:10",
+  "updated": "2026-09-15 10:23:42",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",

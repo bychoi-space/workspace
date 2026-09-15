@@ -153,16 +153,6 @@
       "defaultTab": "description",
       "screenDesc": "[object Object]"
     },
-    "09_Admin_PC_Scroll_639_copy.html": {
-      "title": "기획전 등록 - 기본값",
-      "type": "admin",
-      "updatedAt": "2026-09-11T05:25:28.501Z",
-      "template": "template_admin_pc_scroll.html",
-      "description": [],
-      "connectors": [],
-      "defaultTab": "description",
-      "screenDesc": ""
-    },
     "01_Project_Summary_898.html": {
       "title": "과제 개요",
       "type": "plan",
@@ -557,7 +547,6 @@
     "09_Admin_PC_Scroll_639.html",
     "09_Admin_PC_Scroll_639_copy3.html",
     "09_Admin_PC_Scroll_639_copy4.html",
-    "09_Admin_PC_Scroll_639_copy.html",
     "09_Admin_PC_Scroll_639_copy2.html",
     "10_Product_Ranking_Rules_850.html"
   ],

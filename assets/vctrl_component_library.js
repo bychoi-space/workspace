@@ -699,29 +699,4 @@ window.renderAtomicLibrary = function() {
     if (emptyState) {
         emptyState.style.setProperty('display', totalMatch === 0 ? 'flex' : 'none', 'important');
     }
-
-    // Legacy unused code
-    if (!window.V4_COMPONENT_LIBRARY) return;
-    const lib = window.V4_COMPONENT_LIBRARY;
-    const atomsPane = document.getElementById('pane-atoms');
-    if (atomsPane) {
-        const allComponents = [...(lib.atoms || []), ...(lib.molecules || []), ...(lib.organisms || [])];
-        atomsPane.innerHTML = allComponents.map(item => `
-            <div class="library-item" onclick="insertV4ComponentById('${item.id}')">
-                <div class="item-preview">${item.previewHtml || '<span class="material-icons-outlined">extension</span>'}</div>
-                <div class="item-name">${item.name}</div>
-            </div>
-        `).join('');
-    }
-
-    const iconsPane = document.getElementById('pane-icons');
-    if (iconsPane) {
-        const icons = ['Home', 'Category', 'My', 'Heart', 'Search', 'Cart', 'Brand', 'Back', 'Bell', 'Share', 'Party', 'New Window', 'Download', 'Zoom', 'Copy', 'Global', 'Camera', 'Recent'];
-        iconsPane.innerHTML = icons.map(i => `
-            <div class="library-item" onclick="insertAtomicComponent('icon', '${i}')" style="flex: 0 0 calc(25% - 8px); height:60px;">
-                <div class="item-preview"><div class="lf-icon lf-icon-${i.toLowerCase().replace(' ', '-')}" style="background-image:none !important; transform: scale(0.6);"></div></div>
-                <div class="item-name" style="font-size:9px;">${i}</div>
-            </div>
-        `).join('');
-    }
 };

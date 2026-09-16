@@ -7,16 +7,16 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 
 ## Core Boundaries & Architecture
 - Keep the engine modular. Add a dedicated JS file for a large new feature instead of swelling an existing file.
-- `vctrl_core.js` owns global `state`, `MessageHub`, GitHub API load/save, dynamic script compilation for iframe `srcdoc`, and SmartGuide calculation flow.
+- `vctrl_core.js` owns global `state`, `MessageHub`, GitHub API load/save, dynamic script compilation via `ENGINE_SCRIPT_REGISTRY` pipeline for iframe `srcdoc`, screen save/export synchronization via `window.ScreenSanitizer.cleanDOM`, and SmartGuide calculation flow.
 - `vctrl_screen_manager.js` owns screen reordering (`screenOrder`), screen creation (`+`), cloning, deletion, active screen routing, and `metadata.json` persistence synchronization.
 - `vctrl_canvas_viewport.js` owns Canvas Interaction (`adjustZoom`, `centerView`, `updateTransform`), 100% crisp snap (`toggleCrispView`), Fullscreen, and Global Space-key Panning logic (integrated with `vctrl_core.js` iframe event propagation). (The legacy `vctrl_v3.js` was fully phased out and replaced by this module.)
-- `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, and metadata description synchronization.
+- `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, and metadata description synchronization. Pin reordering logic is fully consolidated into `window.reorderAllPins` and `LF_REORDER_PINS` SSOT inside `vctrl_responsive_pins.js`.
 - `vctrl_connectors.js` owns connector spawning (`spawnLine`), 30px magnetic port snapping (`collectSnapTargets`), port highlighting, real-time anchoring (`syncAnchoredPositions`), and connector inspector routing.
 - `vctrl_iframe_ports.js` owns iframe-side port detection and port-drag connector initiation.
 - `vctrl_grouping.js` owns marquee selection, `selectedIds`, group move/delete/grouping behavior, and selected class sync.
-- `vctrl_inspector.js` and `assets/inspector/*` own sidebar tabs, metadata UI, screen list rendering, Quill initialization, floating card routing, and domain-specific inspector controls (`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`).
-- `vctrl_common.js` owns `window.EditorBus` (`sendToIframe`, `sendToParent`) for reliable iframe-parent messaging and universal color conversion SSOT (`rgbToHex`, `hexToRgb`, `hexToRgba`).
-- `vctrl_component_library.js` & `vctrl_component_inserter.js` own component library categories, search filtering, canvas drop coordinates, and dynamic object insertion.
+- `vctrl_inspector.js` and `assets/inspector/*` own sidebar tabs, metadata UI, screen list rendering, Quill initialization, floating card routing, and domain-specific inspector controls (`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`). Specifically, atom property synchronization is modularized in `assets/inspector/inspector_atoms.js` (`window.InspectorAtoms`).
+- `vctrl_common.js` owns `window.EditorBus` (`sendToIframe`, `sendToParent`) for reliable messaging, universal color conversion (`rgbToHex`, `hexToRgb`, `hexToRgba`), screen markup sanitizer SSOT (`window.ScreenSanitizer`), and responsive document discriminator SSOT (`isResponsiveDocument`).
+- `vctrl_component_library.js` & `vctrl_component_inserter.js` own component library categories, shape/atomic/icon rendering (`renderV4Shapes`, `renderAtomicLibrary`), dual-language search filtering, canvas drop coordinates, and dynamic object insertion. `vctrl_component_library.js` is loaded before `vctrl_inspector.js` in `viewer.html` to establish proper binding order.
 - `vctrl_pdf_exporter.js` owns multi-screen batch PDF export based on `metadata.json` `screenOrder`, long-canvas captures, and progress modal management.
 - `vctrl_presentation_pen.js` owns real-time presentation drawing canvas (laser pointer & highlighter pen) activated when holding `Shift` in fullscreen (`F`) mode.
 - **Offline Build Pipeline**:
@@ -31,10 +31,16 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - Inline CSS/JS dependencies needed by `srcdoc` iframe flows to avoid security blocking.
 - **Nested Backtick Precaution**: `vctrl_core.js`의 `v4Script` 또는 인라인 주입 스크립트와 같이 백틱(`)으로 감싸진 템플릿 리터럴 내부에서 다시 백틱이나 변수 보간(`${}`)을 사용하면 구문 에러(SyntaxError)가 발생한다. 내부에서는 반드시 일반 따옴표(`"` 또는 `'`)와 덧셈 연산자(`+`)를 사용하거나 이스케이프(`\``) 처리를 해야 한다.
 - **Iframe State Initialization**: iframe 컨텍스트에서는 부모 창의 전역 변수(예: `window.state`)가 자동으로 공유되지 않는다. iframe 내부에 주입되는 스크립트(예: `vctrl_undo.js`)에서 상태를 참조하거나 저장할 때는 반드시 참조 전 초기화 여부(예: `if (!window.state) window.state = {};`)를 확인하여 `TypeError`를 방지하라.
-- **iframe 하위 스크립트 모듈화 및 동적 컴파일 (Modular Iframe Scripts & Dynamic Compilation)**:
+- **iframe 하위 스크립트 모듈화 및 정형화 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**:
   - iframe의 `srcdoc`에 주입되는 스크립트는 19개 도메인 모듈 파일(`vctrl_typography.js`, `vctrl_undo.js`, `vctrl_table.js`, `vctrl_text_measurer.js`, `vctrl_ui_atoms.js`, `vctrl_design_system.js`, `vctrl_shortcuts.js`, `vctrl_common.js`, `vctrl_object_shape.js`, `vctrl_object_connector.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_ports.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_tab.js`, `vctrl_responsive_smartguide.js`, `vctrl_responsive_pins.js`, `vctrl_responsive_multiselect.js`, `vctrl_iframe_script.js`)로 완전 분리 관리된다.
-  - `vctrl_core.js`의 `loadScreen()` 시점에 이 분리된 파일들을 동적으로 결합(Compile)하여 iframe의 `srcdoc` 내부 `<script>` 영역에 순서대로 주입한다.
-  - **자동 캐시 무효화 (Auto Cache Busting)**: 빌드 시점에 결합되는 스크립트 블록 최상단에 `Date.now()` 타임스탬프 난수가 담긴 버스터 주석(`// Cache Buster Timestamp: ...`)을 함께 인라인 주입하므로, 개발자는 쿼리스트링 버전을 매번 수동 범프할 필요가 없으며 로드 시마다 캐시 무효화가 자동으로 일어난다.
+  - `vctrl_core.js`의 `getInlinedEngineScript()`는 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 순회하며 각 모듈의 로드 여부를 자동 검증(누락 시 콘솔 경고 발생)하고 동적으로 결합/컴파일하여 iframe `srcdoc`에 주입한다.
+  - 결합 결과는 안전하게 캐싱되며, 스크립트 블록 최상단에 `Date.now()` 타임스탬프 난수가 담긴 버스터 주석(`// Cache Buster Timestamp: ...`)을 인라인 주입하여 자동 캐시 무효화를 수행한다.
+- **Iframe 메시지 레지스트리 디스패처 (`window.v4MessageHandlers`)**:
+  - `vctrl_iframe_script.js`의 `message` 이벤트 리스너는 550줄의 거대한 `if-else` 분기문을 전면 폐지하고, `v4IframeCoreHandlers` 테이블 맵과 전역 `window.v4MessageHandlers` SSOT 레지스트리를 통한 초경량 10줄 디스패처로 경량화되었다.
+  - 신규 iframe 메시지 핸들러 추가 시 거대 if-else를 작성하지 말고 반드시 핸들러 테이블 맵 또는 `window.v4MessageHandlers[type] = function(data) { ... }`에 순수 함수로 등록해야 한다.
+- **전역 화면 살균 SSOT (`window.ScreenSanitizer`)**:
+  - 스크린 저장, 뷰포트 스냅샷, HTML 내보내기 시 임의의 수동 DOM 조작(임시 태그 제거, 스타일 파싱 등)을 절대 금지한다.
+  - 반드시 `vctrl_common.js`의 `window.ScreenSanitizer.cleanDOM(targetDoc)` 단일 진실 공급원을 호출하여 선택선/마키박스/핸들/가이드라인/빈스타일을 완벽히 정제해야 한다.
 - **크로스 스크린 복사/붙여넣기 (Cross-Screen Clipboard Sync)**:
   - 각 스크린 iframe은 고유한 `srcdoc` 컨텍스트(또는 `file://` sandboxed context)에서 로드되므로 격리되어 있어 `localStorage`나 iframe 간의 단순 전역 변수 공유가 불가능하다.
   - 이를 극복하고 서로 다른 스크린을 넘나들며 오브젝트 복사/붙여넣기(`Ctrl+C` / `Ctrl+V`)를 지원하기 위해 최상위 윈도우(`window.top`)의 전역 프로퍼티인 `window.top.__lf_global_clipboard__`를 클립보드 데이터의 SSOT로 정의하여 통신한다.

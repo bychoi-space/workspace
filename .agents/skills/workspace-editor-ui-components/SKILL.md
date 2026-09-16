@@ -129,6 +129,15 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **Group Component Property Hiding**:
   - For single selection of a grouped component (`.lf-group`), the OBJECT PROPERTIES floating card must hide all property editors and only show the group actions toolbar (`selection-actions-bar`) containing `[UNGROUP]`, `[ADD TO MOLECULES]`, `[BRING FRONT]`, and `[SEND BACK]`.
   - Recursive search queries inside groups during style retrieval must be bypassed to avoid false-positive sub-editor display.
+- **Library Component Renderer & Dead Code Removal SSOT**:
+  - `renderV4Shapes` 및 `renderAtomicLibrary`는 [assets/vctrl_component_library.js](file:///c:/Users/sisun/ai_work/assets/vctrl_component_library.js)가 단일 책임으로 전담합니다.
+  - 사이드바 라이브러리 렌더링 시 과거 레거시 탭(`pane-atoms`, `pane-icons`)을 조작하는 사장된 코드는 완전히 정리되었으므로, 불필요한 레거시 탭 조작 코드를 임의로 복구하거나 추가해서는 안 됩니다.
+  - `viewer.html`에서 [assets/vctrl_component_library.js](file:///c:/Users/sisun/ai_work/assets/vctrl_component_library.js)는 [assets/vctrl_inspector.js](file:///c:/Users/sisun/ai_work/assets/vctrl_inspector.js)보다 앞서 로드되어 DOM 바인딩 의존성을 완벽히 충족해야 합니다.
+- **Inspector Atoms 동기화 모듈화 (`window.InspectorAtoms`)**:
+  - 체크박스/라디오, 텍스트박스/텍스트에어리어, 서치바, 데이트피커 등 아톰 컴포넌트의 인스펙터 속성 양방향 동기화 로직은 [assets/inspector/inspector_atoms.js](file:///c:/Users/sisun/ai_work/assets/inspector/inspector_atoms.js) (`window.InspectorAtoms`)에서 배타적으로 모듈화되어 관리됩니다.
+  - [assets/vctrl_inspector.js](file:///c:/Users/sisun/ai_work/assets/vctrl_inspector.js) 내부에 거대한 인라인 속성 제어 코드를 중복 누적하지 말고 `InspectorAtoms` 모듈의 도메인 메서드(`syncCheckboxRadio`, `syncTextboxTextarea`, `syncSearchBar`, `syncDatePicker`)에 위임하여 책임을 분리해야 합니다.
+- **클릭 이벤트 리스너 중복 바인딩 금지 (전역 이벤트 위임 SSOT)**:
+  - 테이블 셀 정렬 및 도형 텍스트 정렬 버튼 등 컴포넌트 내부 액션 요소들에 개별 인라인 클릭 리스너를 중복 바인딩하지 마세요. 전역 이벤트 위임(Event Delegation)을 통해 단일 리스너로만 처리하여 이벤트 누수와 다중 발화를 원천 차단해야 합니다.
 - **Library English Name Unification & Dual-Language Search**:
   - All Atom, Icon, and Shape library cards displayed in the right sidebar must use English names.
   - To support Korean queries, each card must include a `data-ko` attribute containing Korean synonyms, and dynamic shape definitions must include a `koName` property. The search filtering logic must query both English titles and Korean metadata.

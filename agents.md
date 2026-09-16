@@ -190,8 +190,8 @@
 - **Pure MessageHub Architecture**: 부모 창의 오케스트레이터에서 iframe 내부 요소에 절대로 직접 접근(`contentDocument`)해서는 안 됩니다. 반드시 `MessageHub`를 통해 메시지를 보내고, Iframe 내부 스크립트(`vctrl_iframe_script.js`)가 처리를 위임받아 실행하도록 설계해야 합니다.
 - **명령어 유연성 (Case-Insensitivity)**: `MessageHub`를 통해 전달되는 모든 액션 명령어는 대소문자를 구분하지 않으며, 하이픈(`-`)과 언더바(`_`)를 모두 수용하도록 정규화하여 처리합니다.
 
-## 📐 스크린 에이전트 직접 제작/빌드 시 6대 불변 대원칙 (Screen Authoring Standards)
-> AI가 사용자 요청으로 워크스페이스 에디터의 스크린(HTML)을 직접 그릴 때는 반드시 `workspace-editor-screen-authoring` 스킬과 아래 6대 원칙을 100% 준수해야 합니다.
+## 📐 스크린 에이전트 직접 제작/빌드 시 7대 불변 대원칙 (Screen Authoring Standards)
+> AI가 사용자 요청으로 워크스페이스 에디터의 스크린(HTML)을 직접 그릴 때는 반드시 `workspace-editor-screen-authoring` 스킬과 아래 7대 원칙을 100% 준수해야 합니다.
 > - **참조 벤치마크 스크린**: [10_Product_Ranking_Rules_850.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/10_Product_Ranking_Rules_850.html), [01_Benchmark_Report_382.html](file:///c:/Users/sisun/ai_work/data/p_bujl8/01_Benchmark_Report_382.html)
 - **1. 사실 기반 데이터 전용 (Fact-based Data Only)**: 무조건 사실 기반 데이터로만 스크린을 그린다. 거짓된 데이터나, AI가 상상하는 값을 수치화로 넣지 않는다. (환각 금지, 기획서/요청 데이터 100% 팩트 기반)
 - **2. LIBRARY 표준 오브젝트 100% 활용 (Native Library Objects Only)**: 스크린에 존재하는 모든 오브젝트는 LIBRARY에 존재하는 도형(`.v4-shape`), 아톰, 아이콘(`.lf-icon` SVG)을 활용한다. 비표준 임의 HTML 태그나 커스텀 스타일 클래스는 금지한다.
@@ -199,6 +199,7 @@
 - **4. 텍스트 폰트 크기 최소 12px 이상 (Min Font-Size >= 12px)**: 스크린의 텍스트 폰트 크기는 최소 12px 이상으로만 구성한다. 그 이하(10px, 11px 등)의 폰트 크기는 가독성을 저하시키므로 절대 사용하지 않는다.
 - **5. 간결하고 깔끔한 레이아웃 (Concise & Clutter-Free Layout)**: 스크린은 최대한 깔끔하게 구성되어야 하고, 불필요하게 많은 텍스트는 지양한다. 반드시 필요한 내용으로만 구성하고 중복되는 내용은 지양하며, 1600x900 단일 캔버스 내에서 스크롤 없이 완결되는 레이아웃을 구성한다.
 - **6. 절제된 컬러 및 포인트 강조 (Restrained Color Palette & Strategic Accent)**: 컬러를 너무 다양하게 사용하지 않는다. 뉴트럴 톤(배경 #f8fafc/#ffffff, 보더 #e2e8f0, 텍스트 #0f172a)을 기본으로 하고, 매우 중요해서 강조되어야 하는 부분에만 중점적으로 1~2개의 포인트 컬러(블루, 그린, 핑크 등)를 전략적으로 사용한다.
+- **7. 스크린 생성/수정 완료 시 무조건 GitHub 원격 배포 (Mandatory Automated GitHub Deployment)**: 스크린을 신규 생성하거나 수정했을 때는 로컬 작업에 그치지 않고, 반드시 `git pull --rebase origin main` 선행 후 `git push origin main`까지 자체적으로 즉시 자동 완결한다.
 - **임의의 기획 요약 및 누락 절대 금지 (1:1 Text & Data Match)**:
   - 원본 PPT(슬라이드) 또는 가이드 이미지를 바탕으로 스크린을 자동 생성할 때, 기획서의 핵심 데이터를 임의로 축소, 생략하거나 대체 텍스트로 요약하는 것을 전면 금지합니다.
   - 슬라이드 속의 복잡한 표(Table)나 수치, 데이터 및 설명 텍스트는 **단 한 글자의 누락도 없이 100% 동일하게** 에디터 객체(`.lf-component`)로 코딩하여 완벽히 이식해야 합니다.

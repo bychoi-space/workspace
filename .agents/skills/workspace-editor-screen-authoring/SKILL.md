@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-screen-authoring
-description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, atomic element separation, minimum 12px font size, concise layout, and restrained color palette.
+description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, atomic element separation, minimum 12px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
 ---
 
 # Workspace Editor Screen Authoring Standards (AI 직접 스크린 제작 대원칙)
@@ -14,7 +14,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 
 ---
 
-## 🏛️ 스크린 제작 6대 절대 규칙 (Strict Core Rules)
+## 🏛️ 스크린 제작 7대 절대 규칙 (Strict Core Rules)
 
 ### 1. 무조건 사실 기반 데이터 전용 (Fact-Based Data Only)
 - **가짜 데이터 및 상상 수치 원천 배제**: 사용자가 제공한 기획서, 회의록, 벤치마크 팩트, 실제 서비스 정책/수치 데이터만을 근거로 화면을 구성합니다.
@@ -73,6 +73,10 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - **성공/자동적용/승인 (Success)**: `#15803d` (그린), 연한 배경 `#dcfce7`
   - **주의/경고/핵심 수치 (Alert/Accent)**: `#e11d48` (로즈 레드), 연한 배경 `#fee2e2`
 - 전체 스크린에서 주도적인 포인트 색상은 1~2개로 제한하여 시각적 피로도를 없애고 정보의 우선순위를 즉각 파악할 수 있게 합니다.
+
+### 7. 스크린 생성 및 수정 완료 시 무조건 GitHub 원격 배포 (Mandatory Automated GitHub Deployment)
+- **로컬 완결 후 즉시 자동 배포 완결**: AI가 스크린(HTML)을 신규 생성하거나 기존 스크린을 수정했을 때는, 로컬 파일 수정 및 정적 검증에 그치지 않고 **반드시 GitHub 원격 저장소(`main`)로의 커밋 및 푸시까지 에이전트가 자체 판단하여 무조건 자동으로 완결**해야 합니다.
+- **추가 질문 대기 배제**: 스크린 작업 완료 후 "배포할까요?" 등의 불필요한 중간 질문을 하지 않으며, 브라우저 UI 자동 저장 커밋 충돌 방지를 위해 항상 `git pull --rebase origin main`을 선행한 후 즉시 `git push origin main`을 실행하여 배포를 완료하고 결과만 보고합니다.
 
 ---
 

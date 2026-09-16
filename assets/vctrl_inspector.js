@@ -1029,72 +1029,15 @@ function _syncButtonProps(comp) {
 }
 
 function _syncTextboxTextareaProps(comp) {
-    const activeY = document.getElementById('btn-input-counter-y');
-    const activeN = document.getElementById('btn-input-counter-n');
-
-    if (activeY && activeN) {
-        highlightActive(activeY, comp.showCounter === true);
-        highlightActive(activeN, comp.showCounter === false);
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncTextboxTextarea === 'function') {
+        window.InspectorAtoms.syncTextboxTextarea(comp);
     }
-    
-    const phInput = document.getElementById('prop-input-placeholder');
-    if (phInput && document.activeElement !== phInput && comp.placeholderText !== undefined) {
-        phInput.value = comp.placeholderText;
-    }
-    
-    const mlInput = document.getElementById('prop-input-maxlength');
-    const mlTxt = document.getElementById('txt-input-maxlength');
-    if (mlInput && document.activeElement !== mlInput && comp.maxLength !== undefined) {
-        mlInput.value = comp.maxLength;
-        if (mlTxt) mlTxt.innerText = comp.maxLength;
-    }
-    
-    const s = comp.currentStyles || {};
-    const syncColor = (id, wrapperId, color, isTransparent) => {
-        const picker = document.getElementById(id);
-        const wrapper = document.getElementById(wrapperId);
-        if (picker && color) picker.value = color;
-        if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
-    };
-    syncColor('input-bg-color', 'input-bg-wrapper', s.bg, s.isBgTransparent);
-    syncColor('input-border-color', 'input-border-wrapper', s.border, s.isBorderTransparent);
-
-    // Sync Font Size & Font Family
-    const fsInput = document.getElementById('prop-input-fontsize');
-    if (fsInput && document.activeElement !== fsInput && s.fontSize !== undefined) {
-        fsInput.value = s.fontSize;
-    }
-    const ffInput = document.getElementById('prop-input-fontfamily');
-    if (ffInput && s.fontFamily !== undefined) {
-        const normalizedFont = s.fontFamily.replace(/['"]/g, '');
-        let matched = false;
-        for (let i = 0; i < ffInput.options.length; i++) {
-            const optVal = ffInput.options[i].value.replace(/['"]/g, '');
-            if (optVal === normalizedFont) {
-                ffInput.selectedIndex = i;
-                matched = true;
-                break;
-            }
-        }
-        if (!matched) {
-            ffInput.value = 'inherit';
-        }
-    }
-    _syncAtomDisabledProps(comp);
 }
 
 function _syncSearchBarProps(comp) {
-    const phInput = document.getElementById('prop-searchbar-placeholder');
-    if (phInput && document.activeElement !== phInput && comp.searchbarPlaceholder !== undefined) {
-        phInput.value = comp.searchbarPlaceholder;
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSearchBar === 'function') {
+        window.InspectorAtoms.syncSearchBar(comp);
     }
-    
-    const s = comp.currentStyles || {};
-    const fsInput = document.getElementById('prop-searchbar-fontsize');
-    if (fsInput && document.activeElement !== fsInput && s.fontSize !== undefined) {
-        fsInput.value = s.fontSize;
-    }
-    _syncAtomDisabledProps(comp);
 }
 
 function _syncAccordionProps(comp) {
@@ -1118,108 +1061,15 @@ function _syncGridProps(comp) {
 }
 
 function _syncCheckboxRadioProps(comp) {
-    const activeY = document.getElementById('btn-atom-active-y');
-    const activeN = document.getElementById('btn-atom-active-n');
-    const textY = document.getElementById('btn-atom-text-y');
-    const textN = document.getElementById('btn-atom-text-n');
-
-    if (activeY && activeN) {
-        highlightActive(activeY, comp.checked === true);
-        highlightActive(activeN, comp.checked === false);
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncCheckboxRadio === 'function') {
+        window.InspectorAtoms.syncCheckboxRadio(comp);
     }
-    if (textY && textN) {
-        highlightActive(textY, comp.textEnabled === true);
-        highlightActive(textN, comp.textEnabled === false);
-    }
-    
-    const s = comp.currentStyles || {};
-    const syncColor = (id, wrapperId, color, isTransparent) => {
-        const picker = document.getElementById(id);
-        const wrapper = document.getElementById(wrapperId);
-        if (picker && color) picker.value = color;
-        if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
-    };
-    syncColor('atom-bg-color', 'atom-bg-wrapper', s.bg, s.isBgTransparent);
-    syncColor('atom-border-color', 'atom-border-wrapper', s.border, s.isBorderTransparent);
-
-    const textInp = document.getElementById('prop-atom-text-content');
-    if (textInp && comp.checkboxText !== undefined) {
-        if (document.activeElement !== textInp) {
-            textInp.value = comp.checkboxText;
-        }
-    }
-
-    const wIconInp = document.getElementById('prop-width-icon');
-    const hIconInp = document.getElementById('prop-height-icon');
-    if (wIconInp && document.activeElement !== wIconInp) {
-        wIconInp.value = Math.round(comp.boxW !== undefined ? comp.boxW : 20);
-    }
-    if (hIconInp && document.activeElement !== hIconInp) {
-        hIconInp.value = Math.round(comp.boxH !== undefined ? comp.boxH : 20);
-    }
-    _syncAtomDisabledProps(comp);
 }
 
 function _syncDatePickerProps(comp) {
-    // Sync Mode selector
-    const btnModeSimple = document.getElementById('btn-dp-mode-simple');
-    const btnModeDetailed = document.getElementById('btn-dp-mode-detailed');
-    const mode = comp.dpMode || 'simple';
-    highlightActive(btnModeSimple, mode === 'simple');
-    highlightActive(btnModeDetailed, mode === 'detailed');
-
-    const timeWrapper = document.getElementById('dp-time-inputs-wrapper');
-    const presetsToggleWrapper = document.getElementById('dp-presets-toggle-wrapper');
-    const showEndToggleWrapper = document.getElementById('dp-show-end-toggle-wrapper');
-    const defaultPresetWrapper = document.getElementById('dp-default-preset-wrapper');
-
-    if (timeWrapper) timeWrapper.style.display = mode === 'detailed' ? 'block' : 'none';
-    if (presetsToggleWrapper) presetsToggleWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
-    if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
-    if (defaultPresetWrapper) defaultPresetWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
-
-    // Sync presets show/hide toggle
-    const presetsY = document.getElementById('btn-dp-presets-y');
-    const presetsN = document.getElementById('btn-dp-presets-n');
-    const showPresets = comp.dpShowPresets !== false;
-    highlightActive(presetsY, showPresets);
-    highlightActive(presetsN, !showPresets);
-
-    // Sync show end date toggle
-    const showEndY = document.getElementById('btn-dp-show-end-y');
-    const showEndN = document.getElementById('btn-dp-show-end-n');
-    const showEndDate = comp.dpShowEndDate !== false;
-    highlightActive(showEndY, showEndDate);
-    highlightActive(showEndN, !showEndDate);
-
-    // Sync default preset buttons
-    const presetKeys = ['none', '1D', '1W', '1M', '6M', 'all'];
-    const currentPreset = comp.dpDefaultPreset || 'none';
-    presetKeys.forEach(key => {
-        const btn = document.getElementById('btn-dp-default-' + key);
-        highlightActive(btn, key === currentPreset);
-    });
-
-    // Sync date inputs
-    const startInput = document.getElementById('prop-dp-start-date');
-    const endInput = document.getElementById('prop-dp-end-date');
-    if (startInput && comp.dpStartDate !== undefined) {
-        if (document.activeElement !== startInput) startInput.value = comp.dpStartDate || '';
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncDatePicker === 'function') {
+        window.InspectorAtoms.syncDatePicker(comp);
     }
-    if (endInput && comp.dpEndDate !== undefined) {
-        if (document.activeElement !== endInput) endInput.value = comp.dpEndDate || '';
-    }
-
-    // Sync time inputs
-    const startTimeInput = document.getElementById('prop-dp-start-time');
-    const endTimeInput = document.getElementById('prop-dp-end-time');
-    if (startTimeInput && comp.dpStartTime !== undefined) {
-        if (document.activeElement !== startTimeInput) startTimeInput.value = comp.dpStartTime || '';
-    }
-    if (endTimeInput && comp.dpEndTime !== undefined) {
-        if (document.activeElement !== endTimeInput) endTimeInput.value = comp.dpEndTime || '';
-    }
-    _syncAtomDisabledProps(comp);
 }
 
 function getCategoryData(type) {
@@ -1245,203 +1095,7 @@ let currentFlyoutScreen = null;
 
 // Screen list and flyout delegated to vctrl_screen_manager.js
 
-// --- 4. Library & Editor ---
-window.renderV4Shapes = function() {
-    console.log("[Inspector] Rendering V4 Shapes dynamically...");
-    const container = document.getElementById('v4-shapes-container');
-    if (!container || !window.V4_COMPONENT_LIBRARY) {
-        console.warn("[Inspector] #v4-shapes-container or V4_COMPONENT_LIBRARY not found!");
-        return 0;
-    }
-
-    const molecules = window.V4_COMPONENT_LIBRARY.molecules || [];
-    const shapes = molecules.filter(item => item.category === 'Shapes');
-
-    const query = (window.editorSearchQuery || '').toLowerCase().trim();
-    const filteredShapes = query ? shapes.filter(item => {
-        const enMatch = item.name.toLowerCase().includes(query);
-        const koMatch = item.koName ? item.koName.toLowerCase().includes(query) : false;
-        return enMatch || koMatch;
-    }) : shapes;
-
-    container.innerHTML = filteredShapes.map(item => {
-        let onclickAttr = '';
-        let classList = 'component-item v4-card';
-        let dataAttrs = '';
-        let titleAttr = item.name;
-
-        // 1) 툴 카드인 경우 (Text 툴)
-        if (item.isTool) {
-            classList += ' sidebar-tool-btn';
-            dataAttrs = `data-tool="${item.toolName}"`;
-            titleAttr = `${item.name} 추가`;
-            onclickAttr = `onclick="if (typeof window.handleTextboxCreation === 'function') window.handleTextboxCreation();"`;
-        } 
-        // 2) 클릭 액션이 명시된 경우 (선그리기 등)
-        else if (item.onclick) {
-            onclickAttr = `onclick="${item.onclick}"`;
-            titleAttr = item.name;
-        } 
-        // 3) 일반 V4 컴포넌트 추가인 경우
-        else {
-            onclickAttr = `onclick="insertV4ComponentById('${item.id}')"`;
-            titleAttr = item.name;
-        }
-
-        // 아이콘 HTML 빌드
-        let iconHtml = '';
-        if (item.iconType === 'svg') {
-            iconHtml = item.iconSvg;
-        } else if (item.icon) {
-            const styleStr = item.iconStyle ? `style="${item.iconStyle} font-size: 18px; color: ${item.iconColor || 'var(--text-secondary)'};"` : `style="font-size: 18px; color: ${item.iconColor || 'var(--text-secondary)'};"`;
-            iconHtml = `<span class="material-icons-outlined" ${styleStr}>${item.icon}</span>`;
-        } else {
-            iconHtml = `<span class="material-icons-outlined" style="font-size: 18px; color: var(--text-secondary);">extension</span>`;
-        }
-
-        const cardStyle = item.cardStyle ? item.cardStyle : '';
-
-        return `
-            <div class="${classList}" ${onclickAttr} ${dataAttrs} title="${titleAttr}" style="${cardStyle} border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
-                ${iconHtml}
-                <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">${item.name}</span>
-            </div>
-        `;
-    }).join('');
-
-    return filteredShapes.length;
-};
-
-window.renderAtomicLibrary = function() {
-    const query = (window.editorSearchQuery || '').toLowerCase().trim();
-
-    // 1. Shapes 렌더링 및 매치 카운트 획득
-    let shapesCount = 0;
-    if (typeof window.renderV4Shapes === 'function') {
-        shapesCount = window.renderV4Shapes();
-    }
-
-    // 2. Custom Components (Molecules) 필터링 및 렌더링
-    const rawCustomComps = window.state.globalComponents;
-    const customComps = Array.isArray(rawCustomComps) ? rawCustomComps : (rawCustomComps && typeof rawCustomComps === 'object' ? Object.values(rawCustomComps) : []);
-    const filteredCustomComps = query ? customComps.filter(m => m && m.name && m.name.toLowerCase().includes(query)) : customComps;
-
-    const compHeader = document.getElementById('molecules-header-text');
-    if (compHeader) {
-        compHeader.innerHTML = `COMPONENTS <b style="color:var(--accent); margin-left: 4px;">(${filteredCustomComps.length})</b>`;
-    }
-
-    const molContainer = document.getElementById('custom-molecules-container');
-    if (molContainer) {
-        molContainer.innerHTML = filteredCustomComps.map(m => `
-            <div class="v4-component-item">
-                <div class="v4-component-name-wrap" onclick="insertV4ComponentById('${m.id}')">
-                    <span class="material-icons-outlined" style="font-size:14px; margin-right:8px; color:var(--accent); flex-shrink:0;">category</span>
-                    <span class="v4-component-name" title="${m.name}">${m.name}</span>
-                </div>
-                <div class="v4-comp-actions">
-                    <button class="v4-comp-btn v4-comp-edit-btn" onclick="renameComponent('${m.id}', event)" title="이름 수정"><span class="material-icons-outlined" style="font-size:14px;">edit</span></button>
-                    <button class="v4-comp-btn v4-comp-delete-btn" onclick="deleteMolecule('${m.id}', event)" title="삭제"><span class="material-icons-outlined" style="font-size:14px;">close</span></button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // 3. Static Atomic Library & Icon Library 필터링
-    let atomicCount = 0;
-    const atomicContainer = document.getElementById('atomic-library-container');
-    if (atomicContainer) {
-        const cards = atomicContainer.querySelectorAll('.component-item');
-        cards.forEach(card => {
-            const nameSpan = card.querySelector('span:not(.material-icons-outlined)') || card.querySelector('span');
-            const nameText = nameSpan ? nameSpan.innerText : '';
-            const koText = card.getAttribute('data-ko') || '';
-            const isMatch = nameText.toLowerCase().includes(query) || koText.toLowerCase().includes(query);
-            card.style.setProperty('display', isMatch ? 'flex' : 'none', 'important');
-            if (isMatch) atomicCount++;
-        });
-    }
-
-    let iconCount = 0;
-    const iconContainer = document.getElementById('icon-library-container');
-    if (iconContainer) {
-        const cards = iconContainer.querySelectorAll('.component-item');
-        cards.forEach(card => {
-            const nameSpan = card.querySelector('span');
-            const nameText = nameSpan ? nameSpan.innerText : '';
-            const koText = card.getAttribute('data-ko') || '';
-            const isMatch = nameText.toLowerCase().includes(query) || koText.toLowerCase().includes(query);
-            card.style.setProperty('display', isMatch ? 'flex' : 'none', 'important');
-            if (isMatch) iconCount++;
-        });
-    }
-
-    // 4. Section Visibility 조절
-    const shapesHeader = document.getElementById('v4-shapes-header');
-    const shapesBody = document.getElementById('v4-shapes-body');
-    if (shapesHeader && shapesBody) {
-        const hasShapes = shapesCount > 0;
-        shapesHeader.style.setProperty('display', hasShapes ? 'flex' : 'none', 'important');
-        shapesBody.style.setProperty('display', hasShapes ? 'block' : 'none', 'important');
-    }
-
-    const atomicHeader = document.getElementById('atomic-library-header');
-    const atomicBody = document.getElementById('atomic-library-body');
-    if (atomicHeader && atomicBody) {
-        const hasAtomic = atomicCount > 0;
-        atomicHeader.style.setProperty('display', hasAtomic ? 'flex' : 'none', 'important');
-        atomicBody.style.setProperty('display', hasAtomic ? 'block' : 'none', 'important');
-    }
-
-    const iconHeader = document.getElementById('icon-library-header');
-    const iconBody = document.getElementById('icon-library-body');
-    if (iconHeader && iconBody) {
-        const hasIcon = iconCount > 0;
-        iconHeader.style.setProperty('display', hasIcon ? 'flex' : 'none', 'important');
-        iconBody.style.setProperty('display', hasIcon ? 'block' : 'none', 'important');
-    }
-
-    const moleculesHeader = document.getElementById('molecules-header');
-    const moleculesBody = document.getElementById('molecules-body');
-    if (moleculesHeader && moleculesBody) {
-        const hasMolecules = filteredCustomComps.length > 0;
-        moleculesHeader.style.setProperty('display', hasMolecules ? 'flex' : 'none', 'important');
-        moleculesBody.style.setProperty('display', hasMolecules ? 'block' : 'none', 'important');
-    }
-
-    // 5. Empty State 처리
-    const totalMatch = shapesCount + atomicCount + iconCount + filteredCustomComps.length;
-    const emptyState = document.getElementById('sidebar-search-empty');
-    if (emptyState) {
-        emptyState.style.setProperty('display', totalMatch === 0 ? 'flex' : 'none', 'important');
-    }
-
-    // Legacy unused code
-    if (!window.V4_COMPONENT_LIBRARY) return;
-    const lib = window.V4_COMPONENT_LIBRARY;
-    const atomsPane = document.getElementById('pane-atoms');
-    if (atomsPane) {
-        const allComponents = [...(lib.atoms || []), ...(lib.molecules || []), ...(lib.organisms || [])];
-        atomsPane.innerHTML = allComponents.map(item => `
-            <div class="library-item" onclick="insertV4ComponentById('${item.id}')">
-                <div class="item-preview">${item.previewHtml || '<span class="material-icons-outlined">extension</span>'}</div>
-                <div class="item-name">${item.name}</div>
-            </div>
-        `).join('');
-    }
-
-    const iconsPane = document.getElementById('pane-icons');
-    if (iconsPane) {
-        const icons = ['Home', 'Category', 'My', 'Heart', 'Search', 'Cart', 'Brand', 'Back', 'Bell', 'Share', 'Party', 'New Window', 'Download', 'Zoom', 'Copy', 'Global', 'Camera', 'Recent'];
-        iconsPane.innerHTML = icons.map(i => `
-            <div class="library-item" onclick="insertAtomicComponent('icon', '${i}')" style="flex: 0 0 calc(25% - 8px); height:60px;">
-                <div class="item-preview"><div class="lf-icon lf-icon-${i.toLowerCase().replace(' ', '-')}" style="background-image:none !important; transform: scale(0.6);"></div></div>
-                <div class="item-name" style="font-size:9px;">${i}</div>
-            </div>
-        `).join('');
-    }
-};
-
+// --- 4. Library & Editor (Delegated to vctrl_component_library.js) ---
 // Global Color Palette delegated to vctrl_color_picker.js
 
 window.initQuillEditor = function() {
@@ -1920,17 +1574,9 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
 }
 
 function _syncToggleProps(comp) {
-    const btnOn = document.getElementById('btn-toggle-on');
-    const btnOff = document.getElementById('btn-toggle-off');
-    const isChecked = comp.toggleChecked === true;
-    highlightActive(btnOn, isChecked);
-    highlightActive(btnOff, !isChecked);
-
-    const colorPicker = document.getElementById('prop-toggle-color');
-    if (colorPicker && comp.toggleColor) {
-        colorPicker.value = comp.toggleColor;
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncToggle === 'function') {
+        window.InspectorAtoms.syncToggle(comp);
     }
-    _syncAtomDisabledProps(comp);
 }
 
 // Auto-initialize global color palette popover

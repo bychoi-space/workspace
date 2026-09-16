@@ -528,3 +528,200 @@ window.V4_COMPONENT_LIBRARY = {
         }
     ]
 };
+
+// --- V4 Library UI Rendering (SSOT) ---
+window.renderV4Shapes = function() {
+    console.log("[Component Library] Rendering V4 Shapes dynamically...");
+    const container = document.getElementById('v4-shapes-container');
+    if (!container || !window.V4_COMPONENT_LIBRARY) {
+        console.warn("[Component Library] #v4-shapes-container or V4_COMPONENT_LIBRARY not found!");
+        return 0;
+    }
+
+    const molecules = window.V4_COMPONENT_LIBRARY.molecules || [];
+    const shapes = molecules.filter(item => item.category === 'Shapes');
+
+    const query = (window.editorSearchQuery || '').toLowerCase().trim();
+    const filteredShapes = query ? shapes.filter(item => {
+        const enMatch = item.name.toLowerCase().includes(query);
+        const koMatch = item.koName ? item.koName.toLowerCase().includes(query) : false;
+        return enMatch || koMatch;
+    }) : shapes;
+
+    container.innerHTML = filteredShapes.map(item => {
+        let onclickAttr = '';
+        let classList = 'component-item v4-card';
+        let dataAttrs = '';
+        let titleAttr = item.name;
+
+        // 1) 툴 카드인 경우 (Text 툴)
+        if (item.isTool) {
+            classList += ' sidebar-tool-btn';
+            dataAttrs = `data-tool="${item.toolName}"`;
+            titleAttr = `${item.name} 추가`;
+            onclickAttr = `onclick="if (typeof window.handleTextboxCreation === 'function') window.handleTextboxCreation();"`;
+        } 
+        // 2) 클릭 액션이 명시된 경우 (선그리기 등)
+        else if (item.onclick) {
+            onclickAttr = `onclick="${item.onclick}"`;
+            titleAttr = item.name;
+        } 
+        // 3) 일반 V4 컴포넌트 추가인 경우
+        else {
+            onclickAttr = `onclick="insertV4ComponentById('${item.id}')"`;
+            titleAttr = item.name;
+        }
+
+        // 아이콘 HTML 빌드
+        let iconHtml = '';
+        if (item.iconType === 'svg') {
+            iconHtml = item.iconSvg;
+        } else if (item.icon) {
+            const styleStr = item.iconStyle ? `style="${item.iconStyle} font-size: 18px; color: ${item.iconColor || 'var(--text-secondary)'};"` : `style="font-size: 18px; color: ${item.iconColor || 'var(--text-secondary)'};"`;
+            iconHtml = `<span class="material-icons-outlined" ${styleStr}>${item.icon}</span>`;
+        } else {
+            iconHtml = `<span class="material-icons-outlined" style="font-size: 18px; color: var(--text-secondary);">extension</span>`;
+        }
+
+        const cardStyle = item.cardStyle ? item.cardStyle : '';
+
+        return `
+            <div class="${classList}" ${onclickAttr} ${dataAttrs} title="${titleAttr}" style="${cardStyle} border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
+                ${iconHtml}
+                <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2;">${item.name}</span>
+            </div>
+        `;
+    }).join('');
+
+    return filteredShapes.length;
+};
+
+window.renderAtomicLibrary = function() {
+    const query = (window.editorSearchQuery || '').toLowerCase().trim();
+
+    // 1. Shapes 렌더링 및 매치 카운트 획득
+    let shapesCount = 0;
+    if (typeof window.renderV4Shapes === 'function') {
+        shapesCount = window.renderV4Shapes();
+    }
+
+    // 2. Custom Components (Molecules) 필터링 및 렌더링
+    const rawCustomComps = window.state ? window.state.globalComponents : null;
+    const customComps = Array.isArray(rawCustomComps) ? rawCustomComps : (rawCustomComps && typeof rawCustomComps === 'object' ? Object.values(rawCustomComps) : []);
+    const filteredCustomComps = query ? customComps.filter(m => m && m.name && m.name.toLowerCase().includes(query)) : customComps;
+
+    const compHeader = document.getElementById('molecules-header-text');
+    if (compHeader) {
+        compHeader.innerHTML = `COMPONENTS <b style="color:var(--accent); margin-left: 4px;">(${filteredCustomComps.length})</b>`;
+    }
+
+    const molContainer = document.getElementById('custom-molecules-container');
+    if (molContainer) {
+        molContainer.innerHTML = filteredCustomComps.map(m => `
+            <div class="v4-component-item">
+                <div class="v4-component-name-wrap" onclick="insertV4ComponentById('${m.id}')">
+                    <span class="material-icons-outlined" style="font-size:14px; margin-right:8px; color:var(--accent); flex-shrink:0;">category</span>
+                    <span class="v4-component-name" title="${m.name}">${m.name}</span>
+                </div>
+                <div class="v4-comp-actions">
+                    <button class="v4-comp-btn v4-comp-edit-btn" onclick="renameComponent('${m.id}', event)" title="이름 수정"><span class="material-icons-outlined" style="font-size:14px;">edit</span></button>
+                    <button class="v4-comp-btn v4-comp-delete-btn" onclick="deleteMolecule('${m.id}', event)" title="삭제"><span class="material-icons-outlined" style="font-size:14px;">close</span></button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 3. Static Atomic Library & Icon Library 필터링
+    let atomicCount = 0;
+    const atomicContainer = document.getElementById('atomic-library-container');
+    if (atomicContainer) {
+        const cards = atomicContainer.querySelectorAll('.component-item');
+        cards.forEach(card => {
+            const nameSpan = card.querySelector('span:not(.material-icons-outlined)') || card.querySelector('span');
+            const nameText = nameSpan ? nameSpan.innerText : '';
+            const koText = card.getAttribute('data-ko') || '';
+            const isMatch = nameText.toLowerCase().includes(query) || koText.toLowerCase().includes(query);
+            card.style.setProperty('display', isMatch ? 'flex' : 'none', 'important');
+            if (isMatch) atomicCount++;
+        });
+    }
+
+    let iconCount = 0;
+    const iconContainer = document.getElementById('icon-library-container');
+    if (iconContainer) {
+        const cards = iconContainer.querySelectorAll('.component-item');
+        cards.forEach(card => {
+            const nameSpan = card.querySelector('span');
+            const nameText = nameSpan ? nameSpan.innerText : '';
+            const koText = card.getAttribute('data-ko') || '';
+            const isMatch = nameText.toLowerCase().includes(query) || koText.toLowerCase().includes(query);
+            card.style.setProperty('display', isMatch ? 'flex' : 'none', 'important');
+            if (isMatch) iconCount++;
+        });
+    }
+
+    // 4. Section Visibility 조절
+    const shapesHeader = document.getElementById('v4-shapes-header');
+    const shapesBody = document.getElementById('v4-shapes-body');
+    if (shapesHeader && shapesBody) {
+        const hasShapes = shapesCount > 0;
+        shapesHeader.style.setProperty('display', hasShapes ? 'flex' : 'none', 'important');
+        shapesBody.style.setProperty('display', hasShapes ? 'block' : 'none', 'important');
+    }
+
+    const atomicHeader = document.getElementById('atomic-library-header');
+    const atomicBody = document.getElementById('atomic-library-body');
+    if (atomicHeader && atomicBody) {
+        const hasAtomic = atomicCount > 0;
+        atomicHeader.style.setProperty('display', hasAtomic ? 'flex' : 'none', 'important');
+        atomicBody.style.setProperty('display', hasAtomic ? 'block' : 'none', 'important');
+    }
+
+    const iconHeader = document.getElementById('icon-library-header');
+    const iconBody = document.getElementById('icon-library-body');
+    if (iconHeader && iconBody) {
+        const hasIcon = iconCount > 0;
+        iconHeader.style.setProperty('display', hasIcon ? 'flex' : 'none', 'important');
+        iconBody.style.setProperty('display', hasIcon ? 'block' : 'none', 'important');
+    }
+
+    const moleculesHeader = document.getElementById('molecules-header');
+    const moleculesBody = document.getElementById('molecules-body');
+    if (moleculesHeader && moleculesBody) {
+        const hasMolecules = filteredCustomComps.length > 0;
+        moleculesHeader.style.setProperty('display', hasMolecules ? 'flex' : 'none', 'important');
+        moleculesBody.style.setProperty('display', hasMolecules ? 'block' : 'none', 'important');
+    }
+
+    // 5. Empty State 처리
+    const totalMatch = shapesCount + atomicCount + iconCount + filteredCustomComps.length;
+    const emptyState = document.getElementById('sidebar-search-empty');
+    if (emptyState) {
+        emptyState.style.setProperty('display', totalMatch === 0 ? 'flex' : 'none', 'important');
+    }
+
+    // Legacy unused code
+    if (!window.V4_COMPONENT_LIBRARY) return;
+    const lib = window.V4_COMPONENT_LIBRARY;
+    const atomsPane = document.getElementById('pane-atoms');
+    if (atomsPane) {
+        const allComponents = [...(lib.atoms || []), ...(lib.molecules || []), ...(lib.organisms || [])];
+        atomsPane.innerHTML = allComponents.map(item => `
+            <div class="library-item" onclick="insertV4ComponentById('${item.id}')">
+                <div class="item-preview">${item.previewHtml || '<span class="material-icons-outlined">extension</span>'}</div>
+                <div class="item-name">${item.name}</div>
+            </div>
+        `).join('');
+    }
+
+    const iconsPane = document.getElementById('pane-icons');
+    if (iconsPane) {
+        const icons = ['Home', 'Category', 'My', 'Heart', 'Search', 'Cart', 'Brand', 'Back', 'Bell', 'Share', 'Party', 'New Window', 'Download', 'Zoom', 'Copy', 'Global', 'Camera', 'Recent'];
+        iconsPane.innerHTML = icons.map(i => `
+            <div class="library-item" onclick="insertAtomicComponent('icon', '${i}')" style="flex: 0 0 calc(25% - 8px); height:60px;">
+                <div class="item-preview"><div class="lf-icon lf-icon-${i.toLowerCase().replace(' ', '-')}" style="background-image:none !important; transform: scale(0.6);"></div></div>
+                <div class="item-name" style="font-size:9px;">${i}</div>
+            </div>
+        `).join('');
+    }
+};

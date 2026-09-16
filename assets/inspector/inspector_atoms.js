@@ -564,6 +564,183 @@
         }
     };
 
+    // Common Color Sync Helper
+    const syncAtomColor = (id, wrapperId, color, isTransparent) => {
+        const picker = document.getElementById(id);
+        const wrapper = document.getElementById(wrapperId);
+        if (picker && color) picker.value = color;
+        if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
+    };
+
+    // --- Checkbox & Radio Component Sync ---
+    const syncCheckboxRadio = (comp) => {
+        if (!comp) return;
+        const activeY = document.getElementById('btn-atom-active-y');
+        const activeN = document.getElementById('btn-atom-active-n');
+        const textY = document.getElementById('btn-atom-text-y');
+        const textN = document.getElementById('btn-atom-text-n');
+
+        if (activeY && activeN) {
+            highlightActive(activeY, comp.checked === true);
+            highlightActive(activeN, comp.checked === false);
+        }
+        if (textY && textN) {
+            highlightActive(textY, comp.textEnabled === true);
+            highlightActive(textN, comp.textEnabled === false);
+        }
+        
+        const s = comp.currentStyles || {};
+        syncAtomColor('atom-bg-color', 'atom-bg-wrapper', s.bg, s.isBgTransparent);
+        syncAtomColor('atom-border-color', 'atom-border-wrapper', s.border, s.isBorderTransparent);
+
+        const textInp = document.getElementById('prop-atom-text-content');
+        if (textInp && comp.checkboxText !== undefined) {
+            if (document.activeElement !== textInp) {
+                textInp.value = comp.checkboxText;
+            }
+        }
+
+        const wIconInp = document.getElementById('prop-width-icon');
+        const hIconInp = document.getElementById('prop-height-icon');
+        if (wIconInp && document.activeElement !== wIconInp) {
+            wIconInp.value = Math.round(comp.boxW !== undefined ? comp.boxW : 20);
+        }
+        if (hIconInp && document.activeElement !== hIconInp) {
+            hIconInp.value = Math.round(comp.boxH !== undefined ? comp.boxH : 20);
+        }
+        syncDisabled(comp);
+    };
+
+    // --- Textbox & Textarea Component Sync ---
+    const syncTextboxTextarea = (comp) => {
+        if (!comp) return;
+        const activeY = document.getElementById('btn-input-counter-y');
+        const activeN = document.getElementById('btn-input-counter-n');
+
+        if (activeY && activeN) {
+            highlightActive(activeY, comp.showCounter === true);
+            highlightActive(activeN, comp.showCounter === false);
+        }
+        
+        const phInput = document.getElementById('prop-input-placeholder');
+        if (phInput && document.activeElement !== phInput && comp.placeholderText !== undefined) {
+            phInput.value = comp.placeholderText;
+        }
+        
+        const mlInput = document.getElementById('prop-input-maxlength');
+        const mlTxt = document.getElementById('txt-input-maxlength');
+        if (mlInput && document.activeElement !== mlInput && comp.maxLength !== undefined) {
+            mlInput.value = comp.maxLength;
+            if (mlTxt) mlTxt.innerText = comp.maxLength;
+        }
+        
+        const s = comp.currentStyles || {};
+        syncAtomColor('input-bg-color', 'input-bg-wrapper', s.bg, s.isBgTransparent);
+        syncAtomColor('input-border-color', 'input-border-wrapper', s.border, s.isBorderTransparent);
+
+        // Sync Font Size & Font Family
+        const fsInput = document.getElementById('prop-input-fontsize');
+        if (fsInput && document.activeElement !== fsInput && s.fontSize !== undefined) {
+            fsInput.value = s.fontSize;
+        }
+        const ffInput = document.getElementById('prop-input-fontfamily');
+        if (ffInput && s.fontFamily !== undefined) {
+            const normalizedFont = s.fontFamily.replace(/['"]/g, '');
+            let matched = false;
+            for (let i = 0; i < ffInput.options.length; i++) {
+                const optVal = ffInput.options[i].value.replace(/['"]/g, '');
+                if (optVal === normalizedFont) {
+                    ffInput.selectedIndex = i;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                ffInput.value = 'inherit';
+            }
+        }
+        syncDisabled(comp);
+    };
+
+    // --- SearchBar Component Sync ---
+    const syncSearchBar = (comp) => {
+        if (!comp) return;
+        const phInput = document.getElementById('prop-searchbar-placeholder');
+        if (phInput && document.activeElement !== phInput && comp.searchbarPlaceholder !== undefined) {
+            phInput.value = comp.searchbarPlaceholder;
+        }
+        
+        const s = comp.currentStyles || {};
+        const fsInput = document.getElementById('prop-searchbar-fontsize');
+        if (fsInput && document.activeElement !== fsInput && s.fontSize !== undefined) {
+            fsInput.value = s.fontSize;
+        }
+        syncDisabled(comp);
+    };
+
+    // --- DatePicker Component Sync ---
+    const syncDatePicker = (comp) => {
+        if (!comp) return;
+        // Sync Mode selector
+        const btnModeSimple = document.getElementById('btn-dp-mode-simple');
+        const btnModeDetailed = document.getElementById('btn-dp-mode-detailed');
+        const mode = comp.dpMode || 'simple';
+        highlightActive(btnModeSimple, mode === 'simple');
+        highlightActive(btnModeDetailed, mode === 'detailed');
+
+        const timeWrapper = document.getElementById('dp-time-inputs-wrapper');
+        const presetsToggleWrapper = document.getElementById('dp-presets-toggle-wrapper');
+        const showEndToggleWrapper = document.getElementById('dp-show-end-toggle-wrapper');
+        const defaultPresetWrapper = document.getElementById('dp-default-preset-wrapper');
+
+        if (timeWrapper) timeWrapper.style.display = mode === 'detailed' ? 'block' : 'none';
+        if (presetsToggleWrapper) presetsToggleWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
+        if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
+        if (defaultPresetWrapper) defaultPresetWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
+
+        // Sync presets show/hide toggle
+        const presetsY = document.getElementById('btn-dp-presets-y');
+        const presetsN = document.getElementById('btn-dp-presets-n');
+        const showPresets = comp.dpShowPresets !== false;
+        highlightActive(presetsY, showPresets);
+        highlightActive(presetsN, !showPresets);
+
+        // Sync show end date toggle
+        const showEndY = document.getElementById('btn-dp-show-end-y');
+        const showEndN = document.getElementById('btn-dp-show-end-n');
+        const showEndDate = comp.dpShowEndDate !== false;
+        highlightActive(showEndY, showEndDate);
+        highlightActive(showEndN, !showEndDate);
+
+        // Sync default preset buttons
+        const presetKeys = ['none', '1D', '1W', '1M', '6M', 'all'];
+        const currentPreset = comp.dpDefaultPreset || 'none';
+        presetKeys.forEach(key => {
+            const btn = document.getElementById('btn-dp-default-' + key);
+            highlightActive(btn, key === currentPreset);
+        });
+
+        // Sync date inputs
+        const startInput = document.getElementById('prop-dp-start-date');
+        const endInput = document.getElementById('prop-dp-end-date');
+        if (startInput && comp.dpStartDate !== undefined) {
+            if (document.activeElement !== startInput) startInput.value = comp.dpStartDate || '';
+        }
+        if (endInput && comp.dpEndDate !== undefined) {
+            if (document.activeElement !== endInput) endInput.value = comp.dpEndDate || '';
+        }
+
+        // Sync time inputs
+        const startTimeInput = document.getElementById('prop-dp-start-time');
+        const endTimeInput = document.getElementById('prop-dp-end-time');
+        if (startTimeInput && comp.dpStartTime !== undefined) {
+            if (document.activeElement !== startTimeInput) startTimeInput.value = comp.dpStartTime || '';
+        }
+        if (endTimeInput && comp.dpEndTime !== undefined) {
+            if (document.activeElement !== endTimeInput) endTimeInput.value = comp.dpEndTime || '';
+        }
+        syncDisabled(comp);
+    };
 
     // --- Checkbox & Radio Events (Integrated from vctrl_v4_addon.js) ---
     const initCheckboxRadioEvents = () => {
@@ -903,6 +1080,10 @@
         syncButton: syncButton,
         syncToggle: syncToggle,
         syncDisabled: syncDisabled,
+        syncCheckboxRadio: syncCheckboxRadio,
+        syncTextboxTextarea: syncTextboxTextarea,
+        syncSearchBar: syncSearchBar,
+        syncDatePicker: syncDatePicker,
         bindStepperEvents: bindStepperEvents,
         bindSelectboxEvents: bindSelectboxEvents,
         bindFileuploadEvents: bindFileuploadEvents,

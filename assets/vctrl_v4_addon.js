@@ -122,19 +122,7 @@
 
     window._updateCellAlignButtonsUI = updateCellAlignButtonsUI;
 
-    const bindCellAlignButton = (id, align) => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.addEventListener('click', function() {
-                notifyIframe({ type: 'LF_UPDATE_CELL_STYLE', style: { textAlign: align } });
-                updateCellAlignButtonsUI(align);
-            });
-        }
-    };
-
-    bindCellAlignButton('btn-cell-align-left', 'left');
-    bindCellAlignButton('btn-cell-align-center', 'center');
-    bindCellAlignButton('btn-cell-align-right', 'right');
+    // Cell align clicks are handled via global document event delegation (SSOT) below
 
     // Cell Borders Event Bindings
     const getTableBorderColor = () => {
@@ -778,32 +766,7 @@
         }
 
 
-        // 5. Shape Text Alignments
-        const btnLeft = document.getElementById('btn-shape-align-left');
-        if (btnLeft) {
-            btnLeft.onclick = () => _applyTextAlign('left');
-        }
-        const btnCenter = document.getElementById('btn-shape-align-center');
-        if (btnCenter) {
-            btnCenter.onclick = () => _applyTextAlign('center');
-        }
-        const btnRight = document.getElementById('btn-shape-align-right');
-        if (btnRight) {
-            btnRight.onclick = () => _applyTextAlign('right');
-        }
-
-        const btnVTop = document.getElementById('btn-shape-valign-top');
-        if (btnVTop) {
-            btnVTop.onclick = () => _applyVerticalAlign('top');
-        }
-        const btnVMiddle = document.getElementById('btn-shape-valign-middle');
-        if (btnVMiddle) {
-            btnVMiddle.onclick = () => _applyVerticalAlign('middle');
-        }
-        const btnVBottom = document.getElementById('btn-shape-valign-bottom');
-        if (btnVBottom) {
-            btnVBottom.onclick = () => _applyVerticalAlign('bottom');
-        }
+        // 5. Shape Text Alignments handled by global click delegation (SSOT)
 
         if (typeof window._bindShapePaddingEvents === 'function') {
             window._bindShapePaddingEvents();

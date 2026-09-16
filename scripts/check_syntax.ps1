@@ -35,6 +35,14 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_connectors.js",
     "c:\Users\sisun\ai_work\assets\inspector\inspector_admin_settings.js",
     "c:\Users\sisun\ai_work\assets\vctrl_ui_atoms.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_grouping.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_table.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_typography.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_component_library.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_object_shape.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_object_connector.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_undo.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_ports.js",
     "c:\Users\sisun\ai_work\viewer.html"
 )
 

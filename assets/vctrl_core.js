@@ -142,11 +142,17 @@ window.loadScreen = async function (fileName) {
         finalContent = syncCoverMetadata(finalContent, state.projectMetadata, false, fileName);
     }
 
-    const isResponsiveScreen = (state.projectMetadata && state.projectMetadata.screens && (
-        state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
-        state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
-        state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html'
-    )) || finalContent.includes('pc-browser-frame') || finalContent.includes('template_responsive_pc_mobile.html') || finalContent.includes('template_admin_pc_scroll.html');
+    const isResponsiveScreen = Boolean(
+        (state.projectMetadata && state.projectMetadata.screens && (
+            state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html'
+        )) || 
+        content.includes('pc-browser-frame') || 
+        content.includes('class="pc-frame"') || 
+        content.includes('class="mobile-frame"') ||
+        (fileName && fileName.toLowerCase().includes('responsive'))
+    );
 
     state.isCurrentResponsiveScreen = isResponsiveScreen;
 
@@ -224,7 +230,7 @@ window.loadScreen = async function (fileName) {
                     }, 80);
                 }
             } else {
-                const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'text' || p.text || p.html);
+                const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'pin' || p.type === 'text' || p.text || p.html);
                 if (legacyPins.length > 0 && iframe.contentWindow) {
                     setTimeout(() => {
                         iframe.contentWindow.postMessage({ type: 'LF_IMPORT_PINS', pins: legacyPins }, '*');
@@ -368,6 +374,7 @@ window.handleTextCreation = function () {
         }
     } else {
         state.activeFile.meta.description.push({
+            type: "pin",
             text: "Edit Text",
             html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
             x: 670,

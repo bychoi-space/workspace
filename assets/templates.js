@@ -69,7 +69,7 @@ window.LF_TEMPLATES['template_admin_pc_scroll.html'] = `
                 </div>
                 <div class="pc-content-area">
                     <div class="pc-content-inner">
-                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300000; overflow: visible;"></svg>
                     </div>
                 </div>
             </div>
@@ -2133,7 +2133,7 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `
                 </div>
                 <div class="pc-content-area">
                     <div class="pc-content-inner">
-                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300000; overflow: visible;"></svg>
                     </div>
                 </div>
             </div>
@@ -2157,7 +2157,7 @@ window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `
                 </div>
                 <div class="mobile-content">
                     <div class="mobile-content-inner">
-                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; overflow: visible;"></svg>
+                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300000; overflow: visible;"></svg>
                     </div>
                 </div>
             </div>

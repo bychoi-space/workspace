@@ -1507,7 +1507,7 @@ window.v4Script = `
             const compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);
             const compH = isPinMarker ? 28 : ((d.style && d.style.height) ? parseInt(d.style.height) || 100 : 100);
 
-            let host = document.querySelector('.canvas') || document.body;
+            let host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
             let centerTop = Math.round((window.innerHeight - compH) / 2);
             let centerLeft = Math.round((window.innerWidth - compW) / 2);
 
@@ -1585,11 +1585,14 @@ window.v4Script = `
             if (isPinMarker) {
                 const idx = parseInt(d.id.replace('v4-pin-', '')) || 0;
                 v.className = 'lf-component pin-marker';
+                v.setAttribute('data-index', String(idx));
+                v.setAttribute('data-pin-num', String(idx + 1));
                 v.style.width = '20px';
                 v.style.height = '20px';
                 v.style.zIndex = '200000';
                 v.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
                               '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
+                if (typeof window.updateHandles === 'function') window.updateHandles(v);
             } else {
                 v.className = 'lf-component' + (d.isGroup ? ' lf-group' : '') + (d.className ? ' ' + d.className : ''); 
                 v.style.transform = 'none';
@@ -1658,7 +1661,7 @@ window.v4Script = `
             });
             markDirty();
         } else if (d.type === 'LF_INSERT_COMPONENTS') {
-            const host = document.querySelector('.canvas') || document.body;
+            const host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
             const comps = d.components || [];
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
             

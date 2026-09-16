@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-engine
-description: Use when editing Workspace Editor engine files, vctrl_core.js, vctrl_inspector.js, vctrl_grouping.js, vctrl_v3.js, MessageHub, SmartGuide, iframe scripts, DOM registries, init functions, listener wiring, selection, grouping, canvas, zoom, pan, annotations, or module boundaries.
+description: Use when editing Workspace Editor engine files, vctrl_core.js, vctrl_inspector.js, vctrl_grouping.js, vctrl_canvas_viewport.js, vctrl_screen_manager.js, vctrl_annotation_pins.js, assets/inspector/*, MessageHub, EditorBus, SmartGuide, iframe scripts, DOM registries, init functions, listener wiring, selection, grouping, canvas, zoom, pan, annotations, or module boundaries.
 ---
 
 # Workspace Editor Engine
@@ -8,11 +8,20 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 ## Core Boundaries & Architecture
 - Keep the engine modular. Add a dedicated JS file for a large new feature instead of swelling an existing file.
 - `vctrl_core.js` owns global `state`, `MessageHub`, GitHub API load/save, dynamic script compilation for iframe `srcdoc`, and SmartGuide calculation flow.
+- `vctrl_screen_manager.js` owns screen reordering (`screenOrder`), screen creation (`+`), cloning, deletion, active screen routing, and `metadata.json` persistence synchronization.
+- `vctrl_canvas_viewport.js` owns Canvas Interaction (`adjustZoom`, `centerView`, `updateTransform`), 100% crisp snap (`toggleCrispView`), Fullscreen, and Global Space-key Panning logic (integrated with `vctrl_core.js` iframe event propagation). (The legacy `vctrl_v3.js` was fully phased out and replaced by this module.)
+- `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, and metadata description synchronization.
 - `vctrl_connectors.js` owns connector spawning (`spawnLine`), 30px magnetic port snapping (`collectSnapTargets`), port highlighting, real-time anchoring (`syncAnchoredPositions`), and connector inspector routing.
 - `vctrl_iframe_ports.js` owns iframe-side port detection and port-drag connector initiation.
 - `vctrl_grouping.js` owns marquee selection, `selectedIds`, group move/delete/grouping behavior, and selected class sync.
-- `vctrl_inspector.js` owns sidebar tabs, metadata UI, screen list rendering, Quill initialization, floating card routing, and the central `DOM` registry.
-- `vctrl_v3.js` owns annotation pins (legacy render), Canvas Interaction (`adjustZoom`, `centerView`, `updateTransform`), Fullscreen, and Global Space-key Panning logic (integrated with `vctrl_core.js` iframe event propagation).
+- `vctrl_inspector.js` and `assets/inspector/*` own sidebar tabs, metadata UI, screen list rendering, Quill initialization, floating card routing, and domain-specific inspector controls (`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`).
+- `vctrl_common.js` owns `window.EditorBus` (`sendToIframe`, `sendToParent`) for reliable iframe-parent messaging and universal color conversion SSOT (`rgbToHex`, `hexToRgb`, `hexToRgba`).
+- `vctrl_component_library.js` & `vctrl_component_inserter.js` own component library categories, search filtering, canvas drop coordinates, and dynamic object insertion.
+- `vctrl_pdf_exporter.js` owns multi-screen batch PDF export based on `metadata.json` `screenOrder`, long-canvas captures, and progress modal management.
+- `vctrl_presentation_pen.js` owns real-time presentation drawing canvas (laser pointer & highlighter pen) activated when holding `Shift` in fullscreen (`F`) mode.
+- **Offline Build Pipeline**:
+  - Whenever modifying `assets/templates/*.html`, developers must run `powershell -ExecutionPolicy Bypass -File scripts/build_templates.ps1` to recompile `assets/templates.js`.
+  - Whenever modifying `assets/ui_library/*.html` (cards, panels, modals), run `powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1` to update `assets/ui_library_fallback.js`.
 
 
 ## Communication & Scripting Safety
@@ -23,7 +32,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **Nested Backtick Precaution**: `vctrl_core.js`의 `v4Script` 또는 인라인 주입 스크립트와 같이 백틱(`)으로 감싸진 템플릿 리터럴 내부에서 다시 백틱이나 변수 보간(`${}`)을 사용하면 구문 에러(SyntaxError)가 발생한다. 내부에서는 반드시 일반 따옴표(`"` 또는 `'`)와 덧셈 연산자(`+`)를 사용하거나 이스케이프(`\``) 처리를 해야 한다.
 - **Iframe State Initialization**: iframe 컨텍스트에서는 부모 창의 전역 변수(예: `window.state`)가 자동으로 공유되지 않는다. iframe 내부에 주입되는 스크립트(예: `vctrl_undo.js`)에서 상태를 참조하거나 저장할 때는 반드시 참조 전 초기화 여부(예: `if (!window.state) window.state = {};`)를 확인하여 `TypeError`를 방지하라.
 - **iframe 하위 스크립트 모듈화 및 동적 컴파일 (Modular Iframe Scripts & Dynamic Compilation)**:
-  - iframe의 `srcdoc`에 주입되는 스크립트는 기능별 모듈 파일(`vctrl_undo.js`, `vctrl_design_system.js`, `vctrl_shortcuts.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_script.js` 등)로 완전 분리 관리된다.
+  - iframe의 `srcdoc`에 주입되는 스크립트는 19개 도메인 모듈 파일(`vctrl_typography.js`, `vctrl_undo.js`, `vctrl_table.js`, `vctrl_text_measurer.js`, `vctrl_ui_atoms.js`, `vctrl_design_system.js`, `vctrl_shortcuts.js`, `vctrl_common.js`, `vctrl_object_shape.js`, `vctrl_object_connector.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_ports.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_tab.js`, `vctrl_responsive_smartguide.js`, `vctrl_responsive_pins.js`, `vctrl_responsive_multiselect.js`, `vctrl_iframe_script.js`)로 완전 분리 관리된다.
   - `vctrl_core.js`의 `loadScreen()` 시점에 이 분리된 파일들을 동적으로 결합(Compile)하여 iframe의 `srcdoc` 내부 `<script>` 영역에 순서대로 주입한다.
   - **자동 캐시 무효화 (Auto Cache Busting)**: 빌드 시점에 결합되는 스크립트 블록 최상단에 `Date.now()` 타임스탬프 난수가 담긴 버스터 주석(`// Cache Buster Timestamp: ...`)을 함께 인라인 주입하므로, 개발자는 쿼리스트링 버전을 매번 수동 범프할 필요가 없으며 로드 시마다 캐시 무효화가 자동으로 일어난다.
 - **크로스 스크린 복사/붙여넣기 (Cross-Screen Clipboard Sync)**:
@@ -40,7 +49,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **SmartGuide Anchor Compensation**: For `.text-marker`, all objects are now Top-Left oriented. When calculating `calculateSnap()` bounding boxes, coordinates are relative to the component's top-left corner without the legacy center-offset transform.
 - **데이터 기반 정밀 연산 (Pure Data / No-Measure Strategy)**: 다중 선택 그룹화, 이동, 정렬 시 브라우저의 `getBoundingClientRect()`는 줌이나 테두리에 의해 오차가 발생할 수 있으므로 가급적 지양한다. 대신 객체의 **`style.left/top` 데이터**를 직접 읽어와 산술 연산하는 방식을 우선한다.
 - **캔버스 1:1 픽셀 매핑 및 텍스트 100% 선명도 보장 원칙 (Crisp Typography & Subpixel Integrity)**:
-  - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_v3.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 한다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단한다.
+  - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_canvas_viewport.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 한다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단한다.
   - **정수 픽셀 정렬 (`Math.round`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `Math.round()`를 거쳐 소수점 픽셀(`translate(12.35px)`)을 완전 제거하고 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 한다.
   - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 유지하여 12px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장한다.
 - **Group-Aware State Sync**: 요소가 그룹화되어 계층 구조가 변경되더라도 `metadata.json`에 저장되는 데이터는 항상 **전체 스크린(body) 기준의 절대 좌표(px)**를 유지해야 한다. 그룹 내 자식 요소의 뷰포트 좌표를 실시간 역산하여 전역 데이터로 동기화(`LF_UPDATE_PIN_POS` 등)해야 한다.
@@ -90,7 +99,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - 반응형 화면: 활성 프레임의 현재 스크롤(`scrollTop`)과 뷰포트 높이(`clientHeight`)를 기반으로 현재 시야 정중앙(`viewCenterY = scrollTop + clientHeight/2`)에 바운딩 박스 중심을 정렬.
   - 일반 화면: 캔버스 줌/팬 좌표(`state.transform`)를 역연산하여 사용자 화면 중심에 정렬.
   - 다중 선택 및 그룹의 상대 좌표 간격(`relX`, `relY`)을 1:1로 온전히 보존.
-- **Canvas Subpixel Jitter Protection (`vctrl_v3.js`)**:
+- **Canvas Subpixel Jitter Protection (`vctrl_canvas_viewport.js`)**:
   - `centerView()` 연산 시 100% 배율 근처(0.96x 이상)는 정확히 `scale: 1.0`으로 스냅하고, `translate` 좌표를 `Math.round()` 정수 픽셀로 고정하여 iframe 내부 텍스트의 래스터화 블러를 원천 방지한다.
 - **Dedicated Responsive SmartGuide Engine (`vctrl_responsive_smartguide.js` & `vctrl_shortcuts.js`)**:
   - **Frame Boundary 4-Wall Distance**: 프레임 내부 오브젝트 이동 시 상/하/좌/우 4방향 테두리(`wall-left`, `wall-right`, `wall-top`, `wall-bottom`)와의 물리적 거리를 픽셀 단위로 정밀 측정하여 실시간 핑크 뱃지 및 가이드선을 표시한다.

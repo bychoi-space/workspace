@@ -1,6 +1,6 @@
 # bychoi workspace를 위한 Antigravity / Gemini 에이전트 제약 조건
 
-## 🤖 Gemini 3.7 Flash / Antigravity 에이전트 가이드라인
+## 🤖 Gemini 3.8 Flash / Antigravity 에이전트 가이드라인
 - **자율 실행 및 로컬 자체 완결 (Autonomous Local Execution)**: 사용자의 수동 승인(Accept / Submit / Run Confirm) 절차를 완전히 배제하고 작업 속도를 극대화하기 위해, PowerShell 명령어 실행(`run_command`), 코드 수정, 파일 생성, 정적 검증, 디버깅 등의 모든 작업은 중간 질문이나 사용자 확인 대기 없이 에이전트가 자체 판단하여 무조건 자동으로 즉시 실행하고 로컬에서 끝까지 완결 후 결과만 명확히 보고합니다.
 - **PowerShell / 터미널 작업 무조건 자동 실행 (Unconditional Auto-Run)**: 터미널 명령어나 검증 스크립트 실행 시 사용자에게 확인을 요청하지 않고 자율적으로 즉시 구동하여 신속하게 문제 해결 및 검증을 완료합니다.
 - **온디맨드 자동 GitHub 배포 (Automated On-Demand Deployment)**: GitHub 원격 저장소(`main`)로의 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 즉시 자동으로 커밋 및 푸시하여 동기화를 완료합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지하며, 브라우저 UI 측의 자동 저장 커밋으로 인한 충돌을 방지하기 위해 푸시 전 항상 `git pull --rebase origin main`을 선행하여 안전하게 동기화합니다.)
@@ -10,11 +10,17 @@
 
 ## 🛠️ 기술 스택 및 아키텍처 (엄격한 규칙)
 - **Vanilla JS 전용**: 프레임워크(React, Vue 등)를 절대 사용하지 마세요. 코드는 가볍고 직관적으로 유지해야 합니다.
-- **단일 진실 공급원 (SSOT)**: 모든 프로젝트 상태(화면 목록, 순서, 설명 등)는 각 개별 프로젝트 폴더의 `metadata.json`(예: `data/p_xxxx/metadata.json`)에서만 배타적으로 관리되어야 합니다. (전역 공유 `data/metadata.json`은 사용하지 않습니다.)
+- **단일 진실 공급원 (SSOT)**: 모든 프로젝트 상태(화면 목록, 설명, 핀 어노테이션, 그리고 화면의 실제 순서 배열인 `screenOrder` 등)는 각 개별 프로젝트 폴더의 `metadata.json`(예: `data/p_xxxx/metadata.json`)에서만 배타적으로 관리되어야 합니다. 화면 추가, 복제, 삭제, 순서 변경 시 `metadata.json`의 `screenOrder` 배열을 반드시 함께 갱신해야 합니다. (전역 공유 `data/metadata.json`은 사용하지 않습니다.)
 - **모듈러 아키텍처 (Modular Architecture)**: 엔진 안정성과 확장성을 위해 역할을 엄격히 분리합니다.
   - **`vctrl_core.js` (Core Orchestrator - Parent Side)**:
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, GitHub API 연동(저장/로드), `MessageHub`를 통한 모듈 간 조율, 스크린 로딩 및 내비게이션 보호 로직 담당.
-    - **참고**: 스크린 로드 시점에 분리된 여러 iframe 하위 스크립트 모듈들(`vctrl_undo.js`, `vctrl_design_system.js`, `vctrl_shortcuts.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_script.js` 등)을 동적으로 결합/컴파일하여 iframe `srcdoc`에 주입합니다.
+    - **참고**: 스크린 로드 시점에 분리된 19개 iframe 하위 스크립트 모듈들(`vctrl_typography.js`, `vctrl_undo.js`, `vctrl_table.js`, `vctrl_text_measurer.js`, `vctrl_ui_atoms.js`, `vctrl_design_system.js`, `vctrl_shortcuts.js`, `vctrl_common.js`, `vctrl_object_shape.js`, `vctrl_object_connector.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_ports.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_tab.js`, `vctrl_responsive_smartguide.js`, `vctrl_responsive_pins.js`, `vctrl_responsive_multiselect.js`, `vctrl_iframe_script.js`)을 동적으로 결합/컴파일하여 iframe `srcdoc`에 순서대로 주입합니다.
+  - **`vctrl_screen_manager.js` (Screen Manager - Parent Side)**:
+    - **역할**: 화면 순서 변경(`screenOrder`), 화면 추가(`+`), 복제, 삭제, 활성 스크린 전환 및 메타데이터 저장 동기화를 전담합니다.
+  - **`vctrl_canvas_viewport.js` (Canvas Viewport Engine - Parent Side)**:
+    - **역할**: 시스템의 '손'. 캔버스 줌(`adjustZoom`), 팬(`updateTransform`), 화면 맞춤/100% 뷰 스냅(`toggleCrispView`, `centerView`), 스페이스바 패닝, 풀스크린 토글 및 전역 뷰포트 상태 관리. (기존 레거시 `vctrl_v3.js`는 폐기되고 본 모듈로 전면 대체되었습니다.)
+  - **`vctrl_annotation_pins.js` / `vctrl_responsive_pins.js` (Annotation Engine)**:
+    - **역할**: 일반 캔버스 및 반응형 프레임 내 핀 번호 어노테이션 마커 렌더링, 위치 추종 및 메타데이터 동기화 전담.
   - **`vctrl_connectors.js` (Connector Engine - Parent Side)**:
     - **역할**: 선/커넥터(`Line (Straight)`, `Line (Elbow)`) 전용 엔진. 캔버스 중앙 생성(`spawnLine`), 30px 자석 스냅(`collectSnapTargets`), 포트 하이라이트, 컴포넌트 이동 시 실시간 앵커 추종(`syncAnchoredPositions`) 및 인스펙터 패널 연동 전담.
   - **`vctrl_iframe_ports.js` (Port Engine - Iframe Side)**:
@@ -23,8 +29,8 @@
     - **역할**: 시스템의 '근육'. iframe 내부의 DOM 직접 조작, 기본 이벤트 리스너 바인딩, 커넥터 조작 핸들 이벤트 디스패칭(`LF_CONNECTOR_HANDLE_MOVE`) 등을 전담합니다.
   - **`vctrl_iframe_drag.js` (Drag/Resize Engine - Iframe Side)**:
     - **역할**: iframe 내부 요소의 마우스 드래그 이동 및 리사이즈 조작 인터랙션을 전담합니다.
-  - **`vctrl_iframe_grid.js` / `vctrl_iframe_accordion.js` / `vctrl_v4_addon.js` / `vctrl_object_shape.js` / `vctrl_object_connector.js`**:
-    - **역할**: 특수 쉐입, 커넥터 객체, 그리드 테이블 및 아코디언 계층 구조 컴포넌트의 전용 동적 렌더링 및 스타일 핸들링을 분리 전담합니다.
+  - **`vctrl_iframe_grid.js` / `vctrl_iframe_accordion.js` / `vctrl_iframe_tab.js` / `vctrl_v4_addon.js` / `vctrl_object_shape.js` / `vctrl_object_connector.js`**:
+    - **역할**: 특수 쉐입, 커넥터 객체, 그리드 테이블, 아코디언, 탭 계층 구조 컴포넌트의 전용 동적 렌더링 및 스타일 핸들링을 분리 전담합니다.
   - **`vctrl_undo.js` (Undo Layer - Iframe Side)**:
     - **역할**: iframe 내부의 V4UndoManager 및 Undo/Redo 로컬 상태 관리를 전담합니다.
   - **`vctrl_design_system.js` (Design Observer - Iframe Side)**:
@@ -33,10 +39,19 @@
     - **역할**: 키보드 핫키 단축키 바인딩 및 크로스 스크린 복사/붙여넣기 연동을 전담합니다.
   - **`vctrl_grouping.js` (Interaction Layer)**:
     - **역할**: 다중 요소 관리자. 드래그 범위 선택(Marquee), 다중 선택 상태(`selectedIds`), 그룹 이동/삭제/그룹화 연산 로직 전담.
-  - **`vctrl_inspector.js` (UI Controller)**:
-    - **역할**: 시스템의 '얼굴'. 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 관리.
-  - **`vctrl_v3.js` (Utility Layer)**:
-    - **역할**: 시스템의 '손'. 캔버스 조작(줌/팬), 장치 뷰포트 변경, 유틸리티 함수 및 레거시 어노테이션 관리.
+  - **`vctrl_inspector.js` 및 `assets/inspector/*` (UI Controller & Domain Inspectors)**:
+    - **역할**: 시스템의 '얼굴'. `vctrl_inspector.js`는 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 및 플로팅 카드를 총괄하며, 각 컴포넌트별 상세 속성 제어는 분리된 도메인 인스펙터(`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`)가 전담합니다.
+  - **`vctrl_common.js` (Common Bus & Utilities)**:
+    - **역할**: 부모-Iframe 통신 인터페이스인 `window.EditorBus`(`sendToIframe`, `sendToParent`) 및 공통 색상 유틸리티(`rgbToHex`, `hexToRgb`, `hexToRgba`)의 단일 진실 공급원(SSOT).
+  - **`vctrl_component_library.js` & `vctrl_component_inserter.js` (Library & Insertion Engine)**:
+    - **역할**: 사이드바 라이브러리 목록 렌더링, 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성을 전담합니다.
+  - **`vctrl_pdf_exporter.js` (PDF Export Engine)**:
+    - **역할**: `metadata.json`의 `screenOrder` 기준 전체 스크린 일괄 고해상도 PDF 결합 생성 및 장문 캔버스 캡처 전담.
+  - **`vctrl_presentation_pen.js` (Presentation Drawing Engine)**:
+    - **역할**: 풀스크린 모드(`F`)에서 `Shift` 키 홀드 시 캔버스 형광펜/레이저 포인터 실시간 드로잉 인터랙션 전담.
+- **오프라인 템플릿 및 UI 라이브러리 빌드 파이프라인 (Offline Build Pipeline SSOT)**:
+  - `assets/templates/*.html`을 추가/수정했을 때는 반드시 **`powershell -ExecutionPolicy Bypass -File scripts/build_templates.ps1`**을 실행하여 `assets/templates.js` 번들을 재컴파일해야 오프라인(`file://`) 환경에서 즉시 반영됩니다.
+  - `assets/ui_library/*.html` (atomic_cards, icon_cards, inspector_panels, modals)을 수정했을 때는 반드시 **`powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1`**을 실행하여 `assets/ui_library_fallback.js`를 재컴파일해야 합니다.
 - **인코딩 보안 규칙 (Encoding Safety)**: 
   - **금지**: 소스 코드 내부에 하드코딩된 한글 문자열 사용을 지양합니다. 파일 저장 시 인코딩 변환 문제로 코드가 깨지는 것을 방지해야 합니다.
   - **권장**: UI에 노출되는 특수문자는 반드시 HTML 엔티티(`&times;` 등)를 사용하고, 경고 문구 등은 ASCII 안전 문자열로 작성하거나, 수정 시 파일 인코딩이 `UTF-8`로 유지되는지 엄격히 확인하세요.
@@ -62,7 +77,7 @@
 - **캔버스 크기**: 에디터 화면(`lf-canvas` 또는 `page`)의 크기는 레이아웃 틀어짐을 방지하기 위해 'Cover' 화면 크기(예: 1600x900)와 완벽하게 일치해야 합니다. (기존 1440x900 레거시 스크린은 로드 시 자동 감지되어 1440px 뷰포트로 안전하게 렌더링됨)
 - **타이포그래피 가이드 및 텍스트 100% 선명도 유지 원칙 (Crisp Typography & Subpixel Integrity Protocol)**:
   - **폰트 크기 표준**: 대분류 타이틀: `18px` ~ `20px` / 중분류 헤더: `15px` ~ `16px` / 본문: `14px` ~ `15px` / 부가 설명: `13px` / 최소 단위: `12px`
-  - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 합니다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단합니다.
+  - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_canvas_viewport.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 합니다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단합니다.
   - **정수 픽셀 정렬 (`Math.round`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `Math.round()`를 거쳐 소수점 픽셀(`translate(12.35px)`)을 완전 제거하고 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 합니다.
   - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 유지하여 12px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장합니다.
   - **블러 필터 지양**: `backdrop-filter: blur(...)`와 같이 캔버스 줌/스케일 환경에서 텍스트 래스터화를 뭉개는 필터 속성은 텍스트 영역에 사용을 금지합니다.
@@ -80,7 +95,7 @@
   - 2. **키보드 이동 보장**: 화살표 키(`ArrowUp` 등)를 통해 픽셀 단위로 상하좌우 이동이 가능해야 합니다.
   - 3. **Delete 삭제 보장**: 사이드바 버튼 외에도 `Delete` 또는 `Backspace` 키보드 입력만으로 즉시 삭제되어야 합니다.
   - 4. **Ctrl+Z (Undo) 보장**: 모든 객체의 이동, 생성, 삭제, 그룹화 동작은 `V4UndoManager.saveState()`를 거쳐 실행 취소가 가능해야 합니다.
-  - 5. **Ctrl+C / Ctrl+V 복사 및 붙여넣기 보장 (크로스 스크린 지원)**: 서로 다른 스크린 iframe 간 복사/붙여넣기를 지원하기 위해 `window.top.__lf_global_clipboard__`를 전역 클립보드 SSOT로 사용합니다. 복사 시 선택된 최상위 객체들을 JSON으로 직렬화하여 저장하고, 붙여넣기 시 겹침 방지 오프셋(+15px)을 적용해 복제 생성한 뒤 새로 생성된 객체들만 자동으로 선택(`.selected`) 상태로 전환해야 합니다. 핀마커 복사 시 순번 재정렬 및 부모 연동, 글 편집 시 텍스트 복사 우선권 보장 규칙을 준수합니다.
+  - 5. **Ctrl+C / Ctrl+V / Ctrl+X 복사, 붙여넣기, 잘라내기 보장 (크로스 스크린 지원)**: 서로 다른 스크린 iframe 간 복사/붙여넣기를 지원하기 위해 `window.top.__lf_global_clipboard__`를 전역 클립보드 SSOT로 사용합니다. 복사 시 선택된 최상위 객체들을 JSON으로 직렬화하여 저장하고, 붙여넣기 시 겹침 방지 오프셋(+15px)을 적용해 복제 생성한 뒤 새로 생성된 객체들만 자동으로 선택(`.selected`) 상태로 전환해야 합니다. `Ctrl+X` 시 복사 후 원본을 즉시 삭제합니다.
   - 6. **Ctrl+S 전체저장 보장**: 포커스 위치에 관계없이 캔버스 내부 단축키 입력 시 즉시 툴바의 전체저장(`handleGlobalSave`)이 실행되도록 부모 창으로 이벤트를 프록시 토스해야 합니다.
   - 7. **오브젝트 프로퍼티 플로팅 카드 (Object Properties Floating Card) 및 다중 선택**:
     - **플로팅 연동**: 선택 활성화 시 `#floating-inspector-card`가 노출되며, 현재 활성화된 속성 편집 섹션(예: `text-editor-section`) 및 툴바(`#selection-actions-bar`)가 `#floating-inspector-body` 내부로 동적으로 이동(`appendChild`)되어야 합니다.
@@ -94,6 +109,19 @@
     - F2 키 입력 시 선택 모드(키보드 이동/삭제가 가능하며 텍스트 편집이 비활성화된 상태)와 텍스트 편집 모드(요소의 `contenteditable`이 true가 되고 캐럿이 깜빡이는 상태)가 상호 전환(Toggle)되어야 합니다.
     - **포커스 스왑 제어**: 텍스트 편집 모드로 진입 시, 브라우저 보안 및 포커스 격리를 극복하기 위해 `contenteditable` 영역을 포커스하기 전 반드시 iframe 자체(`window.top`에서 iframe 요소를 찾아서 `.contentWindow.focus()`) 또는 iframe 내부 `window.focus()`를 먼저 호출한 뒤 대상 요소를 포커스해야 캐럿(Caret)이 정상적으로 노출됩니다.
     - **입력 필드 예외 처리 (Keydown Hijacking 방지)**: 부모 창 또는 사이드바(Quill Editor 등)의 입력 폼에 포커스된 상태에서 키보드 이벤트가 가로채지는 문제를 막기 위해, 부모 keydown 리스너의 `isInput` 판단 분기문 시작 지점 등에서 `F2` 키 입력을 최우선적으로 가드하여 무조건 동작하도록 설계해야 합니다. 또한 IME 한글 입력 중 중복 이벤트를 방지하기 위해 `isComposing` 상태 체크 및 `e.key === 'F2'`와 `e.code === 'F2'` 검증을 동시에 거쳐야 합니다.
+  - 9. **레이어 순서 제어 (Layer Ordering Shortcuts)**: `Ctrl + ]` (맨 앞으로 가져오기 / `LF_BRING_FRONT`), `Ctrl + [` (맨 뒤로 보내기 / `LF_SEND_BACK`) 단축키를 완벽 지원합니다.
+  - 10. **그룹화 제어 (Grouping Shortcuts)**: `Ctrl + G` (그룹화), `Ctrl + Shift + G` (그룹 해제)를 지원합니다.
+  - 11. **실행 취소 / 재실행 (Undo / Redo Shortcuts)**: `Ctrl + Z` (실행 취소), `Ctrl + Y` 및 `Ctrl + Shift + Z` (다시 실행)를 지원합니다.
+  - 12. **캔버스 뷰포트 및 도구 단축키 (Parent Viewport Shortcuts)**:
+    - `Space`: 누르고 있는 동안 임시 핸드 툴(패닝) 활성화, 떼면 복귀.
+    - `1` 또는 `Home`: 100% 선명 뷰 ↔ 화면 맞춤(Fit) 모드 즉시 전환 (`toggleCrispView`).
+    - `F`: 풀스크린 모드 토글 (`toggleFullscreen`).
+    - `R`: 우측 사이드바 패널 열기/닫기 토글 (`toggleSidebar('right')`).
+    - `V`: 선택 도구 모드, `H`: 핸드 도구 모드, `T`: 원터치 텍스트 생성.
+    - `Shift + G`: 반응형 프레임 격자무늬(Grid) On/Off 토글.
+    - `Shift + Arrow`: 화살표 이동 시 10px 고속 이동 (일반 Arrow는 1px 정밀 Nudge).
+    - `Escape`: 인라인 텍스트 편집 탈출 및 오브젝트 다중 선택 일괄 해제.
+    - `Shift + Drag (풀스크린 모드)`: 프레젠테이션 형광펜/레이저 포인터 드로잉.
 - **통합 좌표 및 단위 표준 (Unified Coordinate Standards)**:
   - **No-Measure 전략**: 브라우저의 `getBoundingClientRect()` 대신 객체의 `style.left/top` 데이터가 Single Source of Truth(SSOT)가 되도록 합니다.
   - **Pure Data 연산**: 모든 이동/정렬 연산은 순수 픽셀(`px`) 산술로 수행하여 줌이나 레이아웃 방식에 영향을 받지 않는 절대적인 정확도를 보장합니다.
@@ -121,8 +149,8 @@
 - **도형 텍스트(SHAPE Text) 여백 핏(Fit) & 렌더링 아키텍처 정밀 규격 수칙 (SSOT)**:
   - **1. 명칭 및 기획 정의**: 우측 사이드바 `SHAPE` 카테고리의 첫 번째 항목인 **`T (Text)` (도형 텍스트)**를 가리키며, `ATOMIC LIBRARY`의 첫 번째 항목인 **`Textbox` (텍스트박스 아톰)**와 엄격하게 구분한다. 내부 클래스명인 `.v4-text-box`와 상관없이 UI 상의 명칭은 반드시 **'도형 텍스트'**로 통일한다.
   - **2. 핵심 소스코드 수정 위치 (File Map)**:
-    - **[assets/vctrl_text_measurer.js](file:///c:/ai-work/assets/vctrl_text_measurer.js)**: 전략/디스패처(Strategy/Dispatcher) 패턴 기반의 컴포넌트 타입 분류기(`getComponentType`), 순수 오프스크린 측정 코어(`measureCellTextDimensions`), 그리고 타입별 100% 독립 전용 처리 엔진(`fitStandaloneTextShape`, `fitTextBox`, `fitShapeText`, `fitDefaultCell`)으로 텍스트 동적 테두리 피팅을 수행하는 핵심 로직 소유 파일.
-    - **[assets/vctrl_iframe_styles.js](file:///c:/ai-work/assets/vctrl_iframe_styles.js)**: 셀 기본 패딩(`padding: 4px !important;`) 및 FLEX 대칭 정렬 CSS 규칙 소유 파일.
+    - **[assets/vctrl_text_measurer.js](file:///c:/Users/sisun/ai_work/assets/vctrl_text_measurer.js)**: 전략/디스패처(Strategy/Dispatcher) 패턴 기반의 컴포넌트 타입 분류기(`getComponentType`), 순수 오프스크린 측정 코어(`measureCellTextDimensions`), 그리고 타입별 100% 독립 전용 처리 엔진(`fitStandaloneTextShape`, `fitTextBox`, `fitShapeText`, `fitDefaultCell`)으로 텍스트 동적 테두리 피팅을 수행하는 핵심 로직 소유 파일.
+    - **[assets/vctrl_iframe_styles.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_styles.js)**: 셀 기본 패딩(`padding: 4px !important;`) 및 FLEX 대칭 정렬 CSS 규칙 소유 파일.
   - **3. 정밀 박스-모델 수치 및 산술 공식 (Exact Math Spec)**:
     - **기본 차감 픽셀**: `box-sizing: border-box` 스펙 상 `1.6px` 보더(양쪽 3.2px) + `4px` 셀 패딩(양쪽 8.0px) = **`11.2px` 기본 차감**.
     - **순수 도형 텍스트(`isStandaloneTextShape`) 버퍼 할당**:
@@ -155,7 +183,15 @@
 - **Pure MessageHub Architecture**: 부모 창의 오케스트레이터에서 iframe 내부 요소에 절대로 직접 접근(`contentDocument`)해서는 안 됩니다. 반드시 `MessageHub`를 통해 메시지를 보내고, Iframe 내부 스크립트(`vctrl_iframe_script.js`)가 처리를 위임받아 실행하도록 설계해야 합니다.
 - **명령어 유연성 (Case-Insensitivity)**: `MessageHub`를 통해 전달되는 모든 액션 명령어는 대소문자를 구분하지 않으며, 하이픈(`-`)과 언더바(`_`)를 모두 수용하도록 정규화하여 처리합니다.
 
-## 📐 스크린 에이전트 직접 빌드 시 유의사항 (PPT 1대1 싱크 규칙)
+## 📐 스크린 에이전트 직접 제작/빌드 시 6대 불변 대원칙 (Screen Authoring Standards)
+> AI가 사용자 요청으로 워크스페이스 에디터의 스크린(HTML)을 직접 그릴 때는 반드시 `workspace-editor-screen-authoring` 스킬과 아래 6대 원칙을 100% 준수해야 합니다.
+> - **참조 벤치마크 스크린**: [10_Product_Ranking_Rules_850.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/10_Product_Ranking_Rules_850.html), [01_Benchmark_Report_382.html](file:///c:/Users/sisun/ai_work/data/p_bujl8/01_Benchmark_Report_382.html)
+- **1. 사실 기반 데이터 전용 (Fact-based Data Only)**: 무조건 사실 기반 데이터로만 스크린을 그린다. 거짓된 데이터나, AI가 상상하는 값을 수치화로 넣지 않는다. (환각 금지, 기획서/요청 데이터 100% 팩트 기반)
+- **2. LIBRARY 표준 오브젝트 100% 활용 (Native Library Objects Only)**: 스크린에 존재하는 모든 오브젝트는 LIBRARY에 존재하는 도형(`.v4-shape`), 아톰, 아이콘(`.lf-icon` SVG)을 활용한다. 비표준 임의 HTML 태그나 커스텀 스타일 클래스는 금지한다.
+- **3. 최소 단위 원자적 분리/파편화 (Atomic Granularity & Separation)**: 스크린을 구성하는 오브젝트는 최소 단위로 잘게 쪼개져서 파편화되어야 한다. 사용자가 캔버스 위에서 직접 내용을 클릭하여 수정하기 원활하게 하기 위함이다. 카드 1개를 구성하더라도 [배경 쉐입] + [독립 아이콘] + [독립 타이틀] + [독립 뱃지] + [독립 설명]으로 각각의 `.lf-component`로 완전 분리 배치해야 한다.
+- **4. 텍스트 폰트 크기 최소 12px 이상 (Min Font-Size >= 12px)**: 스크린의 텍스트 폰트 크기는 최소 12px 이상으로만 구성한다. 그 이하(10px, 11px 등)의 폰트 크기는 가독성을 저하시키므로 절대 사용하지 않는다.
+- **5. 간결하고 깔끔한 레이아웃 (Concise & Clutter-Free Layout)**: 스크린은 최대한 깔끔하게 구성되어야 하고, 불필요하게 많은 텍스트는 지양한다. 반드시 필요한 내용으로만 구성하고 중복되는 내용은 지양하며, 1600x900 단일 캔버스 내에서 스크롤 없이 완결되는 레이아웃을 구성한다.
+- **6. 절제된 컬러 및 포인트 강조 (Restrained Color Palette & Strategic Accent)**: 컬러를 너무 다양하게 사용하지 않는다. 뉴트럴 톤(배경 #f8fafc/#ffffff, 보더 #e2e8f0, 텍스트 #0f172a)을 기본으로 하고, 매우 중요해서 강조되어야 하는 부분에만 중점적으로 1~2개의 포인트 컬러(블루, 그린, 핑크 등)를 전략적으로 사용한다.
 - **임의의 기획 요약 및 누락 절대 금지 (1:1 Text & Data Match)**:
   - 원본 PPT(슬라이드) 또는 가이드 이미지를 바탕으로 스크린을 자동 생성할 때, 기획서의 핵심 데이터를 임의로 축소, 생략하거나 대체 텍스트로 요약하는 것을 전면 금지합니다.
   - 슬라이드 속의 복잡한 표(Table)나 수치, 데이터 및 설명 텍스트는 **단 한 글자의 누락도 없이 100% 동일하게** 에디터 객체(`.lf-component`)로 코딩하여 완벽히 이식해야 합니다.
@@ -189,7 +225,7 @@
 - **정밀 분석 후 실행**: 작업을 시작하기 전 픽셀 단위까지 분석하고 '단 한 번에 확실하게' 진행하세요.
 - **회귀 방지 (Regression Guard)**: 엔진 수정 후에는 '스크린 추가', '전체 저장', '삭제' 등 핵심 UI 로직이 여전히 정상 동작하는지 코드 무결성을 철저히 검토하세요.
 - **인코딩 깨짐 주의**: 대량의 텍스트 교체 시 한글 문자열이 깨지지 않도록 도구 사용에 주의하고, 수정 후에는 `Select-String` 등을 통해 의도치 않은 깨짐 문자가 없는지 확인하세요.
-- **브래킷(괄호) 매칭 무결성 상시 검사**: 엔진 및 에디터 코드에 중첩 조건문, 삼항 연산식, 중괄호 블록 등을 대량 수정한 후에는 반드시 `check_syntax.ps1` 스크립트를 구동하여 브래킷 불일치로 인한 `SyntaxError`가 존재하지 않는지 엄격히 검증하여 배포해야 합니다.
+- **브래킷(괄호) 매칭 무결성 상시 검사**: 엔진 및 에디터 코드에 중첩 조건문, 삼항 연산식, 중괄호 블록 등을 대량 수정한 후에는 반드시 `scripts/check_syntax.ps1` 스크립트를 구동하여 브래킷 불일치로 인한 `SyntaxError`가 존재하지 않는지 엄격히 검증하여 배포해야 합니다. 필요시 `scripts/verify_all.ps1`을 통해 실제 브라우저 엔진(Edge headless) 상의 전수 구문 적합성을 보강 검증합니다.
 - **중첩 삼항 연산자(Nested Ternaries) 지양 및 분기문 최적화**: 가독성을 해치고 브래킷 매칭 오류(SyntaxError)를 유발하기 쉬운 다중 중첩 삼항 연산자 대신 명확한 `if - else if` 분기 또는 매핑 객체(Dictionary)를 사용하세요. 특정 모듈(예: `vctrl_inspector.js`)의 SyntaxError로 인해 객체(예: `DOM`)가 생성되지 못하면, 이를 의존하는 다른 모듈들까지 `ReferenceError`로 작동을 멈추는 연쇄 장애가 발생하므로 구문 오류 예방에 최우선적으로 집중해야 합니다.
 - **템플릿 리터럴 내 문자열 이스케이프 및 결합 표준**: `vctrl_iframe_script.js`와 같이 파일 전체가 큰 백틱(`` ` ``) 템플릿 문자열로 감싸진 채 부모 측 브라우저에서 동적으로 평가(eval)되는 파일의 경우, 내부 코드에서 또다시 백틱(`` ` ``)이나 변수 보간(`${}`) 구문을 사용하면 문법 충돌(SyntaxError)이 일어나 작동이 중단됩니다. 이를 방지하기 위해 내부 문자열 표현은 반드시 표준적인 따옴표(싱글/더블)와 덧셈 연산자(`"Sub Item " + (i + 1)`)를 활용해 문자열을 결합해야 합니다.
 - **신규 아톰 추가 시 옵션 프로퍼티 플로팅 카드 통합 규칙**: 신규 아톰의 설정 패널을 디자인할 때는 우측 사이드바가 아닌 옵션 프로퍼티 플로팅 카드(`Object Properties Floating Card`)에 노출되도록 `vctrl_inspector.js` 내의 `DOM` 매핑 등록, `restorePropertiesSections` 복원 대상 등록, `updateProperties`의 보이기/숨기기 처리 및 선택 해제(Deselect) 시 숨김 처리를 빠짐없이 세트로 적용하여 사이드바에 옵션 패널이 잔존하는 버그를 원천 차단해야 합니다.
@@ -208,15 +244,16 @@
   - **PC → Mobile 복사 시**: Mobile 프레임 폭(`360px`)을 초과하는 대형 컴포넌트는 `width: 330px`로 자동 클램핑되고 `left` 좌표가 내부로 안전하게 보정된다.
   - **Mobile → PC 복사 시**: 1160px 너비의 넓은 PC 캔버스에 원본 비율과 오프셋을 유지하며 매끄럽게 안착된다.
   - **뷰포트 정중앙 계산**: 복사된 오브젝트(또는 다중 선택 그룹)의 바운딩 박스 중심을 계산하여, 현재 스크롤 위치(`scrollTop`)와 뷰포트 높이(`clientHeight`)의 정중앙에 정확히 배치하며 내부 상대 좌표를 1:1로 보존한다.
-- **4. 상단 라벨바(`.frame-label-bar`) 폰트 번짐 방지 및 다크 테마 표준**:
+- **4. 상단 라벨바(`.frame-label-bar`) 규격 및 다크 테마 표준**:
   - `backdrop-filter: blur(...)` 속성은 캔버스 줌/스케일 환경에서 GPU 서브픽셀 래스터화 블러를 유발하므로 절대 사용하지 않는다.
-  - 배경은 `#141720` 솔리드 다크 테마를 사용하고, 폰트 두께는 가독성을 극대화한 `600 (SemiBold)`과 `-webkit-font-smoothing: antialiased`를 필수 적용한다.
+  - 배경은 `#141720` 솔리드 다크 테마, 보더는 `1.6px solid rgba(255, 255, 255, 0.12)`, 높이 `32px`, 패딩 `0 12px`, 모서리 `8px` 둥글기를 적용한다.
+  - 폰트 두께는 가독성을 극대화한 `600 (SemiBold)`과 `-webkit-font-smoothing: antialiased`를 필수 적용한다.
 - **5. 반응형 프레임 스타일 단일 SSOT 수칙 (Single Source of Truth)**:
   - 반응형 프레임 런타임 스타일의 단일 진실 공급원(SSOT)은 `assets/responsive_frame.js` (`window.responsiveFrameStyles`)이다. Iframe 주입 및 렌더링은 이 스크립트 기반으로 동작하며, `assets/responsive_frame.css`는 정적 참조/미러 산출물 역할을 수행한다. 스타일 확장 시 런타임 SSOT인 `responsive_frame.js`를 우선 갱신한다.
 
 ## 🚀 작업 프로세스 및 안정성 대원칙 (CRITICAL)
 1. **고민 (Pondering)** -> 2. **분석 (Analysis)** -> 3. **설계 (Design)** -> 4. **실행 (Execution)** -> 5. **확인 (Verification)** 단계를 엄격히 준수합니다.
-- **[AI 브라우저 직접 검증 절대 금지]**: 에이전트(AI)가 브라우저 자동화 도구(`browser_subagent` 등)를 실행하여 직접 브라우저를 열고 조작/검증하는 행위는 원천 금지합니다. 작업 속도와 리소스 효율을 위해 정밀 소스코드 심층 분석, 브래킷/구문 검사(`check_syntax.ps1` / `node -c`)를 통한 정적 무결성 확보에 집중하며, 브라우저 상의 UI 동작 검증은 사용자가 직접 확인할 수 있도록 점검 절차와 가이드만을 제공합니다.
+- **[AI 브라우저 직접 검증 절대 금지]**: 에이전트(AI)가 브라우저 자동화 도구(`browser_subagent` 등)를 실행하여 직접 브라우저를 열고 조작/검증하는 행위는 원천 금지합니다. 작업 속도와 리소스 효율을 위해 정밀 소스코드 심층 분석, 브래킷/구문 검사(`scripts/check_syntax.ps1` / `node -c` / `scripts/verify_all.ps1`)를 통한 정적 무결성 확보에 집중하며, 브라우저 상의 UI 동작 검증은 사용자가 직접 확인할 수 있도록 점검 절차와 가이드만을 제공합니다.
 - **[무조건적 원복 규칙]**: 논리적 에러나 구문 오류 발견 시 즉시 모든 작업을 중단하고 작업 전 상태로 되돌립니다.
 - **[요청 시 배포 규칙]**: 깃허브(GitHub) 배포(Push)는 반드시 사용자가 명시적으로 배포를 요청할 때만 수행해야 합니다. 개발 안정성 및 롤백 유연성 확보를 위해 임의의 자동 배포는 절대 금지합니다.
 
@@ -236,8 +273,9 @@
   - **다중 컬럼 균등 분할 (Equal Flex Division)**: 컬럼 개수(1~3개)에 따라 각 컬럼의 입력 영역(`.v4-admin-content-cell`)은 `flex: 1 1 0%; min-width: 0;`으로 완전 균등 분할되어 비대칭 왜곡 없이 1:1 (2컬럼) 또는 1:1:1 (3컬럼) 배치가 보장됩니다.
   - **캔버스 인라인 레이블 편집 (Direct Canvas Label Editing)**: 항목명 레이블 셀(`.v4-admin-label-cell`)에 `contenteditable="true"` 및 `v4-editable-cell` 클래스를 부여하여 사용자가 캔버스 위에서 직접 더블클릭/포커스로 라벨명을 편집할 수 있으며, `data-row{i}-label` 속성 및 우측 인스펙터 입력란과 실시간 양방향 동기화됩니다.
   - **그룹 타이틀 (Group Header)**: 인스펙터에서 그룹 타이틀(대제목) 표시 활성화(`adminShowGroupHeader: true/false`), 타이틀 텍스트, 배경색 및 글자색을 커스텀 설정할 수 있으며, 활성화 시 상단에 `40px` 높이의 헤더(`.v4-admin-group-header`, 캔버스 인라인 직접 편집 지원)가 렌더링됩니다.
-  - **행 개수 및 동적 높이 계산**:
-    - 행 개수(Row Count) 조절은 인스펙터의 **`[- 행 삭제]` / `[+ 행 추가]`** 물리 버튼으로 수행합니다.
+  - **행 개수 및 동적 높이 계산 (최대 20개 행 지원)**:
+    - 행 개수(Row Count) 조절은 인스펙터의 **`[- 행 삭제]` / `[+ 행 추가]`** 물리 버튼으로 1행에서 **최대 20행**까지 자유롭게 확장/축소할 수 있습니다.
+    - **행별 세부 옵션**: 각 행마다 레이블 너비 슬라이더(60px ~ 300px, 기본 140px), 개별 행 높이(기본 44px), 컬럼 분할 수(1~3컬럼), 필수 여부(`required` 체크박스)를 독립적으로 제어할 수 있습니다.
     - 컴포넌트의 전체 높이는 **`(각 행별 높이 합산) + (그룹 타이틀 활성화 시 40px)`** 공식에 따라 실시간으로 자동 확장/축소(가변 처리)됩니다.
   - `Query Item` 아톰은 내부 조회 조건 영역(`.v4-admin-content-cell`)이 비어 있는 채로 생성되며, 사용자가 캔버스의 다른 아톰(인풋, 셀렉트박스, 데이트피커 등)을 자유롭게 끌어다 올리는 방식으로 조립합니다.
 - **인스펙터 타이핑 포커스 유지 (Focus Guard)**:

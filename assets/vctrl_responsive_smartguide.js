@@ -137,7 +137,7 @@ window.v4ResponsiveSmartGuideScript = `
                 svg.style.width = '100%';
                 svg.style.height = '100%';
                 svg.style.pointerEvents = 'none';
-                svg.style.zIndex = '99999';
+                svg.style.zIndex = '300000';
                 svg.style.overflow = 'visible';
                 container.appendChild(svg);
             }

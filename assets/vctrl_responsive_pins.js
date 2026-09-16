@@ -383,7 +383,7 @@ window.v4ResponsivePinsScript = `
             window.importResponsivePins(d.pins);
             return;
         }
-        const host = document.body;
+        const host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
         (d.pins || []).forEach(function(pin, idx) {
             let div = document.getElementById('v4-pin-' + idx);
             if (div) return;
@@ -396,6 +396,8 @@ window.v4ResponsivePinsScript = `
             div.className = 'lf-component ' + (isPinType ? 'pin-marker' : 'text-marker');
             
             if (isPinType) {
+                div.setAttribute('data-index', idx);
+                div.setAttribute('data-pin-num', idx + 1);
                 div.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
                                 '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
                 div.style.width = '20px';
@@ -429,7 +431,7 @@ window.v4ResponsivePinsScript = `
             return;
         }
         document.querySelectorAll('.pin-marker, .text-marker').forEach(function(el) { el.remove(); });
-        const host = document.body;
+        const host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
         const pinsList = d.pins || [];
         pinsList.forEach(function(pin, idx) {
             const div = document.createElement('div');
@@ -440,6 +442,8 @@ window.v4ResponsivePinsScript = `
             div.className = 'lf-component ' + (isPinType ? 'pin-marker' : 'text-marker');
             
             if (isPinType) {
+                div.setAttribute('data-index', idx);
+                div.setAttribute('data-pin-num', idx + 1);
                 div.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
                                 '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
                 div.style.width = '20px';

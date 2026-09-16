@@ -678,4 +678,13 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     pointer-events: none !important;
     user-select: none !important;
 }
+
+/* SmartGuide Overlay: Highest Priority Layer above Pins and Components */
+.v4-responsive-guide-layer,
+.pc-guide-layer,
+.mobile-guide-layer,
+.canvas-guide-layer {
+    z-index: 300000 !important;
+    pointer-events: none !important;
+}
 `;

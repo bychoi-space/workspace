@@ -65,8 +65,8 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **도형 텍스트(SHAPE Text) 여백 핏(Fit) & 렌더링 아키텍처 정밀 규격 수칙 (SSOT)**:
   - **1. 명칭 및 기획 정의**: 우측 사이드바 `SHAPE` 카테고리의 첫 번째 항목인 **`T (Text)` (도형 텍스트)**를 가리키며, `ATOMIC LIBRARY`의 첫 번째 항목인 **`Textbox` (텍스트박스 아톰)**와 엄격하게 구분한다. 내부 클래스명인 `.v4-text-box`와 상관없이 UI 상의 명칭은 반드시 **'도형 텍스트'**로 통일한다.
   - **2. 핵심 소스코드 수정 위치 (File Map)**:
-    - **[assets/vctrl_text_measurer.js](file:///c:/ai-work/assets/vctrl_text_measurer.js)**: 전략/디스패처(Strategy/Dispatcher) 패턴 기반 컴포넌트 타입 분류기(`getComponentType`), 순수 오프스크린 측정 코어(`measureCellTextDimensions`), 그리고 타입별 100% 독립 전용 처리 엔진(`fitStandaloneTextShape`, `fitTextBox`, `fitShapeText`, `fitDefaultCell`)으로 텍스트 동적 테두리 피팅을 수행하는 핵심 로직 소유 파일.
-    - **[assets/vctrl_iframe_styles.js](file:///c:/ai-work/assets/vctrl_iframe_styles.js)**: 셀 기본 패딩(`padding: 4px !important;`) 및 FLEX 대칭 정렬 CSS 규칙 소유 파일.
+    - **[assets/vctrl_text_measurer.js](file:///c:/Users/sisun/ai_work/assets/vctrl_text_measurer.js)**: 전략/디스패처(Strategy/Dispatcher) 패턴 기반 컴포넌트 타입 분류기(`getComponentType`), 순수 오프스크린 측정 코어(`measureCellTextDimensions`), 그리고 타입별 100% 독립 전용 처리 엔진(`fitStandaloneTextShape`, `fitTextBox`, `fitShapeText`, `fitDefaultCell`)으로 텍스트 동적 테두리 피팅을 수행하는 핵심 로직 소유 파일.
+    - **[assets/vctrl_iframe_styles.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_styles.js)**: 셀 기본 패딩(`padding: 4px !important;`) 및 FLEX 대칭 정렬 CSS 규칙 소유 파일.
   - **3. 정밀 박스-모델 수치 및 산술 공식 (Exact Math Spec)**:
     - **기본 차감 픽셀**: `box-sizing: border-box` 스펙 상 `1.6px` 보더(양쪽 3.2px) + `4px` 셀 패딩(양쪽 8.0px) = **`11.2px` 기본 차감**.
     - **순수 도형 텍스트(`isStandaloneTextShape`) 버퍼 할당**:
@@ -98,6 +98,12 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - **5. 초정밀 열 간격 제어와 Box-Sizing의 병합**: 8일 이상의 복잡한 요일이 들어가더라도 열 간격이 테이블 컨테이너 밖으로 오버플로우되거나 짤려 보이지 않도록, 테이블의 모든 셀(`th, td`)에 반드시 **`box-sizing: border-box !important`**를 선언해야 한다. 또한, 각 열의 가로폭 지정 합계가 메인 테이블 컨테이너 너비(`1380px`)를 수학적으로 정확하게 일치하거나 미세하게 하회하도록(예: 8열의 경우 라벨 180px * 2, 날짜 127px * 8 = 1376px로 4px 여유) 칼럼별 픽셀을 정밀하게 분할 지정해야 한다.
   - **6. ISSUE 행 삽입 및 휴일/이벤트 표기**: 헤더(Header) 바로 아래이자 본문 첫 행(안산 출고 여부) 위에 **`ISSUE / 이슈`** 행을 필수로 삽입한다. 이 행의 셀들은 모두 `contenteditable="true"` 상태로 제공되어야 하며, 크리스마스, 명절, 현충일, 삼일절, 광복절, 선거일자, 대체휴무일 등 해당 날짜에 해당하는 공식 휴일이나 특이 이슈 명칭을 명확하게 텍스트로 기입해야 한다.
 
+
+## Tab (탭) 컴포넌트 표준 규격 (V4 Tab Component Protocol)
+- **전용 렌더링 및 인스펙터 모듈**: `assets/vctrl_iframe_tab.js` (Iframe 렌더링/인터랙션) 및 `assets/inspector/inspector_tab.js` (사이드바/플로팅 인스펙터).
+- **데이터 구조 및 SSOT**: 탭 목록 데이터는 컴포넌트 루트 엘리먼트의 `data-tabs` 속성에 JSON 배열(예: `[{"title":"Tab 1"},{"title":"Tab 2"}]`) 형태로 저장되며, 활성 탭 인덱스는 `data-active-tab` ("0", "1" 등)에 배타적으로 보존됩니다.
+- **인라인 편집 지원**: 각 탭 버튼(`.v4-tab-item`)은 `contenteditable="true"`와 `.v4-editable-cell` 클래스를 포함하여 캔버스 상에서 직접 더블클릭/포커스로 탭 제목을 수정할 수 있으며, 입력 즉시 `data-tabs` JSON 및 인스펙터 목록과 실시간 동기화됩니다.
+- **동적 가변 및 보더 일치**: 탭 컴포넌트의 테두리는 `1.6px` 표준을 준수하며, 탭 추가/삭제/리사이즈 시 탭 컨테이너 전체의 너비 및 내부 탭 항목들의 균등/가변 배치가 부드럽게 유지되어야 합니다.
 
 ## Molecules
 - When saving grouped elements to Molecules, store the container `innerHTML` only and save `width`, `height`, and `isGroup` as metadata.
@@ -133,14 +139,14 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 
 ## 📱 Responsive Frame UI Components, Styling & Typography
 - **PC & Mobile Frame Specs**:
-  - **PC Frame**: 너비 `1000px`, 브라우저 헤더(`.pc-browser-header`) + 3단 도트 + Mac 스타일 URL 탭. 내부 스크롤 컨테이너(`.pc-content-area`) + 캔버스(`.pc-content-inner`).
-  - **Mobile Frame**: 너비 `360px`, 스마트폰 탑바(`.mobile-top-bar`) + 노치/상태바. 내부 스크롤 컨테이너(`.mobile-content-area`) + 캔버스(`.mobile-content-inner`).
+  - **PC Frame**: 너비 **`1160px`** (외부 프레임 `.pc-browser-frame` `1172px`, 내부 캔버스 `.pc-content-inner` `1160px`, 스크롤바 `12px`), 브라우저 헤더(`.pc-browser-header`) + 3단 도트 + Mac 스타일 URL 탭. 내부 스크롤 컨테이너(`.pc-content-area`) + 캔버스(`.pc-content-inner`).
+  - **Mobile Frame**: 너비 **`360px`** (외부 프레임 `.mobile-frame` `382px`, 내부 캔버스 `.mobile-content-inner` `360px`), 스마트폰 탑바(`.mobile-top-bar`) + 노치/상태바. 내부 스크롤 컨테이너(`.mobile-content-area`) + 캔버스(`.mobile-content-inner`).
 - **Frame Label Bar Standards (`.frame-label-bar`)**:
   - 배경: `#141720` 솔리드 다크 테마 (절대 `backdrop-filter: blur` 금지).
   - 보더: `1.6px solid rgba(255, 255, 255, 0.12)`.
-  - 높이: `36px`, 패딩 `0 14px`, 둥글기 `8px`.
-  - 화면명 입력창(`.frame-title-input`): `font-size: 12px; font-weight: 600; color: #f8fafc;`.
-  - 높이 제어창(`.frame-label-input`): `width: 54px; height: 22px; background: #0f131a; border: 1.2px solid rgba(0, 229, 255, 0.35); color: #38bdf8; font-weight: 600; font-size: 11px; font-family: 'Inter', monospace;`.
+  - 높이: `32px`, 패딩 `0 12px`, 둥글기 `8px`.
+  - 화면명 입력창(`.frame-title-input`): `font-size: 11px; font-weight: 600; color: #f8fafc; padding: 1px 5px; width: 170px;`.
+  - 높이 제어창(`.frame-label-input`): `width: 50px; height: 20px; background: #0f131a; border: 1.2px solid rgba(0, 229, 255, 0.35); color: #38bdf8; font-weight: 600; font-size: 10.5px; font-family: 'Inter', monospace; text-align: center;`.
   - 폰트 안티앨리어싱: `-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;`.
 - **Dual File Sync Rule**:
   - `assets/responsive_frame.js`와 `assets/responsive_frame.css`를 항상 100% 동일하게 유지해야 한다.

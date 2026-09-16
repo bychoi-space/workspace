@@ -10,19 +10,20 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
 2. Analyze: inspect existing code and data before editing.
 3. Design: fix scope and method; get approval for broad or destructive changes.
 4. Execute: change only the designed scope.
-5. Verify: perform static syntax/bracket inspection (check_syntax.ps1) and static code integrity analysis.
+5. Verify: perform static syntax/bracket inspection (scripts/check_syntax.ps1, scripts/verify_all.ps1) and static code integrity analysis.
 
 ## Data And Git Safety
 - **Strict Production Integrity & Prohibition of Dummy/Fake Fallbacks**: This system is an active production workspace editor. Never inject hardcoded dummy data, fake metadata objects, or fake fallback HTML/JSON to bypass errors or CORS warnings. Dummy fallbacks corrupt real production data (`metadata.json`, saved screen HTMLs). Always rely solely on authentic disk reading and true system error recovery pipelines.
 - Do not flatten folders or move/delete subfolders without explicit user approval.
-- Do not delete or overwrite metadata files such as `metadata.json` in each project folder.
-- During conflicts, manually merge each project's `metadata.json` `screens` arrays. Never blindly overwrite them.
+- Do not delete or overwrite metadata files such as `metadata.json` in each project folder. Always keep the `screenOrder` array synchronized when adding, deleting, or reordering screens.
+- **Offline Bundle Synchronization**: When modifying `assets/templates/*.html`, run `scripts/build_templates.ps1`. When modifying `assets/ui_library/*.html`, run `scripts/build_ui_fallback.ps1` to ensure offline `file://` compatibility.
+- During conflicts, manually merge each project's `metadata.json` `screens` arrays and `screenOrder`. Never blindly overwrite them.
 - **On-Demand Auto Deployment**: Do NOT push to GitHub automatically on everyday small changes. When explicitly requested by the user ("배포해줘", "푸시해줘", etc.), automatically commit and push to the remote repository immediately without asking for extra confirmation.
 - Do not revert user changes. If existing changes affect the task, work with them or ask.
 
 ## Code Integrity & Safety Rules
 - **Encoding Safety**: Avoid hardcoding raw Korean strings directly inside source code logic to prevent file encoding corruption upon saving. Use ASCII-safe status strings or HTML entities (`&times;` etc.) where applicable, and ensure files are saved in UTF-8.
-- **Bracket Matching & Syntax Integrity**: After extensive edits on conditional branches or nested functions, run `check_syntax.ps1` or perform syntax inspection to ensure no missing brackets or trailing syntax errors exist.
+- **Bracket Matching & Syntax Integrity**: After extensive edits on conditional branches or nested functions, run `scripts/check_syntax.ps1` or perform syntax inspection to ensure no missing brackets or trailing syntax errors exist. Run `scripts/verify_all.ps1` for comprehensive browser-engine VM validation.
 - Preserve function declarations, class definitions, global initialization, and module-call names such as `window.updateProperties`.
 - In core engine edits, check cross-file function-name consistency before finishing.
 - For SVG shapes such as diamonds and triangles, keep `borderColor`, SVG `stroke`, and 1.6px stroke standards synchronized.

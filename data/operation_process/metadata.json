@@ -1,6 +1,13 @@
 {
   "title": "Operation Process",
-  "screens": {},
+  "screens": {
+    "99_Blank_535.html": {
+      "title": "99_Blank_535",
+      "type": "blank",
+      "updatedAt": "2026-09-16T01:54:49.963Z",
+      "template": "template_blank.html"
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "figmaUrl": "",

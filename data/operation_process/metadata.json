@@ -4,7 +4,7 @@
     "01_Fashion_Ecommerce_Process_Map_900.html": {
       "title": "01_비즈니스 프로세스 맵",
       "type": "architecture",
-      "updatedAt": "2026-09-16T07:29:52.684Z",
+      "updatedAt": "2026-09-16T07:32:34.299Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -27,7 +27,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-09-16 16:29:52",
+  "updated": "2026-09-16 16:32:33",
   "version": 0.2,
   "period": ""
 }

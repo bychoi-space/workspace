@@ -11,10 +11,19 @@
     "01_Project_Summary_Report_101.html": {
       "title": "과제 개요 및 일정",
       "type": "plan",
-      "updatedAt": "2026-09-14T03:19:57.045Z",
+      "updatedAt": "2026-09-16T00:33:06.203Z",
       "template": "template_plan.html",
-      "version": 0.1,
-      "description": [],
+      "version": 0.3,
+      "description": [
+        {
+          "type": "pin",
+          "text": "9/14 오프라인 매장 찾기 기능 스펙아웃",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 36,
+          "y": 290,
+          "standardized": true
+        }
+      ],
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": "시선닷컴 상품 상세(PDP) 리뉴얼 누락 개선 과제 목적, 작업 범위(Front/Admin), 일정 및 마일스톤 보고서"
@@ -127,7 +136,7 @@
   "period": "2026.09.01 ~ 2026.10.01",
   "themeIndex": 0,
   "jira": "",
-  "updated": "2026-09-14 14:43:31",
+  "updated": "2026-09-16 09:33:06",
   "figmaUrl": "https://www.figma.com/design/5tx1QKw7gAPwrJy4DlC3FD/01.-%EC%83%81%ED%92%88?node-id=2952-36225",
   "notionUrl": "https://app.notion.com/p/2-1-3c2f6986169c8012b18bddd5ffc75c83?source=copy_link",
   "version": 0.3

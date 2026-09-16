@@ -15,75 +15,12 @@ window.v4ShortcutsScript = `
     let isArrowMoving = false;
     let isPastingLocked = false;
 
-    window.reorderAllPins = (deletedIndex) => {
-        if (typeof window.isResponsiveScreen === 'function' && window.isResponsiveScreen() && typeof window.reorderResponsivePins === 'function') {
-            return window.reorderResponsivePins(deletedIndex);
-        }
-        function getPinIdx(pin) {
-            if (!pin) return 999999;
-            let idx = parseInt(pin.getAttribute('data-index'));
-            if (isNaN(idx)) {
-                idx = parseInt((pin.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
-            }
-            return isNaN(idx) ? 999999 : idx;
-        }
-
-        if (deletedIndex !== undefined && deletedIndex !== null && !isNaN(deletedIndex)) {
-            const delIdxNum = Number(deletedIndex);
-            document.querySelectorAll('.text-marker, .pin-marker').forEach(pin => {
-                if (getPinIdx(pin) === delIdxNum) {
-                    pin.remove();
-                }
-            });
-        }
-
-        const pins = Array.from(document.querySelectorAll('.text-marker, .pin-marker'));
-        pins.sort((a, b) => getPinIdx(a) - getPinIdx(b));
-
-        pins.forEach((pin, idx) => {
-            pin.id = 'v4-pin-' + idx;
-            pin.setAttribute('data-index', String(idx));
-            pin.setAttribute('data-pin-num', String(idx + 1));
-            const badge = pin.querySelector('.pin-number-badge');
-            if (badge) {
-                badge.innerText = idx + 1;
-            }
-        });
-        try {
-            if (window.parent && window.parent.state && window.parent.state.activeFile) {
-                const descList = window.parent.state.activeFile.meta.description || [];
-                const remainingPins = Array.from(document.querySelectorAll('.text-marker, .pin-marker'));
-                remainingPins.sort((a, b) => getPinIdx(a) - getPinIdx(b));
-                if (descList.length > remainingPins.length) {
-                    descList.splice(remainingPins.length);
-                }
-                remainingPins.forEach((pin, idx) => {
-                    const isPinType = pin.classList.contains('pin-marker');
-                    if (!descList[idx]) {
-                        descList[idx] = {};
-                    }
-                    descList[idx].x = parseFloat(pin.style.left) || 0;
-                    descList[idx].y = parseFloat(pin.style.top) || 0;
-                    descList[idx].standardized = true;
-                    if (isPinType) {
-                        descList[idx].type = 'pin';
-                    } else {
-                        const editable = pin.querySelector('.v4-editable-cell');
-                        const textContent = editable ? editable.innerText.trim() : "Edit Text";
-                        const htmlContent = editable ? editable.innerHTML : pin.innerHTML;
-                        descList[idx].type = 'text';
-                        descList[idx].text = textContent;
-                        descList[idx].html = htmlContent;
-                    }
-                });
-                if (typeof window.parent.renderDescriptionList === 'function') {
-                    window.parent.renderDescriptionList();
-                }
-            }
-        } catch (e) {
-            console.warn("[V4 Shortcuts] Parent window access guarded under file:// protocol:", e);
-        }
-    };
+    // Pin reordering is owned and managed by vctrl_responsive_pins.js (Universal Pin Reorder Engine SSOT)
+    if (!window.reorderAllPins) {
+        window.reorderAllPins = function(deletedIndex) {
+            console.warn("[Shortcuts] reorderAllPins called before pins module fully initialized.");
+        };
+    }
 
     window.copySelectedObjects = () => {
         const selected = document.querySelectorAll('.lf-component.selected');

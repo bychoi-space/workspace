@@ -503,8 +503,75 @@ window.v4ResponsivePinsScript = `
             window.importResponsivePins(d.pins);
         } else if (d.type === 'LF_REORDER_RESPONSIVE_PINS') {
             window.reorderResponsivePins(d ? d.deletedIndex : undefined);
+        } else if (d.type === 'LF_REORDER_PINS') {
+            window.reorderAllPins(d ? d.deletedIndex : undefined);
         }
     });
+
+    // Universal Pin Reorder Engine (Standard & Responsive SSOT)
+    window.reorderAllPins = function(deletedIndex) {
+        if (typeof window.isResponsiveScreen === 'function' && window.isResponsiveScreen()) {
+            if (typeof window.reorderResponsivePins === 'function') {
+                return window.reorderResponsivePins(deletedIndex);
+            }
+        }
+        
+        if (deletedIndex !== undefined && deletedIndex !== null && !isNaN(deletedIndex)) {
+            var delIdxNum = Number(deletedIndex);
+            document.querySelectorAll('.text-marker, .pin-marker').forEach(function(pin) {
+                if (getPinIdx(pin) === delIdxNum) {
+                    pin.remove();
+                }
+            });
+        }
+
+        var pins = Array.from(document.querySelectorAll('.text-marker, .pin-marker'));
+        pins.sort(function(a, b) { return getPinIdx(a) - getPinIdx(b); });
+
+        pins.forEach(function(pin, idx) {
+            pin.id = 'v4-pin-' + idx;
+            pin.setAttribute('data-index', String(idx));
+            pin.setAttribute('data-pin-num', String(idx + 1));
+            var badge = pin.querySelector('.pin-number-badge');
+            if (badge) {
+                badge.innerText = idx + 1;
+            }
+        });
+        try {
+            if (window.parent && window.parent.state && window.parent.state.activeFile) {
+                var descList = window.parent.state.activeFile.meta.description || [];
+                var remainingPins = Array.from(document.querySelectorAll('.text-marker, .pin-marker'));
+                remainingPins.sort(function(a, b) { return getPinIdx(a) - getPinIdx(b); });
+                if (descList.length > remainingPins.length) {
+                    descList.splice(remainingPins.length);
+                }
+                remainingPins.forEach(function(pin, idx) {
+                    var isPinType = pin.classList.contains('pin-marker');
+                    if (!descList[idx]) {
+                        descList[idx] = {};
+                    }
+                    descList[idx].x = parseFloat(pin.style.left) || 0;
+                    descList[idx].y = parseFloat(pin.style.top) || 0;
+                    descList[idx].standardized = true;
+                    if (isPinType) {
+                        descList[idx].type = 'pin';
+                    } else {
+                        var editable = pin.querySelector('.v4-editable-cell');
+                        var textContent = editable ? editable.innerText.trim() : "Edit Text";
+                        var htmlContent = editable ? editable.innerHTML : pin.innerHTML;
+                        descList[idx].type = 'text';
+                        descList[idx].text = textContent;
+                        descList[idx].html = htmlContent;
+                    }
+                });
+                if (typeof window.parent.renderDescriptionList === 'function') {
+                    window.parent.renderDescriptionList();
+                }
+            }
+        } catch (e) {
+            console.warn("[Pins] Parent window access guarded under file:// protocol:", e);
+        }
+    };
 
 })();
 `;

@@ -416,52 +416,9 @@ window.getIframeHTML = async function () {
             if (DOM.iframe && DOM.iframe.contentDocument) {
                 const doc = DOM.iframe.contentDocument;
                 const clone = doc.documentElement.cloneNode(true);
-                clone.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(el => el.remove());
-                clone.querySelectorAll('.lf-component, .v4-shape').forEach(el => el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped'));
-                const splitStyleRules = (str) => {
-                    if (!str) return [];
-                    const rules = [];
-                    let cur = '';
-                    let inParen = 0;
-                    let inQuote = null;
-                    for (let i = 0; i < str.length; i++) {
-                        const ch = str[i];
-                        if (inQuote) {
-                            if (ch === inQuote) inQuote = null;
-                            cur += ch;
-                        } else if (ch === '"' || ch === "'") {
-                            inQuote = ch;
-                            cur += ch;
-                        } else if (ch === '(') {
-                            inParen++;
-                            cur += ch;
-                        } else if (ch === ')') {
-                            if (inParen > 0) inParen--;
-                            cur += ch;
-                        } else if (ch === ';' && inParen === 0 && !inQuote) {
-                            if (cur.trim()) rules.push(cur.trim());
-                            cur = '';
-                        } else {
-                            cur += ch;
-                        }
-                    }
-                    if (cur.trim()) rules.push(cur.trim());
-                    return rules;
-                };
-
-                clone.querySelectorAll('[style]').forEach(el => {
-                    const s = el.getAttribute('style');
-                    if (!s) return;
-                    const rules = splitStyleRules(s).filter(r => {
-                        const idx = r.indexOf(':');
-                        return idx !== -1 && r.substring(idx + 1).trim().length > 0;
-                    });
-                    if (rules.length > 0) {
-                        el.setAttribute('style', rules.join('; ') + ';');
-                    } else {
-                        el.removeAttribute('style');
-                    }
-                });
+                if (window.ScreenSanitizer && typeof window.ScreenSanitizer.cleanDOM === 'function') {
+                    window.ScreenSanitizer.cleanDOM(clone);
+                }
                 return "<!DOCTYPE html>\n" + clone.outerHTML;
             }
         } catch (e) {

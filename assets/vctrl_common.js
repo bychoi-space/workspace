@@ -45,6 +45,99 @@ window.notifyIframe = function(data) {
     }
 };
 
+// --- Universal Responsive Screen Detector (SSOT) ---
+window.isResponsiveDocument = function(targetDoc) {
+    try {
+        const doc = targetDoc || (window.DOM && window.DOM.iframe && window.DOM.iframe.contentDocument) || document;
+        return !!(doc && doc.querySelector && (
+            doc.querySelector('.pc-content-inner') || 
+            doc.querySelector('.mobile-content-inner') || 
+            doc.querySelector('.pc-browser-frame') ||
+            doc.querySelector('.pc-content-area')
+        ));
+    } catch (e) {
+        return false;
+    }
+};
+window.isResponsiveScreen = window.isResponsiveDocument;
+
+// --- Universal Screen Sanitizer for Clean HTML Export & Persistence ---
+(function() {
+    const splitStyleRules = function(str) {
+        if (!str) return [];
+        const rules = [];
+        let cur = '';
+        let inParen = 0;
+        let inQuote = null;
+        for (let i = 0; i < str.length; i++) {
+            const ch = str[i];
+            if (inQuote) {
+                if (ch === inQuote && str[i - 1] !== '\\') inQuote = null;
+                cur += ch;
+            } else if (ch === '"' || ch === "'") {
+                inQuote = ch;
+                cur += ch;
+            } else if (ch === '(') {
+                inParen++;
+                cur += ch;
+            } else if (ch === ')') {
+                if (inParen > 0) inParen--;
+                cur += ch;
+            } else if (ch === ';' && inParen === 0) {
+                if (cur.trim()) rules.push(cur.trim());
+                cur = '';
+            } else {
+                cur += ch;
+            }
+        }
+        if (cur.trim()) rules.push(cur.trim());
+        return rules;
+    };
+
+    const cleanEmptyStyleRules = function(styleStr) {
+        if (!styleStr) return '';
+        const rules = splitStyleRules(styleStr);
+        const cleaned = rules.filter(function(r) {
+            const colonIdx = r.indexOf(':');
+            if (colonIdx === -1) return false;
+            const val = r.slice(colonIdx + 1).trim();
+            return val.length > 0 && val !== 'initial' && val !== 'inherit';
+        });
+        return cleaned.length > 0 ? cleaned.join('; ') + ';' : '';
+    };
+
+    window.ScreenSanitizer = {
+        splitStyleRules: splitStyleRules,
+        cleanEmptyStyleRules: cleanEmptyStyleRules,
+        cleanDOM: function(root) {
+            if (!root) return root;
+            // 1. Remove runtime UI helpers (ports, handles, guide layers, marquee box, selection adorners)
+            root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(function(el) {
+                el.remove();
+            });
+            
+            // 2. Remove active state classes
+            root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
+                el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');
+            });
+
+            // 3. Clean empty inline style rules created by browser DOM serialization
+            root.querySelectorAll('[style]').forEach(function(el) {
+                const raw = el.getAttribute('style');
+                if (raw) {
+                    const cleaned = cleanEmptyStyleRules(raw);
+                    if (cleaned) {
+                        el.setAttribute('style', cleaned);
+                    } else {
+                        el.removeAttribute('style');
+                    }
+                }
+            });
+            return root;
+        }
+    };
+})();
+
 window.highlightActive = function(btn, isActive) {
     if (!btn) return;
     btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
@@ -320,6 +413,88 @@ window.v4CommonScript = `
             }
         }
         return path;
+    };
+
+    // Universal Responsive Screen Detector (Iframe SSOT)
+    window.isResponsiveDocument = function(targetDoc) {
+        try {
+            const doc = targetDoc || document;
+            return !!(doc && doc.querySelector && (
+                doc.querySelector('.pc-content-inner') || 
+                doc.querySelector('.mobile-content-inner') || 
+                doc.querySelector('.pc-browser-frame') ||
+                doc.querySelector('.pc-content-area')
+            ));
+        } catch (e) {
+            return false;
+        }
+    };
+    window.isResponsiveScreen = window.isResponsiveDocument;
+
+    // Universal Screen Sanitizer (Iframe SSOT)
+    window.ScreenSanitizer = {
+        splitStyleRules: function(str) {
+            if (!str) return [];
+            var rules = [];
+            var cur = '';
+            var inParen = 0;
+            var inQuote = null;
+            for (var i = 0; i < str.length; i++) {
+                var ch = str[i];
+                if (inQuote) {
+                    if (ch === inQuote && str[i - 1] !== '\\\\') inQuote = null;
+                    cur += ch;
+                } else if (ch === '"' || ch === "'") {
+                    inQuote = ch;
+                    cur += ch;
+                } else if (ch === '(') {
+                    inParen++;
+                    cur += ch;
+                } else if (ch === ')') {
+                    if (inParen > 0) inParen--;
+                    cur += ch;
+                } else if (ch === ';' && inParen === 0) {
+                    if (cur.trim()) rules.push(cur.trim());
+                    cur = '';
+                } else {
+                    cur += ch;
+                }
+            }
+            if (cur.trim()) rules.push(cur.trim());
+            return rules;
+        },
+        cleanEmptyStyleRules: function(styleStr) {
+            if (!styleStr) return '';
+            var rules = window.ScreenSanitizer.splitStyleRules(styleStr);
+            var cleaned = rules.filter(function(r) {
+                var colonIdx = r.indexOf(':');
+                if (colonIdx === -1) return false;
+                var val = r.slice(colonIdx + 1).trim();
+                return val.length > 0 && val !== 'initial' && val !== 'inherit';
+            });
+            return cleaned.length > 0 ? cleaned.join('; ') + ';' : '';
+        },
+        cleanDOM: function(root) {
+            if (!root) return root;
+            root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(function(el) {
+                el.remove();
+            });
+            root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
+                el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');
+            });
+            root.querySelectorAll('[style]').forEach(function(el) {
+                var raw = el.getAttribute('style');
+                if (raw) {
+                    var cleaned = window.ScreenSanitizer.cleanEmptyStyleRules(raw);
+                    if (cleaned) {
+                        el.setAttribute('style', cleaned);
+                    } else {
+                        el.removeAttribute('style');
+                    }
+                }
+            });
+            return root;
+        }
     };
 })();
 `;

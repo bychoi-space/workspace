@@ -11,12 +11,6 @@
       "version": 0.2,
       "screenDesc": "패션 이커머스 7대 핵심 도메인 비즈니스 프로세스 & 시스템 아키텍처 맵 (Front 저니맵 ⇄ Core 도메인 ⇄ Admin 백오피스)",
       "defaultTab": "editor"
-    },
-    "99_Blank_23.html": {
-      "description": [],
-      "updatedAt": "2026-09-16T07:00:56.345Z",
-      "version": 0.2,
-      "connectors": []
     }
   },
   "screenOrder": [

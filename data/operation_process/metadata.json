@@ -3,13 +3,14 @@
   "screens": {
     "01_Fashion_Ecommerce_Process_Map_900.html": {
       "title": "01_비즈니스 프로세스 맵",
-      "type": "process",
-      "updatedAt": "2026-09-16T02:26:00.000Z",
+      "type": "architecture",
+      "updatedAt": "2026-09-16T03:29:14.708Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
       "version": 0.1,
-      "screenDesc": "패션 이커머스 7대 핵심 도메인 비즈니스 프로세스 & 시스템 아키텍처 맵 (Front 저니맵 ⇄ Core 도메인 ⇄ Admin 백오피스)"
+      "screenDesc": "패션 이커머스 7대 핵심 도메인 비즈니스 프로세스 & 시스템 아키텍처 맵 (Front 저니맵 ⇄ Core 도메인 ⇄ Admin 백오피스)",
+      "defaultTab": "editor"
     }
   },
   "screenOrder": [

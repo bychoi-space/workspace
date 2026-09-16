@@ -1344,24 +1344,390 @@ window.v4Script = `
         }
     };
 
-    window.addEventListener('message', e => {
-        const d = e.data; if (!d) return;
+    // --- Helper Handlers for Iframe Core Message Registry ---
+    function handleInsertComponent(d) {
+        const pcScrollArea = document.querySelector('.pc-content-area');
+        const pcInner = document.querySelector('.pc-content-inner');
+        const mobileScrollArea = document.querySelector('.mobile-content-area, .mobile-content');
+        const mobileInner = document.querySelector('.mobile-content-inner');
+        const isResponsiveTemplate = !!(pcInner || mobileInner);
 
-        if (d.type === 'LF_PARENT_MOUSEUP') {
-            document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-            return;
-        }
+        const isPinMarker = d.className && d.className.includes('pin-marker');
+        const compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);
+        const compH = isPinMarker ? 28 : ((d.style && d.style.height) ? parseInt(d.style.height) || 100 : 100);
 
-        if (d.type && window.v4MessageHandlers && typeof window.v4MessageHandlers[d.type.toUpperCase()] === 'function') {
+        let host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
+        let centerTop = Math.round((window.innerHeight - compH) / 2);
+        let centerLeft = Math.round((window.innerWidth - compW) / 2);
+
+        if (isResponsiveTemplate) {
+            let activeFrame = window.lastActiveFrame;
+            if (!mobileScrollArea && pcScrollArea) activeFrame = 'pc';
+            if (!pcScrollArea && mobileScrollArea) activeFrame = 'mobile';
+            if (!activeFrame) {
+                const currentlySelected = document.querySelector('.lf-component.selected');
+                if (currentlySelected) {
+                    if (currentlySelected.closest('.mobile-content-inner, .mobile-content-area, .mobile-content, .mobile-frame, .mobile-browser-frame')) {
+                        activeFrame = 'mobile';
+                    } else if (currentlySelected.closest('.pc-content-inner, .pc-content-area, .pc-frame, .pc-browser-frame')) {
+                        activeFrame = 'pc';
+                    }
+                }
+            }
+            if (!activeFrame) {
+                if (document.querySelector('.mobile-column.active-column')) activeFrame = 'mobile';
+                else if (document.querySelector('.pc-column.active-column')) activeFrame = 'pc';
+            }
+            if (!activeFrame) {
+                activeFrame = (pcScrollArea || pcInner) ? 'pc' : 'mobile';
+            }
+
+            if (activeFrame === 'mobile' && (mobileScrollArea || mobileInner)) {
+                host = mobileInner || mobileScrollArea;
+                const scrollContainer = mobileScrollArea || mobileInner;
+                const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
+                const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
+                const hostW = host ? (host.offsetWidth || 360) : 360;
+                centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+            } else if (pcScrollArea || pcInner) {
+                host = pcInner || pcScrollArea;
+                const scrollContainer = pcScrollArea || pcInner;
+                const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
+                const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
+                const hostW = host ? (host.offsetWidth || 1160) : 1160;
+                centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+            }
+        } else {
             try {
-                window.v4MessageHandlers[d.type.toUpperCase()](d);
-                return; // Intercepted and handled by modular component file!
-            } catch(err) {
-                console.error("[MessageDispatcher] Error running modular handler for " + d.type + ":", err);
+                const parentState = window.parent && window.parent.state;
+                const parentDOM = window.parent && window.parent.DOM;
+                if (parentState && parentState.transform && parentDOM && parentDOM.canvas) {
+                    const t = parentState.transform;
+                    const cw = parentDOM.canvas.clientWidth || 1600;
+                    const ch = parentDOM.canvas.clientHeight || 900;
+                    const s = t.scale || 1;
+                    const viewCenterX = Math.round(((cw / 2) - t.x) / s);
+                    const viewCenterY = Math.round(((ch / 2) - t.y) / s);
+                    centerLeft = Math.round(viewCenterX - (compW / 2));
+                    centerTop = Math.round(viewCenterY - (compH / 2));
+                    const maxW = Math.max(1600, document.body.scrollWidth, document.documentElement.scrollWidth);
+                    const maxH = Math.max(900, document.body.scrollHeight, document.documentElement.scrollHeight);
+                    centerLeft = Math.max(15, Math.min(centerLeft, maxW - compW - 15));
+                    centerTop = Math.max(15, Math.min(centerTop, maxH - compH - 15));
+                }
+            } catch(e) {}
+        }
+        
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+        const v = document.createElement('div'); 
+        v.id = d.id || ('v4-comp-' + Date.now()); 
+        v.style.position = 'absolute'; 
+        v.style.top = centerTop + 'px'; 
+        v.style.left = centerLeft + 'px'; 
+        const nextZ = (typeof window.getNextTopZIndex === 'function') ? window.getNextTopZIndex(host) : 1010;
+        v.style.zIndex = String(nextZ);
+
+        if (isPinMarker) {
+            const idx = parseInt(d.id.replace('v4-pin-', '')) || 0;
+            v.className = 'lf-component pin-marker';
+            v.setAttribute('data-index', String(idx));
+            v.setAttribute('data-pin-num', String(idx + 1));
+            v.style.width = '20px';
+            v.style.height = '20px';
+            v.style.zIndex = '200000';
+            v.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
+                          '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
+            if (typeof window.updateHandles === 'function') window.updateHandles(v);
+        } else {
+            v.className = 'lf-component' + (d.isGroup ? ' lf-group' : '') + (d.className ? ' ' + d.className : ''); 
+            v.style.transform = 'none';
+            if (d.style) {
+                Object.assign(v.style, d.style);
+                if (!d.style.zIndex || parseInt(d.style.zIndex, 10) <= 1000) {
+                    v.style.zIndex = String(nextZ);
+                }
+            }
+            v.innerHTML = d.html + '<div class="lf-delete-trigger">&times;</div>';
+            if (d.dataset) {
+                for (let k in d.dataset) {
+                    v.setAttribute('data-' + k.replace(/([A-Z])/g, '-$1').toLowerCase(), d.dataset[k]);
+                }
             }
         }
+        
+        if (window.parent.state && window.parent.state.transform) {
+            const s = window.parent.state.transform.scale || 1;
+            if (s < 1) {
+                const bw = parseInt(v.style.width) || 200;
+                const bh = parseInt(v.style.height) || 100;
+                if (s < 0.8 && !d.isGroup) {
+                    const isImg = v.querySelector('.v4-shape-image') || v.getAttribute('data-aspect-ratio');
+                    if (isImg) {
+                        const natRatio = parseFloat(v.getAttribute('data-aspect-ratio')) || (bw / bh);
+                        const newW = Math.round(bw / s);
+                        v.style.width = newW + 'px';
+                        v.style.height = Math.round(newW / natRatio) + 'px';
+                    } else {
+                        v.style.width = Math.round(bw / s) + 'px';
+                        v.style.height = Math.round(bh / s) + 'px';
+                    }
+                }
+            }
+        }
+        
+        const children = Array.from(v.children).filter(c => c.classList.contains('lf-component') || c.classList.contains('lf-group'));
+        if (children.length === 1) {
+            const inner = children[0];
+            const l = parseInt(inner.style.left) || 0;
+            const t = parseInt(inner.style.top) || 0;
+            if (l !== 0 || t !== 0) {
+                inner.style.left = '0px';
+                inner.style.top = '0px';
+                if (inner.style.width) v.style.width = inner.style.width;
+                if (inner.style.height) v.style.height = inner.style.height;
+            }
+        }
+        
+        const trailingRef = Array.from(host.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+        if (trailingRef && trailingRef.parentNode === host) {
+            host.insertBefore(v, trailingRef);
+        } else {
+            host.appendChild(v);
+        }
+        document.querySelectorAll('.lf-component').forEach(c => c.classList.remove('selected'));
+        v.classList.add('selected');
+        if (v.classList.contains('v4-text-shape') && typeof window.resizeToFitText === 'function') {
+            window.resizeToFitText(v);
+        }
+        const styles = window._getCompStyles(v);
+        notifyParent({ 
+            type: 'LF_COMP_SELECTED', 
+            ...styles
+        });
+        markDirty();
+    }
 
-        if (d.type === 'LF_SNAP_RESPONSE' && window.activeEl && window.V4DragResizeEngine && window.V4DragResizeEngine.isDragging) {
+    function handleDeselectAll(d) {
+        document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
+        window.activeEl = null;
+        if (document.activeElement && (document.activeElement.classList?.contains('v4-editable-cell') || document.activeElement.isContentEditable)) {
+            try { document.activeElement.blur(); } catch (_) {}
+        }
+        if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
+            window.ResponsiveSmartGuide.clearGuides(true);
+        }
+        if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
+            window.SelectionAdorner.clear();
+        }
+    }
+
+    function handleBringFront(d) {
+        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        if (selected.length === 0) {
+            if (d.ids && Array.isArray(d.ids)) {
+                d.ids.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                        selected.push(el);
+                    }
+                });
+            } else if (d.id) {
+                var singleTarget = document.getElementById(d.id);
+                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                    selected.push(singleTarget);
+                }
+            }
+        }
+        var topLevelSelected = selected.filter(function(el) {
+            var parent = el.parentElement;
+            while (parent && parent !== document.body) {
+                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
+                parent = parent.parentElement;
+            }
+            return true;
+        });
+        if (topLevelSelected.length > 0) {
+            if (window.V4UndoManager) window.V4UndoManager.saveState();
+            
+            var parentMap = new Map();
+            topLevelSelected.forEach(function(el) {
+                var p = el.parentElement;
+                if (!p) return;
+                if (!parentMap.has(p)) {
+                    parentMap.set(p, []);
+                }
+                parentMap.get(p).push(el);
+            });
+
+            parentMap.forEach(function(items, parent) {
+                items.sort(function(a, b) {
+                    var pos = a.compareDocumentPosition(b);
+                    return (pos & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
+                });
+
+                var siblingComps = Array.from(parent.children).filter(function(c) {
+                    return c.classList.contains('lf-component');
+                });
+
+                var maxZ = 1000;
+                var hasZ = false;
+                siblingComps.forEach(function(c) {
+                    if (c.classList.contains('pin-marker')) return;
+                    var z = parseInt(c.style.zIndex, 10);
+                    if (isNaN(z)) {
+                        var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                        z = isNaN(compZ) ? 1000 : compZ;
+                    }
+                    if (z < 9999) {
+                        if (!hasZ) {
+                            maxZ = z;
+                            hasZ = true;
+                        } else if (z > maxZ) {
+                            maxZ = z;
+                        }
+                    }
+                });
+
+                var trailingRef = Array.from(parent.children).find(function(c) {
+                    return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+                });
+
+                var targetZ = maxZ + 10;
+                items.forEach(function(el) {
+                    el.style.zIndex = String(targetZ);
+                    if (trailingRef && trailingRef.parentNode === parent) {
+                        parent.insertBefore(el, trailingRef);
+                    } else {
+                        parent.appendChild(el);
+                    }
+                });
+            });
+
+            markDirty();
+            if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
+        }
+    }
+
+    function handleSendBack(d) {
+        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        if (selected.length === 0) {
+            if (d.ids && Array.isArray(d.ids)) {
+                d.ids.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                        selected.push(el);
+                    }
+                });
+            } else if (d.id) {
+                var singleTarget = document.getElementById(d.id);
+                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                    selected.push(singleTarget);
+                }
+            }
+        }
+        var topLevelSelected = selected.filter(function(el) {
+            var parent = el.parentElement;
+            while (parent && parent !== document.body) {
+                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
+                parent = parent.parentElement;
+            }
+            return true;
+        });
+        if (topLevelSelected.length > 0) {
+            if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+            var parentMap = new Map();
+            topLevelSelected.forEach(function(el) {
+                var p = el.parentElement;
+                if (!p) return;
+                if (!parentMap.has(p)) {
+                    parentMap.set(p, []);
+                }
+                parentMap.get(p).push(el);
+            });
+
+            parentMap.forEach(function(items, parent) {
+                items.sort(function(a, b) {
+                    var pos = a.compareDocumentPosition(b);
+                    return (pos & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
+                });
+
+                var siblingComps = Array.from(parent.children).filter(function(c) {
+                    return c.classList.contains('lf-component');
+                });
+
+                var minZ = 1000;
+                var hasZ = false;
+                siblingComps.forEach(function(c) {
+                    var z = parseInt(c.style.zIndex, 10);
+                    if (isNaN(z)) {
+                        var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                        z = isNaN(compZ) ? 1000 : compZ;
+                    }
+                    if (!hasZ) {
+                        minZ = z;
+                        hasZ = true;
+                    } else if (z < minZ) {
+                        minZ = z;
+                    }
+                });
+
+                var targetZ = minZ - 10;
+                if (targetZ < 1) {
+                    var shift = Math.abs(targetZ) + 10;
+                    siblingComps.forEach(function(c) {
+                        if (c.classList.contains('pin-marker')) return;
+                        var curZ = parseInt(c.style.zIndex, 10);
+                        if (isNaN(curZ)) {
+                            var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                            curZ = isNaN(compZ) ? 1000 : compZ;
+                        }
+                        c.style.zIndex = String(curZ + shift);
+                    });
+                    targetZ = 1;
+                }
+
+                var firstUnselectedComp = siblingComps.find(function(c) {
+                    return !items.includes(c);
+                });
+
+                if (firstUnselectedComp && firstUnselectedComp.parentNode === parent) {
+                    items.forEach(function(el) {
+                        el.style.zIndex = String(targetZ);
+                        parent.insertBefore(el, firstUnselectedComp);
+                    });
+                } else {
+                    var nonCompAnchor = Array.from(parent.children).find(function(c) {
+                        return !c.classList.contains('lf-component');
+                    });
+                    items.forEach(function(el) {
+                        el.style.zIndex = String(targetZ);
+                        if (nonCompAnchor && nonCompAnchor.parentNode === parent) {
+                            parent.insertBefore(el, nonCompAnchor);
+                        } else {
+                            parent.appendChild(el);
+                        }
+                    });
+                }
+            });
+
+            markDirty();
+            if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
+        }
+    }
+
+    // --- Iframe Core Message Handlers (Dispatcher Registry SSOT) ---
+    const v4IframeCoreHandlers = {
+        'LF_PARENT_MOUSEUP': function(d) {
+            document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+        },
+
+        'LF_SNAP_RESPONSE': function(d) {
+            if (!window.activeEl || !window.V4DragResizeEngine || !window.V4DragResizeEngine.isDragging) return;
             const activeEl = window.activeEl;
             const curLeft = parseInt(activeEl.style.left) || 0;
             const curTop = parseInt(activeEl.style.top) || 0;
@@ -1433,8 +1799,9 @@ window.v4Script = `
                     notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent?.state?.connectors });
                 }
             }
-        }
-        else if (d.type === 'LF_REQUEST_SAVE_CONTENT') {
+        },
+
+        'LF_REQUEST_SAVE_CONTENT': function(d) {
             const c = document.documentElement.cloneNode(true);
             if (window.ScreenSanitizer && typeof window.ScreenSanitizer.cleanDOM === 'function') {
                 window.ScreenSanitizer.cleanDOM(c);
@@ -1449,171 +1816,12 @@ window.v4Script = `
             if (responsiveStyle) responsiveStyle.remove();
 
             notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
-        } else if (d.type === 'LF_INSERT_COMPONENT' || d.type === 'LF_INSERT_V4_COMP') {
-            const pcScrollArea = document.querySelector('.pc-content-area');
-            const pcInner = document.querySelector('.pc-content-inner');
-            const mobileScrollArea = document.querySelector('.mobile-content-area, .mobile-content');
-            const mobileInner = document.querySelector('.mobile-content-inner');
-            const isResponsiveTemplate = !!(pcInner || mobileInner);
+        },
 
-            const isPinMarker = d.className && d.className.includes('pin-marker');
-            const compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);
-            const compH = isPinMarker ? 28 : ((d.style && d.style.height) ? parseInt(d.style.height) || 100 : 100);
+        'LF_INSERT_COMPONENT': handleInsertComponent,
+        'LF_INSERT_V4_COMP': handleInsertComponent,
 
-            let host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
-            let centerTop = Math.round((window.innerHeight - compH) / 2);
-            let centerLeft = Math.round((window.innerWidth - compW) / 2);
-
-            if (isResponsiveTemplate) {
-                let activeFrame = window.lastActiveFrame;
-                if (!mobileScrollArea && pcScrollArea) activeFrame = 'pc';
-                if (!pcScrollArea && mobileScrollArea) activeFrame = 'mobile';
-                if (!activeFrame) {
-                    const currentlySelected = document.querySelector('.lf-component.selected');
-                    if (currentlySelected) {
-                        if (currentlySelected.closest('.mobile-content-inner, .mobile-content-area, .mobile-content, .mobile-frame, .mobile-browser-frame')) {
-                            activeFrame = 'mobile';
-                        } else if (currentlySelected.closest('.pc-content-inner, .pc-content-area, .pc-frame, .pc-browser-frame')) {
-                            activeFrame = 'pc';
-                        }
-                    }
-                }
-                if (!activeFrame) {
-                    if (document.querySelector('.mobile-column.active-column')) activeFrame = 'mobile';
-                    else if (document.querySelector('.pc-column.active-column')) activeFrame = 'pc';
-                }
-                if (!activeFrame) {
-                    activeFrame = (pcScrollArea || pcInner) ? 'pc' : 'mobile';
-                }
-
-                if (activeFrame === 'mobile' && (mobileScrollArea || mobileInner)) {
-                    host = mobileInner || mobileScrollArea;
-                    const scrollContainer = mobileScrollArea || mobileInner;
-                    const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
-                    const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
-                    const hostW = host ? (host.offsetWidth || 360) : 360;
-                    centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
-                    centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
-                    if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
-                } else if (pcScrollArea || pcInner) {
-                    host = pcInner || pcScrollArea;
-                    const scrollContainer = pcScrollArea || pcInner;
-                    const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
-                    const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
-                    const hostW = host ? (host.offsetWidth || 1160) : 1160;
-                    centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
-                    centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
-                    if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
-                }
-            } else {
-                try {
-                    const parentState = window.parent && window.parent.state;
-                    const parentDOM = window.parent && window.parent.DOM;
-                    if (parentState && parentState.transform && parentDOM && parentDOM.canvas) {
-                        const t = parentState.transform;
-                        const cw = parentDOM.canvas.clientWidth || 1600;
-                        const ch = parentDOM.canvas.clientHeight || 900;
-                        const s = t.scale || 1;
-                        const viewCenterX = Math.round(((cw / 2) - t.x) / s);
-                        const viewCenterY = Math.round(((ch / 2) - t.y) / s);
-                        centerLeft = Math.round(viewCenterX - (compW / 2));
-                        centerTop = Math.round(viewCenterY - (compH / 2));
-                        const maxW = Math.max(1600, document.body.scrollWidth, document.documentElement.scrollWidth);
-                        const maxH = Math.max(900, document.body.scrollHeight, document.documentElement.scrollHeight);
-                        centerLeft = Math.max(15, Math.min(centerLeft, maxW - compW - 15));
-                        centerTop = Math.max(15, Math.min(centerTop, maxH - compH - 15));
-                    }
-                } catch(e) {}
-            }
-            
-            if (window.V4UndoManager) window.V4UndoManager.saveState();
-            const v = document.createElement('div'); 
-            v.id = d.id || ('v4-comp-' + Date.now()); 
-            v.style.position = 'absolute'; 
-            v.style.top = centerTop + 'px'; 
-            v.style.left = centerLeft + 'px'; 
-            const nextZ = (typeof window.getNextTopZIndex === 'function') ? window.getNextTopZIndex(host) : 1010;
-            v.style.zIndex = String(nextZ);
-
-            if (isPinMarker) {
-                const idx = parseInt(d.id.replace('v4-pin-', '')) || 0;
-                v.className = 'lf-component pin-marker';
-                v.setAttribute('data-index', String(idx));
-                v.setAttribute('data-pin-num', String(idx + 1));
-                v.style.width = '20px';
-                v.style.height = '20px';
-                v.style.zIndex = '200000';
-                v.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
-                              '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
-                if (typeof window.updateHandles === 'function') window.updateHandles(v);
-            } else {
-                v.className = 'lf-component' + (d.isGroup ? ' lf-group' : '') + (d.className ? ' ' + d.className : ''); 
-                v.style.transform = 'none';
-                if (d.style) {
-                    Object.assign(v.style, d.style);
-                    if (!d.style.zIndex || parseInt(d.style.zIndex, 10) <= 1000) {
-                        v.style.zIndex = String(nextZ);
-                    }
-                }
-                v.innerHTML = d.html + '<div class="lf-delete-trigger">&times;</div>';
-                if (d.dataset) {
-                    for (let k in d.dataset) {
-                        v.setAttribute('data-' + k.replace(/([A-Z])/g, '-$1').toLowerCase(), d.dataset[k]);
-                    }
-                }
-            }
-            
-            if (window.parent.state && window.parent.state.transform) {
-                const s = window.parent.state.transform.scale || 1;
-                if (s < 1) {
-                    const bw = parseInt(v.style.width) || 200;
-                    const bh = parseInt(v.style.height) || 100;
-                    if (s < 0.8 && !d.isGroup) {
-                        const isImg = v.querySelector('.v4-shape-image') || v.getAttribute('data-aspect-ratio');
-                        if (isImg) {
-                            const natRatio = parseFloat(v.getAttribute('data-aspect-ratio')) || (bw / bh);
-                            const newW = Math.round(bw / s);
-                            v.style.width = newW + 'px';
-                            v.style.height = Math.round(newW / natRatio) + 'px';
-                        } else {
-                            v.style.width = Math.round(bw / s) + 'px';
-                            v.style.height = Math.round(bh / s) + 'px';
-                        }
-                    }
-                }
-            }
-            
-            const children = Array.from(v.children).filter(c => c.classList.contains('lf-component') || c.classList.contains('lf-group'));
-            if (children.length === 1) {
-                const inner = children[0];
-                const l = parseInt(inner.style.left) || 0;
-                const t = parseInt(inner.style.top) || 0;
-                if (l !== 0 || t !== 0) {
-                    inner.style.left = '0px';
-                    inner.style.top = '0px';
-                    if (inner.style.width) v.style.width = inner.style.width;
-                    if (inner.style.height) v.style.height = inner.style.height;
-                }
-            }
-            
-            const trailingRef = Array.from(host.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
-            if (trailingRef && trailingRef.parentNode === host) {
-                host.insertBefore(v, trailingRef);
-            } else {
-                host.appendChild(v);
-            }
-            document.querySelectorAll('.lf-component').forEach(c => c.classList.remove('selected'));
-            v.classList.add('selected');
-            if (v.classList.contains('v4-text-shape') && typeof window.resizeToFitText === 'function') {
-                window.resizeToFitText(v);
-            }
-            const styles = window._getCompStyles(v);
-            notifyParent({ 
-                type: 'LF_COMP_SELECTED', 
-                ...styles
-            });
-            markDirty();
-        } else if (d.type === 'LF_INSERT_COMPONENTS') {
+        'LF_INSERT_COMPONENTS': function(d) {
             const host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
             const comps = d.components || [];
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
@@ -1651,7 +1859,9 @@ window.v4Script = `
                 window.updateHandles(v);
             });
             markDirty();
-        } else if (d.type === 'LF_SELECT_ID') {
+        },
+
+        'LF_SELECT_ID': function(d) {
             const el = document.getElementById(d.id);
             if (el) {
                 document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
@@ -1663,12 +1873,15 @@ window.v4Script = `
                     ...window._getCompStyles(el)
                 });
             }
-        }
-        else if (d.type === 'LF_UPDATE_STYLE') {
+        },
+
+        'LF_UPDATE_STYLE': function(d) {
             if (typeof window.v4GlobalStyleHandler === 'function') {
                 window.v4GlobalStyleHandler(d);
             }
-        } else if (d.type === 'LF_DELETE_SELECTED') {
+        },
+
+        'LF_DELETE_SELECTED': function(d) {
             const s = document.querySelector('.lf-component.selected'); 
             if (s) { 
                 if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -1676,19 +1889,12 @@ window.v4Script = `
                 markDirty(); 
                 notifyParent({ type: 'LF_DESELECT' });
             }
-        } else if (d.type === 'LF_DESELECT_ALL' || d.type === 'LF_DESELECT') {
-            document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
-            window.activeEl = null;
-            if (document.activeElement && (document.activeElement.classList?.contains('v4-editable-cell') || document.activeElement.isContentEditable)) {
-                try { document.activeElement.blur(); } catch (_) {}
-            }
-            if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
-                window.ResponsiveSmartGuide.clearGuides(true);
-            }
-            if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
-                window.SelectionAdorner.clear();
-            }
-        } else if (d.type === 'LF_SET_RESPONSIVE_GRID') {
+        },
+
+        'LF_DESELECT_ALL': handleDeselectAll,
+        'LF_DESELECT': handleDeselectAll,
+
+        'LF_SET_RESPONSIVE_GRID': function(d) {
             const isResponsiveTemplate = !!(document.querySelector('.pc-content-inner') || document.querySelector('.mobile-content-inner') || document.querySelector('.pc-browser-frame'));
             if (isResponsiveTemplate) {
                 if (d.visible === false) {
@@ -1697,203 +1903,39 @@ window.v4Script = `
                     document.body.classList.remove('hide-frame-grid');
                 }
             }
-        } else if (d.type === 'LF_BRING_FRONT') {
-            var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
-            if (selected.length === 0) {
-                if (d.ids && Array.isArray(d.ids)) {
-                    d.ids.forEach(function(id) {
-                        var el = document.getElementById(id);
-                        if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
-                            selected.push(el);
-                        }
-                    });
-                } else if (d.id) {
-                    var singleTarget = document.getElementById(d.id);
-                    if (singleTarget && singleTarget.classList.contains('lf-component')) {
-                        selected.push(singleTarget);
-                    }
-                }
-            }
-            var topLevelSelected = selected.filter(function(el) {
-                var parent = el.parentElement;
-                while (parent && parent !== document.body) {
-                    if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
-                    parent = parent.parentElement;
-                }
-                return true;
-            });
-            if (topLevelSelected.length > 0) {
-                if (window.V4UndoManager) window.V4UndoManager.saveState();
-                
-                var parentMap = new Map();
-                topLevelSelected.forEach(function(el) {
-                    var p = el.parentElement;
-                    if (!p) return;
-                    if (!parentMap.has(p)) {
-                        parentMap.set(p, []);
-                    }
-                    parentMap.get(p).push(el);
-                });
+        },
 
-                parentMap.forEach(function(items, parent) {
-                    items.sort(function(a, b) {
-                        var pos = a.compareDocumentPosition(b);
-                        return (pos & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
-                    });
+        'LF_BRING_FRONT': handleBringFront,
+        'LF_SEND_BACK': handleSendBack,
 
-                    var siblingComps = Array.from(parent.children).filter(function(c) {
-                        return c.classList.contains('lf-component');
-                    });
-
-                    var maxZ = 1000;
-                    var hasZ = false;
-                    siblingComps.forEach(function(c) {
-                        if (c.classList.contains('pin-marker')) return;
-                        var z = parseInt(c.style.zIndex, 10);
-                        if (isNaN(z)) {
-                            var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
-                            z = isNaN(compZ) ? 1000 : compZ;
-                        }
-                        if (z < 9999) {
-                            if (!hasZ) {
-                                maxZ = z;
-                                hasZ = true;
-                            } else if (z > maxZ) {
-                                maxZ = z;
-                            }
-                        }
-                    });
-
-                    var trailingRef = Array.from(parent.children).find(function(c) {
-                        return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
-                    });
-
-                    var targetZ = maxZ + 10;
-                    items.forEach(function(el) {
-                        el.style.zIndex = String(targetZ);
-                        if (trailingRef && trailingRef.parentNode === parent) {
-                            parent.insertBefore(el, trailingRef);
-                        } else {
-                            parent.appendChild(el);
-                        }
-                    });
-                });
-
-                markDirty();
-                if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
-            }
-        } else if (d.type === 'LF_SEND_BACK') {
-            var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
-            if (selected.length === 0) {
-                if (d.ids && Array.isArray(d.ids)) {
-                    d.ids.forEach(function(id) {
-                        var el = document.getElementById(id);
-                        if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
-                            selected.push(el);
-                        }
-                    });
-                } else if (d.id) {
-                    var singleTarget = document.getElementById(d.id);
-                    if (singleTarget && singleTarget.classList.contains('lf-component')) {
-                        selected.push(singleTarget);
-                    }
-                }
-            }
-            var topLevelSelected = selected.filter(function(el) {
-                var parent = el.parentElement;
-                while (parent && parent !== document.body) {
-                    if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
-                    parent = parent.parentElement;
-                }
-                return true;
-            });
-            if (topLevelSelected.length > 0) {
-                if (window.V4UndoManager) window.V4UndoManager.saveState();
-
-                var parentMap = new Map();
-                topLevelSelected.forEach(function(el) {
-                    var p = el.parentElement;
-                    if (!p) return;
-                    if (!parentMap.has(p)) {
-                        parentMap.set(p, []);
-                    }
-                    parentMap.get(p).push(el);
-                });
-
-                parentMap.forEach(function(items, parent) {
-                    items.sort(function(a, b) {
-                        var pos = a.compareDocumentPosition(b);
-                        return (pos & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
-                    });
-
-                    var siblingComps = Array.from(parent.children).filter(function(c) {
-                        return c.classList.contains('lf-component');
-                    });
-
-                    var minZ = 1000;
-                    var hasZ = false;
-                    siblingComps.forEach(function(c) {
-                        var z = parseInt(c.style.zIndex, 10);
-                        if (isNaN(z)) {
-                            var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
-                            z = isNaN(compZ) ? 1000 : compZ;
-                        }
-                        if (!hasZ) {
-                            minZ = z;
-                            hasZ = true;
-                        } else if (z < minZ) {
-                            minZ = z;
-                        }
-                    });
-
-                    var targetZ = minZ - 10;
-                    if (targetZ < 1) {
-                        var shift = Math.abs(targetZ) + 10;
-                        siblingComps.forEach(function(c) {
-                            if (c.classList.contains('pin-marker')) return;
-                            var curZ = parseInt(c.style.zIndex, 10);
-                            if (isNaN(curZ)) {
-                                var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
-                                curZ = isNaN(compZ) ? 1000 : compZ;
-                            }
-                            c.style.zIndex = String(curZ + shift);
-                        });
-                        targetZ = 1;
-                    }
-
-                    var firstUnselectedComp = siblingComps.find(function(c) {
-                        return !items.includes(c);
-                    });
-
-                    if (firstUnselectedComp && firstUnselectedComp.parentNode === parent) {
-                        items.forEach(function(el) {
-                            el.style.zIndex = String(targetZ);
-                            parent.insertBefore(el, firstUnselectedComp);
-                        });
-                    } else {
-                        var nonCompAnchor = Array.from(parent.children).find(function(c) {
-                            return !c.classList.contains('lf-component');
-                        });
-                        items.forEach(function(el) {
-                            el.style.zIndex = String(targetZ);
-                            if (nonCompAnchor && nonCompAnchor.parentNode === parent) {
-                                parent.insertBefore(el, nonCompAnchor);
-                            } else {
-                                parent.appendChild(el);
-                            }
-                        });
-                    }
-                });
-
-                markDirty();
-                if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
-            }
-        } else if (d.type === 'LF_REQUEST_SNAP_TARGETS') {
+        'LF_REQUEST_SNAP_TARGETS': function(d) {
             if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.collectSnapTargets === 'function') {
                 const res = window.ResponsiveSmartGuide.collectSnapTargets();
                 notifyParent({ type: 'LF_SNAP_TARGETS_RESPONSE', targets: res.targets, rects: res.rects });
             } else {
                 notifyParent({ type: 'LF_SNAP_TARGETS_RESPONSE', targets: [], rects: [] });
+            }
+        }
+    };
+
+    // Register Iframe Core Handlers to Global Registry SSOT
+    window.v4MessageHandlers = window.v4MessageHandlers || {};
+    for (const msgType in v4IframeCoreHandlers) {
+        if (!window.v4MessageHandlers[msgType]) {
+            window.v4MessageHandlers[msgType] = v4IframeCoreHandlers[msgType];
+        }
+    }
+
+    // Universal Iframe Message Dispatcher (Concise & Modular)
+    window.addEventListener('message', e => {
+        const d = e.data; if (!d || !d.type) return;
+        const msgType = d.type.toUpperCase();
+        const handler = window.v4MessageHandlers ? window.v4MessageHandlers[msgType] : null;
+        if (typeof handler === 'function') {
+            try {
+                handler(d);
+            } catch(err) {
+                console.error("[MessageDispatcher] Error running handler for " + d.type + ":", err);
             }
         }
     });

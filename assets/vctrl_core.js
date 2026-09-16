@@ -35,31 +35,45 @@ window.invalidateEngineScriptCache = function() {
     _cachedEngineScriptBlock = null;
 };
 
+// Structured Registry for Inlined Engine Scripts (Order & Dependency SSOT)
+const ENGINE_SCRIPT_REGISTRY = [
+    { name: 'Typography', key: 'v4TypographyScript' },
+    { name: 'Undo', key: 'v4UndoScript' },
+    { name: 'Table', key: 'v4TableScript' },
+    { name: 'TextMeasurer', key: 'v4TextMeasurerScript' },
+    { name: 'UIAtoms', key: 'v4UIAtomsScript' },
+    { name: 'DesignSystem', key: 'v4DesignSystemScript' },
+    { name: 'Shortcuts', key: 'v4ShortcutsScript' },
+    { name: 'Common', key: 'v4CommonScript' },
+    { name: 'ObjectShape', key: 'v4ObjectShapeScript' },
+    { name: 'ObjectConnector', key: 'v4ObjectConnectorScript' },
+    { name: 'DragResize', key: 'v4DragResizeScript' },
+    { name: 'PortConnector', key: 'v4PortConnectorScript' },
+    { name: 'Grid', key: 'v4GridScript' },
+    { name: 'Accordion', key: 'v4AccordionScript' },
+    { name: 'Tab', key: 'v4TabScript' },
+    { name: 'ResponsiveSmartGuide', key: 'v4ResponsiveSmartGuideScript' },
+    { name: 'ResponsivePins', key: 'v4ResponsivePinsScript' },
+    { name: 'CoreScript', key: 'v4Script' },
+    { name: 'ResponsiveMultiselect', key: 'v4ResponsiveMultiselectScript' }
+];
+
 function getInlinedEngineScript() {
     if (_cachedEngineScriptBlock && window.__DEV_NO_CACHE__ !== true) {
         return _cachedEngineScriptBlock;
     }
+    const assembledParts = ENGINE_SCRIPT_REGISTRY.map(item => {
+        const code = window[item.key];
+        if (!code) {
+            console.warn('[Engine Pipeline] Script missing or empty:', item.name, item.key);
+            return '';
+        }
+        return code;
+    });
+
     _cachedEngineScriptBlock = '<script id="v4-inlined-script">\n' +
         '// Engine Script Initialized: ' + Date.now() + '\n' +
-        (window.v4TypographyScript || '') + '\n' +
-        (window.v4UndoScript || '') + '\n' +
-        (window.v4TableScript || '') + '\n' +
-        (window.v4TextMeasurerScript || '') + '\n' +
-        (window.v4UIAtomsScript || '') + '\n' +
-        (window.v4DesignSystemScript || '') + '\n' +
-        (window.v4ShortcutsScript || '') + '\n' +
-        (window.v4CommonScript || '') + '\n' +
-        (window.v4ObjectShapeScript || '') + '\n' +
-        (window.v4ObjectConnectorScript || '') + '\n' +
-        (window.v4DragResizeScript || '') + '\n' +
-        (window.v4PortConnectorScript || '') + '\n' +
-        (window.v4GridScript || '') + '\n' +
-        (window.v4AccordionScript || '') + '\n' +
-        (window.v4TabScript || '') + '\n' +
-        (window.v4ResponsiveSmartGuideScript || '') + '\n' +
-        (window.v4ResponsivePinsScript || '') + '\n' +
-        (window.v4Script || '') + '\n' +
-        (window.v4ResponsiveMultiselectScript || '') + '\n</script>';
+        assembledParts.join('\n') + '\n</script>';
     return _cachedEngineScriptBlock;
 }
 

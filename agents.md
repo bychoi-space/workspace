@@ -14,19 +14,21 @@
 - **모듈러 아키텍처 (Modular Architecture)**: 엔진 안정성과 확장성을 위해 역할을 엄격히 분리합니다.
   - **`vctrl_core.js` (Core Orchestrator - Parent Side)**:
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, GitHub API 연동(저장/로드), `MessageHub`를 통한 모듈 간 조율, 스크린 로딩 및 내비게이션 보호 로직 담당.
-    - **참고**: 스크린 로드 시점에 분리된 19개 iframe 하위 스크립트 모듈들(`vctrl_typography.js`, `vctrl_undo.js`, `vctrl_table.js`, `vctrl_text_measurer.js`, `vctrl_ui_atoms.js`, `vctrl_design_system.js`, `vctrl_shortcuts.js`, `vctrl_common.js`, `vctrl_object_shape.js`, `vctrl_object_connector.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_ports.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_tab.js`, `vctrl_responsive_smartguide.js`, `vctrl_responsive_pins.js`, `vctrl_responsive_multiselect.js`, `vctrl_iframe_script.js`)을 동적으로 결합/컴파일하여 iframe `srcdoc`에 순서대로 주입합니다.
+    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 19개 iframe 하위 스크립트 모듈들(`vctrl_typography.js`, `vctrl_undo.js`, `vctrl_table.js`, `vctrl_text_measurer.js`, `vctrl_ui_atoms.js`, `vctrl_design_system.js`, `vctrl_shortcuts.js`, `vctrl_common.js`, `vctrl_object_shape.js`, `vctrl_object_connector.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_ports.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_tab.js`, `vctrl_responsive_smartguide.js`, `vctrl_responsive_pins.js`, `vctrl_responsive_multiselect.js`, `vctrl_iframe_script.js`)을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 정형화하여 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다. 모듈 누락 자동 감지 경고 및 결합 캐싱을 제공합니다.
+    - **스크린 저장 및 살균 SSOT 연동**: 스크린 HTML 저장 및 파일 내보내기 시 수동 DOM 정리 대신 반드시 `window.ScreenSanitizer.cleanDOM` 단일 진실 공급원을 호출하여 깨끗하고 일관된 마크업 저장을 보장합니다.
   - **`vctrl_screen_manager.js` (Screen Manager - Parent Side)**:
     - **역할**: 화면 순서 변경(`screenOrder`), 화면 추가(`+`), 복제, 삭제, 활성 스크린 전환 및 메타데이터 저장 동기화를 전담합니다.
   - **`vctrl_canvas_viewport.js` (Canvas Viewport Engine - Parent Side)**:
     - **역할**: 시스템의 '손'. 캔버스 줌(`adjustZoom`), 팬(`updateTransform`), 화면 맞춤/100% 뷰 스냅(`toggleCrispView`, `centerView`), 스페이스바 패닝, 풀스크린 토글 및 전역 뷰포트 상태 관리. (기존 레거시 `vctrl_v3.js`는 폐기되고 본 모듈로 전면 대체되었습니다.)
   - **`vctrl_annotation_pins.js` / `vctrl_responsive_pins.js` (Annotation Engine)**:
-    - **역할**: 일반 캔버스 및 반응형 프레임 내 핀 번호 어노테이션 마커 렌더링, 위치 추종 및 메타데이터 동기화 전담.
+    - **역할**: 일반 캔버스 및 반응형 프레임 내 핀 번호 어노테이션 마커 렌더링, 위치 추종 및 메타데이터 동기화 전담. 핀 재정렬 로직은 `vctrl_responsive_pins.js`의 `window.reorderAllPins` 및 `LF_REORDER_PINS`로 완전 단일화(SSOT)되어 있습니다.
   - **`vctrl_connectors.js` (Connector Engine - Parent Side)**:
     - **역할**: 선/커넥터(`Line (Straight)`, `Line (Elbow)`) 전용 엔진. 캔버스 중앙 생성(`spawnLine`), 30px 자석 스냅(`collectSnapTargets`), 포트 하이라이트, 컴포넌트 이동 시 실시간 앵커 추종(`syncAnchoredPositions`) 및 인스펙터 패널 연동 전담.
   - **`vctrl_iframe_ports.js` (Port Engine - Iframe Side)**:
     - **역할**: iframe 내부 요소의 edge/port 영역 감지 및 포트 드래그 커넥터 시작 연동 전담.
   - **`vctrl_iframe_script.js` (Rendering Engine Shell - Iframe Side)**:
     - **역할**: 시스템의 '근육'. iframe 내부의 DOM 직접 조작, 기본 이벤트 리스너 바인딩, 커넥터 조작 핸들 이벤트 디스패칭(`LF_CONNECTOR_HANDLE_MOVE`) 등을 전담합니다.
+    - **메시지 레지스트리 디스패처 (`window.v4MessageHandlers`)**: 거대한 `if-else` 분기문 대신 코어 핸들러 테이블 맵(`v4IframeCoreHandlers`)과 전역 `window.v4MessageHandlers` 레지스트리를 통한 초경량(10줄) 이벤트 디스패처 구조를 따릅니다. 신규 메시지 타입 추가 시 거대 if-else를 확장하지 않고 핸들러 테이블에 순수 함수로 등록해야 합니다. (백틱 충돌 0건 원칙 엄격 준수)
   - **`vctrl_iframe_drag.js` (Drag/Resize Engine - Iframe Side)**:
     - **역할**: iframe 내부 요소의 마우스 드래그 이동 및 리사이즈 조작 인터랙션을 전담합니다.
   - **`vctrl_iframe_grid.js` / `vctrl_iframe_accordion.js` / `vctrl_iframe_tab.js` / `vctrl_v4_addon.js` / `vctrl_object_shape.js` / `vctrl_object_connector.js`**:
@@ -36,15 +38,20 @@
   - **`vctrl_design_system.js` (Design Observer - Iframe Side)**:
     - **역할**: 1.6px 보더 두께 유지, % 좌표의 px 자동 마이그레이션, img-to-div 전환 및 아톰 크기 자동 보정(Design System)을 전담합니다.
   - **`vctrl_shortcuts.js` (Interaction Layer - Iframe Side)**:
-    - **역할**: 키보드 핫키 단축키 바인딩 및 크로스 스크린 복사/붙여넣기 연동을 전담합니다.
+    - **역할**: 키보드 핫키 단축키 바인딩 및 크로스 스크린 복사/붙여넣기 연동을 전담합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
   - **`vctrl_grouping.js` (Interaction Layer)**:
     - **역할**: 다중 요소 관리자. 드래그 범위 선택(Marquee), 다중 선택 상태(`selectedIds`), 그룹 이동/삭제/그룹화 연산 로직 전담.
   - **`vctrl_inspector.js` 및 `assets/inspector/*` (UI Controller & Domain Inspectors)**:
     - **역할**: 시스템의 '얼굴'. `vctrl_inspector.js`는 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 및 플로팅 카드를 총괄하며, 각 컴포넌트별 상세 속성 제어는 분리된 도메인 인스펙터(`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`)가 전담합니다.
-  - **`vctrl_common.js` (Common Bus & Utilities)**:
-    - **역할**: 부모-Iframe 통신 인터페이스인 `window.EditorBus`(`sendToIframe`, `sendToParent`) 및 공통 색상 유틸리티(`rgbToHex`, `hexToRgb`, `hexToRgba`)의 단일 진실 공급원(SSOT).
+    - **`inspector_atoms.js` (`window.InspectorAtoms`)**: 체크박스/라디오, 텍스트박스/텍스트에어리어, 서치바, 데이트피커 등 아톰 속성 인스펙터 동기화 전담 SSOT 모듈.
+  - **`vctrl_common.js` (Common Bus, Sanitizer & Utilities)**:
+    - **역할**: 
+      1. 부모-Iframe 통신 인터페이스: `window.EditorBus`(`sendToIframe`, `sendToParent`)
+      2. 공통 색상 유틸리티: `rgbToHex`, `hexToRgb`, `hexToRgba`
+      3. 전역 화면 살균 SSOT: `window.ScreenSanitizer` (`splitStyleRules`, `cleanEmptyStyleRules`, `cleanDOM`)
+      4. 반응형 문서 판별 SSOT: `isResponsiveDocument(doc)`
   - **`vctrl_component_library.js` & `vctrl_component_inserter.js` (Library & Insertion Engine)**:
-    - **역할**: 사이드바 라이브러리 목록 렌더링, 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성을 전담합니다.
+    - **역할**: 사이드바 라이브러리 목록 렌더링(`renderV4Shapes`, `renderAtomicLibrary`), 국영문 하이브리드 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성을 전담합니다. `viewer.html`에서 `vctrl_inspector.js`보다 먼저 로드되어 라이브러리 UI 바인딩의 SSOT를 책임집니다.
   - **`vctrl_pdf_exporter.js` (PDF Export Engine)**:
     - **역할**: `metadata.json`의 `screenOrder` 기준 전체 스크린 일괄 고해상도 PDF 결합 생성 및 장문 캔버스 캡처 전담.
   - **`vctrl_presentation_pen.js` (Presentation Drawing Engine)**:
@@ -262,6 +269,14 @@
   - 이 시스템은 기업에서 실제 운영(Production)되는 실무 워크스페이스 에디터 시스템입니다.
   - 에러, 경고, CORS 차단 등을 우회하거나 때우기 위해 임시 하드코딩된 더미 데이터, 가짜 껍데기 메타데이터/JSON/HTML, 임시 폴백 객체를 코드에 임의로 주입하는 행위는 실운영 데이터 덮어쓰기 및 데이터 오염/유실을 유발하므로 **100% 엄격히 금지(Strictly Prohibited)**합니다.
   - 로딩 실패나 예외 발생 시 원본 데이터의 실체(`data/p_xxxx/metadata.json` 등)를 훼손하거나 가짜 객체로 대체하지 않고, **순수 원본 데이터 읽기 및 정상적인 에러 로깅/복구 파이프라인만을 정직하게 실행**해야 합니다.
+- **수동 DOM 살균 및 개별 클린업 코드 중복 작성 금지 (ScreenSanitizer SSOT 강제)**:
+  - 스크린 저장, 뷰포트 스냅샷, HTML 내보내기 시 각 파일에서 수동으로 선택선/마키박스/핸들/가이드라인을 `clone.querySelectorAll` 등으로 개별 삭제하거나 빈 스타일 태그를 수동 파싱하는 코드를 작성하는 것은 엄격히 금지됩니다.
+  - 반드시 [assets/vctrl_common.js](file:///c:/Users/sisun/ai_work/assets/vctrl_common.js)의 **`window.ScreenSanitizer.cleanDOM(targetDoc)`** 단일 SSOT 함수를 호출하여 깨끗한 마크업을 일원화해 추출해야 합니다.
+- **Iframe 메시지 거대 `if-else` 분기문 누적 금지 (Message Registry Pattern 강제)**:
+  - [assets/vctrl_iframe_script.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_script.js)의 `message` 이벤트 리스너 내부에 직접 거대한 `if-else` 분기문을 추가/누적하지 마세요.
+  - 신규 iframe 메시지 핸들러는 반드시 `v4IframeCoreHandlers` 테이블 객체 또는 전역 **`window.v4MessageHandlers[type] = function(data) { ... }`**에 등록해야 하며, 파일 전체를 감싸고 있는 백틱(`` ` ``)과의 충돌을 방지하기 위해 일반 따옴표만을 사용해야 합니다.
+- **컴포넌트 셀/텍스트 정렬 클릭 리스너 중복 등록 금지 (전역 위임 SSOT 강제)**:
+  - 테이블 셀 정렬이나 도형 텍스트 정렬 버튼 등에 인라인 클릭 리스너를 개별적으로 중복 바인딩하지 마세요. `viewer.html` 또는 상위 컨테이너 레벨의 전역 이벤트 위임(Event Delegation)을 통해 단일 리스너로만 처리해야 이벤트 누수와 2중 실행을 원천 차단할 수 있습니다.
 - **임의의 구조 변경 금지**: 사용자 승인 없이 폴더 구조나 핵심 파일명을 변경하지 마세요.
 - **데이터 훼손 금지**: 각 개별 프로젝트 폴더의 `metadata.json` 등 공통 메타데이터를 임의로 삭제하거나 훼손하지 마세요.
 - **코드 무결성 유지**: 부분 교체 시 앞뒤 문맥을 철저히 대조하여 `SyntaxError`를 원천 차단하세요.

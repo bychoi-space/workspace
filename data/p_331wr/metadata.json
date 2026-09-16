@@ -11,7 +11,7 @@
     "01_Project_Summary_Report_101.html": {
       "title": "과제 개요 및 일정",
       "type": "plan",
-      "updatedAt": "2026-09-16T00:33:06.203Z",
+      "updatedAt": "2026-09-16T00:33:15.851Z",
       "template": "template_plan.html",
       "version": 0.3,
       "description": [
@@ -25,7 +25,7 @@
         }
       ],
       "connectors": [],
-      "defaultTab": "editor",
+      "defaultTab": "description",
       "screenDesc": "시선닷컴 상품 상세(PDP) 리뉴얼 누락 개선 과제 목적, 작업 범위(Front/Admin), 일정 및 마일스톤 보고서"
     },
     "08_Responsive_PC_Mobile_486.html": {

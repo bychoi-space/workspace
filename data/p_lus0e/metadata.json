@@ -176,7 +176,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-17T02:17:57.119Z",
+      "updatedAt": "2026-09-17T02:19:06.729Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -196,7 +196,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "2. 상단 비주얼 관리\n- 영역 구분을 위한 타이틀 존재\n- 이미지 PC, MO 등록 항목만 존재",
@@ -215,7 +216,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "3. 쿠폰 영역 관리\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 쿠폰 설정 기능\n- 최초 등록 시에는 모든 데이터 null",
@@ -234,36 +236,18 @@
               "active": true
             }
           },
-          "standardized": true
-        },
-        {
-          "text": "4. 상품 그룹 관리\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 상품 그룹 설정 기능\n- 최초 등록 시에는 모든 데이터 null",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 277,
-          "y": 1384,
-          "pins": {
-            "pc": {
-              "x": 277,
-              "y": 1384,
-              "active": true
-            },
-            "mobile": {
-              "x": 180,
-              "y": 300,
-              "active": true
-            }
-          },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "5. 연관 기획전\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 연관 기획전 설정 기능\n- 최초 등록 시에는 모든 데이터 null",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 275,
-          "y": 1672,
+          "x": 890,
+          "y": 423,
           "pins": {
             "pc": {
-              "x": 275,
-              "y": 1672,
+              "x": 890,
+              "y": 423,
               "active": true
             },
             "mobile": {
@@ -272,7 +256,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         },
         {
           "text": "Edit Text",
@@ -291,7 +276,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "type": "pin"
         }
       ],
       "connectors": [],
@@ -430,7 +416,7 @@
   "developer": "원미란란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 11:17:57",
+  "updated": "2026-09-17 11:19:06",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

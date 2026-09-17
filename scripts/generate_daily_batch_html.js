@@ -23,7 +23,7 @@ function textShape(id, left, top, width, height, contentHtml, fontSize = '13px',
 }
 
 // Helper to create a Multi-line Flow Container Text component
-function multiLineText(id, left, top, width, height, contentHtml, fontSize = '13.5px', fontWeight = '400', color = '#334155', lineHeight = '1.45', zIndex = 102) {
+function multiLineText(id, left, top, width, height, contentHtml, fontSize = '13px', fontWeight = '400', color = '#334155', lineHeight = '1.45', zIndex = 102) {
     return `
         <!-- Multi-line Flow Text: ${id} -->
         <div id="${id}" class="lf-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
@@ -64,25 +64,49 @@ function iconShape(id, left, top, width, height, svgInner, color = '#2563eb', zI
 let components = [];
 
 // ==========================================
-// [0] HEADER (Top: 20, Left: 20, W: 1560, H: 48)
+// [0] HEADER (Top: 20, Left: 20, W: 1560, H: 46)
 // ==========================================
-components.push(rectShape('hdr_bg', 20, 20, 1560, 48, '#0f172a', '#1e293b', '10px', 100));
-components.push(iconShape('hdr_icon', 38, 31, 24, 24, `
+components.push(rectShape('hdr_bg', 20, 20, 1560, 46, '#0f172a', '#1e293b', '10px', 100));
+components.push(iconShape('hdr_icon', 38, 30, 24, 24, `
     <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
     <polyline points="2 17 12 22 22 17"></polyline>
     <polyline points="2 12 12 17 22 12"></polyline>
 `, '#38bdf8', 105));
-components.push(textShape('hdr_title', 74, 30, 680, 26, `<p style="white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 17.5px; white-space: nowrap !important;">시선닷컴 상품 랭킹 산정 기준 &amp; 10개 상품 실무 시뮬레이션</strong></p>`, '17.5px', '800', '#ffffff', 'left', 105));
-components.push(badgeShape('hdr_tag', 1310, 29, 250, 30, 'RANKING POLICY & 10 PRODUCTS', '#1e293b', '#38bdf8', '#38bdf8', '12px', '6px', 105));
+components.push(textShape('hdr_title', 74, 29, 680, 26, `<p style="white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 17px; white-space: nowrap !important;">시선닷컴 상품 랭킹 산정 기준 &amp; 10개 상품 실무 시뮬레이션</strong></p>`, '17px', '800', '#ffffff', 'left', 105));
+components.push(badgeShape('hdr_tag', 1310, 28, 250, 28, 'RANKING POLICY & 10 PRODUCTS', '#1e293b', '#38bdf8', '#38bdf8', '12px', '6px', 105));
 
 // ==========================================
-// [1] SECTION 1: 6대 핵심 지표별 데이터 수집 기준 및 산정 방식 (Top: 76, Left: 20, W: 1560, H: 215)
+// [1] SECTION 1: 6대 핵심 지표별 데이터 수집 기준 및 산정 공식 (Top: 74, Left: 20, W: 1560, H: 242)
 // ==========================================
-components.push(rectShape('s1_container', 20, 76, 1560, 215, '#ffffff', '#cbd5e1', '10px', 100));
-components.push(textShape('s1_lbl', 38, 88, 540, 24, `<p style="white-space: nowrap !important;"><strong style="font-size: 16px; color: #0f172a; white-space: nowrap !important;">1. 6대 핵심 지표별 데이터 수집 기준 및 산정 방식 (패션 시즌 특화)</strong></p>`, '16px', '800', '#0f172a', 'left', 102));
-components.push(badgeShape('s1_tag', 590, 87, 265, 25, '가중치 합계 100% | 100점 만점 표준화', '#eff6ff', '#bfdbfe', '#1d4ed8', '12.5px', '4px', 102));
+components.push(rectShape('s1_container', 20, 74, 1560, 242, '#ffffff', '#cbd5e1', '10px', 100));
+components.push(textShape('s1_lbl', 36, 85, 540, 24, `<p style="white-space: nowrap !important;"><strong style="font-size: 15.5px; color: #0f172a; white-space: nowrap !important;">1. 6대 핵심 지표별 데이터 수집 기준 및 산정 방식 (패션 시즌 특화)</strong></p>`, '15.5px', '800', '#0f172a', 'left', 102));
+components.push(badgeShape('s1_tag', 580, 84, 265, 24, '가중치 합계 100% | 100점 만점 표준화', '#eff6ff', '#bfdbfe', '#1d4ed8', '12px', '4px', 102));
 
-// 6개 카드 (W: 244, H: 155, Left: 36 + i*256, Top: 120)
+// [요약 바] 가중치 합계 및 백분위 순위 포인트 산정 공식 요약 (Left: 36, Top: 114, W: 1528, H: 38)
+components.push(rectShape('s1_formula_bg', 36, 114, 1528, 38, '#f8fafc', '#cbd5e1', '6px', 101));
+components.push(multiLineText('s1_formula_content', 38, 115, 1524, 36, `
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 0 10px; box-sizing: border-box; font-family: inherit;">
+        <!-- Step 1 -->
+        <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+            <span style="background: #0f172a; color: #ffffff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">1단계: 지표별 순위 정렬</span>
+            <span style="font-size: 12.5px; font-weight: 600; color: #1e293b;">전체 대상 상품(N개)을 각 지표 실적순으로 1위부터 N위까지 내림차순 정렬</span>
+        </div>
+        <span style="font-size: 14px; font-weight: 800; color: #94a3b8;">➔</span>
+        <!-- Step 2 -->
+        <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+            <span style="background: #2563eb; color: #ffffff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">2단계: 백분위 포인트 산출</span>
+            <span style="font-size: 12.5px; font-weight: 700; color: #1d4ed8;">획득 포인트 = [ 1 - (내 순위 - 1) / (전체 N - 1) ] × 지표 가중치 만점 <span style="font-size: 12px; font-weight: 500; color: #64748b;">(1위=만점, 꼴등=0점)</span></span>
+        </div>
+        <span style="font-size: 14px; font-weight: 800; color: #94a3b8;">➔</span>
+        <!-- Step 3 -->
+        <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+            <span style="background: #0d9488; color: #ffffff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">3단계: 가중치 합산 (Base 100점)</span>
+            <span style="font-size: 12.5px; font-weight: 700; color: #0f766e;">6대 지표 포인트 합산 = Base 점수 <span style="font-size: 12px; font-weight: 500; color: #64748b;">(결제35 + 수량25 + 담기15 + 위시10 + UV10 + PV5 = 100점)</span></span>
+        </div>
+    </div>
+`, '12.5px', '400', '#334155', '1.2', 103));
+
+// 6개 카드 (W: 244, H: 146, Left: 36 + i*256, Top: 158)
 const metrics = [
     {
         id: 'm1', name: '결제금액 (GMV)', weight: '35%', maxPt: '만점 35.0 점',
@@ -124,24 +148,24 @@ const metrics = [
 
 metrics.forEach((m, idx) => {
     const left = 36 + idx * 256;
-    components.push(rectShape(`${m.id}_bg`, left, 120, 244, 155, '#f8fafc', '#cbd5e1', '8px', 101));
-    components.push(badgeShape(`${m.id}_w`, left + 10, 129, 66, 24, m.weight, m.color, m.color, '#ffffff', '12.5px', '4px', 103));
-    components.push(textShape(`${m.id}_t`, left + 82, 129, 152, 24, `<p style="white-space: nowrap !important;"><strong style="font-size: 15px; color: #0f172a; white-space: nowrap !important;">${m.name}</strong></p>`, '15px', '800', '#0f172a', 'left', 103));
-    components.push(badgeShape(`${m.id}_sc`, left + 10, 158, 108, 24, m.scope, m.scopeBg, '#cbd5e1', m.scopeColor, '12px', '4px', 103));
-    components.push(badgeShape(`${m.id}_pt`, left + 124, 158, 110, 24, m.maxPt, '#ffffff', '#cbd5e1', '#0f172a', '12px', '4px', 103));
-    components.push(multiLineText(`${m.id}_desc`, left + 10, 187, 224, 82, `
-        <p style="margin: 0; font-size: 13.5px; color: #334155; line-height: 1.45;">${m.desc}</p>
-    `, '13.5px', '400', '#334155', '1.45', 103));
+    components.push(rectShape(`${m.id}_bg`, left, 158, 244, 146, '#f8fafc', '#cbd5e1', '8px', 101));
+    components.push(badgeShape(`${m.id}_w`, left + 10, 166, 66, 22, m.weight, m.color, m.color, '#ffffff', '12px', '4px', 103));
+    components.push(textShape(`${m.id}_t`, left + 82, 165, 152, 22, `<p style="white-space: nowrap !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">${m.name}</strong></p>`, '14.5px', '800', '#0f172a', 'left', 103));
+    components.push(badgeShape(`${m.id}_sc`, left + 10, 192, 108, 22, m.scope, m.scopeBg, '#cbd5e1', m.scopeColor, '12px', '4px', 103));
+    components.push(badgeShape(`${m.id}_pt`, left + 124, 192, 110, 22, m.maxPt, '#ffffff', '#cbd5e1', '#0f172a', '12px', '4px', 103));
+    components.push(multiLineText(`${m.id}_desc`, left + 10, 218, 224, 80, `
+        <p style="margin: 0; font-size: 12.5px; color: #334155; line-height: 1.4;">${m.desc}</p>
+    `, '12.5px', '400', '#334155', '1.4', 103));
 });
 
 // ==========================================
-// [2] SECTION 2: 10개 상품 실무 시뮬레이션 매트릭스 표 (Top: 299, Left: 20, W: 1560, H: 575)
+// [2] SECTION 2: 10개 상품 실무 시뮬레이션 매트릭스 표 (Top: 324, Left: 20, W: 1560, H: 554)
 // ==========================================
-components.push(rectShape('s2_container', 20, 299, 1560, 575, '#ffffff', '#cbd5e1', '10px', 100));
-components.push(textShape('s2_lbl', 38, 312, 560, 24, `<p style="white-space: nowrap !important;"><strong style="font-size: 16px; color: #0f172a; white-space: nowrap !important;">2. 패션 카테고리 10개 상품 랭킹 시뮬레이션 매트릭스 (가상 데이터 검증)</strong></p>`, '16px', '800', '#0f172a', 'left', 102));
-components.push(badgeShape('s2_tag', 610, 311, 320, 25, 'Total Score = Base Score(100점) × 신상품 부스팅', '#fdf2f8', '#fbcfe8', '#be185d', '12.5px', '4px', 102));
+components.push(rectShape('s2_container', 20, 324, 1560, 554, '#ffffff', '#cbd5e1', '10px', 100));
+components.push(textShape('s2_lbl', 36, 336, 560, 24, `<p style="white-space: nowrap !important;"><strong style="font-size: 15.5px; color: #0f172a; white-space: nowrap !important;">2. 패션 카테고리 10개 상품 랭킹 시뮬레이션 매트릭스 (가상 데이터 검증)</strong></p>`, '15.5px', '800', '#0f172a', 'left', 102));
+components.push(badgeShape('s2_tag', 610, 335, 320, 24, 'Total Score = Base Score(100점) × 신상품 부스팅', '#fdf2f8', '#fbcfe8', '#be185d', '12px', '4px', 102));
 
-// 10개 상품 시뮬레이션 데이터 (비즈니스 판정 요약 컬럼 제거, 폰트 13~14px 기준)
+// 10개 상품 시뮬레이션 데이터 (기존보다 1px 낮춘 편안하고 정돈된 폰트 사이즈)
 const products = [
     {
         rank: '1위 🏆', brand: 'it MICHAA', name: '플리츠 벨티드 원피스', price: '280,000원',
@@ -218,7 +242,7 @@ const products = [
     }
 ];
 
-// 테이블 행 생성 (13~14px 폰트, 여유 있는 행 높이 45px)
+// 테이블 행 생성 (1px씩 낮춘 부담 없는 최적 타이포그래피, 행 높이 41px)
 let tableRowsHtml = products.map((p, idx) => {
     let rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
     let rankColor = '#0f172a';
@@ -243,45 +267,45 @@ let tableRowsHtml = products.map((p, idx) => {
     }
 
     return `
-        <tr style="background: ${rowBg}; border-bottom: 1px solid #e2e8f0; height: 45px;">
-            <td style="padding: 6px 4px; font-weight: ${rankWeight}; color: ${rankColor}; font-size: 14px;">${p.rank}</td>
-            <td style="padding: 6px 8px; text-align: left; font-size: 13.5px;"><span style="font-weight: 800; color: #0f172a;">[${p.brand}]</span> <span style="color: #1e293b; font-weight: 600;">${p.name}</span> <span style="color: #64748b; font-size: 12.5px;">(${p.price})</span></td>
-            <td style="padding: 6px 4px; font-weight: 700; font-size: 13.5px; color: ${p.boost !== '1.00x' ? '#be185d' : '#475569'};">${p.launch} <span style="font-size: 12px; font-weight: 800;">(${p.boost})</span></td>
-            <td style="padding: 6px 4px; color: #1e3a8a; font-weight: 700; font-size: 14px;">${p.gmv}</td>
-            <td style="padding: 6px 4px; color: #0369a1; font-weight: 700; font-size: 14px;">${p.vol}</td>
-            <td style="padding: 6px 4px; color: #0f766e; font-weight: 600; font-size: 13.5px;">${p.cart}</td>
-            <td style="padding: 6px 4px; color: #be123c; font-weight: 600; font-size: 13.5px;">${p.wish}</td>
-            <td style="padding: 6px 4px; color: #4338ca; font-weight: 600; font-size: 13.5px;">${p.uv}</td>
-            <td style="padding: 6px 4px; color: #475569; font-weight: 600; font-size: 13.5px;">${p.pv}</td>
-            <td style="padding: 6px 4px; font-weight: 800; color: #334155; font-size: 14px;">${p.base}</td>
-            <td style="padding: 6px 4px; font-weight: 900; color: ${totalColor}; font-size: 15.5px;">${p.total}</td>
+        <tr style="background: ${rowBg}; border-bottom: 1px solid #e2e8f0; height: 41px;">
+            <td style="padding: 5px 4px; font-weight: ${rankWeight}; color: ${rankColor}; font-size: 13px;">${p.rank}</td>
+            <td style="padding: 5px 8px; text-align: left; font-size: 12.5px;"><span style="font-weight: 800; color: #0f172a;">[${p.brand}]</span> <span style="color: #1e293b; font-weight: 600;">${p.name}</span> <span style="color: #64748b; font-size: 12px;">(${p.price})</span></td>
+            <td style="padding: 5px 4px; font-weight: 700; font-size: 12.5px; color: ${p.boost !== '1.00x' ? '#be185d' : '#475569'};">${p.launch} <span style="font-size: 12px; font-weight: 800;">(${p.boost})</span></td>
+            <td style="padding: 5px 4px; color: #1e3a8a; font-weight: 700; font-size: 13px;">${p.gmv}</td>
+            <td style="padding: 5px 4px; color: #0369a1; font-weight: 700; font-size: 13px;">${p.vol}</td>
+            <td style="padding: 5px 4px; color: #0f766e; font-weight: 600; font-size: 12.5px;">${p.cart}</td>
+            <td style="padding: 5px 4px; color: #be123c; font-weight: 600; font-size: 12.5px;">${p.wish}</td>
+            <td style="padding: 5px 4px; color: #4338ca; font-weight: 600; font-size: 12.5px;">${p.uv}</td>
+            <td style="padding: 5px 4px; color: #475569; font-weight: 600; font-size: 12.5px;">${p.pv}</td>
+            <td style="padding: 5px 4px; font-weight: 800; color: #334155; font-size: 13px;">${p.base}</td>
+            <td style="padding: 5px 4px; font-weight: 900; color: ${totalColor}; font-size: 14.5px;">${p.total}</td>
         </tr>
     `;
 }).join('\n');
 
-components.push(rectShape('s2_tb_container', 38, 344, 1520, 514, '#ffffff', '#cbd5e1', '8px', 101));
-components.push(multiLineText('s2_tb_content', 40, 346, 1516, 510, `
+components.push(rectShape('s2_tb_container', 36, 368, 1528, 494, '#ffffff', '#cbd5e1', '8px', 101));
+components.push(multiLineText('s2_tb_content', 38, 370, 1524, 490, `
     <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
-            <tr style="background: #0f172a; color: #ffffff; border-bottom: 1.6px solid #1e293b; height: 46px; font-size: 13.5px;">
-                <th style="padding: 6px 4px; width: 75px;">순위</th>
-                <th style="padding: 6px 8px; text-align: left; width: 325px;">브랜드 / 상품명 (판매가)</th>
-                <th style="padding: 6px 4px; width: 140px;">출시 시점 (부스트)</th>
-                <th style="padding: 6px 4px; width: 140px; color: #93c5fd;">결제금액 (35점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">시즌 전체 누적</span></th>
-                <th style="padding: 6px 4px; width: 135px; color: #7dd3fc;">주문수량 (25점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">시즌 전체 누적</span></th>
-                <th style="padding: 6px 4px; width: 125px; color: #5eead4;">장바구니 (15점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">현재 스냅샷</span></th>
-                <th style="padding: 6px 4px; width: 125px; color: #fda4af;">위시리스트 (10점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">현재 스냅샷</span></th>
-                <th style="padding: 6px 4px; width: 125px; color: #c4b5fd;">UV (10점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">최근 7일 누적</span></th>
-                <th style="padding: 6px 4px; width: 115px; color: #cbd5e1;">PV (5점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">최근 7일 (3회 캡)</span></th>
-                <th style="padding: 6px 4px; width: 95px;">Base<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">기본 (100점)</span></th>
-                <th style="padding: 6px 4px; width: 120px; color: #38bdf8;">최종 종합 점수<br><span style="font-size: 12px; font-weight: 400; color: #38bdf8;">Total Score</span></th>
+            <tr style="background: #0f172a; color: #ffffff; border-bottom: 1.6px solid #1e293b; height: 42px; font-size: 12.5px;">
+                <th style="padding: 5px 4px; width: 75px;">순위</th>
+                <th style="padding: 5px 8px; text-align: left; width: 325px;">브랜드 / 상품명 (판매가)</th>
+                <th style="padding: 5px 4px; width: 140px;">출시 시점 (부스트)</th>
+                <th style="padding: 5px 4px; width: 140px; color: #93c5fd;">결제금액 (35점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">시즌 전체 누적</span></th>
+                <th style="padding: 5px 4px; width: 135px; color: #7dd3fc;">주문수량 (25점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">시즌 전체 누적</span></th>
+                <th style="padding: 5px 4px; width: 125px; color: #5eead4;">장바구니 (15점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">현재 스냅샷</span></th>
+                <th style="padding: 5px 4px; width: 125px; color: #fda4af;">위시리스트 (10점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">현재 스냅샷</span></th>
+                <th style="padding: 5px 4px; width: 125px; color: #c4b5fd;">UV (10점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">최근 7일 누적</span></th>
+                <th style="padding: 5px 4px; width: 115px; color: #cbd5e1;">PV (5점)<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">최근 7일 (3회 캡)</span></th>
+                <th style="padding: 5px 4px; width: 95px;">Base<br><span style="font-size: 12px; font-weight: 400; color: #cbd5e1;">기본 (100점)</span></th>
+                <th style="padding: 5px 4px; width: 128px; color: #38bdf8;">최종 종합 점수<br><span style="font-size: 12px; font-weight: 400; color: #38bdf8;">Total Score</span></th>
             </tr>
         </thead>
         <tbody>
             ${tableRowsHtml}
         </tbody>
     </table>
-`, '13.5px', '400', '#334155', '1.3', 103));
+`, '12.5px', '400', '#334155', '1.3', 103));
 
 let html = `<!DOCTYPE html>
 <html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 14px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;">
@@ -344,4 +368,4 @@ ${components.join('\n')}
 `;
 
 fs.writeFileSync('data/p_lus0e/11_Daily_Ranking_Batch_Percentile_851.html', html, 'utf8');
-console.log('Successfully regenerated 11_Daily_Ranking_Batch_Percentile_851.html with refined layout and enlarged typography!');
+console.log('Successfully regenerated 11_Daily_Ranking_Batch_Percentile_851.html with formula summary and -1px reduced table font size!');

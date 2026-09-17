@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-09-17 17:18:00",
+    "file": "11_Daily_Ranking_Batch_Percentile_851.html",
+    "version": 0.6,
+    "assignee": "최범열",
+    "developer": "원미란",
+    "message": "상단 6대 지표 영역에 백분위 순위 포인트 산정 공식 요약 바 추가, 시뮬레이션 표 텍스트 1px 축소 가독성 최적화"
+  },
+  {
     "date": "2026-09-17 17:05:00",
     "file": "11_Daily_Ranking_Batch_Percentile_851.html",
     "version": 0.5,

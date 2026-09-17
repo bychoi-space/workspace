@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-17T04:53:41.257Z",
+      "updatedAt": "2026-09-17T04:57:56.967Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -99,7 +99,7 @@
           "type": "pin"
         },
         {
-          "text": "어드민 상품 영역의 [그룹] 설정된 데이터 표현\n- 기존 기획전 기능과동일",
+          "text": "어드민 상품 영역의 [그룹] 설정된 데이터 표현\n- 기존 기획전 기능과 동일",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 7,
           "y": 1046,
@@ -117,6 +117,25 @@
           },
           "standardized": true,
           "type": "pin"
+        },
+        {
+          "text": "댓글 영역 신규 추가 (9/17)\n- 어드민 공통 기능 [댓글작성여부] 를 위한 영역 설계\n- 기존 댓글 UI 동일하게 활용하여 구성\n- 모든 기능 기존과 동일",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 149,
+          "y": 2628,
+          "pins": {
+            "pc": {
+              "x": 149,
+              "y": 2628,
+              "active": true
+            },
+            "mobile": {
+              "x": 11,
+              "y": 2479,
+              "active": true
+            }
+          },
+          "standardized": true
         }
       ],
       "connectors": [],
@@ -417,7 +436,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 13:53:41",
+  "updated": "2026-09-17 13:57:56",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

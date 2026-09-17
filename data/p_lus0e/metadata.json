@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-17T04:57:56.967Z",
+      "updatedAt": "2026-09-17T07:25:54.125Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -141,7 +141,7 @@
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object],[object Object]",
-      "version": 0.3
+      "version": 0.4
     },
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
@@ -505,7 +505,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 16:25:00",
+  "updated": "2026-09-17 16:25:53",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

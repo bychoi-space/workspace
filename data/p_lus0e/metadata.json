@@ -499,6 +499,12 @@
       "version": 0.3,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
+    },
+    "06_Mobile_Design_3_319.html": {
+      "title": "06_Mobile_Design_3_319",
+      "type": "mobile-ui",
+      "updatedAt": "2026-09-17T07:42:18.885Z",
+      "template": "template_mobile_ui_3.html"
     }
   },
   "assignee": "최범열",
@@ -515,7 +521,8 @@
     "09_Admin_PC_Scroll_639_copy4.html",
     "99_Blank_812.html",
     "10_Product_Ranking_Rules_850.html",
-    "11_Daily_Ranking_Batch_Percentile_851.html"
+    "11_Daily_Ranking_Batch_Percentile_851.html",
+    "06_Mobile_Design_3_319.html"
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link",

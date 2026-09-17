@@ -439,8 +439,8 @@
     },
     "99_Blank_812.html": {
       "title": "99_Blank_812",
-      "type": "blank",
-      "updatedAt": "2026-09-17T06:11:48.159Z",
+      "type": "admin",
+      "updatedAt": "2026-09-17T06:12:23.398Z",
       "template": "template_blank.html",
       "description": [
         {
@@ -450,10 +450,20 @@
           "x": 300,
           "y": 121,
           "standardized": true
+        },
+        {
+          "type": "pin",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 1131,
+          "y": 170,
+          "standardized": true
         }
       ],
       "connectors": [],
-      "version": 0.4
+      "version": 0.4,
+      "defaultTab": "editor",
+      "screenDesc": "[object Object],[object Object]"
     }
   },
   "assignee": "최범열",

@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-17T07:41:32.324Z",
+      "updatedAt": "2026-09-17T04:57:56.967Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -141,7 +141,7 @@
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object],[object Object]",
-      "version": 0.4
+      "version": 0.3
     },
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
@@ -194,15 +194,15 @@
       "screenDesc": "시선닷컴 3개 브랜드(MICHAA, it MICHAA, E.B.M)를 위한 상품 종합 랭킹(Ranking Score) 산정 룰 및 알고리즘 정책"
     },
     "11_Daily_Ranking_Batch_Percentile_851.html": {
-      "title": "상품 랭킹 6대 지표 산정 기준 & 집계 정책",
+      "title": "상품 랭킹 기준 & 10개 상품 시뮬레이션",
       "type": "plan",
-      "updatedAt": "2026-09-17T07:25:00.000Z",
+      "updatedAt": "2026-09-17T07:50:00.000Z",
       "template": "template_project_summary.html",
-      "version": 0.3,
+      "version": 0.4,
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
-      "screenDesc": "최근 7일 롤링 윈도우, 장바구니/위시 이벤트 로그 집계 방식, UV/PV 일별 요약 적재 정책 및 6대 지표별 실무 정의·어뷰징 캡·계산 예시"
+      "screenDesc": "시선닷컴 패션 특화 6대 지표 수집 기준(시즌 전체 누적 결제/수량, 배치 시점 스냅샷 카트/위시, 최근 7일 UV/PV) 및 10개 가상 상품 실무 시뮬레이션 매트릭스 표"
     },
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
@@ -499,27 +499,17 @@
       "version": 0.3,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
-    },
-    "06_Mobile_Design_3_319.html": {
-      "title": "06_Mobile_Design_3_319",
-      "type": "mobile-ui",
-      "updatedAt": "2026-09-17T07:43:43.005Z",
-      "template": "template_mobile_ui_3.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.4
     }
   },
   "assignee": "최범열",
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 16:43:42",
+  "updated": "2026-09-17 16:50:00",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",
     "08_Responsive_PC_Mobile_730.html",
-    "06_Mobile_Design_3_319.html",
     "09_Admin_PC_Scroll_639.html",
     "09_Admin_PC_Scroll_639_copy3.html",
     "09_Admin_PC_Scroll_639_copy4.html",

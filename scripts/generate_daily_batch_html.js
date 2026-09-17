@@ -248,16 +248,16 @@ components.push(multiLineText('s2_c1_metrics', 60, 584, 450, 134, `
 
 components.push(rectShape('s2_c1_res_bg', 54, 730, 462, 120, '#ffffff', '#cbd5e1', '6px', 102));
 components.push(multiLineText('s2_c1_res_text', 64, 738, 442, 104, `
-    <p style="margin: 0; line-height: 1.5;"><strong style="font-size: 13px; color: #0f172a;">• Base Score (기본 점수):</strong> <span style="font-size: 15px; font-weight: 800; color: #2563eb;">76.7 점</span> (100점 만점 중)</p>
-    <p style="margin: 3px 0; line-height: 1.5;"><strong style="font-size: 13px; color: #0f172a;">• 신상품 부스트:</strong> 1.00배 ➔ <strong style="font-size: 13px; color: #0f172a;">최종 종합 점수:</strong> <span style="font-size: 17px; font-weight: 900; color: #0f172a;">76.7 점</span> <span style="font-size: 12px; color: #15803d; font-weight: 700;">(종합 2위)</span></p>
-    <p style="margin: 3px 0 0 0; font-size: 12px; color: #475569; line-height: 1.4;"><strong>※ 단위 해소 효과:</strong> 150만원 고가이지만 결제점수 만점 한도인 <strong>35점 중 34.3점까지만 반영</strong>되므로 다른 상품을 점수로 압살하지 않고 공정하게 2위 안착</p>
+    <p style="margin: 0; line-height: 1.5;"><strong style="font-size: 13px; color: #0f172a;">• Base Score (기본 점수):</strong> <span style="font-size: 15px; font-weight: 800; color: #2563eb;">76.7 점</span> &nbsp;|&nbsp; <strong style="font-size: 13px; color: #0f172a;">신상품 부스트:</strong> 1.00배</p>
+    <p style="margin: 3px 0; line-height: 1.5;"><strong style="font-size: 13px; color: #0f172a;">• 최종 종합 점수:</strong> <span style="font-size: 17px; font-weight: 900; color: #0f172a;">76.7 점</span> <span style="font-size: 12px; color: #475569; font-weight: 800;">[ 전체 종합 3위 🥉 ]</span></p>
+    <p style="margin: 3px 0 0 0; font-size: 12px; color: #475569; line-height: 1.4;"><strong>※ 단위 해소 효과:</strong> 150만원 고가이지만 결제점수 만점 한도(35점 중 34.3점)만 반영되어, 랭킹을 독점하지 않고 대중 인기 상품(2위) 및 신상품(1위)에 이어 3위 안착</p>
 `, '12.5px', '400', '#334155', '1.3', 103));
 
-// Card 2: 556px (E.B.M 데일리 슬랙스 - 저가/대량)
+// Card 2: 556px (E.B.M 데일리 슬랙스 - 종합 2위 / 기존 상품군 1위)
 components.push(rectShape('s2_c2_bg', 556, 538, 490, 326, '#eff6ff', '#bfdbfe', '8px', 101));
 components.push(badgeShape('s2_c2_b1', 570, 550, 75, 22, 'E.B.M', '#0f172a', '#1e293b', '#ffffff', '12px', '4px', 103));
-components.push(textShape('s2_c2_title', 652, 550, 250, 22, `<p style="white-space: nowrap !important;"><strong style="font-size: 14px; color: #1e3a8a; white-space: nowrap !important;">와이드 핏 슬랙스 (7.9만원 / 대중인기)</strong></p>`, '14px', '700', '#1e3a8a', 'left', 103));
-components.push(badgeShape('s2_c2_b2', 940, 550, 92, 22, '출시 45일차', '#dbeafe', '#bfdbfe', '#1e40af', '12px', '4px', 103));
+components.push(textShape('s2_c2_title', 652, 550, 220, 22, `<p style="white-space: nowrap !important;"><strong style="font-size: 14px; color: #1e3a8a; white-space: nowrap !important;">와이드 핏 슬랙스 (7.9만원)</strong></p>`, '14px', '700', '#1e3a8a', 'left', 103));
+components.push(badgeShape('s2_c2_b2', 880, 550, 152, 22, '전체 2위 (기존 상품 1위 🥈)', '#dbeafe', '#bfdbfe', '#1e40af', '12px', '4px', 103));
 
 components.push(rectShape('s2_c2_tb_bg', 570, 580, 462, 142, '#ffffff', '#bfdbfe', '6px', 102));
 components.push(multiLineText('s2_c2_metrics', 576, 584, 450, 134, `
@@ -306,16 +306,16 @@ components.push(multiLineText('s2_c2_metrics', 576, 584, 450, 134, `
 
 components.push(rectShape('s2_c2_res_bg', 570, 730, 462, 120, '#ffffff', '#bfdbfe', '6px', 102));
 components.push(multiLineText('s2_c2_res_text', 580, 738, 442, 104, `
-    <p style="margin: 0; line-height: 1.5;"><strong style="font-size: 13px; color: #1e3a8a;">• Base Score (기본 점수):</strong> <span style="font-size: 15px; font-weight: 800; color: #1d4ed8;">86.1 점</span> (100점 만점 중)</p>
-    <p style="margin: 3px 0; line-height: 1.5;"><strong style="font-size: 13px; color: #1e3a8a;">• 신상품 부스트:</strong> 1.00배 ➔ <strong style="font-size: 13px; color: #1e3a8a;">최종 종합 점수:</strong> <span style="font-size: 17px; font-weight: 900; color: #1d4ed8;">86.1 점</span> <span style="font-size: 12px; color: #2563eb; font-weight: 700;">(종합 1위 등극! 🏆)</span></p>
-    <p style="margin: 3px 0 0 0; font-size: 12px; color: #1e3a8a; line-height: 1.4;"><strong>※ 단위 해소 효과:</strong> 금액은 낮지만 압도적 수량(24.5점)과 높은 장바구니/위시/트래픽 가치를 정당하게 인정받아 <strong>고가 코트를 제치고 종합 1위 등극!</strong></p>
+    <p style="margin: 0; line-height: 1.5;"><strong style="font-size: 13px; color: #1e3a8a;">• Base Score (기본 점수):</strong> <span style="font-size: 15px; font-weight: 800; color: #1d4ed8;">86.1 점</span> &nbsp;|&nbsp; <strong style="font-size: 13px; color: #1e3a8a;">신상품 부스트:</strong> 1.00배</p>
+    <p style="margin: 3px 0; line-height: 1.5;"><strong style="font-size: 13px; color: #1e3a8a;">• 최종 종합 점수:</strong> <span style="font-size: 17px; font-weight: 900; color: #1d4ed8;">86.1 점</span> <span style="font-size: 12px; color: #1e40af; font-weight: 800;">[ 전체 2위 · 기존상품 1위 🥈 ]</span></p>
+    <p style="margin: 3px 0 0 0; font-size: 12px; color: #1e3a8a; line-height: 1.4;"><strong>※ 단위 해소 효과:</strong> 금액은 낮지만 압도적 수량(24.5점)과 고객 반응으로 <strong>기존 일반 상품군 중 1위(전체 2위)</strong>를 차지하며 저가 상품 역차별을 완벽 극복!</p>
 `, '12.5px', '400', '#1e3a8a', '1.3', 103));
 
-// Card 3: 1072px (it MICHAA 신상품 - 부스팅 적용)
+// Card 3: 1072px (it MICHAA 신상품 - 종합 1위 등극! 🏆)
 components.push(rectShape('s2_c3_bg', 1072, 538, 488, 326, '#fdf2f8', '#fbcfe8', '8px', 101));
 components.push(badgeShape('s2_c3_b1', 1086, 550, 75, 22, 'it MICHAA', '#0f172a', '#1e293b', '#ffffff', '12px', '4px', 103));
-components.push(textShape('s2_c3_title', 1168, 550, 250, 22, `<p style="white-space: nowrap !important;"><strong style="font-size: 14px; color: #831843; white-space: nowrap !important;">플리츠 벨티드 원피스 (28만원 / 신상)</strong></p>`, '14px', '700', '#831843', 'left', 103));
-components.push(badgeShape('s2_c3_b2', 1450, 550, 95, 22, '출시 3일차 (1.5x)', '#be185d', '#9d174d', '#ffffff', '12px', '4px', 103));
+components.push(textShape('s2_c3_title', 1168, 550, 200, 22, `<p style="white-space: nowrap !important;"><strong style="font-size: 14px; color: #831843; white-space: nowrap !important;">플리츠 원피스 (28만원/신상)</strong></p>`, '14px', '700', '#831843', 'left', 103));
+components.push(badgeShape('s2_c3_b2', 1380, 550, 166, 22, '전체 1위 등극 (슈퍼부스트 🏆)', '#be185d', '#9d174d', '#ffffff', '12px', '4px', 103));
 
 components.push(rectShape('s2_c3_tb_bg', 1086, 580, 460, 142, '#ffffff', '#fbcfe8', '6px', 102));
 components.push(multiLineText('s2_c3_metrics', 1092, 584, 448, 134, `
@@ -364,9 +364,9 @@ components.push(multiLineText('s2_c3_metrics', 1092, 584, 448, 134, `
 
 components.push(rectShape('s2_c3_res_bg', 1086, 730, 460, 120, '#ffffff', '#fbcfe8', '6px', 102));
 components.push(multiLineText('s2_c3_res_text', 1096, 738, 440, 104, `
-    <p style="margin: 0; line-height: 1.5;"><strong style="font-size: 13px; color: #831843;">• Base Score (기본 점수):</strong> <span style="font-size: 15px; font-weight: 800; color: #be185d;">63.5 점</span> (100점 만점 중)</p>
-    <p style="margin: 3px 0; line-height: 1.5;"><strong style="font-size: 13px; color: #831843;">• 신상품 부스트:</strong> <strong style="color: #be185d;">× 1.50배</strong> ➔ <strong style="font-size: 13px; color: #831843;">최종 종합 점수:</strong> <span style="font-size: 17px; font-weight: 900; color: #be185d;">95.3 점</span> <span style="font-size: 12px; color: #9d174d; font-weight: 700;">(최상위 노출 🚀)</span></p>
-    <p style="margin: 3px 0 0 0; font-size: 12px; color: #831843; line-height: 1.4;"><strong>※ 신상품 부스팅 효과:</strong> 누적 실적이 적어도 출시 3일차 신상품 슈퍼 부스트(1.5x)를 받아 95.3점으로 랭킹 최상단 노출 기회를 완벽 보장</p>
+    <p style="margin: 0; line-height: 1.5;"><strong style="font-size: 13px; color: #831843;">• Base Score (기본 점수):</strong> <span style="font-size: 15px; font-weight: 800; color: #be185d;">63.5 점</span> &nbsp;|&nbsp; <strong style="font-size: 13px; color: #831843;">신상품 부스트:</strong> <strong style="color: #be185d;">× 1.50배</strong></p>
+    <p style="margin: 3px 0; line-height: 1.5;"><strong style="font-size: 13px; color: #831843;">• 최종 종합 점수:</strong> <span style="font-size: 17px; font-weight: 900; color: #be185d;">95.3 점</span> <span style="font-size: 12px; color: #be185d; font-weight: 800;">[ 전체 종합 1위 등극! 🏆 ]</span></p>
+    <p style="margin: 3px 0 0 0; font-size: 12px; color: #831843; line-height: 1.4;"><strong>※ 신상품 부스팅 효과:</strong> 기본 점수는 63.5점이지만 출시 3일차 슈퍼 부스트(×1.50배)를 승산 받아 <strong>95.3점으로 기존 1위(86.1점)를 제치고 전체 1위 등극!</strong></p>
 `, '12.5px', '400', '#831843', '1.3', 103));
 
 let html = `<!DOCTYPE html>

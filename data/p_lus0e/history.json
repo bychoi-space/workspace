@@ -1,11 +1,11 @@
 [
   {
-    "date": "2026-09-17 16:11:00",
+    "date": "2026-09-17 16:25:00",
     "file": "11_Daily_Ranking_Batch_Percentile_851.html",
-    "version": 0.2,
+    "version": 0.3,
     "assignee": "최범열",
     "developer": "원미란",
-    "message": "상대 백분위 정규화 모델 상세화 및 10,000개 상품 점수화 매커니즘 개편"
+    "message": "6대 지표 실무 산정 기준, 어뷰징 캡 및 최근 7일 롤링 윈도우 집계 정책 상세화"
   },
   {
     "version": "0.4",

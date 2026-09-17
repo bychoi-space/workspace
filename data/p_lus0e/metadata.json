@@ -440,12 +440,12 @@
     "99_Blank_812.html": {
       "title": "99_Blank_812",
       "type": "admin",
-      "updatedAt": "2026-09-17T06:28:46.043Z",
+      "updatedAt": "2026-09-17T06:31:38.815Z",
       "template": "template_blank.html",
       "description": [
         {
           "type": "pin",
-          "text": "- 영역이 작은 숫자였다가, 큰 숫자로 늘리고 [적용] 버튼 클릭 시 즉시 반영\n- 영역이 큰 숫자였다가, 작은 숫자로 줄이고 [적용] 버튼 클릭 시 얼럿 표시",
+          "text": "- 영역이 작은 숫자였다가, 큰 숫자로 늘리고 [적용] 버튼 클릭 시 즉시 반영\n- 영역이 큰 숫자였다가, 작은 숫자로 줄이고 [적용] 버튼 클릭 시 얼럿 표시\n   : [확인] 시 영역과 데이터 모두 삭제",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 300,
           "y": 121,
@@ -477,7 +477,7 @@
         },
         {
           "type": "pin",
-          "text": "- 상품 영역이 2개 이상일 때, [삭제] 버튼 클릭 시 얼럿 표시",
+          "text": "- 상품 영역이 2개 이상일 때, [삭제] 버튼 클릭 시 얼럿 표시\n   : [확인] 시 영역과 데이터 모두 삭제",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 1230,
           "y": 388,
@@ -494,7 +494,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 15:27:47",
+  "updated": "2026-09-17 15:31:38",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

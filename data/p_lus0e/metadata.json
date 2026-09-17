@@ -308,7 +308,7 @@
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
       "type": "admin",
-      "updatedAt": "2026-09-17T06:04:43.262Z",
+      "updatedAt": "2026-09-17T05:28:27.769Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -440,7 +440,7 @@
     "99_Blank_812.html": {
       "title": "99_Blank_812",
       "type": "blank",
-      "updatedAt": "2026-09-17T05:58:21.058Z",
+      "updatedAt": "2026-09-17T06:07:00.814Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -451,7 +451,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 15:04:43",
+  "updated": "2026-09-17 15:07:00",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

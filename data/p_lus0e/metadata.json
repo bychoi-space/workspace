@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-17T02:37:12.450Z",
+      "updatedAt": "2026-09-17T02:38:05.731Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -416,7 +416,7 @@
   "developer": "원미란란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 11:37:12",
+  "updated": "2026-09-17 11:38:05",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

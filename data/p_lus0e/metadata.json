@@ -440,15 +440,18 @@
     "99_Blank_812.html": {
       "title": "99_Blank_812",
       "type": "blank",
-      "updatedAt": "2026-09-17T05:58:21.058Z",
-      "template": "template_blank.html"
+      "updatedAt": "2026-09-17T05:58:55.279Z",
+      "template": "template_blank.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.3
     }
   },
   "assignee": "최범열",
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 14:28:27",
+  "updated": "2026-09-17 14:58:54",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-17T02:22:02.827Z",
+      "updatedAt": "2026-09-15T07:21:23.279Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -176,7 +176,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-17T02:17:57.119Z",
+      "updatedAt": "2026-09-17T02:22:41.729Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -283,7 +283,7 @@
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object]",
-      "version": 0.2
+      "version": 0.3
     },
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
@@ -416,7 +416,7 @@
   "developer": "원미란란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 11:22:02",
+  "updated": "2026-09-17 11:22:41",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",
@@ -428,5 +428,5 @@
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link",
-  "version": 0.2
+  "version": 0.3
 }

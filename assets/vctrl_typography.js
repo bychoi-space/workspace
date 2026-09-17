@@ -74,7 +74,7 @@
                 'body, .page, .lf-component {',
                 '  font-family: var(--v4-font-family) !important;',
                 '}',
-                '.v4-editable-cell, .v4-shape, .v4-shape-rect, .v4-shape-circle, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-arrow, .v4-shape-pattern-grid, .v4-shape-wave, .text-marker, .v4-text-box, .v4-text-shape {',
+                '.v4-editable-cell, .v4-shape, .v4-shape-rect, .v4-shape-circle, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-arrow, .v4-shape-pattern-grid, .v4-shape-wave, .v4-shape-webpage, .text-marker, .v4-text-box, .v4-text-shape {',
                 '  color: var(--v4-text-color, #0f172a);',
                 '  font-size: var(--v4-font-size, 12px);',
                 '  font-weight: var(--v4-font-weight, 400);',

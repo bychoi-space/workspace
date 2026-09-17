@@ -188,11 +188,23 @@ window.v4ObjectShapeScript = `
                             } else {
                                 t.style[key] = val;
                             }
-                        } else if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'borderRadius') {
-                            const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : (key === 'justifyContent' ? 'justify-content' : 'border-radius'));
-                            t.style.setProperty(cssKey, val, 'important');
+                        } else if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'borderRadius' || key === 'vAlign') {
+                            const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : ((key === 'justifyContent' || key === 'vAlign') ? 'justify-content' : 'border-radius'));
+                            let cssVal = val;
+                            if (key === 'justifyContent' || key === 'vAlign') {
+                                const normV = (val === 'flex-start' || val === 'top') ? 'top' : ((val === 'flex-end' || val === 'bottom') ? 'bottom' : 'middle');
+                                cssVal = normV === 'top' ? 'flex-start' : (normV === 'bottom' ? 'flex-end' : 'center');
+                                s.setAttribute('data-valign', normV);
+                                t.setAttribute('data-valign', normV);
+                                if (shape) shape.setAttribute('data-valign', normV);
+                            } else if (key === 'textAlign') {
+                                s.setAttribute('data-align', val);
+                                t.setAttribute('data-align', val);
+                                if (shape) shape.setAttribute('data-align', val);
+                            }
+                            t.style.setProperty(cssKey, cssVal, 'important');
                             
-                            if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent') {
+                            if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'vAlign') {
                                 // Preserve existing custom padding if present; only fallback to 5px 10px if not set
                                 const curPadTop = t.getAttribute('data-pad-top') || (shape ? shape.getAttribute('data-pad-top') : null) || (parseInt(t.style.paddingTop) || 5);
                                 const curPadRight = t.getAttribute('data-pad-right') || (shape ? shape.getAttribute('data-pad-right') : null) || (parseInt(t.style.paddingRight) || 10);
@@ -230,9 +242,9 @@ window.v4ObjectShapeScript = `
                                         child.style.setProperty('padding', '0px', 'important');
                                         child.style.setProperty('margin', '0px', 'important');
                                     });
-                                } else if (key === 'justifyContent') {
+                                } else if (key === 'justifyContent' || key === 'vAlign') {
                                     t.querySelectorAll('p, span, .ql-editor, .ql-editor p, .v4-shape-text-content, .v4-editable-cell').forEach(child => {
-                                        child.style.setProperty('justify-content', val, 'important');
+                                        child.style.setProperty('justify-content', cssVal, 'important');
                                     });
                                 }
                             }
@@ -272,6 +284,14 @@ window.v4ObjectShapeScript = `
                             svgShape.style.vectorEffect = 'non-scaling-stroke';
                         }
                     }
+
+                    if (t.classList.contains('v4-shape-webpage') || (shape && shape.classList.contains('v4-shape-webpage'))) {
+                        const targetWebpage = t.classList.contains('v4-shape-webpage') ? t : shape;
+                        const header = targetWebpage.querySelector('.v4-webpage-header');
+                        if (header && d.style && d.style.borderColor !== undefined) {
+                            header.style.borderBottomColor = d.style.borderColor;
+                        }
+                    }
                 }
             });
         });
@@ -304,6 +324,22 @@ window.v4ObjectShapeScript = `
             if (cell) {
                 if (window.V4UndoManager) window.V4UndoManager.saveState();
                 cell.innerHTML = d.html;
+                const curAlign = d.align || s.getAttribute('data-align') || cell.getAttribute('data-align') || cell.style.textAlign || 'left';
+                const hAlign = curAlign === 'left' ? 'flex-start' : (curAlign === 'right' ? 'flex-end' : 'center');
+                const curVAlign = d.vAlign || s.getAttribute('data-valign') || cell.getAttribute('data-valign') || 'middle';
+                const vJustify = curVAlign === 'top' || curVAlign === 'flex-start' ? 'flex-start' : (curVAlign === 'bottom' || curVAlign === 'flex-end' ? 'flex-end' : 'center');
+                const normVAlign = curVAlign === 'flex-start' ? 'top' : (curVAlign === 'flex-end' ? 'bottom' : (curVAlign || 'middle'));
+                s.setAttribute('data-align', curAlign);
+                cell.setAttribute('data-align', curAlign);
+                s.setAttribute('data-valign', normVAlign);
+                cell.setAttribute('data-valign', normVAlign);
+                cell.style.setProperty('text-align', curAlign, 'important');
+                cell.style.setProperty('align-items', hAlign, 'important');
+                cell.style.setProperty('justify-content', vJustify, 'important');
+                cell.querySelectorAll('p').forEach(p => {
+                    p.style.setProperty('width', '100%', 'important');
+                    p.style.setProperty('text-align', curAlign, 'important');
+                });
                 if (typeof window.markDirty === 'function') window.markDirty();
                 if (typeof window.resizeToFitText === 'function') {
                     window.resizeToFitText(s);
@@ -371,7 +407,22 @@ window.v4ObjectShapeScript = `
         }
         const activeContainer = editableCell || shape.querySelector('.v4-shape-text-overlay') || shape.querySelector('.v4-shape-text-content');
         if (activeContainer) {
-            const curTextAlign = activeContainer.style.textAlign || (shape.style ? shape.style.textAlign : '');
+            const curTextAlign = d.align || activeContainer.getAttribute('data-align') || shape.getAttribute('data-align') || activeContainer.style.textAlign || (shape.style ? shape.style.textAlign : '');
+            const curVAlign = d.vAlign || activeContainer.getAttribute('data-valign') || shape.getAttribute('data-valign') || '';
+            if (curVAlign) {
+                const normVAlign = (curVAlign === 'flex-start' || curVAlign === 'top') ? 'top' : ((curVAlign === 'flex-end' || curVAlign === 'bottom') ? 'bottom' : 'middle');
+                const vJustify = normVAlign === 'top' ? 'flex-start' : (normVAlign === 'bottom' ? 'flex-end' : 'center');
+                shape.setAttribute('data-valign', normVAlign);
+                activeContainer.setAttribute('data-valign', normVAlign);
+                activeContainer.style.setProperty('justify-content', vJustify, 'important');
+            }
+            if (curTextAlign) {
+                shape.setAttribute('data-align', curTextAlign);
+                activeContainer.setAttribute('data-align', curTextAlign);
+                const hAlign = curTextAlign === 'left' ? 'flex-start' : (curTextAlign === 'right' ? 'flex-end' : 'center');
+                activeContainer.style.setProperty('align-items', hAlign, 'important');
+                activeContainer.style.setProperty('text-align', curTextAlign, 'important');
+            }
             activeContainer.querySelectorAll('p').forEach(p => {
                 p.style.setProperty('width', '100%', 'important');
                 if (curTextAlign) p.style.setProperty('text-align', curTextAlign, 'important');

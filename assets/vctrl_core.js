@@ -483,21 +483,57 @@ window.handleGlobalSave = async function () {
     }
 
     const overlay = document.getElementById('save-overlay');
+    const originalHTML = btn.innerHTML;
+
+    // Save Overlay Lifecycle Controllers
+    const showSaveOverlay = () => {
+        if (!overlay) return;
+        overlay.style.display = 'flex';
+        requestAnimationFrame(() => {
+            overlay.classList.add('active');
+            overlay.style.opacity = '1';
+            overlay.style.visibility = 'visible';
+            overlay.style.pointerEvents = 'all';
+        });
+    };
+
+    const hideSaveOverlay = () => {
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        overlay.style.opacity = '0';
+        overlay.style.visibility = 'hidden';
+        overlay.style.pointerEvents = 'none';
+        setTimeout(() => {
+            if (!overlay.classList.contains('active')) {
+                overlay.style.display = 'none';
+            }
+        }, 250);
+    };
+
+    // 15-second safety failsafe timer to prevent infinite lock
+    let saveTimeoutId = setTimeout(() => {
+        console.warn("[Save] Operation exceeded 15s timeout limit. Forcing save overlay dismissal.");
+        hideSaveOverlay();
+        if (btn) {
+            btn.innerHTML = originalHTML;
+            btn.style.removeProperty('background');
+            btn.style.position = '';
+            btn.style.overflow = '';
+            btn.disabled = false;
+        }
+        if (typeof window.showToast === 'function') {
+            window.showToast("저장 응답 시간이 초과되었습니다. 네트워크 상태를 확인해주세요.", "warning");
+        }
+    }, 15000);
+
     try {
         if (state.isEditing && typeof window.closeActiveEditor === 'function') {
             window.closeActiveEditor(true);
         }
 
-        // Show premium glassmorphic lock overlay
-        if (overlay) {
-            overlay.style.display = 'flex';
-            overlay.style.opacity = '0';
-            requestAnimationFrame(() => {
-                overlay.style.opacity = '1';
-            });
-        }
+        // Show premium glassmorphic lock overlay (Centered)
+        showSaveOverlay();
 
-        const originalHTML = btn.innerHTML;
         btn.disabled = true;
         btn.style.position = 'relative';
         btn.style.overflow = 'hidden';
@@ -583,13 +619,10 @@ window.handleGlobalSave = async function () {
         const bar = document.getElementById('save-loading-bar');
         if (bar) { bar.style.transition = 'width 0.3s ease'; bar.style.width = '100%'; }
 
-        await new Promise(r => setTimeout(r, 350));
+        await new Promise(r => setTimeout(r, 300));
 
         // Hide overlay smoothly on completion
-        if (overlay) {
-            overlay.style.opacity = '0';
-            setTimeout(() => { overlay.style.display = 'none'; }, 300);
-        }
+        hideSaveOverlay();
 
         if (success) {
             markAsClean();
@@ -647,11 +680,7 @@ window.handleGlobalSave = async function () {
         }
     } catch (err) {
         console.error("[Save Error]", err);
-        // Hide overlay smoothly on error
-        if (overlay) {
-            overlay.style.opacity = '0';
-            setTimeout(() => { overlay.style.display = 'none'; }, 300);
-        }
+        hideSaveOverlay();
         if (btn) {
             btn.innerHTML = `<span class="material-icons-outlined" style="font-size:15px;">error</span> 저장 실패`;
             btn.style.setProperty('background', '#ef4444', 'important');
@@ -663,7 +692,13 @@ window.handleGlobalSave = async function () {
                 btn.disabled = false;
             }, 1500);
         }
+        if (typeof window.showToast === 'function') {
+            window.showToast(err.message || "저장 중 오류가 발생했습니다.", "error");
+        }
         if (window.Notification) window.Notification.alert('저장 중 오류가 발생했습니다: ' + err.message, '오류', 'error');
+    } finally {
+        clearTimeout(saveTimeoutId);
+        hideSaveOverlay();
     }
 };
 

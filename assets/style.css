@@ -386,22 +386,22 @@
     color: #f87171 !important;
 }
 
-/* Editor Body (.ql-container.ql-snow) */
+/* Editor Body (.ql-container.ql-snow) - 밝은 체커보드 패턴으로 텍스트 가독성 최적화 */
 .ql-container.ql-snow {
     position: relative !important;
     transform: none !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
     border-top: none !important;
     border-radius: 0 0 8px 8px !important;
-    background-color: #273142 !important;
+    background-color: #f1f5f9 !important;
     background-image: 
-        linear-gradient(45deg, #424e60 25%, transparent 25%), 
-        linear-gradient(-45deg, #424e60 25%, transparent 25%), 
-        linear-gradient(45deg, transparent 75%, #424e60 75%), 
-        linear-gradient(-45deg, transparent 75%, #424e60 75%) !important;
+        linear-gradient(45deg, #cbd5e1 25%, transparent 25%), 
+        linear-gradient(-45deg, #cbd5e1 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #cbd5e1 75%), 
+        linear-gradient(-45deg, transparent 75%, #cbd5e1 75%) !important;
     background-size: 16px 16px !important;
     background-position: 0 0, 0 8px, 8px -8px, -8px 0px !important;
-    color: #f8fafc !important;
+    color: #0f172a !important;
     font-family: 'Inter', sans-serif !important;
     min-height: 72px !important;
     height: auto !important;
@@ -409,13 +409,13 @@
     box-sizing: border-box !important;
     margin: 0 !important;
     padding: 0 !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12) !important;
     overflow: hidden !important;
 }
 .ql-editor {
     position: relative !important;
     transform: none !important;
-    color: #f8fafc !important;
+    color: #0f172a !important;
     min-height: 72px !important;
     padding: 10px 14px !important;
     font-size: 13px !important;
@@ -424,11 +424,10 @@
     width: 100% !important;
 }
 .ql-editor ::selection {
-    background: rgba(99, 102, 241, 0.6) !important;
-    color: #ffffff !important;
+    background: rgba(99, 102, 241, 0.35) !important;
 }
 .ql-editor.ql-blank::before {
-    color: rgba(255, 255, 255, 0.45) !important;
+    color: #94a3b8 !important;
     font-style: normal !important;
     font-size: 13px !important;
     line-height: 1.5 !important;
@@ -1601,77 +1600,136 @@ body.drag-active #drop-overlay {
     margin-top: 32px;
 }
 
-/* --- 3-TIER BUTTON SYSTEM (UNIFIED STANDARD) --- */
+/* --- 3-TIER BUTTON SYSTEM (UNIFIED WHIMSICAL MODERN ROUND SQUARE STANDARD) --- */
 .btn-accent, .btn-primary, .btn-secondary, .v4-button,
-.dialog-footer button, .modal-footer button, .v4-inspector-btn, .btn-jira-shortcut {
+.dialog-footer button, .modal-footer button, .v4-inspector-btn, .btn-jira-shortcut,
+.btn-new-project {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 6px !important;
-    padding: 0 16px !important; /* Unified Padding */
-    height: 26px !important;
-    border-radius: 13px !important; /* Pill Shape */
-    font-size: 11px !important;
+    padding: 0 12px !important; /* Unified Standard Padding */
+    height: 28px !important;    /* Unified Height Standard (28px) */
+    border-radius: var(--radius-md, 6px) !important; /* Modern Round Square (6px) SSOT */
+    font-size: 12px !important;
     font-weight: 500 !important;
     white-space: nowrap !important;
     text-decoration: none !important;
     cursor: pointer !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    font-family: var(--font-main) !important;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-family: 'Inter', -apple-system, sans-serif !important;
     box-sizing: border-box !important;
     border: 1px solid transparent !important;
     text-align: center !important;
+    outline: none !important;
 }
 
-/* Unified 3D Hover Effect */
-.btn-accent:hover, .btn-primary:hover, .btn-secondary:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25) !important;
-    filter: brightness(1.1);
+/* Unified Subtle Lift & Hover */
+.btn-accent:hover, .btn-primary:hover, .btn-secondary:hover, .btn-new-project:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+    filter: brightness(1.08);
 }
 
-.btn-accent:active, .btn-primary:active, .btn-secondary:active {
-    transform: translateY(0) scale(0.97) !important;
+.btn-accent:active, .btn-primary:active, .btn-secondary:active, .btn-new-project:active {
+    transform: translateY(0) scale(0.98) !important;
 }
 
-/* Tier 1: Critical (Accent + White Text) */
-.btn-accent {
-    background: #6366f1 !important; /* Indigo Accent */
+/* Tier 1: Primary Action (Whimsical Royal Violet + White Text) */
+.btn-accent, .btn-new-project {
+    background: var(--accent, #6e56cf) !important;
     color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.25) !important; /* Subtle border for visibility */
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 2px 8px var(--accent-subtle, rgba(110, 86, 207, 0.25)) !important;
+}
+.btn-accent:hover, .btn-new-project:hover {
+    background: var(--accent-hover, #5e43c8) !important;
+    box-shadow: 0 4px 14px var(--accent-subtle, rgba(110, 86, 207, 0.35)) !important;
 }
 
-/* Tier 2: Important (Black + White Text) */
+/* Tier 2: Strong Secondary / Slate Dark Action */
 .btn-primary {
-    background: #1e2128 !important; /* Dark Navy/Black */
+    background: #1e202e !important; /* Whimsical Slate Surface */
     color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Subtle border for visibility */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
+}
+.btn-primary:hover {
+    background: #282a3d !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Tier 3: General (Light + Black Text) */
+/* Tier 3: Subdued / Surface Secondary */
 .btn-secondary, .btn-jira-shortcut {
-    background: #e0e7ff !important; /* Light Indigo */
-    color: #1e1b4b !important; /* Dark Text */
-    border: 1px solid #c7d2fe !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: var(--text-primary, #f8fafc) !important;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+}
+.btn-secondary:hover, .btn-jira-shortcut:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
 }
 
-/* Icon & SVG Styling (Only for Accent/Primary where applicable) */
-.btn-accent svg, .btn-primary svg,
-.btn-accent .material-icons-outlined, .btn-primary .material-icons-outlined {
-    width: 13px !important;
-    height: 13px !important;
-    font-size: 13px !important;
-    stroke-width: 2 !important;
+/* Icon & SVG Styling Inside Buttons (16px Standard) */
+.btn-accent svg, .btn-primary svg, .btn-secondary svg, .btn-new-project svg,
+.btn-accent .material-icons-outlined, .btn-primary .material-icons-outlined,
+.btn-secondary .material-icons-outlined, .btn-new-project .material-icons-outlined {
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 16px !important;
+    line-height: 16px !important;
+    stroke-width: 1.8 !important;
     display: inline-block !important;
     color: inherit !important;
+    vertical-align: middle !important;
 }
 
+/* --- Common Inspector & Modal Utility Classes (SSOT Replacement for Inline Styles) --- */
+.v4-prop-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 8px !important;
+}
 
-/* Fix for index.html New Project button which might have tight padding */
-.btn-new-project {
-    padding: 0 16px !important;
+.v4-prop-grid-2 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+}
+
+.v4-color-none-btn {
+    width: 24px !important;
+    height: 24px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: var(--radius-sm, 4px) !important;
+    color: #f87171 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    transition: all 0.15s ease !important;
+}
+.v4-color-none-btn:hover {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+.v4-inspector-card-section {
+    background: rgba(22, 24, 38, 0.6) !important;
+    border: 1px solid rgba(110, 86, 207, 0.25) !important;
+    border-radius: var(--radius-lg, 8px) !important;
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+}
+
+.v4-btn-toggle {
+    height: 28px !important;
+    font-size: 11px !important;
+    border-radius: var(--radius-md, 6px) !important;
 }
 
 .btn-new-project {
@@ -2672,21 +2730,21 @@ body.drag-active #drop-overlay {
     display: flex;
 }
 .dialog-card {
-    background: rgba(30, 41, 59, 0.9);
+    background: rgba(22, 24, 38, 0.96);
     backdrop-filter: blur(20px);
     border: 1.6px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 20px;
+    border-radius: var(--radius-card, 10px) !important;
     width: 90%;
     max-width: 420px;
-    padding: 32px 24px;
+    padding: 28px 24px;
     text-align: center;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    transform: scale(0.9);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    transform: scale(0.95);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-sizing: border-box;
 }
 .dialog-overlay.active .dialog-card {
@@ -2694,20 +2752,20 @@ body.drag-active #drop-overlay {
     opacity: 1;
 }
 .dialog-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-lg, 8px) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin: 0 auto 20px !important;
+    margin: 0 auto 16px !important;
     position: relative !important;
     box-sizing: border-box;
     flex-shrink: 0;
 }
 .dialog-icon .material-icons-outlined,
 .dialog-icon.material-icons-outlined {
-    font-size: 32px !important;
+    font-size: 28px !important;
     line-height: 1 !important;
     display: flex !important;
     align-items: center !important;
@@ -2717,19 +2775,19 @@ body.drag-active #drop-overlay {
     text-align: center !important;
     margin: 0 !important;
 }
-.dialog-icon.success { background: rgba(0, 229, 255, 0.1); color: var(--accent); }
-.dialog-icon.error { background: rgba(244, 63, 94, 0.1); color: #f43f5e; }
-.dialog-icon.warning { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
-.dialog-icon.info { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.dialog-icon.success { background: rgba(45, 212, 191, 0.15); color: #2dd4bf; border: 1px solid rgba(45, 212, 191, 0.3); }
+.dialog-icon.error { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
+.dialog-icon.warning { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.dialog-icon.info { background: rgba(110, 86, 207, 0.15); color: #9e8cfc; border: 1px solid rgba(110, 86, 207, 0.3); }
 .dialog-title {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
     color: #fff;
-    margin: 0 0 12px 0;
+    margin: 0 0 10px 0;
     text-align: center;
 }
 .dialog-message {
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.6;
     color: var(--text-secondary);
     margin: 0 0 20px 0;
@@ -2738,57 +2796,66 @@ body.drag-active #drop-overlay {
 }
 .dialog-footer {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
     width: 100%;
 }
 .dialog-footer button {
-    height: 32px !important;
-    border-radius: 16px !important;
-    padding: 0 24px !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
+    height: 28px !important;
+    border-radius: var(--radius-md, 6px) !important;
+    padding: 0 16px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
     cursor: pointer !important;
     border: none !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box;
 }
 .dialog-footer button.btn-primary {
-    background: var(--accent) !important;
-    color: #000000 !important;
-    box-shadow: 0 4px 12px rgba(0, 229, 255, 0.2) !important;
+    background: var(--accent, #6e56cf) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px var(--accent-subtle, rgba(110, 86, 207, 0.3)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+.dialog-footer button.btn-danger {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
 }
 .dialog-footer button.btn-secondary {
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
     color: #ffffff !important;
-    border: 1.6px solid rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
 }
 .dialog-footer button:hover {
     transform: translateY(-1px) !important;
-    filter: brightness(1.1) !important;
+    filter: brightness(1.08) !important;
 }
 .dialog-footer button:active {
     transform: translateY(0) !important;
 }
 .dialog-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1.6px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 10px;
-    padding: 12px 16px;
+    height: 32px !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md, 6px) !important;
+    padding: 0 12px !important;
     color: #fff;
-    font-size: 14px;
-    margin: 8px 0 24px 0;
-    transition: border-color 0.2s;
+    font-size: 13px !important;
+    margin: 4px 0 18px 0;
+    transition: border-color 0.15s;
     box-sizing: border-box;
 }
 .dialog-input:focus {
     outline: none;
     border-color: var(--accent) !important;
-    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px var(--accent-subtle) !important;
+    background: rgba(0, 0, 0, 0.45);
 }
 
 /* Global Loading Progress UI */
@@ -3002,32 +3069,32 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .pin-marker:hover .lf-delete-trigger, .pin-marker.active .lf-delete-trigger, .pin-marker.highlight .lf-delete-trigger, .text-marker:hover .lf-delete-trigger, .text-marker.active .lf-delete-trigger, .text-marker.editing-active .lf-delete-trigger, .text-marker.highlight .lf-delete-trigger { display: flex !important; }
 .text-marker:hover .lf-drag-handle, .text-marker.active .lf-drag-handle, .text-marker.editing-active .lf-drag-handle, .text-marker.highlight .lf-drag-handle { display: none !important; }
 
-/* --- Premium Button Design Standard (V4) --- */
+/* --- Premium Button Design Standard (V4 Inspector Unified) --- */
 .v4-inspector-btn {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
+    gap: 6px !important;
     height: 28px !important;
-    padding: 0 16px !important;
-    border-radius: 14px !important;
+    padding: 0 12px !important;
+    border-radius: var(--radius-md, 6px) !important;
     font-size: 11px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
-    border: none !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: 1px solid transparent !important;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
     white-space: nowrap !important;
     box-sizing: border-box !important;
     text-transform: uppercase !important;
 }
 .v4-inspector-btn:hover {
     transform: translateY(-1px) !important;
-    filter: brightness(1.1) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    filter: brightness(1.08) !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
 }
-.v4-inspector-btn.btn-accent { background: var(--accent) !important; color: #000 !important; border: 1px solid rgba(255, 255, 255, 0.15) !important; }
-.v4-inspector-btn.btn-primary { background: #1e293b !important; color: #fff !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; }
-.v4-inspector-btn.btn-secondary { background: rgba(255, 255, 255, 0.9) !important; color: #0f172a !important; }
+.v4-inspector-btn.btn-accent { background: var(--accent) !important; color: #fff !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; }
+.v4-inspector-btn.btn-primary { background: #1e202e !important; color: #fff !important; border: 1px solid rgba(255, 255, 255, 0.12) !important; }
+.v4-inspector-btn.btn-secondary { background: rgba(255, 255, 255, 0.08) !important; color: var(--text-primary) !important; border: 1px solid var(--border-color) !important; }
 
 /* --- Premium Toast Notification (V4) --- */
 #v4-toast-container {

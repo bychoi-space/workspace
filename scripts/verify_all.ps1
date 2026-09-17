@@ -130,8 +130,11 @@ Write-Host "Test harness generated at: $testHarnessPath"
 # Run Edge Headless and dump DOM
 $tmpOut = "c:\Users\sisun\ai_work\scripts\edge_output_" + [System.Guid]::NewGuid().ToString("N") + ".txt"
 $proc = Start-Process -FilePath $edge -ArgumentList "--headless", "--disable-gpu", "--allow-file-access-from-files", "--dump-dom", "$testHarnessPath" -PassThru -NoNewWindow -RedirectStandardOutput $tmpOut
-$proc.WaitForExit(10000)
-Start-Sleep -Milliseconds 800
+$proc.WaitForExit(15000)
+if (!$proc.HasExited) {
+    try { $proc.Kill() } catch {}
+}
+Start-Sleep -Milliseconds 1000
 
 if (Test-Path $tmpOut) {
     try {

@@ -27,15 +27,15 @@ function showPdfProgressModal(projectName) {
             transition: opacity 0.3s ease;
         `;
         modal.innerHTML = `
-            <div style="background: #1e293b; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; width: 420px; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); text-align: center; color: #f8fafc; font-family: 'Inter', sans-serif;">
-                <div style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 50%; margin: 0 auto 16px;">
-                    <span class="material-icons-outlined" style="font-size: 28px; color: #818cf8; animation: spinPdfIcon 2s linear infinite;">picture_as_pdf</span>
+            <div style="background: rgba(22, 24, 38, 0.96); border: 1.6px solid rgba(255,255,255,0.12); border-radius: 10px; width: 420px; padding: 28px; box-shadow: 0 24px 48px -12px rgba(0,0,0,0.7), 0 0 20px rgba(110,86,207,0.2); text-align: center; color: #f8fafc; font-family: 'Inter', sans-serif;">
+                <div style="display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: rgba(110, 86, 207, 0.15); border: 1px solid rgba(110, 86, 207, 0.3); border-radius: 8px; margin: 0 auto 16px;">
+                    <span class="material-icons-outlined" style="font-size: 28px; color: #9e8cfc; animation: spinPdfIcon 2s linear infinite;">picture_as_pdf</span>
                 </div>
-                <h3 id="pdf-modal-title" style="margin: 0 0 8px; font-size: 18px; font-weight: 600; color: #ffffff;">PDF 문서 생성 중</h3>
+                <h3 id="pdf-modal-title" style="margin: 0 0 8px; font-size: 17px; font-weight: 600; color: #ffffff;">PDF 문서 생성 중</h3>
                 <p id="pdf-modal-subtitle" style="margin: 0 0 20px; font-size: 13px; color: #94a3b8; line-height: 1.5;">프로젝트의 모든 스크린을 고화질로 결합하고 있습니다.</p>
                 
-                <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
-                    <div id="pdf-modal-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6366f1, #a855f7); border-radius: 4px; transition: width 0.2s ease;"></div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
+                    <div id="pdf-modal-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6e56cf, #9e8cfc, #38bdf8); border-radius: 4px; transition: width 0.2s ease;"></div>
                 </div>
                 <div id="pdf-modal-status" style="font-size: 12px; color: #cbd5e1; font-weight: 500;">준비 중...</div>
             </div>

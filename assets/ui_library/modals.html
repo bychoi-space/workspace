@@ -64,15 +64,15 @@
                     <div class="form-group">
                         <label class="form-label">새 파일명 (Filename)</label>
                         <input type="text" id="copy-screen-filename" class="form-input" placeholder="예: screen_copy.html">
-                        <p id="copy-screen-filename-notice" class="form-notice" style="color:#94a3b8; font-size:11px; margin-top:4px;">* 대상 프로젝트 내에 이미 존재하는 파일명이면 자동으로 번호가 증가합니다.</p>
+                        <p id="copy-screen-filename-notice" class="form-notice modal-notice-dim">* 대상 프로젝트 내에 이미 존재하는 파일명이면 자동으로 번호가 증가합니다.</p>
                     </div>
-                    <div class="form-group" style="display:flex; flex-direction:column; gap:8px; margin-top:12px; padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:6px;">
-                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-main, #ffffff); cursor:pointer;">
-                            <input type="checkbox" id="copy-screen-open-after" checked style="cursor:pointer;">
+                    <div class="form-group modal-checkbox-box">
+                        <label class="modal-checkbox-label">
+                            <input type="checkbox" id="copy-screen-open-after" checked class="cursor-pointer">
                             <span>복사 완료 후 해당 프로젝트의 복사된 화면으로 즉시 이동</span>
                         </label>
-                        <label id="copy-screen-move-group" style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-dim, #94a3b8); cursor:pointer;">
-                            <input type="checkbox" id="copy-screen-is-move" style="cursor:pointer;">
+                        <label id="copy-screen-move-group" class="modal-checkbox-label dim">
+                            <input type="checkbox" id="copy-screen-is-move" class="cursor-pointer">
                             <span>원본 프로젝트에서 삭제하고 이전 (이동 모드)</span>
                         </label>
                     </div>
@@ -85,7 +85,7 @@
         </div>
 
         <!-- Save Progress Overlay -->
-        <div id="save-overlay" class="save-overlay" style="display: none;">
+        <div id="save-overlay" class="save-overlay">
             <div class="save-spinner"></div>
             <div class="save-text">프로젝트를 안전하게 저장하는 중입니다...</div>
         </div>
@@ -107,24 +107,24 @@
                     <div class="template-grid" id="template-list">
                         <div class="template-card" data-template="template_cover.html" data-default-name="00_Cover">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">auto_stories</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">auto_stories</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">프로젝트 커버</div>
                             <div class="template-badge">Cover</div>
                         </div>
                         <div class="template-card" data-template="template_project_summary.html" data-default-name="01_Project_Summary">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">summarize</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">summarize</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">과제 개요</div>
                             <div class="template-badge">Summary</div>
                         </div>
                         <div class="template-card" data-template="template_plan.html" data-default-name="02_Plan">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">event_note</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">event_note</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">진행 일정</div>
                             <div class="template-badge">Plan</div>
@@ -132,72 +132,72 @@
 
                         <div class="template-card" data-template="template_mobile_ui_1.html" data-default-name="06_Mobile_Design_1">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">smartphone</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">smartphone</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">Mobile UI (1개 화면)</div>
                             <div class="template-badge">Mobile</div>
                         </div>
                         <div class="template-card" data-template="template_mobile_ui_2.html" data-default-name="06_Mobile_Design_2">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">phonelink_setup</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">phonelink_setup</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">Mobile UI (2개 화면)</div>
                             <div class="template-badge">Mobile</div>
                         </div>
                         <div class="template-card" data-template="template_mobile_ui_3.html" data-default-name="06_Mobile_Design_3">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">devices</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">devices</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">Mobile UI (3개 화면)</div>
                             <div class="template-badge">Mobile</div>
                         </div>
                         <div class="template-card" data-template="template_onesphere.html" data-default-name="05_Admin_Onesphere">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">cloud_queue</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">cloud_queue</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">Admin (OneSphere)</div>
                             <div class="template-badge">Modern</div>
                         </div>
                         <div class="template-card" data-template="template_pc_ui.html" data-default-name="07_PC_Design">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">desktop_mac</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">desktop_mac</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">PC UI (Chrome Frame)</div>
                             <div class="template-badge">PC</div>
                         </div>
                         <div class="template-card" data-template="template_responsive_pc_mobile.html" data-default-name="08_Responsive_PC_Mobile">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">devices</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">devices</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">반응형 (PC + Mobile)</div>
                             <div class="template-badge">Dual</div>
                         </div>
                         <div class="template-card" data-template="template_admin_pc_scroll.html" data-default-name="09_Admin_PC_Scroll">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">admin_panel_settings</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">admin_panel_settings</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">Admin PC (세로 스크롤)</div>
                             <div class="template-badge">Admin</div>
                         </div>
                         <div class="template-card" data-template="template_case_study.html" data-default-name="04_Case_Study">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">analytics</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">analytics</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">Case Study (벤치마크/가설)</div>
                             <div class="template-badge">Benchmark</div>
                         </div>
                         <div class="template-card" data-template="template_blank.html" data-default-name="99_Blank">
                             <div class="template-thumb">
-                                <span class="material-icons-outlined" style="font-size: 32px; opacity: 0.5;">crop_din</span>
-                                <div class="template-check"><svg class="lf-icon" viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:#10b981; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; background-image:none !important;"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <span class="material-icons-outlined template-thumb-icon">crop_din</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
                             </div>
                             <div class="template-name">빈 화면</div>
                             <div class="template-badge">Blank</div>

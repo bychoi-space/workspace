@@ -520,19 +520,19 @@ async function renderList(projectsToRender = state.projects) {
             <div class="delete-btn-card" data-project="${p.name}" title="프로젝트 삭제">
                 <span class="material-icons-outlined">delete_outline</span>
             </div>
-            <div class="thumbnail-wrapper" style="background: ${theme.gradient}; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 16/10; border-radius: 12px; transition: all 0.4s ease; border: 1px solid rgba(255,255,255,0.08);">
+            <div class="thumbnail-wrapper" style="background: ${theme.gradient}; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 16/10; border-radius: 8px; transition: all 0.4s ease; border: 1px solid rgba(255,255,255,0.08);">
                 
                 <!-- Glowing Ambient Orbs -->
                 <div class="thumbnail-glow-orb" style="position: absolute; width: 130px; height: 130px; background: ${theme.glowColor}; border-radius: 50%; filter: blur(28px); bottom: -30px; right: -30px; opacity: 0.85; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); pointer-events: none;"></div>
                 <div class="thumbnail-glow-orb-top" style="position: absolute; width: 90px; height: 90px; background: rgba(255,255,255,0.18); border-radius: 50%; filter: blur(18px); top: -20px; left: -20px; opacity: 0.6; pointer-events: none;"></div>
                 
                 <!-- Frosted Glass Icon Plate -->
-                <div class="frosted-glass-pane" style="position: relative; width: 66px; height: 66px; background: rgba(255, 255, 255, 0.16); border: 1.6px solid rgba(255, 255, 255, 0.28); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.2); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 2; pointer-events: none;">
+                <div class="frosted-glass-pane" style="position: relative; width: 64px; height: 64px; background: rgba(255, 255, 255, 0.16); border: 1.6px solid rgba(255, 255, 255, 0.28); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.2); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 2; pointer-events: none;">
                     <span class="material-icons-outlined" style="font-size: 32px; color: ${theme.iconColor}; text-shadow: 0 2px 8px rgba(0,0,0,0.15);">${theme.icon}</span>
                 </div>
                 
                 <!-- Floating Category/Abbr Badge -->
-                <div class="abbr-badge" style="position: absolute; bottom: 12px; left: 12px; padding: 4px 10px; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.14); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 20px; color: rgba(255,255,255,0.92); font-size: 10px; font-weight: 700; letter-spacing: 0.5px; z-index: 2; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
+                <div class="abbr-badge" style="position: absolute; bottom: 12px; left: 12px; padding: 2px 7px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.16); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 4px; color: rgba(255,255,255,0.92); font-size: 10px; font-weight: 600; letter-spacing: 0.5px; z-index: 2; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
                     ${abbrText}
                 </div>
             </div>

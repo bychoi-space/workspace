@@ -32,14 +32,16 @@
         const item = (lib.atoms || []).find(i => i.id === id) || 
                      (lib.molecules || []).find(i => i.id === id) || 
                      (lib.organisms || []).find(i => i.id === id) ||
+                     (lib.illustrations || []).find(i => i.id === id) ||
                      customMols.find(i => i.id === id);
 
         if (!item) return console.error("[V4] Component not found:", id);
 
-        const isIcon = item.id.includes('icon') || (item.html && (item.html.includes('<img') || item.html.includes('lf-icon')));
+        const isIllustration = item.category === 'Illustration' || (item.id && item.id.startsWith('v4-ill-'));
+        const isIcon = !isIllustration && (item.id.includes('icon') || (item.html && (item.html.includes('<img') || item.html.includes('lf-icon'))));
         const style = { 
-            width: item.width || (isIcon ? '30px' : '120px'), 
-            height: item.height || (isIcon ? '30px' : '40px') 
+            width: item.width || (isIllustration ? '200px' : (isIcon ? '30px' : '120px')), 
+            height: item.height || (isIllustration ? '200px' : (isIcon ? '30px' : '40px')) 
         };
         if (item.id === 'v4-search-bar' || item.id === 'v4-premium-gnb') {
             style.width = '100%';
@@ -279,7 +281,45 @@
                 'List': '<line x1="3" y1="6" x2="6" y2="6"></line><line x1="10" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="6" y2="18"></line><line x1="10" y1="18" x2="21" y2="18"></line>',
                 'list': '<line x1="3" y1="6" x2="6" y2="6"></line><line x1="10" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="6" y2="18"></line><line x1="10" y1="18" x2="21" y2="18"></line>',
                 '목록': '<line x1="3" y1="6" x2="6" y2="6"></line><line x1="10" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="6" y2="18"></line><line x1="10" y1="18" x2="21" y2="18"></line>',
-                '리스트': '<line x1="3" y1="6" x2="6" y2="6"></line><line x1="10" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="6" y2="18"></line><line x1="10" y1="18" x2="21" y2="18"></line>'
+                '리스트': '<line x1="3" y1="6" x2="6" y2="6"></line><line x1="10" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="6" y2="18"></line><line x1="10" y1="18" x2="21" y2="18"></line>',
+                'Outfit': '<path d="M6 4h12l3 4-3 2-1-1v3H7V9l-1 1-3-2 3-4z"></path><path d="M7 14h10l1 7h-3.5L12 17.5 9.5 21H6l1-7z"></path>',
+                'outfit': '<path d="M6 4h12l3 4-3 2-1-1v3H7V9l-1 1-3-2 3-4z"></path><path d="M7 14h10l1 7h-3.5L12 17.5 9.5 21H6l1-7z"></path>',
+                'Fashion Set': '<path d="M6 4h12l3 4-3 2-1-1v3H7V9l-1 1-3-2 3-4z"></path><path d="M7 14h10l1 7h-3.5L12 17.5 9.5 21H6l1-7z"></path>',
+                '상하의': '<path d="M6 4h12l3 4-3 2-1-1v3H7V9l-1 1-3-2 3-4z"></path><path d="M7 14h10l1 7h-3.5L12 17.5 9.5 21H6l1-7z"></path>',
+                '착장': '<path d="M6 4h12l3 4-3 2-1-1v3H7V9l-1 1-3-2 3-4z"></path><path d="M7 14h10l1 7h-3.5L12 17.5 9.5 21H6l1-7z"></path>',
+                '코디': '<path d="M6 4h12l3 4-3 2-1-1v3H7V9l-1 1-3-2 3-4z"></path><path d="M7 14h10l1 7h-3.5L12 17.5 9.5 21H6l1-7z"></path>',
+                'Exhibition': '<line x1="4" y1="2" x2="4" y2="22"></line><path d="M4 4h15l-3.5 5 3.5 5H4"></path>',
+                'exhibition': '<line x1="4" y1="2" x2="4" y2="22"></line><path d="M4 4h15l-3.5 5 3.5 5H4"></path>',
+                'Event': '<line x1="4" y1="2" x2="4" y2="22"></line><path d="M4 4h15l-3.5 5 3.5 5H4"></path>',
+                'event': '<line x1="4" y1="2" x2="4" y2="22"></line><path d="M4 4h15l-3.5 5 3.5 5H4"></path>',
+                '기획전': '<line x1="4" y1="2" x2="4" y2="22"></line><path d="M4 4h15l-3.5 5 3.5 5H4"></path>',
+                '이벤트': '<line x1="4" y1="2" x2="4" y2="22"></line><path d="M4 4h15l-3.5 5 3.5 5H4"></path>',
+                'Coupon': '<path d="M4 5h16a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7a2 2 0 0 1 2-2z"></path><line x1="17" y1="5" x2="17" y2="19" stroke-dasharray="2 2"></line><line x1="8.5" y1="15.5" x2="13.5" y2="8.5"></line><circle cx="9" cy="9" r="1.3"></circle><circle cx="13" cy="15" r="1.3"></circle>',
+                'coupon': '<path d="M4 5h16a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7a2 2 0 0 1 2-2z"></path><line x1="17" y1="5" x2="17" y2="19" stroke-dasharray="2 2"></line><line x1="8.5" y1="15.5" x2="13.5" y2="8.5"></line><circle cx="9" cy="9" r="1.3"></circle><circle cx="13" cy="15" r="1.3"></circle>',
+                '쿠폰': '<path d="M4 5h16a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7a2 2 0 0 1 2-2z"></path><line x1="17" y1="5" x2="17" y2="19" stroke-dasharray="2 2"></line><line x1="8.5" y1="15.5" x2="13.5" y2="8.5"></line><circle cx="9" cy="9" r="1.3"></circle><circle cx="13" cy="15" r="1.3"></circle>',
+                '할인쿠폰': '<path d="M4 5h16a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7a2 2 0 0 1 2-2z"></path><line x1="17" y1="5" x2="17" y2="19" stroke-dasharray="2 2"></line><line x1="8.5" y1="15.5" x2="13.5" y2="8.5"></line><circle cx="9" cy="9" r="1.3"></circle><circle cx="13" cy="15" r="1.3"></circle>',
+                'Mileage': '<circle cx="12" cy="12" r="9"></circle><path d="M8.5 15.5V8.5l3.5 4 3.5-4v7"></path>',
+                'mileage': '<circle cx="12" cy="12" r="9"></circle><path d="M8.5 15.5V8.5l3.5 4 3.5-4v7"></path>',
+                'Point': '<circle cx="12" cy="12" r="9"></circle><path d="M8.5 15.5V8.5l3.5 4 3.5-4v7"></path>',
+                'point': '<circle cx="12" cy="12" r="9"></circle><path d="M8.5 15.5V8.5l3.5 4 3.5-4v7"></path>',
+                '마일리지': '<circle cx="12" cy="12" r="9"></circle><path d="M8.5 15.5V8.5l3.5 4 3.5-4v7"></path>',
+                '적립금': '<circle cx="12" cy="12" r="9"></circle><path d="M8.5 15.5V8.5l3.5 4 3.5-4v7"></path>',
+                '포인트': '<circle cx="12" cy="12" r="9"></circle><path d="M8.5 15.5V8.5l3.5 4 3.5-4v7"></path>',
+                'Payment': '<rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><line x1="6" y1="15" x2="10" y2="15"></line>',
+                'payment': '<rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><line x1="6" y1="15" x2="10" y2="15"></line>',
+                'Pay': '<rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><line x1="6" y1="15" x2="10" y2="15"></line>',
+                'pay': '<rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><line x1="6" y1="15" x2="10" y2="15"></line>',
+                '결제': '<rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><line x1="6" y1="15" x2="10" y2="15"></line>',
+                '카드결제': '<rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><line x1="6" y1="15" x2="10" y2="15"></line>',
+                'Claim': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>',
+                'claim': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>',
+                'Cancel': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>',
+                'cancel': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>',
+                'Return': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>',
+                'return': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>',
+                '클레임': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>',
+                '취소': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>',
+                '반품': '<path d="M5 12.5A7.5 7.5 0 0 1 18.5 9"></path><polyline points="15 9 19 9 19 5"></polyline><path d="M19 11.5A7.5 7.5 0 0 1 5.5 15"></path><polyline points="9 15 5 15 5 19"></polyline>'
             };
 
             const LOGO_DATA = {

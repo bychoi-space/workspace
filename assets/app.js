@@ -555,12 +555,18 @@ async function uploadToProject(project, filename, content, statusCallback, isBin
         if (putRes.status === 409) {
             console.warn(`[API] 409 Conflict for ${filename}. Retrying with fresh SHA...`);
             try {
-                const res = await fetch(url + `?t=${Date.now()}`, { headers, credentials: 'omit' });
+                const retryGetCtrl = new AbortController();
+                const retryGetTimeout = setTimeout(() => retryGetCtrl.abort(), 6000);
+                const res = await fetch(url + `?t=${Date.now()}`, { headers, credentials: 'omit', signal: retryGetCtrl.signal });
+                clearTimeout(retryGetTimeout);
+
                 if (res.ok) {
                     const json = await res.json();
                     sha = json.sha;
                     window.shaCache[cacheKey] = sha;
                     
+                    const retryPutCtrl = new AbortController();
+                    const retryPutTimeout = setTimeout(() => retryPutCtrl.abort(), 8000);
                     putRes = await fetch(url, {
                         method: 'PUT',
                         headers: { 
@@ -569,12 +575,14 @@ async function uploadToProject(project, filename, content, statusCallback, isBin
                             'Content-Type': 'application/json' 
                         },
                         credentials: 'omit',
+                        signal: retryPutCtrl.signal,
                         body: JSON.stringify({
                             message: `Update ${filename} (Retry)`,
                             content: finalContent,
                             sha: sha
                         })
                     });
+                    clearTimeout(retryPutTimeout);
                 }
             } catch (e) {
                 console.error("[API] Self-healing retry failed:", e);

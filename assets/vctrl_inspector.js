@@ -529,7 +529,7 @@ const ProjectMetadataManager = {
                 // Show/hide Arrow/Triangle direction config group & Corner style group (Rect only)
                 const arrowGroup = document.getElementById('shape-arrow-direction-group');
                 const cornerGroup = document.getElementById('shape-corner-style-group');
-                const isRect = (compStyles.shapeType === 'rect' || compStyles.id === 'v4-shape-rect');
+                const isRect = (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage');
                 const isArrow = (compStyles.shapeType === 'arrow' || compStyles.id === 'v4-shape-arrow');
                 const isTriangle = (compStyles.shapeType === 'triangle' || compStyles.id === 'v4-shape-triangle');
                 const isArrowOrTriangle = isArrow || isTriangle;
@@ -691,8 +691,8 @@ const ProjectMetadataManager = {
                 if (txt) txt.innerText = s.fontSize;
             }
 
-            // 3. Sync Corner Radius (Rect Shape only)
-            const isRectShape = (compStyles.isShape || state.editingType === 'shape') && (compStyles.shapeType === 'rect' || compStyles.id === 'v4-shape-rect' || !compStyles.shapeType);
+            // 3. Sync Corner Radius (Rect & Webpage Shape)
+            const isRectShape = (compStyles.isShape || state.editingType === 'shape') && (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage' || !compStyles.shapeType);
             if (isRectShape && s.borderRadius !== undefined) {
                 const radiusVal = s.borderRadius;
                 const slider = document.getElementById('shape-border-radius');
@@ -913,6 +913,10 @@ const ProjectMetadataManager = {
                 }
                 if (fallbackColor) {
                     window._currentStickyFormat.color = fallbackColor;
+                }
+                const curAlign = (compStyles.currentStyles && compStyles.currentStyles.textAlign) || compStyles.textAlign || 'left';
+                if (window.quillEditor && window.quillEditor.root) {
+                    window.quillEditor.root.style.textAlign = curAlign;
                 }
                 const curFmt = window.quillEditor.getFormat();
                 if (curFmt && Object.keys(curFmt).length > 0) {
@@ -1247,6 +1251,9 @@ window.initQuillEditor = function() {
         }
 
         const html = window.quillEditor.root.innerHTML;
+        const activeAlign = (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles && window.state.selectedComponentStyles.currentStyles.textAlign) || 
+                            (window.quillEditor && window.quillEditor.root && window.quillEditor.root.style.textAlign) || '';
+        const activeVAlign = (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles && (window.state.selectedComponentStyles.currentStyles.vAlign || window.state.selectedComponentStyles.currentStyles.justifyContent)) || '';
         if (state.editingType === 'pin') {
             // Update description array (legacy compat)
             const list = state.activeFile?.meta?.description;
@@ -1260,7 +1267,9 @@ window.initQuillEditor = function() {
                 const compId = state.editingIndex;
                 MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', { 
                     id: compId,
-                    html: html
+                    html: html,
+                    align: activeAlign,
+                    vAlign: activeVAlign
                 });
             }
             markAsDirty();
@@ -1268,7 +1277,11 @@ window.initQuillEditor = function() {
             // Shape 텍스트 업데이트: 선택된 shape 내부 innerHTML 교체
             const iframe = document.getElementById('main-iframe');
             if (iframe && iframe.contentWindow) {
-                MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', { html: html });
+                MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', { 
+                    html: html,
+                    align: activeAlign,
+                    vAlign: activeVAlign
+                });
                 markAsDirty();
             }
         } else {
@@ -1276,7 +1289,9 @@ window.initQuillEditor = function() {
             if (iframe && iframe.contentWindow) {
                 MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', { 
                     id: state.editingIndex,
-                    html: html
+                    html: html,
+                    align: activeAlign,
+                    vAlign: activeVAlign
                 });
                 markAsDirty();
             }

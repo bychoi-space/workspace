@@ -481,6 +481,22 @@ window.v4ResponsivePinsScript = `
                 }
                 if (window.V4UndoManager) window.V4UndoManager.saveState();
                 cell.innerHTML = d.html;
+                const curAlign = d.align || comp.getAttribute('data-align') || cell.getAttribute('data-align') || cell.style.textAlign || 'left';
+                const hAlign = curAlign === 'left' ? 'flex-start' : (curAlign === 'right' ? 'flex-end' : 'center');
+                const curVAlign = d.vAlign || comp.getAttribute('data-valign') || cell.getAttribute('data-valign') || 'middle';
+                const vJustify = curVAlign === 'top' || curVAlign === 'flex-start' ? 'flex-start' : (curVAlign === 'bottom' || curVAlign === 'flex-end' ? 'flex-end' : 'center');
+                const normVAlign = curVAlign === 'flex-start' ? 'top' : (curVAlign === 'flex-end' ? 'bottom' : (curVAlign || 'middle'));
+                comp.setAttribute('data-align', curAlign);
+                cell.setAttribute('data-align', curAlign);
+                comp.setAttribute('data-valign', normVAlign);
+                cell.setAttribute('data-valign', normVAlign);
+                cell.style.setProperty('text-align', curAlign, 'important');
+                cell.style.setProperty('align-items', hAlign, 'important');
+                cell.style.setProperty('justify-content', vJustify, 'important');
+                cell.querySelectorAll('p').forEach(p => {
+                    p.style.setProperty('width', '100%', 'important');
+                    p.style.setProperty('text-align', curAlign, 'important');
+                });
                 if (typeof window.markDirty === 'function') window.markDirty();
                 if (typeof window.resizeToFitText === 'function') {
                     window.resizeToFitText(comp);

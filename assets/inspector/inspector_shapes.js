@@ -33,44 +33,38 @@
         return singleId ? [singleId] : [];
     };
 
+    const setBtnActive = (btn, isActive) => {
+        if (!btn) return;
+        if (isActive) {
+            btn.classList.add('v4-btn-accent-active-sm');
+            btn.classList.remove('v4-btn-accent-inactive-sm');
+        } else {
+            btn.classList.add('v4-btn-accent-inactive-sm');
+            btn.classList.remove('v4-btn-accent-active-sm');
+        }
+        btn.style.removeProperty('background');
+        btn.style.removeProperty('border-color');
+        btn.style.removeProperty('color');
+    };
+
     // --- State Synchronization (Read) ---
     const syncCornerBtns = (radiusVal) => {
         const btnSharp = document.getElementById('btn-shape-corner-sharp');
         const btnRound = document.getElementById('btn-shape-corner-round');
         const isSharp = parseInt(radiusVal) === 0;
-        if (btnSharp) {
-            btnSharp.style.background = isSharp ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)';
-            btnSharp.style.borderColor = isSharp ? 'rgba(0,229,255,0.6)' : 'rgba(255,255,255,0.15)';
-            btnSharp.style.color = isSharp ? '#00e5ff' : '#94a3b8';
-        }
-        if (btnRound) {
-            btnRound.style.background = !isSharp ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)';
-            btnRound.style.borderColor = !isSharp ? 'rgba(0,229,255,0.6)' : 'rgba(255,255,255,0.15)';
-            btnRound.style.color = !isSharp ? '#00e5ff' : '#94a3b8';
-        }
+        setBtnActive(btnSharp, isSharp);
+        setBtnActive(btnRound, !isSharp);
     };
 
     const syncAlignBtns = (alignVal) => {
         const btnLeft = document.getElementById('btn-shape-align-left');
         const btnCenter = document.getElementById('btn-shape-align-center');
         const btnRight = document.getElementById('btn-shape-align-right');
-        const align = alignVal || 'center';
+        const align = (alignVal || 'left').toLowerCase();
         
-        if (btnLeft) {
-            btnLeft.style.background = align === 'left' ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)';
-            btnLeft.style.borderColor = align === 'left' ? 'rgba(0,229,255,0.6)' : 'rgba(255,255,255,0.15)';
-            btnLeft.style.color = align === 'left' ? '#00e5ff' : '#94a3b8';
-        }
-        if (btnCenter) {
-            btnCenter.style.background = align === 'center' ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)';
-            btnCenter.style.borderColor = align === 'center' ? 'rgba(0,229,255,0.6)' : 'rgba(255,255,255,0.15)';
-            btnCenter.style.color = align === 'center' ? '#00e5ff' : '#94a3b8';
-        }
-        if (btnRight) {
-            btnRight.style.background = align === 'right' ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)';
-            btnRight.style.borderColor = align === 'right' ? 'rgba(0,229,255,0.6)' : 'rgba(255,255,255,0.15)';
-            btnRight.style.color = align === 'right' ? '#00e5ff' : '#94a3b8';
-        }
+        setBtnActive(btnLeft, align === 'left');
+        setBtnActive(btnCenter, align === 'center');
+        setBtnActive(btnRight, align === 'right');
     };
 
     const syncVAlignBtns = (valignVal) => {
@@ -79,21 +73,9 @@
         const btnBottom = document.getElementById('btn-shape-valign-bottom');
         const valign = (valignVal === 'flex-start' ? 'top' : (valignVal === 'flex-end' ? 'bottom' : (valignVal || 'middle'))).toLowerCase();
         
-        if (btnTop) {
-            btnTop.style.background = (valign === 'top' || valign === 'flex-start') ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)';
-            btnTop.style.borderColor = (valign === 'top' || valign === 'flex-start') ? 'rgba(0,229,255,0.6)' : 'rgba(255,255,255,0.15)';
-            btnTop.style.color = (valign === 'top' || valign === 'flex-start') ? '#00e5ff' : '#94a3b8';
-        }
-        if (btnMiddle) {
-            btnMiddle.style.background = (valign === 'middle' || valign === 'center') ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)';
-            btnMiddle.style.borderColor = (valign === 'middle' || valign === 'center') ? 'rgba(0,229,255,0.6)' : 'rgba(255,255,255,0.15)';
-            btnMiddle.style.color = (valign === 'middle' || valign === 'center') ? '#00e5ff' : '#94a3b8';
-        }
-        if (btnBottom) {
-            btnBottom.style.background = (valign === 'bottom' || valign === 'flex-end') ? 'rgba(0,229,255,0.25)' : 'rgba(255,255,255,0.05)';
-            btnBottom.style.borderColor = (valign === 'bottom' || valign === 'flex-end') ? 'rgba(0,229,255,0.6)' : 'rgba(255,255,255,0.15)';
-            btnBottom.style.color = (valign === 'bottom' || valign === 'flex-end') ? '#00e5ff' : '#94a3b8';
-        }
+        setBtnActive(btnTop, valign === 'top' || valign === 'flex-start');
+        setBtnActive(btnMiddle, valign === 'middle' || valign === 'center');
+        setBtnActive(btnBottom, valign === 'bottom' || valign === 'flex-end');
     };
 
     const syncShapePaddingInputs = (padObj) => {
@@ -136,7 +118,7 @@
                     type: 'LF_UPDATE_STYLE',
                     id: targetIds[0],
                     ids: targetIds,
-                    selector: '.v4-shape-rect',
+                    selector: '.v4-shape-rect, .v4-shape-webpage',
                     style: { borderRadius: val + 'px' }
                 });
                 if (typeof window.markAsDirty === 'function') window.markAsDirty();
@@ -156,6 +138,11 @@
             window.state.selectedComponentStyles.currentStyles.textAlign = align;
             window.state.selectedComponentStyles.currentStyles.alignItems = horizontalAlign;
         }
+
+        // Synchronize Content Editor (Quill) text alignment
+        if (window.quillEditor && window.quillEditor.root) {
+            window.quillEditor.root.style.textAlign = align;
+        }
         
         notifyIframe({
             type: 'LF_UPDATE_STYLE',
@@ -165,6 +152,7 @@
             style: {
                 alignItems: horizontalAlign,
                 textAlign: align,
+                align: align,
                 boxSizing: 'border-box'
             }
         });
@@ -179,6 +167,7 @@
 
         if (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles) {
             window.state.selectedComponentStyles.currentStyles.justifyContent = verticalJustify;
+            window.state.selectedComponentStyles.currentStyles.vAlign = vAlign;
         }
         
         notifyIframe({
@@ -188,6 +177,7 @@
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell',
             style: {
                 justifyContent: verticalJustify,
+                vAlign: vAlign,
                 boxSizing: 'border-box'
             }
         });
@@ -248,8 +238,12 @@
             }
 
             // Alignments
-            syncAlignBtns(s.textAlign || 'center');
-            syncVAlignBtns(s.justifyContent || 'center');
+            const curAlign = s.textAlign || 'center';
+            syncAlignBtns(curAlign);
+            syncVAlignBtns(s.vAlign || s.justifyContent || 'center');
+            if (window.quillEditor && window.quillEditor.root) {
+                window.quillEditor.root.style.textAlign = curAlign;
+            }
 
             // Paddings
             syncShapePaddingInputs({

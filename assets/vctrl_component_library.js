@@ -496,6 +496,31 @@ window.V4_COMPONENT_LIBRARY = {
                 </svg>
                 <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative; color: var(--v4-text-color, #0f172a);"></div>
             </div>`
+        },
+        {
+            id: 'v4-shape-webpage',
+            name: 'Webpage',
+            koName: '웹페이지 브라우저 화면 창 홈페이지 사이트',
+            category: 'Shapes',
+            icon: 'web',
+            iconColor: '#00e5ff',
+            width: '160px',
+            height: '120px',
+            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            previewHtml: `<div style="width: 38px; height: 28px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box;"><div style="width: 100%; height: 7px; background: rgba(0, 0, 0, 0.05); border-bottom: 1px solid var(--v4-border-color, rgb(200, 200, 200)); display: flex; align-items: center; padding: 0 4px; gap: 2px;"><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #ef4444;"></div><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #eab308;"></div><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #22c55e;"></div></div></div>`,
+            html: `
+            <div class="v4-shape v4-shape-webpage" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 8px; overflow: hidden; box-sizing: border-box;">
+                <div class="v4-webpage-header" style="width: 100%; height: 26px; min-height: 26px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.03); border-bottom: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); box-sizing: border-box; flex-shrink: 0; pointer-events: none; user-select: none;">
+                    <div style="display: flex; gap: 5px; align-items: center; width: 40px; flex-shrink: 0;">
+                        <div style="width: 7px; height: 7px; border-radius: 50%; background: #ef4444; opacity: 0.85;"></div>
+                        <div style="width: 7px; height: 7px; border-radius: 50%; background: #eab308; opacity: 0.85;"></div>
+                        <div style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e; opacity: 0.85;"></div>
+                    </div>
+                    <div class="v4-webpage-url-bar" style="flex: 1; max-width: 55%; height: 12px; border-radius: 6px; background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.04); margin: 0 auto;"></div>
+                    <div style="width: 40px; flex-shrink: 0;"></div>
+                </div>
+                <div contenteditable="true" class="v4-editable-cell" style="flex: 1 1 auto; width: 100%; height: calc(100% - 26px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; color: var(--v4-text-color, #0f172a);"></div>
+            </div>`
         }
     ],
     organisms: [
@@ -526,7 +551,122 @@ window.V4_COMPONENT_LIBRARY = {
                 </div>
             </nav>`
         }
+    ],
+    illustrations: [
+        {
+            id: 'v4-ill-enter',
+            name: '1. 시스템 입장',
+            koName: '1 시스템 입장 쇼핑몰 진입 포털 디지털스토어 enter login portal store',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/step1_enter_ecommerce.png',
+            previewHtml: `<img src="assets/illustrations/step1_enter_ecommerce.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step1_enter_ecommerce.png" alt="1. 시스템 입장" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-browse',
+            name: '2. 상품 둘러보기',
+            koName: '2 상품 둘러보기 의류 탐색 행거 돋보기 browse search clothes catalog',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/step2_browse_clothing.png',
+            previewHtml: `<img src="assets/illustrations/step2_browse_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step2_browse_clothing.png" alt="2. 상품 둘러보기" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-select',
+            name: '3. 상품 선택',
+            koName: '3 상품 선택 의류 선택 재킷 골라담기 체크 select pick choose jacket',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/step3_select_clothing.png',
+            previewHtml: `<img src="assets/illustrations/step3_select_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step3_select_clothing.png" alt="3. 상품 선택" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-membership',
+            name: '4. 멤버십 가입',
+            koName: '4 멤버십 가입 회원가입 vip 카드 프로필 membership join signup',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/step4_membership_signup.png',
+            previewHtml: `<img src="assets/illustrations/step4_membership_signup.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step4_membership_signup.png" alt="4. 멤버십 가입" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-discount',
+            name: '5. 할인 혜택',
+            koName: '5 할인 혜택 세일 쿠폰 가격인하 코인 discount sale coupon off',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/step5_discount_clothing.png',
+            previewHtml: `<img src="assets/illustrations/step5_discount_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step5_discount_clothing.png" alt="5. 할인 혜택" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-payment',
+            name: '6. 상품 결제',
+            koName: '6 상품 결제 체크아웃 카드 단말기 정산 pos payment checkout pay',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/step6_payment_checkout.png',
+            previewHtml: `<img src="assets/illustrations/step6_payment_checkout.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step6_payment_checkout.png" alt="6. 상품 결제" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-delivery',
+            name: '7. 배송 수령',
+            koName: '7 배송 수령 택배 상자 배달 기사 delivery receive package box courier',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/step7_delivery_receive.png',
+            previewHtml: `<img src="assets/illustrations/step7_delivery_receive.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step7_delivery_receive.png" alt="7. 배송 수령" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-return',
+            name: '8. 상품 반품',
+            koName: '8 상품 반품 반품접수 회수 교환 데스크 return exchange parcel courier',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/step8_return_clothing.png',
+            previewHtml: `<img src="assets/illustrations/step8_return_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step8_return_clothing.png" alt="8. 상품 반품" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        }
     ]
+};
+
+// --- Illustration Library UI Rendering ---
+window.renderIllustrationLibrary = function() {
+    const container = document.getElementById('illustration-library-container');
+    if (!container || !window.V4_COMPONENT_LIBRARY) return 0;
+
+    const illustrations = window.V4_COMPONENT_LIBRARY.illustrations || [];
+    const query = (window.editorSearchQuery || '').toLowerCase().trim();
+    const filtered = query ? illustrations.filter(item => {
+        const enMatch = item.name.toLowerCase().includes(query);
+        const koMatch = item.koName ? item.koName.toLowerCase().includes(query) : false;
+        return enMatch || koMatch;
+    }) : illustrations;
+
+    container.innerHTML = filtered.map(item => `
+        <div class="component-item v4-card v4-card-illustration" onclick="insertV4ComponentById('${item.id}')" title="${item.name}" style="border-radius: 8px; padding: 6px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
+            <div style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 6px; background: rgba(255,255,255,0.06);">
+                <img src="${item.thumb}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;" />
+            </div>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.name}</span>
+        </div>
+    `).join('');
+
+    return filtered.length;
 };
 
 // --- V4 Library UI Rendering (SSOT) ---
@@ -685,6 +825,19 @@ window.renderAtomicLibrary = function() {
         iconBody.style.setProperty('display', hasIcon ? 'block' : 'none', 'important');
     }
 
+    // 3.5. Illustration Library 렌더링
+    let illustrationCount = 0;
+    if (typeof window.renderIllustrationLibrary === 'function') {
+        illustrationCount = window.renderIllustrationLibrary();
+    }
+    const illHeader = document.getElementById('illustration-library-header');
+    const illBody = document.getElementById('illustration-library-body');
+    if (illHeader && illBody) {
+        const hasIll = illustrationCount > 0;
+        illHeader.style.setProperty('display', hasIll ? 'flex' : 'none', 'important');
+        illBody.style.setProperty('display', hasIll ? 'block' : 'none', 'important');
+    }
+
     const moleculesHeader = document.getElementById('molecules-header');
     const moleculesBody = document.getElementById('molecules-body');
     if (moleculesHeader && moleculesBody) {
@@ -694,7 +847,7 @@ window.renderAtomicLibrary = function() {
     }
 
     // 5. Empty State 처리
-    const totalMatch = shapesCount + atomicCount + iconCount + filteredCustomComps.length;
+    const totalMatch = shapesCount + atomicCount + iconCount + illustrationCount + filteredCustomComps.length;
     const emptyState = document.getElementById('sidebar-search-empty');
     if (emptyState) {
         emptyState.style.setProperty('display', totalMatch === 0 ? 'flex' : 'none', 'important');

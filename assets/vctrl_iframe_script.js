@@ -413,7 +413,7 @@ window.v4Script = `
             id: c.id,
             x: parseFloat(c.style.left) || 0,
             y: parseFloat(c.style.top) || 0,
-            shapeType: shape ? (shape.classList.contains('v4-shape-line') ? 'line' : (shape.classList.contains('v4-shape-pattern-grid') ? 'pattern' : (shape.classList.contains('v4-shape-rect') ? 'rect' : (shape.classList.contains('v4-shape-circle') ? 'circle' : (shape.classList.contains('v4-shape-triangle') ? 'triangle' : (shape.classList.contains('v4-shape-diamond') ? 'diamond' : (shape.classList.contains('v4-shape-arrow') ? 'arrow' : ''))))))) : '',
+            shapeType: shape ? (shape.classList.contains('v4-shape-line') ? 'line' : (shape.classList.contains('v4-shape-pattern-grid') ? 'pattern' : (shape.classList.contains('v4-shape-rect') ? 'rect' : (shape.classList.contains('v4-shape-circle') ? 'circle' : (shape.classList.contains('v4-shape-triangle') ? 'triangle' : (shape.classList.contains('v4-shape-diamond') ? 'diamond' : (shape.classList.contains('v4-shape-arrow') ? 'arrow' : (shape.classList.contains('v4-shape-webpage') ? 'webpage' : '')))))))) : '',
             lineDir: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-line-dir') || 'horizontal') : 'horizontal',
             lineStyle: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-line-style') || 'solid') : 'solid',
             lineThickness: (function() {
@@ -588,8 +588,42 @@ window.v4Script = `
                     const colorVal = getCompBorder();
                     return !colorVal || colorVal === "transparent" || colorVal === "none" || colorVal.includes("rgba(0, 0, 0, 0)");
                 })(),
-                textAlign: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay'), 'textAlign') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'textAlign') || 'center'),
-                justifyContent: shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay'), 'justifyContent') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'justifyContent') || 'center'),
+                textAlign: (() => {
+                    const cell = shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : c.querySelector('.v4-editable-cell');
+                    const attr = c.getAttribute('data-align') || (cell && cell.getAttribute('data-align'));
+                    if (attr) return attr;
+                    if (cell) {
+                        const sAlign = cell.style.textAlign;
+                        if (sAlign && sAlign !== 'inherit') return sAlign;
+                        const cAlign = window.getComputedStyle(cell).textAlign;
+                        if (cAlign && cAlign !== 'inherit') return cAlign;
+                    }
+                    return shape ? 'center' : 'left';
+                })(),
+                justifyContent: (() => {
+                    const cell = shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : c.querySelector('.v4-editable-cell');
+                    const vAttr = c.getAttribute('data-valign') || (cell && cell.getAttribute('data-valign'));
+                    if (vAttr === 'top' || vAttr === 'flex-start') return 'flex-start';
+                    if (vAttr === 'bottom' || vAttr === 'flex-end') return 'flex-end';
+                    if (vAttr === 'middle' || vAttr === 'center') return 'center';
+                    if (cell) {
+                        const jc = cell.style.justifyContent || window.getComputedStyle(cell).justifyContent;
+                        if (jc && jc !== 'inherit') return jc;
+                    }
+                    return shape ? (_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay'), 'justifyContent') || 'center') : (_getVal(c.querySelector('.v4-editable-cell'), 'justifyContent') || 'center');
+                })(),
+                vAlign: (() => {
+                    const cell = shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : c.querySelector('.v4-editable-cell');
+                    const vAttr = c.getAttribute('data-valign') || (cell && cell.getAttribute('data-valign'));
+                    if (vAttr) return vAttr === 'flex-start' ? 'top' : (vAttr === 'flex-end' ? 'bottom' : (vAttr === 'center' ? 'middle' : vAttr));
+                    if (cell) {
+                        const jc = cell.style.justifyContent || window.getComputedStyle(cell).justifyContent;
+                        if (jc === 'flex-start') return 'top';
+                        if (jc === 'flex-end') return 'bottom';
+                        if (jc === 'center') return 'middle';
+                    }
+                    return 'middle';
+                })(),
                 padTop: (() => {
                     if (!shape) return 5;
                     const el = shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
@@ -1123,6 +1157,7 @@ window.v4Script = `
                 if (shape && shape.classList.contains('v4-shape-triangle')) return 'shape-triangle';
                 if (shape && shape.classList.contains('v4-shape-circle')) return 'shape-circle';
                 if (shape && shape.classList.contains('v4-shape-diamond')) return 'shape-diamond';
+                if (shape && shape.classList.contains('v4-shape-webpage')) return 'shape-webpage';
                 if (shape && shape.classList.contains('v4-shape-pattern-grid')) return 'shape-pattern';
                 return 'shape-rect';
             }
@@ -1145,9 +1180,9 @@ window.v4Script = `
             return 'other';
         });
 
-        // Group shapes together if they belong to general vector family (rect, circle, triangle, diamond, text)
+        // Group shapes together if they belong to general vector family (rect, circle, triangle, diamond, text, webpage)
         var normalizedTypes = types.map(function(t) {
-            if (t === 'shape-rect' || t === 'shape-circle' || t === 'shape-triangle' || t === 'shape-diamond' || t === 'shape-arrow' || t === 'shape-text') {
+            if (t === 'shape-rect' || t === 'shape-circle' || t === 'shape-triangle' || t === 'shape-diamond' || t === 'shape-arrow' || t === 'shape-text' || t === 'shape-webpage') {
                 return 'shape';
             }
             return t;
@@ -1276,9 +1311,19 @@ window.v4Script = `
                 for (var key in styleToAssign) {
                     if (styleToAssign.hasOwnProperty(key)) {
                         var val = styleToAssign[key];
-                        if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'borderRadius') {
-                            var cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : (key === 'justifyContent' ? 'justify-content' : 'border-radius'));
-                            target.style.setProperty(cssKey, val, 'important');
+                        if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'borderRadius' || key === 'vAlign') {
+                            var cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : ((key === 'justifyContent' || key === 'vAlign') ? 'justify-content' : 'border-radius'));
+                            var cssVal = val;
+                            if (key === 'justifyContent' || key === 'vAlign') {
+                                var normV = (val === 'flex-start' || val === 'top') ? 'top' : ((val === 'flex-end' || val === 'bottom') ? 'bottom' : 'middle');
+                                cssVal = normV === 'top' ? 'flex-start' : (normV === 'bottom' ? 'flex-end' : 'center');
+                                s.setAttribute('data-valign', normV);
+                                target.setAttribute('data-valign', normV);
+                            } else if (key === 'textAlign') {
+                                s.setAttribute('data-align', val);
+                                target.setAttribute('data-align', val);
+                            }
+                            target.style.setProperty(cssKey, cssVal, 'important');
                         }
                     }
                 }

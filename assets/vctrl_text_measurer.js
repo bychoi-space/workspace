@@ -250,9 +250,31 @@ window.v4TextMeasurerScript = `
         c.style.setProperty('--v4-text-shape-pad-y', padY);
         c.style.setProperty('white-space', 'nowrap', 'important');
         const cell = c.querySelector('.v4-editable-cell');
+
+        const align = c.getAttribute('data-align') || 
+                      (cell && cell.getAttribute('data-align')) || 
+                      (cell && cell.style.textAlign) || 
+                      c.style.textAlign || 
+                      'left';
+        const hAlign = align === 'left' ? 'flex-start' : (align === 'right' ? 'flex-end' : 'center');
+
+        const vAlign = c.getAttribute('data-valign') || 
+                       (cell && cell.getAttribute('data-valign')) || 
+                       (cell && cell.style.justifyContent === 'flex-start' ? 'top' : (cell && cell.style.justifyContent === 'flex-end' ? 'bottom' : 'middle')) || 
+                       'middle';
+        const vJustify = vAlign === 'top' ? 'flex-start' : (vAlign === 'bottom' ? 'flex-end' : 'center');
+
         if (cell) {
             cell.style.setProperty('padding', padY + ' 3px', 'important');
             cell.style.setProperty('white-space', 'nowrap', 'important');
+            cell.style.setProperty('text-align', align, 'important');
+            cell.style.setProperty('align-items', hAlign, 'important');
+            cell.style.setProperty('justify-content', vJustify, 'important');
+            cell.querySelectorAll('p').forEach(p => {
+                p.style.setProperty('text-align', align, 'important');
+                p.style.setProperty('width', '100%', 'important');
+                p.style.setProperty('white-space', 'nowrap', 'important');
+            });
             cell.querySelectorAll('p, span, font, strong, b, em, i, u, s').forEach(child => {
                 child.style.setProperty('white-space', 'nowrap', 'important');
             });
@@ -262,6 +284,40 @@ window.v4TextMeasurerScript = `
         const targetH = measured.lineCount > 1 
             ? Math.round(measured.fsPx * 1.2 * measured.lineCount) + addedH 
             : measured.textH + addedH;
+
+        // PPT Text Box Center/Right Alignment Anchor Compensation:
+        // When text expands/contracts, preserve center or right anchor based on text alignment
+        const curW = (origW && !origW.includes('%')) ? parseFloat(origW) : c.offsetWidth;
+        const deltaW = targetW - curW;
+        if (curW > 0 && Math.abs(deltaW) >= 0.5) {
+            const curLeft = !isNaN(parseFloat(c.style.left)) ? parseFloat(c.style.left) : c.offsetLeft;
+            if (!isNaN(curLeft)) {
+                if (align === 'center') {
+                    const newLeft = curLeft - (deltaW / 2);
+                    c.style.left = Math.round(newLeft) + 'px';
+                } else if (align === 'right') {
+                    const newLeft = curLeft - deltaW;
+                    c.style.left = Math.round(newLeft) + 'px';
+                }
+            }
+        }
+
+        // PPT Text Box Vertical Alignment Anchor Compensation:
+        // When text height expands/contracts, preserve center or bottom anchor based on vertical alignment
+        const curH = (origH && !origH.includes('%')) ? parseFloat(origH) : c.offsetHeight;
+        const deltaH = targetH - curH;
+        if (curH > 0 && Math.abs(deltaH) >= 0.5) {
+            const curTop = !isNaN(parseFloat(c.style.top)) ? parseFloat(c.style.top) : c.offsetTop;
+            if (!isNaN(curTop)) {
+                if (vAlign === 'middle' || vAlign === 'center') {
+                    const newTop = curTop - (deltaH / 2);
+                    c.style.top = Math.round(newTop) + 'px';
+                } else if (vAlign === 'bottom') {
+                    const newTop = curTop - deltaH;
+                    c.style.top = Math.round(newTop) + 'px';
+                }
+            }
+        }
 
         const finalW = targetW + 'px';
         const finalH = targetH + 'px';
@@ -279,6 +335,60 @@ window.v4TextMeasurerScript = `
         const targetH = measured.lineCount > 1 
             ? (measured.fsPx * 1.2 * measured.lineCount) + addedH 
             : measured.textH + addedH;
+
+        const cell = c.querySelector('.v4-editable-cell');
+        const align = c.getAttribute('data-align') || 
+                      (cell && cell.getAttribute('data-align')) || 
+                      (cell && cell.style.textAlign) || 
+                      c.style.textAlign || 
+                      'left';
+        const hAlign = align === 'left' ? 'flex-start' : (align === 'right' ? 'flex-end' : 'center');
+
+        const vAlign = c.getAttribute('data-valign') || 
+                       (cell && cell.getAttribute('data-valign')) || 
+                       (cell && cell.style.justifyContent === 'flex-start' ? 'top' : (cell && cell.style.justifyContent === 'flex-end' ? 'bottom' : 'middle')) || 
+                       'middle';
+        const vJustify = vAlign === 'top' ? 'flex-start' : (vAlign === 'bottom' ? 'flex-end' : 'center');
+
+        if (cell) {
+            cell.style.setProperty('text-align', align, 'important');
+            cell.style.setProperty('align-items', hAlign, 'important');
+            cell.style.setProperty('justify-content', vJustify, 'important');
+            cell.querySelectorAll('p').forEach(p => {
+                p.style.setProperty('text-align', align, 'important');
+                p.style.setProperty('width', '100%', 'important');
+            });
+        }
+
+        const curW = (origW && !origW.includes('%')) ? parseFloat(origW) : c.offsetWidth;
+        const deltaW = targetW - curW;
+        if (curW > 0 && Math.abs(deltaW) >= 0.5) {
+            const curLeft = !isNaN(parseFloat(c.style.left)) ? parseFloat(c.style.left) : c.offsetLeft;
+            if (!isNaN(curLeft)) {
+                if (align === 'center') {
+                    const newLeft = curLeft - (deltaW / 2);
+                    c.style.left = Math.round(newLeft) + 'px';
+                } else if (align === 'right') {
+                    const newLeft = curLeft - deltaW;
+                    c.style.left = Math.round(newLeft) + 'px';
+                }
+            }
+        }
+
+        const curH = (origH && !origH.includes('%')) ? parseFloat(origH) : c.offsetHeight;
+        const deltaH = targetH - curH;
+        if (curH > 0 && Math.abs(deltaH) >= 0.5) {
+            const curTop = !isNaN(parseFloat(c.style.top)) ? parseFloat(c.style.top) : c.offsetTop;
+            if (!isNaN(curTop)) {
+                if (vAlign === 'middle' || vAlign === 'center') {
+                    const newTop = curTop - (deltaH / 2);
+                    c.style.top = Math.round(newTop) + 'px';
+                } else if (vAlign === 'bottom') {
+                    const newTop = curTop - deltaH;
+                    c.style.top = Math.round(newTop) + 'px';
+                }
+            }
+        }
 
         const finalW = targetW + 'px';
         const finalH = targetH + 'px';
@@ -402,6 +512,10 @@ window.v4TextMeasurerScript = `
             delTrigger.style.removeProperty('display');
             if (origDelDisplay) delTrigger.style.display = origDelDisplay;
         }
+
+        if (typeof window.updateHandles === 'function') {
+            window.updateHandles(c);
+        }
     };
 
     // --- V4 Text Style Update Handler ---
@@ -446,11 +560,28 @@ window.v4TextMeasurerScript = `
                 delete styleToAssign.height;
                 
                 for (const [key, val] of Object.entries(styleToAssign)) {
-                    if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent') {
-                        const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : 'justify-content');
-                        t.style.setProperty(cssKey, val, 'important');
+                    if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'align' || key === 'vAlign') {
+                        let cssKey = 'text-align';
+                        if (key === 'alignItems') cssKey = 'align-items';
+                        else if (key === 'justifyContent' || key === 'vAlign') cssKey = 'justify-content';
+
+                        let cssVal = val;
+                        if (key === 'justifyContent' || key === 'vAlign') {
+                            const normVAlign = (val === 'flex-start' || val === 'top') ? 'top' : ((val === 'flex-end' || val === 'bottom') ? 'bottom' : 'middle');
+                            cssVal = normVAlign === 'top' ? 'flex-start' : (normVAlign === 'bottom' ? 'flex-end' : 'center');
+                            s.setAttribute('data-valign', normVAlign);
+                            t.setAttribute('data-valign', normVAlign);
+                        }
+                        t.style.setProperty(cssKey, cssVal, 'important');
+                        if (key === 'textAlign' || key === 'align') {
+                            s.setAttribute('data-align', val);
+                            t.setAttribute('data-align', val);
+                            const hAlign = val === 'left' ? 'flex-start' : (val === 'right' ? 'flex-end' : 'center');
+                            t.style.setProperty('align-items', hAlign, 'important');
+                        }
                         t.querySelectorAll('p, span').forEach(child => {
-                            child.style.setProperty(cssKey, val, 'important');
+                            child.style.setProperty(cssKey, cssVal, 'important');
+                            if (child.tagName === 'P') child.style.setProperty('width', '100%', 'important');
                         });
                     } else if (key === 'fontSize') {
                         t.style.fontSize = val;

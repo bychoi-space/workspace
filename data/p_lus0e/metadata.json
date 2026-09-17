@@ -500,19 +500,10 @@
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
     },
-    "06_Mobile_Design_3_319.html": {
-      "title": "쿠폰 표현 케이스 정의",
-      "type": "ui",
-      "defaultTab": "editor",
-      "screenDesc": "",
-      "updatedAt": "2026-09-17T08:04:14.599Z",
-      "description": [],
-      "connectors": []
-    },
     "06_Mobile_Design_3_527.html": {
       "title": "06_Mobile_Design_3_527",
       "type": "mobile-ui",
-      "updatedAt": "2026-09-17T08:42:06.631Z",
+      "updatedAt": "2026-09-17T08:41:15.894Z",
       "template": "template_mobile_ui_3.html",
       "description": [],
       "connectors": [],
@@ -529,7 +520,6 @@
     "01_Project_Summary_898.html",
     "08_Responsive_PC_Mobile_730.html",
     "06_Mobile_Design_3_527.html",
-    "06_Mobile_Design_3_319.html",
     "09_Admin_PC_Scroll_639.html",
     "09_Admin_PC_Scroll_639_copy3.html",
     "09_Admin_PC_Scroll_639_copy4.html",

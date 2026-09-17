@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 14px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;">
-<head>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
     <meta charset="UTF-8">
     <title>시선닷컴 상품 랭킹 산정 기준 &amp; 10개 상품 실무 시뮬레이션</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
@@ -49,6 +48,7 @@
             display: block;
         }
     </style>
+
 </head>
 <body>
     <div class="canvas" id="canvas">
@@ -62,9 +62,9 @@
 
         <!-- Icon Shape: hdr_icon -->
         <div id="hdr_icon" class="lf-component" style="position: absolute; top: 30px; left: 38px; width: 24px; height: 24px; z-index: 105;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;">
                 
-    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+    <polygon points="12 2 2 7 12 12 22 7 12 2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
     <polyline points="2 17 12 22 22 17"></polyline>
     <polyline points="2 12 12 17 22 12"></polyline>
 
@@ -72,9 +72,9 @@
         </div>
 
         <!-- Text Shape: hdr_title -->
-        <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 29px; left: 74px; width: 680px; height: 26px; z-index: 105; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 17px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 17px; white-space: nowrap !important;">시선닷컴 상품 랭킹 산정 기준 &amp; 10개 상품 실무 시뮬레이션</strong></p>
+        <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 29px; left: 74px; width: 398px; height: 27px; z-index: 105; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(255, 255, 255); font-size: 17px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;">
+                <p style="white-space: nowrap !important; text-align: left !important; width: 100% !important;"><strong style="color: #ffffff; font-size: 17px; white-space: nowrap !important;">시선닷컴 상품 랭킹 산정 기준 &amp; 10개 상품 실무 시뮬레이션</strong></p>
             </div>
         </div>
 
@@ -82,7 +82,7 @@
         <div id="hdr_tag" class="lf-component" style="position: absolute; top: 28px; left: 1310px; width: 250px; height: 28px; z-index: 105;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #38bdf8; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; text-align: center; padding: 3px 6px !important; height: 100%;">
-                    <p style="margin: 0;"><span style="font-size: 12px; font-weight: 700; color: #38bdf8; white-space: nowrap !important;">RANKING POLICY & 10 PRODUCTS</span></p>
+                    <p style="margin: 0;"><span style="font-size: 12px; font-weight: 700; color: #38bdf8; white-space: nowrap !important;">RANKING POLICY &amp; 10 PRODUCTS</span></p>
                 </div>
             </div>
         </div>
@@ -95,20 +95,12 @@
         </div>
 
         <!-- Text Shape: s1_lbl -->
-        <div id="s1_lbl" class="lf-component v4-text-shape" style="position: absolute; top: 85px; left: 36px; width: 540px; height: 24px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="font-size: 15.5px; color: #0f172a; white-space: nowrap !important;">1. 6대 핵심 지표별 데이터 수집 기준 및 산정 방식 (패션 시즌 특화)</strong></p>
-            </div>
+        <div id="s1_lbl" class="lf-component v4-text-shape" style="position: absolute; top: 85px; left: 36px; width: 249px; height: 25px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;" data-align="left" data-valign="middle">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 15.5px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;" data-align="left" data-valign="middle"><p style="width: 100% !important; text-align: left !important; white-space: nowrap !important;"><strong style="color: rgb(15, 23, 42); white-space: nowrap !important;">1. 지표 별 데이터 수집 기준 및 산정 방식</strong></p></div>
         </div>
 
         <!-- Badge: s1_tag -->
-        <div id="s1_tag" class="lf-component" style="position: absolute; top: 84px; left: 580px; width: 265px; height: 24px; z-index: 102;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: center; padding: 3px 6px !important; height: 100%;">
-                    <p style="margin: 0;"><span style="font-size: 12px; font-weight: 700; color: #1d4ed8; white-space: nowrap !important;">가중치 합계 100% | 100점 만점 표준화</span></p>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Rect Shape: s1_formula_bg -->
         <div id="s1_formula_bg" class="lf-component" style="position: absolute; top: 114px; left: 36px; width: 1528px; height: 38px; z-index: 101;" data-resized="true">
@@ -123,7 +115,7 @@
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left !important; align-items: flex-start !important; padding: 4px 8px !important; box-sizing: border-box;">
                     <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; word-break: keep-all; line-height: 1.2; padding: 0 !important; white-space: normal !important; align-items: flex-start !important; margin: 0px !important;">
                         
-    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 0 10px; box-sizing: border-box; font-family: inherit;">
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 0 10px; box-sizing: border-box;">
         <!-- Step 1 -->
         <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
             <span style="background: #0f172a; color: #ffffff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">1단계: 지표별 순위 정렬</span>
@@ -165,9 +157,9 @@
         </div>
 
         <!-- Text Shape: m1_t -->
-        <div id="m1_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 118px; width: 152px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">결제금액 (GMV)</strong></p>
+        <div id="m1_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 118px; width: 111px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14.5px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;">
+                <p style="white-space: nowrap !important; text-align: left !important; width: 100% !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">결제금액 (GMV)</strong></p>
             </div>
         </div>
 
@@ -219,9 +211,9 @@
         </div>
 
         <!-- Text Shape: m2_t -->
-        <div id="m2_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 374px; width: 152px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">주문수량 (Vol)</strong></p>
+        <div id="m2_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 374px; width: 99px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14.5px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;">
+                <p style="white-space: nowrap !important; text-align: left !important; width: 100% !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">주문수량 (Vol)</strong></p>
             </div>
         </div>
 
@@ -273,9 +265,9 @@
         </div>
 
         <!-- Text Shape: m3_t -->
-        <div id="m3_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 630px; width: 152px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">장바구니 담기</strong></p>
+        <div id="m3_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 630px; width: 88px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14.5px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;">
+                <p style="white-space: nowrap !important; text-align: left !important; width: 100% !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">장바구니 담기</strong></p>
             </div>
         </div>
 
@@ -327,9 +319,9 @@
         </div>
 
         <!-- Text Shape: m4_t -->
-        <div id="m4_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 886px; width: 152px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">위시리스트 찜</strong></p>
+        <div id="m4_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 886px; width: 88px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14.5px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;">
+                <p style="white-space: nowrap !important; text-align: left !important; width: 100% !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">위시리스트 찜</strong></p>
             </div>
         </div>
 
@@ -381,9 +373,9 @@
         </div>
 
         <!-- Text Shape: m5_t -->
-        <div id="m5_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 1142px; width: 152px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">순방문자 (UV)</strong></p>
+        <div id="m5_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 1142px; width: 97px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14.5px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;">
+                <p style="white-space: nowrap !important; text-align: left !important; width: 100% !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">순방문자 (UV)</strong></p>
             </div>
         </div>
 
@@ -435,9 +427,9 @@
         </div>
 
         <!-- Text Shape: m6_t -->
-        <div id="m6_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 1398px; width: 152px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">페이지뷰 (PV)</strong></p>
+        <div id="m6_t" class="lf-component v4-text-shape" style="position: absolute; top: 165px; left: 1398px; width: 96px; height: 22px; z-index: 103; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14.5px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;">
+                <p style="white-space: nowrap !important; text-align: left !important; width: 100% !important;"><strong style="font-size: 14.5px; color: #0f172a; white-space: nowrap !important;">페이지뷰 (PV)</strong></p>
             </div>
         </div>
 
@@ -480,20 +472,14 @@
         </div>
 
         <!-- Text Shape: s2_lbl -->
-        <div id="s2_lbl" class="lf-component v4-text-shape" style="position: absolute; top: 336px; left: 36px; width: 560px; height: 24px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15.5px; font-weight: 800; display: block; text-align: left; width: 100%; height: 100%; padding: 2px 3px !important; box-sizing: border-box; line-height: 1.2; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="font-size: 15.5px; color: #0f172a; white-space: nowrap !important;">2. 패션 카테고리 10개 상품 랭킹 시뮬레이션 매트릭스 (가상 데이터 검증)</strong></p>
+        <div id="s2_lbl" class="lf-component v4-text-shape" style="position: absolute; top: 336px; left: 36px; width: 451px; height: 25px; z-index: 102; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 15.5px; font-weight: 800; display: block; text-align: left !important; width: 100%; height: 100%; box-sizing: border-box; line-height: 1.2; padding: 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;">
+                <p style="white-space: nowrap !important; text-align: left !important; width: 100% !important;"><strong style="font-size: 15.5px; color: #0f172a; white-space: nowrap !important;">2. 패션 카테고리 10개 상품 랭킹 시뮬레이션 매트릭스 (가상 데이터 검증)</strong></p>
             </div>
         </div>
 
         <!-- Badge: s2_tag -->
-        <div id="s2_tag" class="lf-component" style="position: absolute; top: 335px; left: 610px; width: 320px; height: 24px; z-index: 102;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fdf2f8; border: 1.6px solid #fbcfe8; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; text-align: center; padding: 3px 6px !important; height: 100%;">
-                    <p style="margin: 0;"><span style="font-size: 12px; font-weight: 700; color: #be185d; white-space: nowrap !important;">Total Score = Base Score(100점) × 신상품 부스팅</span></p>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Rect Shape: s2_tb_container -->
         <div id="s2_tb_container" class="lf-component" style="position: absolute; top: 368px; left: 36px; width: 1528px; height: 494px; z-index: 101;" data-resized="true">
@@ -683,5 +669,7 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+<script id="v4-inlined-script">/* Dynamic scripts injected */</script>
+
+
+</body></html>

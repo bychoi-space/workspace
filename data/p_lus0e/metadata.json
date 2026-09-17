@@ -193,6 +193,17 @@
       "defaultTab": "editor",
       "screenDesc": "시선닷컴 3개 브랜드(MICHAA, it MICHAA, E.B.M)를 위한 상품 종합 랭킹(Ranking Score) 산정 룰 및 알고리즘 정책"
     },
+    "11_Daily_Ranking_Batch_Percentile_851.html": {
+      "title": "상품 랭킹 일간 배치 & 정규화",
+      "type": "plan",
+      "updatedAt": "2026-09-17T06:58:00.000Z",
+      "template": "template_project_summary.html",
+      "version": 0.1,
+      "description": [],
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": "매일 새벽 03:00 일 단위 배치로 6대 지표를 백분위 순위(Percentile, 0~100pt)로 표준화하여 단위 불일치를 해소하고 공정하게 산정하는 아키텍처 및 실증 시뮬레이션 파이프라인"
+    },
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
@@ -494,7 +505,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 15:46:00",
+  "updated": "2026-09-17 15:58:00",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",
@@ -503,7 +514,8 @@
     "09_Admin_PC_Scroll_639_copy3.html",
     "09_Admin_PC_Scroll_639_copy4.html",
     "99_Blank_812.html",
-    "10_Product_Ranking_Rules_850.html"
+    "10_Product_Ranking_Rules_850.html",
+    "11_Daily_Ranking_Batch_Percentile_851.html"
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link",

@@ -17,7 +17,10 @@ window.LF_TEMPLATES['history_modal.html'] = `
                 <span class="material-icons-outlined history-dialog-title-icon">history</span>
                 <h3 class="history-dialog-title">프로젝트 재개정 이력</h3>
             </div>
-            <button id="btn-close-history" class="btn-secondary history-close-btn"><span class="material-icons-outlined">close</span></button>
+            <div class="history-header-actions">
+                <button id="btn-add-history" class="history-btn-add" title="새 재개정 이력 직접 추가"><span class="material-icons-outlined" style="font-size:16px;">add</span> 이력 추가</button>
+                <button id="btn-close-history" class="btn-secondary history-close-btn"><span class="material-icons-outlined">close</span></button>
+            </div>
         </div>
         <div id="history-popup-list" class="history-list-box">
             <!-- Dynamic history entries here -->

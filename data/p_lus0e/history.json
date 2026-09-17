@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-09-17 15:58:00",
+    "file": "11_Daily_Ranking_Batch_Percentile_851.html",
+    "version": 0.1,
+    "assignee": "최범열",
+    "developer": "원미란",
+    "message": "상품 랭킹 일간 배치 & 백분위 정규화 파이프라인 신규 설계 화면 생성"
+  },
+  {
     "version": "0.4",
     "date": "2026-09-17 15:33:57",
     "message": "ADMIN 설계 수정 - [상품 영역] 설정 케이스 상세 정의",

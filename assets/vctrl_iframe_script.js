@@ -23,7 +23,7 @@ window.v4Script = `
     window.getNextTopZIndex = function(container) {
         var targetParent = container || document.body;
         var maxZ = 1000;
-        var comps = targetParent.querySelectorAll ? targetParent.querySelectorAll('.lf-component') : [];
+        var comps = document.querySelectorAll ? document.querySelectorAll('.lf-component') : (targetParent.querySelectorAll ? targetParent.querySelectorAll('.lf-component') : []);
         comps.forEach(function(c) {
             if (c.classList.contains('pin-marker')) return;
             var rawZ = parseInt(c.style.zIndex, 10);
@@ -31,7 +31,7 @@ window.v4Script = `
                 var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                 rawZ = isNaN(compZ) ? 1000 : compZ;
             }
-            if (rawZ < 9999 && rawZ > maxZ) {
+            if (rawZ < 190000 && rawZ > maxZ) {
                 maxZ = rawZ;
             }
         });
@@ -1598,10 +1598,16 @@ window.v4Script = `
         if (topLevelSelected.length > 0) {
             if (window.V4UndoManager) window.V4UndoManager.saveState();
             
+            var realCanvasHost = document.querySelector('.canvas, .page, #canvas-page, #canvas');
             var parentMap = new Map();
             topLevelSelected.forEach(function(el) {
                 var p = el.parentElement;
                 if (!p) return;
+                // Self-healing: If an element was mistakenly appended directly to document.body while a canvas container exists, reparent it
+                if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
+                    realCanvasHost.appendChild(el);
+                    p = realCanvasHost;
+                }
                 if (!parentMap.has(p)) {
                     parentMap.set(p, []);
                 }
@@ -1627,13 +1633,27 @@ window.v4Script = `
                         var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                         z = isNaN(compZ) ? 1000 : compZ;
                     }
-                    if (z < 9999) {
+                    if (z < 190000) {
                         if (!hasZ) {
                             maxZ = z;
                             hasZ = true;
                         } else if (z > maxZ) {
                             maxZ = z;
                         }
+                    }
+                });
+
+                // Check document-wide max z-index as well to ensure it reliably sits above any cross-frame elements
+                var allComps = document.querySelectorAll ? document.querySelectorAll('.lf-component') : [];
+                allComps.forEach(function(c) {
+                    if (c.classList.contains('pin-marker')) return;
+                    var z = parseInt(c.style.zIndex, 10);
+                    if (isNaN(z)) {
+                        var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
+                        z = isNaN(compZ) ? 1000 : compZ;
+                    }
+                    if (z < 190000 && z > maxZ) {
+                        maxZ = z;
                     }
                 });
 
@@ -1653,7 +1673,12 @@ window.v4Script = `
             });
 
             markDirty();
-            if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
+            var hasPinSelected = topLevelSelected.some(function(el) {
+                return el.classList.contains('pin-marker') || el.classList.contains('text-marker');
+            });
+            if (hasPinSelected && typeof window.reorderAllPins === 'function') {
+                window.reorderAllPins();
+            }
         }
     }
 
@@ -1685,10 +1710,16 @@ window.v4Script = `
         if (topLevelSelected.length > 0) {
             if (window.V4UndoManager) window.V4UndoManager.saveState();
 
+            var realCanvasHost = document.querySelector('.canvas, .page, #canvas-page, #canvas');
             var parentMap = new Map();
             topLevelSelected.forEach(function(el) {
                 var p = el.parentElement;
                 if (!p) return;
+                // Self-healing: If an element was mistakenly appended directly to document.body while a canvas container exists, reparent it
+                if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
+                    realCanvasHost.appendChild(el);
+                    p = realCanvasHost;
+                }
                 if (!parentMap.has(p)) {
                     parentMap.set(p, []);
                 }
@@ -1708,11 +1739,13 @@ window.v4Script = `
                 var minZ = 1000;
                 var hasZ = false;
                 siblingComps.forEach(function(c) {
+                    if (c.classList.contains('pin-marker')) return;
                     var z = parseInt(c.style.zIndex, 10);
                     if (isNaN(z)) {
                         var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                         z = isNaN(compZ) ? 1000 : compZ;
                     }
+                    if (z >= 190000) return; // Ignore pin markers or overlay tiers
                     if (!hasZ) {
                         minZ = z;
                         hasZ = true;
@@ -1747,7 +1780,9 @@ window.v4Script = `
                     });
                 } else {
                     var nonCompAnchor = Array.from(parent.children).find(function(c) {
-                        return !c.classList.contains('lf-component');
+                        if (c.classList.contains('lf-component')) return false;
+                        if (c.id === 'canvas' || c.classList.contains('canvas') || c.classList.contains('page') || c.id === 'canvas-page') return false;
+                        return true;
                     });
                     items.forEach(function(el) {
                         el.style.zIndex = String(targetZ);
@@ -1761,7 +1796,12 @@ window.v4Script = `
             });
 
             markDirty();
-            if (typeof window.reorderAllPins === 'function') window.reorderAllPins();
+            var hasPinSelected = topLevelSelected.some(function(el) {
+                return el.classList.contains('pin-marker') || el.classList.contains('text-marker');
+            });
+            if (hasPinSelected && typeof window.reorderAllPins === 'function') {
+                window.reorderAllPins();
+            }
         }
     }
 

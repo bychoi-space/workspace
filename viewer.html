@@ -16,7 +16,7 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-    <link rel="stylesheet" href="assets/style.css?v=V347_WHIMSICAL_UNIFIED">
+    <link rel="stylesheet" href="assets/style.css?v=V350_NOTIFICATION_SVG">
     <link rel="stylesheet" href="assets/theme.css?v=V347_WHIMSICAL_UNIFIED">
     <!-- Flatpickr (Date Picker) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -518,7 +518,10 @@
                     <span class="material-icons-outlined">history</span>
                     <h3 class="history-dialog-title">프로젝트 재개정 이력</h3>
                 </div>
-                <button id="btn-close-history" class="history-dialog-close" title="닫기"><span class="material-icons-outlined">close</span></button>
+                <div class="history-header-actions">
+                    <button id="btn-add-history" class="history-btn-add" title="새 재개정 이력 직접 추가"><span class="material-icons-outlined" style="font-size:16px;">add</span> 이력 추가</button>
+                    <button id="btn-close-history" class="history-dialog-close" title="닫기"><span class="material-icons-outlined">close</span></button>
+                </div>
             </div>
             <div id="history-popup-list" class="history-dialog-list">
                 <!-- Dynamic history entries here -->
@@ -528,55 +531,55 @@
 
 
     <!-- Script modularization: Pure Vanilla V3 Migration -->
-    <script src="assets/vctrl_typography.js?v=V346_SHAPE_ALIGN_FIX"></script>
+    <script src="assets/vctrl_typography.js?v=V351_ZINDEX_LAYER_FIX"></script>
     <!-- Dynamic UI Library for Inspectors, Library Icons & Modals -->
     <script src="assets/ui_library_fallback.js?v=V349_INSPECTOR_FIX"></script>
     <script src="assets/vctrl_ui_library.js?v=V349_INSPECTOR_FIX"></script>
-    <script src="assets/templates.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/app.js?v=V346_SHAPE_ALIGN_FIX"></script>
+    <script src="assets/templates.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/app.js?v=V350_NOTIFICATION_SVG"></script>
     
     <!-- Modularized Engine -->
-    <script src="assets/vctrl_undo.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_text_measurer.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_ui_atoms.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_design_system.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_shortcuts.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_common.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_object_shape.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_object_connector.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/responsive_frame.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_iframe_styles.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_iframe_script.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_iframe_grid.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_iframe_accordion.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_iframe_tab.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_iframe_drag.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_iframe_ports.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_presentation_pen.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_core.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_smartguide.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_responsive_smartguide.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_responsive_multiselect.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_responsive_pins.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_grouping.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_color_picker.js?v=V346_SHAPE_ALIGN_FIX"></script>
+    <script src="assets/vctrl_undo.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_text_measurer.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_ui_atoms.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_design_system.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_shortcuts.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_common.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_object_shape.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_object_connector.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/responsive_frame.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_styles.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_script.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_grid.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_accordion.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_tab.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_drag.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_ports.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_presentation_pen.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_core.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_smartguide.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_responsive_smartguide.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_responsive_multiselect.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_responsive_pins.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_grouping.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_color_picker.js?v=V351_ZINDEX_LAYER_FIX"></script>
     <script src="assets/vctrl_component_library.js?v=V349_ILLUSTRATION_PNG"></script>
-    <script src="assets/vctrl_inspector.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_screen_manager.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_annotation_pins.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_canvas_viewport.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_properties.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_connectors.js?v=V346_SHAPE_ALIGN_FIX"></script>
+    <script src="assets/vctrl_inspector.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_screen_manager.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_annotation_pins.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_canvas_viewport.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_properties.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_connectors.js?v=V351_ZINDEX_LAYER_FIX"></script>
     
     <!-- V4 Premium Addons -->
-    <script src="assets/vctrl_table.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_component_inserter.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/inspector/inspector_grid.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/inspector/inspector_accordion.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/inspector/inspector_tab.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/inspector/inspector_shapes.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/inspector/inspector_atoms.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/inspector/inspector_admin_settings.js?v=V346_SHAPE_ALIGN_FIX"></script>
-    <script src="assets/vctrl_v4_addon.js?v=V346_SHAPE_ALIGN_FIX"></script>
+    <script src="assets/vctrl_table.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_component_inserter.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/inspector/inspector_grid.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/inspector/inspector_accordion.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/inspector/inspector_tab.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/inspector/inspector_shapes.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/inspector/inspector_atoms.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/inspector/inspector_admin_settings.js?v=V351_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_v4_addon.js?v=V351_ZINDEX_LAYER_FIX"></script>
 </body>
 </html>

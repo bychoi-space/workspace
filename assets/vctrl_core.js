@@ -461,26 +461,14 @@ window.getIframeHTML = async function () {
     });
 };
 
-window.handleGlobalSave = async function () {
+window.handleGlobalSave = async function (explicitReason = "") {
     const btn = document.getElementById('btn-global-save');
     if (!btn || btn.disabled) return;
 
     if (state.isReadOnly) return window.showAuthModal?.();
 
-    // 1. Get revision history message with Prompt (Default "")
-    let changeMsg = "";
-    if (window.Notification && typeof window.Notification.prompt === 'function') {
-        const res = await window.Notification.prompt(
-            "이번 재개정(저장)의 상세 변경 사유를 입력해주세요. (입력하지 않으면 이력이 기록되지 않습니다.)",
-            "",
-            "재개정 이력 기록"
-        );
-        if (res === null) {
-            console.log("[Save] Save cancelled by user in prompt.");
-            return; // Cancel saving
-        }
-        changeMsg = res.trim();
-    }
+    // 1. Revision message handling (Default "" for silent fast save; history is managed via dedicated modal)
+    let changeMsg = typeof explicitReason === 'string' ? explicitReason.trim() : "";
 
     const overlay = document.getElementById('save-overlay');
     const originalHTML = btn.innerHTML;

@@ -74,11 +74,11 @@
                 activeImageRatio = (data.imageRatio && data.imageRatio > 0) 
                     ? data.imageRatio 
                     : ((data.h && data.h > 0) ? (data.w / data.h) : null);
-                if (ratioRow) ratioRow.style.display = 'flex';
+                if (ratioRow) ratioRow.classList.add('is-visible');
                 if (chk) chk.checked = true; // Default locked to preserve aspect ratio
             } else {
                 activeImageRatio = null;
-                if (ratioRow) ratioRow.style.display = 'none';
+                if (ratioRow) ratioRow.classList.remove('is-visible');
                 if (chk) chk.checked = false;
             }
         });
@@ -126,7 +126,7 @@
             // Hide ratio row on deselect
             const ratioRow = document.getElementById('shape-aspect-ratio-row');
             const chk = document.getElementById('chk-preserve-aspect-ratio');
-            if (ratioRow) ratioRow.style.display = 'none';
+            if (ratioRow) ratioRow.classList.remove('is-visible');
             if (chk) chk.checked = false;
 
             if (typeof window._syncShapePaddingInputs === 'function') {
@@ -170,11 +170,11 @@
                         : ((data.firstCompStyles.h && data.firstCompStyles.h > 0) 
                             ? (data.firstCompStyles.w / data.firstCompStyles.h) 
                             : null);
-                    if (ratioRow) ratioRow.style.display = 'flex';
+                    if (ratioRow) ratioRow.classList.add('is-visible');
                     if (chk) chk.checked = true; // Default locked to preserve aspect ratio
                 } else {
                     activeImageRatio = null;
-                    if (ratioRow) ratioRow.style.display = 'none';
+                    if (ratioRow) ratioRow.classList.remove('is-visible');
                     if (chk) chk.checked = false;
                 }
             }

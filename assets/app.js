@@ -426,6 +426,8 @@ async function saveProjectHistory(project, history, statusCallback) {
     const content = JSON.stringify(history, null, 2);
     return await uploadToProject(project, 'history.json', content, statusCallback);
 }
+window.saveProjectHistory = saveProjectHistory;
+window.fetchProjectHistory = fetchProjectHistory;
 
 async function fetchGlobalComponents() {
     const content = await fetchFileContent(`global_components.json`);
@@ -859,23 +861,32 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
     }
 }
 
+const NOTIFICATION_SVG_ICONS = {
+    info: `<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`,
+    success: `<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+    warning: `<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+    error: `<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`
+};
+
 const Notification = {
     DOM: null,
     _init() {
-        if (this.DOM || document.getElementById('notification-overlay')) return;
-        const overlay = document.createElement('div');
-        overlay.id = 'notification-overlay';
-        overlay.className = 'dialog-overlay';
-        overlay.innerHTML = `<div class="dialog-card">
-                <div id="notification-icon-bg" class="dialog-icon">
-                    <span id="notification-icon" class="material-icons-outlined"></span>
-                </div>
-                <h3 id="notification-title" class="dialog-title"></h3>
-                <div id="notification-message" class="dialog-message"></div>
-                <div id="notification-input-container"></div>
-                <div class="dialog-footer" id="notification-footer"></div>
-            </div>`;
-        document.body.appendChild(overlay);
+        let overlay = document.getElementById('notification-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'notification-overlay';
+            overlay.className = 'dialog-overlay';
+            overlay.innerHTML = `<div class="dialog-card">
+                    <div id="notification-icon-bg" class="dialog-icon">
+                        <span id="notification-icon" class="dialog-icon-svg" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></span>
+                    </div>
+                    <h3 id="notification-title" class="dialog-title"></h3>
+                    <div id="notification-message" class="dialog-message"></div>
+                    <div id="notification-input-container"></div>
+                    <div class="dialog-footer" id="notification-footer"></div>
+                </div>`;
+            document.body.appendChild(overlay);
+        }
         this.DOM = {
             overlay,
             card: overlay.querySelector('.dialog-card'),
@@ -887,23 +898,29 @@ const Notification = {
             footer: overlay.querySelector('#notification-footer')
         };
     },
-    _show(type, title, message, buttons, hasInput = false, defaultValue = '') {
+    _show(type, title, message, buttons, hasInput = false, defaultValue = '', isTextarea = true) {
         this._init();
         this.DOM.title.innerText = title;
         this.DOM.message.innerHTML = message.replace(/\n/g, '<br>');
-        const iconMap = { success: 'check_circle', error: 'error_outline', warning: 'report_problem', info: 'info_outline' };
         
-        // Clean up classes
+        // Clean up classes & render robust SVG icon
         const iconBg = this.DOM.iconBg || this.DOM.overlay.querySelector('#notification-icon-bg');
         if (iconBg) {
             iconBg.className = `dialog-icon ${type || 'info'}`;
         }
         if (this.DOM.icon) {
-            this.DOM.icon.className = 'material-icons-outlined';
-            this.DOM.icon.innerText = iconMap[type] || 'info_outline';
+            this.DOM.icon.innerHTML = NOTIFICATION_SVG_ICONS[type] || NOTIFICATION_SVG_ICONS.info;
         }
         
-        this.DOM.inputContainer.innerHTML = hasInput ? `<input type="text" id="notification-prompt-input" class="dialog-input" style="width:100%; box-sizing:border-box;" value="${defaultValue}">` : '';
+        if (hasInput) {
+            const escapedDefault = String(defaultValue || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            this.DOM.inputContainer.innerHTML = isTextarea
+                ? `<textarea id="notification-prompt-input" class="dialog-textarea" placeholder="상세 변경 사유를 입력하세요...">${escapedDefault}</textarea><div class="dialog-hint">Ctrl + Enter 로 즉시 저장 가능</div>`
+                : `<input type="text" id="notification-prompt-input" class="dialog-input" style="width:100%; box-sizing:border-box;" value="${escapedDefault}">`;
+        } else {
+            this.DOM.inputContainer.innerHTML = '';
+        }
+
         this.DOM.footer.innerHTML = '';
         return new Promise((resolve) => {
             buttons.forEach(btn => {
@@ -915,7 +932,8 @@ const Notification = {
                     if (btn.value !== undefined) {
                         value = btn.value;
                     } else if (hasInput) {
-                        value = document.getElementById('notification-prompt-input').value;
+                        const inputField = document.getElementById('notification-prompt-input');
+                        value = inputField ? inputField.value : '';
                     } else {
                         value = true;
                     }
@@ -930,12 +948,24 @@ const Notification = {
                     const inputEl = document.getElementById('notification-prompt-input');
                     if (inputEl) {
                         inputEl.focus();
+                        if (inputEl.setSelectionRange) {
+                            inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+                        }
                         inputEl.onkeydown = (e) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                const val = inputEl.value;
-                                this.DOM.overlay.classList.remove('active');
-                                resolve(val);
+                            if (isTextarea) {
+                                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                                    e.preventDefault();
+                                    const val = inputEl.value;
+                                    this.DOM.overlay.classList.remove('active');
+                                    resolve(val);
+                                }
+                            } else {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    const val = inputEl.value;
+                                    this.DOM.overlay.classList.remove('active');
+                                    resolve(val);
+                                }
                             }
                         };
                     }
@@ -952,11 +982,11 @@ const Notification = {
             { text: '네, 진행합니다', primary: true, value: true, danger: type === 'warning' }
         ]);
     },
-    prompt(message, defaultValue = '', title = 'Input') {
+    prompt(message, defaultValue = '', title = 'Input', isTextarea = true) {
         return this._show('info', title, message, [
             { text: 'Cancel', primary: false, value: null },
             { text: 'OK', primary: true }
-        ], true, defaultValue);
+        ], true, defaultValue, isTextarea);
     }
 };
 

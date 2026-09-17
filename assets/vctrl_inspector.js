@@ -250,6 +250,9 @@ window.setSidebarInspectorVisible = function(visible) {
         if (activePane) activePane.style.setProperty('display', 'flex', 'important');
         const btns = document.querySelectorAll('.tab-btn');
         btns.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === lastTab));
+        if (lastTab === 'description' && typeof window.autoResizeDescriptionInputs === 'function') {
+            setTimeout(window.autoResizeDescriptionInputs, 50);
+        }
     }
 };
 
@@ -264,6 +267,9 @@ window.switchSidebarTab = function(tabName) {
     
     // If target tab is already active and sidebar is open, exit early to avoid reflow/focus interruption
     if (targetPane && targetPane.classList.contains('active') && isSidebarOpen) {
+        if (tabName === 'description' && typeof window.autoResizeDescriptionInputs === 'function') {
+            setTimeout(window.autoResizeDescriptionInputs, 50);
+        }
         return;
     }
 
@@ -1102,6 +1108,39 @@ let currentFlyoutScreen = null;
 // --- 4. Library & Editor (Delegated to vctrl_component_library.js) ---
 // Global Color Palette delegated to vctrl_color_picker.js
 
+    /**
+     * Helper: CONTENT EDITOR(Quill)에서 작성된 텍스트의 연속 공백 및 선행 공백을 HTML 엔티티(&nbsp;)로 정밀 보존
+     * - HTML 태그 및 속성(style, class 등)은 절대 건드리지 않고, 순수 TextNode만 안전하게 변환
+     * - 단일 공백은 일반 공백(' ')으로 유지하여 브라우저의 단어 자동 줄바꿈(Word Wrap)을 온전히 보존
+     * - 선행 공백 및 2개 이상 연속된 공백은 '\u00A0' (NBSP)로 변환하여 브라우저의 공백 축약(Collapsing) 방지
+     */
+    function preserveConsecutiveSpaces(html) {
+        if (!html || typeof html !== 'string') return html;
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            while ((node = walker.nextNode())) {
+                let val = node.nodeValue;
+                if (!val) continue;
+
+                // 1) 텍스트 노드 시작 부분의 공백(선행 들여쓰기 공백) 보존
+                val = val.replace(/^ +/g, match => '\u00A0'.repeat(match.length));
+
+                // 2) 텍스트 노드 중간의 2개 이상 연속 공백 보존 (첫 공백은 일반 스페이스로 남겨 워드랩 보장)
+                val = val.replace(/ {2,}/g, match => ' ' + '\u00A0'.repeat(match.length - 1));
+
+                node.nodeValue = val;
+            }
+            return doc.body.innerHTML;
+        } catch (e) {
+            console.error('[preserveConsecutiveSpaces] Error:', e);
+            return html;
+        }
+    }
+    window.preserveConsecutiveSpaces = preserveConsecutiveSpaces;
+
 window.initQuillEditor = function() {
     if (typeof window.initV4GlobalColorPalette === 'function') {
         window.initV4GlobalColorPalette();
@@ -1250,7 +1289,8 @@ window.initQuillEditor = function() {
             }
         }
 
-        const html = window.quillEditor.root.innerHTML;
+        const rawHtml = window.quillEditor.root.innerHTML;
+        const html = preserveConsecutiveSpaces(rawHtml);
         const activeAlign = (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles && window.state.selectedComponentStyles.currentStyles.textAlign) || 
                             (window.quillEditor && window.quillEditor.root && window.quillEditor.root.style.textAlign) || '';
         const activeVAlign = (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles && (window.state.selectedComponentStyles.currentStyles.vAlign || window.state.selectedComponentStyles.currentStyles.justifyContent)) || '';

@@ -75,9 +75,18 @@
 
             // Input & Row Actions
             var input = row.querySelector('.desc-input');
-            var autoResize = function(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; };
+            var autoResize = function(el) {
+                if (!el) return;
+                // If element is hidden (display: none), scrollHeight is 0 and will crush text to 1 line
+                if (el.offsetParent === null) return;
+                el.style.height = 'auto';
+                if (el.scrollHeight > 0) {
+                    el.style.height = el.scrollHeight + 'px';
+                }
+            };
             input.onfocus = function() {
                 selectRow();
+                autoResize(input);
             };
             input.oninput = function() { 
                 item.text = input.value; 
@@ -114,9 +123,14 @@
     window.autoResizeDescriptionInputs = function() {
         var DOM = window.DOM || {};
         if (!DOM.descriptionList) return;
+        var tabDesc = document.getElementById('tab-description');
+        if (tabDesc && tabDesc.offsetParent === null) return;
         DOM.descriptionList.querySelectorAll('.desc-input').forEach(function(el) {
+            if (el.offsetParent === null) return;
             el.style.height = 'auto';
-            el.style.height = el.scrollHeight + 'px';
+            if (el.scrollHeight > 0) {
+                el.style.height = el.scrollHeight + 'px';
+            }
         });
     };
 

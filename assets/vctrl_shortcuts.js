@@ -230,6 +230,7 @@ window.v4ShortcutsScript = `
             let targetHost = document.body;
             let baseLeft = 0;
             let baseTop = 0;
+            let visibleW = 360;
 
             if (isResponsiveTemplate) {
                 const pcScrollArea = document.querySelector('.pc-content-area');
@@ -267,7 +268,7 @@ window.v4ShortcutsScript = `
                 const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
                 const visibleH = scrollArea ? (scrollArea.clientHeight || 810) : 810;
                 const pcW = pcInner ? (pcInner.offsetWidth || 1160) : 1160;
-                const visibleW = targetFrame === 'mobile' ? (mobileInner ? (mobileInner.offsetWidth || 360) : 360) : pcW;
+                visibleW = targetFrame === 'mobile' ? (mobileInner ? (mobileInner.offsetWidth || 360) : 360) : pcW;
 
                 const viewCenterX = visibleW / 2;
                 const viewCenterY = scrollTop + (visibleH / 2);
@@ -276,7 +277,7 @@ window.v4ShortcutsScript = `
                 baseTop = Math.round(viewCenterY - (groupH / 2));
 
                 if (targetFrame === 'mobile') {
-                    baseLeft = Math.max(15, Math.min(baseLeft, visibleW - groupW - 15));
+                    baseLeft = Math.max(10, Math.min(baseLeft, visibleW - groupW - 10));
                 } else {
                     baseLeft = Math.max(15, Math.min(baseLeft, pcW - groupW - 15));
                 }
@@ -312,7 +313,7 @@ window.v4ShortcutsScript = `
                     return window.getNextTopZIndex(container);
                 }
                 let maxZ = 1000;
-                const comps = (container || document.body).querySelectorAll('.lf-component');
+                const comps = document.querySelectorAll ? document.querySelectorAll('.lf-component') : ((container || document.body).querySelectorAll ? (container || document.body).querySelectorAll('.lf-component') : []);
                 comps.forEach(c => {
                     if (c.classList.contains('pin-marker')) return;
                     let z = parseInt(c.style.zIndex, 10);
@@ -320,12 +321,12 @@ window.v4ShortcutsScript = `
                         const compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                         z = isNaN(compZ) ? 1000 : compZ;
                     }
-                    if (z < 9999 && z > maxZ) maxZ = z;
+                    if (z < 190000 && z > maxZ) maxZ = z;
                 });
                 return maxZ + 10;
             };
 
-            const pasteHost = isResponsiveTemplate ? targetHost : (document.querySelector('.canvas') || document.body);
+            const pasteHost = isResponsiveTemplate ? targetHost : (document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body);
             const baseTopZ = getHostTopZ(pasteHost);
 
             // Extract original z-indexes to preserve relative layering inside copied group
@@ -362,9 +363,12 @@ window.v4ShortcutsScript = `
 
                 if (isResponsiveTemplate) {
                     if (targetFrame === 'mobile') {
-                        const curW = parseFloat(v.style.width);
-                        if (curW && curW > 330) {
-                            v.style.width = '330px';
+                        const curW = parseFloat(v.style.width) || (typeof item.width === 'number' ? item.width : parseFloat(item.width)) || 0;
+                        if (curW && curW > 340) {
+                            v.style.width = '340px';
+                            if (componentItems.length === 1) {
+                                posX = Math.max(10, Math.round((visibleW - 340) / 2));
+                            }
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ui_library_fallback.js
  * Fallback data for offline file:// protocol execution.
  * Auto-generated.
@@ -553,7 +553,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     </div>
                 </div>
                 <!-- Preserve Aspect Ratio row: shown only when image selected -->
-                <div class="v4-prop-flex-between mt-4" id="shape-aspect-ratio-row" style="display: none;">
+                <div class="mt-4" id="shape-aspect-ratio-row">
                     <label class="v4-flex-checkbox-label dim">
                         <input class="v4-checkbox-cyan" type="checkbox" id="chk-preserve-aspect-ratio">
                         <span>Preserve Aspect Ratio</span>

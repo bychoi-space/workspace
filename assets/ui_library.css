@@ -444,16 +444,18 @@
 
 /* --- 8. History Modal Dialog Utility --- */
 .history-dialog-card {
-    max-width: 560px !important;
-    width: 92% !important;
-    max-height: 80vh !important;
+    max-width: 760px !important;
+    width: 94% !important;
+    max-height: 85vh !important;
     display: flex !important;
     flex-direction: column !important;
+    align-items: stretch !important;
+    text-align: left !important;
     background: rgba(22, 24, 38, 0.96) !important;
     border: 1.6px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: var(--radius-card, 10px) !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
-    padding: 24px !important;
+    padding: 24px 26px !important;
     box-sizing: border-box !important;
     backdrop-filter: blur(20px) !important;
 }
@@ -532,11 +534,14 @@
 .history-list-box {
     flex: 1 !important;
     overflow-y: auto !important;
-    padding-right: 4px !important;
+    padding-right: 6px !important;
     display: flex !important;
     flex-direction: column !important;
+    align-items: stretch !important;
     gap: 12px !important;
     min-height: 140px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* --- 9. Inspector Panel Granular Utilities & Whimsical Alignment --- */
@@ -1216,5 +1221,16 @@
     align-items: center !important;
     justify-content: space-between !important;
     margin-top: 0 !important;
+}
+
+/* --- 11. Inspector Dynamic State Controls --- */
+#shape-aspect-ratio-row {
+    display: none !important;
+}
+
+#shape-aspect-ratio-row.is-visible {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
 }
 

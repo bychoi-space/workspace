@@ -6,28 +6,30 @@
     console.log("[VCTRL COLOR PICKER] Module loaded.");
 
 window.V4_COMMON_COLOR_PALETTE = [
-    // 1. Grayscale (7)
-    '#000000', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#d1d5db', '#ffffff',
-    // 2. Red / Coral (7)
-    '#7f1d1d', '#991b1b', '#dc2626', '#ef4444', '#f87171', '#fca5a5', '#fee2e2',
-    // 3. Orange / Amber (7)
-    '#7c2d12', '#9a3412', '#ea580c', '#f97316', '#fb923c', '#fdba74', '#ffedd5',
-    // 4. Yellow / Gold (7)
-    '#713f12', '#854d0e', '#ca8a04', '#eab308', '#facc15', '#fde047', '#fef9c3',
-    // 5. Green / Emerald (7)
-    '#064e3b', '#065f46', '#059669', '#10b981', '#34d399', '#6ee7b7', '#ecfdf5',
-    // 6. Teal / Cyan (7)
-    '#134e4a', '#115e59', '#0d9488', '#14b8a6', '#2dd4bf', '#5eead4', '#f0fdfa',
-    // 7. Blue / Sky (7)
-    '#0c4a6e', '#075985', '#0284c7', '#0ea5e9', '#38bdf8', '#7dd3fc', '#f0f9ff',
-    // 8. Indigo / Violet (7)
-    '#312e81', '#3730a3', '#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#eef2ff',
-    // 9. Purple / Fuchsia (7)
-    '#581c87', '#6b21a8', '#9333ea', '#a855f7', '#c084fc', '#d8b4fe', '#faf5ff',
-    // 10. Pink / Rose (7)
-    '#701a75', '#86198f', '#c026d3', '#d946ef', '#e879f9', '#f0abfc', '#fdf4ff',
-    // 11. Brown / Warm (7)
-    '#451a03', '#78350f', '#92400e', '#b45309', '#d97706', '#f59e0b', '#fef3c7'
+    // 1. Grayscale - Neutral Gray (7)
+    '#111827', '#374151', '#6b7280', '#9ca3af', '#d1d5db', '#f3f4f6', '#ffffff',
+    // 2. Grayscale - Cool Slate (7)
+    '#0f172a', '#334155', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0', '#f8fafc',
+    // 3. Grayscale - Warm Stone (7)
+    '#1c1917', '#44403c', '#78716c', '#a8a29e', '#d6d3d1', '#e7e5e4', '#f5f5f4',
+    // 4. Blue - Deep Navy / Midnight (7)
+    '#0b192c', '#1e3a8a', '#1d4ed8', '#3b82f6', '#93c5fd', '#dbeafe', '#eff6ff',
+    // 5. Blue - Classic & Sky Blue (7)
+    '#0369a1', '#0284c7', '#0ea5e9', '#38bdf8', '#7dd3fc', '#bae6fd', '#e0f2fe',
+    // 6. Blue / Indigo - Indigo & Lavender Blue (7)
+    '#312e81', '#4338ca', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe', '#eef2ff',
+    // 7. Teal / Cyan - Teal & Ice Cyan (7)
+    '#134e4a', '#0f766e', '#14b8a6', '#2dd4bf', '#5eead4', '#99f6e4', '#f0fdfa',
+    // 8. Green - Emerald & Soft Sage (7)
+    '#064e3b', '#047857', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#ecfdf5',
+    // 9. Yellow / Amber - Butter & Soft Yellow (7)
+    '#713f12', '#ca8a04', '#eab308', '#facc15', '#fde047', '#fef08a', '#fef9c3',
+    // 10. Orange - Peach & Soft Coral (7)
+    '#7c2d12', '#ea580c', '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#fff7ed',
+    // 11. Red / Rose - Rose & Soft Red (7)
+    '#881337', '#be123c', '#f43f5e', '#fb7185', '#fda4af', '#fecdd3', '#fff1f2',
+    // 12. Purple - Lavender & Soft Violet (7)
+    '#581c87', '#7e22ce', '#a855f7', '#c084fc', '#d8b4fe', '#e9d5ff', '#faf5ff'
 ];
 
 window.initV4GlobalColorPalette = function() {

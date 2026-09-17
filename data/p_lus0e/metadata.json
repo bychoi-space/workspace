@@ -499,6 +499,13 @@
       "version": 0.3,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
+    },
+    "06_Mobile_Design_3_319.html": {
+      "title": "쿠폰 표현 케이스 정의",
+      "type": "ui",
+      "defaultTab": "editor",
+      "screenDesc": "",
+      "updatedAt": "2026-09-17T08:04:14.599Z"
     }
   },
   "assignee": "최범열",

@@ -196,7 +196,7 @@
     "11_Daily_Ranking_Batch_Percentile_851.html": {
       "title": "상품 랭킹 기준 & 10개 상품 시뮬레이션",
       "type": "plan",
-      "updatedAt": "2026-09-17T07:50:00.000Z",
+      "updatedAt": "2026-09-17T08:29:33.239Z",
       "template": "template_project_summary.html",
       "version": 0.6,
       "description": [],
@@ -505,14 +505,16 @@
       "type": "ui",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-09-17T08:04:14.599Z"
+      "updatedAt": "2026-09-17T08:04:14.599Z",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 16:50:00",
+  "updated": "2026-09-17 17:29:32",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",
@@ -527,5 +529,5 @@
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link",
-  "version": 0.4
+  "version": 0.6
 }

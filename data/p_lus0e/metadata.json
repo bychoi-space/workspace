@@ -185,9 +185,9 @@
     "10_Product_Ranking_Rules_850.html": {
       "title": "상품 랭킹 산정 룰",
       "type": "plan",
-      "updatedAt": "2026-09-14T05:04:25.775Z",
+      "updatedAt": "2026-09-17T06:46:01.173Z",
       "template": "template_project_summary.html",
-      "version": 0.1,
+      "version": 0.4,
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
@@ -494,7 +494,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 15:31:38",
+  "updated": "2026-09-17 15:46:00",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",
@@ -507,5 +507,5 @@
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link",
-  "version": 0.3
+  "version": 0.4
 }

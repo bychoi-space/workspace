@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-15T07:21:23.279Z",
+      "updatedAt": "2026-09-17T02:16:49.929Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -427,10 +427,10 @@
     }
   },
   "assignee": "최범열",
-  "developer": "",
+  "developer": "원미란란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 10:19:08",
+  "updated": "2026-09-17 11:16:49",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

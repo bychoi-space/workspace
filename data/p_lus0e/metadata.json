@@ -512,15 +512,18 @@
     "06_Mobile_Design_2_722.html": {
       "title": "06_Mobile_Design_2_722",
       "type": "mobile-ui",
-      "updatedAt": "2026-09-17T08:54:09.655Z",
-      "template": "template_mobile_ui_2.html"
+      "updatedAt": "2026-09-17T08:54:30.002Z",
+      "template": "template_mobile_ui_2.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.6
     }
   },
   "assignee": "최범열",
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 17:52:51",
+  "updated": "2026-09-17 17:54:29",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

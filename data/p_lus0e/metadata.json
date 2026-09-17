@@ -440,7 +440,7 @@
     "99_Blank_812.html": {
       "title": "99_Blank_812",
       "type": "admin",
-      "updatedAt": "2026-09-17T06:12:23.398Z",
+      "updatedAt": "2026-09-17T06:13:01.705Z",
       "template": "template_blank.html",
       "description": [
         {
@@ -470,7 +470,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 15:12:29",
+  "updated": "2026-09-17 15:13:01",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

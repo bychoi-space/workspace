@@ -440,7 +440,7 @@
     "99_Blank_812.html": {
       "title": "99_Blank_812",
       "type": "admin",
-      "updatedAt": "2026-09-17T06:27:47.430Z",
+      "updatedAt": "2026-09-17T06:28:46.043Z",
       "template": "template_blank.html",
       "description": [
         {
@@ -486,7 +486,7 @@
       ],
       "connectors": [],
       "version": 0.3,
-      "defaultTab": "editor",
+      "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
     }
   },

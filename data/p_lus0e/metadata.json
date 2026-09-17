@@ -176,11 +176,11 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-17T01:02:22.411Z",
+      "updatedAt": "2026-09-17T01:05:34.431Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
-          "text": "1. 기본 정보\n- 영역 구분을 위한 타이틀 존재\n- [타입선택] 항목 = '템플릿' 추가\n- [타이틀] [서브타이틀] 항목 = '국문', '영문', '중문' 하나로 통합\n- 그 외 모든 항목 기존과 동일한 구성",
+          "text": "1. 기본 정보\n- 영역 구분을 위한 타이틀 존재\n- [기획전 유형] 항목 신규 추가\n   : '일반 기획전' default\n   : '일반 기획전' 선택 시, 하단 설정 항목 기존 기획전으로 표현 (HTML 등록)\n   : '템플릿 기획전' 선택 시, 하단 설정 항목 기획서 내용대로 신규 개발된 구조로 표현\n- [타이틀] [서브타이틀] 항목 = '국문', '영문', '중문' 하나로 통합\n- 그 외 모든 항목 기존과 동일한 구성",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 271,
           "y": 379,
@@ -264,6 +264,25 @@
             "pc": {
               "x": 275,
               "y": 1672,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 890,
+          "y": 423,
+          "pins": {
+            "pc": {
+              "x": 890,
+              "y": 423,
               "active": true
             },
             "mobile": {
@@ -411,7 +430,7 @@
   "developer": "",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 10:02:21",
+  "updated": "2026-09-17 10:05:34",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

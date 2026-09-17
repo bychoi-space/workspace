@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-09-17 17:05:00",
+    "file": "11_Daily_Ranking_Batch_Percentile_851.html",
+    "version": 0.5,
+    "assignee": "최범열",
+    "developer": "원미란",
+    "message": "하단 요약 영역 및 판정 컬럼 정리, 상단 6대 지표 및 표 본문 13~14px 폰트 확대 최적화"
+  },
+  {
     "date": "2026-09-17 16:50:00",
     "file": "11_Daily_Ranking_Batch_Percentile_851.html",
     "version": 0.4,

@@ -198,11 +198,11 @@
       "type": "plan",
       "updatedAt": "2026-09-17T07:50:00.000Z",
       "template": "template_project_summary.html",
-      "version": 0.4,
+      "version": 0.5,
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
-      "screenDesc": "시선닷컴 패션 특화 6대 지표 수집 기준(시즌 전체 누적 결제/수량, 배치 시점 스냅샷 카트/위시, 최근 7일 UV/PV) 및 10개 가상 상품 실무 시뮬레이션 매트릭스 표"
+      "screenDesc": "시선닷컴 패션 특화 6대 지표 수집 기준 및 10개 가상 상품 실무 랭킹 시뮬레이션 매트릭스 (본문 13~14px 폰트 확대 및 스크롤-프리 레이아웃)"
     },
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",

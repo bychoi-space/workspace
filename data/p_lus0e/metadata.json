@@ -196,9 +196,9 @@
     "11_Daily_Ranking_Batch_Percentile_851.html": {
       "title": "상품 랭킹 일간 배치 & 정규화",
       "type": "plan",
-      "updatedAt": "2026-09-17T06:58:00.000Z",
+      "updatedAt": "2026-09-17T07:03:39.682Z",
       "template": "template_project_summary.html",
-      "version": 0.1,
+      "version": 0.4,
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
@@ -505,7 +505,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 15:58:00",
+  "updated": "2026-09-17 16:03:39",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

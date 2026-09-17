@@ -194,15 +194,15 @@
       "screenDesc": "시선닷컴 3개 브랜드(MICHAA, it MICHAA, E.B.M)를 위한 상품 종합 랭킹(Ranking Score) 산정 룰 및 알고리즘 정책"
     },
     "11_Daily_Ranking_Batch_Percentile_851.html": {
-      "title": "상품 랭킹 일간 배치 & 정규화",
+      "title": "상품 랭킹 백분위 정규화 모델",
       "type": "plan",
-      "updatedAt": "2026-09-17T07:03:39.682Z",
+      "updatedAt": "2026-09-17T07:11:00.000Z",
       "template": "template_project_summary.html",
-      "version": 0.4,
+      "version": 0.2,
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
-      "screenDesc": "매일 새벽 03:00 일 단위 배치로 6대 지표를 백분위 순위(Percentile, 0~100pt)로 표준화하여 단위 불일치를 해소하고 공정하게 산정하는 아키텍처 및 실증 시뮬레이션 파이프라인"
+      "screenDesc": "대량 상품(10,000개+) 환경에서 6대 지표를 상대 백분위(Percentile, 0~100점)로 변환하여 단위 불일치를 해소하는 표준화 원리 및 실무 산정 시뮬레이션"
     },
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
@@ -505,7 +505,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 16:03:39",
+  "updated": "2026-09-17 16:11:00",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

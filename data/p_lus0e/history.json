@@ -1,11 +1,11 @@
 [
   {
-    "date": "2026-09-17 15:58:00",
+    "date": "2026-09-17 16:11:00",
     "file": "11_Daily_Ranking_Batch_Percentile_851.html",
-    "version": 0.1,
+    "version": 0.2,
     "assignee": "최범열",
     "developer": "원미란",
-    "message": "상품 랭킹 일간 배치 & 백분위 정규화 파이프라인 신규 설계 화면 생성"
+    "message": "상대 백분위 정규화 모델 상세화 및 10,000개 상품 점수화 매커니즘 개편"
   },
   {
     "version": "0.4",

@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-09-17 11:22:41",
+    "file": "09_Admin_PC_Scroll_639_copy3.html",
+    "version": 0.3,
+    "assignee": "최범열",
+    "developer": "원미란란",
+    "message": "admin 설계 수정 - '기획전 유형' 추가"
+  },
+  {
     "date": "2026-09-15 16:21:23",
     "file": "08_Responsive_PC_Mobile_730.html",
     "version": 0.2,

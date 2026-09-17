@@ -1,13 +1,5 @@
 [
   {
-    "date": "2026-09-17 16:25:00",
-    "file": "11_Daily_Ranking_Batch_Percentile_851.html",
-    "version": 0.3,
-    "assignee": "최범열",
-    "developer": "원미란",
-    "message": "6대 지표 실무 산정 기준, 어뷰징 캡 및 최근 7일 롤링 윈도우 집계 정책 상세화"
-  },
-  {
     "version": "0.4",
     "date": "2026-09-17 15:33:57",
     "message": "ADMIN 설계 수정 - [상품 영역] 설정 케이스 상세 정의",

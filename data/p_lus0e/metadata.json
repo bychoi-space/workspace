@@ -503,7 +503,7 @@
     "06_Mobile_Design_3_527.html": {
       "title": "06_Mobile_Design_3_527",
       "type": "mobile-ui",
-      "updatedAt": "2026-09-17T08:43:19.772Z",
+      "updatedAt": "2026-09-17T08:50:01.105Z",
       "template": "template_mobile_ui_3.html",
       "description": [],
       "connectors": [],
@@ -514,7 +514,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 17:43:19",
+  "updated": "2026-09-17 17:50:01",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

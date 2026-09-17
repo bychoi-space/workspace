@@ -440,18 +440,18 @@
     "99_Blank_812.html": {
       "title": "99_Blank_812",
       "type": "blank",
-      "updatedAt": "2026-09-17T05:58:55.279Z",
+      "updatedAt": "2026-09-17T06:03:39.965Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
-      "version": 0.3
+      "version": 0.4
     }
   },
   "assignee": "최범열",
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 14:58:54",
+  "updated": "2026-09-17 15:03:39",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",
@@ -464,5 +464,5 @@
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link",
-  "version": 0.3
+  "version": 0.4
 }

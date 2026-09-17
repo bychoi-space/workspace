@@ -440,7 +440,7 @@
     "99_Blank_812.html": {
       "title": "99_Blank_812",
       "type": "admin",
-      "updatedAt": "2026-09-17T06:25:18.481Z",
+      "updatedAt": "2026-09-17T06:27:47.430Z",
       "template": "template_blank.html",
       "description": [
         {
@@ -463,16 +463,24 @@
           "type": "pin",
           "text": "- 영역이 최하위에 존재할때 [아래쪽 화살표] 버튼 클릭 시 얼럿 표시",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 1133,
+          "x": 1136,
           "y": 388,
           "standardized": true
         },
         {
           "type": "pin",
-          "text": "상품 영역이 1 일때, 삭제 버튼 클릭 시 얼럿 표시",
+          "text": "- 상품 영역이 1 일 때, 삭제 버튼 클릭 시 얼럿 표시",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 1231,
           "y": 172,
+          "standardized": true
+        },
+        {
+          "type": "pin",
+          "text": "- 상품 영역이 2개 이상일 때, [삭제] 버튼 클릭 시 얼럿 표시",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 1230,
+          "y": 388,
           "standardized": true
         }
       ],
@@ -486,7 +494,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-17 15:25:18",
+  "updated": "2026-09-17 15:27:47",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

@@ -646,8 +646,8 @@ window.V4_COMPONENT_LIBRARY = {
         },
         {
             id: 'v4-ill-atomic-system',
-            name: '9. 아토믹 디자인 시스템',
-            koName: '9 아토믹 디자인 시스템 컴포넌트 패턴 원자 분자 atomic design system hierarchy',
+            name: '9. 아토믹 다이어그램 (전체)',
+            koName: '9 아토믹 디자인 시스템 컴포넌트 패턴 원자 분자 전체 다이어그램 atomic design system hierarchy',
             category: 'Illustration',
             width: '320px',
             height: '240px',
@@ -665,6 +665,61 @@ window.V4_COMPONENT_LIBRARY = {
             thumb: 'assets/illustrations/storybook_guide_workspace.png',
             previewHtml: `<img src="assets/illustrations/storybook_guide_workspace.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/storybook_guide_workspace.png" alt="스토리북 디자인 시스템 워크스페이스" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-atomic-atoms',
+            name: '11. 아토믹 - Atoms',
+            koName: '11 아토믹 원자 atoms button icon color typography 기초단위',
+            category: 'Illustration',
+            width: '160px',
+            height: '240px',
+            thumb: 'assets/illustrations/atomic_atoms.png',
+            previewHtml: `<img src="assets/illustrations/atomic_atoms.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_atoms.png" alt="아토믹 디자인 - Atoms" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-atomic-molecules',
+            name: '12. 아토믹 - Molecules',
+            koName: '12 아토믹 분자 molecules button input searchbar 결합단위',
+            category: 'Illustration',
+            width: '180px',
+            height: '260px',
+            thumb: 'assets/illustrations/atomic_molecules.png',
+            previewHtml: `<img src="assets/illustrations/atomic_molecules.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_molecules.png" alt="아토믹 디자인 - Molecules" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-atomic-organisms',
+            name: '13. 아토믹 - Organisms',
+            koName: '13 아토믹 유기체 organisms card gnb header footer 복합단위',
+            category: 'Illustration',
+            width: '220px',
+            height: '280px',
+            thumb: 'assets/illustrations/atomic_organisms.png',
+            previewHtml: `<img src="assets/illustrations/atomic_organisms.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_organisms.png" alt="아토믹 디자인 - Organisms" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-atomic-layout',
+            name: '14. 아토믹 - Layout',
+            koName: '14 아토믹 레이아웃 layout grid templates 구조 뼈대',
+            category: 'Illustration',
+            width: '260px',
+            height: '240px',
+            thumb: 'assets/illustrations/atomic_layout.png',
+            previewHtml: `<img src="assets/illustrations/atomic_layout.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_layout.png" alt="아토믹 디자인 - Layout Grid" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-atomic-pages',
+            name: '15. 아토믹 - Pages',
+            koName: '15 아토믹 페이지 pages screens mobile 완성화면 최종산출물',
+            category: 'Illustration',
+            width: '260px',
+            height: '280px',
+            thumb: 'assets/illustrations/atomic_pages.png',
+            previewHtml: `<img src="assets/illustrations/atomic_pages.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_pages.png" alt="아토믹 디자인 - Pages" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
     ]
 };

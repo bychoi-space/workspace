@@ -22,11 +22,18 @@
       "version": 0.2,
       "screenDesc": "시선닷컴 Front UI 개편 방향 (디자인 가이드 부재 해결 ➔ Atomic Pattern & Storybook 컴포넌트 가이드화 ➔ 우선순위별 점진적 UI 개편 로드맵)",
       "defaultTab": "editor"
+    },
+    "99_Blank_14.html": {
+      "title": "99_Blank_14",
+      "type": "blank",
+      "updatedAt": "2026-09-18T05:01:15.244Z",
+      "template": "template_blank.html"
     }
   },
   "screenOrder": [
     "01_Fashion_Ecommerce_Process_Map_900.html",
-    "02_Front_System_Atomic_Design_Roadmap_900.html"
+    "02_Front_System_Atomic_Design_Roadmap_900.html",
+    "99_Blank_14.html"
   ],
   "assignee": "최범열",
   "developer": "",

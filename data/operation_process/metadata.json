@@ -26,12 +26,13 @@
     "99_Blank_14.html": {
       "title": "Front UI",
       "type": "architecture",
-      "updatedAt": "2026-09-18T05:01:41.956Z",
+      "updatedAt": "2026-09-18T05:03:46.109Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
-      "screenDesc": ""
+      "screenDesc": "",
+      "version": 0.2
     }
   },
   "screenOrder": [
@@ -44,7 +45,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-09-18 13:58:30",
+  "updated": "2026-09-18 14:03:45",
   "version": 0.2,
   "period": ""
 }

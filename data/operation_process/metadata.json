@@ -15,11 +15,11 @@
     "02_Front_System_Atomic_Design_Roadmap_900.html": {
       "title": "02_Front UI 개편 로드맵",
       "type": "architecture",
-      "updatedAt": "2026-09-18T04:48:30.000Z",
+      "updatedAt": "2026-09-18T04:58:30.474Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
-      "version": 0.1,
+      "version": 0.2,
       "screenDesc": "시선닷컴 Front UI 개편 방향 (디자인 가이드 부재 해결 ➔ Atomic Pattern & Storybook 컴포넌트 가이드화 ➔ 우선순위별 점진적 UI 개편 로드맵)",
       "defaultTab": "editor"
     }
@@ -33,7 +33,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-09-18 13:48:30",
+  "updated": "2026-09-18 13:58:30",
   "version": 0.2,
   "period": ""
 }

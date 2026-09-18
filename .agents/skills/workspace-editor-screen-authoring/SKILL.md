@@ -58,18 +58,54 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - **본문 / 주요 설명**: `13.5px` ~ `14.5px` (굵기: `500` / `600`)
   - **보조 설명 / 서브 텍스트**: `13px` (굵기: `400` / `500`)
   - **최소 단위 (뱃지, 태그, 각주, 캡션)**: **정확히 `12px`** (절대 12px 밑으로 내려가지 않음)
-- **텍스트 줄바꿈(Wrapping) 및 영역 이탈 방지 절대 원칙 (Strict Bounds)**:
-  - **`v4-text-shape` 사용 범위 제한 (단일행 전용)**:
-    - 에디터 엔진(`vctrl_iframe_styles.js`)은 `.v4-text-shape .v4-editable-cell *`에 `white-space: nowrap !important;`를 전역 주입합니다.
-    - 따라서 `.v4-text-shape`는 **메인 타이틀, 카드 헤더, 상태 뱃지 등 1행으로 끝나는 단일 텍스트에만 한정하여 사용**해야 합니다.
-  - **줄바꿈이 필요한 모든 본문 설명/문장은 투명 쉐입 구조 필수 사용 (Multiline Safe)**:
-    - 2줄 이상 줄바꿈이 필요한 모든 설명, 불릿 포인트, 효과 텍스트는 **`class="lf-component"` + `v4-shape v4-shape-rect(투명)` + `v4-shape-text-content`** 구조를 사용해야 합니다.
-    - 이 구조는 에디터 엔진의 강제 `nowrap` 주입을 완벽히 우회하여, 지정된 가로 너비(Width) 내에서 정상적으로 자동 줄바꿈이 일어납니다.
-  - **본문 자동 줄바꿈 필수 속성**:
-    - `white-space: normal !important;`
-    - `word-break: break-word !important;` (영문/한글 혼용 시 카드 폭 초과 방지)
-    - `overflow-wrap: break-word !important;`
-  - **너비(Width) 제약 엄수**: 텍스트 컴포넌트의 `width`는 반드시 **부모 카드의 가로 폭에서 좌우 패딩을 제외한 실제 유효 너비(예: 카드 폭 420px이면 텍스트 폭 380px 이하)**로 정확히 지정하여, 글자가 카드 바깥으로 삐져나와 인접 카드와 겹치는 대형 사고를 100% 방지해야 합니다.
+
+#### ⚠️ [필독] 텍스트 줄바꿈 실패 및 영역 이탈 원인 심층 분석 (Root-Cause Deep Dive)
+> **왜 `style="white-space: normal !important;"`를 주어도 줄바꿈이 안 되고 한 줄로 카드를 뚫고 나가는가?**
+> 1. **에디터 엔진의 전역 강제 주입**: 에디터 시스템([vctrl_iframe_styles.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_styles.js#L354))은 iframe 렌더링 시 다음 CSS를 `<style id="vctrl-injected-styles">`로 강제 주입합니다:
+>    ```css
+>    .text-marker .v4-editable-cell *, 
+>    .v4-text-box .v4-editable-cell *, 
+>    .v4-text-shape .v4-editable-cell * { 
+>        white-space: nowrap !important; /* <--- 원인: 자식 엘리먼트 전체에 와일드카드 강제 nowrap */
+>    }
+>    ```
+> 2. **인라인 스타일 무력화**: 클래스에 `.v4-text-shape`가 포함되어 있으면, 인라인 스타일로 아무리 `white-space: normal !important;`나 `word-break: break-word`를 작성해도 **와일드카드(`*`) 선택자의 `!important`가 `p`, `span`, `strong` 등에 우선 적용되어 무조건 1줄로 강제 연장**됩니다.
+> 3. **설계 의도**: `.v4-text-shape`는 시스템 태생상 **타이틀, 헤더, 뱃지, 태그 등 "1줄 단일 텍스트(Single-line)" 전용**입니다.
+
+#### 🛡️ 텍스트 유형별 이원화 아키텍처 규칙 (Strict Text Architecture)
+* **[유형 A] 1줄 단일 텍스트 (Single-line Text)**:
+  * **용도**: 대분류 메인 타이틀, 섹션 카드 헤더, 상태 뱃지, 단일 태그 라벨 등
+  * **표준 마크업**: `class="lf-component v4-text-shape"` 사용 (`white-space: nowrap !important;` 유지)
+* **[유형 B] 2줄 이상 멀티라인 본문/설명 (Multiline Body/Description)**:
+  * **용도**: 본문 설명문, 불릿 리스트 문장, 효과/결과 설명, 가이드 문구 등 모든 다중행 텍스트
+  * **금지 사항**: **절대로 `v4-text-shape` 클래스를 붙이지 마십시오.** (붙이는 순간 nowrap 강제 주입 발동)
+  * **표준 마크업**: 반드시 **`class="lf-component"` + 투명 `v4-shape v4-shape-rect` + `v4-shape-text-content`** 3계층 구조를 사용하십시오:
+    ```html
+    <!-- [표준 멀티라인 텍스트 구조 - 줄바꿈 100% 보장] -->
+    <div id="card_line_1" class="lf-component" style="position: absolute; top: ...px; left: ...px; width: 385px; height: 60px; z-index: 20;" data-resized="true">
+        <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+            <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                    <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                        • 본문 설명이 지정된 폭(Width) 내에서 정상적으로 자동 줄바꿈되며 카드를 절대 뚫고 나가지 않습니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    ```
+  * **너비(Width) 제약 엄수**: 텍스트 컴포넌트의 `width`는 반드시 **부모 카드의 가로 폭에서 좌우 패딩을 제외한 실제 유효 너비(예: 카드 폭 420px이면 텍스트 폭 385px 이하)**로 정확히 지정하여, 인접 카드 침범을 원천 차단합니다.
+  * **스크린 `<style>` 방어 CSS 필수 포함**: 스크린 `<head>` 내부 `<style>` 태그에 다음 규칙을 필수로 선언합니다:
+    ```css
+    .v4-shape-text-content p,
+    .v4-shape-text-content span,
+    .v4-shape-text-content strong,
+    .v4-shape-text-content * {
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+    ```
 
 ### 5. 간결하고 정돈된 레이아웃 (Clutter-Free & No Redundancy)
 - **군더더기 배제**: 장황하고 불필요한 미사여구나 서술형 장문을 지양하고, **핵심 키워드, 명확한 불릿 포인트, 구조화된 인포그래픽** 위주로 컴팩트하게 정돈합니다.

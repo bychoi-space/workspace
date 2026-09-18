@@ -683,11 +683,11 @@ window.renderIllustrationLibrary = function() {
     }) : illustrations;
 
     container.innerHTML = filtered.map(item => `
-        <div class="component-item v4-card v4-card-illustration" onclick="insertV4ComponentById('${item.id}')" title="${item.name}" style="border-radius: 8px; padding: 6px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box; text-align: center;">
-            <div style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 6px; background: rgba(255,255,255,0.06);">
-                <img src="${item.thumb}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;" />
+        <div class="component-item v4-card v4-card-illustration" onclick="insertV4ComponentById('${item.id}')" title="${item.name}">
+            <div class="illustration-thumb-wrap">
+                <img src="${item.thumb}" alt="${item.name}" />
             </div>
-            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; display: block; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.name}</span>
+            <span class="illustration-label">${item.name}</span>
         </div>
     `).join('');
 

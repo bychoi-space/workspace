@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-screen-authoring
-description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, atomic element separation, minimum 12px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
+description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, atomic element separation, minimum 13px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
 ---
 
 # Workspace Editor Screen Authoring Standards (AI 직접 스크린 제작 대원칙)
@@ -51,13 +51,13 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 - 모든 원자적 요소는 독립적인 `id`, 고유의 `position: absolute; top: ...; left: ...; width: ...; height: ...;` 좌표를 갖고 개별 선택 가능해야 합니다.
 
 ### 4. 텍스트 폰트 크기 및 줄바꿈/오버플로우 엄격 제어 (Typography, Wrapping & Bounds)
-- **가독성 저하 차단**: **`12px` 미만의 폰트 크기(예: 10px, 11px, 11.5px 등)는 화면 가독성을 심각하게 해치므로 사용을 전면 금지**합니다.
+- **가독성 저하 차단**: **`13px` 미만의 폰트 크기(예: 10px, 11px, 12px 등)는 화면 가독성을 심각하게 해치므로 사용을 전면 금지**합니다.
 - **권장 폰트 스케일**:
   - **대분류 메인 타이틀**: `18px` ~ `20px` (굵기: `800` / `900`)
   - **섹션 헤더 / 카드 제목**: `15px` ~ `16px` (굵기: `700` / `800`)
   - **본문 / 주요 설명**: `13.5px` ~ `14.5px` (굵기: `500` / `600`)
-  - **보조 설명 / 서브 텍스트**: `13px` (굵기: `400` / `500`)
-  - **최소 단위 (뱃지, 태그, 각주, 캡션)**: **정확히 `12px`** (절대 12px 밑으로 내려가지 않음)
+  - **보조 설명 / 서브 텍스트**: `13px` ~ `13.5px` (굵기: `400` / `500`)
+  - **최소 단위 (뱃지, 태그, 각주, 캡션)**: **정확히 `13px`** (절대 13px 밑으로 내려가지 않음)
 
 #### ⚠️ [필독] 텍스트 줄바꿈 실패 및 영역 이탈 원인 심층 분석 (Root-Cause Deep Dive)
 > **왜 `style="white-space: normal !important;"`를 주어도 줄바꿈이 안 되고 한 줄로 카드를 뚫고 나가는가?**
@@ -85,7 +85,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
     <div id="card_line_1" class="lf-component" style="position: absolute; top: ...px; left: ...px; width: 385px; height: 60px; z-index: 20;" data-resized="true">
         <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
             <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
                     <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
                         • 본문 설명이 지정된 폭(Width) 내에서 정상적으로 자동 줄바꿈되며 카드를 절대 뚫고 나가지 않습니다.
                     </p>
@@ -227,7 +227,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 ## 🚫 스크린 제작 안티패턴 (Strict Anti-Patterns)
 
 1. **[금기 1] 카드 내부 다중 태그 뭉치기**: 배경 div 안에 텍스트와 이미지를 전부 인라인으로 때려 넣는 구조 금지 (무조건 개별 `.lf-component`로 분리할 것).
-2. **[금기 2] 12px 미만 폰트 사용**: 9px, 10px, 11px 폰트 사용 금지 (최소 `12px` 엄수).
+2. **[금기 2] 13px 미만 폰트 사용**: 9px, 10px, 11px, 12px 폰트 사용 금지 (최소 `13px` 엄수).
 3. **[금기 3] AI 지어내기 수치 삽입**: 근거 없는 퍼센트(%), 가상 금액, 거짓 벤치마크 내용 주입 금지 (기획서 팩트 기반 작성).
 4. **[금기 4] 복잡한 원색 난립**: 빨강, 노랑, 파랑, 보라 등 무지개색을 무분별하게 혼용하는 디자인 금지 (뉴트럴 + 단일/이중 포인트 컬러 준수).
 5. **[금기 5] 1600x900 초과 세로 스크롤 레이아웃**: 프레젠테이션/보고서 스크린은 1600x900 단일 화면 내에서 스크롤 없이 완결되는 컴팩트한 레이아웃을 지향해야 함.

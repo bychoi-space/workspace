@@ -45,7 +45,8 @@
         }
         .v4-editable-cell {
             outline: none;
-            word-break: keep-all;
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
             font-family: inherit;
         }
         .lf-icon {
@@ -145,37 +146,52 @@
             </div>
         </div>
 
-        <!-- 1-3. 3대 문제점 진단 카드 -->
+        <!-- 1-3. 3대 문제점 진단 카드 (배경 박스) -->
         <div id="sec1_diag_box" class="lf-component" style="top: 576px; left: 38px; width: 604px; height: 286px; z-index: 15;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fca5a5; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
-        <div id="sec1_diag_title" class="lf-component v4-text-shape" style="top: 590px; left: 54px; width: 350px; height: 22px; z-index: 20; white-space: nowrap !important;">
+        <div id="sec1_diag_title" class="lf-component v4-text-shape" style="top: 588px; left: 54px; width: 350px; height: 22px; z-index: 20; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #991b1b; font-size: 14.5px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;"><strong style="color: #991b1b; font-size: 15px;">⚠️ 현황 3대 문제점 진단 (Issues)</strong></p>
             </div>
         </div>
 
-        <div id="sec1_diag_item1" class="lf-component v4-text-shape" style="top: 622px; left: 54px; width: 572px; height: 60px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13px; font-weight: 500; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p><strong style="color: #b91c1c; font-size: 13.5px;">1. 핵심 자사 브랜드 [EBM] 누락</strong></p>
-                <p style="color: #475569; font-size: 12.5px;">• 시선닷컴의 3대 주력 브랜드 중 MICHAA, IT MICHAA만 노출되고 EBM이 서브링크에서 완전히 배제되어 신규 브랜드 유입 기회 상실.</p>
+        <!-- 1-3-1. 문제점 1 (제목 / 설명 파편화 분리) -->
+        <div id="sec1_d1_title" class="lf-component v4-text-shape" style="top: 618px; left: 54px; width: 572px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 13.5px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #b91c1c;">1. 핵심 자사 브랜드 [EBM] 누락</strong></p>
+            </div>
+        </div>
+        <div id="sec1_d1_desc" class="lf-component v4-text-shape" style="top: 640px; left: 54px; width: 572px; height: 42px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• 3대 주력 브랜드 중 MICHAA, IT MICHAA만 노출되고 EBM이 서브링크에서 완전히 배제되어 신규 브랜드 유입 기회 상실.</p>
             </div>
         </div>
 
-        <div id="sec1_diag_item2" class="lf-component v4-text-shape" style="top: 692px; left: 54px; width: 572px; height: 60px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13px; font-weight: 500; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p><strong style="color: #b91c1c; font-size: 13.5px;">2. 단발성 개별 상품명 [골지 하프 슬리브 니트] 슬롯 잠식</strong></p>
-                <p style="color: #475569; font-size: 12.5px;">• 브랜드 대표 메뉴가 위치해야 할 핵심 서브링크 자리에 개별 상품 1개가 차지하여 종합 패션몰로서의 신뢰도 및 탐색성 저하.</p>
+        <!-- 1-3-2. 문제점 2 (제목 / 설명 파편화 분리) -->
+        <div id="sec1_d2_title" class="lf-component v4-text-shape" style="top: 694px; left: 54px; width: 572px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 13.5px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #b91c1c;">2. 단발성 개별 상품명 [골지 하프 슬리브 니트] 슬롯 잠식</strong></p>
+            </div>
+        </div>
+        <div id="sec1_d2_desc" class="lf-component v4-text-shape" style="top: 716px; left: 54px; width: 572px; height: 42px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• 브랜드 대표 메뉴가 위치해야 할 핵심 서브링크 자리에 개별 상품 1개가 차지하여 종합 패션몰로서의 신뢰도 저하.</p>
             </div>
         </div>
 
-        <div id="sec1_diag_item3" class="lf-component v4-text-shape" style="top: 762px; left: 54px; width: 572px; height: 60px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13px; font-weight: 500; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p><strong style="color: #b91c1c; font-size: 13.5px;">3. 특정 컬렉션 기획전 과다 편중 (Quiet Deeper 등 2개)</strong></p>
-                <p style="color: #475569; font-size: 12.5px;">• 미샤(MICHAA) 가을 컬렉션 및 브라이드 기획전 명칭이 2자리나 차지하여 브랜드 간 균형이 무너짐.</p>
+        <!-- 1-3-3. 문제점 3 (제목 / 설명 파편화 분리) -->
+        <div id="sec1_d3_title" class="lf-component v4-text-shape" style="top: 770px; left: 54px; width: 572px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 13.5px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #b91c1c;">3. 특정 컬렉션 기획전 과다 편중 (Quiet Deeper 등 2개)</strong></p>
+            </div>
+        </div>
+        <div id="sec1_d3_desc" class="lf-component v4-text-shape" style="top: 792px; left: 54px; width: 572px; height: 42px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• 미샤(MICHAA) 가을 컬렉션 및 브라이드 기획전 명칭이 2자리나 차지하여 브랜드 간 균형이 무너짐.</p>
             </div>
         </div>
 
@@ -201,57 +217,69 @@
             </div>
         </div>
 
-        <!-- 2-1. 원인 1 카드 -->
+        <!-- 2-1. 원인 1 카드 (배경 + 제목 + 문장 1 + 문장 2 파편화) -->
         <div id="sec2_c1_bg" class="lf-component" style="top: 136px; left: 705px; width: 280px; height: 174px; z-index: 15;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-        <div id="sec2_c1_title" class="lf-component v4-text-shape" style="top: 148px; left: 720px; width: 250px; height: 24px; z-index: 20; white-space: nowrap !important;">
+        <div id="sec2_c1_title" class="lf-component v4-text-shape" style="top: 148px; left: 718px; width: 254px; height: 22px; z-index: 20; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 13.5px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;"><span style="color: #2563eb;">[원인 1]</span> GNB 앵커 표기 불일치</p>
             </div>
         </div>
-        <div id="sec2_c1_desc" class="lf-component v4-text-shape" style="top: 176px; left: 720px; width: 250px; height: 120px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p>• 메인 헤더 HTML에 <code style="color: #dc2626; font-size: 12px; background: #fee2e2; padding: 1px 3px; border-radius: 3px;">E.B.M</code>(점 포함)으로 코딩됨.</p>
-                <p>• 메타태그 및 유저 검색어인 <strong style="color: #0f172a;">EBM</strong>과 표기가 달라 검색 로봇의 키워드 결합 가중치 감점.</p>
+        <div id="sec2_c1_line1" class="lf-component v4-text-shape" style="top: 174px; left: 718px; width: 254px; height: 48px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• 메인 헤더 HTML에 <code style="color: #dc2626; font-size: 12px; background: #fee2e2; padding: 1px 3px; border-radius: 3px;">E.B.M</code>(점 포함)으로 코딩되어 표기 불일치 발생.</p>
+            </div>
+        </div>
+        <div id="sec2_c1_line2" class="lf-component v4-text-shape" style="top: 228px; left: 718px; width: 254px; height: 64px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• 메타태그 및 유저 검색어인 <strong style="color: #0f172a;">EBM</strong>과 달라 검색 로봇의 키워드 결합 가중치 감점.</p>
             </div>
         </div>
 
-        <!-- 2-2. 원인 2 카드 -->
+        <!-- 2-2. 원인 2 카드 (배경 + 제목 + 문장 1 + 문장 2 파편화) -->
         <div id="sec2_c2_bg" class="lf-component" style="top: 136px; left: 1000px; width: 280px; height: 174px; z-index: 15;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-        <div id="sec2_c2_title" class="lf-component v4-text-shape" style="top: 148px; left: 1015px; width: 250px; height: 24px; z-index: 20; white-space: nowrap !important;">
+        <div id="sec2_c2_title" class="lf-component v4-text-shape" style="top: 148px; left: 1013px; width: 254px; height: 22px; z-index: 20; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 13.5px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;"><span style="color: #e11d48;">[원인 2]</span> 상품 링크의 슬롯 잠식</p>
             </div>
         </div>
-        <div id="sec2_c2_desc" class="lf-component v4-text-shape" style="top: 176px; left: 1015px; width: 250px; height: 120px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p>• 메인 화면에 노출된 인기 상품(<strong style="color: #0f172a;">골지 하프...</strong>)의 높은 유입/클릭 트래픽 발생.</p>
-                <p>• 네이버 알고리즘이 해당 상품을 중요 문서로 오인하여 5개 슬롯 중 1자리를 선점.</p>
+        <div id="sec2_c2_line1" class="lf-component v4-text-shape" style="top: 174px; left: 1013px; width: 254px; height: 48px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• 메인에 노출된 인기 상품(<strong style="color: #0f172a;">골지 하프...</strong>)의 높은 클릭 트래픽 발생.</p>
+            </div>
+        </div>
+        <div id="sec2_c2_line2" class="lf-component v4-text-shape" style="top: 228px; left: 1013px; width: 254px; height: 64px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• 네이버 알고리즘이 상품을 대표 메뉴로 오인하여 5개 슬롯 중 1자리를 선점.</p>
             </div>
         </div>
 
-        <!-- 2-3. 원인 3 카드 -->
+        <!-- 2-3. 원인 3 카드 (배경 + 제목 + 문장 1 + 문장 2 파편화) -->
         <div id="sec2_c3_bg" class="lf-component" style="top: 136px; left: 1295px; width: 265px; height: 174px; z-index: 15;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-        <div id="sec2_c3_title" class="lf-component v4-text-shape" style="top: 148px; left: 1310px; width: 235px; height: 24px; z-index: 20; white-space: nowrap !important;">
+        <div id="sec2_c3_title" class="lf-component v4-text-shape" style="top: 148px; left: 1308px; width: 240px; height: 22px; z-index: 20; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 13.5px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;"><span style="color: #64748b;">[원인 3]</span> 내부 링크 점수 열세</p>
             </div>
         </div>
-        <div id="sec2_c3_desc" class="lf-component v4-text-shape" style="top: 176px; left: 1310px; width: 235px; height: 120px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p>• MICHAA 대비 EBM 브랜드 하위 페이지 수와 메인 링크 비중이 상대적으로 적음.</p>
-                <p>• 내부 링크 파워가 밀려 대형 기획전 및 고클릭 상품 뒤로 순위가 밀림.</p>
+        <div id="sec2_c3_line1" class="lf-component v4-text-shape" style="top: 174px; left: 1308px; width: 240px; height: 48px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• MICHAA 대비 EBM 브랜드의 하위 페이지 수 및 내부 링크 비중이 적음.</p>
+            </div>
+        </div>
+        <div id="sec2_c3_line2" class="lf-component v4-text-shape" style="top: 228px; left: 1308px; width: 240px; height: 64px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• 로봇 크롤러의 내부 링크 평가에서 대형 기획전 및 상품 뒤로 순위가 밀림.</p>
             </div>
         </div>
 
@@ -279,83 +307,169 @@
             </div>
         </div>
 
-        <!-- 3-1. Step 1 카드 (핵심 꿀팁) -->
+        <!-- ========================================================================= -->
+        <!-- 3-1. Step 1 카드: 불필요 상품 링크 차단 (완전 파편화 구조)                  -->
+        <!-- ========================================================================= -->
+        <!-- 1) 카드 배경 쉐입 -->
         <div id="sec3_s1_bg" class="lf-component" style="top: 392px; left: 705px; width: 420px; height: 184px; z-index: 15;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #93c5fd; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-        <div id="sec3_s1_title" class="lf-component v4-text-shape" style="top: 404px; left: 720px; width: 390px; height: 22px; z-index: 20; white-space: nowrap !important;">
+        <!-- 2) 카드 타이틀 텍스트 -->
+        <div id="sec3_s1_title" class="lf-component v4-text-shape" style="top: 404px; left: 720px; width: 385px; height: 22px; z-index: 20; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e40af; font-size: 14px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;">Step 1. 불필요 상품 링크 차단 (핵심 솔루션)</p>
             </div>
         </div>
-        <div id="sec3_s1_desc" class="lf-component v4-text-shape" style="top: 432px; left: 720px; width: 390px; height: 135px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p>• 메인 화면의 상품 상세 링크에 <code style="color: #2563eb; font-weight: 700; background: #dbeafe; padding: 1px 4px; border-radius: 3px;">rel="nosublink"</code> 추가</p>
-                <p style="font-family: monospace; font-size: 12px; color: #0369a1; background: #ffffff; padding: 4px 6px; border: 1px solid #bfdbfe; border-radius: 4px; margin: 4px 0;">&lt;a href="/product/detail..." rel="nosublink"&gt;골지 하프...&lt;/a&gt;</p>
+        <!-- 3) 문장 1 (상단 설명) -->
+        <div id="sec3_s1_line1" class="lf-component v4-text-shape" style="top: 430px; left: 720px; width: 385px; height: 22px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 500; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">• 메인 화면의 상품 상세 링크에 <code style="color: #2563eb; font-weight: 700; background: #dbeafe; padding: 1px 4px; border-radius: 3px;">rel="nosublink"</code> 추가</p>
+            </div>
+        </div>
+        <!-- 4) 코드 블록 배경 쉐입 (독립 쉐입) -->
+        <div id="sec3_s1_code_bg" class="lf-component" style="top: 456px; left: 720px; width: 385px; height: 30px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.2px solid #bfdbfe; border-radius: 5px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <!-- 5) 코드 텍스트 (독립 텍스트 도형) -->
+        <div id="sec3_s1_code_txt" class="lf-component v4-text-shape" style="top: 462px; left: 728px; width: 370px; height: 18px; z-index: 25; white-space: nowrap !important; overflow: hidden;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0369a1; font-family: monospace; font-size: 12px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;">
+                <p style="white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;">&lt;a href="/product/detail..." rel="nosublink"&gt;골지 하프...&lt;/a&gt;</p>
+            </div>
+        </div>
+        <!-- 6) 문장 2 (효과 설명, 자동 줄바꿈 엄수) -->
+        <div id="sec3_s1_line2" class="lf-component v4-text-shape" style="top: 494px; left: 720px; width: 385px; height: 60px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
                 <p>• <strong style="color: #1e40af;">효과:</strong> 상품 링크가 서브링크 후보에서 자동 탈락되어 빈자리에 3대 브랜드인 <strong style="color: #15803d;">EBM이 자연 승격</strong>됨.</p>
             </div>
         </div>
 
-        <!-- 3-2. Step 2 카드 -->
+        <!-- ========================================================================= -->
+        <!-- 3-2. Step 2 카드: GNB 브랜드 앵커 일치화 (완전 파편화 구조)                  -->
+        <!-- ========================================================================= -->
+        <!-- 1) 카드 배경 쉐입 -->
         <div id="sec3_s2_bg" class="lf-component" style="top: 392px; left: 1140px; width: 420px; height: 184px; z-index: 15;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-        <div id="sec3_s2_title" class="lf-component v4-text-shape" style="top: 404px; left: 1155px; width: 390px; height: 22px; z-index: 20; white-space: nowrap !important;">
+        <!-- 2) 카드 타이틀 텍스트 -->
+        <div id="sec3_s2_title" class="lf-component v4-text-shape" style="top: 404px; left: 1155px; width: 385px; height: 22px; z-index: 20; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;">Step 2. GNB 브랜드 앵커 텍스트 일치화</p>
             </div>
         </div>
-        <div id="sec3_s2_desc" class="lf-component v4-text-shape" style="top: 432px; left: 1155px; width: 390px; height: 135px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p>• 헤더 GNB의 <span style="text-decoration: line-through; color: #94a3b8;">E.B.M</span>을 <strong style="color: #2563eb;">EBM</strong>으로 점 제거 통일</p>
-                <p style="font-family: monospace; font-size: 12px; color: #0f172a; background: #ffffff; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; margin: 4px 0;">&lt;a href="/EBM/" title="EBM 공식관"&gt;EBM&lt;/a&gt;</p>
-                <p>• <strong style="color: #0f172a;">효과:</strong> 검색어 및 메타태그와 명칭이 완벽히 일치되어 로봇의 브랜드 카테고리 매칭 점수 극대화.</p>
+        <!-- 3) 문장 1 (상단 설명) -->
+        <div id="sec3_s2_line1" class="lf-component v4-text-shape" style="top: 430px; left: 1155px; width: 385px; height: 22px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 500; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">• 헤더 GNB의 <span style="text-decoration: line-through; color: #94a3b8;">E.B.M</span>을 <strong style="color: #2563eb;">EBM</strong>으로 점 제거 통일</p>
+            </div>
+        </div>
+        <!-- 4) 코드 블록 배경 쉐입 (독립 쉐입) -->
+        <div id="sec3_s2_code_bg" class="lf-component" style="top: 456px; left: 1155px; width: 385px; height: 30px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.2px solid #cbd5e1; border-radius: 5px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <!-- 5) 코드 텍스트 (독립 텍스트 도형) -->
+        <div id="sec3_s2_code_txt" class="lf-component v4-text-shape" style="top: 462px; left: 1163px; width: 370px; height: 18px; z-index: 25; white-space: nowrap !important; overflow: hidden;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-family: monospace; font-size: 12px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;">
+                <p style="white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;">&lt;a href="/EBM/" title="EBM 공식관"&gt;EBM&lt;/a&gt;</p>
+            </div>
+        </div>
+        <!-- 6) 문장 2 (효과 설명, 자동 줄바꿈 엄수) -->
+        <div id="sec3_s2_line2" class="lf-component v4-text-shape" style="top: 494px; left: 1155px; width: 385px; height: 60px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
+                <p>• <strong style="color: #0f172a;">효과:</strong> 검색 키워드 및 메타태그와 명칭이 완벽히 일치되어 로봇의 브랜드 카테고리 매칭 점수 극대화.</p>
             </div>
         </div>
 
-        <!-- 3-3. Step 3 카드 -->
+        <!-- ========================================================================= -->
+        <!-- 3-3. Step 3 카드: 구조화 데이터 삽입 (완전 파편화 구조)                      -->
+        <!-- ========================================================================= -->
+        <!-- 1) 카드 배경 쉐입 -->
         <div id="sec3_s3_bg" class="lf-component" style="top: 588px; left: 705px; width: 420px; height: 180px; z-index: 15;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-        <div id="sec3_s3_title" class="lf-component v4-text-shape" style="top: 600px; left: 720px; width: 390px; height: 22px; z-index: 20; white-space: nowrap !important;">
+        <!-- 2) 카드 타이틀 텍스트 -->
+        <div id="sec3_s3_title" class="lf-component v4-text-shape" style="top: 600px; left: 720px; width: 385px; height: 22px; z-index: 20; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;">Step 3. 구조화 데이터 (SiteNavigation) 삽입</p>
             </div>
         </div>
-        <div id="sec3_s3_desc" class="lf-component v4-text-shape" style="top: 628px; left: 720px; width: 390px; height: 130px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p>• 메인 &lt;head&gt;에 Schema.org 표준 JSON-LD 적용</p>
-                <p style="font-family: monospace; font-size: 12px; color: #047857; background: #ffffff; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; margin: 4px 0;">"SiteNavigationElement": [MICHAA, ITMICHAA, EBM]</p>
+        <!-- 3) 문장 1 (상단 설명) -->
+        <div id="sec3_s3_line1" class="lf-component v4-text-shape" style="top: 626px; left: 720px; width: 385px; height: 22px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 500; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">• 메인 &lt;head&gt;에 Schema.org 표준 JSON-LD 적용</p>
+            </div>
+        </div>
+        <!-- 4) 코드 블록 배경 쉐입 (독립 쉐입) -->
+        <div id="sec3_s3_code_bg" class="lf-component" style="top: 652px; left: 720px; width: 385px; height: 30px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.2px solid #cbd5e1; border-radius: 5px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <!-- 5) 코드 텍스트 (독립 텍스트 도형) -->
+        <div id="sec3_s3_code_txt" class="lf-component v4-text-shape" style="top: 658px; left: 728px; width: 370px; height: 18px; z-index: 25; white-space: nowrap !important; overflow: hidden;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #047857; font-family: monospace; font-size: 12px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;">
+                <p style="white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;">"SiteNavigationElement": [MICHAA, ITMICHAA, EBM]</p>
+            </div>
+        </div>
+        <!-- 6) 문장 2 (효과 설명, 자동 줄바꿈 엄수) -->
+        <div id="sec3_s3_line2" class="lf-component v4-text-shape" style="top: 690px; left: 720px; width: 385px; height: 60px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
                 <p>• <strong style="color: #0f172a;">효과:</strong> 검색 로봇에게 사이트의 핵심 3대 브랜드 메뉴 구조를 기계적으로 명확히 전달.</p>
             </div>
         </div>
 
-        <!-- 3-4. Step 4 카드 -->
+        <!-- ========================================================================= -->
+        <!-- 3-4. Step 4 카드: 서치어드바이저 수집 요청 및 검증 (완전 파편화 구조)           -->
+        <!-- ========================================================================= -->
+        <!-- 1) 카드 배경 쉐입 -->
         <div id="sec3_s4_bg" class="lf-component" style="top: 588px; left: 1140px; width: 420px; height: 180px; z-index: 15;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
-        <div id="sec3_s4_title" class="lf-component v4-text-shape" style="top: 600px; left: 1155px; width: 390px; height: 22px; z-index: 20; white-space: nowrap !important;">
+        <!-- 2) 카드 타이틀 텍스트 -->
+        <div id="sec3_s4_title" class="lf-component v4-text-shape" style="top: 600px; left: 1155px; width: 385px; height: 22px; z-index: 20; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;">Step 4. 서치어드바이저 수집 요청 및 검증</p>
             </div>
         </div>
-        <div id="sec3_s4_desc" class="lf-component v4-text-shape" style="top: 628px; left: 1155px; width: 390px; height: 130px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
-                <p>• 네이버 서치어드바이저 웹마스터도구에서 <strong style="color: #0f172a;">웹페이지 수집</strong> 요청</p>
-                <p>• 수집 대상: 메인(<code style="font-size: 12px;">/</code>) 및 브랜드 페이지(<code style="font-size: 12px;">/EBM/</code>)</p>
+        <!-- 3) 문장 1 (상단 설명) -->
+        <div id="sec3_s4_line1" class="lf-component v4-text-shape" style="top: 626px; left: 1155px; width: 385px; height: 22px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 500; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;">• 네이버 서치어드바이저 웹마스터도구에서 <strong style="color: #0f172a;">웹페이지 수집</strong> 요청</p>
+            </div>
+        </div>
+        <!-- 4) 코드 블록 배경 쉐입 (독립 쉐입) -->
+        <div id="sec3_s4_code_bg" class="lf-component" style="top: 652px; left: 1155px; width: 385px; height: 30px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.2px solid #cbd5e1; border-radius: 5px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <!-- 5) 코드 텍스트 (독립 텍스트 도형) -->
+        <div id="sec3_s4_code_txt" class="lf-component v4-text-shape" style="top: 658px; left: 1163px; width: 370px; height: 18px; z-index: 25; white-space: nowrap !important; overflow: hidden;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-family: monospace; font-size: 12px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 0 !important; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;">
+                <p style="white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;">수집 대상: 메인(/) 및 브랜드 페이지(/EBM/)</p>
+            </div>
+        </div>
+        <!-- 6) 문장 2 (반영 주기 설명, 자동 줄바꿈 엄수) -->
+        <div id="sec3_s4_line2" class="lf-component v4-text-shape" style="top: 690px; left: 1155px; width: 385px; height: 60px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 12.5px; font-weight: 400; text-align: left; width: 100%; height: 100%; line-height: 1.45; padding: 0 !important; white-space: normal !important; word-break: break-word !important;">
                 <p>• <strong style="color: #15803d;">반영 주기:</strong> 배포 후 재수집 및 알고리즘 갱신까지 <strong style="color: #15803d;">약 3~7일(최대 2주)</strong> 소요.</p>
             </div>
         </div>
 
-        <!-- 3-5. 최종 목표 결과 바 (TO-BE Bar) -->
+        <!-- ========================================================================= -->
+        <!-- 3-5. 최종 목표 결과 바 (TO-BE Bar)                                        -->
+        <!-- ========================================================================= -->
         <div id="sec3_result_bg" class="lf-component" style="top: 780px; left: 705px; width: 855px; height: 86px; z-index: 20;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
@@ -377,7 +491,7 @@
         </div>
 
         <div id="sec3_result_effects" class="lf-component v4-text-shape" style="top: 802px; left: 1260px; width: 285px; height: 52px; z-index: 25;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #cbd5e1; font-size: 12.5px; font-weight: 500; text-align: right; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: keep-all;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #cbd5e1; font-size: 12.5px; font-weight: 500; text-align: right; width: 100%; height: 100%; line-height: 1.5; padding: 0 !important; word-break: break-word !important; white-space: normal !important;">
                 <p style="color: #4ade80; font-weight: 700;">✓ 3대 자사 브랜드 탐색 동선 완성</p>
                 <p style="color: #94a3b8;">✓ 단발성 상품 제거로 브랜딩 신뢰도 제고</p>
             </div>

@@ -33,15 +33,24 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 ### 3. 최소 단위 원자적 분리 및 파편화 (Atomic Granularity & Element Separation)
 - **목적**: 스크린 제작 후 **사용자가 캔버스에서 각 요소를 마우스로 직접 클릭하여 손쉽게 내용 수정, 수치 변경, 위치 이동, 색상 조정을 할 수 있도록 보장**하기 위함입니다.
 - **단일 복합 카드 금지**: 하나의 카드 컨테이너 안에 배경, 아이콘, 뱃지, 제목, 본문 텍스트를 하나의 거대 HTML 블록으로 합쳐 넣는 행위를 **엄격히 금지**합니다. (그렇게 작성하면 인스펙터/Quill에서 한 글자만 수정해도 주변 아이콘과 레이아웃이 파괴됩니다.)
+- **텍스트 다중 문장 1개 도형 몰아넣기 절대 금지 (Text Fragmentation)**:
+  - 본문 설명이나 리스트 내용도 **절대로 1개의 Text Shape 안에 모든 줄과 코드, 효과를 한꺼번에 몰아넣지 마십시오.**
+  - 하나의 카드 안에서도 내용은 **최소 2~3개의 독립된 텍스트 도형(`.lf-component.v4-text-shape`) 및 전용 쉐입으로 잘게 분리(파편화)**해야 합니다.
+    - 예: `[항목 1 불릿 텍스트]` (독립 컴포넌트)
+    - 예: `[코드/수식/예시 박스]` (독립 배경 쉐입 + 텍스트 컴포넌트)
+    - 예: `[결과/효과 불릿 텍스트]` (독립 컴포넌트)
+  - 이렇게 나누어야 사용자가 특정 문장이나 코드만 마우스로 콕 찍어서 수정하거나 줄 간격을 자유롭게 재배치할 수 있습니다.
 - **원자적 분리 필수 구조 (예: 1개 카드 섹션 구성 시)**:
   1. **카드 배경 쉐입**: `<div id="card_bg" class="lf-component" ...><div class="v4-shape v4-shape-rect" ...></div></div>`
   2. **카드 아이콘 아톰**: `<div id="card_icon" class="lf-component" ...><svg class="lf-icon" ...></svg></div>`
   3. **카드 제목 텍스트**: `<div id="card_title" class="lf-component v4-text-shape" ...><div class="v4-editable-cell" contenteditable="true" ...></div></div>`
   4. **카드 상태 뱃지**: `<div id="card_badge" class="lf-component" ...><div class="v4-shape v4-shape-rect" ...></div></div>`
-  5. **카드 본문/설명 텍스트**: `<div id="card_desc" class="lf-component v4-text-shape" ...><div class="v4-editable-cell" contenteditable="true" ...></div></div>`
+  5. **본문 설명 문장 1 (상단)**: `<div id="card_text_1" class="lf-component v4-text-shape" ...><div class="v4-editable-cell" ...></div></div>`
+  6. **코드/키워드 강조 블록**: `<div id="card_code_bg" ...></div>` + `<div id="card_code_text" ...></div>`
+  7. **본문 설명 문장 2 (하단/효과)**: `<div id="card_text_2" class="lf-component v4-text-shape" ...><div class="v4-editable-cell" ...></div></div>`
 - 모든 원자적 요소는 독립적인 `id`, 고유의 `position: absolute; top: ...; left: ...; width: ...; height: ...;` 좌표를 갖고 개별 선택 가능해야 합니다.
 
-### 4. 텍스트 폰트 크기 최소 12px 이상 (Min Font-Size >= 12px)
+### 4. 텍스트 폰트 크기 및 줄바꿈/오버플로우 엄격 제어 (Typography, Wrapping & Bounds)
 - **가독성 저하 차단**: **`12px` 미만의 폰트 크기(예: 10px, 11px, 11.5px 등)는 화면 가독성을 심각하게 해치므로 사용을 전면 금지**합니다.
 - **권장 폰트 스케일**:
   - **대분류 메인 타이틀**: `18px` ~ `20px` (굵기: `800` / `900`)
@@ -49,7 +58,13 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - **본문 / 주요 설명**: `13.5px` ~ `14.5px` (굵기: `500` / `600`)
   - **보조 설명 / 서브 텍스트**: `13px` (굵기: `400` / `500`)
   - **최소 단위 (뱃지, 태그, 각주, 캡션)**: **정확히 `12px`** (절대 12px 밑으로 내려가지 않음)
-- 모든 텍스트 영역에는 줄바꿈 방지가 필요한 경우 `white-space: nowrap !important;`를 부여하고, 다국어 및 한글 단어 끊김 방지를 위해 `word-break: keep-all;`을 필수로 적용합니다.
+- **텍스트 줄바꿈(Wrapping) 및 영역 이탈 방지 절대 원칙 (Strict Bounds)**:
+  - **무분별한 `white-space: nowrap` 금지**: 타이틀, 뱃지, 한 줄 태그처럼 1행으로 완결되어야 하는 경우에만 `nowrap`을 적용하고, **설명문, 본문, 문장형 텍스트에는 절대 `nowrap`을 쓰지 마십시오.**
+  - **본문 자동 줄바꿈 필수 속성**:
+    - `white-space: normal !important;`
+    - `word-break: break-word !important;` (영문/한글 혼용 시 카드 폭 초과 방지)
+    - `overflow-wrap: break-word !important;`
+  - **너비(Width) 제약 엄수**: 텍스트 컴포넌트의 `width`는 반드시 **부모 카드의 가로 폭에서 좌우 패딩을 제외한 실제 유효 너비(예: 카드 폭 420px이면 텍스트 폭 380px 이하)**로 정확히 지정하여, 글자가 카드 바깥으로 삐져나와 인접 카드와 겹치는 대형 사고를 100% 방지해야 합니다.
 
 ### 5. 간결하고 정돈된 레이아웃 (Clutter-Free & No Redundancy)
 - **군더더기 배제**: 장황하고 불필요한 미사여구나 서술형 장문을 지양하고, **핵심 키워드, 명확한 불릿 포인트, 구조화된 인포그래픽** 위주로 컴팩트하게 정돈합니다.
@@ -175,3 +190,5 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 3. **[금기 3] AI 지어내기 수치 삽입**: 근거 없는 퍼센트(%), 가상 금액, 거짓 벤치마크 내용 주입 금지 (기획서 팩트 기반 작성).
 4. **[금기 4] 복잡한 원색 난립**: 빨강, 노랑, 파랑, 보라 등 무지개색을 무분별하게 혼용하는 디자인 금지 (뉴트럴 + 단일/이중 포인트 컬러 준수).
 5. **[금기 5] 1600x900 초과 세로 스크롤 레이아웃**: 프레젠테이션/보고서 스크린은 1600x900 단일 화면 내에서 스크롤 없이 완결되는 컴팩트한 레이아웃을 지향해야 함.
+6. **[금기 6] 텍스트 1개 도형 몰아넣기 (No Single Text Dump)**: 불릿 리스트 여러 줄, 코드 박스, 효과 설명을 단 1개의 텍스트 도형에 몰아넣는 행위 금지. 사용자의 개별 편집 편의성을 위해 최소 2~3개의 독립된 `.lf-component.v4-text-shape`로 파편화할 것.
+7. **[금기 7] 줄바꿈 미처리 및 카드 경계 침범 (No Text Overflow & Overlap)**: 본문 설명문에 `white-space: nowrap`을 오적용하거나 폭(width) 계산을 누락하여 텍스트가 카드를 뚫고 인접 영역을 침범·중첩하는 레이아웃 파괴 행위 절대 금지. (`white-space: normal !important; word-break: break-word;` 및 유효 너비 엄수)

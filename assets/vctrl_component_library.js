@@ -643,6 +643,28 @@ window.V4_COMPONENT_LIBRARY = {
             thumb: 'assets/illustrations/step8_return_clothing.png',
             previewHtml: `<img src="assets/illustrations/step8_return_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step8_return_clothing.png" alt="8. 상품 반품" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-atomic-system',
+            name: '9. 아토믹 디자인 시스템',
+            koName: '9 아토믹 디자인 시스템 컴포넌트 패턴 원자 분자 atomic design system hierarchy',
+            category: 'Illustration',
+            width: '320px',
+            height: '240px',
+            thumb: 'assets/illustrations/atomic_system_diagram.png',
+            previewHtml: `<img src="assets/illustrations/atomic_system_diagram.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_system_diagram.png" alt="아토믹 디자인 시스템 5단계 다이어그램" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-storybook-guide',
+            name: '10. 스토리북 가이드 허브',
+            koName: '10 스토리북 가이드 허브 컴포넌트 라이브러리 워크스페이스 storybook design tokens workspace',
+            category: 'Illustration',
+            width: '320px',
+            height: '240px',
+            thumb: 'assets/illustrations/storybook_guide_workspace.png',
+            previewHtml: `<img src="assets/illustrations/storybook_guide_workspace.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/storybook_guide_workspace.png" alt="스토리북 디자인 시스템 워크스페이스" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
     ]
 };

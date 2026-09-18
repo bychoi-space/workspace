@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive Mobile Dual (As-Is vs To-Be) - 기획전 템플릿화</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <div class="page mobile-compare-page">
+        <!-- Left Frame: To-Be -->
+        <div class="frame-column mobile-column mobile-column-left active-column">
+            <div class="frame-label-bar">
+                <div class="frame-label-title">
+                    <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">smartphone</span>
+                    <input type="text" class="frame-title-input mobile-title-input" value="To-Be Mobile Screen" placeholder="프레임명 입력...">
+                </div>
+                <div class="frame-label-height-control">
+                    <span>Height:</span>
+                    <input type="number" class="frame-label-input mobile-height-input" value="810" min="810" step="10">
+                    <span>px</span>
+                </div>
+            </div>
+            <div class="mobile-frame active-frame">
+                <div class="mobile-top-bar">
+                    <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                    <div class="mobile-header-notch"></div>
+                </div>
+                <div class="mobile-content">
+                    <div class="mobile-content-inner">
+                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300000; overflow: visible;"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Flow Arrow Divider -->
+        <div class="flow-arrow-divider">
+            <div class="flow-arrow-badge" id="flow-arrow-btn" onclick="if (typeof window.toggleFlowArrowDirection === 'function') window.toggleFlowArrowDirection();" title="화살표 방향 전환 (클릭)">
+                <span class="material-icons-outlined flow-arrow-icon" id="flow-arrow-icon">arrow_forward</span>
+            </div>
+            <span class="flow-arrow-label" id="flow-arrow-label">CHANGE</span>
+        </div>
+
+        <!-- Right Frame: As-Is -->
+        <div class="frame-column mobile-column mobile-column-right">
+            <div class="frame-label-bar">
+                <div class="frame-label-title">
+                    <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">smartphone</span>
+                    <input type="text" class="frame-title-input mobile-title-input" value="As-Is Mobile Screen" placeholder="프레임명 입력...">
+                </div>
+                <div class="frame-label-height-control">
+                    <span>Height:</span>
+                    <input type="number" class="frame-label-input mobile-height-input" value="810" min="810" step="10">
+                    <span>px</span>
+                </div>
+            </div>
+            <div class="mobile-frame">
+                <div class="mobile-top-bar">
+                    <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                    <div class="mobile-header-notch"></div>
+                </div>
+                <div class="mobile-content">
+                    <div class="mobile-content-inner">
+                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300000; overflow: visible;"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function() {
+            function initHeightControls() {
+                const columns = document.querySelectorAll('.frame-column');
+                columns.forEach(col => {
+                    const heightInput = col.querySelector('.mobile-height-input, .pc-height-input, .frame-label-input');
+                    const inner = col.querySelector('.mobile-content-inner, .pc-content-inner');
+                    if (heightInput && inner) {
+                        const updateHeight = () => {
+                            const val = Math.max(810, parseInt(heightInput.value) || 810);
+                            inner.style.minHeight = (val + 2) + 'px';
+                            heightInput.setAttribute('value', val);
+                        };
+                        heightInput.addEventListener('input', updateHeight);
+                        heightInput.addEventListener('change', updateHeight);
+                        updateHeight();
+                    }
+                });
+            }
+
+            window.toggleFlowArrowDirection = function() {
+                const icon = document.getElementById('flow-arrow-icon');
+                if (!icon) return;
+                const isForward = icon.innerText === 'arrow_forward';
+                icon.innerText = isForward ? 'arrow_back' : 'arrow_forward';
+                const label = document.getElementById('flow-arrow-label');
+                if (label) {
+                    label.innerText = isForward ? 'REVERT' : 'CHANGE';
+                }
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initHeightControls);
+            } else {
+                initHeightControls();
+            }
+        })();
+    </script>
+    <script id="v4-inlined-script">
+        /* Dynamic scripts injected */
+    </script>
+</body>
+</html>
+

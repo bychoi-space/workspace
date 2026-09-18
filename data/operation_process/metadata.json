@@ -27,13 +27,15 @@
       "title": "99_Blank_14",
       "type": "blank",
       "updatedAt": "2026-09-18T05:01:15.244Z",
-      "template": "template_blank.html"
+      "template": "template_blank.html",
+      "description": [],
+      "connectors": []
     }
   },
   "screenOrder": [
     "01_Fashion_Ecommerce_Process_Map_900.html",
-    "02_Front_System_Atomic_Design_Roadmap_900.html",
-    "99_Blank_14.html"
+    "99_Blank_14.html",
+    "02_Front_System_Atomic_Design_Roadmap_900.html"
   ],
   "assignee": "최범열",
   "developer": "",

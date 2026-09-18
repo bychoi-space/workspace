@@ -45,9 +45,9 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   2. **카드 아이콘 아톰**: `<div id="card_icon" class="lf-component" ...><svg class="lf-icon" ...></svg></div>`
   3. **카드 제목 텍스트**: `<div id="card_title" class="lf-component v4-text-shape" ...><div class="v4-editable-cell" contenteditable="true" ...></div></div>`
   4. **카드 상태 뱃지**: `<div id="card_badge" class="lf-component" ...><div class="v4-shape v4-shape-rect" ...></div></div>`
-  5. **본문 설명 문장 1 (상단)**: `<div id="card_text_1" class="lf-component v4-text-shape" ...><div class="v4-editable-cell" ...></div></div>`
+  5. **본문 설명 문장 1 (줄바꿈 지원)**: `<div id="card_text_1" class="lf-component" ...><div class="v4-shape v4-shape-rect" style="width:100%; height:100%; background:transparent; border:1.6px solid transparent;"><div class="v4-shape-text-content" style="text-align:left; align-items:flex-start; justify-content:flex-start; padding:0 !important;"><div class="v4-editable-cell" ...></div></div></div></div>`
   6. **코드/키워드 강조 블록**: `<div id="card_code_bg" ...></div>` + `<div id="card_code_text" ...></div>`
-  7. **본문 설명 문장 2 (하단/효과)**: `<div id="card_text_2" class="lf-component v4-text-shape" ...><div class="v4-editable-cell" ...></div></div>`
+  7. **본문 설명 문장 2 (줄바꿈 지원)**: `<div id="card_text_2" class="lf-component" ...><div class="v4-shape v4-shape-rect" style="width:100%; height:100%; background:transparent; border:1.6px solid transparent;"><div class="v4-shape-text-content" style="text-align:left; align-items:flex-start; justify-content:flex-start; padding:0 !important;"><div class="v4-editable-cell" ...></div></div></div></div>`
 - 모든 원자적 요소는 독립적인 `id`, 고유의 `position: absolute; top: ...; left: ...; width: ...; height: ...;` 좌표를 갖고 개별 선택 가능해야 합니다.
 
 ### 4. 텍스트 폰트 크기 및 줄바꿈/오버플로우 엄격 제어 (Typography, Wrapping & Bounds)
@@ -59,7 +59,12 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - **보조 설명 / 서브 텍스트**: `13px` (굵기: `400` / `500`)
   - **최소 단위 (뱃지, 태그, 각주, 캡션)**: **정확히 `12px`** (절대 12px 밑으로 내려가지 않음)
 - **텍스트 줄바꿈(Wrapping) 및 영역 이탈 방지 절대 원칙 (Strict Bounds)**:
-  - **무분별한 `white-space: nowrap` 금지**: 타이틀, 뱃지, 한 줄 태그처럼 1행으로 완결되어야 하는 경우에만 `nowrap`을 적용하고, **설명문, 본문, 문장형 텍스트에는 절대 `nowrap`을 쓰지 마십시오.**
+  - **`v4-text-shape` 사용 범위 제한 (단일행 전용)**:
+    - 에디터 엔진(`vctrl_iframe_styles.js`)은 `.v4-text-shape .v4-editable-cell *`에 `white-space: nowrap !important;`를 전역 주입합니다.
+    - 따라서 `.v4-text-shape`는 **메인 타이틀, 카드 헤더, 상태 뱃지 등 1행으로 끝나는 단일 텍스트에만 한정하여 사용**해야 합니다.
+  - **줄바꿈이 필요한 모든 본문 설명/문장은 투명 쉐입 구조 필수 사용 (Multiline Safe)**:
+    - 2줄 이상 줄바꿈이 필요한 모든 설명, 불릿 포인트, 효과 텍스트는 **`class="lf-component"` + `v4-shape v4-shape-rect(투명)` + `v4-shape-text-content`** 구조를 사용해야 합니다.
+    - 이 구조는 에디터 엔진의 강제 `nowrap` 주입을 완벽히 우회하여, 지정된 가로 너비(Width) 내에서 정상적으로 자동 줄바꿈이 일어납니다.
   - **본문 자동 줄바꿈 필수 속성**:
     - `white-space: normal !important;`
     - `word-break: break-word !important;` (영문/한글 혼용 시 카드 폭 초과 방지)

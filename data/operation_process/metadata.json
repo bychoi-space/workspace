@@ -11,17 +11,29 @@
       "version": 0.2,
       "screenDesc": "패션 이커머스 7대 핵심 도메인 비즈니스 프로세스 & 시스템 아키텍처 맵 (Front 저니맵 ⇄ Core 도메인 ⇄ Admin 백오피스)",
       "defaultTab": "editor"
+    },
+    "02_Front_System_Atomic_Design_Roadmap_900.html": {
+      "title": "02_Front UI 개편 로드맵",
+      "type": "architecture",
+      "updatedAt": "2026-09-18T04:48:30.000Z",
+      "template": "template_process.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "screenDesc": "시선닷컴 Front UI 개편 방향 (디자인 가이드 부재 해결 ➔ Atomic Pattern & Storybook 컴포넌트 가이드화 ➔ 우선순위별 점진적 UI 개편 로드맵)",
+      "defaultTab": "editor"
     }
   },
   "screenOrder": [
-    "01_Fashion_Ecommerce_Process_Map_900.html"
+    "01_Fashion_Ecommerce_Process_Map_900.html",
+    "02_Front_System_Atomic_Design_Roadmap_900.html"
   ],
   "assignee": "최범열",
   "developer": "",
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-09-17 10:00:38",
+  "updated": "2026-09-18 13:48:30",
   "version": 0.2,
   "period": ""
 }

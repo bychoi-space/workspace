@@ -4,7 +4,7 @@
     "01_Naver_Sublinks_Optimization_901.html": {
       "title": "서브링크 최적화 방안",
       "type": "ui",
-      "updatedAt": "2026-09-18T03:21:48.104Z",
+      "updatedAt": "2026-09-18T03:30:04.409Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -17,6 +17,8 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 0,
-  "updated": "2026-09-18 12:21:47",
+  "assignee": "",
+  "period": "",
+  "updated": "2026-09-18 12:30:04",
   "version": 0.1
 }

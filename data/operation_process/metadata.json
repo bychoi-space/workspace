@@ -24,12 +24,14 @@
       "defaultTab": "editor"
     },
     "99_Blank_14.html": {
-      "title": "99_Blank_14",
-      "type": "blank",
-      "updatedAt": "2026-09-18T05:01:15.244Z",
+      "title": "Front UI",
+      "type": "architecture",
+      "updatedAt": "2026-09-18T05:01:41.956Z",
       "template": "template_blank.html",
       "description": [],
-      "connectors": []
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "screenOrder": [

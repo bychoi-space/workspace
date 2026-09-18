@@ -186,9 +186,35 @@ window.v4ResponsiveMultiselectScript = `
                                 boundH = targetContainer ? (targetContainer.offsetHeight || targetContainer.clientHeight || 810) : 810;
                             }
                         } else {
-                            const pageEl = doc.querySelector('.page') || doc.body;
-                            boundW = pageEl ? (pageEl.offsetWidth || 1600) : 1600;
-                            boundH = pageEl ? (pageEl.offsetHeight || 900) : 900;
+                            // Non-responsive canvas: check if element is inside or geometrically within a .mobile-frame
+                            let mobileFrame = el ? el.closest('.mobile-frame') : null;
+                            if (!mobileFrame && el) {
+                                const compRect = el.getBoundingClientRect();
+                                const compCenter = compRect.left + compRect.width / 2;
+                                const frames = doc.querySelectorAll('.mobile-frame');
+                                for (let i = 0; i < frames.length; i++) {
+                                    const f = frames[i];
+                                    const fRect = f.getBoundingClientRect();
+                                    if (compCenter >= fRect.left - 20 && compCenter <= fRect.right + 20) {
+                                        mobileFrame = f;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (mobileFrame) {
+                                const mContent = mobileFrame.querySelector('.mobile-content') || mobileFrame;
+                                const mRect = mContent.getBoundingClientRect();
+                                const pageEl = doc.querySelector('.page') || doc.body;
+                                const pRect = pageEl.getBoundingClientRect();
+                                boundL = Math.round(mRect.left - pRect.left);
+                                boundT = Math.round(mRect.top - pRect.top);
+                                boundW = mContent.offsetWidth || 360;
+                                boundH = mContent.offsetHeight || 810;
+                            } else {
+                                const pageEl = doc.querySelector('.page') || doc.body;
+                                boundW = pageEl ? (pageEl.offsetWidth || 1600) : 1600;
+                                boundH = pageEl ? (pageEl.offsetHeight || 900) : 900;
+                            }
                         }
         
                         let targetL = item.x;

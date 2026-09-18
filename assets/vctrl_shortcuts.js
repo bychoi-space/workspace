@@ -237,51 +237,69 @@ window.v4ShortcutsScript = `
                 const mobileScrollArea = document.querySelector('.mobile-content-area, .mobile-content');
 
                 targetFrame = window.lastActiveFrame;
-                if (!mobileScrollArea && pcScrollArea) targetFrame = 'pc';
-                if (!pcScrollArea && mobileScrollArea) targetFrame = 'mobile';
-                if (!targetFrame) {
-                    const currentlySelected = document.querySelector('.lf-component.selected');
-                    if (currentlySelected) {
-                        if (currentlySelected.closest('.mobile-content-inner, .mobile-content-area, .mobile-content, .mobile-frame, .mobile-browser-frame')) {
-                            targetFrame = 'mobile';
-                        } else if (currentlySelected.closest('.pc-content-inner, .pc-content-area, .pc-frame, .pc-browser-frame')) {
-                            targetFrame = 'pc';
+                const currentlySelected = document.querySelector('.lf-component.selected');
+                const isCanvasTarget = (targetFrame === 'canvas') ||
+                                       (currentlySelected && !currentlySelected.closest('.frame-column, .pc-browser-frame, .mobile-browser-frame, .pc-content-inner, .mobile-content-inner'));
+
+                if (isCanvasTarget) {
+                    targetFrame = 'canvas';
+                    targetHost = document.querySelector('.page, .canvas, #canvas-page, #canvas') || document.body;
+                    baseLeft = Math.max(15, Math.round((1600 - groupW) / 2));
+                    baseTop = Math.max(15, Math.round((900 - groupH) / 2));
+                } else {
+                    const targetCol = (currentlySelected ? currentlySelected.closest('.frame-column') : null) ||
+                                      document.querySelector('.frame-column.active-column') ||
+                                      document.querySelector('.mobile-column.active-column') ||
+                                      document.querySelector('.pc-column.active-column');
+
+                    if (targetCol) {
+                        const colInner = targetCol.querySelector('.mobile-content-inner, .pc-content-inner');
+                        const colScroll = targetCol.querySelector('.mobile-content-area, .mobile-content, .pc-content-area');
+                        targetHost = colInner || targetCol;
+                        const scrollTop = colScroll ? colScroll.scrollTop : 0;
+                        const visibleH = colScroll ? (colScroll.clientHeight || 810) : 810;
+                        const colW = targetHost.offsetWidth || (targetCol.classList.contains('mobile-column') ? 360 : 1160);
+                        baseLeft = Math.max(15, Math.round((colW - groupW) / 2));
+                        baseTop = Math.max(15, Math.round(scrollTop + (visibleH / 2) - (groupH / 2)));
+                    } else {
+                        if (!mobileScrollArea && pcScrollArea) targetFrame = 'pc';
+                        if (!pcScrollArea && mobileScrollArea) targetFrame = 'mobile';
+                        if (!targetFrame) {
+                            if (currentlySelected) {
+                                if (currentlySelected.closest('.mobile-content-inner, .mobile-content-area, .mobile-content, .mobile-frame, .mobile-browser-frame')) {
+                                    targetFrame = 'mobile';
+                                } else if (currentlySelected.closest('.pc-content-inner, .pc-content-area, .pc-frame, .pc-browser-frame')) {
+                                    targetFrame = 'pc';
+                                }
+                            }
                         }
+                        if (!targetFrame) {
+                            targetFrame = componentItems.some(i => i.frameContainer === 'mobile') ? 'mobile' : 'pc';
+                        }
+                        targetHost = (targetFrame === 'mobile' && mobileInner) ? mobileInner : (pcInner || document.body);
+                        const scrollArea = (targetFrame === 'mobile' && mobileScrollArea)
+                            ? mobileScrollArea
+                            : (pcScrollArea || mobileScrollArea);
+
+                        const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
+                        const visibleH = scrollArea ? (scrollArea.clientHeight || 810) : 810;
+                        const pcW = pcInner ? (pcInner.offsetWidth || 1160) : 1160;
+                        visibleW = targetFrame === 'mobile' ? (mobileInner ? (mobileInner.offsetWidth || 360) : 360) : pcW;
+
+                        const viewCenterX = visibleW / 2;
+                        const viewCenterY = scrollTop + (visibleH / 2);
+
+                        baseLeft = Math.round(viewCenterX - (groupW / 2));
+                        baseTop = Math.round(viewCenterY - (groupH / 2));
+
+                        if (targetFrame === 'mobile') {
+                            baseLeft = Math.max(10, Math.min(baseLeft, visibleW - groupW - 10));
+                        } else {
+                            baseLeft = Math.max(15, Math.min(baseLeft, pcW - groupW - 15));
+                        }
+                        baseTop = Math.max(15, baseTop);
                     }
                 }
-                if (!targetFrame) {
-                    if (document.querySelector('.mobile-column.active-column')) targetFrame = 'mobile';
-                    else if (document.querySelector('.pc-column.active-column')) targetFrame = 'pc';
-                }
-                if (!targetFrame) {
-                    targetFrame = componentItems.some(i => i.frameContainer === 'mobile') ? 'mobile' : 'pc';
-                }
-                if (!mobileScrollArea && pcScrollArea) targetFrame = 'pc';
-                if (!pcScrollArea && mobileScrollArea) targetFrame = 'mobile';
-
-                targetHost = (targetFrame === 'mobile' && mobileInner) ? mobileInner : (pcInner || document.body);
-
-                const scrollArea = (targetFrame === 'mobile' && mobileScrollArea)
-                    ? mobileScrollArea
-                    : (pcScrollArea || mobileScrollArea);
-
-                const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
-                const visibleH = scrollArea ? (scrollArea.clientHeight || 810) : 810;
-                const pcW = pcInner ? (pcInner.offsetWidth || 1160) : 1160;
-                visibleW = targetFrame === 'mobile' ? (mobileInner ? (mobileInner.offsetWidth || 360) : 360) : pcW;
-
-                const viewCenterX = visibleW / 2;
-                const viewCenterY = scrollTop + (visibleH / 2);
-
-                baseLeft = Math.round(viewCenterX - (groupW / 2));
-                baseTop = Math.round(viewCenterY - (groupH / 2));
-
-                if (targetFrame === 'mobile') {
-                    baseLeft = Math.max(10, Math.min(baseLeft, visibleW - groupW - 10));
-                } else {
-                    baseLeft = Math.max(15, Math.min(baseLeft, pcW - groupW - 15));
-                }
-                baseTop = Math.max(15, baseTop);
             } else {
                 // Non-responsive screen: center in current visible viewport canvas coordinates
                 let viewCenterX = 800;

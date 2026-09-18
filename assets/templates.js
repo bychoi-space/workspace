@@ -476,6 +476,9 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `
             --v4-accent: #00e5ff;
             --v4-bg: #1e293b;
             --v4-frame-bg: #ffffff;
+            --v4-border-color: #cbd5e1;
+            --v4-header-bg: #f8fafc;
+            --v4-subtext: #475569;
             --v4-text: #f8fafc;
         }
         body {
@@ -491,60 +494,68 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `
             width: 1600px; height: 900px;
             position: relative;
             display: flex; justify-content: center; align-items: center;
-            gap: 60px;
         }
 
         /* Mobile Frame Styling */
         .mobile-frame {
-            width: 375px; height: 838px;
+            width: 382px; height: 848px;
             background: var(--v4-frame-bg);
-            border-radius: 40px;
+            display: flex; flex-direction: column;
+            border-radius: 28px;
             position: relative;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 8px #111;
-            overflow: hidden;
-            border: 4px solid #334155;
+            border: 1.6px solid var(--v4-border-color) !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            overflow: hidden !important;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+        .mobile-frame.active-frame {
+            border: 1.6px solid #00e5ff !important;
+            box-shadow: 0 0 0 0.8px rgba(0, 229, 255, 0.8), 0 20px 40px rgba(0, 0, 0, 0.25) !important;
+        }
+        .mobile-top-bar {
+            height: 38px;
+            background: var(--v4-header-bg);
+            border-bottom: 1.6px solid var(--v4-border-color) !important;
+            position: relative;
+            user-select: none;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            z-index: 100;
         }
         .mobile-header-notch {
             position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 150px; height: 30px; background: #111;
-            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+            width: 110px; height: 20px; background: #1e293b;
+            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
             z-index: 1000;
+            pointer-events: none;
+        }
+        .mobile-statusbar {
+            position: absolute; top: 10px; left: 16px; right: 16px; height: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            color: var(--v4-subtext); font-size: 11px; font-weight: 700;
+            z-index: 1001; pointer-events: none; white-space: nowrap;
         }
         .mobile-content {
-            width: 360px; height: 800px;
+            width: 360px; height: 810px;
             position: absolute;
-            top: 30px; left: 7.5px;
+            top: 38px; left: 11px;
+            background-color: #ffffff;
             background-image:
                 linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
             background-size: 20px 20px;
-            overflow-y: scroll !important;
-            overflow-x: hidden !important;
-            scrollbar-gutter: stable;
-            scroll-behavior: smooth;
+            overflow: hidden !important;
             border: none !important;
             box-sizing: border-box;
         }
-        .mobile-content::-webkit-scrollbar {
-            width: 12px;
+        .mobile-home-indicator {
+            position: absolute; bottom: 6px; left: 50%;
+            width: 120px; height: 4px; border-radius: 999px;
+            background: #94a3b8; transform: translateX(-50%);
+            z-index: 1001; pointer-events: none;
         }
-        .mobile-content::-webkit-scrollbar-track {
-            background: #f1f3f4;
-            border-left: 1px solid #dadce0;
-        }
-        .mobile-content::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 6px;
-            border: 2px solid #f1f3f4;
-        }
-        .mobile-content::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-        .mobile-content::-webkit-scrollbar-thumb:active {
-            background: #787878;
-        }
-        .mobile-statusbar { position: absolute; top: 10px; left: 24px; right: 24px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: #111827; font-size: 12px; font-weight: 800; z-index: 1001; pointer-events: none; white-space: nowrap; }
-        .mobile-home-indicator { position: absolute; bottom: 8px; left: 50%; width: 132px; height: 5px; border-radius: 999px; background: #111827; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
         .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
         .mobile-ui-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: #fff; border-bottom: 1px solid #e5e7eb; }
         .mobile-ui-card { padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #111827, #334155); color: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18); }
@@ -588,10 +599,12 @@ window.LF_TEMPLATES['template_mobile_ui_1.html'] = `
     <div class="page">
         <!-- Screen 1 -->
         <div class="mobile-frame">
-            <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
-            <div class="mobile-header-notch"></div>
-            <div class="mobile-content">
+            <div class="mobile-top-bar">
+                <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                <div class="mobile-header-notch"></div>
             </div>
+            <div class="mobile-content"></div>
+            <div class="mobile-home-indicator"></div>
         </div>
     </div>
 </body>
@@ -607,19 +620,16 @@ window.LF_TEMPLATES['template_mobile_ui_2.html'] = `
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; }
+        :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; --v4-border-color: #cbd5e1; --v4-header-bg: #f8fafc; --v4-subtext: #475569; }
         body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
-        .page { width: 1600px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 80px; }
-        .mobile-frame { width: 375px; height: 838px; background: var(--v4-frame-bg); border-radius: 40px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 8px #111; overflow: hidden; border: 4px solid #334155; z-index: 10; }
-        .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 30px; background: #111; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 1000; }
-        .mobile-content { width: 360px; height: 800px; position: absolute; top: 30px; left: 7.5px; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; overflow-y: scroll !important; overflow-x: hidden !important; scrollbar-gutter: stable; scroll-behavior: smooth; border: none !important; box-sizing: border-box; }
-        .mobile-content::-webkit-scrollbar { width: 12px; }
-        .mobile-content::-webkit-scrollbar-track { background: #f1f3f4; border-left: 1px solid #dadce0; }
-        .mobile-content::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 6px; border: 2px solid #f1f3f4; }
-        .mobile-content::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
-        .mobile-content::-webkit-scrollbar-thumb:active { background: #787878; }
-        .mobile-statusbar { position: absolute; top: 10px; left: 24px; right: 24px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: #111827; font-size: 12px; font-weight: 800; z-index: 1001; pointer-events: none; white-space: nowrap; }
-        .mobile-home-indicator { position: absolute; bottom: 8px; left: 50%; width: 132px; height: 5px; border-radius: 999px; background: #111827; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
+        .page { width: 1600px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 60px; }
+        .mobile-frame { width: 382px; height: 848px; background: var(--v4-frame-bg); display: flex; flex-direction: column; border-radius: 28px; position: relative; border: 1.6px solid var(--v4-border-color) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.25); overflow: hidden !important; box-sizing: border-box; flex-shrink: 0; z-index: 10; }
+        .mobile-frame.active-frame { border: 1.6px solid #00e5ff !important; box-shadow: 0 0 0 0.8px rgba(0, 229, 255, 0.8), 0 20px 40px rgba(0, 0, 0, 0.25) !important; }
+        .mobile-top-bar { height: 38px; background: var(--v4-header-bg); border-bottom: 1.6px solid var(--v4-border-color) !important; position: relative; user-select: none; box-sizing: border-box; flex-shrink: 0; z-index: 100; }
+        .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 110px; height: 20px; background: #1e293b; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; z-index: 1000; pointer-events: none; }
+        .mobile-statusbar { position: absolute; top: 10px; left: 16px; right: 16px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: var(--v4-subtext); font-size: 11px; font-weight: 700; z-index: 1001; pointer-events: none; white-space: nowrap; }
+        .mobile-content { width: 360px; height: 810px; position: absolute; top: 38px; left: 11px; background-color: #ffffff; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; overflow: hidden !important; border: none !important; box-sizing: border-box; }
+        .mobile-home-indicator { position: absolute; bottom: 6px; left: 50%; width: 120px; height: 4px; border-radius: 999px; background: #94a3b8; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
         .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
         .mobile-ui-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: #fff; border-bottom: 1px solid #e5e7eb; }
         .mobile-ui-card { padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #111827, #334155); color: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18); }
@@ -658,17 +668,21 @@ window.LF_TEMPLATES['template_mobile_ui_2.html'] = `
     <div class="page">
         <!-- Screen 1 -->
         <div class="mobile-frame">
-            <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
-            <div class="mobile-header-notch"></div>
-            <div class="mobile-content">
+            <div class="mobile-top-bar">
+                <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                <div class="mobile-header-notch"></div>
             </div>
+            <div class="mobile-content"></div>
+            <div class="mobile-home-indicator"></div>
         </div>
         <!-- Screen 2 -->
         <div class="mobile-frame">
-            <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
-            <div class="mobile-header-notch"></div>
-            <div class="mobile-content">
+            <div class="mobile-top-bar">
+                <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                <div class="mobile-header-notch"></div>
             </div>
+            <div class="mobile-content"></div>
+            <div class="mobile-home-indicator"></div>
         </div>
     </div>
 </body>
@@ -684,19 +698,16 @@ window.LF_TEMPLATES['template_mobile_ui_3.html'] = `
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; }
+        :root { --v4-primary: #6366f1; --v4-accent: #00e5ff; --v4-bg: #1e293b; --v4-frame-bg: #ffffff; --v4-border-color: #cbd5e1; --v4-header-bg: #f8fafc; --v4-subtext: #475569; }
         body { margin: 0; padding: 0; background: var(--v4-bg); font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
         .page { width: 1600px; height: 900px; position: relative; display: flex; justify-content: center; align-items: center; gap: 40px; }
-        .mobile-frame { width: 375px; height: 838px; background: var(--v4-frame-bg); border-radius: 40px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 8px #111; overflow: hidden; border: 4px solid #334155; z-index: 10; }
-        .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 30px; background: #111; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 1000; }
-        .mobile-content { width: 360px; height: 800px; position: absolute; top: 30px; left: 7.5px; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; overflow-y: scroll !important; overflow-x: hidden !important; scrollbar-gutter: stable; scroll-behavior: smooth; border: none !important; box-sizing: border-box; }
-        .mobile-content::-webkit-scrollbar { width: 12px; }
-        .mobile-content::-webkit-scrollbar-track { background: #f1f3f4; border-left: 1px solid #dadce0; }
-        .mobile-content::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 6px; border: 2px solid #f1f3f4; }
-        .mobile-content::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
-        .mobile-content::-webkit-scrollbar-thumb:active { background: #787878; }
-        .mobile-statusbar { position: absolute; top: 10px; left: 24px; right: 24px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: #111827; font-size: 12px; font-weight: 800; z-index: 1001; pointer-events: none; white-space: nowrap; }
-        .mobile-home-indicator { position: absolute; bottom: 8px; left: 50%; width: 132px; height: 5px; border-radius: 999px; background: #111827; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
+        .mobile-frame { width: 382px; height: 848px; background: var(--v4-frame-bg); display: flex; flex-direction: column; border-radius: 28px; position: relative; border: 1.6px solid var(--v4-border-color) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.25); overflow: hidden !important; box-sizing: border-box; flex-shrink: 0; z-index: 10; }
+        .mobile-frame.active-frame { border: 1.6px solid #00e5ff !important; box-shadow: 0 0 0 0.8px rgba(0, 229, 255, 0.8), 0 20px 40px rgba(0, 0, 0, 0.25) !important; }
+        .mobile-top-bar { height: 38px; background: var(--v4-header-bg); border-bottom: 1.6px solid var(--v4-border-color) !important; position: relative; user-select: none; box-sizing: border-box; flex-shrink: 0; z-index: 100; }
+        .mobile-header-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 110px; height: 20px; background: #1e293b; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; z-index: 1000; pointer-events: none; }
+        .mobile-statusbar { position: absolute; top: 10px; left: 16px; right: 16px; height: 20px; display: flex; align-items: center; justify-content: space-between; color: var(--v4-subtext); font-size: 11px; font-weight: 700; z-index: 1001; pointer-events: none; white-space: nowrap; }
+        .mobile-content { width: 360px; height: 810px; position: absolute; top: 38px; left: 11px; background-color: #ffffff; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; overflow: hidden !important; border: none !important; box-sizing: border-box; }
+        .mobile-home-indicator { position: absolute; bottom: 6px; left: 50%; width: 120px; height: 4px; border-radius: 999px; background: #94a3b8; transform: translateX(-50%); z-index: 1001; pointer-events: none; }
         .mobile-ui-header, .mobile-ui-card, .mobile-ui-nav, .mobile-ui-list { width: 100%; height: 100%; box-sizing: border-box; color: #0f172a; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
         .mobile-ui-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: #fff; border-bottom: 1px solid #e5e7eb; }
         .mobile-ui-card { padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #111827, #334155); color: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18); }
@@ -735,24 +746,30 @@ window.LF_TEMPLATES['template_mobile_ui_3.html'] = `
     <div class="page">
         <!-- Screen 1 -->
         <div class="mobile-frame">
-            <div class="mobile-statusbar"><span>9:41</span><span>5G</span></div>
-            <div class="mobile-header-notch"></div>
-            <div class="mobile-content">
+            <div class="mobile-top-bar">
+                <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                <div class="mobile-header-notch"></div>
             </div>
+            <div class="mobile-content"></div>
+            <div class="mobile-home-indicator"></div>
         </div>
         <!-- Screen 2 -->
         <div class="mobile-frame">
-            <div class="mobile-statusbar"><span>9:41</span><span>5G</span></div>
-            <div class="mobile-header-notch"></div>
-            <div class="mobile-content">
+            <div class="mobile-top-bar">
+                <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                <div class="mobile-header-notch"></div>
             </div>
+            <div class="mobile-content"></div>
+            <div class="mobile-home-indicator"></div>
         </div>
         <!-- Screen 3 -->
         <div class="mobile-frame">
-            <div class="mobile-statusbar"><span>9:41</span><span>5G</span></div>
-            <div class="mobile-header-notch"></div>
-            <div class="mobile-content">
+            <div class="mobile-top-bar">
+                <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                <div class="mobile-header-notch"></div>
             </div>
+            <div class="mobile-content"></div>
+            <div class="mobile-home-indicator"></div>
         </div>
     </div>
 </body>
@@ -2098,6 +2115,127 @@ window.LF_TEMPLATES['template_project_summary.html'] = `
 
 `;
 
+window.LF_TEMPLATES['template_responsive_mobile_compare.html'] = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive Mobile Dual (As-Is vs To-Be) - {{PROJECT_NAME}}</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="assets/responsive_frame.css">
+</head>
+<body>
+    <div class="page mobile-compare-page">
+        <!-- Left Frame: To-Be -->
+        <div class="frame-column mobile-column mobile-column-left active-column">
+            <div class="frame-label-bar">
+                <div class="frame-label-title">
+                    <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">smartphone</span>
+                    <input type="text" class="frame-title-input mobile-title-input" value="To-Be Mobile Screen" placeholder="프레임명 입력...">
+                </div>
+                <div class="frame-label-height-control">
+                    <span>Height:</span>
+                    <input type="number" class="frame-label-input mobile-height-input" value="810" min="810" step="10">
+                    <span>px</span>
+                </div>
+            </div>
+            <div class="mobile-frame active-frame">
+                <div class="mobile-top-bar">
+                    <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                    <div class="mobile-header-notch"></div>
+                </div>
+                <div class="mobile-content">
+                    <div class="mobile-content-inner">
+                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300000; overflow: visible;"></svg>
+                    </div>
+                </div>
+                <div class="mobile-home-indicator"></div>
+            </div>
+        </div>
+
+        <!-- Center Flow Arrow Divider -->
+        <div class="flow-arrow-divider">
+            <div class="flow-arrow-badge" id="flow-arrow-btn" onclick="if (typeof window.toggleFlowArrowDirection === 'function') window.toggleFlowArrowDirection();" title="화살표 방향 전환 (클릭)">
+                <span class="material-icons-outlined flow-arrow-icon" id="flow-arrow-icon">arrow_forward</span>
+            </div>
+            <span class="flow-arrow-label" id="flow-arrow-label">CHANGE</span>
+        </div>
+
+        <!-- Right Frame: As-Is -->
+        <div class="frame-column mobile-column mobile-column-right">
+            <div class="frame-label-bar">
+                <div class="frame-label-title">
+                    <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">smartphone</span>
+                    <input type="text" class="frame-title-input mobile-title-input" value="As-Is Mobile Screen" placeholder="프레임명 입력...">
+                </div>
+                <div class="frame-label-height-control">
+                    <span>Height:</span>
+                    <input type="number" class="frame-label-input mobile-height-input" value="810" min="810" step="10">
+                    <span>px</span>
+                </div>
+            </div>
+            <div class="mobile-frame">
+                <div class="mobile-top-bar">
+                    <div class="mobile-statusbar"><span>9:41</span><span>5G 100%</span></div>
+                    <div class="mobile-header-notch"></div>
+                </div>
+                <div class="mobile-content">
+                    <div class="mobile-content-inner">
+                        <svg class="v4-responsive-guide-layer mobile-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300000; overflow: visible;"></svg>
+                    </div>
+                </div>
+                <div class="mobile-home-indicator"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function() {
+            function initHeightControls() {
+                const columns = document.querySelectorAll('.frame-column');
+                columns.forEach(col => {
+                    const heightInput = col.querySelector('.mobile-height-input, .pc-height-input, .frame-label-input');
+                    const inner = col.querySelector('.mobile-content-inner, .pc-content-inner');
+                    if (heightInput && inner) {
+                        const updateHeight = () => {
+                            const val = Math.max(810, parseInt(heightInput.value) || 810);
+                            inner.style.minHeight = (val + 2) + 'px';
+                            heightInput.setAttribute('value', val);
+                        };
+                        heightInput.addEventListener('input', updateHeight);
+                        heightInput.addEventListener('change', updateHeight);
+                        updateHeight();
+                    }
+                });
+            }
+
+            window.toggleFlowArrowDirection = function() {
+                const icon = document.getElementById('flow-arrow-icon');
+                if (!icon) return;
+                const isForward = icon.innerText === 'arrow_forward';
+                icon.innerText = isForward ? 'arrow_back' : 'arrow_forward';
+                const label = document.getElementById('flow-arrow-label');
+                if (label) {
+                    label.innerText = isForward ? 'REVERT' : 'CHANGE';
+                }
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initHeightControls);
+            } else {
+                initHeightControls();
+            }
+        })();
+    </script>
+    <script id="v4-inlined-script">
+        /* Dynamic scripts injected */
+    </script>
+</body>
+</html>
+
+`;
+
 window.LF_TEMPLATES['template_responsive_pc_mobile.html'] = `
 <!DOCTYPE html>
 <html lang="ko">
@@ -2235,3 +2373,6 @@ window.LF_TEMPLATES['blank'] = window.LF_TEMPLATES['template_blank.html'];
 window.LF_TEMPLATES['admin_pc_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];
 window.LF_TEMPLATES['admin_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];
 window.LF_TEMPLATES['pc_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];
+window.LF_TEMPLATES['responsive_mobile_compare'] = window.LF_TEMPLATES['template_responsive_mobile_compare.html'];
+window.LF_TEMPLATES['mobile_compare'] = window.LF_TEMPLATES['template_responsive_mobile_compare.html'];
+window.LF_TEMPLATES['mobile_dual'] = window.LF_TEMPLATES['template_responsive_mobile_compare.html'];

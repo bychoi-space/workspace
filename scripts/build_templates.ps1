@@ -61,6 +61,9 @@ foreach ($f in $templateFiles) {
 [void]$sb.AppendLine("window.LF_TEMPLATES['admin_pc_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];")
 [void]$sb.AppendLine("window.LF_TEMPLATES['admin_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];")
 [void]$sb.AppendLine("window.LF_TEMPLATES['pc_scroll'] = window.LF_TEMPLATES['template_admin_pc_scroll.html'];")
+[void]$sb.AppendLine("window.LF_TEMPLATES['responsive_mobile_compare'] = window.LF_TEMPLATES['template_responsive_mobile_compare.html'];")
+[void]$sb.AppendLine("window.LF_TEMPLATES['mobile_compare'] = window.LF_TEMPLATES['template_responsive_mobile_compare.html'];")
+[void]$sb.AppendLine("window.LF_TEMPLATES['mobile_dual'] = window.LF_TEMPLATES['template_responsive_mobile_compare.html'];")
 
 [System.IO.File]::WriteAllText($outputFile, $sb.ToString(), [System.Text.Encoding]::UTF8)
 Write-Host "[BUILD TEMPLATES] Success! Wrote clean bundle to $outputFile"

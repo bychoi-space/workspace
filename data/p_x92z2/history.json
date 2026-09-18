@@ -6,5 +6,13 @@
     "assignee": "",
     "developer": "",
     "file": "metadata.json"
+  },
+  {
+    "version": "0.2",
+    "date": "2026-09-18 11:30:00",
+    "message": "네이버 인라인 서브링크 최적화 방안 스크린 신규 생성 (01_Naver_Sublinks_Optimization_901.html)",
+    "assignee": "AI Assistant",
+    "developer": "AI Assistant",
+    "file": "01_Naver_Sublinks_Optimization_901.html"
   }
 ]

@@ -6,7 +6,7 @@
     const notifyIframe = (data) => window.notifyIframe(data);
 
     window.insertV4ComponentById = function(id, customIdx) {
-        if (id === 'v4-atom-image') {
+        if (id === 'v4-atom-image' || id === 'v4-shape-image') {
             triggerImageFileUpload();
             return;
         }

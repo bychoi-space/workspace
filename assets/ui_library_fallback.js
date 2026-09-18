@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ui_library_fallback.js
  * Fallback data for offline file:// protocol execution.
  * Auto-generated.
@@ -65,10 +65,6 @@ window.VCTRL_UI_FALLBACK_ATOMIC = `
         <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-searchbar')" data-ko="검색창 검색 인풋 입력란 통합검색">
             <span class="material-icons-outlined v4-card-atom-icon">search</span>
             <span class="v4-card-atom-label">Search Bar</span>
-        </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-image')" data-ko="이미지 사진 첨부 업로드 파일 그림 png jpg">
-            <span class="material-icons-outlined v4-card-atom-icon">image</span>
-            <span class="v4-card-atom-label">Image</span>
         </div>
         <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-admin-settings')" data-ko="조회항목 어드민 검색 조건 설정 항목 admin조회">
             <span class="material-icons-outlined v4-card-atom-icon">tune</span>
@@ -2036,6 +2032,14 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             </div>
                             <div class="template-name">Admin PC (세로 스크롤)</div>
                             <div class="template-badge">Admin</div>
+                        </div>
+                        <div class="template-card" data-template="template_responsive_mobile_compare.html" data-default-name="10_Mobile_Compare">
+                            <div class="template-thumb">
+                                <span class="material-icons-outlined template-thumb-icon">compare</span>
+                                <div class="template-check"><svg class="lf-icon template-check-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                            </div>
+                            <div class="template-name">반응형 Mobile Dual (As-Is vs To-Be)</div>
+                            <div class="template-badge">Compare</div>
                         </div>
                         <div class="template-card" data-template="template_case_study.html" data-default-name="04_Case_Study">
                             <div class="template-thumb">

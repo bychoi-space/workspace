@@ -129,7 +129,7 @@
         state.tool = t;
         if (DOM.canvas) DOM.canvas.classList.toggle('hand-active', t === 'hand');
         if (DOM.iframe) DOM.iframe.style.pointerEvents = t === 'hand' ? 'none' : 'auto';
-        if (DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = (t === 'select') ? 'auto' : 'none';
+        if (DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
     };
 
     // 6. Viewport Event Listeners
@@ -153,10 +153,11 @@
                     state.isHandMode = true;
                 }
             }
-            if (e.code === 'KeyV') window.setTool('select');
-            if (e.code === 'KeyH') window.setTool('hand');
-            if (e.code === 'KeyT') { if (window.handleTextboxCreation) window.handleTextboxCreation(); }
-            if (e.code === 'KeyF') window.toggleFullscreen();
+            const isCombo = !!e.ctrlKey || !!e.metaKey || !!e.altKey;
+            if (e.code === 'KeyV' && !isCombo) window.setTool('select');
+            if (e.code === 'KeyH' && !isCombo) window.setTool('hand');
+            if (e.code === 'KeyT' && !isCombo) { if (window.handleTextboxCreation) window.handleTextboxCreation(); }
+            if (e.code === 'KeyF' && !isCombo) window.toggleFullscreen();
         });
 
         window.addEventListener('keyup', function(e) {

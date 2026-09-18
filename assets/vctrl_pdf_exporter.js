@@ -173,12 +173,14 @@ async function fetchScreenHtmlForPdf(projectName, screenFileName) {
  */
 function isResponsiveScreenHtml(rawHtml, screenFileName = '') {
     const fn = (screenFileName || '').toLowerCase();
-    if (fn.includes('responsive') || fn.includes('admin_pc_scroll')) return true;
+    if (fn.includes('responsive') || fn.includes('admin_pc_scroll') || fn.includes('mobile_compare')) return true;
     if (!rawHtml) return false;
     return rawHtml.includes('pc-browser-frame') ||
            rawHtml.includes('pc-content-area') ||
            rawHtml.includes('frame-column') ||
            rawHtml.includes('full-pc-page') ||
+           rawHtml.includes('mobile-compare-page') ||
+           rawHtml.includes('mobile-content-area') ||
            rawHtml.includes('template_responsive') ||
            rawHtml.includes('template_admin_pc_scroll');
 }

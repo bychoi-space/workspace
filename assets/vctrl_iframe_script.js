@@ -771,23 +771,45 @@ window.v4Script = `
         }
     };
 
-    window.updateActiveFrameUI = function(type) {
-        const targetType = type || window.lastActiveFrame || 'pc';
-        const pcFrames = document.querySelectorAll('.pc-browser-frame, .pc-frame');
-        const mobileFrames = document.querySelectorAll('.mobile-frame, .mobile-browser-frame');
-        const pcCols = document.querySelectorAll('.pc-column');
-        const mobileCols = document.querySelectorAll('.mobile-column');
+    window.updateActiveFrameUI = function(typeOrCol) {
+        let targetCol = null;
+        let targetType = 'pc';
+        if (typeOrCol && typeof typeOrCol === 'object' && typeOrCol.nodeType) {
+            targetCol = typeOrCol.closest('.frame-column');
+            targetType = targetCol && targetCol.classList.contains('mobile-column') ? 'mobile' : 'pc';
+        } else {
+            targetType = typeOrCol || window.lastActiveFrame || 'pc';
+        }
 
-        if (targetType === 'mobile') {
-            mobileFrames.forEach(f => f.classList.add('active-frame'));
-            mobileCols.forEach(c => c.classList.add('active-column'));
-            pcFrames.forEach(f => f.classList.remove('active-frame'));
-            pcCols.forEach(c => c.classList.remove('active-column'));
-        } else if (targetType === 'pc') {
-            pcFrames.forEach(f => f.classList.add('active-frame'));
-            pcCols.forEach(c => c.classList.add('active-column'));
-            mobileFrames.forEach(f => f.classList.remove('active-frame'));
-            mobileCols.forEach(c => c.classList.remove('active-column'));
+        const allCols = document.querySelectorAll('.frame-column');
+        const allFrames = document.querySelectorAll('.pc-browser-frame, .pc-frame, .mobile-frame, .mobile-browser-frame');
+        
+        if (targetType === 'canvas') {
+            allCols.forEach(c => c.classList.remove('active-column'));
+            allFrames.forEach(f => f.classList.remove('active-frame'));
+            return;
+        }
+
+        if (targetCol) {
+            allCols.forEach(c => c.classList.toggle('active-column', c === targetCol));
+            allFrames.forEach(f => f.classList.toggle('active-frame', f.closest('.frame-column') === targetCol));
+        } else {
+            const pcCols = document.querySelectorAll('.pc-column');
+            const mobileCols = document.querySelectorAll('.mobile-column');
+            const pcFrames = document.querySelectorAll('.pc-browser-frame, .pc-frame');
+            const mobileFrames = document.querySelectorAll('.mobile-frame, .mobile-browser-frame');
+
+            if (targetType === 'mobile') {
+                mobileFrames.forEach(f => f.classList.add('active-frame'));
+                mobileCols.forEach(c => c.classList.add('active-column'));
+                pcFrames.forEach(f => f.classList.remove('active-frame'));
+                pcCols.forEach(c => c.classList.remove('active-column'));
+            } else if (targetType === 'pc') {
+                pcFrames.forEach(f => f.classList.add('active-frame'));
+                pcCols.forEach(c => c.classList.add('active-column'));
+                mobileFrames.forEach(f => f.classList.remove('active-frame'));
+                mobileCols.forEach(c => c.classList.remove('active-column'));
+            }
         }
     };
 
@@ -797,12 +819,14 @@ window.v4Script = `
     document.addEventListener('wheel', e => {
         const mob = e.target.closest && e.target.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
         const pc = e.target.closest && e.target.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
-        if (mob && window.lastActiveFrame !== 'mobile') {
+        if (mob) {
+            const col = mob.closest('.frame-column');
             window.lastActiveFrame = 'mobile';
-            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
-        } else if (pc && window.lastActiveFrame !== 'pc') {
+            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI(col || 'mobile');
+        } else if (pc) {
+            const col = pc.closest('.frame-column');
             window.lastActiveFrame = 'pc';
-            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI(col || 'pc');
         }
     }, { passive: true });
     document.addEventListener('mousedown', e => {
@@ -811,11 +835,19 @@ window.v4Script = `
         const mob = e.target.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
         const pc = e.target.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
         if (mob) {
+            const col = mob.closest('.frame-column');
             window.lastActiveFrame = 'mobile';
-            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI(col || 'mobile');
         } else if (pc) {
+            const col = pc.closest('.frame-column');
             window.lastActiveFrame = 'pc';
-            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+            if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI(col || 'pc');
+        } else {
+            const isBaseCanvas = e.target.closest('.page, .canvas, .artboard, .responsive-compare-container, body');
+            if (isBaseCanvas) {
+                window.lastActiveFrame = 'canvas';
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('canvas');
+            }
         }
 
         let d = e.target.closest('.lf-delete-trigger'), c = e.target.closest('.lf-component');
@@ -865,11 +897,16 @@ window.v4Script = `
             const compMob = c.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
             const compPc = c.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
             if (compMob) {
+                const col = compMob.closest('.frame-column');
                 window.lastActiveFrame = 'mobile';
-                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI(col || 'mobile');
             } else if (compPc) {
+                const col = compPc.closest('.frame-column');
                 window.lastActiveFrame = 'pc';
-                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI(col || 'pc');
+            } else {
+                window.lastActiveFrame = 'canvas';
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('canvas');
             }
             const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
             if (isMulti) {
@@ -1406,45 +1443,75 @@ window.v4Script = `
         let centerLeft = Math.round((window.innerWidth - compW) / 2);
 
         if (isResponsiveTemplate) {
-            let activeFrame = window.lastActiveFrame;
-            if (!mobileScrollArea && pcScrollArea) activeFrame = 'pc';
-            if (!pcScrollArea && mobileScrollArea) activeFrame = 'mobile';
-            if (!activeFrame) {
-                const currentlySelected = document.querySelector('.lf-component.selected');
-                if (currentlySelected) {
-                    if (currentlySelected.closest('.mobile-content-inner, .mobile-content-area, .mobile-content, .mobile-frame, .mobile-browser-frame')) {
-                        activeFrame = 'mobile';
-                    } else if (currentlySelected.closest('.pc-content-inner, .pc-content-area, .pc-frame, .pc-browser-frame')) {
-                        activeFrame = 'pc';
+            const currentlySelected = document.querySelector('.lf-component.selected');
+            const isCanvasTarget = (window.lastActiveFrame === 'canvas') || 
+                                   (currentlySelected && !currentlySelected.closest('.frame-column, .pc-browser-frame, .mobile-browser-frame, .pc-content-inner, .mobile-content-inner'));
+
+            if (isCanvasTarget) {
+                host = document.querySelector('.page, .canvas, #canvas-page, #canvas') || document.body;
+                centerLeft = Math.max(15, Math.round((1600 - compW) / 2));
+                centerTop = Math.max(15, Math.round((900 - compH) / 2));
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('canvas');
+            } else {
+                // Multi-column responsive targeting: prioritize currently active column
+                const targetCol = (currentlySelected ? currentlySelected.closest('.frame-column') : null) ||
+                                  document.querySelector('.frame-column.active-column') ||
+                                  document.querySelector('.mobile-column.active-column') ||
+                                  document.querySelector('.pc-column.active-column');
+
+                if (targetCol) {
+                    const inner = targetCol.querySelector('.mobile-content-inner, .pc-content-inner');
+                    const scrollContainer = targetCol.querySelector('.mobile-content-area, .mobile-content, .pc-content-area');
+                    if (inner && scrollContainer) {
+                        host = inner;
+                        const sTop = scrollContainer.scrollTop || 0;
+                        const vHeight = scrollContainer.clientHeight || 810;
+                        const hostW = host.offsetWidth || (targetCol.classList.contains('mobile-column') ? 360 : 1160);
+                        centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                        centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI(targetCol);
+                    }
+                } else {
+                    let activeFrame = window.lastActiveFrame;
+                    if (!mobileScrollArea && pcScrollArea) activeFrame = 'pc';
+                    if (!pcScrollArea && mobileScrollArea) activeFrame = 'mobile';
+                    if (!activeFrame) {
+                        if (currentlySelected) {
+                            if (currentlySelected.closest('.mobile-content-inner, .mobile-content-area, .mobile-content, .mobile-frame, .mobile-browser-frame')) {
+                                activeFrame = 'mobile';
+                            } else if (currentlySelected.closest('.pc-content-inner, .pc-content-area, .pc-frame, .pc-browser-frame')) {
+                                activeFrame = 'pc';
+                            }
+                        }
+                    }
+                    if (!activeFrame) {
+                        if (document.querySelector('.mobile-column.active-column')) activeFrame = 'mobile';
+                        else if (document.querySelector('.pc-column.active-column')) activeFrame = 'pc';
+                    }
+                    if (!activeFrame) {
+                        activeFrame = (pcScrollArea || pcInner) ? 'pc' : 'mobile';
+                    }
+
+                    if (activeFrame === 'mobile' && (mobileScrollArea || mobileInner)) {
+                        host = mobileInner || mobileScrollArea;
+                        const scrollContainer = mobileScrollArea || mobileInner;
+                        const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
+                        const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
+                        const hostW = host ? (host.offsetWidth || 360) : 360;
+                        centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                        centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+                    } else if (pcScrollArea || pcInner) {
+                        host = pcInner || pcScrollArea;
+                        const scrollContainer = pcScrollArea || pcInner;
+                        const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
+                        const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
+                        const hostW = host ? (host.offsetWidth || 1160) : 1160;
+                        centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                        centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
                     }
                 }
-            }
-            if (!activeFrame) {
-                if (document.querySelector('.mobile-column.active-column')) activeFrame = 'mobile';
-                else if (document.querySelector('.pc-column.active-column')) activeFrame = 'pc';
-            }
-            if (!activeFrame) {
-                activeFrame = (pcScrollArea || pcInner) ? 'pc' : 'mobile';
-            }
-
-            if (activeFrame === 'mobile' && (mobileScrollArea || mobileInner)) {
-                host = mobileInner || mobileScrollArea;
-                const scrollContainer = mobileScrollArea || mobileInner;
-                const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
-                const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
-                const hostW = host ? (host.offsetWidth || 360) : 360;
-                centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
-                centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
-                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
-            } else if (pcScrollArea || pcInner) {
-                host = pcInner || pcScrollArea;
-                const scrollContainer = pcScrollArea || pcInner;
-                const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
-                const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
-                const hostW = host ? (host.offsetWidth || 1160) : 1160;
-                centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
-                centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
-                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
             }
         } else {
             try {
@@ -1547,6 +1614,9 @@ window.v4Script = `
         v.classList.add('selected');
         if (v.classList.contains('v4-text-shape') && typeof window.resizeToFitText === 'function') {
             window.resizeToFitText(v);
+        }
+        if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
+            window.ResponsiveSmartGuide.onSelect(v, 2000);
         }
         const styles = window._getCompStyles(v);
         notifyParent({ 

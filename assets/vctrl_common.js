@@ -53,7 +53,10 @@ window.isResponsiveDocument = function(targetDoc) {
             doc.querySelector('.pc-content-inner') || 
             doc.querySelector('.mobile-content-inner') || 
             doc.querySelector('.pc-browser-frame') ||
-            doc.querySelector('.pc-content-area')
+            doc.querySelector('.pc-content-area') ||
+            doc.querySelector('.mobile-compare-page') ||
+            doc.querySelector('.frame-column') ||
+            doc.querySelector('.mobile-content-area')
         ));
     } catch (e) {
         return false;

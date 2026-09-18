@@ -569,7 +569,7 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 
 /* 100% High-Contrast Chrome Web Browser Vertical Scrollbars for PC & Mobile Frames */
 .pc-content-area,
-.mobile-content,
+.mobile-column .mobile-content,
 .chrome-content-area {
     overflow-y: scroll !important;
     overflow-x: hidden !important;
@@ -577,21 +577,21 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     isolation: isolate;
 }
 .pc-content-area::-webkit-scrollbar,
-.mobile-content::-webkit-scrollbar,
+.mobile-column .mobile-content::-webkit-scrollbar,
 .chrome-content-area::-webkit-scrollbar {
     width: 12px !important;
     height: 12px !important;
     display: block !important;
 }
 .pc-content-area::-webkit-scrollbar-track,
-.mobile-content::-webkit-scrollbar-track,
+.mobile-column .mobile-content::-webkit-scrollbar-track,
 .chrome-content-area::-webkit-scrollbar-track {
     background: #edf2f7 !important;
     border-left: 1.6px solid #cbd5e1 !important;
     display: block !important;
 }
 .pc-content-area::-webkit-scrollbar-thumb,
-.mobile-content::-webkit-scrollbar-thumb,
+.mobile-column .mobile-content::-webkit-scrollbar-thumb,
 .chrome-content-area::-webkit-scrollbar-thumb {
     background: #94a3b8 !important;
     border-radius: 6px !important;
@@ -600,12 +600,12 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     display: block !important;
 }
 .pc-content-area::-webkit-scrollbar-thumb:hover,
-.mobile-content::-webkit-scrollbar-thumb:hover,
+.mobile-column .mobile-content::-webkit-scrollbar-thumb:hover,
 .chrome-content-area::-webkit-scrollbar-thumb:hover {
     background: #64748b !important;
 }
 .pc-content-area::-webkit-scrollbar-thumb:active,
-.mobile-content::-webkit-scrollbar-thumb:active,
+.mobile-column .mobile-content::-webkit-scrollbar-thumb:active,
 .chrome-content-area::-webkit-scrollbar-thumb:active {
     background: #475569 !important;
 }

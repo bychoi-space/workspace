@@ -81,6 +81,11 @@ function getInlinedEngineScript() {
 window.loadScreen = async function (fileName) {
     window.invalidateEngineScriptCache();
     const DOM = window.DOM || {};
+    if (DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
+    if (DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
+    if (DOM.canvas) DOM.canvas.classList.remove('hand-active');
+    if (window.state) window.state.isHandMode = false;
+
     if (state.isEditing && typeof window.closeActiveEditor === 'function') {
         window.closeActiveEditor(true);
     }
@@ -113,9 +118,26 @@ window.loadScreen = async function (fileName) {
     }
 
     // Inject Scoped Responsive Frame Styles ONLY into authentic Responsive templates/screens
-    const isResponsive = (fileName && fileName.toLowerCase().includes('responsive')) ||
-                         content.includes('class="pc-browser-frame"') ||
-                         content.includes('class="pc-content-area"');
+    const isResponsive = Boolean(
+        (fileName && (
+            fileName.toLowerCase().includes('responsive') ||
+            fileName.toLowerCase().includes('mobile_compare') ||
+            fileName.toLowerCase().includes('admin_pc')
+        )) ||
+        content.includes('pc-browser-frame') ||
+        content.includes('pc-content-area') ||
+        content.includes('mobile-compare-page') ||
+        content.includes('mobile-content-area') ||
+        content.includes('pc-content-inner') ||
+        content.includes('mobile-content-inner') ||
+        content.includes('frame-column') ||
+        (state.projectMetadata && state.projectMetadata.screens && (
+            state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_responsive_mobile_compare.html'
+        ))
+    );
     if (isResponsive && window.responsiveFrameStyles) {
         const scopedBlock = '<style id="v4-responsive-frame-style">\n' + window.responsiveFrameStyles + '\n</style>';
         finalContent = finalContent.replace(/<style id="v4-responsive-frame-style">[\s\S]*?<\/style>/gi, '');
@@ -160,12 +182,20 @@ window.loadScreen = async function (fileName) {
         (state.projectMetadata && state.projectMetadata.screens && (
             state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
             state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html'
+            state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_responsive_mobile_compare.html'
         )) || 
         content.includes('pc-browser-frame') || 
         content.includes('class="pc-frame"') || 
-        content.includes('class="mobile-frame"') ||
-        (fileName && fileName.toLowerCase().includes('responsive'))
+        content.includes('mobile-compare-page') ||
+        content.includes('frame-column') ||
+        content.includes('pc-content-inner') ||
+        content.includes('mobile-content-inner') ||
+        (fileName && (
+            fileName.toLowerCase().includes('responsive') ||
+            fileName.toLowerCase().includes('mobile_compare') ||
+            fileName.toLowerCase().includes('admin_pc')
+        ))
     );
 
     state.isCurrentResponsiveScreen = isResponsiveScreen;
@@ -359,7 +389,7 @@ window.handleTextCreation = function () {
         state.activeFile.meta.description = [];
     }
 
-    const isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html'));
+    const isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));
     const newIdx = state.activeFile.meta.description.length;
 
     if (isResponsive) {
@@ -797,7 +827,7 @@ window.MessageHub = {
             } else if (data.type === 'LF_TABLE_SIZE_CHANGED') {
                 markAsDirty();
             } else if (data.type === 'LF_COMP_SELECTED') {
-                const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html'));
+                const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));
                 if (window.SmartGuide) {
                     if (isResponsive) {
                         window.SmartGuide.clearGuides(true);
@@ -989,6 +1019,12 @@ window.MessageHub = {
                             try { window.updateProperties(data.firstCompStyles || {}); } catch (e) { }
                         }
                     }
+
+                    // Self-healing safety: ensure pointer interaction is fully unlocked on parent canvas
+                    if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
+                    if (DOM && DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
+                    if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
+                    if (window.state) window.state.isHandMode = false;
                 } catch (pasteErr) {
                     console.error("[Core] Error in LF_PASTE_COMPLETED handler:", pasteErr);
                 }

@@ -424,4 +424,85 @@ body.hide-frame-grid .mobile-content-inner,
     box-sizing: border-box !important;
     z-index: 500;
 }
+
+/* --- Dual Mobile Compare Screen Layout (.mobile-compare-page) --- */
+.page.mobile-compare-page {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 48px !important;
+    padding: 0 40px !important;
+    box-sizing: border-box !important;
+}
+
+.mobile-compare-page .frame-column.mobile-column {
+    width: 382px !important;
+    flex-shrink: 0 !important;
+}
+
+.flow-arrow-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 80px;
+    flex-shrink: 0;
+    user-select: none;
+    z-index: 10;
+}
+
+.flow-arrow-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1.6px solid var(--v4-accent, #00e5ff);
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--v4-accent, #00e5ff);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flow-arrow-badge:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.6), 0 6px 16px rgba(0, 0, 0, 0.4);
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.flow-arrow-badge .flow-arrow-icon {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
+
+.flow-arrow-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--v4-accent, #00e5ff);
+    text-transform: uppercase;
+    background: rgba(0, 229, 255, 0.1);
+    padding: 3px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 229, 255, 0.25);
+}
+
+/* --- Base Canvas Guide Layer & Components --- */
+svg.canvas-guide-layer {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 300000;
+    overflow: visible;
+}
+
+.page > .lf-component {
+    z-index: 500;
+}
 `;

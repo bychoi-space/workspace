@@ -67,50 +67,107 @@ window.v4ResponsiveSmartGuideScript = `
             }
             if (!el) return null;
 
-            const pcInner = document.querySelector('.pc-content-inner');
-            const mobileInner = document.querySelector('.mobile-content-inner');
-            const pcArea = document.querySelector('.pc-content-area, .pc-content');
-            const mobileArea = document.querySelector('.mobile-content-area, .mobile-content');
-
-            if (pcInner && (pcInner.contains(el) || el.closest('.pc-column') || el.closest('.pc-browser-frame') || el.closest('.pc-content-area'))) {
-                return {
-                    type: 'pc',
-                    inner: pcInner,
-                    area: pcArea,
-                    guideLayer: this.ensureGuideLayer(pcInner, 'pc-guide-layer')
-                };
-            }
-            if (mobileInner && (mobileInner.contains(el) || el.closest('.mobile-column') || el.closest('.mobile-browser-frame') || el.closest('.mobile-content-area') || el.closest('.mobile-content'))) {
-                return {
-                    type: 'mobile',
-                    inner: mobileInner,
-                    area: mobileArea,
-                    guideLayer: this.ensureGuideLayer(mobileInner, 'mobile-guide-layer')
-                };
-            }
-
-            if (pcArea && mobileArea) {
-                const compRect = el.getBoundingClientRect();
-                const compCenter = compRect.left + compRect.width / 2;
-                const mobileRect = mobileArea.getBoundingClientRect();
-                if (compCenter >= mobileRect.left) {
+            // 1. Check if el is inside a specific frame column (Responsive Dual Mobile, Responsive PC+Mobile, etc.)
+            const frameCol = el.closest('.frame-column, .pc-column, .mobile-column, .pc-browser-frame, .mobile-browser-frame');
+            if (frameCol) {
+                const isPc = frameCol.classList.contains('pc-column') || frameCol.classList.contains('pc-browser-frame') || !!frameCol.querySelector('.pc-content-inner');
+                const colInner = frameCol.querySelector(isPc ? '.pc-content-inner' : '.mobile-content-inner');
+                const colArea = frameCol.querySelector(isPc ? '.pc-content-area, .pc-content' : '.mobile-content-area, .mobile-content');
+                const guideClass = isPc ? 'pc-guide-layer' : 'mobile-guide-layer';
+                if (colInner) {
                     return {
-                        type: 'mobile',
-                        inner: mobileInner || mobileArea,
-                        area: mobileArea,
-                        guideLayer: this.ensureGuideLayer(mobileInner || mobileArea, 'mobile-guide-layer')
-                    };
-                } else {
-                    return {
-                        type: 'pc',
-                        inner: pcInner || pcArea,
-                        area: pcArea,
-                        guideLayer: this.ensureGuideLayer(pcInner || pcArea, 'pc-guide-layer')
+                        type: isPc ? 'pc' : 'mobile',
+                        inner: colInner,
+                        area: colArea || colInner,
+                        column: frameCol,
+                        guideLayer: this.ensureGuideLayer(colInner, guideClass)
                     };
                 }
             }
 
-            // Universal Canvas Context (Standard 1600x900 non-responsive, plan, flowchart screens)
+            // 2. Direct containment check in responsive inner containers
+            const allPcInners = document.querySelectorAll('.pc-content-inner');
+            for (let i = 0; i < allPcInners.length; i++) {
+                if (allPcInners[i].contains(el)) {
+                    return {
+                        type: 'pc',
+                        inner: allPcInners[i],
+                        area: allPcInners[i].closest('.pc-content-area, .pc-content') || allPcInners[i],
+                        guideLayer: this.ensureGuideLayer(allPcInners[i], 'pc-guide-layer')
+                    };
+                }
+            }
+            const allMobileInners = document.querySelectorAll('.mobile-content-inner');
+            for (let i = 0; i < allMobileInners.length; i++) {
+                if (allMobileInners[i].contains(el)) {
+                    return {
+                        type: 'mobile',
+                        inner: allMobileInners[i],
+                        area: allMobileInners[i].closest('.mobile-content-area, .mobile-content') || allMobileInners[i],
+                        guideLayer: this.ensureGuideLayer(allMobileInners[i], 'mobile-guide-layer')
+                    };
+                }
+            }
+
+            // 3. Static multi-screen mobile frames (non-responsive templates e.g. 1~3 mobile screen template)
+            const isResponsiveTemplate = !!document.querySelector('.responsive-compare-container, .frame-column, .dual-mobile-container, .pc-mobile-grid');
+            if (!isResponsiveTemplate) {
+                const mobileFrames = document.querySelectorAll('.mobile-frame');
+                if (mobileFrames && mobileFrames.length > 0) {
+                    let targetFrame = null;
+                    let targetContent = null;
+                    let frameIdx = 0;
+
+                    for (let i = 0; i < mobileFrames.length; i++) {
+                        const mf = mobileFrames[i];
+                        if (mf.contains(el)) {
+                            targetFrame = mf;
+                            targetContent = mf.querySelector('.mobile-content') || mf;
+                            frameIdx = i;
+                            break;
+                        }
+                    }
+
+                    if (!targetFrame) {
+                        const compRect = el.getBoundingClientRect();
+                        const compCenterX = compRect.left + compRect.width / 2;
+                        for (let i = 0; i < mobileFrames.length; i++) {
+                            const mf = mobileFrames[i];
+                            const fRect = mf.getBoundingClientRect();
+                            if (compCenterX >= fRect.left - 20 && compCenterX <= fRect.right + 20) {
+                                targetFrame = mf;
+                                targetContent = mf.querySelector('.mobile-content') || mf;
+                                frameIdx = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (targetFrame && targetContent) {
+                        const canvasContainer = document.querySelector('.page, .canvas, .artboard') || document.body;
+                        const mPos = this.getPureOffset(targetContent, canvasContainer);
+                        return {
+                            type: 'mobile-frame',
+                            inner: canvasContainer,
+                            area: canvasContainer,
+                            frame: targetFrame,
+                            content: targetContent,
+                            frameIndex: frameIdx,
+                            frameBounds: {
+                                left: mPos.left,
+                                top: mPos.top,
+                                width: mPos.width || 360,
+                                height: mPos.height || 810,
+                                right: mPos.left + (mPos.width || 360),
+                                bottom: mPos.top + (mPos.height || 810)
+                            },
+                            guideLayer: this.ensureGuideLayer(canvasContainer, 'canvas-guide-layer')
+                        };
+                    }
+                }
+            }
+
+            // 4. Canvas Base Context (Base background of 1600x900 canvas, outside responsive columns, or non-responsive canvas)
             const canvasContainer = document.querySelector('.page, .canvas, .artboard') || document.body;
             if (canvasContainer) {
                 return {
@@ -166,9 +223,9 @@ window.v4ResponsiveSmartGuideScript = `
             // Scope query to the active frame/column or root body so that all elements in the column are included
             let rootScope = document.body;
             if (context.type === 'pc') {
-                rootScope = context.inner.closest('.pc-column, .pc-browser-frame') || context.area || context.inner.parentElement || document.body;
+                rootScope = context.column || context.inner.closest('.pc-column, .pc-browser-frame') || context.area || context.inner.parentElement || document.body;
             } else if (context.type === 'mobile') {
-                rootScope = context.inner.closest('.mobile-column, .mobile-browser-frame') || context.area || context.inner.parentElement || document.body;
+                rootScope = context.column || context.inner.closest('.mobile-column, .mobile-browser-frame') || context.area || context.inner.parentElement || document.body;
             } else {
                 rootScope = context.inner || document.body;
             }
@@ -176,6 +233,8 @@ window.v4ResponsiveSmartGuideScript = `
 
             components.forEach((c, idx) => {
                 if (c === activeEl || c.classList.contains('dragging-now')) return;
+                // Exclude components inside frame columns when calculating on canvas base
+                if (context.type === 'canvas' && c.closest('.frame-column, .pc-browser-frame, .mobile-browser-frame')) return;
                 // Allow container ancestors to be included as container candidates (excluded from sibling raycast)
                 const isAncestor = activeEl && c.contains(activeEl);
                 if (activeEl && activeEl.contains(c)) return;
@@ -190,6 +249,13 @@ window.v4ResponsiveSmartGuideScript = `
                 const name = c.id ? c.id.replace('v4-comp-', 'Comp ') : (isGridCell ? ((c.tagName.toLowerCase() === 'th' ? 'Col ' : 'Cell ') + (idx + 1)) : ('Item ' + (idx + 1)));
 
                 const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table') || c.classList.contains('v4-grid-container') || !!c.querySelector('.v4-grid-container');
+
+                if (context.type === 'mobile-frame' && context.frameBounds) {
+                    const cCenterX = l + w / 2;
+                    if (cCenterX < context.frameBounds.left - 40 || cCenterX > context.frameBounds.right + 40) {
+                        return;
+                    }
+                }
 
                 this.spacingTargets.push({
                     id: c.id || ('comp-' + idx),
@@ -211,6 +277,7 @@ window.v4ResponsiveSmartGuideScript = `
             const rows = rootScope.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr');
             rows.forEach((row, rIdx) => {
                 if (row === activeEl) return;
+                if (context.type === 'canvas' && row.closest('.frame-column, .pc-browser-frame, .mobile-browser-frame')) return;
                 const pos = this.getPureOffset(row, context.inner);
                 const l = pos.left;
                 const t = pos.top;
@@ -221,6 +288,13 @@ window.v4ResponsiveSmartGuideScript = `
                 const parentComp = row.closest('.lf-component');
                 const tableId = parentComp ? parentComp.id : ('table-' + rIdx);
                 const isAncestor = activeEl ? row.contains(activeEl) : false;
+
+                if (context.type === 'mobile-frame' && context.frameBounds) {
+                    const rCenterX = l + w / 2;
+                    if (rCenterX < context.frameBounds.left - 40 || rCenterX > context.frameBounds.right + 40) {
+                        return;
+                    }
+                }
 
                 this.spacingTargets.push({
                     id: row.id || ('v4-row-' + rIdx),
@@ -237,6 +311,34 @@ window.v4ResponsiveSmartGuideScript = `
                     isAncestor: isAncestor
                 });
             });
+
+            // When in canvas base context, register outer frame boundaries and flow divider
+            if (context.type === 'canvas') {
+                const boundaryCols = document.querySelectorAll('.frame-column, .flow-arrow-divider, .compare-header');
+                boundaryCols.forEach((col, cIdx) => {
+                    const pos = this.getPureOffset(col, context.inner);
+                    const l = pos.left;
+                    const t = pos.top;
+                    const w = pos.width || col.offsetWidth || 0;
+                    const h = pos.height || col.offsetHeight || 0;
+                    if (w > 10 && h > 10) {
+                        const label = col.classList.contains('flow-arrow-divider') ? 'Flow Arrow' : (col.getAttribute('data-frame-id') ? ('Frame ' + col.getAttribute('data-frame-id').toUpperCase()) : ('Frame ' + (cIdx + 1)));
+                        this.spacingTargets.push({
+                            id: col.id || ('base-target-' + cIdx),
+                            label: label,
+                            left: l,
+                            top: t,
+                            width: w,
+                            height: h,
+                            right: l + w,
+                            bottom: t + h,
+                            isWall: false,
+                            isAncestor: false,
+                            isFrameBoundary: true
+                        });
+                    }
+                });
+            }
         },
 
         calculateSpacing: function(x, y, w, h, activeId) {
@@ -302,17 +404,32 @@ window.v4ResponsiveSmartGuideScript = `
 
             // Fallback to frame if no component container found
             if (!container) {
-                container = {
-                    id: (this.activeContext ? this.activeContext.type : 'frame') + '-bounds',
-                    label: 'Frame',
-                    left: 0,
-                    top: 0,
-                    right: containerWidth,
-                    bottom: containerHeight,
-                    width: containerWidth,
-                    height: containerHeight,
-                    isFrame: true
-                };
+                if (this.activeContext && this.activeContext.type === 'mobile-frame' && this.activeContext.frameBounds) {
+                    const fb = this.activeContext.frameBounds;
+                    container = {
+                        id: 'mobile-frame-' + (this.activeContext.frameIndex || 0) + '-bounds',
+                        label: 'Mobile Frame',
+                        left: fb.left,
+                        top: fb.top,
+                        right: fb.right,
+                        bottom: fb.bottom,
+                        width: fb.width,
+                        height: fb.height,
+                        isFrame: true
+                    };
+                } else {
+                    container = {
+                        id: (this.activeContext ? this.activeContext.type : 'frame') + '-bounds',
+                        label: 'Frame',
+                        left: 0,
+                        top: 0,
+                        right: containerWidth,
+                        bottom: containerHeight,
+                        width: containerWidth,
+                        height: containerHeight,
+                        isFrame: true
+                    };
+                }
             }
 
             // 2. Base Distances: Inner Padding to Container 4 Walls
@@ -435,11 +552,39 @@ window.v4ResponsiveSmartGuideScript = `
 
             const spacing = this.calculateSpacing(x, y, w, h, activeId);
 
+            let snapX = x;
+            let snapY = y;
+            let snapXData = null;
+            let snapYData = null;
+
+            if (!isArrowKey && this.activeContext) {
+                if (this.activeContext.type === 'mobile-frame' && this.activeContext.frameBounds) {
+                    const fb = this.activeContext.frameBounds;
+                    const idealCenterX = Math.round(fb.left + (fb.width - w) / 2);
+                    if (Math.abs(x - idealCenterX) <= 5) {
+                        snapX = idealCenterX;
+                        snapXData = { snapped: true, x: idealCenterX };
+                    }
+                } else if (this.activeContext.type === 'canvas') {
+                    // Center snapping on Canvas Base (Horizontal center 800, Vertical center 450)
+                    const idealCenterX = Math.round((1600 - w) / 2);
+                    const idealCenterY = Math.round((900 - h) / 2);
+                    if (Math.abs(x - idealCenterX) <= 6) {
+                        snapX = idealCenterX;
+                        snapXData = { snapped: true, x: idealCenterX };
+                    }
+                    if (Math.abs(y - idealCenterY) <= 6) {
+                        snapY = idealCenterY;
+                        snapYData = { snapped: true, y: idealCenterY };
+                    }
+                }
+            }
+
             return {
-                x: x,
-                y: y,
-                snapXData: null,
-                snapYData: null,
+                x: snapX,
+                y: snapY,
+                snapXData: snapXData,
+                snapYData: snapYData,
                 spacing: spacing
             };
         },
@@ -447,12 +592,25 @@ window.v4ResponsiveSmartGuideScript = `
         drawGuides: function(context, snapData) {
             if (!context || !context.guideLayer) return;
 
-            const otherType = context.type === 'pc' ? 'mobile' : 'pc';
-            const otherSvg = document.querySelector('.' + otherType + '-guide-layer');
-            if (otherSvg) otherSvg.innerHTML = '';
+            // Clear all other guide layers to prevent residual artifact lines
+            document.querySelectorAll('.v4-responsive-guide-layer').forEach(function(layer) {
+                if (layer !== context.guideLayer) {
+                    layer.innerHTML = '';
+                }
+            });
 
             const svg = context.guideLayer;
             const htmlList = [];
+
+            // Draw center alignment guide lines if snapped to canvas center
+            if (snapData && snapData.snapXData && snapData.snapXData.snapped && context.type === 'canvas') {
+                const cx = snapData.snapXData.x + (snapData.spacing ? snapData.spacing.active.width / 2 : 0);
+                htmlList.push('<line x1="' + cx + '" y1="0" x2="' + cx + '" y2="900" stroke="#3b82f6" stroke-width="1.2" stroke-dasharray="4,3" />');
+            }
+            if (snapData && snapData.snapYData && snapData.snapYData.snapped && context.type === 'canvas') {
+                const cy = snapData.snapYData.y + (snapData.spacing ? snapData.spacing.active.height / 2 : 0);
+                htmlList.push('<line x1="0" y1="' + cy + '" x2="1600" y2="' + cy + '" stroke="#3b82f6" stroke-width="1.2" stroke-dasharray="4,3" />');
+            }
 
             if (snapData && snapData.spacing) {
                 this.drawSpacingGuides(snapData.spacing, htmlList, '#ec4899');

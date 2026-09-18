@@ -1,13 +1,5 @@
 [
   {
-    "date": "2026-09-17 16:50:00",
-    "file": "11_Daily_Ranking_Batch_Percentile_851.html",
-    "version": 0.4,
-    "assignee": "최범열",
-    "developer": "원미란",
-    "message": "패션 시즌 특화 6대 지표 수집 기준 간결화 및 10개 상품 시뮬레이션 매트릭스 표 구성"
-  },
-  {
     "version": "0.4",
     "date": "2026-09-17 15:33:57",
     "message": "ADMIN 설계 수정 - [상품 영역] 설정 케이스 상세 정의",

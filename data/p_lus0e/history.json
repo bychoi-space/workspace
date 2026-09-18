@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.5",
+    "date": "2026-09-18 09:42:24",
+    "message": "FRONT 설계 수정 - 쿠폰 Maximum / Minimum 케이스 추가",
+    "assignee": "최범열",
+    "developer": "원미란",
+    "file": "06_Mobile_Design_2_722.html"
+  },
+  {
     "version": "0.4",
     "date": "2026-09-17 15:33:57",
     "message": "ADMIN 설계 수정 - [상품 영역] 설정 케이스 상세 정의",

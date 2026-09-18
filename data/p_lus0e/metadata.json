@@ -503,9 +503,26 @@
     "06_Mobile_Design_2_722.html": {
       "title": "06_Mobile_Design_2_722",
       "type": "mobile-ui",
-      "updatedAt": "2026-09-18T00:15:19.919Z",
+      "updatedAt": "2026-09-18T00:21:46.598Z",
       "template": "template_mobile_ui_2.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "text": "쿠폰 최대 개수 (Max 5) 설정 예시\n- 2개 이상의 쿠폰이 설정 된 경우에만 [쿠폰 한번에 받기] 버튼 표현\n- 유의사항 Textarea 에 등록된 값이 있을 경우 영역 표현",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 377.222,
+          "y": 203.889,
+          "standardized": true
+        },
+        {
+          "type": "pin",
+          "text": "쿠폰 최소 개수 (Min 1) 설정 예시\n- 1개의 쿠폰이 설정 된 경우에는 [쿠폰 한번에 받기] 버튼 미노출",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 1200.55,
+          "y": 207.333,
+          "standardized": true
+        }
+      ],
       "connectors": [],
       "version": 0.6
     }
@@ -514,7 +531,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-18 09:15:19",
+  "updated": "2026-09-18 09:21:46",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

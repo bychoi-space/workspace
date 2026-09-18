@@ -196,7 +196,7 @@
     "11_Daily_Ranking_Batch_Percentile_851.html": {
       "title": "상품 랭킹 기준 & 10개 상품 시뮬레이션",
       "type": "plan",
-      "updatedAt": "2026-09-18T01:25:53.768Z",
+      "updatedAt": "2026-09-18T01:26:44.353Z",
       "template": "template_project_summary.html",
       "version": 0.6,
       "description": [],
@@ -531,7 +531,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-18 10:25:53",
+  "updated": "2026-09-18 10:26:44",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

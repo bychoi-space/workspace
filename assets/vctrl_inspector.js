@@ -52,6 +52,9 @@ window.rebindInspectorDOM = function() {
 };
 
 window.restorePropertiesSections = function(force) {
+    if (typeof window.closeV4ColorPalette === 'function') {
+        window.closeV4ColorPalette();
+    }
     const storage = document.getElementById('inspector-panels-storage');
     if (!storage) return;
 
@@ -1487,6 +1490,9 @@ if (btnSidebarPopout) {
 
 // Central Single Source of Truth for Deselection (Object & Inspector)
 window.deselectAll = function() {
+    if (typeof window.closeV4ColorPalette === 'function') {
+        window.closeV4ColorPalette();
+    }
     // 1. Restore dynamically mounted properties sections to storage container
     if (typeof window.restorePropertiesSections === 'function') {
         window.restorePropertiesSections();

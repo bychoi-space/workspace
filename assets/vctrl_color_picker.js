@@ -32,6 +32,20 @@ window.V4_COMMON_COLOR_PALETTE = [
     '#581c87', '#7e22ce', '#a855f7', '#c084fc', '#d8b4fe', '#e9d5ff', '#faf5ff'
 ];
 
+    function normalizeHex(input) {
+        if (!input || typeof input !== 'string') return null;
+        let hex = input.trim().replace(/^#/, '');
+        // 3-digit shorthand (#abc -> #aabbcc)
+        if (/^[0-9a-fA-F]{3}$/.test(hex)) {
+            hex = hex.split('').map(c => c + c).join('');
+        }
+        // 6-digit hex validation
+        if (/^[0-9a-fA-F]{6}$/.test(hex)) {
+            return '#' + hex.toLowerCase();
+        }
+        return null;
+    }
+
 window.initV4GlobalColorPalette = function() {
     if (window._v4ColorPaletteInitialized) return;
     window._v4ColorPaletteInitialized = true;
@@ -43,13 +57,23 @@ window.initV4GlobalColorPalette = function() {
         popover.innerHTML = `
             <div class="v4-palette-grid"></div>
             <div class="v4-palette-footer">
-                <div class="v4-palette-custom-action" title="원하는 색상 직접 선택" style="position: relative; overflow: hidden; cursor: pointer;">
-                    <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">palette</span>
-                    <span style="pointer-events: none;">직접 선택</span>
-                    <input type="color" class="v4-palette-native-input" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; margin: 0; z-index: 2;">
+                <div class="v4-palette-custom-action" title="Hexcode 직접 설정" style="cursor: pointer;">
+                    <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">tag</span>
+                    <span style="pointer-events: none;">직접 설정</span>
                 </div>
                 <button type="button" class="v4-palette-reset-btn" title="투명 / 색상 제거">
                     <span class="material-icons-outlined" style="font-size: 13px;">block</span>
+                </button>
+            </div>
+            <div class="v4-palette-hex-bar">
+                <div class="v4-hex-preview" style="background-color: #ffffff;" title="색상 미리보기"></div>
+                <span class="v4-hex-prefix">#</span>
+                <input type="text" class="v4-hex-input" maxlength="7" placeholder="HEXCODE" spellcheck="false" autocomplete="off">
+                <button type="button" class="v4-hex-btn v4-hex-btn-apply" title="적용">
+                    <span class="material-icons-outlined" style="font-size: 14px;">check</span>
+                </button>
+                <button type="button" class="v4-hex-btn v4-hex-btn-cancel" title="취소">
+                    <span class="material-icons-outlined" style="font-size: 14px;">close</span>
                 </button>
             </div>
         `;
@@ -60,12 +84,68 @@ window.initV4GlobalColorPalette = function() {
             <div class="v4-palette-item" data-color="${c}" style="background-color: ${c};" title="${c}"></div>
         `).join('');
 
-        const nativeInput = popover.querySelector('.v4-palette-native-input');
+        const footer = popover.querySelector('.v4-palette-footer');
         const customAction = popover.querySelector('.v4-palette-custom-action');
         const resetBtn = popover.querySelector('.v4-palette-reset-btn');
 
+        const hexBar = popover.querySelector('.v4-palette-hex-bar');
+        const hexPreview = popover.querySelector('.v4-hex-preview');
+        const hexInput = popover.querySelector('.v4-hex-input');
+        const hexApplyBtn = popover.querySelector('.v4-hex-btn-apply');
+        const hexCancelBtn = popover.querySelector('.v4-hex-btn-cancel');
+
         let currentActiveWrapper = null;
         let currentTargetInput = null;
+
+        function closeHexBar() {
+            if (hexBar) hexBar.classList.remove('active');
+            if (footer) footer.style.display = 'flex';
+            if (hexInput) hexInput.classList.remove('error');
+        }
+
+        function openHexBar() {
+            if (!hexBar || !footer) return;
+            footer.style.display = 'none';
+            hexBar.classList.add('active');
+
+            const curVal = (currentTargetInput && currentTargetInput.value ? currentTargetInput.value : '#ffffff').toLowerCase();
+            const cleanHex = curVal.replace(/^#/, '').toUpperCase();
+            if (hexInput) {
+                hexInput.value = cleanHex;
+                hexInput.classList.remove('error');
+            }
+            if (hexPreview) {
+                hexPreview.style.backgroundColor = (curVal.startsWith('#') && (curVal.length === 7 || curVal.length === 4)) ? curVal : '#ffffff';
+            }
+            setTimeout(() => {
+                if (hexInput) {
+                    hexInput.focus();
+                    hexInput.select();
+                }
+            }, 10);
+        }
+
+        function applyHexColor() {
+            if (!hexInput) return;
+            const norm = normalizeHex(hexInput.value);
+            if (!norm) {
+                hexInput.classList.add('error');
+                setTimeout(() => {
+                    if (hexInput) hexInput.classList.remove('error');
+                }, 500);
+                return;
+            }
+
+            if (currentTargetInput) {
+                currentTargetInput.value = norm;
+                currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            if (currentActiveWrapper) {
+                currentActiveWrapper.classList.remove('transparent-active');
+            }
+            window.closeV4ColorPalette();
+        }
 
         // Swatch click
         grid.addEventListener('click', (e) => {
@@ -79,20 +159,43 @@ window.initV4GlobalColorPalette = function() {
             window.closeV4ColorPalette();
         });
 
-        nativeInput.addEventListener('input', (e) => {
-            if (!currentTargetInput) return;
-            currentTargetInput.value = e.target.value;
-            currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-            if (currentActiveWrapper) currentActiveWrapper.classList.remove('transparent-active');
+        // Custom action -> Open Hex Bar
+        customAction.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openHexBar();
         });
 
-        nativeInput.addEventListener('change', (e) => {
-            if (!currentTargetInput) return;
-            currentTargetInput.value = e.target.value;
-            currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-            currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-            if (currentActiveWrapper) currentActiveWrapper.classList.remove('transparent-active');
-            window.closeV4ColorPalette();
+        // Hex Input real-time preview & keyboard event isolation
+        hexInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            const norm = normalizeHex(val);
+            if (norm && hexPreview) {
+                hexPreview.style.backgroundColor = norm;
+                hexInput.classList.remove('error');
+            }
+        });
+
+        hexInput.addEventListener('keydown', (e) => {
+            e.stopPropagation(); // Stop propagation to prevent global shortcuts (delete, fullscreen, nudge, etc.)
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyHexColor();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeHexBar();
+            }
+        });
+        hexInput.addEventListener('keyup', (e) => e.stopPropagation());
+        hexInput.addEventListener('keypress', (e) => e.stopPropagation());
+
+        hexApplyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            applyHexColor();
+        });
+
+        hexCancelBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeHexBar();
         });
 
         // Reset / Transparent
@@ -118,10 +221,9 @@ window.initV4GlobalColorPalette = function() {
             currentTargetInput = wrapperEl.querySelector('input[type="color"], .v4-color-input');
             if (!currentTargetInput) return;
 
+            closeHexBar();
+
             const curVal = (currentTargetInput.value || '#ffffff').toLowerCase();
-            if (nativeInput) {
-                nativeInput.value = (curVal.startsWith('#') && (curVal.length === 7 || curVal.length === 4)) ? curVal : '#ffffff';
-            }
             popover.querySelectorAll('.v4-palette-item').forEach(it => {
                 if (it.dataset.color.toLowerCase() === curVal) {
                     it.classList.add('selected');
@@ -152,10 +254,30 @@ window.initV4GlobalColorPalette = function() {
         };
 
         window.closeV4ColorPalette = function() {
+            closeHexBar();
             popover.classList.remove('active');
             currentActiveWrapper = null;
             currentTargetInput = null;
         };
+
+        // Auto-close on object deselection via MessageHub
+        if (window.MessageHub) {
+            window.MessageHub.subscribe('LF_DESELECT', () => {
+                window.closeV4ColorPalette();
+            });
+            window.MessageHub.subscribe('LF_COMP_DESELECTED', () => {
+                window.closeV4ColorPalette();
+            });
+        }
+
+        // Auto-close when clicking inside an iframe (parent window blurs and activeElement becomes IFRAME)
+        window.addEventListener('blur', () => {
+            if (popover && popover.classList.contains('active')) {
+                if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+                    window.closeV4ColorPalette();
+                }
+            }
+        });
 
         // Close on outside click
         document.addEventListener('mousedown', (e) => {
@@ -167,7 +289,11 @@ window.initV4GlobalColorPalette = function() {
         // Close on escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && popover.classList.contains('active')) {
-                window.closeV4ColorPalette();
+                if (hexBar && hexBar.classList.contains('active')) {
+                    closeHexBar();
+                } else {
+                    window.closeV4ColorPalette();
+                }
             }
         });
     }
@@ -193,34 +319,132 @@ window.initV4GlobalColorPalette = function() {
         const footer = document.createElement('div');
         footer.className = 'ql-custom-color-footer';
         footer.innerHTML = `
-            <div class="ql-custom-color-action" title="원하는 색상 직접 선택" style="position: relative; overflow: hidden; cursor: pointer;">
-                <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">palette</span>
-                <span style="pointer-events: none;">직접 선택</span>
-                <input type="color" class="ql-custom-color-input" value="${formatType === 'color' ? '#6366f1' : '#facc15'}" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; margin: 0; z-index: 2;">
+            <div class="ql-custom-color-action" title="Hexcode 직접 설정" style="cursor: pointer;">
+                <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">tag</span>
+                <span style="pointer-events: none;">직접 설정</span>
             </div>
             <button type="button" class="ql-custom-color-reset" title="색상 제거 / 기본값">
                 <span class="material-icons-outlined" style="font-size: 13px;">format_color_reset</span>
             </button>
         `;
 
-        const input = footer.querySelector('.ql-custom-color-input');
+        const hexBar = document.createElement('div');
+        hexBar.className = 'ql-custom-hex-bar';
+        hexBar.innerHTML = `
+            <div class="ql-hex-preview" style="background-color: ${formatType === 'color' ? '#6366f1' : '#facc15'};" title="색상 미리보기"></div>
+            <span class="ql-hex-prefix">#</span>
+            <input type="text" class="ql-hex-input" maxlength="7" placeholder="HEXCODE" spellcheck="false" autocomplete="off">
+            <button type="button" class="ql-hex-btn ql-hex-btn-apply" title="적용">
+                <span class="material-icons-outlined" style="font-size: 14px;">check</span>
+            </button>
+            <button type="button" class="ql-hex-btn ql-hex-btn-cancel" title="취소">
+                <span class="material-icons-outlined" style="font-size: 14px;">close</span>
+            </button>
+        `;
+
+        const customAction = footer.querySelector('.ql-custom-color-action');
         const resetBtn = footer.querySelector('.ql-custom-color-reset');
 
-        input.addEventListener('input', (e) => {
+        const hexPreview = hexBar.querySelector('.ql-hex-preview');
+        const hexInput = hexBar.querySelector('.ql-hex-input');
+        const hexApplyBtn = hexBar.querySelector('.ql-hex-btn-apply');
+        const hexCancelBtn = hexBar.querySelector('.ql-hex-btn-cancel');
+
+        function closeHexBar() {
+            hexBar.classList.remove('active');
+            footer.style.display = 'flex';
+            if (hexInput) hexInput.classList.remove('error');
+        }
+
+        function getCurrentQuillColor() {
             if (window.quillEditor) {
-                window.quillEditor.format(formatType, e.target.value);
+                const format = window.quillEditor.getFormat();
+                if (format && format[formatType]) {
+                    return format[formatType];
+                }
+            }
+            if (window._currentStickyFormat && window._currentStickyFormat[formatType]) {
+                return window._currentStickyFormat[formatType];
+            }
+            return formatType === 'color' ? '#6366f1' : '#facc15';
+        }
+
+        function openHexBar() {
+            footer.style.display = 'none';
+            hexBar.classList.add('active');
+
+            const curVal = getCurrentQuillColor();
+            const cleanHex = curVal.replace(/^#/, '').toUpperCase();
+            if (hexInput) {
+                hexInput.value = cleanHex;
+                hexInput.classList.remove('error');
+            }
+            if (hexPreview) {
+                hexPreview.style.backgroundColor = curVal.startsWith('#') ? curVal : (typeof window.rgbToHex === 'function' ? window.rgbToHex(curVal) : curVal);
+            }
+            setTimeout(() => {
+                if (hexInput) {
+                    hexInput.focus();
+                    hexInput.select();
+                }
+            }, 10);
+        }
+
+        function applyHexColor() {
+            if (!hexInput) return;
+            const norm = normalizeHex(hexInput.value);
+            if (!norm) {
+                hexInput.classList.add('error');
+                setTimeout(() => {
+                    if (hexInput) hexInput.classList.remove('error');
+                }, 500);
+                return;
+            }
+
+            if (window.quillEditor) {
+                window.quillEditor.format(formatType, norm);
                 if (!window._currentStickyFormat) window._currentStickyFormat = {};
-                window._currentStickyFormat[formatType] = e.target.value;
+                window._currentStickyFormat[formatType] = norm;
+            }
+            closeHexBar();
+            pickerEl.classList.remove('ql-expanded');
+        }
+
+        customAction.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openHexBar();
+        });
+
+        hexInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            const norm = normalizeHex(val);
+            if (norm && hexPreview) {
+                hexPreview.style.backgroundColor = norm;
+                hexInput.classList.remove('error');
             }
         });
 
-        input.addEventListener('change', (e) => {
-            if (window.quillEditor) {
-                window.quillEditor.format(formatType, e.target.value);
-                if (!window._currentStickyFormat) window._currentStickyFormat = {};
-                window._currentStickyFormat[formatType] = e.target.value;
+        hexInput.addEventListener('keydown', (e) => {
+            e.stopPropagation();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyHexColor();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeHexBar();
             }
-            pickerEl.classList.remove('ql-expanded');
+        });
+        hexInput.addEventListener('keyup', (e) => e.stopPropagation());
+        hexInput.addEventListener('keypress', (e) => e.stopPropagation());
+
+        hexApplyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            applyHexColor();
+        });
+
+        hexCancelBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeHexBar();
         });
 
         resetBtn.addEventListener('click', (e) => {
@@ -231,10 +455,22 @@ window.initV4GlobalColorPalette = function() {
                     delete window._currentStickyFormat[formatType];
                 }
             }
+            closeHexBar();
             pickerEl.classList.remove('ql-expanded');
         });
 
+        // Close hex bar when picker collapses
+        const pickerLabel = pickerEl.querySelector('.ql-picker-label');
+        if (pickerLabel) {
+            pickerLabel.addEventListener('click', () => {
+                if (!pickerEl.classList.contains('ql-expanded')) {
+                    closeHexBar();
+                }
+            });
+        }
+
         optionsEl.appendChild(footer);
+        optionsEl.appendChild(hexBar);
     }
 
     window.setupCustomColorPicker = setupCustomColorPicker;

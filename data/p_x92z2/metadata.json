@@ -4,16 +4,19 @@
     "01_Naver_Sublinks_Optimization_901.html": {
       "title": "서브링크 최적화 방안",
       "type": "ui",
-      "updatedAt": "2026-09-18T02:30:00.000Z",
+      "updatedAt": "2026-09-18T03:21:48.104Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
-      "screenDesc": "네이버 검색결과 인라인 서브링크(Sitelinks) 3대 대표 브랜드 EBM 노출 최적화 방안"
+      "screenDesc": "네이버 검색결과 인라인 서브링크(Sitelinks) 3대 대표 브랜드 EBM 노출 최적화 방안",
+      "version": 0.1
     }
   },
   "developer": "AI Assistant",
   "figmaUrl": "",
   "notionUrl": "",
-  "themeIndex": 0
+  "themeIndex": 0,
+  "updated": "2026-09-18 12:21:47",
+  "version": 0.1
 }

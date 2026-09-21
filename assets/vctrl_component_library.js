@@ -746,9 +746,9 @@ window.V4_COMPONENT_LIBRARY = {
             category: 'Illustration',
             width: '240px',
             height: '240px',
-            thumb: 'assets/illustrations/admin_ill_pim.jpg',
-            previewHtml: `<img src="assets/illustrations/admin_ill_pim.jpg" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_pim.jpg" alt="상품관리 시스템 개선 (LLM 상세 보강 &amp; TPO 키워드 &amp; 체형 사이즈 제안)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+            thumb: 'assets/illustrations/admin_ill_pim.png',
+            previewHtml: `<img src="assets/illustrations/admin_ill_pim.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_pim.png" alt="상품관리 시스템 개선 (LLM 상세 보강 &amp; TPO 키워드 &amp; 체형 사이즈 제안)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         },
         {
             id: 'v4-ill-admin-cms',
@@ -757,9 +757,9 @@ window.V4_COMPONENT_LIBRARY = {
             category: 'Illustration',
             width: '240px',
             height: '240px',
-            thumb: 'assets/illustrations/admin_ill_cms.jpg',
-            previewHtml: `<img src="assets/illustrations/admin_ill_cms.jpg" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_cms.jpg" alt="전시관리 시스템 개선 (통합 카테고리 &amp; Front 전 영역 카드화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+            thumb: 'assets/illustrations/admin_ill_cms.png',
+            previewHtml: `<img src="assets/illustrations/admin_ill_cms.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_cms.png" alt="전시관리 시스템 개선 (통합 카테고리 &amp; Front 전 영역 카드화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         },
         {
             id: 'v4-ill-admin-logistics',
@@ -768,9 +768,9 @@ window.V4_COMPONENT_LIBRARY = {
             category: 'Illustration',
             width: '240px',
             height: '240px',
-            thumb: 'assets/illustrations/admin_ill_logistics.jpg',
-            previewHtml: `<img src="assets/illustrations/admin_ill_logistics.jpg" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_logistics.jpg" alt="배송관리 시스템 개선 (재고 연동 &amp; 배송예정일 자동화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+            thumb: 'assets/illustrations/admin_ill_logistics.png',
+            previewHtml: `<img src="assets/illustrations/admin_ill_logistics.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_logistics.png" alt="배송관리 시스템 개선 (재고 연동 &amp; 배송예정일 자동화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
     ]
 };

@@ -185,9 +185,9 @@
     "10_Product_Ranking_Rules_850.html": {
       "title": "상품 랭킹 산정 룰",
       "type": "plan",
-      "updatedAt": "2026-09-17T06:46:01.173Z",
+      "updatedAt": "2026-09-21T09:24:25.799Z",
       "template": "template_project_summary.html",
-      "version": 0.4,
+      "version": 0.6,
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
@@ -196,7 +196,7 @@
     "11_Daily_Ranking_Batch_Percentile_851.html": {
       "title": "상품 랭킹 기준 & 10개 상품 시뮬레이션",
       "type": "plan",
-      "updatedAt": "2026-09-21T09:21:48.524Z",
+      "updatedAt": "2026-09-18T01:26:44.353Z",
       "template": "template_project_summary.html",
       "version": 0.6,
       "description": [],
@@ -550,7 +550,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-21 18:21:48",
+  "updated": "2026-09-21 18:24:25",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

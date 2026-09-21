@@ -555,6 +555,24 @@ window.V4_COMPONENT_LIBRARY = {
             </nav>`
         }
     ],
+    canvasBackgrounds: [
+        {
+            id: 'bg-ecommerce-ui',
+            name: '이커머스 FRONT UI 개선',
+            desc: '저채도 모노크롬, 상품/장바구니 와이어프레임 & 그리드 모티프',
+            url: 'assets/illustrations/ecommerce_ui_bg.jpg',
+            thumb: 'assets/illustrations/ecommerce_ui_bg.jpg',
+            defaultOpacity: 1.0
+        },
+        {
+            id: 'bg-admin-backend',
+            name: '백엔드 / ADMIN 시스템 고도화',
+            desc: '저채도 모노크롬, 어드민 대시보드 & 서버 API 아키텍처 모티프',
+            url: 'assets/illustrations/admin_backend_bg.jpg',
+            thumb: 'assets/illustrations/admin_backend_bg.jpg',
+            defaultOpacity: 1.0
+        }
+    ],
     illustrations: [
         {
             id: 'v4-ill-enter',

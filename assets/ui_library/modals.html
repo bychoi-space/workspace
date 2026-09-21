@@ -218,4 +218,70 @@
                 </div>
             </div>
         </div>
+
+        <!-- Canvas Background Modal -->
+        <div id="canvas-bg-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-card modal-card-canvas-bg">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <span class="material-icons-outlined modal-header-icon">wallpaper</span>
+                        <h3 class="modal-title">스크린 배경 설정 (Canvas Background)</h3>
+                    </div>
+                    <button type="button" class="modal-close-btn" id="btn-canvas-bg-close" title="닫기">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Current Status Section -->
+                    <div class="bg-section-header">
+                        <span class="bg-section-title">현재 적용된 배경</span>
+                        <span class="bg-status-badge" id="canvas-bg-modal-status-badge">단색 배경 (#f8fafc)</span>
+                    </div>
+                    <div class="bg-current-preview-box" id="canvas-bg-current-preview">
+                        <div class="bg-preview-empty" id="canvas-bg-preview-empty">
+                            <span class="material-icons-outlined">check_box_outline_blank</span>
+                            <span>설정된 배경 이미지가 없습니다.</span>
+                        </div>
+                        <img id="canvas-bg-preview-img" src="" alt="현재 배경" style="display: none;">
+                    </div>
+
+                    <!-- Presets Section -->
+                    <div class="bg-section-header">
+                        <span class="bg-section-title">추천 프리셋 (Preset Gallery)</span>
+                    </div>
+                    <div class="bg-presets-grid" id="canvas-bg-presets-container">
+                        <!-- Dynamic preset cards -->
+                    </div>
+
+                    <!-- Custom Upload Section -->
+                    <div class="bg-section-header">
+                        <span class="bg-section-title">내 PC 이미지 업로드 (Custom Upload)</span>
+                    </div>
+                    <div class="bg-upload-box" id="canvas-bg-upload-box" onclick="document.getElementById('canvas-bg-file-input').click()">
+                        <span class="material-icons-outlined bg-upload-icon">cloud_upload</span>
+                        <div class="bg-upload-text">클릭하여 이미지 파일 선택 (JPG, PNG, WebP, SVG)</div>
+                        <div class="bg-upload-sub">1920px 규격으로 자동 최적화 압축되어 가볍고 선명하게 적용됩니다.</div>
+                        <input type="file" id="canvas-bg-file-input" accept="image/*" style="display: none;">
+                    </div>
+
+                    <!-- Controls: Opacity -->
+                    <div class="bg-controls-grid">
+                        <div class="bg-control-item">
+                            <div class="bg-control-label-row">
+                                <span class="bg-control-label">배경 투명도 (Opacity)</span>
+                                <span class="bg-control-value" id="canvas-bg-opacity-val">100%</span>
+                            </div>
+                            <input type="range" id="canvas-bg-opacity-slider" min="10" max="100" value="100" step="5" class="bg-range-slider">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer modal-footer-between">
+                    <button type="button" id="btn-canvas-bg-remove" class="btn-danger-outline" style="display: none;">
+                        <span class="material-icons-outlined">delete</span>
+                        배경 제거 (단색 복원)
+                    </button>
+                    <div class="modal-footer-right">
+                        <button type="button" id="btn-canvas-bg-cancel" class="btn-secondary">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     

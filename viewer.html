@@ -394,6 +394,23 @@
                     <div class="search-empty-desc">다른 검색어를 입력해 보세요.</div>
                 </div>
 
+                <!-- Part 0: CANVAS & BACKGROUND -->
+                <div id="v4-canvas-bg-header" class="panel-header header-canvas-bg">
+                    <span class="panel-header-title title-canvas-bg">CANVAS & BACKGROUND</span>
+                </div>
+                <div id="v4-canvas-bg-body" class="components-body canvas-bg-body">
+                    <button type="button" id="btn-open-canvas-bg" class="canvas-bg-entry-card" onclick="if(typeof window.openCanvasBackgroundModal==='function')window.openCanvasBackgroundModal();" title="스크린 배경 이미지 설정">
+                        <div class="canvas-bg-entry-icon-wrap">
+                            <span class="material-icons-outlined">wallpaper</span>
+                        </div>
+                        <div class="canvas-bg-entry-meta">
+                            <span class="canvas-bg-entry-title">배경 설정 (Background)</span>
+                            <span class="canvas-bg-entry-sub" id="canvas-bg-quick-status">단색 배경 (#f8fafc)</span>
+                        </div>
+                        <span class="material-icons-outlined canvas-bg-entry-arrow">chevron_right</span>
+                    </button>
+                </div>
+
                 <!-- Part 1: COMPONENTS -->
                 <div id="v4-shapes-header" class="panel-header header-shapes">
                     <span class="panel-header-title title-shapes">SHAPE</span>

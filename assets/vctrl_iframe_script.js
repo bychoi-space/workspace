@@ -2070,6 +2070,64 @@ window.v4Script = `
             } else {
                 notifyParent({ type: 'LF_SNAP_TARGETS_RESPONSE', targets: [], rects: [] });
             }
+        },
+
+        'LF_SET_CANVAS_BACKGROUND': function(d) {
+            if (window.V4UndoManager && typeof window.V4UndoManager.saveState === 'function') {
+                window.V4UndoManager.saveState();
+            }
+
+            var canvas = document.getElementById('canvas') || document.querySelector('.canvas') || document.body;
+            var existingLayer = document.getElementById('canvas_bg_layer');
+
+            if (d.action === 'remove') {
+                if (existingLayer) existingLayer.remove();
+                notifyParent({ type: 'LF_CANVAS_BACKGROUND_UPDATED', hasBg: false, url: '', opacity: 1.0 });
+                return;
+            }
+
+            if (d.action === 'update_opacity') {
+                if (existingLayer) {
+                    var curImg = existingLayer.querySelector('img');
+                    if (curImg) {
+                        curImg.style.opacity = d.opacity;
+                    }
+                }
+                return;
+            }
+
+            if (d.action === 'set' && d.imageUrl) {
+                var opVal = (d.opacity !== undefined) ? d.opacity : 1.0;
+                if (!existingLayer) {
+                    var layer = document.createElement('div');
+                    layer.id = 'canvas_bg_layer';
+                    layer.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none !important; user-select: none; overflow: hidden;';
+                    
+                    var img = document.createElement('img');
+                    img.id = 'canvas_bg_img';
+                    img.alt = 'Canvas Background';
+                    img.src = d.imageUrl;
+                    img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; pointer-events: none !important; user-select: none; display: block; opacity: ' + opVal + ';';
+                    layer.appendChild(img);
+
+                    if (canvas.firstChild) {
+                        canvas.insertBefore(layer, canvas.firstChild);
+                    } else {
+                        canvas.appendChild(layer);
+                    }
+                } else {
+                    var img = existingLayer.querySelector('img');
+                    if (!img) {
+                        img = document.createElement('img');
+                        img.id = 'canvas_bg_img';
+                        existingLayer.appendChild(img);
+                    }
+                    img.src = d.imageUrl;
+                    img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; pointer-events: none !important; user-select: none; display: block; opacity: ' + opVal + ';';
+                }
+
+                notifyParent({ type: 'LF_CANVAS_BACKGROUND_UPDATED', hasBg: true, url: d.imageUrl, opacity: opVal });
+            }
         }
     };
 

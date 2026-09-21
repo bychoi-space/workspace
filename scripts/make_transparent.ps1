@@ -4,8 +4,8 @@ function Convert-3DToTransparentPng {
     param(
         [Parameter(Mandatory=$true)][string]$srcPath,
         [Parameter(Mandatory=$true)][string]$dstPath,
-        [int]$threshold = 246,
-        [int]$softEdge = 215
+        [int]$threshold = 244,
+        [int]$softEdge = 210
     )
 
     if (-not (Test-Path $srcPath)) {
@@ -111,6 +111,14 @@ function Convert-3DToTransparentPng {
     Write-Host "Created transparent natural 3D PNG: $dstPath"
 }
 
-Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_pim_natural_1789975142981.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_pim.png" -threshold 246 -softEdge 215
-Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_cms_natural_1789975179095.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_cms.png" -threshold 246 -softEdge 215
-Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_logistics_natural_1789975217033.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_logistics.png" -threshold 244 -softEdge 210
+# Membership
+Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_membership_raw_1789976277944.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_membership.png" -threshold 244 -softEdge 210
+
+# Promotion
+Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_promotion_raw_1789976448978.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_promotion.png" -threshold 244 -softEdge 210
+
+# Order
+Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_order_raw_1789976496624.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_order.png" -threshold 244 -softEdge 210
+
+# Claim
+Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_claim_raw_1789976919925.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_claim.png" -threshold 244 -softEdge 210

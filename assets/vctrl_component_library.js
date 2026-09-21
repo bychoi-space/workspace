@@ -804,6 +804,50 @@ window.V4_COMPONENT_LIBRARY = {
             thumb: 'assets/illustrations/admin_vector_logistics.png',
             previewHtml: `<img src="assets/illustrations/admin_vector_logistics.png" style="width: 100%; height: 100%; object-fit: contain;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_vector_logistics.png" alt="배송관리 (택배 &amp; 스케줄)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-admin-3d-membership',
+            name: '22. [3D] 회원관리 - 고객 여정 & VIP',
+            koName: '22 3d 회원관리 membership 고객여정 vip 등급 분석 시스템개선',
+            category: 'Illustration',
+            width: '240px',
+            height: '240px',
+            thumb: 'assets/illustrations/admin_3d_membership.png',
+            previewHtml: `<img src="assets/illustrations/admin_3d_membership.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_membership.png" alt="회원관리 시스템 개선 (고객 여정 분석 &amp; VIP 등급 체계)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-admin-3d-promotion',
+            name: '23. [3D] 프로모션 - 쿠폰 & 리워드',
+            koName: '23 3d 프로모션 promotion 쿠폰 마일리지 연산엔진 매출전환 시스템개선',
+            category: 'Illustration',
+            width: '240px',
+            height: '240px',
+            thumb: 'assets/illustrations/admin_3d_promotion.png',
+            previewHtml: `<img src="assets/illustrations/admin_3d_promotion.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_promotion.png" alt="프로모션 관리 시스템 개선 (쿠폰 &amp; 마일리지 연산 최적화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-admin-3d-order',
+            name: '24. [3D] 주문관리 - 결제 & 파이프라인',
+            koName: '24 3d 주문관리 order 결제수단 트랜잭션 파이프라인 안전성 시스템개선',
+            category: 'Illustration',
+            width: '240px',
+            height: '240px',
+            thumb: 'assets/illustrations/admin_3d_order.png',
+            previewHtml: `<img src="assets/illustrations/admin_3d_order.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_order.png" alt="주문 관리 시스템 개선 (트랜잭션 분석 &amp; 안전성 고도화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-admin-3d-claim',
+            name: '25. [3D] 클레임 - 반품 & 자동환불',
+            koName: '25 3d 클레임 claim 반품 교환 역물류 수거 신속환불 정산자동화 시스템개선',
+            category: 'Illustration',
+            width: '240px',
+            height: '240px',
+            thumb: 'assets/illustrations/admin_3d_claim.png',
+            previewHtml: `<img src="assets/illustrations/admin_3d_claim.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_claim.png" alt="클레임 관리 시스템 개선 (반품 사유 분석 &amp; 신속 환불/정산 자동화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
     ]
 };

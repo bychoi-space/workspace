@@ -2,7 +2,7 @@
 <html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 13px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;">
 <head>
     <meta charset="UTF-8">
-    <title>Front System 개편 로드맵 - 2026.4Q ~ 2028 중장기 단계별 마일스톤 일정표</title>
+    <title>Front System 개편 로드맵 - 2026.4Q ~ 2028 중장기 상·하 교차 마일스톤 일정표</title>
     <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
     <style>
@@ -97,7 +97,7 @@
 
         <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 27px; left: 70px; width: 850px; height: 26px; z-index: 20;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 18px; font-weight: 800; line-height: 1.2;">
-                [Front System 개편 로드맵] 2026.4Q ~ 2028 중장기 단계별 마일스톤 일정표
+                [Front System 개편 로드맵] 2026.4Q ~ 2028 중장기 상·하 교차 마일스톤 일정표
             </div>
         </div>
 
@@ -119,11 +119,11 @@
 
 
         <!-- ======================================================== -->
-        <!-- [1] SUBHEADER RIBBON / LEGEND (Top: 70px, H: 28px) -->
+        <!-- [1] SUBHEADER RIBBON / LEGEND (Top: 72px, H: 28px) -->
         <!-- ======================================================== -->
         <div id="sub_title" class="lf-component v4-text-shape" style="position: absolute; top: 72px; left: 24px; width: 750px; height: 24px; z-index: 20;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14.5px; font-weight: 800;">
-                🎯 시선닷컴 Front 5대 핵심 마일스톤 (아토믹 디자인 시스템 &amp; 스토리북 기반 순차 개편)
+                🎯 시선닷컴 Front 5대 핵심 마일스톤 (상·하 교차 웨이브 타임라인 인포그래픽)
             </div>
         </div>
 
@@ -155,693 +155,438 @@
 
 
         <!-- ======================================================== -->
-        <!-- [2] CENTRAL HORIZONTAL TIMELINE AXIS (Top: 220px) -->
+        <!-- [2] CENTRAL HORIZONTAL TIMELINE AXIS (Top: 456px) -->
         <!-- ======================================================== -->
-        <div id="axis_track" class="lf-component" style="position: absolute; top: 220px; left: 60px; width: 1480px; height: 8px; z-index: 5;">
+        <div id="axis_track" class="lf-component" style="position: absolute; top: 456px; left: 60px; width: 1480px; height: 8px; z-index: 5;">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #cbd5e1; border-radius: 4px;"></div>
         </div>
-        <div id="axis_progress" class="lf-component" style="position: absolute; top: 220px; left: 60px; width: 330px; height: 8px; z-index: 6;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border-radius: 4px;"></div>
+        <div id="axis_progress" class="lf-component" style="position: absolute; top: 456px; left: 60px; width: 220px; height: 8px; z-index: 6;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155; border-radius: 4px;"></div>
         </div>
 
 
         <!-- ======================================================== -->
-        <!-- [3] 5 MILESTONE COLUMNS (Top: 104px ~ 740px) -->
-        <!-- Col 1: Left: 20px   | Col 2: Left: 337px  | Col 3: Left: 654px -->
-        <!-- Col 4: Left: 971px  | Col 5: Left: 1288px | Width: 292px each -->
+        <!-- [3] 5 MILESTONES (ALTERNATING TOP & BOTTOM) -->
+        <!-- M1: TOP (X: 160px)   | M2: BOTTOM (X: 470px) | M3: TOP (X: 780px) -->
+        <!-- M4: BOTTOM (X: 1090px)| M5: TOP (X: 1400px) -->
         <!-- ======================================================== -->
 
         <!-- ---------------------------------------------------- -->
-        <!-- MILESTONE 1 : [2026. 4Q] 기반 구축 (Design System & Storybook) -->
-        <!-- Center X: 166px (Col 1 Left: 20px) -->
+        <!-- MILESTONE 1 [TOP] : 2026. 4Q (기반 구축 : 아토믹 토큰 & 스토리북) -->
+        <!-- Center X: 160px -->
         <!-- ---------------------------------------------------- -->
-        <!-- 1-A. Top Circular Node (Top: 104px, Left: 118px, 96x96px) -->
-        <div id="m1_node_circle" class="lf-component" style="position: absolute; top: 104px; left: 118px; width: 96px; height: 96px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 2.4px solid #334155; border-radius: 50%; box-shadow: 0 4px 12px rgba(51,65,85,0.12); display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 44px; height: 44px;">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                </svg>
-            </div>
-        </div>
-        <div id="m1_tag_pill" class="lf-component" style="position: absolute; top: 100px; left: 184px; width: 36px; height: 22px; z-index: 20;">
+        <!-- M1 Step Tag -->
+        <div id="m1_tag" class="lf-component" style="position: absolute; top: 104px; left: 125px; width: 70px; height: 22px; z-index: 25;">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155; border-radius: 11px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">M1</div>
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">STEP 01</div>
             </div>
         </div>
 
-        <!-- 1-B. Vertical Stem Line -->
-        <div id="m1_stem" class="lf-component" style="position: absolute; top: 200px; left: 164.5px; width: 3px; height: 20px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155;"></div>
-        </div>
-        <!-- 1-C. Axis Node Dot -->
-        <div id="m1_dot" class="lf-component" style="position: absolute; top: 212px; left: 154px; width: 24px; height: 24px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></div>
+        <!-- M1 Circular Visual Node (126x126px, Top: 116px, Left: 97px) -->
+        <div id="m1_circle" class="lf-component" style="position: absolute; top: 116px; left: 97px; width: 126px; height: 126px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 3px solid #334155; border-radius: 50%; box-shadow: 0 8px 24px rgba(51,65,85,0.12); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 104px; height: 104px; border-radius: 50%; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 50px; height: 50px;">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </div>
+            </div>
         </div>
 
-        <!-- 1-D. Period Badge -->
-        <div id="m1_period" class="lf-component" style="position: absolute; top: 236px; left: 96px; width: 140px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+        <!-- M1 Content Area (TOP) -->
+        <div id="m1_title" class="lf-component v4-text-shape" style="position: absolute; top: 252px; left: 30px; width: 260px; height: 26px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; text-align: center;">
+                [기반] 아토믹 토큰 &amp; 스토리북
+            </div>
+        </div>
+
+        <div id="m1_scope" class="lf-component v4-text-shape" style="position: absolute; top: 280px; left: 30px; width: 260px; height: 22px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 700; text-align: center;">
+                디자인 토큰 &amp; UI 컴포넌트 허브
+            </div>
+        </div>
+
+        <div id="m1_chip1" class="lf-component" style="position: absolute; top: 306px; left: 30px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 700;">
+                    • 공통 디자인 토큰 표준화 (컬러/폰트)
+                </div>
+            </div>
+        </div>
+
+        <div id="m1_chip2" class="lf-component" style="position: absolute; top: 338px; left: 30px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 700;">
+                    • 5단계 아토믹 컴포넌트 라이브러리
+                </div>
+            </div>
+        </div>
+
+        <div id="m1_kpi" class="lf-component" style="position: absolute; top: 370px; left: 30px; width: 260px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
+                    🎯 전사 UI 일관성 100% SSOT 확립
+                </div>
+            </div>
+        </div>
+
+        <!-- M1 Period Badge (Just above axis) -->
+        <div id="m1_period" class="lf-component" style="position: absolute; top: 412px; left: 105px; width: 110px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(51,65,85,0.2);">
                 <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13.5px; font-weight: 800;">2026. 4Q</div>
             </div>
         </div>
 
-        <!-- 1-E. Milestone Title Ribbon -->
-        <div id="m1_title_ribbon" class="lf-component" style="position: absolute; top: 268px; left: 22px; width: 288px; height: 32px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 14px; font-weight: 800;">
-                    [기반] 아토믹 토큰 &amp; 스토리북
-                </div>
-            </div>
+        <!-- M1 Vertical Stem Line -->
+        <div id="m1_stem" class="lf-component" style="position: absolute; top: 242px; left: 158.5px; width: 3px; height: 208px; z-index: 10;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155;"></div>
         </div>
 
-        <!-- 1-F. Scope Target Pill -->
-        <div id="m1_scope" class="lf-component" style="position: absolute; top: 306px; left: 22px; width: 288px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 700;">
-                    범위 : 디자인 토큰 &amp; UI 컴포넌트 허브
-                </div>
-            </div>
-        </div>
-
-        <!-- 1-G. Milestone Detail Card Background -->
-        <div id="m1_card_bg" class="lf-component" style="position: absolute; top: 338px; left: 20px; width: 292px; height: 400px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);"></div>
-        </div>
-
-        <!-- 1-H. 3 Atomic Deliverable Chips -->
-        <div id="m1_chip_1" class="lf-component" style="position: absolute; top: 350px; left: 32px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 공통 디자인 토큰 표준화
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    컬러 팔레트·타이포·1.6px 보더 가이드
-                </div>
-            </div>
-        </div>
-        <div id="m1_chip_2" class="lf-component" style="position: absolute; top: 404px; left: 32px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 5단계 아토믹 라이브러리
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    Atoms ➔ Molecules ➔ Organisms
-                </div>
-            </div>
-        </div>
-        <div id="m1_chip_3" class="lf-component" style="position: absolute; top: 458px; left: 32px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 스토리북 가이드 허브 배포
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    컴포넌트 주도 개발(CDD) 워크스페이스
-                </div>
-            </div>
-        </div>
-
-        <!-- 1-I. KPI Target Box -->
-        <div id="m1_kpi_box" class="lf-component" style="position: absolute; top: 512px; left: 32px; width: 268px; height: 68px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; padding: 6px 12px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 700;">
-                    목표 성과 (KPI)
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 14px; font-weight: 800;">
-                    전사 UI 일관성 100% SSOT 확립
-                </div>
-            </div>
-        </div>
-
-        <!-- 1-J. Status Badge -->
-        <div id="m1_status" class="lf-component" style="position: absolute; top: 590px; left: 32px; width: 268px; height: 30px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    [착수 단계] 2026.10 착수 확정
-                </div>
-            </div>
-        </div>
-
-        <!-- 1-K. Value Add Summary -->
-        <div id="m1_val" class="lf-component" style="position: absolute; top: 630px; left: 32px; width: 268px; height: 96px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-around;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 700;">
-                    ⚡ 디자인 가이드 부재 완전 해소
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 700;">
-                    ⚡ 전사 컴포넌트 재사용률 85% 달성
-                </div>
-            </div>
+        <!-- M1 Axis Node Dot -->
+        <div id="m1_dot" class="lf-component" style="position: absolute; top: 446px; left: 146px; width: 28px; height: 28px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
         </div>
 
 
         <!-- ---------------------------------------------------- -->
-        <!-- MILESTONE 2 : [2027. 1H] 1차 론칭 (통합 메인 & 구매전환 허브) -->
-        <!-- Center X: 483px (Col 2 Left: 337px) -->
+        <!-- MILESTONE 2 [BOTTOM] : 2027. 1H (1차 론칭 : 통합 메인 & 결제 전환) -->
+        <!-- Center X: 470px -->
         <!-- ---------------------------------------------------- -->
-        <!-- 2-A. Top Circular Node (Top: 104px, Left: 435px, 96x96px) -->
-        <div id="m2_node_circle" class="lf-component" style="position: absolute; top: 104px; left: 435px; width: 96px; height: 96px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 2.4px solid #2563eb; border-radius: 50%; box-shadow: 0 4px 12px rgba(37,99,235,0.15); display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 44px; height: 44px;">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
-            </div>
-        </div>
-        <div id="m2_tag_pill" class="lf-component" style="position: absolute; top: 100px; left: 501px; width: 36px; height: 22px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border-radius: 11px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">M2</div>
-            </div>
+        <!-- M2 Axis Node Dot -->
+        <div id="m2_dot" class="lf-component" style="position: absolute; top: 446px; left: 456px; width: 28px; height: 28px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 8px rgba(37,99,235,0.25);"></div>
         </div>
 
-        <!-- 2-B. Vertical Stem Line -->
-        <div id="m2_stem" class="lf-component" style="position: absolute; top: 200px; left: 481.5px; width: 3px; height: 20px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb;"></div>
-        </div>
-        <!-- 2-C. Axis Node Dot -->
-        <div id="m2_dot" class="lf-component" style="position: absolute; top: 212px; left: 471px; width: 24px; height: 24px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></div>
-        </div>
-
-        <!-- 2-D. Period Badge -->
-        <div id="m2_period" class="lf-component" style="position: absolute; top: 236px; left: 413px; width: 140px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+        <!-- M2 Period Badge (Just below axis) -->
+        <div id="m2_period" class="lf-component" style="position: absolute; top: 484px; left: 415px; width: 110px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37,99,235,0.25);">
                 <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13.5px; font-weight: 800;">2027. 1H</div>
             </div>
         </div>
 
-        <!-- 2-E. Milestone Title Ribbon -->
-        <div id="m2_title_ribbon" class="lf-component" style="position: absolute; top: 268px; left: 339px; width: 288px; height: 32px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 14px; font-weight: 800;">
-                    [1차] 통합 메인 &amp; 결제 구매전환
-                </div>
+        <!-- M2 Vertical Stem Line -->
+        <div id="m2_stem" class="lf-component" style="position: absolute; top: 474px; left: 468.5px; width: 3px; height: 204px; z-index: 10;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb;"></div>
+        </div>
+
+        <!-- M2 Content Area (BOTTOM) -->
+        <div id="m2_title" class="lf-component v4-text-shape" style="position: absolute; top: 522px; left: 340px; width: 260px; height: 26px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 15px; font-weight: 800; text-align: center;">
+                [1차] 통합 메인 &amp; 결제 구매전환
             </div>
         </div>
 
-        <!-- 2-F. Scope Target Pill -->
-        <div id="m2_scope" class="lf-component" style="position: absolute; top: 306px; left: 339px; width: 288px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+        <div id="m2_scope" class="lf-component v4-text-shape" style="position: absolute; top: 550px; left: 340px; width: 260px; height: 22px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #2563eb; font-size: 13px; font-weight: 700; text-align: center;">
+                메인 · 상품상세(PDP) · 주문서(Checkout)
+            </div>
+        </div>
+
+        <div id="m2_chip1" class="lf-component" style="position: absolute; top: 576px; left: 340px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
                 <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 700;">
-                    범위 : 메인 · 상품상세(PDP) · 결제주문서
+                    • 3대 브랜드 메인 GNB/LNB 통일화
                 </div>
             </div>
         </div>
 
-        <!-- 2-G. Milestone Detail Card Background -->
-        <div id="m2_card_bg" class="lf-component" style="position: absolute; top: 338px; left: 337px; width: 292px; height: 400px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #93c5fd; border-radius: 10px; box-shadow: 0 2px 8px rgba(37,99,235,0.06);"></div>
-        </div>
-
-        <!-- 2-H. 3 Atomic Deliverable Chips -->
-        <div id="m2_chip_1" class="lf-component" style="position: absolute; top: 350px; left: 349px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • GNB / LNB 헤더 공통 모듈화
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    3대 브랜드 메인 템플릿 일관화
-                </div>
-            </div>
-        </div>
-        <div id="m2_chip_2" class="lf-component" style="position: absolute; top: 404px; left: 349px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 모바일 플로팅 구매 바
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    옵션 선택 즉시 장바구니/주문 연동
-                </div>
-            </div>
-        </div>
-        <div id="m2_chip_3" class="lf-component" style="position: absolute; top: 458px; left: 349px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 원클릭 간편결제 아코디언
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    주문서 결제 이탈률 원천 차단 UX
-                </div>
-            </div>
-        </div>
-
-        <!-- 2-I. KPI Target Box -->
-        <div id="m2_kpi_box" class="lf-component" style="position: absolute; top: 512px; left: 349px; width: 268px; height: 68px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; padding: 6px 12px; box-sizing: border-box;">
+        <div id="m2_chip2" class="lf-component" style="position: absolute; top: 608px; left: 340px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
                 <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 700;">
-                    목표 성과 (KPI)
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 14px; font-weight: 800;">
-                    구매 전환율(CVR) 극대화 &amp; 결제 이탈 Zero
+                    • 모바일 플로팅 구매 바 &amp; 간편결제
                 </div>
             </div>
         </div>
 
-        <!-- 2-J. Status Badge -->
-        <div id="m2_status" class="lf-component" style="position: absolute; top: 590px; left: 349px; width: 268px; height: 30px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    [최우선 롤아웃] 2027 상반기 론칭
+        <div id="m2_kpi" class="lf-component" style="position: absolute; top: 640px; left: 340px; width: 260px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #93c5fd; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 13px; font-weight: 800;">
+                    🎯 구매전환율(CVR) 극대화 &amp; 결제 이탈 차단
                 </div>
             </div>
         </div>
 
-        <!-- 2-K. Value Add Summary -->
-        <div id="m2_val" class="lf-component" style="position: absolute; top: 630px; left: 349px; width: 268px; height: 96px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-around;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 700;">
-                    ⚡ 브랜드 메인 첫인상 신뢰도 제고
+        <!-- M2 Circular Visual Node (126x126px, Top: 678px, Left: 407px) -->
+        <div id="m2_circle" class="lf-component" style="position: absolute; top: 678px; left: 407px; width: 126px; height: 126px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 3px solid #2563eb; border-radius: 50%; box-shadow: 0 8px 24px rgba(37,99,235,0.18); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 104px; height: 104px; border-radius: 50%; background: #eff6ff; display: flex; align-items: center; justify-content: center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 50px; height: 50px;">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
                 </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 700;">
-                    ⚡ 결제 단계 이탈 최소화로 매출 직결
-                </div>
+            </div>
+        </div>
+
+        <!-- M2 Step Tag -->
+        <div id="m2_tag" class="lf-component" style="position: absolute; top: 810px; left: 435px; width: 70px; height: 22px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border-radius: 11px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">STEP 02</div>
             </div>
         </div>
 
 
         <!-- ---------------------------------------------------- -->
-        <!-- MILESTONE 3 : [2027. 2H] 2차 확장 (탐색 고도화 & 혜택 체감) -->
-        <!-- Center X: 800px (Col 3 Left: 654px) -->
+        <!-- MILESTONE 3 [TOP] : 2027. 2H (2차 확장 : 탐색 고도화 & 혜택 체감) -->
+        <!-- Center X: 780px -->
         <!-- ---------------------------------------------------- -->
-        <!-- 3-A. Top Circular Node (Top: 104px, Left: 752px, 96x96px) -->
-        <div id="m3_node_circle" class="lf-component" style="position: absolute; top: 104px; left: 752px; width: 96px; height: 96px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 2.4px solid #059669; border-radius: 50%; box-shadow: 0 4px 12px rgba(5,150,105,0.15); display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 44px; height: 44px;">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-            </div>
-        </div>
-        <div id="m3_tag_pill" class="lf-component" style="position: absolute; top: 100px; left: 818px; width: 36px; height: 22px; z-index: 20;">
+        <!-- M3 Step Tag -->
+        <div id="m3_tag" class="lf-component" style="position: absolute; top: 104px; left: 745px; width: 70px; height: 22px; z-index: 25;">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669; border-radius: 11px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">M3</div>
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">STEP 03</div>
             </div>
         </div>
 
-        <!-- 3-B. Vertical Stem Line -->
-        <div id="m3_stem" class="lf-component" style="position: absolute; top: 200px; left: 798.5px; width: 3px; height: 20px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669;"></div>
-        </div>
-        <!-- 3-C. Axis Node Dot -->
-        <div id="m3_dot" class="lf-component" style="position: absolute; top: 212px; left: 788px; width: 24px; height: 24px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></div>
+        <!-- M3 Circular Visual Node (126x126px, Top: 116px, Left: 717px) -->
+        <div id="m3_circle" class="lf-component" style="position: absolute; top: 116px; left: 717px; width: 126px; height: 126px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 3px solid #059669; border-radius: 50%; box-shadow: 0 8px 24px rgba(5,150,105,0.18); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 104px; height: 104px; border-radius: 50%; background: #f0fdf4; display: flex; align-items: center; justify-content: center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 50px; height: 50px;">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+            </div>
         </div>
 
-        <!-- 3-D. Period Badge -->
-        <div id="m3_period" class="lf-component" style="position: absolute; top: 236px; left: 730px; width: 140px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+        <!-- M3 Content Area (TOP) -->
+        <div id="m3_title" class="lf-component v4-text-shape" style="position: absolute; top: 252px; left: 650px; width: 260px; height: 26px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #14532d; font-size: 15px; font-weight: 800; text-align: center;">
+                [2차] 탐색 고도화 &amp; 혜택 체감
+            </div>
+        </div>
+
+        <div id="m3_scope" class="lf-component v4-text-shape" style="position: absolute; top: 280px; left: 650px; width: 260px; height: 22px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #059669; font-size: 13px; font-weight: 700; text-align: center;">
+                카테고리(PLP) · 검색 · 기획전/쿠폰
+            </div>
+        </div>
+
+        <div id="m3_chip1" class="lf-component" style="position: absolute; top: 306px; left: 650px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bbf7d0; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 700;">
+                    • 다중 필터 칩 &amp; 실시간 자동완성 검색
+                </div>
+            </div>
+        </div>
+
+        <div id="m3_chip2" class="lf-component" style="position: absolute; top: 338px; left: 650px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bbf7d0; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 700;">
+                    • 기획전 룩북 &amp; 최대 할인 자동추천
+                </div>
+            </div>
+        </div>
+
+        <div id="m3_kpi" class="lf-component" style="position: absolute; top: 370px; left: 650px; width: 260px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #86efac; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #15803d; font-size: 13px; font-weight: 800;">
+                    🎯 탐색 소요시간 50% 단축 &amp; 객단가 상승
+                </div>
+            </div>
+        </div>
+
+        <!-- M3 Period Badge (Just above axis) -->
+        <div id="m3_period" class="lf-component" style="position: absolute; top: 412px; left: 725px; width: 110px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(5,150,105,0.25);">
                 <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13.5px; font-weight: 800;">2027. 2H</div>
             </div>
         </div>
 
-        <!-- 3-E. Milestone Title Ribbon -->
-        <div id="m3_title_ribbon" class="lf-component" style="position: absolute; top: 268px; left: 656px; width: 288px; height: 32px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #15803d; font-size: 14px; font-weight: 800;">
-                    [2차] 탐색 고도화 &amp; 혜택 체감
-                </div>
-            </div>
+        <!-- M3 Vertical Stem Line -->
+        <div id="m3_stem" class="lf-component" style="position: absolute; top: 242px; left: 778.5px; width: 3px; height: 208px; z-index: 10;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669;"></div>
         </div>
 
-        <!-- 3-F. Scope Target Pill -->
-        <div id="m3_scope" class="lf-component" style="position: absolute; top: 306px; left: 656px; width: 288px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 700;">
-                    범위 : 카테고리(PLP) · 통합검색 · 기획전
-                </div>
-            </div>
-        </div>
-
-        <!-- 3-G. Milestone Detail Card Background -->
-        <div id="m3_card_bg" class="lf-component" style="position: absolute; top: 338px; left: 654px; width: 292px; height: 400px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #86efac; border-radius: 10px; box-shadow: 0 2px 8px rgba(5,150,105,0.06);"></div>
-        </div>
-
-        <!-- 3-H. 3 Atomic Deliverable Chips -->
-        <div id="m3_chip_1" class="lf-component" style="position: absolute; top: 350px; left: 666px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 다중 필터 칩 (사이즈·컬러)
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    원하는 속성 패션 상품 즉시 발견
-                </div>
-            </div>
-        </div>
-        <div id="m3_chip_2" class="lf-component" style="position: absolute; top: 404px; left: 666px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 실시간 자동완성 서치바
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    오타 보정 및 브랜드·카테고리 직행
-                </div>
-            </div>
-        </div>
-        <div id="m3_chip_3" class="lf-component" style="position: absolute; top: 458px; left: 666px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 최대 할인율 자동추천 티켓
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    이벤트 룩북 &amp; 쿠폰팩 원클릭 다운
-                </div>
-            </div>
-        </div>
-
-        <!-- 3-I. KPI Target Box -->
-        <div id="m3_kpi_box" class="lf-component" style="position: absolute; top: 512px; left: 666px; width: 268px; height: 68px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; padding: 6px 12px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 700;">
-                    목표 성과 (KPI)
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #15803d; font-size: 14px; font-weight: 800;">
-                    탐색 소요시간 50% 단축 &amp; 객단가 상승
-                </div>
-            </div>
-        </div>
-
-        <!-- 3-J. Status Badge -->
-        <div id="m3_status" class="lf-component" style="position: absolute; top: 590px; left: 666px; width: 268px; height: 30px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    [로드맵 2단계] 2027 하반기 확장
-                </div>
-            </div>
-        </div>
-
-        <!-- 3-K. Value Add Summary -->
-        <div id="m3_val" class="lf-component" style="position: absolute; top: 630px; left: 666px; width: 268px; height: 96px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-around;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #15803d; font-size: 13px; font-weight: 700;">
-                    ⚡ 원하는 스타일 상품 즉각 발견
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #15803d; font-size: 13px; font-weight: 700;">
-                    ⚡ 체감 혜택 극대화로 구매욕 고취
-                </div>
-            </div>
+        <!-- M3 Axis Node Dot -->
+        <div id="m3_dot" class="lf-component" style="position: absolute; top: 446px; left: 766px; width: 28px; height: 28px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 8px rgba(5,150,105,0.25);"></div>
         </div>
 
 
         <!-- ---------------------------------------------------- -->
-        <!-- MILESTONE 4 : [2028. 1H] 3차 강화 (회원 인증 & 리텐션 배송) -->
-        <!-- Center X: 1117px (Col 4 Left: 971px) -->
+        <!-- MILESTONE 4 [BOTTOM] : 2028. 1H (3차 강화 : 회원 인증 & 리텐션 배송) -->
+        <!-- Center X: 1090px -->
         <!-- ---------------------------------------------------- -->
-        <!-- 4-A. Top Circular Node (Top: 104px, Left: 1069px, 96x96px) -->
-        <div id="m4_node_circle" class="lf-component" style="position: absolute; top: 104px; left: 1069px; width: 96px; height: 96px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 2.4px solid #7c3aed; border-radius: 50%; box-shadow: 0 4px 12px rgba(124,58,237,0.15); display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 44px; height: 44px;">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-            </div>
-        </div>
-        <div id="m4_tag_pill" class="lf-component" style="position: absolute; top: 100px; left: 1135px; width: 36px; height: 22px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border-radius: 11px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">M4</div>
-            </div>
+        <!-- M4 Axis Node Dot -->
+        <div id="m4_dot" class="lf-component" style="position: absolute; top: 446px; left: 1076px; width: 28px; height: 28px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 8px rgba(124,58,237,0.25);"></div>
         </div>
 
-        <!-- 4-B. Vertical Stem Line -->
-        <div id="m4_stem" class="lf-component" style="position: absolute; top: 200px; left: 1115.5px; width: 3px; height: 20px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed;"></div>
-        </div>
-        <!-- 4-C. Axis Node Dot -->
-        <div id="m4_dot" class="lf-component" style="position: absolute; top: 212px; left: 1105px; width: 24px; height: 24px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></div>
-        </div>
-
-        <!-- 4-D. Period Badge -->
-        <div id="m4_period" class="lf-component" style="position: absolute; top: 236px; left: 1047px; width: 140px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+        <!-- M4 Period Badge (Just below axis) -->
+        <div id="m4_period" class="lf-component" style="position: absolute; top: 484px; left: 1035px; width: 110px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(124,58,237,0.25);">
                 <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13.5px; font-weight: 800;">2028. 1H</div>
             </div>
         </div>
 
-        <!-- 4-E. Milestone Title Ribbon -->
-        <div id="m4_title_ribbon" class="lf-component" style="position: absolute; top: 268px; left: 973px; width: 288px; height: 32px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #faf5ff; border: 1.6px solid #e9d5ff; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #6b21a8; font-size: 14px; font-weight: 800;">
-                    [3차] 회원 인증 &amp; 리텐션 배송
-                </div>
+        <!-- M4 Vertical Stem Line -->
+        <div id="m4_stem" class="lf-component" style="position: absolute; top: 474px; left: 1088.5px; width: 3px; height: 204px; z-index: 10;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed;"></div>
+        </div>
+
+        <!-- M4 Content Area (BOTTOM) -->
+        <div id="m4_title" class="lf-component v4-text-shape" style="position: absolute; top: 522px; left: 960px; width: 260px; height: 26px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #581c87; font-size: 15px; font-weight: 800; text-align: center;">
+                [3차] 회원 인증 &amp; 리텐션 배송
             </div>
         </div>
 
-        <!-- 4-F. Scope Target Pill -->
-        <div id="m4_scope" class="lf-component" style="position: absolute; top: 306px; left: 973px; width: 288px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #581c87; font-size: 13px; font-weight: 700;">
-                    범위 : 소셜인증 · 배송추적 · 상품리뷰
-                </div>
+        <div id="m4_scope" class="lf-component v4-text-shape" style="position: absolute; top: 550px; left: 960px; width: 260px; height: 22px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #7c3aed; font-size: 13px; font-weight: 700; text-align: center;">
+                소셜가입 · 마이페이지 · 배송추적/리뷰
             </div>
         </div>
 
-        <!-- 4-G. Milestone Detail Card Background -->
-        <div id="m4_card_bg" class="lf-component" style="position: absolute; top: 338px; left: 971px; width: 292px; height: 400px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #d8b4fe; border-radius: 10px; box-shadow: 0 2px 8px rgba(124,58,237,0.06);"></div>
-        </div>
-
-        <!-- 4-H. 3 Atomic Deliverable Chips -->
-        <div id="m4_chip_1" class="lf-component" style="position: absolute; top: 350px; left: 983px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 3초 소셜 간편가입 (카카오/네이버)
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    가입 허들 최소화 및 회원 전환
-                </div>
-            </div>
-        </div>
-        <div id="m4_chip_2" class="lf-component" style="position: absolute; top: 404px; left: 983px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 배송 5단계 트래킹 스텝퍼
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    택배사 API 실시간 출고/배송 현황
-                </div>
-            </div>
-        </div>
-        <div id="m4_chip_3" class="lf-component" style="position: absolute; top: 458px; left: 983px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 체형별 포토 리뷰 그리드
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    UGC 리뷰 축적 및 리워드 지급
-                </div>
-            </div>
-        </div>
-
-        <!-- 4-I. KPI Target Box -->
-        <div id="m4_kpi_box" class="lf-component" style="position: absolute; top: 512px; left: 983px; width: 268px; height: 68px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #faf5ff; border: 1.6px solid #e9d5ff; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; padding: 6px 12px; box-sizing: border-box;">
+        <div id="m4_chip1" class="lf-component" style="position: absolute; top: 576px; left: 960px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e9d5ff; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
                 <div class="v4-editable-cell" contenteditable="true" style="color: #6b21a8; font-size: 13px; font-weight: 700;">
-                    목표 성과 (KPI)
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #581c87; font-size: 14px; font-weight: 800;">
-                    멤버십 확보 &amp; 실착 리뷰로 재구매 견인
+                    • 3초 소셜 간편가입 &amp; 본인인증
                 </div>
             </div>
         </div>
 
-        <!-- 4-J. Status Badge -->
-        <div id="m4_status" class="lf-component" style="position: absolute; top: 590px; left: 983px; width: 268px; height: 30px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    [로드맵 3단계] 2028 상반기 고도화
+        <div id="m4_chip2" class="lf-component" style="position: absolute; top: 608px; left: 960px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e9d5ff; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #6b21a8; font-size: 13px; font-weight: 700;">
+                    • 배송 5단계 스텝퍼 &amp; 체형별 실착 리뷰
                 </div>
             </div>
         </div>
 
-        <!-- 4-K. Value Add Summary -->
-        <div id="m4_val" class="lf-component" style="position: absolute; top: 630px; left: 983px; width: 268px; height: 96px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-around;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #6b21a8; font-size: 13px; font-weight: 700;">
-                    ⚡ 비회원 이탈 차단 및 팬덤 락인
+        <div id="m4_kpi" class="lf-component" style="position: absolute; top: 640px; left: 960px; width: 260px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #faf5ff; border: 1.6px solid #d8b4fe; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #6b21a8; font-size: 13px; font-weight: 800;">
+                    🎯 회원 락인 &amp; UGC 리뷰로 재구매 견인
                 </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #6b21a8; font-size: 13px; font-weight: 700;">
-                    ⚡ 배송 신뢰도 증대로 CS 문의 감소
+            </div>
+        </div>
+
+        <!-- M4 Circular Visual Node (126x126px, Top: 678px, Left: 1027px) -->
+        <div id="m4_circle" class="lf-component" style="position: absolute; top: 678px; left: 1027px; width: 126px; height: 126px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 3px solid #7c3aed; border-radius: 50%; box-shadow: 0 8px 24px rgba(124,58,237,0.18); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 104px; height: 104px; border-radius: 50%; background: #faf5ff; display: flex; align-items: center; justify-content: center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 50px; height: 50px;">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
                 </div>
+            </div>
+        </div>
+
+        <!-- M4 Step Tag -->
+        <div id="m4_tag" class="lf-component" style="position: absolute; top: 810px; left: 1055px; width: 70px; height: 22px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border-radius: 11px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">STEP 04</div>
             </div>
         </div>
 
 
         <!-- ---------------------------------------------------- -->
-        <!-- MILESTONE 5 : [2028. 2H] 4차 완성 (클레임 자동화 & AI CS 케어) -->
-        <!-- Center X: 1434px (Col 5 Left: 1288px) -->
+        <!-- MILESTONE 5 [TOP] : 2028. 2H (4차 완성 : 클레임 자동화 & AI CS 케어) -->
+        <!-- Center X: 1400px -->
         <!-- ---------------------------------------------------- -->
-        <!-- 5-A. Top Circular Node (Top: 104px, Left: 1386px, 96x96px) -->
-        <div id="m5_node_circle" class="lf-component" style="position: absolute; top: 104px; left: 1386px; width: 96px; height: 96px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 2.4px solid #e11d48; border-radius: 50%; box-shadow: 0 4px 12px rgba(225,29,72,0.15); display: flex; align-items: center; justify-content: center;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 44px; height: 44px;">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    <line x1="9" y1="10" x2="9.01" y2="10"></line>
-                    <line x1="15" y1="10" x2="15.01" y2="10"></line>
-                </svg>
-            </div>
-        </div>
-        <div id="m5_tag_pill" class="lf-component" style="position: absolute; top: 100px; left: 1452px; width: 36px; height: 22px; z-index: 20;">
+        <!-- M5 Step Tag -->
+        <div id="m5_tag" class="lf-component" style="position: absolute; top: 104px; left: 1365px; width: 70px; height: 22px; z-index: 25;">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e11d48; border-radius: 11px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">M5</div>
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">STEP 05</div>
             </div>
         </div>
 
-        <!-- 5-B. Vertical Stem Line -->
-        <div id="m5_stem" class="lf-component" style="position: absolute; top: 200px; left: 1432.5px; width: 3px; height: 20px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e11d48;"></div>
-        </div>
-        <!-- 5-C. Axis Node Dot -->
-        <div id="m5_dot" class="lf-component" style="position: absolute; top: 212px; left: 1422px; width: 24px; height: 24px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e11d48; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></div>
+        <!-- M5 Circular Visual Node (126x126px, Top: 116px, Left: 1337px) -->
+        <div id="m5_circle" class="lf-component" style="position: absolute; top: 116px; left: 1337px; width: 126px; height: 126px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 3px solid #e11d48; border-radius: 50%; box-shadow: 0 8px 24px rgba(225,29,72,0.18); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 104px; height: 104px; border-radius: 50%; background: #fff1f2; display: flex; align-items: center; justify-content: center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 50px; height: 50px;">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        <line x1="9" y1="10" x2="9.01" y2="10"></line>
+                        <line x1="15" y1="10" x2="15.01" y2="10"></line>
+                    </svg>
+                </div>
+            </div>
         </div>
 
-        <!-- 5-D. Period Badge -->
-        <div id="m5_period" class="lf-component" style="position: absolute; top: 236px; left: 1364px; width: 140px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e11d48; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+        <!-- M5 Content Area (TOP) -->
+        <div id="m5_title" class="lf-component v4-text-shape" style="position: absolute; top: 252px; left: 1270px; width: 260px; height: 26px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #881337; font-size: 15px; font-weight: 800; text-align: center;">
+                [4차] 클레임 자동화 &amp; AI CS
+            </div>
+        </div>
+
+        <div id="m5_scope" class="lf-component v4-text-shape" style="position: absolute; top: 280px; left: 1270px; width: 260px; height: 22px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #e11d48; font-size: 13px; font-weight: 700; text-align: center;">
+                취소·반품·교환 · 24/7 AI 챗봇
+            </div>
+        </div>
+
+        <div id="m5_chip1" class="lf-component" style="position: absolute; top: 306px; left: 1270px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecdd3; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #9f1239; font-size: 13px; font-weight: 700;">
+                    • 원클릭 즉시 취소 &amp; 자동 수거예약
+                </div>
+            </div>
+        </div>
+
+        <div id="m5_chip2" class="lf-component" style="position: absolute; top: 338px; left: 1270px; width: 260px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecdd3; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #9f1239; font-size: 13px; font-weight: 700;">
+                    • 24/7 실시간 AI 고객상담 챗봇
+                </div>
+            </div>
+        </div>
+
+        <div id="m5_kpi" class="lf-component" style="position: absolute; top: 370px; left: 1270px; width: 260px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fecdd3; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 800;">
+                    🎯 CS 인입 40% 감축 &amp; 상담 대기 Zero
+                </div>
+            </div>
+        </div>
+
+        <!-- M5 Period Badge (Just above axis) -->
+        <div id="m5_period" class="lf-component" style="position: absolute; top: 412px; left: 1345px; width: 110px; height: 28px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e11d48; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(225,29,72,0.25);">
                 <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13.5px; font-weight: 800;">2028. 2H</div>
             </div>
         </div>
 
-        <!-- 5-E. Milestone Title Ribbon -->
-        <div id="m5_title_ribbon" class="lf-component" style="position: absolute; top: 268px; left: 1290px; width: 288px; height: 32px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fecdd3; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 14px; font-weight: 800;">
-                    [4차] 클레임 자동화 &amp; AI CS
-                </div>
-            </div>
+        <!-- M5 Vertical Stem Line -->
+        <div id="m5_stem" class="lf-component" style="position: absolute; top: 242px; left: 1398.5px; width: 3px; height: 208px; z-index: 10;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e11d48;"></div>
         </div>
 
-        <!-- 5-F. Scope Target Pill -->
-        <div id="m5_scope" class="lf-component" style="position: absolute; top: 306px; left: 1290px; width: 288px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #881337; font-size: 13px; font-weight: 700;">
-                    범위 : 취소·반품·교환 · 24/7 AI 챗봇
-                </div>
-            </div>
-        </div>
-
-        <!-- 5-G. Milestone Detail Card Background -->
-        <div id="m5_card_bg" class="lf-component" style="position: absolute; top: 338px; left: 1288px; width: 292px; height: 400px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecdd3; border-radius: 10px; box-shadow: 0 2px 8px rgba(225,29,72,0.06);"></div>
-        </div>
-
-        <!-- 5-H. 3 Atomic Deliverable Chips -->
-        <div id="m5_chip_1" class="lf-component" style="position: absolute; top: 350px; left: 1300px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 원클릭 결제 즉시 승인취소
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    출고 전 주문 즉시 자동 환불
-                </div>
-            </div>
-        </div>
-        <div id="m5_chip_2" class="lf-component" style="position: absolute; top: 404px; left: 1300px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 택배사 원클릭 자동 수거예약
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    사이즈·컬러 맞교환 원스톱 처리
-                </div>
-            </div>
-        </div>
-        <div id="m5_chip_3" class="lf-component" style="position: absolute; top: 458px; left: 1300px; width: 268px; height: 46px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">
-                    • 24/7 실시간 AI 상담 챗봇
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500;">
-                    FAQ 아코디언 &amp; 상담 대기시간 Zero
-                </div>
-            </div>
-        </div>
-
-        <!-- 5-I. KPI Target Box -->
-        <div id="m5_kpi_box" class="lf-component" style="position: absolute; top: 512px; left: 1300px; width: 268px; height: 68px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fecdd3; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; padding: 6px 12px; box-sizing: border-box;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #9f1239; font-size: 13px; font-weight: 700;">
-                    목표 성과 (KPI)
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 14px; font-weight: 800;">
-                    CS 인입 40% 이상 감축 &amp; 대기 Zero
-                </div>
-            </div>
-        </div>
-
-        <!-- 5-J. Status Badge -->
-        <div id="m5_status" class="lf-component" style="position: absolute; top: 590px; left: 1300px; width: 268px; height: 30px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e11d48; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    [로드맵 4단계] 2028 하반기 완성
-                </div>
-            </div>
-        </div>
-
-        <!-- 5-K. Value Add Summary -->
-        <div id="m5_val" class="lf-component" style="position: absolute; top: 630px; left: 1300px; width: 268px; height: 96px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-around;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 700;">
-                    ⚡ 클레임 셀프 자동화로 CS 비용 절감
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 700;">
-                    ⚡ 사후 케어 신뢰도로 고객 충성도 회복
-                </div>
-            </div>
+        <!-- M5 Axis Node Dot -->
+        <div id="m5_dot" class="lf-component" style="position: absolute; top: 446px; left: 1386px; width: 28px; height: 28px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e11d48; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 8px rgba(225,29,72,0.25);"></div>
         </div>
 
 
         <!-- ======================================================== -->
-        <!-- [4] BOTTOM TIER : 3대 종합 기대 효과 요약 (Top: 752px, H: 126px) -->
+        <!-- [4] BOTTOM TIER : 3대 종합 기대 효과 요약 배너 (Top: 846px, H: 36px) -->
         <!-- ======================================================== -->
-        <div id="bot_summary_bg" class="lf-component" style="position: absolute; top: 752px; left: 20px; width: 1560px; height: 126px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);"></div>
+        <div id="bot_summary_bg" class="lf-component" style="position: absolute; top: 846px; left: 60px; width: 1480px; height: 36px; z-index: 10;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);"></div>
         </div>
 
-        <div id="bot_summary_title" class="lf-component v4-text-shape" style="position: absolute; top: 760px; left: 36px; width: 550px; height: 24px; z-index: 20;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800;">
-                📈 2026~2028 중장기 Front UI/UX 3대 종합 기대 효과
+        <div id="bot_hl_1" class="lf-component v4-text-shape" style="position: absolute; top: 852px; left: 90px; width: 440px; height: 24px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e40af; font-size: 13px; font-weight: 800;">
+                💎 [UI 일관성] 전사 아토믹 컴포넌트 85% 재사용 &amp; 개발 공수 60% 절감
             </div>
         </div>
 
-        <!-- 3 Highlight Columns -->
-        <!-- Highlight 1: UI 일관성 -->
-        <div id="bot_hl_1_box" class="lf-component" style="position: absolute; top: 788px; left: 36px; width: 486px; height: 78px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13.5px; font-weight: 800; margin-bottom: 4px;">
-                    💎 UI/UX 일관성 100% SSOT 확립
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 600;">
-                    3대 브랜드 공통 컴포넌트 재사용률 85% 달성 &amp; 신규 화면 개발 공수 60% 절감
-                </div>
+        <div id="bot_hl_2" class="lf-component v4-text-shape" style="position: absolute; top: 852px; left: 560px; width: 460px; height: 24px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #166534; font-size: 13px; font-weight: 800;">
+                🚀 [비즈니스 CVR] 원클릭 결제 &amp; 속성 필터링으로 탐색 시간 50% 단축
             </div>
         </div>
 
-        <!-- Highlight 2: 구매전환율 -->
-        <div id="bot_hl_2_box" class="lf-component" style="position: absolute; top: 788px; left: 538px; width: 486px; height: 78px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13.5px; font-weight: 800; margin-bottom: 4px;">
-                    🚀 구매 전환율(CVR) 극대화 &amp; 결제 이탈 차단
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 600;">
-                    원클릭 간편결제 &amp; 속성 필터링으로 탐색 소요시간 50% 단축 및 직접 매출 신장
-                </div>
-            </div>
-        </div>
-
-        <!-- Highlight 3: 운영 효율성 -->
-        <div id="bot_hl_3_box" class="lf-component" style="position: absolute; top: 788px; left: 1040px; width: 524px; height: 78px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fecdd3; border-radius: 8px; padding: 10px 14px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #9f1239; font-size: 13.5px; font-weight: 800; margin-bottom: 4px;">
-                    🛡️ 운영 효율화 &amp; CS 인입 40% 이상 감축
-                </div>
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 600;">
-                    반품·교환 자동 수거 &amp; 24/7 AI 챗봇 즉시 응대로 상담 대기 Zero 및 충성 고객 확보
-                </div>
+        <div id="bot_hl_3" class="lf-component v4-text-shape" style="position: absolute; top: 852px; left: 1050px; width: 460px; height: 24px; z-index: 20;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #9f1239; font-size: 13px; font-weight: 800;">
+                🛡️ [운영 효율화] 반품·교환 자동화 &amp; 24/7 AI 챗봇으로 CS 인입 40% 감축
             </div>
         </div>
 

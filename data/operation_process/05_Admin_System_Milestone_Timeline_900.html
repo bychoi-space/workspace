@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
+    <meta charset="UTF-8">
+    <title>Admin System 개편 로드맵 - 7대 도메인 상·하 교차 마일스톤 일정표</title>
+    <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --v4-primary: #2563eb;
+            --v4-accent: #38bdf8;
+            --v4-bg: #0f172a;
+            --v4-surface: #ffffff;
+            --v4-border: #cbd5e1;
+            --v4-text: #0f172a;
+            --v4-text-muted: #64748b;
+            --v4-font-size: 13px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            background: #0f172a;
+            font-family: 'Pretendard Variable', 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+            color: var(--v4-text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        .canvas {
+            width: 1600px; height: 900px;
+            position: relative;
+            background: #f8fafc;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .lf-component {
+            position: absolute !important;
+            box-sizing: border-box !important;
+            user-select: none;
+        }
+        .v4-shape {
+            box-sizing: border-box;
+            transition: border-color 0.15s ease;
+        }
+        .v4-editable-cell {
+            outline: none;
+            word-break: keep-all;
+            font-family: inherit;
+        }
+        .lf-icon {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+    <style id="v4-typography-rules">
+    :root {
+        --v4-text-color: #0f172a;
+        --v4-font-size: 13px;
+        --v4-font-weight: 400;
+        --v4-font-family: 'Pretendard Variable', 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        --v4-placeholder-color: #94a3b8;
+    }
+    .v4-editable-cell, .v4-shape, .v4-shape-rect, .text-marker, .v4-text-box, .v4-text-shape {
+        color: var(--v4-text-color, #0f172a);
+        font-family: var(--v4-font-family, inherit);
+    }
+    .v4-shape-text-content p,
+    .v4-shape-text-content span,
+    .v4-shape-text-content strong,
+    .v4-shape-text-content * {
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+    </style>
+</head>
+<body>
+    <div class="canvas" id="canvas" style="background-color: #f8fafc;">
+
+        <!-- [BACKGROUND LAYER] 캔버스 최하단 무간섭 배경 이미지 레이어 -->
+        <div id="canvas_bg_layer" style="position: absolute; top: 0; left: 0; width: 1600px; height: 900px; z-index: 0; pointer-events: none !important; user-select: none;">
+            <img src="assets/illustrations/admin_backend_bg.jpg" alt="Background" style="width: 100%; height: 100%; object-fit: cover; user-select: none; display: block; pointer-events: none !important; opacity: 0.45;">
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [0] STEP 07 Visual Circle & Placeholder (Top: 140px, Left: 1389px) -->
+        <!-- ======================================================== -->
+        <div id="v4-comp-1789964685365_761623_0" class="lf-component" data-resized="true" style="position: absolute; top: 140px; left: 1389px; z-index: 1034; transform: none; width: 120px; height: 120px;">
+            <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border-color: rgb(225, 29, 72); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box; border-width: 1.6px !important;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [1] GLOBAL HEADER (Top: 20px, Left: 20px, W: 1558px, H: 50px) -->
+        <!-- ======================================================== -->
+        <div id="v4-comp-1789957871093_199557_0" class="lf-component lf-group" style="position: absolute; left: 20px; top: 20px; width: 1558px; height: 50px; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; z-index: 1044;">
+            <div id="v4-comp-1789957871093_666803_0" class="lf-component" data-resized="true" style="position: absolute; top: 0px; left: 0px; width: 1558px; height: 50px; z-index: 1020;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 8px; box-sizing: border-box;">
+                    <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+                </div>
+            </div>
+            <div id="v4-comp-1789957871093_46129_1" class="lf-component v4-text-shape" style="position: absolute; top: 15px; left: 58.5714px; width: 340px; height: 21px; z-index: 1020; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important; min-width: unset !important; min-height: unset !important;" data-align="left" data-valign="middle">
+                <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(255, 255, 255); font-size: 15px; font-weight: 800; text-align: left !important; line-height: 1.2; width: 100%; height: 100%; padding: 2px 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;" data-align="left" data-valign="middle">
+                    <p style="width: 100% !important; text-align: left !important; white-space: nowrap !important;"><span style="color: rgb(255, 255, 255); font-size: 14px; white-space: nowrap !important;">BACKEND (ADMIN) - RENEWAL ROADMAP</span></p>
+                </div>
+            </div>
+            <div id="v4-comp-1789957871093_927019_2" class="lf-component" style="position: absolute; top: 10px; left: 19.2857px; z-index: 1020; transform: none; height: 30px; color: rgb(0, 0, 0); width: 30px;" data-resized="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; padding: 3px; box-sizing: border-box; background-image: none !important; color: rgb(255, 255, 255);">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
+                    <polyline points="2 17 12 22 22 17" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polyline>
+                    <polyline points="2 12 12 17 22 12" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [2] CENTRAL HORIZONTAL TIMELINE AXIS (Top: 477px, Left: 19px) -->
+        <!-- ======================================================== -->
+        <div id="axis_track" class="lf-component" style="position: absolute; top: 477px; left: 19px; width: 1560px; height: 10px; z-index: 6452;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(203, 213, 225); border-radius: 4px; border-width: 1.6px !important; border-color: transparent;"></div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [3] STEP 04 [BOTTOM] : 회원관리 (Left: 669px, Top: 468px) -->
+        <!-- ======================================================== -->
+        <div id="group-1789964148337" class="lf-component lf-group" style="position: absolute; left: 669px; top: 468px; width: 260px; height: 376px; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; z-index: 35290;">
+            <div id="v4-comp-1789961309479_748472_0" class="lf-component" data-resized="true" style="position: absolute; top: 236px; left: 70px; z-index: 1034; transform: none; width: 120px; height: 120px;">
+                <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border-color: rgb(71, 85, 105); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box; border-width: 1.6px !important;">
+                    <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+                </div>
+            </div>
+            <div id="m4_dot" class="lf-component" style="position: absolute; top: 0px; left: 116px; width: 28px; height: 28px; z-index: 12852;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(71, 85, 105); border-width: 1.6px !important; border-style: solid; border-color: rgb(255, 255, 255); border-image: none; border-radius: 50%; box-shadow: rgba(71, 85, 105, 0.25) 0px 2px 8px;"></div>
+            </div>
+            <div id="m4_period" class="lf-component" style="position: absolute; top: 38px; left: 75px; width: 110px; height: 28px; z-index: 12857; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(71, 85, 105); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: rgba(71, 85, 105, 0.25) 0px 2px 6px; border-width: 1.6px !important;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13.5px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">2027. 3Q</span></p></div>
+                </div>
+            </div>
+            <div id="m4_stem" class="lf-component" style="position: absolute; top: 27px; left: 128.5px; width: 3px; height: 210px; z-index: 12847;" data-resized="true">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(71, 85, 105); border-width: 1.6px !important;"></div>
+            </div>
+            <div id="m4_title" class="lf-component v4-text-shape" style="position: absolute; top: 76px; left: 52px; width: 156px; height: 22px; z-index: 29970; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;" data-align="center" data-valign="middle">
+                <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 41, 59); font-size: 15px; font-weight: 800; width: 100%; height: 100%; text-align: center !important; padding: 2px 3px !important; white-space: nowrap !important; align-items: center !important; justify-content: center !important; background: rgb(255, 255, 255);" data-align="center" data-valign="middle"><p style="text-align: center !important; width: 100% !important; white-space: nowrap !important;"><span style="font-size: 15px; white-space: nowrap !important;">[4차] 회원관리</span></p></div>
+            </div>
+            <div id="m4_chip1" class="lf-component" style="position: absolute; top: 108px; left: 0px; width: 260px; height: 28px; z-index: 33130; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(51, 65, 85); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">• 고객 구매 주기·여정 데이터 분석</span></p></div>
+                </div>
+            </div>
+            <div id="m4_chip2" class="lf-component" style="position: absolute; top: 146px; left: 0px; width: 260px; height: 28px; z-index: 33140; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(51, 65, 85); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">• 회원 등급 체계 개편 방안 수립</span></p></div>
+                </div>
+            </div>
+            <div id="m4_kpi" class="lf-component" style="position: absolute; top: 184px; left: 0px; width: 260px; height: 32px; z-index: 33150; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(30, 41, 59); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">고객 리텐션 인사이트 도출</span></p></div>
+                </div>
+            </div>
+            <div id="m4_tag" class="lf-component" style="position: absolute; top: 346px; left: 80px; width: 100px; height: 30px; z-index: 35250;" data-resized="true">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(71, 85, 105); border-radius: 11px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important; border-color: transparent;">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">STEP 04</div>
+                </div>
+            </div>
+            <div id="v4-comp-1789961255189" class="lf-component" style="position: absolute; top: 236px; left: 70px; z-index: 35260; transform: none; height: 120px; width: 120px;" data-resized="true">
+                <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                    <img src="assets/illustrations/step4_membership_signup.png" alt="4. 회원관리" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [4] STEP 07 [TOP] : 클레임관리 (Left: 1319px ~ 1447px) -->
+        <!-- ======================================================== -->
+        <div id="m5_stem" class="lf-component" style="position: absolute; top: 260px; left: 1447.5px; width: 3px; height: 210px; z-index: 69536;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(225, 29, 72); border-width: 1.6px !important;"></div>
+        </div>
+        <div id="m5_chip1" class="lf-component" style="position: absolute; top: 312px; left: 1319px; width: 260px; height: 28px; z-index: 74989; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecdd3; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(159, 18, 57); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">• 반품·교환 인입 사유 전수 분석</span></p></div>
+            </div>
+        </div>
+        <div id="m5_chip2" class="lf-component" style="position: absolute; top: 350px; left: 1319px; width: 260px; height: 28px; z-index: 74989; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecdd3; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(159, 18, 57); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">• 물류 수거 지연 방지 방안 수립</span></p></div>
+            </div>
+        </div>
+        <div id="m5_kpi" class="lf-component" style="position: absolute; top: 388px; left: 1319px; width: 260px; height: 32px; z-index: 74989; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fecdd3; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(190, 18, 60); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">신속 환불 및 정산 자동화 수립</span></p></div>
+            </div>
+        </div>
+        <div id="m5_period" class="lf-component" style="position: absolute; top: 430px; left: 1394px; width: 110px; height: 28px; z-index: 74989; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(225, 29, 72); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: rgba(225, 29, 72, 0.25) 0px 2px 6px; border-width: 1.6px !important; border-color: transparent;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13.5px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">2028. 2Q</span></p></div>
+            </div>
+        </div>
+        <div id="m5_dot" class="lf-component" style="position: absolute; top: 468px; left: 1435px; width: 28px; height: 28px; z-index: 74984;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(225, 29, 72); border-width: 1.6px !important; border-style: solid; border-color: rgb(255, 255, 255); border-image: none; border-radius: 50%; box-shadow: rgba(225, 29, 72, 0.25) 0px 2px 8px;"></div>
+        </div>
+        <div id="m5_title" class="lf-component v4-text-shape" style="position: absolute; top: 280px; left: 1357px; width: 195px; height: 22px; z-index: 76069; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;" data-align="center" data-valign="middle">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(136, 19, 55); font-size: 15px; font-weight: 800; width: 100%; height: 100%; text-align: center !important; padding: 2px 3px !important; white-space: nowrap !important; align-items: center !important; justify-content: center !important; background: rgb(255, 255, 255);" data-align="center" data-valign="middle"><p style="text-align: center !important; width: 100% !important; white-space: nowrap !important;"><span style="font-size: 15px; white-space: nowrap !important;">[7차] 클레임 관리</span></p></div>
+        </div>
+        <div id="m5_tag" class="lf-component" style="position: absolute; top: 120px; left: 1399px; width: 100px; height: 30px; z-index: 77109; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(225, 29, 72); border-radius: 11px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important; border-color: transparent;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">STEP 07</span></p></div>
+            </div>
+        </div>
+        <div id="v4-comp-1789964716296" class="lf-component" style="position: absolute; top: 140px; left: 1389px; z-index: 103882; transform: none; height: 120px; width: 120px !important;" data-resized="true">
+            <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/step8_return_clothing.png" alt="7. 클레임 관리" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [5] STEP 01 [TOP] : 상품관리 (Left: 19px, Top: 121px) -->
+        <!-- ======================================================== -->
+        <div id="group-1789964222191" class="lf-component lf-group" style="position: absolute; left: 19px; top: 121px; width: 260px; height: 375px; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; z-index: 69546;">
+            <div id="m1_stem" class="lf-component" style="position: absolute; top: 139px; left: 128.5px; width: 3px; height: 210px; z-index: 994;" data-resized="true">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-width: 1.6px !important;"></div>
+            </div>
+            <div id="axis_progress" class="lf-component" style="position: absolute; top: 356px; left: 30px; width: 220px; height: 10px; z-index: 6453;" data-resized="true">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-radius: 4px; border-width: 1.6px !important; border-color: transparent;"></div>
+            </div>
+            <div id="m1_dot" class="lf-component" style="position: absolute; top: 347px; left: 116px; width: 28px; height: 28px; z-index: 6462;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-width: 1.6px !important; border-style: solid; border-color: rgb(255, 255, 255); border-image: none; border-radius: 50%; box-shadow: rgba(37, 99, 235, 0.25) 0px 2px 8px;"></div>
+            </div>
+            <div id="m1_tag" class="lf-component" style="position: absolute; top: 0px; left: 80px; width: 100px; height: 30px; z-index: 7542;" data-resized="true">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-radius: 11px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important; border-color: transparent;">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">STEP 01</div>
+                </div>
+            </div>
+            <div id="m1_circle" class="lf-component" style="position: absolute; top: 19px; left: 70px; width: 120px; height: 120px; z-index: 7537;" data-resized="true">
+                <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                    <img src="assets/illustrations/admin_ill_pim.jpg" alt="1. 상품관리" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%; pointer-events: none; user-select: none;">
+                </div>
+            </div>
+            <div id="m1_title" class="lf-component v4-text-shape" style="position: absolute; top: 159px; left: 36px; width: 188px; height: 22px; z-index: 7537; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;" data-align="center" data-valign="middle">
+                <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 58, 138); font-size: 15px; font-weight: 800; width: 100%; height: 100%; text-align: center !important; padding: 2px 3px !important; white-space: nowrap !important; align-items: center !important; justify-content: center !important; background: rgb(255, 255, 255);" data-align="center" data-valign="middle"><p style="width: 100% !important; text-align: center !important; white-space: nowrap !important;"><span style="font-size: 15px; white-space: nowrap !important;">[1차] 상품관리 (PIM)</span></p></div>
+            </div>
+            <div id="m1_chip1" class="lf-component" style="position: absolute; top: 191px; left: 0px; width: 260px; height: 28px; z-index: 7537;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(30, 64, 175); font-size: 13px; font-weight: 700;">
+                        • LLM 상세 정보 자동 보강
+                    </div>
+                </div>
+            </div>
+            <div id="m1_chip2" class="lf-component" style="position: absolute; top: 229px; left: 0px; width: 260px; height: 28px; z-index: 7537;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(30, 64, 175); font-size: 13px; font-weight: 700;">
+                        • TPO 추천 키워드 FRONT 연동
+                    </div>
+                </div>
+            </div>
+            <div id="m1_kpi" class="lf-component" style="position: absolute; top: 267px; left: 0px; width: 260px; height: 32px; z-index: 7537; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #93c5fd; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(29, 78, 216); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">키·체중 체형 맞춤 사이즈 제안</span></p></div>
+                </div>
+            </div>
+            <div id="m1_period" class="lf-component" style="position: absolute; top: 309px; left: 75px; width: 110px; height: 28px; z-index: 7537; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: rgba(37, 99, 235, 0.2) 0px 2px 6px; border-width: 1.6px !important; border-color: transparent;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13.5px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">2026. 4Q</span></p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [6] STEP 02 [BOTTOM] : 전시관리 (Left: 235.667px, Top: 468px) -->
+        <!-- ======================================================== -->
+        <div id="group-1789964234788" class="lf-component lf-group" style="position: absolute; left: 235.667px; top: 468px; width: 260px; height: 376px; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; z-index: 69556;">
+            <div id="m2_dot" class="lf-component" style="position: absolute; top: 0px; left: 116px; width: 28px; height: 28px; z-index: 7502;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(124, 58, 237); border-width: 1.6px !important; border-style: solid; border-color: rgb(255, 255, 255); border-image: none; border-radius: 50%; box-shadow: rgba(124, 58, 237, 0.25) 0px 2px 8px;"></div>
+            </div>
+            <div id="m2_period" class="lf-component" style="position: absolute; top: 38px; left: 75px; width: 110px; height: 28px; z-index: 7507; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(124, 58, 237); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: rgba(124, 58, 237, 0.25) 0px 2px 6px; border-width: 1.6px !important;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13.5px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">2027. 1Q</span></p></div>
+                </div>
+            </div>
+            <div id="m2_stem" class="lf-component" style="position: absolute; top: 27px; left: 128.5px; width: 3px; height: 210px; z-index: 7497;" data-resized="true">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(124, 58, 237); border-width: 1.6px !important;"></div>
+            </div>
+            <div id="v4-comp-1789960886646_202575_0" class="lf-component" data-resized="true" style="position: absolute; top: 236px; left: 70px; z-index: 18147; transform: none; width: 120px; height: 120px;">
+                <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border-color: rgb(124, 58, 237); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box; border-width: 1.6px !important;">
+                    <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+                </div>
+            </div>
+            <div id="m2_title" class="lf-component v4-text-shape" style="position: absolute; top: 76px; left: 53.5px; width: 153px; height: 22px; z-index: 24620; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;" data-align="center" data-valign="middle">
+                <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(76, 29, 149); font-size: 15px; font-weight: 800; width: 100%; height: 100%; text-align: center !important; padding: 2px 3px !important; white-space: nowrap !important; align-items: center !important; justify-content: center !important; background: rgb(255, 255, 255);" data-align="center" data-valign="middle"><p style="text-align: center !important; width: 100% !important; white-space: nowrap !important;"><span style="font-size: 15px; white-space: nowrap !important;">[2차] 전시관리 (CMS)</span></p></div>
+            </div>
+            <div id="m2_chip1" class="lf-component" style="position: absolute; top: 108px; left: 0px; width: 260px; height: 28px; z-index: 27780; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #ddd6fe; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(109, 40, 217); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">• 브랜드·디바이스 통합 카테고리</span></p></div>
+                </div>
+            </div>
+            <div id="m2_chip2" class="lf-component" style="position: absolute; top: 146px; left: 0px; width: 260px; height: 28px; z-index: 27790; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #ddd6fe; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(109, 40, 217); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">• 스페셜 카테고리 분리 운영</span></p></div>
+                </div>
+            </div>
+            <div id="m2_kpi" class="lf-component" style="position: absolute; top: 184px; left: 0px; width: 260px; height: 32px; z-index: 27800; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #faf5ff; border: 1.6px solid #c4b5fd; border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(109, 40, 217); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">Front 전 영역 카드화 &amp; 자동 조립</span></p></div>
+                </div>
+            </div>
+            <div id="v4-comp-1789960876589" class="lf-component" style="position: absolute; top: 236px; left: 70px; z-index: 29940; transform: none; height: 120px; width: 120px;" data-resized="true">
+                <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                    <img src="assets/illustrations/admin_ill_cms.jpg" alt="2. 전시관리" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%; pointer-events: none; user-select: none;">
+                </div>
+            </div>
+            <div id="m2_tag" class="lf-component" style="position: absolute; top: 346px; left: 80px; width: 100px; height: 30px; z-index: 29950;" data-resized="true">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(124, 58, 237); border-radius: 11px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important; border-color: transparent;">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">STEP 02</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [7] STEP 03 [TOP] : 배송관리 (Left: 452.333px, Top: 121px) -->
+        <!-- ======================================================== -->
+        <div id="group-1789964240821" class="lf-component lf-group" style="position: absolute; left: 452.333px; top: 121px; width: 260px; height: 375px; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; z-index: 69566;">
+            <div id="v4-comp-1789959891597_985596_7" class="lf-component" style="position: absolute; top: 139px; left: 128.5px; width: 3px; height: 210px; z-index: 1024;" data-resized="true">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(5, 150, 105); border-width: 1.6px !important;"></div>
+            </div>
+            <div id="v4-comp-1789960610370" class="lf-component" style="position: absolute; top: 19px; left: 70px; z-index: 6414; transform: none; width: 120px; height: 120px;" data-resized="true">
+                <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                    <img src="assets/illustrations/admin_ill_logistics.jpg" alt="3. 배송관리" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%; pointer-events: none; user-select: none;">
+                </div>
+            </div>
+            <div id="v4-comp-1789959891597_127956_3" class="lf-component" style="position: absolute; top: 191px; left: 0px; width: 260px; height: 28px; z-index: 7497; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(110, 231, 183); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(22, 101, 52); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">• 물류센터 실시간 가용 재고 연동</span></p></div>
+                </div>
+            </div>
+            <div id="v4-comp-1789959891597_786743_4" class="lf-component" style="position: absolute; top: 229px; left: 0px; width: 260px; height: 28px; z-index: 7497; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(110, 231, 183); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(22, 101, 52); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">• 출고-배송 도착 시점 시뮬레이션</span></p></div>
+                </div>
+            </div>
+            <div id="v4-comp-1789959891597_801905_5" class="lf-component" style="position: absolute; top: 267px; left: 0px; width: 260px; height: 32px; z-index: 7497; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(240, 253, 244); border: 1.6px solid rgb(110, 231, 183); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(21, 128, 61); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px; color: rgb(21, 128, 61);">'배송예정일 자동화' 프로젝트 추진</span></p></div>
+                </div>
+            </div>
+            <div id="v4-comp-1789959891597_719202_6" class="lf-component" style="position: absolute; top: 309px; left: 75px; width: 110px; height: 28px; z-index: 7497; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(4, 120, 87); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: rgba(5, 150, 105, 0.25) 0px 2px 6px; border-color: transparent; border-width: 1.6px !important;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13.5px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">2027. 2Q</span></p></div>
+                </div>
+            </div>
+            <div id="v4-comp-1789959891597_899237_8" class="lf-component" style="position: absolute; top: 347px; left: 116px; width: 28px; height: 28px; z-index: 7492;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(5, 150, 105); border-width: 1.6px !important; border-style: solid; border-color: rgb(255, 255, 255); border-image: none; border-radius: 50%; box-shadow: rgba(5, 150, 105, 0.25) 0px 2px 8px;"></div>
+            </div>
+            <div id="v4-comp-1789959891597_427924_2" class="lf-component v4-text-shape" style="position: absolute; top: 159px; left: 36px; width: 188px; height: 22px; z-index: 8577; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;" data-align="center" data-valign="middle">
+                <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(6, 78, 59); font-size: 15px; font-weight: 800; width: 100%; height: 100%; text-align: center !important; padding: 2px 3px !important; white-space: nowrap !important; align-items: center !important; justify-content: center !important; background: rgb(255, 255, 255);" data-align="center" data-valign="middle"><p style="text-align: center !important; width: 100% !important; white-space: nowrap !important;"><span style="font-size: 15px; white-space: nowrap !important;">[3차] 배송관리 (Logistics)</span></p></div>
+            </div>
+            <div id="v4-comp-1789960578607" class="lf-component" style="position: absolute; top: 19px; left: 70px; z-index: 12807; transform: none; height: 120px; width: 120px;" data-resized="true">
+                <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border-color: rgb(4, 120, 87); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box; border-width: 1.6px !important;">
+                    <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+                </div>
+            </div>
+            <div id="v4-comp-1789960348017_635739_0" class="lf-component" data-resized="true" style="position: absolute; top: 0px; left: 80px; width: 100px; height: 30px; z-index: 12817; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+                <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(4, 120, 87); border-radius: 11px; display: flex; align-items: center; justify-content: center; border-color: transparent; border-width: 1.6px !important;" data-valign="middle" data-align="center">
+                    <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">STEP 03</span></p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [8] STEP 05 [TOP] : 프로모션 관리 (Left: 885.667px ~ 1014px) -->
+        <!-- ======================================================== -->
+        <div id="v4-comp-1789962943767_744324_0" class="lf-component" data-resized="true" style="position: absolute; top: 140px; left: 955.667px; z-index: 69576; transform: none; width: 120px; height: 120px;">
+            <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border-color: rgb(202, 138, 4); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box; border-width: 1.6px !important;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>
+        </div>
+        <div id="m3_stem" class="lf-component" style="position: absolute; top: 260px; left: 1014.17px; width: 3px; height: 210px; z-index: 69596;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(202, 138, 4); border-width: 1.6px !important;"></div>
+        </div>
+        <div id="m3_chip1" class="lf-component" style="position: absolute; top: 312px; left: 885.667px; width: 260px; height: 28px; z-index: 81459; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(254, 240, 138); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(113, 63, 18); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="color: rgb(113, 63, 18); font-size: 13px;">• 쿠폰 발행·마일리지 반응 분석</span></p></div>
+            </div>
+        </div>
+        <div id="m3_chip2" class="lf-component" style="position: absolute; top: 350px; left: 885.667px; width: 260px; height: 28px; z-index: 81459; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(254, 240, 138); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(113, 63, 18); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="color: rgb(113, 63, 18); font-size: 13px;">• 매출 전환 프로모션 엔진 설계</span></p></div>
+            </div>
+        </div>
+        <div id="m3_kpi" class="lf-component" style="position: absolute; top: 388px; left: 885.667px; width: 260px; height: 32px; z-index: 81459; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(254, 249, 195); border: 1.6px solid rgb(254, 240, 138); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(113, 63, 18); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="color: rgb(113, 63, 18); font-size: 13px;">프로모션 연산 최적화 인사이트</span></p></div>
+            </div>
+        </div>
+        <div id="m3_period" class="lf-component" style="position: absolute; top: 430px; left: 960.667px; width: 110px; height: 28px; z-index: 81459; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(202, 138, 4); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: rgba(202, 138, 4, 0.25) 0px 2px 6px; border-color: transparent; border-width: 1.6px !important;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13.5px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">2027. 4Q</span></p></div>
+            </div>
+        </div>
+        <div id="m3_dot" class="lf-component" style="position: absolute; top: 468px; left: 1001.67px; width: 28px; height: 28px; z-index: 81454;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(202, 138, 4); border-style: solid; border-color: rgb(255, 255, 255); border-image: none; border-radius: 50%; box-shadow: rgba(202, 138, 4, 0.25) 0px 2px 8px; border-width: 1.6px !important;"></div>
+        </div>
+        <div id="m3_title" class="lf-component v4-text-shape" style="position: absolute; top: 280px; left: 922.667px; width: 186px; height: 22px; z-index: 82539; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;" data-align="center" data-valign="middle">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(113, 63, 18); font-size: 15px; font-weight: 800; width: 100%; height: 100%; text-align: center !important; padding: 2px 3px !important; white-space: nowrap !important; align-items: center !important; justify-content: center !important; background: rgb(255, 255, 255);" data-align="center" data-valign="middle"><p style="text-align: center !important; width: 100% !important; white-space: nowrap !important;"><span style="color: rgb(113, 63, 18); font-size: 15px; white-space: nowrap !important;">[5차] 프로모션 관리</span></p></div>
+        </div>
+        <div id="v4-comp-1789963931465" class="lf-component" style="position: absolute; top: 140px; left: 955.667px; z-index: 103862; transform: none; height: 120px; width: 120px;" data-resized="true">
+            <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/step5_discount_clothing.png" alt="5. 프로모션 관리" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+        <div id="m3_tag" class="lf-component" style="position: absolute; top: 120px; left: 965.667px; width: 100px; height: 30px; z-index: 103872; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(202, 138, 4); border-radius: 11px; display: flex; align-items: center; justify-content: center; border-color: transparent; border-width: 1.6px !important;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">STEP 05</span></p></div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [9] STEP 06 [BOTTOM] : 주문 관리 (Left: 1102.33px ~ 1218px) -->
+        <!-- ======================================================== -->
+        <div id="v4-comp-1789964148885_671394_0" class="lf-component" data-resized="true" style="position: absolute; top: 704px; left: 1172.33px; z-index: 69586; transform: none; width: 120px; height: 120px;">
+            <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border-color: rgb(234, 88, 12); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box; border-width: 1.6px !important;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>
+        </div>
+        <div id="v4-comp-1789964148885_580617_1" class="lf-component" style="position: absolute; top: 468px; left: 1218.33px; width: 28px; height: 28px; z-index: 81404;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(234, 88, 12); border-style: solid; border-color: rgb(255, 255, 255); border-image: none; border-radius: 50%; box-shadow: rgba(234, 88, 12, 0.25) 0px 2px 8px; border-width: 1.6px !important;"></div>
+        </div>
+        <div id="v4-comp-1789964148885_21265_2" class="lf-component" style="position: absolute; top: 506px; left: 1177.33px; width: 110px; height: 28px; z-index: 81409; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(234, 88, 12); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: rgba(234, 88, 12, 0.25) 0px 2px 6px; border-width: 1.6px !important;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13.5px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px;">2028. 1Q</span></p></div>
+            </div>
+        </div>
+        <div id="v4-comp-1789964148885_106972_3" class="lf-component" style="position: absolute; top: 495px; left: 1230.83px; width: 3px; height: 210px; z-index: 81399;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(234, 88, 12); border-width: 1.6px !important;"></div>
+        </div>
+        <div id="v4-comp-1789964148885_999661_4" class="lf-component v4-text-shape" style="position: absolute; top: 544px; left: 1180px; width: 104px; height: 22px; z-index: 98522; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important; white-space: nowrap !important;" data-align="center" data-valign="middle">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(154, 52, 18); font-size: 15px; font-weight: 800; width: 100%; height: 100%; text-align: center !important; padding: 2px 3px !important; white-space: nowrap !important; align-items: center !important; justify-content: center !important; background: rgb(255, 255, 255);" data-align="center" data-valign="middle"><p style="text-align: center !important; width: 100% !important; white-space: nowrap !important;"><span style="font-size: 15px; color: rgb(234, 88, 12); white-space: nowrap !important;">[6차] 주문 관리</span></p></div>
+        </div>
+        <div id="v4-comp-1789964148885_545340_5" class="lf-component" style="position: absolute; top: 576px; left: 1102.33px; width: 260px; height: 28px; z-index: 101682; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(251, 146, 60); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(154, 52, 18); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="color: rgb(234, 88, 12); font-size: 13px;">• 결제 수단별 트랜잭션 흐름 분석</span></p></div>
+            </div>
+        </div>
+        <div id="v4-comp-1789964148885_951943_6" class="lf-component" style="position: absolute; top: 614px; left: 1102.33px; width: 260px; height: 28px; z-index: 101692; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(251, 146, 60); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(154, 52, 18); font-size: 13px; font-weight: 700; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="color: rgb(234, 88, 12); font-size: 13px;">• 대량 주문 처리 패턴 최적화</span></p></div>
+            </div>
+        </div>
+        <div id="v4-comp-1789964148885_118519_7" class="lf-component" style="position: absolute; top: 652px; left: 1102.33px; width: 260px; height: 32px; z-index: 101702; --v4-text-adjust-y: 0px; min-width: unset !important; min-height: unset !important;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(254, 215, 170); border: 1.6px solid rgb(251, 146, 60); border-radius: 6px; display: flex; align-items: center; justify-content: center;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(154, 52, 18); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="text-align: center !important; width: 100% !important;"><span style="font-size: 13px; color: rgb(124, 45, 18);">주문 파이프라인 안전성 고도화</span></p></div>
+            </div>
+        </div>
+        <div id="v4-comp-1789964407239" class="lf-component" style="position: absolute; top: 704px; left: 1172.33px; z-index: 103812; transform: none; width: 120px !important; height: 120px;" data-resized="true">
+            <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/step6_payment_checkout.png" alt="6. 주문 관리" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+        <div id="v4-comp-1789964148885_208549_8" class="lf-component" style="position: absolute; top: 814px; left: 1182.33px; width: 100px; height: 30px; z-index: 103822; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(234, 88, 12); border-radius: 11px; display: flex; align-items: center; justify-content: center; border-color: transparent; border-width: 1.6px !important;" data-valign="middle" data-align="center">
+                <div class="v4-editable-cell" contenteditable="true" style="color: rgb(255, 255, 255); font-size: 13px; font-weight: 800; justify-content: center !important; align-items: center !important; text-align: center !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="center"><p style="width: 100% !important; text-align: center !important;"><span style="font-size: 13px;">STEP 06</span></p></div>
+            </div>
+        </div>
+
+    </div>
+
+<script id="v4-inlined-script">/* Dynamic scripts injected */</script>
+</body></html>

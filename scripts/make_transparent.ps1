@@ -4,7 +4,7 @@ function Convert-3DToTransparentPng {
     param(
         [Parameter(Mandatory=$true)][string]$srcPath,
         [Parameter(Mandatory=$true)][string]$dstPath,
-        [int]$threshold = 240,
+        [int]$threshold = 246,
         [int]$softEdge = 215
     )
 
@@ -29,7 +29,6 @@ function Convert-3DToTransparentPng {
     $bytes = New-Object byte[] ($stride * $h)
     [System.Runtime.InteropServices.Marshal]::Copy($bmpData.Scan0, $bytes, 0, $bytes.Length)
 
-    # Sample corner background color
     $cornerOffset = 0
     $bgB = $bytes[$cornerOffset]
     $bgG = $bytes[$cornerOffset + 1]
@@ -74,7 +73,7 @@ function Convert-3DToTransparentPng {
         $diff = [Math]::Sqrt([Math]::Pow($r - $bgR, 2) + [Math]::Pow($gVal - $bgG, 2) + [Math]::Pow($b - $bgB, 2))
         $brightness = ($r + $gVal + $b) / 3.0
 
-        if ($brightness -ge $threshold -or $diff -le 12) {
+        if ($brightness -ge $threshold -or $diff -le 10) {
             # Fully transparent
             $bytes[$offset + 3] = 0
 
@@ -109,9 +108,9 @@ function Convert-3DToTransparentPng {
     $bmp.Save($dstPath, [System.Drawing.Imaging.ImageFormat]::Png)
     $bmp.Dispose()
 
-    Write-Host "Created transparent 3D PNG: $dstPath"
+    Write-Host "Created transparent natural 3D PNG: $dstPath"
 }
 
-Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_pim_raw_1789973751032.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_pim.png" -threshold 248 -softEdge 220
-Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_cms_raw_1789973981208.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_cms.png" -threshold 248 -softEdge 220
-Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_logistics_raw_1789974294769.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_logistics.png" -threshold 240 -softEdge 215
+Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_pim_natural_1789975142981.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_pim.png" -threshold 246 -softEdge 215
+Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_cms_natural_1789975179095.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_cms.png" -threshold 246 -softEdge 215
+Convert-3DToTransparentPng -srcPath "C:\Users\sisun\.gemini\antigravity-ide\brain\7ff22387-4c41-4562-8efa-83f26d456a2c\admin_3d_logistics_natural_1789975217033.jpg" -dstPath "c:\Users\sisun\ai_work\assets\illustrations\admin_3d_logistics.png" -threshold 244 -softEdge 210

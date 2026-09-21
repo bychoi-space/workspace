@@ -15,12 +15,12 @@
     "03_Admin_System_Development_Roadmap_900.html": {
       "title": "03_Admin 시스템 개발 로드맵",
       "type": "architecture",
-      "updatedAt": "2026-09-21T04:46:44.508Z",
+      "updatedAt": "2026-09-21T05:55:00.000Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
-      "version": 0.2,
-      "screenDesc": "관리자 업무 효율성 & 사용 빈도 기반 7대 도메인 개발 우선순위 및 핵심 2대 도메인([상품관리] 2단계 분리 유연화 & [전시관리] 카드 블록 기반 화면 자동 조립) 아키텍처",
+      "version": 0.3,
+      "screenDesc": "어드민 시스템 3대 최우선 핵심 과제([상품관리] LLM 상세 보강·TPO 키워드·체형별 사이즈 제안, [전시관리] 통합 카테고리·Front 카드화 자동 퍼블리싱, [배송관리] 재고 기반 배송예정일 시뮬레이션 자동화) 및 4대 후속 분석 과제",
       "defaultTab": "editor"
     },
     "04_Front_System_Milestone_Timeline_900.html": {

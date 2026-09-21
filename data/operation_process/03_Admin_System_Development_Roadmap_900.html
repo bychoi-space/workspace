@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 14px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;">
+<head>
     <meta charset="UTF-8">
-    <title>어드민 시스템 개편 전략 - 7대 도메인 개발 로드맵 &amp; 2대 핵심 아키텍처</title>
+    <title>03_Admin 시스템 개발 로드맵</title>
     <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --v4-primary: #2563eb;
@@ -13,7 +14,7 @@
             --v4-border: #cbd5e1;
             --v4-text: #0f172a;
             --v4-text-muted: #64748b;
-            --v4-font-size: 13px;
+            --v4-font-size: 14px;
         }
         * { box-sizing: border-box; }
         body {
@@ -30,7 +31,7 @@
         .canvas {
             width: 1600px; height: 900px;
             position: relative;
-            background: #f1f5f9;
+            background: #f8fafc;
             overflow: hidden;
             margin: 0 auto;
         }
@@ -52,11 +53,19 @@
             display: inline-block;
             vertical-align: middle;
         }
+        .v4-shape-text-content p,
+        .v4-shape-text-content span,
+        .v4-shape-text-content strong,
+        .v4-shape-text-content * {
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
+        }
     </style>
     <style id="v4-typography-rules">
     :root {
         --v4-text-color: #0f172a;
-        --v4-font-size: 13px;
+        --v4-font-size: 14px;
         --v4-font-weight: 400;
         --v4-font-family: 'Pretendard Variable', 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         --v4-placeholder-color: #94a3b8;
@@ -66,975 +75,589 @@
         font-family: var(--v4-font-family, inherit);
     }
     </style>
-
 </head>
 <body>
     <div class="canvas" id="canvas">
 
         <!-- ======================================================== -->
-        <!-- [0] GLOBAL HEADER (Top: 16px, Left: 20px, W: 1560px, H: 48px) -->
+        <!-- [0] GLOBAL HEADER (Top: 20px, Left: 20px, W: 1560px, H: 50px) -->
         <!-- ======================================================== -->
-        
-
-        
-
-        
-
-        
-
-        
-
-
-        <!-- ======================================================== -->
-        <!-- [1] TOP TIER : 7대 도메인 개발 로드맵 (Top: 72px, H: 216px) -->
-        <!-- ======================================================== -->
-        <div id="top_sec_title" class="lf-component v4-text-shape" style="position: absolute; top: 54px; left: 24px; width: 475px; height: 58px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                ☆ 어드민 7대 도메인 개발 우선순위 로드맵 (일일 업무 체류 빈도 &amp; 효율성 기준)
-            </div>
-        </div>
-
-        <div id="top_sec_notice" class="lf-component" style="position: absolute; top: 70px; left: 1140px; width: 440px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 13px; font-weight: 700;">
-                    운영 체류 비중 78% 집중 영역(상품·전시) 최우선 전면 개편
-                </div>
-            </div>
-        </div>
-
-        <!-- ---------------------------------------------------- -->
-        <!-- Top Tier Col 1: 1단계 · 최우선 개발 (상품관리 + 전시관리) -->
-        <!-- ---------------------------------------------------- -->
-        <div id="col1_bg" class="lf-component" style="position: absolute; top: 102px; left: 20px; width: 378px; height: 184px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #2563eb; border-radius: 10px; box-shadow: 0 2px 6px rgba(37,99,235,0.08);"></div>
-        </div>
-        <div id="col1_hdr_pill" class="lf-component" style="position: absolute; top: 110px; left: 32px; width: 130px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">1단계 · 최우선 개발</div>
-            </div>
-        </div>
-        <div id="col1_hdr_sub" class="lf-component v4-text-shape" style="position: absolute; top: 112px; left: 172px; width: 151px; height: 20px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(29, 78, 216); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">일일 체류 78% (최대 병목)</div>
-        </div>
-
-        <!-- Col 1 - Domain A: 상품관리 -->
-        <div id="col1_domA_box" class="lf-component" style="position: absolute; top: 140px; left: 30px; width: 174px; height: 104px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #93c5fd; border-radius: 8px;"></div>
-        </div>
-        <div id="col1_domA_icon" class="lf-component" style="position: absolute; top: 146px; left: 38px; width: 36px; height: 36px; z-index: 25;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
-            </svg>
-        </div>
-        <div id="col1_domA_title" class="lf-component v4-text-shape" style="position: absolute; top: 148px; left: 80px; width: 62px; height: 22px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 58, 138); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">상품관리</div>
-        </div>
-        <div id="col1_domA_chip1" class="lf-component" style="position: absolute; top: 184px; left: 38px; width: 74px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(219, 234, 254); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 800;">체류 42%</div>
-            </div>
-        </div>
-        <div id="col1_domA_chip2" class="lf-component" style="position: absolute; top: 184px; left: 118px; width: 80px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">신속 등록</div>
-            </div>
-        </div>
-        <div id="col1_domA_tag" class="lf-component v4-text-shape" style="position: absolute; top: 215px; left: 38px; width: 116px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 64, 175); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">⚡ 신상품 즉시 출시</div>
-        </div>
-
-        <!-- Col 1 - Domain B: 전시관리 -->
-        <div id="col1_domB_box" class="lf-component" style="position: absolute; top: 140px; left: 214px; width: 174px; height: 104px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fefce8; border: 1.6px solid #fde047; border-radius: 8px;"></div>
-        </div>
-        <div id="col1_domB_icon" class="lf-component" style="position: absolute; top: 146px; left: 222px; width: 36px; height: 36px; z-index: 25;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></rect>
-                <line x1="3" y1="9" x2="21" y2="9"></line>
-                <line x1="9" y1="21" x2="9" y2="9"></line>
-            </svg>
-        </div>
-        <div id="col1_domB_title" class="lf-component v4-text-shape" style="position: absolute; top: 148px; left: 264px; width: 62px; height: 22px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(120, 53, 15); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">전시관리</div>
-        </div>
-        <div id="col1_domB_chip1" class="lf-component" style="position: absolute; top: 184px; left: 222px; width: 74px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(254, 243, 199); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #b45309; font-size: 13px; font-weight: 800;">체류 36%</div>
-            </div>
-        </div>
-        <div id="col1_domB_chip2" class="lf-component" style="position: absolute; top: 184px; left: 302px; width: 80px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fde68a; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">카드 조립</div>
-            </div>
-        </div>
-        <div id="col1_domB_tag" class="lf-component v4-text-shape" style="position: absolute; top: 215px; left: 222px; width: 127px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(180, 83, 9); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">🔄 무중단 실시간 배포</div>
-        </div>
-
-        <div id="col1_bottom_banner" class="lf-component" style="position: absolute; top: 252px; left: 30px; width: 358px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(219, 234, 254); border-radius: 6px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 800;">
-                    신상품 즉시 출시 및 실시간 전시 편성 병목 해소
-                </div>
-            </div>
-        </div>
-
-        <!-- ---------------------------------------------------- -->
-        <!-- Top Tier Col 2: 2단계 · 매출 드라이브 (프로모션관리 + 주문관리) -->
-        <!-- ---------------------------------------------------- -->
-        <div id="col2_bg" class="lf-component" style="position: absolute; top: 102px; left: 414px; width: 378px; height: 184px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);"></div>
-        </div>
-        <div id="col2_hdr_pill" class="lf-component" style="position: absolute; top: 110px; left: 426px; width: 130px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(99, 102, 241); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">2단계 · 매출 드라이브</div>
-            </div>
-        </div>
-        <div id="col2_hdr_sub" class="lf-component v4-text-shape" style="position: absolute; top: 112px; left: 566px; width: 152px; height: 20px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(79, 70, 229); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">일일 빈도 45% (주요 연동)</div>
-        </div>
-
-        <!-- Col 2 - Domain C: 프로모션관리 -->
-        <div id="col2_domC_box" class="lf-component" style="position: absolute; top: 140px; left: 424px; width: 174px; height: 104px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #faf5ff; border: 1.6px solid #e9d5ff; border-radius: 8px;"></div>
-        </div>
-        <div id="col2_domC_icon" class="lf-component" style="position: absolute; top: 146px; left: 432px; width: 36px; height: 36px; z-index: 25;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#7e22ce" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
-                <line x1="7" y1="7" x2="7.01" y2="7"></line>
-            </svg>
-        </div>
-        <div id="col2_domC_title" class="lf-component v4-text-shape" style="position: absolute; top: 148px; left: 474px; width: 88px; height: 22px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(88, 28, 135); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">프로모션관리</div>
-        </div>
-        <div id="col2_domC_chip1" class="lf-component" style="position: absolute; top: 184px; left: 432px; width: 74px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(243, 232, 255); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #6b21a8; font-size: 13px; font-weight: 800;">빈도 25%</div>
-            </div>
-        </div>
-        <div id="col2_domC_chip2" class="lf-component" style="position: absolute; top: 184px; left: 512px; width: 80px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e9d5ff; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">쿠폰 엔진</div>
-            </div>
-        </div>
-        <div id="col2_domC_tag" class="lf-component v4-text-shape" style="position: absolute; top: 215px; left: 432px; width: 127px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(107, 33, 168); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">🎟️ 마일리지 자동 연산</div>
-        </div>
-
-        <!-- Col 2 - Domain D: 주문관리 -->
-        <div id="col2_domD_box" class="lf-component" style="position: absolute; top: 140px; left: 608px; width: 174px; height: 104px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px;"></div>
-        </div>
-        <div id="col2_domD_icon" class="lf-component" style="position: absolute; top: 146px; left: 616px; width: 36px; height: 36px; z-index: 25;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-        </div>
-        <div id="col2_domD_title" class="lf-component v4-text-shape" style="position: absolute; top: 148px; left: 658px; width: 62px; height: 22px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(20, 83, 45); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">주문관리</div>
-        </div>
-        <div id="col2_domD_chip1" class="lf-component" style="position: absolute; top: 184px; left: 616px; width: 74px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(220, 252, 231); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 800;">빈도 20%</div>
-            </div>
-        </div>
-        <div id="col2_domD_chip2" class="lf-component" style="position: absolute; top: 184px; left: 696px; width: 80px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bbf7d0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">실시간 결제</div>
-            </div>
-        </div>
-        <div id="col2_domD_tag" class="lf-component v4-text-shape" style="position: absolute; top: 215px; left: 616px; width: 133px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(21, 128, 61); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">💳 결제-주문 즉시 수집</div>
-        </div>
-
-        <div id="col2_bottom_banner" class="lf-component" style="position: absolute; top: 252px; left: 424px; width: 358px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(243, 232, 255); border-radius: 6px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #6b21a8; font-size: 13px; font-weight: 800;">
-                    쿠폰·마일리지 자동 연산 &amp; 실시간 결제-주문 연동
-                </div>
-            </div>
-        </div>
-
-        <!-- ---------------------------------------------------- -->
-        <!-- Top Tier Col 3: 3단계 · 물류/고객만족 (배송관리 + 클레임관리) -->
-        <!-- ---------------------------------------------------- -->
-        <div id="col3_bg" class="lf-component" style="position: absolute; top: 102px; left: 808px; width: 378px; height: 184px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);"></div>
-        </div>
-        <div id="col3_hdr_pill" class="lf-component" style="position: absolute; top: 110px; left: 820px; width: 130px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(2, 132, 199); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">3단계 · 물류/고객만족</div>
-            </div>
-        </div>
-        <div id="col3_hdr_sub" class="lf-component v4-text-shape" style="position: absolute; top: 112px; left: 960px; width: 163px; height: 20px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(3, 105, 161); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">일일 빈도 32% (정형 표준화)</div>
-        </div>
-
-        <!-- Col 3 - Domain E: 배송관리 -->
-        <div id="col3_domE_box" class="lf-component" style="position: absolute; top: 140px; left: 818px; width: 174px; height: 104px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0f9ff; border: 1.6px solid #bae6fd; border-radius: 8px;"></div>
-        </div>
-        <div id="col3_domE_icon" class="lf-component" style="position: absolute; top: 146px; left: 826px; width: 36px; height: 36px; z-index: 25;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <rect x="1" y="3" width="15" height="13" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></rect>
-                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
-                <circle cx="5.5" cy="18.5" r="2.5" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
-                <circle cx="18.5" cy="18.5" r="2.5" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
-            </svg>
-        </div>
-        <div id="col3_domE_title" class="lf-component v4-text-shape" style="position: absolute; top: 148px; left: 868px; width: 62px; height: 22px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(12, 74, 110); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">배송관리</div>
-        </div>
-        <div id="col3_domE_chip1" class="lf-component" style="position: absolute; top: 184px; left: 826px; width: 74px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(224, 242, 254); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0369a1; font-size: 13px; font-weight: 800;">빈도 18%</div>
-            </div>
-        </div>
-        <div id="col3_domE_chip2" class="lf-component" style="position: absolute; top: 184px; left: 906px; width: 80px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bae6fd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">출고 연동</div>
-            </div>
-        </div>
-        <div id="col3_domE_tag" class="lf-component v4-text-shape" style="position: absolute; top: 215px; left: 826px; width: 130px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(2, 132, 199); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">📦 송장 일괄 대량 전송</div>
-        </div>
-
-        <!-- Col 3 - Domain F: 클레임관리 -->
-        <div id="col3_domF_box" class="lf-component" style="position: absolute; top: 140px; left: 1002px; width: 174px; height: 104px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fecdd3; border-radius: 8px;"></div>
-        </div>
-        <div id="col3_domF_icon" class="lf-component" style="position: absolute; top: 146px; left: 1010px; width: 36px; height: 36px; z-index: 25;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <polyline points="23 4 23 10 17 10"></polyline>
-                <polyline points="1 20 1 14 7 14"></polyline>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
-            </svg>
-        </div>
-        <div id="col3_domF_title" class="lf-component v4-text-shape" style="position: absolute; top: 148px; left: 1052px; width: 75px; height: 22px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(136, 19, 55); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">클레임관리</div>
-        </div>
-        <div id="col3_domF_chip1" class="lf-component" style="position: absolute; top: 184px; left: 1010px; width: 74px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(255, 228, 230); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 800;">빈도 14%</div>
-            </div>
-        </div>
-        <div id="col3_domF_chip2" class="lf-component" style="position: absolute; top: 184px; left: 1090px; width: 80px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecdd3; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">반품·교환</div>
-            </div>
-        </div>
-        <div id="col3_domF_tag" class="lf-component v4-text-shape" style="position: absolute; top: 215px; left: 1010px; width: 141px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(190, 18, 60); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">🔄 반품 수거 &amp; 자동 환불</div>
-        </div>
-
-        <div id="col3_bottom_banner" class="lf-component" style="position: absolute; top: 252px; left: 818px; width: 358px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(224, 242, 254); border-radius: 6px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0369a1; font-size: 13px; font-weight: 800;">
-                    송장 일괄 대량 전송 &amp; 반품·교환 수거 및 자동 정산
-                </div>
-            </div>
-        </div>
-
-        <!-- ---------------------------------------------------- -->
-        <!-- Top Tier Col 4: 4단계 · 기반 거버넌스 (회원관리 + 운영 거버넌스) -->
-        <!-- ---------------------------------------------------- -->
-        <div id="col4_bg" class="lf-component" style="position: absolute; top: 102px; left: 1202px; width: 378px; height: 184px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);"></div>
-        </div>
-        <div id="col4_hdr_pill" class="lf-component" style="position: absolute; top: 110px; left: 1214px; width: 130px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(71, 85, 105); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">4단계 · 기반 거버넌스</div>
-            </div>
-        </div>
-        <div id="col4_hdr_sub" class="lf-component v4-text-shape" style="position: absolute; top: 112px; left: 1354px; width: 161px; height: 20px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">일일 빈도 15% (기반 인프라)</div>
-        </div>
-
-        <!-- Col 4 - Domain G: 회원관리 -->
-        <div id="col4_domG_box" class="lf-component" style="position: absolute; top: 140px; left: 1212px; width: 174px; height: 104px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px;"></div>
-        </div>
-        <div id="col4_domG_icon" class="lf-component" style="position: absolute; top: 146px; left: 1220px; width: 36px; height: 36px; z-index: 25;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
-                <circle cx="12" cy="7" r="4" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></circle>
-            </svg>
-        </div>
-        <div id="col4_domG_title" class="lf-component v4-text-shape" style="position: absolute; top: 148px; left: 1262px; width: 62px; height: 22px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">회원관리</div>
-        </div>
-        <div id="col4_domG_chip1" class="lf-component" style="position: absolute; top: 184px; left: 1220px; width: 74px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(226, 232, 240); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 800;">빈도 15%</div>
-            </div>
-        </div>
-        <div id="col4_domG_chip2" class="lf-component" style="position: absolute; top: 184px; left: 1300px; width: 80px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">등급·포인트</div>
-            </div>
-        </div>
-        <div id="col4_domG_tag" class="lf-component v4-text-shape" style="position: absolute; top: 215px; left: 1220px; width: 127px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">👥 고객 등급 세그먼트</div>
-        </div>
-
-        <!-- Col 4 - Domain H: 운영 거버넌스 -->
-        <div id="col4_domH_box" class="lf-component" style="position: absolute; top: 140px; left: 1396px; width: 174px; height: 104px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px;"></div>
-        </div>
-        <div id="col4_domH_icon" class="lf-component" style="position: absolute; top: 146px; left: 1404px; width: 36px; height: 36px; z-index: 25;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
-            </svg>
-        </div>
-        <div id="col4_domH_title" class="lf-component v4-text-shape" style="position: absolute; top: 148px; left: 1446px; width: 91px; height: 22px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 15px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">운영 거버넌스</div>
-        </div>
-        <div id="col4_domH_chip1" class="lf-component" style="position: absolute; top: 184px; left: 1404px; width: 74px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(226, 232, 240); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 800;">역할 보안</div>
-            </div>
-        </div>
-        <div id="col4_domH_chip2" class="lf-component" style="position: absolute; top: 184px; left: 1484px; width: 80px; height: 24px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">감사 로그</div>
-            </div>
-        </div>
-        <div id="col4_domH_tag" class="lf-component v4-text-shape" style="position: absolute; top: 215px; left: 1404px; width: 141px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(51, 65, 85); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">🔒 권한 제어 &amp; 이력 추적</div>
-        </div>
-
-        <div id="col4_bottom_banner" class="lf-component" style="position: absolute; top: 252px; left: 1212px; width: 358px; height: 26px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(226, 232, 240); border-radius: 6px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 800;">
-                    회원 등급/포인트 체계 &amp; 관리자 접근 권한 보안 통제
-                </div>
-            </div>
-        </div>
-
-
-        <!-- ======================================================== -->
-        <!-- [2] LOWER LEFT PANEL : [핵심 1] 전시관리 (Left: 20px, Top: 298px, W: 770px, H: 586px) -->
-        <!-- ======================================================== -->
-        <div id="pnl_cms_bg" class="lf-component" style="position: absolute; top: 298px; left: 20px; width: 770px; height: 586px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);"></div>
-        </div>
-
-        <!-- Panel Left Header -->
-        <div id="pnl_cms_icon" class="lf-component" style="position: absolute; top: 312px; left: 34px; width: 30px; height: 30px; z-index: 20;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></rect>
-                <line x1="8" y1="21" x2="16" y2="21"></line>
-                <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-        </div>
-        <div id="pnl_cms_title" class="lf-component v4-text-shape" style="position: absolute; top: 295px; left: 72px; width: 317px; height: 64px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 58, 138); font-size: 16px; font-weight: 800; padding: 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                [핵심 1] 전시관리 : 카드 블록 기반 화면 자동 조립
-            </div>
-        </div>
-        <div id="pnl_cms_badge" class="lf-component" style="position: absolute; top: 312px; left: 530px; width: 244px; height: 28px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #3b82f6; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 13px; font-weight: 800;">
-                    노코드 어드민 ➔ 실시간 화면 배포
-                </div>
-            </div>
-        </div>
-
-        <!-- CMS Stage 1 Subheader -->
-        <div id="cms_s1_pill" class="lf-component" style="position: absolute; top: 350px; left: 34px; width: 170px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    1단계 · 어드민 카드 블록 편성
-                </div>
-            </div>
-        </div>
-        <div id="cms_s1_sub" class="lf-component v4-text-shape" style="position: absolute; top: 337px; left: 212px; width: 317px; height: 51px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                이미지·텍스트·노출순서·예약값을 카드 블록 단위로 자유 편집
-            </div>
-        </div>
-
-        <!-- CMS Stage 1: Large Prominent Illustration -->
-        <div id="cms_s1_illust" class="lf-component" style="position: absolute; top: 382px; left: 34px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                <img src="assets/illustrations/admin_cms_builder.jpg" alt="전시관리 카드 블록 빌더 일러스트" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-        </div>
-
-        <!-- CMS Stage 1: 4 Atomic Modular Cards -->
-        <!-- CMS Card 1: 메인 배너 -->
-        <div id="cms_c1_box" class="lf-component" style="position: absolute; top: 382px; left: 184px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #3b82f6; border-radius: 8px;"></div>
-        </div>
-        <div id="cms_c1_title" class="lf-component v4-text-shape" style="position: absolute; top: 391px; left: 192px; width: 103px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(29, 78, 216); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">[카드 1] 메인 배너</div>
-        </div>
-        <div id="cms_c1_chip1" class="lf-component" style="position: absolute; top: 418px; left: 192px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(219, 234, 254); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 700;">풀비주얼 그래픽</div>
-            </div>
-        </div>
-        <div id="cms_c1_chip2" class="lf-component" style="position: absolute; top: 450px; left: 192px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">문구·링크 다이렉트</div>
-            </div>
-        </div>
-        <div id="cms_c1_chip3" class="lf-component" style="position: absolute; top: 482px; left: 192px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">롤링 타이머 제어</div>
-            </div>
-        </div>
-
-        <!-- CMS Card 2: 인기 랭킹 -->
-        <div id="cms_c2_box" class="lf-component" style="position: absolute; top: 382px; left: 332px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #10b981; border-radius: 8px;"></div>
-        </div>
-        <div id="cms_c2_title" class="lf-component v4-text-shape" style="position: absolute; top: 391px; left: 340px; width: 105px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(4, 120, 87); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">[카드 2] 인기 랭킹</div>
-        </div>
-        <div id="cms_c2_chip1" class="lf-component" style="position: absolute; top: 418px; left: 340px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(209, 250, 229); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #065f46; font-size: 13px; font-weight: 700;">실시간 4단 배열</div>
-            </div>
-        </div>
-        <div id="cms_c2_chip2" class="lf-component" style="position: absolute; top: 450px; left: 340px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #a7f3d0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">판매 집계 자동 연동</div>
-            </div>
-        </div>
-        <div id="cms_c2_chip3" class="lf-component" style="position: absolute; top: 482px; left: 340px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #a7f3d0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">품절 상품 즉시 제외</div>
-            </div>
-        </div>
-
-        <!-- CMS Card 3: 테마 큐레이션 -->
-        <div id="cms_c3_box" class="lf-component" style="position: absolute; top: 382px; left: 480px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #faf5ff; border: 1.6px solid #8b5cf6; border-radius: 8px;"></div>
-        </div>
-        <div id="cms_c3_title" class="lf-component v4-text-shape" style="position: absolute; top: 391px; left: 488px; width: 128px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(109, 40, 217); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">[카드 3] 테마 큐레이션</div>
-        </div>
-        <div id="cms_c3_chip1" class="lf-component" style="position: absolute; top: 418px; left: 488px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(237, 233, 254); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #5b21b6; font-size: 13px; font-weight: 700;">스타일 룩북 슬라이더</div>
-            </div>
-        </div>
-        <div id="cms_c3_chip2" class="lf-component" style="position: absolute; top: 450px; left: 488px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #ddd6fe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">스타일 태그 칩 연동</div>
-            </div>
-        </div>
-        <div id="cms_c3_chip3" class="lf-component" style="position: absolute; top: 482px; left: 488px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #ddd6fe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">핫스팟 원클릭 구매</div>
-            </div>
-        </div>
-
-        <!-- CMS Card 4: 시즌 기획전 -->
-        <div id="cms_c4_box" class="lf-component" style="position: absolute; top: 382px; left: 628px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fdf2f8; border: 1.6px solid #ec4899; border-radius: 8px;"></div>
-        </div>
-        <div id="cms_c4_title" class="lf-component v4-text-shape" style="position: absolute; top: 391px; left: 636px; width: 117px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(190, 24, 93); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">[카드 4] 시즌 기획전</div>
-        </div>
-        <div id="cms_c4_chip1" class="lf-component" style="position: absolute; top: 418px; left: 636px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(252, 231, 243); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #9d174d; font-size: 13px; font-weight: 700;">마감 카운트다운</div>
-            </div>
-        </div>
-        <div id="cms_c4_chip2" class="lf-component" style="position: absolute; top: 450px; left: 636px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fbcfe8; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">기획전 전용 쿠폰팩</div>
-            </div>
-        </div>
-        <div id="cms_c4_chip3" class="lf-component" style="position: absolute; top: 482px; left: 636px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fbcfe8; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">탭별 카테고리 정렬</div>
-            </div>
-        </div>
-
-        <!-- CMS Arrow 1 -->
-        <div id="cms_arrow_1" class="lf-component" style="position: absolute; top: 524px; left: 395px; width: 20px; height: 18px; z-index: 20;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <polyline points="19 12 12 19 5 12"></polyline>
-            </svg>
-        </div>
-
-        <!-- CMS Stage 2 Subheader -->
-        <div id="cms_s2_pill" class="lf-component" style="position: absolute; top: 546px; left: 34px; width: 170px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(30, 41, 59); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    2단계 · 데이터 구조화 &amp; 배포
-                </div>
-            </div>
-        </div>
-        <div id="cms_s2_sub" class="lf-component v4-text-shape" style="position: absolute; top: 533px; left: 212px; width: 311px; height: 51px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                카드 설정을 표준 데이터 배열로 자동 변환 ➔ 즉시 캐싱 배포
-            </div>
-        </div>
-
-        <!-- CMS Stage 2: JSON Terminal & 3 Smart Badges -->
-        <div id="cms_s2_json" class="lf-component" style="position: absolute; top: 574px; left: 34px; width: 320px; height: 36px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(15, 23, 42); border-radius: 6px; display: flex; align-items: center; padding: 0px 12px; box-sizing: border-box; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #38bdf8; font-family: monospace; font-size: 13px; font-weight: 600;">
-                    { 화면: "메인", 레이아웃: "스택", 카드: [1, 2, 3, 4] }
-                </div>
-            </div>
-        </div>
-        <div id="cms_s2_badge1" class="lf-component" style="position: absolute; top: 574px; left: 364px; width: 130px; height: 36px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #93c5fd; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 800;">스케줄링 예약 노출</div>
-            </div>
-        </div>
-        <div id="cms_s2_badge2" class="lf-component" style="position: absolute; top: 574px; left: 502px; width: 130px; height: 36px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #86efac; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 800;">타깃 맞춤 등급 분기</div>
-            </div>
-        </div>
-        <div id="cms_s2_badge3" class="lf-component" style="position: absolute; top: 574px; left: 640px; width: 134px; height: 36px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fefce8; border: 1.6px solid #fde047; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #854d0e; font-size: 13px; font-weight: 800;">무중단 즉시 갱신</div>
-            </div>
-        </div>
-
-        <!-- CMS Arrow 2 -->
-        <div id="cms_arrow_2" class="lf-component" style="position: absolute; top: 616px; left: 395px; width: 20px; height: 18px; z-index: 20;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <polyline points="19 12 12 19 5 12"></polyline>
-            </svg>
-        </div>
-
-        <!-- CMS Stage 3 Subheader -->
-        <div id="cms_s3_pill" class="lf-component" style="position: absolute; top: 638px; left: 34px; width: 170px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(4, 120, 87); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    3단계 · 프론트 자동 화면 조립
-                </div>
-            </div>
-        </div>
-        <div id="cms_s3_sub" class="lf-component v4-text-shape" style="position: absolute; top: 625px; left: 212px; width: 312px; height: 51px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                카드가 모여 1개의 완성된 웹/모바일 페이지로 실시간 렌더링
-            </div>
-        </div>
-
-        <!-- CMS Stage 3: Browser Frame -->
-        <div id="cms_browser_frame" class="lf-component" style="position: absolute; top: 668px; left: 34px; width: 742px; height: 204px; z-index: 15;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 10px; overflow: hidden;"></div>
-        </div>
-
-        <!-- Browser Window Header Bar -->
-        <div id="cms_browser_bar" class="lf-component" style="position: absolute; top: 668px; left: 34px; width: 742px; height: 28px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(15, 23, 42); border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; align-items: center; padding: 0px 12px; box-sizing: border-box; border-width: 1.6px !important;">
-                <div style="display: flex; gap: 6px; align-items: center; width: 50px;">
-                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></div>
-                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #eab308;"></div>
-                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></div>
-                </div>
-                <div style="flex: 1; text-align: center; color: #94a3b8; font-size: 13px; font-family: monospace;">
-                    https://sisun.com/main (자동 조립 웹화면)
-                </div>
-                <div style="width: 50px;"></div>
-            </div>
-        </div>
-
-        <!-- Browser Card 1: Main Banner Result -->
-        <div id="cms_res_b1_box" class="lf-component" style="position: absolute; top: 704px; left: 46px; width: 228px; height: 158px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #93c5fd; border-radius: 8px;"></div>
-        </div>
-        <div id="cms_res_b1_tag" class="lf-component" style="position: absolute; top: 712px; left: 56px; width: 120px; height: 22px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(219, 234, 254); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 800;">[카드 1] 메인 배너</div>
-            </div>
-        </div>
-        <div id="cms_res_b1_title" class="lf-component v4-text-shape" style="position: absolute; top: 742px; left: 56px; width: 152px; height: 21px; z-index: 30; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">2026 가을 신상품 컬렉션</div>
-        </div>
-        <div id="cms_res_b1_desc" class="lf-component v4-text-shape" style="position: absolute; top: 769px; left: 56px; width: 171px; height: 20px; z-index: 30; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 13px; font-weight: 600; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">어드민 이미지/문구 100% 반영</div>
-        </div>
-        <div id="cms_res_b1_btn" class="lf-component" style="position: absolute; top: 820px; left: 56px; width: 120px; height: 32px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-radius: 6px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">지금 쇼핑하기 ➔</div>
-            </div>
-        </div>
-
-        <!-- Browser Card 2: Ranking Grid Result -->
-        <div id="cms_res_b2_box" class="lf-component" style="position: absolute; top: 704px; left: 284px; width: 242px; height: 158px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #86efac; border-radius: 8px;"></div>
-        </div>
-        <div id="cms_res_b2_tag" class="lf-component" style="position: absolute; top: 712px; left: 294px; width: 140px; height: 22px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(209, 250, 229); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #065f46; font-size: 13px; font-weight: 800;">[카드 2] 실시간 랭킹 TOP 4</div>
-            </div>
-        </div>
-        <div id="cms_res_b2_r1" class="lf-component" style="position: absolute; top: 744px; left: 294px; width: 106px; height: 32px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">1위 코트</div>
-            </div>
-        </div>
-        <div id="cms_res_b2_r2" class="lf-component" style="position: absolute; top: 744px; left: 410px; width: 106px; height: 32px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">2위 니트</div>
-            </div>
-        </div>
-        <div id="cms_res_b2_r3" class="lf-component" style="position: absolute; top: 784px; left: 294px; width: 106px; height: 32px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">3위 슬랙스</div>
-            </div>
-        </div>
-        <div id="cms_res_b2_r4" class="lf-component" style="position: absolute; top: 784px; left: 410px; width: 106px; height: 32px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800;">4위 블라우스</div>
-            </div>
-        </div>
-        <div id="cms_res_b2_note" class="lf-component v4-text-shape" style="position: absolute; top: 827px; left: 294px; width: 184px; height: 20px; z-index: 30; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(4, 120, 87); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">⚡ 10분 단위 판매 집계 자동 갱신</div>
-        </div>
-
-        <!-- Browser Card 3: Promotion Result -->
-        <div id="cms_res_b3_box" class="lf-component" style="position: absolute; top: 704px; left: 536px; width: 230px; height: 158px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #ddd6fe; border-radius: 8px;"></div>
-        </div>
-        <div id="cms_res_b3_tag" class="lf-component" style="position: absolute; top: 712px; left: 546px; width: 140px; height: 22px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(237, 233, 254); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #5b21b6; font-size: 13px; font-weight: 800;">[카드 3] 기획전 &amp; 혜택</div>
-            </div>
-        </div>
-        <div id="cms_res_b3_title" class="lf-component v4-text-shape" style="position: absolute; top: 742px; left: 546px; width: 134px; height: 21px; z-index: 30; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(15, 23, 42); font-size: 14px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">단독 15% 쿠폰팩 증정</div>
-        </div>
-        <div id="cms_res_b3_desc" class="lf-component v4-text-shape" style="position: absolute; top: 769px; left: 546px; width: 132px; height: 20px; z-index: 30; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(100, 116, 139); font-size: 13px; font-weight: 600; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">스케줄링 예약 자동 노출</div>
-        </div>
-        <div id="cms_res_b3_cd" class="lf-component" style="position: absolute; top: 818px; left: 546px; width: 210px; height: 34px; z-index: 30;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fee2e2; border: 1.6px solid #fca5a5; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #b91c1c; font-size: 13px; font-weight: 800;">[마감임박] 23:59:59 종료</div>
-            </div>
-        </div>
-
-
-        <!-- ======================================================== -->
-        <!-- [3] LOWER RIGHT PANEL : [핵심 2] 상품관리 (Left: 810px, Top: 298px, W: 770px, H: 586px) -->
-        <!-- ======================================================== -->
-        <div id="pnl_pim_bg" class="lf-component" style="position: absolute; top: 298px; left: 810px; width: 770px; height: 586px; z-index: 10;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);"></div>
-        </div>
-
-        <!-- Panel Right Header -->
-        <div id="pnl_pim_icon" class="lf-component" style="position: absolute; top: 312px; left: 824px; width: 30px; height: 30px; z-index: 20;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path>
-            </svg>
-        </div>
-        <div id="pnl_pim_title" class="lf-component v4-text-shape" style="position: absolute; top: 295px; left: 862px; width: 393px; height: 64px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 3px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(30, 58, 138); font-size: 16px; font-weight: 800; padding: 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                [핵심 2] 상품관리 : 2단계 분리 (신속 등록 ➔ 상세 보강) 모델
-            </div>
-        </div>
-        <div id="pnl_pim_badge" class="lf-component" style="position: absolute; top: 312px; left: 1320px; width: 244px; height: 28px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #3b82f6; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 13px; font-weight: 800;">
-                    등록 시간 70% 단축 + 무제한 확장
-                </div>
-            </div>
-        </div>
-
-        <!-- PIM Stage 1 Subheader -->
-        <div id="pim_s1_pill" class="lf-component" style="position: absolute; top: 350px; left: 824px; width: 170px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    1단계 · 최초 상품 신속 등록
-                </div>
-            </div>
-        </div>
-        <div id="pim_s1_sub" class="lf-component v4-text-shape" style="position: absolute; top: 337px; left: 1002px; width: 369px; height: 51px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                최소 필수 정보(4개 핵심 항목)만으로 신속 등록 ➔ 즉시 론칭/판매 개시
-            </div>
-        </div>
-
-        <!-- PIM Stage 1: Large Prominent Illustration -->
-        <div id="pim_s1_illust" class="lf-component" style="position: absolute; top: 382px; left: 824px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                <img src="assets/illustrations/admin_pim_fastpass.jpg" alt="상품관리 신속 등록 일러스트" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-        </div>
-
-        <!-- PIM Stage 1: 4 Atomic Essential Widgets -->
-        <!-- PIM Widget 1: 기본 식별 -->
-        <div id="pim_w1_box" class="lf-component" style="position: absolute; top: 382px; left: 974px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #3b82f6; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_w1_title" class="lf-component v4-text-shape" style="position: absolute; top: 391px; left: 982px; width: 98px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(29, 78, 216); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">① 기본 식별 정보</div>
-        </div>
-        <div id="pim_w1_chip1" class="lf-component" style="position: absolute; top: 418px; left: 982px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(219, 234, 254); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 700;">코드: MC26W-CT01</div>
-            </div>
-        </div>
-        <div id="pim_w1_chip2" class="lf-component" style="position: absolute; top: 450px; left: 982px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">캐시미어 블렌드 코트</div>
-            </div>
-        </div>
-        <div id="pim_w1_chip3" class="lf-component" style="position: absolute; top: 482px; left: 982px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bfdbfe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">브랜드: MICHAA</div>
-            </div>
-        </div>
-
-        <!-- PIM Widget 2: 가격 & 정산 -->
-        <div id="pim_w2_box" class="lf-component" style="position: absolute; top: 382px; left: 1122px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #ef4444; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_w2_title" class="lf-component v4-text-shape" style="position: absolute; top: 391px; left: 1130px; width: 84px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(185, 28, 28); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">② 가격 &amp; 정산</div>
-        </div>
-        <div id="pim_w2_chip1" class="lf-component" style="position: absolute; top: 418px; left: 1130px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(254, 226, 226); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #991b1b; font-size: 13px; font-weight: 800;">판매가: 367,200원</div>
-            </div>
-        </div>
-        <div id="pim_w2_chip2" class="lf-component" style="position: absolute; top: 450px; left: 1130px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecaca; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">20% 할인 자동 산출</div>
-            </div>
-        </div>
-        <div id="pim_w2_chip3" class="lf-component" style="position: absolute; top: 482px; left: 1130px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecaca; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">과세/정산 수수료 연동</div>
-            </div>
-        </div>
-
-        <!-- PIM Widget 3: 대표 비주얼 -->
-        <div id="pim_w3_box" class="lf-component" style="position: absolute; top: 382px; left: 1270px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0f9ff; border: 1.6px solid #0284c7; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_w3_title" class="lf-component v4-text-shape" style="position: absolute; top: 391px; left: 1278px; width: 84px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(3, 105, 161); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">③ 대표 비주얼</div>
-        </div>
-        <div id="pim_w3_chip1" class="lf-component" style="position: absolute; top: 418px; left: 1278px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(224, 242, 254); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0284c7; font-size: 13px; font-weight: 800;">1000px 고해상 컷</div>
-            </div>
-        </div>
-        <div id="pim_w3_chip2" class="lf-component" style="position: absolute; top: 450px; left: 1278px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bae6fd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">마우스오버 롤오버 컷</div>
-            </div>
-        </div>
-        <div id="pim_w3_chip3" class="lf-component" style="position: absolute; top: 482px; left: 1278px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #bae6fd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">모바일 자동 압축 웹피</div>
-            </div>
-        </div>
-
-        <!-- PIM Widget 4: 옵션 & 재고 -->
-        <div id="pim_w4_box" class="lf-component" style="position: absolute; top: 382px; left: 1418px; width: 140px; height: 136px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #10b981; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_w4_title" class="lf-component v4-text-shape" style="position: absolute; top: 391px; left: 1426px; width: 84px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(4, 120, 87); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">④ 옵션 &amp; 재고</div>
-        </div>
-        <div id="pim_w4_chip1" class="lf-component" style="position: absolute; top: 418px; left: 1426px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(209, 250, 229); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #065f46; font-size: 13px; font-weight: 800;">가용 재고: 총 150개</div>
-            </div>
-        </div>
-        <div id="pim_w4_chip2" class="lf-component" style="position: absolute; top: 450px; left: 1426px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #a7f3d0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">블랙 / 베이지 2컬러</div>
-            </div>
-        </div>
-        <div id="pim_w4_chip3" class="lf-component" style="position: absolute; top: 482px; left: 1426px; width: 124px; height: 26px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #a7f3d0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">사이즈: 55, 66, 77</div>
-            </div>
-        </div>
-
-        <!-- Fast Pass Instant Launch Banner -->
-        <div id="pim_fp_box" class="lf-component" style="position: absolute; top: 526px; left: 824px; width: 734px; height: 38px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #2563eb; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_fp_text" class="lf-component v4-text-shape" style="position: absolute; top: 521px; left: 838px; width: 522px; height: 51px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(56, 189, 248); font-size: 13px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                🚀 1단계 완료 시 즉시 [판매 대기 / 정상 판매] 상태로 게시 가능 ➔ 초기 등록 공수 70% 획기적 절감!
-            </div>
-        </div>
-        <div id="pim_fp_btn" class="lf-component" style="position: absolute; top: 531px; left: 1406px; width: 144px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(37, 99, 235); border-radius: 6px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">신속 판매 개시 ➔</div>
-            </div>
-        </div>
-
-        <!-- PIM Arrow -->
-        <div id="pim_arrow" class="lf-component" style="position: absolute; top: 570px; left: 1185px; width: 20px; height: 18px; z-index: 20;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <polyline points="19 12 12 19 5 12"></polyline>
-            </svg>
-        </div>
-
-        <!-- PIM Stage 2 Subheader -->
-        <div id="pim_s2_pill" class="lf-component" style="position: absolute; top: 594px; left: 824px; width: 170px; height: 24px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgb(5, 150, 105); border-radius: 4px; display: flex; align-items: center; justify-content: center; border-width: 1.6px !important;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
-                    2단계 · 유연한 상세정보 보강
-                </div>
-            </div>
-        </div>
-        <div id="pim_s2_sub" class="lf-component v4-text-shape" style="position: absolute; top: 581px; left: 1002px; width: 408px; height: 51px; z-index: 20; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(71, 85, 105); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">
-                등록 후 필요한 섹션을 자유롭게 조립·확장 ➔ 구매 전환율 극대화 &amp; 반품률 감소
-            </div>
-        </div>
-
-        <!-- PIM Stage 2: 4 Atomic Expansion Modules -->
-        <!-- Module 1: 스타일 룩북 -->
-        <div id="pim_m1_box" class="lf-component" style="position: absolute; top: 626px; left: 824px; width: 174px; height: 246px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #10b981; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_m1_title" class="lf-component v4-text-shape" style="position: absolute; top: 637px; left: 834px; width: 122px; height: 21px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(4, 120, 87); font-size: 14px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">[보강 1] 스타일 룩북</div>
-        </div>
-        <div id="pim_m1_sub" class="lf-component v4-text-shape" style="position: absolute; top: 660px; left: 834px; width: 109px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(6, 95, 70); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">다각도 모델 착용 뷰</div>
-        </div>
-        <div id="pim_m1_chip1" class="lf-component" style="position: absolute; top: 686px; left: 834px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">스타일링 코디 제안</div>
-            </div>
-        </div>
-        <div id="pim_m1_chip2" class="lf-component" style="position: absolute; top: 720px; left: 834px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">가방/슈즈 함께 담기</div>
-            </div>
-        </div>
-        <div id="pim_m1_chip3" class="lf-component" style="position: absolute; top: 754px; left: 834px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">시즌 에디토리얼 스토리</div>
-            </div>
-        </div>
-        <div id="pim_m1_badge" class="lf-component" style="position: absolute; top: 830px; left: 834px; width: 154px; height: 32px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #d1fae5; border: 1.6px solid #6ee7b7; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #047857; font-size: 13px; font-weight: 800;">객단가 상승 +24%</div>
-            </div>
-        </div>
-
-        <!-- Module 2: 원단 스펙 -->
-        <div id="pim_m2_box" class="lf-component" style="position: absolute; top: 626px; left: 1010px; width: 174px; height: 246px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0f9ff; border: 1.6px solid #0284c7; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_m2_title" class="lf-component v4-text-shape" style="position: absolute; top: 637px; left: 1020px; width: 112px; height: 21px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(3, 105, 161); font-size: 14px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">[보강 2] 원단 스펙</div>
-        </div>
-        <div id="pim_m2_sub" class="lf-component v4-text-shape" style="position: absolute; top: 660px; left: 1020px; width: 140px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(2, 132, 199); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">5대 지표 슬라이더 게이지</div>
-        </div>
-        <div id="pim_m2_chip1" class="lf-component" style="position: absolute; top: 686px; left: 1020px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">신축·두께·비침 5단계</div>
-            </div>
-        </div>
-        <div id="pim_m2_chip2" class="lf-component" style="position: absolute; top: 720px; left: 1020px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">계절감 슬라이더 게이지</div>
-            </div>
-        </div>
-        <div id="pim_m2_chip3" class="lf-component" style="position: absolute; top: 754px; left: 1020px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">혼용률 &amp; 세탁 케어 안내</div>
-            </div>
-        </div>
-        <div id="pim_m2_badge" class="lf-component" style="position: absolute; top: 830px; left: 1020px; width: 154px; height: 32px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e0f2fe; border: 1.6px solid #7dd3fc; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0369a1; font-size: 13px; font-weight: 800;">단순변심 반품 -38%</div>
-            </div>
-        </div>
-
-        <!-- Module 3: 실측 & 피팅 -->
-        <div id="pim_m3_box" class="lf-component" style="position: absolute; top: 626px; left: 1196px; width: 174px; height: 246px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #faf5ff; border: 1.6px solid #8b5cf6; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_m3_title" class="lf-component v4-text-shape" style="position: absolute; top: 637px; left: 1206px; width: 125px; height: 21px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(109, 40, 217); font-size: 14px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">[보강 3] 실측 &amp; 피팅</div>
-        </div>
-        <div id="pim_m3_sub" class="lf-component v4-text-shape" style="position: absolute; top: 660px; left: 1206px; width: 106px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(124, 58, 237); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">부위별 정밀 실측표</div>
-        </div>
-        <div id="pim_m3_chip1" class="lf-component" style="position: absolute; top: 686px; left: 1206px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">총장·어깨·가슴 정밀 실측</div>
-            </div>
-        </div>
-        <div id="pim_m3_chip2" class="lf-component" style="position: absolute; top: 720px; left: 1206px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">모델 174cm 55사이즈 착용</div>
-            </div>
-        </div>
-        <div id="pim_m3_chip3" class="lf-component" style="position: absolute; top: 754px; left: 1206px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">체형별 맞춤 추천 가이드</div>
-            </div>
-        </div>
-        <div id="pim_m3_badge" class="lf-component" style="position: absolute; top: 830px; left: 1206px; width: 154px; height: 32px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ede9fe; border: 1.6px solid #c4b5fd; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #6d28d9; font-size: 13px; font-weight: 800;">사이즈 고민 이탈 방지</div>
-            </div>
-        </div>
-
-        <!-- Module 4: 영상 & 리뷰 -->
-        <div id="pim_m4_box" class="lf-component" style="position: absolute; top: 626px; left: 1382px; width: 174px; height: 246px; z-index: 20;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fdf2f8; border: 1.6px solid #ec4899; border-radius: 8px;"></div>
-        </div>
-        <div id="pim_m4_title" class="lf-component v4-text-shape" style="position: absolute; top: 637px; left: 1392px; width: 125px; height: 21px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(190, 24, 93); font-size: 14px; font-weight: 800; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">[보강 4] 영상 &amp; 리뷰</div>
-        </div>
-        <div id="pim_m4_sub" class="lf-component v4-text-shape" style="position: absolute; top: 660px; left: 1392px; width: 132px; height: 20px; z-index: 25; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(219, 39, 119); font-size: 13px; font-weight: 700; padding: 2px 3px !important; white-space: nowrap !important; text-align: left !important; align-items: flex-start !important; justify-content: center !important; width: 100%; height: 100%;">숏폼 비디오 &amp; 실착 리뷰</div>
-        </div>
-        <div id="pim_m4_chip1" class="lf-component" style="position: absolute; top: 686px; left: 1392px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">숏폼 동영상 클립 삽입</div>
-            </div>
-        </div>
-        <div id="pim_m4_chip2" class="lf-component" style="position: absolute; top: 720px; left: 1392px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">실착 포토 리뷰 연동</div>
-            </div>
-        </div>
-        <div id="pim_m4_chip3" class="lf-component" style="position: absolute; top: 754px; left: 1392px; width: 154px; height: 28px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 600;">검색 메타 태그 자동 생성</div>
-            </div>
-        </div>
-        <div id="pim_m4_badge" class="lf-component" style="position: absolute; top: 830px; left: 1392px; width: 154px; height: 32px; z-index: 25;">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fce7f3; border: 1.6px solid #f9a8d4; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be185d; font-size: 13px; font-weight: 800;">자연 검색 유입 +31%</div>
-            </div>
-        </div>
-
-    <div id="group-1789965879225" class="lf-component lf-group" style="position: absolute; left: 20px; top: 20px; width: 1558px; height: 50px; background: transparent; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; z-index: 1020;"><div id="v4-comp-1789965877468_827944_0" class="lf-component" data-resized="true" style="position: absolute; top: 0px; left: 0px; width: 1558px; height: 50px; z-index: 1010;">
+        <div id="hdr_bg" class="lf-component" style="position: absolute; top: 20px; left: 20px; width: 1560px; height: 50px; z-index: 100;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
-        </div><div id="v4-comp-1789965877468_881565_1" class="lf-component v4-text-shape" data-align="left" data-valign="middle" style="position: absolute; top: 15px; left: 58.5714px; width: 258px; height: 21px; z-index: 1010; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important; min-width: unset !important; min-height: unset !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: rgb(255, 255, 255); font-size: 15px; font-weight: 800; line-height: 1.2; width: 100%; height: 100%; text-align: left !important; padding: 2px 3px !important; white-space: nowrap !important; align-items: flex-start !important; justify-content: center !important;" data-align="left" data-valign="middle"><p style="width: 100% !important; text-align: left !important; white-space: nowrap !important;"><span style="color: rgb(255, 255, 255); font-size: 14px; white-space: nowrap !important;">BACKEND (ADMIN) - ADVANCEMENT</span></p></div>
-        </div><div id="v4-comp-1789965877468_190097_2" class="lf-component" style="position: absolute; top: 10px; left: 19.2857px; z-index: 1010; transform: none; height: 30px; color: rgb(0, 0, 0); width: 30px;" data-resized="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; padding: 3px; box-sizing: border-box; background-image: none !important; color: rgb(255, 255, 255);"><path d="M15 14c.8-.8 1.5-1.8 1.8-2.9a6 6 0 1 0-9.6 0c.3 1.1 1 2.1 1.8 2.9" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path><path d="M9 18h6" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path><path d="M10 22h4" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></path></svg></div></div></div>
-<script id="v4-inlined-script">/* Dynamic scripts injected */</script>
+        </div>
+
+        <div id="hdr_icon" class="lf-component" style="position: absolute; top: 30px; left: 38px; width: 30px; height: 30px; z-index: 105;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+        </div>
+
+        <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 34px; left: 78px; width: 340px; height: 22px; z-index: 105; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 15px; font-weight: 800; text-align: left; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important; width: 100%; height: 100%;">
+                <p style="white-space: nowrap !important;"><strong style="font-size: 15px; color: #ffffff; white-space: nowrap !important;">BACKEND (ADMIN) - ADVANCEMENT &amp; ROADMAP</strong></p>
+            </div>
+        </div>
+
+        <div id="hdr_subdesc" class="lf-component v4-text-shape" style="position: absolute; top: 36px; left: 450px; width: 480px; height: 20px; z-index: 105; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #94a3b8; font-size: 13px; font-weight: 500; text-align: left; padding: 2px 3px !important; white-space: nowrap !important; width: 100%; height: 100%;">
+                <p style="white-space: nowrap !important;">어드민 시스템 개편 방향 : 3대 최우선 핵심 과제 &amp; 4대 후속 분석 과제</p>
+            </div>
+        </div>
+
+        <div id="hdr_badge" class="lf-component" style="position: absolute; top: 31px; left: 1250px; width: 310px; height: 28px; z-index: 105;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #082f49; border: 1.6px solid #0284c7; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center; padding: 2px 4px !important;">
+                    <p><strong style="color: #38bdf8; font-size: 13px;">시선닷컴 백오피스 혁신 아키텍처</strong></p>
+                </div>
+            </div>
+        </div>
 
 
-</body></html>
+        <!-- ========================================================================================= -->
+        <!-- [1] SECTION 1: 3대 최우선 핵심 과제 (Top: 85px, Left: 20px, Width: 1560px, H: 605px) -->
+        <!-- Col 1: 상품관리 (W: 504px) | Col 2: 전시관리 (W: 504px) | Col 3: 배송관리 (W: 504px) -->
+        <!-- ========================================================================================= -->
+
+        <!-- ----------------------------------------------------------------------------------------- -->
+        <!-- [COLUMN 1] 상품관리 (Left: 20px, Width: 504px, Height: 605px) -->
+        <!-- ----------------------------------------------------------------------------------------- -->
+        <div id="col1_container" class="lf-component" style="position: absolute; top: 85px; left: 20px; width: 504px; height: 605px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #93c5fd; border-radius: 12px; box-shadow: 0 4px 14px rgba(37,99,235,0.06); box-sizing: border-box;"></div>
+        </div>
+
+        <!-- Col 1 Header Area -->
+        <div id="col1_tag" class="lf-component" style="position: absolute; top: 98px; left: 36px; width: 112px; height: 24px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">최우선 과제 01</div>
+            </div>
+        </div>
+
+        <div id="col1_title" class="lf-component v4-text-shape" style="position: absolute; top: 97px; left: 156px; width: 200px; height: 26px; z-index: 15; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 16px; font-weight: 800; padding: 2px 0 !important; white-space: nowrap !important;">
+                상품관리 (PIM)
+            </div>
+        </div>
+
+        <div id="col1_target" class="lf-component v4-text-shape" style="position: absolute; top: 126px; left: 36px; width: 472px; height: 20px; z-index: 15; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #3b82f6; font-size: 13px; font-weight: 700; padding: 2px 0 !important; white-space: nowrap !important;">
+                • 수작업 등록 탈피 ➔ LLM 상세 보강 &amp; TPO 키워드 &amp; 체형 사이즈 제안
+            </div>
+        </div>
+
+        <!-- Col 1 AS-IS Box -->
+        <div id="col1_asis_box" class="lf-component" style="position: absolute; top: 150px; left: 34px; width: 476px; height: 114px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #fecaca; border-radius: 8px;"></div>
+        </div>
+        <div id="col1_asis_tag" class="lf-component v4-text-shape" style="position: absolute; top: 158px; left: 46px; width: 180px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 13px; font-weight: 800; white-space: nowrap !important;">
+                ⚠️ AS-IS 현황 및 한계
+            </div>
+        </div>
+        <div id="col1_asis_p1" class="lf-component" style="position: absolute; top: 182px; left: 46px; width: 452px; height: 36px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #7f1d1d; font-size: 13px; font-weight: 500; line-height: 1.4;">
+                        <p>• <strong>수작업 입력 의존</strong> : ERP로부터 최소한의 데이터만 전송받아 생성 후, 온라인MD가 직접 상품 정보를 일일이 채워넣는 형태로만 운영</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="col1_asis_p2" class="lf-component" style="position: absolute; top: 220px; left: 46px; width: 452px; height: 36px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #7f1d1d; font-size: 13px; font-weight: 500; line-height: 1.4;">
+                        <p>• <strong>빈약한 사이즈 조견표</strong> : 상품의 총길이, 가슴단면, 소매길이 등 단순 치수 정보만 표기되어 고객 맞춤형 안내 부재</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 1 Direction Badge -->
+        <div id="col1_dir_badge" class="lf-component" style="position: absolute; top: 272px; left: 162px; width: 220px; height: 26px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
+                    ▼ 구조적 기능 고도화 과제 (TO-BE)
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 1 TO-BE Box -->
+        <div id="col1_tobe_box" class="lf-component" style="position: absolute; top: 306px; left: 34px; width: 476px; height: 368px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #bfdbfe; border-radius: 8px;"></div>
+        </div>
+
+        <!-- Col 1 TO-BE Item 1 -->
+        <div id="col1_tobe1_card" class="lf-component" style="position: absolute; top: 318px; left: 46px; width: 452px; height: 104px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #93c5fd; border-radius: 6px;"></div>
+        </div>
+        <div id="col1_tobe1_tag" class="lf-component" style="position: absolute; top: 326px; left: 56px; width: 210px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #dbeafe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 800;">① LLM 기반 상세 정보 자동 보강</div>
+            </div>
+        </div>
+        <div id="col1_tobe1_txt" class="lf-component" style="position: absolute; top: 356px; left: 56px; width: 432px; height: 56px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>데이터 기반 LLM 엔진 도입</strong> : 상품 상세 정보에 데이터 기반 LLM을 구성하여, 최소 ERP 데이터로부터 상세 스펙과 특장점을 자동으로 추론 및 보강하는 자동 생성 체계 구축</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 1 TO-BE Item 2 -->
+        <div id="col1_tobe2_card" class="lf-component" style="position: absolute; top: 432px; left: 46px; width: 452px; height: 104px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #93c5fd; border-radius: 6px;"></div>
+        </div>
+        <div id="col1_tobe2_tag" class="lf-component" style="position: absolute; top: 440px; left: 56px; width: 220px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #dbeafe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 800;">② TPO별 추천 키워드 분류 &amp; 연동</div>
+            </div>
+        </div>
+        <div id="col1_tobe2_txt" class="lf-component" style="position: absolute; top: 470px; left: 56px; width: 432px; height: 56px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>상황별 추천 키워드 자동 추출</strong> : 상품 데이터를 기반으로 TPO(Time·Place·Occasion) 맞춤 추천 키워드를 체계적으로 분류하고, 이를 FRONT 화면에 동적으로 연동 출력</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 1 TO-BE Item 3 -->
+        <div id="col1_tobe3_card" class="lf-component" style="position: absolute; top: 546px; left: 46px; width: 452px; height: 114px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #93c5fd; border-radius: 6px;"></div>
+        </div>
+        <div id="col1_tobe3_tag" class="lf-component" style="position: absolute; top: 554px; left: 56px; width: 226px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #dbeafe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; font-weight: 800;">③ 키·체중 체형 맞춤 사이즈 제안</div>
+            </div>
+        </div>
+        <div id="col1_tobe3_txt" class="lf-component" style="position: absolute; top: 584px; left: 56px; width: 432px; height: 66px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>체형 맞춤 사이즈 추천 체계화</strong> : 단순 단면 치수를 넘어 소비자의 키와 체중에 대한 스펙 데이터를 체계화하여, 개별 체형에 가장 적합한 사이즈를 정밀 제안하는 기능 구현</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ----------------------------------------------------------------------------------------- -->
+        <!-- [COLUMN 2] 전시관리 (Left: 548px, Width: 504px, Height: 605px) -->
+        <!-- ----------------------------------------------------------------------------------------- -->
+        <div id="col2_container" class="lf-component" style="position: absolute; top: 85px; left: 548px; width: 504px; height: 605px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c4b5fd; border-radius: 12px; box-shadow: 0 4px 14px rgba(124,58,237,0.06); box-sizing: border-box;"></div>
+        </div>
+
+        <!-- Col 2 Header Area -->
+        <div id="col2_tag" class="lf-component" style="position: absolute; top: 98px; left: 564px; width: 112px; height: 24px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">최우선 과제 02</div>
+            </div>
+        </div>
+
+        <div id="col2_title" class="lf-component v4-text-shape" style="position: absolute; top: 97px; left: 684px; width: 200px; height: 26px; z-index: 15; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #4c1d95; font-size: 16px; font-weight: 800; padding: 2px 0 !important; white-space: nowrap !important;">
+                전시관리 (CMS)
+            </div>
+        </div>
+
+        <div id="col2_target" class="lf-component v4-text-shape" style="position: absolute; top: 126px; left: 564px; width: 472px; height: 20px; z-index: 15; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #7c3aed; font-size: 13px; font-weight: 700; padding: 2px 0 !important; white-space: nowrap !important;">
+                • 파편화 해소 ➔ 브랜드·디바이스 통합 카테고리 &amp; Front 전 영역 카드화
+            </div>
+        </div>
+
+        <!-- Col 2 AS-IS Box -->
+        <div id="col2_asis_box" class="lf-component" style="position: absolute; top: 150px; left: 562px; width: 476px; height: 114px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #fecaca; border-radius: 8px;"></div>
+        </div>
+        <div id="col2_asis_tag" class="lf-component v4-text-shape" style="position: absolute; top: 158px; left: 574px; width: 180px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 13px; font-weight: 800; white-space: nowrap !important;">
+                ⚠️ AS-IS 현황 및 한계
+            </div>
+        </div>
+        <div id="col2_asis_p1" class="lf-component" style="position: absolute; top: 182px; left: 574px; width: 452px; height: 36px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #7f1d1d; font-size: 13px; font-weight: 500; line-height: 1.4;">
+                        <p>• <strong>카테고리 파편화 및 이원화</strong> : 브랜드별로 카테고리 체계가 다르고, PC와 Mobile을 따로 등록/관리하여 운영 공수 급증</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="col2_asis_p2" class="lf-component" style="position: absolute; top: 220px; left: 574px; width: 452px; height: 36px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #7f1d1d; font-size: 13px; font-weight: 500; line-height: 1.4;">
+                        <p>• <strong>단순 전시 기능의 한계</strong> : 각 영역별 단순 이미지, 상품, 배너, 팝업 등 기초적 요소만 수동 등록하는 제한적 구조</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 2 Direction Badge -->
+        <div id="col2_dir_badge" class="lf-component" style="position: absolute; top: 272px; left: 690px; width: 220px; height: 26px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #7c3aed; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
+                    ▼ 구조적 기능 고도화 과제 (TO-BE)
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 2 TO-BE Box -->
+        <div id="col2_tobe_box" class="lf-component" style="position: absolute; top: 306px; left: 562px; width: 476px; height: 368px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #faf5ff; border: 1.6px solid #ddd6fe; border-radius: 8px;"></div>
+        </div>
+
+        <!-- Col 2 TO-BE Item 1 -->
+        <div id="col2_tobe1_card" class="lf-component" style="position: absolute; top: 318px; left: 574px; width: 452px; height: 104px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c4b5fd; border-radius: 6px;"></div>
+        </div>
+        <div id="col2_tobe1_tag" class="lf-component" style="position: absolute; top: 326px; left: 584px; width: 236px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ede9fe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #6d28d9; font-size: 13px; font-weight: 800;">① 구조적 카테고리 통합 (공통 규격)</div>
+            </div>
+        </div>
+        <div id="col2_tobe1_txt" class="lf-component" style="position: absolute; top: 356px; left: 584px; width: 432px; height: 56px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>단일화된 카테고리 체계</strong> : 브랜드와 디바이스(PC/Mobile)에 구애받지 않고 유기적으로 연결되는 공통 카테고리 구조를 전면 수립하여 단일 SSOT로 관리</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 2 TO-BE Item 2 -->
+        <div id="col2_tobe2_card" class="lf-component" style="position: absolute; top: 432px; left: 574px; width: 452px; height: 104px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c4b5fd; border-radius: 6px;"></div>
+        </div>
+        <div id="col2_tobe2_tag" class="lf-component" style="position: absolute; top: 440px; left: 584px; width: 226px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ede9fe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #6d28d9; font-size: 13px; font-weight: 800;">② 브랜드별 스페셜 카테고리 분리</div>
+            </div>
+        </div>
+        <div id="col2_tobe2_txt" class="lf-component" style="position: absolute; top: 470px; left: 584px; width: 432px; height: 56px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>브랜드 특화 기능 독립화</strong> : 각 브랜드 고유의 콘셉트와 특성을 반영해야 하는 스페셜 카테고리는 별도 전용 기능으로 정밀 분리하여 유연성 극대화</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 2 TO-BE Item 3 -->
+        <div id="col2_tobe3_card" class="lf-component" style="position: absolute; top: 546px; left: 574px; width: 452px; height: 114px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c4b5fd; border-radius: 6px;"></div>
+        </div>
+        <div id="col2_tobe3_tag" class="lf-component" style="position: absolute; top: 554px; left: 584px; width: 236px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ede9fe; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #6d28d9; font-size: 13px; font-weight: 800;">③ Front 전 화면 카드화 &amp; 자동 조립</div>
+            </div>
+        </div>
+        <div id="col2_tobe3_txt" class="lf-component" style="position: absolute; top: 584px; left: 584px; width: 432px; height: 66px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>카드 블록 기반 자동 퍼블리싱</strong> : Front의 모든 영역을 모듈형 [카드 블록]으로 표준화하고, 어드민에서 카드를 자유롭게 세팅하면 실시간 자동 퍼블리싱되는 구조적 아키텍처 완성</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ----------------------------------------------------------------------------------------- -->
+        <!-- [COLUMN 3] 배송관리 (Left: 1076px, Width: 504px, Height: 605px) -->
+        <!-- ----------------------------------------------------------------------------------------- -->
+        <div id="col3_container" class="lf-component" style="position: absolute; top: 85px; left: 1076px; width: 504px; height: 605px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #86efac; border-radius: 12px; box-shadow: 0 4px 14px rgba(16,185,129,0.06); box-sizing: border-box;"></div>
+        </div>
+
+        <!-- Col 3 Header Area -->
+        <div id="col3_tag" class="lf-component" style="position: absolute; top: 98px; left: 1092px; width: 112px; height: 24px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">최우선 과제 03</div>
+            </div>
+        </div>
+
+        <div id="col3_title" class="lf-component v4-text-shape" style="position: absolute; top: 97px; left: 1212px; width: 230px; height: 26px; z-index: 15; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #064e3b; font-size: 16px; font-weight: 800; padding: 2px 0 !important; white-space: nowrap !important;">
+                배송관리 (Logistics)
+            </div>
+        </div>
+
+        <div id="col3_target" class="lf-component v4-text-shape" style="position: absolute; top: 126px; left: 1092px; width: 472px; height: 20px; z-index: 15; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #059669; font-size: 13px; font-weight: 700; padding: 2px 0 !important; white-space: nowrap !important;">
+                • 대대적 재구축 ➔ 물류센터 재고 연동 &amp; '배송예정일 자동화' 프로젝트
+            </div>
+        </div>
+
+        <!-- Col 3 AS-IS Box -->
+        <div id="col3_asis_box" class="lf-component" style="position: absolute; top: 150px; left: 1090px; width: 476px; height: 114px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef2f2; border: 1.6px solid #fecaca; border-radius: 8px;"></div>
+        </div>
+        <div id="col3_asis_tag" class="lf-component v4-text-shape" style="position: absolute; top: 158px; left: 1102px; width: 180px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #b91c1c; font-size: 13px; font-weight: 800; white-space: nowrap !important;">
+                ⚠️ AS-IS 현황 및 한계
+            </div>
+        </div>
+        <div id="col3_asis_p1" class="lf-component" style="position: absolute; top: 182px; left: 1102px; width: 452px; height: 36px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #7f1d1d; font-size: 13px; font-weight: 500; line-height: 1.4;">
+                        <p>• <strong>단순 배송 조회에 국한</strong> : 현재 시스템은 단순하게 택배 송장을 조회하고, ERP에 매출을 반영하는 기능만 한정적으로 존재</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="col3_asis_p2" class="lf-component" style="position: absolute; top: 220px; left: 1102px; width: 452px; height: 36px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #7f1d1d; font-size: 13px; font-weight: 500; line-height: 1.4;">
+                        <p>• <strong>도착 시점 예측 정보 부재</strong> : 실시간 재고와 출고 리드타임이 연계되지 않아 고객에게 실제 배송 도착 시점을 명확히 안내 불가</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 3 Direction Badge -->
+        <div id="col3_dir_badge" class="lf-component" style="position: absolute; top: 272px; left: 1218px; width: 220px; height: 26px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #059669; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">
+                    ▼ 구조적 기능 고도화 과제 (TO-BE)
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 3 TO-BE Box -->
+        <div id="col3_tobe_box" class="lf-component" style="position: absolute; top: 306px; left: 1090px; width: 476px; height: 368px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 8px;"></div>
+        </div>
+
+        <!-- Col 3 TO-BE Item 1 -->
+        <div id="col3_tobe1_card" class="lf-component" style="position: absolute; top: 318px; left: 1102px; width: 452px; height: 104px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #86efac; border-radius: 6px;"></div>
+        </div>
+        <div id="col3_tobe1_tag" class="lf-component" style="position: absolute; top: 326px; left: 1112px; width: 220px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #dcfce7; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 800;">① 물류센터 실시간 재고 연동 조회</div>
+            </div>
+        </div>
+        <div id="col3_tobe1_txt" class="lf-component" style="position: absolute; top: 356px; left: 1112px; width: 432px; height: 56px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>가용 재고 정밀 파악</strong> : 물류센터 현장 재고를 실시간으로 직접 조회하고, 물류 거점별 출고 가능 수량을 즉각 산출하는 기반 연동망 구축</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 3 TO-BE Item 2 -->
+        <div id="col3_tobe2_card" class="lf-component" style="position: absolute; top: 432px; left: 1102px; width: 452px; height: 104px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #86efac; border-radius: 6px;"></div>
+        </div>
+        <div id="col3_tobe2_tag" class="lf-component" style="position: absolute; top: 440px; left: 1112px; width: 236px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #dcfce7; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 800;">② 출고-배송 도착 시점 시뮬레이션</div>
+            </div>
+        </div>
+        <div id="col3_tobe2_txt" class="lf-component" style="position: absolute; top: 470px; left: 1112px; width: 432px; height: 56px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>도착 예정 시점 명확화</strong> : 조회된 재고를 기반으로 주문 후 물류센터 출고 시점과 고객 배송 완료 시점을 정밀하게 시뮬레이션하여 데이터화</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 3 TO-BE Item 3 -->
+        <div id="col3_tobe3_card" class="lf-component" style="position: absolute; top: 546px; left: 1102px; width: 452px; height: 114px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #86efac; border-radius: 6px;"></div>
+        </div>
+        <div id="col3_tobe3_tag" class="lf-component" style="position: absolute; top: 554px; left: 1112px; width: 236px; height: 24px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #dcfce7; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #166534; font-size: 13px; font-weight: 800;">③ [배송예정일 자동화] 프로젝트 추진</div>
+            </div>
+        </div>
+        <div id="col3_tobe3_txt" class="lf-component" style="position: absolute; top: 584px; left: 1112px; width: 432px; height: 66px; z-index: 25;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>• <strong>고객 도착 안내 전면 자동화</strong> : '배송예정일 자동화' 전용 신규 프로젝트를 도입하여, 고객이 결제 전/주문서/상세페이지에서 언제쯤 도착 예정인지 명확히 확인하도록 구현</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================================================================= -->
+        <!-- [2] SECTION 2: 4대 후속 분석 과제 (Top: 706px, Left: 20px, Width: 1560px, Height: 174px) -->
+        <!-- ========================================================================================= -->
+        <div id="sec2_bg" class="lf-component" style="position: absolute; top: 706px; left: 20px; width: 1560px; height: 174px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); box-sizing: border-box;"></div>
+        </div>
+
+        <!-- Section 2 Left Header Block -->
+        <div id="sec2_badge" class="lf-component" style="position: absolute; top: 722px; left: 36px; width: 120px; height: 24px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800;">NEXT PHASE</div>
+            </div>
+        </div>
+
+        <div id="sec2_title" class="lf-component v4-text-shape" style="position: absolute; top: 750px; left: 36px; width: 230px; height: 24px; z-index: 15; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; white-space: nowrap !important;">
+                4대 후속 분석 과제
+            </div>
+        </div>
+
+        <div id="sec2_desc" class="lf-component" style="position: absolute; top: 780px; left: 36px; width: 230px; height: 86px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 13px; font-weight: 500; line-height: 1.45;">
+                        <p>3대 핵심 과제 구축 완료 후, 현업 데이터 및 사용자 행동 패턴 분석을 토대로 실질적 인사이트를 도출하여 순차 고도화 추진</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vertical Divider -->
+        <div id="sec2_divider" class="lf-component" style="position: absolute; top: 720px; left: 280px; width: 1.6px; height: 146px; z-index: 15;">
+            <div style="width: 100%; height: 100%; background: #e2e8f0;"></div>
+        </div>
+
+        <!-- Sub Task 1: 회원관리 -->
+        <div id="sub1_card" class="lf-component" style="position: absolute; top: 720px; left: 298px; width: 298px; height: 146px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px;"></div>
+        </div>
+        <div id="sub1_icon" class="lf-component" style="position: absolute; top: 730px; left: 310px; width: 24px; height: 24px; z-index: 20;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+        <div id="sub1_title" class="lf-component v4-text-shape" style="position: absolute; top: 731px; left: 340px; width: 110px; height: 22px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 14px; font-weight: 800; white-space: nowrap !important;">
+                [과제 1] 회원관리
+            </div>
+        </div>
+        <div id="sub1_badge" class="lf-component" style="position: absolute; top: 730px; left: 512px; width: 72px; height: 22px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 700;">분석 예정</div>
+            </div>
+        </div>
+        <div id="sub1_txt" class="lf-component" style="position: absolute; top: 760px; left: 310px; width: 274px; height: 96px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 400; line-height: 1.45;">
+                        <p>• 고객 구매 주기 및 여정 데이터 분석을 토대로 회원 등급 체계와 리텐션 강화 방안 인사이트 도출 후 순차 개발 착수</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Task 2: 프로모션 관리 -->
+        <div id="sub2_card" class="lf-component" style="position: absolute; top: 720px; left: 614px; width: 298px; height: 146px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px;"></div>
+        </div>
+        <div id="sub2_icon" class="lf-component" style="position: absolute; top: 730px; left: 626px; width: 24px; height: 24px; z-index: 20;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+        </div>
+        <div id="sub2_title" class="lf-component v4-text-shape" style="position: absolute; top: 731px; left: 656px; width: 130px; height: 22px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 14px; font-weight: 800; white-space: nowrap !important;">
+                [과제 2] 프로모션 관리
+            </div>
+        </div>
+        <div id="sub2_badge" class="lf-component" style="position: absolute; top: 730px; left: 828px; width: 72px; height: 22px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 700;">분석 예정</div>
+            </div>
+        </div>
+        <div id="sub2_txt" class="lf-component" style="position: absolute; top: 760px; left: 626px; width: 274px; height: 96px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 400; line-height: 1.45;">
+                        <p>• 쿠폰 발행 및 마일리지 사용 반응 데이터를 면밀히 분석하여, 매출 전환 효율을 극대화하는 프로모션 연산 엔진 기획 및 설계</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Task 3: 주문 관리 -->
+        <div id="sub3_card" class="lf-component" style="position: absolute; top: 720px; left: 930px; width: 298px; height: 146px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px;"></div>
+        </div>
+        <div id="sub3_icon" class="lf-component" style="position: absolute; top: 730px; left: 942px; width: 24px; height: 24px; z-index: 20;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+        </div>
+        <div id="sub3_title" class="lf-component v4-text-shape" style="position: absolute; top: 731px; left: 972px; width: 110px; height: 22px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 14px; font-weight: 800; white-space: nowrap !important;">
+                [과제 3] 주문 관리
+            </div>
+        </div>
+        <div id="sub3_badge" class="lf-component" style="position: absolute; top: 730px; left: 1144px; width: 72px; height: 22px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 700;">분석 예정</div>
+            </div>
+        </div>
+        <div id="sub3_txt" class="lf-component" style="position: absolute; top: 760px; left: 942px; width: 274px; height: 96px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 400; line-height: 1.45;">
+                        <p>• 결제 수단별 실시간 트랜잭션 및 대량 주문 처리 패턴을 분석하여 주문 파이프라인의 안전성과 처리 속도 고도화 방안 수립</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Task 4: 클레임 관리 -->
+        <div id="sub4_card" class="lf-component" style="position: absolute; top: 720px; left: 1246px; width: 298px; height: 146px; z-index: 15;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 8px;"></div>
+        </div>
+        <div id="sub4_icon" class="lf-component" style="position: absolute; top: 730px; left: 1258px; width: 24px; height: 24px; z-index: 20;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+        </div>
+        <div id="sub4_title" class="lf-component v4-text-shape" style="position: absolute; top: 731px; left: 1288px; width: 120px; height: 22px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e293b; font-size: 14px; font-weight: 800; white-space: nowrap !important;">
+                [과제 4] 클레임 관리
+            </div>
+        </div>
+        <div id="sub4_badge" class="lf-component" style="position: absolute; top: 730px; left: 1460px; width: 72px; height: 22px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; font-weight: 700;">분석 예정</div>
+            </div>
+        </div>
+        <div id="sub4_txt" class="lf-component" style="position: absolute; top: 760px; left: 1258px; width: 274px; height: 96px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 400; line-height: 1.45;">
+                        <p>• 반품 및 교환 인입 사유와 물류 수거 패턴을 전수 분석하여, 수거 지연 방지 및 신속 환불/정산 프로세스 자동화 방향 도출</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

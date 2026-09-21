@@ -207,7 +207,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-17T05:20:34.746Z",
+      "updatedAt": "2026-09-21T01:46:19.670Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -271,14 +271,14 @@
           "type": "pin"
         },
         {
-          "text": "5. 연관 기획전\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 연관 기획전 설정 기능\n- 최초 등록 시에는 모든 데이터 null",
+          "text": "4. 상품 그룹 관리\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 상품 그룹 설정 기능\n- 최초 등록 시에는 모든 데이터 null",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 890,
-          "y": 423,
+          "x": 277,
+          "y": 1373,
           "pins": {
             "pc": {
-              "x": 890,
-              "y": 423,
+              "x": 277,
+              "y": 1373,
               "active": true
             },
             "mobile": {
@@ -291,14 +291,14 @@
           "type": "pin"
         },
         {
-          "text": "Edit Text",
+          "text": "5. 연관 기획전\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 연관 기획전 설정 기능\n- 최초 등록 시에는 모든 데이터 null",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 890,
-          "y": 423,
+          "x": 276,
+          "y": 1668,
           "pins": {
             "pc": {
-              "x": 890,
-              "y": 423,
+              "x": 276,
+              "y": 1668,
               "active": true
             },
             "mobile": {
@@ -314,7 +314,7 @@
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object]",
-      "version": 0.3
+      "version": 0.6
     },
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
@@ -531,7 +531,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-18 10:26:44",
+  "updated": "2026-09-21 10:46:19",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

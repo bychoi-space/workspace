@@ -15,7 +15,7 @@
     "03_Admin_System_Development_Roadmap_900.html": {
       "title": "03_Admin 시스템 개발 로드맵",
       "type": "architecture",
-      "updatedAt": "2026-09-21T06:30:17.417Z",
+      "updatedAt": "2026-09-21T06:24:10.151Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -50,7 +50,9 @@
       "type": "architecture",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-09-21T06:25:12.071Z"
+      "updatedAt": "2026-09-21T06:25:12.071Z",
+      "description": [],
+      "connectors": []
     },
     "99_Blank_15.html": {
       "title": "99_Blank_15",
@@ -66,6 +68,7 @@
     "99_Blank_14.html",
     "04_Front_System_Milestone_Timeline_900.html",
     "03_Admin_System_Development_Roadmap_900.html",
+    "05_Admin_System_Milestone_Timeline_900.html",
     "99_Blank_15.html"
   ],
   "assignee": "최범열",

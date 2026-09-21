@@ -746,31 +746,64 @@ window.V4_COMPONENT_LIBRARY = {
             category: 'Illustration',
             width: '240px',
             height: '240px',
-            thumb: 'assets/illustrations/admin_ill_pim.png',
-            previewHtml: `<img src="assets/illustrations/admin_ill_pim.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_pim.png" alt="상품관리 시스템 개선 (LLM 상세 보강 &amp; TPO 키워드 &amp; 체형 사이즈 제안)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+            thumb: 'assets/illustrations/admin_3d_pim.png',
+            previewHtml: `<img src="assets/illustrations/admin_3d_pim.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_pim.png" alt="상품관리 시스템 개선 (LLM 상세 보강 &amp; TPO 키워드 &amp; 체형 사이즈 제안)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         },
         {
-            id: 'v4-ill-admin-cms',
-            name: '17. 전시관리 - 통합 & 카드화',
-            koName: '17 전시관리 cms 통합카테고리 카드블록 자동퍼블리싱 display mobile pc 시스템개선',
+            id: 'v4-ill-admin-3d-cms',
+            name: '17. [3D] 전시관리 - 통합 & 카드화',
+            koName: '17 3d 전시관리 cms 통합카테고리 카드블록 자동퍼블리싱 display mobile pc 시스템개선',
             category: 'Illustration',
             width: '240px',
             height: '240px',
-            thumb: 'assets/illustrations/admin_ill_cms.png',
-            previewHtml: `<img src="assets/illustrations/admin_ill_cms.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_cms.png" alt="전시관리 시스템 개선 (통합 카테고리 &amp; Front 전 영역 카드화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+            thumb: 'assets/illustrations/admin_3d_cms.png',
+            previewHtml: `<img src="assets/illustrations/admin_3d_cms.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_cms.png" alt="전시관리 시스템 개선 (통합 카테고리 &amp; Front 전 영역 카드화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         },
         {
-            id: 'v4-ill-admin-logistics',
-            name: '18. 배송관리 - 배송예정일 자동화',
-            koName: '18 배송관리 logistics 실시간재고 배송예정일자동화 풀필먼트 도착예측 delivery shipping 시스템개선',
+            id: 'v4-ill-admin-3d-logistics',
+            name: '18. [3D] 배송관리 - 배송예정일 자동화',
+            koName: '18 3d 배송관리 logistics 실시간재고 배송예정일자동화 풀필먼트 도착예측 delivery shipping 시스템개선',
             category: 'Illustration',
             width: '240px',
             height: '240px',
-            thumb: 'assets/illustrations/admin_ill_logistics.png',
-            previewHtml: `<img src="assets/illustrations/admin_ill_logistics.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_ill_logistics.png" alt="배송관리 시스템 개선 (재고 연동 &amp; 배송예정일 자동화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+            thumb: 'assets/illustrations/admin_3d_logistics.png',
+            previewHtml: `<img src="assets/illustrations/admin_3d_logistics.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_logistics.png" alt="배송관리 시스템 개선 (재고 연동 &amp; 배송예정일 자동화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-admin-vec-pim',
+            name: '19. [2D] 상품관리 - 실측 & 상세',
+            koName: '19 2d 벡터 상품관리 pim 마네킹 줄자 상세정보 시스템개선',
+            category: 'Illustration',
+            width: '240px',
+            height: '240px',
+            thumb: 'assets/illustrations/admin_vector_pim.png',
+            previewHtml: `<img src="assets/illustrations/admin_vector_pim.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_vector_pim.png" alt="상품관리 (실측 &amp; 상세)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-admin-vec-cms',
+            name: '20. [2D] 전시관리 - 카드 조립',
+            koName: '20 2d 벡터 전시관리 cms 카드조립 디스플레이 시스템개선',
+            category: 'Illustration',
+            width: '240px',
+            height: '240px',
+            thumb: 'assets/illustrations/admin_vector_cms.png',
+            previewHtml: `<img src="assets/illustrations/admin_vector_cms.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_vector_cms.png" alt="전시관리 (카드 조립)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-admin-vec-logistics',
+            name: '21. [2D] 배송관리 - 택배 & 스케줄',
+            koName: '21 2d 벡터 배송관리 logistics 택배상자 달력 시스템개선',
+            category: 'Illustration',
+            width: '240px',
+            height: '240px',
+            thumb: 'assets/illustrations/admin_vector_logistics.png',
+            previewHtml: `<img src="assets/illustrations/admin_vector_logistics.png" style="width: 100%; height: 100%; object-fit: contain;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_vector_logistics.png" alt="배송관리 (택배 &amp; 스케줄)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
     ]
 };

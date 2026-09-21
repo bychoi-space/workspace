@@ -34,6 +34,17 @@
       "screenDesc": "관리자 업무 효율성 & 사용 빈도 기반 7대 도메인 개발 우선순위 및 핵심 2대 도메인([상품관리] 2단계 분리 유연화 & [전시관리] 카드 블록 기반 화면 자동 조립) 아키텍처",
       "defaultTab": "editor"
     },
+    "04_Front_System_Milestone_Timeline_900.html": {
+      "title": "04_Front 일정표 (마일스톤)",
+      "type": "architecture",
+      "updatedAt": "2026-09-21T09:46:00.000Z",
+      "template": "template_process.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.2,
+      "screenDesc": "시선닷컴 Front System 개편 5대 마일스톤 일정표 (2026.4Q 아토믹 SSOT ➔ 2027.1H 메인/결제 ➔ 2027.2H 탐색/기획전 ➔ 2028.1H 회원/배송 ➔ 2028.2H 클레임/AI CS)",
+      "defaultTab": "editor"
+    },
     "99_Blank_14.html": {
       "title": "Front UI",
       "type": "architecture",
@@ -50,6 +61,7 @@
     "01_Fashion_Ecommerce_Process_Map_900.html",
     "02_Front_System_Atomic_Design_Roadmap_900.html",
     "03_Admin_System_Development_Roadmap_900.html",
+    "04_Front_System_Milestone_Timeline_900.html",
     "99_Blank_14.html"
   ],
   "assignee": "최범열",
@@ -57,7 +69,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-09-21 09:02:00",
+  "updated": "2026-09-21 09:46:00",
   "version": 0.2,
   "period": ""
 }

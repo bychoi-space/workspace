@@ -319,7 +319,7 @@
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
       "type": "admin",
-      "updatedAt": "2026-09-21T08:43:45.893Z",
+      "updatedAt": "2026-09-21T08:48:11.256Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -441,6 +441,25 @@
           },
           "standardized": true,
           "type": "pin"
+        },
+        {
+          "text": "상품 그룹 Min 1 ~ Max 10\n- 상품 그룹이 너무 많아질 것을 우려한 제약사항\n- 10개 그룹 이상 생성 시 얼럿\n- 나머지 버튼 (그룹 저장, 그룹 삭제) 은 기존 기능과 동일",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 738,
+          "y": 1711,
+          "pins": {
+            "pc": {
+              "x": 738,
+              "y": 1711,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true
         }
       ],
       "connectors": [],
@@ -531,7 +550,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-21 17:43:45",
+  "updated": "2026-09-21 17:48:11",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

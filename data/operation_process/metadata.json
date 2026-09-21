@@ -48,7 +48,7 @@
     "99_Blank_14.html": {
       "title": "Front UI",
       "type": "architecture",
-      "updatedAt": "2026-09-21T01:29:05.921Z",
+      "updatedAt": "2026-09-21T02:13:35.280Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -69,7 +69,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-09-21 10:29:05",
+  "updated": "2026-09-21 11:13:35",
   "version": 0.2,
   "period": ""
 }

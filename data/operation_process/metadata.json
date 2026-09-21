@@ -15,7 +15,7 @@
     "03_Admin_System_Development_Roadmap_900.html": {
       "title": "03_Admin 시스템 개발 로드맵",
       "type": "architecture",
-      "updatedAt": "2026-09-21T06:24:02.983Z",
+      "updatedAt": "2026-09-21T06:24:10.151Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -57,7 +57,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-09-21 15:24:02",
+  "updated": "2026-09-21 15:24:10",
   "version": 0.2,
   "period": ""
 }

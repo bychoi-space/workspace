@@ -12,17 +12,6 @@
       "screenDesc": "패션 이커머스 7대 핵심 도메인 비즈니스 프로세스 & 시스템 아키텍처 맵 (Front 저니맵 ⇄ Core 도메인 ⇄ Admin 백오피스)",
       "defaultTab": "editor"
     },
-    "02_Front_System_Atomic_Design_Roadmap_900.html": {
-      "title": "02_Front UI 개편 로드맵",
-      "type": "architecture",
-      "updatedAt": "2026-09-18T04:58:30.474Z",
-      "template": "template_process.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.2,
-      "screenDesc": "시선닷컴 Front UI 개편 방향 (디자인 가이드 부재 해결 ➔ Atomic Pattern & Storybook 컴포넌트 가이드화 ➔ 우선순위별 점진적 UI 개편 로드맵)",
-      "defaultTab": "editor"
-    },
     "03_Admin_System_Development_Roadmap_900.html": {
       "title": "03_Admin 시스템 개발 로드맵",
       "type": "architecture",
@@ -37,7 +26,7 @@
     "04_Front_System_Milestone_Timeline_900.html": {
       "title": "04_Front 일정표 (마일스톤)",
       "type": "architecture",
-      "updatedAt": "2026-09-21T04:30:11.850Z",
+      "updatedAt": "2026-09-21T04:25:29.017Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -61,7 +50,6 @@
     "01_Fashion_Ecommerce_Process_Map_900.html",
     "99_Blank_14.html",
     "04_Front_System_Milestone_Timeline_900.html",
-    "02_Front_System_Atomic_Design_Roadmap_900.html",
     "03_Admin_System_Development_Roadmap_900.html"
   ],
   "assignee": "최범열",

@@ -150,6 +150,17 @@
       "defaultTab": "editor",
       "screenDesc": "",
       "version": 0.2
+    },
+    "02_Front_System_Atomic_Design_Roadmap_900_copy.html": {
+      "title": "02_Front UI 개편 로드맵 (복사본)",
+      "type": "architecture",
+      "updatedAt": "2026-09-21T04:31:24.790Z",
+      "template": "template_process.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.2,
+      "screenDesc": "시선닷컴 Front UI 개편 방향 (디자인 가이드 부재 해결 ➔ Atomic Pattern & Storybook 컴포넌트 가이드화 ➔ 우선순위별 점진적 UI 개편 로드맵)",
+      "defaultTab": "editor"
     }
   },
   "developer": "",
@@ -159,6 +170,7 @@
   "screenOrder": [
     "09_Admin_PC_Scroll_639_copy5.html",
     "09_Admin_PC_Scroll_639_copy.html",
-    "99_Blank_14_copy.html"
+    "99_Blank_14_copy.html",
+    "02_Front_System_Atomic_Design_Roadmap_900_copy.html"
   ]
 }

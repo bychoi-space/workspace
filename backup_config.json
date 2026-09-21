@@ -1,0 +1,10 @@
+{
+  "sourcePath": "c:\\Users\\sisun\\ai_work\\data",
+  "backupDirectory": "c:\\ai_work_backups\\daily",
+  "scheduledTime": "18:00",
+  "retentionDays": 30,
+  "minRetentionCount": 5,
+  "enableZipCompression": true,
+  "missedTaskCatchUp": true,
+  "showToastNotification": true
+}

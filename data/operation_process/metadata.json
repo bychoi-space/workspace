@@ -53,14 +53,6 @@
       "updatedAt": "2026-09-21T06:25:12.071Z",
       "description": [],
       "connectors": []
-    },
-    "99_Blank_15.html": {
-      "title": "99_Blank_15",
-      "type": "blank",
-      "updatedAt": "2026-09-21T06:25:41.999Z",
-      "template": "template_blank.html",
-      "description": [],
-      "connectors": []
     }
   },
   "screenOrder": [
@@ -68,8 +60,7 @@
     "99_Blank_14.html",
     "04_Front_System_Milestone_Timeline_900.html",
     "03_Admin_System_Development_Roadmap_900.html",
-    "05_Admin_System_Milestone_Timeline_900.html",
-    "99_Blank_15.html"
+    "05_Admin_System_Milestone_Timeline_900.html"
   ],
   "assignee": "최범열",
   "developer": "",

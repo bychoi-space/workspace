@@ -319,11 +319,11 @@
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
       "type": "admin",
-      "updatedAt": "2026-09-22T06:22:10.322Z",
+      "updatedAt": "2026-09-22T06:22:35.206Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
-          "text": "1. 기본 정보 영역\n- 모든 항목 기존 '기획전 등록/상세' 기능과 동일하게 설계\n- [기획전 유형] 항목 신규 추가\n- [타이틀], [서브타이틀] 부분만 사용성 강화를 위해 1개 항목으로 통합",
+          "text": "1. 기본 정보 영역\n- 모든 항목 기존 '기획전 등록/상세' 기능과 동일하게 설계\n- [기획전 유형] 항목 신규 추가\n   : [타입선택] = 기획전 경우에만 항목 노출\n- [타이틀], [서브타이틀] 부분만 사용성 강화를 위해 1개 항목으로 통합",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 275,
           "y": 385,
@@ -550,7 +550,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-22 15:22:10",
+  "updated": "2026-09-22 15:22:35",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

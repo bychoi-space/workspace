@@ -11,7 +11,7 @@
     "08_Responsive_PC_Mobile_498.html": {
       "title": "08_Responsive_PC_Mobile_498",
       "type": "responsive-ui",
-      "updatedAt": "2026-09-22T01:25:24.390Z",
+      "updatedAt": "2026-09-22T01:26:04.666Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -24,6 +24,6 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-22 10:25:24",
+  "updated": "2026-09-22 10:26:04",
   "version": 0.1
 }

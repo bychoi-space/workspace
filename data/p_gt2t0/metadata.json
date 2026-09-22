@@ -11,13 +11,15 @@
       "connectors": []
     },
     "08_Responsive_PC_Mobile_498.html": {
-      "title": "08_Responsive_PC_Mobile_498",
-      "type": "responsive-ui",
-      "updatedAt": "2026-09-22T08:44:34.493Z",
+      "title": "기획전 As-Is 현황",
+      "type": "ui",
+      "updatedAt": "2026-09-22T08:45:53.502Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
-      "version": 0.1
+      "version": 0.1,
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

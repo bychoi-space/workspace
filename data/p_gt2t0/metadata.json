@@ -11,8 +11,11 @@
     "08_Responsive_PC_Mobile_498.html": {
       "title": "08_Responsive_PC_Mobile_498",
       "type": "responsive-ui",
-      "updatedAt": "2026-09-22T01:05:55.034Z",
-      "template": "template_responsive_pc_mobile.html"
+      "updatedAt": "2026-09-22T01:07:33.191Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -20,5 +23,7 @@
   "period": "2026.09.22(화) ~ 2026.10.02(금)",
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
-  "themeIndex": 1
+  "themeIndex": 1,
+  "updated": "2026-09-22 10:07:32",
+  "version": 0.1
 }

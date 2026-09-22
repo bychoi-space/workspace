@@ -207,7 +207,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-22T03:20:23.654Z",
+      "updatedAt": "2026-09-22T03:24:11.915Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -550,7 +550,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-22 12:20:23",
+  "updated": "2026-09-22 12:24:11",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

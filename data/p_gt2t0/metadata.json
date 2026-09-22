@@ -1,6 +1,14 @@
 {
   "title": "[기획전] 상품 코너 - 랜더링 방식 변경",
-  "screens": {},
+  "screens": {
+    "00_Cover_152.html": {
+      "title": "00_Cover_152",
+      "type": "cover",
+      "updatedAt": "2026-09-22T01:05:24.803Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.09.22(화) ~ 2026.10.02(금)",

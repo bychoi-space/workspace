@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
     <meta charset="UTF-8">
     <title>Cover - 업무 진행 방향</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
         :root {
@@ -79,7 +77,55 @@
             color: #1a1c1e !important;
         }
     </style>
-</head>
+
+<style id="v4-typography-rules">:root {
+  --v4-text-color: #0f172a;
+  --v4-font-size: 12px;
+  --v4-font-weight: 400;
+  --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --v4-placeholder-color: #94a3b8;
+}
+body, .page, .lf-component {
+  font-family: var(--v4-font-family) !important;
+}
+.v4-editable-cell, .v4-shape, .v4-shape-rect, .v4-shape-circle, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-arrow, .v4-shape-pattern-grid, .v4-shape-wave, .v4-shape-webpage, .text-marker, .v4-text-box, .v4-text-shape {
+  color: var(--v4-text-color, #0f172a);
+  font-size: var(--v4-font-size, 12px);
+  font-weight: var(--v4-font-weight, 400);
+  font-family: var(--v4-font-family, inherit);
+}
+.v4-premium-table th, .v4-premium-table td, .v4-grid-container td.v4-grid-cell, .v4-grid-container th.v4-grid-cell {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: var(--v4-text-color, #0f172a) !important;
+  font-family: inherit !important;
+}
+.v4-checkbox-text, .v4-radio-text {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: var(--v4-text-color, #0f172a) !important;
+  font-family: inherit !important;
+}
+.v4-dp-preset-btn {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-alert-desc-badge, .v4-alert-title, .v4-alert-message, .v4-alert-btn {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-admin-group-header, .v4-admin-label-cell {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-popup-title, .v4-stepper-value, .v4-stepper-action, .v4-stepper-dec, .v4-stepper-inc, .v4-textbox-counter, .v4-textarea-counter {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}</style></head>
 <body>
     <div class="page">
         <div class="accent-bar"></div>
@@ -88,9 +134,9 @@
         <div style="position: absolute; top: 60px; left: 80px;">
             <div class="logo-area">
                 <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img">
-                    <rect x="15" y="22" width="55" height="14" rx="7" fill="#1a1a1a" />
-                    <rect x="25" y="43" width="55" height="14" rx="7" fill="#1a1a1a" opacity="0.7" />
-                    <rect x="35" y="64" width="55" height="14" rx="7" fill="#1a1a1a" opacity="0.4" />
+                    <rect x="15" y="22" width="55" height="14" rx="7" fill="#1a1a1a" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></rect>
+                    <rect x="25" y="43" width="55" height="14" rx="7" fill="#1a1a1a" opacity="0.7" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></rect>
+                    <rect x="35" y="64" width="55" height="14" rx="7" fill="#1a1a1a" opacity="0.4" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></rect>
                 </svg>
                 <div style="width: 1px; height: 24px; background: #ddd; margin: 0 4px;"></div>
                 <div class="logo-text">bychoi workspace <span class="logo-sub" style="margin-left: 4px;">Design System</span></div>
@@ -99,8 +145,8 @@
 
         <!-- Editable Main Title - Balanced Typography -->
         <div id="cover-title" class="lf-component" style="top: 220px; left: 80px; min-width: 800px;">
-            <div class="lf-drag-handle"><span class="material-icons-outlined" style="font-size:14px;">drag_indicator</span></div>
-            <div class="lf-delete-trigger">×</div>
+            
+            
             <div id="cover-project-title" contenteditable="true" class="v4-editable-cell" style="font-size: 48px; font-weight: 900; line-height: 1.15; letter-spacing: -2px; color: var(--v4-text); margin-bottom: 28px;">업무 진행 방향</div>
             <div style="display: flex; align-items: center; gap: 16px;">
                 <div style="width: 40px; height: 3px; background: var(--v4-accent);"></div>
@@ -110,20 +156,20 @@
 
         <!-- Editable Version Info - Clean Badges -->
         <div id="cover-version" class="lf-component" style="top: 500px; left: 80px;">
-            <div class="lf-drag-handle"><span class="material-icons-outlined" style="font-size:14px;">drag_indicator</span></div>
-            <div class="lf-delete-trigger">×</div>
+            
+            
             <div style="display: flex; align-items: center; gap: 24px;">
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <span style="font-size: 12px; font-weight: 800; color: var(--v4-text-sub);">DOCUMENT VERSION</span>
-                    <div id="cover-version-val" contenteditable="true" class="v4-editable-cell" style="font-size: 22px; font-weight: 800; color: var(--v4-accent);">v0.1</div>
+                    <div id="cover-version-val" contenteditable="true" class="v4-editable-cell" style="font-size: 22px; font-weight: 800; color: var(--v4-accent);">v0.2</div>
                 </div>
             </div>
         </div>
 
         <!-- Editable Project Info Table - High Legibility -->
         <div id="cover-info-table" class="lf-component v4-card" style="bottom: 80px; right: 80px; width: 540px; padding: 0; overflow: hidden;">
-            <div class="lf-drag-handle"><span class="material-icons-outlined" style="font-size:14px;">drag_indicator</span></div>
-            <div class="lf-delete-trigger">×</div>
+            
+            
             <table class="cover-info-premium-table">
                 <thead>
                     <tr>
@@ -138,7 +184,7 @@
                     </tr>
                     <tr>
                         <td style="font-weight: 600; color: #6d7175;">Publication Date</td>
-                        <td id="cover-date" contenteditable="true" class="v4-editable-cell" style="font-weight: 700; color: #1a1c1e !important;">2026. 9. 22.</td>
+                        <td id="cover-date" contenteditable="true" class="v4-editable-cell" style="font-weight: 700; color: #1a1c1e !important;">-</td>
                     </tr>
                     <tr>
                         <td style="font-weight: 600; color: #6d7175;">System Context</td>
@@ -149,5 +195,7 @@
         </div>
 
     </div>
-</body>
-</html>
+<script id="v4-inlined-script">/* Dynamic scripts injected */</script>
+
+
+</body></html>

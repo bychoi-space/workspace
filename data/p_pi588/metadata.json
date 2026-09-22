@@ -1,6 +1,13 @@
 {
   "title": "사례 조사 - 외국인 구매 여부",
-  "screens": {},
+  "screens": {
+    "04_Case_Study_292.html": {
+      "title": "04_Case_Study_292",
+      "type": "case-study",
+      "updatedAt": "2026-09-22T04:36:40.737Z",
+      "template": "template_case_study.html"
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.09.22(화) ~ 2026.09.22(화)",

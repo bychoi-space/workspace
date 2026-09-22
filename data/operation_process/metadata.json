@@ -58,9 +58,9 @@
     "00_Cover_403.html": {
       "title": "00_Cover_403",
       "type": "cover",
-      "updatedAt": "2026-09-22T00:28:48.136Z",
+      "updatedAt": "2026-09-22T00:29:00.832Z",
       "template": "template_cover.html",
-      "version": 0.1,
+      "version": 0.2,
       "description": [],
       "connectors": []
     }
@@ -78,7 +78,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-09-21 18:18:42",
+  "updated": "2026-09-22 09:29:00",
   "version": 0.2,
   "period": ""
 }

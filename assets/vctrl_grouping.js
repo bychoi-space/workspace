@@ -66,6 +66,28 @@ window.GroupingManager = (function() {
              });
          }
  
+         const triggerCopyFormat = () => {
+             if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
+                 window.EditorBus.sendToIframe('LF_TRIGGER_COPY_STYLE');
+             } else {
+                 const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+                 if (iframe && iframe.contentWindow) {
+                     iframe.contentWindow.postMessage({ type: 'LF_TRIGGER_COPY_STYLE' }, '*');
+                 }
+             }
+         };
+
+         const triggerPasteFormat = () => {
+             if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
+                 window.EditorBus.sendToIframe('LF_TRIGGER_PASTE_STYLE');
+             } else {
+                 const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+                 if (iframe && iframe.contentWindow) {
+                     iframe.contentWindow.postMessage({ type: 'LF_TRIGGER_PASTE_STYLE' }, '*');
+                 }
+             }
+         };
+
          // Bind UI Buttons
          if (window.DOM) {
              if (DOM.btnGroup) DOM.btnGroup.onclick = groupSelected;
@@ -73,6 +95,8 @@ window.GroupingManager = (function() {
              if (DOM.btnAddToMolecules) DOM.btnAddToMolecules.onclick = addToMolecules;
              if (DOM.btnBringFront) DOM.btnBringFront.onclick = bringFrontSelected;
              if (DOM.btnSendBack) DOM.btnSendBack.onclick = sendBackSelected;
+             if (DOM.btnCopyFormat) DOM.btnCopyFormat.onclick = triggerCopyFormat;
+             if (DOM.btnPasteFormat) DOM.btnPasteFormat.onclick = triggerPasteFormat;
  
              // Alignment Listeners (RESTORED)
              if (DOM.btnAlignLeft) DOM.btnAlignLeft.onclick = () => alignSelected('left');
@@ -90,6 +114,10 @@ window.GroupingManager = (function() {
          if (btnBringFrontDirect) btnBringFrontDirect.onclick = bringFrontSelected;
          const btnSendBackDirect = document.getElementById('btn-send-back-action');
          if (btnSendBackDirect) btnSendBackDirect.onclick = sendBackSelected;
+         const btnCopyFormatDirect = document.getElementById('btn-copy-format-action');
+         if (btnCopyFormatDirect) btnCopyFormatDirect.onclick = triggerCopyFormat;
+         const btnPasteFormatDirect = document.getElementById('btn-paste-format-action');
+         if (btnPasteFormatDirect) btnPasteFormatDirect.onclick = triggerPasteFormat;
  
          // Keyboard Shortcuts
          window.addEventListener('keydown', (e) => {

@@ -572,9 +572,39 @@ window.v4Script = `
             currentStyles: {
                 bg: window.rgbToHex(getCompBg()),
                 border: window.rgbToHex(getCompBorder()),
-                text: window.rgbToHex(textCell ? _getVal(textCell, "color") : (buttonEl ? _getVal(buttonEl, "color") : "")),
-                fontSize: parseInt(_getVal(textCell, "fontSize")) || (shape ? parseInt(_getVal(shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay'), "fontSize")) || 14 : (inputContainer ? parseInt(_getVal(inputContainer, "fontSize")) || 14 : 14)),
-                fontFamily: textCell ? _getVal(textCell, "fontFamily") : (inputContainer ? _getVal(inputContainer, "fontFamily") : "inherit"),
+                text: (function() {
+                    const cell = textCell || (shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : null);
+                    if (cell) {
+                        const coloredSpan = cell.querySelector('[style*="color"]');
+                        const col = (coloredSpan && coloredSpan.style.color) || _getVal(cell, "color");
+                        if (col && col !== 'inherit' && col !== 'initial' && col !== 'transparent') return window.rgbToHex(col);
+                    }
+                    if (buttonEl) return window.rgbToHex(_getVal(buttonEl, "color"));
+                    return "";
+                })(),
+                fontSize: (function() {
+                    const cell = textCell || (shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : null);
+                    if (cell) {
+                        const fsSpan = cell.querySelector('[style*="font-size"], [style*="fontSize"]');
+                        const fs = (fsSpan && parseInt(fsSpan.style.fontSize)) || parseInt(_getVal(cell, "fontSize"));
+                        if (!isNaN(fs) && fs > 0) return fs;
+                    }
+                    if (inputContainer) {
+                        const fs = parseInt(_getVal(inputContainer, "fontSize"));
+                        if (!isNaN(fs) && fs > 0) return fs;
+                    }
+                    return 14;
+                })(),
+                fontFamily: (function() {
+                    const cell = textCell || (shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : null);
+                    if (cell) {
+                        const ffSpan = cell.querySelector('[style*="font-family"], [style*="fontFamily"]');
+                        const ff = (ffSpan && ffSpan.style.fontFamily) || _getVal(cell, "fontFamily");
+                        if (ff && ff !== 'inherit') return ff;
+                    }
+                    if (inputContainer) return _getVal(inputContainer, "fontFamily") || "inherit";
+                    return "inherit";
+                })(),
                 tableHeader: window.rgbToHex(table ? _getVal(table.querySelector("th"), "backgroundColor") : ""),
                 tableHeaderText: window.rgbToHex(table ? _getVal(table.querySelector("th"), "color") : ""),
                 iconColor: window.rgbToHex(detectedIconColor || "#000000"),

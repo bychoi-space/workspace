@@ -45,6 +45,8 @@ window.rebindInspectorDOM = function() {
     DOM.btnAddToMolecules = get('btn-add-molecules-action');
     DOM.btnBringFront = get('btn-bring-front-action');
     DOM.btnSendBack = get('btn-send-back-action');
+    DOM.btnCopyFormat = get('btn-copy-format-action');
+    DOM.btnPasteFormat = get('btn-paste-format-action');
 
     if (typeof window.initUnifiedLabels === 'function') {
         window.initUnifiedLabels();
@@ -183,6 +185,8 @@ window.DOM = {
     btnAddToMolecules: get('btn-add-molecules-action'),
     btnBringFront: get('btn-bring-front-action'),
     btnSendBack: get('btn-send-back-action'),
+    btnCopyFormat: get('btn-copy-format-action'),
+    btnPasteFormat: get('btn-paste-format-action'),
     // Alignment
     alignBar: get('selection-align-bar'),
     btnAlignLeft: get('btn-align-left'),
@@ -824,6 +828,8 @@ const ProjectMetadataManager = {
         if (btnUngroup) btnUngroup.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
         if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
         if (alignBar) alignBar.style.setProperty('display', (selIds.length > 1) ? 'block' : 'none', 'important');
+        const styleActionRow = document.getElementById('selection-style-action-row');
+        if (styleActionRow) styleActionRow.style.setProperty('display', isSingleGroup ? 'none' : 'flex', 'important');
 
         if (groupDimBar) {
             if (isSingleGroup) {

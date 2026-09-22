@@ -590,6 +590,32 @@
                 clipboard: storedData
             });
         }
+        else if (data.type === 'LF_SAVE_STYLE_CLIPBOARD') {
+            console.log("[Style Clipboard Debug] Parent saved style clipboard data to window.top SSOT:", data.styleClipboard);
+            try {
+                (window.top || window).__lf_global_style_clipboard__ = data.styleClipboard;
+            } catch(err) {
+                window.__lf_global_style_clipboard__ = data.styleClipboard;
+            }
+        }
+        else if (data.type === 'LF_REQUEST_STYLE_CLIPBOARD') {
+            let storedStyle = null;
+            try {
+                storedStyle = (window.top || window).__lf_global_style_clipboard__ || null;
+            } catch(err) {
+                storedStyle = window.__lf_global_style_clipboard__ || null;
+            }
+            console.log("[Style Clipboard Debug] Parent received request for style clipboard.");
+            notifyIframe({
+                type: 'LF_RESPONSE_STYLE_CLIPBOARD',
+                styleClipboard: storedStyle
+            });
+        }
+        else if (data.type === 'LF_SHOW_TOAST') {
+            if (typeof window.showToast === 'function') {
+                window.showToast(data.message, data.toastType || 'info');
+            }
+        }
     });
 
     // Checkbox / Radio Button Option Actions

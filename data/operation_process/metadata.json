@@ -54,6 +54,13 @@
       "description": [],
       "connectors": [],
       "version": 0.2
+    },
+    "00_Cover_403.html": {
+      "title": "00_Cover_403",
+      "type": "cover",
+      "updatedAt": "2026-09-22T00:28:48.136Z",
+      "template": "template_cover.html",
+      "version": 0.1
     }
   },
   "screenOrder": [
@@ -61,7 +68,8 @@
     "99_Blank_14.html",
     "04_Front_System_Milestone_Timeline_900.html",
     "03_Admin_System_Development_Roadmap_900.html",
-    "05_Admin_System_Milestone_Timeline_900.html"
+    "05_Admin_System_Milestone_Timeline_900.html",
+    "00_Cover_403.html"
   ],
   "assignee": "최범열",
   "developer": "",

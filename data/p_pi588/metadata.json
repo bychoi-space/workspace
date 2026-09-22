@@ -4,8 +4,11 @@
     "04_Case_Study_292.html": {
       "title": "04_Case_Study_292",
       "type": "case-study",
-      "updatedAt": "2026-09-22T04:36:40.737Z",
-      "template": "template_case_study.html"
+      "updatedAt": "2026-09-22T05:13:09.144Z",
+      "template": "template_case_study.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -13,5 +16,7 @@
   "period": "2026.09.22(화) ~ 2026.09.22(화)",
   "figmaUrl": "",
   "notionUrl": "",
-  "themeIndex": 9
+  "themeIndex": 9,
+  "updated": "2026-09-22 14:13:08",
+  "version": 0.1
 }

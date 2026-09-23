@@ -31,6 +31,12 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "04_Case_Study_633.html": {
+      "title": "04_Case_Study_633",
+      "type": "case-study",
+      "updatedAt": "2026-09-23T03:23:37.703Z",
+      "template": "template_case_study.html"
     }
   },
   "assignee": "최범열",
@@ -44,6 +50,7 @@
   "screenOrder": [
     "00_Cover_152.html",
     "08_Responsive_PC_Mobile_498.html",
-    "08_Responsive_PC_Mobile_498_copy.html"
+    "08_Responsive_PC_Mobile_498_copy.html",
+    "04_Case_Study_633.html"
   ]
 }

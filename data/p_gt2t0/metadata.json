@@ -35,8 +35,11 @@
     "04_Case_Study_633.html": {
       "title": "04_Case_Study_633",
       "type": "case-study",
-      "updatedAt": "2026-09-23T03:23:37.703Z",
-      "template": "template_case_study.html"
+      "updatedAt": "2026-09-23T03:28:08.578Z",
+      "template": "template_case_study.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -45,7 +48,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-23 12:17:39",
+  "updated": "2026-09-23 12:28:07",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

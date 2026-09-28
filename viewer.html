@@ -380,6 +380,40 @@
                         <span class="material-icons-outlined">add_circle</span>
                     </button>
                 </div>
+                <!-- Formatting Toolbar for Scene Annotations -->
+                <div class="desc-toolbar" id="desc-toolbar" title="텍스트 서식 도구">
+                    <button type="button" class="desc-tool-btn" id="desc-tool-bold" data-cmd="bold" title="굵게 (Ctrl+B)">
+                        <b>B</b>
+                    </button>
+                    <button type="button" class="desc-tool-btn" id="desc-tool-underline" data-cmd="underline" title="밑줄 (Ctrl+U)">
+                        <u>U</u>
+                    </button>
+                    <div class="desc-tool-divider"></div>
+                    <div class="desc-color-picker-wrap">
+                        <button type="button" class="desc-tool-btn desc-tool-color" id="desc-tool-color-btn" title="글자색">
+                            <span class="desc-color-letter">A</span>
+                            <span class="desc-color-bar" id="desc-active-color-bar"></span>
+                        </button>
+                        <div class="desc-color-popover" id="desc-color-popover">
+                            <div class="desc-preset-grid">
+                                <button type="button" class="desc-color-swatch" data-color="#cbd5e1" style="background:#cbd5e1;" title="기본 본문 (#cbd5e1)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#ffffff" style="background:#ffffff;" title="화이트 (#ffffff)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#ef4444" style="background:#ef4444;" title="포인트 레드 (#ef4444)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#38bdf8" style="background:#38bdf8;" title="스카이 블루 (#38bdf8)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#34d399" style="background:#34d399;" title="에메랄드 그린 (#34d399)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#fbbf24" style="background:#fbbf24;" title="앰버 옐로우 (#fbbf24)"></button>
+                            </div>
+                            <label class="desc-custom-color-row">
+                                <span class="desc-custom-color-label">직접 선택</span>
+                                <input type="color" class="desc-native-color-input" id="desc-native-color" value="#cbd5e1" title="커스텀 컬러 선택">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="desc-tool-divider"></div>
+                    <button type="button" class="desc-tool-btn" id="desc-tool-clear" data-cmd="removeFormat" title="서식 지우기">
+                        <span style="font-size: 11px;">T&times;</span>
+                    </button>
+                </div>
                 <div class="description-container">
                     <div id="description-list">
                         <!-- Dynamic rows here -->

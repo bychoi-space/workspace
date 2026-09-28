@@ -63,7 +63,7 @@
     "08_Responsive_PC_Mobile_498_copy.html": {
       "title": "기획전 To-Be 개선안",
       "type": "ui",
-      "updatedAt": "2026-09-28T05:42:44.943Z",
+      "updatedAt": "2026-09-28T00:48:59.035Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -83,12 +83,12 @@
     "10_Mobile_Compare_18.html": {
       "title": "Mobile UI 변경 정리",
       "type": "ui",
-      "updatedAt": "2026-09-28T02:30:37.894Z",
+      "updatedAt": "2026-09-28T05:42:55.093Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [],
       "connectors": [],
       "version": 0.1,
-      "defaultTab": "editor",
+      "defaultTab": "description",
       "screenDesc": ""
     }
   },

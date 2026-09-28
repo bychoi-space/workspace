@@ -44,7 +44,7 @@
     "10_Mobile_Compare_18.html": {
       "title": "10_Mobile_Compare_18",
       "type": "ui",
-      "updatedAt": "2026-09-28T01:59:29.961Z",
+      "updatedAt": "2026-09-28T02:00:03.610Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [],
       "connectors": [],
@@ -59,7 +59,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 10:59:29",
+  "updated": "2026-09-28 11:00:03",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

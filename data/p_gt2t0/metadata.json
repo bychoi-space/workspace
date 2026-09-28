@@ -63,7 +63,7 @@
     "08_Responsive_PC_Mobile_498_copy.html": {
       "title": "기획전 To-Be 개선안",
       "type": "ui",
-      "updatedAt": "2026-09-28T06:09:29.508Z",
+      "updatedAt": "2026-09-28T06:20:51.896Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -80,6 +80,25 @@
             "mobile": {
               "x": 0,
               "y": 543,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "[GROUP 2 TITLE 영역]\n- 스크롤이 해당 위치까지 이동하여도, '상단 고정 영역' 은 '전체보기' 활성화\n- 다른 항목을 선택하면, 상품 그룹 영역만 해당 그룹으로 리로드",
+          "html": "[GROUP 2 TITLE 영역]<div>- 스크롤이 해당 위치까지 이동하여도, '상단 고정 영역' 은 '<span style=\"color: rgb(251, 191, 36);\">전체보기</span>' 활성화</div><div>- 다른 항목을 선택하면, <span style=\"text-decoration-line: underline;\">상품 그룹 영역만 해당 그룹으로 리로드</span></div>",
+          "x": 10,
+          "y": 1510,
+          "pins": {
+            "pc": {
+              "x": 10,
+              "y": 1510,
+              "active": true
+            },
+            "mobile": {
+              "x": 0,
+              "y": 1364,
               "active": true
             }
           },
@@ -118,7 +137,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 15:09:29",
+  "updated": "2026-09-28 15:20:51",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

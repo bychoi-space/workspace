@@ -13,7 +13,7 @@
     "08_Responsive_PC_Mobile_498.html": {
       "title": "기획전 As-Is 현황",
       "type": "ui",
-      "updatedAt": "2026-09-28T02:29:27.634Z",
+      "updatedAt": "2026-09-23T00:18:54.811Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -24,7 +24,7 @@
     "08_Responsive_PC_Mobile_498_copy.html": {
       "title": "기획전 To-Be 개선안",
       "type": "ui",
-      "updatedAt": "2026-09-28T00:48:59.035Z",
+      "updatedAt": "2026-09-28T02:29:56.016Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -59,7 +59,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 11:29:27",
+  "updated": "2026-09-28 11:29:55",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

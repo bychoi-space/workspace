@@ -13,7 +13,7 @@
     "08_Responsive_PC_Mobile_498.html": {
       "title": "기획전 As-Is 현황",
       "type": "ui",
-      "updatedAt": "2026-09-28T03:29:50.039Z",
+      "updatedAt": "2026-09-28T04:45:22.668Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -30,6 +30,25 @@
             "mobile": {
               "x": 0,
               "y": 545,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 20,
+          "y": 1570,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 1570,
+              "active": true
+            },
+            "mobile": {
+              "x": 5,
+              "y": 1361,
               "active": true
             }
           },
@@ -79,7 +98,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 12:29:50",
+  "updated": "2026-09-28 13:45:22",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

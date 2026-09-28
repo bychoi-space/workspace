@@ -177,6 +177,12 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": ""
+    },
+    "10_Mobile_Compare_210.html": {
+      "title": "10_Mobile_Compare_210",
+      "type": "responsive-ui",
+      "updatedAt": "2026-09-28T08:15:35.992Z",
+      "template": "template_responsive_mobile_compare.html"
     }
   },
   "assignee": "최범열",
@@ -192,6 +198,7 @@
     "08_Responsive_PC_Mobile_498.html",
     "08_Responsive_PC_Mobile_498_copy.html",
     "10_Mobile_Compare_18.html",
-    "04_Case_Study_633.html"
+    "04_Case_Study_633.html",
+    "10_Mobile_Compare_210.html"
   ]
 }

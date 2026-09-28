@@ -122,7 +122,7 @@
     "10_Mobile_Compare_18.html": {
       "title": "Mobile UI 변경 정리",
       "type": "ui",
-      "updatedAt": "2026-09-28T08:15:16.075Z",
+      "updatedAt": "2026-09-28T08:16:00.539Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
@@ -182,7 +182,9 @@
       "title": "10_Mobile_Compare_210",
       "type": "responsive-ui",
       "updatedAt": "2026-09-28T08:15:35.992Z",
-      "template": "template_responsive_mobile_compare.html"
+      "template": "template_responsive_mobile_compare.html",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",
@@ -191,7 +193,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 17:15:15",
+  "updated": "2026-09-28 17:16:00",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

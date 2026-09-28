@@ -13,7 +13,7 @@
     "08_Responsive_PC_Mobile_498.html": {
       "title": "기획전 As-Is 현황",
       "type": "ui",
-      "updatedAt": "2026-09-23T00:18:54.811Z",
+      "updatedAt": "2026-09-28T02:29:27.634Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -44,7 +44,7 @@
     "10_Mobile_Compare_18.html": {
       "title": "10_Mobile_Compare_18",
       "type": "ui",
-      "updatedAt": "2026-09-28T02:28:49.443Z",
+      "updatedAt": "2026-09-28T02:18:19.369Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [],
       "connectors": [],
@@ -59,7 +59,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 11:28:49",
+  "updated": "2026-09-28 11:29:27",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

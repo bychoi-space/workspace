@@ -122,16 +122,16 @@
     "10_Mobile_Compare_18.html": {
       "title": "Mobile UI 변경 정리",
       "type": "ui",
-      "updatedAt": "2026-09-28T08:16:00.539Z",
+      "updatedAt": "2026-09-28T08:31:57.346Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
           "type": "pin",
-          "target": "frame",
+          "target": "canvas",
           "text": "[상품 그룹 선택 영역 (상단 고정)]\n- 최초 랜더링 시 [전체보기] 기본값으로 개선",
           "html": "[상품 그룹 선택 영역 (상단 고정)]<div>- 최초 랜더링 시 [전체보기] 기본값으로 개선</div>",
-          "x": 10,
-          "y": 523,
+          "x": 135,
+          "y": 379,
           "pins": {
             "left": {
               "x": 10,
@@ -152,6 +152,11 @@
               "x": 10,
               "y": 523,
               "active": true
+            },
+            "canvas": {
+              "x": 135,
+              "y": 379,
+              "active": true
             }
           },
           "standardized": true
@@ -159,14 +164,30 @@
         {
           "type": "pin",
           "target": "canvas",
-          "text": "기존에는 Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작",
-          "html": "기존에는 Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작",
+          "text": "기존안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작",
+          "html": "기존안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작",
           "x": 135,
           "y": 379,
           "pins": {
             "canvas": {
               "x": 135,
               "y": 379,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "type": "pin",
+          "target": "canvas",
+          "text": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)",
+          "html": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)",
+          "x": 1409,
+          "y": 375,
+          "pins": {
+            "canvas": {
+              "x": 1409,
+              "y": 375,
               "active": true
             }
           },
@@ -193,7 +214,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 17:16:00",
+  "updated": "2026-09-28 17:31:56",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

@@ -13,12 +13,12 @@
     "08_Responsive_PC_Mobile_498.html": {
       "title": "기획전 As-Is 현황",
       "type": "ui",
-      "updatedAt": "2026-09-28T05:02:27.658Z",
+      "updatedAt": "2026-09-28T05:22:37.739Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "text": "예시 URL : https://sisun.com/EBM/event/sale/8839\n\n[PC - 상품 그룹 영역]\n- 페이지 최초 랜더링 시 모든 그룹 호출\n- 상품은 그룹 별로 30개 랜더링 후, [+상품더보기] 버튼으로 Lazy loading 처리\n\n[Mobile - 상품 그룹 영역]\n- 페이지 최초 랜더링 시 모든 그룹 호출\n- 상품은 그룹 별로 24개 랜더링 후, 스크롤이 내려가면 자동으로 Lazy loading 처리\n\n[공통 디스크립션]\n- 예시 : 상품 그룹 5개 / 그룹 당 상품 40개 로 가정 > 그룹 5 * 상품 30 = 최초 랜더링 상품 150개\n- 최초 페이지 랜더링 리소스가 매우 많음",
-          "html": "예시 URL : <span style=\"text-decoration-line: underline;\">https://sisun.com/EBM/event/sale/8839</span><br><br>[PC - 상품 그룹 영역]<br>- 페이지 최초 랜더링 시 모든 그룹 호출<br>- 상품은 그룹 별로 <span style=\"color: rgb(251, 191, 36);\">30개 랜더링 후, [+상품더보기] 버튼으로 Lazy loading</span> 처리<br><br>[Mobile - 상품 그룹 영역]<br>- 페이지 최초 랜더링 시 모든 그룹 호출<br>- 상품은 그룹 별로 <span style=\"color: rgb(251, 191, 36);\">24개 랜더링 후, 스크롤이 내려가면 자동으로 Lazy loading</span> 처리<br><br>[공통 디스크립션]<br>- 예시 : 상품 그룹 5개 / 그룹 당 상품 40개 로 가정 &gt; 그룹 5 * 상품 30 = <span style=\"color: rgb(251, 191, 36);\">최초 랜더링 상품 150개</span><br>- 최초 페이지 랜더링 리소스가 매우 많음",
+          "html": "예시 URL : <span style=\"text-decoration-line: underline;\">https://sisun.com/EBM/event/sale/8839</span><br><br>[PC - 상품 그룹 영역]<br>- 페이지 최초 랜더링 시 모든 그룹 호출<br>- 상품은 그룹 별로 <span style=\"color: rgb(251, 191, 36);\"><span style=\"font-weight: bold; text-decoration-line: underline;\">30</span>개 랜더링 후, [+상품더보기] 버튼으로 Lazy loading</span> 처리<br><br>[Mobile - 상품 그룹 영역]<br>- 페이지 최초 랜더링 시 모든 그룹 호출<br>- 상품은 그룹 별로 <span style=\"color: rgb(251, 191, 36);\"><span style=\"font-weight: bold; text-decoration-line: underline;\">24</span>개 랜더링 후, 스크롤이 내려가면 자동으로 Lazy loading</span> 처리<br><br>[공통 디스크립션]<br>- 예시 : 상품 그룹 5개 / 그룹 당 상품 40개 로 가정 &gt; 그룹 5 * 상품 30 = <span style=\"color: rgb(251, 191, 36);\">최초 랜더링 상품 150개</span><br>- 최초 페이지 랜더링 리소스가 매우 많음",
           "x": 35,
           "y": 660,
           "pins": {
@@ -36,8 +36,8 @@
           "standardized": true
         },
         {
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "text": "[PC - 상품 2번 그룹 영역]\n- 스크롤이 해당 위치를 지나면, 상단 고정 영역 TAB 에서 2번 TAB 활성화 처리\n\n\n[Mobile - 상품 2번 그룹 영역]\n- 스크롤이 해당 위치를 지나면, 상단 고정 영역 SEELCT BOX 에서 2번 항목 활성화 처리",
+          "html": "[PC - 상품 2번 그룹 영역]<div>- 스크롤이 해당 위치를 지나면, 상단 고정 영역 <span style=\"color: rgb(251, 191, 36);\">TAB 에서 2번 TAB 활성화</span> 처리</div><div><br></div><div>[Mobile - 상품 2번 그룹 영역]</div><div>- 스크롤이 해당 위치를 지나면, 상단 고정 영역 <span style=\"color: rgb(251, 191, 36);\">SEELCT BOX 에서 2번 항목 활성화 </span>처리</div>",
           "x": 20,
           "y": 1570,
           "pins": {
@@ -98,7 +98,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 14:02:27",
+  "updated": "2026-09-28 14:22:37",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

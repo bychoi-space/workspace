@@ -15,7 +15,7 @@
     "renewal_cart.html": {
       "title": "renewal_cart",
       "type": "ui",
-      "updatedAt": "2026-09-28T07:00:47.136Z",
+      "updatedAt": "2026-09-28T07:01:05.084Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -33,5 +33,7 @@
   "screenOrder": [
     "renewal_cart.html",
     "renewal_order.html"
-  ]
+  ],
+  "updated": "2026-09-28 16:01:04",
+  "version": 0.1
 }

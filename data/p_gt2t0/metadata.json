@@ -122,7 +122,7 @@
     "10_Mobile_Compare_18.html": {
       "title": "Mobile UI 변경 정리",
       "type": "ui",
-      "updatedAt": "2026-09-28T08:46:22.247Z",
+      "updatedAt": "2026-09-28T08:47:07.397Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
@@ -180,8 +180,8 @@
         {
           "type": "pin",
           "target": "canvas",
-          "text": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)\n\n\n변경안은 '첫번째 그룹 + 상품",
-          "html": "<span style=\"font-weight: bold; color: rgb(251, 191, 36);\">변경</span>안 : Select Box 를 활성화하여, 다른 항목을 선택하면, <span style=\"font-weight: bold; color: rgb(251, 191, 36);\">상품 그룹 영역 재 조회</span> (리랜더링)<div><br></div><div>변경안은 '첫번째 그룹 + 상품 </div>",
+          "text": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)\n\n\n변경안은 '첫번째 그룹 + 상품 10개 (5행)' 가 최초 랜더링 시 그려지는 구조",
+          "html": "<span style=\"font-weight: bold; color: rgb(251, 191, 36);\">변경</span>안 : Select Box 를 활성화하여, 다른 항목을 선택하면, <span style=\"font-weight: bold; color: rgb(251, 191, 36);\">상품 그룹 영역 재 조회</span> (리랜더링)<div><br></div><div>변경안은 '<span style=\"text-decoration-line: underline;\">첫번째 그룹 + 상품 10개 (5행)</span>' 가 최초 랜더링 시 그려지는 구조</div>",
           "x": 1409,
           "y": 375,
           "pins": {
@@ -214,7 +214,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 17:46:22",
+  "updated": "2026-09-28 17:47:07",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

@@ -122,7 +122,7 @@
     "10_Mobile_Compare_18.html": {
       "title": "Mobile UI 변경 정리",
       "type": "ui",
-      "updatedAt": "2026-09-28T08:44:05.203Z",
+      "updatedAt": "2026-09-28T08:46:22.247Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
@@ -164,8 +164,8 @@
         {
           "type": "pin",
           "target": "canvas",
-          "text": "기존안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작\n\n\n기존안은 '모든 그룹 + 그룹 별 상품",
-          "html": "<span style=\"font-weight: bold; color: rgb(251, 191, 36);\">기존</span>안 : Select Box 를 활성화하여, 다른 항목을 선택하면, <span style=\"color: rgb(251, 191, 36); font-weight: bold;\">페이지 내에서 스크롤 이동</span>으로 동작<div><br></div><div>기존안은 '모든 그룹 + 그룹 별 상품 </div>",
+          "text": "기존안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작\n\n\n기존안은 '모든 그룹 + 그룹 별 상품 24개' 가 최초 랜더링 시 그려지는 구조",
+          "html": "<span style=\"font-weight: bold; color: rgb(251, 191, 36);\">기존</span>안 : Select Box 를 활성화하여, 다른 항목을 선택하면, <span style=\"color: rgb(251, 191, 36); font-weight: bold;\">페이지 내에서 스크롤 이동</span>으로 동작<div><br></div><div>기존안은 '<span style=\"color: rgb(255, 255, 255);\"><span style=\"text-decoration-line: underline;\">모든 그룹 + 그룹 별 상품 24개</span>' </span>가 최초 랜더링 시 그려지는 구조</div>",
           "x": 135,
           "y": 379,
           "pins": {
@@ -180,8 +180,8 @@
         {
           "type": "pin",
           "target": "canvas",
-          "text": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)",
-          "html": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)",
+          "text": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)\n\n\n변경안은 '첫번째 그룹 + 상품",
+          "html": "<span style=\"font-weight: bold; color: rgb(251, 191, 36);\">변경</span>안 : Select Box 를 활성화하여, 다른 항목을 선택하면, <span style=\"font-weight: bold; color: rgb(251, 191, 36);\">상품 그룹 영역 재 조회</span> (리랜더링)<div><br></div><div>변경안은 '첫번째 그룹 + 상품 </div>",
           "x": 1409,
           "y": 375,
           "pins": {
@@ -214,7 +214,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 17:44:04",
+  "updated": "2026-09-28 17:46:22",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

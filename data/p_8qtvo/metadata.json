@@ -31,7 +31,7 @@
   "notionUrl": "",
   "themeIndex": 1,
   "screenOrder": [
-    "renewal_order.html",
-    "renewal_cart.html"
+    "renewal_cart.html",
+    "renewal_order.html"
   ]
 }

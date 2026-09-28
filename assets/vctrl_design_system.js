@@ -57,6 +57,7 @@ window.v4DesignSystemScript = `
         try { if (window.bindFileuploadEvents) window.bindFileuploadEvents(); } catch(e) { console.error("Error in bindFileuploadEvents:", e); }
         try { if (window.bindAccordionEvents) window.bindAccordionEvents(); } catch(e) { console.error("Error in bindAccordionEvents:", e); }
         try { if (window.bindToggleEvents) window.bindToggleEvents(); } catch(e) { console.error("Error in bindToggleEvents:", e); }
+        try { if (window.bindCursorEvents) window.bindCursorEvents(); } catch(e) { console.error("Error in bindCursorEvents:", e); }
 
         try {
             // Restore pattern styles for pattern shapes with strict Value Comparison Guard

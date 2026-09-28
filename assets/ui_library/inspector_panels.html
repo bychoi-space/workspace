@@ -1466,4 +1466,82 @@
 
             
         </div>
+
+        <!-- cursor-inspector-section -->
+        <div class="v4-card-section mt-12" id="cursor-inspector-section" style="display: none;">
+            <div class="v4-section-header">
+                <span class="v4-section-header-title">CURSOR PROPERTIES</span>
+            </div>
+            
+            <!-- Unified Dimensions (Top) -->
+            <div class="v4-dimensions-group prop-group v4-prop-group-divider">
+                <div class="v4-section-header mb-6">
+                    <span class="v4-prop-label bold">크기 설정 (DIMENSIONS)</span>
+                </div>
+                <div class="v4-prop-grid-2">
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-width-cursor" class="v4-prop-input v4-prop-input-styled" data-prop="width" value="140" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="height">세로 크기 (H)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-height-cursor" class="v4-prop-input v4-prop-input-styled" data-prop="height" value="32" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cursor Type Selection -->
+            <div class="prop-group mb-12">
+                <label class="v4-prop-label mb-8">마우스 커서 모양 (Cursor Type)</label>
+                <div class="v4-prop-grid-3 gap-6">
+                    <button id="btn-cursor-type-default" class="v4-inspector-btn v4-btn-medium active" data-type="default" title="일반 화살표 커서">
+                        <span style="font-size: 13px; font-weight: bold; margin-right: 2px;">↖</span> 일반
+                    </button>
+                    <button id="btn-cursor-type-pointer" class="v4-inspector-btn v4-btn-medium" data-type="pointer" title="호버 손가락 포인터">
+                        <span style="font-size: 13px; margin-right: 2px;">👆</span> 호버
+                    </button>
+                    <button id="btn-cursor-type-text" class="v4-inspector-btn v4-btn-medium" data-type="text" title="텍스트 입력 I-Beam 커서">
+                        <span style="font-size: 13px; font-weight: bold; margin-right: 2px;">⌶</span> 키인
+                    </button>
+                </div>
+            </div>
+
+            <!-- Click Event Description Section -->
+            <div class="top-divider mt-12 mb-12">
+                <div class="v4-section-header mb-8">
+                    <span class="v4-section-header-title">CLICK EVENT DESCRIPTION</span>
+                </div>
+
+                <!-- Show/Hide Description Badge -->
+                <div class="prop-group v4-section-header mb-10">
+                    <label class="v4-prop-label mb-0">설명 텍스트 박스 노출</label>
+                    <div class="v4-flex-gap-4 w-84">
+                        <button id="btn-cursor-text-y" class="v4-inspector-btn v4-pill-btn-mini active" data-show="true">Y</button>
+                        <button id="btn-cursor-text-n" class="v4-inspector-btn v4-pill-btn-mini" data-show="false">N</button>
+                    </div>
+                </div>
+
+                <!-- Description Text Input -->
+                <div class="prop-group mb-12" id="cursor-text-input-group">
+                    <label class="v4-prop-label mb-6">디스크립션 텍스트 내용</label>
+                    <input type="text" id="prop-cursor-text" class="v4-prop-input-base pad-6-10" placeholder="클릭 이벤트 설명 입력..." value="Click Event">
+                </div>
+
+                <!-- Badge Theme Preset Buttons -->
+                <div class="prop-group mb-8" id="cursor-badge-theme-group">
+                    <label class="v4-prop-label mb-6">디스크립션 스타일 테마</label>
+                    <div class="v4-prop-grid-3 gap-6">
+                        <button id="btn-cursor-theme-dark" class="v4-inspector-btn v4-btn-medium active" data-theme="dark">Dark</button>
+                        <button id="btn-cursor-theme-blue" class="v4-inspector-btn v4-btn-medium" data-theme="blue">Blue</button>
+                        <button id="btn-cursor-theme-light" class="v4-inspector-btn v4-btn-medium" data-theme="light">Light</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     

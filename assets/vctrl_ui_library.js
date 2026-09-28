@@ -54,6 +54,7 @@
             if (typeof window.initGridEvents === 'function') window.initGridEvents();
             if (typeof window.initAdminSettingsEvents === 'function') window.initAdminSettingsEvents();
             if (typeof window.initToggleEvents === 'function') window.initToggleEvents();
+            if (typeof window.initCursorEvents === 'function') window.initCursorEvents();
             if (typeof window.initV4AddonEventListeners === 'function') window.initV4AddonEventListeners();
         }
     }

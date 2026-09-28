@@ -1269,6 +1269,21 @@ window.v4ShortcutsScript = `
 
     document.addEventListener('keydown', e => {
         const inInputEarly = isInputActive(e.target) || isInputActive(document.activeElement);
+
+        // 100% Crisp View / Fit View Toggle Shortcut (Backquote, Home, or Alt+Backquote)
+        const isCrispToggleKey = (
+            e.code === 'Backquote' || 
+            e.key === String.fromCharCode(96) || 
+            e.key === '~' || 
+            e.key === 'Home' || 
+            e.code === 'Home'
+        );
+        if (isCrispToggleKey && !inInputEarly && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            notifyParent({ type: 'LF_TOGGLE_CRISP_VIEW' });
+            return;
+        }
+
         const isAlignKey = ['1','2','3','4','5','6'].includes(e.key) || ['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Numpad1','Numpad2','Numpad3','Numpad4','Numpad5','Numpad6'].includes(e.code);
         if ((e.altKey || e.ctrlKey || e.metaKey) && isAlignKey && !inInputEarly) {
             e.preventDefault();
@@ -1505,9 +1520,8 @@ window.v4ShortcutsScript = `
                             const idx = parseInt(child.id.replace('v4-pin-', ''));
                             const childRect = child.getBoundingClientRect();
                             const hostRect = document.body.getBoundingClientRect();
-                            const scale = (window.parent?.state?.transform?.scale) || 1;
-                            const absX = (childRect.left - hostRect.left) / scale;
-                            const absY = (childRect.top - hostRect.top) / scale;
+                            const absX = childRect.left - hostRect.left;
+                            const absY = childRect.top - hostRect.top;
                             notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: absX, y: absY });
                         });
                     }

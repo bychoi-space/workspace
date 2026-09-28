@@ -12,6 +12,8 @@ window.GroupingManager = (function() {
     let selectedIds = [];
     let currentTargets = [];
     let selectedIdsIsGroupMap = {};
+    let cachedConnectors = [];
+    let initialSelectedIds = [];
 
     const init = () => {
         // Listen for marquee messages from Core (Iframe)
@@ -162,19 +164,67 @@ window.GroupingManager = (function() {
      const startMarquee = (data) => {
          const overlay = document.getElementById('pins-layer');
          if (!overlay) return;
- 
+
          // Wipes out any prior orphaned marquee boxes from the DOM
          document.querySelectorAll('.v4-marquee-box').forEach(el => el.remove());
- 
+
          isSelecting = true;
          startX = data.x;
          startY = data.y;
          currentTargets = data.targets || [];
- 
+         initialSelectedIds = (data.shiftKey && Array.isArray(selectedIds)) ? [...selectedIds] : [];
+
          if (!data.shiftKey) {
              clearSelection();
          }
- 
+
+         // Pre-cache connector bounding coordinates once to eliminate layout reflows during drag
+         cachedConnectors = [];
+         if (window.state && window.state.connectors && window.ConnectorEngine) {
+             const iframe = document.getElementById('main-iframe');
+             const iframeDoc = iframe ? (iframe.contentDocument || iframe.contentWindow.document) : null;
+             const host = iframeDoc ? (iframeDoc.querySelector('.mobile-content') || iframeDoc.querySelector('.page') || iframeDoc.body) : null;
+             const hostRect = host ? host.getBoundingClientRect() : { left: 0, top: 0 };
+             const scale = (window.state && window.state.transform && window.state.transform.scale) || 1;
+
+             window.state.connectors.forEach(conn => {
+                 if (!conn || !conn.start || !conn.end) return;
+
+                 let x1 = conn.start.x || 0;
+                 let y1 = conn.start.y || 0;
+                 let x2 = conn.end.x || 0;
+                 let y2 = conn.end.y || 0;
+
+                 if (conn.start.targetId && iframeDoc) {
+                     const targetEl = iframeDoc.getElementById(conn.start.targetId);
+                     if (targetEl) {
+                         const r = targetEl.getBoundingClientRect();
+                         if (conn.start.side === 'left') { x1 = (r.left - hostRect.left) / scale; y1 = (r.top + r.height/2 - hostRect.top) / scale; }
+                         else if (conn.start.side === 'right') { x1 = (r.right - hostRect.left) / scale; y1 = (r.top + r.height/2 - hostRect.top) / scale; }
+                         else if (conn.start.side === 'top') { x1 = (r.left + r.width/2 - hostRect.left) / scale; y1 = (r.top - hostRect.top) / scale; }
+                         else if (conn.start.side === 'bottom') { x1 = (r.left + r.width/2 - hostRect.left) / scale; y1 = (r.bottom - hostRect.top) / scale; }
+                     }
+                 }
+
+                 if (conn.end.targetId && iframeDoc) {
+                     const targetEl = iframeDoc.getElementById(conn.end.targetId);
+                     if (targetEl) {
+                         const r = targetEl.getBoundingClientRect();
+                         if (conn.end.side === 'left') { x2 = (r.left - hostRect.left) / scale; y2 = (r.top + r.height/2 - hostRect.top) / scale; }
+                         else if (conn.end.side === 'right') { x2 = (r.right - hostRect.left) / scale; y2 = (r.top + r.height/2 - hostRect.top) / scale; }
+                         else if (conn.end.side === 'top') { x2 = (r.left + r.width/2 - hostRect.left) / scale; y2 = (r.top - hostRect.top) / scale; }
+                         else if (conn.end.side === 'bottom') { x2 = (r.left + r.width/2 - hostRect.left) / scale; y2 = (r.bottom - hostRect.top) / scale; }
+                     }
+                 }
+
+                 cachedConnectors.push({
+                     id: conn.id,
+                     p1: { x: x1, y: y1 },
+                     p2: { x: x2, y: y2 }
+                 });
+             });
+         }
+
          marqueeBox = document.createElement('div');
          marqueeBox.className = 'v4-marquee-box';
          marqueeBox.style.position = 'absolute';
@@ -186,118 +236,106 @@ window.GroupingManager = (function() {
          marqueeBox.style.top = startY + 'px';
          overlay.appendChild(marqueeBox);
      };
- 
+
      const updateMarquee = (data) => {
          if (!isSelecting || !marqueeBox) return;
- 
+
          const x = Math.min(startX, data.x);
          const y = Math.min(startY, data.y);
          const w = Math.abs(startX - data.x);
          const h = Math.abs(startY - data.y);
- 
+
          marqueeBox.style.left = x + 'px';
          marqueeBox.style.top = y + 'px';
          marqueeBox.style.width = w + 'px';
          marqueeBox.style.height = h + 'px';
- 
+
          checkIntersections({ x, y, w, h });
      };
- 
+
      const checkIntersections = (box) => {
-         currentTargets.forEach(comp => {
-             if (comp.isGroupChild) {
-                 // Inner group child components are represented by their top-level parent .lf-group
-                 return;
-             }
+         const newSelectedSet = new Set(initialSelectedIds);
+         for (let i = 0; i < currentTargets.length; i++) {
+             const comp = currentTargets[i];
+             if (comp.isGroupChild) continue;
              if (isFullyContained(box, comp)) {
-                 if (!selectedIds.includes(comp.id)) selectedIds.push(comp.id);
-             } else {
-                 selectedIds = selectedIds.filter(id => id !== comp.id);
+                 newSelectedSet.add(comp.id);
              }
-         });
- 
-         // --- Connector Selection Integration ---
-         if (window.state.connectors && window.ConnectorEngine) {
-             const connectorIdsToSelect = [];
-             const iframe = document.getElementById('main-iframe');
-             const iframeDoc = iframe ? (iframe.contentDocument || iframe.contentWindow.document) : null;
-             const host = iframeDoc ? (iframeDoc.querySelector('.mobile-content') || iframeDoc.querySelector('.page') || iframeDoc.body) : null;
-             const hostRect = host ? host.getBoundingClientRect() : { left: 0, top: 0 };
-             const scale = (window.state && window.state.transform && window.state.transform.scale) || 1;
- 
-             window.state.connectors.forEach(conn => {
-                 if (!conn || !conn.start || !conn.end) return;
- 
-                 let x1 = conn.start.x || 0;
-                 let y1 = conn.start.y || 0;
-                 let x2 = conn.end.x || 0;
-                 let y2 = conn.end.y || 0;
- 
-                 if (conn.start.targetId && iframeDoc) {
-                     const targetEl = iframeDoc.getElementById(conn.start.targetId);
-                     if (targetEl) {
-                         const r = targetEl.getBoundingClientRect();
-                         if (conn.start.side === 'left') { x1 = (r.left - hostRect.left) / scale; y1 = (r.top + r.height/2 - hostRect.top) / scale; }
-                         else if (conn.start.side === 'right') { x1 = (r.right - hostRect.left) / scale; y1 = (r.top + r.height/2 - hostRect.top) / scale; }
-                         else if (conn.start.side === 'top') { x1 = (r.left + r.width/2 - hostRect.left) / scale; y1 = (r.top - hostRect.top) / scale; }
-                         else if (conn.start.side === 'bottom') { x1 = (r.left + r.width/2 - hostRect.left) / scale; y1 = (r.bottom - hostRect.top) / scale; }
-                     }
-                 }
- 
-                 if (conn.end.targetId && iframeDoc) {
-                     const targetEl = iframeDoc.getElementById(conn.end.targetId);
-                     if (targetEl) {
-                         const r = targetEl.getBoundingClientRect();
-                         if (conn.end.side === 'left') { x2 = (r.left - hostRect.left) / scale; y2 = (r.top + r.height/2 - hostRect.top) / scale; }
-                         else if (conn.end.side === 'right') { x2 = (r.right - hostRect.left) / scale; y2 = (r.top + r.height/2 - hostRect.top) / scale; }
-                         else if (conn.end.side === 'top') { x2 = (r.left + r.width/2 - hostRect.left) / scale; y2 = (r.top - hostRect.top) / scale; }
-                         else if (conn.end.side === 'bottom') { x2 = (r.left + r.width/2 - hostRect.left) / scale; y2 = (r.bottom - hostRect.top) / scale; }
-                     }
-                 }
- 
-                 const p1 = { x: x1, y: y1 };
-                 const p2 = { x: x2, y: y2 };
-                 const isIn = (pt) => pt.x >= box.x && pt.x <= box.x + box.w && pt.y >= box.y && pt.y <= box.y + box.h;
- 
-                 if (isIn(p1) && isIn(p2)) {
-                     connectorIdsToSelect.push(conn.id);
-                     if (!selectedIds.includes(conn.id)) selectedIds.push(conn.id);
-                 } else {
-                     selectedIds = selectedIds.filter(id => id !== conn.id);
+         }
+
+         const connectorIdsToSelect = [];
+         if (cachedConnectors.length > 0) {
+             const isIn = (pt) => pt.x >= box.x && pt.x <= box.x + box.w && pt.y >= box.y && pt.y <= box.y + box.h;
+             cachedConnectors.forEach(c => {
+                 if (isIn(c.p1) && isIn(c.p2)) {
+                     newSelectedSet.add(c.id);
+                     connectorIdsToSelect.push(c.id);
                  }
              });
+         }
+         if (window.ConnectorEngine && typeof window.ConnectorEngine.setSelectedIds === 'function') {
              window.ConnectorEngine.setSelectedIds(connectorIdsToSelect);
          }
- 
-         // Sync visual selection inside iframe via MessageHub
+
+         const newSelectedIds = Array.from(newSelectedSet);
+
+         // Diffing Guard: Check if selection changed
+         let isChanged = false;
+         if (newSelectedIds.length !== selectedIds.length) {
+             isChanged = true;
+         } else {
+             for (let i = 0; i < newSelectedIds.length; i++) {
+                 if (newSelectedIds[i] !== selectedIds[i]) {
+                     isChanged = true;
+                     break;
+                 }
+             }
+         }
+
+         if (!isChanged) {
+             // Selection set has not changed! Skip IPC message & DOM sync completely!
+             return;
+         }
+
+         selectedIds = newSelectedIds;
+
+         // Sync visual selection inside iframe via MessageHub (Live Dragging)
          const iframe = document.getElementById('main-iframe');
          if (iframe && iframe.contentWindow && window.MessageHub) {
-             window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
+             window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { 
+                 ids: selectedIds, 
+                 isDragging: true 
+             });
          }
- 
+
          syncWithCore();
      };
- 
+
      const isFullyContained = (r1, r2) => {
         return (r2.x >= r1.x &&
                 r2.x + r2.w <= r1.x + r1.w &&
                 r2.y >= r1.y &&
                 r2.y + r2.h <= r1.y + r1.h);
     };
- 
+
      const endMarquee = () => {
          isSelecting = false;
+         cachedConnectors = [];
+         initialSelectedIds = [];
          if (marqueeBox) {
              marqueeBox.remove();
              marqueeBox = null;
          }
- 
+
          if (selectedIds.length > 0) {
              const iframe = document.getElementById('main-iframe');
              if (selectedIds.length === 1 && iframe && iframe.contentWindow) {
                  window.MessageHub.send(iframe.contentWindow, 'LF_SELECT_ID', { id: selectedIds[0] });
              } else if (selectedIds.length > 1 && iframe && iframe.contentWindow) {
-                 window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
+                 window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { 
+                     ids: selectedIds, 
+                     isDragging: false 
+                 });
              }
          }
          document.querySelectorAll('.v4-marquee-box').forEach(el => el.remove());

@@ -35,10 +35,12 @@
     --text-muted: #64748b;
     --glass-blur: 20px;
     --selected-bg: rgba(110, 86, 207, 0.16);
+    --font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
 }
 
 /* 1. Global Background Upgrade (Whimsical Ambient Mesh) */
 body {
+    font-family: var(--font-sans);
     background-color: var(--bg-base);
     background-image: 
         radial-gradient(circle at 10% 10%, rgba(110, 86, 207, 0.14) 0%, transparent 45%),

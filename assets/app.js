@@ -991,6 +991,7 @@ const Notification = {
 };
 
 window.NotificationUI = Notification;
+window.AppDialog = Notification;
 try {
     window.Notification = Notification;
 } catch(e) {

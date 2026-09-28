@@ -680,6 +680,7 @@
         safeRun(initGridEvents, 'initGridEvents');
         safeRun(initAdminSettingsEvents, 'initAdminSettingsEvents');
         safeRun(initToggleEvents, 'initToggleEvents');
+        safeRun(window.initCursorEvents || (window.InspectorAtoms && window.InspectorAtoms.initCursorEvents), 'initCursorEvents');
         safeRun(window.initV4AddonEventListeners, 'initV4AddonEventListeners');
         safeRun(() => window.InspectorShapes?.bindEvents?.(), 'InspectorShapes.bindEvents');
     };

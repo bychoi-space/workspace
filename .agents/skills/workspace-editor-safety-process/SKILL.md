@@ -5,6 +5,9 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
 
 # Workspace Editor Safety Process
 
+## 🚨 7대 필수 게이트웨이 절대 준수 (7 Mandatory Gateways SSOT)
+모든 분석 및 개발 작업은 `AGENTS.md` 최상단에 명시된 **7대 필수 게이트웨이**(1. 운영 시스템 무결성, 2. 사전 정밀 분석 및 계획 수립, 3. 사이드이펙트 차단, 4. 스크립트/런타임 에러 0건, 5. 백틱 충돌 에러 0건, 6. 구문/브래킷 에러 0건 및 `scripts/check_syntax.ps1` 검증 통과, 7. CORS 에러 0건 및 MessageHub 통신)를 무조건적인 선행 및 완료 조건으로 통과해야 합니다.
+
 ## Five-Step Flow
 1. Ponder: identify the requested outcome and possible system impact.
 2. Analyze: inspect existing code and data before editing.
@@ -17,6 +20,7 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
 - Do not flatten folders or move/delete subfolders without explicit user approval.
 - Do not delete or overwrite metadata files such as `metadata.json` in each project folder. Always keep the `screenOrder` array synchronized when adding, deleting, or reordering screens.
 - **Offline Bundle Synchronization**: When modifying `assets/templates/*.html`, run `scripts/build_templates.ps1`. When modifying `assets/ui_library/*.html`, run `scripts/build_ui_fallback.ps1` to ensure offline `file://` compatibility.
+- **Local Daily Backup & Rapid Restoration Safeguard**: An automated daily backup engine runs at 18:00 via Task Scheduler (`C:\ai_work_backups\daily\data_daily_*.zip`). Before high-risk refactoring, broad folder reorganizations, or metadata migrations, verify existing backups or run `powershell -ExecutionPolicy Bypass -File scripts/daily_auto_backup.ps1` to ensure an immediate zero-loss restore point exists. When restoring via `scripts/restore_data.ps1`, ensure the pre-restore snapshot (`_pre_restore_safety_*`) is verified.
 - During conflicts, manually merge each project's `metadata.json` `screens` arrays and `screenOrder`. Never blindly overwrite them.
 - **On-Demand Auto Deployment**: Do NOT push to GitHub automatically on everyday small changes. When explicitly requested by the user ("배포해줘", "푸시해줘", etc.), automatically commit and push to the remote repository immediately without asking for extra confirmation.
 - Do not revert user changes. If existing changes affect the task, work with them or ask.

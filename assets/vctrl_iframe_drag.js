@@ -74,9 +74,9 @@ window.v4DragResizeScript = `
                     else dx = 0;
                 }
 
-                const scale = (window.parent?.state?.transform?.scale) || 1;
-                const logicalX = startLeft + dx / scale;
-                const logicalY = startTop + dy / scale;
+                // Note: e.clientX/Y inside the iframe are already unscaled by the browser's coordinate mapping.
+                const logicalX = startLeft + dx;
+                const logicalY = startTop + dy;
 
                 window.activeEl.style.left = logicalX + 'px';
                 window.activeEl.style.top = logicalY + 'px';
@@ -104,13 +104,12 @@ window.v4DragResizeScript = `
                 markDirty();
             }
             else if (isResizing && window.activeEl) {
-                const scale = (window.parent?.state?.transform?.scale) || 1;
                 const shapeLine = window.activeEl.querySelector('.v4-shape-line');
                 const shapeImage = window.activeEl.querySelector('.v4-shape-image');
                 const isImage = !!shapeImage || window.activeEl.classList.contains('v4-shape-image') || !!window.activeEl.getAttribute('data-aspect-ratio');
                 
-                let nw = Math.max(10, startW + (e.clientX - startX) / scale);
-                let nh = Math.max(10, startH + (e.clientY - startY) / scale);
+                let nw = Math.max(10, startW + (e.clientX - startX));
+                let nh = Math.max(10, startH + (e.clientY - startY));
                 
                 if (shapeLine) {
                     const isVert = shapeLine.getAttribute('data-line-dir') === 'vertical';
@@ -221,10 +220,10 @@ window.v4DragResizeScript = `
                     if (isDroppedOnMobile) {
                         const mobileMaxW = Math.max(0, (mobileInner.offsetWidth || 360) - compW);
                         if (!isCurrentlyInMobile) {
-                            // Cross-Frame: PC -> Mobile (Reparenting with scale correction)
+                            // Cross-Frame: PC -> Mobile (Reparenting)
                             const mobileInnerRect = mobileInner.getBoundingClientRect();
-                            const relTop = (compRect.top - mobileInnerRect.top) / scale;
-                            const relLeft = (compRect.left - mobileInnerRect.left) / scale;
+                            const relTop = compRect.top - mobileInnerRect.top;
+                            const relLeft = compRect.left - mobileInnerRect.left;
                             const clampedLeft = Math.max(0, Math.min(mobileMaxW, relLeft));
                             const clampedTop = Math.max(0, relTop);
 
@@ -244,10 +243,10 @@ window.v4DragResizeScript = `
                         const pcFrameWidth = pcInner.offsetWidth || 1160;
                         const pcMaxW = Math.max(0, pcFrameWidth - compW);
                         if (!isCurrentlyInPc) {
-                            // Cross-Frame: Mobile -> PC (Reparenting with scale correction)
+                            // Cross-Frame: Mobile -> PC (Reparenting)
                             const pcInnerRect = pcInner.getBoundingClientRect();
-                            const relTop = (compRect.top - pcInnerRect.top) / scale;
-                            const relLeft = (compRect.left - pcInnerRect.left) / scale;
+                            const relTop = compRect.top - pcInnerRect.top;
+                            const relLeft = compRect.left - pcInnerRect.left;
                             const clampedLeft = Math.max(0, Math.min(pcMaxW, relLeft));
                             const clampedTop = Math.max(0, relTop);
 
@@ -282,14 +281,13 @@ window.v4DragResizeScript = `
                     });
                 }
                 if (window.activeEl.classList.contains('lf-group')) {
-                    const scale = (window.parent && window.parent.state && window.parent.state.transform) ? window.parent.state.transform.scale : 1;
                     const hostRect = document.body.getBoundingClientRect();
                     window.activeEl.querySelectorAll('.text-marker, .pin-marker').forEach(child => {
                         const idx = parseInt(child.id.replace('v4-pin-', ''));
                         if (!isNaN(idx)) {
                             const childRect = child.getBoundingClientRect();
-                            const absX = (childRect.left - hostRect.left) / scale;
-                            const absY = (childRect.top - hostRect.top) / scale;
+                            const absX = childRect.left - hostRect.left;
+                            const absY = childRect.top - hostRect.top;
                             notifyParent({
                                 type: 'LF_UPDATE_PIN_POS',
                                 index: idx,

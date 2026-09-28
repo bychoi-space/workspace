@@ -1709,6 +1709,111 @@ body.fullscreen-mode .stage {
     color: #f59e0b;
 }
 
+/* Collapsible Library Panel Headers & Badges */
+.collapsible-header {
+    cursor: pointer !important;
+    user-select: none !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.collapsible-header:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+}
+
+.panel-header-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+}
+
+.panel-header-chevron {
+    font-size: 18px !important;
+    color: rgba(255, 255, 255, 0.45) !important;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease !important;
+    transform: rotate(0deg);
+    flex-shrink: 0 !important;
+}
+
+.collapsible-header:hover .panel-header-chevron {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.collapsible-header.is-collapsed .panel-header-chevron {
+    transform: rotate(-90deg) !important;
+}
+
+/* Section Asset Count Badges */
+.section-count-badge {
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+    padding: 1px 6px !important;
+    border-radius: 9999px !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.badge-icon {
+    color: #38bdf8 !important;
+    background: rgba(56, 189, 248, 0.12) !important;
+    border: 1px solid rgba(56, 189, 248, 0.25) !important;
+}
+
+.badge-illustration {
+    color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.12) !important;
+    border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+
+.badge-molecules {
+    color: #f43f5e !important;
+    background: rgba(244, 63, 94, 0.12) !important;
+    border: 1px solid rgba(244, 63, 94, 0.25) !important;
+}
+
+/* Collapsible Body */
+.collapsible-body {
+    transition: opacity 0.2s ease !important;
+}
+
+.collapsible-body.is-collapsed {
+    display: none !important;
+}
+
+/* Sub-group Collapsible Dividers inside Illustration Library */
+.illustration-group-divider.collapsible-divider {
+    cursor: pointer !important;
+    user-select: none !important;
+    transition: background 0.15s ease, border-color 0.15s ease !important;
+}
+
+.illustration-group-divider.collapsible-divider:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.illustration-subgroup-chevron {
+    font-size: 15px !important;
+    color: #64748b !important;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s ease !important;
+    margin-right: 2px !important;
+    flex-shrink: 0 !important;
+}
+
+.illustration-group-divider:hover .illustration-subgroup-chevron {
+    color: #94a3b8 !important;
+}
+
+.illustration-group-divider.is-sub-collapsed .illustration-subgroup-chevron {
+    transform: rotate(-90deg) !important;
+}
+
 /* Illustration Library 2-Column Responsive Grid (Zero Overflow, Symmetrical 2x5 Layout) */
 #illustration-library-container {
     display: grid !important;
@@ -1717,6 +1822,69 @@ body.fullscreen-mode .stage {
     gap: 8px !important;
     box-sizing: border-box !important;
     width: 100% !important;
+}
+
+/* Illustration Group Section Divider (Spans 2 columns) */
+.illustration-group-divider {
+    grid-column: span 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 6px 8px !important;
+    margin-top: 6px !important;
+    margin-bottom: 2px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+    cursor: default !important;
+}
+
+.illustration-group-divider:first-child {
+    margin-top: 0 !important;
+}
+
+.illustration-group-divider:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.illustration-group-title {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #cbd5e1 !important;
+    letter-spacing: 0.2px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    text-align: left !important;
+}
+
+.illustration-group-count {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 20px !important;
+    height: 18px !important;
+    padding: 0 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-radius: 9999px !important;
+    margin-left: 8px !important;
+    line-height: 1 !important;
 }
 
 .v4-card-illustration {

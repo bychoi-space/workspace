@@ -36,9 +36,8 @@ window.v4PortConnectorScript = `
         handleMouseMove: function(e) {
             if (!isDrawingConnector) return;
             const rect = document.body.getBoundingClientRect();
-            const scale = (window.parent?.state?.transform?.scale) || 1;
-            const logicalX = (e.clientX - rect.left) / scale;
-            const logicalY = (e.clientY - rect.top) / scale;
+            const logicalX = e.clientX - rect.left;
+            const logicalY = e.clientY - rect.top;
             
             drawTempLine(connDragStartX, connDragStartY, logicalX, logicalY);
             

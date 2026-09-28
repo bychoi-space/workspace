@@ -34,6 +34,7 @@ window.rebindInspectorDOM = function() {
     DOM.gridPropSection = get('grid-inspector-section');
     DOM.adminSettingsPropSection = get('admin-settings-inspector-section');
     DOM.tabPropSection = get('tab-inspector-section');
+    DOM.cursorPropSection = get('cursor-inspector-section');
 
     DOM.textColorPicker = get('text-color-picker');
     DOM.selectionBar = get('selection-actions-bar');
@@ -68,7 +69,7 @@ window.restorePropertiesSections = function(force) {
         DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
         DOM.fileuploadPropSection, DOM.alertPropSection, DOM.buttonPropSection,
         DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
-        DOM.adminSettingsPropSection, DOM.tabPropSection
+        DOM.adminSettingsPropSection, DOM.tabPropSection, DOM.cursorPropSection
     ];
 
     sections.forEach(sec => {
@@ -172,6 +173,7 @@ window.DOM = {
     gridPropSection: get('grid-inspector-section'),
     adminSettingsPropSection: get('admin-settings-inspector-section'),
     tabPropSection: get('tab-inspector-section'),
+    cursorPropSection: get('cursor-inspector-section'),
     textColorPicker: get('text-color-picker'),
     colorPresets: document.querySelectorAll('.color-preset'),
 
@@ -208,6 +210,11 @@ window.toggleSidebar = function(side, forceOpen = null) {
     
     const isCollapsed = sidebar.classList.contains('collapsed');
     const shouldOpen = forceOpen !== null ? forceOpen : isCollapsed;
+    
+    // If state is already matching forceOpen, exit early to avoid redundant centerView calls
+    if (forceOpen !== null && (!isCollapsed) === shouldOpen) {
+        return;
+    }
     
     sidebar.classList.toggle('collapsed', !shouldOpen);
     console.log(`[Inspector] Sidebar ${side} is now ${shouldOpen ? 'OPEN' : 'COLLAPSED'}`);
@@ -477,6 +484,7 @@ const ProjectMetadataManager = {
         if (DOM.buttonPropSection) DOM.buttonPropSection.style.display = 'none';
         if (DOM.datePickerPropSection) DOM.datePickerPropSection.style.display = 'none';
         if (DOM.togglePropSection) DOM.togglePropSection.style.display = 'none';
+        if (DOM.cursorPropSection) DOM.cursorPropSection.style.display = 'none';
         if (DOM.adminSettingsPropSection && !isTypingInAdminProps) DOM.adminSettingsPropSection.style.display = 'none';
 
         if (compStyles) {
@@ -504,6 +512,7 @@ const ProjectMetadataManager = {
             else if (compStyles.isAccordion) type = 'accordion';
             else if (compStyles.isAdminSettings) type = 'admin-settings';
             else if (compStyles.isTab) type = 'tab';
+            else if (compStyles.isCursor) type = 'cursor';
             else if (compStyles.isIcon) type = 'icon';
             state.editingType = type;
 
@@ -646,6 +655,10 @@ const ProjectMetadataManager = {
                 if (window.InspectorTab && typeof window.InspectorTab.bindEvents === 'function') {
                     window.InspectorTab.bindEvents();
                 }
+            } else if (state.editingType === 'cursor') {
+                const cursorSec = DOM.cursorPropSection || document.getElementById('cursor-inspector-section');
+                if (cursorSec) cursorSec.style.display = 'block';
+                _syncCursorProps(compStyles);
             }
 
             // Sync Property Controls
@@ -863,42 +876,13 @@ const ProjectMetadataManager = {
             editorLabel.innerText = 'CONTENT EDITOR';
         }
 
-        // Helper: 정규화된 HTML을 생성하여 Quill 클립보드가 인라인 font-size 및 서식을 온전히 파싱하도록 보장
-        function normalizeHtmlForQuill(rawHtml, fallbackFontSize) {
-            if (!rawHtml) return '<p><br></p>';
-            const parser = new DOMParser();
-            const parsed = parser.parseFromString(rawHtml, 'text/html');
-            const textContent = parsed.querySelector('.v4-shape-text-content') || 
-                                parsed.querySelector('.v4-shape-text-overlay') || 
-                                parsed.querySelector('.v4-editable-cell');
-            let clean = textContent ? textContent.innerHTML.trim() : rawHtml.trim();
-            if (!clean) return '<p><br></p>';
-
-            // p나 div 블록 태그가 전혀 없으면 <p>로 감싸기
-            if (!clean.includes('<p') && !clean.includes('<div')) {
-                clean = `<p>${clean}</p>`;
+        // Helper: 정규화된 HTML을 생성하여 Quill 클립보드가 인라인 font-size 및 서식을 온전히 파싱하도록 보장 (Delegated to inspector_text_formatter.js)
+        const normalizeHtmlForQuill = (rawHtml, fallbackFontSize) => {
+            if (window.InspectorTextFormatter && typeof window.InspectorTextFormatter.normalizeHtmlForQuill === 'function') {
+                return window.InspectorTextFormatter.normalizeHtmlForQuill(rawHtml, fallbackFontSize);
             }
-
-            // 인라인 font-size가 전혀 없는 경우, p 태그 내부 콘텐츠에 안전하게 font-size span을 주입
-            const hasExplicitFontSize = clean.includes('font-size') || clean.includes('fontSize');
-            if (!hasExplicitFontSize && fallbackFontSize) {
-                const fsPx = typeof fallbackFontSize === 'number' ? fallbackFontSize + 'px' : (fallbackFontSize.endsWith('px') ? fallbackFontSize : fallbackFontSize + 'px');
-                const doc = parser.parseFromString(clean, 'text/html');
-                const blocks = doc.body.querySelectorAll('p, div');
-                if (blocks.length > 0) {
-                    blocks.forEach(b => {
-                        if (b.innerHTML.trim() && !b.querySelector('[style*="font-size"]')) {
-                            b.innerHTML = `<span style="font-size: ${fsPx};">${b.innerHTML}</span>`;
-                        }
-                    });
-                    clean = doc.body.innerHTML;
-                } else {
-                    clean = `<p><span style="font-size: ${fsPx};">${doc.body.innerHTML}</span></p>`;
-                }
-            }
-            return clean;
-        }
-        window.normalizeHtmlForQuill = normalizeHtmlForQuill;
+            return rawHtml;
+        };
 
         // Load content to Quill
         if (compStyles && !compStyles.isMultiSameType && (state.editingType === 'pin' || state.editingType === 'shape') && window.quillEditor) {
@@ -921,7 +905,7 @@ const ProjectMetadataManager = {
                 window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
 
                 // Sticky Format 동기화 (오브젝트 고유 기본 스타일 캐싱)
-                if (!window._currentStickyFormat) window._currentStickyFormat = {};
+                window._currentStickyFormat = {};
                 if (fallbackFs) {
                     const fsPx = typeof fallbackFs === 'number' ? fallbackFs + 'px' : (fallbackFs.endsWith('px') ? fallbackFs : fallbackFs + 'px');
                     window._currentStickyFormat.size = fsPx;
@@ -933,9 +917,42 @@ const ProjectMetadataManager = {
                 if (window.quillEditor && window.quillEditor.root) {
                     window.quillEditor.root.style.textAlign = curAlign;
                 }
+                window._currentStickyFormat.align = curAlign;
+                // Line Height 감지 및 동기화
+                const curLh = (compStyles.currentStyles && compStyles.currentStyles.lineHeight) || '1.5';
+                window._currentStickyFormat.lineheight = curLh;
+
+                if (window.quillEditor) {
+                    window.quillEditor.format('align', curAlign === 'left' ? false : curAlign, 'silent');
+                    if (fallbackColor) {
+                        window.quillEditor.format('color', fallbackColor, 'silent');
+                    }
+                    if (curLh) {
+                        window.quillEditor.format('lineheight', curLh, 'silent');
+                    }
+                }
                 const curFmt = window.quillEditor.getFormat();
                 if (curFmt && Object.keys(curFmt).length > 0) {
                     window._currentStickyFormat = { ...window._currentStickyFormat, ...curFmt };
+                    if (!curFmt.align) {
+                        window._currentStickyFormat.align = curAlign;
+                    }
+                    if (!curFmt.lineheight) {
+                        window._currentStickyFormat.lineheight = curLh;
+                    }
+                }
+
+                // Toolbar Line Height Picker 동기화
+                const lhPicker = document.querySelector('.ql-toolbar .ql-lineheight');
+                if (lhPicker) {
+                    if (typeof setupCustomLineHeightPicker === 'function' && !lhPicker._customLhInitialized) {
+                        setupCustomLineHeightPicker(lhPicker);
+                    }
+                    const targetLh = window._currentStickyFormat.lineheight || curLh || '1.5';
+                    const lhPickerLabel = lhPicker.querySelector('.ql-picker-label');
+                    if (lhPickerLabel) lhPickerLabel.setAttribute('data-value', targetLh);
+                    const lhInput = lhPicker.querySelector('.ql-lineheight-input');
+                    if (lhInput && document.activeElement !== lhInput) lhInput.value = targetLh;
                 }
 
                 if (wasQuillFocused) {
@@ -975,7 +992,8 @@ const ProjectMetadataManager = {
                 DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
                 DOM.fileuploadPropSection, DOM.alertPropSection, DOM.buttonPropSection,
                 DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
-                DOM.adminSettingsPropSection, DOM.tabPropSection
+                DOM.adminSettingsPropSection, DOM.tabPropSection,
+                DOM.cursorPropSection || document.getElementById('cursor-inspector-section')
             ];
             sections.forEach(sec => {
                 if (sec && sec.style.display === 'block') {
@@ -1017,6 +1035,12 @@ function _syncStepperProps(comp) {
     }
 }
 
+function _syncCursorProps(comp) {
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncCursor === 'function') {
+        window.InspectorAtoms.syncCursor(comp);
+    }
+}
+
 function _syncAtomDisabledProps(comp) {
     if (window.InspectorAtoms && typeof window.InspectorAtoms.syncDisabled === 'function') {
         window.InspectorAtoms.syncDisabled(comp);
@@ -1047,12 +1071,6 @@ function _syncButtonProps(comp) {
     }
 }
 
-function _syncTextboxTextareaProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncTextboxTextarea === 'function') {
-        window.InspectorAtoms.syncTextboxTextarea(comp);
-    }
-}
-
 function _syncSearchBarProps(comp) {
     if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSearchBar === 'function') {
         window.InspectorAtoms.syncSearchBar(comp);
@@ -1066,7 +1084,6 @@ function _syncAccordionProps(comp) {
         return;
     }
 }
-
 
 function _syncGridProps(comp) {
     if (window.InspectorGrid && typeof window.InspectorGrid.sync === 'function') {
@@ -1091,22 +1108,24 @@ function _syncDatePickerProps(comp) {
     }
 }
 
-function getCategoryData(type) {
-    const categories = {
-        'cover': { label: 'COVER', code: 'CO', class: 'badge-cover' },
-        'architecture': { label: 'ARCH', code: 'AR', class: 'badge-architecture' },
-        'plan': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
-        'plan-delivery': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
-        'case-study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
-        'case_study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
-        'ui': { label: 'UI', code: 'UI', class: 'badge-ui' },
-        'responsive-ui': { label: 'PC+MO', code: 'PC', class: 'badge-responsive-ui' },
-        'mobile-ui': { label: 'MOBILE', code: 'MO', class: 'badge-mobile-ui' },
-        'admin': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
-        'admin-nbos': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
-        'admin-onesphere': { label: 'ADMIN', code: 'AD', class: 'badge-admin' }
+if (typeof window.getCategoryData !== 'function') {
+    window.getCategoryData = function(type) {
+        const categories = {
+            'cover': { label: 'COVER', code: 'CO', class: 'badge-cover' },
+            'architecture': { label: 'ARCH', code: 'AR', class: 'badge-architecture' },
+            'plan': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
+            'plan-delivery': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
+            'case-study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
+            'case_study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
+            'ui': { label: 'UI', code: 'UI', class: 'badge-ui' },
+            'responsive-ui': { label: 'PC+MO', code: 'PC', class: 'badge-responsive-ui' },
+            'mobile-ui': { label: 'MOBILE', code: 'MO', class: 'badge-mobile-ui' },
+            'admin': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
+            'admin-nbos': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
+            'admin-onesphere': { label: 'ADMIN', code: 'AD', class: 'badge-admin' }
+        };
+        return categories[type] || { label: 'ETC', code: (type || 'ET').slice(0, 2).toUpperCase(), class: 'badge-default' };
     };
-    return categories[type] || { label: 'ETC', code: (type || 'ET').slice(0, 2).toUpperCase(), class: 'badge-default' };
 }
 
 let flyoutHideTimer = null;
@@ -1117,38 +1136,9 @@ let currentFlyoutScreen = null;
 // --- 4. Library & Editor (Delegated to vctrl_component_library.js) ---
 // Global Color Palette delegated to vctrl_color_picker.js
 
-    /**
-     * Helper: CONTENT EDITOR(Quill)에서 작성된 텍스트의 연속 공백 및 선행 공백을 HTML 엔티티(&nbsp;)로 정밀 보존
-     * - HTML 태그 및 속성(style, class 등)은 절대 건드리지 않고, 순수 TextNode만 안전하게 변환
-     * - 단일 공백은 일반 공백(' ')으로 유지하여 브라우저의 단어 자동 줄바꿈(Word Wrap)을 온전히 보존
-     * - 선행 공백 및 2개 이상 연속된 공백은 '\u00A0' (NBSP)로 변환하여 브라우저의 공백 축약(Collapsing) 방지
-     */
-    function preserveConsecutiveSpaces(html) {
-        if (!html || typeof html !== 'string') return html;
-        try {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
-            let node;
-            while ((node = walker.nextNode())) {
-                let val = node.nodeValue;
-                if (!val) continue;
-
-                // 1) 텍스트 노드 시작 부분의 공백(선행 들여쓰기 공백) 보존
-                val = val.replace(/^ +/g, match => '\u00A0'.repeat(match.length));
-
-                // 2) 텍스트 노드 중간의 2개 이상 연속 공백 보존 (첫 공백은 일반 스페이스로 남겨 워드랩 보장)
-                val = val.replace(/ {2,}/g, match => ' ' + '\u00A0'.repeat(match.length - 1));
-
-                node.nodeValue = val;
-            }
-            return doc.body.innerHTML;
-        } catch (e) {
-            console.error('[preserveConsecutiveSpaces] Error:', e);
-            return html;
-        }
+    if (typeof window.preserveConsecutiveSpaces !== 'function') {
+        window.preserveConsecutiveSpaces = (html) => (window.InspectorTextFormatter?.preserveConsecutiveSpaces ? window.InspectorTextFormatter.preserveConsecutiveSpaces(html) : html);
     }
-    window.preserveConsecutiveSpaces = preserveConsecutiveSpaces;
 
 window.initQuillEditor = function() {
     if (typeof window.initV4GlobalColorPalette === 'function') {
@@ -1164,11 +1154,18 @@ window.initQuillEditor = function() {
     const Align = Quill.import('attributors/style/align');
     Quill.register(Align, true);
 
+    const Parchment = Quill.import('parchment');
+    const LineHeightStyle = new Parchment.Attributor.Style('lineheight', 'line-height', {
+        scope: Parchment.Scope.BLOCK
+    });
+    Quill.register(LineHeightStyle, true);
+
     // Sticky Format Cache: 텍스트 삭제 후에도 직전 타이포그래피 서식 기억
     if (!window._currentStickyFormat) {
         window._currentStickyFormat = {
             size: '14px',
-            color: '#000000'
+            color: '#000000',
+            lineheight: '1.5'
         };
     }
 
@@ -1202,6 +1199,7 @@ window.initQuillEditor = function() {
         modules: {
             toolbar: [
                 [{ 'size': Size.whitelist }],
+                [{ 'lineheight': ['1.0', '1.2', '1.4', '1.5', '1.6', '1.8', '2.0'] }],
                 ['bold', 'italic', 'underline', 'strike'],
                 [{ 'color': colorPalette }, { 'background': colorPalette }],
                 ['clean']
@@ -1216,11 +1214,186 @@ window.initQuillEditor = function() {
         }
     }
 
+    // Universal Line Height Combobox (Keyboard Direct Typing + Click Dropdown + Wheel)
+    function setupCustomLineHeightPicker(lhPicker) {
+        if (!lhPicker || lhPicker._customLhInitialized) return;
+        lhPicker._customLhInitialized = true;
+
+        const pickerLabel = lhPicker.querySelector('.ql-picker-label');
+        const optionsEl = lhPicker.querySelector('.ql-picker-options');
+        if (!pickerLabel) return;
+
+        // Create or locate direct keyboard key-in input field
+        let input = pickerLabel.querySelector('.ql-lineheight-input');
+        if (!input) {
+            input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'ql-lineheight-input';
+            input.setAttribute('title', '줄간격 (키보드로 숫자 직접 입력 또는 위/아래 방향키)');
+            input.setAttribute('aria-label', '줄간격 배수');
+            const initVal = pickerLabel.getAttribute('data-value') || (window._currentStickyFormat && window._currentStickyFormat.lineheight) || '1.5';
+            input.value = initVal;
+
+            // Insert input before SVG arrow icon
+            const svg = pickerLabel.querySelector('svg');
+            if (svg) {
+                pickerLabel.insertBefore(input, svg);
+            } else {
+                pickerLabel.appendChild(input);
+            }
+            pickerLabel.classList.add('has-input');
+        }
+
+        function commitLineHeight(val) {
+            let num = parseFloat(val);
+            if (isNaN(num)) num = 1.5;
+            num = Math.max(0.8, Math.min(4.0, num));
+            const formatted = (num % 1 === 0) ? num.toFixed(1) : parseFloat(num.toFixed(2)).toString();
+
+            if (input && document.activeElement !== input) input.value = formatted;
+            pickerLabel.setAttribute('data-value', formatted);
+
+            if (!window._currentStickyFormat) window._currentStickyFormat = {};
+            window._currentStickyFormat.lineheight = formatted;
+
+            if (window.quillEditor) {
+                const range = window.quillEditor.getSelection();
+                if (range && range.length > 0) {
+                    window.quillEditor.formatLine(range.index, range.length, 'lineheight', formatted, 'user');
+                } else {
+                    const totalLen = window.quillEditor.getLength();
+                    window.quillEditor.formatLine(0, totalLen, 'lineheight', formatted, 'user');
+                    window.quillEditor.format('lineheight', formatted, 'user');
+                }
+            }
+
+            // Real-time canvas sync to Shape / Pin
+            const iframe = document.getElementById('main-iframe');
+            if (iframe && iframe.contentWindow && window.state && window.MessageHub) {
+                const activeAlign = (window.state.selectedComponentStyles?.currentStyles?.textAlign) || '';
+                const activeVAlign = (window.state.selectedComponentStyles?.currentStyles?.vAlign) || '';
+                const rawHtml = window.quillEditor ? window.quillEditor.root.innerHTML : '';
+                const cleanHtml = (typeof window.preserveConsecutiveSpaces === 'function') 
+                    ? window.preserveConsecutiveSpaces(rawHtml) 
+                    : rawHtml;
+
+                if (window.state.editingType === 'shape') {
+                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', {
+                        html: cleanHtml,
+                        align: activeAlign,
+                        vAlign: activeVAlign
+                    });
+                    if (typeof window.markAsDirty === 'function') window.markAsDirty();
+                } else if (window.state.editingType === 'pin') {
+                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', {
+                        id: window.state.editingIndex,
+                        html: cleanHtml,
+                        align: activeAlign,
+                        vAlign: activeVAlign
+                    });
+                    if (typeof window.markAsDirty === 'function') window.markAsDirty();
+                }
+            }
+
+            // Highlight selected item in options list
+            if (optionsEl) {
+                optionsEl.querySelectorAll('.ql-picker-item').forEach(item => {
+                    if (item.getAttribute('data-value') === formatted) {
+                        item.classList.add('ql-selected');
+                    } else {
+                        item.classList.remove('ql-selected');
+                    }
+                });
+            }
+        }
+        lhPicker._commitLineHeight = commitLineHeight;
+
+        // Prevent input click/mousedown from bubbling to Quill picker label toggle
+        input.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+        });
+        input.addEventListener('click', (e) => {
+            e.stopPropagation();
+            input.select();
+        });
+        input.addEventListener('focus', () => {
+            input.select();
+        });
+        input.addEventListener('keydown', (e) => {
+            e.stopPropagation();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                commitLineHeight(input.value);
+                input.value = pickerLabel.getAttribute('data-value') || input.value;
+                lhPicker.classList.remove('ql-expanded');
+                if (window.quillEditor) window.quillEditor.focus();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                input.value = pickerLabel.getAttribute('data-value') || window._currentStickyFormat?.lineheight || '1.5';
+                lhPicker.classList.remove('ql-expanded');
+                if (window.quillEditor) window.quillEditor.focus();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                let cur = parseFloat(input.value) || 1.5;
+                commitLineHeight((cur + 0.1).toFixed(1));
+                input.select();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                let cur = parseFloat(input.value) || 1.5;
+                commitLineHeight(Math.max(0.8, cur - 0.1).toFixed(1));
+                input.select();
+            }
+        });
+        input.addEventListener('blur', () => {
+            commitLineHeight(input.value);
+            input.value = pickerLabel.getAttribute('data-value') || input.value;
+        });
+        input.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let cur = parseFloat(input.value) || 1.5;
+            const delta = e.deltaY < 0 ? 0.1 : -0.1;
+            commitLineHeight(Math.max(0.8, Math.min(4.0, cur + delta)).toFixed(1));
+            input.select();
+        }, { passive: false });
+
+        // Dropdown option item selection and smooth options interactions
+        if (optionsEl) {
+            optionsEl.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+            });
+            optionsEl.addEventListener('click', (e) => {
+                const item = e.target.closest('.ql-picker-item');
+                if (!item) return;
+                const val = item.getAttribute('data-value');
+                if (val) {
+                    if (input) input.value = val;
+                    commitLineHeight(val);
+                }
+                lhPicker.classList.remove('ql-expanded');
+            });
+        }
+
+        // Close dropdown when input gains focus
+        input.addEventListener('focus', () => {
+            lhPicker.classList.remove('ql-expanded');
+            input.select();
+        });
+    }
+    window.setupCustomLineHeightPicker = setupCustomLineHeightPicker;
+
     setTimeout(() => {
         const toolbarEl = container.previousElementSibling || document.querySelector('.ql-toolbar');
         if (toolbarEl) {
             const btnSize = toolbarEl.querySelector('.ql-size .ql-picker-label');
             if (btnSize) btnSize.setAttribute('title', '글자 크기 (Font Size)');
+
+            const lhPicker = toolbarEl.querySelector('.ql-lineheight');
+            if (lhPicker) {
+                const btnLh = lhPicker.querySelector('.ql-picker-label');
+                if (btnLh) btnLh.setAttribute('title', '줄간격 (Line Spacing)');
+                setupCustomLineHeightPicker(lhPicker);
+            }
 
             const colorPicker = toolbarEl.querySelector('.ql-color');
             if (colorPicker) {
@@ -1268,6 +1441,17 @@ window.initQuillEditor = function() {
             const curFormat = window.quillEditor.getFormat(range);
             if (curFormat && Object.keys(curFormat).length > 0) {
                 window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
+            }
+            const lhPicker = document.querySelector('.ql-toolbar .ql-lineheight');
+            if (lhPicker) {
+                if (typeof setupCustomLineHeightPicker === 'function' && !lhPicker._customLhInitialized) {
+                    setupCustomLineHeightPicker(lhPicker);
+                }
+                const activeLh = (curFormat && curFormat.lineheight) || (window._currentStickyFormat && window._currentStickyFormat.lineheight) || '1.5';
+                const lhPickerLabel = lhPicker.querySelector('.ql-picker-label');
+                if (lhPickerLabel) lhPickerLabel.setAttribute('data-value', activeLh);
+                const lhInput = lhPicker.querySelector('.ql-lineheight-input');
+                if (lhInput && document.activeElement !== lhInput) lhInput.value = activeLh;
             }
         }
     });

@@ -1,856 +1,129 @@
 /**
- * bychoi workspace V4 - Premium Component Library
- * Optimized for high-fidelity design reviews.
+ * bychoi workspace V4 - Premium Component Library Controller
+ * UI rendering, Accordion management, and search engine.
+ * Component metadata definition is separated to vctrl_component_data.js (SSOT).
  */
 
-window.V4_COMPONENT_LIBRARY = {
-    atoms: [
-        {
-            id: 'v4-btn-primary',
-            name: 'Pill Action Button',
-            category: 'Atoms',
-            previewHtml: `<div class="v4-btn-glass" style="background: var(--v4-primary, #6366f1); border:none; height: 28px; border-radius: 14px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; box-shadow: 0 4px 12px var(--v4-primary-glow, rgba(99, 102, 241, 0.4));">Action</div>`,
-            html: `<button class="v4-btn-glass" style="background: #6366f1; border:none; color:white; height: 28px; padding: 0 18px; border-radius: 14px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; outline: none;">Primary Action</button>`
-        },
-        {
-            id: 'v4-badge-new',
-            name: 'Neon Badge',
-            category: 'Atoms',
-            previewHtml: `<span style="background: #00e5ff; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900;">NEW</span>`,
-            html: `<span style="background: #00e5ff; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-block; box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);">NEW</span>`
-        },
-        {
-            id: 'v4-text-premium',
-            name: 'Premium Text Block',
-            category: 'Atoms',
-            previewHtml: `<div style="font-size: 12px; color: #0f172a; border-bottom: 1.6px solid #475569; width: 40px; text-align: center;">TEXT</div>`,
-            html: `
-            <div class="v4-shape v4-shape-text" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 8px; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; white-space: pre-wrap;">Enter Premium Text</div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-icon-share',
-            name: 'Share Icon (Premium)',
-            category: 'Atoms',
-            width: '40px',
-            height: '40px',
-            previewHtml: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 24px; height: 24px; color: white;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
-            html: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; padding: 8px; box-sizing: border-box;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`
-        },
-        {
-            id: 'v4-atom-textbox',
-            name: 'Textbox',
-            category: 'Atoms',
-            width: '150px',
-            height: '30px',
-            previewHtml: `<div style="width: 80px; height: 20px; background: var(--v4-input-bg, #fafaf2); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 4px; display: flex; align-items: center; padding: 0 4px; font-size: 8px; color: var(--v4-placeholder-color, #a3a3a3); font-family: inherit;">Placeholder</div>`,
-            html: `
-            <div class="v4-textbox-container" style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background-color: var(--v4-input-bg, #fafaf2); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; display: flex; align-items: center; padding: 0 12px; pointer-events: auto;">
-                <div class="v4-textbox-placeholder" style="position: absolute; left: 12px; color: var(--v4-placeholder-color, #a3a3a3); pointer-events: none; font-size: 12px; font-weight: 400; user-select: none; font-family: inherit;">Placeholder</div>
-                <div contenteditable="true" class="v4-editable-cell v4-textbox-input" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; display: flex; align-items: center; white-space: nowrap; overflow: hidden; padding: 8px 0; box-sizing: border-box; padding-right: 48px; font-family: inherit;"></div>
-                <div class="v4-textbox-counter" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 400; color: var(--v4-placeholder-color, #a3a3a3); user-select: none; display: none; font-family: inherit;">0/100</div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-textarea',
-            name: 'Textarea',
-            category: 'Atoms',
-            width: '150px',
-            height: '60px',
-            previewHtml: `<div style="width: 80px; height: 30px; background: var(--v4-input-bg, #fafaf2); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 4px; padding: 2px; font-size: 8px; color: var(--v4-placeholder-color, #a3a3a3); box-sizing: border-box; font-family: inherit;">Placeholder</div>`,
-            html: `
-            <div class="v4-textarea-container" style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background-color: var(--v4-input-bg, #fafaf2); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; display: flex; flex-direction: column; padding: 10px 12px 6px 12px; pointer-events: auto;">
-                <div class="v4-textarea-placeholder" style="position: absolute; left: 12px; top: 10px; color: var(--v4-placeholder-color, #a3a3a3); pointer-events: none; font-size: 12px; font-weight: 400; user-select: none; font-family: inherit;">Placeholder</div>
-                <div contenteditable="true" class="v4-editable-cell v4-textarea-input" style="width: 100%; flex: 1 1 auto; min-height: 0; border: none; outline: none; background: transparent; color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; resize: none; overflow-y: auto; padding: 0 4px 0 0; word-break: break-all; white-space: pre-wrap; box-sizing: border-box; font-family: inherit;"></div>
-                <div class="v4-textarea-counter" style="align-self: flex-end; margin-top: 4px; font-size: 11px; line-height: 1; font-weight: 400; color: var(--v4-placeholder-color, #a3a3a3); user-select: none; display: none; font-family: inherit; flex-shrink: 0;">0/100</div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-stepper',
-            name: 'Quantity Stepper',
-            category: 'Atoms',
-            width: '134px',
-            height: '30px',
-            previewHtml: `<div style="display: flex; align-items: center; background: var(--v4-component-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 6px; font-size: 10px; height: 20px; padding: 0 4px; box-sizing: border-box; width: 80px; justify-content: space-between;"><span style="color: var(--v4-placeholder-color, #9ca3af); font-weight: bold; cursor: default;">—</span><span style="font-weight: bold; color: var(--v4-text-color, #0f172a);">1</span><span style="color: var(--v4-text-color, #0f172a); font-weight: bold; cursor: default;">+</span></div>`,
-            html: `
-            <div class="v4-stepper-container" data-min="1" data-max="99" data-val="1" data-btn-enabled="true" data-btn-text="적용" data-disabled="false" style="position: relative; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; pointer-events: auto; user-select: none;">
-                <div class="v4-stepper-control" style="display: inline-flex; align-items: center; border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; background-color: var(--v4-component-bg, #ffffff); overflow: hidden; height: 30px; box-sizing: border-box;">
-                    <button class="v4-stepper-dec" style="width: 24px; height: 100%; border: none; background: var(--v4-disabled-bg, #f3f4f6); color: var(--v4-placeholder-color, #9ca3af); font-size: 12px; font-weight: 400; cursor: not-allowed; outline: none; display: flex; align-items: center; justify-content: center; user-select: none; transition: background-color 0.2s, color 0.2s; font-family: inherit;">—</button>
-                    <div class="v4-stepper-value" style="width: 32px; text-align: center; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); user-select: none; font-family: inherit;">1</div>
-                    <button class="v4-stepper-inc" style="width: 24px; height: 100%; border: none; background: var(--v4-component-bg, #ffffff); border-left: 1.6px solid var(--v4-border-color, #e5e7eb); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; cursor: pointer; outline: none; display: flex; align-items: center; justify-content: center; user-select: none; transition: background-color 0.2s, color 0.2s; font-family: inherit;">+</button>
-                </div>
-                <button class="v4-stepper-action" style="height: 30px; padding: 0 12px; border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; background-color: var(--v4-component-bg, #ffffff); font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); cursor: pointer; outline: none; white-space: nowrap; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-family: inherit;">적용</button>
-            </div>`
-        },
-        {
-            id: 'v4-atom-selectbox',
-            name: 'Select Box',
-            category: 'Atoms',
-            width: '150px',
-            height: '30px',
-            previewHtml: `<div style="display: flex; align-items: center; justify-content: space-between; background: var(--v4-component-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 6px; font-size: 10px; height: 20px; padding: 0 6px; box-sizing: border-box; width: 80px;"><span style="color: var(--v4-text-color, #0f172a);">선택하세요</span><span style="font-size: 8px; color: var(--v4-placeholder-color, #9ca3af);">▼</span></div>`,
-            html: `
-            <div class="v4-selectbox-container" data-default-text="선택하세요" data-dropdown-active="false" data-options="Option 1,Option 2,Option 3" style="position: relative; width: 100%; height: 100%; font-family: inherit; pointer-events: auto; user-select: none; box-sizing: border-box;">
-                <div class="v4-selectbox-header" style="display: flex; align-items: center; justify-content: space-between; border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; background-color: var(--v4-component-bg, #ffffff); height: 100%; width: 100%; padding: 0 12px; box-sizing: border-box; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); cursor: pointer; overflow: hidden;">
-                    <span class="v4-selectbox-selected-text" style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">선택하세요</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--v4-placeholder-color, #9ca3af)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px; flex-shrink: 0; transition: transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </div>
-                <div class="v4-selectbox-options" style="display: none; position: absolute; top: calc(100% - 2px); left: 0; width: 100%; background-color: var(--v4-component-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cccccc); border-top: none; border-radius: 0 0 8px 8px; box-sizing: border-box; z-index: 1000; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                    <div class="v4-selectbox-option" style="height: 30px; padding: 0 12px; display: flex; align-items: center; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); border-bottom: 1.6px solid var(--v4-disabled-bg, #f3f4f6); box-sizing: border-box;">Option 1</div>
-                    <div class="v4-selectbox-option" style="height: 30px; padding: 0 12px; display: flex; align-items: center; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); border-bottom: 1.6px solid var(--v4-disabled-bg, #f3f4f6); box-sizing: border-box;">Option 2</div>
-                    <div class="v4-selectbox-option" style="height: 30px; padding: 0 12px; display: flex; align-items: center; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); border-bottom: 1.6px solid var(--v4-disabled-bg, #f3f4f6); box-sizing: border-box;">Option 3</div>
-                </div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-fileupload',
-            name: 'File Upload',
-            category: 'Atoms',
-            width: '300px',
-            height: '30px',
-            previewHtml: `<div style="display: flex; align-items: center; background: var(--v4-component-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 6px; font-size: 10px; height: 20px; padding: 0 4px; box-sizing: border-box; width: 80px; gap: 4px;"><div style="flex: 1; border: 1px solid var(--v4-disabled-bg, #eee); height: 12px; background: var(--v4-input-bg, #fafafa);"></div><div style="background: var(--v4-disabled-bg, #eee); font-size: 8px; padding: 1px 3px; border-radius: 2px;">첨부</div></div>`,
-            html: `
-            <div class="v4-fileupload-container" data-selected="false" data-file-name="" data-button-text="파일첨부" data-placeholder="선택된 파일 없음" style="position: relative; display: flex; align-items: center; gap: 6px; width: 100%; height: 100%; font-family: inherit; pointer-events: auto; user-select: none; box-sizing: border-box;">
-                <div class="v4-fileupload-textbox-wrapper" style="position: relative; display: flex; align-items: center; flex: 1; border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; background-color: var(--v4-component-bg, #ffffff); height: 30px; padding: 0 10px; box-sizing: border-box;">
-                    <div class="v4-fileupload-textbox" style="font-size: 12px; font-weight: 400; color: var(--v4-placeholder-color, #9ca3af); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; cursor: not-allowed; font-family: inherit;">선택된 파일 없음</div>
-                    <span class="v4-fileupload-delete" style="display: none; cursor: pointer; color: var(--v4-placeholder-color, #9ca3af); font-size: 14px; font-weight: bold; margin-left: 8px; flex-shrink: 0; transition: color 0.2s;">&times;</span>
-                </div>
-                <button class="v4-fileupload-button" style="height: 30px; padding: 0 14px; border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; background-color: var(--v4-component-bg, #ffffff); font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); cursor: pointer; outline: none; white-space: nowrap; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-family: inherit;">파일첨부</button>
-            </div>`
-        },
-        {
-            id: 'v4-atom-alert',
-            name: 'Alert Window',
-            category: 'Atoms',
-            width: '250px',
-            height: '120px',
-            previewHtml: `<div style="display: flex; flex-direction: column; width: 80px; height: 50px; background: var(--v4-component-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); overflow: hidden; font-size: 8px; box-sizing: border-box;"><div style="background: var(--v4-disabled-bg, #e5e7eb); height: 12px; display: flex; align-items: center; padding: 0 4px; border-bottom: 1px solid var(--v4-border-color, #ccc); font-weight: bold;">Alert</div><div style="flex: 1; display: flex; align-items: center; justify-content: center; font-size: 6px; color: var(--v4-placeholder-color, #666); padding: 2px; text-align: center;">Message</div></div>`,
-            html: `
-            <div class="v4-alert-container" data-message="얼럿 메시지 입력 표시" data-btn-count="1" data-btn-text-1="확인" data-btn-text-2="취소" data-btn-text-3="저장" data-btn-style-1="normal" data-btn-style-2="normal" data-btn-style-3="normal" data-show-desc="true" data-desc="얼럿 노출 케이스" style="position: relative; width: 100%; height: 100%; font-family: inherit; pointer-events: auto; user-select: none; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; background: transparent; justify-content: flex-end;">
-                <div class="v4-alert-desc-wrapper" style="display: flex; justify-content: flex-start; width: 100%; flex-shrink: 0;">
-                    <div class="v4-alert-desc-badge" style="background: #1e3a8a; color: #ffffff; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 400; font-family: inherit; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1.6px solid #1e40af;">얼럿 노출 케이스</div>
-                </div>
-                <div class="v4-alert-dialog" style="flex: 1; width: 100%; background: var(--v4-component-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cccccc) !important; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;">
-                    <div class="v4-alert-header" style="height: 32px; flex-shrink: 0; background: var(--v4-disabled-bg, #e5e7eb); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; border-bottom: 1.6px solid var(--v4-border-color, #cccccc) !important; box-sizing: border-box; width: 100%;">
-                        <span class="v4-alert-title" style="font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); font-family: inherit;">Alert</span>
-                        <span class="v4-alert-close" style="cursor: pointer; color: var(--v4-placeholder-color, #9ca3af); font-size: 16px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center;">&times;</span>
-                    </div>
-                    <div class="v4-alert-content" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 12px; box-sizing: border-box; width: 100%;">
-                        <div class="v4-alert-message" style="font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); text-align: center; line-height: 1.4; white-space: pre-wrap; font-family: inherit; margin-bottom: 14px; word-break: break-all; width: 100%;">얼럿 메시지 입력 표시</div>
-                        <div class="v4-alert-buttons" style="display: flex; gap: 8px; justify-content: center; width: 100%; flex-wrap: nowrap; flex-shrink: 0;">
-                            <button class="v4-alert-btn v4-alert-btn-1 style-normal" style="height: 28px; min-width: 70px; padding: 0 12px; border: 1.6px solid var(--v4-border-color, #cccccc) !important; border-radius: 6px; background: var(--v4-component-bg, #ffffff); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); box-sizing: border-box; transition: background 0.2s;">확인</button>
-                            <button class="v4-alert-btn v4-alert-btn-2 style-normal" style="height: 28px; min-width: 70px; padding: 0 12px; border: 1.6px solid var(--v4-border-color, #cccccc) !important; border-radius: 6px; background: var(--v4-component-bg, #ffffff); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); box-sizing: border-box; transition: background 0.2s;">취소</button>
-                            <button class="v4-alert-btn v4-alert-btn-3 style-normal" style="height: 28px; min-width: 70px; padding: 0 12px; border: 1.6px solid var(--v4-border-color, #cccccc) !important; border-radius: 6px; background: var(--v4-component-bg, #ffffff); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); box-sizing: border-box; transition: background 0.2s;">저장</button>
-                        </div>
-                    </div>
-                </div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-popup',
-            name: 'Popup Window',
-            koName: '팝업 모달 다이얼로그 창',
-            category: 'Atoms',
-            width: '300px',
-            height: '200px',
-            previewHtml: `<div style="display: flex; flex-direction: column; width: 80px; height: 55px; background: var(--v4-component-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 6px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); overflow: hidden; font-size: 8px; box-sizing: border-box;"><div style="background: var(--v4-disabled-bg, #f1f5f9); height: 14px; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; border-bottom: 1px solid var(--v4-border-color, #ccc); font-weight: bold; color: #1e293b;"><span>Popup</span><span>&times;</span></div><div style="flex: 1; padding: 4px; background: transparent;"></div></div>`,
-            html: `
-            <div class="v4-shape v4-popup-container" style="width: 100%; height: 100%; font-family: inherit; pointer-events: auto; user-select: none; box-sizing: border-box; display: flex; flex-direction: column; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)) !important; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.18), 0 2px 10px rgba(0,0,0,0.06); overflow: hidden;">
-                <div class="v4-popup-header" style="height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: var(--v4-disabled-bg, #f1f5f9); border-bottom: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)) !important; box-sizing: border-box; width: 100%; flex-shrink: 0; pointer-events: auto;">
-                    <div contenteditable="true" class="v4-editable-cell v4-popup-title" style="font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); outline: none; text-align: left; flex: 1; font-family: inherit;">Popup Title</div>
-                    <span class="v4-popup-close" style="cursor: pointer; color: var(--v4-placeholder-color, #94a3b8); font-size: 16px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px;">&times;</span>
-                </div>
-                <div class="v4-popup-body" style="flex: 1; width: 100%; padding: 12px; box-sizing: border-box; background: transparent; position: relative;">
-                    
-                </div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-button',
-            name: 'Button',
-            category: 'Atoms',
-            width: '80px',
-            height: '40px',
-            previewHtml: `<div style="display: flex; align-items: center; justify-content: center; width: 60px; height: 30px; background: var(--v4-component-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 8px; font-weight: bold; color: var(--v4-text-color, #333); box-sizing: border-box;">Button</div>`,
-            html: `
-            <div class="v4-btn-container" data-text="버튼" data-btn-style="normal" data-btn-radius="6" data-font-size="12" style="position: relative; width: 100%; height: 100%; font-family: inherit; pointer-events: auto; user-select: none; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
-                <button class="v4-custom-btn style-normal" style="width: 100%; height: 100%; border: 1.6px solid var(--v4-border-color, #cccccc) !important; border-radius: 6px; background: var(--v4-component-bg, #ffffff); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); box-sizing: border-box; transition: all 0.2s; font-family: inherit;">버튼</button>
-            </div>`
-        },
-        {
-            id: 'v4-atom-datepicker',
-            name: 'Date Picker',
-            category: 'Atoms',
-            width: '500px',
-            height: '30px',
-            previewHtml: `<div style="display:flex; align-items:center; background:var(--v4-component-bg, #ffffff); border:1.6px solid var(--v4-border-color, #cccccc); border-radius:4px; height:20px; padding:0 5px; font-size:7px; color:var(--v4-text-color, #0f172a); box-sizing:border-box; gap:3px; white-space:nowrap;"><span>26/05/18</span><span style="color:var(--v4-placeholder-color, #9ca3af);">&#9553;</span><span>-</span><span style="color:var(--v4-placeholder-color, #9ca3af);">&#9553;</span><span>26/06/18</span></div>`,
-            html: `
-            <div class="v4-datepicker-container" data-show-presets="true" data-show-end-date="true" data-default-preset="1M" data-start-date="" data-end-date="" style="position: relative; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; pointer-events: auto; user-select: none; box-sizing: border-box; flex-wrap: nowrap; width: 100%; height: 100%;">
-                <div class="v4-dp-fields" style="display: inline-flex; align-items: center; gap: 0; border: 1.6px solid var(--v4-border-color, #cccccc); border-radius: 8px; background: var(--v4-component-bg, #ffffff); height: 100%; min-height: 30px; overflow: hidden; box-sizing: border-box; flex-shrink: 0;">
-                    <div class="v4-dp-input-group" style="display: inline-flex; align-items: center; padding: 0 10px; gap: 6px; height: 100%;">
-                        <div class="v4-dp-date-field v4-dp-start v4-editable-cell" contenteditable="true" style="font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); outline: none; white-space: nowrap; min-width: 82px; font-family: inherit; -webkit-user-select: text; user-select: text;"></div>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--v4-placeholder-color, #9ca3af)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 15px; height: 15px; flex-shrink: 0; pointer-events: none; background-image: none !important;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    </div>
-                    <div class="v4-dp-separator" style="color: var(--v4-placeholder-color, #9ca3af); font-size: 12px; padding: 0 2px; flex-shrink: 0; font-family: inherit;">-</div>
-                    <div class="v4-dp-input-group" style="display: inline-flex; align-items: center; padding: 0 10px; gap: 6px; height: 100%;">
-                        <div class="v4-dp-date-field v4-dp-end v4-editable-cell" contenteditable="true" style="font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); outline: none; white-space: nowrap; min-width: 82px; font-family: inherit; -webkit-user-select: text; user-select: text;"></div>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--v4-placeholder-color, #9ca3af)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 15px; height: 15px; flex-shrink: 0; pointer-events: none; background-image: none !important;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    </div>
-                </div>
-                <div class="v4-dp-presets" style="display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;">
-                    <button class="v4-dp-preset-btn" data-preset="1D" style="height: 30px; min-width: 36px; padding: 0 10px; border: 1.6px solid #cccccc; border-radius: 8px; background: var(--v4-component-bg, #ffffff); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; cursor: pointer; outline: none; white-space: nowrap; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: inherit;">1D</button>
-                    <button class="v4-dp-preset-btn" data-preset="1W" style="height: 30px; min-width: 36px; padding: 0 10px; border: 1.6px solid #cccccc; border-radius: 8px; background: var(--v4-component-bg, #ffffff); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; cursor: pointer; outline: none; white-space: nowrap; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: inherit;">1W</button>
-                    <button class="v4-dp-preset-btn v4-dp-preset-active" data-preset="1M" style="height: 30px; min-width: 36px; padding: 0 10px; border: 1.6px solid #1d4ed8; border-radius: 8px; background: #1d4ed8; color: #ffffff; font-size: 12px; font-weight: 400; cursor: pointer; outline: none; white-space: nowrap; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: inherit;">1M</button>
-                    <button class="v4-dp-preset-btn" data-preset="6M" style="height: 30px; min-width: 36px; padding: 0 10px; border: 1.6px solid #cccccc; border-radius: 8px; background: var(--v4-component-bg, #ffffff); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; cursor: pointer; outline: none; white-space: nowrap; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: inherit;">6M</button>
-                    <button class="v4-dp-preset-btn" data-preset="all" style="height: 30px; min-width: 36px; padding: 0 12px; border: 1.6px solid #cccccc; border-radius: 8px; background: var(--v4-component-bg, #ffffff); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; cursor: pointer; outline: none; white-space: nowrap; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: inherit;">&#51204;&#52404;</button>
-                </div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-toggle',
-            name: 'Toggle Button',
-            koName: '토글 버튼 스위치 toggle switch',
-            category: 'Atoms',
-            width: '40px',
-            height: '20px',
-            previewHtml: `<div style="width:30px; height:15px; border-radius:10px; background:#3b82f6; position:relative; display:flex; align-items:center; box-sizing:border-box; padding:2px;"><div style="width:11px; height:11px; border-radius:50%; background:#fff; position:absolute; right:2px;"></div></div>`,
-            html: `
-            <div class="v4-toggle-container" data-checked="false" data-color="#3b82f6" style="position: relative; width: 100%; height: 100%; border-radius: 9999px; background: rgb(203, 213, 225); border: 1.6px solid rgb(200, 200, 200) !important; box-sizing: border-box; cursor: pointer; transition: all 0.2s; padding: 0;">
-                <div class="v4-toggle-handle" style="position: absolute; top: 3.4px; left: 3.4px; height: calc(100% - 6.8px); aspect-ratio: 1 / 1; border-radius: 50%; background: #ffffff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(0);"></div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-admin-settings',
-            name: 'Query Item',
-            koName: '조회 항목',
-            category: 'Atoms',
-            width: '1160px',
-            height: '44px',
-            previewHtml: `<div style="display:flex; align-items:center; border:1px solid #ccc; background:#f8fafc; padding:4px; width:80px; height:40px; box-sizing:border-box;"><div style="width:25px; height:100%; background:#e2e8f0; border-right:1px solid #ccc;"></div><div style="flex:1; height:100%; background:#fff;"></div></div>`,
-            html: `
-            <div class="v4-admin-settings-container" data-row-count="1" data-row-height="44"
-                 data-row1-label="조회 항목" data-row1-cols="1" data-row1-type="textbox" data-row1-height="44" data-row1-required="false"
-                 style="position: relative; width: 100%; height: 100%; box-sizing: border-box; background: #ffffff; border: 1.6px solid rgb(226, 232, 240); border-radius: 8px; font-family: inherit; display: flex; flex-direction: column; overflow: hidden; isolation: isolate; contain: paint; -webkit-mask-image: -webkit-radial-gradient(white, black); mask-image: radial-gradient(white, black); transform: translateZ(0); pointer-events: auto;">
-                <div class="v4-admin-settings-table" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
-                    <!-- Row 1 -->
-                    <div class="v4-admin-row" style="display: flex; width: 100%; box-sizing: border-box; height: 44px;">
-                        <div class="v4-admin-label-cell v4-editable-cell" contenteditable="true" style="width: 140px; background: #f1f5f9; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); border-right: 1.6px solid rgb(226, 232, 240); border-top-left-radius: 6.4px; border-bottom-left-radius: 6.4px; box-sizing: border-box; flex-shrink: 0; font-family: inherit; outline: none; cursor: text; user-select: text; -webkit-user-select: text;">조회 항목</div>
-                        <div class="v4-admin-content-cell" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; padding: 0 16px; box-sizing: border-box;"></div>
-                    </div>
-                </div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-accordion',
-            name: 'Accordion',
-            category: 'Atoms',
-            width: '180px',
-            height: '36px',
-            legacyName: 'Accordion UI'
-        },
-        {
-            id: 'v4-atom-checkbox',
-            name: 'Check Box',
-            category: 'Atoms',
-            width: '80px',
-            height: '32px',
-            legacyName: 'Check Box'
-        },
-        {
-            id: 'v4-atom-radio',
-            name: 'Radio Button',
-            category: 'Atoms',
-            width: '80px',
-            height: '32px',
-            legacyName: 'Radio Button'
-        },
-        {
-            id: 'v4-atom-grid',
-            name: 'Grid UI',
-            category: 'Atoms',
-            width: '600px',
-            height: '400px',
-            legacyName: 'Grid UI'
-        },
-        {
-            id: 'v4-atom-searchbar',
-            name: 'Search Bar',
-            category: 'Atoms',
-            width: '200px',
-            height: '30px',
-            legacyName: 'Search Bar'
-        },
-        {
-            id: 'v4-atom-tab',
-            name: 'Tab',
-            category: 'Atoms',
-            width: '360px',
-            height: '40px',
-            legacyName: 'Tab UI'
-        }
-    ],
-    molecules: [
-        {
-            id: 'v4-search-bar',
-            name: 'Glass Search Bar',
-            category: 'Molecules',
-            previewHtml: `<div style="width: 120px; height: 24px; background: rgba(255,255,255,0.1); border-radius: 12px; border: 1.6px solid rgba(255,255,255,0.2);"></div>`,
-            html: `
-            <div class="v4-search-container" style="display: flex; align-items: center; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1.6px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 8px 16px; width: 100%; max-width: 400px; box-sizing: border-box;">
-                <span class="material-icons-outlined" style="color: rgba(255,255,255,0.4); font-size: 20px;">search</span>
-                <input type="text" placeholder="Search products..." style="background: transparent; border: none; color: white; margin-left: 10px; font-size: 14px; outline: none; width: 100%;">
-            </div>`
-        },
+if (!window.V4_COMPONENT_LIBRARY) {
+    console.warn("[Component Library] V4_COMPONENT_LIBRARY not loaded yet. Ensuring registry initialization.");
+    window.V4_COMPONENT_LIBRARY = { atoms: [], molecules: [], canvasBackgrounds: [], illustrations: [] };
+}
 
-        {
-            id: 'v4-tool-text',
-            name: 'Text',
-            koName: '텍스트 글상자',
-            category: 'Shapes',
-            isTool: true,
-            toolName: 'text',
-            icon: 'title',
-            iconColor: 'var(--accent)',
-            cardStyle: 'background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.1) !important;',
-            html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; white-space:nowrap;">Edit Text</div>'
-        },
-        {
-            id: 'v4-data-table',
-            name: 'Table',
-            koName: '표 테이블',
-            category: 'Shapes',
-            icon: 'table_chart',
-            iconColor: '#818cf8',
-            width: '200px',
-            height: '100px',
-            cardStyle: 'background: rgba(99, 102, 241, 0.05); border: 1.6px solid rgba(99, 102, 241, 0.1) !important;',
-            previewHtml: `<div style="width: 80px; height: 40px; border: 1.6px solid var(--v4-border-color, #475569); background: var(--v4-disabled-bg, #e2e8f0); border-radius: 4px;"></div>`,
-            html: `
-            <table class="v4-premium-table" style="background: var(--v4-disabled-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box;">
-                <colgroup>
-                    <col style="width: 100px;">
-                    <col style="width: 100px;">
-                </colgroup>
-                <thead>
-                    <tr style="height: 50px;">
-                        <th contenteditable="true" class="v4-editable-cell" style="background: var(--v4-input-bg, #f8fafc); color: var(--v4-text-color, #0f172a); border: 1.6px solid var(--v4-border-color, #cbd5e1); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">구분</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: var(--v4-input-bg, #f8fafc); color: var(--v4-text-color, #0f172a); border: 1.6px solid var(--v4-border-color, #cbd5e1); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">상세 내용</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="height: 50px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">내용</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">정보</td>
-                    </tr>
-                </tbody>
-            </table>`
-        },
-        {
-            id: 'v4-shape-rect',
-            name: 'Rect',
-            koName: '사각형 사각도형',
-            category: 'Shapes',
-            icon: 'crop_square',
-            iconColor: '#00e5ff',
-            width: '100px',
-            height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 40px; height: 30px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 4px;"></div>`,
-            html: `
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
-            </div>`
-        },
-        {
-            id: 'v4-shape-circle',
-            name: 'Circle',
-            koName: '원 원형 동그라미',
-            category: 'Shapes',
-            icon: 'panorama_fish_eye',
-            iconColor: '#00e5ff',
-            width: '100px',
-            height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 30px; height: 30px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 50%;"></div>`,
-            html: `
-            <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
-            </div>`
-        },
-        {
-            id: 'v4-atom-image',
-            name: 'Image',
-            koName: '이미지 사진 첨부 업로드 파일 그림 png jpg',
-            category: 'Shapes',
-            icon: 'image',
-            iconColor: '#00e5ff',
-            width: '120px',
-            height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 40px; height: 30px; background: rgba(0, 229, 255, 0.1); border: 1.6px solid rgba(0, 229, 255, 0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center;"><span class="material-icons-outlined" style="font-size: 18px; color: #00e5ff;">image</span></div>`,
-            html: `<div class="v4-shape v4-shape-image" data-natural-width="120" data-natural-height="100" data-aspect-ratio="1.2" style="width: 100%; height: 100%; background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23cbd5e1%22 stroke-width=%221.6%22><rect width=%2220%22 height=%2220%22 x=%222%22 y=%222%22 rx=%222%22 ry=%222%22/><circle cx=%228.5%22 cy=%228.5%22 r=%221.5%22/><path d=%22M21 15l-5-5L5 21%22/></svg>'); background-size: cover; background-position: center; background-repeat: no-repeat; box-sizing: border-box; border: 1.6px solid transparent;"></div>`
-        },
-        {
-            id: 'v4-shape-triangle',
-            name: 'Triangle',
-            koName: '삼각형 삼각 세모',
-            category: 'Shapes',
-            icon: 'change_history',
-            iconColor: '#00e5ff',
-            width: '100px',
-            height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 30px solid rgb(255, 255, 255);"></div>`,
-            html: `
-            <div class="v4-shape v4-shape-triangle" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: flex-end; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,1 1,99 99,99" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
-                </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
-            </div>`
-        },
-        {
-            id: 'v4-shape-diamond',
-            name: 'Diamond',
-            koName: '다이아몬드 마름모 조건 의사결정',
-            category: 'Shapes',
-            icon: 'crop_square',
-            iconColor: '#00e5ff',
-            iconStyle: 'transform: rotate(45deg);',
-            width: '100px',
-            height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 30px; height: 30px; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>`,
-            html: `
-            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,1 99,50 50,99 1,50" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
-                </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 60%; height: 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
-            </div>`
-        },
-        {
-            id: 'v4-shape-arrow',
-            name: 'Arrow',
-            koName: '화살표 방향 지시 흐름도',
-            category: 'Shapes',
-            icon: 'trending_flat',
-            iconColor: '#00e5ff',
-            width: '100px',
-            height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<svg viewBox="0 0 100 100" style="width: 30px; height: 30px; overflow: visible;"><path d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
-            html: `
-            <div class="v4-shape v4-shape-arrow" data-arrow-dir="right" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <path class="v4-arrow-path" d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
-                </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 50%; height: 40%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
-            </div>`
-        },
-        {
-            id: 'v4-shape-line',
-            name: 'Line (Straight)',
-            koName: '직선 라인 선 구분선 디바이더 가로선 세로선',
-            category: 'Shapes',
-            icon: 'horizontal_rule',
-            iconColor: '#00e5ff',
-            width: '200px',
-            height: '2px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="display: flex; align-items: center; justify-content: center; width: 34px; height: 30px;"><div style="width: 100%; height: 2px; background: #00e5ff; border-radius: 1px;"></div></div>`,
-            html: `
-            <div class="v4-shape v4-shape-line" data-line-dir="horizontal" data-line-style="solid" data-line-width="1.6" data-line-color="#c8c8c8" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; overflow: visible; box-sizing: border-box; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none;">
-                    <line class="v4-line-path" x1="0" y1="50" x2="100" y2="50" style="stroke: #c8c8c8; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
-                </svg>
-            </div>`
-        },
-        {
-            id: 'v4-shape-pattern-grid',
-            name: 'Pattern',
-            koName: '패턴 격자 그리드 모눈종이',
-            category: 'Shapes',
-            icon: 'grid_4x4',
-            iconColor: '#fff',
-            cardStyle: 'background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.1) !important;',
-            previewHtml: `<div class="v4-shape-pattern-grid" style="width: 40px; height: 30px; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200);"></div>`,
-            html: `
-            <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
-            </div>`
-        },
-        {
-            id: 'v4-shape-wave',
-            name: 'Wave',
-            koName: '물결 웨이브 파도 구분선',
-            category: 'Shapes',
-            icon: 'waves',
-            iconColor: '#fb923c',
-            cardStyle: 'background: rgba(251, 146, 60, 0.05); border: 1.6px solid rgba(251, 146, 60, 0.1) !important;',
-            width: '360px',
-            height: '20px',
-            previewHtml: `<svg viewBox="0 0 100 20" preserveAspectRatio="none" style="width: 45px; height: 15px;"><polygon points="0,6 12.5,2 25,6 37.5,2 50,6 62.5,2 75,6 87.5,2 100,6 100,16 87.5,12 75,16 62.5,12 50,16 37.5,12 25,16 12.5,12 0,16" style="fill: #ffedd5; stroke: #fb923c; stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
-            html: `
-            <div class="v4-shape v4-shape-wave" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
-                <svg viewBox="0 0 360 20" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16" style="fill: #ffedd5; stroke: #fb923c; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
-                </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative; color: var(--v4-text-color, #0f172a);"></div>
-            </div>`
-        },
-        {
-            id: 'v4-shape-webpage',
-            name: 'Webpage',
-            koName: '웹페이지 브라우저 화면 창 홈페이지 사이트',
-            category: 'Shapes',
-            icon: 'web',
-            iconColor: '#00e5ff',
-            width: '160px',
-            height: '120px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 38px; height: 28px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box;"><div style="width: 100%; height: 7px; background: rgba(0, 0, 0, 0.05); border-bottom: 1px solid var(--v4-border-color, rgb(200, 200, 200)); display: flex; align-items: center; padding: 0 4px; gap: 2px;"><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #ef4444;"></div><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #eab308;"></div><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #22c55e;"></div></div></div>`,
-            html: `
-            <div class="v4-shape v4-shape-webpage" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 8px; overflow: hidden; box-sizing: border-box;">
-                <div class="v4-webpage-header" style="width: 100%; height: 26px; min-height: 26px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.03); border-bottom: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); box-sizing: border-box; flex-shrink: 0; pointer-events: none; user-select: none;">
-                    <div style="display: flex; gap: 5px; align-items: center; width: 40px; flex-shrink: 0;">
-                        <div style="width: 7px; height: 7px; border-radius: 50%; background: #ef4444; opacity: 0.85;"></div>
-                        <div style="width: 7px; height: 7px; border-radius: 50%; background: #eab308; opacity: 0.85;"></div>
-                        <div style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e; opacity: 0.85;"></div>
-                    </div>
-                    <div class="v4-webpage-url-bar" style="flex: 1; max-width: 55%; height: 12px; border-radius: 6px; background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.04); margin: 0 auto;"></div>
-                    <div style="width: 40px; flex-shrink: 0;"></div>
-                </div>
-                <div contenteditable="true" class="v4-editable-cell" style="flex: 1 1 auto; width: 100%; height: calc(100% - 26px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; color: var(--v4-text-color, #0f172a);"></div>
-            </div>`
+// --- V4 Sidebar Library Collapsible Accordion Controller ---
+window.V4SidebarAccordion = {
+    STORAGE_KEY: 'vctrl_sidebar_accordion_state_v2',
+
+    getState() {
+        try {
+            const raw = localStorage.getItem(this.STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (typeof parsed === 'object' && parsed !== null) {
+                    return {
+                        'icon-library': parsed['icon-library'] !== undefined ? !!parsed['icon-library'] : true,
+                        'illustration-library': parsed['illustration-library'] !== undefined ? !!parsed['illustration-library'] : true,
+                        'molecules': parsed['molecules'] !== undefined ? !!parsed['molecules'] : true,
+                        subGroups: parsed.subGroups && typeof parsed.subGroups === 'object' ? parsed.subGroups : {}
+                    };
+                }
+            }
+        } catch (e) {
+            console.warn('[Sidebar Accordion] Failed to read localStorage:', e);
         }
-    ],
-    organisms: [
-        {
-            id: 'v4-premium-gnb',
-            name: 'Black Pearl GNB',
-            category: 'Organisms',
-            previewHtml: `<div style="width: 100%; height: 10px; background: #000;"></div>`,
-            html: `
-            <nav class="premium-gnb" style="display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 80px; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); width: 100%; color: white; font-family: 'Inter', sans-serif; box-sizing: border-box;">
-                <div style="display: flex; align-items: center; gap: 32px;">
-                    <div style="font-size: 24px; font-weight: 900; letter-spacing: -1px;">LF<span style="color: #6366f1;">.</span></div>
-                    <div style="display: flex; gap: 24px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7);">
-                        <span>NEW</span>
-                        <span>MEN</span>
-                        <span>WOMEN</span>
-                        <span>KIDS</span>
-                        <span>SALE</span>
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <span class="material-icons-outlined">search</span>
-                    <span class="material-icons-outlined">person_outline</span>
-                    <span class="material-icons-outlined" style="position: relative;">
-                        shopping_bag
-                        <span style="position: absolute; top: -4px; right: -6px; width: 14px; height: 14px; background: #6366f1; border-radius: 50%; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 900;">2</span>
-                    </span>
-                </div>
-            </nav>`
+        return { 'icon-library': true, 'illustration-library': true, 'molecules': true, subGroups: {} };
+    },
+
+    saveState(state) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+            console.warn('[Sidebar Accordion] Failed to save localStorage:', e);
         }
-    ],
-    canvasBackgrounds: [
-        {
-            id: 'bg-ecommerce-ui',
-            name: '이커머스 FRONT UI 개선',
-            desc: '저채도 모노크롬, 상품/장바구니 와이어프레임 & 그리드 모티프',
-            url: 'assets/illustrations/ecommerce_ui_bg.jpg',
-            thumb: 'assets/illustrations/ecommerce_ui_bg.jpg',
-            defaultOpacity: 1.0
-        },
-        {
-            id: 'bg-admin-backend',
-            name: '백엔드 / ADMIN 시스템 고도화',
-            desc: '저채도 모노크롬, 어드민 대시보드 & 서버 API 아키텍처 모티프',
-            url: 'assets/illustrations/admin_backend_bg.jpg',
-            thumb: 'assets/illustrations/admin_backend_bg.jpg',
-            defaultOpacity: 1.0
+    },
+
+    isCollapsed(sectionId) {
+        const state = this.getState();
+        return state[sectionId] !== undefined ? !!state[sectionId] : true;
+    },
+
+    toggle(sectionId) {
+        const state = this.getState();
+        const nextCollapsed = !this.isCollapsed(sectionId);
+        state[sectionId] = nextCollapsed;
+        this.saveState(state);
+
+        const header = document.getElementById(`${sectionId}-header`);
+        const body = document.getElementById(`${sectionId}-body`);
+        if (header) {
+            header.classList.toggle('is-collapsed', nextCollapsed);
         }
-    ],
-    illustrations: [
-        {
-            id: 'v4-ill-enter',
-            name: '1. 시스템 입장',
-            koName: '1 시스템 입장 쇼핑몰 진입 포털 디지털스토어 enter login portal store',
-            category: 'Illustration',
-            width: '200px',
-            height: '200px',
-            thumb: 'assets/illustrations/step1_enter_ecommerce.png',
-            previewHtml: `<img src="assets/illustrations/step1_enter_ecommerce.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step1_enter_ecommerce.png" alt="1. 시스템 입장" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-browse',
-            name: '2. 상품 둘러보기',
-            koName: '2 상품 둘러보기 의류 탐색 행거 돋보기 browse search clothes catalog',
-            category: 'Illustration',
-            width: '200px',
-            height: '200px',
-            thumb: 'assets/illustrations/step2_browse_clothing.png',
-            previewHtml: `<img src="assets/illustrations/step2_browse_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step2_browse_clothing.png" alt="2. 상품 둘러보기" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-select',
-            name: '3. 상품 선택',
-            koName: '3 상품 선택 의류 선택 재킷 골라담기 체크 select pick choose jacket',
-            category: 'Illustration',
-            width: '200px',
-            height: '200px',
-            thumb: 'assets/illustrations/step3_select_clothing.png',
-            previewHtml: `<img src="assets/illustrations/step3_select_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step3_select_clothing.png" alt="3. 상품 선택" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-membership',
-            name: '4. 멤버십 가입',
-            koName: '4 멤버십 가입 회원가입 vip 카드 프로필 membership join signup',
-            category: 'Illustration',
-            width: '200px',
-            height: '200px',
-            thumb: 'assets/illustrations/step4_membership_signup.png',
-            previewHtml: `<img src="assets/illustrations/step4_membership_signup.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step4_membership_signup.png" alt="4. 멤버십 가입" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-discount',
-            name: '5. 할인 혜택',
-            koName: '5 할인 혜택 세일 쿠폰 가격인하 코인 discount sale coupon off',
-            category: 'Illustration',
-            width: '200px',
-            height: '200px',
-            thumb: 'assets/illustrations/step5_discount_clothing.png',
-            previewHtml: `<img src="assets/illustrations/step5_discount_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step5_discount_clothing.png" alt="5. 할인 혜택" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-payment',
-            name: '6. 상품 결제',
-            koName: '6 상품 결제 체크아웃 카드 단말기 정산 pos payment checkout pay',
-            category: 'Illustration',
-            width: '200px',
-            height: '200px',
-            thumb: 'assets/illustrations/step6_payment_checkout.png',
-            previewHtml: `<img src="assets/illustrations/step6_payment_checkout.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step6_payment_checkout.png" alt="6. 상품 결제" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-delivery',
-            name: '7. 배송 수령',
-            koName: '7 배송 수령 택배 상자 배달 기사 delivery receive package box courier',
-            category: 'Illustration',
-            width: '200px',
-            height: '200px',
-            thumb: 'assets/illustrations/step7_delivery_receive.png',
-            previewHtml: `<img src="assets/illustrations/step7_delivery_receive.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step7_delivery_receive.png" alt="7. 배송 수령" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-return',
-            name: '8. 상품 반품',
-            koName: '8 상품 반품 반품접수 회수 교환 데스크 return exchange parcel courier',
-            category: 'Illustration',
-            width: '200px',
-            height: '200px',
-            thumb: 'assets/illustrations/step8_return_clothing.png',
-            previewHtml: `<img src="assets/illustrations/step8_return_clothing.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/step8_return_clothing.png" alt="8. 상품 반품" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-atomic-system',
-            name: '9. 아토믹 다이어그램 (전체)',
-            koName: '9 아토믹 디자인 시스템 컴포넌트 패턴 원자 분자 전체 다이어그램 atomic design system hierarchy',
-            category: 'Illustration',
-            width: '320px',
-            height: '240px',
-            thumb: 'assets/illustrations/atomic_system_diagram.png',
-            previewHtml: `<img src="assets/illustrations/atomic_system_diagram.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_system_diagram.png" alt="아토믹 디자인 시스템 5단계 다이어그램" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-storybook-guide',
-            name: '10. 스토리북 가이드 허브',
-            koName: '10 스토리북 가이드 허브 컴포넌트 라이브러리 워크스페이스 storybook design tokens workspace',
-            category: 'Illustration',
-            width: '320px',
-            height: '240px',
-            thumb: 'assets/illustrations/storybook_guide_workspace.png',
-            previewHtml: `<img src="assets/illustrations/storybook_guide_workspace.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/storybook_guide_workspace.png" alt="스토리북 디자인 시스템 워크스페이스" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-atomic-atoms',
-            name: '11. 아토믹 - Atoms',
-            koName: '11 아토믹 원자 atoms button icon color typography 기초단위',
-            category: 'Illustration',
-            width: '120px',
-            height: '240px',
-            thumb: 'assets/illustrations/atomic_atoms.png',
-            previewHtml: `<img src="assets/illustrations/atomic_atoms.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_atoms.png" alt="아토믹 디자인 - Atoms" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-atomic-molecules',
-            name: '12. 아토믹 - Molecules',
-            koName: '12 아토믹 분자 molecules button input searchbar 결합단위',
-            category: 'Illustration',
-            width: '126px',
-            height: '240px',
-            thumb: 'assets/illustrations/atomic_molecules.png',
-            previewHtml: `<img src="assets/illustrations/atomic_molecules.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_molecules.png" alt="아토믹 디자인 - Molecules" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-atomic-organisms',
-            name: '13. 아토믹 - Organisms',
-            koName: '13 아토믹 유기체 organisms card gnb header footer 복합단위',
-            category: 'Illustration',
-            width: '160px',
-            height: '240px',
-            thumb: 'assets/illustrations/atomic_organisms.png',
-            previewHtml: `<img src="assets/illustrations/atomic_organisms.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_organisms.png" alt="아토믹 디자인 - Organisms" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-atomic-layout',
-            name: '14. 아토믹 - Layout',
-            koName: '14 아토믹 레이아웃 layout grid templates 구조 뼈대',
-            category: 'Illustration',
-            width: '220px',
-            height: '240px',
-            thumb: 'assets/illustrations/atomic_layout.png',
-            previewHtml: `<img src="assets/illustrations/atomic_layout.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_layout.png" alt="아토믹 디자인 - Layout Grid" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-atomic-pages',
-            name: '15. 아토믹 - Pages',
-            koName: '15 아토믹 페이지 pages screens mobile 완성화면 최종산출물',
-            category: 'Illustration',
-            width: '220px',
-            height: '240px',
-            thumb: 'assets/illustrations/atomic_pages.png',
-            previewHtml: `<img src="assets/illustrations/atomic_pages.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/atomic_pages.png" alt="아토믹 디자인 - Pages" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-pim',
-            name: '16. 상품관리 - LLM & 추천',
-            koName: '16 상품관리 pim llm 인공지능 tpo 키워드 체형 사이즈 추천 product 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_3d_pim.png',
-            previewHtml: `<img src="assets/illustrations/admin_3d_pim.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_pim.png" alt="상품관리 시스템 개선 (LLM 상세 보강 &amp; TPO 키워드 &amp; 체형 사이즈 제안)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-3d-cms',
-            name: '17. [3D] 전시관리 - 통합 & 카드화',
-            koName: '17 3d 전시관리 cms 통합카테고리 카드블록 자동퍼블리싱 display mobile pc 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_3d_cms.png',
-            previewHtml: `<img src="assets/illustrations/admin_3d_cms.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_cms.png" alt="전시관리 시스템 개선 (통합 카테고리 &amp; Front 전 영역 카드화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-3d-logistics',
-            name: '18. [3D] 배송관리 - 배송예정일 자동화',
-            koName: '18 3d 배송관리 logistics 실시간재고 배송예정일자동화 풀필먼트 도착예측 delivery shipping 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_3d_logistics.png',
-            previewHtml: `<img src="assets/illustrations/admin_3d_logistics.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_logistics.png" alt="배송관리 시스템 개선 (재고 연동 &amp; 배송예정일 자동화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-vec-pim',
-            name: '19. [2D] 상품관리 - 실측 & 상세',
-            koName: '19 2d 벡터 상품관리 pim 마네킹 줄자 상세정보 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_vector_pim.png',
-            previewHtml: `<img src="assets/illustrations/admin_vector_pim.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_vector_pim.png" alt="상품관리 (실측 &amp; 상세)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-vec-cms',
-            name: '20. [2D] 전시관리 - 카드 조립',
-            koName: '20 2d 벡터 전시관리 cms 카드조립 디스플레이 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_vector_cms.png',
-            previewHtml: `<img src="assets/illustrations/admin_vector_cms.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_vector_cms.png" alt="전시관리 (카드 조립)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-vec-logistics',
-            name: '21. [2D] 배송관리 - 택배 & 스케줄',
-            koName: '21 2d 벡터 배송관리 logistics 택배상자 달력 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_vector_logistics.png',
-            previewHtml: `<img src="assets/illustrations/admin_vector_logistics.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_vector_logistics.png" alt="배송관리 (택배 &amp; 스케줄)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-3d-membership',
-            name: '22. [3D] 회원관리 - 고객 여정 & VIP',
-            koName: '22 3d 회원관리 membership 고객여정 vip 등급 분석 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_3d_membership.png',
-            previewHtml: `<img src="assets/illustrations/admin_3d_membership.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_membership.png" alt="회원관리 시스템 개선 (고객 여정 분석 &amp; VIP 등급 체계)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-3d-promotion',
-            name: '23. [3D] 프로모션 - 쿠폰 & 리워드',
-            koName: '23 3d 프로모션 promotion 쿠폰 마일리지 연산엔진 매출전환 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_3d_promotion.png',
-            previewHtml: `<img src="assets/illustrations/admin_3d_promotion.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_promotion.png" alt="프로모션 관리 시스템 개선 (쿠폰 &amp; 마일리지 연산 최적화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-3d-order',
-            name: '24. [3D] 주문관리 - 결제 & 파이프라인',
-            koName: '24 3d 주문관리 order 결제수단 트랜잭션 파이프라인 안전성 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_3d_order.png',
-            previewHtml: `<img src="assets/illustrations/admin_3d_order.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_order.png" alt="주문 관리 시스템 개선 (트랜잭션 분석 &amp; 안전성 고도화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
-        },
-        {
-            id: 'v4-ill-admin-3d-claim',
-            name: '25. [3D] 클레임 - 반품 & 자동환불',
-            koName: '25 3d 클레임 claim 반품 교환 역물류 수거 신속환불 정산자동화 시스템개선',
-            category: 'Illustration',
-            width: '240px',
-            height: '240px',
-            thumb: 'assets/illustrations/admin_3d_claim.png',
-            previewHtml: `<img src="assets/illustrations/admin_3d_claim.png" style="width: 100%; height: 100%; object-fit: contain;">`,
-            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/admin_3d_claim.png" alt="클레임 관리 시스템 개선 (반품 사유 분석 &amp; 신속 환불/정산 자동화)" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        if (body) {
+            body.classList.toggle('is-collapsed', nextCollapsed);
+            body.style.setProperty('display', nextCollapsed ? 'none' : 'block', 'important');
         }
-    ]
+    },
+
+    isSubGroupCollapsed(groupId) {
+        const state = this.getState();
+        return !!(state.subGroups && state.subGroups[groupId]);
+    },
+
+    toggleSubGroup(groupId) {
+        const state = this.getState();
+        if (!state.subGroups) state.subGroups = {};
+        state.subGroups[groupId] = !state.subGroups[groupId];
+        this.saveState(state);
+
+        if (typeof window.renderIllustrationLibrary === 'function') {
+            window.renderIllustrationLibrary();
+        }
+    },
+
+    updateBadges() {
+        const iconBadge = document.getElementById('icon-library-total-badge');
+        if (iconBadge) {
+            const iconContainer = document.getElementById('icon-library-container');
+            const totalIcons = iconContainer ? iconContainer.querySelectorAll('.component-item').length : 36;
+            iconBadge.textContent = totalIcons || 36;
+        }
+
+        const illBadge = document.getElementById('illustration-library-total-badge');
+        if (illBadge && window.V4_COMPONENT_LIBRARY && Array.isArray(window.V4_COMPONENT_LIBRARY.illustrations)) {
+            illBadge.textContent = window.V4_COMPONENT_LIBRARY.illustrations.length;
+        }
+
+        const molBadge = document.getElementById('molecules-total-badge');
+        if (molBadge) {
+            const rawCustomComps = window.state ? window.state.globalComponents : null;
+            const customComps = Array.isArray(rawCustomComps) ? rawCustomComps : (rawCustomComps && typeof rawCustomComps === 'object' ? Object.values(rawCustomComps) : []);
+            molBadge.textContent = customComps.length;
+        }
+    },
+
+    init() {
+        const state = this.getState();
+        ['icon-library', 'illustration-library', 'molecules'].forEach(sec => {
+            const isCol = state[sec] !== undefined ? !!state[sec] : true;
+            const header = document.getElementById(`${sec}-header`);
+            const body = document.getElementById(`${sec}-body`);
+            if (header) header.classList.toggle('is-collapsed', isCol);
+            if (body) {
+                body.classList.toggle('is-collapsed', isCol);
+                body.style.setProperty('display', isCol ? 'none' : 'block', 'important');
+            }
+        });
+        this.updateBadges();
+    }
 };
+
+// Auto-initialize Sidebar Accordion on load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.V4SidebarAccordion) window.V4SidebarAccordion.init();
+    });
+} else {
+    if (window.V4SidebarAccordion) window.V4SidebarAccordion.init();
+}
 
 // --- Illustration Library UI Rendering ---
 window.renderIllustrationLibrary = function() {
@@ -861,18 +134,55 @@ window.renderIllustrationLibrary = function() {
     const query = (window.editorSearchQuery || '').toLowerCase().trim();
     const filtered = query ? illustrations.filter(item => {
         const enMatch = item.name.toLowerCase().includes(query);
+        const titleMatch = item.title ? item.title.toLowerCase().includes(query) : false;
         const koMatch = item.koName ? item.koName.toLowerCase().includes(query) : false;
-        return enMatch || koMatch;
+        return enMatch || titleMatch || koMatch;
     }) : illustrations;
 
-    container.innerHTML = filtered.map(item => `
-        <div class="component-item v4-card v4-card-illustration" onclick="insertV4ComponentById('${item.id}')" title="${item.name}">
-            <div class="illustration-thumb-wrap">
-                <img src="${item.thumb}" alt="${item.name}" />
+    if (query) {
+        // 검색 모드: 구분선 없이 일치하는 카드만 렌더링
+        container.innerHTML = filtered.map(item => `
+            <div class="component-item v4-card v4-card-illustration" onclick="insertV4ComponentById('${item.id}')" title="${item.title || item.name}">
+                <div class="illustration-thumb-wrap">
+                    <img src="${item.thumb}" alt="${item.name}" />
+                </div>
+                <span class="illustration-label">${item.name}</span>
             </div>
-            <span class="illustration-label">${item.name}</span>
-        </div>
-    `).join('');
+        `).join('');
+    } else {
+        // 기본 모드: 스타일 그룹별 섹션 헤더(divider)와 함께 렌더링 (서브그룹 접기/펼치기 지원)
+        let html = '';
+        let currentGroup = '';
+        filtered.forEach(item => {
+            if (item.group && item.group !== currentGroup) {
+                currentGroup = item.group;
+                const groupTitle = item.groupTitle || currentGroup;
+                const groupCount = filtered.filter(x => x.group === currentGroup).length;
+                const isSubCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isSubGroupCollapsed(currentGroup) : false;
+                html += `
+                    <div class="illustration-group-divider collapsible-divider ${isSubCol ? 'is-sub-collapsed' : ''}" onclick="if(window.V4SidebarAccordion)window.V4SidebarAccordion.toggleSubGroup('${currentGroup}');" title="${groupTitle} 접기/펼치기">
+                        <span class="illustration-group-title">
+                            <span class="material-icons-outlined illustration-subgroup-chevron">expand_more</span>
+                            ${groupTitle}
+                        </span>
+                        <span class="illustration-group-count">${groupCount}</span>
+                    </div>
+                `;
+            }
+            const isSubCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isSubGroupCollapsed(item.group) : false;
+            if (!isSubCol) {
+                html += `
+                    <div class="component-item v4-card v4-card-illustration" onclick="insertV4ComponentById('${item.id}')" title="${item.title || item.name}">
+                        <div class="illustration-thumb-wrap">
+                            <img src="${item.thumb}" alt="${item.name}" />
+                        </div>
+                        <span class="illustration-label">${item.name}</span>
+                    </div>
+                `;
+            }
+        });
+        container.innerHTML = html;
+    }
 
     return filtered.length;
 };
@@ -960,7 +270,7 @@ window.renderAtomicLibrary = function() {
 
     const compHeader = document.getElementById('molecules-header-text');
     if (compHeader) {
-        compHeader.innerHTML = `COMPONENTS <b style="color:var(--accent); margin-left: 4px;">(${filteredCustomComps.length})</b>`;
+        compHeader.textContent = 'COMPONENTS';
     }
 
     const molContainer = document.getElementById('custom-molecules-container');
@@ -1030,7 +340,20 @@ window.renderAtomicLibrary = function() {
     if (iconHeader && iconBody) {
         const hasIcon = iconCount > 0;
         iconHeader.style.setProperty('display', hasIcon ? 'flex' : 'none', 'important');
-        iconBody.style.setProperty('display', hasIcon ? 'block' : 'none', 'important');
+        if (!hasIcon) {
+            iconBody.style.setProperty('display', 'none', 'important');
+        } else if (query) {
+            // 검색 중: 매칭 항목 있으면 무조건 펼쳐서 노출
+            iconBody.style.setProperty('display', 'block', 'important');
+            iconHeader.classList.remove('is-collapsed');
+            iconBody.classList.remove('is-collapsed');
+        } else {
+            // 검색 없음: 저장된 사용자 접힘 상태 복원 (기본 접힘)
+            const isCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isCollapsed('icon-library') : true;
+            iconBody.style.setProperty('display', isCol ? 'none' : 'block', 'important');
+            iconHeader.classList.toggle('is-collapsed', isCol);
+            iconBody.classList.toggle('is-collapsed', isCol);
+        }
     }
 
     // 3.5. Illustration Library 렌더링
@@ -1043,7 +366,20 @@ window.renderAtomicLibrary = function() {
     if (illHeader && illBody) {
         const hasIll = illustrationCount > 0;
         illHeader.style.setProperty('display', hasIll ? 'flex' : 'none', 'important');
-        illBody.style.setProperty('display', hasIll ? 'block' : 'none', 'important');
+        if (!hasIll) {
+            illBody.style.setProperty('display', 'none', 'important');
+        } else if (query) {
+            // 검색 중: 매칭 항목 있으면 무조건 펼쳐서 노출
+            illBody.style.setProperty('display', 'block', 'important');
+            illHeader.classList.remove('is-collapsed');
+            illBody.classList.remove('is-collapsed');
+        } else {
+            // 검색 없음: 저장된 사용자 접힘 상태 복원 (기본 접힘)
+            const isCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isCollapsed('illustration-library') : true;
+            illBody.style.setProperty('display', isCol ? 'none' : 'block', 'important');
+            illHeader.classList.toggle('is-collapsed', isCol);
+            illBody.classList.toggle('is-collapsed', isCol);
+        }
     }
 
     const moleculesHeader = document.getElementById('molecules-header');
@@ -1051,7 +387,20 @@ window.renderAtomicLibrary = function() {
     if (moleculesHeader && moleculesBody) {
         const hasMolecules = filteredCustomComps.length > 0;
         moleculesHeader.style.setProperty('display', hasMolecules ? 'flex' : 'none', 'important');
-        moleculesBody.style.setProperty('display', hasMolecules ? 'block' : 'none', 'important');
+        if (!hasMolecules) {
+            moleculesBody.style.setProperty('display', 'none', 'important');
+        } else if (query) {
+            // 검색 중: 매칭 항목 있으면 무조건 펼쳐서 노출
+            moleculesBody.style.setProperty('display', 'block', 'important');
+            moleculesHeader.classList.remove('is-collapsed');
+            moleculesBody.classList.remove('is-collapsed');
+        } else {
+            // 검색 없음: 저장된 사용자 접힘 상태 복원 (기본 접힘)
+            const isCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isCollapsed('molecules') : true;
+            moleculesBody.style.setProperty('display', isCol ? 'none' : 'block', 'important');
+            moleculesHeader.classList.toggle('is-collapsed', isCol);
+            moleculesBody.classList.toggle('is-collapsed', isCol);
+        }
     }
 
     // 5. Empty State 처리
@@ -1059,5 +408,10 @@ window.renderAtomicLibrary = function() {
     const emptyState = document.getElementById('sidebar-search-empty');
     if (emptyState) {
         emptyState.style.setProperty('display', totalMatch === 0 ? 'flex' : 'none', 'important');
+    }
+
+    // 6. Section Asset Count Badges 실시간 갱신
+    if (window.V4SidebarAccordion) {
+        window.V4SidebarAccordion.updateBadges();
     }
 };

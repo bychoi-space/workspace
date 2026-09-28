@@ -76,23 +76,39 @@ window.v4ResponsiveMultiselectScript = `
 
     window.v4MessageHandlers['LF_UPDATE_MARQUEE_SELECTION'] = function(d) {
         const ids = d.ids || [];
-        document.querySelectorAll('.lf-component').forEach(x => {
-            x.classList.toggle('selected', ids.includes(x.id));
-        });
-        if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
-            window.SelectionAdorner.update();
+        const isDragging = !!d.isDragging;
+        const idSet = new Set(ids);
+
+        // Fast diff DOM update: only touch elements whose .selected status actually changes
+        const allComps = document.querySelectorAll('.lf-component');
+        for (let i = 0; i < allComps.length; i++) {
+            const x = allComps[i];
+            const shouldBeSelected = idSet.has(x.id);
+            const isCurrentlySelected = x.classList.contains('selected');
+            if (shouldBeSelected !== isCurrentlySelected) {
+                x.classList.toggle('selected', shouldBeSelected);
+            }
         }
-        if (ids.length > 1 && typeof window.getHomogeneousSelectionInfo === 'function' && typeof window.notifyParent === 'function') {
-            const homoInfo = window.getHomogeneousSelectionInfo();
-            if (homoInfo && homoInfo.isMultiSame) {
-                window.notifyParent({
-                    type: 'LF_MULTI_SELECTION_STYLES',
-                    isMultiSameType: true,
-                    commonType: homoInfo.commonType,
-                    selectedCount: homoInfo.count,
-                    selectedIds: homoInfo.ids,
-                    ...(homoInfo.primaryStyles || {})
-                });
+
+        // PERFORMANCE GUARD:
+        // During real-time dragging, skip heavy DOM adorner re-creation and 18-query inspector styling.
+        // They will run only when dragging finishes (isDragging is false or undefined).
+        if (!isDragging) {
+            if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                window.SelectionAdorner.update();
+            }
+            if (ids.length > 1 && typeof window.getHomogeneousSelectionInfo === 'function' && typeof window.notifyParent === 'function') {
+                const homoInfo = window.getHomogeneousSelectionInfo();
+                if (homoInfo && homoInfo.isMultiSame) {
+                    window.notifyParent({
+                        type: 'LF_MULTI_SELECTION_STYLES',
+                        isMultiSameType: true,
+                        commonType: homoInfo.commonType,
+                        selectedCount: homoInfo.count,
+                        selectedIds: homoInfo.ids,
+                        ...(homoInfo.primaryStyles || {})
+                    });
+                }
             }
         }
     };

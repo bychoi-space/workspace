@@ -69,6 +69,10 @@
         });
     };
 
+    window.insertTextComponent = function(customIdx) {
+        return window.insertV4ComponentById('v4-tool-text', customIdx);
+    };
+
     function triggerImageFileUpload() {
         let input = document.getElementById('v4-image-file-input');
         if (!input) {
@@ -629,6 +633,7 @@
     window.ComponentInserter = {
         insertAtomicComponent: insertAtomicComponent,
         insertV4ComponentById: window.insertV4ComponentById,
+        insertTextComponent: window.insertTextComponent,
         insertImageComponent: window.insertImageComponent,
         triggerImageFileUpload: triggerImageFileUpload,
         openCanvasBackgroundModal: window.openCanvasBackgroundModal,

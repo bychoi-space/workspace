@@ -904,7 +904,8 @@ svg.lf-icon, div.v4-checkbox.lf-icon, div.v4-radio.lf-icon { background-image: n
     width: auto;
 }
 .text-marker .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell { padding: var(--v4-text-shape-pad-y, 2px) 3px !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: inherit; box-sizing: border-box !important; line-height: 1 !important; width: 100% !important; height: 100% !important; white-space: nowrap !important; }
-.text-marker .v4-editable-cell p, .v4-text-box .v4-editable-cell p, .v4-text-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; white-space: nowrap !important; }
+.text-marker .v4-editable-cell p:not([style*="line-height"]), .v4-text-box .v4-editable-cell p:not([style*="line-height"]), .v4-text-shape .v4-editable-cell p:not([style*="line-height"]) { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; white-space: nowrap !important; }
+.text-marker .v4-editable-cell p[style*="line-height"], .v4-text-box .v4-editable-cell p[style*="line-height"], .v4-text-shape .v4-editable-cell p[style*="line-height"] { margin: 0 !important; padding: 0 !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; white-space: nowrap !important; }
 .text-marker .v4-editable-cell *, .v4-text-box .v4-editable-cell *, .v4-text-shape .v4-editable-cell * { white-space: nowrap !important; }
 .text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: transparent !important; background: transparent; box-shadow: none; }
 .text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
@@ -1066,8 +1067,9 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 .v4-shape-diamond > .v4-editable-cell { width: 60% !important; height: 60% !important; }
 .v4-shape-arrow > .v4-editable-cell { width: 50% !important; height: 40% !important; }
 .v4-shape-triangle > .v4-editable-cell { width: 100% !important; height: 60% !important; }
-.v4-shape-text-content p, .v4-shape-text-overlay p, .v4-shape .v4-editable-cell p { margin: 0 !important; padding: 0 !important; line-height: 1 !important; text-align: inherit !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
-.v4-shape-text-content span, .v4-shape-text-overlay span, .v4-shape .v4-editable-cell span { line-height: 1 !important; display: inline-block !important; }
+.v4-shape-text-content p:not([style*="line-height"]), .v4-shape-text-overlay p:not([style*="line-height"]), .v4-shape .v4-editable-cell p:not([style*="line-height"]) { margin: 0 !important; padding: 0 !important; line-height: 1 !important; text-align: inherit !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
+.v4-shape-text-content p[style*="line-height"], .v4-shape-text-overlay p[style*="line-height"], .v4-shape .v4-editable-cell p[style*="line-height"] { margin: 0 !important; padding: 0 !important; text-align: inherit !important; display: block !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; }
+.v4-shape-text-content span:not([style*="line-height"]), .v4-shape-text-overlay span:not([style*="line-height"]), .v4-shape .v4-editable-cell span:not([style*="line-height"]) { line-height: inherit !important; display: inline-block !important; }
 /* Unify Grid UI Table Cell Typography and Colors */
 .v4-grid-container td.v4-grid-cell {
     font-size: 12px !important;

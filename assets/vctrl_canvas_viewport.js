@@ -16,11 +16,11 @@
         } else {
             state.viewMode = 'crisp';
         }
-        window.centerView();
+        window.centerView(true);
     };
 
     // 2. Viewport Centering & Smart-Snap Calculation
-    window.centerView = function() {
+    window.centerView = function(forceReset) {
         var DOM = window.DOM, state = window.state;
         if (!DOM || !DOM.canvas || !DOM.iframe || !state) return;
         var iw = parseInt(DOM.iframe.style.width) || 1600, ih = parseInt(DOM.iframe.style.height) || 900;
@@ -31,7 +31,10 @@
         var fitScale = Math.min((cw * 0.98) / iw, (ch * 0.98) / ih);
 
         var s;
-        if (state.viewMode === 'crisp') {
+        if (state.viewMode === 'custom' && !forceReset && state.transform && state.transform.scale) {
+            // [사용자 커스텀 줌 모드 보존]: 사용자가 직접 조절한 확대/축소 배율을 유지
+            s = state.transform.scale;
+        } else if (state.viewMode === 'crisp') {
             // [100% 선명 뷰 모드 강제]: 모니터 해상도와 무관하게 1:1 물리 디스플레이 픽셀 선명도 100% 보장
             s = 1.0;
         } else {
@@ -47,13 +50,19 @@
             }
         }
 
-        var x = Math.round((cw - (iw * s)) / 2);
-        // 세로 높이가 뷰포트를 초과하는 경우 상단 10px 안전 여백으로 배치
-        var y;
-        if (ih * s > ch) {
-            y = 10;
+        var x, y;
+        if (state.viewMode === 'custom' && !forceReset && state.transform && typeof state.transform.x === 'number' && typeof state.transform.y === 'number') {
+            // [사용자 커스텀 뷰포트 위치 보존]: 스페이스+드래그 팬 이동 및 줌 위치를 정중앙으로 리셋하지 않고 보존
+            x = state.transform.x;
+            y = state.transform.y;
         } else {
-            y = Math.round((ch - (ih * s)) / 2);
+            x = Math.round((cw - (iw * s)) / 2);
+            // 세로 높이가 뷰포트를 초과하는 경우 상단 10px 안전 여백으로 배치
+            if (ih * s > ch) {
+                y = 10;
+            } else {
+                y = Math.round((ch - (ih * s)) / 2);
+            }
         }
 
         state.transform = { x: x, y: y, scale: s };
@@ -76,11 +85,11 @@
             var is100 = Math.abs(state.transform.scale - 1.0) < 0.02;
             if (is100) {
                 toggleIcon.innerText = 'fit_screen';
-                toggleBtn.title = '화면 맞춤으로 전환 (단축키: 1)';
+                toggleBtn.title = '화면 맞춤으로 전환 (단축키: `)';
                 toggleBtn.style.color = 'var(--v4-accent, #00e5ff)';
             } else {
                 toggleIcon.innerText = 'center_focus_strong';
-                toggleBtn.title = '100% 선명 뷰로 전환 (단축키: 1)';
+                toggleBtn.title = '100% 선명 뷰로 전환 (단축키: `)';
                 toggleBtn.style.color = '';
             }
         }
@@ -99,6 +108,7 @@
         state.transform.x = mx - (mx - state.transform.x) * (ns / s);
         state.transform.y = my - (my - state.transform.y) * (ns / s);
         state.transform.scale = ns;
+        state.viewMode = 'custom';
         window.updateTransform();
     };
 
@@ -202,6 +212,7 @@
                         e.preventDefault();
                         state.transform.x -= e.deltaX;
                         state.transform.y -= e.deltaY;
+                        state.viewMode = 'custom';
                         window.updateTransform();
                     }
                 }
@@ -227,6 +238,7 @@
             if (!state || !state.isDragging) return;
             state.transform.x = e.clientX - state.startX;
             state.transform.y = e.clientY - state.startY;
+            state.viewMode = 'custom';
             window.updateTransform();
         });
 
@@ -236,14 +248,15 @@
         });
 
         window.addEventListener('resize', function() {
-            if (window.centerView) window.centerView();
+            if (window.centerView) window.centerView(false);
         });
 
         window.addEventListener('keydown', function(e) {
-            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.classList.contains('v4-editable-cell'))) {
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.classList.contains('v4-editable-cell') || (e.target.closest && e.target.closest('.ql-editor')))) {
                 return;
             }
-            if (e.key === '1' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            var isCrispKey = (e.code === 'Backquote' || e.key === '`' || e.key === '~' || e.key === 'Home' || e.code === 'Home');
+            if (isCrispKey && !e.ctrlKey && !e.metaKey) {
                 if (window.toggleCrispView) {
                     e.preventDefault();
                     window.toggleCrispView();
@@ -251,12 +264,20 @@
             }
         });
 
+        if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
+            window.MessageHub.subscribe('LF_TOGGLE_CRISP_VIEW', function() {
+                if (typeof window.toggleCrispView === 'function') {
+                    window.toggleCrispView();
+                }
+            });
+        }
+
         if (DOM && DOM.canvas && window.ResizeObserver) {
             const ro = new ResizeObserver(function(entries) {
                 for (var i = 0; i < entries.length; i++) {
                     var entry = entries[i];
                     if (entry.contentRect.width > 100 && entry.contentRect.height > 100) {
-                        if (window.centerView) window.centerView();
+                        if (window.centerView) window.centerView(false);
                     }
                 }
             });

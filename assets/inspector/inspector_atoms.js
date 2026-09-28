@@ -1072,6 +1072,139 @@
     };
 
 
+    // --- Mouse Cursor Component ---
+    const syncCursor = (comp) => {
+        if (!comp) return;
+
+        // 0. Dimensions Synchronization
+        const isShowText = comp.showText !== false && comp.showText !== 'false';
+        const wCursorInp = document.getElementById('prop-width-cursor');
+        const hCursorInp = document.getElementById('prop-height-cursor');
+        if (wCursorInp && document.activeElement !== wCursorInp) {
+            wCursorInp.value = Math.round(comp.w || comp.width || (isShowText ? 140 : 32));
+        }
+        if (hCursorInp && document.activeElement !== hCursorInp) {
+            hCursorInp.value = Math.round(comp.h || comp.height || 32);
+        }
+
+        // 1. Cursor Type (default / pointer / text)
+        const curType = comp.cursorType || 'default';
+        const btnDef = document.getElementById('btn-cursor-type-default');
+        const btnPtr = document.getElementById('btn-cursor-type-pointer');
+        const btnTxt = document.getElementById('btn-cursor-type-text');
+        if (btnDef) highlightActive(btnDef, curType === 'default');
+        if (btnPtr) highlightActive(btnPtr, curType === 'pointer');
+        if (btnTxt) highlightActive(btnTxt, curType === 'text');
+
+        // 2. Show Description Text (true / false)
+        const btnTextY = document.getElementById('btn-cursor-text-y');
+        const btnTextN = document.getElementById('btn-cursor-text-n');
+        if (btnTextY && btnTextN) {
+            highlightActive(btnTextY, isShowText);
+            highlightActive(btnTextN, !isShowText);
+        }
+
+        // Toggle text input group visibility
+        const textInpGroup = document.getElementById('cursor-text-input-group');
+        const badgeThemeGroup = document.getElementById('cursor-badge-theme-group');
+        if (textInpGroup) textInpGroup.style.display = isShowText ? 'block' : 'none';
+        if (badgeThemeGroup) badgeThemeGroup.style.display = isShowText ? 'block' : 'none';
+
+        // 3. Description Text Input (Focus Guard)
+        const textInp = document.getElementById('prop-cursor-text');
+        if (textInp && document.activeElement !== textInp) {
+            textInp.value = comp.cursorText !== undefined ? comp.cursorText : 'Click Event';
+        }
+
+        // 4. Badge Theme Style (dark / blue / light)
+        const theme = comp.badgeStyle || 'dark';
+        const btnDark = document.getElementById('btn-cursor-theme-dark');
+        const btnBlue = document.getElementById('btn-cursor-theme-blue');
+        const btnLight = document.getElementById('btn-cursor-theme-light');
+        if (btnDark) highlightActive(btnDark, theme === 'dark');
+        if (btnBlue) highlightActive(btnBlue, theme === 'blue');
+        if (btnLight) highlightActive(btnLight, theme === 'light');
+    };
+
+    const bindCursorEvents = () => {
+        // Cursor Type Selection
+        const types = ['default', 'pointer', 'text'];
+        types.forEach(t => {
+            const btn = document.getElementById('btn-cursor-type-' + t);
+            if (btn && !btn._bound) {
+                btn._bound = true;
+                btn.onclick = () => {
+                    types.forEach(o => {
+                        const b = document.getElementById('btn-cursor-type-' + o);
+                        if (b) highlightActive(b, o === t);
+                    });
+                    notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', cursorType: t });
+                };
+            }
+        });
+
+        // Show/Hide Description Text
+        const btnTextY = document.getElementById('btn-cursor-text-y');
+        const btnTextN = document.getElementById('btn-cursor-text-n');
+        const textInpGroup = document.getElementById('cursor-text-input-group');
+        const badgeThemeGroup = document.getElementById('cursor-badge-theme-group');
+
+        if (btnTextY && !btnTextY._bound) {
+            btnTextY._bound = true;
+            btnTextY.onclick = () => {
+                highlightActive(btnTextY, true);
+                if (btnTextN) highlightActive(btnTextN, false);
+                if (textInpGroup) textInpGroup.style.display = 'block';
+                if (badgeThemeGroup) badgeThemeGroup.style.display = 'block';
+                const wCursorInp = document.getElementById('prop-width-cursor');
+                const hCursorInp = document.getElementById('prop-height-cursor');
+                if (wCursorInp && parseInt(wCursorInp.value) <= 32) wCursorInp.value = 140;
+                if (hCursorInp) hCursorInp.value = 32;
+                notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', showText: true });
+            };
+        }
+        if (btnTextN && !btnTextN._bound) {
+            btnTextN._bound = true;
+            btnTextN.onclick = () => {
+                if (btnTextY) highlightActive(btnTextY, false);
+                highlightActive(btnTextN, true);
+                if (textInpGroup) textInpGroup.style.display = 'none';
+                if (badgeThemeGroup) badgeThemeGroup.style.display = 'none';
+                const wCursorInp = document.getElementById('prop-width-cursor');
+                const hCursorInp = document.getElementById('prop-height-cursor');
+                if (wCursorInp) wCursorInp.value = 32;
+                if (hCursorInp) hCursorInp.value = 32;
+                notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', showText: false });
+            };
+        }
+
+        // Description Text Input
+        const textInp = document.getElementById('prop-cursor-text');
+        if (textInp && !textInp._bound) {
+            textInp._bound = true;
+            textInp.addEventListener('input', function() {
+                notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', cursorText: this.value });
+            });
+        }
+
+        // Badge Themes
+        const themes = ['dark', 'blue', 'light'];
+        themes.forEach(th => {
+            const btn = document.getElementById('btn-cursor-theme-' + th);
+            if (btn && !btn._bound) {
+                btn._bound = true;
+                btn.onclick = () => {
+                    themes.forEach(o => {
+                        const b = document.getElementById('btn-cursor-theme-' + o);
+                        if (b) highlightActive(b, o === th);
+                    });
+                    notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', badgeStyle: th });
+                };
+            }
+        });
+    };
+    const initCursorEvents = bindCursorEvents;
+
     window.InspectorAtoms = {
         syncStepper: syncStepper,
         syncSelectbox: syncSelectbox,
@@ -1084,6 +1217,7 @@
         syncTextboxTextarea: syncTextboxTextarea,
         syncSearchBar: syncSearchBar,
         syncDatePicker: syncDatePicker,
+        syncCursor: syncCursor,
         bindStepperEvents: bindStepperEvents,
         bindSelectboxEvents: bindSelectboxEvents,
         bindFileuploadEvents: bindFileuploadEvents,
@@ -1094,6 +1228,7 @@
         bindTextboxTextareaEvents: initTextboxTextareaEvents,
         bindSearchBarEvents: initSearchBarEvents,
         bindDatePickerEvents: initDatePickerEvents,
+        bindCursorEvents: bindCursorEvents,
         bindAllEvents: function() {
             bindStepperEvents();
             bindSelectboxEvents();
@@ -1101,6 +1236,7 @@
             bindAlertEvents();
             bindButtonEvents();
             bindToggleEvents();
+            bindCursorEvents();
             if (typeof initCheckboxRadioEvents === 'function') initCheckboxRadioEvents();
             if (typeof initTextboxTextareaEvents === 'function') initTextboxTextareaEvents();
             if (typeof initSearchBarEvents === 'function') initSearchBarEvents();
@@ -1113,4 +1249,5 @@
     window.initTextboxTextareaEvents = initTextboxTextareaEvents;
     window.initSearchbarEvents = initSearchBarEvents;
     window.initDatePickerEvents = initDatePickerEvents;
+    window.initCursorEvents = initCursorEvents;
 })();

@@ -36,4 +36,4 @@ description: Use when creating or editing Workspace Editor process screens, flow
 ## Text & Typography
 - Keep labels short and readable.
 - Use `white-space: nowrap;` for branch labels, dates, and compact process tags that must stay on one line.
-- Font hierarchy: Title `18-20px`, Section Header `15-16px`, Body/Nodes `14-15px`, Labels `13px`, Mini Tags `12px`.
+- Font hierarchy: Title `18-20px`, Section Header `15-16px`, Body/Nodes `14-15px`, Labels/Tags: Minimum `13px` (13px 미만 폰트 사용은 가독성 저하로 전면 금지).

@@ -9,14 +9,19 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - Keep the engine modular. Add a dedicated JS file for a large new feature instead of swelling an existing file.
 - `vctrl_core.js` owns global `state`, `MessageHub`, GitHub API load/save, dynamic script compilation via `ENGINE_SCRIPT_REGISTRY` pipeline for iframe `srcdoc`, screen save/export synchronization via `window.ScreenSanitizer.cleanDOM`, and SmartGuide calculation flow.
 - `vctrl_screen_manager.js` owns screen reordering (`screenOrder`), screen creation (`+`), cloning, deletion, active screen routing, and `metadata.json` persistence synchronization.
-- `vctrl_canvas_viewport.js` owns Canvas Interaction (`adjustZoom`, `centerView`, `updateTransform`), 100% crisp snap (`toggleCrispView`), Fullscreen, and Global Space-key Panning logic (integrated with `vctrl_core.js` iframe event propagation). (The legacy `vctrl_v3.js` was fully phased out and replaced by this module.)
+- `vctrl_revision_history.js` owns Project Revision History modal (`#history-modal`), entry CRUD (`window.renderHistoryPopup`), and metadata persistence synchronization.
+- `vctrl_clipboard.js` owns URL copy dropdown handling, project & screen URL copying, and asynchronous system clipboard fallback (`copyTextToClipboard`).
+- `vctrl_component_data.js` owns V4 component library (`window.V4_COMPONENT_LIBRARY`) templates and metadata definitions SSOT.
+- `vctrl_canvas_viewport.js` owns Canvas Interaction (`adjustZoom`, `centerView`, `updateTransform`), 100% crisp snap (`toggleCrispView`), Fullscreen, and Global Space-key Panning logic (integrated with `vctrl_core.js` iframe event propagation).
 - `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, and metadata description synchronization. Pin reordering logic is fully consolidated into `window.reorderAllPins` and `LF_REORDER_PINS` SSOT inside `vctrl_responsive_pins.js`.
 - `vctrl_connectors.js` owns connector spawning (`spawnLine`), 30px magnetic port snapping (`collectSnapTargets`), port highlighting, real-time anchoring (`syncAnchoredPositions`), and connector inspector routing.
 - `vctrl_iframe_ports.js` owns iframe-side port detection and port-drag connector initiation.
 - `vctrl_grouping.js` owns marquee selection, `selectedIds`, group move/delete/grouping behavior, and selected class sync.
-- `vctrl_inspector.js` and `assets/inspector/*` own sidebar tabs, metadata UI, screen list rendering, Quill initialization, floating card routing, and domain-specific inspector controls (`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`). Specifically, atom property synchronization is modularized in `assets/inspector/inspector_atoms.js` (`window.InspectorAtoms`).
+- `vctrl_inspector.js` and `assets/inspector/*` own sidebar tabs, metadata UI, screen list rendering, Quill initialization, floating card routing, and domain-specific inspector controls (`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`, `inspector_text_formatter.js`).
+  - `inspector_atoms.js` (`window.InspectorAtoms`): Atom property synchronization SSOT.
+  - `inspector_text_formatter.js` (`window.InspectorTextFormatter`): Quill NBSP spacing preservation (`preserveConsecutiveSpaces`) and inline font-size normalization (`normalizeHtmlForQuill`).
 - `vctrl_common.js` owns `window.EditorBus` (`sendToIframe`, `sendToParent`) for reliable messaging, universal color conversion (`rgbToHex`, `hexToRgb`, `hexToRgba`), screen markup sanitizer SSOT (`window.ScreenSanitizer`), and responsive document discriminator SSOT (`isResponsiveDocument`).
-- `vctrl_component_library.js` & `vctrl_component_inserter.js` own component library categories, shape/atomic/icon rendering (`renderV4Shapes`, `renderAtomicLibrary`), dual-language search filtering, canvas drop coordinates, and dynamic object insertion. `vctrl_component_library.js` is loaded before `vctrl_inspector.js` in `viewer.html` to establish proper binding order.
+- `vctrl_component_library.js` & `vctrl_component_inserter.js` own component library categories, shape/atomic/icon rendering (`renderV4Shapes`, `renderAtomicLibrary`), Illustration Library 2-column rendering (`renderIllustrationLibrary`), Canvas Background Setting modal & presets (`openCanvasBackgroundModal`, `applyCanvasBackground`, `removeCanvasBackground`), dual-language search filtering, canvas drop coordinates, and dynamic object insertion. `vctrl_component_library.js` is loaded before `vctrl_inspector.js` in `viewer.html` to establish proper binding order.
 - `vctrl_pdf_exporter.js` owns multi-screen batch PDF export based on `metadata.json` `screenOrder`, long-canvas captures, and progress modal management.
 - `vctrl_presentation_pen.js` owns real-time presentation drawing canvas (laser pointer & highlighter pen) activated when holding `Shift` in fullscreen (`F`) mode.
 - **Offline Build Pipeline**:
@@ -45,6 +50,17 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - 각 스크린 iframe은 고유한 `srcdoc` 컨텍스트(또는 `file://` sandboxed context)에서 로드되므로 격리되어 있어 `localStorage`나 iframe 간의 단순 전역 변수 공유가 불가능하다.
   - 이를 극복하고 서로 다른 스크린을 넘나들며 오브젝트 복사/붙여넣기(`Ctrl+C` / `Ctrl+V`)를 지원하기 위해 최상위 윈도우(`window.top`)의 전역 프로퍼티인 `window.top.__lf_global_clipboard__`를 클립보드 데이터의 SSOT로 정의하여 통신한다.
   - 복사 시 선택한 오브젝트 데이터(스타일, 속성, 내부 텍스트, HTML 등)를 JSON 형태로 직렬화하여 `window.top.__lf_global_clipboard__`에 저장하며, 붙여넣기 시 이를 역직렬화하여 겹침 방지 오프셋(+15px)을 더한 뒤 캔버스에 붙여넣는다.
+- **도형 서식 클립보드 파이프라인 (Format Painter Pipeline & Style Clipboard SSOT)**:
+  - `vctrl_shortcuts.js` (`copySelectedObjectStyle`, `pasteCopiedObjectStyle`)와 `vctrl_v4_addon.js` (`LF_SAVE_STYLE_CLIPBOARD`, `LF_REQUEST_STYLE_CLIPBOARD`, `LF_RESPONSE_STYLE_CLIPBOARD`, `LF_SHOW_TOAST`)로 구성됩니다.
+  - `Ctrl + Shift + C` 복사 시 컴포넌트의 시각 스타일 및 텍스트 타이포그래피(폰트, 크기, 색상, 두께, 정렬)를 깊이 추출하여 부모 창의 `(window.top || window).__lf_global_style_clipboard__`에 저장합니다.
+  - `Ctrl + Shift + V` 붙여넣기 시 부모에 클립보드 데이터를 요청하여 단일 또는 다중 선택된 N개 요소에 일괄 주입하며, 주입 전 `V4UndoManager.saveState()`를 호출하여 실행 취소를 보장합니다.
+- **스크린 배경 설정 엔진 (Canvas Background Setting Pipeline)**:
+  - 부모 창의 `ComponentInserter.applyCanvasBackground()`에서 iframe으로 `LF_SET_CANVAS_BACKGROUND` 메시지를 디스패치합니다.
+  - Iframe 측(`vctrl_iframe_script.js`)에서는 캔버스 루트 최상단 자식으로 `#canvas_bg_layer` (`pointer-events: none !important; user-select: none; overflow: hidden;`)를 생성/갱신하고 `#canvas_bg_img`의 `src` 및 `opacity`를 적용한 뒤 부모 창으로 `LF_CANVAS_BACKGROUND_UPDATED` 신호를 회신합니다.
+- **로컬 일일 데이터 자동 백업 및 무인 스케줄러 아키텍처 (Daily Auto Backup & Scheduler Pipeline)**:
+  - `scripts/daily_auto_backup.ps1`은 `FileShare.ReadWrite` 스트림 복사로 파일 락 없이 `data/`를 임시 스테이징한 후 UTF-8 ZIP 압축 아카이브(`C:\ai_work_backups\daily\data_daily_*.zip`)를 생성합니다.
+  - 아카이브 생성 즉시 내부 프로젝트 메타데이터 및 스크린 파일 개수를 전수 검증하며, 30일 경과 백업본을 자동 정리하되 최소 5개는 강제 보존합니다.
+  - `scripts/setup_daily_schedule.ps1`을 통해 매일 18:00 정각 윈도우 작업 스케줄러(`AiWork_Daily_Project_Backup`)로 무인 실행되며, PC 부팅 시 누락 작업 캐치업(`-StartWhenAvailable`)을 지원합니다.
 - **MutationObserver 무한 재귀 루프 방지 (Preventing Infinite Mutation Loops)**: `enforceDesignSystem()` 등 MutationObserver가 활성화된 루프 내에서 카운터 textContent, placeholder display, 또는 폰트 크기 등의 DOM 쓰기 연산을 수행할 경우 다시 MutationObserver가 발동하여 브라우저가 정지하는 무한 재귀 상태에 빠지기 쉽다. 이를 예방하기 위해, 모든 DOM 쓰기 작업은 반드시 **현재 DOM 값과 대입하려는 신규 값을 엄격히 비교(Value Comparison Guard)**하여, 값이 변경된 경우에만 실행되도록 보호해야 한다.
 
 
@@ -57,7 +73,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **캔버스 1:1 픽셀 매핑 및 텍스트 100% 선명도 보장 원칙 (Crisp Typography & Subpixel Integrity)**:
   - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_canvas_viewport.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 한다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단한다.
   - **정수 픽셀 정렬 (`Math.round`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `Math.round()`를 거쳐 소수점 픽셀(`translate(12.35px)`)을 완전 제거하고 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 한다.
-  - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 유지하여 12px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장한다.
+  - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 유지하여 13px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장한다.
 - **Group-Aware State Sync**: 요소가 그룹화되어 계층 구조가 변경되더라도 `metadata.json`에 저장되는 데이터는 항상 **전체 스크린(body) 기준의 절대 좌표(px)**를 유지해야 한다. 그룹 내 자식 요소의 뷰포트 좌표를 실시간 역산하여 전역 데이터로 동기화(`LF_UPDATE_PIN_POS` 등)해야 한다.
 
 - **MessageHub Nudge/Align/Undo**: Use MessageHub (`LF_NUDGE`, `LF_ALIGN_COMPONENTS`, `LF_SAVE_UNDO`) to synchronize keyboard movements and alignments from the parent window to the iframe components seamlessly.
@@ -69,10 +85,11 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 ## Connector and Cross-Window Interaction Principles
 - **Iframe Occlusion Protection**: 부모 창에서 드래그 인터랙션(커넥터 핸들 등)이 발생할 때, 마우스가 iframe 위로 올라가면 이벤트가 끊길 수 있다. `mousedown` 시 iframe에 `pointer-events: none`을 설정하고 `mouseup` 시 `auto`로 복구하여 끊김 없는 드래그를 보장하라.
 - **Iframe Coordinate Normalization**: 부모 창에서 iframe 내부 요소의 물리적 위치(예: 드래그 중인 포트 커넥터 등)를 계산할 때, `getBoundingClientRect()` 결과에 iframe 자체의 `left`, `top` 오프셋을 반드시 더해주어야 부모 창 기준의 정확한 절대 좌표를 얻을 수 있습니다. 단, 스마트 가이드의 오브젝트 간 스냅 계산 시에는 줌 오차가 없는 `style.left/top` 기반의 Pure Data 연산을 우선합니다.
-- **Scale/Zoom Compensation**: 에디터가 줌(Scale) 상태일 때 마우스 이동 거리(`e.clientX - rect.left`)를 그대로 사용하면 안 된다. 반드시 현재의 스케일 값(`window.state.transform.scale`)으로 나누어 가상 캔버스 좌표로 보정하라.
+- **Scale/Zoom Compensation (부모 창 전용)**: 부모 창에서 드래그나 드롭 인터랙션을 처리할 때, 부모 창의 마우스 이벤트(`e.clientX`, `e.clientY`)는 브라우저 전체 창 기준의 물리 스크린 좌표(Scaled)이므로, iframe 내부 가상 캔버스 좌표로 변환할 때 반드시 현재 스케일 값(`window.state.transform.scale`)으로 나누어 보정해야 한다.
+- **Iframe 내부 이벤트 언스케일드 원칙 (Iframe Unscaled Invariant)**: 반대로 iframe 내부 문서에서 발생하는 모든 마우스 이벤트(`e.clientX`, `e.clientY`)는 브라우저 렌더러가 이미 iframe 뷰포트(1600x900)에 맞게 역변환(Unproject)하여 전달하므로 이미 순수 논리 픽셀이다. 따라서 `vctrl_iframe_drag.js`, `vctrl_iframe_ports.js`, `vctrl_iframe_script.js` 등 iframe 내부 스크립트에서는 `dx = e.clientX - startX`를 절대 `scale`로 다시 나누지 말고 1:1 논리 좌표로 직접 연산해야 한다 (이중 보정 버그 원천 금지).
 - **교차 창 좌표계 화해 (Coordinate Reconciliation)**: 
-  - **iframe 내부**: `style.left/top`은 `body` 기준의 **논리 좌표(Unscaled)**이며, 모든 객체의 기준점이 된다.
-  - **부모 창**: `getBoundingClientRect()`는 **물리적 스크린 좌표(Scaled)**를 반환하므로, 줌 배율(`scale`)로 나누어 보정해야 한다.
+  - **iframe 내부**: `style.left/top` 및 내부 엘리먼트의 `getBoundingClientRect()`는 `body` 기준의 **논리 좌표(Unscaled)**이며, 모든 객체의 기준점이 된다.
+  - **부모 창**: 부모 창의 `getBoundingClientRect()`는 **물리적 스크린 좌표(Scaled)**를 반환하므로, 줌 배율(`scale`)로 나누어 보정해야 한다.
   - **통합 로직**: 다중 선택(Marquee) 및 교차 검사 시, 반드시 **이프레임 바디(Global Root)**를 기준점(Origin)으로 삼아 모든 좌표를 가상 공간으로 변환(Normalize)한 뒤 연산하라.
 
 - **Performance Optimization (rAF)**: 커넥터 재그리기와 같이 연산량이 많은 실시간 업데이트는 `requestAnimationFrame`을 사용하여 브라우저 주사율에 최적화하라.

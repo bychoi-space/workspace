@@ -23,6 +23,10 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
      - F2 키 입력 시 선택 모드(이동/삭제 가능)와 텍스트 편집 모드(`contenteditable="true"`, 캐럿 깜빡임)가 토글(Toggle)되어야 한다.
      - **포커스 스왑 제어**: 텍스트 편집 모드로 진입 시 iframe 보안 격리를 극복하기 위해 `contenteditable` 영역을 포커스하기 전 반드시 iframe 자체(`window.top`에서 iframe `.contentWindow.focus()`) 또는 iframe 내부 `window.focus()`를 먼저 호출한 뒤 대상 요소를 포커스해야 캐럿(Caret)이 정상 노출된다.
      - **Input Hijacking 방지 & IME 가드**: 사이드바/폼 입력 중 키보드 가로채기를 막기 위해 부모 keydown 이벤트의 시작 지점에서 `F2` 키 입력을 최우선 가드하고, 한글 조합 입력 중 중복 발동 방지를 위해 `isComposing` 검증을 병행해야 한다.
+  7. **도형 서식 복사 및 붙여넣기 보장 (Format Painter - `Ctrl + Shift + C` / `Ctrl + Shift + V`)**:
+     - **단축키 및 플로팅 툴바 바인딩**: 선택된 컴포넌트의 스타일 서식을 `Ctrl + Shift + C`로 복사하고, 대상 컴포넌트(단일 또는 N개 다중 선택)에 `Ctrl + Shift + V`로 즉시 일괄 적용한다. 플로팅 인스펙터 내 `#selection-style-action-row`의 `[서식 복사]` 및 `[서식 붙여넣기]` 버튼과 100% 양방향 연동된다 (단일 그룹 선택 시에는 자동 숨김).
+     - **심층 서식 추출 및 복원 범위**: 도형 배경색(RGBA 투명도 포함), 테두리(색상, 1.6px 보더 두께, solid/dashed/dotted 스타일, 코너 반경 0~100px), 불투명도뿐만 아니라 하위 텍스트 셀(`.v4-editable-cell`, `.v4-shape-text-content`) 및 인라인 요소의 타이포그래피(글꼴, 크기, 글자색, 두께, 정렬), 테이블 헤더/본문 색상, 아이콘 채색 컬러를 심층 추출하여 오차 없이 이식한다.
+     - **전역 SSOT & 실행 취소**: 스크린 간 격리를 극복하기 위해 `(window.top || window).__lf_global_style_clipboard__`를 단일 진실 공급원으로 사용하며, 서식 적용 직전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 즉시 롤백할 수 있다. 서식 복사 및 적용 상태는 토스트 알림(`LF_SHOW_TOAST`)으로 안내된다.
 
 - **Unified Marker Structure**: Text markers must include a `.lf-drag-handle` (drag handle), `.lf-delete-trigger` (delete), and `.v4-editable-cell` (content) inside their `.lf-component` wrapper. All markers are aligned to their **Top-Left** corner (0, 0) and use **px** units for consistent coordinate mapping with shapes and atoms.
 - **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.lf-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
@@ -82,7 +86,9 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - **5. 도형 텍스트 우측 하단 크기 조절 버튼(.lf-resizer) 완전 미노출 규격**:
     - 도형 텍스트(`.v4-text-shape`, `.v4-text-box`, `.text-marker`)는 폰트 크기 변경에 따른 동적 자동 핏(Fit)을 따르므로 우측 하단의 수동 크기 조절 버튼(`.lf-resizer`)은 완전히 불필요하다.
     - 이를 위해 `assets/vctrl_iframe_styles.js`에 `.v4-text-shape > .lf-resizer, .v4-text-box > .lf-resizer, .text-marker > .lf-resizer { display: none !important; }` CSS 선언부 및 `vctrl_text_measurer.js` 내의 `fitResult.hideResizer` 핸들러 제어 로직을 통해 리사이저 버튼을 완전히 숨겨야 한다.
-- Use font sizes within the project scale: 18-20px for main titles, 15-16px for section/table headers, 14-15px for body/table cells, 13px for labels/help text, and 12px for tiny markers/tags.
+- **컴포넌트 라이브러리 템플릿 SSOT (`vctrl_component_data.js`)**: 우측 사이드바 및 캔버스에 삽입되는 모든 V4 아톰(버튼, 뱃지, 텍스트박스, 텍스트에어리어 등)의 템플릿과 메타데이터는 `assets/vctrl_component_data.js`의 `window.V4_COMPONENT_LIBRARY`를 단일 진실 공급원으로 참조해야 합니다.
+- **Quill 에디터 연속 공백 및 폰트 서식 보존 (`inspector_text_formatter.js`)**: 텍스트 에디터(Quill) 입력 중 들여쓰기 공백이나 2개 이상의 연속 공백이 브라우저에서 1개로 축약(collapsing)되는 것을 막기 위해 `window.InspectorTextFormatter.preserveConsecutiveSpaces`를 통해 선행 및 중복 공백을 `\u00A0` (NBSP)로 변환하고, 인라인 폰트 크기 누락 시 `normalizeHtmlForQuill`로 안전하게 보정해야 합니다.
+- Use font sizes within the project scale: 18-20px for main titles, 15-16px for section/table headers, 14-15px for body/table cells, 13.5px for labels/help text, and minimum 13px for compact markers/tags (13px 미만 폰트 사용은 가독성 저하로 전면 금지).
 - Apply `white-space: nowrap;` to dates and short labels that must stay on one line.
 - In polygon/shape text, calculate padding and `line-height` so text remains centered.
 - **양측 여백 및 테이블 크기 균형 가이드 (Balanced Layout Breathing Room & Exact Column Grid)**:
@@ -145,6 +151,41 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - `vctrl_iframe_script.js`와 같이 파일 전체가 큰 백틱(`` ` ``) 템플릿 문자열로 감싸진 채 부모 측 브라우저에서 동적으로 평가(eval)되는 파일의 경우, 내부 코드에서 또다시 백틱(`` ` ``)이나 변수 보간(`${}`) 구문을 사용하면 문법 충돌(SyntaxError)이 일어나 작동이 중단됩니다. 이를 방지하기 위해 내부 문자열 표현은 반드시 표준적인 따옴표(싱글/더블)와 덧셈 연산자(`"Sub Item " + (i + 1)`)를 활용해 문자열을 결합해야 합니다.
 - **신규 아톰 추가 시 옵션 프로퍼티 플로팅 카드 통합 규칙 (Floating Card Registry Unification)**:
   - 신규 아톰의 설정 패널을 디자인할 때는 우측 사이드바가 아닌 옵션 프로퍼티 플로팅 카드(`Object Properties Floating Card`)에 노출되도록 `vctrl_inspector.js` 내의 `DOM` 매핑 등록, `restorePropertiesSections` 복원 대상 등록, `updateProperties`의 보이기/숨기기 처리 및 선택 해제(Deselect) 시 숨김 처리를 빠짐없이 세트로 적용하여 사이드바에 옵션 패널이 잔존하는 버그를 원천 차단해야 합니다.
+
+## 🖼️ Canvas Background Setting Modal & Presets UI
+- **사이드바 원터치 트리거 및 모달 구조**:
+  - 우측 사이드바 `LIBRARY` 최상단에 알약형 `[배경 설정]` 버튼이 배치되어 클릭 시 `#canvas-bg-modal` 팝업을 호출합니다.
+  - 모달 내에는 현재 배경 상태 배지(`canvas-bg-modal-status-badge`), 미리보기 창(`canvas-bg-preview-img`), 저채도 프리셋 목록(`canvas-bg-presets-container`), 투명도 조절 슬라이더(`canvas-bg-opacity-slider`), 파일 업로드 및 [배경 제거] 버튼이 구성되어 있습니다.
+- **저채도 모노크롬 프리셋 2종**:
+  1. `이커머스 FRONT UI 개선` (`assets/illustrations/ecommerce_ui_bg.jpg`): 상품/장바구니 와이어프레임 & 그리드 모티프
+  2. `백엔드 / ADMIN 시스템 고도화` (`assets/illustrations/admin_backend_bg.jpg`): 어드민 대시보드 & 서버 API 아키텍처 모티프
+- **클라이언트 브라우저 Canvas 이미지 최적화**:
+  - 사용자 커스텀 이미지 업로드 시 브라우저 Canvas를 활용하여 해상도를 최대 1920px로 리사이징하고 JPEG 85% 품질(~200KB)로 자동 압축한 뒤 base64 데이터로 주입합니다.
+- **최하단 무간섭 레이어 강제 규격 (`#canvas_bg_layer`)**:
+  - 배경 이미지는 iframe 내부 캔버스 루트 `#canvas` 최상단 자식으로 삽입되며, **`pointer-events: none !important; user-select: none; overflow: hidden;`** 속성을 필수 적용하여 캔버스 상의 모든 오브젝트 선택 및 조작에 일절 간섭하지 않아야 합니다.
+
+## 🎨 Illustration Library Component & Grid Standards
+- **단일 진실 공급원(SSOT) 규칙 문서**:
+  - 일러스트 제작 7대 불변 원칙, 유형별 기본 규격(3D/2D 240x240, 여정 200x200, 아토믹 240/320x240), 메타데이터 등록 규격은 **[docs/rules_illustration_library.md](file:///c:/Users/sisun/ai_work/docs/rules_illustration_library.md)**에서 통합 관리합니다.
+- **2열 대칭 반응형 그리드 & 그룹 디바이더 (`#illustration-library-container`)**:
+  - 우측 사이드바 `LIBRARY` 내 `ILLUSTRATION` 카테고리는 2열 대칭 그리드로 카드를 렌더링하며, 검색어가 없을 때는 4대 논리 그룹별 **`.illustration-group-divider`** (그룹 타이틀 + 배지 카운트, `grid-column: span 2`)를 렌더링하여 스타일별 영역을 구분합니다.
+  - **표시 명칭 표준화**: 2열 카드(~130px) 가로폭에서 말줄임이 발생하지 않도록 카드 라벨은 `[태그] 핵심어` (예: `[3D] 상품관리`, `[여정 01] 입장`, `[아토믹 01] Atoms`)로 간결화하고, 상세 설명은 마우스 호버 `title` 툴팁으로 제공합니다.
+- **4대 스타일 그룹 분류 및 정렬 순서 (총 25종)**:
+  1. **🏢 Group 1: 3D Admin 시스템 (7종)**: 상품관리(PIM) ➔ 전시관리(CMS) ➔ 주문결제(Order) ➔ 클레임관리(Claim) ➔ 물류배송(Logistics) ➔ 회원멤버십(Membership) ➔ 프로모션(Promotion) (`240px × 240px` 투명 PNG).
+  2. **📐 Group 2: 2D Admin 시스템 (3종)**: 상품관리(PIM) ➔ 전시관리(CMS) ➔ 배송물류(Logistics) (`240px × 240px` 투명 PNG).
+  3. **🛍️ Group 3: 고객 구매 여정 (8종)**: 01.입장 ➔ 02.탐색 ➔ 03.선택 ➔ 04.멤버십 ➔ 05.할인혜택 ➔ 06.주문결제 ➔ 07.배송수령 ➔ 08.반품교환 (`200px × 200px` 투명 PNG).
+  4. **🧬 Group 4: 아토믹 디자인 시스템 (7종)**: 01.Atoms ➔ 02.Molecules ➔ 03.Organisms ➔ 04.Layout ➔ 05.Pages (높이 `240px` 통일) 및 아토믹 구조도 ➔ 스토리북 허브 (`320px × 240px` 투명 PNG).
+- **국영문 하이브리드 검색 필터링**:
+  - `item.name`, `item.title`, `item.koName`(국문 동의어 키워드)을 모두 스캔하여 한글/영문 검색어 입력 시 즉각 필터링됩니다 (검색 시 디바이더는 자동 숨김).
+- **표준 3계층 컴포넌트 구조**:
+  - 클릭 삽입 시 캔버스 정중앙에 `.lf-component` ➔ `.v4-illustration-container` ➔ `<img style="object-fit: contain; pointer-events: none; user-select: none;">` 표준 3계층 구조로 주입되어 드래그, Nudge 이동, 크기 조절 점, 삭제, Undo를 100% 보장합니다.
+- **라이브러리 접기/펼치기 아코디언 및 상태 영속화 (`V4SidebarAccordion`)**:
+  - `ICON LIBRARY`, `ILLUSTRATION`, `COMPONENTS` 3대 패널 헤더는 클릭 가능한 아코디언(`.collapsible-header`)으로 동작하며, 클릭 시 우측의 Chevron 화살표가 180도 회전(`transform: rotate(-90deg)`)하며 바디 영역을 숨기거나 노출합니다.
+  - **기본값은 '모두 접은 상태 (Collapsed)'**: 화면 초기 로딩 시 3개 섹션 모두 기본 접힌 상태(`is-collapsed`)로 시작하여 사이드바 공간을 깔끔하게 유지하며, 사용자가 필요한 섹션만 펼쳐서 사용합니다.
+  - **상태 영속화 (`localStorage`)**: 접힘 상태(`vctrl_sidebar_accordion_state_v2`)를 브라우저에 저장하여 새로고침(F5) 후에도 사용자 선호 상태가 유지됩니다.
+  - **검색 시 자동 펼침 및 복원**: 상단 검색창에 검색어 입력 시 매칭 결과가 있는 섹션은 자동으로 펼쳐서 즉각 노출하고, 검색어를 지우면 사용자가 설정해둔 원래 접힘 상태로 자동 복구됩니다.
+  - **실시간 에셋 수량 뱃지**: 헤더 타이틀 우측에 `.section-count-badge` (아이콘 `36`, 일러스트 `25`, 컴포넌트 `N`)를 실시간 카운팅하여 노출합니다.
+  - **일러스트 4대 서브 그룹 아코디언**: 일러스트 내부 스타일 디바이더(`.illustration-group-divider`) 클릭 시 해당 스타일 그룹의 카드만 개별 접기/펼치기를 지원합니다.
 
 ## 📱 Responsive Frame UI Components, Styling & Typography
 - **PC & Mobile Frame Specs**:

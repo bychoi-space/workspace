@@ -9,8 +9,12 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 
 > [!IMPORTANT]
 > **표준 벤치마크 및 레퍼런스 스크린 (SSOT Reference Screens)**:
-> 1. [10_Product_Ranking_Rules_850.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/10_Product_Ranking_Rules_850.html) (`project=p_lus0e&file=10_Product_Ranking_Rules_850.html`): 상품 랭킹 산정 룰 캔버스
-> 2. [01_Benchmark_Report_382.html](file:///c:/Users/sisun/ai_work/data/p_bujl8/01_Benchmark_Report_382.html) (`project=p_bujl8&file=01_Benchmark_Report_382.html`): 이커머스 주문서 최대 할인 벤치마크 리포트
+> 1. [03_Admin_System_Development_Roadmap_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/03_Admin_System_Development_Roadmap_900.html): 어드민 시스템 7대 도메인 개발 로드맵 (100% 원자적 오브젝트 분리 + 3D 도메인 일러스트 결합)
+> 2. [04_Front_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/04_Front_System_Milestone_Timeline_900.html): 프론트 시스템 중장기 마일스톤 (상·하 교차 웨이브 인포그래픽 + `#canvas_bg_layer` 무간섭 배경 레이어 적용)
+> 3. [05_Admin_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/05_Admin_System_Milestone_Timeline_900.html): 어드민 시스템 7단계 마일스톤 타임라인 인포그래픽
+> 4. [10_Product_Ranking_Rules_850.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/10_Product_Ranking_Rules_850.html): 상품 랭킹 산정 룰 프로세스 & 정책 캔버스
+> 5. [11_Daily_Ranking_Batch_Percentile_851.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/11_Daily_Ranking_Batch_Percentile_851.html): 일일 랭킹 배치 파이프라인 & 백분위수 정규화 시뮬레이션 테이블 (최소 13px 폰트 규격 엄수)
+> 6. [01_Benchmark_Report_382.html](file:///c:/Users/sisun/ai_work/data/p_bujl8/01_Benchmark_Report_382.html): 이커머스 주문서 최대 할인 벤치마크 리포트
 
 ---
 
@@ -27,6 +31,8 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - **도형 (Shapes)**: `.v4-shape.v4-shape-rect` (또는 `v4-shape-circle`, `v4-shape-diamond` 등) ➔ `.v4-shape-text-content`
   - **텍스트 (Text Shape)**: `.lf-component.v4-text-shape` ➔ `.v4-editable-cell[contenteditable="true"]`
   - **아이콘 (Icons / Atoms)**: SVG 내 `.lf-icon` 필수 포함, `stroke-width="1.2"` (또는 `1.6`), `fill="none"`
+  - **일러스트 (Illustrations / 3D & 2D)**: `.lf-component` ➔ `.v4-illustration-container` ➔ `<img src="assets/illustrations/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`
+  - **스크린 배경 이미지 (Canvas Background)**: 배경 이미지가 필요한 경우 캔버스 루트 `#canvas` 최상단 자식으로 `<div id="canvas_bg_layer" style="position: absolute; top: 0; left: 0; width: 1600px; height: 900px; z-index: 0; pointer-events: none !important; user-select: none; overflow: hidden;"><img id="canvas_bg_img" src="..." style="width: 100%; height: 100%; object-fit: cover; opacity: ...; pointer-events: none !important; user-select: none; display: block;"></div>` 무간섭 레이어 배치.
   - **뱃지/태그 (Badges)**: 콤팩트한 직사각형 도형 래퍼 + `.v4-shape-text-content`
 - **임의의 비표준 태그 금지**: 에디터 시스템 엔진이 인식할 수 없는 임의의 커스텀 태그나 비표준 클래스를 남발하여 인스펙터 선택/편집이 마비되는 현상을 차단합니다.
 
@@ -113,6 +119,9 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 - **1600x900 캔버스 스크롤-프리 (Scroll-Free)**:
   - 캔버스는 기본 **`width: 1600px; height: 900px;`** 규격을 준수합니다.
   - 상단 헤더(Top: 20px, H: 50~60px) ➔ 본문 섹션(3~4개 논리적 블록)으로 위계를 세워, **브라우저 스크롤 없이 한 화면에 핵심 가치가 한눈에 완벽히 전달**되도록 여백(Breathing Room)을 유지합니다.
+- **상·하 교차 웨이브 인포그래픽 패턴 (Alternating Wave Timeline/Infographic)**:
+  - 마일스톤, 연간 로드맵, 다단계 여정 프로세스를 구성할 때는 항목들을 한 줄에 빽빽하게 나열하지 않고, **중앙 축을 기준으로 상단(홀수/짝수)과 하단으로 교차 배치**하는 웨이브 패턴을 권장합니다.
+  - 상단 블록과 하단 블록 간의 리듬감 있는 수직 여백과 곡선/직선 커넥터를 통해 1600x900 공간 활용도를 극대화하고 가독성을 확보합니다 ([04_Front_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/04_Front_System_Milestone_Timeline_900.html) 참조).
 
 ### 6. 절제된 컬러 및 포인트 강조 (Restrained Color Palette)
 - **무지개색 남발 금지**: 색상을 너무 난잡하게 여러 가지 섞어 쓰지 않습니다.

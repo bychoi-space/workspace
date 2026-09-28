@@ -31,6 +31,7 @@ $jsFiles = @(
     "assets/vctrl_iframe_drag.js",
     "assets/vctrl_iframe_ports.js",
     "assets/vctrl_presentation_pen.js",
+    "assets/vctrl_clipboard.js",
     "assets/vctrl_core.js",
     "assets/vctrl_smartguide.js",
     "assets/vctrl_responsive_smartguide.js",
@@ -40,6 +41,7 @@ $jsFiles = @(
     "assets/vctrl_color_picker.js",
     "assets/vctrl_inspector.js",
     "assets/vctrl_screen_manager.js",
+    "assets/vctrl_revision_history.js",
     "assets/vctrl_annotation_pins.js",
     "assets/vctrl_canvas_viewport.js",
     "assets/vctrl_properties.js",
@@ -53,6 +55,7 @@ $jsFiles = @(
     "assets/inspector/inspector_shapes.js",
     "assets/inspector/inspector_atoms.js",
     "assets/inspector/inspector_admin_settings.js",
+    "assets/inspector/inspector_text_formatter.js",
     "assets/vctrl_v4_addon.js"
 )
 
@@ -134,11 +137,20 @@ $proc.WaitForExit(15000)
 if (!$proc.HasExited) {
     try { $proc.Kill() } catch {}
 }
-Start-Sleep -Milliseconds 1000
+Start-Sleep -Milliseconds 1500
+try { $proc.Close() } catch {}
 
 if (Test-Path $tmpOut) {
     try {
-        $out = [System.IO.File]::ReadAllText($tmpOut, [System.Text.Encoding]::UTF8)
+        $out = ""
+        for ($retry = 0; $retry -lt 5; $retry++) {
+            try {
+                $out = [System.IO.File]::ReadAllText($tmpOut, [System.Text.Encoding]::UTF8)
+                break
+            } catch {
+                Start-Sleep -Milliseconds 1000
+            }
+        }
         if ($out -match '<div id="result">([\s\S]*?)<\/div>') {
             $resultJson = $matches[1]
             Write-Host "Result from Browser Engine: $resultJson"

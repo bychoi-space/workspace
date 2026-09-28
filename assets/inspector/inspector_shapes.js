@@ -143,6 +143,12 @@
         if (window.quillEditor && window.quillEditor.root) {
             window.quillEditor.root.style.textAlign = align;
         }
+        if (window._currentStickyFormat) {
+            window._currentStickyFormat.align = align;
+        }
+        if (window.quillEditor) {
+            window.quillEditor.format('align', align === 'left' ? false : align, 'silent');
+        }
         
         notifyIframe({
             type: 'LF_UPDATE_STYLE',
@@ -243,6 +249,9 @@
             syncVAlignBtns(s.vAlign || s.justifyContent || 'center');
             if (window.quillEditor && window.quillEditor.root) {
                 window.quillEditor.root.style.textAlign = curAlign;
+            }
+            if (window._currentStickyFormat) {
+                window._currentStickyFormat.align = curAlign;
             }
 
             // Paddings

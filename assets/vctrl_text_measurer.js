@@ -280,9 +280,21 @@ window.v4TextMeasurerScript = `
             });
         }
 
+        let lhVal = 1.2;
+        if (cell) {
+            const pWithLh = cell.querySelector('p[style*="line-height"]');
+            if (pWithLh && pWithLh.style.lineHeight) {
+                const parsed = parseFloat(pWithLh.style.lineHeight);
+                if (!isNaN(parsed) && parsed >= 0.8) lhVal = parsed;
+            } else if (cell.style.lineHeight) {
+                const parsed = parseFloat(cell.style.lineHeight);
+                if (!isNaN(parsed) && parsed >= 0.8) lhVal = parsed;
+            }
+        }
+
         const targetW = measured.textW + addedW;
         const targetH = measured.lineCount > 1 
-            ? Math.round(measured.fsPx * 1.2 * measured.lineCount) + addedH 
+            ? Math.round(measured.fsPx * lhVal * measured.lineCount) + addedH 
             : measured.textH + addedH;
 
         // PPT Text Box Center/Right Alignment Anchor Compensation:
@@ -331,12 +343,24 @@ window.v4TextMeasurerScript = `
     const fitTextBox = (c, measured, origW, origH) => {
         const addedW = 22; // 11px left + 11px right
         const addedH = 8;  // 4px top + 4px bottom
+        const cell = c.querySelector('.v4-editable-cell');
+
+        let lhVal = 1.2;
+        if (cell) {
+            const pWithLh = cell.querySelector('p[style*="line-height"]');
+            if (pWithLh && pWithLh.style.lineHeight) {
+                const parsed = parseFloat(pWithLh.style.lineHeight);
+                if (!isNaN(parsed) && parsed >= 0.8) lhVal = parsed;
+            } else if (cell.style.lineHeight) {
+                const parsed = parseFloat(cell.style.lineHeight);
+                if (!isNaN(parsed) && parsed >= 0.8) lhVal = parsed;
+            }
+        }
+
         const targetW = measured.textW + addedW;
         const targetH = measured.lineCount > 1 
-            ? (measured.fsPx * 1.2 * measured.lineCount) + addedH 
+            ? Math.round(measured.fsPx * lhVal * measured.lineCount) + addedH 
             : measured.textH + addedH;
-
-        const cell = c.querySelector('.v4-editable-cell');
         const align = c.getAttribute('data-align') || 
                       (cell && cell.getAttribute('data-align')) || 
                       (cell && cell.style.textAlign) || 

@@ -1,7 +1,39 @@
 # bychoi workspace를 위한 Antigravity / Gemini 에이전트 제약 조건
 
+## 🚨 [최우선 불변 규칙] 작업 착수 및 완료를 위한 7대 필수 게이트웨이 (7 Mandatory Gateways)
+> 에이전트는 사용자의 어떤 요청(신규 기능 개발, 버그 수정, 성능 개선, 분석, 리팩토링 등)을 수행하더라도, 
+> 코드를 수정하거나 명령어를 실행하기 전/후에 아래 7대 필수 게이트웨이를 무조건 통과해야 하며 어떠한 예외도 허용되지 않습니다.
+
+1. **[운영 시스템 무결성 보장] (Strict Production Integrity)**:
+   - 본 시스템은 실제 서비스 중인 실무 운영 시스템이다. 절대 실수나 데이터 유실이 없어야 한다.
+   - 땜질식 임시 가짜 데이터(Mock/Dummy Fallback)나 임의의 하드코딩 객체 주입을 전면 금지하며, 원본 데이터(`metadata.json`, 스크린 HTML 등)의 실체를 100% 보존하고 실제 디스크 데이터만을 정직하게 처리한다.
+
+2. **[사전 정밀 심층 분석 & 룰/스킬 확인 & 사전 계획 수립] (Deep Analysis & Plan First)**:
+   - 코드 한 줄이라도 수정하기 전에 관련 소스코드(`vctrl_*.js`, 스타일, 인스펙터 등)와 연관 스킬(`SKILL.md`) 및 시스템 룰(`AGENTS.md`)을 전수 분석한다.
+   - 변경 목적, 영향 범위, 구현 절차를 사전에 명확히 수립(대규모 작업 또는 사용자 요청 시 사전 계획서 작성)한 뒤 안전하게 착수한다.
+
+3. **[사이드이펙트 원천 차단] (Zero Side-Effects)**:
+   - 전역 이벤트 리스너(`mouseup`, `keydown` 등), 공통 통신 버스, 타 컴포넌트(도형, 아톰, 테이블 등) 렌더링에 간섭이 없도록 모듈 격리와 스코프 가드를 철저히 적용한다.
+   - 단일 기능 수정으로 인해 기존에 잘 동작하던 기능이 중단되는 회귀(Regression)를 원천 차단한다.
+
+4. **[스크립트/런타임 에러 0건] (Zero Script/Runtime Errors)**:
+   - 변수/함수 미정의(`ReferenceError`), `null`/`undefined` 속성 접근(`TypeError`), 이벤트 핸들러 누락 등으로 인한 브라우저 콘솔 에러를 100% 방지한다.
+   - 안전한 옵셔널 체이닝(`?.`)과 유효성 검증 가드를 필수로 둔다.
+
+5. **[백틱(템플릿 리터럴) 충돌 에러 0건] (Zero Backtick Syntax Collisions)**:
+   - `vctrl_iframe_script.js`, `vctrl_text_measurer.js`, `assets/templates.js` 등 파일 전체가 백틱(`` ` ``)으로 감싸져 부모 측에서 동적으로 평가(eval/srcdoc 주입)되는 파일 내부에서는 중첩 백틱(`` ` ``) 및 변수 보간(`${...}`) 사용을 전면 금지한다.
+   - 반드시 표준 따옴표(`'` 또는 `"`)와 문자열 연결 연산자(`+`)만을 사용하여 문법 충돌(`SyntaxError`)을 차단한다.
+
+6. **[구문/브래킷 에러 0건 및 자동 정적 검증 강제] (Zero Syntax Errors & Mandatory Verification)**:
+   - 중첩 괄호, 삼항 연산자, 블록 매칭 불일치로 인한 구문 에러를 원천 차단한다.
+   - 코드 수정 완료 후 사용자에게 보고하기 전에 반드시 `powershell -ExecutionPolicy Bypass -File scripts/check_syntax.ps1`을 자체 구동하여 전체 파일의 브래킷/백틱/구문 무결성이 100% 통과(0 Errors)되었음을 확인한 후 완료 보고한다.
+
+7. **[CORS 에러 0건 및 통신 프로토콜 준수] (Zero CORS Errors)**:
+   - 부모 창과 Iframe 간에 `contentDocument` 직접 접근 등 SOP(동일 출처 정책) 위반 및 CORS 차단을 유발하는 코드를 절대 작성하지 않는다.
+   - 반드시 표준 인터페이스인 `MessageHub` 및 `window.EditorBus`(`sendToIframe` / `sendToParent`)를 통해서만 안전하게 통신한다.
+
 ## 🤖 Gemini 3.8 Flash / Antigravity 에이전트 가이드라인
-- **자율 실행 및 로컬 자체 완결 (Autonomous Local Execution)**: 사용자의 수동 승인(Accept / Submit / Run Confirm) 절차를 완전히 배제하고 작업 속도를 극대화하기 위해, PowerShell 명령어 실행(`run_command`), 코드 수정, 파일 생성, 정적 검증, 디버깅 등의 모든 작업은 중간 질문이나 사용자 확인 대기 없이 에이전트가 자체 판단하여 무조건 자동으로 즉시 실행하고 로컬에서 끝까지 완결 후 결과만 명확히 보고합니다.
+- **자율 실행 및 로컬 자체 완결 (Autonomous Local Execution)**: 사용자의 수동 승인(Accept / Submit / Run Confirm) 절차를 완전히 배제하고 작업 속도를 극대화하기 위해, PowerShell 명령어 실행(`run_command`), 코드 수정, 파일 생성, 정적 검증, 디버깅 등의 모든 작업은 중간 질문이나 사용자 확인 대기 없이 에이전트가 자체 판단하여 무조건 자동으로 즉시 실행하고 로컬에서 끝까지 완결 후 결과만 명확히 보고합니다. (단, 상기 '7대 필수 게이트웨이' 사전/사후 검증 절차는 필수적으로 거칩니다.)
 - **PowerShell / 터미널 작업 무조건 자동 실행 (Unconditional Auto-Run)**: 터미널 명령어나 검증 스크립트 실행 시 사용자에게 확인을 요청하지 않고 자율적으로 즉시 구동하여 신속하게 문제 해결 및 검증을 완료합니다.
 - **온디맨드 자동 GitHub 배포 (Automated On-Demand Deployment)**: GitHub 원격 저장소(`main`)로의 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 즉시 자동으로 커밋 및 푸시하여 동기화를 완료합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지하며, 브라우저 UI 측의 자동 저장 커밋으로 인한 충돌을 방지하기 위해 푸시 전 항상 `git pull --rebase origin main`을 선행하여 안전하게 동기화합니다.)
 - **엄격한 규칙 이행**: 사용자가 지정한 아키텍처 규칙, SSOT(Single Source of Truth), 인코딩 및 마스킹 표준을 예외 없이 100% 준수해야 합니다.
@@ -18,8 +50,14 @@
     - **스크린 저장 및 살균 SSOT 연동**: 스크린 HTML 저장 및 파일 내보내기 시 수동 DOM 정리 대신 반드시 `window.ScreenSanitizer.cleanDOM` 단일 진실 공급원을 호출하여 깨끗하고 일관된 마크업 저장을 보장합니다.
   - **`vctrl_screen_manager.js` (Screen Manager - Parent Side)**:
     - **역할**: 화면 순서 변경(`screenOrder`), 화면 추가(`+`), 복제, 삭제, 활성 스크린 전환 및 메타데이터 저장 동기화를 전담합니다.
+  - **`vctrl_revision_history.js` (Project Revision History Engine - Parent Side)**:
+    - **역할**: 프로젝트 재개정 이력 전용 도메인 모듈. 재개정 이력 팝업 모달(`#history-modal`), 버전/일자/작성자/개발자/변경내용 인라인 추가/수정/삭제 렌더링(`window.renderHistoryPopup`) 및 메타데이터 동기화를 전담합니다.
+  - **`vctrl_clipboard.js` (Clipboard & URL Manager - Parent Side)**:
+    - **역할**: 프로젝트 URL 및 스크린 공유 URL 복사, 헤더 드롭다운 메뉴 제어, 시스템 클립보드 비동기 복사 fallback(`copyTextToClipboard`)을 전담합니다.
+  - **`vctrl_component_data.js` (Component Definition SSOT - Parent Side)**:
+    - **역할**: V4 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, SVG 아이콘, 아톰 템플릿 마크업 및 카테고리 메타데이터를 전담 정의합니다.
   - **`vctrl_canvas_viewport.js` (Canvas Viewport Engine - Parent Side)**:
-    - **역할**: 시스템의 '손'. 캔버스 줌(`adjustZoom`), 팬(`updateTransform`), 화면 맞춤/100% 뷰 스냅(`toggleCrispView`, `centerView`), 스페이스바 패닝, 풀스크린 토글 및 전역 뷰포트 상태 관리. (기존 레거시 `vctrl_v3.js`는 폐기되고 본 모듈로 전면 대체되었습니다.)
+    - **역할**: 시스템의 '손'. 캔버스 줌(`adjustZoom`), 팬(`updateTransform`), 화면 맞춤/100% 뷰 스냅(`toggleCrispView`, `centerView`), 스페이스바 패닝, 풀스크린 토글 및 전역 뷰포트 상태 관리.
   - **`vctrl_annotation_pins.js` / `vctrl_responsive_pins.js` (Annotation Engine)**:
     - **역할**: 일반 캔버스 및 반응형 프레임 내 핀 번호 어노테이션 마커 렌더링, 위치 추종 및 메타데이터 동기화 전담. 핀 재정렬 로직은 `vctrl_responsive_pins.js`의 `window.reorderAllPins` 및 `LF_REORDER_PINS`로 완전 단일화(SSOT)되어 있습니다.
   - **`vctrl_connectors.js` (Connector Engine - Parent Side)**:
@@ -30,7 +68,7 @@
     - **역할**: 시스템의 '근육'. iframe 내부의 DOM 직접 조작, 기본 이벤트 리스너 바인딩, 커넥터 조작 핸들 이벤트 디스패칭(`LF_CONNECTOR_HANDLE_MOVE`) 등을 전담합니다.
     - **메시지 레지스트리 디스패처 (`window.v4MessageHandlers`)**: 거대한 `if-else` 분기문 대신 코어 핸들러 테이블 맵(`v4IframeCoreHandlers`)과 전역 `window.v4MessageHandlers` 레지스트리를 통한 초경량(10줄) 이벤트 디스패처 구조를 따릅니다. 신규 메시지 타입 추가 시 거대 if-else를 확장하지 않고 핸들러 테이블에 순수 함수로 등록해야 합니다. (백틱 충돌 0건 원칙 엄격 준수)
   - **`vctrl_iframe_drag.js` (Drag/Resize Engine - Iframe Side)**:
-    - **역할**: iframe 내부 요소의 마우스 드래그 이동 및 리사이즈 조작 인터랙션을 전담합니다.
+    - **역할**: iframe 내부 요소의 마우스 드래그 이동 및 리사이즈 조작 인터랙션을 전담합니다. 브라우저가 iframe 내부로 전달하는 마우스 이벤트(`e.clientX`, `e.clientY`)는 이미 언스케일드 논리 좌표계이므로, 드래그/리사이즈 이동량(`dx`, `dy`)에 절대 `/ scale`을 나누지 않는 순수 1:1 논리 픽셀 불변성을 유지해야 합니다.
   - **`vctrl_iframe_grid.js` / `vctrl_iframe_accordion.js` / `vctrl_iframe_tab.js` / `vctrl_v4_addon.js` / `vctrl_object_shape.js` / `vctrl_object_connector.js`**:
     - **역할**: 특수 쉐입, 커넥터 객체, 그리드 테이블, 아코디언, 탭 계층 구조 컴포넌트의 전용 동적 렌더링 및 스타일 핸들링을 분리 전담합니다.
   - **`vctrl_undo.js` (Undo Layer - Iframe Side)**:
@@ -38,12 +76,13 @@
   - **`vctrl_design_system.js` (Design Observer - Iframe Side)**:
     - **역할**: 1.6px 보더 두께 유지, % 좌표의 px 자동 마이그레이션, img-to-div 전환 및 아톰 크기 자동 보정(Design System)을 전담합니다.
   - **`vctrl_shortcuts.js` (Interaction Layer - Iframe Side)**:
-    - **역할**: 키보드 핫키 단축키 바인딩 및 크로스 스크린 복사/붙여넣기 연동을 전담합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
+    - **역할**: 키보드 핫키 단축키 바인딩, 크로스 스크린 복사/붙여넣기(`window.top.__lf_global_clipboard__`), 및 도형 서식 복사/붙여넣기(`Ctrl+Shift+C` / `Ctrl+Shift+V`, `window.top.__lf_global_style_clipboard__`) 연동을 전담합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
   - **`vctrl_grouping.js` (Interaction Layer)**:
     - **역할**: 다중 요소 관리자. 드래그 범위 선택(Marquee), 다중 선택 상태(`selectedIds`), 그룹 이동/삭제/그룹화 연산 로직 전담.
   - **`vctrl_inspector.js` 및 `assets/inspector/*` (UI Controller & Domain Inspectors)**:
-    - **역할**: 시스템의 '얼굴'. `vctrl_inspector.js`는 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 및 플로팅 카드를 총괄하며, 각 컴포넌트별 상세 속성 제어는 분리된 도메인 인스펙터(`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`)가 전담합니다.
+    - **역할**: 시스템의 '얼굴'. `vctrl_inspector.js`는 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 및 플로팅 카드를 총괄하며, 각 컴포넌트별 상세 속성 제어는 분리된 도메인 인스펙터(`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_admin_settings.js`, `inspector_text_formatter.js`)가 전담합니다.
     - **`inspector_atoms.js` (`window.InspectorAtoms`)**: 체크박스/라디오, 텍스트박스/텍스트에어리어, 서치바, 데이트피커 등 아톰 속성 인스펙터 동기화 전담 SSOT 모듈.
+    - **`inspector_text_formatter.js` (`window.InspectorTextFormatter`)**: Quill 에디터와 캔버스 텍스트 셀 간 연속 공백 보존(`preserveConsecutiveSpaces`, 선행/다중 공백 NBSP 변환) 및 폰트 사이즈 인라인 정규화(`normalizeHtmlForQuill`)를 전담합니다.
   - **`vctrl_common.js` (Common Bus, Sanitizer & Utilities)**:
     - **역할**: 
       1. 부모-Iframe 통신 인터페이스: `window.EditorBus`(`sendToIframe`, `sendToParent`)
@@ -51,7 +90,7 @@
       3. 전역 화면 살균 SSOT: `window.ScreenSanitizer` (`splitStyleRules`, `cleanEmptyStyleRules`, `cleanDOM`)
       4. 반응형 문서 판별 SSOT: `isResponsiveDocument(doc)`
   - **`vctrl_component_library.js` & `vctrl_component_inserter.js` (Library & Insertion Engine)**:
-    - **역할**: 사이드바 라이브러리 목록 렌더링(`renderV4Shapes`, `renderAtomicLibrary`), 국영문 하이브리드 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성을 전담합니다. `viewer.html`에서 `vctrl_inspector.js`보다 먼저 로드되어 라이브러리 UI 바인딩의 SSOT를 책임집니다.
+    - **역할**: 사이드바 라이브러리 목록 렌더링(`renderV4Shapes`, `renderAtomicLibrary`, `renderIllustrationLibrary`), 2열 대칭 일러스트 라이브러리, 사이드바 라이브러리 3대 아코디언(`V4SidebarAccordion`: ICON LIBRARY, ILLUSTRATION, COMPONENTS 3개 섹션 기본 접힘(`is-collapsed`) 시작 및 검색 자동 펼침/복원, `localStorage` 영속화), 스크린 배경 설정 모달(`openCanvasBackgroundModal`) 및 저채도 프리셋 연동, 국영문 하이브리드 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성을 전담합니다. `viewer.html`에서 `vctrl_inspector.js`보다 먼저 로드되어 라이브러리 UI 바인딩의 SSOT를 책임집니다.
   - **`vctrl_pdf_exporter.js` (PDF Export Engine)**:
     - **역할**: `metadata.json`의 `screenOrder` 기준 전체 스크린 일괄 고해상도 PDF 결합 생성 및 장문 캔버스 캡처 전담.
   - **`vctrl_presentation_pen.js` (Presentation Drawing Engine)**:
@@ -121,7 +160,7 @@
   - 11. **실행 취소 / 재실행 (Undo / Redo Shortcuts)**: `Ctrl + Z` (실행 취소), `Ctrl + Y` 및 `Ctrl + Shift + Z` (다시 실행)를 지원합니다.
   - 12. **캔버스 뷰포트 및 도구 단축키 (Parent Viewport Shortcuts)**:
     - `Space`: 누르고 있는 동안 임시 핸드 툴(패닝) 활성화, 떼면 복귀.
-    - `1` 또는 `Home`: 100% 선명 뷰 ↔ 화면 맞춤(Fit) 모드 즉시 전환 (`toggleCrispView`).
+    - `` ` `` 또는 `Home`: 100% 선명 뷰 ↔ 화면 맞춤(Fit) 모드 즉시 전환 (`toggleCrispView`). 전역 Iframe 포커스 격리를 극복하여 확대 상태에서도 즉시 토글 지원.
     - `F`: 풀스크린 모드 토글 (`toggleFullscreen`).
     - `R`: 우측 사이드바 패널 열기/닫기 토글 (`toggleSidebar('right')`).
     - `V`: 선택 도구 모드, `H`: 핸드 도구 모드, `T`: 원터치 텍스트 생성.
@@ -129,6 +168,10 @@
     - `Shift + Arrow`: 화살표 이동 시 10px 고속 이동 (일반 Arrow는 1px 정밀 Nudge).
     - `Escape`: 인라인 텍스트 편집 탈출 및 오브젝트 다중 선택 일괄 해제.
     - `Shift + Drag (풀스크린 모드)`: 프레젠테이션 형광펜/레이저 포인터 드로잉.
+  - 13. **도형 서식 복사 및 붙여넣기 보장 (Format Painter Shortcuts - `Ctrl + Shift + C` / `Ctrl + Shift + V`)**:
+    - **단축키 및 인터랙션**: 선택된 오브젝트의 스타일 서식을 **`Ctrl + Shift + C`**로 복사하고, 대상 컴포넌트(단일 또는 N개 다중 선택)에 **`Ctrl + Shift + V`**로 일괄 적용합니다. 플로팅 인스펙터(`#floating-inspector-card`) 내 `[서식 복사]` 및 `[서식 붙여넣기]` 버튼과 완벽히 동기화됩니다 (단일 그룹 선택 시에는 자동 미노출).
+    - **서식 추출 범위**: 도형 스타일(배경색, 테두리 색상/두께/스타일/반경, 투명도)뿐만 아니라, 내부 하위 텍스트 셀(`.v4-editable-cell`, `.v4-shape-text-content`) 및 인라인 서식의 타이포그래피(글꼴 패밀리, 폰트 크기, 글자색, 두께, 정렬), 테이블 헤더/본문 색상, 아이콘 컬러까지 심층 추출하여 정밀 복원합니다.
+    - **전역 SSOT 및 실행 취소**: 스크린 iframe 격리를 극복하기 위해 최상위 부모 창 `(window.top || window).__lf_global_style_clipboard__`를 단일 진실 공급원으로 활용하며, 서식 주입 전 `V4UndoManager.saveState()`를 자동 호출하여 **`Ctrl + Z` (Undo)로 즉시 롤백**할 수 있습니다. 서식 복사/적용 상태는 화면 상단에 토스트 알림(`LF_SHOW_TOAST`)으로 즉시 피드백됩니다.
 - **통합 좌표 및 단위 표준 (Unified Coordinate Standards)**:
   - **No-Measure 전략**: 브라우저의 `getBoundingClientRect()` 대신 객체의 `style.left/top` 데이터가 Single Source of Truth(SSOT)가 되도록 합니다.
   - **Pure Data 연산**: 모든 이동/정렬 연산은 순수 픽셀(`px`) 산술로 수행하여 줌이나 레이아웃 방식에 영향을 받지 않는 절대적인 정확도를 보장합니다.
@@ -183,7 +226,53 @@
     - **3단계 (완전 가변형 - Textbox, Textarea, Search Bar, Selectbox, Image, Grid, Accordion, Popup, Shape)**:
       - 캔버스 크기 조절 점(`.lf-resizer`) 및 인스펙터 프로퍼티 (`Width / Height`): **모두 노출 유지**
 
+- **🖼️ 스크린 배경 설정 시스템 (Screen Background Setting Architecture & SSOT)**:
+  - **최하단 무간섭 레이어 (`#canvas_bg_layer`)**:
+    - 캔버스 배경 이미지는 iframe 내부 캔버스 루트(`#canvas` 또는 `.canvas`) 최하단 자식으로 배치되는 `<div id="canvas_bg_layer">` 및 하위 `<img id="canvas_bg_img">`로 렌더링됩니다.
+    - **오브젝트 간섭 원천 차단**: 캔버스 상의 모든 오브젝트 클릭, 마키 드래그(Marquee), 커넥터 앵커링 조작에 일절 영향을 주지 않도록 **`pointer-events: none !important; user-select: none; overflow: hidden;`** 및 `object-fit: cover`를 절대 불변 규칙으로 강제합니다.
+  - **사이드바 LIBRARY 모달 & 퀵 프리셋 연동**:
+    - 우측 사이드바 `LIBRARY` 최상단 **`[배경 설정]`** 원터치 퀵 버튼 클릭 시 배경 설정 모달이 호출됩니다.
+    - **기본 저채도 모노크롬 프리셋 2종 탑재**:
+      1. `이커머스 FRONT UI 개선` (`assets/illustrations/ecommerce_ui_bg.jpg`): 쇼핑몰 상품/장바구니 와이어프레임 & 그리드 모티프
+      2. `백엔드 / ADMIN 시스템 고도화` (`assets/illustrations/admin_backend_bg.jpg`): 어드민 대시보드 & 서버 API 아키텍처 모티프
+    - **투명도(Opacity) 실시간 슬라이더**: 0% ~ 100% 범위에서 배경 이미지 투명도를 실시간 조절할 수 있습니다.
+    - **사용자 커스텀 이미지 업로드**: 클라이언트 브라우저 Canvas를 통해 1920px max 해상도, JPEG 85% (~200KB)로 자동 경량화 압축 후 base64 인라인 주입을 지원합니다.
+  - **메시지 통신 및 Undo 지원**:
+    - 부모 ➔ Iframe: `LF_SET_CANVAS_BACKGROUND` (`action: 'set' | 'remove' | 'update_opacity'`, `imageUrl`, `opacity`)
+    - Iframe ➔ 부모: `LF_CANVAS_BACKGROUND_UPDATED` (`hasBg`, `url`, `opacity`)
+    - 배경 변경 시 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z` 실행 취소를 지원합니다.
 
+- **🎨 일러스트 라이브러리 및 3D/2D 에셋 표준 규격 (Illustration Library & Visual Assets Standards)**:
+  - **단일 진실 공급원 규칙 문서**: 일러스트 제작 7대 불변 원칙, 규격, 메타데이터 인터페이스는 **[docs/rules_illustration_library.md](file:///c:/Users/sisun/ai_work/docs/rules_illustration_library.md)**에서 통합 관리합니다.
+  - **2열 대칭 반응형 그리드 (`#illustration-library-container`)**:
+    - 우측 사이드바 `LIBRARY` 내 `ILLUSTRATION` 카테고리에서 2열 그리드로 렌더링되며, 4대 논리 그룹별 **`.illustration-group-divider`** 섹션 헤더(제목 + 배지 카운트)를 제공합니다.
+    - **표시 명칭 표준화**: 2열 카드(~130px) 가로폭에서 말줄임이 발생하지 않도록 카드 라벨은 `[태그] 핵심어` (예: `[3D] 상품관리`, `[여정 01] 입장`, `[아토믹 01] Atoms`)로 간결화하고, 상세 설명은 마우스 호버 `title` 툴팁으로 제공합니다.
+    - **국영문 하이브리드 통합 검색**: `item.name`, `item.title`, `item.koName`(동의어 키워드)을 모두 스캔하여 한글/영문 검색어 입력 시 즉각 필터링됩니다.
+  - **4대 스타일 그룹 분류 및 정렬 순서 (총 25종)**:
+    1. **🏢 Group 1: 3D Admin 시스템 (7종)**: 상품관리(PIM) ➔ 전시관리(CMS) ➔ 주문결제(Order) ➔ 클레임관리(Claim) ➔ 물류배송(Logistics) ➔ 회원멤버십(Membership) ➔ 프로모션(Promotion) (`240px × 240px` 투명 PNG).
+    2. **📐 Group 2: 2D Admin 시스템 (3종)**: 상품관리(PIM) ➔ 전시관리(CMS) ➔ 배송물류(Logistics) (`240px × 240px` 투명 PNG).
+    3. **🛍️ Group 3: 고객 구매 여정 (8종)**: 01.입장 ➔ 02.탐색 ➔ 03.선택 ➔ 04.멤버십 ➔ 05.할인혜택 ➔ 06.주문결제 ➔ 07.배송수령 ➔ 08.반품교환 (`200px × 200px` 투명 PNG).
+    4. **🧬 Group 4: 아토믹 디자인 시스템 (7종)**: 01.Atoms ➔ 02.Molecules ➔ 03.Organisms ➔ 04.Layout ➔ 05.Pages (높이 `240px` 통일) 및 아토믹 구조도 ➔ 스토리북 허브 (`320px × 240px` 투명 PNG).
+  - **표준 3계층 컴포넌트 삽입 규격**:
+    - 캔버스 삽입 시 `.lf-component` 최외곽 래퍼 ➔ `.v4-illustration-container` ➔ `<img style="object-fit: contain; pointer-events: none; user-select: none;">` 표준 3계층 구조로 렌더링되며, 캔버스 드래그, Nudge 이동, 크기 조절 점(`.lf-resizer`), `Delete`, `Ctrl+Z`를 100% 보장합니다.
+  - **라이브러리 접기/펼치기 아코디언 및 상태 영속화 (`V4SidebarAccordion`)**:
+    - `ICON LIBRARY` 및 `ILLUSTRATION` 헤더 클릭 시 개별 영역을 자유롭게 접고 펼칠 수 있는 독립 아코디언 컨트롤러(`assets/vctrl_component_library.js`) 탑재.
+    - **상태 영속화 (`localStorage`)**: 사용자 설정 접힘 상태(`vctrl_sidebar_accordion_state`)를 로컬에 보존하여 화면 새로고침(F5) 후에도 접힘 상태를 100% 유지합니다.
+    - **검색 시 자동 펼침 및 복원 (Search Resilience)**: 검색어 입력 시 매칭 결과가 있는 섹션은 자동으로 펼쳐서 즉각 노출하고, 검색어를 지우면 사용자가 설정해둔 원래 접힘 상태로 무결하게 복구됩니다.
+    - **실시간 에셋 수량 뱃지 & Chevron 회전**: 헤더별 총 수량 뱃지(아이콘 `36`, 일러스트 `25`) 및 180도 회전 Chevron 마이크로 애니메이션 제공.
+    - **일러스트 4대 스타일 서브 그룹 아코디언**: 일러스트 내부의 각 스타일 구분선(`.illustration-group-divider`) 클릭 시 해당 그룹(`3d_admin`, `2d_admin`, `journey`, `atomic`)의 카드들만 개별적으로 접고 펼치는 2단계 아코디언을 지원합니다.
+
+- **💾 로컬 일일 데이터 자동 백업 및 복원 배치 시스템 (Daily Data Backup & Protection Engine SSOT)**:
+  - **자동 백업 엔진 ([scripts/daily_auto_backup.ps1](file:///c:/Users/sisun/ai_work/scripts/daily_auto_backup.ps1))**:
+    - 매일 18:00에 윈도우 작업 스케줄러(`AiWork_Daily_Project_Backup`)를 통해 무인 백그라운드 자동 구동됩니다.
+    - `FileShare.ReadWrite` 스트림 복사 방식을 채택하여 에디터 브라우저가 화면을 편집/저장 중이더라도 파일 잠금(Locking) 충돌 없이 안전하게 임시 스테이징 후 UTF-8 표준 ZIP 아카이브로 압축합니다.
+    - 아카이브 생성 즉시 내부 엔트리 수, 프로젝트 메타데이터, 스크린 파일 존재 여부를 자체 전수 검증(Self-Verification)하며, 실패 시 롤백합니다.
+    - **보존 정책 (Retention Policy)**: 기본 30일 보관, 최소 5개 이상의 최신 백업 아카이브를 강제 보존하여 유실을 원천 방지합니다.
+  - **스케줄러 관리자 ([scripts/setup_daily_schedule.ps1](file:///c:/Users/sisun/ai_work/scripts/setup_daily_schedule.ps1))**:
+    - `install_schedule.bat` / `uninstall_schedule.bat`을 통해 원클릭 등록/해제할 수 있으며, PC가 꺼져 있어 실행 시간을 놓친 경우 다음 부팅 시 즉시 실행(`-StartWhenAvailable`)하는 캐치업 로직을 탑재했습니다.
+  - **안전 복원 엔진 ([scripts/restore_data.ps1](file:///c:/Users/sisun/ai_work/scripts/restore_data.ps1))**:
+    - `restore.bat` 실행 시 대화형 목록에서 특정 날짜 백업본을 선택하여 복원할 수 있으며, 복원 실행 전 현재 `data/` 상태를 `_pre_restore_safety_*` 폴더에 1차 안전 백업한 후 덮어쓰므로 언제든지 복원 전 상태로 되돌릴 수 있습니다.
+  - **설정 SSOT ([backup_config.json](file:///c:/Users/sisun/ai_work/backup_config.json))**: 백업 소스, 목적지(`C:\ai_work_backups\daily`), 실행 시각, 보존 주기, 윈도우 토스트 알림 여부를 통합 제어합니다.
 
 
 ## 🛡️ 보안 및 통신 규칙 (매수 중요)
@@ -192,7 +281,13 @@
 
 ## 📐 스크린 에이전트 직접 제작/빌드 시 7대 불변 대원칙 (Screen Authoring Standards)
 > AI가 사용자 요청으로 워크스페이스 에디터의 스크린(HTML)을 직접 그릴 때는 반드시 `workspace-editor-screen-authoring` 스킬과 아래 7대 원칙을 100% 준수해야 합니다.
-> - **참조 벤치마크 스크린**: [10_Product_Ranking_Rules_850.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/10_Product_Ranking_Rules_850.html), [01_Benchmark_Report_382.html](file:///c:/Users/sisun/ai_work/data/p_bujl8/01_Benchmark_Report_382.html)
+> - **참조 벤치마크 스크린 (SSOT Benchmark Screens)**:
+>   1. [03_Admin_System_Development_Roadmap_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/03_Admin_System_Development_Roadmap_900.html): 어드민 시스템 로드맵 (100% 원자적 오브젝트 분리 + 3D 도메인 일러스트 결합)
+>   2. [04_Front_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/04_Front_System_Milestone_Timeline_900.html): 프론트 중장기 마일스톤 (상·하 교차 웨이브 인포그래픽 + `#canvas_bg_layer` 무간섭 배경 적용)
+>   3. [05_Admin_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/05_Admin_System_Milestone_Timeline_900.html): 어드민 시스템 7단계 타임라인 인포그래픽
+>   4. [10_Product_Ranking_Rules_850.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/10_Product_Ranking_Rules_850.html): 상품 랭킹 산정 룰 프로세스 & 정책 다이어그램
+>   5. [11_Daily_Ranking_Batch_Percentile_851.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/11_Daily_Ranking_Batch_Percentile_851.html): 일일 랭킹 배치 파이프라인 & 백분위수 정규화 시뮬레이션 테이블 (최소 13px 폰트 규격 엄수)
+>   6. [01_Benchmark_Report_382.html](file:///c:/Users/sisun/ai_work/data/p_bujl8/01_Benchmark_Report_382.html): 이커머스 주문서 최대 할인 벤치마크 리포트
 - **1. 사실 기반 데이터 전용 (Fact-based Data Only)**: 무조건 사실 기반 데이터로만 스크린을 그린다. 거짓된 데이터나, AI가 상상하는 값을 수치화로 넣지 않는다. (환각 금지, 기획서/요청 데이터 100% 팩트 기반)
 - **2. LIBRARY 표준 오브젝트 100% 활용 (Native Library Objects Only)**: 스크린에 존재하는 모든 오브젝트는 LIBRARY에 존재하는 도형(`.v4-shape`), 아톰, 아이콘(`.lf-icon` SVG)을 활용한다. 비표준 임의 HTML 태그나 커스텀 스타일 클래스는 금지한다.
 - **3. 최소 단위 원자적 분리/파편화 (Atomic Granularity & Separation)**: 스크린을 구성하는 오브젝트는 최소 단위로 잘게 쪼개져서 파편화되어야 한다. 사용자가 캔버스 위에서 직접 내용을 클릭하여 수정하기 원활하게 하기 위함이다. 카드 1개를 구성하더라도 [배경 쉐입] + [독립 아이콘] + [독립 타이틀] + [독립 뱃지] + [독립 설명]으로 각각의 `.lf-component`로 완전 분리 배치해야 한다.

@@ -151,12 +151,32 @@ window.highlightActive = function(btn, isActive) {
 
 window.rgbToHex = function(rgb) {
     if (!rgb || rgb === "transparent" || rgb === "none" || rgb.includes("rgba(0, 0, 0, 0)")) return null;
-    if (rgb.startsWith('#')) return rgb;
-    const matches = rgb.match(/\d+/g);
+    if (typeof rgb === "string" && rgb.startsWith('#')) return rgb;
+    
+    // 1) var(...) CSS variable expression defense: extract fallback hex or rgb
+    if (typeof rgb === "string" && rgb.includes('var(')) {
+        const hexMatch = rgb.match(/#[0-9a-fA-F]{3,8}/);
+        if (hexMatch) return hexMatch[0];
+        const rgbMatch = rgb.match(/rgba?\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+/i);
+        if (rgbMatch) rgb = rgbMatch[0] + ')';
+        else return null;
+    }
+
+    // 2) Strict rgba?(r, g, b) format parsing
+    const m = typeof rgb === "string" ? rgb.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i) : null;
+    if (m) {
+        const r = Math.min(255, parseInt(m[1], 10)).toString(16).padStart(2, "0");
+        const g = Math.min(255, parseInt(m[2], 10)).toString(16).padStart(2, "0");
+        const b = Math.min(255, parseInt(m[3], 10)).toString(16).padStart(2, "0");
+        return "#" + r + g + b;
+    }
+
+    // 3) Fallback digit extraction
+    const matches = typeof rgb === "string" ? rgb.match(/\d+/g) : null;
     if (!matches || matches.length < 3) return "#ffffff";
-    const r = Math.min(255, parseInt(matches[0])).toString(16).padStart(2, "0");
-    const g = Math.min(255, parseInt(matches[1])).toString(16).padStart(2, "0");
-    const b = Math.min(255, parseInt(matches[2])).toString(16).padStart(2, "0");
+    const r = Math.min(255, parseInt(matches[0], 10)).toString(16).padStart(2, "0");
+    const g = Math.min(255, parseInt(matches[1], 10)).toString(16).padStart(2, "0");
+    const b = Math.min(255, parseInt(matches[2], 10)).toString(16).padStart(2, "0");
     return "#" + r + g + b;
 };
 
@@ -194,6 +214,25 @@ window.hexToRgba = function(hex, opacity) {
 window.EditorBus.rgbToHex = window.rgbToHex;
 window.EditorBus.hexToRgb = window.hexToRgb;
 window.EditorBus.hexToRgba = window.hexToRgba;
+
+// Universal Screen Category Data SSOT
+window.getCategoryData = function(type) {
+    const categories = {
+        'cover': { label: 'COVER', code: 'CO', class: 'badge-cover' },
+        'architecture': { label: 'ARCH', code: 'AR', class: 'badge-architecture' },
+        'plan': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
+        'plan-delivery': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
+        'case-study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
+        'case_study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
+        'ui': { label: 'UI', code: 'UI', class: 'badge-ui' },
+        'responsive-ui': { label: 'PC+MO', code: 'PC', class: 'badge-responsive-ui' },
+        'mobile-ui': { label: 'MOBILE', code: 'MO', class: 'badge-mobile-ui' },
+        'admin': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
+        'admin-nbos': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
+        'admin-onesphere': { label: 'ADMIN', code: 'AD', class: 'badge-admin' }
+    };
+    return categories[type] || { label: 'ETC', code: (type || 'ET').slice(0, 2).toUpperCase(), class: 'badge-default' };
+};
 
 window.showToast = function(message, type = 'success') {
     let container = document.getElementById('v4-toast-container');
@@ -367,12 +406,32 @@ window.v4CommonScript = `
     // Universal RGB to HEX Converter
     window.rgbToHex = function(rgb) {
         if (!rgb || rgb === "transparent" || rgb === "none" || rgb.includes("rgba(0, 0, 0, 0)")) return null;
-        if (rgb.startsWith('#')) return rgb;
-        const matches = rgb.match(/\\d+/g);
+        if (typeof rgb === "string" && rgb.startsWith('#')) return rgb;
+        
+        // 1) var(...) CSS variable expression defense: extract fallback hex or rgb
+        if (typeof rgb === "string" && rgb.includes('var(')) {
+            const hexMatch = rgb.match(/#[0-9a-fA-F]{3,8}/);
+            if (hexMatch) return hexMatch[0];
+            const rgbMatch = rgb.match(/rgba?\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+/i);
+            if (rgbMatch) rgb = rgbMatch[0] + ')';
+            else return null;
+        }
+
+        // 2) Strict rgba?(r, g, b) format parsing
+        const m = typeof rgb === "string" ? rgb.match(/rgba?\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)/i) : null;
+        if (m) {
+            const r = Math.min(255, parseInt(m[1], 10)).toString(16).padStart(2, "0");
+            const g = Math.min(255, parseInt(m[2], 10)).toString(16).padStart(2, "0");
+            const b = Math.min(255, parseInt(m[3], 10)).toString(16).padStart(2, "0");
+            return "#" + r + g + b;
+        }
+
+        // 3) Fallback digit extraction
+        const matches = typeof rgb === "string" ? rgb.match(/\\d+/g) : null;
         if (!matches || matches.length < 3) return "#ffffff";
-        const r = Math.min(255, parseInt(matches[0])).toString(16).padStart(2, "0");
-        const g = Math.min(255, parseInt(matches[1])).toString(16).padStart(2, "0");
-        const b = Math.min(255, parseInt(matches[2])).toString(16).padStart(2, "0");
+        const r = Math.min(255, parseInt(matches[0], 10)).toString(16).padStart(2, "0");
+        const g = Math.min(255, parseInt(matches[1], 10)).toString(16).padStart(2, "0");
+        const b = Math.min(255, parseInt(matches[2], 10)).toString(16).padStart(2, "0");
         return "#" + r + g + b;
     };
 

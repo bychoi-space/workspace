@@ -236,6 +236,14 @@ window.v4Script = `
         // Grid UI Atom Detection
         const isGrid = isGroup ? false : (!!c.querySelector('.v4-grid-container') || c.classList.contains('v4-grid-container'));
         const gridContainer = isGroup ? null : (c.querySelector('.v4-grid-container') || (isGrid ? c : null));
+
+        // Mouse Cursor Atom Detection
+        const isCursor = isGroup ? false : (!!c.querySelector('.v4-cursor-container') || c.classList.contains('v4-cursor-container'));
+        const cursorContainer = isGroup ? null : (c.querySelector('.v4-cursor-container') || (isCursor ? c : null));
+        const cursorType = cursorContainer ? (cursorContainer.getAttribute('data-cursor-type') || 'default') : 'default';
+        const cursorText = cursorContainer ? (cursorContainer.getAttribute('data-cursor-text') || cursorContainer.querySelector('.v4-cursor-text')?.innerText || 'Click Event') : 'Click Event';
+        const showCursorText = cursorContainer ? (cursorContainer.getAttribute('data-show-text') !== 'false') : true;
+        const cursorBadgeStyle = cursorContainer ? (cursorContainer.getAttribute('data-badge-style') || 'dark') : 'dark';
         const gridHeaders = gridContainer ? Array.from(gridContainer.querySelectorAll('.v4-grid-header-row .v4-grid-cell')).slice(1).map(cell => cell.innerText.replace(' ⇅', '')) : [];
         const gridRowCount = gridContainer ? (parseInt(gridContainer.getAttribute('data-row-count')) || 0) : 0;
         const gridShowPagination = gridContainer ? gridContainer.getAttribute('data-pagination') !== 'false' : true;
@@ -561,6 +569,11 @@ window.v4Script = `
             isToggle: isToggle,
             toggleChecked: toggleChecked,
             toggleColor: toggleColor,
+            isCursor: isCursor,
+            cursorType: cursorType,
+            cursorText: cursorText,
+            showText: showCursorText,
+            badgeStyle: cursorBadgeStyle,
             html: textCell ? textCell.innerHTML : (shape ? (shape.querySelector('.v4-shape-text-content')?.innerHTML ?? shape.querySelector('.v4-shape-text-overlay')?.innerHTML ?? shape.innerHTML) : (table ? table.innerHTML : "")),
             isGroup: c.classList.contains('lf-group'),
             w: parseFloat(c.style.width) || c.offsetWidth || 200,
@@ -576,7 +589,11 @@ window.v4Script = `
                     const cell = textCell || (shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : null);
                     if (cell) {
                         const coloredSpan = cell.querySelector('[style*="color"]');
-                        const col = (coloredSpan && coloredSpan.style.color) || _getVal(cell, "color");
+                        let col = (coloredSpan && coloredSpan.style.color) || _getVal(cell, "color");
+                        if (col && typeof col === 'string' && col.includes('var(')) {
+                            const compCol = window.getComputedStyle(coloredSpan || cell).color;
+                            if (compCol) col = compCol;
+                        }
                         if (col && col !== 'inherit' && col !== 'initial' && col !== 'transparent') return window.rgbToHex(col);
                     }
                     if (buttonEl) return window.rgbToHex(_getVal(buttonEl, "color"));
@@ -604,6 +621,15 @@ window.v4Script = `
                     }
                     if (inputContainer) return _getVal(inputContainer, "fontFamily") || "inherit";
                     return "inherit";
+                })(),
+                lineHeight: (function() {
+                    const cell = textCell || (shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : null);
+                    if (cell) {
+                        const lhP = cell.querySelector('p[style*="line-height"]');
+                        if (lhP && lhP.style.lineHeight) return lhP.style.lineHeight;
+                        if (cell.style.lineHeight) return cell.style.lineHeight;
+                    }
+                    return "1.5";
                 })(),
                 tableHeader: window.rgbToHex(table ? _getVal(table.querySelector("th"), "backgroundColor") : ""),
                 tableHeaderText: window.rgbToHex(table ? _getVal(table.querySelector("th"), "color") : ""),
@@ -1061,15 +1087,17 @@ window.v4Script = `
     });
 
     let rafId = null;
+    let marqueeRafId = null;
+    let marqueeClientX = 0;
+    let marqueeClientY = 0;
     document.addEventListener('mousemove', e => {
         if (isConnectorDragging) {
             notifyParent({ type: 'LF_CONNECTOR_HANDLE_MOVE', clientX: e.clientX, clientY: e.clientY });
             return;
         }
         if (isDraggingLine && activeLineId) {
-            const scale = (window.parent?.state?.transform?.scale) || 1;
-            const dx = (e.clientX - startX) / scale;
-            const dy = (e.clientY - startY) / scale;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
             const conn = window.parent?.state?.connectors?.find(c => c.id === activeLineId);
             if (conn && startLineCoords) {
                 conn.start.x = startLineCoords.start.x + dx;
@@ -1089,8 +1117,20 @@ window.v4Script = `
         }
 
         if (isMarquee) {
-            notifyParent({ type: 'LF_MARQUEE_MOVE', x: e.clientX, y: e.clientY });
-            window.getSelection()?.removeAllRanges();
+            marqueeClientX = e.clientX;
+            marqueeClientY = e.clientY;
+            if (!marqueeRafId) {
+                marqueeRafId = requestAnimationFrame(function() {
+                    marqueeRafId = null;
+                    if (isMarquee) {
+                        notifyParent({ type: 'LF_MARQUEE_MOVE', x: marqueeClientX, y: marqueeClientY });
+                    }
+                });
+            }
+            if (window.getSelection) {
+                var sel = window.getSelection();
+                if (sel && sel.removeAllRanges) sel.removeAllRanges();
+            }
             return;
         }
         if (rafId) cancelAnimationFrame(rafId);
@@ -1122,6 +1162,10 @@ window.v4Script = `
 
         if (isMarquee) {
             isMarquee = false;
+            if (marqueeRafId) {
+                cancelAnimationFrame(marqueeRafId);
+                marqueeRafId = null;
+            }
             notifyParent({ type: 'LF_MARQUEE_END' });
         }
         if (window.V4DragResizeEngine && (window.V4DragResizeEngine.isDragging || window.V4DragResizeEngine.isResizing || window.V4DragResizeEngine.isPendingDrag)) {
@@ -1242,6 +1286,7 @@ window.v4Script = `
             if (el.querySelector('.v4-accordion-container') || el.classList.contains('v4-accordion-container')) return 'accordion';
             if (el.querySelector('.v4-tab-container') || el.classList.contains('v4-tab-container')) return 'tab';
             if (el.querySelector('.v4-admin-settings-container') || el.classList.contains('v4-admin-settings-container')) return 'admin-settings';
+            if (el.querySelector('.v4-cursor-container') || el.classList.contains('v4-cursor-container')) return 'cursor';
             if (el.querySelector('table')) return 'table';
             if (el.querySelector('.lf-icon') || el.querySelector('svg') || el.classList.contains('lf-icon')) return 'icon';
             return 'other';

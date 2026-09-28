@@ -79,7 +79,8 @@ function getInlinedEngineScript() {
 
 // --- Core Logic ---
 window.loadScreen = async function (fileName) {
-    window.invalidateEngineScriptCache();
+    // Engine script cache is preserved across screen transitions for instant rendering.
+    // Call window.invalidateEngineScriptCache() explicitly if engine scripts change dynamically.
     const DOM = window.DOM || {};
     if (DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
     if (DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
@@ -324,39 +325,10 @@ window.loadScreen = async function (fileName) {
     setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 150);
 };
 
-window.handleDeleteScreen = async function (name, sha) {
-    if (state.isReadOnly) return window.showAuthModal?.();
-    const confirmed = await Notification.confirm(
-        `'${name}' 스크린을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
-        "스크린 삭제",
-        "warning"
-    );
-    if (!confirmed) return;
-
-    if (typeof window.showLoading === 'function') window.showLoading("Deleting: " + name);
-
-    let success = await deleteFileFromGitHub(`${state.currentProject}/${name}`, sha);
-    if (!success && window.location.protocol === 'file:') {
-        success = true;
-    }
-    if (success) {
-        state.screens = state.screens.filter(s => s.name !== name);
-        if (state.projectMetadata.screens) delete state.projectMetadata.screens[name];
-        if (state.projectMetadata.screenOrder) {
-            state.projectMetadata.screenOrder = state.projectMetadata.screenOrder.filter(n => n !== name);
-        }
-        await saveProjectMetadata(state.currentProject, state.projectMetadata, () => { });
-
-        if (state.activeFile && state.activeFile.name === name) {
-            location.href = `viewer.html?project=${state.currentProject}`;
-        } else {
-            location.reload();
-        }
-    } else {
-        if (typeof window.hideLoading === 'function') window.hideLoading();
-        window.Notification?.alert("삭제 실패", "오류", "error");
-    }
-};
+// Screen deletion is managed by vctrl_screen_manager.js (SSOT). Fallback guard maintained.
+if (typeof window.handleDeleteScreen !== 'function') {
+    window.handleDeleteScreen = (name, sha) => window.ScreenManager?.handleDeleteScreen?.(name, sha);
+}
 
 window.insertAtomicComponent = function (type, name) {
     if (window.ComponentInserter && typeof window.ComponentInserter.insertAtomicComponent === 'function') {
@@ -395,7 +367,7 @@ window.handleTextCreation = function () {
     if (isResponsive) {
         state.activeFile.meta.description.push({
             text: "Edit Text",
-            html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+            html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
             x: 500,
             y: 300,
             pins: {
@@ -420,7 +392,7 @@ window.handleTextCreation = function () {
         state.activeFile.meta.description.push({
             type: "pin",
             text: "Edit Text",
-            html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+            html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
             x: 670,
             y: 430,
             standardized: true
@@ -430,10 +402,12 @@ window.handleTextCreation = function () {
             window.renderDescriptionList();
         }
 
-        if (typeof window.insertV4ComponentById === 'function') {
+        if (window.ComponentInserter && typeof window.ComponentInserter.insertTextComponent === 'function') {
+            window.ComponentInserter.insertTextComponent(newIdx);
+        } else if (typeof window.insertV4ComponentById === 'function') {
             window.insertV4ComponentById('v4-tool-text', newIdx);
         } else {
-            console.error("[V4 Core] insertV4ComponentById not available for Text Creation.");
+            console.error("[V4 Core] insertTextComponent not available for Text Creation.");
         }
     }
     markAsDirty();
@@ -444,10 +418,12 @@ window.handleTextboxCreation = function () {
     if (state.isReadOnly) return window.showAuthModal?.();
     if (!state.activeFile) return window.Notification?.alert("스크린을 선택해주세요.", "알림", "warning");
 
-    if (typeof window.insertV4ComponentById === 'function') {
+    if (window.ComponentInserter && typeof window.ComponentInserter.insertTextComponent === 'function') {
+        window.ComponentInserter.insertTextComponent();
+    } else if (typeof window.insertV4ComponentById === 'function') {
         window.insertV4ComponentById('v4-tool-text');
     } else {
-        console.error("[V4 Core] insertV4ComponentById not available for Textbox Creation.");
+        console.error("[V4 Core] insertTextComponent not available for Textbox Creation.");
     }
     markAsDirty();
 };
@@ -744,31 +720,26 @@ window.MessageHub = {
             }
         });
 
-        window.addEventListener('message', (e) => {
-            const data = e.data;
-            if (!data || !data.type) return;
-
-            if (window.DEBUG_MODE) {
-                console.log(`%c[MessageHub] IN: ${data.type}`, "color: #10b981;", data);
-            }
-
-            // Internal engine hooks
-            if (data.type === 'LF_FOCUS_PARENT_QUILL') {
+        // Modular Parent Core Message Handlers Table Map
+        const v4ParentCoreHandlers = {
+            'LF_FOCUS_PARENT_QUILL': () => {
                 if (window.SmartGuide) window.SmartGuide.clearGuides(true);
                 if (window.quillEditor) {
                     window.quillEditor.focus();
-                    // Put cursor at the end of the text
                     const length = window.quillEditor.getLength();
                     window.quillEditor.setSelection(length, 0);
                 }
-            } else if (data.type === 'LF_SNAP_START') {
+            },
+            'LF_SNAP_START': () => {
                 if (window.SmartGuide) {
                     window.SmartGuide.clearGuides(true);
                     window.SmartGuide.findSnapTargets();
                 }
-            } else if (data.type === 'LF_CLEAR_SMARTGUIDE') {
+            },
+            'LF_CLEAR_SMARTGUIDE': () => {
                 if (window.SmartGuide) window.SmartGuide.clearGuides(true);
-            } else if (data.type === 'LF_SNAP_REQUEST') {
+            },
+            'LF_SNAP_REQUEST': (data, e) => {
                 const DOM = window.DOM;
                 const targetWindow = (DOM && DOM.iframe && DOM.iframe.contentWindow) || e.source;
                 if (window.SmartGuide && targetWindow) {
@@ -776,20 +747,25 @@ window.MessageHub = {
                     window.SmartGuide.drawGuides(snap);
                     MessageHub.send(targetWindow, 'LF_SNAP_RESPONSE', snap);
                 }
-            } else if (data.type === 'LF_SNAP_END') {
+            },
+            'LF_SNAP_END': () => {
                 if (window.SmartGuide) window.SmartGuide.clearGuides();
-            } else if (data.type === 'LF_DESELECT') {
+            },
+            'LF_DESELECT': () => {
                 if (window.SmartGuide) window.SmartGuide.clearGuides(true);
-            } else if (data.type === 'LF_RESTORE_CONNECTORS') {
+            },
+            'LF_RESTORE_CONNECTORS': (data) => {
                 if (window.state && data.connectors) {
                     window.state.connectors = data.connectors;
                     if (window.ConnectorEngine) window.ConnectorEngine.redrawAll();
                 }
-            } else if (data.type === 'LF_TOGGLE_GRID_REQUEST') {
+            },
+            'LF_TOGGLE_GRID_REQUEST': () => {
                 if (typeof window.toggleResponsiveGrid === 'function') {
                     window.toggleResponsiveGrid();
                 }
-            } else if (data.type === 'LF_UPDATE_PIN_POS') {
+            },
+            'LF_UPDATE_PIN_POS': (data) => {
                 if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
                     const pin = window.state.activeFile.meta.description[data.index];
                     if (pin) {
@@ -809,24 +785,24 @@ window.MessageHub = {
                         markAsDirty();
                     }
                 }
-            } else if (data.type === 'LF_DELETE_PIN') {
+            },
+            'LF_DELETE_PIN': (data) => {
                 if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
                     window.state.activeFile.meta.description.splice(data.index, 1);
                     if (typeof window.renderDescriptionList === 'function') {
                         window.renderDescriptionList(window.state.activeFile.meta.description);
                     }
-
-                    // Trigger child iframe to re-order and re-index all remaining text-markers
                     const DOM = window.DOM;
                     if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
                         MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: data.index, pins: window.state.activeFile.meta.description });
                     }
-
                     markAsDirty();
                 }
-            } else if (data.type === 'LF_TABLE_SIZE_CHANGED') {
+            },
+            'LF_TABLE_SIZE_CHANGED': () => {
                 markAsDirty();
-            } else if (data.type === 'LF_COMP_SELECTED') {
+            },
+            'LF_COMP_SELECTED': (data) => {
                 const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));
                 if (window.SmartGuide) {
                     if (isResponsive) {
@@ -844,7 +820,6 @@ window.MessageHub = {
                     activeEl.isContentEditable
                 );
 
-                // If a different component is selected, release residual parent focus to allow property synchronization
                 const isNewSelection = Boolean(data.id && data.id !== state.editingIndex);
                 if (isNewSelection && activeEl && typeof activeEl.blur === 'function') {
                     activeEl.blur();
@@ -901,7 +876,6 @@ window.MessageHub = {
                             window.state.selectedIds = [...selectedIds];
                         }
 
-                        // SmartGuide 2-second selection guide trigger (non-responsive single object only)
                         if (window.SmartGuide) {
                             if (isResponsive) {
                                 window.SmartGuide.clearGuides(true);
@@ -914,8 +888,8 @@ window.MessageHub = {
                             }
                         }
 
-                        // Sync selection state back to iframe DOM to prevent local desync
-                        if (DOM.iframe && DOM.iframe.contentWindow) {
+                        const DOM = window.DOM;
+                        if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
                             MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
                         }
 
@@ -939,7 +913,8 @@ window.MessageHub = {
                         if (!isTyping && typeof window.updateProperties === 'function') window.updateProperties(data);
                     }
                 }
-            } else if (data.type === 'LF_MULTI_SELECTION_STYLES') {
+            },
+            'LF_MULTI_SELECTION_STYLES': (data) => {
                 if (window.state) {
                     window.state.selectedComponent = { id: data.id, ...data };
                     window.state.selectedComponentStyles = data;
@@ -955,7 +930,8 @@ window.MessageHub = {
                 if (!isTyping && typeof window.updateProperties === 'function') {
                     window.updateProperties(data);
                 }
-            } else if (data.type === 'LF_PASTE_COMPLETED') {
+            },
+            'LF_PASTE_COMPLETED': (data) => {
                 try {
                     if (window.SmartGuide) {
                         try { window.SmartGuide.findSnapTargets(); } catch (e) { }
@@ -978,7 +954,8 @@ window.MessageHub = {
                         window.activeCompId = newIds[0];
                     }
 
-                    if (DOM.iframe && DOM.iframe.contentWindow) {
+                    const DOM = window.DOM;
+                    if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
                         try { DOM.iframe.contentWindow.focus(); } catch (e) { }
                     }
 
@@ -995,7 +972,7 @@ window.MessageHub = {
                         if (window.state) {
                             window.state.selectedIds = [...newIds];
                         }
-                        if (DOM.iframe && DOM.iframe.contentWindow) {
+                        if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
                             MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: newIds });
                         }
                         if (!isTyping) {
@@ -1020,7 +997,6 @@ window.MessageHub = {
                         }
                     }
 
-                    // Self-healing safety: ensure pointer interaction is fully unlocked on parent canvas
                     if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
                     if (DOM && DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
                     if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
@@ -1028,17 +1004,20 @@ window.MessageHub = {
                 } catch (pasteErr) {
                     console.error("[Core] Error in LF_PASTE_COMPLETED handler:", pasteErr);
                 }
-            } else if (data.type === 'LF_SPACE_DOWN') {
+            },
+            'LF_SPACE_DOWN': () => {
                 const DOM = window.DOM;
                 if (DOM && DOM.canvas) DOM.canvas.classList.add('hand-active');
                 if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'none';
                 window.state.isHandMode = true;
-            } else if (data.type === 'LF_SPACE_UP') {
+            },
+            'LF_SPACE_UP': () => {
                 const DOM = window.DOM;
                 if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
                 if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
                 window.state.isHandMode = false;
-            } else if (data.type === 'LF_IFRAME_WHEEL_ZOOM') {
+            },
+            'LF_IFRAME_WHEEL_ZOOM': (data) => {
                 const DOM = window.DOM;
                 if (DOM && DOM.iframe && DOM.canvas && window.state) {
                     const iframeRect = DOM.iframe.getBoundingClientRect();
@@ -1056,10 +1035,31 @@ window.MessageHub = {
                     state.transform.x = mx - (mx - state.transform.x) * (ns / s);
                     state.transform.y = my - (my - state.transform.y) * (ns / s);
                     state.transform.scale = ns;
+                    state.viewMode = 'custom';
                     if (typeof window.updateTransform === 'function') {
                         window.updateTransform();
                     }
                 }
+            },
+            'LF_TOGGLE_CRISP_VIEW': () => {
+                if (typeof window.toggleCrispView === 'function') {
+                    window.toggleCrispView();
+                }
+            }
+        };
+
+        window.addEventListener('message', (e) => {
+            const data = e.data;
+            if (!data || !data.type) return;
+
+            if (window.DEBUG_MODE) {
+                console.log(`%c[MessageHub] IN: ${data.type}`, "color: #10b981;", data);
+            }
+
+            // Dispatch core handler from table map
+            const coreHandler = v4ParentCoreHandlers[data.type];
+            if (typeof coreHandler === 'function') {
+                coreHandler(data, e);
             }
 
             // Call all registered subscribers
@@ -1256,90 +1256,9 @@ window.init = async function () {
         // --- ATTACH GLOBAL LISTENERS ---
         console.log("[INIT] Attaching global listeners...");
         document.addEventListener('click', async (e) => {
-            // 0-1. URL Copy Dropdown & Action Handlers
-            const copyUrlBtn = e.target && e.target.closest('#btn-copy-project-url');
-            const menuCopyProject = e.target && e.target.closest('#menu-copy-project-url');
-            const menuCopyScreen = e.target && e.target.closest('#menu-copy-screen-url');
-            const copyMenu = document.getElementById('url-copy-menu');
-
-            if (copyUrlBtn) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (copyMenu) {
-                    const isVisible = copyMenu.style.display === 'flex';
-                    if (isVisible) {
-                        copyMenu.style.display = 'none';
-                        copyUrlBtn.classList.remove('active');
-                    } else {
-                        // Update screen item state before opening
-                        const activeScreen = (typeof state !== 'undefined' && state && state.activeFile)
-                            ? (state.activeFile.name || state.activeFile)
-                            : null;
-                        const screenItem = document.getElementById('menu-copy-screen-url');
-                        const screenSubText = document.getElementById('menu-screen-name-sub');
-
-                        if (activeScreen) {
-                            if (screenItem) screenItem.classList.remove('disabled');
-                            if (screenSubText) screenSubText.innerText = activeScreen;
-                        } else {
-                            if (screenItem) screenItem.classList.add('disabled');
-                            if (screenSubText) screenSubText.innerText = '선택된 화면 없음';
-                        }
-
-                        copyMenu.style.display = 'flex';
-                        copyUrlBtn.classList.add('active');
-                    }
-                }
-                return;
-            }
-
-            if (menuCopyProject) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (copyMenu) copyMenu.style.display = 'none';
-                const triggerBtn = document.getElementById('btn-copy-project-url');
-                if (triggerBtn) triggerBtn.classList.remove('active');
-
-                const currentProj = (typeof state !== 'undefined' && state && state.currentProject)
-                    ? state.currentProject
-                    : new URLSearchParams(window.location.search).get('project');
-                if (currentProj) {
-                    if (typeof copyProjectShortUrl === 'function') {
-                        copyProjectShortUrl(currentProj);
-                    }
-                }
-                return;
-            }
-
-            if (menuCopyScreen) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (menuCopyScreen.classList.contains('disabled')) return;
-
-                if (copyMenu) copyMenu.style.display = 'none';
-                const triggerBtn = document.getElementById('btn-copy-project-url');
-                if (triggerBtn) triggerBtn.classList.remove('active');
-
-                const currentProj = (typeof state !== 'undefined' && state && state.currentProject)
-                    ? state.currentProject
-                    : new URLSearchParams(window.location.search).get('project');
-                const activeScreen = (typeof state !== 'undefined' && state && state.activeFile)
-                    ? (state.activeFile.name || state.activeFile)
-                    : null;
-
-                if (currentProj && activeScreen) {
-                    if (typeof copyProjectShortUrl === 'function') {
-                        copyProjectShortUrl(currentProj, { screenName: activeScreen });
-                    }
-                }
-                return;
-            }
-
-            // Close URL copy dropdown when clicking outside
-            if (copyMenu && copyMenu.style.display === 'flex' && !e.target.closest('#url-copy-dropdown-wrapper')) {
-                copyMenu.style.display = 'none';
-                const triggerBtn = document.getElementById('btn-copy-project-url');
-                if (triggerBtn) triggerBtn.classList.remove('active');
+            // 0-1. URL Copy Dropdown & Action Handlers (Delegated to vctrl_clipboard.js)
+            if (window.ClipboardManager && typeof window.ClipboardManager.handleUrlCopyClick === 'function') {
+                if (window.ClipboardManager.handleUrlCopyClick(e)) return;
             }
 
             // 0-2. PDF Export Button

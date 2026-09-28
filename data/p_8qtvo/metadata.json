@@ -6,46 +6,18 @@
       "type": "ui",
       "updatedAt": "2026-09-28T06:59:53.326Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [
-        {
-          "text": "[최대 할인 적용] Check Box 도입\n- 최초 주문서 진입 시 '쿠폰 미적용' 상태\n- [최대 할인 적용] 클릭 시, 자동으로 최대 혜택 쿠폰 적용",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 8,
-          "y": 871,
-          "pins": {
-            "pc": {
-              "x": 8,
-              "y": 871,
-              "active": true
-            },
-            "mobile": {
-              "x": 119,
-              "y": 839,
-              "active": true
-            }
-          },
-          "standardized": true
-        },
-        {
-          "text": "버튼 명칭 및 컬러 변경\n- 명칭 : 기존 [쿠폰적용] => 변경 [쿠폰선택]\n- 컬러 : 기존 'White' => 변경 'Black'",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 645,
-          "y": 828,
-          "pins": {
-            "pc": {
-              "x": 645,
-              "y": 828,
-              "active": true
-            },
-            "mobile": {
-              "x": 240,
-              "y": 783,
-              "active": true
-            }
-          },
-          "standardized": true
-        }
-      ],
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
+    },
+    "renewal_cart.html": {
+      "title": "renewal_cart",
+      "type": "ui",
+      "updatedAt": "2026-09-28T07:00:47.136Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -59,6 +31,7 @@
   "notionUrl": "",
   "themeIndex": 1,
   "screenOrder": [
-    "renewal_order.html"
+    "renewal_order.html",
+    "renewal_cart.html"
   ]
 }

@@ -13,7 +13,7 @@
     "08_Responsive_PC_Mobile_498.html": {
       "title": "기획전 As-Is 현황",
       "type": "ui",
-      "updatedAt": "2026-09-28T05:36:08.053Z",
+      "updatedAt": "2026-09-28T05:38:53.283Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -98,7 +98,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 14:36:07",
+  "updated": "2026-09-28 14:38:53",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

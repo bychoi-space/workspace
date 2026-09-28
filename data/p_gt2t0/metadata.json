@@ -24,7 +24,7 @@
     "08_Responsive_PC_Mobile_498_copy.html": {
       "title": "기획전 To-Be 개선안",
       "type": "ui",
-      "updatedAt": "2026-09-28T02:29:56.016Z",
+      "updatedAt": "2026-09-28T00:48:59.035Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -64,8 +64,8 @@
   "screenOrder": [
     "00_Cover_152.html",
     "08_Responsive_PC_Mobile_498.html",
-    "10_Mobile_Compare_18.html",
     "08_Responsive_PC_Mobile_498_copy.html",
+    "10_Mobile_Compare_18.html",
     "04_Case_Study_633.html"
   ]
 }

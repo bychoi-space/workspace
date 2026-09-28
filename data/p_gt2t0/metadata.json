@@ -63,9 +63,29 @@
     "08_Responsive_PC_Mobile_498_copy.html": {
       "title": "기획전 To-Be 개선안",
       "type": "ui",
-      "updatedAt": "2026-09-28T00:48:59.035Z",
+      "updatedAt": "2026-09-28T05:43:41.998Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "text": "예시 URL : https://sisun.com/EBM/event/sale/8839\n\n\n[PC - 상품 그룹 영역]\n- 페이지 최초 랜더링 시 모든 그룹 호출\n- 상품은 그룹 별로 30개 랜더링 후, [+상품더보기] 버튼으로 Lazy loading 처리\n\n\n[Mobile - 상품 그룹 영역]\n- 페이지 최초 랜더링 시 모든 그룹 호출\n- 상품은 그룹 별로 24개 랜더링 후, 스크롤이 내려가면 자동으로 Lazy loading 처리\n\n\n[공통 디스크립션]\n- 예시 : 상품 그룹 5개 / 그룹 당 상품 40개 로 가정 > 그룹 5 * 상품 30 = 최초 랜더링 상품 150개\n- 최초 페이지 랜더링 리소스가 매우 많음",
+          "html": "예시 URL : https://sisun.com/EBM/event/sale/8839<div><br></div><div>[PC - 상품 그룹 영역]</div><div>- 페이지 최초 랜더링 시 모든 그룹 호출</div><div>- 상품은 그룹 별로 30개 랜더링 후, [+상품더보기] 버튼으로 Lazy loading 처리</div><div><br></div><div>[Mobile - 상품 그룹 영역]</div><div>- 페이지 최초 랜더링 시 모든 그룹 호출</div><div>- 상품은 그룹 별로 24개 랜더링 후, 스크롤이 내려가면 자동으로 Lazy loading 처리</div><div><br></div><div>[공통 디스크립션]</div><div>- 예시 : 상품 그룹 5개 / 그룹 당 상품 40개 로 가정 &gt; 그룹 5 * 상품 30 = 최초 랜더링 상품 150개</div><div>- 최초 페이지 랜더링 리소스가 매우 많음</div>",
+          "x": 35,
+          "y": 660,
+          "pins": {
+            "pc": {
+              "x": 35,
+              "y": 660,
+              "active": true
+            },
+            "mobile": {
+              "x": 0,
+              "y": 543,
+              "active": true
+            }
+          },
+          "standardized": true
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "editor",
@@ -98,7 +118,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-09-28 14:42:44",
+  "updated": "2026-09-28 14:43:41",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

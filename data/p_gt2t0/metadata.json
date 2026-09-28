@@ -40,6 +40,12 @@
       "description": [],
       "connectors": [],
       "version": 0.1
+    },
+    "10_Mobile_Compare_18.html": {
+      "title": "10_Mobile_Compare_18",
+      "type": "responsive-ui",
+      "updatedAt": "2026-09-28T00:49:45.090Z",
+      "template": "template_responsive_mobile_compare.html"
     }
   },
   "assignee": "최범열",
@@ -54,6 +60,7 @@
     "00_Cover_152.html",
     "08_Responsive_PC_Mobile_498.html",
     "08_Responsive_PC_Mobile_498_copy.html",
-    "04_Case_Study_633.html"
+    "04_Case_Study_633.html",
+    "10_Mobile_Compare_18.html"
   ]
 }

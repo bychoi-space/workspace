@@ -7,6 +7,12 @@
       "updatedAt": "2026-09-29T02:05:48.768Z",
       "template": "template_cover.html",
       "version": 0.1
+    },
+    "07_PC_Design_115.html": {
+      "title": "07_PC_Design_115",
+      "type": "default",
+      "updatedAt": "2026-09-29T02:09:01.096Z",
+      "template": "template_pc_ui.html"
     }
   },
   "assignee": "최범열",

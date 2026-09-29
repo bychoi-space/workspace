@@ -207,7 +207,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-29T01:47:44.885Z",
+      "updatedAt": "2026-09-29T01:48:50.442Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -309,6 +309,32 @@
           },
           "standardized": true,
           "type": "pin"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "(신규 개발 범위)\n6. 화면 하단 고정 영역\n- [복사] [저장] [삭제] 버튼 위치\n- 스크롤과 관계 없이 화면 하단에 고정 노출",
+          "html": "(신규 개발 범위)<div>6. 화면 하단 고정 영역</div><div>- [복사] [저장] [삭제] 버튼 위치</div><div>- 스크롤과 관계 없이 화면 하단에 고정 노출</div>",
+          "x": 745,
+          "y": 2067,
+          "pins": {
+            "pc": {
+              "x": 745,
+              "y": 2067,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 745,
+              "y": 2067,
+              "active": true
+            }
+          },
+          "standardized": true
         }
       ],
       "connectors": [],
@@ -550,7 +576,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-29 10:47:44",
+  "updated": "2026-09-29 10:48:50",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

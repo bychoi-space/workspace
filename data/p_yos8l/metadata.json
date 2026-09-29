@@ -13,6 +13,12 @@
       "type": "default",
       "updatedAt": "2026-09-29T02:09:01.096Z",
       "template": "template_pc_ui.html"
+    },
+    "09_Admin_PC_Scroll_599.html": {
+      "title": "09_Admin_PC_Scroll_599",
+      "type": "admin",
+      "updatedAt": "2026-09-29T02:21:28.173Z",
+      "template": "template_admin_pc_scroll.html"
     }
   },
   "assignee": "최범열",

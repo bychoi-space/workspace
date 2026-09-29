@@ -17,8 +17,11 @@
     "09_Admin_PC_Scroll_599.html": {
       "title": "09_Admin_PC_Scroll_599",
       "type": "admin",
-      "updatedAt": "2026-09-29T02:21:28.173Z",
-      "template": "template_admin_pc_scroll.html"
+      "updatedAt": "2026-09-29T02:22:11.518Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -26,5 +29,7 @@
   "period": "2026.09.29(화) ~ 2026.10.09(금)",
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
-  "themeIndex": 0
+  "themeIndex": 0,
+  "updated": "2026-09-29 11:22:11",
+  "version": 0.1
 }

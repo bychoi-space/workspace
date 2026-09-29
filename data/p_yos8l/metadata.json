@@ -6,7 +6,9 @@
       "type": "cover",
       "updatedAt": "2026-09-29T02:05:48.768Z",
       "template": "template_cover.html",
-      "version": 0.1
+      "version": 0.1,
+      "description": [],
+      "connectors": []
     },
     "07_PC_Design_115.html": {
       "title": "07_PC_Design_115",
@@ -17,7 +19,7 @@
     "09_Admin_PC_Scroll_599.html": {
       "title": "09_Admin_PC_Scroll_599",
       "type": "admin",
-      "updatedAt": "2026-09-29T03:25:27.446Z",
+      "updatedAt": "2026-09-29T03:26:46.264Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -30,6 +32,6 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-09-29 12:25:27",
+  "updated": "2026-09-29 12:26:45",
   "version": 0.1
 }

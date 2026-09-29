@@ -269,7 +269,7 @@ window.v4DragResizeScript = `
                     const frameType = window.activeEl.getAttribute('data-frame') || (window.activeEl.closest && window.activeEl.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (window.activeEl.closest && window.activeEl.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : ''));
                     let idx = parseInt(window.activeEl.getAttribute('data-index'));
                     if (isNaN(idx)) {
-                        idx = parseInt(window.activeEl.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+                        idx = parseInt(window.activeEl.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                     }
                     notifyParent({
                         type: 'LF_UPDATE_PIN_POS',

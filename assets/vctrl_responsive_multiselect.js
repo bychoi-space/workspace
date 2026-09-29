@@ -278,7 +278,7 @@ window.v4ResponsiveMultiselectScript = `
                                 item.el.style.top = (targetT - parentT) + 'px';
         
                                 if (item.type === 'marker') {
-                                    const idx = parseInt(item.id.replace('v4-pin-', ''));
+                                    const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                                     notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: targetL, y: targetT });
                                 }
         
@@ -334,7 +334,7 @@ window.v4ResponsiveMultiselectScript = `
                                 }
                                 item.el.style.left = (newAbsX - parentL) + 'px';
                                 if (item.type === 'marker') {
-                                    const idx = parseInt(item.id.replace('v4-pin-', ''));
+                                    const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                                     notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: newAbsX, y: item.y });
                                 }
                             }
@@ -386,7 +386,7 @@ window.v4ResponsiveMultiselectScript = `
                                 }
                                 item.el.style.top = (newAbsY - parentT) + 'px';
                                 if (item.type === 'marker') {
-                                    const idx = parseInt(item.id.replace('v4-pin-', ''));
+                                    const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                                     notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: item.x, y: newAbsY });
                                 }
                             }
@@ -444,7 +444,7 @@ window.v4ResponsiveMultiselectScript = `
                             item.el.style.top = (newAbsY - parentT) + 'px';
                             
                             if (item.type === 'marker') {
-                                const idx = parseInt(item.id.replace('v4-pin-', ''));
+                                const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                                 notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: newAbsX, y: newAbsY });
                             }
                         }
@@ -632,7 +632,7 @@ window.v4ResponsiveMultiselectScript = `
         
                         const isMarker = c.classList.contains('text-marker');
                         if (isMarker && c.id.startsWith('v4-pin-')) {
-                            const pinIdx = parseInt(c.id.replace('v4-pin-', ''));
+                            const pinIdx = parseInt(c.getAttribute('data-index')) || parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                             notifyParent({ type: 'LF_UPDATE_PIN_POS', index: pinIdx, x: absL, y: absT });
                         }
                         c.classList.add('selected');

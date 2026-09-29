@@ -304,6 +304,18 @@
                     };
                 }
             });
+
+            // Shape Background Transparency Toggle
+            const btnShapeBgNone = document.getElementById('btn-shape-bg-none');
+            if (btnShapeBgNone) {
+                btnShapeBgNone.onclick = () => {
+                    const opacitySlider = document.getElementById('shape-bg-opacity');
+                    if (opacitySlider) {
+                        opacitySlider.value = 0;
+                        opacitySlider.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                };
+            }
         },
 
         syncCornerBtns: syncCornerBtns,
@@ -317,12 +329,143 @@
         applyShapePadding: applyShapePadding
     };
 
+    // Button Corner Presets Helper
+    function syncButtonCornerBtns(val) {
+        const r = parseInt(val, 10) || 0;
+        document.querySelectorAll('.btn-btn-corner').forEach(btn => {
+            const br = parseInt(btn.getAttribute('data-radius'), 10) || 0;
+            if (br === r) {
+                btn.classList.add('primary');
+                btn.style.borderColor = '#00e5ff';
+                btn.style.color = '#00e5ff';
+                btn.style.background = 'rgba(0, 229, 255, 0.15)';
+            } else {
+                btn.classList.remove('primary');
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                btn.style.background = '';
+            }
+        });
+    }
+
+    // Global click delegation for Pattern, Arrow Direction, and Button Corner Presets
+    document.addEventListener('click', function(e) {
+        if (!e.target) return;
+
+        // Pattern button
+        const patternBtn = e.target.closest('.v4-pattern-type-btn');
+        if (patternBtn) {
+            const pType = patternBtn.dataset.type;
+            syncPatternVisualBtns(pType);
+            notifyIframe({
+                type: 'LF_UPDATE_STYLE',
+                selector: '.v4-shape',
+                style: { patternType: pType }
+            });
+            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            return;
+        }
+
+        // Arrow / Triangle direction button
+        const arrowBtn = e.target.closest('.v4-arrow-dir-btn');
+        if (arrowBtn) {
+            const dir = arrowBtn.dataset.dir;
+            if (typeof window._syncArrowDirBtns === 'function') {
+                window._syncArrowDirBtns(dir);
+            }
+            notifyIframe({
+                type: 'LF_UPDATE_ARROW_DIRECTION',
+                direction: dir
+            });
+            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            return;
+        }
+
+        // Button corner presets
+        const btnCorner = e.target.closest('.btn-btn-corner');
+        if (btnCorner) {
+            const r = parseInt(btnCorner.getAttribute('data-radius'), 10) || 0;
+            const radiusSlider = document.getElementById('prop-button-border-radius');
+            const radiusTxt = document.getElementById('txt-button-border-radius');
+            if (radiusSlider) {
+                radiusSlider.value = r;
+                if (radiusTxt) radiusTxt.innerText = r;
+                radiusSlider.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            syncButtonCornerBtns(r);
+            return;
+        }
+    });
+
+    // Global input delegation for shape-bg-color and shape-bg-opacity (Single SSOT)
+    document.addEventListener('input', function(e) {
+        if (!e.target) return;
+
+        if (e.target.id === 'shape-bg-color') {
+            const colorHex = e.target.value;
+            const opacitySlider = document.getElementById('shape-bg-opacity');
+            let opacityVal = opacitySlider ? parseInt(opacitySlider.value, 10) : 100;
+
+            if (opacityVal === 0 && opacitySlider) {
+                opacityVal = 100;
+                opacitySlider.value = 100;
+                const txt = document.getElementById('txt-shape-bg-opacity');
+                if (txt) txt.innerText = 100;
+            }
+
+            const rgbaColor = (window.hexToRgba ? window.hexToRgba(colorHex, opacityVal / 100) : colorHex);
+            const targetIds = getActiveTargetIds();
+
+            notifyIframe({
+                type: 'LF_UPDATE_STYLE',
+                id: targetIds[0] || undefined,
+                ids: targetIds.length > 0 ? targetIds : undefined,
+                selector: '.v4-shape',
+                style: { background: rgbaColor, backgroundColor: rgbaColor }
+            });
+
+            const wrapper = document.getElementById('shape-bg-wrapper');
+            if (wrapper) wrapper.classList.remove('transparent-active');
+            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+        } else if (e.target.id === 'shape-bg-opacity') {
+            const opacityVal = e.target.value;
+            const txt = document.getElementById('txt-shape-bg-opacity');
+            if (txt) txt.innerText = opacityVal;
+
+            const colorPicker = document.getElementById('shape-bg-color');
+            const colorHex = (colorPicker && colorPicker.value) ? colorPicker.value : '#ffffff';
+            const rgbaColor = (window.hexToRgba ? window.hexToRgba(colorHex, parseInt(opacityVal, 10) / 100) : colorHex);
+            const targetIds = getActiveTargetIds();
+
+            notifyIframe({
+                type: 'LF_UPDATE_STYLE',
+                id: targetIds[0] || undefined,
+                ids: targetIds.length > 0 ? targetIds : undefined,
+                selector: '.v4-shape',
+                style: { background: rgbaColor, backgroundColor: rgbaColor }
+            });
+
+            const wrapper = document.getElementById('shape-bg-wrapper');
+            if (wrapper) {
+                if (parseInt(opacityVal, 10) === 0) {
+                    wrapper.classList.add('transparent-active');
+                } else {
+                    wrapper.classList.remove('transparent-active');
+                }
+            }
+            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+        } else if (e.target.id === 'prop-button-border-radius') {
+            syncButtonCornerBtns(e.target.value);
+        }
+    });
+
     // Backward-compatible global aliases
     window._syncCornerBtns = syncCornerBtns;
     window._syncAlignBtns = syncAlignBtns;
     window._syncVAlignBtns = syncVAlignBtns;
     window._syncShapePaddingInputs = syncShapePaddingInputs;
     window._syncPatternVisualBtns = syncPatternVisualBtns;
+    window._syncButtonCornerBtns = syncButtonCornerBtns;
     window._applyCornerRadius = applyCornerRadius;
     window._applyTextAlign = applyTextAlign;
     window._applyVerticalAlign = applyVerticalAlign;

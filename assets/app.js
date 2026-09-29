@@ -1067,6 +1067,9 @@ async function createShortUrl(longUrl) {
 }
 
 async function copyTextToClipboard(text) {
+    if (window.ClipboardManager && typeof window.ClipboardManager.copyTextToClipboard === 'function') {
+        return await window.ClipboardManager.copyTextToClipboard(text);
+    }
     if (navigator.clipboard && window.isSecureContext) {
         try {
             await navigator.clipboard.writeText(text);

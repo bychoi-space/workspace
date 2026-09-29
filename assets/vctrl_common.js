@@ -40,8 +40,15 @@ window.EditorBus = {
 };
 
 window.notifyIframe = function(data) {
-    if (window.EditorBus) {
+    if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
         window.EditorBus.sendToIframe(data);
+    } else {
+        const iframe = (window.DOM && window.DOM.iframe) || 
+                       document.getElementById('main-iframe') || 
+                       document.getElementById('screen-iframe');
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage(data, '*');
+        }
     }
 };
 
@@ -283,6 +290,18 @@ window.parseColorWithOpacity = function(colorStr) {
     }
     const hex = window.rgbToHex(colorStr) || '#ffffff';
     return { hex: hex, opacity: 1 };
+};
+
+// --- Universal KST Timestamp Formatter (SSOT) ---
+window.getFormattedKST = function(dateObj) {
+    const now = dateObj ? new Date(dateObj) : new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    return yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + min + ':' + ss;
 };
 
 // --- Cover Template Metadata Sync & Version Auto-Increment Helper ---

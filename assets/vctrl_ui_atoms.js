@@ -284,12 +284,6 @@ window.v4UIAtomsScript = `
         if (typeof window.updateHandles === 'function') {
             window.updateHandles(comp);
         }
-
-        if (typeof window._getCompStyles === 'function') {
-            window.parent.postMessage(Object.assign({
-                type: 'LF_COMP_SELECTED'
-            }, window._getCompStyles(comp)), '*');
-        }
     };
 
     const bindCursorEvents = () => {

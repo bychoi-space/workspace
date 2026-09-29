@@ -362,7 +362,7 @@
         });
     };
 
-    window.focusDescriptionRow = function(index) {
+    window.focusDescriptionRow = function(index, shouldFocusEditor) {
         var DOM = window.DOM;
         if (!DOM || !DOM.descriptionList) return;
         
@@ -380,7 +380,9 @@
             var editor = row.querySelector('.desc-rich-editor');
             if (editor) {
                 window._activeDescEditor = editor;
-                editor.focus();
+                if (shouldFocusEditor === true) {
+                    editor.focus();
+                }
                 updateToolbarState();
             }
 

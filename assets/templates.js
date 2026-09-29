@@ -2130,12 +2130,12 @@ window.LF_TEMPLATES['template_responsive_mobile_compare.html'] = `
 </head>
 <body>
     <div class="page mobile-compare-page">
-        <!-- Left Frame: To-Be -->
+        <!-- Left Frame: As-Is -->
         <div class="frame-column mobile-column mobile-column-left active-column">
             <div class="frame-label-bar">
                 <div class="frame-label-title">
                     <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">smartphone</span>
-                    <input type="text" class="frame-title-input mobile-title-input" value="To-Be Mobile Screen" placeholder="프레임명 입력...">
+                    <input type="text" class="frame-title-input mobile-title-input" value="As-Is Mobile Screen" placeholder="프레임명 입력...">
                 </div>
                 <div class="frame-label-height-control">
                     <span>Height:</span>
@@ -2165,12 +2165,12 @@ window.LF_TEMPLATES['template_responsive_mobile_compare.html'] = `
             <span class="flow-arrow-label" id="flow-arrow-label">CHANGE</span>
         </div>
 
-        <!-- Right Frame: As-Is -->
+        <!-- Right Frame: To-Be -->
         <div class="frame-column mobile-column mobile-column-right">
             <div class="frame-label-bar">
                 <div class="frame-label-title">
                     <span class="material-icons-outlined" style="font-size: 15px; color: var(--v4-accent);">smartphone</span>
-                    <input type="text" class="frame-title-input mobile-title-input" value="As-Is Mobile Screen" placeholder="프레임명 입력...">
+                    <input type="text" class="frame-title-input mobile-title-input" value="To-Be Mobile Screen" placeholder="프레임명 입력...">
                 </div>
                 <div class="frame-label-height-control">
                     <span>Height:</span>
@@ -2208,6 +2208,14 @@ window.LF_TEMPLATES['template_responsive_mobile_compare.html'] = `
                         heightInput.addEventListener('input', updateHeight);
                         heightInput.addEventListener('change', updateHeight);
                         updateHeight();
+                    }
+                    const titleInput = col.querySelector('.frame-title-input');
+                    if (titleInput) {
+                        const updateTitle = () => {
+                            titleInput.setAttribute('value', titleInput.value);
+                        };
+                        titleInput.addEventListener('input', updateTitle);
+                        titleInput.addEventListener('change', updateTitle);
                     }
                 });
             }

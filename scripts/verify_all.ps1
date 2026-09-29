@@ -18,12 +18,17 @@ $jsFiles = @(
     "assets/vctrl_text_measurer.js",
     "assets/vctrl_ui_atoms.js",
     "assets/vctrl_design_system.js",
+    "assets/vctrl_clipboard_objects.js",
+    "assets/vctrl_format_painter.js",
     "assets/vctrl_shortcuts.js",
     "assets/vctrl_common.js",
     "assets/vctrl_object_shape.js",
     "assets/vctrl_object_connector.js",
     "assets/responsive_frame.js",
     "assets/vctrl_iframe_styles.js",
+    "assets/vctrl_iframe_style_extractor.js",
+    "assets/vctrl_iframe_layering.js",
+    "assets/vctrl_iframe_inserter.js",
     "assets/vctrl_iframe_script.js",
     "assets/vctrl_iframe_grid.js",
     "assets/vctrl_iframe_accordion.js",
@@ -39,6 +44,8 @@ $jsFiles = @(
     "assets/vctrl_responsive_pins.js",
     "assets/vctrl_grouping.js",
     "assets/vctrl_color_picker.js",
+    "assets/vctrl_system_modals.js",
+    "assets/inspector/inspector_quill.js",
     "assets/vctrl_inspector.js",
     "assets/vctrl_screen_manager.js",
     "assets/vctrl_revision_history.js",
@@ -56,7 +63,7 @@ $jsFiles = @(
     "assets/inspector/inspector_atoms.js",
     "assets/inspector/inspector_admin_settings.js",
     "assets/inspector/inspector_text_formatter.js",
-    "assets/vctrl_v4_addon.js"
+    "assets/inspector/inspector_table.js"
 )
 
 $scriptsTags = ($jsFiles | ForEach-Object { "<script src='../$_' onerror=`"window.errors.push({ script: '$_' })`"></script>" }) -join "`n"

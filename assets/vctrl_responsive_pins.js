@@ -17,20 +17,85 @@ window.v4ResponsivePinsScript = `
 (function() {
     console.log("%c [RESPONSIVE PINS] Dedicated Module Initialized ", "background: #6366f1; color: #ffffff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
+    // Self-healing: auto-reconcile pins on load if parent state has descriptions
+    setTimeout(function() {
+        try {
+            var currentDescs = (window.parent && window.parent.state && window.parent.state.activeFile && window.parent.state.activeFile.meta && Array.isArray(window.parent.state.activeFile.meta.description))
+                ? window.parent.state.activeFile.meta.description
+                : null;
+            if (currentDescs !== null && typeof window.importResponsivePins === 'function') {
+                window.importResponsivePins(currentDescs);
+            }
+        } catch(e) {}
+    }, 120);
+
     function isResponsiveScreen() {
         return !!(document.querySelector('.pc-content-inner') || document.querySelector('.mobile-content-inner') || document.querySelector('.pc-browser-frame'));
     }
     window.isResponsiveScreen = isResponsiveScreen;
 
+    function getResponsiveContext() {
+        var isMobileCompare = !!(document.querySelector('.mobile-compare-page') || (document.querySelector('.mobile-column-left') && document.querySelector('.mobile-column-right')));
+        var isPcMobile = !!(document.querySelector('.pc-content-inner') && document.querySelector('.mobile-content-inner'));
+        var isAdminPc = !isPcMobile && !isMobileCompare && !!document.querySelector('.pc-content-inner');
+
+        var frame1 = null;
+        var frame2 = null;
+        var frame1Type = 'pc';
+        var frame2Type = 'mobile';
+        var ground = document.querySelector('.mobile-compare-page, .page, #canvas-page, .canvas') || document.body;
+
+        if (isMobileCompare) {
+            var leftCol = document.querySelector('.mobile-column-left');
+            var rightCol = document.querySelector('.mobile-column-right');
+            frame1 = leftCol ? (leftCol.querySelector('.mobile-content-inner') || leftCol.querySelector('.mobile-content-area, .mobile-content')) : null;
+            frame2 = rightCol ? (rightCol.querySelector('.mobile-content-inner') || rightCol.querySelector('.mobile-content-area, .mobile-content')) : null;
+            if (!frame1 || !frame2) {
+                var inners = document.querySelectorAll('.mobile-content-inner');
+                frame1 = inners[0] || null;
+                frame2 = inners[1] || null;
+            }
+            frame1Type = 'left';
+            frame2Type = 'right';
+        } else if (isPcMobile) {
+            frame1 = document.querySelector('.pc-content-inner') || document.querySelector('.pc-content-area, .pc-content');
+            frame2 = document.querySelector('.mobile-content-inner') || document.querySelector('.mobile-content-area, .mobile-content');
+            frame1Type = 'pc';
+            frame2Type = 'mobile';
+        } else if (isAdminPc) {
+            frame1 = document.querySelector('.pc-content-inner') || document.querySelector('.pc-content-area, .pc-content');
+            frame1Type = 'pc';
+        }
+
+        return {
+            isMobileCompare: isMobileCompare,
+            isPcMobile: isPcMobile,
+            isAdminPc: isAdminPc,
+            frame1: frame1,
+            frame2: frame2,
+            frame1Type: frame1Type,
+            frame2Type: frame2Type,
+            ground: ground
+        };
+    }
+    window.getResponsiveContext = getResponsiveContext;
+
     function getFrameContainers() {
-        const pcInner = document.querySelector('.pc-content-inner') || document.querySelector('.pc-content-area, .pc-content');
-        const mobileInner = document.querySelector('.mobile-content-inner') || document.querySelector('.mobile-content-area, .mobile-content');
-        return { pcInner, mobileInner };
+        var ctx = getResponsiveContext();
+        return {
+            pcInner: (ctx.frame1Type === 'pc' ? ctx.frame1 : null),
+            mobileInner: (ctx.frame2Type === 'mobile' ? ctx.frame2 : (ctx.frame1Type === 'left' ? ctx.frame1 : null)),
+            frame1: ctx.frame1,
+            frame2: ctx.frame2,
+            frame1Type: ctx.frame1Type,
+            frame2Type: ctx.frame2Type,
+            ground: ctx.ground
+        };
     }
 
     function createSinglePinElement(frame, index, number, customX, customY) {
-        const pinId = 'v4-pin-' + frame + '-' + index;
-        let pin = document.getElementById(pinId);
+        var pinId = 'v4-pin-' + frame + '-' + index;
+        var pin = document.getElementById(pinId);
         if (pin) return pin;
 
         pin = document.createElement('div');
@@ -44,23 +109,38 @@ window.v4ResponsivePinsScript = `
         pin.style.height = '20px';
         pin.style.zIndex = '200000';
 
-        let defaultLeft = 50;
-        let defaultTop = 150;
+        var defaultLeft = 50;
+        var defaultTop = 150;
 
         if (frame === 'pc') {
-            const pcArea = document.querySelector('.pc-content-area, .pc-content');
-            const scrollY = pcArea ? pcArea.scrollTop : 0;
+            var pcArea = document.querySelector('.pc-content-area, .pc-content');
+            var scrollY = pcArea ? pcArea.scrollTop : 0;
             defaultLeft = Math.round((1000 - 20) / 2);
             defaultTop = Math.round(250 + scrollY);
+        } else if (frame === 'left') {
+            var leftCol = document.querySelector('.mobile-column-left');
+            var leftArea = leftCol ? leftCol.querySelector('.mobile-content-area, .mobile-content') : null;
+            var scrollY = leftArea ? leftArea.scrollTop : 0;
+            defaultLeft = Math.round((360 - 20) / 2);
+            defaultTop = Math.round(250 + scrollY);
+        } else if (frame === 'right') {
+            var rightCol = document.querySelector('.mobile-column-right');
+            var rightArea = rightCol ? rightCol.querySelector('.mobile-content-area, .mobile-content') : null;
+            var scrollY = rightArea ? rightArea.scrollTop : 0;
+            defaultLeft = Math.round((360 - 20) / 2);
+            defaultTop = Math.round(250 + scrollY);
+        } else if (frame === 'canvas') {
+            defaultLeft = 790;
+            defaultTop = 450;
         } else {
-            const mobileArea = document.querySelector('.mobile-content-area, .mobile-content');
-            const scrollY = mobileArea ? mobileArea.scrollTop : 0;
+            var mobileArea = document.querySelector('.mobile-content-area, .mobile-content');
+            var scrollY = mobileArea ? mobileArea.scrollTop : 0;
             defaultLeft = Math.round((360 - 20) / 2);
             defaultTop = Math.round(250 + scrollY);
         }
 
-        const posX = (customX !== undefined && customX !== null && !isNaN(customX)) ? customX : defaultLeft;
-        const posY = (customY !== undefined && customY !== null && !isNaN(customY)) ? customY : defaultTop;
+        var posX = (customX !== undefined && customX !== null && !isNaN(customX)) ? customX : defaultLeft;
+        var posY = (customY !== undefined && customY !== null && !isNaN(customY)) ? customY : defaultTop;
 
         pin.style.left = posX + 'px';
         pin.style.top = posY + 'px';
@@ -75,49 +155,49 @@ window.v4ResponsivePinsScript = `
         return pin;
     }
 
-    window.spawnResponsiveDualPins = function(index, number, pcPos, mobilePos) {
+    window.spawnResponsiveDualPins = function(index, number, pos1, pos2) {
         if (!isResponsiveScreen()) return;
-        const { pcInner, mobileInner } = getFrameContainers();
-        if (!pcInner && !mobileInner) return;
+        var ctx = getResponsiveContext();
+        if (!ctx.frame1 && !ctx.frame2) return;
 
         if (window.V4UndoManager) {
             window.V4UndoManager.saveState();
         }
 
-        let pcPin = null;
-        let mobPin = null;
+        var pin1 = null;
+        var pin2 = null;
 
-        if (pcInner) {
-            const pcX = pcPos ? pcPos.x : null;
-            const pcY = pcPos ? pcPos.y : null;
-            pcPin = createSinglePinElement('pc', index, number, pcX, pcY);
-            pcInner.appendChild(pcPin);
+        if (ctx.frame1) {
+            var p1X = pos1 ? pos1.x : null;
+            var p1Y = pos1 ? pos1.y : null;
+            pin1 = createSinglePinElement(ctx.frame1Type, index, number, p1X, p1Y);
+            ctx.frame1.appendChild(pin1);
 
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
                     type: 'LF_UPDATE_PIN_POS',
                     index: index,
-                    frame: 'pc',
-                    x: parseFloat(pcPin.style.left) || 0,
-                    y: parseFloat(pcPin.style.top) || 0,
+                    frame: ctx.frame1Type,
+                    x: parseFloat(pin1.style.left) || 0,
+                    y: parseFloat(pin1.style.top) || 0,
                     standardized: true
                 });
             }
         }
 
-        if (mobileInner) {
-            const mobX = mobilePos ? mobilePos.x : null;
-            const mobY = mobilePos ? mobilePos.y : null;
-            mobPin = createSinglePinElement('mobile', index, number, mobX, mobY);
-            mobileInner.appendChild(mobPin);
+        if (ctx.frame2) {
+            var p2X = pos2 ? pos2.x : null;
+            var p2Y = pos2 ? pos2.y : null;
+            pin2 = createSinglePinElement(ctx.frame2Type, index, number, p2X, p2Y);
+            ctx.frame2.appendChild(pin2);
 
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
                     type: 'LF_UPDATE_PIN_POS',
                     index: index,
-                    frame: 'mobile',
-                    x: parseFloat(mobPin.style.left) || 0,
-                    y: parseFloat(mobPin.style.top) || 0,
+                    frame: ctx.frame2Type,
+                    x: parseFloat(pin2.style.left) || 0,
+                    y: parseFloat(pin2.style.top) || 0,
                     standardized: true
                 });
             }
@@ -127,28 +207,75 @@ window.v4ResponsivePinsScript = `
             c.classList.remove('selected');
         });
 
-        if (pcPin) pcPin.classList.add('selected');
-        if (mobPin) mobPin.classList.add('selected');
+        if (pin1) pin1.classList.add('selected');
+        if (pin2) pin2.classList.add('selected');
+        window.activeEl = pin1 || pin2;
+        window.lastActiveFrame = ctx.frame1Type;
 
         if (typeof window.notifyParent === 'function') {
             window.notifyParent({
                 type: 'LF_COMP_SELECTED',
-                id: pcPin ? pcPin.id : (mobPin ? mobPin.id : ''),
+                id: pin1 ? pin1.id : (pin2 ? pin2.id : ''),
                 isTable: false,
                 isShape: false,
                 isPin: true,
                 isDescriptionPin: true,
                 pinIndex: index,
-                frame: 'pc'
+                frame: ctx.frame1Type
+            });
+        }
+    };
+
+    window.spawnGroundPin = function(index, number, posX, posY) {
+        if (!isResponsiveScreen()) return;
+        var ctx = getResponsiveContext();
+        var ground = ctx.ground || document.body;
+
+        if (window.V4UndoManager) {
+            window.V4UndoManager.saveState();
+        }
+
+        var pin = createSinglePinElement('canvas', index, number, posX, posY);
+        ground.appendChild(pin);
+
+        if (typeof window.notifyParent === 'function') {
+            window.notifyParent({
+                type: 'LF_UPDATE_PIN_POS',
+                index: index,
+                frame: 'canvas',
+                x: parseFloat(pin.style.left) || 0,
+                y: parseFloat(pin.style.top) || 0,
+                standardized: true
+            });
+        }
+
+        document.querySelectorAll('.lf-component').forEach(function(c) {
+            c.classList.remove('selected');
+        });
+
+        pin.classList.add('selected');
+        window.activeEl = pin;
+        window.lastActiveFrame = 'canvas';
+
+        if (typeof window.notifyParent === 'function') {
+            window.notifyParent({
+                type: 'LF_COMP_SELECTED',
+                id: pin.id,
+                isTable: false,
+                isShape: false,
+                isPin: true,
+                isDescriptionPin: true,
+                pinIndex: index,
+                frame: 'canvas'
             });
         }
     };
 
     function getPinIdx(pin) {
         if (!pin) return 999999;
-        let idx = parseInt(pin.getAttribute('data-index'));
+        var idx = parseInt(pin.getAttribute('data-index'));
         if (isNaN(idx)) {
-            idx = parseInt((pin.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
+            idx = parseInt((pin.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
         }
         return isNaN(idx) ? 999999 : idx;
     }
@@ -157,81 +284,59 @@ window.v4ResponsivePinsScript = `
         if (!isResponsiveScreen()) return;
 
         try {
-            const descList = (window.parent && window.parent.state && window.parent.state.activeFile && window.parent.state.activeFile.meta && window.parent.state.activeFile.meta.description)
+            var descList = (window.parent && window.parent.state && window.parent.state.activeFile && window.parent.state.activeFile.meta && window.parent.state.activeFile.meta.description)
                 ? window.parent.state.activeFile.meta.description
                 : [];
 
-            const maxIndex = descList.length;
+            var maxIndex = descList.length;
 
             // Step 1: Explicit deletion if deletedIndex is provided
             if (deletedIndex !== undefined && deletedIndex !== null && !isNaN(deletedIndex)) {
-                const delIdxNum = Number(deletedIndex);
+                var delIdxNum = Number(deletedIndex);
                 document.querySelectorAll('.pin-marker, [data-pin-num]').forEach(function(pin) {
                     if (getPinIdx(pin) === delIdxNum) {
                         pin.remove();
                     }
                 });
-            } else {
-                // Fallback: If no deletedIndex was provided, but there are more pins in DOM than in descList:
-                const allDomPins = Array.from(document.querySelectorAll('.pc-content-inner .pin-marker, .pc-content-area .pin-marker, .pc-content .pin-marker, [data-frame="pc"].pin-marker'));
-                if (allDomPins.length > maxIndex) {
-                    allDomPins.sort(function(a, b) { return getPinIdx(a) - getPinIdx(b); });
-                    let foundDeletedIdx = -1;
-                    for (let k = 0; k < allDomPins.length; k++) {
-                        const domPin = allDomPins[k];
-                        const domX = parseFloat(domPin.style.left) || 0;
-                        const domY = parseFloat(domPin.style.top) || 0;
-                        const hasMatch = descList.some(function(item) {
-                            const pcPos = (item && item.pins && item.pins.pc) ? item.pins.pc : item;
-                            if (!pcPos) return false;
-                            const ix = parseFloat(pcPos.x) || 0;
-                            const iy = parseFloat(pcPos.y) || 0;
-                            return Math.abs(ix - domX) < 2 && Math.abs(iy - domY) < 2;
-                        });
-                        if (!hasMatch) {
-                            foundDeletedIdx = getPinIdx(domPin);
-                            break;
-                        }
-                    }
-                    if (foundDeletedIdx !== -1) {
-                        document.querySelectorAll('.pin-marker, [data-pin-num]').forEach(function(pin) {
-                            if (getPinIdx(pin) === foundDeletedIdx) {
-                                pin.remove();
-                            }
-                        });
-                    }
-                }
             }
 
-            const pcPins = Array.from(document.querySelectorAll('.pc-content-inner .pin-marker, .pc-content-area .pin-marker, .pc-content .pin-marker, [data-frame="pc"].pin-marker'));
-            const mobilePins = Array.from(document.querySelectorAll('.mobile-content-inner .pin-marker, .mobile-content-area .pin-marker, .mobile-content .pin-marker, [data-frame="mobile"].pin-marker'));
+            var ctx = getResponsiveContext();
+            var frame1Selector = ctx.isMobileCompare
+                ? '.mobile-column-left .pin-marker, [data-frame="left"].pin-marker'
+                : '.pc-content-inner .pin-marker, .pc-content-area .pin-marker, .pc-content .pin-marker, [data-frame="pc"].pin-marker';
+            var frame2Selector = ctx.isMobileCompare
+                ? '.mobile-column-right .pin-marker, [data-frame="right"].pin-marker'
+                : '.mobile-content-inner .pin-marker, .mobile-content-area .pin-marker, .mobile-content .pin-marker, [data-frame="mobile"].pin-marker';
+            var canvasSelector = '[data-frame="canvas"].pin-marker';
 
-            // Step 2: Sort pins strictly by their current numerical index (NEVER arbitrary DOM order!)
-            pcPins.sort(function(a, b) {
-                return getPinIdx(a) - getPinIdx(b);
-            });
+            var frame1Pins = Array.from(document.querySelectorAll(frame1Selector));
+            var frame2Pins = Array.from(document.querySelectorAll(frame2Selector));
+            var canvasPins = Array.from(document.querySelectorAll(canvasSelector));
 
-            mobilePins.sort(function(a, b) {
-                return getPinIdx(a) - getPinIdx(b);
-            });
+            frame1Pins.sort(function(a, b) { return getPinIdx(a) - getPinIdx(b); });
+            frame2Pins.sort(function(a, b) { return getPinIdx(a) - getPinIdx(b); });
+            canvasPins.sort(function(a, b) { return getPinIdx(a) - getPinIdx(b); });
 
-            // Step 3: Re-index remaining pins in sequence 0..maxIndex-1
-            pcPins.forEach(function(pin, i) {
+            // Step 2: Re-index remaining pins in sequence 0..maxIndex-1
+            frame1Pins.forEach(function(pin, i) {
                 if (i < maxIndex) {
-                    pin.id = 'v4-pin-pc-' + i;
-                    pin.setAttribute('data-frame', 'pc');
+                    pin.id = 'v4-pin-' + ctx.frame1Type + '-' + i;
+                    pin.setAttribute('data-frame', ctx.frame1Type);
                     pin.setAttribute('data-index', String(i));
                     pin.setAttribute('data-pin-num', String(i + 1));
-                    const badge = pin.querySelector('.pin-number-badge');
+                    var badge = pin.querySelector('.pin-number-badge');
                     if (badge) badge.innerText = String(i + 1);
 
                     if (descList[i]) {
                         if (!descList[i].pins) descList[i].pins = {};
-                        descList[i].pins.pc = {
+                        descList[i].pins[ctx.frame1Type] = {
                             x: parseFloat(pin.style.left) || 0,
                             y: parseFloat(pin.style.top) || 0,
                             active: true
                         };
+                        if (ctx.isMobileCompare) {
+                            descList[i].pins.pc = descList[i].pins.left;
+                        }
                         descList[i].x = parseFloat(pin.style.left) || 0;
                         descList[i].y = parseFloat(pin.style.top) || 0;
                         descList[i].standardized = true;
@@ -242,22 +347,52 @@ window.v4ResponsivePinsScript = `
                 }
             });
 
-            mobilePins.forEach(function(pin, i) {
+            frame2Pins.forEach(function(pin, i) {
                 if (i < maxIndex) {
-                    pin.id = 'v4-pin-mobile-' + i;
-                    pin.setAttribute('data-frame', 'mobile');
+                    pin.id = 'v4-pin-' + ctx.frame2Type + '-' + i;
+                    pin.setAttribute('data-frame', ctx.frame2Type);
                     pin.setAttribute('data-index', String(i));
                     pin.setAttribute('data-pin-num', String(i + 1));
-                    const badge = pin.querySelector('.pin-number-badge');
+                    var badge = pin.querySelector('.pin-number-badge');
                     if (badge) badge.innerText = String(i + 1);
 
                     if (descList[i]) {
                         if (!descList[i].pins) descList[i].pins = {};
-                        descList[i].pins.mobile = {
+                        descList[i].pins[ctx.frame2Type] = {
                             x: parseFloat(pin.style.left) || 0,
                             y: parseFloat(pin.style.top) || 0,
                             active: true
                         };
+                        if (ctx.isMobileCompare) {
+                            descList[i].pins.mobile = descList[i].pins.right;
+                        }
+                    }
+                } else {
+                    pin.remove();
+                }
+            });
+
+            canvasPins.forEach(function(pin, i) {
+                if (i < maxIndex) {
+                    pin.id = 'v4-pin-canvas-' + i;
+                    pin.setAttribute('data-frame', 'canvas');
+                    pin.setAttribute('data-index', String(i));
+                    pin.setAttribute('data-pin-num', String(i + 1));
+                    var badge = pin.querySelector('.pin-number-badge');
+                    if (badge) badge.innerText = String(i + 1);
+
+                    if (descList[i]) {
+                        if (!descList[i].pins) descList[i].pins = {};
+                        descList[i].pins.canvas = {
+                            x: parseFloat(pin.style.left) || 0,
+                            y: parseFloat(pin.style.top) || 0,
+                            active: true
+                        };
+                        descList[i].target = 'canvas';
+                        descList[i].x = parseFloat(pin.style.left) || 0;
+                        descList[i].y = parseFloat(pin.style.top) || 0;
+                        descList[i].standardized = true;
+                        descList[i].type = 'pin';
                     }
                 } else {
                     pin.remove();
@@ -274,10 +409,8 @@ window.v4ResponsivePinsScript = `
 
     window.highlightResponsivePins = function(index, active) {
         if (!isResponsiveScreen()) return;
-        const pcPin = document.getElementById('v4-pin-pc-' + index);
-        const mobPin = document.getElementById('v4-pin-mobile-' + index);
-
-        [pcPin, mobPin].forEach(function(pin) {
+        var pins = document.querySelectorAll('[data-index="' + index + '"]');
+        pins.forEach(function(pin) {
             if (!pin) return;
             if (active) {
                 pin.classList.add('highlight-pin');
@@ -297,7 +430,7 @@ window.v4ResponsivePinsScript = `
         });
 
         if (!isResponsiveScreen()) {
-            const singlePin = document.getElementById('v4-pin-' + index);
+            var singlePin = document.getElementById('v4-pin-' + index);
             if (singlePin) {
                 singlePin.classList.add('selected');
                 window.activeEl = singlePin;
@@ -306,15 +439,24 @@ window.v4ResponsivePinsScript = `
             return;
         }
 
-        const pcArea = document.querySelector('.pc-content-area, .pc-content');
-        const mobArea = document.querySelector('.mobile-content-area, .mobile-content');
-        const pcPin = document.getElementById('v4-pin-pc-' + index) || document.querySelector('[data-frame="pc"][data-index="' + index + '"]');
-        const mobPin = document.getElementById('v4-pin-mobile-' + index) || document.querySelector('[data-frame="mobile"][data-index="' + index + '"]');
+        var pins = Array.from(document.querySelectorAll('[data-index="' + index + '"]'));
+        pins.forEach(function(pin) {
+            pin.classList.add('selected');
+        });
 
-        if (pcPin) pcPin.classList.add('selected');
-        if (mobPin) mobPin.classList.add('selected');
-
-        const activePin = (window.lastActiveFrame === 'mobile' ? mobPin : pcPin) || pcPin || mobPin;
+        var activePin = null;
+        if (window.lastActiveFrame) {
+            activePin = pins.find(function(p) {
+                var pf = p.getAttribute('data-frame');
+                if (!pf && typeof window.detectFrameType === 'function') {
+                    pf = window.detectFrameType(p);
+                }
+                return pf === window.lastActiveFrame;
+            });
+        }
+        if (!activePin) {
+            activePin = pins[0] || null;
+        }
         if (activePin) {
             window.activeEl = activePin;
             if (typeof window.updateHandles === 'function') {
@@ -322,25 +464,21 @@ window.v4ResponsivePinsScript = `
             }
         }
 
-        const isDragging = window.V4DragResizeEngine && (window.V4DragResizeEngine.isDragging || window.V4DragResizeEngine.isPendingDrag);
-        const allowScroll = (shouldScroll !== false) && !isDragging;
+        var isDragging = window.V4DragResizeEngine && (window.V4DragResizeEngine.isDragging || window.V4DragResizeEngine.isPendingDrag);
+        var allowScroll = (shouldScroll !== false) && !isDragging;
 
         if (allowScroll) {
-            if (pcArea && pcPin) {
-                const pinTop = parseFloat(pcPin.style.top) || pcPin.offsetTop || 0;
-                const targetTop = Math.max(0, pinTop - (pcArea.clientHeight / 2) + 10);
-                pcArea.scrollTo({ top: targetTop, behavior: 'smooth' });
-            }
-
-            if (mobArea && mobPin) {
-                const pinTop = parseFloat(mobPin.style.top) || mobPin.offsetTop || 0;
-                const targetTop = Math.max(0, pinTop - (mobArea.clientHeight / 2) + 10);
-                mobArea.scrollTo({ top: targetTop, behavior: 'smooth' });
-            }
+            pins.forEach(function(pin) {
+                var scrollArea = pin.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
+                if (scrollArea) {
+                    var pinTop = parseFloat(pin.style.top) || pin.offsetTop || 0;
+                    var targetTop = Math.max(0, pinTop - (scrollArea.clientHeight / 2) + 10);
+                    scrollArea.scrollTo({ top: targetTop, behavior: 'smooth' });
+                }
+            });
         }
 
-        [pcPin, mobPin].forEach(function(pin) {
-            if (!pin) return;
+        pins.forEach(function(pin) {
             pin.classList.remove('pin-active-pulse');
             void pin.offsetWidth;
             pin.classList.add('pin-active-pulse');
@@ -351,26 +489,80 @@ window.v4ResponsivePinsScript = `
     };
 
     window.importResponsivePins = function(pins) {
-        if (!isResponsiveScreen() || !Array.isArray(pins)) return;
-        const { pcInner, mobileInner } = getFrameContainers();
-        if (!pcInner && !mobileInner) return;
+        if (!isResponsiveScreen()) return;
+        pins = Array.isArray(pins) ? pins : [];
+        var ctx = getResponsiveContext();
+        if (!ctx.frame1 && !ctx.frame2 && !ctx.ground) return;
+
+        // [CRITICAL DEFENSE & SELF-HEALING] Collect valid pin IDs according to pins metadata
+        var validPinIds = {};
+        pins.forEach(function(item, idx) {
+            var isGround = item.target === 'canvas' && (!item.pins || (!item.pins.left && !item.pins.right && !item.pins.pc && !item.pins.mobile));
+            if (isGround) {
+                validPinIds['v4-pin-canvas-' + idx] = true;
+            } else {
+                if (ctx.frame1) validPinIds['v4-pin-' + ctx.frame1Type + '-' + idx] = true;
+                if (ctx.frame2) validPinIds['v4-pin-' + ctx.frame2Type + '-' + idx] = true;
+            }
+        });
+
+        // Purge any orphan/ghost pin marker elements not matching metadata
+        var existingPins = document.querySelectorAll('.pin-marker, [id^="v4-pin-"]');
+        existingPins.forEach(function(p) {
+            if (!validPinIds[p.id]) {
+                console.log("[RESPONSIVE PINS] Purged orphan/ghost pin marker:", p.id);
+                p.remove();
+            }
+        });
 
         pins.forEach(function(item, idx) {
-            const num = idx + 1;
-            const pcPos = (item.pins && item.pins.pc) ? item.pins.pc : { x: item.x || 50, y: item.y || 150 };
-            const mobPos = (item.pins && item.pins.mobile) ? item.pins.mobile : { x: 50, y: 150 };
+            var num = idx + 1;
+            var isGround = item.target === 'canvas' && (!item.pins || (!item.pins.left && !item.pins.right && !item.pins.pc && !item.pins.mobile));
 
-            if (pcInner) {
-                const pcPin = createSinglePinElement('pc', idx, num, pcPos.x, pcPos.y);
-                if (!document.getElementById(pcPin.id)) {
-                    pcInner.appendChild(pcPin);
+            if (isGround) {
+                var canPos = (item.pins && item.pins.canvas) ? item.pins.canvas : { x: item.x || 790, y: item.y || 450 };
+                var groundTarget = ctx.ground || document.body;
+                var existingCan = document.getElementById('v4-pin-canvas-' + idx);
+                if (!existingCan) {
+                    var canPin = createSinglePinElement('canvas', idx, num, canPos.x, canPos.y);
+                    groundTarget.appendChild(canPin);
+                } else {
+                    existingCan.style.left = canPos.x + 'px';
+                    existingCan.style.top = canPos.y + 'px';
+                }
+                return;
+            }
+
+            var p1Pos = null;
+            var p2Pos = null;
+
+            if (ctx.isMobileCompare) {
+                p1Pos = (item.pins && item.pins.left) ? item.pins.left : ((item.pins && item.pins.pc) ? item.pins.pc : { x: (item.x !== undefined ? item.x : 0), y: (item.y !== undefined ? item.y : 545) });
+                p2Pos = (item.pins && item.pins.right) ? item.pins.right : ((item.pins && item.pins.mobile) ? item.pins.mobile : { x: (item.x !== undefined ? item.x : 0), y: (item.y !== undefined ? item.y : 545) });
+            } else {
+                p1Pos = (item.pins && item.pins.pc) ? item.pins.pc : { x: item.x || 500, y: item.y || 300 };
+                p2Pos = (item.pins && item.pins.mobile) ? item.pins.mobile : { x: 180, y: 300 };
+            }
+
+            if (ctx.frame1) {
+                var existing1 = document.getElementById('v4-pin-' + ctx.frame1Type + '-' + idx);
+                if (!existing1) {
+                    var pin1 = createSinglePinElement(ctx.frame1Type, idx, num, p1Pos.x, p1Pos.y);
+                    ctx.frame1.appendChild(pin1);
+                } else {
+                    existing1.style.left = p1Pos.x + 'px';
+                    existing1.style.top = p1Pos.y + 'px';
                 }
             }
 
-            if (mobileInner) {
-                const mobPin = createSinglePinElement('mobile', idx, num, mobPos.x, mobPos.y);
-                if (!document.getElementById(mobPin.id)) {
-                    mobileInner.appendChild(mobPin);
+            if (ctx.frame2) {
+                var existing2 = document.getElementById('v4-pin-' + ctx.frame2Type + '-' + idx);
+                if (!existing2) {
+                    var pin2 = createSinglePinElement(ctx.frame2Type, idx, num, p2Pos.x, p2Pos.y);
+                    ctx.frame2.appendChild(pin2);
+                } else {
+                    existing2.style.left = p2Pos.x + 'px';
+                    existing2.style.top = p2Pos.y + 'px';
                 }
             }
         });
@@ -380,11 +572,22 @@ window.v4ResponsivePinsScript = `
 
     window.v4MessageHandlers['LF_IMPORT_PINS'] = function(d) {
         if (isResponsiveScreen()) {
-            window.importResponsivePins(d.pins);
+            window.importResponsivePins(d ? d.pins : []);
             return;
         }
         const host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
-        (d.pins || []).forEach(function(pin, idx) {
+        const validLegacyIds = {};
+        const safePins = (d && Array.isArray(d.pins)) ? d.pins : [];
+        safePins.forEach(function(pin, idx) {
+            validLegacyIds['v4-pin-' + idx] = true;
+        });
+        document.querySelectorAll('.pin-marker, [id^="v4-pin-"]').forEach(function(p) {
+            if (!validLegacyIds[p.id]) {
+                p.remove();
+            }
+        });
+
+        safePins.forEach(function(pin, idx) {
             let div = document.getElementById('v4-pin-' + idx);
             if (div) return;
             
@@ -510,7 +713,9 @@ window.v4ResponsivePinsScript = `
         if (!d || typeof d !== 'object') return;
 
         if (d.type === 'LF_INSERT_RESPONSIVE_PINS') {
-            window.spawnResponsiveDualPins(d.index, d.number, d.pcPos, d.mobilePos);
+            window.spawnResponsiveDualPins(d.index, d.number, d.pcPos || d.pos1, d.mobilePos || d.pos2);
+        } else if (d.type === 'LF_INSERT_GROUND_PIN') {
+            window.spawnGroundPin(d.index, d.number, d.x, d.y);
         } else if (d.type === 'LF_FOCUS_PIN') {
             window.focusResponsivePin(d.index, d.scroll !== false);
         } else if (d.type === 'LF_HIGHLIGHT_PIN') {
@@ -521,6 +726,29 @@ window.v4ResponsivePinsScript = `
             window.reorderResponsivePins(d ? d.deletedIndex : undefined);
         } else if (d.type === 'LF_REORDER_PINS') {
             window.reorderAllPins(d ? d.deletedIndex : undefined);
+        }
+    });
+
+    document.addEventListener('dblclick', function(e) {
+        if (!isResponsiveScreen()) return;
+        var target = e.target;
+        if (!target) return;
+
+        if (target.closest('.mobile-content-inner, .pc-content-inner, .mobile-content-area, .pc-content-area, .lf-component, .v4-editable-cell, input, textarea, button')) {
+            return;
+        }
+
+        var page = document.querySelector('.mobile-compare-page, .page, #canvas-page');
+        if (page && (page.contains(target) || target === document.body || target === document.documentElement)) {
+            var groundX = Math.round(e.pageX);
+            var groundY = Math.round(e.pageY);
+            if (typeof window.notifyParent === 'function') {
+                window.notifyParent({
+                    type: 'LF_CREATE_GROUND_PIN',
+                    x: groundX,
+                    y: groundY
+                });
+            }
         }
     });
 

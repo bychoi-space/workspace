@@ -27,6 +27,25 @@ window.V4UndoManager = (function() {
     
     function getCleanHTML() {
         const host = document.body;
+        // [Form Value SSOT Sync] Commit all live form input values to attributes before snapshot
+        host.querySelectorAll('input').forEach(function(inp) {
+            if (inp.type === 'checkbox' || inp.type === 'radio') {
+                if (inp.checked) inp.setAttribute('checked', '');
+                else inp.removeAttribute('checked');
+            } else {
+                inp.setAttribute('value', inp.value);
+            }
+        });
+        host.querySelectorAll('textarea').forEach(function(ta) {
+            ta.textContent = ta.value;
+        });
+        host.querySelectorAll('select').forEach(function(sel) {
+            Array.from(sel.options).forEach(function(opt) {
+                if (opt.selected) opt.setAttribute('selected', '');
+                else opt.removeAttribute('selected');
+            });
+        });
+
         const clone = host.cloneNode(true);
         clone.querySelectorAll('script').forEach(el => el.remove());
         clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(el => el.remove());

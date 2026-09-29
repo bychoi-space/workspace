@@ -4,3 +4,6 @@ tmp/
 scratch/
 backups/
 logs/
+*.bak
+_archive/
+

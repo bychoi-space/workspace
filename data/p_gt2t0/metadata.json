@@ -122,40 +122,35 @@
     "10_Mobile_Compare_18.html": {
       "title": "Mobile UI 변경 정리",
       "type": "ui",
-      "updatedAt": "2026-09-28T09:11:57.571Z",
+      "updatedAt": "2026-09-29T10:30:00.000Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
           "type": "pin",
-          "target": "canvas",
+          "target": "frame",
           "text": "[상품 그룹 선택 영역 (상단 고정)]\n- 최초 랜더링 시 [전체보기] 기본값으로 개선",
           "html": "[상품 그룹 선택 영역 (상단 고정)]<div>- 최초 랜더링 시 [전체보기] 기본값으로 개선</div>",
-          "x": 346,
-          "y": 607,
+          "x": 0,
+          "y": 545,
           "pins": {
             "left": {
-              "x": 10,
-              "y": 523,
+              "x": 0,
+              "y": 545,
               "active": true
             },
             "right": {
-              "x": 10,
-              "y": 523,
+              "x": 0,
+              "y": 545,
               "active": true
             },
             "pc": {
-              "x": 10,
-              "y": 523,
+              "x": 0,
+              "y": 545,
               "active": true
             },
             "mobile": {
-              "x": 10,
-              "y": 523,
-              "active": true
-            },
-            "canvas": {
-              "x": 346,
-              "y": 607,
+              "x": 0,
+              "y": 545,
               "active": true
             }
           },

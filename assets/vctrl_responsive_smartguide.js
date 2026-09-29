@@ -825,6 +825,7 @@ window.v4ResponsiveSmartGuideScript = `
 
             if (!this.activeContext || 
                 this.activeContext.type !== ctx.type || 
+                this.activeContext.inner !== ctx.inner || 
                 this.lastActiveId !== activeEl.id || 
                 this.spacingTargets.length === 0) {
                 this.findSnapTargets(ctx, activeEl);

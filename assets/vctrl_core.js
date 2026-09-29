@@ -43,6 +43,8 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'TextMeasurer', key: 'v4TextMeasurerScript' },
     { name: 'UIAtoms', key: 'v4UIAtomsScript' },
     { name: 'DesignSystem', key: 'v4DesignSystemScript' },
+    { name: 'ClipboardObjects', key: 'v4ClipboardObjectsScript' },
+    { name: 'FormatPainter', key: 'v4FormatPainterScript' },
     { name: 'Shortcuts', key: 'v4ShortcutsScript' },
     { name: 'Common', key: 'v4CommonScript' },
     { name: 'ObjectShape', key: 'v4ObjectShapeScript' },
@@ -54,6 +56,9 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'Tab', key: 'v4TabScript' },
     { name: 'ResponsiveSmartGuide', key: 'v4ResponsiveSmartGuideScript' },
     { name: 'ResponsivePins', key: 'v4ResponsivePinsScript' },
+    { name: 'IframeStyleExtractor', key: 'v4IframeStyleExtractorScript' },
+    { name: 'IframeLayering', key: 'v4IframeLayeringScript' },
+    { name: 'IframeInserter', key: 'v4IframeInserterScript' },
     { name: 'CoreScript', key: 'v4Script' },
     { name: 'ResponsiveMultiselect', key: 'v4ResponsiveMultiselectScript' }
 ];
@@ -267,16 +272,14 @@ window.loadScreen = async function (fileName) {
             // Phase 3: Import legacy description pins ONCE, then render sidebar list
             if (isResponsiveScreen && iframe.contentWindow) {
                 const descList = state.activeFile?.meta?.description || [];
-                if (descList.length > 0) {
-                    setTimeout(() => {
-                        if (window.MessageHub) {
-                            MessageHub.send(iframe.contentWindow, 'LF_IMPORT_RESPONSIVE_PINS', { pins: descList });
-                        }
-                    }, 80);
-                }
+                setTimeout(() => {
+                    if (window.MessageHub) {
+                        MessageHub.send(iframe.contentWindow, 'LF_IMPORT_RESPONSIVE_PINS', { pins: descList });
+                    }
+                }, 80);
             } else {
                 const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'pin' || p.type === 'text' || p.text || p.html);
-                if (legacyPins.length > 0 && iframe.contentWindow) {
+                if (iframe.contentWindow) {
                     setTimeout(() => {
                         iframe.contentWindow.postMessage({ type: 'LF_IMPORT_PINS', pins: legacyPins }, '*');
                     }, 80);
@@ -361,19 +364,29 @@ window.handleTextCreation = function () {
         state.activeFile.meta.description = [];
     }
 
-    const isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));
+    const isMobileCompare = (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html');
+    const isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || isMobileCompare);
     const newIdx = state.activeFile.meta.description.length;
 
     if (isResponsive) {
+        const initialPins = isMobileCompare ? {
+            left: { x: 170, y: 250, active: true },
+            right: { x: 170, y: 250, active: true },
+            pc: { x: 170, y: 250, active: true },
+            mobile: { x: 170, y: 250, active: true }
+        } : {
+            pc: { x: 500, y: 300, active: true },
+            mobile: { x: 180, y: 300, active: true }
+        };
+
         state.activeFile.meta.description.push({
+            type: "pin",
+            target: "frame",
             text: "Edit Text",
             html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-            x: 500,
-            y: 300,
-            pins: {
-                pc: { x: 500, y: 300, active: true },
-                mobile: { x: 180, y: 300, active: true }
-            },
+            x: isMobileCompare ? 170 : 500,
+            y: isMobileCompare ? 250 : 300,
+            pins: initialPins,
             standardized: true
         });
 
@@ -385,7 +398,8 @@ window.handleTextCreation = function () {
         if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
             MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_RESPONSIVE_PINS', {
                 index: newIdx,
-                number: newIdx + 1
+                number: newIdx + 1,
+                isMobileCompare: isMobileCompare
             });
         }
     } else {
@@ -435,6 +449,26 @@ window.getIframeHTML = async function () {
         try {
             if (DOM.iframe && DOM.iframe.contentDocument) {
                 const doc = DOM.iframe.contentDocument;
+
+                // [Form Value SSOT Sync] Commit all live form input values to attributes before clone
+                doc.querySelectorAll('input').forEach(inp => {
+                    if (inp.type === 'checkbox' || inp.type === 'radio') {
+                        if (inp.checked) inp.setAttribute('checked', '');
+                        else inp.removeAttribute('checked');
+                    } else {
+                        inp.setAttribute('value', inp.value);
+                    }
+                });
+                doc.querySelectorAll('textarea').forEach(ta => {
+                    ta.textContent = ta.value;
+                });
+                doc.querySelectorAll('select').forEach(sel => {
+                    Array.from(sel.options).forEach(opt => {
+                        if (opt.selected) opt.setAttribute('selected', '');
+                        else opt.removeAttribute('selected');
+                    });
+                });
+
                 const clone = doc.documentElement.cloneNode(true);
                 if (window.ScreenSanitizer && typeof window.ScreenSanitizer.cleanDOM === 'function') {
                     window.ScreenSanitizer.cleanDOM(clone);
@@ -538,18 +572,10 @@ window.handleGlobalSave = async function (explicitReason = "") {
             if (bar) bar.style.width = '90%';
         });
 
-        // 2. Format DateTime KST
-        const getFormattedKST = () => {
-            const now = new Date();
-            const yyyy = now.getFullYear();
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const dd = String(now.getDate()).padStart(2, '0');
-            const hh = String(now.getHours()).padStart(2, '0');
-            const min = String(now.getMinutes()).padStart(2, '0');
-            const ss = String(now.getSeconds()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
-        };
-        const updatedTimeStr = getFormattedKST();
+        // 2. Format DateTime KST (Unified with window.getFormattedKST SSOT)
+        const updatedTimeStr = typeof window.getFormattedKST === 'function' 
+            ? window.getFormattedKST() 
+            : new Date().toISOString().slice(0, 19).replace('T', ' ');
 
         const projectMeta = {
             title: document.getElementById('viewer-meta-title')?.value || '',
@@ -769,12 +795,30 @@ window.MessageHub = {
                 if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
                     const pin = window.state.activeFile.meta.description[data.index];
                     if (pin) {
-                        if (data.frame === 'mobile') {
-                            if (!pin.pins) pin.pins = { pc: { x: pin.x || 500, y: pin.y || 300, active: true } };
+                        if (!pin.pins) pin.pins = {};
+                        if (data.frame === 'left') {
+                            pin.pins.left = { x: data.x, y: data.y, active: true };
+                            pin.pins.pc = pin.pins.left;
+                            pin.target = 'frame';
+                            pin.x = data.x;
+                            pin.y = data.y;
+                        } else if (data.frame === 'right') {
+                            pin.pins.right = { x: data.x, y: data.y, active: true };
+                            pin.pins.mobile = pin.pins.right;
+                            pin.target = 'frame';
+                        } else if (data.frame === 'canvas') {
+                            pin.pins.canvas = { x: data.x, y: data.y, active: true };
+                            pin.target = 'canvas';
+                            pin.x = data.x;
+                            pin.y = data.y;
+                        } else if (data.frame === 'mobile') {
                             pin.pins.mobile = { x: data.x, y: data.y, active: true };
+                            pin.pins.right = pin.pins.mobile;
+                            pin.target = 'frame';
                         } else if (data.frame === 'pc') {
-                            if (!pin.pins) pin.pins = { mobile: { x: 180, y: 300, active: true } };
                             pin.pins.pc = { x: data.x, y: data.y, active: true };
+                            pin.pins.left = pin.pins.pc;
+                            pin.target = 'frame';
                             pin.x = data.x;
                             pin.y = data.y;
                         } else {
@@ -785,6 +829,44 @@ window.MessageHub = {
                         markAsDirty();
                     }
                 }
+            },
+            'LF_CREATE_GROUND_PIN': (data) => {
+                if (state.isReadOnly) return;
+                if (!state.activeFile) return;
+                if (!state.activeFile.meta.description) {
+                    state.activeFile.meta.description = [];
+                }
+                const newIdx = state.activeFile.meta.description.length;
+                const posX = Math.round(data.x || 800);
+                const posY = Math.round(data.y || 450);
+
+                state.activeFile.meta.description.push({
+                    type: "pin",
+                    target: "canvas",
+                    text: "Edit Text",
+                    html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+                    x: posX,
+                    y: posY,
+                    pins: {
+                        canvas: { x: posX, y: posY, active: true }
+                    },
+                    standardized: true
+                });
+
+                if (typeof window.renderDescriptionList === 'function') {
+                    window.renderDescriptionList();
+                }
+
+                const DOM = window.DOM || {};
+                if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
+                    MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_GROUND_PIN', {
+                        index: newIdx,
+                        number: newIdx + 1,
+                        x: posX,
+                        y: posY
+                    });
+                }
+                markAsDirty();
             },
             'LF_DELETE_PIN': (data) => {
                 if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
@@ -832,7 +914,11 @@ window.MessageHub = {
                     if (window.state) window.state.selectedComponent = null;
                     if (!isTyping && typeof window.switchSidebarTab === 'function') window.switchSidebarTab('description');
                     if (typeof window.focusDescriptionRow === 'function') {
-                        window.focusDescriptionRow(data.pinIndex);
+                        window.focusDescriptionRow(data.pinIndex, false);
+                    }
+                    const DOM = window.DOM;
+                    if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
+                        try { DOM.iframe.contentWindow.focus(); } catch (err) { }
                     }
                 } else {
                     state.isEditing = true;
@@ -1045,8 +1131,99 @@ window.MessageHub = {
                 if (typeof window.toggleCrispView === 'function') {
                     window.toggleCrispView();
                 }
+            },
+            'LF_DIRTY': () => {
+                if (typeof window.markAsDirty === 'function') {
+                    window.markAsDirty();
+                }
+            },
+            'LF_TRIGGER_SAVE': () => {
+                if (typeof window.handleGlobalSave === 'function') {
+                    window.handleGlobalSave();
+                }
+            },
+            'LF_SHOW_TOAST': (data) => {
+                if (typeof window.showToast === 'function') {
+                    window.showToast(data.message, data.toastType || 'info');
+                }
+            },
+            'LF_INSERT_IMAGE_COMP': (data) => {
+                const base64 = data.base64;
+                if (!base64) return;
+                const img = new Image();
+                img.onload = function() {
+                    const origW = img.naturalWidth || 200;
+                    const origH = img.naturalHeight || 200;
+                    const naturalRatio = origW / origH;
+                    let w = origW;
+                    let h = origH;
+                    if (naturalRatio < 0.65) {
+                        w = 320;
+                        h = Math.round(w / naturalRatio);
+                        if (h > 750) {
+                            h = 750;
+                            w = Math.round(h * naturalRatio);
+                        }
+                    } else if (w > 560 || h > 450) {
+                        const scale = Math.min(560 / w, 450 / h);
+                        w = Math.round(w * scale);
+                        h = Math.round(h * scale);
+                    }
+                    if (typeof window.insertImageComponent === 'function') {
+                        window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
+                    }
+                };
+                img.src = base64;
             }
         };
+
+        // Parent-side paste event listener for handling pasted image files when parent has focus
+        window.addEventListener('paste', function(e) {
+            const activeEl = document.activeElement;
+            const isInput = activeEl && (activeEl.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) || activeEl.closest('.ql-editor'));
+            if (isInput) return;
+
+            const items = (e.clipboardData || window.clipboardData)?.items;
+            if (!items) return;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (!file) continue;
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        const base64 = evt.target.result;
+                        const img = new Image();
+                        img.onload = function() {
+                            const origW = img.naturalWidth || 200;
+                            const origH = img.naturalHeight || 200;
+                            const naturalRatio = origW / origH;
+                            let w = origW;
+                            let h = origH;
+                            if (naturalRatio < 0.65) {
+                                w = 320;
+                                h = Math.round(w / naturalRatio);
+                                if (h > 750) {
+                                    h = 750;
+                                    w = Math.round(h * naturalRatio);
+                                }
+                            } else if (w > 560 || h > 450) {
+                                const scale = Math.min(560 / w, 450 / h);
+                                w = Math.round(w * scale);
+                                h = Math.round(h * scale);
+                            }
+
+                            if (typeof window.insertImageComponent === 'function') {
+                                window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
+                            }
+                        };
+                        img.src = base64;
+                    };
+                    reader.readAsDataURL(file);
+                    e.preventDefault();
+                    break;
+                }
+            }
+        });
 
         window.addEventListener('message', (e) => {
             const data = e.data;

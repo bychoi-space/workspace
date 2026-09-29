@@ -146,7 +146,7 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
       "type": "admin",
-      "updatedAt": "2026-09-16T02:02:01.225Z",
+      "updatedAt": "2026-09-29T07:59:02.633Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -172,7 +172,7 @@
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object]",
-      "version": 0.2
+      "version": 0.6
     },
     "01_Project_Summary_898.html": {
       "title": "과제 개요",
@@ -576,7 +576,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-09-29 10:52:55",
+  "updated": "2026-09-29 16:59:02",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

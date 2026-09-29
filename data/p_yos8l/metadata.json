@@ -1,6 +1,14 @@
 {
   "title": "[회원] 악성 고객 - 주문 제한 조치",
-  "screens": {},
+  "screens": {
+    "00_Cover_827.html": {
+      "title": "00_Cover_827",
+      "type": "cover",
+      "updatedAt": "2026-09-29T02:05:48.768Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.09.29(화) ~ 2026.10.09(금)",

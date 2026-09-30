@@ -75,9 +75,36 @@
     "09_Admin_PC_Scroll_245.html": {
       "title": "09_Admin_PC_Scroll_245",
       "type": "admin",
-      "updatedAt": "2026-09-30T06:41:16.349Z",
+      "updatedAt": "2026-09-30T06:41:51.667Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "회원 기본정보 설정 영역\n- [악성고객여부] 항목 추가",
+          "html": "회원 기본정보 설정 영역<div>- [악성고객여부] 항목 추가</div>",
+          "x": 41,
+          "y": 471,
+          "pins": {
+            "pc": {
+              "x": 41,
+              "y": 471,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 41,
+              "y": 471,
+              "active": true
+            }
+          },
+          "standardized": true
+        }
+      ],
       "connectors": [],
       "version": 0.1
     }
@@ -88,6 +115,6 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-09-30 15:41:16",
+  "updated": "2026-09-30 15:41:51",
   "version": 0.1
 }

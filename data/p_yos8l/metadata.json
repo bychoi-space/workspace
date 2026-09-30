@@ -133,12 +133,12 @@
     "order_block.html": {
       "title": "주문서_주문제한",
       "type": "ui",
-      "updatedAt": "2026-09-30T08:39:43.382Z",
+      "updatedAt": "2026-09-30T08:43:08.383Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
       "version": 0.1,
-      "defaultTab": "description",
+      "defaultTab": "editor",
       "screenDesc": ""
     }
   },

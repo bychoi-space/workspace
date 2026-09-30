@@ -115,7 +115,7 @@
     "09_Admin_PC_Scroll_246.html": {
       "title": "회원상세 - 악성고객",
       "type": "admin",
-      "updatedAt": "2026-09-30T09:13:39.012Z",
+      "updatedAt": "2026-09-30T08:24:32.174Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -124,7 +124,7 @@
     "09_Admin_PC_Scroll_247.html": {
       "title": "회원상세 - 악성고객(활성화)",
       "type": "admin",
-      "updatedAt": "2026-09-30T08:23:04.250Z",
+      "updatedAt": "2026-09-30T09:13:53.342Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -159,7 +159,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-09-30 18:13:38",
+  "updated": "2026-09-30 18:13:53",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

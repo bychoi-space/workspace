@@ -71,6 +71,12 @@
       ],
       "connectors": [],
       "version": 0.1
+    },
+    "09_Admin_PC_Scroll_245.html": {
+      "title": "09_Admin_PC_Scroll_245",
+      "type": "admin",
+      "updatedAt": "2026-09-30T03:20:25.462Z",
+      "template": "template_admin_pc_scroll.html"
     }
   },
   "assignee": "최범열",

@@ -13,9 +13,62 @@
     "09_Admin_PC_Scroll_599.html": {
       "title": "09_Admin_PC_Scroll_599",
       "type": "admin",
-      "updatedAt": "2026-09-30T02:32:01.964Z",
+      "updatedAt": "2026-09-30T02:35:01.996Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "조회조건 영역\n- [악성고객여부] 항목 추가\n- Select Box 기본값 [전체]\n- Dropdown List : Y, N",
+          "html": "조회조건 영역<div>- [악성고객여부] 항목 추가</div><div>- Select Box 기본값 [전체]</div><div>- Dropdown List : Y, N</div>",
+          "x": 685,
+          "y": 198,
+          "pins": {
+            "pc": {
+              "x": 685,
+              "y": 198,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 685,
+              "y": 198,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "조회결과 영역\n- [악성고객여부] 컬럼 추가\n- 설정 데이터 표현\n- 컬럼 위치는 우측 끝",
+          "html": "조회결과 영역<div>- [악성고객여부] 컬럼 추가</div><div>- 설정 데이터 표현</div><div>- 컬럼 위치는 우측 끝</div>",
+          "x": 1388,
+          "y": 525,
+          "pins": {
+            "pc": {
+              "x": 1388,
+              "y": 525,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 1388,
+              "y": 525,
+              "active": true
+            }
+          },
+          "standardized": true
+        }
+      ],
       "connectors": [],
       "version": 0.1
     }
@@ -26,6 +79,6 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-09-30 11:32:01",
+  "updated": "2026-09-30 11:35:01",
   "version": 0.1
 }

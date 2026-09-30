@@ -140,6 +140,17 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "cart_block.html": {
+      "title": "장바구니_주문제한",
+      "type": "ui",
+      "updatedAt": "2026-09-30T08:47:48.772Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",
@@ -156,6 +167,7 @@
     "09_Admin_PC_Scroll_245.html",
     "09_Admin_PC_Scroll_246.html",
     "09_Admin_PC_Scroll_247.html",
-    "order_block.html"
+    "order_block.html",
+    "cart_block.html"
   ]
 }

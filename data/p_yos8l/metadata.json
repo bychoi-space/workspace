@@ -129,6 +129,12 @@
       "description": [],
       "connectors": [],
       "version": 0.1
+    },
+    "08_Responsive_PC_Mobile_839.html": {
+      "title": "08_Responsive_PC_Mobile_839",
+      "type": "responsive-ui",
+      "updatedAt": "2026-09-30T08:37:25.668Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "최범열",
@@ -144,6 +150,7 @@
     "09_Admin_PC_Scroll_599.html",
     "09_Admin_PC_Scroll_245.html",
     "09_Admin_PC_Scroll_246.html",
-    "09_Admin_PC_Scroll_247.html"
+    "09_Admin_PC_Scroll_247.html",
+    "08_Responsive_PC_Mobile_839.html"
   ]
 }

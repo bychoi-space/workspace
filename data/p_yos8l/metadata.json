@@ -10,12 +10,6 @@
       "description": [],
       "connectors": []
     },
-    "07_PC_Design_115.html": {
-      "title": "07_PC_Design_115",
-      "type": "default",
-      "updatedAt": "2026-09-29T02:09:01.096Z",
-      "template": "template_pc_ui.html"
-    },
     "09_Admin_PC_Scroll_599.html": {
       "title": "09_Admin_PC_Scroll_599",
       "type": "admin",

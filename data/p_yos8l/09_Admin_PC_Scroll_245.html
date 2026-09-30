@@ -1,14 +1,61 @@
-
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
     <meta charset="UTF-8">
     <title>Admin PC Web - [회원] 악성 고객 - 주문 제한 조치</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+KR:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-</head>
-<body>
+
+
+<style id="v4-typography-rules">:root {
+  --v4-text-color: #0f172a;
+  --v4-font-size: 12px;
+  --v4-font-weight: 400;
+  --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --v4-placeholder-color: #94a3b8;
+}
+body, .page, .lf-component {
+  font-family: var(--v4-font-family) !important;
+}
+.v4-editable-cell, .v4-shape, .v4-shape-rect, .v4-shape-circle, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-arrow, .v4-shape-pattern-grid, .v4-shape-wave, .v4-shape-webpage, .text-marker, .v4-text-box, .v4-text-shape {
+  color: var(--v4-text-color, #0f172a);
+  font-size: var(--v4-font-size, 12px);
+  font-weight: var(--v4-font-weight, 400);
+  font-family: var(--v4-font-family, inherit);
+}
+.v4-premium-table th, .v4-premium-table td, .v4-grid-container td.v4-grid-cell, .v4-grid-container th.v4-grid-cell {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: var(--v4-text-color, #0f172a) !important;
+  font-family: inherit !important;
+}
+.v4-checkbox-text, .v4-radio-text {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: var(--v4-text-color, #0f172a) !important;
+  font-family: inherit !important;
+}
+.v4-dp-preset-btn {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-alert-desc-badge, .v4-alert-title, .v4-alert-message, .v4-alert-btn {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-admin-group-header, .v4-admin-label-cell {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+.v4-popup-title, .v4-stepper-value, .v4-stepper-action, .v4-stepper-dec, .v4-stepper-inc, .v4-textbox-counter, .v4-textarea-counter {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}</style></head>
+<body class="hide-frame-grid">
     <div class="page full-pc-page">
         <div class="frame-column pc-column active-column full-width">
             <div class="frame-label-bar">
@@ -18,7 +65,7 @@
                 </div>
                 <div class="frame-label-height-control">
                     <span>Height:</span>
-                    <input type="number" class="frame-label-input pc-height-input" value="810" min="810" step="10">
+                    <input type="number" class="frame-label-input pc-height-input" value="1400" min="810" step="10">
                     <span>px</span>
                 </div>
             </div>
@@ -33,15 +80,24 @@
                         <div class="pc-browser-tabs">
                             <div class="pc-browser-tab">
                                 <span class="material-icons-outlined" style="font-size: 14px; color: #6366f1;">admin_panel_settings</span>
-                                <span style="font-family: inherit;">ADMIN CONSOLE | PC Web</span>
+                                <span>ADMIN CONSOLE | PC Web</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="pc-content-area">
-                    <div class="pc-content-inner">
-                        <svg class="v4-responsive-guide-layer pc-guide-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300000; overflow: visible;"></svg>
-                    </div>
+                    <div class="pc-content-inner" style="min-height: 1402px;">
+                        
+                    <div id="v4-comp-1790738492659" class="lf-component" style="position: absolute; top: 43px; left: 68px; z-index: 1010; transform: none; width: 1400px; height: 1000px; min-width: unset !important; min-height: unset !important; --v4-text-adjust-y: 0px;" data-resized="true">
+            <div class="v4-shape v4-popup-container" style="width: 100%; height: 100%; pointer-events: auto; user-select: none; box-sizing: border-box; display: flex; flex-direction: column; background: var(--v4-component-bg, rgb(255, 255, 255)); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.18) 0px 10px 30px, rgba(0, 0, 0, 0.06) 0px 2px 10px; overflow: hidden; border-top-color:  !important; border-top-style:  !important; border-width: 1.6px !important; border-right-color:  !important; border-right-style:  !important; border-bottom-color:  !important; border-bottom-style:  !important; border-left-color:  !important; border-left-style:  !important; border-image-source:  !important; border-image-slice:  !important; border-image-width:  !important; border-image-outset:  !important; border-image-repeat:  !important;" data-valign="middle" data-align="left">
+                <div class="v4-popup-header" style="height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: var(--v4-disabled-bg, #f1f5f9); border-bottom: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)) !important; box-sizing: border-box; width: 100%; flex-shrink: 0; pointer-events: auto;">
+                    <div contenteditable="true" class="v4-editable-cell v4-popup-title" style="font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); outline: none; text-align: left !important; flex: 1 1 0%; justify-content: center !important; align-items: flex-start !important; padding: 5px 10px !important; width: 100%; height: 100%;" data-valign="middle" data-align="left"><p style="line-height: 1.5; width: 100% !important; text-align: left !important;"><span style="font-size: 12px;">회원상세</span></p></div>
+                    <span class="v4-popup-close" style="cursor: pointer; color: var(--v4-placeholder-color, #94a3b8); font-size: 16px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px;">×</span>
+                </div>
+                <div class="v4-popup-body" style="flex: 1; width: 100%; padding: 12px; box-sizing: border-box; background: transparent; position: relative;">
+                    
+                </div>
+            </div></div></div>
                 </div>
             </div>
         </div>
@@ -69,9 +125,9 @@
             }
         })();
     </script>
-    <script id="v4-inlined-script">
-        /* Dynamic scripts injected */
-    </script>
-</body>
-</html>
+    
+<script id="v4-inlined-script">/* Dynamic scripts injected */</script>
 
+
+
+</body></html>

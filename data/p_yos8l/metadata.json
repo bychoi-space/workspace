@@ -75,7 +75,7 @@
     "09_Admin_PC_Scroll_245.html": {
       "title": "09_Admin_PC_Scroll_245",
       "type": "admin",
-      "updatedAt": "2026-09-30T05:12:56.178Z",
+      "updatedAt": "2026-09-30T05:13:55.329Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -88,6 +88,6 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-09-30 14:12:55",
+  "updated": "2026-09-30 14:13:55",
   "version": 0.1
 }

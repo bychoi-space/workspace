@@ -80,12 +80,6 @@
       "description": [],
       "connectors": [],
       "version": 0.1
-    },
-    "99_Blank_96.html": {
-      "title": "99_Blank_96",
-      "type": "blank",
-      "updatedAt": "2026-09-30T06:24:20.288Z",
-      "template": "template_blank.html"
     }
   },
   "assignee": "최범열",

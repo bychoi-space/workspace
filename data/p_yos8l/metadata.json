@@ -13,7 +13,7 @@
     "09_Admin_PC_Scroll_599.html": {
       "title": "09_Admin_PC_Scroll_599",
       "type": "admin",
-      "updatedAt": "2026-09-30T02:35:01.996Z",
+      "updatedAt": "2026-09-30T07:17:57.101Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -70,7 +70,9 @@
         }
       ],
       "connectors": [],
-      "version": 0.1
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     },
     "09_Admin_PC_Scroll_245.html": {
       "title": "09_Admin_PC_Scroll_245",
@@ -111,7 +113,7 @@
     "09_Admin_PC_Scroll_246.html": {
       "title": "회원상세 - 악성고객",
       "type": "admin",
-      "updatedAt": "2026-09-30T07:15:32.635Z",
+      "updatedAt": "2026-09-30T07:04:47.726Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],

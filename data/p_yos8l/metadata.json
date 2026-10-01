@@ -124,7 +124,7 @@
     "09_Admin_PC_Scroll_247.html": {
       "title": "회원상세 - 악성고객(활성화)",
       "type": "admin",
-      "updatedAt": "2026-10-01T07:07:46.634Z",
+      "updatedAt": "2026-09-30T09:13:53.342Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -133,7 +133,7 @@
     "order_block.html": {
       "title": "주문서_주문제한",
       "type": "ui",
-      "updatedAt": "2026-09-30T08:43:08.383Z",
+      "updatedAt": "2026-10-01T07:08:26.393Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -170,7 +170,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-01 16:07:46",
+  "updated": "2026-10-01 16:08:26",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

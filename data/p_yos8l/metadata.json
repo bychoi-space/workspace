@@ -133,7 +133,7 @@
     "order_block.html": {
       "title": "주문서_주문제한",
       "type": "ui",
-      "updatedAt": "2026-10-01T07:42:48.794Z",
+      "updatedAt": "2026-10-01T08:18:27.362Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -170,8 +170,8 @@
       ],
       "connectors": [],
       "version": 0.1,
-      "defaultTab": "editor",
-      "screenDesc": ""
+      "defaultTab": "description",
+      "screenDesc": "[object Object]"
     },
     "cart_block.html": {
       "title": "장바구니_주문제한",
@@ -219,7 +219,7 @@
     "01_Project_Summary_828.html": {
       "title": "과제 개요",
       "type": "plan",
-      "updatedAt": "2026-10-01T08:17:03.217Z",
+      "updatedAt": "2026-10-01T05:34:19.614Z",
       "template": "template_project_summary.html",
       "version": 0.1,
       "description": [],

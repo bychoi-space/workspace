@@ -1,4 +1,4 @@
-﻿/**
+/**
  * assets/inspector/inspector_quill.js
  * Quill Rich Text Editor Lifecycle, Custom Typography Pickers & Sticky Formatting Controller.
  * Decoupled from vctrl_inspector.js for single responsibility.
@@ -77,8 +77,8 @@ window.initQuillEditor = function() {
         }
     });
 
-    // setupCustomColorPicker delegated to vctrl_color_picker.js
-    function setupCustomColorPicker(pickerEl, formatType) {
+    // setupCustomColorPicker delegated to vctrl_color_picker.js SSOT
+    function applyCustomColorPicker(pickerEl, formatType) {
         if (typeof window.setupCustomColorPicker === 'function') {
             window.setupCustomColorPicker(pickerEl, formatType);
         }
@@ -269,14 +269,14 @@ window.initQuillEditor = function() {
             if (colorPicker) {
                 const btnColor = colorPicker.querySelector('.ql-picker-label');
                 if (btnColor) btnColor.setAttribute('title', '글자 색상 (Text Color)');
-                setupCustomColorPicker(colorPicker, 'color');
+                applyCustomColorPicker(colorPicker, 'color');
             }
 
             const bgPicker = toolbarEl.querySelector('.ql-background');
             if (bgPicker) {
                 const btnBg = bgPicker.querySelector('.ql-picker-label');
                 if (btnBg) btnBg.setAttribute('title', '배경 색상 / 형광펜 (Background Color)');
-                setupCustomColorPicker(bgPicker, 'background');
+                applyCustomColorPicker(bgPicker, 'background');
             }
 
             const btnBold = toolbarEl.querySelector('.ql-bold');

@@ -15,13 +15,16 @@ window.v4ClipboardObjectsScript = `
     let isPastingLocked = false;
     let v4Clipboard = [];
 
-    function notifyParent(data) {
+    function dispatchToParent(data) {
         if (window.EditorBus && typeof window.EditorBus.sendToParent === 'function') {
             window.EditorBus.sendToParent(data);
+        } else if (typeof window.notifyParent === 'function') {
+            window.notifyParent(data);
         } else if (window.parent && window.parent !== window) {
             window.parent.postMessage(data, '*');
         }
     }
+    const notifyParent = dispatchToParent;
 
     window.copySelectedObjects = () => {
         const selected = document.querySelectorAll('.lf-component.selected');

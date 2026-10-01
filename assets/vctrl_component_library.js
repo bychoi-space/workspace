@@ -254,6 +254,41 @@ window.renderV4Shapes = function() {
     return filteredShapes.length;
 };
 
+function _filterLibraryCards(containerId, query) {
+    let matchCount = 0;
+    const container = document.getElementById(containerId);
+    if (!container) return matchCount;
+    const cards = container.querySelectorAll('.component-item');
+    cards.forEach(card => {
+        const nameSpan = card.querySelector('span:not(.material-icons-outlined)') || card.querySelector('span');
+        const nameText = nameSpan ? nameSpan.innerText : '';
+        const koText = card.getAttribute('data-ko') || '';
+        const isMatch = !query || nameText.toLowerCase().includes(query) || koText.toLowerCase().includes(query);
+        card.style.setProperty('display', isMatch ? 'flex' : 'none', 'important');
+        if (isMatch) matchCount++;
+    });
+    return matchCount;
+}
+
+function _updateAccordionVisibility(headerId, bodyId, sectionKey, hasItems, query) {
+    const header = document.getElementById(headerId);
+    const body = document.getElementById(bodyId);
+    if (!header || !body) return;
+    header.style.setProperty('display', hasItems ? 'flex' : 'none', 'important');
+    if (!hasItems) {
+        body.style.setProperty('display', 'none', 'important');
+    } else if (query) {
+        body.style.setProperty('display', 'block', 'important');
+        header.classList.remove('is-collapsed');
+        body.classList.remove('is-collapsed');
+    } else {
+        const isCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isCollapsed(sectionKey) : true;
+        body.style.setProperty('display', isCol ? 'none' : 'block', 'important');
+        header.classList.toggle('is-collapsed', isCol);
+        body.classList.toggle('is-collapsed', isCol);
+    }
+}
+
 window.renderAtomicLibrary = function() {
     const query = (window.editorSearchQuery || '').toLowerCase().trim();
 
@@ -290,33 +325,8 @@ window.renderAtomicLibrary = function() {
     }
 
     // 3. Static Atomic Library & Icon Library 필터링
-    let atomicCount = 0;
-    const atomicContainer = document.getElementById('atomic-library-container');
-    if (atomicContainer) {
-        const cards = atomicContainer.querySelectorAll('.component-item');
-        cards.forEach(card => {
-            const nameSpan = card.querySelector('span:not(.material-icons-outlined)') || card.querySelector('span');
-            const nameText = nameSpan ? nameSpan.innerText : '';
-            const koText = card.getAttribute('data-ko') || '';
-            const isMatch = nameText.toLowerCase().includes(query) || koText.toLowerCase().includes(query);
-            card.style.setProperty('display', isMatch ? 'flex' : 'none', 'important');
-            if (isMatch) atomicCount++;
-        });
-    }
-
-    let iconCount = 0;
-    const iconContainer = document.getElementById('icon-library-container');
-    if (iconContainer) {
-        const cards = iconContainer.querySelectorAll('.component-item');
-        cards.forEach(card => {
-            const nameSpan = card.querySelector('span');
-            const nameText = nameSpan ? nameSpan.innerText : '';
-            const koText = card.getAttribute('data-ko') || '';
-            const isMatch = nameText.toLowerCase().includes(query) || koText.toLowerCase().includes(query);
-            card.style.setProperty('display', isMatch ? 'flex' : 'none', 'important');
-            if (isMatch) iconCount++;
-        });
-    }
+    const atomicCount = _filterLibraryCards('atomic-library-container', query);
+    const iconCount = _filterLibraryCards('icon-library-container', query);
 
     // 4. Section Visibility 조절
     const shapesHeader = document.getElementById('v4-shapes-header');
@@ -335,73 +345,15 @@ window.renderAtomicLibrary = function() {
         atomicBody.style.setProperty('display', hasAtomic ? 'block' : 'none', 'important');
     }
 
-    const iconHeader = document.getElementById('icon-library-header');
-    const iconBody = document.getElementById('icon-library-body');
-    if (iconHeader && iconBody) {
-        const hasIcon = iconCount > 0;
-        iconHeader.style.setProperty('display', hasIcon ? 'flex' : 'none', 'important');
-        if (!hasIcon) {
-            iconBody.style.setProperty('display', 'none', 'important');
-        } else if (query) {
-            // 검색 중: 매칭 항목 있으면 무조건 펼쳐서 노출
-            iconBody.style.setProperty('display', 'block', 'important');
-            iconHeader.classList.remove('is-collapsed');
-            iconBody.classList.remove('is-collapsed');
-        } else {
-            // 검색 없음: 저장된 사용자 접힘 상태 복원 (기본 접힘)
-            const isCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isCollapsed('icon-library') : true;
-            iconBody.style.setProperty('display', isCol ? 'none' : 'block', 'important');
-            iconHeader.classList.toggle('is-collapsed', isCol);
-            iconBody.classList.toggle('is-collapsed', isCol);
-        }
-    }
+    _updateAccordionVisibility('icon-library-header', 'icon-library-body', 'icon-library', iconCount > 0, query);
 
     // 3.5. Illustration Library 렌더링
     let illustrationCount = 0;
     if (typeof window.renderIllustrationLibrary === 'function') {
         illustrationCount = window.renderIllustrationLibrary();
     }
-    const illHeader = document.getElementById('illustration-library-header');
-    const illBody = document.getElementById('illustration-library-body');
-    if (illHeader && illBody) {
-        const hasIll = illustrationCount > 0;
-        illHeader.style.setProperty('display', hasIll ? 'flex' : 'none', 'important');
-        if (!hasIll) {
-            illBody.style.setProperty('display', 'none', 'important');
-        } else if (query) {
-            // 검색 중: 매칭 항목 있으면 무조건 펼쳐서 노출
-            illBody.style.setProperty('display', 'block', 'important');
-            illHeader.classList.remove('is-collapsed');
-            illBody.classList.remove('is-collapsed');
-        } else {
-            // 검색 없음: 저장된 사용자 접힘 상태 복원 (기본 접힘)
-            const isCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isCollapsed('illustration-library') : true;
-            illBody.style.setProperty('display', isCol ? 'none' : 'block', 'important');
-            illHeader.classList.toggle('is-collapsed', isCol);
-            illBody.classList.toggle('is-collapsed', isCol);
-        }
-    }
-
-    const moleculesHeader = document.getElementById('molecules-header');
-    const moleculesBody = document.getElementById('molecules-body');
-    if (moleculesHeader && moleculesBody) {
-        const hasMolecules = filteredCustomComps.length > 0;
-        moleculesHeader.style.setProperty('display', hasMolecules ? 'flex' : 'none', 'important');
-        if (!hasMolecules) {
-            moleculesBody.style.setProperty('display', 'none', 'important');
-        } else if (query) {
-            // 검색 중: 매칭 항목 있으면 무조건 펼쳐서 노출
-            moleculesBody.style.setProperty('display', 'block', 'important');
-            moleculesHeader.classList.remove('is-collapsed');
-            moleculesBody.classList.remove('is-collapsed');
-        } else {
-            // 검색 없음: 저장된 사용자 접힘 상태 복원 (기본 접힘)
-            const isCol = window.V4SidebarAccordion ? window.V4SidebarAccordion.isCollapsed('molecules') : true;
-            moleculesBody.style.setProperty('display', isCol ? 'none' : 'block', 'important');
-            moleculesHeader.classList.toggle('is-collapsed', isCol);
-            moleculesBody.classList.toggle('is-collapsed', isCol);
-        }
-    }
+    _updateAccordionVisibility('illustration-library-header', 'illustration-library-body', 'illustration-library', illustrationCount > 0, query);
+    _updateAccordionVisibility('molecules-header', 'molecules-body', 'molecules', filteredCustomComps.length > 0, query);
 
     // 5. Empty State 처리
     const totalMatch = shapesCount + atomicCount + iconCount + illustrationCount + filteredCustomComps.length;

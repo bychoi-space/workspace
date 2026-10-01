@@ -31,6 +31,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_tab.js",
     "c:\Users\sisun\ai_work\assets\vctrl_properties.js",
     "c:\Users\sisun\ai_work\assets\vctrl_smartguide.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_responsive_smartguide_math.js",
     "c:\Users\sisun\ai_work\assets\vctrl_responsive_smartguide.js",
     "c:\Users\sisun\ai_work\assets\inspector\inspector_grid.js",
     "c:\Users\sisun\ai_work\assets\inspector\inspector_accordion.js",
@@ -101,7 +102,7 @@ const scriptsToLoad = [
     'vctrl_ui_atoms.js', 'vctrl_ui_atoms_cursor.js', 'vctrl_design_system.js', 'vctrl_clipboard_objects.js', 'vctrl_format_painter.js', 'vctrl_shortcuts.js', 'vctrl_common.js',
     'vctrl_object_shape.js', 'vctrl_object_connector.js', 'vctrl_iframe_drag.js',
     'vctrl_iframe_ports.js', 'vctrl_iframe_grid.js', 'vctrl_iframe_accordion.js',
-    'vctrl_iframe_tab.js', 'vctrl_responsive_smartguide.js', 'vctrl_responsive_pins.js',
+    'vctrl_iframe_tab.js', 'vctrl_responsive_smartguide_math.js', 'vctrl_responsive_smartguide.js', 'vctrl_responsive_pins.js',
     'vctrl_iframe_style_extractor.js', 'vctrl_iframe_layering.js', 'vctrl_iframe_inserter.js',
     'vctrl_iframe_script.js', 'vctrl_responsive_multiselect.js'
 ];
@@ -118,7 +119,7 @@ const vars = [
     'v4UIAtomsScript', 'v4UIAtomsCursorScript', 'v4DesignSystemScript', 'v4ClipboardObjectsScript', 'v4FormatPainterScript', 'v4ShortcutsScript', 'v4CommonScript',
     'v4ObjectShapeScript', 'v4ObjectConnectorScript', 'v4DragResizeScript',
     'v4PortConnectorScript', 'v4GridScript', 'v4AccordionScript', 'v4TabScript',
-    'v4ResponsiveSmartGuideScript', 'v4ResponsivePinsScript',
+    'v4ResponsiveSmartGuideMathScript', 'v4ResponsiveSmartGuideScript', 'v4ResponsivePinsScript',
     'v4IframeStyleExtractorScript', 'v4IframeLayeringScript', 'v4IframeInserterScript',
     'v4Script', 'v4ResponsiveMultiselectScript'
 ];

@@ -12,13 +12,16 @@
 
 window.v4FormatPainterScript = `
 (function() {
-    function notifyParent(data) {
+    function dispatchFormatToParent(data) {
         if (window.EditorBus && typeof window.EditorBus.sendToParent === 'function') {
             window.EditorBus.sendToParent(data);
+        } else if (typeof window.notifyParent === 'function') {
+            window.notifyParent(data);
         } else if (window.parent && window.parent !== window) {
             window.parent.postMessage(data, '*');
         }
     }
+    const notifyParent = dispatchFormatToParent;
 
     window.copySelectedObjectStyle = function() {
         const selected = document.querySelectorAll('.lf-component.selected');

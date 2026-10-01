@@ -480,6 +480,20 @@ function _detectComponentType(compStyles) {
 }
 
 // 3.6 Synchronize Specific Component Type Panel
+const ATOM_PROP_SYNC_MAP = {
+    textbox: { sec: 'textboxTextareaPropSection', method: 'syncTextboxTextarea', legacy: '_syncTextboxTextareaProps' },
+    textarea: { sec: 'textboxTextareaPropSection', method: 'syncTextboxTextarea', legacy: '_syncTextboxTextareaProps' },
+    searchbar: { sec: 'searchbarPropSection', method: 'syncSearchBar', legacy: '_syncSearchBarProps' },
+    stepper: { sec: 'stepperPropSection', method: 'syncStepper', legacy: '_syncStepperProps' },
+    selectbox: { sec: 'selectboxPropSection', method: 'syncSelectbox', legacy: '_syncSelectboxProps' },
+    fileupload: { sec: 'fileuploadPropSection', method: 'syncFileupload', legacy: '_syncFileuploadProps' },
+    alert: { sec: 'alertPropSection', method: 'syncAlert', legacy: '_syncAlertProps' },
+    button: { sec: 'buttonPropSection', method: 'syncButton', legacy: '_syncButtonProps' },
+    datepicker: { sec: 'datePickerPropSection', method: 'syncDatePicker', legacy: '_syncDatePickerProps' },
+    toggle: { sec: 'togglePropSection', method: 'syncToggle', legacy: '_syncToggleProps' },
+    cursor: { sec: 'cursorPropSection', secId: 'cursor-inspector-section', method: 'syncCursor', legacy: '_syncCursorProps' }
+};
+
 function _syncComponentTypeProperties(compStyles, editingType) {
     if (editingType === 'pin' || editingType === 'shape') {
         if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'block';
@@ -557,47 +571,14 @@ function _syncComponentTypeProperties(compStyles, editingType) {
                 _syncCheckboxRadioProps(compStyles);
             }
         }
-    } else if (editingType === 'textbox' || editingType === 'textarea') {
-        if (DOM.textboxTextareaPropSection) DOM.textboxTextareaPropSection.style.display = 'block';
-        if (typeof _syncTextboxTextareaProps === 'function') {
-            _syncTextboxTextareaProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncTextboxTextarea === 'function') {
-            window.InspectorAtoms.syncTextboxTextarea(compStyles);
-        }
-    } else if (editingType === 'searchbar') {
-        if (DOM.searchbarPropSection) DOM.searchbarPropSection.style.display = 'block';
-        if (typeof _syncSearchBarProps === 'function') {
-            _syncSearchBarProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSearchBar === 'function') {
-            window.InspectorAtoms.syncSearchBar(compStyles);
-        }
-    } else if (editingType === 'stepper') {
-        if (DOM.stepperPropSection) DOM.stepperPropSection.style.display = 'block';
-        if (typeof _syncStepperProps === 'function') {
-            _syncStepperProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncStepper === 'function') {
-            window.InspectorAtoms.syncStepper(compStyles);
-        }
-    } else if (editingType === 'selectbox') {
-        if (DOM.selectboxPropSection) DOM.selectboxPropSection.style.display = 'block';
-        if (typeof _syncSelectboxProps === 'function') {
-            _syncSelectboxProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSelectbox === 'function') {
-            window.InspectorAtoms.syncSelectbox(compStyles);
-        }
-    } else if (editingType === 'fileupload') {
-        if (DOM.fileuploadPropSection) DOM.fileuploadPropSection.style.display = 'block';
-        if (typeof _syncFileuploadProps === 'function') {
-            _syncFileuploadProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncFileupload === 'function') {
-            window.InspectorAtoms.syncFileupload(compStyles);
-        }
-    } else if (editingType === 'alert') {
-        if (DOM.alertPropSection) DOM.alertPropSection.style.display = 'block';
-        if (typeof _syncAlertProps === 'function') {
-            _syncAlertProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncAlert === 'function') {
-            window.InspectorAtoms.syncAlert(compStyles);
+    } else if (ATOM_PROP_SYNC_MAP[editingType]) {
+        const item = ATOM_PROP_SYNC_MAP[editingType];
+        const sec = DOM[item.sec] || (item.secId ? document.getElementById(item.secId) : null);
+        if (sec) sec.style.display = 'block';
+        if (typeof window[item.legacy] === 'function') {
+            window[item.legacy](compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms[item.method] === 'function') {
+            window.InspectorAtoms[item.method](compStyles);
         }
     } else if (editingType === 'popup') {
         const popupSec = DOM.popupPropSection || document.getElementById('popup-inspector-section');
@@ -607,20 +588,6 @@ function _syncComponentTypeProperties(compStyles, editingType) {
         }
         if (window.InspectorPopup && typeof window.InspectorPopup.init === 'function') {
             window.InspectorPopup.init();
-        }
-    } else if (editingType === 'button') {
-        if (DOM.buttonPropSection) DOM.buttonPropSection.style.display = 'block';
-        if (typeof _syncButtonProps === 'function') {
-            _syncButtonProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncButton === 'function') {
-            window.InspectorAtoms.syncButton(compStyles);
-        }
-    } else if (editingType === 'datepicker') {
-        if (DOM.datePickerPropSection) DOM.datePickerPropSection.style.display = 'block';
-        if (typeof _syncDatePickerProps === 'function') {
-            _syncDatePickerProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncDatePicker === 'function') {
-            window.InspectorAtoms.syncDatePicker(compStyles);
         }
     } else if (editingType === 'accordion') {
         if (DOM.accordionPropSection) DOM.accordionPropSection.style.display = 'block';
@@ -665,13 +632,6 @@ function _syncComponentTypeProperties(compStyles, editingType) {
                 _syncCheckboxRadioProps(compStyles);
             }
         }
-    } else if (editingType === 'toggle') {
-        if (DOM.togglePropSection) DOM.togglePropSection.style.display = 'block';
-        if (typeof _syncToggleProps === 'function') {
-            _syncToggleProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncToggle === 'function') {
-            window.InspectorAtoms.syncToggle(compStyles);
-        }
     } else if (editingType === 'tab') {
         if (DOM.tabPropSection) DOM.tabPropSection.style.display = 'block';
         if (window.InspectorTab && typeof window.InspectorTab.sync === 'function') {
@@ -679,14 +639,6 @@ function _syncComponentTypeProperties(compStyles, editingType) {
         }
         if (window.InspectorTab && typeof window.InspectorTab.bindEvents === 'function') {
             window.InspectorTab.bindEvents();
-        }
-    } else if (editingType === 'cursor') {
-        const cursorSec = DOM.cursorPropSection || document.getElementById('cursor-inspector-section');
-        if (cursorSec) cursorSec.style.display = 'block';
-        if (typeof _syncCursorProps === 'function') {
-            _syncCursorProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncCursor === 'function') {
-            window.InspectorAtoms.syncCursor(compStyles);
         }
     }
 }

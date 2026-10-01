@@ -11,7 +11,10 @@ window.v4ResponsiveMultiselectScript = `
 (function() {
     console.log("%c [RESPONSIVE MULTISELECT] Dedicated Module Initialized ", "background: #6366f1; color: #ffffff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
-    function isResponsiveScreen() {
+    function checkIsResponsiveScreen() {
+        if (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function') {
+            return window.ResponsiveFrameUtils.isResponsive(document);
+        }
         if (typeof window.isResponsiveScreen === 'function') {
             return window.isResponsiveScreen();
         }
@@ -58,7 +61,7 @@ window.v4ResponsiveMultiselectScript = `
             window._responsiveMarqueeInterceptorAttached = true;
             const originalNotifyParent = window.notifyParent;
             window.notifyParent = function(data) {
-                if (data && data.type === 'LF_MARQUEE_START' && isResponsiveScreen()) {
+                if (data && data.type === 'LF_MARQUEE_START' && checkIsResponsiveScreen()) {
                     try {
                         const targets = recalculateTargetsForResponsive();
                         if (targets && targets.length > 0) {

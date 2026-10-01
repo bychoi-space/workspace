@@ -58,7 +58,7 @@
 - **모듈러 아키텍처 (Modular Architecture)**: 엔진 안정성과 확장성을 위해 역할을 엄격히 분리합니다.
   - **`vctrl_core.js` (Core Orchestrator - Parent Side)**:
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, 스크린 로딩 파이프라인, 내비게이션 보호 및 중앙 생명주기 조율을 전담합니다.
-    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 25개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
+    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 26개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
   - **`vctrl_storage.js` (Storage Engine - Parent Side)**:
     - **역할**: 스크린 직렬화(`getIframeHTML`), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, GitHub API 원격 커밋 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
   - **`vctrl_core_router.js` (Core Message Router - Parent Side)**:
@@ -129,8 +129,10 @@
     - **역할**: 서식 복사/붙여넣기(`Ctrl+Shift+C`, `Ctrl+Shift+V`), 스타일 클립보드(`window.top.__lf_global_style_clipboard__`) 관리 및 Undo 연동 전담 (`v4FormatPainterScript`).
   - **`vctrl_smartguide.js` (Smart Guide Engine - Parent & Iframe Side)**:
     - **역할**: 일반 1600x900 캔버스 내 컴포넌트 이동/리사이즈 시 5px 자석 스냅선 및 중앙/경계선 가이드 렌더링 전담.
-  - **`vctrl_responsive_smartguide.js` (Responsive Smart Guide Engine - Iframe Side)**:
-    - **역할**: 반응형 2단 프레임(PC/Mobile) 전용 테두리(Wall) 4방향 픽셀 거리 실시간 정밀 측정 및 핑크 뱃지 렌더링 전담 (`v4ResponsiveSmartGuideScript`).
+  - **`vctrl_responsive_smartguide_math.js` (Responsive Smart Guide Math Engine - Iframe Side)**:
+    - **역할**: 반응형 및 일반 캔버스 전용 4방향 레이캐스트(Raycast), 가장 가까운 테두리(Wall) 및 인접 컴포넌트 간 거리 수학 계산 전담 (`v4ResponsiveSmartGuideMathScript`).
+  - **`vctrl_responsive_smartguide.js` (Responsive Smart Guide Renderer & Lifecycle - Iframe Side)**:
+    - **역할**: 실시간 핑크 뱃지 및 SVG 가이드선 렌더링, Alt/Shift 검사, 이동(Nudge) 및 자동 타이머 라이프사이클 관리 전담 (`v4ResponsiveSmartGuideScript`).
   - **`vctrl_responsive_multiselect.js` (Responsive Multi-Selection Engine - Iframe Side)**:
     - **역할**: 반응형 프레임 환경에서 마키(Marquee) 드래그 다중 선택 시 프레임 경계 격리 및 좌표 보정 전담 (`v4ResponsiveMultiselectScript`).
   - **`vctrl_color_picker.js` (Custom Color Picker Engine - Parent Side)**:

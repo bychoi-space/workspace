@@ -55,6 +55,7 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'Grid', key: 'v4GridScript' },
     { name: 'Accordion', key: 'v4AccordionScript' },
     { name: 'Tab', key: 'v4TabScript' },
+    { name: 'ResponsiveSmartGuideMath', key: 'v4ResponsiveSmartGuideMathScript' },
     { name: 'ResponsiveSmartGuide', key: 'v4ResponsiveSmartGuideScript' },
     { name: 'ResponsivePins', key: 'v4ResponsivePinsScript' },
     { name: 'IframeStyleExtractor', key: 'v4IframeStyleExtractorScript' },

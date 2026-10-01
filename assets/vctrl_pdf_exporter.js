@@ -393,6 +393,151 @@ function compileScreenHtmlForPdf(rawHtml, screenFileName = '', dynamicContentH =
     return compiled;
 }
 
+async function captureScreenCanvasForPdf(rawHtml, screenFileName) {
+    const isResponsive = isResponsiveScreenHtml(rawHtml, screenFileName);
+    const dynamicContentH = isResponsive ? detectResponsiveContentHeight(rawHtml) : 0;
+    const isLongPage = isResponsive && (dynamicContentH > 850);
+
+    let screenW = 1600;
+    let screenH = 900;
+    if (isLongPage) {
+        screenH = Math.round(dynamicContentH + 100);
+    } else {
+        const sizeRegex = new RegExp("(?:\\.page|\\.artboard)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px[^\\u007D]*height:\\s*(\\d+)px", "i");
+        const sizeMatch = rawHtml.match(sizeRegex);
+        if (sizeMatch) {
+            screenW = parseInt(sizeMatch[1], 10) || 1600;
+            screenH = parseInt(sizeMatch[2], 10) || 900;
+        } else {
+            const wRegex = new RegExp("(?:\\.page|\\.artboard)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px", "i");
+            const wMatch = rawHtml.match(wRegex);
+            if (wMatch) screenW = parseInt(wMatch[1], 10) || 1600;
+        }
+    }
+
+    const compiledHtml = compileScreenHtmlForPdf(rawHtml, screenFileName, dynamicContentH);
+
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = `
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: ${screenW}px;
+        height: ${screenH}px;
+        border: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        z-index: 1;
+        opacity: 0.001;
+        pointer-events: none;
+    `;
+    document.body.appendChild(iframe);
+
+    try {
+        await new Promise((resolve) => {
+            iframe.onload = () => resolve();
+            iframe.srcdoc = compiledHtml;
+        });
+
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const targetEl = iframeDoc.documentElement || iframeDoc.body;
+
+        try {
+            if (iframeDoc.fonts && typeof iframeDoc.fonts.ready?.then === 'function') {
+                await Promise.race([
+                    iframeDoc.fonts.ready,
+                    new Promise(r => setTimeout(r, 2000))
+                ]);
+            }
+        } catch (fontErr) {
+            console.warn("[PDF Exporter] Font ready wait warning:", fontErr);
+        }
+
+        const imgs = Array.from(iframeDoc.querySelectorAll('img'));
+        if (imgs.length > 0) {
+            await Promise.all(imgs.map(img => {
+                if (img.complete) {
+                    return (typeof img.decode === 'function') ? img.decode().catch(() => {}) : Promise.resolve();
+                }
+                return new Promise(r => {
+                    img.onload = () => {
+                        if (typeof img.decode === 'function') img.decode().catch(() => {}).then(r);
+                        else r();
+                    };
+                    img.onerror = r;
+                    setTimeout(r, 2000);
+                });
+            }));
+        }
+
+        if (isResponsive) {
+            try {
+                const pcInner = iframeDoc.querySelector('.pc-content-inner') || iframeDoc.querySelector('.pc-content-area');
+                const mobInner = iframeDoc.querySelector('.mobile-content-inner') || iframeDoc.querySelector('.mobile-content');
+                let actualDomH = 0;
+                if (pcInner) actualDomH = Math.max(actualDomH, pcInner.scrollHeight || 0, pcInner.offsetHeight || 0);
+                if (mobInner) actualDomH = Math.max(actualDomH, mobInner.scrollHeight || 0, mobInner.offsetHeight || 0);
+
+                if (actualDomH > 850 && actualDomH > dynamicContentH) {
+                    const newScreenH = Math.round(actualDomH + 100);
+                    if (newScreenH > screenH) {
+                        screenH = newScreenH;
+                        iframe.style.height = `${screenH}px`;
+                        const pageEl = iframeDoc.querySelector('.page');
+                        if (pageEl) {
+                            pageEl.style.height = `${screenH}px`;
+                            pageEl.style.minHeight = `${screenH}px`;
+                        }
+                    }
+                }
+            } catch (domMeasureErr) {
+                console.warn("[PDF Exporter] DOM measurement fallback warning:", domMeasureErr);
+            }
+        }
+
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        await new Promise(r => setTimeout(r, 200));
+
+        const computedBodyBg = iframeDoc.defaultView?.getComputedStyle(iframeDoc.body)?.backgroundColor;
+        const computedHtmlBg = iframeDoc.defaultView?.getComputedStyle(iframeDoc.documentElement)?.backgroundColor;
+        let targetBg = null;
+        if (isResponsive) {
+            targetBg = '#0f1115';
+        } else if (computedBodyBg && computedBodyBg !== 'rgba(0, 0, 0, 0)' && computedBodyBg !== 'transparent') {
+            targetBg = computedBodyBg;
+        } else if (computedHtmlBg && computedHtmlBg !== 'rgba(0, 0, 0, 0)' && computedHtmlBg !== 'transparent') {
+            targetBg = computedHtmlBg;
+        } else {
+            targetBg = '#ffffff';
+        }
+
+        const renderScale = screenH > 2200 ? 1.5 : 2;
+
+        const canvas = await html2canvas(targetEl, {
+            scale: renderScale,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: targetBg,
+            logging: false,
+            width: screenW,
+            height: screenH,
+            windowWidth: screenW,
+            windowHeight: screenH,
+            x: 0,
+            y: 0,
+            scrollX: 0,
+            scrollY: 0
+        });
+
+        return { canvas, screenW, screenH };
+    } finally {
+        if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+        }
+    }
+}
+
 /**
  * Main PDF Export Function (High Fidelity True-to-Editor Renderer)
  * Batch renders all screens in the given project into a 1600x900 / Dynamic Landscape PDF document.
@@ -467,154 +612,13 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
                 continue;
             }
 
-            const isResponsive = isResponsiveScreenHtml(rawHtml, screenFileName);
-            const dynamicContentH = isResponsive ? detectResponsiveContentHeight(rawHtml) : 0;
-            const isLongPage = isResponsive && (dynamicContentH > 850);
+            const captureResult = await captureScreenCanvasForPdf(rawHtml, screenFileName);
+            if (!captureResult || !captureResult.canvas) continue;
 
-            // Dynamic screen dimension detection (default to 1600x900, adapt for long-canvas responsive screens)
-            let screenW = 1600;
-            let screenH = 900;
-            if (isLongPage) {
-                screenH = Math.round(dynamicContentH + 100);
-            } else {
-                const sizeRegex = new RegExp("(?:\\.page|\\.artboard)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px[^\\u007D]*height:\\s*(\\d+)px", "i");
-                const sizeMatch = rawHtml.match(sizeRegex);
-                if (sizeMatch) {
-                    screenW = parseInt(sizeMatch[1], 10) || 1600;
-                    screenH = parseInt(sizeMatch[2], 10) || 900;
-                } else {
-                    const wRegex = new RegExp("(?:\\.page|\\.artboard)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px", "i");
-                    const wMatch = rawHtml.match(wRegex);
-                    if (wMatch) screenW = parseInt(wMatch[1], 10) || 1600;
-                }
-            }
-
-            const compiledHtml = compileScreenHtmlForPdf(rawHtml, screenFileName, dynamicContentH);
-
-            // Create in-viewport hidden iframe to ensure GPU layout and font engines execute completely
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = `
-                position: fixed;
-                left: 0;
-                top: 0;
-                width: ${screenW}px;
-                height: ${screenH}px;
-                border: none;
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-                z-index: 1;
-                opacity: 0.001;
-                pointer-events: none;
-            `;
-            document.body.appendChild(iframe);
-
-            // Wait for iframe content & CSS to load
-            await new Promise((resolve) => {
-                iframe.onload = () => resolve();
-                iframe.srcdoc = compiledHtml;
-            });
-
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const targetEl = iframeDoc.documentElement || iframeDoc.body;
-
-            // 1. Wait for web fonts (Inter, Pretendard, Noto Sans KR, Material Icons) to finish loading
-            try {
-                if (iframeDoc.fonts && typeof iframeDoc.fonts.ready?.then === 'function') {
-                    await Promise.race([
-                        iframeDoc.fonts.ready,
-                        new Promise(r => setTimeout(r, 2000))
-                    ]);
-                }
-            } catch (fontErr) {
-                console.warn("[PDF Exporter] Font ready wait warning:", fontErr);
-            }
-
-            // 2. Ensure all images inside iframe are completely loaded and decoded
-            const imgs = Array.from(iframeDoc.querySelectorAll('img'));
-            if (imgs.length > 0) {
-                await Promise.all(imgs.map(img => {
-                    if (img.complete) {
-                        return (typeof img.decode === 'function') ? img.decode().catch(() => {}) : Promise.resolve();
-                    }
-                    return new Promise(r => {
-                        img.onload = () => {
-                            if (typeof img.decode === 'function') img.decode().catch(() => {}).then(r);
-                            else r();
-                        };
-                        img.onerror = r;
-                        setTimeout(r, 2000);
-                    });
-                }));
-            }
-
-            // 3. Check actual inner DOM scrollHeight inside iframe for responsive screens
-            if (isResponsive) {
-                try {
-                    const pcInner = iframeDoc.querySelector('.pc-content-inner') || iframeDoc.querySelector('.pc-content-area');
-                    const mobInner = iframeDoc.querySelector('.mobile-content-inner') || iframeDoc.querySelector('.mobile-content');
-                    let actualDomH = 0;
-                    if (pcInner) actualDomH = Math.max(actualDomH, pcInner.scrollHeight || 0, pcInner.offsetHeight || 0);
-                    if (mobInner) actualDomH = Math.max(actualDomH, mobInner.scrollHeight || 0, mobInner.offsetHeight || 0);
-
-                    if (actualDomH > 850 && actualDomH > dynamicContentH) {
-                        const newScreenH = Math.round(actualDomH + 100);
-                        if (newScreenH > screenH) {
-                            screenH = newScreenH;
-                            iframe.style.height = `${screenH}px`;
-                            const pageEl = iframeDoc.querySelector('.page');
-                            if (pageEl) {
-                                pageEl.style.height = `${screenH}px`;
-                                pageEl.style.minHeight = `${screenH}px`;
-                            }
-                        }
-                    }
-                } catch (domMeasureErr) {
-                    console.warn("[PDF Exporter] DOM measurement fallback warning:", domMeasureErr);
-                }
-            }
-
-            // 4. Wait for layout settling and final paint tick
-            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-            await new Promise(r => setTimeout(r, 200));
-
-            // Detect accurate background color from source document, preventing pure black JPEG artifacts
-            const computedBodyBg = iframeDoc.defaultView?.getComputedStyle(iframeDoc.body)?.backgroundColor;
-            const computedHtmlBg = iframeDoc.defaultView?.getComputedStyle(iframeDoc.documentElement)?.backgroundColor;
-            let targetBg = null;
-            if (isResponsive) {
-                targetBg = '#0f1115';
-            } else if (computedBodyBg && computedBodyBg !== 'rgba(0, 0, 0, 0)' && computedBodyBg !== 'transparent') {
-                targetBg = computedBodyBg;
-            } else if (computedHtmlBg && computedHtmlBg !== 'rgba(0, 0, 0, 0)' && computedHtmlBg !== 'transparent') {
-                targetBg = computedHtmlBg;
-            } else {
-                targetBg = '#ffffff';
-            }
-
-            // High-DPI scale adaptation (use 1.5 for tall pages >2200px to maintain performance and avoid GPU memory limits)
-            const renderScale = screenH > 2200 ? 1.5 : 2;
-
-            // Convert iframe content to canvas using html2canvas
-            const canvas = await html2canvas(targetEl, {
-                scale: renderScale,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: targetBg,
-                logging: false,
-                width: screenW,
-                height: screenH,
-                windowWidth: screenW,
-                windowHeight: screenH,
-                x: 0,
-                y: 0,
-                scrollX: 0,
-                scrollY: 0
-            });
-
+            const { canvas, screenW, screenH } = captureResult;
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
             const orientation = screenW >= screenH ? 'landscape' : 'portrait';
+
             if (!pdf) {
                 pdf = new jsPDF({
                     orientation: orientation,
@@ -628,11 +632,6 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
 
             pdf.addImage(imgData, 'JPEG', 0, 0, screenW, screenH);
             processedCount++;
-
-            // Clean up temporary iframe
-            if (document.body.contains(iframe)) {
-                document.body.removeChild(iframe);
-            }
         }
 
         if (processedCount === 0) {

@@ -184,30 +184,7 @@ async function listRepoRoot() {
     }
 }
 
-async function fetchFileContent(path, isRoot = false) {
-    window.fileContentCache = window.fileContentCache || {};
-    const fullPath = isRoot ? path : `${ghConfig.dataDir}${path}`;
-    
-    // 1. Return in-memory cache if available in current session
-    if (window.fileContentCache[path]) {
-        return window.fileContentCache[path];
-    }
-
-    // 2. On http/https protocol, perform local server fetch
-    if (window.location.protocol !== 'file:') {
-        try {
-            const localRes = await fetch(fullPath + '?t=' + Date.now());
-            if (localRes.ok) {
-                const localText = await localRes.text();
-                if (localText && localText.trim().length > 0) {
-                    window.fileContentCache[path] = localText;
-                    return localText;
-                }
-            }
-        } catch (e) {}
-    }
-
-    // 3. GitHub API Remote Fetch - Single Source of Truth for all screens
+async function _fetchGitHubRemoteContent(fullPath, path) {
     const safePath = fullPath.split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16))).join('/');
     const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}?t=${Date.now()}`;
     
@@ -251,7 +228,7 @@ async function fetchFileContent(path, isRoot = false) {
                     try {
                         const decoded = utf8Base64Decode(data.content);
                         if (decoded) {
-                            window.fileContentCache[path] = decoded; // Cache successful fetch in-memory
+                            window.fileContentCache[path] = decoded;
                             return decoded;
                         }
                     } catch(e) { 
@@ -260,7 +237,6 @@ async function fetchFileContent(path, isRoot = false) {
                 }
 
                 // Case 2: Large files (> 1MB) - Fetch Git Blob API directly by immutable SHA
-                // Git Blob API has 0-second CDN caching lag and always returns the real-time latest content
                 const blobUrl = data.git_url || (data.sha ? `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/git/blobs/${data.sha}` : null);
                 if (blobUrl) {
                     try {
@@ -310,6 +286,53 @@ async function fetchFileContent(path, isRoot = false) {
             break;
         }
     }
+    return null;
+}
+
+function _fetchOfflineFallback(path) {
+    if (window.location.protocol !== 'file:') return null;
+    const filename = path.split('/').pop();
+    if (path.endsWith('metadata.json')) {
+        const project = path.split('/')[0] || 'p_331wr';
+        if (window.PROJECT_METADATA_STORE && window.PROJECT_METADATA_STORE[project]) {
+            return JSON.stringify(window.PROJECT_METADATA_STORE[project]);
+        }
+    }
+    if (filename === 'global_components.json' && window.GLOBAL_COMPONENTS_STORE) {
+        return JSON.stringify(window.GLOBAL_COMPONENTS_STORE);
+    }
+    if (window.PROJECT_SCREEN_STORE && window.PROJECT_SCREEN_STORE[filename]) {
+        return window.PROJECT_SCREEN_STORE[filename];
+    }
+    return null;
+}
+
+async function fetchFileContent(path, isRoot = false) {
+    window.fileContentCache = window.fileContentCache || {};
+    const fullPath = isRoot ? path : `${ghConfig.dataDir}${path}`;
+    
+    // 1. Return in-memory cache if available in current session
+    if (window.fileContentCache[path]) {
+        return window.fileContentCache[path];
+    }
+
+    // 2. On http/https protocol, perform local server fetch
+    if (window.location.protocol !== 'file:') {
+        try {
+            const localRes = await fetch(fullPath + '?t=' + Date.now());
+            if (localRes.ok) {
+                const localText = await localRes.text();
+                if (localText && localText.trim().length > 0) {
+                    window.fileContentCache[path] = localText;
+                    return localText;
+                }
+            }
+        } catch (e) {}
+    }
+
+    // 3. GitHub API Remote Fetch - Single Source of Truth for all screens
+    const remoteResult = await _fetchGitHubRemoteContent(fullPath, path);
+    if (remoteResult) return remoteResult;
 
     // 3.5. Direct Raw GitHub CDN Fetch (Fallback for large files or rate-limited API)
     try {
@@ -325,23 +348,7 @@ async function fetchFileContent(path, isRoot = false) {
     } catch (e) {}
 
     // 4. Offline Fallback (only when GitHub API / Network fails)
-    if (window.location.protocol === 'file:') {
-        const filename = path.split('/').pop();
-        if (path.endsWith('metadata.json')) {
-            const project = path.split('/')[0] || 'p_331wr';
-            if (window.PROJECT_METADATA_STORE && window.PROJECT_METADATA_STORE[project]) {
-                return JSON.stringify(window.PROJECT_METADATA_STORE[project]);
-            }
-        }
-        if (filename === 'global_components.json' && window.GLOBAL_COMPONENTS_STORE) {
-            return JSON.stringify(window.GLOBAL_COMPONENTS_STORE);
-        }
-        if (window.PROJECT_SCREEN_STORE && window.PROJECT_SCREEN_STORE[filename]) {
-            return window.PROJECT_SCREEN_STORE[filename];
-        }
-    }
-
-    return null;
+    return _fetchOfflineFallback(path);
 }
 
 async function fetchProjectFileContent(project, filename) {
@@ -1071,11 +1078,11 @@ async function createShortUrl(longUrl) {
 }
 
 // --- Clipboard Delegation (SSOT: assets/vctrl_clipboard.js) ---
-async function copyTextToClipboard(text, successMessage) {
+async function copyDeployUrlToClipboard(text, successMessage) {
     if (window.ClipboardManager && typeof window.ClipboardManager.copyTextToClipboard === 'function') {
         return await window.ClipboardManager.copyTextToClipboard(text, successMessage);
     }
-    if (typeof window.copyTextToClipboard === 'function' && window.copyTextToClipboard !== copyTextToClipboard) {
+    if (typeof window.copyTextToClipboard === 'function') {
         return await window.copyTextToClipboard(text, successMessage);
     }
     try {
@@ -1083,23 +1090,8 @@ async function copyTextToClipboard(text, successMessage) {
             await navigator.clipboard.writeText(text);
             return true;
         }
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        textArea.style.top = "-9999px";
-        textArea.style.opacity = "0";
-        textArea.setAttribute('readonly', '');
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        const success = document.execCommand('copy');
-        document.body.removeChild(textArea);
-        return success;
-    } catch (err) {
-        console.error("[Clipboard] Fallback failed:", err);
-        return false;
-    }
+    } catch (e) {}
+    return false;
 }
 
 function showGlobalToast(message, type = 'success') {
@@ -1138,7 +1130,7 @@ async function copyProjectShortUrl(projectName, options = {}) {
 
     try {
         const deployUrl = getProjectDeployUrl(projectName, screenName);
-        const copySuccess = await copyTextToClipboard(deployUrl);
+        const copySuccess = await copyDeployUrlToClipboard(deployUrl);
 
         if (copySuccess) {
             const toastMsg = screenName
@@ -1160,7 +1152,7 @@ async function copyProjectShortUrl(projectName, options = {}) {
 
 window.getProjectDeployUrl = getProjectDeployUrl;
 window.createShortUrl = createShortUrl;
-window.copyTextToClipboard = window.copyTextToClipboard || copyTextToClipboard;
+window.copyTextToClipboard = window.copyTextToClipboard || copyDeployUrlToClipboard;
 window.showGlobalToast = showGlobalToast;
 window.copyProjectShortUrl = copyProjectShortUrl;
 window.copyProjectUrl = copyProjectShortUrl;

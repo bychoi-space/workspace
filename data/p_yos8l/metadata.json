@@ -133,7 +133,7 @@
     "order_block.html": {
       "title": "주문서_주문제한",
       "type": "ui",
-      "updatedAt": "2026-10-01T07:25:46.254Z",
+      "updatedAt": "2026-10-01T07:42:48.794Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -144,7 +144,7 @@
     "cart_block.html": {
       "title": "장바구니_주문제한",
       "type": "ui",
-      "updatedAt": "2026-10-01T07:41:36.232Z",
+      "updatedAt": "2026-10-01T07:30:16.457Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -170,7 +170,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-01 16:41:35",
+  "updated": "2026-10-01 16:42:48",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

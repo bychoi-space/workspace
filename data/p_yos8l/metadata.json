@@ -151,6 +151,15 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "01_Project_Summary_828.html": {
+      "title": "과제 개요",
+      "type": "summary",
+      "updatedAt": "2026-10-01T03:28:49.878Z",
+      "template": "template_project_summary.html",
+      "version": 0.1,
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",
@@ -163,6 +172,7 @@
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",
+    "01_Project_Summary_828.html",
     "09_Admin_PC_Scroll_599.html",
     "09_Admin_PC_Scroll_245.html",
     "09_Admin_PC_Scroll_246.html",

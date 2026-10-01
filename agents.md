@@ -348,8 +348,8 @@
 - **Pure MessageHub Architecture**: 부모 창의 오케스트레이터에서 iframe 내부 요소에 절대로 직접 접근(`contentDocument`)해서는 안 됩니다. 반드시 `MessageHub`를 통해 메시지를 보내고, Iframe 내부 스크립트(`vctrl_iframe_script.js`)가 처리를 위임받아 실행하도록 설계해야 합니다.
 - **명령어 유연성 (Case-Insensitivity)**: `MessageHub`를 통해 전달되는 모든 액션 명령어는 대소문자를 구분하지 않으며, 하이픈(`-`)과 언더바(`_`)를 모두 수용하도록 정규화하여 처리합니다.
 
-## 📐 스크린 에이전트 직접 제작/빌드 시 7대 불변 대원칙 (Screen Authoring Standards)
-> AI가 사용자 요청으로 워크스페이스 에디터의 스크린(HTML)을 직접 그릴 때는 반드시 `workspace-editor-screen-authoring` 스킬과 아래 7대 원칙을 100% 준수해야 합니다.
+## 📐 스크린 에이전트 직접 제작/빌드 시 8대 불변 대원칙 (Screen Authoring Standards)
+> AI가 사용자 요청으로 워크스페이스 에디터의 스크린(HTML)을 직접 그릴 때는 반드시 `workspace-editor-screen-authoring` 스킬과 아래 8대 원칙을 100% 준수해야 합니다.
 > - **참조 벤치마크 스크린 (SSOT Benchmark Screens)**:
 >   1. [03_Admin_System_Development_Roadmap_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/03_Admin_System_Development_Roadmap_900.html): 어드민 시스템 로드맵 (100% 원자적 오브젝트 분리 + 3D 도메인 일러스트 결합)
 >   2. [04_Front_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/04_Front_System_Milestone_Timeline_900.html): 프론트 중장기 마일스톤 (상·하 교차 웨이브 인포그래픽 + `#canvas_bg_layer` 무간섭 배경 적용)
@@ -361,9 +361,10 @@
 - **2. LIBRARY 표준 오브젝트 100% 활용 (Native Library Objects Only)**: 스크린에 존재하는 모든 오브젝트는 LIBRARY에 존재하는 도형(`.v4-shape`), 아톰, 아이콘(`.lf-icon` SVG)을 활용한다. 비표준 임의 HTML 태그나 커스텀 스타일 클래스는 금지한다.
 - **3. 최소 단위 원자적 분리/파편화 (Atomic Granularity & Separation)**: 스크린을 구성하는 오브젝트는 최소 단위로 잘게 쪼개져서 파편화되어야 한다. 사용자가 캔버스 위에서 직접 내용을 클릭하여 수정하기 원활하게 하기 위함이다. 카드 1개를 구성하더라도 [배경 쉐입] + [독립 아이콘] + [독립 타이틀] + [독립 뱃지] + [독립 설명]으로 각각의 `.lf-component`로 완전 분리 배치해야 한다.
 - **4. 텍스트 폰트 크기 최소 13px 이상 (Min Font-Size >= 13px)**: 스크린의 텍스트 폰트 크기는 최소 13px 이상으로만 구성한다. 그 이하(10px, 11px, 12px 등)의 폰트 크기는 가독성을 저하시키므로 절대 사용하지 않는다.
-- **5. 간결하고 깔끔한 레이아웃 (Concise & Clutter-Free Layout)**: 스크린은 최대한 깔끔하게 구성되어야 하고, 불필요하게 많은 텍스트는 지양한다. 반드시 필요한 내용으로만 구성하고 중복되는 내용은 지양하며, 1600x900 단일 캔버스 내에서 스크롤 없이 완결되는 레이아웃을 구성한다.
-- **6. 절제된 컬러 및 포인트 강조 (Restrained Color Palette & Strategic Accent)**: 컬러를 너무 다양하게 사용하지 않는다. 뉴트럴 톤(배경 #f8fafc/#ffffff, 보더 #e2e8f0, 텍스트 #0f172a)을 기본으로 하고, 매우 중요해서 강조되어야 하는 부분에만 중점적으로 1~2개의 포인트 컬러(블루, 그린, 핑크 등)를 전략적으로 사용한다.
-- **7. 스크린 생성/수정 완료 시 무조건 GitHub 원격 배포 (Mandatory Automated GitHub Deployment)**: 스크린을 신규 생성하거나 수정했을 때는 로컬 작업에 그치지 않고, 반드시 `git pull --rebase origin main` 선행 후 `git push origin main`까지 자체적으로 즉시 자동 완결한다.
+- **5. 이미지 및 일러스트 적극 활용 및 부재 시 즉시 제작 활용 원칙 (Proactive Illustration Usage & Instant Generation)**: 텍스트 위주의 밋밋하고 건조한 스크린 구성을 배제하고, 도메인/맥락에 부합하는 일러스트(3D/2D)와 그래픽을 적극 배치한다. 상황에 완벽히 부합하는 기존 이미지가 `assets/illustrations/`에 없을 경우, `generate_image` 도구를 가동하여 고품질 이미지를 즉시 직접 제작(`assets/illustrations/`에 저장)하여 화면에 반영한다.
+- **6. 간결하고 깔끔한 레이아웃 (Concise & Clutter-Free Layout)**: 스크린은 최대한 깔끔하게 구성되어야 하고, 불필요하게 많은 텍스트는 지양한다. 반드시 필요한 내용으로만 구성하고 중복되는 내용은 지양하며, 1600x900 단일 캔버스 내에서 스크롤 없이 완결되는 레이아웃을 구성한다.
+- **7. 절제된 컬러 및 포인트 강조 (Restrained Color Palette & Strategic Accent)**: 컬러를 너무 다양하게 사용하지 않는다. 뉴트럴 톤(배경 #f8fafc/#ffffff, 보더 #e2e8f0, 텍스트 #0f172a)을 기본으로 하고, 매우 중요해서 강조되어야 하는 부분에만 중점적으로 1~2개의 포인트 컬러(블루, 그린, 핑크 등)를 전략적으로 사용한다.
+- **8. 스크린 생성/수정 완료 시 무조건 GitHub 원격 배포 (Mandatory Automated GitHub Deployment)**: 스크린을 신규 생성하거나 수정했을 때는 로컬 작업에 그치지 않고, 반드시 `git pull --rebase origin main` 선행 후 `git push origin main`까지 자체적으로 즉시 자동 완결한다.
 - **임의의 기획 요약 및 누락 절대 금지 (1:1 Text & Data Match)**:
   - 원본 PPT(슬라이드) 또는 가이드 이미지를 바탕으로 스크린을 자동 생성할 때, 기획서의 핵심 데이터를 임의로 축소, 생략하거나 대체 텍스트로 요약하는 것을 전면 금지합니다.
   - 슬라이드 속의 복잡한 표(Table)나 수치, 데이터 및 설명 텍스트는 **단 한 글자의 누락도 없이 100% 동일하게** 에디터 객체(`.lf-component`)로 코딩하여 완벽히 이식해야 합니다.

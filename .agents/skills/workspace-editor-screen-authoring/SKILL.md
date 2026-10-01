@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-screen-authoring
-description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, atomic element separation, minimum 13px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
+description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, proactive illustration library usage & instant on-demand image generation, atomic element separation, minimum 13px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
 ---
 
 # Workspace Editor Screen Authoring Standards (AI 직접 스크린 제작 대원칙)
@@ -18,7 +18,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 
 ---
 
-## 🏛️ 스크린 제작 7대 절대 규칙 (Strict Core Rules)
+## 🏛️ 스크린 제작 8대 절대 규칙 (Strict Core Rules)
 
 ### 1. 무조건 사실 기반 데이터 전용 (Fact-Based Data Only)
 - **가짜 데이터 및 상상 수치 원천 배제**: 사용자가 제공한 기획서, 회의록, 벤치마크 팩트, 실제 서비스 정책/수치 데이터만을 근거로 화면을 구성합니다.
@@ -113,7 +113,33 @@ description: Use when the user asks AI to create, draw, generate, design, or com
     }
     ```
 
-### 5. 간결하고 정돈된 레이아웃 (Clutter-Free & No Redundancy)
+### 5. 이미지 및 일러스트 적극 활용 및 부재 시 즉시 제작 활용 원칙 (Proactive Illustration Usage & Instant Generation)
+- **시각적 완성도 및 몰입감 극대화 (Elevate Visual Quality)**:
+  - 텍스트와 단순 사각형(Box) 위주의 밋밋하고 건조한 스크린 구성을 단호히 지양합니다.
+  - 기획 맥락(도메인, 사용자 여정, 시스템 아키텍처, 벤치마크, 정책 등)에 부합하는 **일러스트(3D/2D), 인포그래픽 그래픽, 다이어그램 이미지를 카드 헤더, 프로세스 노드, 대시보드 요약 영역에 적극적으로 배치하여 시각적 직관성과 프레젠테이션 완성도를 극대화**해야 합니다.
+- **기존 일러스트 라이브러리 최우선 탐색 및 활용**:
+  - `assets/illustrations/` 및 에디터 우측 사이드바 `LIBRARY > Illustrations`에 구비된 45종 이상의 도메인 표준 에셋들을 최우선으로 검토하여 적극 삽입합니다:
+    - **어드민/시스템 도메인 3D 일러스트**: `admin_3d_claim.png`, `admin_3d_cms.png`, `admin_3d_logistics.png`, `admin_3d_membership.png`, `admin_3d_order.png`, `admin_3d_pim.png`, `admin_3d_promotion.png` 등
+    - **이커머스 사용자 여정 단계별 일러스트**: `step1_enter_ecommerce.png` ~ `step8_return_clothing.png` (방문, 탐색, 선택, 가입, 할인, 결제, 배송, 반품 8단계)
+    - **아토믹 디자인 시스템 일러스트**: `atomic_atoms.png`, `atomic_molecules.png`, `atomic_organisms.png`, `atomic_layout.png`, `atomic_pages.png` 등
+    - **무간섭 캔버스 배경 레이어**: `admin_backend_bg.jpg`, `ecommerce_ui_bg.jpg` 등
+  - **표준 마크업 규격**:
+    ```html
+    <!-- [표준 일러스트 컴포넌트 마크업] -->
+    <div id="comp_illustration_1" class="lf-component" style="position: absolute; top: 120px; left: 40px; width: 80px; height: 80px; z-index: 10;" data-resized="true">
+        <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <img src="assets/illustrations/admin_3d_order.png" alt="주문 도메인" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+        </div>
+    </div>
+    ```
+- **상황에 맞는 이미지가 없을 때 즉시 제작 및 반영 (Instant On-Demand Generation)**:
+  - 기획 내용이나 특정 업무 도메인(예: 결제 게이트웨이, 신규 물류 정산, 보안 토큰, AI 추천 모델, 클라우드 인프라 등)에 **정확히 부합하는 기존 일러스트가 없는 경우, 망설이거나 텍스트로만 대체하지 말고 에이전트의 이미지 생성 도구(`generate_image`)를 가동하여 상황에 최적화된 이미지를 즉시 직접 제작하여 활용**해야 합니다.
+  - **제작 가이드라인**:
+    - **스타일 일관성**: 기존 라이브러리의 톤앤매너(투명 배경의 세련된 3D 클레이/아이소메트릭 또는 미니멀한 2D 플랫 일러스트)를 엄격히 계승.
+    - **저장 위치**: 제작된 이미지는 반드시 `assets/illustrations/` 디렉토리에 명확한 네이밍(예: `admin_3d_settlement.png`, `ill_security_token.png` 등)으로 저장.
+    - **즉시 마크업 바인딩**: 생성 즉시 스크린 HTML 내 `.v4-illustration-container` 표준 구조로 삽입하여 캔버스에 즉각 렌더링되도록 반영.
+
+### 6. 간결하고 정돈된 레이아웃 (Clutter-Free & No Redundancy)
 - **군더더기 배제**: 장황하고 불필요한 미사여구나 서술형 장문을 지양하고, **핵심 키워드, 명확한 불릿 포인트, 구조화된 인포그래픽** 위주로 컴팩트하게 정돈합니다.
 - **중복 내용 제거**: 섹션 간 내용 중복이나 유사 문구 반복을 철저히 배제합니다.
 - **1600x900 캔버스 스크롤-프리 (Scroll-Free)**:
@@ -123,7 +149,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - 마일스톤, 연간 로드맵, 다단계 여정 프로세스를 구성할 때는 항목들을 한 줄에 빽빽하게 나열하지 않고, **중앙 축을 기준으로 상단(홀수/짝수)과 하단으로 교차 배치**하는 웨이브 패턴을 권장합니다.
   - 상단 블록과 하단 블록 간의 리듬감 있는 수직 여백과 곡선/직선 커넥터를 통해 1600x900 공간 활용도를 극대화하고 가독성을 확보합니다 ([04_Front_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/04_Front_System_Milestone_Timeline_900.html) 참조).
 
-### 6. 절제된 컬러 및 포인트 강조 (Restrained Color Palette)
+### 7. 절제된 컬러 및 포인트 강조 (Restrained Color Palette)
 - **무지개색 남발 금지**: 색상을 너무 난잡하게 여러 가지 섞어 쓰지 않습니다.
 - **기본 뉴트럴 톤 (베이스)**:
   - 캔버스 배경: `#f8fafc` (부드러운 오프화이트/슬레이트 50)
@@ -139,7 +165,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - **주의/경고/핵심 수치 (Alert/Accent)**: `#e11d48` (로즈 레드), 연한 배경 `#fee2e2`
 - 전체 스크린에서 주도적인 포인트 색상은 1~2개로 제한하여 시각적 피로도를 없애고 정보의 우선순위를 즉각 파악할 수 있게 합니다.
 
-### 7. 스크린 생성 및 수정 완료 시 무조건 GitHub 원격 배포 (Mandatory Automated GitHub Deployment)
+### 8. 스크린 생성 및 수정 완료 시 무조건 GitHub 원격 배포 (Mandatory Automated GitHub Deployment)
 - **로컬 완결 후 즉시 자동 배포 완결**: AI가 스크린(HTML)을 신규 생성하거나 기존 스크린을 수정했을 때는, 로컬 파일 수정 및 정적 검증에 그치지 않고 **반드시 GitHub 원격 저장소(`main`)로의 커밋 및 푸시까지 에이전트가 자체 판단하여 무조건 자동으로 완결**해야 합니다.
 - **추가 질문 대기 배제**: 스크린 작업 완료 후 "배포할까요?" 등의 불필요한 중간 질문을 하지 않으며, 브라우저 UI 자동 저장 커밋 충돌 방지를 위해 항상 `git pull --rebase origin main`을 선행한 후 즉시 `git push origin main`을 실행하여 배포를 완료하고 결과만 보고합니다.
 
@@ -242,3 +268,4 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 5. **[금기 5] 1600x900 초과 세로 스크롤 레이아웃**: 프레젠테이션/보고서 스크린은 1600x900 단일 화면 내에서 스크롤 없이 완결되는 컴팩트한 레이아웃을 지향해야 함.
 6. **[금기 6] 텍스트 1개 도형 몰아넣기 (No Single Text Dump)**: 불릿 리스트 여러 줄, 코드 박스, 효과 설명을 단 1개의 텍스트 도형에 몰아넣는 행위 금지. 사용자의 개별 편집 편의성을 위해 최소 2~3개의 독립된 `.lf-component.v4-text-shape`로 파편화할 것.
 7. **[금기 7] 줄바꿈 미처리 및 카드 경계 침범 (No Text Overflow & Overlap)**: 본문 설명문에 `white-space: nowrap`을 오적용하거나 폭(width) 계산을 누락하여 텍스트가 카드를 뚫고 인접 영역을 침범·중첩하는 레이아웃 파괴 행위 절대 금지. (`white-space: normal !important; word-break: break-word;` 및 유효 너비 엄수)
+8. **[금기 8] 일러스트 없는 밋밋한 텍스트 상자 나열 (No Text-Only Dry Screens)**: 시각적 직관성과 프레젠테이션 몰입감을 돕는 일러스트/아이콘 요소를 일절 배제하고 삭막한 텍스트 카드만 늘어놓는 디자인 행위 금지. 상황에 부합하는 이미지를 라이브러리(`assets/illustrations/`)에서 찾거나, 부재 시 `generate_image`로 즉시 제작하여 화면의 시각적 완성도와 생동감을 극대화할 것.

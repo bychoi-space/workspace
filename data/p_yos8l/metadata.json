@@ -176,7 +176,7 @@
     "cart_block.html": {
       "title": "장바구니_주문제한",
       "type": "ui",
-      "updatedAt": "2026-10-01T08:22:48.751Z",
+      "updatedAt": "2026-10-01T08:31:19.459Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -244,8 +244,8 @@
       ],
       "connectors": [],
       "version": 0.1,
-      "defaultTab": "editor",
-      "screenDesc": ""
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     },
     "01_Project_Summary_828.html": {
       "title": "과제 개요",

@@ -219,7 +219,7 @@
     "01_Project_Summary_828.html": {
       "title": "과제 개요",
       "type": "plan",
-      "updatedAt": "2026-10-01T05:34:19.614Z",
+      "updatedAt": "2026-10-01T08:17:03.217Z",
       "template": "template_project_summary.html",
       "version": 0.1,
       "description": [],
@@ -234,7 +234,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-01 17:04:25",
+  "updated": "2026-10-01 17:17:02",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

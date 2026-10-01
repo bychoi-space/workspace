@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-screen-authoring
-description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, proactive illustration library usage & instant on-demand image generation, atomic element separation, minimum 13px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
+description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, pixel-perfect template preservation, proactive illustration library usage & instant on-demand image generation, atomic element separation, minimum 13px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
 ---
 
 # Workspace Editor Screen Authoring Standards (AI 직접 스크린 제작 대원칙)
@@ -18,7 +18,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 
 ---
 
-## 🏛️ 스크린 제작 8대 절대 규칙 (Strict Core Rules)
+## 🏛️ 스크린 제작 9대 절대 규칙 (Strict Core Rules)
 
 ### 1. 무조건 사실 기반 데이터 전용 (Fact-Based Data Only)
 - **가짜 데이터 및 상상 수치 원천 배제**: 사용자가 제공한 기획서, 회의록, 벤치마크 팩트, 실제 서비스 정책/수치 데이터만을 근거로 화면을 구성합니다.
@@ -169,6 +169,16 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 - **로컬 완결 후 즉시 자동 배포 완결**: AI가 스크린(HTML)을 신규 생성하거나 기존 스크린을 수정했을 때는, 로컬 파일 수정 및 정적 검증에 그치지 않고 **반드시 GitHub 원격 저장소(`main`)로의 커밋 및 푸시까지 에이전트가 자체 판단하여 무조건 자동으로 완결**해야 합니다.
 - **추가 질문 대기 배제**: 스크린 작업 완료 후 "배포할까요?" 등의 불필요한 중간 질문을 하지 않으며, 브라우저 UI 자동 저장 커밋 충돌 방지를 위해 항상 `git pull --rebase origin main`을 선행한 후 즉시 `git push origin main`을 실행하여 배포를 완료하고 결과만 보고합니다.
 
+### 9. 표준 템플릿 기반 제작 시 픽셀 단위 레이아웃 100% 보존 불변 원칙 (Strict Pixel-Perfect Template Preservation)
+- **사용자 정돈 템플릿의 기하학적 구조(Geometry) 절대 보존**:
+  - 사용자가 에디터에서 정돈해 둔 표준 템플릿(`assets/templates/template_*.html` 또는 프로젝트 내 복제 템플릿)은 도형, 텍스트 박스, 아이콘, 여백, 정렬선이 **픽셀(PIXEL) 단위로 정교하게 계산되어 조화롭게 배치된 표준 규격**입니다.
+  - 템플릿을 기반으로 신규 스크린을 제작할 때는 **도형의 크기(`width`, `height`), 위치 좌표(`top`, `left`), 내부 여백(`padding`), 정렬(`text-align`, `align-items`), 계층(`z-index`)을 단 1픽셀도 임의로 수정하거나 왜곡해서는 안 됩니다.**
+- **임의 변형 절대 금지 및 1:1 콘텐츠 정밀 치환**:
+  - 내용이 많거나 적다고 해서 컨테이너 크기를 마음대로 줄이거나 늘리고, 박스를 병합하거나 여백을 변경하면 **전체 문서 시스템의 레이아웃 통일성이 완전히 파괴**됩니다.
+  - 모든 템플릿 엘리먼트(`lf-component`)의 인라인 스타일과 ID 구조를 1:1 그대로 보존하고, **오직 내부의 텍스트(타이틀, 소제목, 불릿 설명, 라벨, 수치)와 맥락에 맞는 일러스트/아이콘 경로만 정밀하게 치환**해야 합니다.
+- **작업 후 템플릿 정합성 무결성 검증 필수**:
+  - 템플릿 기반 스크린 생성을 마친 후에는 원본 템플릿과 비교하여 컴포넌트 총 개수 및 인라인 기하 스타일(`top, left, width, height, z-index`)의 불일치(Mismatch)가 0건인지 반드시 정적 검증해야 합니다.
+
 ---
 
 ## 📐 표준 스크린 템플릿 코드 스켈레톤 (Reference Skeleton)
@@ -269,3 +279,4 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 6. **[금기 6] 텍스트 1개 도형 몰아넣기 (No Single Text Dump)**: 불릿 리스트 여러 줄, 코드 박스, 효과 설명을 단 1개의 텍스트 도형에 몰아넣는 행위 금지. 사용자의 개별 편집 편의성을 위해 최소 2~3개의 독립된 `.lf-component.v4-text-shape`로 파편화할 것.
 7. **[금기 7] 줄바꿈 미처리 및 카드 경계 침범 (No Text Overflow & Overlap)**: 본문 설명문에 `white-space: nowrap`을 오적용하거나 폭(width) 계산을 누락하여 텍스트가 카드를 뚫고 인접 영역을 침범·중첩하는 레이아웃 파괴 행위 절대 금지. (`white-space: normal !important; word-break: break-word;` 및 유효 너비 엄수)
 8. **[금기 8] 일러스트 없는 밋밋한 텍스트 상자 나열 (No Text-Only Dry Screens)**: 시각적 직관성과 프레젠테이션 몰입감을 돕는 일러스트/아이콘 요소를 일절 배제하고 삭막한 텍스트 카드만 늘어놓는 디자인 행위 금지. 상황에 부합하는 이미지를 라이브러리(`assets/illustrations/`)에서 찾거나, 부재 시 `generate_image`로 즉시 제작하여 화면의 시각적 완성도와 생동감을 극대화할 것.
+9. **[금기 9] 지정된 템플릿의 픽셀 좌표/크기/여백/얼라인 임의 변형 (No Arbitrary Template Layout Alteration)**: 사용자가 픽셀 단위로 정밀하게 정돈해 둔 템플릿의 도형 크기, 여백, 좌표, 정렬을 AI가 임의로 변경하여 문서 전체의 레이아웃 통일성을 깨뜨리는 행위 절대 금지. 템플릿의 기하학적 구조(Geometry)는 100% 보존하고 내용(텍스트/이미지)만 정밀 치환할 것.

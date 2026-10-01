@@ -144,7 +144,7 @@
     "cart_block.html": {
       "title": "장바구니_주문제한",
       "type": "ui",
-      "updatedAt": "2026-10-01T01:06:15.875Z",
+      "updatedAt": "2026-10-01T01:13:54.978Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -159,7 +159,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-01 10:06:15",
+  "updated": "2026-10-01 10:13:54",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

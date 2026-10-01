@@ -154,12 +154,14 @@
     },
     "01_Project_Summary_828.html": {
       "title": "과제 개요",
-      "type": "summary",
-      "updatedAt": "2026-10-01T04:48:15.943Z",
+      "type": "plan",
+      "updatedAt": "2026-10-01T05:34:19.614Z",
       "template": "template_project_summary.html",
       "version": 0.1,
       "description": [],
-      "connectors": []
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

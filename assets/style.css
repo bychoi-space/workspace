@@ -401,14 +401,53 @@
 .ql-custom-hex-bar.active {
     display: flex !important;
 }
+.ql-hex-preview-wrap {
+    position: relative !important;
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+}
 .ql-hex-preview {
-    width: 16px !important;
-    height: 16px !important;
+    width: 100% !important;
+    height: 100% !important;
     border-radius: 3px !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     box-sizing: border-box !important;
-    flex-shrink: 0 !important;
-    transition: background-color 0.1s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.15s ease !important;
+    overflow: hidden !important;
+}
+.ql-hex-preview-wrap:hover .ql-hex-preview {
+    border-color: #818cf8 !important;
+    box-shadow: 0 0 6px rgba(129, 140, 248, 0.5) !important;
+    transform: scale(1.05) !important;
+}
+.ql-hex-preview-icon {
+    font-size: 11px !important;
+    color: #ffffff !important;
+    opacity: 0 !important;
+    transition: opacity 0.15s ease !important;
+    pointer-events: none !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9) !important;
+}
+.ql-hex-preview-wrap:hover .ql-hex-preview-icon {
+    opacity: 0.9 !important;
+}
+.ql-hex-native-picker {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 2 !important;
 }
 .ql-hex-prefix {
     color: #94a3b8 !important;
@@ -3692,14 +3731,53 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .v4-palette-hex-bar.active {
     display: flex;
 }
+.v4-hex-preview-wrap {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
 .v4-hex-preview {
-    width: 16px;
-    height: 16px;
+    width: 100%;
+    height: 100%;
     border-radius: 3px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-sizing: border-box;
-    flex-shrink: 0;
-    transition: background-color 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    overflow: hidden;
+}
+.v4-hex-preview-wrap:hover .v4-hex-preview {
+    border-color: #818cf8;
+    box-shadow: 0 0 6px rgba(129, 140, 248, 0.5);
+    transform: scale(1.05);
+}
+.v4-hex-preview-icon {
+    font-size: 11px !important;
+    color: #ffffff;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+.v4-hex-preview-wrap:hover .v4-hex-preview-icon {
+    opacity: 0.9;
+}
+.v4-hex-native-picker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    margin: 0;
+    z-index: 2;
 }
 .v4-hex-prefix {
     color: #94a3b8;

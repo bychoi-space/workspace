@@ -55,6 +55,7 @@
             if (typeof window.initAdminSettingsEvents === 'function') window.initAdminSettingsEvents();
             if (typeof window.initToggleEvents === 'function') window.initToggleEvents();
             if (typeof window.initCursorEvents === 'function') window.initCursorEvents();
+            if (window.InspectorPopup && typeof window.InspectorPopup.init === 'function') window.InspectorPopup.init();
             if (typeof window.initV4AddonEventListeners === 'function') window.initV4AddonEventListeners();
         }
     }

@@ -455,6 +455,128 @@
         window.renderDescriptionList();
     };
 
+    // --- Pin & Text Creation Lifecycle Engine (SSOT) ---
+    function getCascadedPosition(startX, startY) {
+        if (startX === undefined) startX = 120;
+        if (startY === undefined) startY = 300;
+        var x = startX, y = startY;
+        var step = 25;
+        var state = window.state || {};
+        var list = (state.activeFile && state.activeFile.meta && state.activeFile.meta.description) || [];
+        var isOccupied = true;
+        var attempts = 0;
+        while (isOccupied && attempts < 15) {
+            isOccupied = list.some(function(item) {
+                return item.type === 'text' && Math.abs(item.x - x) < 20 && Math.abs(item.y - y) < 20;
+            });
+            if (isOccupied) {
+                x += step; y += step; attempts++;
+                if (x > 340 || y > 750) { x = startX; y = startY; break; }
+            }
+        }
+        return { x: x, y: y };
+    }
+
+    function handleTextCreation() {
+        var state = window.state || {};
+        if (state.isReadOnly) return window.showAuthModal?.();
+        if (!state.activeFile) return window.Notification?.alert("스크린을 선택해주세요.", "알림", "warning");
+
+        if (!state.activeFile.meta.description) {
+            state.activeFile.meta.description = [];
+        }
+
+        var isMobileCompare = (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html');
+        var isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || isMobileCompare);
+        var newIdx = state.activeFile.meta.description.length;
+
+        if (isResponsive) {
+            var initialPins = isMobileCompare ? {
+                left: { x: 170, y: 250, active: true },
+                right: { x: 170, y: 250, active: true },
+                pc: { x: 170, y: 250, active: true },
+                mobile: { x: 170, y: 250, active: true }
+            } : {
+                pc: { x: 500, y: 300, active: true },
+                mobile: { x: 180, y: 300, active: true }
+            };
+
+            state.activeFile.meta.description.push({
+                type: "pin",
+                target: "frame",
+                text: "Edit Text",
+                html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;">Edit Text</div>',
+                x: isMobileCompare ? 170 : 500,
+                y: isMobileCompare ? 250 : 300,
+                pins: initialPins,
+                standardized: true
+            });
+
+            if (typeof window.renderDescriptionList === 'function') {
+                window.renderDescriptionList();
+            }
+
+            var DOM = window.DOM || {};
+            if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
+                MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_RESPONSIVE_PINS', {
+                    index: newIdx,
+                    number: newIdx + 1,
+                    isMobileCompare: isMobileCompare
+                });
+            }
+        } else {
+            state.activeFile.meta.description.push({
+                type: "pin",
+                text: "Edit Text",
+                html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;">Edit Text</div>',
+                x: 670,
+                y: 430,
+                standardized: true
+            });
+
+            if (typeof window.renderDescriptionList === 'function') {
+                window.renderDescriptionList();
+            }
+
+            if (window.ComponentInserter && typeof window.ComponentInserter.insertTextComponent === 'function') {
+                window.ComponentInserter.insertTextComponent(newIdx);
+            } else if (typeof window.insertV4ComponentById === 'function') {
+                window.insertV4ComponentById('v4-tool-text', newIdx);
+            } else {
+                console.error("[V4 Core] insertTextComponent not available for Text Creation.");
+            }
+        }
+        if (typeof markAsDirty === 'function') markAsDirty();
+    }
+
+    function handleTextboxCreation() {
+        var state = window.state || {};
+        if (state.isReadOnly) return window.showAuthModal?.();
+        if (!state.activeFile) return window.Notification?.alert("스크린을 선택해주세요.", "알림", "warning");
+
+        if (window.ComponentInserter && typeof window.ComponentInserter.insertTextComponent === 'function') {
+            window.ComponentInserter.insertTextComponent();
+        } else if (typeof window.insertV4ComponentById === 'function') {
+            window.insertV4ComponentById('v4-tool-text');
+        } else {
+            console.error("[V4 Core] insertTextComponent not available for Textbox Creation.");
+        }
+        if (typeof markAsDirty === 'function') markAsDirty();
+    }
+
+    window.getCascadedPosition = getCascadedPosition;
+    window.handleTextCreation = handleTextCreation;
+    window.handleTextboxCreation = handleTextboxCreation;
+
+    window.AnnotationPins = {
+        getCascadedPosition: getCascadedPosition,
+        handleTextCreation: handleTextCreation,
+        handleTextboxCreation: handleTextboxCreation,
+        deleteAnnotation: window.deleteAnnotation,
+        renderDescriptionList: window.renderDescriptionList,
+        focusDescriptionRow: window.focusDescriptionRow
+    };
+
     // MessageHub Deselection Integration
     if (window.MessageHub) {
         MessageHub.subscribe('LF_DESELECT', function() {

@@ -591,7 +591,10 @@ window.ConnectorEngine = (function() {
         if (colorInput) {
             colorInput.value = hexColor;
             const wrapper = colorInput.closest('.v4-color-wrapper');
-            if (wrapper) wrapper.classList.remove('transparent-active');
+            if (wrapper) {
+                const isTrans = compStyles.isLineColorTransparent || compStyles.lineColor === 'transparent' || color === 'transparent';
+                wrapper.classList.toggle('transparent-active', !!isTrans);
+            }
         }
 
         // Dynamic Single Length Control Sync

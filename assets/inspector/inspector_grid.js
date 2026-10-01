@@ -140,6 +140,9 @@
                 const numericWidth = isNaN(parsedW) ? (isCheckbox ? 50 : (col.type === 'text' ? 200 : 100)) : parsedW;
                 const align = col.align || ((col.type === 'number' || col.type === 'currency') ? 'right' : ((col.type === 'checkbox' || col.type === 'status' || col.type === 'action') ? 'center' : 'left'));
 
+                const hl = col.highlight || {};
+                const hlPreset = (hl.enabled !== false && hl.preset) ? hl.preset : (typeof hl === 'string' ? hl : 'none');
+
                 const showStatusOptions = (col.type === 'status');
                 const statusOptionsHtml = showStatusOptions ? `
                     <div style="display:flex; flex-direction:column; gap:2px; grid-column: span 3; margin-top: 4px;">
@@ -152,6 +155,7 @@
                 div.className = 'grid-col-card';
                 div.setAttribute('data-clickable', isClickable ? 'true' : 'false');
                 div.setAttribute('data-align', align);
+                div.setAttribute('data-highlight-preset', hlPreset);
                 div.style.cssText = 'display:flex; flex-direction:column; gap:6px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;';
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -206,6 +210,20 @@
                             <button class="v4-inspector-btn btn-col-clickable-n" data-index="${index}" style="height: 18px; width: 28px; border-radius: 9px; font-size: 9px; padding: 0; cursor: pointer; ${!isClickable ? 'background:rgba(0, 229, 255, 0.25); border:1px solid rgba(0, 229, 255, 0.6); color:#00e5ff; font-weight:bold;' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">N</button>
                         </div>
                     </div>
+
+                    <!-- Highlight Control -->
+                    <div class="grid-highlight-wrapper" style="display:flex; flex-direction:column; gap:4px; margin-top:2px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06); width:100%; box-sizing:border-box;">
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                            <label style="font-size: 8px; color: #94a3b8; font-weight:600;">컬럼 강조 (Highlight)</label>
+                            <span class="grid-hl-active-label" style="font-size: 8.5px; font-weight:bold; color: ${hlPreset === 'none' ? '#64748b' : (hlPreset === 'new' ? '#ef4444' : (hlPreset === 'mod' ? '#f97316' : '#38bdf8'))};">${hlPreset === 'none' ? '일반' : (hlPreset === 'new' ? '신규 (NEW)' : (hlPreset === 'mod' ? '변경 (MOD)' : '포커스 (BLUE)'))}</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px; width:100%; box-sizing:border-box;">
+                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-none" data-preset="none" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'none' ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;'}">없음</button>
+                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-new" data-preset="new" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'new' ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;'}">🔴 신규</button>
+                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-mod" data-preset="mod" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'mod' ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;'}">🟠 변경</button>
+                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-focus" data-preset="focus" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'focus' ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;'}">🔵 포커스</button>
+                        </div>
+                    </div>
                 `;
                 container.appendChild(div);
 
@@ -220,6 +238,8 @@
                 const btnClickableY = div.querySelector('.btn-col-clickable-y');
                 const btnClickableN = div.querySelector('.btn-col-clickable-n');
                 const alignBtns = div.querySelectorAll('.btn-col-align');
+                const hlBtns = div.querySelectorAll('.btn-col-hl');
+                const hlLabel = div.querySelector('.grid-hl-active-label');
 
                 const getCurrentColsFromInputs = () => {
                     const cards = Array.from(container.querySelectorAll('.grid-col-card'));
@@ -233,13 +253,25 @@
                         const oVal = oInp ? oInp.value : '';
                         const clickableVal = cCard.getAttribute('data-clickable') === 'true';
                         const colAlign = cCard.getAttribute('data-align') || 'center';
+                        const pPreset = cCard.getAttribute('data-highlight-preset') || 'none';
+                        let hlObj = null;
+                        if (pPreset && pPreset !== 'none') {
+                            hlObj = {
+                                enabled: true,
+                                preset: pPreset,
+                                borderColor: pPreset === 'new' ? '#ef4444' : (pPreset === 'mod' ? '#f97316' : '#2563eb'),
+                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (pPreset === 'mod' ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
+                                badgeText: pPreset === 'new' ? 'NEW' : (pPreset === 'mod' ? 'MOD' : '')
+                            };
+                        }
                         return {
                             name: t === 'checkbox' ? '' : (inp ? inp.value : ''),
                             type: t,
                             width: wVal + 'px',
                             options: oVal,
                             clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal,
-                            align: colAlign
+                            align: colAlign,
+                            highlight: hlObj
                         };
                     });
                 };
@@ -248,6 +280,36 @@
                     const currentCols = getCurrentColsFromInputs();
                     notifyGrid({ columns: currentCols });
                 };
+
+                // Highlight buttons
+                hlBtns.forEach(btn => {
+                    btn.onclick = () => {
+                        const pKey = btn.getAttribute('data-preset') || 'none';
+                        div.setAttribute('data-highlight-preset', pKey);
+                        
+                        hlBtns.forEach(b => {
+                            const bKey = b.getAttribute('data-preset');
+                            const isSelected = (bKey === pKey);
+                            const baseStyle = 'height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ';
+                            if (bKey === 'none') {
+                                b.style.cssText = baseStyle + (isSelected ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;');
+                            } else if (bKey === 'new') {
+                                b.style.cssText = baseStyle + (isSelected ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;');
+                            } else if (bKey === 'mod') {
+                                b.style.cssText = baseStyle + (isSelected ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;');
+                            } else if (bKey === 'focus') {
+                                b.style.cssText = baseStyle + (isSelected ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;');
+                            }
+                        });
+                        
+                        if (hlLabel) {
+                            hlLabel.textContent = (pKey === 'none') ? '일반' : ((pKey === 'new') ? '신규 (NEW)' : ((pKey === 'mod') ? '변경 (MOD)' : '포커스 (BLUE)'));
+                            hlLabel.style.color = (pKey === 'none') ? '#64748b' : ((pKey === 'new') ? '#ef4444' : ((pKey === 'mod') ? '#f97316' : '#38bdf8'));
+                        }
+                        
+                        triggerColUpdate();
+                    };
+                });
 
                 // Align buttons
                 alignBtns.forEach(btn => {
@@ -450,7 +512,7 @@
                     const cards = Array.from(container.querySelectorAll('.grid-col-card'));
                     if (cards.length <= 1) return;
                     
-                    const updatedCols = cards.slice(0, -1).map((cCard) => {
+                    const currentCols = cards.map(cCard => {
                         const inp = cCard.querySelector('.grid-col-name-input');
                         const tSel = cCard.querySelector('.grid-col-type-select');
                         const wInp = cCard.querySelector('.grid-col-width-input');
@@ -460,8 +522,28 @@
                         const oVal = oInp ? oInp.value : '';
                         const clickableVal = cCard.getAttribute('data-clickable') === 'true';
                         const colAlign = cCard.getAttribute('data-align') || 'center';
-                        return { name: inp ? inp.value : '', type: t, width: wVal + 'px', options: oVal, clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal, align: colAlign };
+                        const pPreset = cCard.getAttribute('data-highlight-preset') || 'none';
+                        let hlObj = null;
+                        if (pPreset && pPreset !== 'none') {
+                            hlObj = {
+                                enabled: true,
+                                preset: pPreset,
+                                borderColor: pPreset === 'new' ? '#ef4444' : (pPreset === 'mod' ? '#f97316' : '#2563eb'),
+                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (pPreset === 'mod' ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
+                                badgeText: pPreset === 'new' ? 'NEW' : (pPreset === 'mod' ? 'MOD' : '')
+                            };
+                        }
+                        return {
+                            name: t === 'checkbox' ? '' : (inp ? inp.value : ''),
+                            type: t,
+                            width: wVal + 'px',
+                            options: oVal,
+                            clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal,
+                            align: colAlign,
+                            highlight: hlObj
+                        };
                     });
+                    const updatedCols = currentCols.slice(0, -1);
                     notifyGrid({ columns: updatedCols });
                     this.renderColumnCards(updatedCols, null, true);
                     const colCountInp = document.getElementById('prop-grid-col-count');
@@ -479,7 +561,7 @@
                         return;
                     }
                     
-                    const updatedCols = cards.map((cCard) => {
+                    const updatedCols = cards.map(cCard => {
                         const inp = cCard.querySelector('.grid-col-name-input');
                         const tSel = cCard.querySelector('.grid-col-type-select');
                         const wInp = cCard.querySelector('.grid-col-width-input');
@@ -489,14 +571,34 @@
                         const oVal = oInp ? oInp.value : '';
                         const clickableVal = cCard.getAttribute('data-clickable') === 'true';
                         const colAlign = cCard.getAttribute('data-align') || 'center';
-                        return { name: inp ? inp.value : '', type: t, width: wVal + 'px', options: oVal, clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal, align: colAlign };
+                        const pPreset = cCard.getAttribute('data-highlight-preset') || 'none';
+                        let hlObj = null;
+                        if (pPreset && pPreset !== 'none') {
+                            hlObj = {
+                                enabled: true,
+                                preset: pPreset,
+                                borderColor: pPreset === 'new' ? '#ef4444' : (pPreset === 'mod' ? '#f97316' : '#2563eb'),
+                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (pPreset === 'mod' ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
+                                badgeText: pPreset === 'new' ? 'NEW' : (pPreset === 'mod' ? 'MOD' : '')
+                            };
+                        }
+                        return {
+                            name: t === 'checkbox' ? '' : (inp ? inp.value : ''),
+                            type: t,
+                            width: wVal + 'px',
+                            options: oVal,
+                            clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal,
+                            align: colAlign,
+                            highlight: hlObj
+                        };
                     });
                     updatedCols.push({
                         name: '항목명',
                         type: 'text',
                         width: '120px',
                         clickable: false,
-                        align: 'center'
+                        align: 'center',
+                        highlight: null
                     });
                     notifyGrid({ columns: updatedCols });
                     this.renderColumnCards(updatedCols, null, true);
@@ -524,7 +626,10 @@
 
             if (rowCountInp) {
                 const updateRowCount = () => {
-                    const val = parseInt(rowCountInp.value) || 5;
+                    const raw = rowCountInp.value;
+                    if (raw === '') return;
+                    const parsed = parseInt(raw, 10);
+                    const val = isNaN(parsed) ? 5 : Math.max(0, Math.min(20, parsed));
                     notifyGrid({ rowCount: val });
                 };
                 rowCountInp.oninput = updateRowCount;

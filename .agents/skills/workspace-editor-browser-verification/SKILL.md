@@ -16,7 +16,7 @@ description: Use when performing static code verification, syntax checking (scri
 - **CORS & SOP Isolation**: 부모-Iframe 간 직접 DOM 접근(`contentDocument`)을 배제하고 `window.EditorBus` / `MessageHub` 통신 프로토콜을 100% 준수했는지 확인합니다.
 
 ## Static Verification Standards
-- **Syntax & Bracket Integrity**: `powershell -ExecutionPolicy Bypass -File scripts/check_syntax.ps1`을 실행하여 전체 엔진 JS 파일의 브래킷 밸런스 및 Node VM 기반 19개 인라인 스크립트 컴파일 무결성을 100% 검증합니다.
+- **Syntax & Bracket Integrity**: `powershell -ExecutionPolicy Bypass -File scripts/check_syntax.ps1`을 실행하여 전체 엔진 JS 파일의 브래킷 밸런스 및 Node VM 기반 `ENGINE_SCRIPT_REGISTRY` 25개 전 모듈 인라인 스크립트 컴파일 무결성을 100% 검증합니다.
 - **Headless Browser Comprehensive Check**: 필요시 `powershell -ExecutionPolicy Bypass -File scripts/verify_all.ps1`을 통해 실제 Chromium/Edge Headless 환경에서 40여 개 전체 엔진 스크립트의 런타임 구문 로드 및 인라인 함수 생성을 전수 검사합니다.
 - **Event Flow Non-Blocking Check**: `mouseup` / `mousemove` 리스너 내 조기 종료(`return;`) 남용으로 하위 상태 해제(`LF_MARQUEE_END`)가 차단되지 않는지 이벤트 루프를 검증합니다.
 - **Module Boundary & SSOT Consistency**: `metadata.json` 스펙 및 `MessageHub` / `EditorBus` 통신 규격이 일치하는지 정적 추적합니다.

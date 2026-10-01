@@ -1,4 +1,4 @@
-﻿/**
+/**
  * assets/vctrl_format_painter.js
  * Shape Style & Typography Deep Extraction, Format Copy & Batch Application Engine (Iframe Side).
  * Decoupled from vctrl_shortcuts.js for single responsibility.
@@ -233,6 +233,9 @@ window.v4FormatPainterScript = `
                 lineThickness: (compStyles && compStyles.lineThickness) ? compStyles.lineThickness : 1.6,
                 lineStyle: (compStyles && compStyles.lineStyle) ? compStyles.lineStyle : 'solid',
                 lineDir: (compStyles && compStyles.lineDir) ? compStyles.lineDir : 'horizontal'
+            },
+            wave: {
+                waveDir: (compStyles && compStyles.waveDir) ? compStyles.waveDir : 'horizontal'
             }
         };
 
@@ -586,6 +589,31 @@ window.v4FormatPainterScript = `
                     if (shape.classList.contains('v4-shape-rect') || shape.classList.contains('v4-shape-webpage')) {
                         const rad = (styleData.border.radius !== undefined) ? parseInt(styleData.border.radius) : 0;
                         shape.style.setProperty('border-radius', rad + 'px', 'important');
+                    }
+                }
+
+                // Wave Direction
+                if (shape.classList.contains('v4-shape-wave') && styleData.wave && styleData.wave.waveDir) {
+                    const waveDir = styleData.wave.waveDir;
+                    shape.setAttribute('data-wave-dir', waveDir);
+                    const svgEl = shape.querySelector('svg');
+                    const polyEl = shape.querySelector('polygon');
+                    const curW = comp.offsetWidth || parseFloat(comp.style.width) || 360;
+                    const curH = comp.offsetHeight || parseFloat(comp.style.height) || 20;
+                    if (waveDir === 'vertical') {
+                        if (curW > curH) {
+                            comp.style.width = Math.min(curH, 20) + 'px';
+                            comp.style.height = Math.max(curW, 100) + 'px';
+                        }
+                        if (svgEl) svgEl.setAttribute('viewBox', '0 0 20 360');
+                        if (polyEl) polyEl.setAttribute('points', '6,0 2,45 6,90 2,135 6,180 2,225 6,270 2,315 6,360 16,360 12,315 16,270 12,225 16,180 12,135 16,90 12,45 16,0');
+                    } else {
+                        if (curH > curW) {
+                            comp.style.width = Math.max(curH, 100) + 'px';
+                            comp.style.height = Math.min(curW, 20) + 'px';
+                        }
+                        if (svgEl) svgEl.setAttribute('viewBox', '0 0 360 20');
+                        if (polyEl) polyEl.setAttribute('points', '0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16');
                     }
                 }
 

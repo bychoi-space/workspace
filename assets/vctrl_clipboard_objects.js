@@ -53,7 +53,7 @@ window.v4ClipboardObjectsScript = `
         topLevelSelected.forEach(el => {
             const cleanClasses = el.className.split(' ')
                 .map(c => c.trim())
-                .filter(c => c && c !== 'selected' && c !== 'dragging-now')
+                .filter(c => c && c !== 'selected' && c !== 'dragging-now' && c !== 'lf-in-group')
                 .join(' ');
 
             const attrs = {};
@@ -94,12 +94,31 @@ window.v4ClipboardObjectsScript = `
                 window.lastActiveFrame = frameContainer;
             }
 
+            // [CRITICAL GATEWAY FIX] Normalize coordinates to host/canvas root
+            // If el is grouped inside an lf-group, accumulate ancestor offsets so it won't paste at screen top (0,0)
+            const getCoord = (val, offset) => (!isNaN(parseFloat(val)) ? parseFloat(val) : (offset || 0));
+            let absL = getCoord(el.style.left, el.offsetLeft);
+            let absT = getCoord(el.style.top, el.offsetTop);
+            let p = el.parentElement;
+            while (p && p !== document.body) {
+                if (p.classList && (p.classList.contains('mobile-content-inner') || p.classList.contains('pc-content-inner') ||
+                    p.classList.contains('canvas') || p.classList.contains('page') || 
+                    p.id === 'canvas-page' || p.id === 'canvas')) {
+                    break;
+                }
+                if (p.classList && (p.classList.contains('lf-group') || p.classList.contains('lf-component'))) {
+                    absL += getCoord(p.style.left, p.offsetLeft);
+                    absT += getCoord(p.style.top, p.offsetTop);
+                }
+                p = p.parentElement;
+            }
+
             clipboardData.push({
                 html: clone.innerHTML,
                 className: cleanClasses,
                 styleCssText: el.style.cssText,
-                left: parseFloat(el.style.left) || el.offsetLeft || 0,
-                top: parseFloat(el.style.top) || el.offsetTop || 0,
+                left: absL,
+                top: absT,
                 width: parseFloat(el.style.width) || el.offsetWidth || 120,
                 height: parseFloat(el.style.height) || el.offsetHeight || 30,
                 frameContainer: frameContainer,
@@ -157,7 +176,11 @@ window.v4ClipboardObjectsScript = `
 
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
+        const affectedGroups = new Set();
         selected.forEach(c => {
+            if (c.parentElement && c.parentElement.classList.contains('lf-group')) {
+                affectedGroups.add(c.parentElement);
+            }
             if (c.classList.contains('connector-line')) {
                 notifyParent({ type: 'LF_DELETE_CONNECTOR', id: c.id });
             } else if (c.classList.contains('text-marker') || c.classList.contains('pin-marker')) {
@@ -169,6 +192,11 @@ window.v4ClipboardObjectsScript = `
                 c.remove();
             } else {
                 c.remove();
+            }
+        });
+        affectedGroups.forEach(g => {
+            if (g && g.querySelectorAll('.lf-component').length === 0) {
+                g.remove();
             }
         });
 
@@ -253,7 +281,11 @@ window.v4ClipboardObjectsScript = `
             const groupW = Math.max(10, maxRight - minLeft);
             const groupH = Math.max(10, maxBottom - minTop);
 
-            // Responsive Screen Cross-Frame Routing & Viewport Center Calculation:
+            // 1. Source frame and multi-frame environment detection
+            const sourceFrame = componentItems[0] ? (componentItems[0].frameContainer || 'root') : 'root';
+            const isMultiFrame = !!((pcCol && (mobileLeftCol || mobileRightCol || mobileCols.length > 0)) || (mobileCols.length > 1));
+
+            // 2. Target frame routing & host element resolution
             let targetFrame = 'root';
             let targetHost = document.body;
             let targetCol = null;
@@ -294,8 +326,6 @@ window.v4ClipboardObjectsScript = `
 
                 if (targetFrame === 'canvas') {
                     targetHost = document.querySelector('.mobile-compare-page, .page, .canvas, #canvas-page, #canvas') || document.body;
-                    baseLeft = Math.max(15, Math.round((1600 - groupW) / 2));
-                    baseTop = Math.max(15, Math.round((900 - groupH) / 2));
                 } else {
                     if (!targetCol) {
                         if (targetFrame === 'right' && mobileRightCol) targetCol = mobileRightCol;
@@ -305,51 +335,60 @@ window.v4ClipboardObjectsScript = `
 
                     if (targetCol) {
                         const colInner = targetCol.querySelector('.mobile-content-inner, .pc-content-inner');
-                        const colScroll = targetCol.querySelector('.mobile-content-area, .mobile-content, .pc-content-area');
                         targetHost = colInner || targetCol;
-                        const scrollTop = colScroll ? colScroll.scrollTop : 0;
-                        const visibleH = colScroll ? (colScroll.clientHeight || 810) : 810;
-                        const isColMobile = targetCol.classList.contains('mobile-column') || (!targetCol.classList.contains('pc-column'));
-                        const colW = targetHost.offsetWidth || (isColMobile ? 360 : 1160);
-                        visibleW = colW;
-
-                        baseLeft = Math.max(10, Math.round((colW - groupW) / 2));
-                        baseTop = Math.max(15, Math.round(scrollTop + (visibleH / 2) - (groupH / 2)));
-                        
-                        // Update active column indicator and memory
                         window.lastActiveFrame = targetFrame || (typeof window.detectFrameType === 'function' ? window.detectFrameType(targetCol) : 'left');
                         if (typeof window.updateActiveFrameUI === 'function') {
                             window.updateActiveFrameUI(targetCol);
                         }
                     } else {
                         targetHost = (mobileInners && mobileInners[0]) || pcInner || document.body;
-                        baseLeft = Math.max(10, Math.round((360 - groupW) / 2));
-                        baseTop = Math.max(15, Math.round((810 - groupH) / 2));
                     }
                 }
             } else {
-                // Non-responsive screen: center in current visible viewport canvas coordinates
-                let viewCenterX = 800;
-                let viewCenterY = 450;
-                try {
-                    const parentState = window.parent && window.parent.state;
-                    const parentDOM = window.parent && window.parent.DOM;
-                    if (parentState && parentState.transform && parentDOM && parentDOM.canvas) {
-                        const t = parentState.transform;
-                        const cw = parentDOM.canvas.clientWidth || 1600;
-                        const ch = parentDOM.canvas.clientHeight || 900;
-                        const s = t.scale || 1;
-                        viewCenterX = Math.round(((cw / 2) - t.x) / s);
-                        viewCenterY = Math.round(((ch / 2) - t.y) / s);
-                    }
-                } catch(e) {}
+                targetHost = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
+                targetFrame = 'root';
+            }
 
-                baseLeft = Math.round(viewCenterX - (groupW / 2));
-                baseTop = Math.round(viewCenterY - (groupH / 2));
-                const maxW = Math.max(1600, document.body.scrollWidth || 0, document.documentElement.scrollWidth || 0);
-                const maxH = Math.max(900, document.body.scrollHeight || 0, document.documentElement.scrollHeight || 0);
-                baseLeft = Math.max(15, Math.min(baseLeft, maxW - groupW - 15));
-                baseTop = Math.max(15, Math.min(baseTop, maxH - groupH - 15));
+            // 3. Determine whether paste is within the same frame or moving across frames
+            const isSameFrame = (!isMultiFrame) || (sourceFrame === targetFrame) || (sourceFrame === 'root' && targetFrame === 'canvas') || (sourceFrame === 'canvas' && targetFrame === 'canvas');
+
+            if (isSameFrame) {
+                // [Condition 1] Same Frame Paste: place at bottom-right (+offset) of original position
+                baseLeft = minLeft + offset;
+                baseTop = minTop + offset;
+
+                // Boundary clamping
+                if (isResponsiveTemplate && targetCol) {
+                    const isColMobile = targetCol.classList.contains('mobile-column') || (!targetCol.classList.contains('pc-column'));
+                    const colW = targetHost.offsetWidth || (isColMobile ? 360 : 1160);
+                    visibleW = colW;
+                    baseLeft = Math.max(10, Math.min(baseLeft, colW - groupW - 10));
+                    baseTop = Math.max(10, baseTop);
+                } else {
+                    const maxW = Math.max(1600, document.body.scrollWidth || 0, document.documentElement.scrollWidth || 0);
+                    const maxH = Math.max(900, document.body.scrollHeight || 0, document.documentElement.scrollHeight || 0);
+                    baseLeft = Math.max(15, Math.min(baseLeft, maxW - groupW - 15));
+                    baseTop = Math.max(15, Math.min(baseTop, maxH - groupH - 15));
+                }
+            } else {
+                // [Condition 2] Cross-Frame Paste: place at center of target frame viewport
+                if (targetFrame === 'canvas') {
+                    baseLeft = Math.max(15, Math.round((1600 - groupW) / 2));
+                    baseTop = Math.max(15, Math.round((900 - groupH) / 2));
+                } else if (targetCol) {
+                    const colScroll = targetCol.querySelector('.mobile-content-area, .mobile-content, .pc-content-area');
+                    const scrollTop = colScroll ? colScroll.scrollTop : 0;
+                    const visibleH = colScroll ? (colScroll.clientHeight || 810) : 810;
+                    const isColMobile = targetCol.classList.contains('mobile-column') || (!targetCol.classList.contains('pc-column'));
+                    const colW = targetHost.offsetWidth || (isColMobile ? 360 : 1160);
+                    visibleW = colW;
+
+                    baseLeft = Math.max(10, Math.round((colW - groupW) / 2));
+                    baseTop = Math.max(15, Math.round(scrollTop + (visibleH / 2) - (groupH / 2)));
+                } else {
+                    baseLeft = Math.max(10, Math.round((360 - groupW) / 2));
+                    baseTop = Math.max(15, Math.round((810 - groupH) / 2));
+                }
             }
 
             // Calculate base top z-index for pasted items

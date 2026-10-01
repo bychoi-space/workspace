@@ -990,6 +990,10 @@ const Notification = {
     }
 };
 
+Notification.alert = Notification.alert.bind(Notification);
+Notification.confirm = Notification.confirm.bind(Notification);
+Notification.prompt = Notification.prompt.bind(Notification);
+
 window.NotificationUI = Notification;
 window.AppDialog = Notification;
 try {
@@ -1066,25 +1070,26 @@ async function createShortUrl(longUrl) {
     return { shortUrl: longUrl, provider: 'original' };
 }
 
-async function copyTextToClipboard(text) {
+// --- Clipboard Delegation (SSOT: assets/vctrl_clipboard.js) ---
+async function copyTextToClipboard(text, successMessage) {
     if (window.ClipboardManager && typeof window.ClipboardManager.copyTextToClipboard === 'function') {
-        return await window.ClipboardManager.copyTextToClipboard(text);
+        return await window.ClipboardManager.copyTextToClipboard(text, successMessage);
     }
-    if (navigator.clipboard && window.isSecureContext) {
-        try {
+    if (typeof window.copyTextToClipboard === 'function' && window.copyTextToClipboard !== copyTextToClipboard) {
+        return await window.copyTextToClipboard(text, successMessage);
+    }
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
             await navigator.clipboard.writeText(text);
             return true;
-        } catch (e) {
-            console.warn("[Clipboard] navigator.clipboard.writeText failed:", e);
         }
-    }
-    // Fallback for file:// or unsecure contexts
-    try {
         const textArea = document.createElement("textarea");
         textArea.value = text;
         textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "-9999px";
+        textArea.style.opacity = "0";
+        textArea.setAttribute('readonly', '');
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
@@ -1092,7 +1097,7 @@ async function copyTextToClipboard(text) {
         document.body.removeChild(textArea);
         return success;
     } catch (err) {
-        console.error("[Clipboard] execCommand failed:", err);
+        console.error("[Clipboard] Fallback failed:", err);
         return false;
     }
 }
@@ -1155,7 +1160,7 @@ async function copyProjectShortUrl(projectName, options = {}) {
 
 window.getProjectDeployUrl = getProjectDeployUrl;
 window.createShortUrl = createShortUrl;
-window.copyTextToClipboard = copyTextToClipboard;
+window.copyTextToClipboard = window.copyTextToClipboard || copyTextToClipboard;
 window.showGlobalToast = showGlobalToast;
 window.copyProjectShortUrl = copyProjectShortUrl;
 window.copyProjectUrl = copyProjectShortUrl;

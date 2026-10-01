@@ -146,6 +146,10 @@ window.v4TableScript = `
             table.addEventListener('mouseenter', (e) => {
                 const cell = e.target.closest('td, th');
                 if (!cell) return;
+                if (window.V4DragResizeEngine && window.V4DragResizeEngine.isDragging) {
+                    this.isDragging = false;
+                    return;
+                }
 
                 const bounds = getCellBounds(table);
                 const b = bounds.get(cell);
@@ -732,7 +736,8 @@ window.v4TableScript = `
         const isGrid = s.classList.contains('v4-grid-container') || s.querySelector('.v4-grid-container');
         if (isGrid) {
             const gridContainer = s.classList.contains('v4-grid-container') ? s : s.querySelector('.v4-grid-container');
-            const rowCount = parseInt(gridContainer.getAttribute('data-row-count')) || 5;
+            const rawRowCount = gridContainer.getAttribute('data-row-count');
+            const rowCount = (rawRowCount !== null && rawRowCount !== '') ? parseInt(rawRowCount, 10) : 5;
             const pagination = gridContainer.getAttribute('data-pagination') !== 'false';
             const rowHeight = parseInt(gridContainer.getAttribute('data-row-height')) || 50;
             
@@ -755,7 +760,7 @@ window.v4TableScript = `
             if (act === 'add-row' || act === 'add_row') {
                 if (window.renderGrid) window.renderGrid(gridContainer, currentCols, rowCount + 1, pagination, rowHeight);
             } else if (act === 'del-row' || act === 'del_row') {
-                if (rowCount > 1 && window.renderGrid) {
+                if (rowCount > 0 && window.renderGrid) {
                     window.renderGrid(gridContainer, currentCols, rowCount - 1, pagination, rowHeight);
                 }
             } else if (act === 'add-col' || act === 'add_col') {

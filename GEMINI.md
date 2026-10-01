@@ -23,3 +23,5 @@
 @./.agents/skills/workspace-editor-safety-process/SKILL.md
 
 @./.agents/skills/workspace-editor-screen-authoring/SKILL.md
+
+@./.agents/skills/workspace-editor-system-diagnosis/SKILL.md

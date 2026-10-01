@@ -1,10 +1,11 @@
 /**
  * assets/vctrl_responsive_pins.js
  * 
- * Dedicated Dual-Frame Pin Marker Manager for Responsive PC & Mobile Screens.
- * - Spawns linked dual pin markers (PC & Mobile) with identical numbers for a single description.
- * - Manages independent frame-level coordinates and prevents cross-frame ID collisions.
- * - Strictly isolated: 0% interference or side-effects on standard non-responsive templates.
+ * Universal Pin Rendering & Reorder Engine (SSOT)
+ * - Single source of truth for pin marker rendering, coordinate tracking, and reordering across all screens.
+ * - Spawns linked dual pin markers (PC & Mobile) with identical numbers for responsive templates.
+ * - Handles standard canvas pin markers with 100% backward compatibility.
+ * - Enforces 1:1 self-healing reconciliation between description metadata and DOM pin numbers.
  * 
  * [WARNING FOR DEVELOPERS & AI AGENTS]
  * This file is wrapped in an outer template literal (window.v4ResponsivePinsScript = `...`).
@@ -30,14 +31,25 @@ window.v4ResponsivePinsScript = `
     }, 120);
 
     function isResponsiveScreen() {
-        return !!(document.querySelector('.pc-content-inner') || document.querySelector('.mobile-content-inner') || document.querySelector('.pc-browser-frame'));
+        if (window.parent && typeof window.parent.isResponsiveDocument === 'function') {
+            try {
+                return window.parent.isResponsiveDocument(document);
+            } catch (e) {}
+        }
+        if (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function') {
+            return window.ResponsiveFrameUtils.isResponsive(document);
+        }
+        return !!(document.querySelector('.pc-content-inner, .mobile-content-inner, .pc-browser-frame, .mobile-browser-frame, .pc-content-area, .mobile-compare-page, .frame-column, .mobile-content-area'));
     }
     window.isResponsiveScreen = isResponsiveScreen;
 
     function getResponsiveContext() {
-        var isMobileCompare = !!(document.querySelector('.mobile-compare-page') || (document.querySelector('.mobile-column-left') && document.querySelector('.mobile-column-right')));
-        var isPcMobile = !!(document.querySelector('.pc-content-inner') && document.querySelector('.mobile-content-inner'));
-        var isAdminPc = !isPcMobile && !isMobileCompare && !!document.querySelector('.pc-content-inner');
+        var tmplType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getTemplateType === 'function')
+            ? window.ResponsiveFrameUtils.getTemplateType(document)
+            : '';
+        var isMobileCompare = tmplType ? (tmplType === 'mobile-compare') : !!(document.querySelector('.mobile-compare-page') || (document.querySelector('.mobile-column-left') && document.querySelector('.mobile-column-right')));
+        var isPcMobile = tmplType ? (tmplType === 'pc-mobile') : !!(document.querySelector('.pc-content-inner') && document.querySelector('.mobile-content-inner'));
+        var isAdminPc = tmplType ? (tmplType === 'admin-pc') : (!isPcMobile && !isMobileCompare && !!document.querySelector('.pc-content-inner'));
 
         var frame1 = null;
         var frame2 = null;
@@ -469,7 +481,9 @@ window.v4ResponsivePinsScript = `
 
         if (allowScroll) {
             pins.forEach(function(pin) {
-                var scrollArea = pin.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
+                var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
+                    ? window.ResponsiveFrameUtils.getScrollArea(pin)
+                    : pin.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
                 if (scrollArea) {
                     var pinTop = parseFloat(pin.style.top) || pin.offsetTop || 0;
                     var targetTop = Math.max(0, pinTop - (scrollArea.clientHeight / 2) + 10);
@@ -734,7 +748,7 @@ window.v4ResponsivePinsScript = `
         var target = e.target;
         if (!target) return;
 
-        if (target.closest('.mobile-content-inner, .pc-content-inner, .mobile-content-area, .pc-content-area, .lf-component, .v4-editable-cell, input, textarea, button')) {
+        if ((window.ResponsiveFrameUtils && window.ResponsiveFrameUtils.getContainer(target)) || target.closest('.mobile-content-inner, .pc-content-inner, .mobile-content-area, .pc-content-area, .lf-component, .v4-editable-cell, input, textarea, button')) {
             return;
         }
 

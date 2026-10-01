@@ -160,6 +160,7 @@
                 if (t.isFrameBoundary || t.source === 'canvas') continue;
                 if (activeId && t.id === activeId) continue;
                 if (t.isGridCell) continue;
+                if (t.isLine) continue;
                 if (!t.width || !t.height) continue;
 
                 const isEdgeContained = (
@@ -241,9 +242,12 @@
                     if (t.isRowContainer || t.id === container.tableId || t.isTableContainer) continue;
                 }
 
+                const effBufferY = (active.height <= 4 || (t.isLine && t.lineDir === 'horizontal')) ? Math.max(overlapBufferY, 30) : overlapBufferY;
+                const effBufferX = (active.width <= 4 || (t.isLine && t.lineDir === 'vertical')) ? Math.max(overlapBufferX, 30) : overlapBufferX;
+
                 // Leftward Raycast
                 if (t.right <= active.left + 0.5) {
-                    const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
+                    const hasOverlapY = !(t.bottom < active.top - effBufferY || t.top > active.bottom + effBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(active.left - t.right));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -256,7 +260,7 @@
 
                 // Rightward Raycast
                 if (t.left >= active.right - 0.5) {
-                    const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
+                    const hasOverlapY = !(t.bottom < active.top - effBufferY || t.top > active.bottom + effBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(t.left - active.right));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -270,7 +274,7 @@
                 // Upward Raycast
                 if (!container.isRowContainer) {
                     if (t.bottom <= active.top + 0.5) {
-                        const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
+                        const hasOverlapX = !(t.right < active.left - effBufferX || t.left > active.right + effBufferX);
                         if (hasOverlapX) {
                             const dist = Math.max(0, Math.round(active.top - t.bottom));
                             if (dist <= MAX_NEIGHBOR_DIST) {
@@ -285,7 +289,7 @@
                 // Downward Raycast
                 if (!container.isRowContainer) {
                     if (t.top >= active.bottom - 0.5) {
-                        const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
+                        const hasOverlapX = !(t.right < active.left - effBufferX || t.left > active.right + effBufferX);
                         if (hasOverlapX) {
                             const dist = Math.max(0, Math.round(t.top - active.bottom));
                             if (dist <= MAX_NEIGHBOR_DIST) {
@@ -315,25 +319,123 @@
 
         /**
          * Core snapping calculation logic (SmartGuide 2.0).
-         * Note: Per user specification, complex align lines (Top/Middle/Bottom) are completely removed.
-         * Coordinates remain smooth and 1:1 without arbitrary jumping or cross-screen dashed lines.
+         * Supports Sibling Edge & Center magnetic snapping with minimal alignment guidelines.
          */
         calculateSnap(x, y, w = 0, h = 0, isArrowKey = false, activeId = null) {
             const spacingThresh = isArrowKey ? Infinity : (this.spacingThreshold || 120);
             const spacing = this.calculateSpacing(x, y, w, h, spacingThresh, activeId);
 
+            let snapX = x;
+            let snapY = y;
+            let snapXData = null;
+            let snapYData = null;
+
+            if (!isArrowKey && this.targets && this.targets.length > 0) {
+                const SNAP_THRESH = 5;
+                const active = {
+                    left: x,
+                    top: y,
+                    right: x + w,
+                    bottom: y + h,
+                    width: w,
+                    height: h,
+                    centerX: x + w / 2,
+                    centerY: y + h / 2
+                };
+
+                let bestDiffX = SNAP_THRESH + 1;
+                let bestDiffY = SNAP_THRESH + 1;
+
+                for (let i = 0; i < this.targets.length; i++) {
+                    const t = this.targets[i];
+                    if (activeId && t.id === activeId) continue;
+                    if (!t.w || !t.h) continue;
+
+                    const tLeft = t.x;
+                    const tTop = t.y;
+                    const tRight = t.x + t.w;
+                    const tBottom = t.y + t.h;
+                    const tCenterX = t.x + t.w / 2;
+                    const tCenterY = t.y + t.h / 2;
+
+                    // X-axis alignment
+                    let d = Math.abs(active.left - tLeft);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = tLeft;
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'left-left', lineX: tLeft };
+                    }
+                    d = Math.abs(active.centerX - tCenterX);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = Math.round(tCenterX - w / 2);
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'center-center', lineX: tCenterX };
+                    }
+                    d = Math.abs(active.right - tRight);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = tRight - w;
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'right-right', lineX: tRight };
+                    }
+                    d = Math.abs(active.left - tRight);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = tRight;
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'left-right', lineX: tRight };
+                    }
+                    d = Math.abs(active.right - tLeft);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = tLeft - w;
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'right-left', lineX: tLeft };
+                    }
+
+                    // Y-axis alignment
+                    d = Math.abs(active.top - tTop);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = tTop;
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'top-top', lineY: tTop };
+                    }
+                    d = Math.abs(active.centerY - tCenterY);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = Math.round(tCenterY - h / 2);
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'middle-middle', lineY: tCenterY };
+                    }
+                    d = Math.abs(active.bottom - tBottom);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = tBottom - h;
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'bottom-bottom', lineY: tBottom };
+                    }
+                    d = Math.abs(active.top - tBottom);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = tBottom;
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'top-bottom', lineY: tBottom };
+                    }
+                    d = Math.abs(active.bottom - tTop);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = tTop - h;
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'bottom-top', lineY: tTop };
+                    }
+                }
+            }
+
             return {
-                x: x,
-                y: y,
-                snapXData: null,
-                snapYData: null,
+                x: snapX,
+                y: snapY,
+                snapXData: snapXData,
+                snapYData: snapYData,
                 spacing: spacing
             };
         },
 
         /**
          * Renders guide lines and labels on the SVG layer.
-         * SmartGuide 2.0: Only clean spacing guides and badges are displayed.
+         * SmartGuide 2.0: Spacing guides, equal spacing indicators, and minimal alignment guidelines.
          */
         drawGuides(data) {
             if (this.clearTimer) {
@@ -344,6 +446,8 @@
             if (!DOM || !DOM.guideLayer) return;
 
             const htmlList = [];
+
+            // Visual alignment lines removed for clean canvas UX; magnetic snapping calculation is preserved in calculateSnap
             if (data && data.spacing) {
                 this.drawSpacingGuides(data.spacing, htmlList);
             }
@@ -498,9 +602,9 @@
          * @param {number} w Component width
          * @param {number} h Component height
          * @param {string} activeId Component id
-         * @param {number} [autoDismissMs=2000] Auto dismiss delay in ms
+         * @param {number} [autoDismissMs=7000] Auto dismiss delay in ms
          */
-        showSelectionGuide(x, y, w, h, activeId, autoDismissMs = 2000) {
+        showSelectionGuide(x, y, w, h, activeId, autoDismissMs = 7000) {
             if (this.clearTimer) {
                 clearTimeout(this.clearTimer);
                 this.clearTimer = null;
@@ -515,11 +619,12 @@
             const snap = this.calculateSnap(x, y, w, h, false, activeId);
             this.drawGuides(snap);
 
+            const delay = typeof autoDismissMs === 'number' ? Math.max(autoDismissMs, 7000) : 7000;
             this.selectionTimer = setTimeout(() => {
                 this.clearGuides(false);
                 this.selectionTimer = null;
                 this.pendingSelection = null;
-            }, autoDismissMs);
+            }, delay);
         },
 
         /**

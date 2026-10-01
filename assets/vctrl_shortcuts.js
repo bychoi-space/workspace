@@ -398,7 +398,23 @@ window.v4ShortcutsScript = `
             if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
                 window.ResponsiveSmartGuide.onNudgeEnd();
             } else {
-                notifyParent({ type: 'LF_SNAP_END' });
+                const activeComp = document.querySelector('.lf-component.selected') || window.activeEl;
+                if (activeComp) {
+                    const compW = activeComp.offsetWidth || 100;
+                    const compH = activeComp.offsetHeight || 40;
+                    const compL = parseFloat(activeComp.style.left) || 0;
+                    const compT = parseFloat(activeComp.style.top) || 0;
+                    notifyParent({
+                        type: 'LF_SNAP_END',
+                        id: activeComp.id,
+                        x: compL,
+                        y: compT,
+                        w: compW,
+                        h: compH
+                    });
+                } else {
+                    notifyParent({ type: 'LF_SNAP_END' });
+                }
             }
         }
     });

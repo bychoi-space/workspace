@@ -1,4 +1,4 @@
-﻿/**
+/**
  * vctrl_inspector.js - UI & Inspector Controller
  * Responsibility: DOM management, sidebar tabs, metadata UI, and component properties.
  */
@@ -26,6 +26,7 @@ window.rebindInspectorDOM = function() {
     DOM.selectboxPropSection = get('selectbox-inspector-section');
     DOM.fileuploadPropSection = get('fileupload-inspector-section');
     DOM.alertPropSection = get('alert-inspector-section');
+    DOM.popupPropSection = get('popup-inspector-section');
     DOM.buttonPropSection = get('button-inspector-section');
     DOM.datepickerPropSection = get('datepicker-inspector-section');
     DOM.datePickerPropSection = get('datepicker-inspector-section');
@@ -67,7 +68,7 @@ window.restorePropertiesSections = function(force) {
         DOM.shapePropSection, DOM.textPropSection, DOM.tablePropSection,
         DOM.linePropSection, DOM.iconPropSection, DOM.checkboxRadioPropSection,
         DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
-        DOM.fileuploadPropSection, DOM.alertPropSection, DOM.buttonPropSection,
+        DOM.fileuploadPropSection, DOM.alertPropSection, (DOM.popupPropSection || document.getElementById('popup-inspector-section')), DOM.buttonPropSection,
         DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
         DOM.adminSettingsPropSection, DOM.tabPropSection, DOM.cursorPropSection
     ];
@@ -312,38 +313,9 @@ window.switchSidebarTab = function(tabName) {
     console.log(`[Inspector] switchSidebarTab END: ${tabName}`);
 };
 
-// --- 3. UI Rendering Functions ---
-window.updateProperties = function(compStyles) {
-    const activeEl = document.activeElement;
-    const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-    const isNewComp = Boolean(compStyles && compStyles.id && compStyles.id !== state.editingIndex);
+// --- 3. UI Rendering & Inspector Dispatcher Sub-modules ---
 
-    // If selecting a different component, clear residual parent focus to ensure immediate synchronization
-    if (isNewComp && activeEl && typeof activeEl.blur === 'function') {
-        activeEl.blur();
-    }
-
-    const currentActiveEl = document.activeElement;
-    const isTypingInInspector = !isBtn && currentActiveEl && !isNewComp && (
-        currentActiveEl.tagName === 'INPUT' ||
-        currentActiveEl.tagName === 'TEXTAREA' ||
-        currentActiveEl.tagName === 'SELECT' ||
-        currentActiveEl.isContentEditable ||
-        currentActiveEl.classList.contains('v4-prop-input') ||
-        currentActiveEl.classList.contains('admin-col-label-input') ||
-        currentActiveEl.classList.contains('grid-col-name-input') ||
-        currentActiveEl.classList.contains('accordion-sub-input')
-    );
-    
-    if (isTypingInInspector) {
-        return;
-    }
-    
-    window.restorePropertiesSections(isNewComp);
-    const pm = state.projectMetadata || {};
-    if (!DOM.metadataPanel) return;
-
-// Project Metadata UI Manager Namespace
+// 3.1 Project Metadata UI Manager (SSOT)
 const ProjectMetadataManager = {
     renderBar(pm) {
         let linksHtml = '';
@@ -398,18 +370,714 @@ const ProjectMetadataManager = {
     }
 };
 
-    // 1. Update Top Metadata Bar
+// 3.2 Update Top Metadata Bar & Footer
+function _syncTopMetadataBar(pm) {
+    if (!DOM.metadataPanel) return;
     if (!DOM.metadataPanel.innerHTML.includes('v4-meta-horizontal')) {
         ProjectMetadataManager.renderBar(pm);
     } else {
         ProjectMetadataManager.updateFields(pm);
     }
-
-    // 1-1. Update Sidebar Footer (Last Updated)
     const updatedTxt = document.getElementById('meta-updated-txt');
     if (updatedTxt) {
         updatedTxt.innerText = pm.updated ? `최종 업데이트: ${pm.updated}` : '최종 업데이트: -';
     }
+}
+
+// 3.3 Apply Inspector Docked / Floating Mode
+function _applyInspectorDockMode() {
+    if (!state.inspectorMode) {
+        try { state.inspectorMode = localStorage.getItem('lf_inspector_mode') || 'docked'; } catch (_) { state.inspectorMode = 'docked'; }
+    }
+    if (!state.floatingSide) {
+        try { state.floatingSide = localStorage.getItem('lf_inspector_floating_side') || 'right'; } catch (_) { state.floatingSide = 'right'; }
+    }
+
+    const isDocked = (state.inspectorMode === 'docked');
+    const floatingInspector = document.getElementById('floating-inspector-card');
+
+    if (isDocked) {
+        window.toggleSidebar('right', true);
+        window.setSidebarInspectorVisible(true);
+        if (floatingInspector) {
+            floatingInspector.style.setProperty('display', 'none', 'important');
+        }
+    } else {
+        window.setSidebarInspectorVisible(false);
+        if (floatingInspector) {
+            floatingInspector.style.setProperty('display', 'flex', 'important');
+            floatingInspector.style.bottom = '24px';
+            floatingInspector.style.top = 'auto';
+
+            const side = state.floatingSide || 'right';
+            if (side === 'left') {
+                floatingInspector.style.left = '24px';
+                floatingInspector.style.right = 'auto';
+            } else {
+                floatingInspector.style.right = '24px';
+                floatingInspector.style.left = 'auto';
+            }
+        }
+    }
+    return isDocked;
+}
+
+// 3.4 Hide all property sections prior to activating matching panel
+function _hideAllPropertySections(isTypingInAdminProps) {
+    const arrowGroupInit = document.getElementById('shape-arrow-direction-group');
+    if (arrowGroupInit) arrowGroupInit.style.display = 'none';
+    const waveGroupInit = document.getElementById('shape-wave-direction-group');
+    if (waveGroupInit) waveGroupInit.style.display = 'none';
+    if (DOM.textPropSection) DOM.textPropSection.style.display = 'none';
+    if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'none';
+    if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'none';
+    if (DOM.linePropSection) DOM.linePropSection.style.display = 'none';
+    if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'none';
+    if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'none';
+    if (DOM.textboxTextareaPropSection) DOM.textboxTextareaPropSection.style.display = 'none';
+    if (DOM.searchbarPropSection) DOM.searchbarPropSection.style.display = 'none';
+    if (DOM.stepperPropSection) DOM.stepperPropSection.style.display = 'none';
+    if (DOM.selectboxPropSection) DOM.selectboxPropSection.style.display = 'none';
+    if (DOM.fileuploadPropSection) DOM.fileuploadPropSection.style.display = 'none';
+    if (DOM.alertPropSection) DOM.alertPropSection.style.display = 'none';
+    const popupSecHide = DOM.popupPropSection || document.getElementById('popup-inspector-section');
+    if (popupSecHide) popupSecHide.style.display = 'none';
+    if (DOM.buttonPropSection) DOM.buttonPropSection.style.display = 'none';
+    if (DOM.datePickerPropSection) DOM.datePickerPropSection.style.display = 'none';
+    if (DOM.togglePropSection) DOM.togglePropSection.style.display = 'none';
+    if (DOM.cursorPropSection) DOM.cursorPropSection.style.display = 'none';
+    if (DOM.adminSettingsPropSection && !isTypingInAdminProps) DOM.adminSettingsPropSection.style.display = 'none';
+}
+
+// 3.5 Detect Component Editing Type
+function _detectComponentType(compStyles) {
+    const hasValidPinIndex = compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex);
+    state.editingIndex = hasValidPinIndex ? compStyles.pinIndex : compStyles.id;
+    if (compStyles.isGroup) return 'group';
+    if (compStyles.isPin && hasValidPinIndex) return 'pin';
+    if (compStyles.isGrid) return 'grid';
+    if (compStyles.isTable) return 'table';
+    if (compStyles.shapeType === 'line' || compStyles.id === 'v4-shape-line') return 'line';
+    if (compStyles.isPopup || compStyles.id === 'v4-atom-popup' || compStyles.compId === 'v4-atom-popup') return 'popup';
+    if (compStyles.isShape || compStyles.isPin) return 'shape';
+    if (compStyles.isConnector) return 'line';
+    if (compStyles.isTextbox) return 'textbox';
+    if (compStyles.isTextarea) return 'textarea';
+    if (compStyles.isSearchBar) return 'searchbar';
+    if (compStyles.isStepper) return 'stepper';
+    if (compStyles.isSelectbox) return 'selectbox';
+    if (compStyles.isFileUpload) return 'fileupload';
+    if (compStyles.isAlert) return 'alert';
+    if (compStyles.isButton) return 'button';
+    if (compStyles.isDatePicker) return 'datepicker';
+    if (compStyles.isToggle) return 'toggle';
+    if (compStyles.isAccordion) return 'accordion';
+    if (compStyles.isAdminSettings) return 'admin-settings';
+    if (compStyles.isTab) return 'tab';
+    if (compStyles.isCursor) return 'cursor';
+    if (compStyles.isIcon) return 'icon';
+    return 'comp';
+}
+
+// 3.6 Synchronize Specific Component Type Panel
+function _syncComponentTypeProperties(compStyles, editingType) {
+    if (editingType === 'pin' || editingType === 'shape') {
+        if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'block';
+        if (window.InspectorShapes && typeof window.InspectorShapes.sync === 'function') {
+            window.InspectorShapes.sync(compStyles);
+        }
+        if (DOM.textPropSection && !compStyles.isImage && !compStyles.isMultiSameType) {
+            DOM.textPropSection.style.display = 'block';
+        }
+
+        const patternGroup = document.getElementById('shape-pattern-type-group');
+        const bgColorGroup = document.getElementById('shape-bg-color-group');
+        const bgOpacityGroup = document.getElementById('shape-bg-opacity-group');
+        const isPattern = (compStyles.shapeType === 'pattern');
+        
+        if (patternGroup) {
+            patternGroup.style.display = isPattern ? 'block' : 'none';
+            if (isPattern && compStyles.patternType) {
+                if (typeof window._syncPatternVisualBtns === 'function') {
+                    window._syncPatternVisualBtns(compStyles.patternType);
+                }
+            }
+        }
+        if (bgColorGroup) {
+            bgColorGroup.style.display = isPattern ? 'none' : 'grid';
+        }
+        if (bgOpacityGroup) {
+            bgOpacityGroup.style.display = isPattern ? 'none' : 'block';
+        }
+
+        const arrowGroup = document.getElementById('shape-arrow-direction-group');
+        const cornerGroup = document.getElementById('shape-corner-style-group');
+        const waveGroup = document.getElementById('shape-wave-direction-group');
+        const isRect = (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage');
+        const isArrow = (compStyles.shapeType === 'arrow' || compStyles.id === 'v4-shape-arrow');
+        const isTriangle = (compStyles.shapeType === 'triangle' || compStyles.id === 'v4-shape-triangle');
+        const isArrowOrTriangle = isArrow || isTriangle;
+        const isWave = (compStyles.shapeType === 'wave' || compStyles.id === 'v4-shape-wave' || (compStyles.classList && compStyles.classList.includes('v4-shape-wave')));
+
+        if (cornerGroup) cornerGroup.style.display = isRect ? 'block' : 'none';
+        if (arrowGroup) {
+            if (isArrowOrTriangle) {
+                arrowGroup.style.display = 'block';
+                const currentDir = compStyles.direction || compStyles.arrowDir || 'right';
+                if (typeof window._syncArrowDirBtns === 'function') {
+                    window._syncArrowDirBtns(currentDir);
+                }
+            } else {
+                arrowGroup.style.display = 'none';
+            }
+        }
+        if (waveGroup) {
+            if (isWave) {
+                waveGroup.style.display = 'block';
+                const currentWaveDir = compStyles.waveDir || 'horizontal';
+                if (typeof window._syncWaveDirBtns === 'function') {
+                    window._syncWaveDirBtns(currentWaveDir);
+                }
+            } else {
+                waveGroup.style.display = 'none';
+            }
+        }
+    } else if (editingType === 'table') {
+        if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'block';
+    } else if (editingType === 'line') {
+        if (DOM.linePropSection) DOM.linePropSection.style.display = 'block';
+        if (typeof window._syncLineEditorProps === 'function') {
+            window._syncLineEditorProps(compStyles);
+        }
+    } else if (editingType === 'icon') {
+        if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'block';
+        if (compStyles.isCheckbox || compStyles.isRadio) {
+            if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
+            if (typeof _syncCheckboxRadioProps === 'function') {
+                _syncCheckboxRadioProps(compStyles);
+            }
+        }
+    } else if (editingType === 'textbox' || editingType === 'textarea') {
+        if (DOM.textboxTextareaPropSection) DOM.textboxTextareaPropSection.style.display = 'block';
+        if (typeof _syncTextboxTextareaProps === 'function') {
+            _syncTextboxTextareaProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncTextboxTextarea === 'function') {
+            window.InspectorAtoms.syncTextboxTextarea(compStyles);
+        }
+    } else if (editingType === 'searchbar') {
+        if (DOM.searchbarPropSection) DOM.searchbarPropSection.style.display = 'block';
+        if (typeof _syncSearchBarProps === 'function') {
+            _syncSearchBarProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSearchBar === 'function') {
+            window.InspectorAtoms.syncSearchBar(compStyles);
+        }
+    } else if (editingType === 'stepper') {
+        if (DOM.stepperPropSection) DOM.stepperPropSection.style.display = 'block';
+        if (typeof _syncStepperProps === 'function') {
+            _syncStepperProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncStepper === 'function') {
+            window.InspectorAtoms.syncStepper(compStyles);
+        }
+    } else if (editingType === 'selectbox') {
+        if (DOM.selectboxPropSection) DOM.selectboxPropSection.style.display = 'block';
+        if (typeof _syncSelectboxProps === 'function') {
+            _syncSelectboxProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSelectbox === 'function') {
+            window.InspectorAtoms.syncSelectbox(compStyles);
+        }
+    } else if (editingType === 'fileupload') {
+        if (DOM.fileuploadPropSection) DOM.fileuploadPropSection.style.display = 'block';
+        if (typeof _syncFileuploadProps === 'function') {
+            _syncFileuploadProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncFileupload === 'function') {
+            window.InspectorAtoms.syncFileupload(compStyles);
+        }
+    } else if (editingType === 'alert') {
+        if (DOM.alertPropSection) DOM.alertPropSection.style.display = 'block';
+        if (typeof _syncAlertProps === 'function') {
+            _syncAlertProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncAlert === 'function') {
+            window.InspectorAtoms.syncAlert(compStyles);
+        }
+    } else if (editingType === 'popup') {
+        const popupSec = DOM.popupPropSection || document.getElementById('popup-inspector-section');
+        if (popupSec) popupSec.style.display = 'block';
+        if (window.InspectorPopup && typeof window.InspectorPopup.sync === 'function') {
+            window.InspectorPopup.sync(compStyles);
+        }
+        if (window.InspectorPopup && typeof window.InspectorPopup.init === 'function') {
+            window.InspectorPopup.init();
+        }
+    } else if (editingType === 'button') {
+        if (DOM.buttonPropSection) DOM.buttonPropSection.style.display = 'block';
+        if (typeof _syncButtonProps === 'function') {
+            _syncButtonProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncButton === 'function') {
+            window.InspectorAtoms.syncButton(compStyles);
+        }
+    } else if (editingType === 'datepicker') {
+        if (DOM.datePickerPropSection) DOM.datePickerPropSection.style.display = 'block';
+        if (typeof _syncDatePickerProps === 'function') {
+            _syncDatePickerProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncDatePicker === 'function') {
+            window.InspectorAtoms.syncDatePicker(compStyles);
+        }
+    } else if (editingType === 'accordion') {
+        if (DOM.accordionPropSection) DOM.accordionPropSection.style.display = 'block';
+        if (typeof _syncAccordionProps === 'function') {
+            _syncAccordionProps(compStyles);
+        }
+    } else if (editingType === 'grid') {
+        if (DOM.gridPropSection) DOM.gridPropSection.style.display = 'block';
+        const activeEl = document.activeElement;
+        const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+        const isTypingInGrid = !isBtn && activeEl && (
+            activeEl.classList.contains('grid-col-width-input') || 
+            activeEl.classList.contains('grid-col-name-input') || 
+            activeEl.classList.contains('grid-col-options-input') || 
+            (activeEl.tagName === 'INPUT' && activeEl.closest('#grid-inspector-section')) || 
+            (activeEl.tagName === 'TEXTAREA' && activeEl.closest('#grid-inspector-section'))
+        );
+        if (!isTypingInGrid) {
+            if (typeof _syncGridProps === 'function') {
+                _syncGridProps(compStyles);
+            }
+        }
+        if (typeof window.initGridEvents === 'function') {
+            window.initGridEvents();
+        }
+    } else if (editingType === 'admin-settings') {
+        if (DOM.adminSettingsPropSection) DOM.adminSettingsPropSection.style.display = 'block';
+        const activeEl = document.activeElement;
+        const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+        const isTypingInAdminProps = !isBtn && activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
+        if (!isTypingInAdminProps) {
+            if (typeof window._syncAdminSettingsProps === 'function') {
+                window._syncAdminSettingsProps(compStyles);
+            }
+        }
+    } else if (compStyles && (compStyles.isCheckbox || compStyles.isRadio)) {
+        const activeEl = document.activeElement;
+        const isTypingCheckboxLabel = activeEl && activeEl.id === 'prop-atom-text-content';
+        if (!isTypingCheckboxLabel) {
+            if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
+            if (typeof _syncCheckboxRadioProps === 'function') {
+                _syncCheckboxRadioProps(compStyles);
+            }
+        }
+    } else if (editingType === 'toggle') {
+        if (DOM.togglePropSection) DOM.togglePropSection.style.display = 'block';
+        if (typeof _syncToggleProps === 'function') {
+            _syncToggleProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncToggle === 'function') {
+            window.InspectorAtoms.syncToggle(compStyles);
+        }
+    } else if (editingType === 'tab') {
+        if (DOM.tabPropSection) DOM.tabPropSection.style.display = 'block';
+        if (window.InspectorTab && typeof window.InspectorTab.sync === 'function') {
+            window.InspectorTab.sync(compStyles);
+        }
+        if (window.InspectorTab && typeof window.InspectorTab.bindEvents === 'function') {
+            window.InspectorTab.bindEvents();
+        }
+    } else if (editingType === 'cursor') {
+        const cursorSec = DOM.cursorPropSection || document.getElementById('cursor-inspector-section');
+        if (cursorSec) cursorSec.style.display = 'block';
+        if (typeof _syncCursorProps === 'function') {
+            _syncCursorProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncCursor === 'function') {
+            window.InspectorAtoms.syncCursor(compStyles);
+        }
+    }
+}
+
+// 3.7 Synchronize Common Controls (Color, Typography, Border, Padding)
+function _syncCommonPropertyControls(compStyles, editingType) {
+    const s = (compStyles && compStyles.currentStyles) || {};
+    if (DOM.textColorPicker) DOM.textColorPicker.value = s.text || "#000000";
+    if (compStyles.isIcon || s.iconColor) {
+        const iconColorInput = document.getElementById('icon-color');
+        if (iconColorInput && s.iconColor) {
+            iconColorInput.value = s.iconColor;
+        }
+    }
+
+    if (compStyles.isShape || editingType === 'shape') {
+        const shapeBgInput = document.getElementById('shape-bg-color');
+        const shapeBorderInput = document.getElementById('shape-border-color');
+        if (shapeBgInput) {
+            const validBg = (s.bg && s.bg !== 'transparent') ? s.bg : '#ffffff';
+            shapeBgInput.value = validBg;
+            const wrapper = document.getElementById('shape-bg-wrapper');
+            if (wrapper) {
+                if (s.bg === 'transparent' || s.bgOpacity === 0) wrapper.classList.add('transparent-active');
+                else wrapper.classList.remove('transparent-active');
+            }
+        }
+        if (shapeBorderInput) {
+            const validBorder = (s.border && s.border !== 'transparent') ? s.border : '#c8c8c8';
+            shapeBorderInput.value = validBorder;
+            const wrapper = document.getElementById('shape-border-wrapper');
+            if (wrapper) {
+                if (s.border === 'transparent') wrapper.classList.add('transparent-active');
+                else wrapper.classList.remove('transparent-active');
+            }
+        }
+        const opacityVal = (s.bgOpacity !== undefined) ? s.bgOpacity : 100;
+        const slider = document.getElementById('shape-bg-opacity');
+        const txt = document.getElementById('txt-shape-bg-opacity');
+        if (slider) slider.value = opacityVal;
+        if (txt) txt.innerText = opacityVal;
+        const wrapper = document.getElementById('shape-bg-wrapper');
+        if (wrapper) {
+            if (s.bg === 'transparent' || opacityVal === 0) wrapper.classList.add('transparent-active');
+            else wrapper.classList.remove('transparent-active');
+        }
+    }
+
+    const fontSizeInput = document.getElementById(compStyles.isTable ? 'table-font-size' : 'shape-font-size');
+    if (fontSizeInput && s.fontSize !== undefined) {
+        fontSizeInput.value = s.fontSize;
+        const txt = document.getElementById('txt-' + fontSizeInput.id);
+        if (txt) txt.innerText = s.fontSize;
+    }
+
+    const isRectShape = (compStyles.isShape || editingType === 'shape') && (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage' || !compStyles.shapeType);
+    if (isRectShape && s.borderRadius !== undefined) {
+        const radiusVal = s.borderRadius;
+        const slider = document.getElementById('shape-border-radius');
+        const txt = document.getElementById('txt-shape-border-radius');
+        if (slider) slider.value = radiusVal;
+        if (txt) txt.innerText = radiusVal;
+        if (typeof window._syncCornerBtns === 'function') {
+            window._syncCornerBtns(radiusVal);
+        }
+    }
+
+    if (s.textAlign !== undefined && typeof window._syncAlignBtns === 'function') {
+        window._syncAlignBtns(s.textAlign);
+    }
+    if (s.justifyContent !== undefined && typeof window._syncVAlignBtns === 'function') {
+        window._syncVAlignBtns(s.justifyContent);
+    }
+
+    if (typeof window._syncShapePaddingInputs === 'function') {
+        window._syncShapePaddingInputs({
+            padTop: s.padTop !== undefined ? s.padTop : 5,
+            padBottom: s.padBottom !== undefined ? s.padBottom : 5,
+            padLeft: s.padLeft !== undefined ? s.padLeft : 10,
+            padRight: s.padRight !== undefined ? s.padRight : 10
+        });
+    } else {
+        const inPadTop = document.getElementById('shape-pad-top');
+        const inPadBottom = document.getElementById('shape-pad-bottom');
+        const inPadLeft = document.getElementById('shape-pad-left');
+        const inPadRight = document.getElementById('shape-pad-right');
+        if (inPadTop && s.padTop !== undefined && document.activeElement !== inPadTop) inPadTop.value = s.padTop;
+        if (inPadBottom && s.padBottom !== undefined && document.activeElement !== inPadBottom) inPadBottom.value = s.padBottom;
+        if (inPadLeft && s.padLeft !== undefined && document.activeElement !== inPadLeft) inPadLeft.value = s.padLeft;
+        if (inPadRight && s.padRight !== undefined && document.activeElement !== inPadRight) inPadRight.value = s.padRight;
+    }
+
+    if (compStyles.isTextbox || compStyles.isTextarea) {
+        const phInput = document.getElementById('prop-input-placeholder');
+        if (phInput && compStyles.placeholderText !== undefined) {
+            phInput.value = compStyles.placeholderText;
+        }
+    }
+
+    if (compStyles.isSearchBar) {
+        const phInput = document.getElementById('prop-searchbar-placeholder');
+        if (phInput && compStyles.searchbarPlaceholder !== undefined) {
+            phInput.value = compStyles.searchbarPlaceholder;
+        }
+        const mlInput = document.getElementById('prop-input-maxlength');
+        const mlTxt = document.getElementById('txt-input-maxlength');
+        if (mlInput && compStyles.maxLength !== undefined) {
+            mlInput.value = compStyles.maxLength;
+            if (mlTxt) mlTxt.innerText = compStyles.maxLength;
+        }
+        const activeY = document.getElementById('btn-input-counter-y');
+        const activeN = document.getElementById('btn-input-counter-n');
+        if (activeY && activeN && compStyles.showCounter !== undefined && typeof window.highlightActive === 'function') {
+            window.highlightActive(activeY, compStyles.showCounter === true);
+            window.highlightActive(activeN, compStyles.showCounter === false);
+        }
+    }
+
+    if (compStyles.isAlert) {
+        if (typeof _syncAlertProps === 'function') {
+            _syncAlertProps(compStyles);
+        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncAlert === 'function') {
+            window.InspectorAtoms.syncAlert(compStyles);
+        }
+    }
+
+    if (compStyles.isButton) {
+        const txtInput = document.getElementById('prop-button-text');
+        if (txtInput && document.activeElement !== txtInput && compStyles.buttonText !== undefined) {
+            txtInput.value = compStyles.buttonText;
+        }
+        const fontInput = document.getElementById('prop-button-font-size');
+        if (fontInput && document.activeElement !== fontInput && compStyles.buttonFontSize !== undefined) {
+            fontInput.value = compStyles.buttonFontSize;
+        }
+        const selStyle = document.getElementById('prop-button-style');
+        if (selStyle && compStyles.buttonStyle !== undefined) {
+            selStyle.value = compStyles.buttonStyle;
+            const customColorsDiv = document.getElementById('prop-button-custom-colors');
+            if (customColorsDiv) {
+                customColorsDiv.style.display = (compStyles.buttonStyle === 'custom') ? 'block' : 'none';
+            }
+        }
+        const radiusSlider = document.getElementById('prop-button-border-radius');
+        const radiusTxt = document.getElementById('txt-button-border-radius');
+        if (radiusSlider && document.activeElement !== radiusSlider && compStyles.buttonRadius !== undefined) {
+            const r = parseInt(compStyles.buttonRadius) || 0;
+            radiusSlider.value = r;
+            if (radiusTxt) radiusTxt.innerText = r;
+            if (typeof window._syncButtonCornerBtns === 'function') {
+                window._syncButtonCornerBtns(r);
+            }
+        }
+    }
+}
+
+// 3.8 Synchronize Selection Action Bar & Group Dimension
+function _syncSelectionActionBar(compStyles) {
+    const btnGroup = document.getElementById('btn-group-action');
+    const btnUngroup = document.getElementById('btn-ungroup-action');
+    const btnAddToMolecules = document.getElementById('btn-add-molecules-action');
+    const alignBar = document.getElementById('selection-align-bar');
+    const groupDimBar = document.getElementById('group-dimension-bar');
+    const groupDimWidth = document.getElementById('group-dim-width');
+    const groupDimHeight = document.getElementById('group-dim-height');
+    
+    const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
+    const isSingleGroup = selIds.length === 1 && compStyles && compStyles.isGroup;
+
+    if (btnGroup) btnGroup.style.setProperty('display', (selIds.length > 1) ? 'flex' : 'none', 'important');
+    if (btnUngroup) btnUngroup.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
+    if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
+    if (alignBar) alignBar.style.setProperty('display', (selIds.length > 1) ? 'block' : 'none', 'important');
+    const styleActionRow = document.getElementById('selection-style-action-row');
+    if (styleActionRow) styleActionRow.style.setProperty('display', isSingleGroup ? 'none' : 'flex', 'important');
+
+    if (groupDimBar) {
+        if (isSingleGroup) {
+            groupDimBar.style.setProperty('display', 'flex', 'important');
+            let wVal = 0;
+            let hVal = 0;
+            if (compStyles && typeof compStyles.w === 'number') {
+                wVal = Math.round(compStyles.w);
+                hVal = Math.round(compStyles.h);
+            } else if (selIds.length === 1) {
+                try {
+                    const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+                    const groupEl = iframeDoc?.getElementById(selIds[0]);
+                    if (groupEl) {
+                        wVal = Math.round(parseFloat(groupEl.style.width) || groupEl.offsetWidth || 0);
+                        hVal = Math.round(parseFloat(groupEl.style.height) || groupEl.offsetHeight || 0);
+                    }
+                } catch(e) {}
+            }
+            if (groupDimWidth) groupDimWidth.innerText = wVal + 'px';
+            if (groupDimHeight) groupDimHeight.innerText = hVal + 'px';
+        } else {
+            groupDimBar.style.setProperty('display', 'none', 'important');
+        }
+    }
+}
+
+// 3.9 Synchronize Content to Quill Editor
+function _syncQuillContent(compStyles, editingType) {
+    const editorLabel = document.getElementById('content-editor-label');
+    if (editorLabel) {
+        editorLabel.innerText = 'CONTENT EDITOR';
+    }
+
+    const normalizeHtmlForQuill = (rawHtml, fallbackFontSize) => {
+        if (window.InspectorTextFormatter && typeof window.InspectorTextFormatter.normalizeHtmlForQuill === 'function') {
+            return window.InspectorTextFormatter.normalizeHtmlForQuill(rawHtml, fallbackFontSize);
+        }
+        return rawHtml;
+    };
+
+    if (compStyles && !compStyles.isMultiSameType && (editingType === 'pin' || editingType === 'shape') && window.quillEditor) {
+        const fallbackFs = compStyles.currentStyles && compStyles.currentStyles.fontSize;
+        const fallbackColor = compStyles.currentStyles && compStyles.currentStyles.text;
+        const cleanHtml = normalizeHtmlForQuill(compStyles.html, fallbackFs);
+
+        if (window._shapeQuillTimer) {
+            clearTimeout(window._shapeQuillTimer);
+            window._shapeQuillTimer = null;
+        }
+
+        state._isLoadingShapeContent = true;
+        const wasQuillFocused = document.activeElement === window.quillEditor.root;
+
+        window._shapeQuillTimer = setTimeout(() => {
+            window._shapeQuillTimer = null;
+            window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
+
+            window._currentStickyFormat = {};
+            if (fallbackFs) {
+                const fsPx = typeof fallbackFs === 'number' ? fallbackFs + 'px' : (fallbackFs.endsWith('px') ? fallbackFs : fallbackFs + 'px');
+                window._currentStickyFormat.size = fsPx;
+            }
+            if (fallbackColor) {
+                window._currentStickyFormat.color = fallbackColor;
+            }
+            const curAlign = (compStyles.currentStyles && compStyles.currentStyles.textAlign) || compStyles.textAlign || 'left';
+            if (window.quillEditor && window.quillEditor.root) {
+                window.quillEditor.root.style.textAlign = curAlign;
+            }
+            window._currentStickyFormat.align = curAlign;
+            const curLh = (compStyles.currentStyles && compStyles.currentStyles.lineHeight) || '1.5';
+            window._currentStickyFormat.lineheight = curLh;
+
+            if (window.quillEditor) {
+                window.quillEditor.format('align', curAlign === 'left' ? false : curAlign, 'silent');
+                if (fallbackColor) {
+                    window.quillEditor.format('color', fallbackColor, 'silent');
+                }
+                if (curLh) {
+                    window.quillEditor.format('lineheight', curLh, 'silent');
+                }
+            }
+            const curFmt = window.quillEditor.getFormat();
+            if (curFmt && Object.keys(curFmt).length > 0) {
+                window._currentStickyFormat = { ...window._currentStickyFormat, ...curFmt };
+                if (!curFmt.align) {
+                    window._currentStickyFormat.align = curAlign;
+                }
+                if (!curFmt.lineheight) {
+                    window._currentStickyFormat.lineheight = curLh;
+                }
+            }
+
+            const lhPicker = document.querySelector('.ql-toolbar .ql-lineheight');
+            if (lhPicker) {
+                if (typeof setupCustomLineHeightPicker === 'function' && !lhPicker._customLhInitialized) {
+                    setupCustomLineHeightPicker(lhPicker);
+                }
+                const targetLh = window._currentStickyFormat.lineheight || curLh || '1.5';
+                const lhPickerLabel = lhPicker.querySelector('.ql-picker-label');
+                if (lhPickerLabel) lhPickerLabel.setAttribute('data-value', targetLh);
+                const lhInput = lhPicker.querySelector('.ql-lineheight-input');
+                if (lhInput && document.activeElement !== lhInput) lhInput.value = targetLh;
+            }
+
+            if (wasQuillFocused) {
+                window.quillEditor.setSelection(0, 0);
+            } else {
+                window.quillEditor.blur();
+                window.quillEditor.setSelection(null);
+                const iframe = document.getElementById('main-iframe');
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.focus();
+                }
+            }
+
+            requestAnimationFrame(() => {
+                state._isLoadingShapeContent = false;
+            });
+        }, 30);
+    }
+}
+
+// 3.10 Dynamically relocate active panels into Target Body (Docked or Floating)
+function _relocatePropertyPanels(isDocked) {
+    const targetBody = isDocked 
+        ? document.getElementById('sidebar-inspector-body') 
+        : document.getElementById('floating-inspector-body');
+
+    if (targetBody) {
+        const selectionBar = document.getElementById('selection-actions-bar');
+        if (selectionBar) {
+            if (selectionBar.parentElement !== targetBody) {
+                targetBody.insertBefore(selectionBar, targetBody.firstChild);
+            }
+            selectionBar.style.setProperty('display', 'flex', 'important');
+        }
+        const sections = [
+            DOM.shapePropSection, DOM.textPropSection, DOM.tablePropSection,
+            DOM.linePropSection, DOM.iconPropSection, DOM.checkboxRadioPropSection,
+            DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
+            DOM.fileuploadPropSection, DOM.alertPropSection, (DOM.popupPropSection || document.getElementById('popup-inspector-section')), DOM.buttonPropSection,
+            DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
+            DOM.adminSettingsPropSection, DOM.tabPropSection,
+            DOM.cursorPropSection || document.getElementById('cursor-inspector-section')
+        ];
+        sections.forEach(sec => {
+            if (sec && sec.style.display === 'block') {
+                if (sec instanceof Node) {
+                    targetBody.appendChild(sec);
+                } else {
+                    console.warn("[VCTRL INSPECTOR] Skipped appendChild: sec is not a valid DOM Node", sec);
+                }
+            }
+        });
+        if (typeof _syncAtomDisabledProps === 'function' && state.selectedComponent) {
+            _syncAtomDisabledProps(state.selectedComponent);
+        }
+    }
+}
+
+// 3.11 Handle No Selection State
+function _handleNoSelection() {
+    window.restorePropertiesSections();
+    if (typeof window.setSidebarInspectorVisible === 'function') {
+        window.setSidebarInspectorVisible(false);
+    }
+    const floatingInspector = document.getElementById('floating-inspector-card');
+    if (floatingInspector) {
+        floatingInspector.style.setProperty('display', 'none', 'important');
+        floatingInspector.style.right = '24px';
+        floatingInspector.style.left = 'auto';
+        floatingInspector.style.bottom = '24px';
+        floatingInspector.style.top = 'auto';
+    }
+    state.isEditing = false;
+    state.editingIndex = -1;
+    if (DOM.selectionBar) DOM.selectionBar.style.display = 'none';
+    const groupDimBar = document.getElementById('group-dimension-bar');
+    if (groupDimBar) groupDimBar.style.setProperty('display', 'none', 'important');
+}
+
+// --- Master Property Coordinator & Dispatcher ---
+window.updateProperties = function(compStyles) {
+    const activeEl = document.activeElement;
+    const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+    const isNewComp = Boolean(compStyles && compStyles.id && compStyles.id !== state.editingIndex);
+
+    // If selecting a different component, clear residual parent focus to ensure immediate synchronization
+    if (isNewComp && activeEl && typeof activeEl.blur === 'function') {
+        activeEl.blur();
+    }
+
+    const currentActiveEl = document.activeElement;
+    const isTypingInInspector = !isBtn && currentActiveEl && !isNewComp && (
+        currentActiveEl.tagName === 'INPUT' ||
+        currentActiveEl.tagName === 'TEXTAREA' ||
+        currentActiveEl.tagName === 'SELECT' ||
+        currentActiveEl.isContentEditable ||
+        currentActiveEl.classList.contains('v4-prop-input') ||
+        currentActiveEl.classList.contains('admin-col-label-input') ||
+        currentActiveEl.classList.contains('grid-col-name-input') ||
+        currentActiveEl.classList.contains('accordion-sub-input')
+    );
+    
+    if (isTypingInInspector) {
+        return;
+    }
+    
+    window.restorePropertiesSections(isNewComp);
+    const pm = state.projectMetadata || {};
+    if (!DOM.metadataPanel) return;
+
+    // 1. Update Top Metadata Bar & Footer
+    _syncTopMetadataBar(pm);
 
     // 2. Update Sidebar Panels based on selected component
     const hasSelection = (window.state && window.state.selectedIds && window.state.selectedIds.length > 0);
@@ -419,406 +1087,24 @@ const ProjectMetadataManager = {
             state.selectedComponentStyles = compStyles;
         }
 
-        if (!state.inspectorMode) {
-            try { state.inspectorMode = localStorage.getItem('lf_inspector_mode') || 'docked'; } catch (_) { state.inspectorMode = 'docked'; }
-        }
-        if (!state.floatingSide) {
-            try { state.floatingSide = localStorage.getItem('lf_inspector_floating_side') || 'right'; } catch (_) { state.floatingSide = 'right'; }
-        }
-
-        const isDocked = (state.inspectorMode === 'docked');
-        const floatingInspector = document.getElementById('floating-inspector-card');
-
-        if (isDocked) {
-            window.toggleSidebar('right', true);
-            window.setSidebarInspectorVisible(true);
-            if (floatingInspector) {
-                floatingInspector.style.setProperty('display', 'none', 'important');
-            }
-        } else {
-            window.setSidebarInspectorVisible(false);
-            if (floatingInspector) {
-                floatingInspector.style.setProperty('display', 'flex', 'important');
-                floatingInspector.style.bottom = '24px';
-                floatingInspector.style.top = 'auto';
-
-                const side = state.floatingSide || 'right';
-                if (side === 'left') {
-                    floatingInspector.style.left = '24px';
-                    floatingInspector.style.right = 'auto';
-                } else {
-                    floatingInspector.style.right = '24px';
-                    floatingInspector.style.left = 'auto';
-                }
-            }
-        }
+        // Apply docked vs floating layout
+        const isDocked = _applyInspectorDockMode();
 
         // Hide all sections first & return active sections to storage
         window.restorePropertiesSections(isNewComp);
-        const activeEl = document.activeElement;
-        const isBtn = activeEl && activeEl.tagName === 'BUTTON';
-        const isTypingInAdminProps = !isBtn && activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
-        const isTyping = !isBtn && activeEl && (
-            activeEl.tagName === 'INPUT' || 
-            activeEl.tagName === 'TEXTAREA' || 
-            activeEl.isContentEditable || 
-            isTypingInAdminProps ||
-            activeEl.classList.contains('grid-col-width-input') ||
-            activeEl.classList.contains('grid-col-name-input')
-        );
+        const curActiveEl = document.activeElement;
+        const curIsBtn = curActiveEl && curActiveEl.tagName === 'BUTTON';
+        const isTypingInAdminProps = !curIsBtn && curActiveEl && (curActiveEl.classList.contains('admin-col-label-input') || curActiveEl.classList.contains('admin-row-height-input') || curActiveEl.id === 'prop-admin-group-header-title' || curActiveEl.id === 'prop-admin-label-width-slider' || curActiveEl.id === 'prop-admin-label-width-number');
 
-        const arrowGroupInit = document.getElementById('shape-arrow-direction-group');
-        if (arrowGroupInit) arrowGroupInit.style.display = 'none';
-        if (DOM.textPropSection) DOM.textPropSection.style.display = 'none';
-        if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'none';
-        if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'none';
-        if (DOM.linePropSection) DOM.linePropSection.style.display = 'none';
-        if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'none';
-        if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'none';
-        if (DOM.textboxTextareaPropSection) DOM.textboxTextareaPropSection.style.display = 'none';
-        if (DOM.searchbarPropSection) DOM.searchbarPropSection.style.display = 'none';
-        if (DOM.stepperPropSection) DOM.stepperPropSection.style.display = 'none';
-        if (DOM.selectboxPropSection) DOM.selectboxPropSection.style.display = 'none';
-        if (DOM.fileuploadPropSection) DOM.fileuploadPropSection.style.display = 'none';
-        if (DOM.alertPropSection) DOM.alertPropSection.style.display = 'none';
-        if (DOM.buttonPropSection) DOM.buttonPropSection.style.display = 'none';
-        if (DOM.datePickerPropSection) DOM.datePickerPropSection.style.display = 'none';
-        if (DOM.togglePropSection) DOM.togglePropSection.style.display = 'none';
-        if (DOM.cursorPropSection) DOM.cursorPropSection.style.display = 'none';
-        if (DOM.adminSettingsPropSection && !isTypingInAdminProps) DOM.adminSettingsPropSection.style.display = 'none';
+        _hideAllPropertySections(isTypingInAdminProps);
 
         if (compStyles) {
             state.isEditing = true;
-            const hasValidPinIndex = compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex);
-            state.editingIndex = hasValidPinIndex ? compStyles.pinIndex : compStyles.id;
-            let type = 'comp';
-            if (compStyles.isGroup) type = 'group';
-            else if (compStyles.isPin && hasValidPinIndex) type = 'pin';
-            else if (compStyles.isGrid) type = 'grid';
-            else if (compStyles.isTable) type = 'table';
-            else if (compStyles.shapeType === 'line' || compStyles.id === 'v4-shape-line') type = 'line';
-            else if (compStyles.isShape || compStyles.isPin) type = 'shape';
-            else if (compStyles.isConnector) type = 'line';
-            else if (compStyles.isTextbox) type = 'textbox';
-            else if (compStyles.isTextarea) type = 'textarea';
-            else if (compStyles.isSearchBar) type = 'searchbar';
-            else if (compStyles.isStepper) type = 'stepper';
-            else if (compStyles.isSelectbox) type = 'selectbox';
-            else if (compStyles.isFileUpload) type = 'fileupload';
-            else if (compStyles.isAlert) type = 'alert';
-            else if (compStyles.isButton) type = 'button';
-            else if (compStyles.isDatePicker) type = 'datepicker';
-            else if (compStyles.isToggle) type = 'toggle';
-            else if (compStyles.isAccordion) type = 'accordion';
-            else if (compStyles.isAdminSettings) type = 'admin-settings';
-            else if (compStyles.isTab) type = 'tab';
-            else if (compStyles.isCursor) type = 'cursor';
-            else if (compStyles.isIcon) type = 'icon';
-            state.editingType = type;
+            state.editingType = _detectComponentType(compStyles);
 
-            // Show relevant section
-            if (state.editingType === 'pin' || state.editingType === 'shape') {
-                if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'block';
-                if (window.InspectorShapes && typeof window.InspectorShapes.sync === 'function') {
-                    window.InspectorShapes.sync(compStyles);
-                }
-                // Shape 및 Pin (텍스트 마커) 모두 CONTENT EDITOR 공유 사용 (단, 이미지 도형이거나 동일 유형 다중 선택인 경우 텍스트 편집기 표시 제외)
-                if (DOM.textPropSection && !compStyles.isImage && !compStyles.isMultiSameType) {
-                    DOM.textPropSection.style.display = 'block';
-                }
-
-                // Pattern Type group vs BG Color/Opacity groups
-                const patternGroup = document.getElementById('shape-pattern-type-group');
-                const bgColorGroup = document.getElementById('shape-bg-color-group');
-                const bgOpacityGroup = document.getElementById('shape-bg-opacity-group');
-                const isPattern = (compStyles.shapeType === 'pattern');
-                
-                if (patternGroup) {
-                    patternGroup.style.display = isPattern ? 'block' : 'none';
-                    if (isPattern && compStyles.patternType) {
-                        if (typeof window._syncPatternVisualBtns === 'function') {
-                            window._syncPatternVisualBtns(compStyles.patternType);
-                        }
-                    }
-                }
-                if (bgColorGroup) {
-                    bgColorGroup.style.display = isPattern ? 'none' : 'grid';
-                }
-                if (bgOpacityGroup) {
-                    bgOpacityGroup.style.display = isPattern ? 'none' : 'block';
-                }
-
-                // Show/hide Arrow/Triangle direction config group & Corner style group (Rect only)
-                const arrowGroup = document.getElementById('shape-arrow-direction-group');
-                const cornerGroup = document.getElementById('shape-corner-style-group');
-                const isRect = (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage');
-                const isArrow = (compStyles.shapeType === 'arrow' || compStyles.id === 'v4-shape-arrow');
-                const isTriangle = (compStyles.shapeType === 'triangle' || compStyles.id === 'v4-shape-triangle');
-                const isArrowOrTriangle = isArrow || isTriangle;
-
-                if (cornerGroup) {
-                    cornerGroup.style.display = isRect ? 'block' : 'none';
-                }
-                if (arrowGroup) {
-                    if (isArrowOrTriangle) {
-                        arrowGroup.style.display = 'block';
-                        const currentDir = compStyles.direction || compStyles.arrowDir || 'right';
-                        if (typeof window._syncArrowDirBtns === 'function') {
-                            window._syncArrowDirBtns(currentDir);
-                        }
-                    } else {
-                        arrowGroup.style.display = 'none';
-                    }
-                }
-            } else if (state.editingType === 'table') {
-                if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'block';
-            } else if (state.editingType === 'line') {
-                if (DOM.linePropSection) DOM.linePropSection.style.display = 'block';
-                if (typeof window._syncLineEditorProps === 'function') {
-                    window._syncLineEditorProps(compStyles);
-                }
-            } else if (state.editingType === 'icon') {
-                if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'block';
-                if (compStyles.isCheckbox || compStyles.isRadio) {
-                    if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
-                    _syncCheckboxRadioProps(compStyles);
-                }
-            } else if (state.editingType === 'textbox' || state.editingType === 'textarea') {
-                if (DOM.textboxTextareaPropSection) DOM.textboxTextareaPropSection.style.display = 'block';
-                _syncTextboxTextareaProps(compStyles);
-            } else if (state.editingType === 'searchbar') {
-                if (DOM.searchbarPropSection) DOM.searchbarPropSection.style.display = 'block';
-                _syncSearchBarProps(compStyles);
-            } else if (state.editingType === 'stepper') {
-                if (DOM.stepperPropSection) DOM.stepperPropSection.style.display = 'block';
-                _syncStepperProps(compStyles);
-            } else if (state.editingType === 'selectbox') {
-                if (DOM.selectboxPropSection) DOM.selectboxPropSection.style.display = 'block';
-                _syncSelectboxProps(compStyles);
-            } else if (state.editingType === 'fileupload') {
-                if (DOM.fileuploadPropSection) DOM.fileuploadPropSection.style.display = 'block';
-                _syncFileuploadProps(compStyles);
-            } else if (state.editingType === 'alert') {
-                if (DOM.alertPropSection) DOM.alertPropSection.style.display = 'block';
-                _syncAlertProps(compStyles);
-            } else if (state.editingType === 'button') {
-                if (DOM.buttonPropSection) DOM.buttonPropSection.style.display = 'block';
-                _syncButtonProps(compStyles);
-            } else if (state.editingType === 'datepicker') {
-                if (DOM.datePickerPropSection) DOM.datePickerPropSection.style.display = 'block';
-                _syncDatePickerProps(compStyles);
-            } else if (state.editingType === 'accordion') {
-                if (DOM.accordionPropSection) DOM.accordionPropSection.style.display = 'block';
-                _syncAccordionProps(compStyles);
-            } else if (state.editingType === 'grid') {
-                if (DOM.gridPropSection) DOM.gridPropSection.style.display = 'block';
-                const activeEl = document.activeElement;
-                const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-                const isTypingInGrid = !isBtn && activeEl && (
-                    activeEl.classList.contains('grid-col-width-input') || 
-                    activeEl.classList.contains('grid-col-name-input') || 
-                    activeEl.classList.contains('grid-col-options-input') ||
-                    (activeEl.tagName === 'INPUT' && activeEl.closest('#grid-inspector-section')) ||
-                    (activeEl.tagName === 'TEXTAREA' && activeEl.closest('#grid-inspector-section'))
-                );
-                if (!isTypingInGrid) {
-                    _syncGridProps(compStyles);
-                }
-                if (typeof window.initGridEvents === 'function') {
-                    window.initGridEvents();
-                }
-            } else if (state.editingType === 'admin-settings') {
-                if (DOM.adminSettingsPropSection) DOM.adminSettingsPropSection.style.display = 'block';
-                // Focus guard: Do not rebuild the inputs if the user is actively typing in one of them
-                const activeEl = document.activeElement;
-                const isBtn = activeEl && activeEl.tagName === 'BUTTON';
-                const isTypingInAdminProps = !isBtn && activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
-                if (!isTypingInAdminProps) {
-                    _syncAdminSettingsProps(compStyles);
-                }
-            } else if (compStyles && (compStyles.isCheckbox || compStyles.isRadio)) {
-                // Focus guard: Do not rebuild checkbox/radio properties if typing in label text input
-                const activeEl = document.activeElement;
-                const isTypingCheckboxLabel = activeEl && activeEl.id === 'prop-atom-text-content';
-                if (!isTypingCheckboxLabel) {
-                    if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
-                    _syncCheckboxRadioProps(compStyles);
-                }
-            } else if (state.editingType === 'toggle') {
-                if (DOM.togglePropSection) DOM.togglePropSection.style.display = 'block';
-                _syncToggleProps(compStyles);
-            } else if (state.editingType === 'tab') {
-                if (DOM.tabPropSection) DOM.tabPropSection.style.display = 'block';
-                if (window.InspectorTab && typeof window.InspectorTab.sync === 'function') {
-                    window.InspectorTab.sync(compStyles);
-                }
-                if (window.InspectorTab && typeof window.InspectorTab.bindEvents === 'function') {
-                    window.InspectorTab.bindEvents();
-                }
-            } else if (state.editingType === 'cursor') {
-                const cursorSec = DOM.cursorPropSection || document.getElementById('cursor-inspector-section');
-                if (cursorSec) cursorSec.style.display = 'block';
-                _syncCursorProps(compStyles);
-            }
-
-            // Sync Property Controls
-            const s = (compStyles && compStyles.currentStyles) || {};
-            if (DOM.textColorPicker) DOM.textColorPicker.value = s.text || "#000000";
-            if (compStyles.isIcon || s.iconColor) {
-                const iconColorInput = document.getElementById('icon-color');
-                if (iconColorInput && s.iconColor) {
-                    iconColorInput.value = s.iconColor;
-                }
-            }
-
-            // Sync Shape BG & Border Color Pickers
-            if (compStyles.isShape || state.editingType === 'shape') {
-                const shapeBgInput = document.getElementById('shape-bg-color');
-                const shapeBorderInput = document.getElementById('shape-border-color');
-                if (shapeBgInput) {
-                    const validBg = (s.bg && s.bg !== 'transparent') ? s.bg : '#ffffff';
-                    shapeBgInput.value = validBg;
-                    const wrapper = document.getElementById('shape-bg-wrapper');
-                    if (wrapper) {
-                        if (s.bg === 'transparent' || s.bgOpacity === 0) wrapper.classList.add('transparent-active');
-                        else wrapper.classList.remove('transparent-active');
-                    }
-                }
-                if (shapeBorderInput) {
-                    const validBorder = (s.border && s.border !== 'transparent') ? s.border : '#c8c8c8';
-                    shapeBorderInput.value = validBorder;
-                    const wrapper = document.getElementById('shape-border-wrapper');
-                    if (wrapper) {
-                        if (s.border === 'transparent') wrapper.classList.add('transparent-active');
-                        else wrapper.classList.remove('transparent-active');
-                    }
-                }
-            }
-
-            // 1. Sync Shape Opacity
-            if (compStyles.isShape || state.editingType === 'shape') {
-                const opacityVal = (s.bgOpacity !== undefined) ? s.bgOpacity : 100;
-                const slider = document.getElementById('shape-bg-opacity');
-                const txt = document.getElementById('txt-shape-bg-opacity');
-                if (slider) slider.value = opacityVal;
-                if (txt) txt.innerText = opacityVal;
-                const wrapper = document.getElementById('shape-bg-wrapper');
-                if (wrapper) {
-                    if (s.bg === 'transparent' || opacityVal === 0) wrapper.classList.add('transparent-active');
-                    else wrapper.classList.remove('transparent-active');
-                }
-            }
-
-            // 2. Sync Other Inputs (Font Size)
-            const fontSizeInput = document.getElementById(compStyles.isTable ? 'table-font-size' : 'shape-font-size');
-            if (fontSizeInput && s.fontSize !== undefined) {
-                fontSizeInput.value = s.fontSize;
-                const txt = document.getElementById('txt-' + fontSizeInput.id);
-                if (txt) txt.innerText = s.fontSize;
-            }
-
-            // 3. Sync Corner Radius (Rect & Webpage Shape)
-            const isRectShape = (compStyles.isShape || state.editingType === 'shape') && (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage' || !compStyles.shapeType);
-            if (isRectShape && s.borderRadius !== undefined) {
-                const radiusVal = s.borderRadius;
-                const slider = document.getElementById('shape-border-radius');
-                const txt = document.getElementById('txt-shape-border-radius');
-                if (slider) slider.value = radiusVal;
-                if (txt) txt.innerText = radiusVal;
-                if (typeof window._syncCornerBtns === 'function') {
-                    window._syncCornerBtns(radiusVal);
-                }
-            }
-
-            // 4. Sync Text Align & Vertical Align
-            if (s.textAlign !== undefined && typeof window._syncAlignBtns === 'function') {
-                window._syncAlignBtns(s.textAlign);
-            }
-            if (s.justifyContent !== undefined && typeof window._syncVAlignBtns === 'function') {
-                window._syncVAlignBtns(s.justifyContent);
-            }
-
-            // 4-B. Sync Shape Text Padding
-            if (typeof window._syncShapePaddingInputs === 'function') {
-                window._syncShapePaddingInputs({
-                    padTop: s.padTop !== undefined ? s.padTop : 5,
-                    padBottom: s.padBottom !== undefined ? s.padBottom : 5,
-                    padLeft: s.padLeft !== undefined ? s.padLeft : 10,
-                    padRight: s.padRight !== undefined ? s.padRight : 10
-                });
-            } else {
-                const inPadTop = document.getElementById('shape-pad-top');
-                const inPadBottom = document.getElementById('shape-pad-bottom');
-                const inPadLeft = document.getElementById('shape-pad-left');
-                const inPadRight = document.getElementById('shape-pad-right');
-                if (inPadTop && s.padTop !== undefined && document.activeElement !== inPadTop) inPadTop.value = s.padTop;
-                if (inPadBottom && s.padBottom !== undefined && document.activeElement !== inPadBottom) inPadBottom.value = s.padBottom;
-                if (inPadLeft && s.padLeft !== undefined && document.activeElement !== inPadLeft) inPadLeft.value = s.padLeft;
-                if (inPadRight && s.padRight !== undefined && document.activeElement !== inPadRight) inPadRight.value = s.padRight;
-            }
-
-            // 5. Sync Textbox / Textarea Properties
-            if (compStyles.isTextbox || compStyles.isTextarea) {
-                const phInput = document.getElementById('prop-input-placeholder');
-                if (phInput && compStyles.placeholderText !== undefined) {
-                    phInput.value = compStyles.placeholderText;
-                }
-            }
-
-            // 6. Sync Search Bar Properties
-            if (compStyles.isSearchBar) {
-                const phInput = document.getElementById('prop-searchbar-placeholder');
-                if (phInput && compStyles.searchbarPlaceholder !== undefined) {
-                    phInput.value = compStyles.searchbarPlaceholder;
-                }
-                const mlInput = document.getElementById('prop-input-maxlength');
-                const mlTxt = document.getElementById('txt-input-maxlength');
-                if (mlInput && compStyles.maxLength !== undefined) {
-                    mlInput.value = compStyles.maxLength;
-                    if (mlTxt) mlTxt.innerText = compStyles.maxLength;
-                }
-                const activeY = document.getElementById('btn-input-counter-y');
-                const activeN = document.getElementById('btn-input-counter-n');
-                if (activeY && activeN && compStyles.showCounter !== undefined && typeof window.highlightActive === 'function') {
-                    window.highlightActive(activeY, compStyles.showCounter === true);
-                    window.highlightActive(activeN, compStyles.showCounter === false);
-                }
-            }
-
-            // 7. Sync Alert Properties
-            if (compStyles.isAlert) {
-                _syncAlertProps(compStyles);
-            }
-
-            // 8. Sync Button Properties
-            if (compStyles.isButton) {
-                const txtInput = document.getElementById('prop-button-text');
-                if (txtInput && document.activeElement !== txtInput && compStyles.buttonText !== undefined) {
-                    txtInput.value = compStyles.buttonText;
-                }
-                const fontInput = document.getElementById('prop-button-font-size');
-                if (fontInput && document.activeElement !== fontInput && compStyles.buttonFontSize !== undefined) {
-                    fontInput.value = compStyles.buttonFontSize;
-                }
-                const selStyle = document.getElementById('prop-button-style');
-                if (selStyle && compStyles.buttonStyle !== undefined) {
-                    selStyle.value = compStyles.buttonStyle;
-                    const customColorsDiv = document.getElementById('prop-button-custom-colors');
-                    if (customColorsDiv) {
-                        customColorsDiv.style.display = (compStyles.buttonStyle === 'custom') ? 'block' : 'none';
-                    }
-                }
-                const radiusSlider = document.getElementById('prop-button-border-radius');
-                const radiusTxt = document.getElementById('txt-button-border-radius');
-                if (radiusSlider && document.activeElement !== radiusSlider && compStyles.buttonRadius !== undefined) {
-                    const r = parseInt(compStyles.buttonRadius) || 0;
-                    radiusSlider.value = r;
-                    if (radiusTxt) radiusTxt.innerText = r;
-                    if (typeof window._syncButtonCornerBtns === 'function') {
-                        window._syncButtonCornerBtns(r);
-                    }
-                }
-            }
+            // Show relevant section and sync controls
+            _syncComponentTypeProperties(compStyles, state.editingType);
+            _syncCommonPropertyControls(compStyles, state.editingType);
         } else {
             // Case: Multi-selection without compStyles
             state.isEditing = true;
@@ -826,206 +1112,15 @@ const ProjectMetadataManager = {
         }
 
         // Show/Hide buttons inside selection-actions-bar based on selection count and type
-        const btnGroup = document.getElementById('btn-group-action');
-        const btnUngroup = document.getElementById('btn-ungroup-action');
-        const btnAddToMolecules = document.getElementById('btn-add-molecules-action');
-        const alignBar = document.getElementById('selection-align-bar');
-        const groupDimBar = document.getElementById('group-dimension-bar');
-        const groupDimWidth = document.getElementById('group-dim-width');
-        const groupDimHeight = document.getElementById('group-dim-height');
-        
-        const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-        const isSingleGroup = selIds.length === 1 && compStyles && compStyles.isGroup;
-
-        if (btnGroup) btnGroup.style.setProperty('display', (selIds.length > 1) ? 'flex' : 'none', 'important');
-        if (btnUngroup) btnUngroup.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
-        if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
-        if (alignBar) alignBar.style.setProperty('display', (selIds.length > 1) ? 'block' : 'none', 'important');
-        const styleActionRow = document.getElementById('selection-style-action-row');
-        if (styleActionRow) styleActionRow.style.setProperty('display', isSingleGroup ? 'none' : 'flex', 'important');
-
-        if (groupDimBar) {
-            if (isSingleGroup) {
-                groupDimBar.style.setProperty('display', 'flex', 'important');
-                let wVal = 0;
-                let hVal = 0;
-                if (compStyles && typeof compStyles.w === 'number') {
-                    wVal = Math.round(compStyles.w);
-                    hVal = Math.round(compStyles.h);
-                } else if (selIds.length === 1) {
-                    try {
-                        const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-                        const groupEl = iframeDoc?.getElementById(selIds[0]);
-                        if (groupEl) {
-                            wVal = Math.round(parseFloat(groupEl.style.width) || groupEl.offsetWidth || 0);
-                            hVal = Math.round(parseFloat(groupEl.style.height) || groupEl.offsetHeight || 0);
-                        }
-                    } catch(e) {}
-                }
-                if (groupDimWidth) groupDimWidth.innerText = wVal + 'px';
-                if (groupDimHeight) groupDimHeight.innerText = hVal + 'px';
-            } else {
-                groupDimBar.style.setProperty('display', 'none', 'important');
-            }
-        }
-
-
-        // CONTENT EDITOR 헤더 레이블 동적 변경 (통합 레이블 제공)
-        const editorLabel = document.getElementById('content-editor-label');
-        if (editorLabel) {
-            editorLabel.innerText = 'CONTENT EDITOR';
-        }
-
-        // Helper: 정규화된 HTML을 생성하여 Quill 클립보드가 인라인 font-size 및 서식을 온전히 파싱하도록 보장 (Delegated to inspector_text_formatter.js)
-        const normalizeHtmlForQuill = (rawHtml, fallbackFontSize) => {
-            if (window.InspectorTextFormatter && typeof window.InspectorTextFormatter.normalizeHtmlForQuill === 'function') {
-                return window.InspectorTextFormatter.normalizeHtmlForQuill(rawHtml, fallbackFontSize);
-            }
-            return rawHtml;
-        };
+        _syncSelectionActionBar(compStyles);
 
         // Load content to Quill
-        if (compStyles && !compStyles.isMultiSameType && (state.editingType === 'pin' || state.editingType === 'shape') && window.quillEditor) {
-            const fallbackFs = compStyles.currentStyles && compStyles.currentStyles.fontSize;
-            const fallbackColor = compStyles.currentStyles && compStyles.currentStyles.text;
-            const cleanHtml = normalizeHtmlForQuill(compStyles.html, fallbackFs);
-
-            // Cancel any pending debounced paste timer to avoid collision between rapid selections
-            if (window._shapeQuillTimer) {
-                clearTimeout(window._shapeQuillTimer);
-                window._shapeQuillTimer = null;
-            }
-
-            // 초기 로드 중에는 text-change 역류를 방지하는 가드 설정
-            state._isLoadingShapeContent = true;
-            const wasQuillFocused = document.activeElement === window.quillEditor.root;
-
-            window._shapeQuillTimer = setTimeout(() => {
-                window._shapeQuillTimer = null;
-                window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
-
-                // Sticky Format 동기화 (오브젝트 고유 기본 스타일 캐싱)
-                window._currentStickyFormat = {};
-                if (fallbackFs) {
-                    const fsPx = typeof fallbackFs === 'number' ? fallbackFs + 'px' : (fallbackFs.endsWith('px') ? fallbackFs : fallbackFs + 'px');
-                    window._currentStickyFormat.size = fsPx;
-                }
-                if (fallbackColor) {
-                    window._currentStickyFormat.color = fallbackColor;
-                }
-                const curAlign = (compStyles.currentStyles && compStyles.currentStyles.textAlign) || compStyles.textAlign || 'left';
-                if (window.quillEditor && window.quillEditor.root) {
-                    window.quillEditor.root.style.textAlign = curAlign;
-                }
-                window._currentStickyFormat.align = curAlign;
-                // Line Height 감지 및 동기화
-                const curLh = (compStyles.currentStyles && compStyles.currentStyles.lineHeight) || '1.5';
-                window._currentStickyFormat.lineheight = curLh;
-
-                if (window.quillEditor) {
-                    window.quillEditor.format('align', curAlign === 'left' ? false : curAlign, 'silent');
-                    if (fallbackColor) {
-                        window.quillEditor.format('color', fallbackColor, 'silent');
-                    }
-                    if (curLh) {
-                        window.quillEditor.format('lineheight', curLh, 'silent');
-                    }
-                }
-                const curFmt = window.quillEditor.getFormat();
-                if (curFmt && Object.keys(curFmt).length > 0) {
-                    window._currentStickyFormat = { ...window._currentStickyFormat, ...curFmt };
-                    if (!curFmt.align) {
-                        window._currentStickyFormat.align = curAlign;
-                    }
-                    if (!curFmt.lineheight) {
-                        window._currentStickyFormat.lineheight = curLh;
-                    }
-                }
-
-                // Toolbar Line Height Picker 동기화
-                const lhPicker = document.querySelector('.ql-toolbar .ql-lineheight');
-                if (lhPicker) {
-                    if (typeof setupCustomLineHeightPicker === 'function' && !lhPicker._customLhInitialized) {
-                        setupCustomLineHeightPicker(lhPicker);
-                    }
-                    const targetLh = window._currentStickyFormat.lineheight || curLh || '1.5';
-                    const lhPickerLabel = lhPicker.querySelector('.ql-picker-label');
-                    if (lhPickerLabel) lhPickerLabel.setAttribute('data-value', targetLh);
-                    const lhInput = lhPicker.querySelector('.ql-lineheight-input');
-                    if (lhInput && document.activeElement !== lhInput) lhInput.value = targetLh;
-                }
-
-                if (wasQuillFocused) {
-                    window.quillEditor.setSelection(0, 0);
-                } else {
-                    window.quillEditor.blur();
-                    window.quillEditor.setSelection(null);
-                    const iframe = document.getElementById('main-iframe');
-                    if (iframe && iframe.contentWindow) {
-                        iframe.contentWindow.focus();
-                    }
-                }
-
-                // 다음 틱에 가드 해제 (text-change 이벤트 차단 완료 후 복구)
-                requestAnimationFrame(() => {
-                    state._isLoadingShapeContent = false;
-                });
-            }, 30);
-        }
+        _syncQuillContent(compStyles, state.editingType);
 
         // Dynamically move active panels into target inspector body (Docked or Floating)
-        const targetBody = isDocked 
-            ? document.getElementById('sidebar-inspector-body') 
-            : document.getElementById('floating-inspector-body');
-
-        if (targetBody) {
-            const selectionBar = document.getElementById('selection-actions-bar');
-            if (selectionBar) {
-                if (selectionBar.parentElement !== targetBody) {
-                    targetBody.insertBefore(selectionBar, targetBody.firstChild);
-                }
-                selectionBar.style.setProperty('display', 'flex', 'important');
-            }
-            const sections = [
-                DOM.shapePropSection, DOM.textPropSection, DOM.tablePropSection,
-                DOM.linePropSection, DOM.iconPropSection, DOM.checkboxRadioPropSection,
-                DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
-                DOM.fileuploadPropSection, DOM.alertPropSection, DOM.buttonPropSection,
-                DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
-                DOM.adminSettingsPropSection, DOM.tabPropSection,
-                DOM.cursorPropSection || document.getElementById('cursor-inspector-section')
-            ];
-            sections.forEach(sec => {
-                if (sec && sec.style.display === 'block') {
-                    if (sec instanceof Node) {
-                        targetBody.appendChild(sec);
-                    } else {
-                        console.warn("[VCTRL INSPECTOR] Skipped appendChild: sec is not a valid DOM Node", sec);
-                    }
-                }
-            });
-            if (typeof _syncAtomDisabledProps === 'function' && state.selectedComponent) {
-                _syncAtomDisabledProps(state.selectedComponent);
-            }
-        }
+        _relocatePropertyPanels(isDocked);
     } else {
-        window.restorePropertiesSections();
-        if (typeof window.setSidebarInspectorVisible === 'function') {
-            window.setSidebarInspectorVisible(false);
-        }
-        const floatingInspector = document.getElementById('floating-inspector-card');
-        if (floatingInspector) {
-            floatingInspector.style.setProperty('display', 'none', 'important');
-            floatingInspector.style.right = '24px';
-            floatingInspector.style.left = 'auto';
-            floatingInspector.style.bottom = '24px';
-            floatingInspector.style.top = 'auto';
-        }
-        state.isEditing = false;
-        state.editingIndex = -1;
-        if (DOM.selectionBar) DOM.selectionBar.style.display = 'none';
-        const groupDimBar = document.getElementById('group-dimension-bar');
-        if (groupDimBar) groupDimBar.style.setProperty('display', 'none', 'important');
+        _handleNoSelection();
     }
 };
 
@@ -1077,6 +1172,18 @@ function _syncSearchBarProps(comp) {
     }
 }
 
+function _syncTextboxTextareaProps(comp) {
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncTextboxTextarea === 'function') {
+        window.InspectorAtoms.syncTextboxTextarea(comp);
+    }
+}
+
+function _syncToggleProps(comp) {
+    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncToggle === 'function') {
+        window.InspectorAtoms.syncToggle(comp);
+    }
+}
+
 function _syncAccordionProps(comp) {
     if (window.InspectorAccordion && typeof window.InspectorAccordion.sync === 'function') {
         window.InspectorAccordion.sync(comp);
@@ -1107,6 +1214,22 @@ function _syncDatePickerProps(comp) {
         window.InspectorAtoms.syncDatePicker(comp);
     }
 }
+
+// Global exposure for seamless cross-module interoperability
+window._syncStepperProps = _syncStepperProps;
+window._syncCursorProps = _syncCursorProps;
+window._syncAtomDisabledProps = _syncAtomDisabledProps;
+window._syncSelectboxProps = _syncSelectboxProps;
+window._syncFileuploadProps = _syncFileuploadProps;
+window._syncAlertProps = _syncAlertProps;
+window._syncButtonProps = _syncButtonProps;
+window._syncSearchBarProps = _syncSearchBarProps;
+window._syncTextboxTextareaProps = _syncTextboxTextareaProps;
+window._syncToggleProps = _syncToggleProps;
+window._syncAccordionProps = _syncAccordionProps;
+window._syncGridProps = _syncGridProps;
+window._syncCheckboxRadioProps = _syncCheckboxRadioProps;
+window._syncDatePickerProps = _syncDatePickerProps;
 
 if (typeof window.getCategoryData !== 'function') {
     window.getCategoryData = function(type) {
@@ -1368,17 +1491,6 @@ if (window.MessageHub) {
     });
 }
 
-function _syncAdminSettingsProps(comp, forceRebuild = false) {
-    if (typeof window._syncAdminSettingsProps === 'function') {
-        window._syncAdminSettingsProps(comp, forceRebuild);
-    }
-}
-
-function _syncToggleProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncToggle === 'function') {
-        window.InspectorAtoms.syncToggle(comp);
-    }
-}
 
 // Auto-initialize global color palette popover
 if (typeof window.initV4GlobalColorPalette === 'function') {

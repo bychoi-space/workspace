@@ -19,6 +19,21 @@
         });
     };
 
+    // --- Disabled State Common Events ---
+    const bindDisabledEvents = () => {
+        document.addEventListener('click', (e) => {
+            const btn = e.target && e.target.closest ? e.target.closest('.btn-atom-disabled') : null;
+            if (!btn) return;
+            const isDis = btn.dataset.disabled === 'true';
+            const group = btn.closest('.prop-group, .v4-flex-gap-4') || document;
+            group.querySelectorAll('.btn-atom-disabled').forEach(b => {
+                highlightActive(b, b.dataset.disabled === String(isDis));
+            });
+            notifyIframe({ type: 'LF_UPDATE_ATOM_DISABLED', disabled: isDis });
+        });
+    };
+    bindDisabledEvents();
+
     // --- Stepper Component ---
     const syncStepper = (comp) => {
         if (!comp) return;
@@ -41,6 +56,11 @@
         
         const maxInput = document.getElementById('prop-stepper-max');
         if (maxInput && comp.maxVal !== undefined) maxInput.value = comp.maxVal;
+        
+        const stepInput = document.getElementById('prop-stepper-step');
+        if (stepInput && document.activeElement !== stepInput && comp.stepVal !== undefined) {
+            stepInput.value = comp.stepVal;
+        }
         
         const btnTextInput = document.getElementById('prop-stepper-btn-text');
         if (btnTextInput && comp.btnText !== undefined) btnTextInput.value = comp.btnText;
@@ -79,6 +99,13 @@
         if (maxInp) {
             maxInp.oninput = () => {
                 notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', maxVal: maxInp.value });
+            };
+        }
+        const stepInp = document.getElementById('prop-stepper-step');
+        if (stepInp) {
+            stepInp.oninput = () => {
+                const step = Math.max(1, parseInt(stepInp.value) || 1);
+                notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', stepVal: step });
             };
         }
         if (txtInp) {
@@ -437,6 +464,7 @@
     // --- Button Component ---
     const syncButton = (comp) => {
         if (!comp) return;
+        syncDisabled(comp);
         const txtInput = document.getElementById('prop-button-text');
         if (txtInput && document.activeElement !== txtInput && comp.buttonText !== undefined) {
             txtInput.value = comp.buttonText;
@@ -742,7 +770,7 @@
         syncDisabled(comp);
     };
 
-    // --- Checkbox & Radio Events (Integrated from vctrl_v4_addon.js) ---
+    // --- Checkbox & Radio Events (Dedicated Domain Module) ---
     const initCheckboxRadioEvents = () => {
         const activeY = document.getElementById('btn-atom-active-y');
         const activeN = document.getElementById('btn-atom-active-n');
@@ -822,7 +850,7 @@
 
     // Textbox / Textarea Inspector Events
 
-    // --- Textbox & Textarea Events (Integrated from vctrl_v4_addon.js) ---
+    // --- Textbox & Textarea Events (Dedicated Domain Module) ---
     const initTextboxTextareaEvents = () => {
         const phInput = document.getElementById('prop-input-placeholder');
         if (phInput) {
@@ -881,7 +909,7 @@
 
     // Search Bar Inspector Events
 
-    // --- SearchBar Events (Integrated from vctrl_v4_addon.js) ---
+    // --- SearchBar Events (Dedicated Domain Module) ---
     const initSearchBarEvents = () => {
         const phInput = document.getElementById('prop-searchbar-placeholder');
         if (phInput) {
@@ -901,7 +929,7 @@
 
     // Stepper Inspector Events
 
-    // --- DatePicker Events (Integrated from vctrl_v4_addon.js) ---
+    // --- DatePicker Events (Dedicated Domain Module) ---
     const initDatePickerEvents = () => {
         // Show Presets Toggle
         const presetsY = document.getElementById('btn-dp-presets-y');
@@ -1229,7 +1257,9 @@
         bindSearchBarEvents: initSearchBarEvents,
         bindDatePickerEvents: initDatePickerEvents,
         bindCursorEvents: bindCursorEvents,
+        bindDisabledEvents: bindDisabledEvents,
         bindAllEvents: function() {
+            bindDisabledEvents();
             bindStepperEvents();
             bindSelectboxEvents();
             bindFileuploadEvents();

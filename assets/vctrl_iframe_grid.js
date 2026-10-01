@@ -113,6 +113,63 @@ window.v4GridScript = `
         return "left";
     };
 
+    var HIGHLIGHT_PRESETS = {
+        "none": { enabled: false },
+        "new": { 
+            enabled: true, 
+            preset: "new",
+            border: "#ef4444", 
+            bg: "rgba(254, 242, 242, 0.55)", 
+            headerBg: "rgba(254, 242, 242, 0.8)",
+            badgeText: "NEW", 
+            badgeBg: "#ef4444", 
+            badgeColor: "#ffffff" 
+        },
+        "mod": { 
+            enabled: true, 
+            preset: "mod",
+            border: "#f97316", 
+            bg: "rgba(255, 247, 237, 0.65)", 
+            headerBg: "rgba(255, 247, 237, 0.85)",
+            badgeText: "MOD", 
+            badgeBg: "#f97316", 
+            badgeColor: "#ffffff" 
+        },
+        "focus": { 
+            enabled: true, 
+            preset: "focus",
+            border: "#2563eb", 
+            bg: "rgba(239, 246, 255, 0.65)", 
+            headerBg: "rgba(239, 246, 255, 0.85)",
+            badgeText: "", 
+            badgeBg: "#2563eb", 
+            badgeColor: "#ffffff" 
+        }
+    };
+
+    var getResolvedHighlight = function(col) {
+        if (!col || !col.highlight) return null;
+        var hl = col.highlight;
+        if (typeof hl === "string") {
+            return HIGHLIGHT_PRESETS[hl] || null;
+        }
+        if (hl.enabled === false || hl.preset === "none") {
+            return null;
+        }
+        var presetKey = hl.preset;
+        var base = (presetKey && HIGHLIGHT_PRESETS[presetKey]) ? HIGHLIGHT_PRESETS[presetKey] : HIGHLIGHT_PRESETS["new"];
+        return {
+            enabled: true,
+            preset: presetKey || "new",
+            border: hl.borderColor || base.border,
+            bg: hl.bgColor || base.bg,
+            headerBg: hl.headerBg || base.headerBg,
+            badgeText: (hl.badgeText !== undefined) ? hl.badgeText : base.badgeText,
+            badgeBg: hl.badgeBg || base.badgeBg,
+            badgeColor: hl.badgeColor || base.badgeColor
+        };
+    };
+
     var swapChildren = function(parent, idxA, idxB) {
         if (!parent) return;
         var children = Array.from(parent.children);
@@ -196,7 +253,12 @@ window.v4GridScript = `
                         var currentIdx = cell.parentNode ? Array.from(cell.parentNode.children).indexOf(cell) : colIdx;
                         var cols = JSON.parse(gridContainer.getAttribute("data-columns") || "[]");
                         if (currentIdx >= 0 && cols[currentIdx]) {
-                            cols[currentIdx].name = cell.innerText.replace(" \u21C5", "").trim();
+                            var badgeEl = cell.querySelector(".v4-col-badge");
+                            var cleanName = cell.innerText.replace(" \u21C5", "").trim();
+                            if (badgeEl && badgeEl.innerText) {
+                                cleanName = cleanName.replace(badgeEl.innerText, "").trim();
+                            }
+                            cols[currentIdx].name = cleanName;
                             gridContainer.setAttribute("data-columns", JSON.stringify(cols));
                         }
                     }
@@ -369,25 +431,47 @@ window.v4GridScript = `
                         th.style.setProperty("vertical-align", "middle", "important");
                         th.setAttribute("data-align", align);
 
+                        var hl = getResolvedHighlight(col);
+                        if (hl && hl.enabled) {
+                            th.classList.add("v4-grid-col-highlight");
+                            th.style.setProperty("background-color", hl.headerBg || hl.bg, "important");
+                            th.style.setProperty("box-shadow", "inset 0 2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
+                        } else {
+                            th.classList.remove("v4-grid-col-highlight");
+                            th.style.removeProperty("box-shadow");
+                            th.style.setProperty("background-color", "#f8fafc", "important");
+                        }
+
                         if (col.type === "checkbox") {
-                            th.className = "v4-grid-cell v4-grid-check-col";
+                            th.className = "v4-grid-cell v4-grid-check-col" + (hl && hl.enabled ? " v4-grid-col-highlight" : "");
                             th.contentEditable = "false";
                             th.setAttribute("data-type", "checkbox");
                             if (!th.querySelector("input[type='checkbox']")) {
                                 th.innerHTML = '<input type="checkbox">';
                             }
                         } else {
-                            th.className = "v4-grid-cell v4-editable-cell";
+                            th.className = "v4-grid-cell v4-editable-cell" + (hl && hl.enabled ? " v4-grid-col-highlight" : "");
                             th.contentEditable = "true";
                             th.setAttribute("data-type", col.type);
-                            var desiredText = (col.name || "") + " \u21C5";
-                            if (th.innerText !== desiredText && th.innerText !== col.name) {
-                                th.innerText = desiredText;
+                            var badgeHtml = "";
+                            if (hl && hl.enabled && hl.badgeText) {
+                                badgeHtml = '<span class="v4-col-badge" contenteditable="false" style="background:' + hl.badgeBg + '; color:' + hl.badgeColor + ';">' + hl.badgeText + '</span>';
+                            }
+                            var desiredHtml = (col.name || "") + " \u21C5" + badgeHtml;
+                            var existingBadge = th.querySelector(".v4-col-badge");
+                            var existingText = th.innerText.replace(" \u21C5", "").trim();
+                            if (existingBadge && existingBadge.innerText) {
+                                existingText = existingText.replace(existingBadge.innerText, "").trim();
+                            }
+                            if (existingText !== (col.name || "") || (!existingBadge !== !badgeHtml) || (existingBadge && existingBadge.innerText !== (hl ? hl.badgeText : ""))) {
+                                th.innerHTML = desiredHtml;
                             }
                             bindGridCellEvents(th, true, idx);
                         }
 
-                        if (bg) th.style.setProperty("background", bg, "important");
+                        if (!hl || !hl.enabled) {
+                            if (bg) th.style.setProperty("background", bg, "important");
+                        }
                         if (color) th.style.setProperty("color", color, "important");
                         if (fontSize) th.style.setProperty("font-size", fontSize, "important");
                         if (fontFamily) th.style.setProperty("font-family", fontFamily, "important");
@@ -449,6 +533,21 @@ window.v4GridScript = `
                         td.style.setProperty("text-align", align, "important");
                         td.setAttribute("data-align", align);
 
+                        var hl = getResolvedHighlight(col);
+                        if (hl && hl.enabled) {
+                            td.classList.add("v4-grid-col-highlight");
+                            td.style.setProperty("background-color", hl.bg, "important");
+                            if (rIdx === rows.length - 1) {
+                                td.style.setProperty("box-shadow", "inset 0 -2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
+                            } else {
+                                td.style.setProperty("box-shadow", "inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
+                            }
+                        } else {
+                            td.classList.remove("v4-grid-col-highlight");
+                            td.style.removeProperty("box-shadow");
+                            td.style.removeProperty("background-color");
+                        }
+
                         var isClickable = !!col.clickable && col.type !== "checkbox" && col.type !== "action";
                         td.setAttribute("data-clickable", isClickable ? "true" : "false");
                         if (isClickable) {
@@ -492,16 +591,17 @@ window.v4GridScript = `
                             var fontFamily = td.style.fontFamily;
 
                             td.setAttribute("data-type", col.type);
+                            var hlClass = (hl && hl.enabled) ? " v4-grid-col-highlight" : "";
                             if (col.type === "checkbox") {
-                                td.className = "v4-grid-cell";
+                                td.className = "v4-grid-cell" + hlClass;
                                 td.contentEditable = "false";
                                 td.innerHTML = '<input type="checkbox">';
                             } else if (col.type === "action") {
-                                td.className = "v4-grid-cell";
+                                td.className = "v4-grid-cell" + hlClass;
                                 td.contentEditable = "false";
                                 td.innerHTML = '<button type="button" class="v4-grid-action-btn">\uC0C1\uC138</button>';
                             } else {
-                                td.className = "v4-grid-cell v4-editable-cell" + (isClickable ? " v4-grid-clickable-cell" : "");
+                                td.className = "v4-grid-cell v4-editable-cell" + (isClickable ? " v4-grid-clickable-cell" : "") + hlClass;
                                 td.contentEditable = "true";
                                 td.style.color = "";
                                 td.style.fontWeight = "";
@@ -509,7 +609,9 @@ window.v4GridScript = `
                                 td.innerHTML = getCellContentForType(col.type, rIdx, col, isClickable, fillMock);
                             }
 
-                            if (bg) td.style.setProperty("background", bg, "important");
+                            if (!hl || !hl.enabled) {
+                                if (bg) td.style.setProperty("background", bg, "important");
+                            }
                             if (col.type === "status" || col.type === "badge" || col.type === "checkbox") {
                                 if (color) td.style.setProperty("color", color, "important");
                                 if (fontSize) td.style.setProperty("font-size", fontSize, "important");
@@ -565,10 +667,19 @@ window.v4GridScript = `
         columns.forEach(function(col, index) {
             var borderRight = " border-right:1.6px solid rgb(226,232,240);";
             var align = getResolvedAlign(col);
+            var hl = getResolvedHighlight(col);
+            var hlClass = (hl && hl.enabled) ? " v4-grid-col-highlight" : "";
+            var hlBg = (hl && hl.enabled) ? (hl.headerBg || hl.bg) : "#f8fafc";
+            var hlShadow = (hl && hl.enabled) ? " box-shadow: inset 0 2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border + " !important;" : "";
+            var badgeHtml = "";
+            if (hl && hl.enabled && hl.badgeText) {
+                badgeHtml = '<span class="v4-col-badge" contenteditable="false" style="background:' + hl.badgeBg + '; color:' + hl.badgeColor + ';">' + hl.badgeText + '</span>';
+            }
+
             if (col.type === "checkbox") {
-                headerHtml += '<th class="v4-grid-cell v4-grid-check-col" data-type="checkbox" data-align="center" style="display:table-cell; vertical-align:middle; text-align:center; height:' + rowHeightVal + ' !important;' + borderRight + ' box-sizing:border-box; padding:0; font-weight:normal; position:sticky; top:0; z-index:10; background:#f8fafc;"><input type="checkbox"></th>';
+                headerHtml += '<th class="v4-grid-cell v4-grid-check-col' + hlClass + '" data-type="checkbox" data-align="center" style="display:table-cell; vertical-align:middle; text-align:center; height:' + rowHeightVal + ' !important;' + borderRight + hlShadow + ' box-sizing:border-box; padding:0; font-weight:normal; position:sticky; top:0; z-index:10; background:' + hlBg + ';"><input type="checkbox"></th>';
             } else {
-                headerHtml += '<th class="v4-grid-cell v4-editable-cell" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '" style="display:table-cell; vertical-align:middle; text-align:' + align + '; height:' + rowHeightVal + ' !important; padding:0 8px;' + borderRight + ' box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; user-select:none; position:sticky; top:0; z-index:10; background:#f8fafc;">' + (col.name || "") + " \u21C5</th>";
+                headerHtml += '<th class="v4-grid-cell v4-editable-cell' + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '" style="display:table-cell; vertical-align:middle; text-align:' + align + '; height:' + rowHeightVal + ' !important; padding:0 8px;' + borderRight + hlShadow + ' box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; user-select:none; position:sticky; top:0; z-index:10; background:' + hlBg + ';">' + (col.name || "") + " \u21C5" + badgeHtml + "</th>";
             }
         });
         headerHtml += "</tr>";
@@ -589,13 +700,25 @@ window.v4GridScript = `
                 var clickableClass = isClickable ? " v4-grid-clickable-cell" : "";
                 var clickableStyle = isClickable ? " color:#2563eb !important; cursor:pointer !important;" : "";
                 var cellContent = getCellContentForType(col.type, i, col, isClickable);
+
+                var hl = getResolvedHighlight(col);
+                var hlClass = (hl && hl.enabled) ? " v4-grid-col-highlight" : "";
+                var hlBgStyle = "";
+                var hlShadowStyle = "";
+                if (hl && hl.enabled) {
+                    hlBgStyle = " background:" + hl.bg + " !important;";
+                    var shadow = (i === rowCount - 1)
+                        ? "inset 0 -2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border
+                        : "inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border;
+                    hlShadowStyle = " box-shadow:" + shadow + " !important;";
+                }
                 
                 if (col.type === "checkbox") {
-                    bodyHtml += '<td class="v4-grid-cell" data-type="checkbox" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + ' padding:0;"><input type="checkbox"></td>';
+                    bodyHtml += '<td class="v4-grid-cell' + hlClass + '" data-type="checkbox" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + hlBgStyle + hlShadowStyle + ' padding:0;"><input type="checkbox"></td>';
                 } else if (col.type === "action") {
-                    bodyHtml += '<td class="v4-grid-cell" data-type="action" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + ' padding:0 8px;">' + cellContent + '</td>';
+                    bodyHtml += '<td class="v4-grid-cell' + hlClass + '" data-type="action" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + hlBgStyle + hlShadowStyle + ' padding:0 8px;">' + cellContent + '</td>';
                 } else {
-                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:' + align + ";" + heightStyle + " padding:0 8px;" + borderRight + " font-size:12px; " + (isClickable ? clickableStyle : "color:#0f172a; font-weight:500;") + '">' + cellContent + '</td>';
+                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:' + align + ";" + heightStyle + " padding:0 8px;" + borderRight + hlBgStyle + hlShadowStyle + " font-size:12px; " + (isClickable ? clickableStyle : "color:#0f172a; font-weight:500;") + '">' + cellContent + '</td>';
                 }
             });
             bodyHtml += "</tr>";
@@ -727,7 +850,9 @@ window.v4GridScript = `
             fillMock = !!d.fillMock;
         }
         
-        var rowCount = parseInt(container.getAttribute("data-row-count")) || 5;
+        var rawRowCount = container.getAttribute("data-row-count");
+        var rowCount = (rawRowCount !== null && rawRowCount !== "") ? parseInt(rawRowCount, 10) : 5;
+        if (isNaN(rowCount)) rowCount = 5;
         var showPagination = container.getAttribute("data-pagination") !== "false";
         var showZebra = container.getAttribute("data-zebra") === "true";
         
@@ -742,7 +867,8 @@ window.v4GridScript = `
             });
         }
         if (d.rowCount !== undefined) {
-            rowCount = Math.min(20, Math.max(1, parseInt(d.rowCount) || 5));
+            var parsedRowCount = parseInt(d.rowCount, 10);
+            rowCount = isNaN(parsedRowCount) ? 5 : Math.min(20, Math.max(0, parsedRowCount));
         }
         if (d.pagination !== undefined) {
             showPagination = !!d.pagination;

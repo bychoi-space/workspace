@@ -1,4 +1,4 @@
-﻿// --- Iframe Component Inserter Module ---
+// --- Iframe Component Inserter Module ---
 if (!window.v4IframeInserterScript) {
     window.v4IframeInserterScript = `
 (function() {
@@ -191,7 +191,7 @@ if (!window.v4IframeInserterScript) {
             window.resizeToFitText(v);
         }
         if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
-            window.ResponsiveSmartGuide.onSelect(v, 2000);
+            window.ResponsiveSmartGuide.onSelect(v, 7000);
         }
         const styles = window._getCompStyles(v);
         notifyParent({ 

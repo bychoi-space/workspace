@@ -68,7 +68,11 @@ window.showScreenFlyout = function(item, screenData) {
         btnDelete.onclick = (e) => {
             e.stopPropagation();
             window.hideScreenFlyout(0);
-            if (typeof window.handleDeleteScreen === 'function') window.handleDeleteScreen(screenData.name, screenData.sha);
+            if (typeof window.handleDeleteScreen === 'function') {
+                window.handleDeleteScreen(screenData.name, screenData.sha).catch(err => {
+                    console.error("[ScreenFlyout] Delete screen failed:", err);
+                });
+            }
         };
     }
 
@@ -174,7 +178,11 @@ window.renderScreenList = function(screens, activeName) {
 
         item.onclick = async (e) => {
             if (e.target.closest('.screen-delete-btn')) {
-                if (typeof window.handleDeleteScreen === 'function') window.handleDeleteScreen(s.name, s.sha);
+                if (typeof window.handleDeleteScreen === 'function') {
+                    window.handleDeleteScreen(s.name, s.sha).catch(err => {
+                        console.error("[ScreenList] Delete screen failed:", err);
+                    });
+                }
                 return;
             }
             if (e.target.closest('.screen-copy-btn')) {
@@ -727,40 +735,66 @@ window.executeCopyScreen = async function(opts) {
 };
 
 window.handleDeleteScreen = async function (name, sha) {
-    if (typeof state !== 'undefined' && state.isReadOnly) return window.showAuthModal?.();
-    const confirmed = await (window.NotificationUI?.confirm || window.Notification?.confirm || confirm)(
-        `'${name}' 스크린을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
-        "스크린 삭제",
-        "warning"
-    );
-    if (!confirmed) return;
+    try {
+        if (typeof state !== 'undefined' && state.isReadOnly) return window.showAuthModal?.();
 
-    if (typeof window.showLoading === 'function') window.showLoading("Deleting: " + name);
-
-    let success = (typeof deleteFileFromGitHub === 'function')
-        ? await deleteFileFromGitHub(`${state.currentProject}/${name}`, sha)
-        : false;
-    if (!success && window.location.protocol === 'file:') {
-        success = true;
-    }
-    if (success) {
-        state.screens = state.screens.filter(s => s.name !== name);
-        if (state.projectMetadata.screens) delete state.projectMetadata.screens[name];
-        if (state.projectMetadata.screenOrder) {
-            state.projectMetadata.screenOrder = state.projectMetadata.screenOrder.filter(n => n !== name);
-        }
-        if (typeof saveProjectMetadata === 'function') {
-            await saveProjectMetadata(state.currentProject, state.projectMetadata, () => { });
-        }
-
-        if (state.activeFile && state.activeFile.name === name) {
-            location.href = `viewer.html?project=${state.currentProject}`;
+        let confirmed = false;
+        const dialogUI = window.NotificationUI || window.AppDialog || (window.Notification && typeof window.Notification.confirm === 'function' ? window.Notification : null);
+        if (dialogUI && typeof dialogUI.confirm === 'function') {
+            confirmed = await dialogUI.confirm(
+                `'${name}' 스크린을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
+                "스크린 삭제",
+                "warning"
+            );
         } else {
-            location.reload();
+            confirmed = window.confirm(`'${name}' 스크린을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`);
         }
-    } else {
+        if (!confirmed) return;
+
+        if (typeof window.showLoading === 'function') window.showLoading("Deleting: " + name);
+
+        const deleteFn = window.deleteFileFromGitHub || (typeof deleteFileFromGitHub === 'function' ? deleteFileFromGitHub : null);
+        let success = deleteFn ? await deleteFn(`${state.currentProject}/${name}`, sha) : false;
+        if (!success && window.location.protocol === 'file:') {
+            success = true;
+        }
+
+        if (success) {
+            state.screens = state.screens.filter(s => s.name !== name);
+            if (state.projectMetadata && state.projectMetadata.screens) {
+                delete state.projectMetadata.screens[name];
+            }
+            if (state.projectMetadata && state.projectMetadata.screenOrder) {
+                state.projectMetadata.screenOrder = state.projectMetadata.screenOrder.filter(n => n !== name);
+            }
+            const saveMetaFn = window.saveProjectMetadata || (typeof saveProjectMetadata === 'function' ? saveProjectMetadata : null);
+            if (saveMetaFn) {
+                await saveMetaFn(state.currentProject, state.projectMetadata, () => { });
+            }
+
+            if (state.activeFile && state.activeFile.name === name) {
+                location.href = `viewer.html?project=${state.currentProject}`;
+            } else {
+                location.reload();
+            }
+        } else {
+            if (typeof window.hideLoading === 'function') window.hideLoading();
+            const alertUI = window.NotificationUI || window.AppDialog || (window.Notification && typeof window.Notification.alert === 'function' ? window.Notification : null);
+            if (alertUI && typeof alertUI.alert === 'function') {
+                alertUI.alert("삭제 실패", "오류", "error");
+            } else {
+                alert("삭제 실패");
+            }
+        }
+    } catch (err) {
+        console.error("[ScreenManager] handleDeleteScreen error:", err);
         if (typeof window.hideLoading === 'function') window.hideLoading();
-        (window.NotificationUI?.alert || window.Notification?.alert || alert)("삭제 실패", "오류", "error");
+        const alertUI = window.NotificationUI || window.AppDialog || (window.Notification && typeof window.Notification.alert === 'function' ? window.Notification : null);
+        if (alertUI && typeof alertUI.alert === 'function') {
+            alertUI.alert(err.message || "삭제 중 오류가 발생했습니다.", "오류", "error");
+        } else {
+            alert(err.message || "삭제 중 오류가 발생했습니다.");
+        }
     }
 };
 

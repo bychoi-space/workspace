@@ -194,6 +194,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             const rowBlock = blocks[r - 1];
             let lbl = comp[`adminRow${r}Label`] || '';
             let cCount = comp[`adminRow${r}Cols`] || 1;
+            let rRatio = comp[`adminRow${r}Ratio`] || '1:1';
             let rType = comp[`adminRow${r}Type`] || 'textbox';
             let rH = comp[`adminRow${r}Height`] || 44;
             let rReq = comp[`adminRow${r}Required`] !== undefined ? comp[`adminRow${r}Required`] : 'false';
@@ -201,6 +202,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             if (containerEl) {
                 lbl = containerEl.getAttribute(`data-row${r}-label`) || lbl;
                 cCount = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || cCount;
+                rRatio = containerEl.getAttribute(`data-row${r}-ratio`) || rRatio;
                 rType = containerEl.getAttribute(`data-row${r}-type`) || rType;
                 rH = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || rH;
                 if (containerEl.hasAttribute(`data-row${r}-required`)) {
@@ -215,6 +217,8 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                 }
                 const colsSel = rowBlock.querySelector('.admin-row-cols');
                 if (colsSel) cCount = parseInt(colsSel.value) || 1;
+                const ratioSel = rowBlock.querySelector('.admin-row-ratio-select');
+                if (ratioSel) rRatio = ratioSel.value || '1:1';
                 const hInp = rowBlock.querySelector('.admin-row-height-input');
                 if (hInp) rH = parseInt(hInp.value) || 44;
                 const reqChks = rowBlock.querySelectorAll('.admin-col-required-chk');
@@ -226,6 +230,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             currentRows.push({
                 label: lbl || `조회 항목 ${r}`,
                 cols: cCount,
+                ratio: rRatio,
                 type: rType,
                 height: rH,
                 required: rReq
@@ -253,12 +258,14 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                             const rowData = rowsArray[r - 1];
                             containerEl.setAttribute(`data-row${r}-label`, rowData.label);
                             containerEl.setAttribute(`data-row${r}-cols`, rowData.cols);
+                            containerEl.setAttribute(`data-row${r}-ratio`, rowData.ratio || '1:1');
                             containerEl.setAttribute(`data-row${r}-type`, rowData.type || 'textbox');
                             containerEl.setAttribute(`data-row${r}-height`, rowData.height || 44);
                             containerEl.setAttribute(`data-row${r}-required`, String(rowData.required || 'false'));
                         } else {
                             containerEl.removeAttribute(`data-row${r}-label`);
                             containerEl.removeAttribute(`data-row${r}-cols`);
+                            containerEl.removeAttribute(`data-row${r}-ratio`);
                             containerEl.removeAttribute(`data-row${r}-type`);
                             containerEl.removeAttribute(`data-row${r}-height`);
                             containerEl.removeAttribute(`data-row${r}-required`);
@@ -289,6 +296,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             if (r <= newRowCount) {
                 syncData[`adminRow${r}Label`] = rowsArray[r - 1].label;
                 syncData[`adminRow${r}Cols`] = rowsArray[r - 1].cols;
+                syncData[`adminRow${r}Ratio`] = rowsArray[r - 1].ratio || '1:1';
                 syncData[`adminRow${r}Type`] = rowsArray[r - 1].type || 'textbox';
                 syncData[`adminRow${r}Height`] = rowsArray[r - 1].height || 44;
                 syncData[`adminRow${r}Required`] = String(rowsArray[r - 1].required || 'false');
@@ -306,6 +314,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
     for (let i = 1; i <= rowCount; i++) {
         const labelsVal = comp[`adminRow${i}Label`] || '';
         const colsVal = comp[`adminRow${i}Cols`] || 1;
+        const ratioVal = comp[`adminRow${i}Ratio`] || '1:1';
         const specificHeightVal = comp[`adminRow${i}Height`] || 44;
         const reqRaw = comp[`adminRow${i}Required`] !== undefined ? comp[`adminRow${i}Required`] : '';
         const reqArr = typeof reqRaw === 'boolean' ? [reqRaw] : String(reqRaw).split(',').map(v => v.trim() === 'true');
@@ -334,11 +343,24 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                         <option value="1" ${colsVal === 1 ? 'selected' : ''}>1개 컬럼</option>
                         <option value="2" ${colsVal === 2 ? 'selected' : ''}>2개 컬럼</option>
                         <option value="3" ${colsVal === 3 ? 'selected' : ''}>3개 컬럼</option>
+                        <option value="4" ${colsVal === 4 ? 'selected' : ''}>4개 컬럼</option>
                     </select>
                 </div>
                 <div class="prop-group">
                     <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">행 높이 (Height px)</label>
                     <input type="number" class="v4-prop-input admin-row-height-input" data-row="${i}" value="${specificHeightVal}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit; height: 23px;">
+                </div>
+            </div>
+            <div class="admin-row-ratio-container" data-row="${i}" style="display: ${colsVal === 2 ? 'block' : 'none'};">
+                <div class="prop-group">
+                    <label style="font-size: 9px; color: #00e5ff; font-weight: 600; display: block; margin-bottom: 4px;">2컬럼 분할 비율</label>
+                    <select class="v4-prop-input admin-row-ratio-select" data-row="${i}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,229,255,0.3); color: #00e5ff; padding: 4px 8px; border-radius: 4px; font-size: 11px; height: 23px; box-sizing: border-box;">
+                        <option value="1:1" ${ratioVal === '1:1' ? 'selected' : ''}>1 : 1 (하프 50% : 50%)</option>
+                        <option value="1:2" ${ratioVal === '1:2' ? 'selected' : ''}>1 : 2 (1/3 분할 33% : 67%)</option>
+                        <option value="2:1" ${ratioVal === '2:1' ? 'selected' : ''}>2 : 1 (2/3 분할 67% : 33%)</option>
+                        <option value="1:3" ${ratioVal === '1:3' ? 'selected' : ''}>1 : 3 (1/4 분할 25% : 75%)</option>
+                        <option value="3:1" ${ratioVal === '3:1' ? 'selected' : ''}>3 : 1 (3/4 분할 75% : 25%)</option>
+                    </select>
                 </div>
             </div>
             <div class="admin-row-labels-container" style="display: flex; flex-direction: column; gap: 8px;">
@@ -367,6 +389,8 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
         container.appendChild(rowDiv);
 
         const colSelect = rowDiv.querySelector('.admin-row-cols');
+        const ratioSelect = rowDiv.querySelector('.admin-row-ratio-select');
+        const ratioContainer = rowDiv.querySelector('.admin-row-ratio-container');
         const heightInp = rowDiv.querySelector('.admin-row-height-input');
         const labelsContainer = rowDiv.querySelector('.admin-row-labels-container');
         const btnUp = rowDiv.querySelector('.btn-move-row-up');
@@ -418,15 +442,24 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
         const updateConfig = () => {
             const iframe = document.getElementById('main-iframe');
             const reqStr = getMergedRequired();
-            if (comp) comp[`adminRow${i}Required`] = reqStr;
+            const currentCols = parseInt(colSelect.value) || 1;
+            const currentRatio = (currentCols === 2 && ratioSelect) ? (ratioSelect.value || '1:1') : '1:1';
+            if (comp) {
+                comp[`adminRow${i}Required`] = reqStr;
+                comp[`adminRow${i}Cols`] = currentCols;
+                comp[`adminRow${i}Ratio`] = currentRatio;
+            }
             if (window.state && window.state.selectedComponentStyles) {
                 window.state.selectedComponentStyles[`adminRow${i}Required`] = reqStr;
+                window.state.selectedComponentStyles[`adminRow${i}Cols`] = currentCols;
+                window.state.selectedComponentStyles[`adminRow${i}Ratio`] = currentRatio;
             }
             if (iframe && iframe.contentWindow && window.MessageHub) {
                 window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
                     rowNum: i,
                     label: getMergedLabels(),
-                    cols: parseInt(colSelect.value) || 1,
+                    cols: currentCols,
+                    ratio: currentRatio,
                     rowType: 'textbox',
                     rowSpecificHeight: parseInt(heightInp.value) || 44,
                     required: reqStr
@@ -434,8 +467,9 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             }
         };
 
-        // Bind input events to height input & initial labels/checkboxes
+        // Bind input events to height input, ratio select & initial labels/checkboxes
         if (heightInp) heightInp.oninput = updateConfig;
+        if (ratioSelect) ratioSelect.onchange = updateConfig;
         labelsContainer.querySelectorAll('.admin-col-label-input').forEach(inp => {
             inp.oninput = updateConfig;
         });
@@ -443,14 +477,18 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
             chk.onchange = updateConfig;
         });
 
-        // If Column Count changes, re-render the label inputs & checkboxes for this row
+        // If Column Count changes, re-render the label inputs & checkboxes for this row, and toggle ratio container
         colSelect.onchange = () => {
             const newColsVal = parseInt(colSelect.value) || 1;
+            if (ratioContainer) {
+                ratioContainer.style.display = (newColsVal === 2) ? 'block' : 'none';
+            }
             const currentReqArr = Array.from(labelsContainer.querySelectorAll('.admin-col-required-chk')).map(c => c.checked);
+            const currentLabels = Array.from(labelsContainer.querySelectorAll('.admin-col-label-input')).map(inp => inp.value.trim());
             labelsContainer.innerHTML = '';
             let newHtml = '';
             for (let c = 0; c < newColsVal; c++) {
-                const currentLabel = labelsArr[c] || `조회 항목 ${i}${c > 0 ? ' ' + (c + 1) : ''}`;
+                const currentLabel = (currentLabels[c] !== undefined && currentLabels[c] !== '') ? currentLabels[c] : (labelsArr[c] || `조회 항목 ${i}${c > 0 ? ' ' + (c + 1) : ''}`);
                 const isColReq = currentReqArr[c] !== undefined ? currentReqArr[c] : (reqArr[c] === true);
                 newHtml += `
                     <div class="prop-group">
@@ -504,6 +542,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                                 if (!containerEl.getAttribute(`data-row${newCount}-label`)) {
                                     containerEl.setAttribute(`data-row${newCount}-label`, `조회 항목 ${newCount}`);
                                     containerEl.setAttribute(`data-row${newCount}-cols`, '1');
+                                    containerEl.setAttribute(`data-row${newCount}-ratio`, '1:1');
                                     containerEl.setAttribute(`data-row${newCount}-type`, 'textbox');
                                     containerEl.setAttribute(`data-row${newCount}-height`, '44');
                                     containerEl.setAttribute(`data-row${newCount}-required`, 'false');
@@ -521,6 +560,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                                 for (let r = 1; r <= 20; r++) {
                                     syncData[`adminRow${r}Label`] = containerEl.getAttribute(`data-row${r}-label`) || '';
                                     syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
+                                    syncData[`adminRow${r}Ratio`] = containerEl.getAttribute(`data-row${r}-ratio`) || '1:1';
                                     syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
                                     syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
                                     syncData[`adminRow${r}Required`] = containerEl.getAttribute(`data-row${r}-required`) || 'false';
@@ -567,6 +607,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
                                 for (let r = 1; r <= 20; r++) {
                                     syncData[`adminRow${r}Label`] = containerEl.getAttribute(`data-row${r}-label`) || '';
                                     syncData[`adminRow${r}Cols`] = parseInt(containerEl.getAttribute(`data-row${r}-cols`)) || 1;
+                                    syncData[`adminRow${r}Ratio`] = containerEl.getAttribute(`data-row${r}-ratio`) || '1:1';
                                     syncData[`adminRow${r}Type`] = containerEl.getAttribute(`data-row${r}-type`) || 'textbox';
                                     syncData[`adminRow${r}Height`] = parseInt(containerEl.getAttribute(`data-row${r}-height`)) || 44;
                                     syncData[`adminRow${r}Required`] = containerEl.getAttribute(`data-row${r}-required`) || 'false';

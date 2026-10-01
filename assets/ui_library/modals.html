@@ -243,6 +243,24 @@
                         <img id="canvas-bg-preview-img" src="" alt="현재 배경" style="display: none;">
                     </div>
 
+                    <!-- Solid Background Color Section -->
+                    <div class="bg-section-header">
+                        <span class="bg-section-title">단색 배경 컬러 (Solid Color)</span>
+                        <span class="bg-section-sub-badge" id="canvas-bg-color-badge">#f8fafc</span>
+                    </div>
+                    <div class="bg-solid-color-wrap">
+                        <div class="bg-color-presets-row" id="canvas-bg-color-presets">
+                            <!-- Preset Color Swatches -->
+                        </div>
+                        <div class="bg-color-custom-row">
+                            <span class="bg-color-custom-label">직접 선택:</span>
+                            <input type="color" id="canvas-bg-color-picker" class="bg-color-picker-input" value="#f8fafc" title="컬러 피커 열기">
+                            <input type="text" id="canvas-bg-color-hex" class="bg-color-hex-input" value="#f8fafc" placeholder="#f8fafc" maxlength="7" spellcheck="false" title="HEX 색상 코드">
+                            <button type="button" id="btn-canvas-bg-apply-color" class="btn-sm-primary" title="입력한 HEX 컬러 적용">컬러 적용</button>
+                            <button type="button" id="btn-canvas-bg-color-reset" class="btn-sm-ghost" title="기본 단색 컬러(#f8fafc)로 복원">기본값 복원</button>
+                        </div>
+                    </div>
+
                     <!-- Presets Section -->
                     <div class="bg-section-header">
                         <span class="bg-section-title">추천 프리셋 (Preset Gallery)</span>

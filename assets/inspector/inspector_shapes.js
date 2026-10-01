@@ -104,6 +104,21 @@
         });
     };
 
+    const syncWaveDirBtns = (dir) => {
+        const waveDir = dir || 'horizontal';
+        document.querySelectorAll('.v4-wave-dir-btn').forEach(b => {
+            const btnDir = b.dataset.dir;
+            if (btnDir === waveDir) {
+                b.classList.add('v4-btn-accent-active-md');
+                b.classList.remove('v4-btn-accent-inactive-md');
+            } else {
+                b.classList.add('v4-btn-accent-inactive-md');
+                b.classList.remove('v4-btn-accent-active-md');
+            }
+        });
+    };
+    window._syncWaveDirBtns = syncWaveDirBtns;
+
     // --- Action Handlers (Write) ---
     const applyCornerRadius = (val) => {
         const slider = document.getElementById('shape-border-radius');
@@ -266,6 +281,11 @@
             if (compStyles.patternType) {
                 syncPatternVisualBtns(compStyles.patternType);
             }
+
+            // Wave Direction
+            if (compStyles.waveDir) {
+                syncWaveDirBtns(compStyles.waveDir);
+            }
         },
 
         bindEvents: function() {
@@ -323,6 +343,7 @@
         syncVAlignBtns: syncVAlignBtns,
         syncShapePaddingInputs: syncShapePaddingInputs,
         syncPatternVisualBtns: syncPatternVisualBtns,
+        syncWaveDirBtns: syncWaveDirBtns,
         applyCornerRadius: applyCornerRadius,
         applyTextAlign: applyTextAlign,
         applyVerticalAlign: applyVerticalAlign,
@@ -378,6 +399,25 @@
                 direction: dir
             });
             if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            return;
+        }
+
+        // Wave direction button
+        const waveBtn = e.target.closest('.v4-wave-dir-btn');
+        if (waveBtn) {
+            const dir = waveBtn.dataset.dir;
+            syncWaveDirBtns(dir);
+            const targetIds = getActiveTargetIds();
+            if (targetIds.length > 0) {
+                notifyIframe({
+                    type: 'LF_UPDATE_STYLE',
+                    id: targetIds[0],
+                    ids: targetIds,
+                    selector: '.v4-shape-wave',
+                    style: { waveDir: dir }
+                });
+                if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            }
             return;
         }
 

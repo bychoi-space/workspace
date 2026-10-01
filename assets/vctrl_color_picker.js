@@ -66,7 +66,12 @@ window.initV4GlobalColorPalette = function() {
                 </button>
             </div>
             <div class="v4-palette-hex-bar">
-                <div class="v4-hex-preview" style="background-color: #ffffff;" title="색상 미리보기"></div>
+                <div class="v4-hex-preview-wrap" title="컬러 피커 열기 (드래그하여 선택)">
+                    <div class="v4-hex-preview" style="background-color: #ffffff;">
+                        <span class="material-icons-outlined v4-hex-preview-icon">palette</span>
+                    </div>
+                    <input type="color" class="v4-hex-native-picker" tabindex="-1" aria-hidden="true">
+                </div>
                 <span class="v4-hex-prefix">#</span>
                 <input type="text" class="v4-hex-input" maxlength="7" placeholder="HEXCODE" spellcheck="false" autocomplete="off">
                 <button type="button" class="v4-hex-btn v4-hex-btn-apply" title="적용">
@@ -89,7 +94,9 @@ window.initV4GlobalColorPalette = function() {
         const resetBtn = popover.querySelector('.v4-palette-reset-btn');
 
         const hexBar = popover.querySelector('.v4-palette-hex-bar');
+        const hexPreviewWrap = popover.querySelector('.v4-hex-preview-wrap');
         const hexPreview = popover.querySelector('.v4-hex-preview');
+        const hexNativePicker = popover.querySelector('.v4-hex-native-picker');
         const hexInput = popover.querySelector('.v4-hex-input');
         const hexApplyBtn = popover.querySelector('.v4-hex-btn-apply');
         const hexCancelBtn = popover.querySelector('.v4-hex-btn-cancel');
@@ -109,13 +116,17 @@ window.initV4GlobalColorPalette = function() {
             hexBar.classList.add('active');
 
             const curVal = (currentTargetInput && currentTargetInput.value ? currentTargetInput.value : '#ffffff').toLowerCase();
-            const cleanHex = curVal.replace(/^#/, '').toUpperCase();
+            const norm = normalizeHex(curVal) || '#ffffff';
+            const cleanHex = norm.replace(/^#/, '').toUpperCase();
             if (hexInput) {
                 hexInput.value = cleanHex;
                 hexInput.classList.remove('error');
             }
             if (hexPreview) {
-                hexPreview.style.backgroundColor = (curVal.startsWith('#') && (curVal.length === 7 || curVal.length === 4)) ? curVal : '#ffffff';
+                hexPreview.style.backgroundColor = norm;
+            }
+            if (hexNativePicker) {
+                hexNativePicker.value = norm;
             }
             setTimeout(() => {
                 if (hexInput) {
@@ -165,12 +176,30 @@ window.initV4GlobalColorPalette = function() {
             openHexBar();
         });
 
-        // Hex Input real-time preview & keyboard event isolation
+        // Native Color Picker (Drag Spectrum) -> Real-time sync to Hex Input & Preview
+        if (hexNativePicker) {
+            const syncFromNativePicker = (e) => {
+                const pickedHex = (e.target.value || '').toLowerCase();
+                const cleanHex = pickedHex.replace(/^#/, '').toUpperCase();
+                if (hexInput) {
+                    hexInput.value = cleanHex;
+                    hexInput.classList.remove('error');
+                }
+                if (hexPreview) {
+                    hexPreview.style.backgroundColor = pickedHex;
+                }
+            };
+            hexNativePicker.addEventListener('input', syncFromNativePicker);
+            hexNativePicker.addEventListener('change', syncFromNativePicker);
+        }
+
+        // Hex Input real-time preview, reverse sync to native picker, & keyboard event isolation
         hexInput.addEventListener('input', (e) => {
             const val = e.target.value;
             const norm = normalizeHex(val);
-            if (norm && hexPreview) {
-                hexPreview.style.backgroundColor = norm;
+            if (norm) {
+                if (hexPreview) hexPreview.style.backgroundColor = norm;
+                if (hexNativePicker) hexNativePicker.value = norm;
                 hexInput.classList.remove('error');
             }
         });
@@ -331,7 +360,12 @@ window.initV4GlobalColorPalette = function() {
         const hexBar = document.createElement('div');
         hexBar.className = 'ql-custom-hex-bar';
         hexBar.innerHTML = `
-            <div class="ql-hex-preview" style="background-color: ${formatType === 'color' ? '#6366f1' : '#facc15'};" title="색상 미리보기"></div>
+            <div class="ql-hex-preview-wrap" title="컬러 피커 열기 (드래그하여 선택)">
+                <div class="ql-hex-preview" style="background-color: ${formatType === 'color' ? '#6366f1' : '#facc15'};">
+                    <span class="material-icons-outlined ql-hex-preview-icon">palette</span>
+                </div>
+                <input type="color" class="ql-hex-native-picker" tabindex="-1" aria-hidden="true">
+            </div>
             <span class="ql-hex-prefix">#</span>
             <input type="text" class="ql-hex-input" maxlength="7" placeholder="HEXCODE" spellcheck="false" autocomplete="off">
             <button type="button" class="ql-hex-btn ql-hex-btn-apply" title="적용">
@@ -345,7 +379,9 @@ window.initV4GlobalColorPalette = function() {
         const customAction = footer.querySelector('.ql-custom-color-action');
         const resetBtn = footer.querySelector('.ql-custom-color-reset');
 
+        const hexPreviewWrap = hexBar.querySelector('.ql-hex-preview-wrap');
         const hexPreview = hexBar.querySelector('.ql-hex-preview');
+        const hexNativePicker = hexBar.querySelector('.ql-hex-native-picker');
         const hexInput = hexBar.querySelector('.ql-hex-input');
         const hexApplyBtn = hexBar.querySelector('.ql-hex-btn-apply');
         const hexCancelBtn = hexBar.querySelector('.ql-hex-btn-cancel');
@@ -374,13 +410,17 @@ window.initV4GlobalColorPalette = function() {
             hexBar.classList.add('active');
 
             const curVal = getCurrentQuillColor();
-            const cleanHex = curVal.replace(/^#/, '').toUpperCase();
+            const norm = normalizeHex(curVal) || (curVal.startsWith('#') ? curVal : (typeof window.rgbToHex === 'function' ? window.rgbToHex(curVal) : '#6366f1'));
+            const cleanHex = norm.replace(/^#/, '').toUpperCase();
             if (hexInput) {
                 hexInput.value = cleanHex;
                 hexInput.classList.remove('error');
             }
             if (hexPreview) {
-                hexPreview.style.backgroundColor = curVal.startsWith('#') ? curVal : (typeof window.rgbToHex === 'function' ? window.rgbToHex(curVal) : curVal);
+                hexPreview.style.backgroundColor = norm;
+            }
+            if (hexNativePicker) {
+                hexNativePicker.value = norm;
             }
             setTimeout(() => {
                 if (hexInput) {
@@ -415,11 +455,30 @@ window.initV4GlobalColorPalette = function() {
             openHexBar();
         });
 
+        // Native Color Picker (Drag Spectrum) -> Real-time sync to Hex Input & Preview
+        if (hexNativePicker) {
+            const syncFromNativePicker = (e) => {
+                const pickedHex = (e.target.value || '').toLowerCase();
+                const cleanHex = pickedHex.replace(/^#/, '').toUpperCase();
+                if (hexInput) {
+                    hexInput.value = cleanHex;
+                    hexInput.classList.remove('error');
+                }
+                if (hexPreview) {
+                    hexPreview.style.backgroundColor = pickedHex;
+                }
+            };
+            hexNativePicker.addEventListener('input', syncFromNativePicker);
+            hexNativePicker.addEventListener('change', syncFromNativePicker);
+        }
+
+        // Hex Input real-time preview, reverse sync to native picker, & keyboard event isolation
         hexInput.addEventListener('input', (e) => {
             const val = e.target.value;
             const norm = normalizeHex(val);
-            if (norm && hexPreview) {
-                hexPreview.style.backgroundColor = norm;
+            if (norm) {
+                if (hexPreview) hexPreview.style.backgroundColor = norm;
+                if (hexNativePicker) hexNativePicker.value = norm;
                 hexInput.classList.remove('error');
             }
         });

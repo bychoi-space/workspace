@@ -83,6 +83,9 @@ body, .page, .lf-component {
 .v4-grid-action-btn { display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 2px 8px !important; border-radius: 12px !important; font-size: 11px !important; border: 1.2px solid rgb(203, 213, 225) !important; background: #ffffff !important; cursor: pointer !important; color: #334155 !important; font-family: inherit !important; line-height: 1.2 !important; box-sizing: border-box !important; }
 .v4-grid-action-btn:hover { background: #f1f5f9 !important; border-color: #94a3b8 !important; }
 .v4-grid-badge { display: inline-block !important; padding: 2px 6px !important; border-radius: 4px !important; font-size: 11px !important; font-weight: 600 !important; line-height: 1.2 !important; }
+.v4-col-badge { display: inline-block !important; font-size: 9px !important; font-weight: 700 !important; line-height: 1 !important; padding: 2px 5px !important; border-radius: 3px !important; margin-left: 4px !important; vertical-align: middle !important; letter-spacing: 0.5px !important; pointer-events: none !important; user-select: none !important; }
+.v4-grid-container table th.v4-grid-col-highlight { z-index: 11 !important; }
+.v4-grid-container table td.v4-grid-col-highlight { position: relative !important; }
 .v4-shape { position: relative; border-width: 1.6px !important; border-style: solid !important; border-color: rgb(200, 200, 200); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgb(255, 255, 255); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; }
 .v4-shape-text-content, .v4-shape-text-overlay, .v4-shape .v4-editable-cell { padding-top: var(--v4-shape-pad-top, 5px) !important; padding-right: var(--v4-shape-pad-right, 10px) !important; padding-bottom: var(--v4-shape-pad-bottom, 5px) !important; padding-left: var(--v4-shape-pad-left, 10px) !important; padding: var(--v4-shape-pad-top, 5px) var(--v4-shape-pad-right, 10px) var(--v4-shape-pad-bottom, 5px) var(--v4-shape-pad-left, 10px) !important; margin: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; box-sizing: border-box !important; flex-direction: column !important; }
 .v4-shape-rect > .v4-editable-cell, .v4-shape-circle > .v4-editable-cell, .v4-shape-pattern-grid > .v4-editable-cell, .v4-shape-wave > .v4-editable-cell, .v4-shape-webpage > .v4-editable-cell, .v4-shape > .v4-shape-text-content { width: 100% !important; height: 100% !important; }
@@ -281,7 +284,11 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 [data-disabled="true"] .v4-checkbox-text,
 [data-disabled="true"] .v4-radio-text,
 [data-disabled="true"] .v4-textbox-text,
+[data-disabled="true"] .v4-textbox-input,
+[data-disabled="true"] .v4-textbox-placeholder,
 [data-disabled="true"] .v4-textarea-text,
+[data-disabled="true"] .v4-textarea-input,
+[data-disabled="true"] .v4-textarea-placeholder,
 [data-disabled="true"] .v4-searchbar-text,
 [data-disabled="true"] .v4-stepper-value,
 [data-disabled="true"] .v4-stepper-dec,
@@ -326,6 +333,12 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 [data-disabled="true"] .v4-textbox-text:empty::before,
 [data-disabled="true"] .v4-textarea-text:empty::before {
     color: #969696 !important;
+}
+.v4-textbox-container[data-disabled="true"],
+.v4-textbox-container[data-disabled="true"] *,
+.v4-textarea-container[data-disabled="true"],
+.v4-textarea-container[data-disabled="true"] * {
+    cursor: not-allowed !important;
 }
 .v4-selectbox-container { display: flex !important; flex-direction: column !important; box-sizing: border-box !important; position: relative !important; width: 100% !important; height: 100% !important; }
 .v4-selectbox-header { height: 30px !important; min-height: 30px !important; max-height: 30px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; box-sizing: border-box !important; }

@@ -12,7 +12,15 @@ window.v4ResponsiveMultiselectScript = `
     console.log("%c [RESPONSIVE MULTISELECT] Dedicated Module Initialized ", "background: #6366f1; color: #ffffff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
     function isResponsiveScreen() {
-        return !!(document.querySelector('.pc-browser-frame, .mobile-browser-frame, .pc-content-inner, .mobile-content-inner'));
+        if (typeof window.isResponsiveScreen === 'function') {
+            return window.isResponsiveScreen();
+        }
+        if (window.parent && typeof window.parent.isResponsiveDocument === 'function') {
+            try {
+                return window.parent.isResponsiveDocument(document);
+            } catch (e) {}
+        }
+        return !!(document.querySelector('.pc-content-inner, .mobile-content-inner, .pc-browser-frame, .mobile-browser-frame, .pc-content-area, .mobile-compare-page, .frame-column, .mobile-content-area'));
     }
 
     function recalculateTargetsForResponsive() {
@@ -180,7 +188,9 @@ window.v4ResponsiveMultiselectScript = `
                     if (items.length === 1) {
                         const item = items[0];
                         const el = item.el;
-                        const isResponsiveTemplate = !!(doc.querySelector('.pc-content-inner') || doc.querySelector('.mobile-content-inner') || doc.querySelector('.pc-browser-frame'));
+                        const isResponsiveTemplate = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function')
+                            ? window.ResponsiveFrameUtils.isResponsive(doc)
+                            : !!(doc.querySelector('.pc-content-inner') || doc.querySelector('.mobile-content-inner') || doc.querySelector('.pc-browser-frame'));
                         
                         let boundL = 0;
                         let boundT = 0;
@@ -188,18 +198,21 @@ window.v4ResponsiveMultiselectScript = `
                         let boundH = 900;
         
                         if (isResponsiveTemplate) {
-                            const pcInner = doc.querySelector('.pc-content-inner');
-                            const mobileInner = doc.querySelector('.mobile-content-inner');
-                            const isInsideMobile = !!(el && (el.closest('.mobile-content-inner, .mobile-content-area, .mobile-frame, .mobile-browser-frame, .mobile-column, .mobile-content') || (mobileInner && mobileInner.contains(el))));
-                            
-                            if (isInsideMobile) {
-                                const targetContainer = mobileInner || doc.querySelector('.mobile-content-area, .mobile-content');
-                                boundW = targetContainer ? (targetContainer.offsetWidth || 360) : 360;
-                                boundH = targetContainer ? (targetContainer.offsetHeight || targetContainer.clientHeight || 810) : 810;
+                            const targetContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function')
+                                ? window.ResponsiveFrameUtils.getContainer(el)
+                                : (doc.querySelector('.mobile-content-inner') || doc.querySelector('.pc-content-inner'));
+                            if (targetContainer) {
+                                boundW = targetContainer.offsetWidth || 360;
+                                boundH = targetContainer.offsetHeight || targetContainer.clientHeight || 810;
                             } else {
-                                const targetContainer = pcInner || doc.querySelector('.pc-content-area');
-                                boundW = targetContainer ? (targetContainer.offsetWidth || 1160) : 1160;
-                                boundH = targetContainer ? (targetContainer.offsetHeight || targetContainer.clientHeight || 810) : 810;
+                                const frameType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
+                                    ? window.ResponsiveFrameUtils.getFrameType(el)
+                                    : 'pc';
+                                if (frameType === 'mobile' || frameType === 'left' || frameType === 'right') {
+                                    boundW = 360; boundH = 810;
+                                } else {
+                                    boundW = 1160; boundH = 810;
+                                }
                             }
                         } else {
                             // Non-responsive canvas: check if element is inside or geometrically within a .mobile-frame

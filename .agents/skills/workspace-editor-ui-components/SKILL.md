@@ -5,13 +5,19 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 
 # Workspace Editor UI Components
 
-- **Global Screen Layer**: 모든 오브젝트는 iframe 내부의 **`document.body`**에 직접 위치한다. 특정 템플릿 영역(`.mobile-content` 등)에 종속되지 않음으로써 스크린 어디서든 자유로운 배치와 그룹화가 가능하다.
-- **Common Object Protocol (4원칙)**: 모든 객체(텍스트, 도형, 선, 아톰 등)는 예외 없이 다음 4가지 동작을 보장해야 한다.
+- **Screen Layout Layer Architecture**: 일반 캔버스 스크린에서는 모든 오브젝트가 iframe 내부의 `document.body` (또는 `.page`) 최상단 캔버스에 직접 위치하며, 반응형 스크린(PC & Mobile Frame)에서는 프레임 내부의 컨텐츠 캔버스인 `.pc-content-inner` 또는 `.mobile-content-inner` 내부의 절대좌표 레이어에 배치된다. 특정 템플릿 제약 없이 해당 캔버스 내부 어디서든 자유로운 배치, 이동, 스냅, 그룹화가 100% 보장된다.
+- **Common Object Protocol (공통 오브젝트 8원칙)**: 모든 객체(텍스트, 도형, 선, 아톰 등)는 예외 없이 다음 동작을 보장해야 한다.
   1. 드래그(Marquee) 및 Shift+Click을 통한 **다중 선택, 그룹화(Ctrl+G), 해제** 보장
   2. 선택 상태에서 **화살표 키(`ArrowUp` 등)를 이용한 픽셀 단위 그룹 이동** 보장
   3. `Delete` 또는 `Backspace` 키보드 입력을 통한 **즉각 삭제** 보장
   4. 객체의 이동, 생성, 삭제, 그룹화 등 모든 상태 변경 전 **`V4UndoManager.saveState()` 호출을 통한 Ctrl+Z (Undo) 보장**
-  5. **오브젝트 프로퍼티 플로팅 카드 (Object Properties Floating Card) 및 다중 선택**:
+  5. **Ctrl+C / Ctrl+V / Ctrl+X 복사, 붙여넣기, 잘라내기 보장 (크로스 스크린 & 스마트 위치 결정)**:
+     - **전역 SSOT**: 서로 다른 스크린 iframe 간 복사/붙여넣기를 완벽 지원하기 위해 `window.top.__lf_global_clipboard__`를 전역 클립보드 SSOT로 사용한다.
+     - **그룹 내부 자식 컴포넌트 단독 복사 좌표 정규화**: 그룹(`.lf-group`) 내부의 자식 컴포넌트를 단일 선택하여 복사할 때, 조상 그룹 체인의 오프셋(`offsetLeft`, `offsetTop`)을 재귀적으로 누적 합산하여 캔버스/반응형 프레임 호스트 기준의 절대 위치(`absL`, `absT`)로 정규화하여 저장한다. 이를 통해 붙여넣기 시 스크린 최상단(0, 0)으로 튀는 현상을 원천 방지하고 독립 오브젝트로 안전하게 복제 생성한다.
+     - **스마트 붙여넣기 위치 결정 (Smart Paste Positioning)**: 동일 스크린 및 동일 프레임 내 붙여넣기 시에는 원본 대비 겹침 방지 오프셋(+15px)을 적용하고, 다른 스크린이나 타 프레임으로 붙여넣을 때 또는 원본 위치가 스크롤 뷰포트를 벗어난 경우 현재 스크롤 뷰포트 정중앙(Viewport Center)에 지능적으로 자동 배치한다.
+     - **붙여넣기 후 자동 선택 전환**: 복제 생성 완료 즉시 새로 생성된 객체들만 자동으로 선택(`.selected`) 상태로 전환하여 연속 이동 및 편집을 보장한다.
+     - **잘라내기(Ctrl+X) 시 빈 그룹 자동 청소**: 원본 객체를 복사 후 즉시 삭제하되, 그룹 내 마지막 자식 요소를 잘라냈을 경우 껍데기만 남은 빈 그룹 컨테이너(`div.lf-group`)를 감지하여 캔버스에서 안전하게 자동 제거한다.
+  6. **오브젝트 프로퍼티 플로팅 카드 (Object Properties Floating Card) 및 다중 선택**:
      - **플로팅 연동**: 선택 활성화 시 `#floating-inspector-card`가 노출되며, 현재 활성화된 속성 편집 섹션(예: `text-editor-section`) 및 툴바(`#selection-actions-bar`)가 `#floating-inspector-body` 내부로 동적으로 이동(`appendChild`)되어야 한다.
      - **DOM 복원 SSOT**: 선택 해제나 상태 변경 시, 동적 이동된 요소들의 상태 유실 및 파괴를 방지하기 위해 반드시 독립 저장소 컨테이너(`#inspector-panels-storage`)로 환원(`restorePropertiesSections()`)한 뒤 갱신해야 한다.
      - **오작동 방지**: 캔버스 드래그 및 줌 마우스 이벤트 등에서 플로팅 카드 내 클릭을 예외 처리(`e.target.closest('#floating-inspector-card')`)하여 편집 제어 도중 영역이 접히는 오작동을 차단한다.
@@ -19,11 +25,11 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
        - **단일 컴포넌트(비그룹)**: `GROUP`, `UNGROUP`, `ADD TO MOLECULES` 3종 버튼 모두 미노출 (`display: none !important`).
        - **단일 그룹**: `UNGROUP`, `ADD TO MOLECULES` 노출, `GROUP` 미노출.
        - **다중 선택(2개 이상)**: `GROUP` 및 정렬 도구 노출, `UNGROUP`, `ADD TO MOLECULES` 미노출.
-  6. **F2 키 기반 도형 선택/텍스트 편집 상태 전환 및 포커스 제어 보장**:
+  7. **F2 키 기반 도형 선택/텍스트 편집 상태 전환 및 포커스 제어 보장**:
      - F2 키 입력 시 선택 모드(이동/삭제 가능)와 텍스트 편집 모드(`contenteditable="true"`, 캐럿 깜빡임)가 토글(Toggle)되어야 한다.
      - **포커스 스왑 제어**: 텍스트 편집 모드로 진입 시 iframe 보안 격리를 극복하기 위해 `contenteditable` 영역을 포커스하기 전 반드시 iframe 자체(`window.top`에서 iframe `.contentWindow.focus()`) 또는 iframe 내부 `window.focus()`를 먼저 호출한 뒤 대상 요소를 포커스해야 캐럿(Caret)이 정상 노출된다.
      - **Input Hijacking 방지 & IME 가드**: 사이드바/폼 입력 중 키보드 가로채기를 막기 위해 부모 keydown 이벤트의 시작 지점에서 `F2` 키 입력을 최우선 가드하고, 한글 조합 입력 중 중복 발동 방지를 위해 `isComposing` 검증을 병행해야 한다.
-  7. **도형 서식 복사 및 붙여넣기 보장 (Format Painter - `Ctrl + Shift + C` / `Ctrl + Shift + V`)**:
+  8. **도형 서식 복사 및 붙여넣기 보장 (Format Painter - `Ctrl + Shift + C` / `Ctrl + Shift + V`)**:
      - **단축키 및 플로팅 툴바 바인딩**: 선택된 컴포넌트의 스타일 서식을 `Ctrl + Shift + C`로 복사하고, 대상 컴포넌트(단일 또는 N개 다중 선택)에 `Ctrl + Shift + V`로 즉시 일괄 적용한다. 플로팅 인스펙터 내 `#selection-style-action-row`의 `[서식 복사]` 및 `[서식 붙여넣기]` 버튼과 100% 양방향 연동된다 (단일 그룹 선택 시에는 자동 숨김).
      - **심층 서식 추출 및 복원 범위**: 도형 배경색(RGBA 투명도 포함), 테두리(색상, 1.6px 보더 두께, solid/dashed/dotted 스타일, 코너 반경 0~100px), 불투명도뿐만 아니라 하위 텍스트 셀(`.v4-editable-cell`, `.v4-shape-text-content`) 및 인라인 요소의 타이포그래피(글꼴, 크기, 글자색, 두께, 정렬), 테이블 헤더/본문 색상, 아이콘 채색 컬러를 심층 추출하여 오차 없이 이식한다.
      - **전역 SSOT & 실행 취소**: 스크린 간 격리를 극복하기 위해 `(window.top || window).__lf_global_style_clipboard__`를 단일 진실 공급원으로 사용하며, 서식 적용 직전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 즉시 롤백할 수 있다. 서식 복사 및 적용 상태는 토스트 알림(`LF_SHOW_TOAST`)으로 안내된다.
@@ -110,6 +116,29 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **데이터 구조 및 SSOT**: 탭 목록 데이터는 컴포넌트 루트 엘리먼트의 `data-tabs` 속성에 JSON 배열(예: `[{"title":"Tab 1"},{"title":"Tab 2"}]`) 형태로 저장되며, 활성 탭 인덱스는 `data-active-tab` ("0", "1" 등)에 배타적으로 보존됩니다.
 - **인라인 편집 지원**: 각 탭 버튼(`.v4-tab-item`)은 `contenteditable="true"`와 `.v4-editable-cell` 클래스를 포함하여 캔버스 상에서 직접 더블클릭/포커스로 탭 제목을 수정할 수 있으며, 입력 즉시 `data-tabs` JSON 및 인스펙터 목록과 실시간 동기화됩니다.
 - **동적 가변 및 보더 일치**: 탭 컴포넌트의 테두리는 `1.6px` 표준을 준수하며, 탭 추가/삭제/리사이즈 시 탭 컨테이너 전체의 너비 및 내부 탭 항목들의 균등/가변 배치가 부드럽게 유지되어야 합니다.
+
+## 🪟 Popup (팝업) 컴포넌트 & 인스펙터 표준 규격 (V4 Popup Component Protocol)
+- **전용 렌더링 및 인스펙터 모듈**: [assets/inspector/inspector_popup.js](file:///c:/Users/sisun/ai_work/assets/inspector/inspector_popup.js) (`window.InspectorPopup`) 및 `vctrl_ui_atoms.js` (`v4-atom-popup`).
+- **표준 DOM 계층 구조**:
+  - 최외곽 래퍼: `.lf-component.v4-atom-popup` (드래그 핸들, 리사이저, 삭제 트리거 포함).
+  - 팝업 헤더 바: `.popup-header-bar` (타이틀 텍스트 `.popup-title` + 닫기 단추 `.popup-close-btn`).
+  - 팝업 본문: `.popup-body` (자유로운 내부 컴포넌트 배치 및 텍스트 편집 영역).
+- **인스펙터 양방향 동기화**:
+  - 팝업 선택 시 전용 인스펙터 패널이 활성화되어 팝업 타이틀명 수정, 헤더 배경색 및 텍스트 색상 조색, 본문 배경색/테두리 스타일을 실시간으로 제어합니다.
+  - 테두리는 시스템 표준 `1.6px solid`를 준수하며, 부드러운 박스 섀도우를 통해 캔버스 상에서 모달/팝업 레이어의 입체감을 유지합니다.
+
+## 📊 Grid & Table 컬럼 하이라이트 표준 (Grid Column Highlight Protocol)
+- **통신 프로토콜 및 모듈**: `LF_SET_GRID_COLUMN_HIGHLIGHT` 및 `LF_CLEAR_GRID_COLUMN_HIGHLIGHT`.
+- **책임 분리**:
+  - 인스펙터 측([assets/inspector/inspector_grid.js](file:///c:/Users/sisun/ai_work/assets/inspector/inspector_grid.js)): 그리드/테이블 컬럼 선택 UI, 하이라이트 토글 및 색상 피커 제어.
+  - Iframe 측([assets/vctrl_iframe_grid.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_grid.js)): 대상 컬럼 셀(`th`, `td`)에 하이라이트 클래스 및 인라인 배경색(`rgba(...)`)을 정밀 주입/제거하고 원본 테두리와 정렬 상태 보존.
+- **실행 취소(Undo) 보장**: 컬럼 하이라이트 적용 직전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 즉시 되돌릴 수 있도록 설계합니다.
+
+## 🔍 Query Item (조회조건) 4-컬럼 커스텀 비율 규격
+- **표준 레이아웃 아키텍처**:
+  - 조회조건 컨테이너(`.v4-query-container`, `.v4-query-row`) 내에 4개 컬럼(라벨 + 입력 컴포넌트 세트)이 배치될 때 가로폭 균형을 위한 커스텀 비율(Custom Ratio) 표준을 제공합니다.
+  - 라벨 영역과 입력 영역(텍스트박스, 드롭다운, 데이트피커 등)의 너비 비율이 화면 해상도나 컨테이너 크기에 따라 찌그러지지 않도록 `grid-template-columns` 또는 유연한 Flexbox 비율을 적용합니다.
+  - 내부 입력 폼 요소의 높이는 시스템 표준(`28px` 또는 `32px`)에 맞추고 폰트 안티앨리어싱을 필수로 적용합니다.
 
 ## Molecules
 - When saving grouped elements to Molecules, store the container `innerHTML` only and save `width`, `height`, and `isGroup` as metadata.

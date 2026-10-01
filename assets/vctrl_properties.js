@@ -368,7 +368,7 @@
         'shape-border-radius': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape-rect, .v4-shape-webpage', style: { borderRadius: val + 'px' } }),
         'text-color-picker': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-editable-cell', style: { color: val } }),
         'icon-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: 'img, .lf-icon', style: { color: val } })
-        // Note: shape-bg-color and shape-bg-opacity are handled by SSOT input handlers in vctrl_v4_addon.js
+        // Note: shape-bg-color and shape-bg-opacity are handled by SSOT input handlers in assets/inspector/inspector_shapes.js
     };
 
     document.addEventListener('input', (e) => {
@@ -431,12 +431,42 @@
         'btn-shape-border-none': { wrapper: 'shape-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape', style: { borderColor: 'transparent' } }) },
         'btn-table-border-none': { wrapper: 'table-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-table', style: { borderColor: 'transparent' } }) },
         'btn-icon-border-none': { wrapper: 'icon-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.lf-icon', style: { borderColor: 'transparent' } }) },
+        'btn-line-color-none': {
+            wrapper: 'line-color-wrapper',
+            msg: () => ({
+                type: 'LF_UPDATE_STYLE',
+                selector: '.v4-shape-line, .v4-shape-line line',
+                style: {
+                    lineColor: 'transparent',
+                    borderColor: 'transparent',
+                    stroke: 'transparent'
+                }
+            })
+        },
         'btn-button-bg-none': { wrapper: 'button-bg-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '', style: { background: 'transparent', backgroundColor: 'transparent' } }) },
         'btn-button-border-none': { wrapper: 'button-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '', style: { borderColor: 'transparent' } }) }
     };
 
     document.addEventListener('click', (e) => {
         if (e.target.closest('#admin-settings-inspector-section')) return;
+
+        const tBtn = e.target.closest('[id]');
+        if (tBtn && TRANSPARENCY_BUTTONS[tBtn.id]) {
+            const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+            const targetIds = getActiveTargetIds();
+            if (targetIds.length === 0 || !iframeWin) return;
+            const conf = TRANSPARENCY_BUTTONS[tBtn.id];
+            
+            const wrapper = document.getElementById(conf.wrapper);
+            if (wrapper) wrapper.classList.add('transparent-active');
+            
+            if (conf.extra) conf.extra();
+            
+            const msg = conf.msg();
+            MessageHub.send(iframeWin, msg.type, { ...msg, id: targetIds[0], ids: targetIds });
+            if (window.markAsDirty) window.markAsDirty();
+            return;
+        }
 
         const btn = e.target.closest('.v4-color-none-btn');
         if (btn) {
@@ -468,23 +498,6 @@
             });
             if (window.markAsDirty) window.markAsDirty();
             return;
-        }
-
-        const tBtn = e.target.closest('[id]');
-        if (tBtn && TRANSPARENCY_BUTTONS[tBtn.id]) {
-            const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
-            const targetIds = getActiveTargetIds();
-            if (targetIds.length === 0 || !iframeWin) return;
-            const conf = TRANSPARENCY_BUTTONS[tBtn.id];
-            
-            const wrapper = document.getElementById(conf.wrapper);
-            if (wrapper) wrapper.classList.add('transparent-active');
-            
-            if (conf.extra) conf.extra();
-            
-            const msg = conf.msg();
-            MessageHub.send(iframeWin, msg.type, { ...msg, id: targetIds[0], ids: targetIds });
-            if (window.markAsDirty) window.markAsDirty();
         }
     });
 

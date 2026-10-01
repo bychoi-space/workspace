@@ -369,11 +369,17 @@ window.v4DesignSystemScript = `
                 const targetW = btnEnabled ? '134px' : '80px';
                 const targetH = '30px';
                 
-                if (c.style.width !== targetW) c.style.width = targetW;
-                if (c.style.height !== targetH) c.style.height = targetH;
+                if (c.getAttribute('data-resized') !== 'true') {
+                    if (c.style.width !== targetW) c.style.width = targetW;
+                    if (c.style.height !== targetH) c.style.height = targetH;
+                }
                 
                 if (stepper.style.width !== '100%') stepper.style.width = '100%';
                 if (stepper.style.height !== '100%') stepper.style.height = '100%';
+                const ctrl = stepper.querySelector('.v4-stepper-control');
+                const act = stepper.querySelector('.v4-stepper-action');
+                if (ctrl && ctrl.style.height !== '100%') ctrl.style.height = '100%';
+                if (act && act.style.height !== '100%') act.style.height = '100%';
                 
                 if (typeof window.updateHandles === 'function') window.updateHandles(c);
             }

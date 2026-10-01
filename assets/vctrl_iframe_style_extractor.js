@@ -1,4 +1,4 @@
-﻿// --- Iframe Component Style Extractor Module ---
+// --- Iframe Component Style Extractor Module ---
 if (!window.v4IframeStyleExtractorScript) {
     window.v4IframeStyleExtractorScript = `
 (function() {
@@ -54,6 +54,7 @@ if (!window.v4IframeStyleExtractorScript) {
         const minVal = stepperContainer ? parseInt(stepperContainer.getAttribute('data-min')) || 1 : 1;
         const maxVal = stepperContainer ? parseInt(stepperContainer.getAttribute('data-max')) || 99 : 99;
         const stepperVal = stepperContainer ? parseInt(stepperContainer.getAttribute('data-val')) || minVal : minVal;
+        const stepperStep = stepperContainer ? parseInt(stepperContainer.getAttribute('data-step')) || 1 : 1;
         const stepperBtnEnabled = stepperContainer ? stepperContainer.getAttribute('data-btn-enabled') !== 'false' : true;
         const stepperBtnText = stepperContainer ? (stepperContainer.getAttribute('data-btn-text') || "\uC801\uC6A9") : "\uC801\uC6A9";
         const stepperDisabled = stepperContainer ? stepperContainer.getAttribute('data-disabled') === 'true' : false;
@@ -95,6 +96,22 @@ if (!window.v4IframeStyleExtractorScript) {
         const buttonStyle = btnContainer ? (btnContainer.getAttribute('data-btn-style') || "normal") : "normal";
         const buttonRadius = btnContainer ? (btnContainer.getAttribute('data-btn-radius') || "6") : "6";
         const buttonFontSize = btnContainer ? (parseInt(btnContainer.getAttribute('data-font-size')) || (btnContainer.querySelector('.v4-custom-btn') ? parseInt(window.getComputedStyle(btnContainer.querySelector('.v4-custom-btn')).fontSize) : 12) || 12) : 12;
+
+        // Popup Window Atom Detection
+        const isPopup = isGroup ? false : (
+            !!c.querySelector('.v4-popup-container') || 
+            c.classList.contains('v4-popup-container') ||
+            c.id === 'v4-atom-popup' ||
+            (c.getAttribute && c.getAttribute('data-comp-id') === 'v4-atom-popup')
+        );
+        const popupContainer = isGroup ? null : (c.querySelector('.v4-popup-container') || (isPopup ? c : null));
+        const popupTitle = popupContainer ? (popupContainer.getAttribute('data-title') || popupContainer.querySelector('.v4-popup-title')?.innerText || "Popup Title") : "Popup Title";
+        const popupShowClose = popupContainer ? (popupContainer.getAttribute('data-show-close') !== 'false') : true;
+        const popupHeaderBg = popupContainer ? (popupContainer.getAttribute('data-header-bg') || (popupContainer.querySelector('.v4-popup-header') ? (popupContainer.querySelector('.v4-popup-header').style.backgroundColor || window.getComputedStyle(popupContainer.querySelector('.v4-popup-header')).backgroundColor) : '#f1f5f9')) : '#f1f5f9';
+        const popupHeaderColor = popupContainer ? (popupContainer.getAttribute('data-header-color') || (popupContainer.querySelector('.v4-popup-title') ? (popupContainer.querySelector('.v4-popup-title').style.color || window.getComputedStyle(popupContainer.querySelector('.v4-popup-title')).color) : '#0f172a')) : '#0f172a';
+        const popupBodyBg = popupContainer ? (popupContainer.getAttribute('data-body-bg') || popupContainer.style.backgroundColor || window.getComputedStyle(popupContainer).backgroundColor || '#ffffff') : '#ffffff';
+        const popupBorderColor = popupContainer ? (popupContainer.getAttribute('data-border-color') || popupContainer.style.borderColor || window.getComputedStyle(popupContainer).borderColor || '#cccccc') : '#cccccc';
+        const popupRadius = popupContainer ? (parseInt(popupContainer.getAttribute('data-border-radius')) || parseInt(popupContainer.style.borderRadius) || parseInt(window.getComputedStyle(popupContainer).borderRadius) || 8) : 8;
 
         // Date Picker Atom Detection
         const isDatePicker = isGroup ? false : (!!c.querySelector('.v4-datepicker-container') || c.classList.contains('v4-datepicker-container'));
@@ -245,6 +262,7 @@ if (!window.v4IframeStyleExtractorScript) {
         for (let i = 1; i <= 20; i++) {
             adminRowData['adminRow' + i + 'Label'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-label') || '') : '';
             adminRowData['adminRow' + i + 'Cols'] = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row' + i + '-cols')) || 1 : 1;
+            adminRowData['adminRow' + i + 'Ratio'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-ratio') || '1:1') : '1:1';
             adminRowData['adminRow' + i + 'Type'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-type') || 'textbox') : 'textbox';
             adminRowData['adminRow' + i + 'Height'] = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row' + i + '-height')) || (adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row-height')) || 44 : 44) : 44;
             adminRowData['adminRow' + i + 'Required'] = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-row' + i + '-required') || 'false') : 'false';
@@ -330,8 +348,16 @@ if (!window.v4IframeStyleExtractorScript) {
             id: c.id,
             x: parseFloat(c.style.left) || 0,
             y: parseFloat(c.style.top) || 0,
-            shapeType: shape ? (shape.classList.contains('v4-shape-line') ? 'line' : (shape.classList.contains('v4-shape-pattern-grid') ? 'pattern' : (shape.classList.contains('v4-shape-rect') ? 'rect' : (shape.classList.contains('v4-shape-circle') ? 'circle' : (shape.classList.contains('v4-shape-triangle') ? 'triangle' : (shape.classList.contains('v4-shape-diamond') ? 'diamond' : (shape.classList.contains('v4-shape-arrow') ? 'arrow' : (shape.classList.contains('v4-shape-webpage') ? 'webpage' : '')))))))) : '',
+            shapeType: shape ? (shape.classList.contains('v4-shape-line') ? 'line' : (shape.classList.contains('v4-shape-pattern-grid') ? 'pattern' : (shape.classList.contains('v4-shape-wave') ? 'wave' : (shape.classList.contains('v4-shape-rect') ? 'rect' : (shape.classList.contains('v4-shape-circle') ? 'circle' : (shape.classList.contains('v4-shape-triangle') ? 'triangle' : (shape.classList.contains('v4-shape-diamond') ? 'diamond' : (shape.classList.contains('v4-shape-arrow') ? 'arrow' : (shape.classList.contains('v4-shape-webpage') ? 'webpage' : ''))))))))) : '',
             lineDir: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-line-dir') || 'horizontal') : 'horizontal',
+            waveDir: (function() {
+                if (!shape || !shape.classList.contains('v4-shape-wave')) return 'horizontal';
+                const attrDir = shape.getAttribute('data-wave-dir');
+                if (attrDir) return attrDir;
+                const curW = parseFloat(c.style.width) || c.offsetWidth || 360;
+                const curH = parseFloat(c.style.height) || c.offsetHeight || 20;
+                return curH > curW ? 'vertical' : 'horizontal';
+            })(),
             lineStyle: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-line-style') || 'solid') : 'solid',
             lineThickness: (function() {
                 if (!shape || !shape.classList.contains('v4-shape-line')) return 1.6;
@@ -352,7 +378,17 @@ if (!window.v4IframeStyleExtractorScript) {
                     strokeVal = lineEl.style.stroke || lineEl.getAttribute('stroke');
                 }
                 strokeVal = strokeVal || '#c8c8c8';
+                if (strokeVal === 'transparent') return 'transparent';
                 return (typeof window.rgbToHex === 'function' ? window.rgbToHex(strokeVal) : strokeVal) || '#c8c8c8';
+            })(),
+            isLineColorTransparent: (function() {
+                if (!shape || !shape.classList.contains('v4-shape-line')) return false;
+                const lineEl = shape.querySelector('line');
+                let strokeVal = shape.getAttribute('data-line-color');
+                if (!strokeVal && lineEl) {
+                    strokeVal = lineEl.style.stroke || lineEl.getAttribute('stroke');
+                }
+                return strokeVal === 'transparent' || strokeVal === 'rgba(0, 0, 0, 0)';
             })(),
             arrowDir: shape ? (shape.getAttribute('data-arrow-dir') || shape.getAttribute('data-direction') || 'right') : '',
             direction: shape ? (shape.getAttribute('data-direction') || shape.getAttribute('data-arrow-dir') || 'right') : '',
@@ -398,6 +434,7 @@ if (!window.v4IframeStyleExtractorScript) {
             minVal: minVal,
             maxVal: maxVal,
             val: stepperVal,
+            stepVal: stepperStep,
             btnEnabled: stepperBtnEnabled,
             btnText: stepperBtnText,
             disabled: (
@@ -410,8 +447,17 @@ if (!window.v4IframeStyleExtractorScript) {
                 (dpContainer && dpContainer.getAttribute('data-disabled') === 'true') ||
                 (toggleContainer && toggleContainer.getAttribute('data-disabled') === 'true') ||
                 (accordionContainer && accordionContainer.getAttribute('data-disabled') === 'true') ||
+                (btnContainer && btnContainer.getAttribute('data-disabled') === 'true') ||
                 !!c.querySelector('[data-disabled="true"]')
             ),
+            isPopup: isPopup,
+            popupTitle: popupTitle,
+            popupShowClose: popupShowClose,
+            popupHeaderBg: popupHeaderBg,
+            popupHeaderColor: popupHeaderColor,
+            popupBodyBg: popupBodyBg,
+            popupBorderColor: popupBorderColor,
+            popupRadius: popupRadius,
             isSelectbox: isSelectbox,
             selectboxDefaultText: selectboxDefaultText,
             selectboxDropdownActive: selectboxDropdownActive,

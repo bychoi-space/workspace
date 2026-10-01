@@ -71,6 +71,68 @@ window.isResponsiveDocument = function(targetDoc) {
 };
 window.isResponsiveScreen = window.isResponsiveDocument;
 
+// --- Universal Responsive Frame & Container Manager (SSOT) ---
+window.ResponsiveFrameUtils = {
+    isResponsive: function(targetDoc) {
+        return window.isResponsiveDocument(targetDoc);
+    },
+    getTemplateType: function(targetDoc) {
+        var doc = targetDoc || (window.DOM && window.DOM.iframe && window.DOM.iframe.contentDocument) || document;
+        if (!doc || !doc.querySelector) return 'standard';
+        if (doc.querySelector('.mobile-compare-page') || (doc.querySelector('.mobile-column-left') && doc.querySelector('.mobile-column-right'))) {
+            return 'mobile-compare';
+        }
+        if (doc.querySelector('.pc-content-inner') && doc.querySelector('.mobile-content-inner')) {
+            return 'pc-mobile';
+        }
+        if (doc.querySelector('.pc-content-inner') || doc.querySelector('.pc-browser-frame') || doc.querySelector('.admin-pc-page')) {
+            return 'admin-pc';
+        }
+        return 'standard';
+    },
+    getContainer: function(el) {
+        if (!el || !el.closest) return null;
+        return el.closest(
+            '.pc-content-inner, .mobile-content-inner, ' +
+            '.pc-content-area, .mobile-content-area, ' +
+            '.mobile-content, .pc-content'
+        );
+    },
+    getFrameType: function(el) {
+        if (!el) return 'canvas';
+        var explicit = el.getAttribute ? (el.getAttribute('data-frame') || '') : '';
+        if (explicit === 'left' || explicit === 'right' || explicit === 'pc' || explicit === 'mobile') {
+            return explicit;
+        }
+        if (el.closest) {
+            if (el.closest('.mobile-column-left') || el.closest('[data-frame="left"]')) return 'left';
+            if (el.closest('.mobile-column-right') || el.closest('[data-frame="right"]')) return 'right';
+            if (el.closest('.pc-content-inner, .pc-content-area, .pc-browser-frame, .pc-column, [data-frame="pc"]')) return 'pc';
+            if (el.closest('.mobile-content-inner, .mobile-content-area, .mobile-browser-frame, .mobile-column, [data-frame="mobile"]')) return 'mobile';
+        }
+        return 'canvas';
+    },
+    getScrollArea: function(el) {
+        if (!el || !el.closest) return null;
+        return el.closest('.pc-content-area, .pc-content, .mobile-content-area, .mobile-content');
+    },
+    getRelativeOffset: function(el, container) {
+        var c = container || this.getContainer(el);
+        if (!c) {
+            return {
+                x: Math.round(parseFloat(el.style.left) || 0),
+                y: Math.round(parseFloat(el.style.top) || 0)
+            };
+        }
+        var elRect = el.getBoundingClientRect();
+        var cRect = c.getBoundingClientRect();
+        return {
+            x: Math.round(elRect.left - cRect.left),
+            y: Math.round(elRect.top - cRect.top)
+        };
+    }
+};
+
 // --- Universal Screen Sanitizer for Clean HTML Export & Persistence ---
 (function() {
     const splitStyleRules = function(str) {
@@ -495,22 +557,6 @@ window.v4CommonScript = `
         }
         return path;
     };
-
-    // Universal Responsive Screen Detector (Iframe SSOT)
-    window.isResponsiveDocument = function(targetDoc) {
-        try {
-            const doc = targetDoc || document;
-            return !!(doc && doc.querySelector && (
-                doc.querySelector('.pc-content-inner') || 
-                doc.querySelector('.mobile-content-inner') || 
-                doc.querySelector('.pc-browser-frame') ||
-                doc.querySelector('.pc-content-area')
-            ));
-        } catch (e) {
-            return false;
-        }
-    };
-    window.isResponsiveScreen = window.isResponsiveDocument;
 
     // Universal Screen Sanitizer (Iframe SSOT)
     window.ScreenSanitizer = {

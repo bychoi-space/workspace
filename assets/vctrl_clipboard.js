@@ -7,7 +7,7 @@
     'use strict';
 
     /**
-     * Safe asynchronous text copy to system clipboard with fallback
+     * Safe asynchronous text copy to system clipboard with fallback (Universal SSOT)
      * @param {string} text - Text to copy
      * @param {string} [successMessage] - Optional toast notification message
      * @returns {Promise<boolean>}
@@ -15,30 +15,44 @@
     async function copyTextToClipboard(text, successMessage) {
         if (!text) return false;
         let success = false;
-        try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
+
+        // 1. Modern Clipboard API (available in secure contexts / https / localhost)
+        if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+            try {
                 await navigator.clipboard.writeText(text);
                 success = true;
-            } else {
+            } catch (err) {
+                console.warn('[ClipboardManager] navigator.clipboard.writeText failed, falling back:', err);
+            }
+        }
+
+        // 2. Universal Fallback (file:// protocol, insecure contexts, or permission denials)
+        if (!success) {
+            try {
                 const textArea = document.createElement('textarea');
                 textArea.value = text;
                 textArea.style.position = 'fixed';
                 textArea.style.top = '-9999px';
                 textArea.style.left = '-9999px';
                 textArea.style.opacity = '0';
+                textArea.setAttribute('readonly', '');
                 document.body.appendChild(textArea);
                 textArea.focus();
                 textArea.select();
                 success = document.execCommand('copy');
                 document.body.removeChild(textArea);
+            } catch (fallbackErr) {
+                console.error('[ClipboardManager] execCommand fallback failed:', fallbackErr);
+                success = false;
             }
-        } catch (err) {
-            console.error('[ClipboardManager] Copy failed:', err);
-            success = false;
         }
 
-        if (success && successMessage && typeof window.showToast === 'function') {
-            window.showToast(successMessage, 'success');
+        if (success && successMessage) {
+            if (typeof window.showToast === 'function') {
+                window.showToast(successMessage, 'success');
+            } else if (typeof window.showGlobalToast === 'function') {
+                window.showGlobalToast(successMessage, 'success');
+            }
         }
         return success;
     }

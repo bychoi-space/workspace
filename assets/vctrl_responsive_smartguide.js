@@ -24,6 +24,10 @@ window.v4ResponsiveSmartGuideScript = `
         activeContext: null,
         lastActiveId: null,
         spacingTargets: [],
+        isAltDown: false,
+        isHoverInspecting: false,
+        lastMousePos: null,
+        _altEventsBound: false,
 
         invalidateTargets: function() {
             this.spacingTargets = [];
@@ -66,6 +70,27 @@ window.v4ResponsiveSmartGuideScript = `
                 if (sel) el = sel;
             }
             if (!el) return null;
+
+            // 0. Primary SSOT resolution via ResponsiveFrameUtils
+            if (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function') {
+                const targetContainer = window.ResponsiveFrameUtils.getContainer(el);
+                if (targetContainer) {
+                    const frameType = window.ResponsiveFrameUtils.getFrameType(el);
+                    const isPc = (frameType === 'pc');
+                    const scrollArea = (typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
+                        ? window.ResponsiveFrameUtils.getScrollArea(el)
+                        : null;
+                    const frameCol = el.closest('.frame-column, .pc-column, .mobile-column, .pc-browser-frame, .mobile-browser-frame');
+                    const guideClass = isPc ? 'pc-guide-layer' : 'mobile-guide-layer';
+                    return {
+                        type: isPc ? 'pc' : 'mobile',
+                        inner: targetContainer,
+                        area: scrollArea || targetContainer,
+                        column: frameCol,
+                        guideLayer: this.ensureGuideLayer(targetContainer, guideClass)
+                    };
+                }
+            }
 
             // 1. Check if el is inside a specific frame column (Responsive Dual Mobile, Responsive PC+Mobile, etc.)
             const frameCol = el.closest('.frame-column, .pc-column, .mobile-column, .pc-browser-frame, .mobile-browser-frame');
@@ -242,9 +267,17 @@ window.v4ResponsiveSmartGuideScript = `
                 const pos = this.getPureOffset(c, context.inner);
                 const l = pos.left;
                 const t = pos.top;
-                const w = pos.width || c.offsetWidth || parseFloat(c.style.width) || 100;
-                const h = pos.height || c.offsetHeight || parseFloat(c.style.height) || 40;
-                if (w < 10 || h < 10) return;
+                const shapeLine = c.querySelector('.v4-shape-line') || (c.classList.contains('v4-shape-line') ? c : null);
+                const isLineShape = !!shapeLine;
+                const lineDir = isLineShape ? (shapeLine.getAttribute('data-line-dir') || (pos.width >= pos.height ? 'horizontal' : 'vertical')) : null;
+
+                const w = pos.width || c.offsetWidth || parseFloat(c.style.width) || (isLineShape ? 100 : 100);
+                const h = pos.height || c.offsetHeight || parseFloat(c.style.height) || (isLineShape ? 2 : 40);
+                if (isLineShape) {
+                    if (w < 1 || h < 1 || (w < 4 && h < 4)) return;
+                } else {
+                    if (w < 10 || h < 10) return;
+                }
                 const isGridCell = c.classList.contains('v4-grid-cell');
                 const name = c.id ? c.id.replace('v4-comp-', 'Comp ') : (isGridCell ? ((c.tagName.toLowerCase() === 'th' ? 'Col ' : 'Cell ') + (idx + 1)) : ('Item ' + (idx + 1)));
 
@@ -269,7 +302,9 @@ window.v4ResponsiveSmartGuideScript = `
                     isWall: false,
                     isAncestor: isAncestor,
                     isTableContainer: isTable,
-                    isGridCell: isGridCell
+                    isGridCell: isGridCell,
+                    isLine: isLineShape,
+                    lineDir: lineDir
                 });
             });
 
@@ -369,6 +404,7 @@ window.v4ResponsiveSmartGuideScript = `
                 const t = this.spacingTargets[i];
                 if (activeId && t.id === activeId) continue;
                 if (t.isGridCell) continue;
+                if (t.isLine) continue;
                 if (!t.width || !t.height) continue;
 
                 // Enclosure test (Case A: 4-edge enclosure with 6px tolerance; Case B: Center-point containment for underlying Rect shape/card)
@@ -462,9 +498,12 @@ window.v4ResponsiveSmartGuideScript = `
                     if (t.isRowContainer || t.id === container.tableId || t.isTableContainer) continue;
                 }
 
+                const effBufferY = (active.height <= 4 || (t.isLine && t.lineDir === 'horizontal')) ? Math.max(overlapBufferY, 30) : overlapBufferY;
+                const effBufferX = (active.width <= 4 || (t.isLine && t.lineDir === 'vertical')) ? Math.max(overlapBufferX, 30) : overlapBufferX;
+
                 // Leftward Raycast (t is on the left of active)
                 if (t.right <= active.left + 0.5) {
-                    const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
+                    const hasOverlapY = !(t.bottom < active.top - effBufferY || t.top > active.bottom + effBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(active.left - t.right));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -477,7 +516,7 @@ window.v4ResponsiveSmartGuideScript = `
 
                 // Rightward Raycast (t is on the right of active)
                 if (t.left >= active.right - 0.5) {
-                    const hasOverlapY = !(t.bottom < active.top - overlapBufferY || t.top > active.bottom + overlapBufferY);
+                    const hasOverlapY = !(t.bottom < active.top - effBufferY || t.top > active.bottom + effBufferY);
                     if (hasOverlapY) {
                         const dist = Math.max(0, Math.round(t.left - active.right));
                         if (dist <= MAX_NEIGHBOR_DIST) {
@@ -492,7 +531,7 @@ window.v4ResponsiveSmartGuideScript = `
                 // If inside row container, preserve top wall padding without raycasting outside row!
                 if (!container.isRowContainer) {
                     if (t.bottom <= active.top + 0.5) {
-                        const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
+                        const hasOverlapX = !(t.right < active.left - effBufferX || t.left > active.right + effBufferX);
                         if (hasOverlapX) {
                             const dist = Math.max(0, Math.round(active.top - t.bottom));
                             if (dist <= MAX_NEIGHBOR_DIST) {
@@ -508,7 +547,7 @@ window.v4ResponsiveSmartGuideScript = `
                 // If inside row container, preserve bottom wall padding without raycasting outside row!
                 if (!container.isRowContainer) {
                     if (t.top >= active.bottom - 0.5) {
-                        const hasOverlapX = !(t.right < active.left - overlapBufferX || t.left > active.right + overlapBufferX);
+                        const hasOverlapX = !(t.right < active.left - effBufferX || t.left > active.right + effBufferX);
                         if (hasOverlapX) {
                             const dist = Math.max(0, Math.round(t.top - active.bottom));
                             if (dist <= MAX_NEIGHBOR_DIST) {
@@ -558,24 +597,127 @@ window.v4ResponsiveSmartGuideScript = `
             let snapYData = null;
 
             if (!isArrowKey && this.activeContext) {
-                if (this.activeContext.type === 'mobile-frame' && this.activeContext.frameBounds) {
-                    const fb = this.activeContext.frameBounds;
-                    const idealCenterX = Math.round(fb.left + (fb.width - w) / 2);
-                    if (Math.abs(x - idealCenterX) <= 5) {
-                        snapX = idealCenterX;
-                        snapXData = { snapped: true, x: idealCenterX };
+                const SNAP_THRESH = 5;
+                const active = {
+                    left: x,
+                    top: y,
+                    right: x + w,
+                    bottom: y + h,
+                    width: w,
+                    height: h,
+                    centerX: x + w / 2,
+                    centerY: y + h / 2
+                };
+
+                let bestDiffX = SNAP_THRESH + 1;
+                let bestDiffY = SNAP_THRESH + 1;
+
+                // 1. Sibling Alignment Snapping (Edge & Center)
+                for (let i = 0; i < this.spacingTargets.length; i++) {
+                    const t = this.spacingTargets[i];
+                    if (activeId && t.id === activeId) continue;
+                    if (t.isGridCell) continue;
+                    if (!t.width || !t.height) continue;
+
+                    // X-axis alignment checks (Vertical guide line)
+                    // a. Left to Left
+                    let d = Math.abs(active.left - t.left);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = t.left;
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'left-left', lineX: t.left };
                     }
-                } else if (this.activeContext.type === 'canvas') {
-                    // Center snapping on Canvas Base (Horizontal center 800, Vertical center 450)
-                    const idealCenterX = Math.round((1600 - w) / 2);
-                    const idealCenterY = Math.round((900 - h) / 2);
-                    if (Math.abs(x - idealCenterX) <= 6) {
-                        snapX = idealCenterX;
-                        snapXData = { snapped: true, x: idealCenterX };
+                    // b. Center to Center
+                    d = Math.abs(active.centerX - t.centerX);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = Math.round(t.centerX - w / 2);
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'center-center', lineX: t.centerX };
                     }
-                    if (Math.abs(y - idealCenterY) <= 6) {
-                        snapY = idealCenterY;
-                        snapYData = { snapped: true, y: idealCenterY };
+                    // c. Right to Right
+                    d = Math.abs(active.right - t.right);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = t.right - w;
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'right-right', lineX: t.right };
+                    }
+                    // d. Left to Right
+                    d = Math.abs(active.left - t.right);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = t.right;
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'left-right', lineX: t.right };
+                    }
+                    // e. Right to Left
+                    d = Math.abs(active.right - t.left);
+                    if (d < bestDiffX) {
+                        bestDiffX = d;
+                        snapX = t.left - w;
+                        snapXData = { snapped: true, x: snapX, target: t, type: 'right-left', lineX: t.left };
+                    }
+
+                    // Y-axis alignment checks (Horizontal guide line)
+                    // a. Top to Top
+                    d = Math.abs(active.top - t.top);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = t.top;
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'top-top', lineY: t.top };
+                    }
+                    // b. Middle to Middle
+                    d = Math.abs(active.centerY - t.centerY);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = Math.round(t.centerY - h / 2);
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'middle-middle', lineY: t.centerY };
+                    }
+                    // c. Bottom to Bottom
+                    d = Math.abs(active.bottom - t.bottom);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = t.bottom - h;
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'bottom-bottom', lineY: t.bottom };
+                    }
+                    // d. Top to Bottom
+                    d = Math.abs(active.top - t.bottom);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = t.bottom;
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'top-bottom', lineY: t.bottom };
+                    }
+                    // e. Bottom to Top
+                    d = Math.abs(active.bottom - t.top);
+                    if (d < bestDiffY) {
+                        bestDiffY = d;
+                        snapY = t.top - h;
+                        snapYData = { snapped: true, y: snapY, target: t, type: 'bottom-top', lineY: t.top };
+                    }
+                }
+
+                // 2. Container/Frame Center Snapping (fallback)
+                if (!snapXData) {
+                    if (this.activeContext.type === 'mobile-frame' && this.activeContext.frameBounds) {
+                        const fb = this.activeContext.frameBounds;
+                        const idealCenterX = Math.round(fb.left + (fb.width - w) / 2);
+                        if (Math.abs(x - idealCenterX) <= 5) {
+                            snapX = idealCenterX;
+                            snapXData = { snapped: true, x: idealCenterX, lineX: idealCenterX + w / 2, isCanvasCenter: true };
+                        }
+                    } else if (this.activeContext.type === 'canvas') {
+                        const idealCenterX = Math.round((1600 - w) / 2);
+                        if (Math.abs(x - idealCenterX) <= 5) {
+                            snapX = idealCenterX;
+                            snapXData = { snapped: true, x: idealCenterX, lineX: 800, isCanvasCenter: true };
+                        }
+                    }
+                }
+                if (!snapYData) {
+                    if (this.activeContext.type === 'canvas') {
+                        const idealCenterY = Math.round((900 - h) / 2);
+                        if (Math.abs(y - idealCenterY) <= 5) {
+                            snapY = idealCenterY;
+                            snapYData = { snapped: true, y: idealCenterY, lineY: 450, isCanvasCenter: true };
+                        }
                     }
                 }
             }
@@ -602,16 +744,7 @@ window.v4ResponsiveSmartGuideScript = `
             const svg = context.guideLayer;
             const htmlList = [];
 
-            // Draw center alignment guide lines if snapped to canvas center
-            if (snapData && snapData.snapXData && snapData.snapXData.snapped && context.type === 'canvas') {
-                const cx = snapData.snapXData.x + (snapData.spacing ? snapData.spacing.active.width / 2 : 0);
-                htmlList.push('<line x1="' + cx + '" y1="0" x2="' + cx + '" y2="900" stroke="#3b82f6" stroke-width="1.2" stroke-dasharray="4,3" />');
-            }
-            if (snapData && snapData.snapYData && snapData.snapYData.snapped && context.type === 'canvas') {
-                const cy = snapData.snapYData.y + (snapData.spacing ? snapData.spacing.active.height / 2 : 0);
-                htmlList.push('<line x1="0" y1="' + cy + '" x2="1600" y2="' + cy + '" stroke="#3b82f6" stroke-width="1.2" stroke-dasharray="4,3" />');
-            }
-
+            // Visual alignment lines removed for clean canvas UX; magnetic snapping calculation is preserved in calculateSnap
             if (snapData && snapData.spacing) {
                 this.drawSpacingGuides(snapData.spacing, htmlList, '#ec4899');
             }
@@ -753,6 +886,371 @@ window.v4ResponsiveSmartGuideScript = `
             drawV(bottomMatch, 'bottom');
         },
 
+        clearHoverInspect: function(ctx) {
+            if (!this.isHoverInspecting) return;
+            this.isHoverInspecting = false;
+
+            const activeEl = document.querySelector('.lf-component.selected') || window.activeEl;
+            if (activeEl) {
+                this.onSelect(activeEl, 7000);
+                return;
+            }
+
+            if (!ctx) {
+                ctx = this.getContainerContext(activeEl);
+            }
+            if (ctx && ctx.guideLayer) {
+                ctx.guideLayer.innerHTML = '';
+            } else {
+                document.querySelectorAll('.v4-responsive-guide-layer').forEach(function(layer) {
+                    layer.innerHTML = '';
+                });
+            }
+        },
+
+        calculatePairSpacing: function(activeEl, targetEl, ctx) {
+            if (!activeEl || !targetEl || !ctx || !ctx.inner) return null;
+            const aPos = this.getPureOffset(activeEl, ctx.inner);
+            const bPos = this.getPureOffset(targetEl, ctx.inner);
+
+            const aLine = activeEl.querySelector('.v4-shape-line') || (activeEl.classList.contains('v4-shape-line') ? activeEl : null);
+            const bLine = targetEl.querySelector('.v4-shape-line') || (targetEl.classList.contains('v4-shape-line') ? targetEl : null);
+
+            const a = {
+                left: aPos.left,
+                top: aPos.top,
+                width: aPos.width || (aLine ? 2 : 100),
+                height: aPos.height || (aLine ? 2 : 40),
+                right: aPos.left + (aPos.width || (aLine ? 2 : 100)),
+                bottom: aPos.top + (aPos.height || (aLine ? 2 : 40))
+            };
+            a.centerX = a.left + a.width / 2;
+            a.centerY = a.top + a.height / 2;
+
+            const b = {
+                left: bPos.left,
+                top: bPos.top,
+                width: bPos.width || (bLine ? 2 : 100),
+                height: bPos.height || (bLine ? 2 : 40),
+                right: bPos.left + (bPos.width || (bLine ? 2 : 100)),
+                bottom: bPos.top + (bPos.height || (bLine ? 2 : 40))
+            };
+            b.centerX = b.left + b.width / 2;
+            b.centerY = b.top + b.height / 2;
+
+            const cWidth = ctx.inner.offsetWidth || (ctx.type === 'canvas' ? 1600 : 1160);
+            const cHeight = Math.max(ctx.inner.scrollHeight || 900, 900);
+
+            // Check if B encloses A (Container padding)
+            const bEnclosesA = (b.left <= a.left + 2 && b.right >= a.right - 2 && b.top <= a.top + 2 && b.bottom >= a.bottom - 2 && (b.width > a.width + 4 || b.height > a.height + 4));
+            // Check if A encloses B
+            const aEnclosesB = (a.left <= b.left + 2 && a.right >= b.right - 2 && a.top <= b.top + 2 && a.bottom >= b.bottom - 2 && (a.width > b.width + 4 || a.height > b.height + 4));
+
+            if (bEnclosesA || aEnclosesB) {
+                const outer = bEnclosesA ? b : a;
+                const inner = bEnclosesA ? a : b;
+                return {
+                    type: 'container',
+                    targetRect: b,
+                    left: Math.max(0, Math.round(inner.left - outer.left)),
+                    right: Math.max(0, Math.round(outer.right - inner.right)),
+                    top: Math.max(0, Math.round(inner.top - outer.top)),
+                    bottom: Math.max(0, Math.round(outer.bottom - inner.bottom)),
+                    activeRect: a,
+                    cWidth: cWidth,
+                    cHeight: cHeight
+                };
+            }
+
+            // Disjoint or Adjacent Sibling Relation
+            let hMatch = null;
+            let vMatch = null;
+
+            // Horizontal relative position
+            if (b.right <= a.left) {
+                // B is on the LEFT of A
+                hMatch = {
+                    side: 'left',
+                    dist: Math.max(0, Math.round(a.left - b.right)),
+                    x1: b.right,
+                    x2: a.left
+                };
+            } else if (b.left >= a.right) {
+                // B is on the RIGHT of A
+                hMatch = {
+                    side: 'right',
+                    dist: Math.max(0, Math.round(b.left - a.right)),
+                    x1: a.right,
+                    x2: b.left
+                };
+            } else {
+                // Horizontal overlap
+                const overlapLeft = Math.max(a.left, b.left);
+                const overlapRight = Math.min(a.right, b.right);
+                hMatch = {
+                    side: 'overlap',
+                    dist: 0,
+                    x1: overlapLeft,
+                    x2: overlapRight
+                };
+            }
+
+            // Vertical relative position
+            if (b.bottom <= a.top) {
+                // B is ABOVE A
+                vMatch = {
+                    side: 'top',
+                    dist: Math.max(0, Math.round(a.top - b.bottom)),
+                    y1: b.bottom,
+                    y2: a.top
+                };
+            } else if (b.top >= a.bottom) {
+                // B is BELOW A
+                vMatch = {
+                    side: 'bottom',
+                    dist: Math.max(0, Math.round(b.top - a.bottom)),
+                    y1: a.bottom,
+                    y2: b.top
+                };
+            } else {
+                // Vertical overlap
+                const overlapTop = Math.max(a.top, b.top);
+                const overlapBottom = Math.min(a.bottom, b.bottom);
+                vMatch = {
+                    side: 'overlap',
+                    dist: 0,
+                    y1: overlapTop,
+                    y2: overlapBottom
+                };
+            }
+
+            return {
+                type: 'sibling',
+                targetRect: b,
+                activeRect: a,
+                hMatch: hMatch,
+                vMatch: vMatch,
+                cWidth: cWidth,
+                cHeight: cHeight
+            };
+        },
+
+        drawPairInspect: function(ctx, data) {
+            if (!ctx || !ctx.guideLayer || !data) return;
+            const svg = ctx.guideLayer;
+            const htmlList = [];
+            const strokeCol = '#f43f5e';
+            const textCol = '#ffffff';
+            const cWidth = data.cWidth || 1160;
+            const cHeight = data.cHeight || 900;
+
+            const t = data.targetRect;
+            const a = data.activeRect;
+
+            // 1. Draw Target Element Highlight Outline Box (Figma style)
+            htmlList.push('<rect x="' + t.left + '" y="' + t.top + '" width="' + t.width + '" height="' + t.height + '" fill="rgba(244, 63, 94, 0.04)" stroke="' + strokeCol + '" stroke-width="1.5" stroke-dasharray="none" />');
+
+            // 2. Container Inner Padding Rendering
+            if (data.type === 'container') {
+                const drawLineBadge = function(x1, y1, x2, y2, dist, isH) {
+                    if (dist < 0) return;
+                    if (dist === 0) {
+                        htmlList.push('<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + strokeCol + '" stroke-width="1.8" />');
+                        return;
+                    }
+                    htmlList.push('<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                    if (isH) {
+                        htmlList.push('<line x1="' + x1 + '" y1="' + (y1 - 4) + '" x2="' + x1 + '" y2="' + (y1 + 4) + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                        htmlList.push('<line x1="' + x2 + '" y1="' + (y2 - 4) + '" x2="' + x2 + '" y2="' + (y2 + 4) + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                    } else {
+                        htmlList.push('<line x1="' + (x1 - 4) + '" y1="' + y1 + '" x2="' + (x1 + 4) + '" y2="' + y1 + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                        htmlList.push('<line x1="' + (x2 - 4) + '" y1="' + y2 + '" x2="' + (x2 + 4) + '" y2="' + y2 + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                    }
+                    const cx = (x1 + x2) / 2;
+                    const cy = (y1 + y2) / 2;
+                    const label = String(dist);
+                    const textWidth = Math.max(22, label.length * 7 + 10);
+                    const clampedX = Math.max(textWidth / 2 + 4, Math.min(cWidth - textWidth / 2 - 4, cx));
+                    const clampedY = Math.max(11, Math.min(cHeight - 11, cy));
+                    htmlList.push(
+                        '<g>' +
+                        '<rect x="' + (clampedX - textWidth / 2) + '" y="' + (clampedY - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + strokeCol + '" />' +
+                        '<text x="' + clampedX + '" y="' + (clampedY + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
+                        '</g>'
+                    );
+                };
+
+                // Top inner padding
+                if (data.top >= 0) drawLineBadge(a.centerX, t.top, a.centerX, a.top, data.top, false);
+                // Bottom inner padding
+                if (data.bottom >= 0) drawLineBadge(a.centerX, a.bottom, a.centerX, t.bottom, data.bottom, false);
+                // Left inner padding
+                if (data.left >= 0) drawLineBadge(t.left, a.centerY, a.left, a.centerY, data.left, true);
+                // Right inner padding
+                if (data.right >= 0) drawLineBadge(a.right, a.centerY, t.right, a.centerY, data.right, true);
+
+                svg.innerHTML = htmlList.join('');
+                return;
+            }
+
+            // 3. Sibling Relative Distance Rendering
+            const h = data.hMatch;
+            const v = data.vMatch;
+
+            // Render Horizontal Distance
+            if (h && h.side !== 'overlap' && h.dist >= 0) {
+                let y = a.centerY;
+                const hasOverlapY = (a.top <= t.bottom && a.bottom >= t.top);
+                if (hasOverlapY) {
+                    const oTop = Math.max(a.top, t.top);
+                    const oBottom = Math.min(a.bottom, t.bottom);
+                    y = (oTop + oBottom) / 2;
+                } else {
+                    y = a.centerY;
+                    const extX = (h.side === 'left') ? t.right : t.left;
+                    const extY1 = (t.centerY < a.centerY) ? t.bottom : t.top;
+                    htmlList.push('<line x1="' + extX + '" y1="' + extY1 + '" x2="' + extX + '" y2="' + y + '" stroke="' + strokeCol + '" stroke-width="1" stroke-dasharray="3,3" opacity="0.7" />');
+                }
+
+                htmlList.push('<line x1="' + h.x1 + '" y1="' + y + '" x2="' + h.x2 + '" y2="' + y + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                htmlList.push('<line x1="' + h.x1 + '" y1="' + (y - 4) + '" x2="' + h.x1 + '" y2="' + (y + 4) + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                htmlList.push('<line x1="' + h.x2 + '" y1="' + (y - 4) + '" x2="' + h.x2 + '" y2="' + (y + 4) + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+
+                const cx = (h.x1 + h.x2) / 2;
+                const label = String(h.dist);
+                const textWidth = Math.max(22, label.length * 7 + 10);
+                const clampedX = Math.max(textWidth / 2 + 4, Math.min(cWidth - textWidth / 2 - 4, cx));
+                htmlList.push(
+                    '<g>' +
+                    '<rect x="' + (clampedX - textWidth / 2) + '" y="' + (y - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + strokeCol + '" />' +
+                    '<text x="' + clampedX + '" y="' + (y + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
+                    '</g>'
+                );
+            }
+
+            // Render Vertical Distance
+            if (v && v.side !== 'overlap' && v.dist >= 0) {
+                let x = a.centerX;
+                const hasOverlapX = (a.left <= t.right && a.right >= t.left);
+                if (hasOverlapX) {
+                    const oLeft = Math.max(a.left, t.left);
+                    const oRight = Math.min(a.right, t.right);
+                    x = (oLeft + oRight) / 2;
+                } else {
+                    x = a.centerX;
+                    const extY = (v.side === 'top') ? t.bottom : t.top;
+                    const extX1 = (t.centerX < a.centerX) ? t.right : t.left;
+                    htmlList.push('<line x1="' + extX1 + '" y1="' + extY + '" x2="' + x + '" y2="' + extY + '" stroke="' + strokeCol + '" stroke-width="1" stroke-dasharray="3,3" opacity="0.7" />');
+                }
+
+                htmlList.push('<line x1="' + x + '" y1="' + v.y1 + '" x2="' + x + '" y2="' + v.y2 + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                htmlList.push('<line x1="' + (x - 4) + '" y1="' + v.y1 + '" x2="' + (x + 4) + '" y2="' + v.y1 + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+                htmlList.push('<line x1="' + (x - 4) + '" y1="' + v.y2 + '" x2="' + (x + 4) + '" y2="' + v.y2 + '" stroke="' + strokeCol + '" stroke-width="1.2" />');
+
+                const cy = (v.y1 + v.y2) / 2;
+                const label = String(v.dist);
+                const textWidth = Math.max(22, label.length * 7 + 10);
+                const clampedY = Math.max(11, Math.min(cHeight - 11, cy));
+                htmlList.push(
+                    '<g>' +
+                    '<rect x="' + (x - textWidth / 2) + '" y="' + (clampedY - 9) + '" width="' + textWidth + '" height="18" rx="4" fill="' + strokeCol + '" />' +
+                    '<text x="' + x + '" y="' + (clampedY + 3.5) + '" fill="' + textCol + '" font-size="10px" font-weight="500" letter-spacing="-0.2px" text-anchor="middle" font-family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif">' + label + '</text>' +
+                    '</g>'
+                );
+            }
+
+            svg.innerHTML = htmlList.join('');
+        },
+
+        renderAltInspect: function(clientX, clientY) {
+            const activeEl = document.querySelector('.lf-component.selected') || window.activeEl;
+            if (!activeEl) {
+                this.clearHoverInspect();
+                return;
+            }
+
+            const ctx = this.getContainerContext(activeEl);
+            if (!ctx || !ctx.guideLayer) return;
+
+            this.isHoverInspecting = true;
+
+            // Invalidate regular selection timer during Alt inspection
+            if (this.selectionTimer) {
+                clearTimeout(this.selectionTimer);
+                this.selectionTimer = null;
+            }
+
+            const elUnderMouse = document.elementFromPoint(clientX, clientY);
+            if (!elUnderMouse) {
+                this.clearHoverInspect(ctx);
+                return;
+            }
+
+            let hoverTarget = elUnderMouse.closest('.lf-component');
+            if (hoverTarget === activeEl || (hoverTarget && activeEl.contains(hoverTarget))) {
+                hoverTarget = null;
+            }
+
+            if (hoverTarget) {
+                const pairData = this.calculatePairSpacing(activeEl, hoverTarget, ctx);
+                if (pairData) {
+                    this.drawPairInspect(ctx, pairData);
+                    return;
+                }
+            }
+
+            // If mouse is on frame background, show padding to container walls
+            const compUnderMouse = elUnderMouse.closest('.pc-content-inner, .mobile-content-inner, .pc-browser-frame, .mobile-frame, .page, #canvas');
+            if (compUnderMouse) {
+                const activePos = this.getPureOffset(activeEl, ctx.inner);
+                const snapResult = this.calculateSnap(activePos.left, activePos.top, activePos.width || 100, activePos.height || 40, true, activeEl.id);
+                this.drawGuides(ctx, snapResult);
+                return;
+            }
+
+            this.clearHoverInspect(ctx);
+        },
+
+        bindAltInspectEvents: function() {
+            if (this._altEventsBound) return;
+            this._altEventsBound = true;
+
+            const self = this;
+
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Shift' || e.key === 'Alt') {
+                    const inInput = e.target && (e.target.isContentEditable || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA');
+                    if (inInput) return;
+
+                    self.isAltDown = true;
+                    if (self.lastMousePos && (self.lastMousePos.x > 0 || self.lastMousePos.y > 0)) {
+                        self.renderAltInspect(self.lastMousePos.x, self.lastMousePos.y);
+                    }
+                }
+            }, true);
+
+            window.addEventListener('keyup', function(e) {
+                if (e.key === 'Shift' || e.key === 'Alt') {
+                    if (!e.shiftKey && !e.altKey) {
+                        self.isAltDown = false;
+                        self.clearHoverInspect();
+                    }
+                }
+            }, true);
+
+            window.addEventListener('mousemove', function(e) {
+                self.lastMousePos = { x: e.clientX, y: e.clientY };
+                if (self.isAltDown) {
+                    self.renderAltInspect(e.clientX, e.clientY);
+                }
+            }, true);
+
+            window.addEventListener('blur', function() {
+                self.isAltDown = false;
+                self.clearHoverInspect();
+            }, true);
+        },
+
         clearGuides: function(forceImmediate) {
             if (this.selectionTimer) {
                 clearTimeout(this.selectionTimer);
@@ -782,6 +1280,8 @@ window.v4ResponsiveSmartGuideScript = `
             const ctx = this.getContainerContext(activeEl);
             if (!ctx) return;
 
+            this.isHoverInspecting = false;
+
             if (this.clearTimer) {
                 clearTimeout(this.clearTimer);
                 this.clearTimer = null;
@@ -796,13 +1296,15 @@ window.v4ResponsiveSmartGuideScript = `
             const activePos = this.getPureOffset(activeEl, ctx.inner);
             const curLeft = activePos.left;
             const curTop = activePos.top;
-            const w = activeEl.offsetWidth || 100;
-            const h = activeEl.offsetHeight || 40;
+            const shapeLine = activeEl.querySelector('.v4-shape-line') || (activeEl.classList.contains('v4-shape-line') ? activeEl : null);
+            const isLine = !!shapeLine;
+            const w = activePos.width || activeEl.offsetWidth || (isLine ? 2 : 100);
+            const h = activePos.height || activeEl.offsetHeight || (isLine ? 2 : 40);
 
             const snapResult = this.calculateSnap(curLeft, curTop, w, h, true, activeEl.id);
             this.drawGuides(ctx, snapResult);
 
-            const delay = typeof autoDismissMs === 'number' ? autoDismissMs : 2000;
+            const delay = typeof autoDismissMs === 'number' ? Math.max(autoDismissMs, 7000) : 7000;
             this.selectionTimer = setTimeout(function() {
                 ResponsiveSmartGuide.clearGuides(false);
                 ResponsiveSmartGuide.selectionTimer = null;
@@ -813,6 +1315,8 @@ window.v4ResponsiveSmartGuideScript = `
             if (!activeEl) return;
             const ctx = this.getContainerContext(activeEl);
             if (!ctx) return;
+
+            this.isHoverInspecting = false;
 
             if (this.selectionTimer) {
                 clearTimeout(this.selectionTimer);
@@ -834,15 +1338,29 @@ window.v4ResponsiveSmartGuideScript = `
             const activePos = this.getPureOffset(activeEl, ctx.inner);
             const curLeft = activePos.left;
             const curTop = activePos.top;
-            const w = activeEl.offsetWidth || 100;
-            const h = activeEl.offsetHeight || 40;
+            const shapeLine = activeEl.querySelector('.v4-shape-line') || (activeEl.classList.contains('v4-shape-line') ? activeEl : null);
+            const isLine = !!shapeLine;
+            const w = activePos.width || activeEl.offsetWidth || (isLine ? 2 : 100);
+            const h = activePos.height || activeEl.offsetHeight || (isLine ? 2 : 40);
 
             const snapResult = this.calculateSnap(curLeft, curTop, w, h, true, activeEl.id);
             this.drawGuides(ctx, snapResult);
         },
 
         onNudgeEnd: function() {
-            this.clearGuides(false);
+            if (this.clearTimer) {
+                clearTimeout(this.clearTimer);
+                this.clearTimer = null;
+            }
+            if (this.selectionTimer) {
+                clearTimeout(this.selectionTimer);
+                this.selectionTimer = null;
+            }
+            const self = this;
+            this.selectionTimer = setTimeout(function() {
+                self.clearGuides(false);
+                self.selectionTimer = null;
+            }, 7000);
         },
 
 
@@ -852,8 +1370,14 @@ window.v4ResponsiveSmartGuideScript = `
             document.querySelectorAll('.lf-component:not(.selected)').forEach(c => {
                 const l = parseFloat(c.style.left) || 0;
                 const t = parseFloat(c.style.top) || 0;
-                const w = c.offsetWidth;
-                const h = c.offsetHeight;
+                const shapeLine = c.querySelector('.v4-shape-line') || (c.classList.contains('v4-shape-line') ? c : null);
+                const isLine = !!shapeLine;
+                const lineDir = isLine ? (shapeLine.getAttribute('data-line-dir') || (c.offsetWidth >= c.offsetHeight ? 'horizontal' : 'vertical')) : null;
+                const w = c.offsetWidth || (isLine ? 2 : 100);
+                const h = c.offsetHeight || (isLine ? 2 : 40);
+                if (isLine) {
+                    if (w < 1 || h < 1 || (w < 4 && h < 4)) return;
+                }
                 const name = c.id.replace('v4-comp-', 'Comp ');
                 targets.push({ x: l, label: name, part: 'Left', type: 'h' });
                 targets.push({ x: l + w / 2, label: name, part: 'Center', type: 'h' });
@@ -873,7 +1397,9 @@ window.v4ResponsiveSmartGuideScript = `
                     height: h,
                     right: l + w,
                     bottom: t + h,
-                    isTableContainer: isTable
+                    isTableContainer: isTable,
+                    isLine: isLine,
+                    lineDir: lineDir
                 });
             });
 
@@ -1121,6 +1647,7 @@ window.v4ResponsiveSmartGuideScript = `
         },
 
         init: function() {
+            this.bindAltInspectEvents();
             console.log("[ResponsiveSmartGuide 2.0] Raycast engine loaded.");
         }
     };

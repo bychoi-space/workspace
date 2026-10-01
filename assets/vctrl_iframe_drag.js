@@ -38,7 +38,7 @@ window.v4DragResizeScript = `
             startTop = t;
             startRect = window.activeEl.getBoundingClientRect();
 
-            if (h || e.target.tagName === 'IMG' || e.target.closest('img') || e.target.closest('.v4-editable-cell')) {
+            if (h || e.target.tagName === 'IMG' || e.target.closest('img') || e.target.closest('.v4-editable-cell') || e.target.tagName === 'BUTTON' || e.target.closest('button')) {
                 e.preventDefault();
             }
         },
@@ -49,6 +49,12 @@ window.v4DragResizeScript = `
                 if (dist >= DRAG_THRESHOLD) {
                     isPendingDrag = false;
                     isDragging = true;
+                    if (window.TableSelection) {
+                        window.TableSelection.isDragging = false;
+                    }
+                    if (window.getSelection) {
+                        try { window.getSelection().removeAllRanges(); } catch(selErr) {}
+                    }
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
                     const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
                     if (!isResp) {
@@ -194,9 +200,20 @@ window.v4DragResizeScript = `
             if (isDragging && window.activeEl) {
                 const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
                 if (isResp) {
-                    window.ResponsiveSmartGuide.onSelect(window.activeEl, 2000);
+                    window.ResponsiveSmartGuide.onSelect(window.activeEl, 7000);
                 } else {
-                    notifyParent({ type: 'LF_SNAP_END' });
+                    const compW = window.activeEl.offsetWidth || 100;
+                    const compH = window.activeEl.offsetHeight || 40;
+                    const compL = parseFloat(window.activeEl.style.left) || 0;
+                    const compT = parseFloat(window.activeEl.style.top) || 0;
+                    notifyParent({
+                        type: 'LF_SNAP_END',
+                        id: window.activeEl.id,
+                        x: compL,
+                        y: compT,
+                        w: compW,
+                        h: compH
+                    });
                 }
 
                 // Responsive Drop: Intelligent In-Frame Preservation & Cross-Frame Reparenting
@@ -266,7 +283,9 @@ window.v4DragResizeScript = `
                 }
                 
                 if (window.activeEl.classList.contains('text-marker') || window.activeEl.classList.contains('pin-marker')) {
-                    const frameType = window.activeEl.getAttribute('data-frame') || (window.activeEl.closest && window.activeEl.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (window.activeEl.closest && window.activeEl.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : ''));
+                    const frameType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
+                        ? window.ResponsiveFrameUtils.getFrameType(window.activeEl)
+                        : (window.activeEl.getAttribute('data-frame') || (window.activeEl.closest && window.activeEl.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (window.activeEl.closest && window.activeEl.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : '')));
                     let idx = parseInt(window.activeEl.getAttribute('data-index'));
                     if (isNaN(idx)) {
                         idx = parseInt(window.activeEl.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
@@ -307,7 +326,9 @@ window.v4DragResizeScript = `
             isPendingDrag = false;
             isDragging = false;
             isResizing = false;
-            window.activeEl = null;
+            if (!document.querySelector('.lf-component.selected')) {
+                window.activeEl = null;
+            }
             groupChildrenStart = null;
         },
         

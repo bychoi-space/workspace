@@ -42,6 +42,7 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'Table', key: 'v4TableScript' },
     { name: 'TextMeasurer', key: 'v4TextMeasurerScript' },
     { name: 'UIAtoms', key: 'v4UIAtomsScript' },
+    { name: 'UIAtomsCursor', key: 'v4UIAtomsCursorScript' },
     { name: 'DesignSystem', key: 'v4DesignSystemScript' },
     { name: 'ClipboardObjects', key: 'v4ClipboardObjectsScript' },
     { name: 'FormatPainter', key: 'v4FormatPainterScript' },
@@ -82,11 +83,9 @@ function getInlinedEngineScript() {
     return _cachedEngineScriptBlock;
 }
 
-// --- Core Logic ---
-window.loadScreen = async function (fileName) {
-    // Engine script cache is preserved across screen transitions for instant rendering.
-    // Call window.invalidateEngineScriptCache() explicitly if engine scripts change dynamically.
-    const DOM = window.DOM || {};
+// --- Screen Loading Sub-modules ---
+
+function _prepareScreenViewport(DOM, fileName) {
     if (DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
     if (DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
     if (DOM.canvas) DOM.canvas.classList.remove('hand-active');
@@ -98,15 +97,33 @@ window.loadScreen = async function (fileName) {
 
     if (typeof window.showLoading === 'function') window.showLoading("Loading: " + fileName);
     if (DOM.placeholder) DOM.placeholder.style.display = 'none';
+}
 
-    const content = await fetchProjectFileContent(state.currentProject, fileName);
-    if (!content) {
-        if (typeof window.hideLoading === 'function') window.hideLoading();
-        if (DOM.placeholder) DOM.placeholder.style.display = 'flex';
-        if (DOM.placeholderTxt) DOM.placeholderTxt.innerText = "파일을 불러오지 못했습니다.";
-        return;
-    }
+function _detectScreenResponsive(fileName, content) {
+    return Boolean(
+        (fileName && (
+            fileName.toLowerCase().includes('responsive') ||
+            fileName.toLowerCase().includes('mobile_compare') ||
+            fileName.toLowerCase().includes('admin_pc')
+        )) ||
+        content.includes('pc-browser-frame') ||
+        content.includes('class="pc-frame"') ||
+        content.includes('pc-content-area') ||
+        content.includes('mobile-compare-page') ||
+        content.includes('mobile-content-area') ||
+        content.includes('pc-content-inner') ||
+        content.includes('mobile-content-inner') ||
+        content.includes('frame-column') ||
+        (state.projectMetadata && state.projectMetadata.screens && (
+            state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html' ||
+            state.projectMetadata.screens[fileName]?.template === 'template_responsive_mobile_compare.html'
+        ))
+    );
+}
 
+function _compileScreenHtml(content, fileName, isResponsive) {
     let finalContent = content;
 
     // Ensure Pretendard Variable WebFont CDN is loaded in iframe head
@@ -124,26 +141,6 @@ window.loadScreen = async function (fileName) {
     }
 
     // Inject Scoped Responsive Frame Styles ONLY into authentic Responsive templates/screens
-    const isResponsive = Boolean(
-        (fileName && (
-            fileName.toLowerCase().includes('responsive') ||
-            fileName.toLowerCase().includes('mobile_compare') ||
-            fileName.toLowerCase().includes('admin_pc')
-        )) ||
-        content.includes('pc-browser-frame') ||
-        content.includes('pc-content-area') ||
-        content.includes('mobile-compare-page') ||
-        content.includes('mobile-content-area') ||
-        content.includes('pc-content-inner') ||
-        content.includes('mobile-content-inner') ||
-        content.includes('frame-column') ||
-        (state.projectMetadata && state.projectMetadata.screens && (
-            state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_responsive_mobile_compare.html'
-        ))
-    );
     if (isResponsive && window.responsiveFrameStyles) {
         const scopedBlock = '<style id="v4-responsive-frame-style">\n' + window.responsiveFrameStyles + '\n</style>';
         finalContent = finalContent.replace(/<style id="v4-responsive-frame-style">[\s\S]*?<\/style>/gi, '');
@@ -152,15 +149,13 @@ window.loadScreen = async function (fileName) {
 
     // Inject/Update Script
     const scriptBlock = getInlinedEngineScript();
-
-    // Forcefully strip out any existing inlined scripts of our engine to avoid duplicates or stale code
     finalContent = finalContent.replace(/<script id="v4-inlined-script">[\s\S]*?<\/script>/gi, '');
 
     // Fast and safe script stripping loop to prevent ReDoS / catastrophic backtracking on large HTML screens
     const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
     const keywords = [
         'V4UndoManager', 'reorderAllPins', 'v4Script', 'v4ShortcutsScript',
-        'v4DesignSystemScript', 'v4TextMeasurerScript', 'v4UIAtomsScript',
+        'v4DesignSystemScript', 'v4TextMeasurerScript', 'v4UIAtomsScript', 'v4UIAtomsCursorScript',
         'v4CommonScript', 'v4ObjectTextScript', 'v4ObjectShapeScript',
         'v4ObjectTableScript', 'v4ObjectConnectorScript', 'v4ConnectorScript',
         'v4GridScript', 'v4AccordionScript', 'v4TabScript', 'v4ResponsivePinsScript', 'spawnResponsiveDualPins',
@@ -184,121 +179,88 @@ window.loadScreen = async function (fileName) {
         finalContent = syncCoverMetadata(finalContent, state.projectMetadata, false, fileName);
     }
 
-    const isResponsiveScreen = Boolean(
-        (state.projectMetadata && state.projectMetadata.screens && (
-            state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_responsive_mobile_compare.html'
-        )) || 
-        content.includes('pc-browser-frame') || 
-        content.includes('class="pc-frame"') || 
-        content.includes('mobile-compare-page') ||
-        content.includes('frame-column') ||
-        content.includes('pc-content-inner') ||
-        content.includes('mobile-content-inner') ||
-        (fileName && (
-            fileName.toLowerCase().includes('responsive') ||
-            fileName.toLowerCase().includes('mobile_compare') ||
-            fileName.toLowerCase().includes('admin_pc')
-        ))
-    );
+    return finalContent;
+}
 
-    state.isCurrentResponsiveScreen = isResponsiveScreen;
+function _mountScreenIframe(iframe, finalContent, isResponsive, DOM) {
+    if (window.DOM && !window.DOM.iframe) window.DOM.iframe = iframe;
+    if (isResponsive) {
+        iframe.classList.add('borderless-artboard');
+    } else {
+        iframe.classList.remove('borderless-artboard');
+    }
 
-    const btnResponsiveGrid = document.getElementById('btn-toggle-responsive-grid');
-    if (btnResponsiveGrid) {
-        if (isResponsiveScreen) {
-            btnResponsiveGrid.style.display = 'inline-flex';
+    // Dynamic Screen-Aware Viewport: detect canvas width/height from screen HTML or fallback to 1600x900
+    let screenW = 1600;
+    let screenH = 900;
+    const pageMatch = finalContent.match(/(?:\.page|\.artboard)\s*\{[^\x7D]*width:\s*(\d+)px[^}]*height:\s*(\d+)px/i);
+    if (pageMatch) {
+        screenW = parseInt(pageMatch[1], 10) || 1600;
+        screenH = parseInt(pageMatch[2], 10) || 900;
+    } else {
+        const widthMatch = finalContent.match(/(?:\.page|\.artboard)\s*\{[^}]*width:\s*(\d+)px/i);
+        if (widthMatch) screenW = parseInt(widthMatch[1], 10) || 1600;
+    }
+
+    iframe.style.width = screenW + 'px';
+    iframe.style.height = screenH + 'px';
+    const wrapper = (DOM && DOM.artboardWrapper) || document.getElementById('artboard-wrapper');
+    if (wrapper) {
+        wrapper.style.width = screenW + 'px';
+        wrapper.style.height = screenH + 'px';
+    }
+
+    iframe.srcdoc = finalContent;
+    iframe.style.display = 'block';
+
+    const loadTimeout = setTimeout(() => {
+        if (typeof window.hideLoading === 'function') window.hideLoading();
+    }, 3000);
+
+    iframe.onload = () => {
+        clearTimeout(loadTimeout);
+        if (typeof window.hideLoading === 'function') window.hideLoading();
+        iframe.onload = null;
+
+        if (isResponsive && iframe.contentWindow) {
             const isGridVisible = localStorage.getItem('responsive_grid_visible') !== 'false';
-            if (typeof window.updateResponsiveGridBtnUI === 'function') {
-                window.updateResponsiveGridBtnUI(isGridVisible);
-            }
-        } else {
-            btnResponsiveGrid.style.display = 'none';
-        }
-    }
-
-    const iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe');
-    if (iframe) {
-        if (window.DOM && !window.DOM.iframe) window.DOM.iframe = iframe;
-        if (isResponsiveScreen) {
-            iframe.classList.add('borderless-artboard');
-        } else {
-            iframe.classList.remove('borderless-artboard');
-        }
-
-        // Dynamic Screen-Aware Viewport: detect canvas width/height from screen HTML or fallback to 1600x900
-        let screenW = 1600;
-        let screenH = 900;
-        const pageMatch = finalContent.match(/(?:\.page|\.artboard)\s*\{[^\x7D]*width:\s*(\d+)px[^}]*height:\s*(\d+)px/i);
-        if (pageMatch) {
-            screenW = parseInt(pageMatch[1], 10) || 1600;
-            screenH = parseInt(pageMatch[2], 10) || 900;
-        } else {
-            const widthMatch = finalContent.match(/(?:\.page|\.artboard)\s*\{[^}]*width:\s*(\d+)px/i);
-            if (widthMatch) screenW = parseInt(widthMatch[1], 10) || 1600;
-        }
-
-        iframe.style.width = screenW + 'px';
-        iframe.style.height = screenH + 'px';
-        const wrapper = (DOM && DOM.artboardWrapper) || document.getElementById('artboard-wrapper');
-        if (wrapper) {
-            wrapper.style.width = screenW + 'px';
-            wrapper.style.height = screenH + 'px';
-        }
-
-        iframe.srcdoc = finalContent;
-        iframe.style.display = 'block';
-
-        const loadTimeout = setTimeout(() => {
-            if (typeof window.hideLoading === 'function') window.hideLoading();
-        }, 3000);
-
-        iframe.onload = () => {
-            clearTimeout(loadTimeout);
-            if (typeof window.hideLoading === 'function') window.hideLoading();
-            iframe.onload = null;
-
-            if (isResponsiveScreen && iframe.contentWindow) {
-                const isGridVisible = localStorage.getItem('responsive_grid_visible') !== 'false';
-                setTimeout(() => {
-                    if (window.MessageHub) {
-                        MessageHub.send(iframe.contentWindow, 'LF_SET_RESPONSIVE_GRID', { visible: isGridVisible });
-                    }
-                }, 80);
-            }
-
-            // Phase 3: Import legacy description pins ONCE, then render sidebar list
-            if (isResponsiveScreen && iframe.contentWindow) {
-                const descList = state.activeFile?.meta?.description || [];
-                setTimeout(() => {
-                    if (window.MessageHub) {
-                        MessageHub.send(iframe.contentWindow, 'LF_IMPORT_RESPONSIVE_PINS', { pins: descList });
-                    }
-                }, 80);
-            } else {
-                const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'pin' || p.type === 'text' || p.text || p.html);
-                if (iframe.contentWindow) {
-                    setTimeout(() => {
-                        iframe.contentWindow.postMessage({ type: 'LF_IMPORT_PINS', pins: legacyPins }, '*');
-                    }, 80);
-                }
-            }
-            if (typeof window.renderDescriptionList === 'function') {
-                setTimeout(window.renderDescriptionList, 100);
-            }
-
-            // [Bug Fix 2] Recalculate center scale after layout has fully settled in iframe.
             setTimeout(() => {
-                if (typeof window.centerView === 'function') {
-                    window.centerView();
-                    console.log('[INIT] Layout settled, ran centerView.');
+                if (window.MessageHub) {
+                    MessageHub.send(iframe.contentWindow, 'LF_SET_RESPONSIVE_GRID', { visible: isGridVisible });
                 }
-            }, 150);
-        };
-    }
+            }, 80);
+        }
 
+        // Import legacy or responsive description pins ONCE, then render sidebar list
+        if (isResponsive && iframe.contentWindow) {
+            const descList = state.activeFile?.meta?.description || [];
+            setTimeout(() => {
+                if (window.MessageHub) {
+                    MessageHub.send(iframe.contentWindow, 'LF_IMPORT_RESPONSIVE_PINS', { pins: descList });
+                }
+            }, 80);
+        } else {
+            const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'pin' || p.type === 'text' || p.text || p.html);
+            if (iframe.contentWindow) {
+                setTimeout(() => {
+                    iframe.contentWindow.postMessage({ type: 'LF_IMPORT_PINS', pins: legacyPins }, '*');
+                }, 80);
+            }
+        }
+        if (typeof window.renderDescriptionList === 'function') {
+            setTimeout(window.renderDescriptionList, 100);
+        }
+
+        setTimeout(() => {
+            if (typeof window.centerView === 'function') {
+                window.centerView();
+                console.log('[INIT] Layout settled, ran centerView.');
+            }
+        }, 150);
+    };
+}
+
+function _syncScreenStateAndMetadata(fileName, content, DOM) {
     let scMeta = (state.projectMetadata.screens || {})[fileName] || {};
     if (!scMeta.description || !Array.isArray(scMeta.description)) {
         scMeta.description = (typeof scMeta.description === 'string' && scMeta.description.trim())
@@ -326,6 +288,44 @@ window.loadScreen = async function (fileName) {
     }
 
     setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 150);
+}
+
+// --- Core Screen Loader Coordinator ---
+window.loadScreen = async function (fileName) {
+    const DOM = window.DOM || {};
+    _prepareScreenViewport(DOM, fileName);
+
+    const content = await fetchProjectFileContent(state.currentProject, fileName);
+    if (!content) {
+        if (typeof window.hideLoading === 'function') window.hideLoading();
+        if (DOM.placeholder) DOM.placeholder.style.display = 'flex';
+        if (DOM.placeholderTxt) DOM.placeholderTxt.innerText = "파일을 불러오지 못했습니다.";
+        return;
+    }
+
+    const isResponsive = _detectScreenResponsive(fileName, content);
+    state.isCurrentResponsiveScreen = isResponsive;
+
+    const btnResponsiveGrid = document.getElementById('btn-toggle-responsive-grid');
+    if (btnResponsiveGrid) {
+        if (isResponsive) {
+            btnResponsiveGrid.style.display = 'inline-flex';
+            const isGridVisible = localStorage.getItem('responsive_grid_visible') !== 'false';
+            if (typeof window.updateResponsiveGridBtnUI === 'function') {
+                window.updateResponsiveGridBtnUI(isGridVisible);
+            }
+        } else {
+            btnResponsiveGrid.style.display = 'none';
+        }
+    }
+
+    const finalContent = _compileScreenHtml(content, fileName, isResponsive);
+    const iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe');
+    if (iframe) {
+        _mountScreenIframe(iframe, finalContent, isResponsive, DOM);
+    }
+
+    _syncScreenStateAndMetadata(fileName, content, DOM);
 };
 
 // Screen deletion is managed by vctrl_screen_manager.js (SSOT). Fallback guard maintained.
@@ -333,937 +333,47 @@ if (typeof window.handleDeleteScreen !== 'function') {
     window.handleDeleteScreen = (name, sha) => window.ScreenManager?.handleDeleteScreen?.(name, sha);
 }
 
-window.insertAtomicComponent = function (type, name) {
-    if (window.ComponentInserter && typeof window.ComponentInserter.insertAtomicComponent === 'function') {
-        return window.ComponentInserter.insertAtomicComponent(type, name);
+// Component insertion is managed by assets/vctrl_component_inserter.js (SSOT).
+
+// Pin & Text Creation Lifecycle Engine (Decoupled to assets/vctrl_annotation_pins.js SSOT)
+window.getCascadedPosition = function (startX, startY) {
+    if (window.AnnotationPins && typeof window.AnnotationPins.getCascadedPosition === 'function') {
+        return window.AnnotationPins.getCascadedPosition(startX, startY);
     }
+    return { x: startX || 120, y: startY || 300 };
 };
-
-// Note: insertV4ComponentById is now handled by vctrl_v4_addon.js for modularity.
-
-window.getCascadedPosition = function (startX = 120, startY = 300) {
-    let x = startX, y = startY;
-    const step = 25;
-    const list = state.activeFile?.meta.description || [];
-    let isOccupied = true;
-    let attempts = 0;
-    while (isOccupied && attempts < 15) {
-        isOccupied = list.some(item => item.type === 'text' && Math.abs(item.x - x) < 20 && Math.abs(item.y - y) < 20);
-        if (isOccupied) { x += step; y += step; attempts++; if (x > 340 || y > 750) { x = startX; y = startY; break; } }
-    }
-    return { x, y };
-};
-
-
 
 window.handleTextCreation = function () {
-    if (state.isReadOnly) return window.showAuthModal?.();
-    if (!state.activeFile) return window.Notification?.alert("스크린을 선택해주세요.", "알림", "warning");
-
-    if (!state.activeFile.meta.description) {
-        state.activeFile.meta.description = [];
+    if (window.AnnotationPins && typeof window.AnnotationPins.handleTextCreation === 'function') {
+        return window.AnnotationPins.handleTextCreation();
     }
-
-    const isMobileCompare = (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html');
-    const isResponsive = !!(state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || isMobileCompare);
-    const newIdx = state.activeFile.meta.description.length;
-
-    if (isResponsive) {
-        const initialPins = isMobileCompare ? {
-            left: { x: 170, y: 250, active: true },
-            right: { x: 170, y: 250, active: true },
-            pc: { x: 170, y: 250, active: true },
-            mobile: { x: 170, y: 250, active: true }
-        } : {
-            pc: { x: 500, y: 300, active: true },
-            mobile: { x: 180, y: 300, active: true }
-        };
-
-        state.activeFile.meta.description.push({
-            type: "pin",
-            target: "frame",
-            text: "Edit Text",
-            html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-            x: isMobileCompare ? 170 : 500,
-            y: isMobileCompare ? 250 : 300,
-            pins: initialPins,
-            standardized: true
-        });
-
-        if (typeof window.renderDescriptionList === 'function') {
-            window.renderDescriptionList();
-        }
-
-        const DOM = window.DOM || {};
-        if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-            MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_RESPONSIVE_PINS', {
-                index: newIdx,
-                number: newIdx + 1,
-                isMobileCompare: isMobileCompare
-            });
-        }
-    } else {
-        state.activeFile.meta.description.push({
-            type: "pin",
-            text: "Edit Text",
-            html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-            x: 670,
-            y: 430,
-            standardized: true
-        });
-
-        if (typeof window.renderDescriptionList === 'function') {
-            window.renderDescriptionList();
-        }
-
-        if (window.ComponentInserter && typeof window.ComponentInserter.insertTextComponent === 'function') {
-            window.ComponentInserter.insertTextComponent(newIdx);
-        } else if (typeof window.insertV4ComponentById === 'function') {
-            window.insertV4ComponentById('v4-tool-text', newIdx);
-        } else {
-            console.error("[V4 Core] insertTextComponent not available for Text Creation.");
-        }
-    }
-    markAsDirty();
 };
 
-// Textbox Creation (NOT a description pin - pure editable text box on canvas)
 window.handleTextboxCreation = function () {
-    if (state.isReadOnly) return window.showAuthModal?.();
-    if (!state.activeFile) return window.Notification?.alert("스크린을 선택해주세요.", "알림", "warning");
-
-    if (window.ComponentInserter && typeof window.ComponentInserter.insertTextComponent === 'function') {
-        window.ComponentInserter.insertTextComponent();
-    } else if (typeof window.insertV4ComponentById === 'function') {
-        window.insertV4ComponentById('v4-tool-text');
-    } else {
-        console.error("[V4 Core] insertTextComponent not available for Textbox Creation.");
-    }
-    markAsDirty();
-};
-
-window.getIframeHTML = async function () {
-    const isFileProtocol = window.location.protocol === 'file:';
-
-    if (!isFileProtocol) {
-        try {
-            if (DOM.iframe && DOM.iframe.contentDocument) {
-                const doc = DOM.iframe.contentDocument;
-
-                // [Form Value SSOT Sync] Commit all live form input values to attributes before clone
-                doc.querySelectorAll('input').forEach(inp => {
-                    if (inp.type === 'checkbox' || inp.type === 'radio') {
-                        if (inp.checked) inp.setAttribute('checked', '');
-                        else inp.removeAttribute('checked');
-                    } else {
-                        inp.setAttribute('value', inp.value);
-                    }
-                });
-                doc.querySelectorAll('textarea').forEach(ta => {
-                    ta.textContent = ta.value;
-                });
-                doc.querySelectorAll('select').forEach(sel => {
-                    Array.from(sel.options).forEach(opt => {
-                        if (opt.selected) opt.setAttribute('selected', '');
-                        else opt.removeAttribute('selected');
-                    });
-                });
-
-                const clone = doc.documentElement.cloneNode(true);
-                if (window.ScreenSanitizer && typeof window.ScreenSanitizer.cleanDOM === 'function') {
-                    window.ScreenSanitizer.cleanDOM(clone);
-                }
-                return "<!DOCTYPE html>\n" + clone.outerHTML;
-            }
-        } catch (e) {
-            console.warn("[Security] Direct iframe access failed, switching to message fallback.");
-        }
-    }
-
-    return new Promise((resolve) => {
-        const handler = (e) => {
-            if (e.data.type === 'LF_SAVE_CONTENT_RESPONSE') {
-                window.removeEventListener('message', handler);
-                resolve(e.data.html);
-            }
-        };
-        window.addEventListener('message', handler);
-        if (DOM.iframe && DOM.iframe.contentWindow) {
-            DOM.iframe.contentWindow.postMessage({ type: 'LF_REQUEST_SAVE_CONTENT' }, '*');
-        } else {
-            window.removeEventListener('message', handler);
-            resolve(null);
-        }
-        setTimeout(() => {
-            window.removeEventListener('message', handler);
-            resolve(null);
-        }, 2500);
-    });
-};
-
-window.handleGlobalSave = async function (explicitReason = "") {
-    const btn = document.getElementById('btn-global-save');
-    if (!btn || btn.disabled) return;
-
-    if (state.isReadOnly) return window.showAuthModal?.();
-
-    // 1. Revision message handling (Default "" for silent fast save; history is managed via dedicated modal)
-    let changeMsg = typeof explicitReason === 'string' ? explicitReason.trim() : "";
-
-    const overlay = document.getElementById('save-overlay');
-    const originalHTML = btn.innerHTML;
-
-    // Save Overlay Lifecycle Controllers
-    const showSaveOverlay = () => {
-        if (!overlay) return;
-        overlay.style.display = 'flex';
-        requestAnimationFrame(() => {
-            overlay.classList.add('active');
-            overlay.style.opacity = '1';
-            overlay.style.visibility = 'visible';
-            overlay.style.pointerEvents = 'all';
-        });
-    };
-
-    const hideSaveOverlay = () => {
-        if (!overlay) return;
-        overlay.classList.remove('active');
-        overlay.style.opacity = '0';
-        overlay.style.visibility = 'hidden';
-        overlay.style.pointerEvents = 'none';
-        setTimeout(() => {
-            if (!overlay.classList.contains('active')) {
-                overlay.style.display = 'none';
-            }
-        }, 250);
-    };
-
-    // 15-second safety failsafe timer to prevent infinite lock
-    let saveTimeoutId = setTimeout(() => {
-        console.warn("[Save] Operation exceeded 15s timeout limit. Forcing save overlay dismissal.");
-        hideSaveOverlay();
-        if (btn) {
-            btn.innerHTML = originalHTML;
-            btn.style.removeProperty('background');
-            btn.style.position = '';
-            btn.style.overflow = '';
-            btn.disabled = false;
-        }
-        if (typeof window.showToast === 'function') {
-            window.showToast("저장 응답 시간이 초과되었습니다. 네트워크 상태를 확인해주세요.", "warning");
-        }
-    }, 15000);
-
-    try {
-        if (state.isEditing && typeof window.closeActiveEditor === 'function') {
-            window.closeActiveEditor(true);
-        }
-
-        // Show premium glassmorphic lock overlay (Centered)
-        showSaveOverlay();
-
-        btn.disabled = true;
-        btn.style.position = 'relative';
-        btn.style.overflow = 'hidden';
-        btn.innerHTML = `<span class="material-icons-outlined" style="font-size:15px;">save</span> 저장 중..<span id="save-loading-bar" style="position:absolute; left:0; bottom:0; height:3px; width:0%; background:rgba(255,255,255,0.9); border-radius:0 0 8px 8px; transition:width 2.5s cubic-bezier(0.4,0,0.2,1);"></span>`;
-
-        requestAnimationFrame(() => {
-            const bar = document.getElementById('save-loading-bar');
-            if (bar) bar.style.width = '90%';
-        });
-
-        // 2. Format DateTime KST (Unified with window.getFormattedKST SSOT)
-        const updatedTimeStr = typeof window.getFormattedKST === 'function' 
-            ? window.getFormattedKST() 
-            : new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-        const projectMeta = {
-            title: document.getElementById('viewer-meta-title')?.value || '',
-            assignee: document.getElementById('viewer-meta-assignee')?.value || '',
-            developer: document.getElementById('viewer-meta-developer')?.value || '',
-            period: document.getElementById('viewer-meta-period')?.value || '',
-            figmaUrl: state.projectMetadata?.figmaUrl || '',
-            notionUrl: state.projectMetadata?.notionUrl || '',
-            updated: updatedTimeStr
-        };
-
-        let htmlContent = await getIframeHTML();
-
-        // 3. Determine Project Version & Revision auto-increment
-        let historyList = [];
-        if (typeof window.fetchProjectHistory === 'function' && state.currentProject) {
-            try {
-                historyList = await window.fetchProjectHistory(state.currentProject);
-            } catch (err) {
-                console.warn("[Save] Failed to fetch project history for version calculation:", err);
-            }
-        }
-
-        let currentLatestVer = 0.1;
-        if (state.projectMetadata && state.projectMetadata.version !== undefined) {
-            currentLatestVer = parseFloat(state.projectMetadata.version) || 0.1;
-        }
-        if (Array.isArray(historyList) && historyList.length > 0 && historyList[0].version !== undefined) {
-            const parsedHistoryVer = parseFloat(String(historyList[0].version).replace(/[^0-9.]/g, ''));
-            if (!isNaN(parsedHistoryVer) && parsedHistoryVer > 0) {
-                currentLatestVer = Math.max(currentLatestVer, parsedHistoryVer);
-            }
-        }
-
-        let nextVer = currentLatestVer;
-        if (changeMsg) {
-            // 새 재개정 사유가 입력된 경우에만 프로젝트 버전 +0.1 증가
-            nextVer = parseFloat((currentLatestVer + 0.1).toFixed(1));
-        }
-        projectMeta.version = nextVer;
-
-        const activeFileName = state.activeFile ? state.activeFile.name : null;
-        const isCoverScreenSave = activeFileName && ((state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]?.type === 'cover') || (htmlContent && (htmlContent.includes('cover-version') || htmlContent.includes('cover-jira-id'))));
-
-        if (htmlContent && isCoverScreenSave) {
-            // Sync all cover metadata with unified nextVer
-            htmlContent = syncCoverMetadata(htmlContent, Object.assign({}, state.projectMetadata, projectMeta, { version: nextVer }), false, activeFileName);
-        } else if (htmlContent && htmlContent.includes('cover-jira-id')) {
-            const jiraValue = projectMeta.jira || '-';
-            htmlContent = htmlContent.replace(/(<div[^>]*id="cover-jira-id"[^>]*>)[^<]*(<\/div>)/i, `$1${jiraValue}$2`);
-        }
-
-        const success = await updateScreenMetadata(state.currentProject, activeFileName, {
-            projectMeta,
-            htmlContent,
-            version: nextVer,
-            description: state.activeFile ? state.activeFile.meta.description : [],
-            existingMetadata: state.projectMetadata
-        }, () => { });
-
-        const bar = document.getElementById('save-loading-bar');
-        if (bar) { bar.style.transition = 'width 0.3s ease'; bar.style.width = '100%'; }
-
-        await new Promise(r => setTimeout(r, 300));
-
-        // Hide overlay smoothly on completion
-        hideSaveOverlay();
-
-        if (success) {
-            markAsClean();
-            Object.assign(state.projectMetadata, projectMeta);
-            state.projectMetadata.version = nextVer;
-            if (activeFileName && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]) {
-                state.projectMetadata.screens[activeFileName].version = nextVer;
-            }
-            if (projectMeta.title && DOM.fileName) DOM.fileName.innerText = projectMeta.title;
-
-            // 실시간 좌측 하단 UI 업데이트
-            const updatedTxt = document.getElementById('meta-updated-txt');
-            if (updatedTxt) {
-                updatedTxt.innerText = `최종 업데이트: ${updatedTimeStr}`;
-            }
-
-            if (typeof window.showToast === 'function') {
-                window.showToast("저장이 성공적으로 완료되었습니다.", "success");
-            }
-
-            // history.json 이력 저장 처리
-            try {
-                if (changeMsg) {
-                    const historyEntry = {
-                        date: updatedTimeStr,
-                        file: activeFileName || 'n/a',
-                        version: nextVer,
-                        assignee: projectMeta.assignee,
-                        developer: projectMeta.developer,
-                        message: changeMsg
-                    };
-
-                    if (typeof window.saveProjectHistory === 'function') {
-                        historyList.unshift(historyEntry); // 최신이 가장 위로
-                        await window.saveProjectHistory(state.currentProject, historyList, null);
-                    }
-                } else {
-                    console.log("[Save] Save completed without writing history (reason is empty).");
-                }
-            } catch (err) {
-                console.error("Failed to append project revision history:", err);
-            }
-
-            btn.style.setProperty('background', 'linear-gradient(135deg, #22c55e, #16a34a)', 'important');
-            btn.innerHTML = `<span class="material-icons-outlined" style="font-size:15px;">check_circle</span> 저장 완료`;
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.style.removeProperty('background');
-                btn.style.position = '';
-                btn.style.overflow = '';
-                btn.disabled = false;
-            }, 1500);
-        } else {
-            throw new Error("GitHub API 반영에 실패했습니다.");
-        }
-    } catch (err) {
-        console.error("[Save Error]", err);
-        hideSaveOverlay();
-        if (btn) {
-            btn.innerHTML = `<span class="material-icons-outlined" style="font-size:15px;">error</span> 저장 실패`;
-            btn.style.setProperty('background', '#ef4444', 'important');
-            setTimeout(() => {
-                btn.innerHTML = `<span class="material-icons-outlined" style="font-size:13px;">save</span> 전체 저장`;
-                btn.style.removeProperty('background');
-                btn.style.position = '';
-                btn.style.overflow = '';
-                btn.disabled = false;
-            }, 1500);
-        }
-        if (typeof window.showToast === 'function') {
-            window.showToast(err.message || "저장 중 오류가 발생했습니다.", "error");
-        }
-        if (window.Notification) window.Notification.alert('저장 중 오류가 발생했습니다: ' + err.message, '오류', 'error');
-    } finally {
-        clearTimeout(saveTimeoutId);
-        hideSaveOverlay();
+    if (window.AnnotationPins && typeof window.AnnotationPins.handleTextboxCreation === 'function') {
+        return window.AnnotationPins.handleTextboxCreation();
     }
 };
 
-// --- State Management ---
-window.MessageHub = {
-    handlers: {},
 
-    // Support multiple subscribers for the same message type
-    subscribe(type, callback) {
-        if (!this.handlers[type]) this.handlers[type] = [];
-        this.handlers[type].push(callback);
-    },
-
-    register(type, callback) {
-        console.warn(`[MessageHub] register() is deprecated. Use subscribe() instead.`);
-        this.subscribe(type, callback);
-    },
-
-    init() {
-        // Global mouseup handler to release active drag/marquee states when releasing mouse outside of iframe
-        window.addEventListener('mouseup', () => {
-            const DOM = window.DOM;
-            if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                DOM.iframe.contentWindow.postMessage({ type: 'LF_PARENT_MOUSEUP' }, '*');
-            }
-        });
-
-        // Modular Parent Core Message Handlers Table Map
-        const v4ParentCoreHandlers = {
-            'LF_FOCUS_PARENT_QUILL': () => {
-                if (window.SmartGuide) window.SmartGuide.clearGuides(true);
-                if (window.quillEditor) {
-                    window.quillEditor.focus();
-                    const length = window.quillEditor.getLength();
-                    window.quillEditor.setSelection(length, 0);
-                }
-            },
-            'LF_SNAP_START': () => {
-                if (window.SmartGuide) {
-                    window.SmartGuide.clearGuides(true);
-                    window.SmartGuide.findSnapTargets();
-                }
-            },
-            'LF_CLEAR_SMARTGUIDE': () => {
-                if (window.SmartGuide) window.SmartGuide.clearGuides(true);
-            },
-            'LF_SNAP_REQUEST': (data, e) => {
-                const DOM = window.DOM;
-                const targetWindow = (DOM && DOM.iframe && DOM.iframe.contentWindow) || e.source;
-                if (window.SmartGuide && targetWindow) {
-                    const snap = window.SmartGuide.calculateSnap(data.x, data.y, data.w, data.h, !!data.isArrowKey, data.activeId);
-                    window.SmartGuide.drawGuides(snap);
-                    MessageHub.send(targetWindow, 'LF_SNAP_RESPONSE', snap);
-                }
-            },
-            'LF_SNAP_END': () => {
-                if (window.SmartGuide) window.SmartGuide.clearGuides();
-            },
-            'LF_DESELECT': () => {
-                if (window.SmartGuide) window.SmartGuide.clearGuides(true);
-            },
-            'LF_RESTORE_CONNECTORS': (data) => {
-                if (window.state && data.connectors) {
-                    window.state.connectors = data.connectors;
-                    if (window.ConnectorEngine) window.ConnectorEngine.redrawAll();
-                }
-            },
-            'LF_TOGGLE_GRID_REQUEST': () => {
-                if (typeof window.toggleResponsiveGrid === 'function') {
-                    window.toggleResponsiveGrid();
-                }
-            },
-            'LF_UPDATE_PIN_POS': (data) => {
-                if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
-                    const pin = window.state.activeFile.meta.description[data.index];
-                    if (pin) {
-                        if (!pin.pins) pin.pins = {};
-                        if (data.frame === 'left') {
-                            pin.pins.left = { x: data.x, y: data.y, active: true };
-                            pin.pins.pc = pin.pins.left;
-                            pin.target = 'frame';
-                            pin.x = data.x;
-                            pin.y = data.y;
-                        } else if (data.frame === 'right') {
-                            pin.pins.right = { x: data.x, y: data.y, active: true };
-                            pin.pins.mobile = pin.pins.right;
-                            pin.target = 'frame';
-                        } else if (data.frame === 'canvas') {
-                            pin.pins.canvas = { x: data.x, y: data.y, active: true };
-                            pin.target = 'canvas';
-                            pin.x = data.x;
-                            pin.y = data.y;
-                        } else if (data.frame === 'mobile') {
-                            pin.pins.mobile = { x: data.x, y: data.y, active: true };
-                            pin.pins.right = pin.pins.mobile;
-                            pin.target = 'frame';
-                        } else if (data.frame === 'pc') {
-                            pin.pins.pc = { x: data.x, y: data.y, active: true };
-                            pin.pins.left = pin.pins.pc;
-                            pin.target = 'frame';
-                            pin.x = data.x;
-                            pin.y = data.y;
-                        } else {
-                            pin.x = data.x;
-                            pin.y = data.y;
-                        }
-                        if (data.standardized) pin.standardized = true;
-                        markAsDirty();
-                    }
-                }
-            },
-            'LF_CREATE_GROUND_PIN': (data) => {
-                if (state.isReadOnly) return;
-                if (!state.activeFile) return;
-                if (!state.activeFile.meta.description) {
-                    state.activeFile.meta.description = [];
-                }
-                const newIdx = state.activeFile.meta.description.length;
-                const posX = Math.round(data.x || 800);
-                const posY = Math.round(data.y || 450);
-
-                state.activeFile.meta.description.push({
-                    type: "pin",
-                    target: "canvas",
-                    text: "Edit Text",
-                    html: "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-                    x: posX,
-                    y: posY,
-                    pins: {
-                        canvas: { x: posX, y: posY, active: true }
-                    },
-                    standardized: true
-                });
-
-                if (typeof window.renderDescriptionList === 'function') {
-                    window.renderDescriptionList();
-                }
-
-                const DOM = window.DOM || {};
-                if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-                    MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_GROUND_PIN', {
-                        index: newIdx,
-                        number: newIdx + 1,
-                        x: posX,
-                        y: posY
-                    });
-                }
-                markAsDirty();
-            },
-            'LF_DELETE_PIN': (data) => {
-                if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
-                    window.state.activeFile.meta.description.splice(data.index, 1);
-                    if (typeof window.renderDescriptionList === 'function') {
-                        window.renderDescriptionList(window.state.activeFile.meta.description);
-                    }
-                    const DOM = window.DOM;
-                    if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                        MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: data.index, pins: window.state.activeFile.meta.description });
-                    }
-                    markAsDirty();
-                }
-            },
-            'LF_TABLE_SIZE_CHANGED': () => {
-                markAsDirty();
-            },
-            'LF_COMP_SELECTED': (data) => {
-                const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));
-                if (window.SmartGuide) {
-                    if (isResponsive) {
-                        window.SmartGuide.clearGuides(true);
-                    } else {
-                        window.SmartGuide.findSnapTargets();
-                    }
-                }
-                const activeEl = document.activeElement;
-                const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-                let isTyping = !isBtn && activeEl && (
-                    activeEl.tagName === 'INPUT' ||
-                    activeEl.tagName === 'TEXTAREA' ||
-                    activeEl.tagName === 'SELECT' ||
-                    activeEl.isContentEditable
-                );
-
-                const isNewSelection = Boolean(data.id && data.id !== state.editingIndex);
-                if (isNewSelection && activeEl && typeof activeEl.blur === 'function') {
-                    activeEl.blur();
-                    isTyping = false;
-                }
-
-                if (data.isDescriptionPin) {
-                    state.isEditing = false;
-                    state.editingIndex = -1;
-                    if (window.state) window.state.selectedComponent = null;
-                    if (!isTyping && typeof window.switchSidebarTab === 'function') window.switchSidebarTab('description');
-                    if (typeof window.focusDescriptionRow === 'function') {
-                        window.focusDescriptionRow(data.pinIndex, false);
-                    }
-                    const DOM = window.DOM;
-                    if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                        try { DOM.iframe.contentWindow.focus(); } catch (err) { }
-                    }
-                } else {
-                    state.isEditing = true;
-                    state.editingIndex = data.id;
-                    if (window.state) {
-                        window.state.selectedComponent = { id: data.id, ...data };
-                    }
-
-                    if (window.GroupingManager) {
-                        let selectedIds = (typeof window.GroupingManager.getSelectedIds === 'function') ? [...window.GroupingManager.getSelectedIds()] : [];
-                        let selectedIdsIsGroupMap = (typeof window.GroupingManager.getSelectedIdsIsGroupMap === 'function') ? { ...window.GroupingManager.getSelectedIdsIsGroupMap() } : {};
-
-                        if (data.shiftKey) {
-                            if (selectedIds.includes(data.id)) {
-                                selectedIds = selectedIds.filter(id => id !== data.id);
-                                delete selectedIdsIsGroupMap[data.id];
-                            } else {
-                                selectedIds.push(data.id);
-                                selectedIdsIsGroupMap[data.id] = !!data.isGroup;
-                            }
-                        } else {
-                            if (selectedIds.length > 1 && selectedIds.includes(data.id)) {
-                                // Keep current multi-selection state
-                            } else {
-                                selectedIds = [data.id];
-                                selectedIdsIsGroupMap = { [data.id]: !!data.isGroup };
-                            }
-                        }
-
-                        if (typeof window.GroupingManager.setSelectedIds === 'function') {
-                            window.GroupingManager.setSelectedIds(selectedIds);
-                        }
-                        if (typeof window.GroupingManager.setSelectedIdsIsGroupMap === 'function') {
-                            window.GroupingManager.setSelectedIdsIsGroupMap(selectedIdsIsGroupMap);
-                        }
-                        if (typeof window.GroupingManager.updateSelectionUI === 'function') {
-                            window.GroupingManager.updateSelectionUI();
-                        }
-
-                        if (window.state) {
-                            window.state.selectedIds = [...selectedIds];
-                        }
-
-                        if (window.SmartGuide) {
-                            if (isResponsive) {
-                                window.SmartGuide.clearGuides(true);
-                            } else if (selectedIds.length === 1 && !data.isConnector && data.id) {
-                                const compW = data.w || data.width || 100;
-                                const compH = data.h || data.height || 40;
-                                window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 2000);
-                            } else if (selectedIds.length > 1) {
-                                window.SmartGuide.clearGuides(true);
-                            }
-                        }
-
-                        const DOM = window.DOM;
-                        if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                            MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
-                        }
-
-                        if (!isTyping) {
-                            if (selectedIds.length === 1) {
-                                if (typeof window.updateProperties === 'function') window.updateProperties(data);
-                            } else {
-                                if (typeof window.updateProperties === 'function') window.updateProperties();
-                            }
-                        }
-                    } else {
-                        if (window.SmartGuide) {
-                            if (isResponsive) {
-                                window.SmartGuide.clearGuides(true);
-                            } else if (!data.shiftKey && !data.isConnector && data.id) {
-                                const compW = data.w || data.width || 100;
-                                const compH = data.h || data.height || 40;
-                                window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 2000);
-                            }
-                        }
-                        if (!isTyping && typeof window.updateProperties === 'function') window.updateProperties(data);
-                    }
-                }
-            },
-            'LF_MULTI_SELECTION_STYLES': (data) => {
-                if (window.state) {
-                    window.state.selectedComponent = { id: data.id, ...data };
-                    window.state.selectedComponentStyles = data;
-                }
-                const activeEl = document.activeElement;
-                const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-                const isTyping = !isBtn && activeEl && (
-                    activeEl.tagName === 'INPUT' ||
-                    activeEl.tagName === 'TEXTAREA' ||
-                    activeEl.tagName === 'SELECT' ||
-                    activeEl.isContentEditable
-                );
-                if (!isTyping && typeof window.updateProperties === 'function') {
-                    window.updateProperties(data);
-                }
-            },
-            'LF_PASTE_COMPLETED': (data) => {
-                try {
-                    if (window.SmartGuide) {
-                        try { window.SmartGuide.findSnapTargets(); } catch (e) { }
-                    }
-                    const activeEl = document.activeElement;
-                    const isTyping = activeEl && (
-                        activeEl.tagName === 'INPUT' ||
-                        activeEl.tagName === 'TEXTAREA' ||
-                        activeEl.tagName === 'SELECT' ||
-                        activeEl.isContentEditable ||
-                        activeEl.closest('#floating-inspector-card') !== null ||
-                        activeEl.closest('#sidebar-right') !== null
-                    );
-                    state.isEditing = true;
-                    const newIds = data.ids || [];
-                    const groupMap = data.selectedIdsIsGroupMap || {};
-
-                    if (newIds.length > 0) {
-                        state.editingIndex = newIds[0];
-                        window.activeCompId = newIds[0];
-                    }
-
-                    const DOM = window.DOM;
-                    if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                        try { DOM.iframe.contentWindow.focus(); } catch (e) { }
-                    }
-
-                    if (window.GroupingManager) {
-                        if (typeof window.GroupingManager.setSelectedIds === 'function') {
-                            window.GroupingManager.setSelectedIds(newIds);
-                        }
-                        if (typeof window.GroupingManager.setSelectedIdsIsGroupMap === 'function') {
-                            window.GroupingManager.setSelectedIdsIsGroupMap(groupMap);
-                        }
-                        if (typeof window.GroupingManager.updateSelectionUI === 'function') {
-                            try { window.GroupingManager.updateSelectionUI(); } catch (e) { }
-                        }
-                        if (window.state) {
-                            window.state.selectedIds = [...newIds];
-                        }
-                        if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                            MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: newIds });
-                        }
-                        if (!isTyping) {
-                            if (newIds.length === 1 && data.firstCompStyles) {
-                                state.selectedComponent = { id: newIds[0], ...data.firstCompStyles };
-                                if (typeof window.updateProperties === 'function') {
-                                    try { window.updateProperties(data.firstCompStyles); } catch (e) { }
-                                }
-                            } else {
-                                state.selectedComponent = null;
-                                if (typeof window.updateProperties === 'function') {
-                                    try { window.updateProperties(); } catch (e) { }
-                                }
-                            }
-                        }
-                    } else {
-                        if (!isTyping && typeof window.updateProperties === 'function') {
-                            if (newIds.length === 1 && data.firstCompStyles) {
-                                state.selectedComponent = { id: newIds[0], ...data.firstCompStyles };
-                            }
-                            try { window.updateProperties(data.firstCompStyles || {}); } catch (e) { }
-                        }
-                    }
-
-                    if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
-                    if (DOM && DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
-                    if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
-                    if (window.state) window.state.isHandMode = false;
-                } catch (pasteErr) {
-                    console.error("[Core] Error in LF_PASTE_COMPLETED handler:", pasteErr);
-                }
-            },
-            'LF_SPACE_DOWN': () => {
-                const DOM = window.DOM;
-                if (DOM && DOM.canvas) DOM.canvas.classList.add('hand-active');
-                if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'none';
-                window.state.isHandMode = true;
-            },
-            'LF_SPACE_UP': () => {
-                const DOM = window.DOM;
-                if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
-                if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
-                window.state.isHandMode = false;
-            },
-            'LF_IFRAME_WHEEL_ZOOM': (data) => {
-                const DOM = window.DOM;
-                if (DOM && DOM.iframe && DOM.canvas && window.state) {
-                    const iframeRect = DOM.iframe.getBoundingClientRect();
-                    const parentClientX = data.clientX + iframeRect.left;
-                    const parentClientY = data.clientY + iframeRect.top;
-
-                    const canvasRect = DOM.canvas.getBoundingClientRect();
-                    const mx = parentClientX - canvasRect.left;
-                    const my = parentClientY - canvasRect.top;
-
-                    const state = window.state;
-                    const s = state.transform.scale;
-                    const ns = Math.max(0.1, Math.min(s * (1 + (data.deltaY > 0 ? -0.1 : 0.1)), 20));
-
-                    state.transform.x = mx - (mx - state.transform.x) * (ns / s);
-                    state.transform.y = my - (my - state.transform.y) * (ns / s);
-                    state.transform.scale = ns;
-                    state.viewMode = 'custom';
-                    if (typeof window.updateTransform === 'function') {
-                        window.updateTransform();
-                    }
-                }
-            },
-            'LF_TOGGLE_CRISP_VIEW': () => {
-                if (typeof window.toggleCrispView === 'function') {
-                    window.toggleCrispView();
-                }
-            },
-            'LF_DIRTY': () => {
-                if (typeof window.markAsDirty === 'function') {
-                    window.markAsDirty();
-                }
-            },
-            'LF_TRIGGER_SAVE': () => {
-                if (typeof window.handleGlobalSave === 'function') {
-                    window.handleGlobalSave();
-                }
-            },
-            'LF_SHOW_TOAST': (data) => {
-                if (typeof window.showToast === 'function') {
-                    window.showToast(data.message, data.toastType || 'info');
-                }
-            },
-            'LF_INSERT_IMAGE_COMP': (data) => {
-                const base64 = data.base64;
-                if (!base64) return;
-                const img = new Image();
-                img.onload = function() {
-                    const origW = img.naturalWidth || 200;
-                    const origH = img.naturalHeight || 200;
-                    const naturalRatio = origW / origH;
-                    let w = origW;
-                    let h = origH;
-                    if (naturalRatio < 0.65) {
-                        w = 320;
-                        h = Math.round(w / naturalRatio);
-                        if (h > 750) {
-                            h = 750;
-                            w = Math.round(h * naturalRatio);
-                        }
-                    } else if (w > 560 || h > 450) {
-                        const scale = Math.min(560 / w, 450 / h);
-                        w = Math.round(w * scale);
-                        h = Math.round(h * scale);
-                    }
-                    if (typeof window.insertImageComponent === 'function') {
-                        window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
-                    }
-                };
-                img.src = base64;
-            }
-        };
-
-        // Parent-side paste event listener for handling pasted image files when parent has focus
-        window.addEventListener('paste', function(e) {
-            const activeEl = document.activeElement;
-            const isInput = activeEl && (activeEl.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) || activeEl.closest('.ql-editor'));
-            if (isInput) return;
-
-            const items = (e.clipboardData || window.clipboardData)?.items;
-            if (!items) return;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf('image') !== -1) {
-                    const file = items[i].getAsFile();
-                    if (!file) continue;
-                    const reader = new FileReader();
-                    reader.onload = function(evt) {
-                        const base64 = evt.target.result;
-                        const img = new Image();
-                        img.onload = function() {
-                            const origW = img.naturalWidth || 200;
-                            const origH = img.naturalHeight || 200;
-                            const naturalRatio = origW / origH;
-                            let w = origW;
-                            let h = origH;
-                            if (naturalRatio < 0.65) {
-                                w = 320;
-                                h = Math.round(w / naturalRatio);
-                                if (h > 750) {
-                                    h = 750;
-                                    w = Math.round(h * naturalRatio);
-                                }
-                            } else if (w > 560 || h > 450) {
-                                const scale = Math.min(560 / w, 450 / h);
-                                w = Math.round(w * scale);
-                                h = Math.round(h * scale);
-                            }
-
-                            if (typeof window.insertImageComponent === 'function') {
-                                window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
-                            }
-                        };
-                        img.src = base64;
-                    };
-                    reader.readAsDataURL(file);
-                    e.preventDefault();
-                    break;
-                }
-            }
-        });
-
-        window.addEventListener('message', (e) => {
-            const data = e.data;
-            if (!data || !data.type) return;
-
-            if (window.DEBUG_MODE) {
-                console.log(`%c[MessageHub] IN: ${data.type}`, "color: #10b981;", data);
-            }
-
-            // Dispatch core handler from table map
-            const coreHandler = v4ParentCoreHandlers[data.type];
-            if (typeof coreHandler === 'function') {
-                coreHandler(data, e);
-            }
-
-            // Call all registered subscribers
-            if (this.handlers[data.type]) {
-                this.handlers[data.type].forEach(callback => {
-                    try {
-                        callback(data);
-                    } catch (err) {
-                        console.error(`[MessageHub] Error in handler for "${data.type}":`, err);
-                    }
-                });
-            }
-        });
-        console.log("[MessageHub] Central message listener active (V2 Modular).");
-    },
-
-    send(targetWindow, type, data = {}) {
-        if (!targetWindow || !targetWindow.postMessage) {
-            console.error("[MessageHub] Invalid target for postMessage.");
-            return;
-        }
-        if (window.DEBUG_MODE) {
-            console.log(`%c[MessageHub] OUT: ${type}`, "color: #3b82f6;", data);
-        }
-        targetWindow.postMessage({ type, ...data }, '*');
+// --- Storage & Saving Engine SSOT (Decoupled to assets/vctrl_storage.js) ---
+window.getIframeHTML = function () {
+    if (window.StorageEngine && typeof window.StorageEngine.getIframeHTML === 'function') {
+        return window.StorageEngine.getIframeHTML();
     }
+    return Promise.resolve(null);
 };
+
+window.handleGlobalSave = function (explicitReason) {
+    if (window.StorageEngine && typeof window.StorageEngine.handleGlobalSave === 'function') {
+        return window.StorageEngine.handleGlobalSave(explicitReason);
+    }
+    return Promise.resolve();
+};
+
+
+// --- MessageHub & Core Router SSOT (Decoupled to assets/vctrl_core_router.js) ---
+
 
 // --- Virtual Undo Manager Proxy (Parent to Child bridge) ---
 window.V4UndoManager = {
@@ -1335,6 +445,281 @@ window.checkEnvironment = function () {
     }
 };
 
+/**
+ * Phase 2 Decomposition: Initializes project metadata, global components, and screen lists
+ */
+async function _initProjectMetadataAndScreens(project, fileNameParam) {
+    const [metadata, globalComps] = await Promise.all([
+        fetchProjectMetadata(project),
+        (typeof fetchGlobalComponents === 'function') ? fetchGlobalComponents() : Promise.resolve([])
+    ]);
+    state.projectMetadata = metadata || {};
+    state.globalComponents = globalComps || [];
+
+    // Synthesize screen list from metadata.json to ensure instant loading without waiting for directory API (CORS/Proxy safe)
+    const order = state.projectMetadata.screenOrder || [];
+    const metaScreens = state.projectMetadata.screens || {};
+    const initialScreens = Object.keys(metaScreens).map(name => ({
+        name: name,
+        type: 'file',
+        sha: metaScreens[name].sha || ''
+    })).sort((a, b) => {
+        const indexA = order.indexOf(a.name);
+        const indexB = order.indexOf(b.name);
+        if (indexA === -1 && indexB === -1) return 0;
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+    });
+
+    state.screens = initialScreens;
+
+    let fileName = fileNameParam;
+    if (!fileName && state.screens.length > 0) {
+        fileName = state.screens[0].name;
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('file', fileName);
+        window.history.replaceState({}, '', newUrl);
+    }
+
+    if (typeof renderScreenList === 'function') renderScreenList(state.screens, fileName);
+    if (typeof renderAtomicLibrary === 'function') renderAtomicLibrary();
+    if (typeof initQuillEditor === 'function') initQuillEditor();
+    if (typeof initResponsiveGridToggle === 'function') initResponsiveGridToggle();
+
+    return { fileName, order };
+}
+
+/**
+ * Phase 2 Decomposition: Fetches repository contents asynchronously to sync SHAs and screen lists
+ */
+function _startBackgroundScreenSync(project, order, currentFileName) {
+    listContents(project).then(contents => {
+        if (contents && contents.length > 0) {
+            const repoScreens = contents.filter(i => i.type === 'file' && i.name.endsWith('.html'));
+            let changed = false;
+            repoScreens.forEach(rs => {
+                const existing = state.screens.find(s => s.name === rs.name);
+                if (existing) {
+                    if (existing.sha !== rs.sha) {
+                        existing.sha = rs.sha;
+                        changed = true;
+                    }
+                } else {
+                    state.screens.push({
+                        name: rs.name,
+                        type: 'file',
+                        sha: rs.sha
+                    });
+                    changed = true;
+                }
+            });
+            if (changed) {
+                state.screens.sort((a, b) => {
+                    const indexA = order.indexOf(a.name);
+                    const indexB = order.indexOf(b.name);
+                    if (indexA === -1 && indexB === -1) return 0;
+                    if (indexA === -1) return 1;
+                    if (indexB === -1) return -1;
+                    return indexA - indexB;
+                });
+                if (typeof renderScreenList === 'function') {
+                    renderScreenList(state.screens, state.activeFile?.name || currentFileName);
+                }
+            }
+        }
+    }).catch(err => console.warn("[V4 Core] Background listContents failed:", err));
+}
+
+/**
+ * Phase 2 Decomposition: Attaches global click delegation handlers for modals, templates, export, and save
+ */
+function _bindGlobalClickDelegates() {
+    console.log("[INIT] Attaching global listeners...");
+    document.addEventListener('click', async (e) => {
+        // 0-1. URL Copy Dropdown & Action Handlers (Delegated to vctrl_clipboard.js)
+        if (window.ClipboardManager && typeof window.ClipboardManager.handleUrlCopyClick === 'function') {
+            if (window.ClipboardManager.handleUrlCopyClick(e)) return;
+        }
+
+        // 0-2. PDF Export Button
+        if (e.target && e.target.closest('#btn-export-project-pdf')) {
+            const currentProj = (typeof state !== 'undefined' && state && state.currentProject)
+                ? state.currentProject
+                : new URLSearchParams(window.location.search).get('project');
+            if (currentProj) {
+                if (typeof exportProjectToPDF === 'function') {
+                    exportProjectToPDF(currentProj, state.projectMetadata || null);
+                } else {
+                    alert("PDF 변환 모듈이 로드되지 않았습니다.");
+                }
+            } else {
+                alert("열려있는 프로젝트가 없습니다.");
+            }
+            return;
+        }
+
+        // 1. Global Save Button
+        if (e.target && e.target.closest('#btn-global-save')) {
+            handleGlobalSave();
+            return;
+        }
+
+        // 2. Submit Add Screen Button
+        if (e.target && e.target.closest('#btn-add-screen-submit')) {
+            e.preventDefault();
+            const btnSubmit = e.target.closest('#btn-add-screen-submit');
+
+            const selectedCard = document.querySelector('.template-card.selected');
+            if (!selectedCard) {
+                window.Notification?.alert("템플릿을 선택해주세요.", "알림", "warning");
+                return;
+            }
+
+            const inputName = document.getElementById('new-screen-name');
+            const screenName = inputName?.value?.trim();
+            if (!screenName) {
+                window.Notification?.alert("화면 이름을 입력해주세요.", "알림", "warning");
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "생성 중..";
+
+            const template = selectedCard.dataset.template;
+            const success = await createScreenFromTemplate(state.currentProject, screenName, template, {
+                PROJECT_TITLE: state.projectMetadata.title || '',
+                PROJECT_NAME: state.projectMetadata.title || '',
+                SCREEN_NAME: screenName,
+                VERSION: '0.1',
+                AUTHOR: state.projectMetadata.assignee || '-',
+                DATE: state.projectMetadata.period || new Date().toLocaleDateString('ko-KR')
+            }, msg => {
+                const placeholderTxt = document.getElementById('placeholder-txt');
+                if (placeholderTxt) placeholderTxt.innerText = msg;
+            });
+
+            if (success) {
+                const targetFilename = screenName.endsWith('.html') ? screenName : `${screenName}.html`;
+                window.location.href = `viewer.html?project=${encodeURIComponent(state.currentProject)}&file=${encodeURIComponent(targetFilename)}`;
+            } else {
+                window.Notification?.alert("화면 생성에 실패했습니다.", "오류", "error");
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "화면 생성하기";
+            }
+            return;
+        }
+
+        // 3. Template Card Selection
+        if (e.target && e.target.closest('.template-card')) {
+            const card = e.target.closest('.template-card');
+            document.querySelectorAll('.template-card').forEach(c => {
+                c.classList.remove('selected');
+                c.classList.remove('active');
+            });
+            card.classList.add('selected');
+            card.classList.add('active');
+
+            const inputName = document.getElementById('new-screen-name');
+            if (inputName) {
+                const defaultName = card.dataset.defaultName || "new_screen";
+                inputName.value = defaultName + "_" + Math.floor(Math.random() * 1000);
+            }
+        }
+
+        // 4. Cancel Edit Screen Button
+        if (e.target && e.target.closest('#btn-edit-screen-cancel')) {
+            e.preventDefault();
+            const editModal = document.getElementById('edit-screen-modal');
+            if (editModal) editModal.classList.remove('active');
+        }
+
+        // 5. Cancel Add Screen Button
+        if (e.target && e.target.closest('#btn-add-screen-cancel')) {
+            e.preventDefault();
+            const addModal = document.getElementById('add-screen-modal');
+            if (addModal) addModal.classList.remove('active');
+        }
+
+        // 6. Cancel Copy Screen Button
+        if (e.target && e.target.closest('#btn-copy-screen-cancel')) {
+            e.preventDefault();
+            const copyModal = document.getElementById('copy-screen-modal');
+            if (copyModal) copyModal.classList.remove('active');
+        }
+    });
+}
+
+/**
+ * Phase 2 Decomposition: Attaches core toolbar, sidebar, and view toggle events
+ */
+function _bindCoreToolbarAndSidebarEvents(DOM) {
+    if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => {
+        const collapsed = DOM.sidebarLeft.classList.toggle('collapsed');
+        const icon = DOM.btnToggleLeft.querySelector('span');
+        if (icon) icon.innerText = collapsed ? 'menu_open' : 'chevron_left';
+        setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 400);
+    };
+    if (DOM.btnToggleRight) DOM.btnToggleRight.onclick = () => {
+        const collapsed = DOM.sidebarRight.classList.toggle('collapsed');
+        const icon = DOM.btnToggleRight.querySelector('span');
+        if (icon) icon.innerText = collapsed ? 'chevron_left' : 'chevron_right';
+        DOM.btnToggleRight.classList.toggle('active', !collapsed);
+        setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 400);
+    };
+
+    if (DOM.btnFullscreen) DOM.btnFullscreen.onclick = () => { if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen(); };
+    if (DOM.btnFullscreenExit) DOM.btnFullscreenExit.onclick = () => { if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen(true); };
+
+    const tabBtns = (DOM && DOM.tabBtns) || document.querySelectorAll('.tab-btn, .sidebar-tab-btn');
+    if (tabBtns) {
+        tabBtns.forEach(btn => {
+            btn.onclick = () => { if (typeof window.switchSidebarTab === 'function') window.switchSidebarTab(btn.dataset.tab); };
+        });
+    }
+
+    // RESTORED: Sidebar Tool Buttons (Text, etc.)
+    if (DOM.sidebarToolBtns) {
+        DOM.sidebarToolBtns.forEach(btn => {
+            const tool = btn.dataset.tool;
+            if (tool) {
+                btn.onclick = () => {
+                    if (tool === 'text') {
+                        if (typeof window.handleTextboxCreation === 'function') window.handleTextboxCreation();
+                    } else if (typeof window.setTool === 'function') {
+                        window.setTool(tool);
+                    }
+                };
+            }
+        });
+    }
+
+    // RESTORED: Top Bar Tool Buttons
+    if (DOM.btnSelect) DOM.btnSelect.onclick = () => window.setTool?.('select');
+    if (DOM.btnHand) DOM.btnHand.onclick = () => window.setTool?.('hand');
+    if (typeof window.initResponsiveGridToggle === 'function') window.initResponsiveGridToggle();
+
+    // RESTORED: Add Screen Modal Logic
+    if (DOM.btnAddScreen) {
+        DOM.btnAddScreen.onclick = () => {
+            if (state.isReadOnly) return window.showAuthModal?.();
+            const realModal = document.getElementById('add-screen-modal');
+            if (realModal) realModal.classList.add('active');
+        };
+    }
+    if (DOM.btnCancelAdd) {
+        DOM.btnCancelAdd.onclick = () => {
+            const realModal = document.getElementById('add-screen-modal');
+            if (realModal) realModal.classList.remove('active');
+        };
+    }
+
+    // Unified Global Keyboard Shortcuts & Event Proxying (Decoupled to assets/vctrl_parent_shortcuts.js)
+    if (window.ParentShortcuts && typeof window.ParentShortcuts.init === 'function') {
+        window.ParentShortcuts.init();
+    }
+}
+
 window.init = async function () {
     try {
         const DOM = window.DOM || {};
@@ -1348,43 +733,9 @@ window.init = async function () {
         state.currentProject = project;
         console.log("[INIT] Target Project:", project);
 
-        // Fetch data
-        const [metadata, globalComps] = await Promise.all([
-            fetchProjectMetadata(project),
-            (typeof fetchGlobalComponents === 'function') ? fetchGlobalComponents() : Promise.resolve([])
-        ]);
-        state.projectMetadata = metadata || {};
-        state.globalComponents = globalComps || [];
-
-        // Synthesize screen list from metadata.json to ensure instant loading without waiting for directory API (CORS/Proxy safe)
-        const order = state.projectMetadata.screenOrder || [];
-        const metaScreens = state.projectMetadata.screens || {};
-        const initialScreens = Object.keys(metaScreens).map(name => ({
-            name: name,
-            type: 'file',
-            sha: metaScreens[name].sha || ''
-        })).sort((a, b) => {
-            const indexA = order.indexOf(a.name);
-            const indexB = order.indexOf(b.name);
-            if (indexA === -1 && indexB === -1) return 0;
-            if (indexA === -1) return 1;
-            if (indexB === -1) return -1;
-            return indexA - indexB;
-        });
-
-        state.screens = initialScreens;
-
-        if (!fileName && state.screens.length > 0) {
-            fileName = state.screens[0].name;
-            const newUrl = new URL(window.location);
-            newUrl.searchParams.set('file', fileName);
-            window.history.replaceState({}, '', newUrl);
-        }
-
-        if (typeof renderScreenList === 'function') renderScreenList(state.screens, fileName);
-        if (typeof renderAtomicLibrary === 'function') renderAtomicLibrary();
-        if (typeof initQuillEditor === 'function') initQuillEditor();
-        if (typeof initResponsiveGridToggle === 'function') initResponsiveGridToggle();
+        // Fetch metadata, components, and synthesize screens
+        const initResult = await _initProjectMetadataAndScreens(project, fileName);
+        fileName = initResult.fileName;
 
         if (fileName) {
             await loadScreen(fileName);
@@ -1393,422 +744,13 @@ window.init = async function () {
             if (DOM.btnAddScreen) DOM.btnAddScreen.classList.add('pulse-attention');
         }
 
-        // Fetch contents in the background to sync SHAs and discover any untracked screens asynchronously
-        listContents(project).then(contents => {
-            if (contents && contents.length > 0) {
-                const repoScreens = contents.filter(i => i.type === 'file' && i.name.endsWith('.html'));
-                let changed = false;
-                repoScreens.forEach(rs => {
-                    const existing = state.screens.find(s => s.name === rs.name);
-                    if (existing) {
-                        if (existing.sha !== rs.sha) {
-                            existing.sha = rs.sha;
-                            changed = true;
-                        }
-                    } else {
-                        state.screens.push({
-                            name: rs.name,
-                            type: 'file',
-                            sha: rs.sha
-                        });
-                        changed = true;
-                    }
-                });
-                if (changed) {
-                    state.screens.sort((a, b) => {
-                        const indexA = order.indexOf(a.name);
-                        const indexB = order.indexOf(b.name);
-                        if (indexA === -1 && indexB === -1) return 0;
-                        if (indexA === -1) return 1;
-                        if (indexB === -1) return -1;
-                        return indexA - indexB;
-                    });
-                    if (typeof renderScreenList === 'function') {
-                        renderScreenList(state.screens, state.activeFile?.name || fileName);
-                    }
-                }
-            }
-        }).catch(err => console.warn("[V4 Core] Background listContents failed:", err));
+        // Asynchronously sync repository contents in background
+        const order = initResult.order || [];
+        _startBackgroundScreenSync(project, order, fileName);
 
-        // --- ATTACH GLOBAL LISTENERS ---
-        console.log("[INIT] Attaching global listeners...");
-        document.addEventListener('click', async (e) => {
-            // 0-1. URL Copy Dropdown & Action Handlers (Delegated to vctrl_clipboard.js)
-            if (window.ClipboardManager && typeof window.ClipboardManager.handleUrlCopyClick === 'function') {
-                if (window.ClipboardManager.handleUrlCopyClick(e)) return;
-            }
-
-            // 0-2. PDF Export Button
-            if (e.target && e.target.closest('#btn-export-project-pdf')) {
-                const currentProj = (typeof state !== 'undefined' && state && state.currentProject)
-                    ? state.currentProject
-                    : new URLSearchParams(window.location.search).get('project');
-                if (currentProj) {
-                    if (typeof exportProjectToPDF === 'function') {
-                        exportProjectToPDF(currentProj, state.projectMetadata || null);
-                    } else {
-                        alert("PDF 변환 모듈이 로드되지 않았습니다.");
-                    }
-                } else {
-                    alert("열려있는 프로젝트가 없습니다.");
-                }
-                return;
-            }
-
-            // 1. Global Save Button
-            if (e.target && e.target.closest('#btn-global-save')) {
-                handleGlobalSave();
-                return;
-            }
-
-            // 2. Submit Add Screen Button
-            if (e.target && e.target.closest('#btn-add-screen-submit')) {
-                e.preventDefault();
-                const btnSubmit = e.target.closest('#btn-add-screen-submit');
-
-                const selectedCard = document.querySelector('.template-card.selected');
-                if (!selectedCard) {
-                    window.Notification?.alert("템플릿을 선택해주세요.", "알림", "warning");
-                    return;
-                }
-
-                const inputName = document.getElementById('new-screen-name');
-                const screenName = inputName?.value?.trim();
-                if (!screenName) {
-                    window.Notification?.alert("화면 이름을 입력해주세요.", "알림", "warning");
-                    return;
-                }
-
-                btnSubmit.disabled = true;
-                btnSubmit.innerText = "생성 중..";
-
-                const template = selectedCard.dataset.template;
-                const success = await createScreenFromTemplate(state.currentProject, screenName, template, {
-                    PROJECT_TITLE: state.projectMetadata.title || '',
-                    PROJECT_NAME: state.projectMetadata.title || '',
-                    SCREEN_NAME: screenName,
-                    VERSION: '0.1',
-                    AUTHOR: state.projectMetadata.assignee || '-',
-                    DATE: state.projectMetadata.period || new Date().toLocaleDateString('ko-KR')
-                }, msg => {
-                    const placeholderTxt = document.getElementById('placeholder-txt');
-                    if (placeholderTxt) placeholderTxt.innerText = msg;
-                });
-
-                if (success) {
-                    const targetFilename = screenName.endsWith('.html') ? screenName : `${screenName}.html`;
-                    window.location.href = `viewer.html?project=${encodeURIComponent(state.currentProject)}&file=${encodeURIComponent(targetFilename)}`;
-                } else {
-                    window.Notification?.alert("화면 생성에 실패했습니다.", "오류", "error");
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerText = "화면 생성하기";
-                }
-                return;
-            }
-
-            // 3. Template Card Selection
-            if (e.target && e.target.closest('.template-card')) {
-                const card = e.target.closest('.template-card');
-                document.querySelectorAll('.template-card').forEach(c => {
-                    c.classList.remove('selected');
-                    c.classList.remove('active');
-                });
-                card.classList.add('selected');
-                card.classList.add('active');
-
-                const inputName = document.getElementById('new-screen-name');
-                if (inputName) {
-                    const defaultName = card.dataset.defaultName || "new_screen";
-                    inputName.value = defaultName + "_" + Math.floor(Math.random() * 1000);
-                }
-            }
-
-            // 4. Cancel Edit Screen Button
-            if (e.target && e.target.closest('#btn-edit-screen-cancel')) {
-                e.preventDefault();
-                const editModal = document.getElementById('edit-screen-modal');
-                if (editModal) editModal.classList.remove('active');
-            }
-
-            // 5. Cancel Add Screen Button
-            if (e.target && e.target.closest('#btn-add-screen-cancel')) {
-                e.preventDefault();
-                const addModal = document.getElementById('add-screen-modal');
-                if (addModal) addModal.classList.remove('active');
-            }
-
-            // 6. Cancel Copy Screen Button
-            if (e.target && e.target.closest('#btn-copy-screen-cancel')) {
-                e.preventDefault();
-                const copyModal = document.getElementById('copy-screen-modal');
-                if (copyModal) copyModal.classList.remove('active');
-            }
-        });
-
-
-        if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => {
-            const collapsed = DOM.sidebarLeft.classList.toggle('collapsed');
-            const icon = DOM.btnToggleLeft.querySelector('span');
-            if (icon) icon.innerText = collapsed ? 'menu_open' : 'chevron_left';
-            setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 400);
-        };
-        if (DOM.btnToggleRight) DOM.btnToggleRight.onclick = () => {
-            const collapsed = DOM.sidebarRight.classList.toggle('collapsed');
-            const icon = DOM.btnToggleRight.querySelector('span');
-            if (icon) icon.innerText = collapsed ? 'chevron_left' : 'chevron_right';
-            DOM.btnToggleRight.classList.toggle('active', !collapsed);
-            setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 400);
-        };
-
-        if (DOM.btnFullscreen) DOM.btnFullscreen.onclick = () => { if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen(); };
-        if (DOM.btnFullscreenExit) DOM.btnFullscreenExit.onclick = () => { if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen(true); };
-
-        const tabBtns = (DOM && DOM.tabBtns) || document.querySelectorAll('.tab-btn, .sidebar-tab-btn');
-        if (tabBtns) {
-            tabBtns.forEach(btn => {
-                btn.onclick = () => { if (typeof window.switchSidebarTab === 'function') window.switchSidebarTab(btn.dataset.tab); };
-            });
-        }
-
-        // RESTORED: Sidebar Tool Buttons (Text, etc.)
-        if (DOM.sidebarToolBtns) {
-            DOM.sidebarToolBtns.forEach(btn => {
-                const tool = btn.dataset.tool;
-                if (tool) {
-                    btn.onclick = () => {
-                        if (tool === 'text') {
-                            if (typeof window.handleTextboxCreation === 'function') window.handleTextboxCreation();
-                        } else if (typeof window.setTool === 'function') {
-                            window.setTool(tool);
-                        }
-                    };
-                }
-            });
-        }
-
-        // RESTORED: Top Bar Tool Buttons
-        if (DOM.btnSelect) DOM.btnSelect.onclick = () => window.setTool?.('select');
-        if (DOM.btnHand) DOM.btnHand.onclick = () => window.setTool?.('hand');
-        if (typeof window.initResponsiveGridToggle === 'function') window.initResponsiveGridToggle();
-
-        // RESTORED: Add Screen Modal Logic
-        if (DOM.btnAddScreen) {
-            DOM.btnAddScreen.onclick = () => {
-                if (state.isReadOnly) return window.showAuthModal?.();
-                const realModal = document.getElementById('add-screen-modal');
-                if (realModal) realModal.classList.add('active');
-            };
-        }
-        if (DOM.btnCancelAdd) {
-            DOM.btnCancelAdd.onclick = () => {
-                const realModal = document.getElementById('add-screen-modal');
-                if (realModal) realModal.classList.remove('active');
-            };
-        }
-
-        // Unified Global Keyboard Shortcuts & Event Proxying to Canvas Iframe (Single SSOT Listener)
-        window.addEventListener('keydown', (e) => {
-            if (state.isReadOnly) return;
-
-            const isF2 = e.key === 'F2' || e.code === 'F2';
-            const isInput = e.target.isContentEditable ||
-                ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) ||
-                !!(e.target.closest && e.target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
-
-            // 1. Global Save Shortcut (Ctrl+S / Cmd+S): Universally intercepted with highest priority across all inputs, editors, and sidebars
-            const keyChar = (e.key || '').toLowerCase();
-            const isS = keyChar === 's' || e.code === 'KeyS';
-            if ((e.ctrlKey || e.metaKey) && isS) {
-                e.preventDefault();
-                console.log("[VCTRL CORE] Global Ctrl+S caught in parent window. isInput:", isInput);
-                if (isInput && document.activeElement && typeof document.activeElement.blur === 'function') {
-                    try { document.activeElement.blur(); } catch (err) { }
-                }
-                handleGlobalSave();
-                return;
-            }
-
-            // 2. F2 Mode Switch: Highest priority, even when isInput is true
-            if (isF2) {
-                if (e.isComposing) return;
-                e.preventDefault();
-                console.log("[VCTRL CORE] F2 key down detected in parent window. isInput:", isInput);
-                if (isInput && typeof e.target.blur === 'function') {
-                    e.target.blur();
-                }
-                const DOM = window.DOM || {};
-                const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-                if (activeIframe && activeIframe.contentWindow) {
-                    try { activeIframe.contentWindow.focus(); } catch (err) { }
-                    activeIframe.contentWindow.postMessage({
-                        type: 'LF_SHORTCUT_KEY_PROXY',
-                        code: 'F2',
-                        key: 'F2',
-                        shiftKey: !!e.shiftKey,
-                        ctrlKey: !!e.ctrlKey,
-                        metaKey: !!e.metaKey
-                    }, '*');
-                }
-                return;
-            }
-
-            // If user is typing in any input/textarea/editor, do NOT process parent shortcuts
-            if (isInput) return;
-
-            // 3. Undo / Redo Global Shortcuts
-            const isZ = e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ';
-            const isY = e.key === 'y' || e.key === 'Y' || e.code === 'KeyY';
-            if ((e.ctrlKey || e.metaKey) && ((isZ && e.shiftKey) || isY)) {
-                e.preventDefault();
-                console.log("[V4 Core] Parent Redo (Ctrl+Y / Ctrl+Shift+Z) caught. Triggering child redo.");
-                const DOM = window.DOM || {};
-                if (DOM.iframe && DOM.iframe.contentWindow) {
-                    DOM.iframe.contentWindow.postMessage({ type: 'LF_TRIGGER_REDO' }, '*');
-                }
-                return;
-            }
-            if ((e.ctrlKey || e.metaKey) && isZ && !e.shiftKey) {
-                e.preventDefault();
-                console.log("[V4 Core] Parent Ctrl+Z caught. Triggering child undo.");
-                const DOM = window.DOM || {};
-                if (DOM.iframe && DOM.iframe.contentWindow) {
-                    DOM.iframe.contentWindow.postMessage({ type: 'LF_TRIGGER_UNDO' }, '*');
-                } else if (window.V4UndoManager) {
-                    window.V4UndoManager.undo();
-                }
-                return;
-            }
-
-            // 4. Shift+G Responsive Grid Toggle
-            const isShiftG = !e.ctrlKey && !e.metaKey && e.shiftKey && (e.key === 'G' || e.key === 'g' || e.code === 'KeyG');
-            if (isShiftG && state.isCurrentResponsiveScreen) {
-                e.preventDefault();
-                if (typeof window.toggleResponsiveGrid === 'function') {
-                    window.toggleResponsiveGrid();
-                }
-                return;
-            }
-
-            // 5. Escape Key Handling
-            if (e.key === 'Escape') {
-                if (document.body.classList.contains('fullscreen-mode')) {
-                    if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen(true);
-                    return;
-                }
-                let closedAnyModal = false;
-                const addModal = document.getElementById('add-screen-modal');
-                if (addModal && addModal.classList.contains('active')) {
-                    addModal.classList.remove('active');
-                    closedAnyModal = true;
-                }
-                const copyModal = document.getElementById('copy-screen-modal');
-                if (copyModal && copyModal.classList.contains('active')) {
-                    copyModal.classList.remove('active');
-                    closedAnyModal = true;
-                }
-                const editModal = document.getElementById('edit-screen-modal');
-                if (editModal && editModal.classList.contains('active')) {
-                    editModal.classList.remove('active');
-                    closedAnyModal = true;
-                }
-                const historyModal = document.getElementById('history-modal');
-                if (historyModal && historyModal.style.display === 'flex') {
-                    if (typeof window.closeHistoryPopup === 'function') {
-                        window.closeHistoryPopup();
-                    } else {
-                        historyModal.style.display = 'none';
-                    }
-                    closedAnyModal = true;
-                }
-                if (typeof window.hideAuthModal === 'function') {
-                    const authModal = document.getElementById('auth-modal');
-                    if (authModal && authModal.classList.contains('active')) {
-                        window.hideAuthModal();
-                        closedAnyModal = true;
-                    }
-                }
-                if (closedAnyModal) {
-                    return;
-                }
-
-                // If user is currently typing in parent window, blur it
-                const activeEl = document.activeElement;
-                if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable || activeEl.classList.contains('ql-editor'))) {
-                    activeEl.blur();
-                    return;
-                }
-
-                // Tier 2: Deselect all objects and hide object properties
-                if (typeof window.deselectAll === 'function') {
-                    window.deselectAll();
-                }
-                return;
-            }
-
-            // 6. Proxy Canvas Shortcuts to Iframe
-            const proxiedCodes = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Delete', 'Backspace', 'Space'];
-            const keyCharProxy = (e.key || '').toLowerCase();
-            const isC = keyCharProxy === 'c' || e.code === 'KeyC';
-            const isX = keyCharProxy === 'x' || e.code === 'KeyX';
-            const isV = keyCharProxy === 'v' || e.code === 'KeyV';
-            const isG = keyCharProxy === 'g' || e.code === 'KeyG';
-            const isCtrlShortcut = (e.ctrlKey || e.metaKey) && (isC || isX || isV || isG);
-
-            if (proxiedCodes.includes(e.code) || isCtrlShortcut) {
-                const DOM = window.DOM || {};
-                if (DOM.iframe && DOM.iframe.contentWindow) {
-                    try { DOM.iframe.contentWindow.focus(); } catch (err) { }
-                    DOM.iframe.contentWindow.postMessage({
-                        type: 'LF_SHORTCUT_KEY_PROXY',
-                        code: e.code,
-                        key: e.key,
-                        shiftKey: e.shiftKey,
-                        ctrlKey: e.ctrlKey,
-                        metaKey: e.metaKey
-                    }, '*');
-
-                    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Space'].includes(e.code) || isCtrlShortcut) {
-                        e.preventDefault();
-                    }
-                }
-            }
-        });
-
-        window.addEventListener('keyup', (e) => {
-            const isInput = e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
-            if (isInput) return;
-
-            if (e.code === 'Space') {
-                if (DOM.iframe && DOM.iframe.contentWindow) {
-                    DOM.iframe.contentWindow.postMessage({
-                        type: 'LF_SHORTCUT_KEY_PROXY',
-                        code: e.code,
-                        key: e.key,
-                        shiftKey: e.shiftKey,
-                        ctrlKey: e.ctrlKey,
-                        metaKey: e.metaKey
-                    }, '*');
-                }
-            }
-
-            // [Bug Fix Arrow-KEY-UP] Proxy Arrow key releases to iframe.
-            // Previously, only Space keyup was proxied. Arrow keyup was never sent,
-            // so the iframe's isArrowMoving flag never reset and LF_SNAP_END never fired.
-            // This caused smart guide state to get permanently stuck after first key press.
-            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-                if (DOM.iframe && DOM.iframe.contentWindow) {
-                    DOM.iframe.contentWindow.postMessage({
-                        type: 'LF_SHORTCUT_KEY_PROXY',
-                        code: e.code,
-                        key: e.key,
-                        shiftKey: e.shiftKey,
-                        ctrlKey: e.ctrlKey,
-                        metaKey: e.metaKey,
-                        isKeyUp: true
-                    }, '*');
-                }
-            }
-        });
+        // Attach global listeners and UI controls
+        _bindGlobalClickDelegates();
+        _bindCoreToolbarAndSidebarEvents(DOM);
 
     } catch (err) {
         console.error("Initialization failed:", err);
@@ -1899,16 +841,24 @@ window.initResponsiveGridToggle = function () {
 };
 
 window.DEBUG_MODE = false;
-MessageHub.init();
+if (window.CoreRouter && typeof window.CoreRouter.init === 'function') {
+    window.CoreRouter.init();
+} else if (window.MessageHub && typeof window.MessageHub.init === 'function') {
+    window.MessageHub.init();
+}
 document.addEventListener('DOMContentLoaded', () => {
     window.init();
 });
 
-// Global Safety Guard: Ensure SmartGuide lines are cleared when mouseup/pointerup occurs anywhere in parent frame
+// Global Safety Guard: Ensure lingering drag guides are cleared on mouseup/pointerup, but preserve active selection SmartGuide
 ['mouseup', 'pointerup'].forEach(evtType => {
     window.addEventListener(evtType, () => {
         if (window.SmartGuide) {
-            window.SmartGuide.clearGuides(true);
+            // If a component selection guide is currently active, preserve it for its full duration!
+            if (window.SmartGuide.selectionTimer || window.SmartGuide.pendingSelection) {
+                return;
+            }
+            window.SmartGuide.clearGuides(false);
         }
     });
 });

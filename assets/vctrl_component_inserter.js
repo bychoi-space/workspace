@@ -225,6 +225,16 @@
                 'Clipboard': '<path d="M7 2H14.89C17.38 2 18.62 2 19.57 2.48C20.41 2.91 21.09 3.59 21.52 4.43C22 5.38 22 6.62 22 9.11V17M5.56 22H14.56C15.8 22 16.42 22 16.9 21.76C17.32 21.54 17.66 21.2 17.87 20.79C18.11 20.31 18.11 19.69 18.11 18.44V9.44C18.11 8.2 18.11 7.58 17.87 7.1C17.66 6.68 17.32 6.34 16.9 6.13C16.42 5.89 15.8 5.89 14.56 5.89H5.56C4.31 5.89 3.69 5.89 3.21 6.13C2.8 6.34 2.46 6.68 2.24 7.1C2 7.58 2 8.2 2 9.44V18.44C2 19.69 2 20.31 2.24 20.79C2.46 21.2 2.8 21.54 3.21 21.76C3.69 22 4.31 22 5.56 22Z"></path>',
                 'clipboard': '<path d="M7 2H14.89C17.38 2 18.62 2 19.57 2.48C20.41 2.91 21.09 3.59 21.52 4.43C22 5.38 22 6.62 22 9.11V17M5.56 22H14.56C15.8 22 16.42 22 16.9 21.76C17.32 21.54 17.66 21.2 17.87 20.79C18.11 20.31 18.11 19.69 18.11 18.44V9.44C18.11 8.2 18.11 7.58 17.87 7.1C17.66 6.68 17.32 6.34 16.9 6.13C16.42 5.89 15.8 5.89 14.56 5.89H5.56C4.31 5.89 3.69 5.89 3.21 6.13C2.8 6.34 2.46 6.68 2.24 7.1C2 7.58 2 8.2 2 9.44V18.44C2 19.69 2 20.31 2.24 20.79C2.46 21.2 2.8 21.54 3.21 21.76C3.69 22 4.31 22 5.56 22Z"></path>',
                 '복사하기': '<path d="M7 2H14.89C17.38 2 18.62 2 19.57 2.48C20.41 2.91 21.09 3.59 21.52 4.43C22 5.38 22 6.62 22 9.11V17M5.56 22H14.56C15.8 22 16.42 22 16.9 21.76C17.32 21.54 17.66 21.2 17.87 20.79C18.11 20.31 18.11 19.69 18.11 18.44V9.44C18.11 8.2 18.11 7.58 17.87 7.1C17.66 6.68 17.32 6.34 16.9 6.13C16.42 5.89 15.8 5.89 14.56 5.89H5.56C4.31 5.89 3.69 5.89 3.21 6.13C2.8 6.34 2.46 6.68 2.24 7.1C2 7.58 2 8.2 2 9.44V18.44C2 19.69 2 20.31 2.24 20.79C2.46 21.2 2.8 21.54 3.21 21.76C3.69 22 4.31 22 5.56 22Z"></path>',
+                'Document': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                'document': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                'File': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                'file': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                'Doc': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                'doc': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                'Page': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                'page': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                '문서': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
+                '파일': '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>',
                 'Global': '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>',
                 'global': '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>',
                 'Language': '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>',
@@ -381,263 +391,15 @@
 
     window.insertAtomicComponent = insertAtomicComponent;
 
-    // ========================================================
-    // [CANVAS BACKGROUND CONTROLLER & SMART COMPRESSION]
-    // ========================================================
-    let _currentCanvasBgState = {
-        hasBg: false,
-        url: '',
-        opacity: 1.0,
-        name: ''
-    };
-
-    window.openCanvasBackgroundModal = function() {
-        const modal = document.getElementById('canvas-bg-modal');
-        if (!modal) {
-            console.warn('[Canvas Background] #canvas-bg-modal not found in DOM.');
-            return;
-        }
-
-        // 1. Check current canvas background state from active iframe
-        queryIframeCanvasBackground(function(bgState) {
-            _currentCanvasBgState = bgState;
-            updateCanvasBgModalUI(bgState);
-            renderCanvasBgPresets(bgState);
-            modal.style.display = 'flex';
-        });
-
-        // Bind modal close buttons once
-        const btnClose = document.getElementById('btn-canvas-bg-close');
-        const btnCancel = document.getElementById('btn-canvas-bg-cancel');
-        const closeModal = function() { modal.style.display = 'none'; };
-        if (btnClose) btnClose.onclick = closeModal;
-        if (btnCancel) btnCancel.onclick = closeModal;
-
-        // Bind file upload input once
-        const fileInput = document.getElementById('canvas-bg-file-input');
-        if (fileInput && !fileInput.dataset.bound) {
-            fileInput.dataset.bound = 'true';
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files && e.target.files[0];
-                if (!file) return;
-                compressAndUploadBgImage(file, function(compressedDataUrl) {
-                    const opacity = getSliderOpacity();
-                    applyCanvasBackground(compressedDataUrl, opacity, file.name);
-                });
-                fileInput.value = '';
-            });
-        }
-
-        // Bind opacity slider once
-        const slider = document.getElementById('canvas-bg-opacity-slider');
-        const valTxt = document.getElementById('canvas-bg-opacity-val');
-        if (slider && !slider.dataset.bound) {
-            slider.dataset.bound = 'true';
-            slider.addEventListener('input', function(e) {
-                const op = parseInt(e.target.value, 10) / 100;
-                if (valTxt) valTxt.innerText = e.target.value + '%';
-                if (_currentCanvasBgState.hasBg) {
-                    sendCanvasBgMessage({ action: 'update_opacity', opacity: op });
-                }
-            });
-        }
-
-        // Bind remove button once
-        const btnRemove = document.getElementById('btn-canvas-bg-remove');
-        if (btnRemove) {
-            btnRemove.onclick = function() {
-                removeCanvasBackground();
-            };
-        }
-    };
-
-    function getSliderOpacity() {
-        const slider = document.getElementById('canvas-bg-opacity-slider');
-        return slider ? (parseInt(slider.value, 10) / 100) : 1.0;
-    }
-
-    function queryIframeCanvasBackground(callback) {
-        const DOM = window.DOM || {};
-        const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-        if (!activeIframe || !activeIframe.contentDocument) {
-            if (callback) callback({ hasBg: false, url: '', opacity: 1.0, name: '' });
-            return;
-        }
-
-        try {
-            const doc = activeIframe.contentDocument;
-            const bgLayer = doc.getElementById('canvas_bg_layer');
-            const bgImg = bgLayer ? bgLayer.querySelector('img') : null;
-            if (bgLayer && bgImg && bgImg.getAttribute('src')) {
-                const src = bgImg.getAttribute('src');
-                const op = bgImg.style.opacity ? parseFloat(bgImg.style.opacity) : 1.0;
-                const state = { hasBg: true, url: src, opacity: isNaN(op) ? 1.0 : op, name: src.split('/').pop() };
-                if (callback) callback(state);
-                return;
-            }
-        } catch(e) {
-            console.warn('[Canvas Background] Direct iframe inspection failed:', e);
-        }
-
-        if (callback) callback({ hasBg: false, url: '', opacity: 1.0, name: '' });
-    }
-
-    function updateCanvasBgModalUI(state) {
-        const badge = document.getElementById('canvas-bg-modal-status-badge');
-        const previewEmpty = document.getElementById('canvas-bg-preview-empty');
-        const previewImg = document.getElementById('canvas-bg-preview-img');
-        const slider = document.getElementById('canvas-bg-opacity-slider');
-        const valTxt = document.getElementById('canvas-bg-opacity-val');
-        const btnRemove = document.getElementById('btn-canvas-bg-remove');
-        const quickStatus = document.getElementById('canvas-bg-quick-status');
-
-        if (state.hasBg && state.url) {
-            if (badge) badge.innerText = '적용됨 (' + (state.name || '이미지 배경') + ')';
-            if (previewEmpty) previewEmpty.style.display = 'none';
-            if (previewImg) {
-                previewImg.src = state.url;
-                previewImg.style.display = 'block';
-                previewImg.style.opacity = state.opacity || 1.0;
-            }
-            if (btnRemove) btnRemove.style.display = 'inline-flex';
-            if (quickStatus) quickStatus.innerText = '이미지 배경 적용됨';
-        } else {
-            if (badge) badge.innerText = '단색 배경 (#f8fafc)';
-            if (previewEmpty) previewEmpty.style.display = 'flex';
-            if (previewImg) {
-                previewImg.src = '';
-                previewImg.style.display = 'none';
-            }
-            if (btnRemove) btnRemove.style.display = 'none';
-            if (quickStatus) quickStatus.innerText = '단색 배경 (#f8fafc)';
-        }
-
-        const opPercent = Math.round((state.opacity || 1.0) * 100);
-        if (slider) slider.value = opPercent;
-        if (valTxt) valTxt.innerText = opPercent + '%';
-    }
-
-    function renderCanvasBgPresets(currentState) {
-        const container = document.getElementById('canvas-bg-presets-container');
-        if (!container) return;
-
-        const lib = window.V4_COMPONENT_LIBRARY || {};
-        const presets = lib.canvasBackgrounds || [];
-
-        container.innerHTML = presets.map(function(item) {
-            const isActive = currentState.hasBg && (currentState.url === item.url || currentState.url.endsWith(item.url));
-            return '<div class="bg-preset-card' + (isActive ? ' active' : '') + '" onclick="applyCanvasBackgroundPreset(\'' + item.id + '\')" title="' + item.desc + '">' +
-                '<div class="bg-preset-thumb-wrap">' +
-                    '<img src="' + item.thumb + '" alt="' + item.name + '" />' +
-                '</div>' +
-                '<span class="bg-preset-title">' + item.name + '</span>' +
-            '</div>';
-        }).join('');
-    }
-
-    window.applyCanvasBackgroundPreset = function(presetId) {
-        const lib = window.V4_COMPONENT_LIBRARY || {};
-        const presets = lib.canvasBackgrounds || [];
-        const item = presets.find(function(p) { return p.id === presetId; });
-        if (!item) return;
-
-        const opacity = item.defaultOpacity || getSliderOpacity();
-        applyCanvasBackground(item.url, opacity, item.name);
-    };
-
-    function compressAndUploadBgImage(file, callback) {
-        if (!file || !callback) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const tempImg = new Image();
-            tempImg.onload = function() {
-                const origW = tempImg.naturalWidth || 1600;
-                const origH = tempImg.naturalHeight || 900;
-                const maxDim = 1920;
-                let targetW = origW;
-                let targetH = origH;
-
-                if (origW > maxDim || origH > maxDim) {
-                    if (origW >= origH) {
-                        targetW = maxDim;
-                        targetH = Math.round((origH * maxDim) / origW);
-                    } else {
-                        targetH = maxDim;
-                        targetW = Math.round((origW * maxDim) / origH);
-                    }
-                }
-
-                const canvas = document.createElement('canvas');
-                canvas.width = targetW;
-                canvas.height = targetH;
-                const ctx = canvas.getContext('2d');
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-                ctx.drawImage(tempImg, 0, 0, targetW, targetH);
-
-                // Compress to JPEG 85% for lightweight and crisp output (~200KB)
-                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
-                callback(compressedBase64);
-            };
-            tempImg.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-
-    window.applyCanvasBackground = function(imageUrl, opacity, displayName) {
-        if (!imageUrl) return;
-        const op = opacity !== undefined ? opacity : getSliderOpacity();
-        sendCanvasBgMessage({
-            action: 'set',
-            imageUrl: imageUrl,
-            opacity: op
-        });
-
-        _currentCanvasBgState = {
-            hasBg: true,
-            url: imageUrl,
-            opacity: op,
-            name: displayName || '이미지 배경'
-        };
-        updateCanvasBgModalUI(_currentCanvasBgState);
-        renderCanvasBgPresets(_currentCanvasBgState);
-        if (typeof window.markAsDirty === 'function') window.markAsDirty();
-    };
-
-    window.removeCanvasBackground = function() {
-        sendCanvasBgMessage({ action: 'remove' });
-        _currentCanvasBgState = {
-            hasBg: false,
-            url: '',
-            opacity: 1.0,
-            name: ''
-        };
-        updateCanvasBgModalUI(_currentCanvasBgState);
-        renderCanvasBgPresets(_currentCanvasBgState);
-        if (typeof window.markAsDirty === 'function') window.markAsDirty();
-    };
-
-    function sendCanvasBgMessage(payload) {
-        const DOM = window.DOM || {};
-        const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-        if (!activeIframe || !activeIframe.contentWindow) return;
-
-        const data = Object.assign({ type: 'LF_SET_CANVAS_BACKGROUND' }, payload);
-        if (window.MessageHub) {
-            window.MessageHub.send(activeIframe.contentWindow, 'LF_SET_CANVAS_BACKGROUND', payload);
-        } else {
-            activeIframe.contentWindow.postMessage(data, '*');
-        }
-    }
-
+    // Note: Canvas Background Controller has been decoupled to assets/vctrl_canvas_background.js (SSOT).
     window.ComponentInserter = {
         insertAtomicComponent: insertAtomicComponent,
         insertV4ComponentById: window.insertV4ComponentById,
         insertTextComponent: window.insertTextComponent,
         insertImageComponent: window.insertImageComponent,
         triggerImageFileUpload: triggerImageFileUpload,
-        openCanvasBackgroundModal: window.openCanvasBackgroundModal,
-        applyCanvasBackground: window.applyCanvasBackground,
-        removeCanvasBackground: window.removeCanvasBackground
+        get openCanvasBackgroundModal() { return window.openCanvasBackgroundModal; },
+        get applyCanvasBackground() { return window.applyCanvasBackground; },
+        get removeCanvasBackground() { return window.removeCanvasBackground; }
     };
 })();

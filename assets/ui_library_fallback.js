@@ -183,6 +183,12 @@ window.VCTRL_UI_FALLBACK_ICON = `
             </div>
             <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Copy</span>
         </div>
+        <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Document')" data-ko="문서 파일 도큐먼트 서류 본문 내용 글 페이지만들기 document file page doc" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
+            <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 20px; height: 20px; color: #ffffff; flex-shrink: 0; box-sizing: border-box; background-image: none !important;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+            </div>
+            <span style="font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Document</span>
+        </div>
         <div class="component-item v4-card" onclick="insertAtomicComponent('icon', 'Global')" data-ko="글로벌 언어 지구본 다국어 해외 영어 global language globe" style="background: rgba(56, 189, 248, 0.05); border: 1.6px solid rgba(56, 189, 248, 0.1) !important; border-radius: 8px; padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 76px; text-align: center;">
             <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: visible;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 20px; height: 20px; color: #ffffff; flex-shrink: 0; box-sizing: border-box; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
@@ -694,6 +700,20 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     <button class="v4-arrow-dir-btn v4-btn-cell-gray" data-dir="right" title="Arrow Right">우</button>
                 </div>
             </div>
+
+            <div id="shape-wave-direction-group" class="prop-group mt-12 top-divider" style="display: none;">
+                <label class="v4-section-header-title mb-8">웨이브 방향 (ORIENTATION)</label>
+                <div class="v4-prop-grid-2 gap-4">
+                    <button id="btn-wave-dir-h" class="v4-wave-dir-btn v4-btn-accent-active-md" data-dir="horizontal" title="가로 웨이브 (Horizontal)">
+                        <span class="material-icons-outlined font-16">horizontal_rule</span>
+                        가로 (H)
+                    </button>
+                    <button id="btn-wave-dir-v" class="v4-wave-dir-btn v4-btn-accent-inactive-md" data-dir="vertical" title="세로 웨이브 (Vertical)">
+                        <span class="material-icons-outlined font-16 rot-90">horizontal_rule</span>
+                        세로 (V)
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- line-editor-section -->
@@ -746,9 +766,10 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 <div class="prop-group">
                     <label class="v4-color-label v4-prop-label">선 색상</label>
                     <div class="v4-prop-flex-gap-4">
-                        <div class="v4-color-wrapper v4-prop-input-frame" id="line-color-wrapper">
-                            <input type="color" id="line-stroke-color" class="v4-color-input" value="#c8c8c8">
+                        <div class="v4-color-wrapper v4-checkerboard-bg v4-prop-input-frame" id="line-color-wrapper">
+                            <input type="color" id="line-stroke-color" class="v4-color-input" data-prop="borderColor" value="#c8c8c8">
                         </div>
+                        <button id="btn-line-color-none" class="v4-color-none-btn v4-btn-action-del" data-prop="borderColor" title="Transparent"><span class="material-icons-outlined font-14">block</span></button>
                     </div>
                 </div>
                 <div class="prop-group">
@@ -798,6 +819,25 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
         <div class="v4-card-section mt-12" id="checkbox-radio-inspector-section" style="display: none;">
             <div class="v4-section-header">
                 <span class="v4-section-header-title">CHECKBOX / RADIO OPTION</span>
+            </div>
+            <!-- Unified Dimensions (Top) -->
+            <div class="v4-dimensions-group prop-group v4-prop-group-divider">
+                <div class="v4-prop-grid-2">
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-width-checkbox" class="v4-prop-input v4-prop-input-styled" data-prop="width" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="height">세로 크기 (H)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-height-checkbox" class="v4-prop-input v4-prop-input-styled" data-prop="height" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="v4-prop-grid-2 gap-12 mb-12">
                 <!-- Checked/Unchecked Toggle -->
@@ -991,7 +1031,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div class="v4-prop-grid-2 mb-10">
                 <div class="prop-group">
                     <label class="v4-prop-label">출력 행 개수</label>
-                    <input type="number" id="prop-grid-row-count" min="1" max="20" value="5" class="v4-prop-input v4-prop-input-base pad-4-6">
+                    <input type="number" id="prop-grid-row-count" min="0" max="20" value="5" class="v4-prop-input v4-prop-input-base pad-4-6">
                 </div>
                 <div class="prop-group">
                     <label class="v4-prop-label">행 높이(px)</label>
@@ -1219,6 +1259,25 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div class="v4-section-header">
                 <span class="v4-section-header-title">STEPPER PROPERTIES</span>
             </div>
+            <!-- Unified Dimensions (Top) -->
+            <div class="v4-dimensions-group prop-group v4-prop-group-divider">
+                <div class="v4-prop-grid-2">
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-width-stepper" class="v4-prop-input v4-prop-input-styled" data-prop="width" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="height">세로 크기 (H)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-height-stepper" class="v4-prop-input v4-prop-input-styled" data-prop="height" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="v4-prop-grid-2 gap-12 mb-12">
                 <!-- Min Value -->
                 <div class="prop-group">
@@ -1230,6 +1289,10 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     <label class="v4-prop-label">MAX VALUE (최대값)</label>
                     <input class="v4-prop-input-base" type="number" id="prop-stepper-max" value="99">
                 </div>
+            </div>
+            <div class="prop-group mb-12">
+                <label class="v4-prop-label">STEP VALUE (증감 단위)</label>
+                <input class="v4-prop-input-base" type="number" id="prop-stepper-step" min="1" max="1000" value="1">
             </div>
             <div class="v4-prop-grid-2 gap-12 mb-12 top-divider">
                 <!-- Button Enabled Toggle -->
@@ -1488,6 +1551,98 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             
         </div>
 
+        <!-- popup-inspector-section -->
+        <div class="v4-card-section mt-12" id="popup-inspector-section" style="display: none;">
+            <div class="v4-section-header mb-12">
+                <span class="v4-section-header-title">POPUP WINDOW PROPERTIES</span>
+            </div>
+            <!-- Unified Dimensions (Top) -->
+            <div class="v4-dimensions-group prop-group v4-prop-group-divider">
+                <div class="v4-prop-grid-2">
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-width-popup" class="v4-prop-input v4-prop-input-styled" data-prop="width" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="height">세로 크기 (H)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-height-popup" class="v4-prop-input v4-prop-input-styled" data-prop="height" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Popup Title -->
+            <div class="prop-group mb-8">
+                <label class="v4-prop-label">팝업 타이틀 (TITLE)</label>
+                <input class="v4-prop-input-base pad-6-10" type="text" id="prop-popup-title" value="Popup Title" placeholder="팝업 제목 입력">
+            </div>
+            <!-- Show Close Button (Y/N) -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">닫기 버튼 (CLOSE X)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-popup-close-y" class="v4-inspector-btn v4-pill-btn-mini">Y</button>
+                    <button id="btn-popup-close-n" class="v4-inspector-btn v4-pill-btn-mini">N</button>
+                </div>
+            </div>
+            <!-- Colors: Header Bg, Header Text, Body Bg, Border -->
+            <div class="prop-group mb-8 top-divider-sm">
+                <label class="v4-prop-label mb-6">색상 설정 (COLORS)</label>
+                <div class="v4-prop-grid-2 gap-8 mb-6">
+                    <div class="prop-group">
+                        <label class="v4-color-label v4-prop-label" data-prop="headerBg">헤더 배경색</label>
+                        <div class="v4-prop-flex-gap-4">
+                            <div class="v4-color-wrapper v4-checkerboard-bg" id="popup-header-bg-wrapper">
+                                <input type="color" id="prop-popup-header-bg" class="v4-color-input" data-prop="headerBg" value="#f1f5f9">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prop-group">
+                        <label class="v4-color-label v4-prop-label" data-prop="headerColor">헤더 글자색</label>
+                        <div class="v4-prop-flex-gap-4">
+                            <div class="v4-color-wrapper v4-checkerboard-bg" id="popup-header-color-wrapper">
+                                <input type="color" id="prop-popup-header-color" class="v4-color-input" data-prop="headerColor" value="#0f172a">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="v4-prop-grid-2 gap-8">
+                    <div class="prop-group">
+                        <label class="v4-color-label v4-prop-label" data-prop="bodyBg">본문 배경색</label>
+                        <div class="v4-prop-flex-gap-4">
+                            <div class="v4-color-wrapper v4-checkerboard-bg" id="popup-body-bg-wrapper">
+                                <input type="color" id="prop-popup-body-bg" class="v4-color-input" data-prop="bodyBg" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prop-group">
+                        <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                        <div class="v4-prop-flex-gap-4">
+                            <div class="v4-color-wrapper v4-checkerboard-bg" id="popup-border-wrapper">
+                                <input type="color" id="prop-popup-border-color" class="v4-color-input" data-prop="borderColor" value="#cccccc">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Border Radius -->
+            <div class="prop-group mb-12 top-divider-sm">
+                <div class="v4-section-header mb-6">
+                    <label class="v4-prop-label mb-0">둥근 모서리 (Radius)</label>
+                    <span class="v4-section-header-title" id="txt-popup-border-radius">8</span>
+                </div>
+                <div class="v4-prop-grid-3 gap-4 mb-6">
+                    <button id="btn-popup-corner-sharp" class="v4-inspector-btn v4-btn-xs" data-radius="0">직각</button>
+                    <button id="btn-popup-corner-round" class="v4-inspector-btn v4-btn-xs" data-radius="8">라운드</button>
+                    <button id="btn-popup-corner-pill" class="v4-inspector-btn v4-btn-xs" data-radius="16">더 둥글게</button>
+                </div>
+                <input class="w-full cursor-pointer" type="range" id="prop-popup-border-radius" min="0" max="40" value="8">
+            </div>
+        </div>
+
         <!-- button-inspector-section -->
         <div class="v4-card-section mt-12" id="button-inspector-section" style="display: none;">
             <div class="v4-section-header">
@@ -1497,7 +1652,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             <div class="v4-dimensions-group prop-group v4-prop-group-divider">
                 <div class="v4-section-header mb-6">
                     <span class="v4-prop-label bold">크기 설정 (DIMENSIONS)</span>
-                    <button id="btn-button-fit-text" class="v4-inspector-btn v4-btn-action-cyan" title="글자 길이에 맞게 가로 크기 자동 조절">텍스트 맞추</button>
+                    <button id="btn-button-fit-text" class="v4-inspector-btn v4-btn-action-cyan" title="글자 길이에 맞게 가로 크기 자동 조절">텍스트 맞춤</button>
                 </div>                <div class="v4-prop-grid-2">
                     <div class="prop-subgroup">
                         <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
@@ -1574,7 +1729,14 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
                 <input class="w-full cursor-pointer" type="range" id="prop-button-border-radius" min="0" max="100" value="6">
             </div>
-            
+            <!-- Atom Disabled Toggle -->
+            <div class="prop-group v4-section-header top-divider-sm mb-8">
+                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                </div>
+            </div>
         </div>
 
         <!-- datepicker-inspector-section -->
@@ -1667,6 +1829,25 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
         <div class="v4-card-section mt-12" id="toggle-inspector-section" style="display: none;">
             <div class="v4-section-header">
                 <span class="v4-section-header-title">TOGGLE PROPERTIES</span>
+            </div>
+            <!-- Unified Dimensions (Top) -->
+            <div class="v4-dimensions-group prop-group v4-prop-group-divider">
+                <div class="v4-prop-grid-2">
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-width-toggle" class="v4-prop-input v4-prop-input-styled" data-prop="width" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="height">세로 크기 (H)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-height-toggle" class="v4-prop-input v4-prop-input-styled" data-prop="height" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Default Value (On/Off) -->
@@ -2170,6 +2351,24 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             <span>설정된 배경 이미지가 없습니다.</span>
                         </div>
                         <img id="canvas-bg-preview-img" src="" alt="현재 배경" style="display: none;">
+                    </div>
+
+                    <!-- Solid Background Color Section -->
+                    <div class="bg-section-header">
+                        <span class="bg-section-title">단색 배경 컬러 (Solid Color)</span>
+                        <span class="bg-section-sub-badge" id="canvas-bg-color-badge">#f8fafc</span>
+                    </div>
+                    <div class="bg-solid-color-wrap">
+                        <div class="bg-color-presets-row" id="canvas-bg-color-presets">
+                            <!-- Preset Color Swatches -->
+                        </div>
+                        <div class="bg-color-custom-row">
+                            <span class="bg-color-custom-label">직접 선택:</span>
+                            <input type="color" id="canvas-bg-color-picker" class="bg-color-picker-input" value="#f8fafc" title="컬러 피커 열기">
+                            <input type="text" id="canvas-bg-color-hex" class="bg-color-hex-input" value="#f8fafc" placeholder="#f8fafc" maxlength="7" spellcheck="false" title="HEX 색상 코드">
+                            <button type="button" id="btn-canvas-bg-apply-color" class="btn-sm-primary" title="입력한 HEX 컬러 적용">컬러 적용</button>
+                            <button type="button" id="btn-canvas-bg-color-reset" class="btn-sm-ghost" title="기본 단색 컬러(#f8fafc)로 복원">기본값 복원</button>
+                        </div>
                     </div>
 
                     <!-- Presets Section -->

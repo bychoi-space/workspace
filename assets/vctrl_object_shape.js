@@ -126,11 +126,67 @@ window.v4ObjectShapeScript = `
                             if (isVert) s.style.width = Math.max(th, 2) + 'px';
                             else s.style.height = Math.max(th, 2) + 'px';
                         }
-                        if (d.style.lineColor !== undefined) {
-                            t.setAttribute('data-line-color', d.style.lineColor);
+                        var colorVal = d.style.lineColor !== undefined ? d.style.lineColor : (d.style.stroke !== undefined ? d.style.stroke : d.style.borderColor);
+                        if (colorVal !== undefined) {
+                            t.setAttribute('data-line-color', colorVal);
                             if (lineEl) {
-                                lineEl.style.stroke = d.style.lineColor;
-                                lineEl.setAttribute('stroke', d.style.lineColor);
+                                lineEl.style.stroke = colorVal;
+                                lineEl.setAttribute('stroke', colorVal);
+                            }
+                        }
+                    }
+
+                    if (t.classList.contains('v4-shape-wave') || (shape && shape.classList.contains('v4-shape-wave'))) {
+                        const waveEl = t.classList.contains('v4-shape-wave') ? t : shape;
+                        if (d.style.waveDir !== undefined) {
+                            waveEl.setAttribute('data-wave-dir', d.style.waveDir);
+                            const svgEl = waveEl.querySelector('svg');
+                            const polyEl = waveEl.querySelector('polygon');
+                            const cellEl = waveEl.querySelector('.v4-editable-cell');
+                            const curW = s.offsetWidth || parseFloat(s.style.width) || 360;
+                            const curH = s.offsetHeight || parseFloat(s.style.height) || 20;
+
+                            if (d.style.waveDir === 'vertical') {
+                                if (curW > curH) {
+                                    s.style.width = Math.min(curH, 20) + 'px';
+                                    s.style.height = Math.max(curW, 100) + 'px';
+                                } else if (parseFloat(s.style.width) > 40) {
+                                    s.style.width = '20px';
+                                }
+                                if (svgEl) {
+                                    svgEl.setAttribute('viewBox', '0 0 20 360');
+                                }
+                                if (polyEl) {
+                                    polyEl.setAttribute('points', '6,0 2,45 6,90 2,135 6,180 2,225 6,270 2,315 6,360 16,360 12,315 16,270 12,225 16,180 12,135 16,90 12,45 16,0');
+                                }
+                                if (cellEl) {
+                                    cellEl.style.padding = '5px 2px';
+                                }
+                            } else {
+                                if (curH > curW) {
+                                    s.style.width = Math.max(curH, 100) + 'px';
+                                    s.style.height = Math.min(curW, 20) + 'px';
+                                } else if (parseFloat(s.style.height) > 40) {
+                                    s.style.height = '20px';
+                                }
+                                if (svgEl) {
+                                    svgEl.setAttribute('viewBox', '0 0 360 20');
+                                }
+                                if (polyEl) {
+                                    polyEl.setAttribute('points', '0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16');
+                                }
+                                if (cellEl) {
+                                    cellEl.style.padding = '5px 10px';
+                                }
+                            }
+
+                            if (typeof window.notifyParent === 'function') {
+                                window.notifyParent({
+                                    type: 'LF_COMP_RESIZED',
+                                    id: s.id,
+                                    width: s.style.width,
+                                    height: s.style.height
+                                });
                             }
                         }
                     }
@@ -256,7 +312,8 @@ window.v4ObjectShapeScript = `
                     if (svgShape) {
                         if (t.classList.contains('v4-shape-line')) {
                             const curLineWidth = t.getAttribute('data-line-width') || '1.6';
-                            const curLineColor = t.getAttribute('data-line-color') || (d.style && d.style.borderColor) || '#c8c8c8';
+                            const lineStyleColor = d.style && (d.style.lineColor !== undefined ? d.style.lineColor : (d.style.stroke !== undefined ? d.style.stroke : d.style.borderColor));
+                            const curLineColor = lineStyleColor !== undefined ? lineStyleColor : (t.getAttribute('data-line-color') || '#c8c8c8');
                             svgShape.style.strokeWidth = curLineWidth;
                             svgShape.setAttribute('stroke-width', curLineWidth);
                             svgShape.style.stroke = curLineColor;

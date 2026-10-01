@@ -570,12 +570,6 @@
       ],
       "connectors": [],
       "version": 0.6
-    },
-    "01_Project_Summary_344.html": {
-      "title": "01_Project_Summary_344",
-      "type": "plan",
-      "updatedAt": "2026-10-01T04:42:26.973Z",
-      "template": "template_project_summary.html"
     }
   },
   "assignee": "최범열",
@@ -593,8 +587,7 @@
     "09_Admin_PC_Scroll_639_copy4.html",
     "99_Blank_812.html",
     "10_Product_Ranking_Rules_850.html",
-    "11_Daily_Ranking_Batch_Percentile_851.html",
-    "01_Project_Summary_344.html"
+    "11_Daily_Ranking_Batch_Percentile_851.html"
   ],
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/361f6986169c80249cead80437108977?source=copy_link",

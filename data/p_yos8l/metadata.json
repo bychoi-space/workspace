@@ -151,12 +151,6 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
-    },
-    "01_Project_Summary_693.html": {
-      "title": "01_Project_Summary_693",
-      "type": "plan",
-      "updatedAt": "2026-10-01T03:15:50.404Z",
-      "template": "template_project_summary.html"
     }
   },
   "assignee": "최범열",
@@ -174,7 +168,6 @@
     "09_Admin_PC_Scroll_246.html",
     "09_Admin_PC_Scroll_247.html",
     "order_block.html",
-    "cart_block.html",
-    "01_Project_Summary_693.html"
+    "cart_block.html"
   ]
 }

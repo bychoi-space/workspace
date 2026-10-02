@@ -558,28 +558,58 @@ window.v4ResponsivePinsScript = `
                 p2Pos = (item.pins && item.pins.mobile) ? item.pins.mobile : { x: 180, y: 300 };
             }
 
+            var isPinFixed = (item.scrollFixed === 'viewport' || item.scrollFixed === 'fixed' || item.scrollFixed === 'top');
+
             if (ctx.frame1) {
                 var existing1 = document.getElementById('v4-pin-' + ctx.frame1Type + '-' + idx);
+                var pin1 = existing1;
                 if (!existing1) {
-                    var pin1 = createSinglePinElement(ctx.frame1Type, idx, num, p1Pos.x, p1Pos.y);
+                    pin1 = createSinglePinElement(ctx.frame1Type, idx, num, p1Pos.x, p1Pos.y);
                     ctx.frame1.appendChild(pin1);
                 } else {
                     existing1.style.left = p1Pos.x + 'px';
                     existing1.style.top = p1Pos.y + 'px';
                 }
+                if (isPinFixed && pin1) {
+                    pin1.setAttribute('data-scroll-fixed', 'viewport');
+                    pin1.style.setProperty('z-index', '200050', 'important');
+                    pin1.style.willChange = 'transform';
+                } else if (pin1) {
+                    pin1.removeAttribute('data-scroll-fixed');
+                    pin1.removeAttribute('data-fixed-host');
+                    pin1.style.removeProperty('transform');
+                    pin1.style.removeProperty('will-change');
+                    pin1.style.setProperty('z-index', '200000', 'important');
+                }
             }
 
             if (ctx.frame2) {
                 var existing2 = document.getElementById('v4-pin-' + ctx.frame2Type + '-' + idx);
+                var pin2 = existing2;
                 if (!existing2) {
-                    var pin2 = createSinglePinElement(ctx.frame2Type, idx, num, p2Pos.x, p2Pos.y);
+                    pin2 = createSinglePinElement(ctx.frame2Type, idx, num, p2Pos.x, p2Pos.y);
                     ctx.frame2.appendChild(pin2);
                 } else {
                     existing2.style.left = p2Pos.x + 'px';
                     existing2.style.top = p2Pos.y + 'px';
                 }
+                if (isPinFixed && pin2) {
+                    pin2.setAttribute('data-scroll-fixed', 'viewport');
+                    pin2.style.setProperty('z-index', '200050', 'important');
+                    pin2.style.willChange = 'transform';
+                } else if (pin2) {
+                    pin2.removeAttribute('data-scroll-fixed');
+                    pin2.removeAttribute('data-fixed-host');
+                    pin2.style.removeProperty('transform');
+                    pin2.style.removeProperty('will-change');
+                    pin2.style.setProperty('z-index', '200000', 'important');
+                }
             }
         });
+
+        if (window.ScrollPinEngine && typeof window.ScrollPinEngine.scheduleUpdate === 'function') {
+            window.ScrollPinEngine.scheduleUpdate();
+        }
     };
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};

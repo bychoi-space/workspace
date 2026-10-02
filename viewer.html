@@ -259,23 +259,66 @@
                                 <div class="scroll-pin-header">
                                     <div class="scroll-pin-title-wrap">
                                         <svg class="lf-icon scroll-pin-title-icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H7M15 19H9"/></svg>
-                                        <span class="scroll-pin-title">SCROLL PIN</span>
+                                        <span class="scroll-pin-title" id="scroll-pin-title-text">SCROLL PIN</span>
                                     </div>
                                     <span class="scroll-pin-badge" id="scroll-pin-status-badge">SCROLL</span>
                                 </div>
-                                <div class="scroll-pin-segment-group">
-                                    <button id="btn-scroll-pin-none" class="v4-inspector-btn scroll-pin-btn active" data-pin="none" title="일반 스크롤 (화면 스크롤 시 함께 이동)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 3v18M18 9l-6-6-6 6M18 15l-6 6-6-6"/></svg>
-                                        <span>일반</span>
+                                <!-- Object Pin Modes (Normal Components / Groups) -->
+                                <div id="scroll-pin-object-group" class="scroll-pin-segment-group scroll-pin-object-stack">
+                                    <div class="scroll-pin-row">
+                                        <button id="btn-scroll-pin-none" class="v4-inspector-btn scroll-pin-btn active" data-pin="none" title="일반 스크롤 (화면 스크롤 시 함께 이동)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 3v18M18 9l-6-6-6 6M18 15l-6 6-6-6"/></svg>
+                                            <span>일반</span>
+                                        </button>
+                                        <button id="btn-scroll-pin-top" class="v4-inspector-btn scroll-pin-btn" data-pin="top" title="상단 고정 (스크롤 시 화면 상단에 고정)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24"><line x1="4" y1="4" x2="20" y2="4" stroke-width="2.5"/><polyline points="16 14 12 10 8 14"/><line x1="12" y1="10" x2="12" y2="20"/></svg>
+                                            <span>상단</span>
+                                        </button>
+                                        <button id="btn-scroll-pin-bottom" class="v4-inspector-btn scroll-pin-btn" data-pin="bottom" title="하단 고정 (스크롤 시 화면 하단에 고정)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20" stroke-width="2.5"/><polyline points="16 10 12 14 8 10"/><line x1="12" y1="4" x2="12" y2="14"/></svg>
+                                            <span>하단</span>
+                                        </button>
+                                    </div>
+                                    <div class="scroll-pin-row">
+                                        <button id="btn-scroll-pin-custom" class="v4-inspector-btn scroll-pin-btn" data-pin="custom" title="자유 플로팅 (현재 배치된 화면 위치에 항상 고정)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                                            <span>플로팅</span>
+                                        </button>
+                                        <button id="btn-scroll-pin-sticky" class="v4-inspector-btn scroll-pin-btn" data-pin="sticky" title="임계치 스티키 (스크롤 중 지정 높이에 도달하면 고정)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><line x1="3" y1="18" x2="21" y2="18" stroke-dasharray="2 2"/><polygon points="8 14 12 10 16 14"/></svg>
+                                            <span>스티키</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Scroll Behavior / Hide Direction Bar -->
+                                <div id="scroll-pin-effect-bar" class="scroll-pin-effect-bar" style="display: none;">
+                                    <span class="scroll-pin-effect-label">스크롤 반응</span>
+                                    <div class="scroll-pin-effect-select-wrap">
+                                        <select id="scroll-pin-effect-select" class="scroll-pin-effect-select">
+                                            <option value="always">상시 고정 (기본)</option>
+                                            <option value="hide-down">스크롤 내릴 때 숨김</option>
+                                            <option value="hide-up">스크롤 올릴 때 숨김</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Description Pin Modes (Numbered Markers) -->
+                                <div id="scroll-pin-marker-group" class="scroll-pin-segment-group scroll-pin-marker-group" style="display: none;">
+                                    <button id="btn-pin-pos-content" class="v4-inspector-btn scroll-pin-btn active" data-pin="none" title="본문 배치 (본문과 함께 자연스럽게 스크롤)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="2"/></svg>
+                                        <span>본문 배치</span>
                                     </button>
-                                    <button id="btn-scroll-pin-top" class="v4-inspector-btn scroll-pin-btn" data-pin="top" title="상단 고정 (스크롤 시 화면 상단에 고정)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><line x1="4" y1="4" x2="20" y2="4" stroke-width="2.5"/><polyline points="16 14 12 10 8 14"/><line x1="12" y1="10" x2="12" y2="20"/></svg>
-                                        <span>상단</span>
+                                    <button id="btn-pin-pos-fixed" class="v4-inspector-btn scroll-pin-btn" data-pin="viewport" title="화면 핀 고정 (스크롤과 무관하게 화면에 항상 고정 📌)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 17v5M9 2h6l-1 7h3l-5 8-5-8h3L9 2z"/></svg>
+                                        <span>화면 고정 📌</span>
                                     </button>
-                                    <button id="btn-scroll-pin-bottom" class="v4-inspector-btn scroll-pin-btn" data-pin="bottom" title="하단 고정 (스크롤 시 화면 하단에 고정)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20" stroke-width="2.5"/><polyline points="16 10 12 14 8 10"/><line x1="12" y1="4" x2="12" y2="14"/></svg>
-                                        <span>하단</span>
-                                    </button>
+                                </div>
+                                <!-- Offset Adjuster Bar -->
+                                <div id="scroll-pin-offset-bar" class="scroll-pin-offset-bar" style="display: none;">
+                                    <span class="scroll-pin-offset-label" id="scroll-pin-offset-label">VIEWPORT Y</span>
+                                    <div class="scroll-pin-offset-input-wrap">
+                                        <input type="number" id="scroll-pin-offset-input" class="scroll-pin-offset-input" placeholder="0">
+                                        <span class="scroll-pin-offset-unit">px</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="selection-btn-stack">
@@ -671,7 +714,7 @@
     <script src="assets/vctrl_responsive_smartguide_math.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_responsive_smartguide.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_responsive_multiselect.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_iframe_scroll_pin.js?v=V362_SCROLL_PIN"></script>
+    <script src="assets/vctrl_iframe_scroll_pin.js?v=V363_SCROLL_PIN_FIX"></script>
     <script src="assets/vctrl_responsive_pins.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_grouping.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_color_picker.js?v=V360_RECURSION_HOTFIX"></script>

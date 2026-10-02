@@ -280,6 +280,14 @@ window.v4DragResizeScript = `
                         window.lastActiveFrame = 'pc';
                         if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
                     }
+
+                    if (window.activeEl && window.activeEl.getAttribute) {
+                        const curFixed = window.activeEl.getAttribute('data-scroll-fixed');
+                        if (curFixed === 'custom' || curFixed === 'floating') {
+                            const newTop = parseFloat(window.activeEl.style.top) || 0;
+                            window.activeEl.setAttribute('data-scroll-target-y', String(Math.round(newTop)));
+                        }
+                    }
                 }
                 
                 if (window.activeEl.classList.contains('text-marker') || window.activeEl.classList.contains('pin-marker')) {
@@ -341,18 +349,26 @@ window.v4DragResizeScript = `
                                 parent.appendChild(pin);
                             }
                         } else if (pin.hasAttribute('data-scroll-fixed')) {
-                            // Unpinning pin from fixed host to free content
-                            const scrollAreaRect = scrollArea ? scrollArea.getBoundingClientRect() : { top: 0, left: 0 };
-                            const freeTop = (pinRect.top - scrollAreaRect.top) + scrollTop;
-                            const freeLeft = (pinRect.left - scrollAreaRect.left);
+                            const curFixedMode = pin.getAttribute('data-scroll-fixed');
+                            const isIndependentViewport = (curFixedMode === 'viewport' && !pin.hasAttribute('data-fixed-host'));
 
-                            pin.removeAttribute('data-scroll-fixed');
-                            pin.removeAttribute('data-fixed-host');
-                            pin.style.removeProperty('transform');
-                            pin.style.removeProperty('will-change');
-                            pin.style.setProperty('z-index', '200000', 'important');
-                            pin.style.top = Math.max(0, Math.round(freeTop)) + 'px';
-                            pin.style.left = Math.max(0, Math.round(freeLeft)) + 'px';
+                            if (isIndependentViewport) {
+                                pin.style.setProperty('z-index', '200050', 'important');
+                                pin.style.willChange = 'transform';
+                            } else {
+                                // Unpinning pin from fixed host to free content
+                                const scrollAreaRect = scrollArea ? scrollArea.getBoundingClientRect() : { top: 0, left: 0 };
+                                const freeTop = (pinRect.top - scrollAreaRect.top) + scrollTop;
+                                const freeLeft = (pinRect.left - scrollAreaRect.left);
+
+                                pin.removeAttribute('data-scroll-fixed');
+                                pin.removeAttribute('data-fixed-host');
+                                pin.style.removeProperty('transform');
+                                pin.style.removeProperty('will-change');
+                                pin.style.setProperty('z-index', '200000', 'important');
+                                pin.style.top = Math.max(0, Math.round(freeTop)) + 'px';
+                                pin.style.left = Math.max(0, Math.round(freeLeft)) + 'px';
+                            }
                         }
                     }
 

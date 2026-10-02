@@ -13,6 +13,9 @@ window.v4ScrollPinScript = `
     console.log("%c [SCROLL PIN ENGINE] Initializing In-Place Virtual Sticky HUD Module... ", "background: #0ea5e9; color: #ffffff; font-weight: bold; padding: 3px 6px; border-radius: 4px;");
 
     function isResponsiveContext() {
+        if (document.querySelector('[data-scroll-fixed]:not([data-scroll-fixed="none"])')) {
+            return true;
+        }
         if (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function') {
             return window.ResponsiveFrameUtils.isResponsive(document);
         }
@@ -24,8 +27,77 @@ window.v4ScrollPinScript = `
 
     var ScrollPinEngine = {
         boundContainers: new Set(),
+        scrollAreaStates: new WeakMap(),
         isRafPending: false,
         observer: null,
+
+        getScrollAreaState: function(container) {
+            if (!container || (typeof container !== 'object' && typeof container !== 'function')) {
+                return {
+                    lastScrollTop: 0,
+                    accumulatedDelta: 0,
+                    direction: 'none',
+                    hideDownActive: false,
+                    hideUpActive: false
+                };
+            }
+            try {
+                var state = this.scrollAreaStates.get(container);
+                if (!state) {
+                    state = {
+                        lastScrollTop: container.scrollTop || 0,
+                        accumulatedDelta: 0,
+                        direction: 'none',
+                        hideDownActive: false,
+                        hideUpActive: false
+                    };
+                    this.scrollAreaStates.set(container, state);
+                }
+                return state;
+            } catch(e) {
+                return {
+                    lastScrollTop: 0,
+                    accumulatedDelta: 0,
+                    direction: 'none',
+                    hideDownActive: false,
+                    hideUpActive: false
+                };
+            }
+        },
+
+        onContainerScroll: function(container) {
+            var state = this.getScrollAreaState(container);
+            var currentScrollTop = container.scrollTop || 0;
+            var delta = currentScrollTop - state.lastScrollTop;
+
+            if (currentScrollTop <= 30) {
+                state.direction = 'none';
+                state.accumulatedDelta = 0;
+                state.hideDownActive = false;
+                state.hideUpActive = false;
+            } else if (delta > 0) {
+                if (state.direction !== 'down') {
+                    state.direction = 'down';
+                    state.accumulatedDelta = 0;
+                }
+                state.accumulatedDelta += delta;
+                if (state.accumulatedDelta >= 12 && currentScrollTop > 60) {
+                    state.hideDownActive = true;
+                    state.hideUpActive = false;
+                }
+            } else if (delta < 0) {
+                if (state.direction !== 'up') {
+                    state.direction = 'up';
+                    state.accumulatedDelta = 0;
+                }
+                state.accumulatedDelta += Math.abs(delta);
+                if (state.accumulatedDelta >= 10) {
+                    state.hideDownActive = false;
+                    state.hideUpActive = true;
+                }
+            }
+            state.lastScrollTop = currentScrollTop;
+        },
 
         init: function() {
             var self = this;
@@ -51,10 +123,19 @@ window.v4ScrollPinScript = `
                 if (!self.boundContainers.has(container)) {
                     self.boundContainers.add(container);
                     container.addEventListener('scroll', function() {
+                        self.onContainerScroll(container);
                         self.scheduleUpdate();
                     }, { passive: true });
                 }
             });
+            if (!self.boundContainers.has(window)) {
+                self.boundContainers.add(window);
+                window.addEventListener('scroll', function() {
+                    var winContainer = document.scrollingElement || document.documentElement || document.body;
+                    if (winContainer) self.onContainerScroll(winContainer);
+                    self.scheduleUpdate();
+                }, { passive: true });
+            }
         },
 
         scheduleUpdate: function() {
@@ -68,7 +149,8 @@ window.v4ScrollPinScript = `
         },
 
         updatePins: function() {
-            var pinnedEls = document.querySelectorAll('[data-scroll-fixed="top"], [data-scroll-fixed="bottom"]');
+            var self = this;
+            var pinnedEls = document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])');
             if (!pinnedEls || pinnedEls.length === 0) return;
 
             // Map host dy for bottom-pinned elements so pins on them share exact same dy
@@ -85,14 +167,19 @@ window.v4ScrollPinScript = `
                 var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
                     ? window.ResponsiveFrameUtils.getScrollArea(el)
                     : el.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
-                if (!scrollArea) return;
+                if (!scrollArea) {
+                    scrollArea = document.scrollingElement || document.documentElement || document.body || window;
+                }
 
                 var scrollTop = scrollArea.scrollTop || 0;
                 var viewportH = scrollArea.clientHeight || 810;
                 var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
                 var domTop = parseFloat(el.style.top) || 0;
                 var targetViewportTop = Math.max(0, viewportH - elH);
-                var dy = scrollTop + (targetViewportTop - domTop);
+                var effect = el.getAttribute('data-scroll-effect') || 'always';
+                var areaState = ScrollPinEngine.getScrollAreaState(scrollArea);
+                var isHidden = (effect === 'hide-down' && areaState.hideDownActive) || (effect === 'hide-up' && areaState.hideUpActive);
+                var dy = isHidden ? (scrollTop + (viewportH - domTop)) : (scrollTop + (targetViewportTop - domTop));
                 bottomHostDyMap.set(el.parentElement, dy);
             });
 
@@ -103,67 +190,101 @@ window.v4ScrollPinScript = `
                 if (el.classList.contains('dragging-now')) return;
 
                 var mode = el.getAttribute('data-scroll-fixed');
-                if (mode !== 'top' && mode !== 'bottom') return;
+                if (!mode || mode === 'none') return;
 
                 var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
                     ? window.ResponsiveFrameUtils.getScrollArea(el)
                     : el.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
 
-                if (!scrollArea) return;
+                if (!scrollArea) {
+                    scrollArea = document.scrollingElement || document.documentElement || document.body || window;
+                }
 
                 var scrollTop = scrollArea.scrollTop || 0;
                 var dy = 0;
                 var isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
 
-                if (mode === 'top') {
-                    // Pinned to Top of Viewport
-                    if (isPin && el.hasAttribute('data-fixed-host')) {
-                        var hostId = el.getAttribute('data-fixed-host');
-                        var hostEl = hostId ? document.getElementById(hostId) : null;
-                        // Self-healing: if host element does not exist, is disconnected, or is no longer fixed, release pin
-                        if (!hostEl || !hostEl.isConnected || !hostEl.hasAttribute('data-scroll-fixed')) {
-                            el.removeAttribute('data-scroll-fixed');
-                            el.removeAttribute('data-fixed-host');
-                            el.style.removeProperty('transform');
-                            el.style.removeProperty('will-change');
-                            el.style.setProperty('z-index', '200000', 'important');
-                            return;
-                        }
-                        if (hostEl.style.transform) {
-                            el.style.setProperty('transform', hostEl.style.transform, 'important');
-                            el.style.setProperty('z-index', '200050', 'important');
-                            return;
-                        }
+                // Check host-pinned cascade first for pins sitting on a pinned component
+                if (isPin && el.hasAttribute('data-fixed-host')) {
+                    var hostId = el.getAttribute('data-fixed-host');
+                    var hostEl = hostId ? document.getElementById(hostId) : null;
+                    // Self-healing: if host element does not exist, is disconnected, or is no longer fixed, release pin
+                    if (!hostEl || !hostEl.isConnected || !hostEl.hasAttribute('data-scroll-fixed') || hostEl.getAttribute('data-scroll-fixed') === 'none') {
+                        el.removeAttribute('data-scroll-fixed');
+                        el.removeAttribute('data-fixed-host');
+                        el.style.removeProperty('transform');
+                        el.style.removeProperty('will-change');
+                        el.style.setProperty('z-index', '200000', 'important');
+                        return;
                     }
-                    dy = scrollTop;
-                } else if (mode === 'bottom') {
-                    // Pinned to Bottom of Viewport
-                    if (isPin && el.hasAttribute('data-fixed-host')) {
-                        var hostId = el.getAttribute('data-fixed-host');
-                        var hostEl = hostId ? document.getElementById(hostId) : null;
-                        // Self-healing: if host element does not exist, is disconnected, or is no longer fixed, release pin
-                        if (!hostEl || !hostEl.isConnected || !hostEl.hasAttribute('data-scroll-fixed')) {
-                            el.removeAttribute('data-scroll-fixed');
-                            el.removeAttribute('data-fixed-host');
-                            el.style.removeProperty('transform');
-                            el.style.removeProperty('will-change');
-                            el.style.setProperty('z-index', '200000', 'important');
-                            return;
+                    if (hostEl.style.transform) {
+                        el.style.setProperty('transform', hostEl.style.transform, 'important');
+                        el.style.setProperty('z-index', '200050', 'important');
+                        if (hostEl.style.transition) {
+                            el.style.transition = hostEl.style.transition;
+                        } else {
+                            el.style.removeProperty('transition');
                         }
-                        if (hostEl.style.transform) {
-                            el.style.setProperty('transform', hostEl.style.transform, 'important');
-                            el.style.setProperty('z-index', '200050', 'important');
-                            return;
-                        }
+                        return;
                     }
-                    if (isPin && bottomHostDyMap.has(el.parentElement)) {
+                }
+
+                var effect = el.getAttribute('data-scroll-effect') || 'always';
+                var areaState = ScrollPinEngine.getScrollAreaState(scrollArea);
+                var isHidden = (effect === 'hide-down' && areaState.hideDownActive) || (effect === 'hide-up' && areaState.hideUpActive);
+
+                if (isPin) {
+                    // Description Pin: Viewport Fixed Mode vs Content Mode
+                    if (mode === 'viewport' || mode === 'fixed' || mode === 'top') {
+                        dy = scrollTop;
+                    } else if (bottomHostDyMap.has(el.parentElement)) {
                         dy = bottomHostDyMap.get(el.parentElement);
                     } else {
-                        var viewportH = scrollArea.clientHeight || 810;
-                        var elH = el.offsetHeight || parseFloat(el.style.height) || (isPin ? 20 : 60);
-                        var domTop = parseFloat(el.style.top) || 0;
-                        var targetViewportTop = Math.max(0, viewportH - elH);
+                        dy = 0;
+                    }
+                } else if (mode === 'top') {
+                    // Pinned to Top of Viewport with Optional Scroll Effect (hide-down / hide-up)
+                    var domTop = parseFloat(el.style.top) || 0;
+                    var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
+                    if (isHidden) {
+                        dy = scrollTop - domTop - elH;
+                    } else {
+                        dy = scrollTop - domTop;
+                    }
+                } else if (mode === 'bottom') {
+                    // Pinned to Bottom of Viewport with Optional Scroll Effect (hide-down / hide-up)
+                    var viewportH = scrollArea.clientHeight || 810;
+                    var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
+                    var domTop = parseFloat(el.style.top) || 0;
+                    var targetViewportTop = Math.max(0, viewportH - elH);
+                    if (isHidden) {
+                        dy = scrollTop + (viewportH - domTop);
+                    } else {
                         dy = scrollTop + (targetViewportTop - domTop);
+                    }
+                } else if (mode === 'custom' || mode === 'floating') {
+                    // Custom Floating HUD: Maintain specified or captured viewport Y offset
+                    var domTop = parseFloat(el.style.top) || 0;
+                    var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
+                    var rawTargetY = el.getAttribute('data-scroll-target-y');
+                    var targetViewportY = (rawTargetY !== null && rawTargetY !== '') ? parseFloat(rawTargetY) : domTop;
+                    if (isNaN(targetViewportY)) targetViewportY = domTop;
+                    if (isHidden) {
+                        dy = scrollTop - domTop - elH;
+                    } else {
+                        dy = scrollTop + (targetViewportY - domTop);
+                    }
+                } else if (mode === 'sticky') {
+                    // Threshold Sticky HUD: Scroll with content until reaching target threshold from viewport top
+                    var domTop = parseFloat(el.style.top) || 0;
+                    var rawStickyTop = el.getAttribute('data-scroll-sticky-top');
+                    var stickyThresholdY = (rawStickyTop !== null && rawStickyTop !== '') ? parseFloat(rawStickyTop) : 0;
+                    if (isNaN(stickyThresholdY)) stickyThresholdY = 0;
+                    var scrollDistanceToStick = Math.max(0, domTop - stickyThresholdY);
+                    if (scrollTop > scrollDistanceToStick) {
+                        dy = scrollTop - scrollDistanceToStick;
+                    } else {
+                        dy = 0;
                     }
                 }
 
@@ -171,6 +292,20 @@ window.v4ScrollPinScript = `
                 var transformStr = 'translate3d(0px, ' + Math.round(dy) + 'px, 0px)';
                 if (el.style.transform !== transformStr) {
                     el.style.setProperty('transform', transformStr, 'important');
+                }
+
+                // Manage smooth transition for animated scroll effects (hide-down / hide-up)
+                var isAnimatedEffect = (effect === 'hide-down' || effect === 'hide-up');
+                var isDragging = el.classList.contains('dragging-now') || (window.V4DragResizeEngine && window.V4DragResizeEngine.isDragging);
+                if (isAnimatedEffect && !isDragging) {
+                    var smartTrans = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
+                    if (el.style.transition !== smartTrans) {
+                        el.style.setProperty('transition', smartTrans);
+                    }
+                } else if (!isPin) {
+                    if (el.style.transition && el.style.transition.indexOf('transform') !== -1) {
+                        el.style.removeProperty('transition');
+                    }
                 }
 
                 // Enforce appropriate tier z-index
@@ -186,21 +321,25 @@ window.v4ScrollPinScript = `
                     el.style.willChange = 'transform';
                 }
 
-                // Ensure opaque background if transparent so scrolling content does not bleed through (non-pins only)
-                if (!isPin) {
-                    try {
-                        var curBg = el.style.backgroundColor;
-                        var compBg = window.getComputedStyle(el).backgroundColor;
-                        var isTrans = !curBg || curBg === 'transparent' || curBg === 'rgba(0, 0, 0, 0)' || !compBg || compBg === 'transparent' || compBg === 'rgba(0, 0, 0, 0)';
-                        if (isTrans) {
-                            var hasBgChild = el.querySelector ? el.querySelector('.v4-shape-rect, .v4-shape-pattern-grid') : null;
-                            if (!hasBgChild) {
-                                el.style.backgroundColor = '#ffffff';
-                                el.dataset.autoBg = 'true';
-                            }
+                // Self-healing: eliminate any auto-injected background to preserve shape transparency and border-radius
+                try {
+                    if (el.dataset && el.dataset.autoBg === 'true') {
+                        el.style.backgroundColor = '';
+                        el.style.removeProperty('background-color');
+                        delete el.dataset.autoBg;
+                        el.removeAttribute('data-auto-bg');
+                    }
+                    if (!isPin && el.querySelector && el.querySelector('.v4-shape, .v4-shape-circle, .v4-shape-rect, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-wave, .lf-icon, svg')) {
+                        if (el.style.backgroundColor && el.style.backgroundColor !== 'transparent') {
+                            el.style.backgroundColor = '';
+                            el.style.removeProperty('background-color');
                         }
-                    } catch(e) {}
-                }
+                        if (el.dataset && el.dataset.autoBg) {
+                            delete el.dataset.autoBg;
+                            el.removeAttribute('data-auto-bg');
+                        }
+                    }
+                } catch(e) {}
             });
 
         },
@@ -294,30 +433,62 @@ window.v4ScrollPinScript = `
             if (!el) return;
 
             var isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
+            var isPinFixed = isPin && (d.mode === 'viewport' || d.mode === 'fixed' || d.mode === 'top');
+            var isObjFixed = !isPin && (d.mode === 'top' || d.mode === 'bottom' || d.mode === 'custom' || d.mode === 'floating' || d.mode === 'sticky' || d.mode === 'smart');
 
-            if (d.mode === 'top' || d.mode === 'bottom') {
-                if (isPin) {
-                    el.setAttribute('data-scroll-fixed', d.mode);
-                    el.style.zIndex = '200050';
-                    el.style.willChange = 'transform';
+            if (isPinFixed) {
+                var pinIdx = el.getAttribute('data-index');
+                var targetPins = (pinIdx !== null && pinIdx !== undefined) ? Array.from(document.querySelectorAll('.pin-marker[data-index="' + pinIdx + '"], .text-marker[data-index="' + pinIdx + '"]')) : [el];
+                targetPins.forEach(function(p) {
+                    p.setAttribute('data-scroll-fixed', 'viewport');
+                    p.removeAttribute('data-fixed-host');
+                    p.style.setProperty('z-index', '200050', 'important');
+                    p.style.willChange = 'transform';
+                });
+            } else if (isObjFixed) {
+                var effectiveMode = (d.mode === 'floating') ? 'custom' : d.mode;
+                var baseline = Math.max(100000, maxAnyZ);
+                maxFixedZ = Math.max(maxFixedZ, baseline) + 10;
+                var targetZ = maxFixedZ;
+                el.setAttribute('data-scroll-fixed', effectiveMode);
+                el.style.zIndex = String(targetZ);
+                el.style.willChange = 'transform';
+
+                if (effectiveMode === 'custom') {
+                    var targetY = (d.targetY !== undefined && d.targetY !== null) ? d.targetY : (parseFloat(el.style.top) || el.offsetTop || 0);
+                    el.setAttribute('data-scroll-target-y', String(Math.round(targetY)));
+                    el.removeAttribute('data-scroll-sticky-top');
+                } else if (effectiveMode === 'sticky') {
+                    var stickyTop = (d.stickyTop !== undefined && d.stickyTop !== null) ? d.stickyTop : 0;
+                    el.setAttribute('data-scroll-sticky-top', String(Math.round(stickyTop)));
+                    el.removeAttribute('data-scroll-target-y');
                 } else {
-                    var baseline = Math.max(100000, maxAnyZ);
-                    maxFixedZ = Math.max(maxFixedZ, baseline) + 10;
-                    var targetZ = maxFixedZ;
-                    el.setAttribute('data-scroll-fixed', d.mode);
-                    el.style.zIndex = String(targetZ);
-                    el.style.willChange = 'transform';
+                    el.removeAttribute('data-scroll-target-y');
+                    el.removeAttribute('data-scroll-sticky-top');
+                }
 
-                    // Smart Background Fill: If a pinned header/footer has no background (transparent), apply an opaque background so scrolling contents don't bleed through
+                if (d.effect && (d.effect === 'hide-down' || d.effect === 'hide-up')) {
+                    el.setAttribute('data-scroll-effect', d.effect);
+                } else if (d.effect === 'always' || d.effect === 'none' || d.effect === '') {
+                    el.removeAttribute('data-scroll-effect');
+                }
+
+                    // Self-healing: eliminate any auto-injected background to preserve custom shape transparency and border-radius
                     try {
-                        var curBg = el.style.backgroundColor;
-                        var compBg = window.getComputedStyle(el).backgroundColor;
-                        var isTrans = !curBg || curBg === 'transparent' || curBg === 'rgba(0, 0, 0, 0)' || !compBg || compBg === 'transparent' || compBg === 'rgba(0, 0, 0, 0)';
-                        if (isTrans) {
-                            var hasBgChild = el.querySelector ? el.querySelector('.v4-shape-rect, .v4-shape-pattern-grid') : null;
-                            if (!hasBgChild) {
-                                el.style.backgroundColor = '#ffffff';
-                                el.dataset.autoBg = 'true';
+                        if (el.dataset && el.dataset.autoBg === 'true') {
+                            el.style.backgroundColor = '';
+                            el.style.removeProperty('background-color');
+                            delete el.dataset.autoBg;
+                            el.removeAttribute('data-auto-bg');
+                        }
+                        if (el.querySelector && el.querySelector('.v4-shape, .v4-shape-circle, .v4-shape-rect, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-wave, .lf-icon, svg')) {
+                            if (el.style.backgroundColor && el.style.backgroundColor !== 'transparent') {
+                                el.style.backgroundColor = '';
+                                el.style.removeProperty('background-color');
+                            }
+                            if (el.dataset && el.dataset.autoBg) {
+                                delete el.dataset.autoBg;
+                                el.removeAttribute('data-auto-bg');
                             }
                         }
                     } catch(e) {}
@@ -349,7 +520,7 @@ window.v4ScrollPinScript = `
                             var pCenterY = pTop + 10;
                             if (pCenterX >= hLeft && pCenterX <= (hLeft + hWidth) &&
                                 pCenterY >= hTop && pCenterY <= (hTop + hHeight)) {
-                                p.setAttribute('data-scroll-fixed', d.mode);
+                                p.setAttribute('data-scroll-fixed', effectiveMode);
                                 if (el.id) p.setAttribute('data-fixed-host', el.id);
                                 p.style.setProperty('z-index', '200050', 'important');
                                 p.style.willChange = 'transform';
@@ -367,14 +538,18 @@ window.v4ScrollPinScript = `
                             }
                         });
                     }
-                }
             } else {
                 if (isPin) {
-                    el.removeAttribute('data-scroll-fixed');
-                    el.removeAttribute('data-fixed-host');
-                    el.style.transform = '';
-                    el.style.willChange = '';
-                    el.style.setProperty('z-index', '200000', 'important');
+                    var pinIdx = el.getAttribute('data-index');
+                    var targetPins = (pinIdx !== null && pinIdx !== undefined && pinIdx !== '') ? Array.from(document.querySelectorAll('.pin-marker[data-index="' + pinIdx + '"], .text-marker[data-index="' + pinIdx + '"]')) : [el];
+                    if (targetPins.indexOf(el) === -1) targetPins.push(el);
+                    targetPins.forEach(function(p) {
+                        p.removeAttribute('data-scroll-fixed');
+                        p.removeAttribute('data-fixed-host');
+                        p.style.removeProperty('transform');
+                        p.style.removeProperty('will-change');
+                        p.style.setProperty('z-index', '200000', 'important');
+                    });
                 } else {
                     var hLeft = parseFloat(el.style.left) || el.offsetLeft || 0;
                     var hTop = parseFloat(el.style.top) || el.offsetTop || 0;
@@ -382,13 +557,25 @@ window.v4ScrollPinScript = `
                     var hHeight = parseFloat(el.style.height) || el.offsetHeight || 0;
 
                     el.removeAttribute('data-scroll-fixed');
-                    el.style.transform = '';
-                    el.style.willChange = '';
+                    el.removeAttribute('data-scroll-effect');
+                    el.removeAttribute('data-scroll-target-y');
+                    el.removeAttribute('data-scroll-sticky-top');
+                    el.style.removeProperty('transform');
+                    el.style.removeProperty('will-change');
+                    el.style.removeProperty('transition');
                     maxNormalZ = Math.min(80000, maxNormalZ + 10);
                     el.style.zIndex = String(Math.max(1010, maxNormalZ));
                     if (el.dataset && el.dataset.autoBg === 'true') {
                         el.style.backgroundColor = '';
+                        el.style.removeProperty('background-color');
                         delete el.dataset.autoBg;
+                        el.removeAttribute('data-auto-bg');
+                    }
+                    if (el.querySelector && el.querySelector('.v4-shape, .v4-shape-circle, .v4-shape-rect, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-wave, .lf-icon, svg')) {
+                        if (el.style.backgroundColor && el.style.backgroundColor !== 'transparent') {
+                            el.style.backgroundColor = '';
+                            el.style.removeProperty('background-color');
+                        }
                     }
 
                     // Cascade unpin to any pins that were pinned on this host

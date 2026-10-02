@@ -2194,7 +2194,50 @@ body.drag-active #drop-overlay {
 .desc-actions {
     display: flex;
     align-items: center;
+    gap: 6px;
+}
+
+.desc-pin-anchor-btn {
+    display: inline-flex;
+    align-items: center;
     gap: 4px;
+    height: 22px;
+    padding: 0 7px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    user-select: none;
+    line-height: 1;
+}
+.desc-pin-anchor-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+    border-color: rgba(255, 255, 255, 0.22);
+}
+.desc-pin-anchor-btn.is-fixed {
+    background: rgba(236, 72, 153, 0.18) !important;
+    color: #f472b6 !important;
+    border-color: rgba(236, 72, 153, 0.45) !important;
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.25) !important;
+    font-weight: 700;
+}
+.desc-pin-anchor-btn.is-fixed:hover {
+    background: rgba(236, 72, 153, 0.28) !important;
+    color: #ffffff !important;
+    border-color: #ec4899 !important;
+}
+.desc-pin-anchor-btn .anchor-icon {
+    font-size: 13px !important;
+    transform: rotate(45deg);
+    transition: transform 0.15s ease;
+}
+.desc-pin-anchor-btn.is-fixed .anchor-icon {
+    transform: rotate(0deg);
 }
 
 .desc-btn {

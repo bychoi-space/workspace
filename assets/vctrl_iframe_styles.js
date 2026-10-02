@@ -47,8 +47,14 @@ body, .page, .lf-component {
 }
 .lf-component[data-scroll-fixed="top"],
 .lf-component[data-scroll-fixed="bottom"],
+.lf-component[data-scroll-fixed="custom"],
+.lf-component[data-scroll-fixed="floating"],
+.lf-component[data-scroll-fixed="sticky"],
 .lf-group[data-scroll-fixed="top"],
-.lf-group[data-scroll-fixed="bottom"] {
+.lf-group[data-scroll-fixed="bottom"],
+.lf-group[data-scroll-fixed="custom"],
+.lf-group[data-scroll-fixed="floating"],
+.lf-group[data-scroll-fixed="sticky"] {
     z-index: 100000;
     will-change: transform;
 }
@@ -78,6 +84,18 @@ body, .page, .lf-component {
 .lf-group[data-scroll-fixed="bottom"].selected::after {
     content: 'PIN BOTTOM';
     bottom: -18px;
+}
+.lf-component[data-scroll-fixed="custom"].selected::after,
+.lf-component[data-scroll-fixed="floating"].selected::after,
+.lf-group[data-scroll-fixed="custom"].selected::after,
+.lf-group[data-scroll-fixed="floating"].selected::after {
+    content: 'FLOATING';
+    top: -18px;
+}
+.lf-component[data-scroll-fixed="sticky"].selected::after,
+.lf-group[data-scroll-fixed="sticky"].selected::after {
+    content: 'STICKY';
+    top: -18px;
 }
 /* --- Legacy Handle Safety Nullification --- */
 .lf-drag-handle,

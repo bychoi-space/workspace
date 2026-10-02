@@ -2338,6 +2338,30 @@ body.fullscreen-mode .stage {
     border-color: rgba(168, 85, 247, 0.4);
     box-shadow: 0 0 8px rgba(168, 85, 247, 0.2);
 }
+.scroll-pin-badge.badge-custom {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+}
+.scroll-pin-badge.badge-sticky {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+}
+.scroll-pin-badge.badge-viewport {
+    background: rgba(236, 72, 153, 0.2);
+    color: #f472b6;
+    border-color: rgba(236, 72, 153, 0.4);
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.2);
+}
+.scroll-pin-badge.badge-smart {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.2);
+}
 .scroll-pin-segment-group {
     display: flex;
     gap: 4px;
@@ -2347,14 +2371,24 @@ body.fullscreen-mode .stage {
     border-radius: 6px;
     box-sizing: border-box;
 }
+.scroll-pin-segment-group.scroll-pin-object-stack {
+    flex-direction: column !important;
+    gap: 3px !important;
+}
+.scroll-pin-row {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    align-items: center;
+}
 .scroll-pin-btn {
     flex: 1 1 0 !important;
     min-width: 0 !important;
-    height: 26px !important;
-    min-height: 26px !important;
-    max-height: 26px !important;
+    height: 27px !important;
+    min-height: 27px !important;
+    max-height: 27px !important;
     padding: 0 4px !important;
-    font-size: 10.5px !important;
+    font-size: 11px !important;
     font-weight: 600 !important;
     border-radius: 4px !important;
     background: transparent !important;
@@ -2367,6 +2401,20 @@ body.fullscreen-mode .stage {
     gap: 4px !important;
     box-shadow: none !important;
     transition: all 0.15s ease !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+}
+.scroll-pin-btn span {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1 !important;
+}
+.scroll-pin-btn .lf-icon {
+    width: 12px !important;
+    height: 12px !important;
+    stroke-width: 1.8 !important;
+    flex-shrink: 0 !important;
 }
 .scroll-pin-btn:hover {
     color: #f1f5f9 !important;
@@ -2393,10 +2441,152 @@ body.fullscreen-mode .stage {
     font-weight: 700 !important;
     box-shadow: 0 0 10px rgba(168, 85, 247, 0.3) !important;
 }
-.scroll-pin-btn .lf-icon {
-    width: 13px !important;
-    height: 13px !important;
-    stroke-width: 1.8 !important;
+.scroll-pin-btn.active[data-pin="custom"] {
+    background: rgba(245, 158, 11, 0.22) !important;
+    border-color: #f59e0b !important;
+    color: #fbbf24 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3) !important;
+}
+.scroll-pin-btn.active[data-pin="sticky"] {
+    background: rgba(16, 185, 129, 0.22) !important;
+    border-color: #10b981 !important;
+    color: #34d399 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3) !important;
+}
+.scroll-pin-btn.active[data-pin="viewport"] {
+    background: rgba(236, 72, 153, 0.22) !important;
+    border-color: #ec4899 !important;
+    color: #f472b6 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 10px rgba(236, 72, 153, 0.3) !important;
+}
+.scroll-pin-btn.active[data-pin="smart"] {
+    background: rgba(99, 102, 241, 0.22) !important;
+    border-color: #6366f1 !important;
+    color: #a5b4fc !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3) !important;
+}
+.scroll-pin-marker-group .scroll-pin-btn {
+    height: 28px !important;
+    min-height: 28px !important;
+    font-size: 11px !important;
+}
+.scroll-pin-offset-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 1px;
+}
+.scroll-pin-effect-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 2px;
+}
+.scroll-pin-effect-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+.scroll-pin-effect-select-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+.scroll-pin-effect-select {
+    width: 100%;
+    max-width: 156px;
+    height: 22px;
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    color: #f1f5f9;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 0 4px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.scroll-pin-effect-select:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(51, 65, 85, 0.9);
+}
+.scroll-pin-effect-select:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 1px #38bdf8;
+}
+.scroll-pin-effect-select option {
+    background: #0f172a;
+    color: #f1f5f9;
+}
+.scroll-pin-offset-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.scroll-pin-offset-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.scroll-pin-offset-input {
+    width: 56px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: right;
+    padding: 0 4px;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+.scroll-pin-offset-input:focus {
+    border-color: #818cf8;
+    box-shadow: 0 0 6px rgba(129, 140, 248, 0.3);
+}
+.scroll-pin-offset-unit {
+    font-size: 10px;
+    color: #64748b;
+    font-weight: 600;
+}
+.desc-pin-fixed-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: rgba(236, 72, 153, 0.15);
+    color: #f472b6;
+    border: 1px solid rgba(236, 72, 153, 0.3);
+    margin-left: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    vertical-align: middle;
 }
 .selection-btn-stack {
     display: flex;

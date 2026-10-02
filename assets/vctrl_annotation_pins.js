@@ -233,6 +233,27 @@
                     .replace(/\n/g, '<br>');
             }
 
+            var isFixedPin = (item.scrollFixed === 'viewport' || item.scrollFixed === 'fixed' || item.scrollFixed === 'top');
+            if (item.scrollFixed === undefined || item.scrollFixed === null) {
+                if (DOM && DOM.iframe && DOM.iframe.contentDocument) {
+                    try {
+                        var pEl = DOM.iframe.contentDocument.querySelector('.pin-marker[data-index="' + index + '"][data-scroll-fixed="viewport"]');
+                        if (pEl) {
+                            isFixedPin = true;
+                            item.scrollFixed = 'viewport';
+                        } else {
+                            item.scrollFixed = 'none';
+                        }
+                    } catch(e) {}
+                }
+            }
+            var anchorBtnHtml = `
+                <button type="button" class="desc-pin-anchor-btn ${isFixedPin ? 'is-fixed' : ''}" data-index="${index}" title="${isFixedPin ? '화면 고정 해제 (본문 스크롤 모드로 전환)' : '화면 고정 (스크롤 시 화면에 항상 고정)'}">
+                    <span class="material-icons-outlined anchor-icon">push_pin</span>
+                    <span class="anchor-txt">${isFixedPin ? '화면 고정' : '본문 배치'}</span>
+                </button>
+            `;
+
             row.innerHTML = `
                 <div class="desc-header">
                     <div class="desc-header-left">
@@ -240,6 +261,7 @@
                         <span class="desc-header-label">Pin ${index + 1}</span>
                     </div>
                     <div class="desc-actions">
+                        ${anchorBtnHtml}
                         <button class="desc-btn desc-btn-del" data-index="${index}" title="삭제"><span class="material-icons-outlined">delete_outline</span></button>
                     </div>
                 </div>
@@ -285,8 +307,70 @@
                 }
             };
             row.onclick = function(e) {
-                if (e.target.closest('.desc-btn-del')) return;
+                if (e.target.closest('.desc-btn-del') || e.target.closest('.desc-pin-anchor-btn')) return;
                 selectRow();
+            };
+
+            // Pin Scroll-Fixed Toggle Binding
+            var anchorBtn = row.querySelector('.desc-pin-anchor-btn');
+            if (anchorBtn) {
+                anchorBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    var state = window.state;
+                    if (state && state.isReadOnly) return window.showAuthModal ? window.showAuthModal() : null;
+
+                    var currentlyFixed = (item.scrollFixed === 'viewport' || item.scrollFixed === 'fixed' || item.scrollFixed === 'top');
+                    var newMode = currentlyFixed ? 'none' : 'viewport';
+                    item.scrollFixed = newMode;
+
+                    // Sync with iframe DOM and ScrollPinEngine
+                    var DOM = window.DOM;
+                    if (DOM && DOM.iframe && DOM.iframe.contentDocument) {
+                        var matchingPins = Array.from(DOM.iframe.contentDocument.querySelectorAll('.pin-marker[data-index="' + index + '"], .text-marker[data-index="' + index + '"]'));
+                        var pinIds = matchingPins.map(function(p) { return p.id; }).filter(Boolean);
+                        if (pinIds.length === 0) pinIds = ['v4-pin-' + index];
+
+                        // Synchronously update iframe DOM styles and attributes to eliminate latency and async races
+                        matchingPins.forEach(function(p) {
+                            if (newMode === 'none') {
+                                p.removeAttribute('data-scroll-fixed');
+                                p.removeAttribute('data-fixed-host');
+                                p.style.removeProperty('transform');
+                                p.style.removeProperty('will-change');
+                                p.style.setProperty('z-index', '200000', 'important');
+                            } else {
+                                p.setAttribute('data-scroll-fixed', 'viewport');
+                                p.removeAttribute('data-fixed-host');
+                                p.style.setProperty('z-index', '200050', 'important');
+                                p.style.willChange = 'transform';
+                            }
+                        });
+
+                        if (DOM.iframe.contentWindow && window.MessageHub) {
+                            pinIds.forEach(function(pId) {
+                                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_SET_SCROLL_FIXED', {
+                                    id: pId,
+                                    ids: pinIds,
+                                    mode: newMode
+                                });
+                            });
+                        }
+                    }
+
+                    if (typeof window.markAsDirty === 'function') window.markAsDirty();
+                    window.renderDescriptionList();
+
+                    // Restore active focus to this row
+                    setTimeout(function() {
+                        if (DOM && DOM.descriptionList) {
+                            var updatedRow = DOM.descriptionList.querySelector('.desc-row[data-index="' + index + '"]');
+                            if (updatedRow) {
+                                updatedRow.classList.add('selected-pin');
+                                updatedRow.classList.add('active-desc');
+                            }
+                        }
+                    }, 30);
+                };
             };
 
             // Rich Editor Event Bindings

@@ -557,6 +557,7 @@ if (!window.v4IframeStyleExtractorScript) {
             html: textCell ? textCell.innerHTML : (shape ? (shape.querySelector('.v4-shape-text-content')?.innerHTML ?? shape.querySelector('.v4-shape-text-overlay')?.innerHTML ?? shape.innerHTML) : (table ? table.innerHTML : "")),
             isGroup: c.classList.contains('lf-group'),
             scrollFixed: c.getAttribute('data-scroll-fixed') || 'none',
+            scrollEffect: c.getAttribute('data-scroll-effect') || 'always',
             isScrollPinnable: !!(c.closest && (c.closest('.mobile-content, .pc-content-area, .mobile-content-inner, .pc-content-inner, .mobile-frame, .pc-browser-frame') || document.querySelector('.mobile-content, .pc-content-area, .mobile-content-inner, .pc-content-inner'))),
             w: parseFloat(c.style.width) || c.offsetWidth || 200,
             h: parseFloat(c.style.height) || c.offsetHeight || 100,

@@ -55,6 +55,11 @@ window.rebindInspectorDOM = function() {
     DOM.btnScrollPinNone = get('btn-scroll-pin-none');
     DOM.btnScrollPinTop = get('btn-scroll-pin-top');
     DOM.btnScrollPinBottom = get('btn-scroll-pin-bottom');
+    DOM.btnScrollPinCustom = get('btn-scroll-pin-custom');
+    DOM.btnScrollPinSticky = get('btn-scroll-pin-sticky');
+    DOM.btnPinPosContent = get('btn-pin-pos-content');
+    DOM.btnPinPosFixed = get('btn-pin-pos-fixed');
+    DOM.scrollPinOffsetInput = get('scroll-pin-offset-input');
 
     if (typeof window.initUnifiedLabels === 'function') {
         window.initUnifiedLabels();
@@ -202,6 +207,11 @@ window.DOM = {
     btnScrollPinNone: get('btn-scroll-pin-none'),
     btnScrollPinTop: get('btn-scroll-pin-top'),
     btnScrollPinBottom: get('btn-scroll-pin-bottom'),
+    btnScrollPinCustom: get('btn-scroll-pin-custom'),
+    btnScrollPinSticky: get('btn-scroll-pin-sticky'),
+    btnPinPosContent: get('btn-pin-pos-content'),
+    btnPinPosFixed: get('btn-pin-pos-fixed'),
+    scrollPinOffsetInput: get('scroll-pin-offset-input'),
     // Alignment
     alignBar: get('selection-align-bar'),
     btnAlignLeft: get('btn-align-left'),
@@ -863,17 +873,41 @@ function _syncSelectionActionBar(compStyles) {
     _syncScrollPinUI(compStyles);
 }
 
-// 3.8.1 Scroll Pin (Sticky/Fixed Navigation HUD) Synchronization & Binding
-function _setScrollPin(mode) {
+// 3.8.1 Scroll Pin (Sticky/Fixed Navigation HUD & Viewport Pin) Synchronization & Binding
+function _setScrollPin(mode, extraOptions) {
     const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
     if (!selIds || selIds.length === 0) return;
 
     const iframe = document.getElementById('main-iframe');
+    const iframeDoc = iframe?.contentDocument;
+    const el = iframeDoc?.getElementById(selIds[0]);
+    const isPin = el?.classList.contains('pin-marker') || el?.classList.contains('text-marker');
+
     const payload = {
         ids: selIds,
         id: selIds[0],
         mode: mode
     };
+
+    if (!isPin && el) {
+        if (mode === 'custom' || mode === 'floating') {
+            const domTop = parseFloat(el.style.top) || el.offsetTop || 0;
+            const targetY = (extraOptions && extraOptions.targetY !== undefined) ? extraOptions.targetY : domTop;
+            payload.targetY = targetY;
+        } else if (mode === 'sticky') {
+            const stickyTop = (extraOptions && extraOptions.stickyTop !== undefined) ? extraOptions.stickyTop : 0;
+            payload.stickyTop = stickyTop;
+        }
+
+        if (extraOptions && extraOptions.effect !== undefined) {
+            payload.effect = extraOptions.effect;
+        } else if (mode === 'none') {
+            payload.effect = 'always';
+        } else {
+            const curEffect = el.getAttribute('data-scroll-effect') || 'always';
+            payload.effect = curEffect;
+        }
+    }
 
     if (iframe && iframe.contentWindow && window.MessageHub) {
         window.MessageHub.send(iframe.contentWindow, 'LF_SET_SCROLL_FIXED', payload);
@@ -884,35 +918,160 @@ function _setScrollPin(mode) {
 
     if (state.selectedComponent) {
         state.selectedComponent.scrollFixed = mode;
+        if (payload.effect) state.selectedComponent.scrollEffect = payload.effect;
     }
     if (state.selectedComponentStyles) {
         state.selectedComponentStyles.scrollFixed = mode;
+        if (payload.effect) state.selectedComponentStyles.scrollEffect = payload.effect;
     }
 
-    _updateScrollPinButtonsUI(mode);
+    if (isPin && el) {
+        let pIdx = parseInt(el.getAttribute('data-index'));
+        if (isNaN(pIdx)) {
+            pIdx = parseInt((el.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
+        }
+        if (!isNaN(pIdx) && window.state && window.state.activeFile && window.state.activeFile.meta && window.state.activeFile.meta.description) {
+            const descItem = window.state.activeFile.meta.description[pIdx];
+            if (descItem) {
+                descItem.scrollFixed = mode;
+                if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            }
+            const descRow = document.querySelector('.desc-row[data-index="' + pIdx + '"]');
+            if (descRow) {
+                const existingBadge = descRow.querySelector('.desc-pin-fixed-badge');
+                const isFixedPin = (mode === 'viewport' || mode === 'fixed' || mode === 'top');
+                if (isFixedPin) {
+                    if (!existingBadge) {
+                        const labelEl = descRow.querySelector('.desc-header-label');
+                        if (labelEl) {
+                            const bSpan = document.createElement('span');
+                            bSpan.className = 'desc-pin-fixed-badge';
+                            bSpan.innerText = '📌 고정';
+                            labelEl.parentNode.insertBefore(bSpan, labelEl.nextSibling);
+                        }
+                    }
+                } else {
+                    if (existingBadge) existingBadge.remove();
+                }
+                const anchorBtn = descRow.querySelector('.desc-pin-anchor-btn');
+                if (anchorBtn) {
+                    anchorBtn.classList.toggle('is-fixed', isFixedPin);
+                    anchorBtn.title = isFixedPin ? '화면 고정 해제 (본문 스크롤 모드로 전환)' : '화면 고정 (스크롤 시 화면에 항상 고정)';
+                    const anchorTxt = anchorBtn.querySelector('.anchor-txt');
+                    if (anchorTxt) anchorTxt.innerText = isFixedPin ? '화면 고정' : '본문 배치';
+                }
+            }
+        }
+    }
+
+    _updateScrollPinButtonsUI(mode, isPin, payload);
 }
 
-function _updateScrollPinButtonsUI(mode) {
-    const pinMode = (mode === 'top' || mode === 'bottom') ? mode : 'none';
+function _updateScrollPinButtonsUI(mode, isPin, payload) {
     const btnNone = document.getElementById('btn-scroll-pin-none');
     const btnTop = document.getElementById('btn-scroll-pin-top');
     const btnBottom = document.getElementById('btn-scroll-pin-bottom');
+    const btnCustom = document.getElementById('btn-scroll-pin-custom');
+    const btnSticky = document.getElementById('btn-scroll-pin-sticky');
+
+    const btnPinContent = document.getElementById('btn-pin-pos-content');
+    const btnPinFixed = document.getElementById('btn-pin-pos-fixed');
+
     const badge = document.getElementById('scroll-pin-status-badge');
+    const titleText = document.getElementById('scroll-pin-title-text');
+    const objGroup = document.getElementById('scroll-pin-object-group');
+    const markerGroup = document.getElementById('scroll-pin-marker-group');
+    const offsetBar = document.getElementById('scroll-pin-offset-bar');
+    const offsetLabel = document.getElementById('scroll-pin-offset-label');
+    const offsetInput = document.getElementById('scroll-pin-offset-input');
+    const effectBar = document.getElementById('scroll-pin-effect-bar');
+    const effectSelect = document.getElementById('scroll-pin-effect-select');
 
-    if (btnNone) btnNone.classList.toggle('active', pinMode === 'none');
-    if (btnTop) btnTop.classList.toggle('active', pinMode === 'top');
-    if (btnBottom) btnBottom.classList.toggle('active', pinMode === 'bottom');
+    if (isPin) {
+        if (titleText) titleText.innerText = 'PIN ANCHOR';
+        if (objGroup) objGroup.style.display = 'none';
+        if (markerGroup) markerGroup.style.display = 'flex';
+        if (offsetBar) offsetBar.style.display = 'none';
+        if (effectBar) effectBar.style.display = 'none';
 
-    if (badge) {
-        badge.className = 'scroll-pin-badge';
-        if (pinMode === 'top') {
-            badge.innerText = 'PIN TOP';
-            badge.classList.add('badge-top');
-        } else if (pinMode === 'bottom') {
-            badge.innerText = 'PIN BOTTOM';
-            badge.classList.add('badge-bottom');
-        } else {
-            badge.innerText = 'SCROLL';
+        const isFixedPin = (mode === 'viewport' || mode === 'fixed' || mode === 'top');
+        if (btnPinContent) btnPinContent.classList.toggle('active', !isFixedPin);
+        if (btnPinFixed) btnPinFixed.classList.toggle('active', isFixedPin);
+
+        if (badge) {
+            badge.className = 'scroll-pin-badge';
+            if (isFixedPin) {
+                badge.innerText = 'FIXED PIN 📌';
+                badge.classList.add('badge-viewport');
+            } else {
+                badge.innerText = 'CONTENT PIN';
+            }
+        }
+    } else {
+        if (titleText) titleText.innerText = 'SCROLL PIN';
+        if (objGroup) objGroup.style.display = 'flex';
+        if (markerGroup) markerGroup.style.display = 'none';
+
+        const pinMode = (mode === 'top' || mode === 'bottom' || mode === 'custom' || mode === 'floating' || mode === 'sticky') ? mode : 'none';
+
+        if (btnNone) btnNone.classList.toggle('active', pinMode === 'none');
+        if (btnTop) btnTop.classList.toggle('active', pinMode === 'top');
+        if (btnBottom) btnBottom.classList.toggle('active', pinMode === 'bottom');
+        if (btnCustom) btnCustom.classList.toggle('active', pinMode === 'custom' || pinMode === 'floating');
+        if (btnSticky) btnSticky.classList.toggle('active', pinMode === 'sticky');
+
+        // Scroll Reaction (Hide on scroll up / down) Sub-bar
+        // Available for top & bottom pinned objects (and custom if desired)
+        if (effectBar) {
+            if (pinMode === 'top' || pinMode === 'bottom' || pinMode === 'custom') {
+                effectBar.style.display = 'flex';
+                if (effectSelect) {
+                    const currentEffect = (payload && payload.effect) ? payload.effect : 'always';
+                    effectSelect.value = currentEffect;
+                }
+            } else {
+                effectBar.style.display = 'none';
+            }
+        }
+
+        if (offsetBar && offsetLabel && offsetInput) {
+            if (pinMode === 'custom' || pinMode === 'floating') {
+                offsetBar.style.display = 'flex';
+                offsetLabel.innerText = 'VIEWPORT Y';
+                if (payload && payload.targetY !== undefined) {
+                    offsetInput.value = Math.round(payload.targetY);
+                }
+            } else if (pinMode === 'sticky') {
+                offsetBar.style.display = 'flex';
+                offsetLabel.innerText = 'STICKY TOP';
+                if (payload && payload.stickyTop !== undefined) {
+                    offsetInput.value = Math.round(payload.stickyTop);
+                }
+            } else {
+                offsetBar.style.display = 'none';
+            }
+        }
+
+        if (badge) {
+            badge.className = 'scroll-pin-badge';
+            const eff = (payload && payload.effect) ? payload.effect : 'always';
+            const effSuffix = (eff === 'hide-down') ? ' (↓숨김)' : (eff === 'hide-up') ? ' (↑숨김)' : '';
+
+            if (pinMode === 'top') {
+                badge.innerText = 'PIN TOP' + effSuffix;
+                badge.classList.add('badge-top');
+            } else if (pinMode === 'bottom') {
+                badge.innerText = 'PIN BOTTOM' + effSuffix;
+                badge.classList.add('badge-bottom');
+            } else if (pinMode === 'custom' || pinMode === 'floating') {
+                badge.innerText = 'FLOATING' + effSuffix;
+                badge.classList.add('badge-custom');
+            } else if (pinMode === 'sticky') {
+                badge.innerText = 'STICKY';
+                badge.classList.add('badge-sticky');
+            } else {
+                badge.innerText = 'SCROLL';
+            }
         }
     }
 }
@@ -929,6 +1088,12 @@ function _syncScrollPinUI(compStyles) {
 
     // Check if current screen or element is in a responsive / scrollable frame
     let isResponsiveScreen = false;
+    let isPin = false;
+    let currentFixed = (compStyles && compStyles.scrollFixed) || 'none';
+    let currentEffect = (compStyles && compStyles.scrollEffect) || 'always';
+    let targetY = undefined;
+    let stickyTop = undefined;
+
     try {
         const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
         if (iframeDoc) {
@@ -938,25 +1103,33 @@ function _syncScrollPinUI(compStyles) {
             if (!isResponsiveScreen) {
                 isResponsiveScreen = !!iframeDoc.querySelector('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content, .pc-browser-frame, .mobile-frame, .responsive-compare-container, .dual-mobile-container');
             }
+
+            const el = iframeDoc.getElementById(selIds[0]);
+            if (el) {
+                isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
+                currentFixed = el.getAttribute('data-scroll-fixed') || currentFixed || 'none';
+                if (el.hasAttribute('data-scroll-effect')) {
+                    currentEffect = el.getAttribute('data-scroll-effect');
+                }
+                if (el.hasAttribute('data-scroll-target-y')) {
+                    targetY = parseFloat(el.getAttribute('data-scroll-target-y'));
+                } else {
+                    targetY = parseFloat(el.style.top) || el.offsetTop || 0;
+                }
+                if (el.hasAttribute('data-scroll-sticky-top')) {
+                    stickyTop = parseFloat(el.getAttribute('data-scroll-sticky-top'));
+                } else {
+                    stickyTop = 0;
+                }
+            }
         }
     } catch(e) {}
-
-    let currentFixed = (compStyles && compStyles.scrollFixed) || 'none';
-    if (currentFixed === 'none' && selIds.length > 0) {
-        try {
-            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-            const el = iframeDoc?.getElementById(selIds[0]);
-            if (el) {
-                currentFixed = el.getAttribute('data-scroll-fixed') || 'none';
-            }
-        } catch(e) {}
-    }
 
     const shouldShow = isResponsiveScreen || (currentFixed !== 'none') || (compStyles && compStyles.isScrollPinnable);
 
     if (shouldShow) {
         scrollPinBar.style.setProperty('display', 'flex', 'important');
-        _updateScrollPinButtonsUI(currentFixed);
+        _updateScrollPinButtonsUI(currentFixed, isPin, { targetY: targetY, stickyTop: stickyTop, effect: currentEffect });
     } else {
         scrollPinBar.style.setProperty('display', 'none', 'important');
     }
@@ -966,6 +1139,13 @@ function _bindScrollPinEvents() {
     const btnNone = document.getElementById('btn-scroll-pin-none');
     const btnTop = document.getElementById('btn-scroll-pin-top');
     const btnBottom = document.getElementById('btn-scroll-pin-bottom');
+    const btnCustom = document.getElementById('btn-scroll-pin-custom');
+    const btnSticky = document.getElementById('btn-scroll-pin-sticky');
+
+    const btnPinContent = document.getElementById('btn-pin-pos-content');
+    const btnPinFixed = document.getElementById('btn-pin-pos-fixed');
+    const offsetInput = document.getElementById('scroll-pin-offset-input');
+    const effectSelect = document.getElementById('scroll-pin-effect-select');
 
     if (btnNone) {
         btnNone.onclick = (e) => {
@@ -983,6 +1163,71 @@ function _bindScrollPinEvents() {
         btnBottom.onclick = (e) => {
             e.stopPropagation();
             _setScrollPin('bottom');
+        };
+    }
+    if (btnCustom) {
+        btnCustom.onclick = (e) => {
+            e.stopPropagation();
+            _setScrollPin('custom');
+        };
+    }
+    if (btnSticky) {
+        btnSticky.onclick = (e) => {
+            e.stopPropagation();
+            _setScrollPin('sticky');
+        };
+    }
+
+    if (effectSelect) {
+        effectSelect.onchange = (e) => {
+            e.stopPropagation();
+            const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
+            if (!selIds || selIds.length === 0) return;
+            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+            const el = iframeDoc?.getElementById(selIds[0]);
+            if (!el) return;
+            const curMode = el.getAttribute('data-scroll-fixed') || 'none';
+            if (curMode !== 'none') {
+                _setScrollPin(curMode, { effect: effectSelect.value });
+            }
+        };
+    }
+
+    if (btnPinContent) {
+        btnPinContent.onclick = (e) => {
+            e.stopPropagation();
+            _setScrollPin('none');
+        };
+    }
+    if (btnPinFixed) {
+        btnPinFixed.onclick = (e) => {
+            e.stopPropagation();
+            _setScrollPin('viewport');
+        };
+    }
+
+    if (offsetInput) {
+        const handleOffsetChange = () => {
+            const val = parseFloat(offsetInput.value);
+            if (isNaN(val)) return;
+            const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
+            if (selIds.length === 0) return;
+            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+            const el = iframeDoc?.getElementById(selIds[0]);
+            if (!el) return;
+            const curMode = el.getAttribute('data-scroll-fixed');
+            if (curMode === 'custom' || curMode === 'floating') {
+                _setScrollPin('custom', { targetY: val });
+            } else if (curMode === 'sticky') {
+                _setScrollPin('sticky', { stickyTop: val });
+            }
+        };
+        offsetInput.onchange = handleOffsetChange;
+        offsetInput.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleOffsetChange();
+            }
         };
     }
 }

@@ -9,6 +9,7 @@
 
     let activeCompId = null;
     let activeImageRatio = null; // w/h ratio for image shapes (null = not an image)
+    let activeIllustrationRatio = null; // w/h ratio for illustration & motion (default 1:1 or natural)
 
     const UNIFIED_LABELS = {
         background: '배경색 (BG)',
@@ -66,6 +67,17 @@
                 if (hIconInp && (isTargetChanged || document.activeElement !== hIconInp)) hIconInp.value = Math.round(data.boxH);
             }
 
+            if (data.isIllustration || data.isMotion || data.isMedia || (data.currentStyles && (data.currentStyles.isIllustration || data.currentStyles.isMotion || data.currentStyles.isMedia))) {
+                const wIllInp = document.getElementById('prop-width-illustration');
+                const hIllInp = document.getElementById('prop-height-illustration');
+                if (wIllInp && (isTargetChanged || document.activeElement !== wIllInp)) wIllInp.value = Math.round(data.w || 200);
+                if (hIllInp && (isTargetChanged || document.activeElement !== hIllInp)) hIllInp.value = Math.round(data.h || 200);
+                activeIllustrationRatio = (data.imageRatio && data.imageRatio > 0)
+                    ? data.imageRatio
+                    : ((data.h && data.h > 0) ? (data.w / data.h) : 1);
+                window.activeIllustrationRatio = activeIllustrationRatio;
+            }
+
             // Show/hide Preserve Aspect Ratio row depending on whether this is an image
             const ratioRow = document.getElementById('shape-aspect-ratio-row');
             const chk = document.getElementById('chk-preserve-aspect-ratio');
@@ -93,6 +105,10 @@
                 const hIconInp = document.getElementById('prop-height-icon');
                 if (hIconInp && document.activeElement !== hIconInp) hIconInp.value = Math.round(data.boxH);
             }
+            const wIllInp = document.getElementById('prop-width-illustration');
+            const hIllInp = document.getElementById('prop-height-illustration');
+            if (wIllInp && document.activeElement !== wIllInp && data.w !== undefined) wIllInp.value = Math.round(data.w);
+            if (hIllInp && document.activeElement !== hIllInp && data.h !== undefined) hIllInp.value = Math.round(data.h);
             // Line Editor length input sync
             const lineLenInp = document.getElementById('prop-line-length');
             if (lineLenInp && document.activeElement !== lineLenInp) {
@@ -119,6 +135,13 @@
             const hIconInp = document.getElementById('prop-height-icon');
             if (wIconInp) wIconInp.value = 0;
             if (hIconInp) hIconInp.value = 0;
+
+            const wIllInp = document.getElementById('prop-width-illustration');
+            const hIllInp = document.getElementById('prop-height-illustration');
+            if (wIllInp) wIllInp.value = 0;
+            if (hIllInp) hIllInp.value = 0;
+            activeIllustrationRatio = null;
+            window.activeIllustrationRatio = null;
 
             const lineLenInp = document.getElementById('prop-line-length');
             if (lineLenInp) lineLenInp.value = 200;
@@ -316,7 +339,14 @@
         window.activeCompId = targetIds[0];
 
         const chk = document.getElementById('chk-preserve-aspect-ratio');
-        const shouldLock = chk && chk.checked && activeImageRatio !== null;
+        const chkIll = document.getElementById('chk-preserve-aspect-ratio-illustration');
+        const isEditingIll = window.state && window.state.editingType === 'illustration';
+        const lockRatio = isEditingIll 
+            ? (window.activeIllustrationRatio || activeIllustrationRatio || 1) 
+            : activeImageRatio;
+        const shouldLock = isEditingIll 
+            ? (chkIll && chkIll.checked && lockRatio !== null)
+            : (chk && chk.checked && lockRatio !== null);
 
         const style = {};
         style[type] = val + 'px';
@@ -324,14 +354,14 @@
         if (shouldLock) {
             // Compute the other dimension proportionally
             if (type === 'width') {
-                const computedH = Math.max(1, Math.round(val / activeImageRatio));
+                const computedH = Math.max(1, Math.round(val / lockRatio));
                 style['height'] = computedH + 'px';
                 // Sync height inputs
                 document.querySelectorAll('.v4-prop-input[data-prop="height"]').forEach(el => {
                     el.value = computedH;
                 });
             } else if (type === 'height') {
-                const computedW = Math.max(1, Math.round(val * activeImageRatio));
+                const computedW = Math.max(1, Math.round(val * lockRatio));
                 style['width'] = computedW + 'px';
                 // Sync width inputs
                 document.querySelectorAll('.v4-prop-input[data-prop="width"]').forEach(el => {
@@ -489,6 +519,27 @@
             const curW = parseFloat(wInp?.value) || 200;
             const newH = Math.max(10, Math.round(curW / activeImageRatio));
             const hInp = document.getElementById('prop-height');
+            if (hInp) hInp.value = newH;
+            
+            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                id: targetIds[0],
+                ids: targetIds,
+                style: { height: newH + 'px' }
+            });
+            if (window.markAsDirty) window.markAsDirty();
+            return;
+        }
+
+        const snapIllBtn = e.target.closest('#btn-snap-illustration-ratio');
+        if (snapIllBtn) {
+            const targetIds = getActiveTargetIds();
+            const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+            const ratio = window.activeIllustrationRatio || activeIllustrationRatio || 1;
+            if (targetIds.length === 0 || !iframeWin || !ratio || ratio <= 0) return;
+            const wInp = document.getElementById('prop-width-illustration') || document.getElementById('prop-width');
+            const curW = parseFloat(wInp?.value) || 200;
+            const newH = Math.max(10, Math.round(curW / ratio));
+            const hInp = document.getElementById('prop-height-illustration');
             if (hInp) hInp.value = newH;
             
             MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {

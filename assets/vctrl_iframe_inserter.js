@@ -17,6 +17,9 @@ if (!window.v4IframeInserterScript) {
         let centerTop = Math.round((window.innerHeight - compH) / 2);
         let centerLeft = Math.round((window.innerWidth - compW) / 2);
 
+        const fixedType = (d.html && d.html.indexOf('data-scroll-fixed="bottom"') !== -1) ? 'bottom' :
+                          ((d.html && d.html.indexOf('data-scroll-fixed="top"') !== -1) ? 'top' : (d.scrollFixed || null));
+
         if (isResponsiveTemplate) {
             const currentlySelected = document.querySelector('.lf-component.selected');
             const isCanvasTarget = (window.lastActiveFrame === 'canvas') || 
@@ -42,8 +45,16 @@ if (!window.v4IframeInserterScript) {
                         const sTop = scrollContainer.scrollTop || 0;
                         const vHeight = scrollContainer.clientHeight || 810;
                         const hostW = host.offsetWidth || (targetCol.classList.contains('mobile-column') ? 360 : 1160);
-                        centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
-                        centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        if (fixedType === 'top') {
+                            centerLeft = 0;
+                            centerTop = 0;
+                        } else if (fixedType === 'bottom') {
+                            centerLeft = 0;
+                            centerTop = Math.max(0, sTop + vHeight - compH);
+                        } else {
+                            centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                            centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        }
                         if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI(targetCol);
                     }
                 } else {
@@ -73,8 +84,16 @@ if (!window.v4IframeInserterScript) {
                         const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
                         const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
                         const hostW = host ? (host.offsetWidth || 360) : 360;
-                        centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
-                        centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        if (fixedType === 'top') {
+                            centerLeft = 0;
+                            centerTop = 0;
+                        } else if (fixedType === 'bottom') {
+                            centerLeft = 0;
+                            centerTop = Math.max(0, sTop + vHeight - compH);
+                        } else {
+                            centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                            centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        }
                         if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
                     } else if (pcScrollArea || pcInner) {
                         host = pcInner || pcScrollArea;
@@ -82,8 +101,16 @@ if (!window.v4IframeInserterScript) {
                         const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
                         const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
                         const hostW = host ? (host.offsetWidth || 1160) : 1160;
-                        centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
-                        centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        if (fixedType === 'top') {
+                            centerLeft = 0;
+                            centerTop = 0;
+                        } else if (fixedType === 'bottom') {
+                            centerLeft = 0;
+                            centerTop = Math.max(0, sTop + vHeight - compH);
+                        } else {
+                            centerLeft = Math.max(15, Math.round((hostW - compW) / 2));
+                            centerTop = Math.max(15, Math.round(sTop + (vHeight / 2) - (compH / 2)));
+                        }
                         if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
                     }
                 }
@@ -110,12 +137,43 @@ if (!window.v4IframeInserterScript) {
         }
         
         if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        // Phase 3: Detect if insertion falls within an existing Fixed HUD element
+        let isInsideFixedHUD = false;
+        let matchedFixedMode = null;
+        const actualLeft = (d.style && d.style.left !== undefined) ? (parseFloat(d.style.left) || 0) : centerLeft;
+        const actualTop = (d.style && d.style.top !== undefined) ? (parseFloat(d.style.top) || 0) : centerTop;
+        if (host) {
+            const existingFixedEls = Array.from(host.children).filter(function(c) {
+                return c.hasAttribute && c.hasAttribute('data-scroll-fixed');
+            });
+            for (let i = 0; i < existingFixedEls.length; i++) {
+                const fEl = existingFixedEls[i];
+                const fLeft = parseFloat(fEl.style.left) || 0;
+                const fTop = parseFloat(fEl.style.top) || 0;
+                const fWidth = fEl.offsetWidth || parseFloat(fEl.style.width) || 360;
+                const fHeight = fEl.offsetHeight || parseFloat(fEl.style.height) || 60;
+
+                if (actualLeft < (fLeft + fWidth) && (actualLeft + compW) > fLeft &&
+                    actualTop < (fTop + fHeight) && (actualTop + compH) > fTop) {
+                    isInsideFixedHUD = true;
+                    matchedFixedMode = fEl.getAttribute('data-scroll-fixed') || 'top';
+                    break;
+                }
+            }
+        }
+
+        const effectiveFixed = fixedType || (isInsideFixedHUD ? matchedFixedMode : null);
+        const isTargetFixed = !!effectiveFixed;
+
         const v = document.createElement('div'); 
         v.id = d.id || ('v4-comp-' + Date.now()); 
         v.style.position = 'absolute'; 
         v.style.top = centerTop + 'px'; 
         v.style.left = centerLeft + 'px'; 
-        const nextZ = (typeof window.getNextTopZIndex === 'function') ? window.getNextTopZIndex(host) : 1010;
+        const nextZ = (typeof window.getNextTopZIndex === 'function') 
+            ? window.getNextTopZIndex(host, isTargetFixed) 
+            : (isTargetFixed ? 100010 : 1010);
         v.style.zIndex = String(nextZ);
 
         if (isPinMarker) {
@@ -125,7 +183,11 @@ if (!window.v4IframeInserterScript) {
             v.setAttribute('data-pin-num', String(idx + 1));
             v.style.width = '20px';
             v.style.height = '20px';
-            v.style.zIndex = '200000';
+            v.style.zIndex = isInsideFixedHUD ? '200050' : '200000';
+            if (isInsideFixedHUD && matchedFixedMode) {
+                v.setAttribute('data-scroll-fixed', matchedFixedMode);
+                v.style.willChange = 'transform';
+            }
             v.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
                           '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
             if (typeof window.updateHandles === 'function') window.updateHandles(v);
@@ -143,6 +205,11 @@ if (!window.v4IframeInserterScript) {
                 for (let k in d.dataset) {
                     v.setAttribute('data-' + k.replace(/([A-Z])/g, '-$1').toLowerCase(), d.dataset[k]);
                 }
+            }
+            if (effectiveFixed) {
+                v.setAttribute('data-scroll-fixed', effectiveFixed);
+                v.style.zIndex = String(nextZ);
+                v.style.willChange = 'transform';
             }
         }
         
@@ -192,6 +259,9 @@ if (!window.v4IframeInserterScript) {
         }
         if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
             window.ResponsiveSmartGuide.onSelect(v, 7000);
+        }
+        if (window.ScrollPinEngine && typeof window.ScrollPinEngine.scheduleUpdate === 'function') {
+            window.ScrollPinEngine.scheduleUpdate();
         }
         const styles = window._getCompStyles(v);
         notifyParent({ 

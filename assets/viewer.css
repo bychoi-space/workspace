@@ -2264,6 +2264,132 @@ body.fullscreen-mode .stage {
     height: 12px;
     background: rgba(16, 185, 129, 0.2);
 }
+/* Scroll Pin Navigation Bar (Responsive Sticky/Fixed HUD) */
+.selection-scroll-pin-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 8px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 2px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+.selection-scroll-pin-bar:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+    background: rgba(99, 102, 241, 0.12);
+}
+.scroll-pin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.scroll-pin-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.scroll-pin-title-icon {
+    width: 12px !important;
+    height: 12px !important;
+    color: #818cf8;
+    stroke-width: 2 !important;
+}
+.scroll-pin-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: #a5b4fc;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+.scroll-pin-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: all 0.2s ease;
+}
+.scroll-pin-badge.badge-top {
+    background: rgba(6, 182, 212, 0.2);
+    color: #38bdf8;
+    border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+}
+.scroll-pin-badge.badge-bottom {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+    border-color: rgba(168, 85, 247, 0.4);
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.2);
+}
+.scroll-pin-segment-group {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 3px;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+.scroll-pin-btn {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    padding: 0 4px !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    border-radius: 4px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: #94a3b8 !important;
+    cursor: pointer;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+}
+.scroll-pin-btn:hover {
+    color: #f1f5f9 !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+.scroll-pin-btn.active[data-pin="none"] {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
+}
+.scroll-pin-btn.active[data-pin="top"] {
+    background: rgba(6, 182, 212, 0.22) !important;
+    border-color: #06b6d4 !important;
+    color: #38bdf8 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.3) !important;
+}
+.scroll-pin-btn.active[data-pin="bottom"] {
+    background: rgba(168, 85, 247, 0.22) !important;
+    border-color: #a855f7 !important;
+    color: #c084fc !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3) !important;
+}
+.scroll-pin-btn .lf-icon {
+    width: 13px !important;
+    height: 13px !important;
+    stroke-width: 1.8 !important;
+}
 .selection-btn-stack {
     display: flex;
     flex-direction: column;
@@ -3164,7 +3290,7 @@ th.v4-editable-cell:focus, td.v4-editable-cell:focus {
     justify-content: center;
     cursor: pointer;
     border: 2px solid #fff;
-    z-index: 10001;
+    z-index: 330000;
     font-size: 14px;
     font-weight: bold;
     box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);

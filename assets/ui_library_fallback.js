@@ -82,6 +82,18 @@ window.VCTRL_UI_FALLBACK_ATOMIC = `
             <span class="material-icons-outlined v4-card-atom-icon">near_me</span>
             <span class="v4-card-atom-label">Mouse Cursor</span>
         </div>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-mobile-fixed-header')" data-ko="고정헤더 상단고정 gnb 검색바 모바일헤더 헤더네비게이션 sticky header 상단네비">
+            <span class="material-icons-outlined v4-card-atom-icon">vertical_align_top</span>
+            <span class="v4-card-atom-label">Fixed Header</span>
+        </div>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-mobile-fixed-bottom-cta')" data-ko="하단고정 바로구매 cta독 장바구니 구매하기 모바일하단 바텀시트 fixed bottom cta 하단독">
+            <span class="material-icons-outlined v4-card-atom-icon">shopping_bag</span>
+            <span class="v4-card-atom-label">Bottom CTA Dock</span>
+        </div>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-mobile-fixed-bottom-nav')" data-ko="하단네비 5탭 바텀네비게이션 탭바 하단고정 모바일네비 fixed bottom nav 하단바">
+            <span class="material-icons-outlined v4-card-atom-icon">vertical_align_bottom</span>
+            <span class="v4-card-atom-label">5-Tab Bottom Nav</span>
+        </div>
 `;
 
 window.VCTRL_UI_FALLBACK_ICON = `
@@ -779,6 +791,45 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
 
             
+        </div>
+
+        <!-- illustration-inspector-section -->
+        <div class="v4-card-section mt-16" id="illustration-inspector-section" style="display: none;">
+            <div class="v4-section-header">
+                <span class="v4-section-header-title">ILLUSTRATION / MOTION EDITOR</span>
+            </div>
+            <!-- Unified Dimensions (Top) -->
+            <div class="v4-dimensions-group prop-group v4-prop-group-divider">
+                <div class="v4-prop-grid-2">
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-width-illustration" class="v4-prop-input v4-prop-input-styled" data-prop="width" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="height">세로 크기 (H)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-height-illustration" class="v4-prop-input v4-prop-input-styled" data-prop="height" value="0" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Aspect Ratio Lock Option -->
+            <div class="prop-group mt-10">
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; color: #334155; cursor: pointer; user-select: none; margin: 0;">
+                        <input type="checkbox" id="chk-preserve-aspect-ratio-illustration" checked style="accent-color: #2563eb; cursor: pointer;">
+                        <span>가로세로 비율 유지 (Lock Ratio)</span>
+                    </label>
+                    <button type="button" id="btn-snap-illustration-ratio" title="원본 비율로 자동 맞춤" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 7px; font-size: 10px; font-weight: 600; color: #475569; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.15s ease;">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        <span>비율 리셋</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- icon-inspector-section -->

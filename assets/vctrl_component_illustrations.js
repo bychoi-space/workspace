@@ -373,5 +373,92 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/storybook_guide_workspace.png',
             previewHtml: `<img src="assets/illustrations/storybook_guide_workspace.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/storybook_guide_workspace.png" alt="스토리북 디자인 시스템 워크스페이스" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        // =========================================================================
+        // [Group 7] ✨ 모션 인터랙션 (Animated WebP - 8종)
+        // =========================================================================
+        {
+            id: 'v4-motion-click-prompt',
+            name: '[모션] 클릭 유도',
+            title: '마우스 클릭 / 터치 탭 유도 마이크로 펄스 모션 (Animated WebP)',
+            koName: '모션 클릭 터치 마우스 탭 pulse click 제스처 마이크로인터랙션',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '140px',
+            height: '140px',
+            thumb: 'assets/illustrations/motion/motion_click_prompt.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_click_prompt.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_click_prompt.webp" alt="마우스 클릭 유도 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-motion-scroll-prompt',
+            name: '[모션] 스크롤 유도',
+            title: '마우스 스크롤 다운 유도 / 휠 제스처 인디케이터 (Animated WebP)',
+            koName: '모션 스크롤 마우스 휠 scroll down 제스처 인디케이터 탐색',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '140px',
+            height: '140px',
+            thumb: 'assets/illustrations/motion/motion_scroll_prompt.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_scroll_prompt.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_scroll_prompt.webp" alt="마우스 스크롤 유도 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-motion-apple-spinner',
+            name: '[모션] 로딩 스피너',
+            title: '애플 스타일 방사형 틱 스피너 & 퍼센트 카운터 (Animated WebP)',
+            koName: '모션 로딩 스피너 loading spinner apple radial 방사형 퍼센트 대기 비동기',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '140px',
+            height: '140px',
+            thumb: 'assets/illustrations/motion/motion_apple_spinner.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_apple_spinner.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_apple_spinner.webp" alt="애플 스타일 로딩 스피너" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-motion-progress-bar',
+            name: '[모션] 프로그레스 바',
+            title: '애플 스타일 라운디드 프로그레스 바 & 쉬머 광택 (Animated WebP)',
+            koName: '모션 프로그레스바 progress bar 진행률 쉬머 바 로딩 상태',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '260px',
+            height: '80px',
+            thumb: 'assets/illustrations/motion/motion_progress_bar.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_progress_bar.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_progress_bar.webp" alt="프로그레스 바 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-motion-skeleton-shimmer',
+            name: '[모션] 스켈레톤 패턴',
+            title: '스켈레톤 UI 카드 플레이스홀더 & 웨이브 쉬머 (Animated WebP)',
+            koName: '모션 스켈레톤 skeleton shimmer 로딩 플레이스홀더 와이어프레임 카드',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '240px',
+            height: '140px',
+            thumb: 'assets/illustrations/motion/motion_skeleton_shimmer.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_skeleton_shimmer.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_skeleton_shimmer.webp" alt="스켈레톤 패턴 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-motion-toast-notification',
+            name: '[모션] 토스트 메시지',
+            title: '애플 다이내믹 플로팅 알림 캡슐 & 체크 펄스 (Animated WebP)',
+            koName: '모션 토스트 메시지 toast notification dynamic 알림 팝업 캡슐',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '240px',
+            height: '100px',
+            thumb: 'assets/illustrations/motion/motion_toast_notification.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_toast_notification.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_toast_notification.webp" alt="토스트 메시지 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
 ];

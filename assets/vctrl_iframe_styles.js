@@ -41,10 +41,44 @@ body, .page, .lf-component {
 .lf-component { 
     position: absolute; cursor: pointer;
     box-sizing: border-box; z-index: 100;
+}
+.lf-component:not([data-scroll-fixed]) {
     transform: none !important; /* Kill legacy centering drift */
+}
+.lf-component[data-scroll-fixed="top"],
+.lf-component[data-scroll-fixed="bottom"],
+.lf-group[data-scroll-fixed="top"],
+.lf-group[data-scroll-fixed="bottom"] {
+    z-index: 100000;
+    will-change: transform;
 }
 .lf-component.selected { outline: 2px solid #6366f1; }
 .lf-component.lf-group.selected { outline: 2px solid #10b981 !important; }
+.lf-component[data-scroll-fixed].selected::after,
+.lf-group[data-scroll-fixed].selected::after {
+    position: absolute;
+    right: 0;
+    background: #00e5ff;
+    color: #0f172a;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 35000;
+    letter-spacing: -0.2px;
+    box-shadow: 0 2px 6px rgba(0, 229, 255, 0.4);
+}
+.lf-component[data-scroll-fixed="top"].selected::after,
+.lf-group[data-scroll-fixed="top"].selected::after {
+    content: 'PIN TOP';
+    top: -18px;
+}
+.lf-component[data-scroll-fixed="bottom"].selected::after,
+.lf-group[data-scroll-fixed="bottom"].selected::after {
+    content: 'PIN BOTTOM';
+    bottom: -18px;
+}
 /* --- Legacy Handle Safety Nullification --- */
 .lf-drag-handle,
 .lf-resizer { 
@@ -57,7 +91,7 @@ body, .page, .lf-component {
 .lf-in-group .lf-delete-trigger,
 .pin-marker > .lf-delete-trigger,
 .pin-marker > .lf-connector-port { display: none !important; }
-.lf-delete-trigger { position: absolute; top: -12px; right: -12px; width: 24px; height: 24px; background: #ef4444; color: #fff; border-radius: 50%; display: none !important; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; z-index: 10002; font-size: 14px; font-weight: bold; }
+.lf-delete-trigger { position: absolute; top: -12px; right: -12px; width: 24px; height: 24px; background: #ef4444; color: #fff; border-radius: 50%; display: none !important; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; z-index: 330000; font-size: 14px; font-weight: bold; }
 .lf-component:hover .lf-delete-trigger, .lf-component.selected .lf-delete-trigger { display: none !important; }
 .v4-premium-table { table-layout: fixed; border-collapse: collapse; border: 1.6px solid #cbd5e1 !important; font-family: inherit; }
 .v4-premium-table th { padding: 14px 16px; text-align: left; border: 1.6px solid #cbd5e1 !important; font-weight: 400; font-size: 12px; color: var(--v4-text-color, #0f172a); white-space: nowrap; }
@@ -408,6 +442,15 @@ svg.lf-icon:not(.v4-logo-img) polygon,
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6) !important;
     background: linear-gradient(135deg, #f87171, #ef4444) !important;
     z-index: 200005 !important;
+}
+.pin-marker[data-scroll-fixed], .text-marker[data-scroll-fixed] {
+    z-index: 200050 !important;
+}
+.pin-marker[data-scroll-fixed].selected, .text-marker[data-scroll-fixed].selected {
+    z-index: 200055 !important;
+}
+.pin-marker[data-scroll-fixed]:hover, .text-marker[data-scroll-fixed]:hover {
+    z-index: 200055 !important;
 }
 .pin-marker .lf-drag-handle,
 .pin-marker .lf-resizer,

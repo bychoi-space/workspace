@@ -44,6 +44,7 @@ $jsFiles = @(
     "assets/vctrl_responsive_smartguide_math.js",
     "assets/vctrl_responsive_smartguide.js",
     "assets/vctrl_responsive_multiselect.js",
+    "assets/vctrl_iframe_scroll_pin.js",
     "assets/vctrl_responsive_pins.js",
     "assets/vctrl_grouping.js",
     "assets/vctrl_color_picker.js",
@@ -116,7 +117,8 @@ $htmlContent = @"
             { name: 'v4ResponsiveSmartGuideScript', code: window.v4ResponsiveSmartGuideScript },
             { name: 'v4Script', code: window.v4Script },
             { name: 'v4ResponsiveMultiselectScript', code: window.v4ResponsiveMultiselectScript },
-            { name: 'v4ResponsivePinsScript', code: window.v4ResponsivePinsScript }
+            { name: 'v4ResponsivePinsScript', code: window.v4ResponsivePinsScript },
+            { name: 'v4ScrollPinScript', code: window.v4ScrollPinScript }
         ];
 
         inlinedScripts.forEach(item => {

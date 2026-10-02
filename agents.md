@@ -58,7 +58,7 @@
 - **모듈러 아키텍처 (Modular Architecture)**: 엔진 안정성과 확장성을 위해 역할을 엄격히 분리합니다.
   - **`vctrl_core.js` (Core Orchestrator - Parent Side)**:
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, 스크린 로딩 파이프라인, 내비게이션 보호 및 중앙 생명주기 조율을 전담합니다.
-    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 26개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
+    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 27개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
   - **`vctrl_storage.js` (Storage Engine - Parent Side)**:
     - **역할**: 스크린 직렬화(`getIframeHTML`), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, GitHub API 원격 커밋 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
   - **`vctrl_core_router.js` (Core Message Router - Parent Side)**:
@@ -74,7 +74,7 @@
   - **`vctrl_component_data.js` (Component Definition SSOT - Parent Side)**:
     - **역할**: V4 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, SVG 아이콘, 아톰 템플릿 마크업 및 카테고리 메타데이터를 전담 정의합니다.
   - **`vctrl_component_illustrations.js` (Illustration Catalog SSOT - Parent Side)**:
-    - **역할**: 3D Admin, 2D Admin, 고객 구매 여정, 아토믹 디자인 시스템 26종 고해상도 일러스트레이션 카탈로그 메타데이터 전담 (`window.V4_COMPONENT_LIBRARY.illustrations`).
+    - **역할**: 3D Admin, 2D Admin, 고객 구매 여정, 아토믹 디자인 시스템 26종 일러스트레이션 및 6종 Apple 스타일 Animated WebP 모션 인터랙션 카탈로그 메타데이터 전담 (`window.V4_COMPONENT_LIBRARY.illustrations`).
   - **`vctrl_canvas_viewport.js` (Canvas Viewport Engine - Parent Side)**:
     - **역할**: 시스템의 '손'. 캔버스 줌(`adjustZoom`), 팬(`updateTransform`), 화면 맞춤/100% 뷰 스냅(`toggleCrispView`, `centerView`), 스페이스바 패닝, 풀스크린 토글 및 전역 뷰포트 상태 관리.
   - **`vctrl_annotation_pins.js` (Annotation UI & Creation Engine - Parent Side)**:
@@ -135,6 +135,8 @@
     - **역할**: 실시간 핑크 뱃지 및 SVG 가이드선 렌더링, Alt/Shift 검사, 이동(Nudge) 및 자동 타이머 라이프사이클 관리 전담 (`v4ResponsiveSmartGuideScript`).
   - **`vctrl_responsive_multiselect.js` (Responsive Multi-Selection Engine - Iframe Side)**:
     - **역할**: 반응형 프레임 환경에서 마키(Marquee) 드래그 다중 선택 시 프레임 경계 격리 및 좌표 보정 전담 (`v4ResponsiveMultiselectScript`).
+  - **`vctrl_iframe_scroll_pin.js` (Responsive Scroll Pinning Engine - Iframe Side)**:
+    - **역할**: 반응형 스크린(PC & Mobile) 내 상단 헤더(`top`) 및 하단 독/CTA(`bottom`)의 인플레이스 가상 스티키 HUD GPU 가속 렌더링 및 동기화 전담 (`v4ScrollPinScript`).
   - **`vctrl_color_picker.js` (Custom Color Picker Engine - Parent Side)**:
     - **역할**: 알약형 프리셋 및 HSL/HEX/RGB 슬라이더 기반의 초경량 커스텀 컬러 피커 드롭다운 인터랙션 전담.
   - **`vctrl_table.js` (V4 Table Component Engine - Iframe Side)**:
@@ -172,7 +174,11 @@
   - SVG 아톰의 경우, 세련되고 섬세한 슬림 라인 UI 표준 유지를 위해 기본 `stroke-width`를 **`1.2`**로 설정하는 것을 원칙으로 합니다. (라이브러리 아이콘 및 캔버스 삽입 SVG 표준)
   - **스프라이트 아톰 반응형 크기 조절 규칙 (Responsive Sprite Sizing)**: 스프라이트 이미지 기반 아톰의 경우, 고정 픽셀(px) 단위 대신 백분율(%) 기반의 `background-size` 및 `background-position`을 사용하여 객체 크기를 조절할 때 스프라이트 내 다른 영역이 노출(bleeding)되지 않고 단일 객체의 크기만 반응형으로 완벽하게 조절되도록 구현해야 합니다. (예: 3열 2행 구조 스프라이트의 경우 `background-size: 300% 200% !important;`와 백분율 좌표 활용)
   - **Replaced Element (<img>) 금지 및 <div> 대체**: 브라우저 그래픽 최적화 특성상 `<img>` 태그에 `-webkit-mask-image`를 입히는 동적 채색 기법은 엘리먼트 증발을 초래하므로 신규 이미지 기반 아톰은 절대 `<img>` 태그로 작성해서는 안 되며, **`<div>` 엘리먼트와 `background-image` 스타일 조합**으로 설계해야 합니다. (레거시 스크린의 `<img>`는 `enforceDesignSystem()` 내의 `img-to-div` 동적 마이그레이션 모듈에 의해 로딩 시 자동으로 `<div>`로 치환됩니다.)
-  - **여백(Padding) 및 마스크 영역 정합 표준**: 여백이 내장된 스프라이트 기반 아이콘들과의 시각적 크기/균형 조화를 위해, 꽉 차게 잘린 신규 이미지 아톰(예: Share 등) 및 커스텀 아톰에는 반드시 **`padding: 8px !important;`** 및 **`box-sizing: border-box !important;`**를 적용해야 합니다. 또한, 조색 시 마스크 영역이 팽창하여 커지지 않고 여백 안쪽으로 수축 안착하도록 **`background-origin/clip: content-box`**와 **`mask-origin/clip: content-box`** (및 `-webkit-` 프리픽스) 스타일 속성을 생성 템플릿(`vctrl_core.js`) 및 스타일 업데이트 핸들러(`LF_UPDATE_STYLE` in `vctrl_iframe_script.js`) 양쪽에 모두 누락 없이 강제 적용 및 보존해야 합니다.
+  - **Animated WebP 모션 컴포넌트 표준 (Motion Component Standard & Zero Side-Effects)**:
+    - 동적 모션(클릭 유도, 스크롤 유도, 방사형 로딩 스피너, 프로그레스 바, 스켈레톤 패턴, 토스트 메시지 등)은 시스템 부하가 없고 투명 배경(Alpha)을 완벽 지원하는 **Animated WebP (`assets/illustrations/motion/*.webp`)**를 표준으로 사용합니다.
+    - **표준 DOM 스펙**: 반드시 정식 3계층 구조 **`.lf-component` ➔ `.v4-motion-container` ➔ `<img src="assets/illustrations/motion/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**을 준수해야 합니다.
+    - **이벤트 무간섭**: 내부 `<img>`에 `pointer-events: none; user-select: none;`을 적용하여 브라우저 기본 고스트 드래그를 차단하고, 캔버스 드래그/리사이즈/선택 이벤트가 최외곽 `.lf-component`로 100% 정상 수신되도록 보장합니다.
+    - **전용 인스펙터 분리 (Illustration / Motion Editor)**: 일반 아이콘(색상 조색 필요)과 분리된 전용 에디터 패널(`illustration-inspector-section`)을 제공합니다. 가로/세로 크기 변경 시 **비율 유지(Lock Ratio)**가 기본 활성화되며, 원본 비율 리셋 버튼(`btn-snap-illustration-ratio`)을 지원하고 불필요한 아이콘색 피커는 표시되지 않습니다.
 - **디자인 시스템 강제화 (1.6px Border)**: 모든 V4 컴포넌트의 보더 굵기는 **1.6px**로 고정합니다. 인라인 스타일의 간섭을 막기 위해 CSS에 `!important`를 사용하고, `MutationObserver`를 통해 실시간으로 굵기를 감시 및 보정해야 합니다.
 
 

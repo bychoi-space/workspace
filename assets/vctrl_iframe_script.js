@@ -90,7 +90,7 @@ window.v4Script = `
             if (!layer) {
                 layer = document.createElement('div');
                 layer.className = 'v4-selection-adorner-layer';
-                layer.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99998; overflow: visible;';
+                layer.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 310000; overflow: visible;';
                 var compStyle = window.getComputedStyle(container);
                 if (compStyle.position === 'static' && container !== document.body) {
                     container.style.position = 'relative';
@@ -141,7 +141,7 @@ window.v4Script = `
                 box.style.height = h + 'px';
                 box.style.pointerEvents = 'none';
                 box.style.boxSizing = 'border-box';
-                box.style.zIndex = '99998';
+                box.style.zIndex = '310000';
 
                 var borderColor = isGroup ? '#10b981' : '#6366f1';
                 box.style.outline = '2px solid ' + borderColor;

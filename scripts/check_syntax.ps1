@@ -1,5 +1,6 @@
 $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_responsive_multiselect.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_scroll_pin.js",
     "c:\Users\sisun\ai_work\assets\vctrl_responsive_pins.js",
     "c:\Users\sisun\ai_work\assets\vctrl_clipboard_objects.js",
     "c:\Users\sisun\ai_work\assets\vctrl_format_painter.js",
@@ -104,7 +105,7 @@ const scriptsToLoad = [
     'vctrl_iframe_ports.js', 'vctrl_iframe_grid.js', 'vctrl_iframe_accordion.js',
     'vctrl_iframe_tab.js', 'vctrl_responsive_smartguide_math.js', 'vctrl_responsive_smartguide.js', 'vctrl_responsive_pins.js',
     'vctrl_iframe_style_extractor.js', 'vctrl_iframe_layering.js', 'vctrl_iframe_inserter.js',
-    'vctrl_iframe_script.js', 'vctrl_responsive_multiselect.js'
+    'vctrl_iframe_script.js', 'vctrl_responsive_multiselect.js', 'vctrl_iframe_scroll_pin.js'
 ];
 
 scriptsToLoad.forEach(s => {
@@ -121,7 +122,7 @@ const vars = [
     'v4PortConnectorScript', 'v4GridScript', 'v4AccordionScript', 'v4TabScript',
     'v4ResponsiveSmartGuideMathScript', 'v4ResponsiveSmartGuideScript', 'v4ResponsivePinsScript',
     'v4IframeStyleExtractorScript', 'v4IframeLayeringScript', 'v4IframeInserterScript',
-    'v4Script', 'v4ResponsiveMultiselectScript'
+    'v4Script', 'v4ResponsiveMultiselectScript', 'v4ScrollPinScript'
 ];
 
 let assembled = '';

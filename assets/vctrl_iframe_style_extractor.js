@@ -22,10 +22,18 @@ if (!window.v4IframeStyleExtractorScript) {
         const isGroup = c.classList.contains('lf-group');
         const shape = isGroup ? null : c.querySelector('.v4-shape');
         const table = isGroup ? null : c.querySelector('table');
-        const icon = isGroup ? null : (c.querySelector('.lf-icon') || c.querySelector('img'));
+        const isIllustration = isGroup ? false : !!c.querySelector('.v4-illustration-container');
+        const isMotion = isGroup ? false : !!c.querySelector('.v4-motion-container');
+        const isMedia = isIllustration || isMotion;
+        const icon = isGroup ? null : (c.querySelector('.lf-icon') || (!isMedia && !shape && !table && c.querySelector('img')));
         const textCell = isGroup ? null : c.querySelector('.v4-editable-cell');
         const isPin = isGroup ? false : (c.classList.contains('text-marker') || c.classList.contains('pin-marker') || c.classList.contains('v4-text-box') || c.classList.contains('v4-text-shape'));
-        const isImage = isGroup ? false : (shape ? shape.classList.contains('v4-shape-image') : (c.id === 'v4-atom-image' || c.classList.contains('v4-shape-image')));
+        const isImage = isGroup ? false : (
+            (shape && shape.classList.contains('v4-shape-image')) ||
+            c.id === 'v4-atom-image' ||
+            c.classList.contains('v4-shape-image') ||
+            isMedia
+        );
         const isDescriptionPin = isGroup ? false : c.classList.contains('pin-marker');
         
         // Checkbox / Radio Atom Detection
@@ -395,6 +403,9 @@ if (!window.v4IframeStyleExtractorScript) {
             patternType: shape && shape.classList.contains('v4-shape-pattern-grid') ? (shape.getAttribute('data-pattern-type') || 'grid') : '',
             isTable: !!table && !isGrid,
             isShape: !!shape,
+            isIllustration: isIllustration,
+            isMotion: isMotion,
+            isMedia: isMedia,
             isIcon: !!icon,
             isImage: isImage,
             imageRatio: (function() {
@@ -404,10 +415,24 @@ if (!window.v4IframeStyleExtractorScript) {
                 const nw = parseFloat(c.getAttribute('data-natural-width') || (shape && shape.getAttribute('data-natural-width')));
                 const nh = parseFloat(c.getAttribute('data-natural-height') || (shape && shape.getAttribute('data-natural-height')));
                 if (nw && nh && nh > 0) return nw / nh;
+                const innerImg = c.querySelector('.v4-illustration-container img, .v4-motion-container img, img');
+                if (innerImg && innerImg.naturalWidth && innerImg.naturalHeight && innerImg.naturalHeight > 0) {
+                    return innerImg.naturalWidth / innerImg.naturalHeight;
+                }
                 return (c.offsetHeight > 0) ? (c.offsetWidth / c.offsetHeight) : 1;
             })(),
-            naturalWidth: parseFloat(c.getAttribute('data-natural-width') || (shape && shape.getAttribute('data-natural-width'))) || null,
-            naturalHeight: parseFloat(c.getAttribute('data-natural-height') || (shape && shape.getAttribute('data-natural-height'))) || null,
+            naturalWidth: (function() {
+                const nw = parseFloat(c.getAttribute('data-natural-width') || (shape && shape.getAttribute('data-natural-width')));
+                if (nw) return nw;
+                const innerImg = c.querySelector('.v4-illustration-container img, .v4-motion-container img, img');
+                return (innerImg && innerImg.naturalWidth) ? innerImg.naturalWidth : null;
+            })(),
+            naturalHeight: (function() {
+                const nh = parseFloat(c.getAttribute('data-natural-height') || (shape && shape.getAttribute('data-natural-height')));
+                if (nh) return nh;
+                const innerImg = c.querySelector('.v4-illustration-container img, .v4-motion-container img, img');
+                return (innerImg && innerImg.naturalHeight) ? innerImg.naturalHeight : null;
+            })(),
             isPin: isPin,
             isDescriptionPin: isDescriptionPin,
             pinIndex: (function() {
@@ -531,6 +556,8 @@ if (!window.v4IframeStyleExtractorScript) {
             badgeStyle: cursorBadgeStyle,
             html: textCell ? textCell.innerHTML : (shape ? (shape.querySelector('.v4-shape-text-content')?.innerHTML ?? shape.querySelector('.v4-shape-text-overlay')?.innerHTML ?? shape.innerHTML) : (table ? table.innerHTML : "")),
             isGroup: c.classList.contains('lf-group'),
+            scrollFixed: c.getAttribute('data-scroll-fixed') || 'none',
+            isScrollPinnable: !!(c.closest && (c.closest('.mobile-content, .pc-content-area, .mobile-content-inner, .pc-content-inner, .mobile-frame, .pc-browser-frame') || document.querySelector('.mobile-content, .pc-content-area, .mobile-content-inner, .pc-content-inner'))),
             w: parseFloat(c.style.width) || c.offsetWidth || 200,
             h: parseFloat(c.style.height) || c.offsetHeight || 100,
             width: parseFloat(c.style.width) || c.offsetWidth || 200,

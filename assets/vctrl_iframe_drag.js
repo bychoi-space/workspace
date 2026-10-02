@@ -283,6 +283,79 @@ window.v4DragResizeScript = `
                 }
                 
                 if (window.activeEl.classList.contains('text-marker') || window.activeEl.classList.contains('pin-marker')) {
+                    const pin = window.activeEl;
+                    const parent = pin.parentElement;
+                    const scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
+                        ? window.ResponsiveFrameUtils.getScrollArea(pin)
+                        : (pin.closest ? pin.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content') : null);
+                    const scrollTop = scrollArea ? (scrollArea.scrollTop || 0) : 0;
+
+                    if (parent) {
+                        const pinnedHosts = Array.from(parent.children).filter(function(el) {
+                            return el !== pin && el.hasAttribute && el.hasAttribute('data-scroll-fixed') &&
+                                   !el.classList.contains('pin-marker') && !el.classList.contains('text-marker');
+                        });
+
+                        const pinRect = pin.getBoundingClientRect();
+                        const pCenterX = pinRect.left + pinRect.width / 2;
+                        const pCenterY = pinRect.top + pinRect.height / 2;
+
+                        let matchedHost = null;
+                        for (let i = 0; i < pinnedHosts.length; i++) {
+                            const hRect = pinnedHosts[i].getBoundingClientRect();
+                            if (pCenterX >= hRect.left && pCenterX <= hRect.right &&
+                                pCenterY >= hRect.top && pCenterY <= hRect.bottom) {
+                                matchedHost = pinnedHosts[i];
+                                break;
+                            }
+                        }
+
+                        if (matchedHost) {
+                            const hostMode = matchedHost.getAttribute('data-scroll-fixed');
+                            pin.setAttribute('data-scroll-fixed', hostMode);
+                            if (matchedHost.id) pin.setAttribute('data-fixed-host', matchedHost.id);
+                            pin.style.setProperty('z-index', '200050', 'important');
+                            pin.style.willChange = 'transform';
+
+                            // Relative position anchoring inside host (Universal for top & bottom)
+                            const hRect = matchedHost.getBoundingClientRect();
+                            const offsetInsideHostY = pinRect.top - hRect.top;
+                            const offsetInsideHostX = pinRect.left - hRect.left;
+                            const hostDomTop = parseFloat(matchedHost.style.top) || 0;
+                            const hostDomLeft = parseFloat(matchedHost.style.left) || 0;
+
+                            pin.style.top = Math.round(hostDomTop + offsetInsideHostY) + 'px';
+                            pin.style.left = Math.round(hostDomLeft + offsetInsideHostX) + 'px';
+
+                            if (matchedHost.style.transform) {
+                                pin.style.setProperty('transform', matchedHost.style.transform, 'important');
+                            }
+
+                            // Elevate pin to be after host in DOM to guarantee topmost rendering
+                            var trailingRef = Array.from(parent.children).find(function(c) {
+                                return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+                            });
+                            if (trailingRef && trailingRef.parentNode === parent) {
+                                parent.insertBefore(pin, trailingRef);
+                            } else {
+                                parent.appendChild(pin);
+                            }
+                        } else if (pin.hasAttribute('data-scroll-fixed')) {
+                            // Unpinning pin from fixed host to free content
+                            const scrollAreaRect = scrollArea ? scrollArea.getBoundingClientRect() : { top: 0, left: 0 };
+                            const freeTop = (pinRect.top - scrollAreaRect.top) + scrollTop;
+                            const freeLeft = (pinRect.left - scrollAreaRect.left);
+
+                            pin.removeAttribute('data-scroll-fixed');
+                            pin.removeAttribute('data-fixed-host');
+                            pin.style.removeProperty('transform');
+                            pin.style.removeProperty('will-change');
+                            pin.style.setProperty('z-index', '200000', 'important');
+                            pin.style.top = Math.max(0, Math.round(freeTop)) + 'px';
+                            pin.style.left = Math.max(0, Math.round(freeLeft)) + 'px';
+                        }
+                    }
+
                     const frameType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
                         ? window.ResponsiveFrameUtils.getFrameType(window.activeEl)
                         : (window.activeEl.getAttribute('data-frame') || (window.activeEl.closest && window.activeEl.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (window.activeEl.closest && window.activeEl.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : '')));
@@ -326,6 +399,9 @@ window.v4DragResizeScript = `
             isPendingDrag = false;
             isDragging = false;
             isResizing = false;
+            if (window.ScrollPinEngine && typeof window.ScrollPinEngine.scheduleUpdate === 'function') {
+                window.ScrollPinEngine.scheduleUpdate();
+            }
             if (!document.querySelector('.lf-component.selected')) {
                 window.activeEl = null;
             }

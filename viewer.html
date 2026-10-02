@@ -254,6 +254,30 @@
                                     <span id="group-dim-height" class="group-dim-val">0px</span>
                                 </div>
                             </div>
+                            <!-- Scroll Pin Navigation Bar (Responsive Sticky/Fixed Pin) -->
+                            <div id="selection-scroll-pin-bar" class="selection-scroll-pin-bar" style="display: none;">
+                                <div class="scroll-pin-header">
+                                    <div class="scroll-pin-title-wrap">
+                                        <svg class="lf-icon scroll-pin-title-icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H7M15 19H9"/></svg>
+                                        <span class="scroll-pin-title">SCROLL PIN</span>
+                                    </div>
+                                    <span class="scroll-pin-badge" id="scroll-pin-status-badge">SCROLL</span>
+                                </div>
+                                <div class="scroll-pin-segment-group">
+                                    <button id="btn-scroll-pin-none" class="v4-inspector-btn scroll-pin-btn active" data-pin="none" title="일반 스크롤 (화면 스크롤 시 함께 이동)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 3v18M18 9l-6-6-6 6M18 15l-6 6-6-6"/></svg>
+                                        <span>일반</span>
+                                    </button>
+                                    <button id="btn-scroll-pin-top" class="v4-inspector-btn scroll-pin-btn" data-pin="top" title="상단 고정 (스크롤 시 화면 상단에 고정)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><line x1="4" y1="4" x2="20" y2="4" stroke-width="2.5"/><polyline points="16 14 12 10 8 14"/><line x1="12" y1="10" x2="12" y2="20"/></svg>
+                                        <span>상단</span>
+                                    </button>
+                                    <button id="btn-scroll-pin-bottom" class="v4-inspector-btn scroll-pin-btn" data-pin="bottom" title="하단 고정 (스크롤 시 화면 하단에 고정)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20" stroke-width="2.5"/><polyline points="16 10 12 14 8 10"/><line x1="12" y1="4" x2="12" y2="14"/></svg>
+                                        <span>하단</span>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="selection-btn-stack">
                                 <div class="selection-btn-row">
                                     <button id="btn-group-action" class="v4-inspector-btn btn-accent" style="display: none;">
@@ -507,7 +531,7 @@
                 <div id="molecules-header" class="panel-header header-molecules collapsible-header is-collapsed" onclick="if(window.V4SidebarAccordion)window.V4SidebarAccordion.toggle('molecules');" title="컴포넌트 라이브러리 접기/펼치기">
                     <div class="panel-header-left">
                         <span id="molecules-header-text" class="panel-header-title title-molecules">COMPONENTS</span>
-                        <span class="section-count-badge badge-molecules" id="molecules-total-badge">2</span>
+                        <span class="section-count-badge badge-molecules" id="molecules-total-badge">5</span>
                     </div>
                     <span class="material-icons-outlined panel-header-chevron">expand_more</span>
                 </div>
@@ -515,6 +539,9 @@
                     <div id="custom-molecules-container" class="molecules-container">
                         <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'Workspace Header')">Workspace Header</button>
                         <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'Workspace MO Header (Detail)')">Workspace MO Header (Detail)</button>
+                        <button class="v4-inspector-btn molecule-btn" onclick="insertV4ComponentById('v4-mobile-fixed-header')" title="상단 고정 GNB 헤더">Fixed Header (GNB)</button>
+                        <button class="v4-inspector-btn molecule-btn" onclick="insertV4ComponentById('v4-mobile-fixed-bottom-cta')" title="하단 고정 구매/장바구니 CTA 독">Fixed Bottom CTA</button>
+                        <button class="v4-inspector-btn molecule-btn" onclick="insertV4ComponentById('v4-mobile-fixed-bottom-nav')" title="하단 고정 5-탭 네비게이션 독">Fixed 5-Tab Nav</button>
                     </div>
                 </div>
                 </div> <!-- Close #tab-editor -->
@@ -644,6 +671,7 @@
     <script src="assets/vctrl_responsive_smartguide_math.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_responsive_smartguide.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_responsive_multiselect.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_iframe_scroll_pin.js?v=V362_SCROLL_PIN"></script>
     <script src="assets/vctrl_responsive_pins.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_grouping.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_color_picker.js?v=V360_RECURSION_HOTFIX"></script>

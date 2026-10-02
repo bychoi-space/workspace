@@ -47,6 +47,12 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - Use `stroke-width="1.2"` for SVG atoms (library icons and canvas-inserted SVG atoms) unless existing context requires otherwise.
 - Add `background-image: none !important;` when `.lf-icon` is applied to new SVG/custom atoms to avoid sprite interference.
 
+## Animated WebP Motion Component Rules
+- **Format**: Motion components utilize Animated WebP format (`assets/illustrations/motion/*.webp`) for silky-smooth framerates, 60-80% smaller file sizes than GIF, and full 8-bit alpha transparency without fringe artifacts.
+- **Wrapping Standard**: Standard 3-layer architecture **`.lf-component` ➔ `.v4-motion-container` ➔ `<img src="..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**.
+- **Mouse & Canvas Event Guard**: Inner `<img>` must maintain `pointer-events: none; user-select: none;` to prevent native browser ghost dragging from colliding with canvas drag/resize handlers.
+- **Dedicated Inspector Panel**: Selecting an illustration or motion component triggers `isIllustration: true` or `isMotion: true`, opening the dedicated **ILLUSTRATION / MOTION EDITOR** (`#illustration-inspector-section`). Aspect ratio lock (`#chk-preserve-aspect-ratio-illustration`) is active by default to prevent distortion, the ratio snap/reset button (`#btn-snap-illustration-ratio`) restores natural dimensions, and icon color controls are excluded.
+
 ## V4 Border Rule
 - Keep all V4 component borders at `1.6px`.
 - Use CSS `!important` where inline styles can interfere.

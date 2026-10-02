@@ -193,6 +193,12 @@ window.ResponsiveFrameUtils = {
                 el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');
             });
 
+            // 2.1 Reset runtime scroll pin transform and will-change before saving
+            root.querySelectorAll('[data-scroll-fixed], .pin-marker').forEach(function(el) {
+                el.style.removeProperty('transform');
+                el.style.removeProperty('will-change');
+            });
+
             // 3. Clean empty inline style rules created by browser DOM serialization
             root.querySelectorAll('[style]').forEach(function(el) {
                 const raw = el.getAttribute('style');
@@ -608,6 +614,10 @@ window.v4CommonScript = `
             });
             root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
                 el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');
+            });
+            root.querySelectorAll('[data-scroll-fixed], .pin-marker').forEach(function(el) {
+                el.style.removeProperty('transform');
+                el.style.removeProperty('will-change');
             });
             root.querySelectorAll('[style]').forEach(function(el) {
                 var raw = el.getAttribute('style');

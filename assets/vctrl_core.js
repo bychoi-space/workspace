@@ -62,7 +62,8 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'IframeLayering', key: 'v4IframeLayeringScript' },
     { name: 'IframeInserter', key: 'v4IframeInserterScript' },
     { name: 'CoreScript', key: 'v4Script' },
-    { name: 'ResponsiveMultiselect', key: 'v4ResponsiveMultiselectScript' }
+    { name: 'ResponsiveMultiselect', key: 'v4ResponsiveMultiselectScript' },
+    { name: 'ScrollPin', key: 'v4ScrollPinScript' }
 ];
 
 function getInlinedEngineScript() {

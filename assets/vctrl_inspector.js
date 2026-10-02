@@ -18,6 +18,7 @@ window.rebindInspectorDOM = function() {
     DOM.tablePropSection = get('table-inspector-section');
     DOM.shapePropSection = get('shape-inspector-section');
     DOM.linePropSection = get('line-editor-section');
+    DOM.illustrationPropSection = get('illustration-inspector-section');
     DOM.iconPropSection = get('icon-inspector-section');
     DOM.checkboxRadioPropSection = get('checkbox-radio-inspector-section');
     DOM.textboxTextareaPropSection = get('textbox-textarea-inspector-section');
@@ -49,6 +50,11 @@ window.rebindInspectorDOM = function() {
     DOM.btnSendBack = get('btn-send-back-action');
     DOM.btnCopyFormat = get('btn-copy-format-action');
     DOM.btnPasteFormat = get('btn-paste-format-action');
+    DOM.selectionScrollPinBar = get('selection-scroll-pin-bar');
+    DOM.scrollPinStatusBadge = get('scroll-pin-status-badge');
+    DOM.btnScrollPinNone = get('btn-scroll-pin-none');
+    DOM.btnScrollPinTop = get('btn-scroll-pin-top');
+    DOM.btnScrollPinBottom = get('btn-scroll-pin-bottom');
 
     if (typeof window.initUnifiedLabels === 'function') {
         window.initUnifiedLabels();
@@ -66,7 +72,7 @@ window.restorePropertiesSections = function(force) {
 
     const sections = [
         DOM.shapePropSection, DOM.textPropSection, DOM.tablePropSection,
-        DOM.linePropSection, DOM.iconPropSection, DOM.checkboxRadioPropSection,
+        DOM.linePropSection, DOM.illustrationPropSection, DOM.iconPropSection, DOM.checkboxRadioPropSection,
         DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
         DOM.fileuploadPropSection, DOM.alertPropSection, (DOM.popupPropSection || document.getElementById('popup-inspector-section')), DOM.buttonPropSection,
         DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
@@ -158,6 +164,7 @@ window.DOM = {
     tablePropSection: get('table-inspector-section'),
     shapePropSection: get('shape-inspector-section'),
     linePropSection: get('line-editor-section'),
+    illustrationPropSection: get('illustration-inspector-section'),
     iconPropSection: get('icon-inspector-section'),
     checkboxRadioPropSection: get('checkbox-radio-inspector-section'),
     textboxTextareaPropSection: get('textbox-textarea-inspector-section'),
@@ -190,6 +197,11 @@ window.DOM = {
     btnSendBack: get('btn-send-back-action'),
     btnCopyFormat: get('btn-copy-format-action'),
     btnPasteFormat: get('btn-paste-format-action'),
+    selectionScrollPinBar: get('selection-scroll-pin-bar'),
+    scrollPinStatusBadge: get('scroll-pin-status-badge'),
+    btnScrollPinNone: get('btn-scroll-pin-none'),
+    btnScrollPinTop: get('btn-scroll-pin-top'),
+    btnScrollPinBottom: get('btn-scroll-pin-bottom'),
     // Alignment
     alignBar: get('selection-align-bar'),
     btnAlignLeft: get('btn-align-left'),
@@ -432,6 +444,7 @@ function _hideAllPropertySections(isTypingInAdminProps) {
     if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'none';
     if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'none';
     if (DOM.linePropSection) DOM.linePropSection.style.display = 'none';
+    if (DOM.illustrationPropSection) DOM.illustrationPropSection.style.display = 'none';
     if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'none';
     if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'none';
     if (DOM.textboxTextareaPropSection) DOM.textboxTextareaPropSection.style.display = 'none';
@@ -475,6 +488,7 @@ function _detectComponentType(compStyles) {
     if (compStyles.isAdminSettings) return 'admin-settings';
     if (compStyles.isTab) return 'tab';
     if (compStyles.isCursor) return 'cursor';
+    if (compStyles.isIllustration || compStyles.isMotion || compStyles.isMedia) return 'illustration';
     if (compStyles.isIcon) return 'icon';
     return 'comp';
 }
@@ -562,6 +576,11 @@ function _syncComponentTypeProperties(compStyles, editingType) {
         if (DOM.linePropSection) DOM.linePropSection.style.display = 'block';
         if (typeof window._syncLineEditorProps === 'function') {
             window._syncLineEditorProps(compStyles);
+        }
+    } else if (editingType === 'illustration') {
+        if (DOM.illustrationPropSection) DOM.illustrationPropSection.style.display = 'block';
+        if (typeof window._syncIllustrationProps === 'function') {
+            window._syncIllustrationProps(compStyles);
         }
     } else if (editingType === 'icon') {
         if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'block';
@@ -839,6 +858,133 @@ function _syncSelectionActionBar(compStyles) {
             groupDimBar.style.setProperty('display', 'none', 'important');
         }
     }
+
+    // 3.8.1 Synchronize Scroll Pin Navigation Controls
+    _syncScrollPinUI(compStyles);
+}
+
+// 3.8.1 Scroll Pin (Sticky/Fixed Navigation HUD) Synchronization & Binding
+function _setScrollPin(mode) {
+    const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
+    if (!selIds || selIds.length === 0) return;
+
+    const iframe = document.getElementById('main-iframe');
+    const payload = {
+        ids: selIds,
+        id: selIds[0],
+        mode: mode
+    };
+
+    if (iframe && iframe.contentWindow && window.MessageHub) {
+        window.MessageHub.send(iframe.contentWindow, 'LF_SET_SCROLL_FIXED', payload);
+    }
+    if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
+        window.EditorBus.sendToIframe('LF_SET_SCROLL_FIXED', payload);
+    }
+
+    if (state.selectedComponent) {
+        state.selectedComponent.scrollFixed = mode;
+    }
+    if (state.selectedComponentStyles) {
+        state.selectedComponentStyles.scrollFixed = mode;
+    }
+
+    _updateScrollPinButtonsUI(mode);
+}
+
+function _updateScrollPinButtonsUI(mode) {
+    const pinMode = (mode === 'top' || mode === 'bottom') ? mode : 'none';
+    const btnNone = document.getElementById('btn-scroll-pin-none');
+    const btnTop = document.getElementById('btn-scroll-pin-top');
+    const btnBottom = document.getElementById('btn-scroll-pin-bottom');
+    const badge = document.getElementById('scroll-pin-status-badge');
+
+    if (btnNone) btnNone.classList.toggle('active', pinMode === 'none');
+    if (btnTop) btnTop.classList.toggle('active', pinMode === 'top');
+    if (btnBottom) btnBottom.classList.toggle('active', pinMode === 'bottom');
+
+    if (badge) {
+        badge.className = 'scroll-pin-badge';
+        if (pinMode === 'top') {
+            badge.innerText = 'PIN TOP';
+            badge.classList.add('badge-top');
+        } else if (pinMode === 'bottom') {
+            badge.innerText = 'PIN BOTTOM';
+            badge.classList.add('badge-bottom');
+        } else {
+            badge.innerText = 'SCROLL';
+        }
+    }
+}
+
+function _syncScrollPinUI(compStyles) {
+    const scrollPinBar = document.getElementById('selection-scroll-pin-bar');
+    if (!scrollPinBar) return;
+
+    const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
+    if (selIds.length === 0) {
+        scrollPinBar.style.setProperty('display', 'none', 'important');
+        return;
+    }
+
+    // Check if current screen or element is in a responsive / scrollable frame
+    let isResponsiveScreen = false;
+    try {
+        const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+        if (iframeDoc) {
+            if (typeof window.isResponsiveDocument === 'function') {
+                isResponsiveScreen = window.isResponsiveDocument(iframeDoc);
+            }
+            if (!isResponsiveScreen) {
+                isResponsiveScreen = !!iframeDoc.querySelector('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content, .pc-browser-frame, .mobile-frame, .responsive-compare-container, .dual-mobile-container');
+            }
+        }
+    } catch(e) {}
+
+    let currentFixed = (compStyles && compStyles.scrollFixed) || 'none';
+    if (currentFixed === 'none' && selIds.length > 0) {
+        try {
+            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+            const el = iframeDoc?.getElementById(selIds[0]);
+            if (el) {
+                currentFixed = el.getAttribute('data-scroll-fixed') || 'none';
+            }
+        } catch(e) {}
+    }
+
+    const shouldShow = isResponsiveScreen || (currentFixed !== 'none') || (compStyles && compStyles.isScrollPinnable);
+
+    if (shouldShow) {
+        scrollPinBar.style.setProperty('display', 'flex', 'important');
+        _updateScrollPinButtonsUI(currentFixed);
+    } else {
+        scrollPinBar.style.setProperty('display', 'none', 'important');
+    }
+}
+
+function _bindScrollPinEvents() {
+    const btnNone = document.getElementById('btn-scroll-pin-none');
+    const btnTop = document.getElementById('btn-scroll-pin-top');
+    const btnBottom = document.getElementById('btn-scroll-pin-bottom');
+
+    if (btnNone) {
+        btnNone.onclick = (e) => {
+            e.stopPropagation();
+            _setScrollPin('none');
+        };
+    }
+    if (btnTop) {
+        btnTop.onclick = (e) => {
+            e.stopPropagation();
+            _setScrollPin('top');
+        };
+    }
+    if (btnBottom) {
+        btnBottom.onclick = (e) => {
+            e.stopPropagation();
+            _setScrollPin('bottom');
+        };
+    }
 }
 
 // 3.9 Synchronize Content to Quill Editor
@@ -954,7 +1100,7 @@ function _relocatePropertyPanels(isDocked) {
         }
         const sections = [
             DOM.shapePropSection, DOM.textPropSection, DOM.tablePropSection,
-            DOM.linePropSection, DOM.iconPropSection, DOM.checkboxRadioPropSection,
+            DOM.linePropSection, DOM.illustrationPropSection, DOM.iconPropSection, DOM.checkboxRadioPropSection,
             DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
             DOM.fileuploadPropSection, DOM.alertPropSection, (DOM.popupPropSection || document.getElementById('popup-inspector-section')), DOM.buttonPropSection,
             DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
@@ -995,6 +1141,8 @@ function _handleNoSelection() {
     if (DOM.selectionBar) DOM.selectionBar.style.display = 'none';
     const groupDimBar = document.getElementById('group-dimension-bar');
     if (groupDimBar) groupDimBar.style.setProperty('display', 'none', 'important');
+    const scrollPinBar = document.getElementById('selection-scroll-pin-bar');
+    if (scrollPinBar) scrollPinBar.style.setProperty('display', 'none', 'important');
 }
 
 // --- Master Property Coordinator & Dispatcher ---
@@ -1221,6 +1369,7 @@ let currentFlyoutScreen = null;
 if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => window.toggleSidebar('left');
 if (DOM.btnToggleRight) DOM.btnToggleRight.onclick = () => window.toggleSidebar('right');
 document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = () => window.switchSidebarTab(btn.dataset.tab));
+_bindScrollPinEvents();
 if (DOM.btnAddDescription) {
     DOM.btnAddDescription.onclick = () => {
         if (typeof window.handleTextCreation === 'function') window.handleTextCreation();
@@ -1497,6 +1646,7 @@ window.initAllInspectorEvents = function() {
     safeRun(() => window.InspectorTable?.bindEvents?.(), 'InspectorTable.bindEvents');
     safeRun(() => window.InspectorShapes?.bindEvents?.(), 'InspectorShapes.bindEvents');
     safeRun(window.initCursorEvents || (window.InspectorAtoms && window.InspectorAtoms.initCursorEvents), 'initCursorEvents');
+    safeRun(_bindScrollPinEvents, '_bindScrollPinEvents');
 };
 
 // Backward-compatible global aliases for atom/domain event triggers

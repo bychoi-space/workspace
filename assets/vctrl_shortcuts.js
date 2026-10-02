@@ -395,6 +395,9 @@ window.v4ShortcutsScript = `
             notifyParent({ type: 'LF_SPACE_UP' });
         } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
             isArrowMoving = false;
+            if (window.ScrollPinEngine && typeof window.ScrollPinEngine.scheduleUpdate === 'function') {
+                window.ScrollPinEngine.scheduleUpdate();
+            }
             if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
                 window.ResponsiveSmartGuide.onNudgeEnd();
             } else {

@@ -32,6 +32,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - **텍스트 (Text Shape)**: `.lf-component.v4-text-shape` ➔ `.v4-editable-cell[contenteditable="true"]`
   - **아이콘 (Icons / Atoms)**: SVG 내 `.lf-icon` 필수 포함, `stroke-width="1.2"` (또는 `1.6`), `fill="none"`
   - **일러스트 (Illustrations / 3D & 2D)**: `.lf-component` ➔ `.v4-illustration-container` ➔ `<img src="assets/illustrations/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`
+  - **모션 인터랙션 (Animated WebP)**: `.lf-component` ➔ `.v4-motion-container` ➔ `<img src="assets/illustrations/motion/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`
   - **스크린 배경 이미지 (Canvas Background)**: 배경 이미지가 필요한 경우 캔버스 루트 `#canvas` 최상단 자식으로 `<div id="canvas_bg_layer" style="position: absolute; top: 0; left: 0; width: 1600px; height: 900px; z-index: 0; pointer-events: none !important; user-select: none; overflow: hidden;"><img id="canvas_bg_img" src="..." style="width: 100%; height: 100%; object-fit: cover; opacity: ...; pointer-events: none !important; user-select: none; display: block;"></div>` 무간섭 레이어 배치.
   - **뱃지/태그 (Badges)**: 콤팩트한 직사각형 도형 래퍼 + `.v4-shape-text-content`
 - **임의의 비표준 태그 금지**: 에디터 시스템 엔진이 인식할 수 없는 임의의 커스텀 태그나 비표준 클래스를 남발하여 인스펙터 선택/편집이 마비되는 현상을 차단합니다.
@@ -138,6 +139,18 @@ description: Use when the user asks AI to create, draw, generate, design, or com
     - **스타일 일관성**: 기존 라이브러리의 톤앤매너(투명 배경의 세련된 3D 클레이/아이소메트릭 또는 미니멀한 2D 플랫 일러스트)를 엄격히 계승.
     - **저장 위치**: 제작된 이미지는 반드시 `assets/illustrations/` 디렉토리에 명확한 네이밍(예: `admin_3d_settlement.png`, `ill_security_token.png` 등)으로 저장.
     - **즉시 마크업 바인딩**: 생성 즉시 스크린 HTML 내 `.v4-illustration-container` 표준 구조로 삽입하여 캔버스에 즉각 렌더링되도록 반영.
+- **동적 모션 인터랙션 적극 활용 (Animated WebP Motion Standard - Apple Style)**:
+  - 마우스 클릭 유도, 마우스 스크롤 유도, 방사형 로딩 스피너, 프로그레스 바, 스켈레톤 패턴, 토스트 메시지 등 **동적 상태를 시각화할 때는 `assets/illustrations/motion/*.webp` 6종 프리셋을 적극 배치**하여 화면의 생동감과 시각적 완성도를 극대화합니다.
+  - **모션 컴포넌트 표준 마크업**:
+    ```html
+    <!-- [표준 모션 컴포넌트 마크업 - Animated WebP] -->
+    <div id="comp_motion_1" class="lf-component" style="position: absolute; top: 120px; left: 80px; width: 140px; height: 140px; z-index: 10;" data-resized="true">
+        <div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+            <img src="assets/illustrations/motion/motion_apple_spinner.webp" alt="로딩 스피너" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+        </div>
+    </div>
+    ```
+  - **원자적 분리 및 전용 에디터 지원**: 모션 오브젝트는 텍스트나 뱃지와 통합하지 않고 반드시 독립적인 `.lf-component`로 분리합니다. 선택 시 전용 **ILLUSTRATION / MOTION EDITOR** 패널이 활성화되어 기본 종횡비 잠금(Lock Ratio) 및 비율 리셋이 완벽히 지원됩니다.
 
 ### 6. 간결하고 정돈된 레이아웃 (Clutter-Free & No Redundancy)
 - **군더더기 배제**: 장황하고 불필요한 미사여구나 서술형 장문을 지양하고, **핵심 키워드, 명확한 불릿 포인트, 구조화된 인포그래픽** 위주로 컴팩트하게 정돈합니다.

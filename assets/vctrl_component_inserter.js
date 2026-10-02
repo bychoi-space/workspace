@@ -37,15 +37,15 @@
 
         if (!item) return console.error("[V4] Component not found:", id);
 
-        const isIllustration = item.category === 'Illustration' || (item.id && item.id.startsWith('v4-ill-'));
+        const isIllustration = item.category === 'Illustration' || (item.id && (item.id.startsWith('v4-ill-') || item.id.startsWith('v4-motion-')));
         const isIcon = !isIllustration && (item.id.includes('icon') || (item.html && (item.html.includes('<img') || item.html.includes('lf-icon'))));
         const style = { 
             width: item.width || (isIllustration ? '200px' : (isIcon ? '30px' : '120px')), 
             height: item.height || (isIllustration ? '200px' : (isIcon ? '30px' : '40px')) 
         };
-        if (item.id === 'v4-search-bar' || item.id === 'v4-premium-gnb') {
-            style.width = '100%';
-            style.height = 'auto';
+        if (item.id === 'v4-search-bar' || item.id === 'v4-premium-gnb' || item.id === 'v4-mobile-fixed-header' || item.id === 'v4-mobile-fixed-bottom-cta' || item.id === 'v4-mobile-fixed-bottom-nav') {
+            style.width = item.width || '100%';
+            style.height = item.height || 'auto';
         }
         if (item.id === 'v4-tool-text') {
             style.width = '120px';

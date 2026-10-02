@@ -377,13 +377,6 @@
       "connectors": [],
       "defaultTab": "editor",
       "screenDesc": ""
-    },
-    "00_Cover_542.html": {
-      "title": "00_Cover_542",
-      "type": "cover",
-      "updatedAt": "2026-10-02T06:19:59.904Z",
-      "template": "template_cover.html",
-      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -402,7 +395,6 @@
     "09_Admin_PC_Scroll_246.html",
     "09_Admin_PC_Scroll_247.html",
     "cart_block.html",
-    "order_block.html",
-    "00_Cover_542.html"
+    "order_block.html"
   ]
 }

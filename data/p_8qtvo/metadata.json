@@ -11,6 +11,82 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": ""
+    },
+    "renewal_cart.html": {
+      "title": "장바구니",
+      "type": "ui",
+      "updatedAt": "2026-10-02T06:14:25.428Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[결제] 버튼\n- 어드민에서 악성 고객으로 등록되어 있으면서, [주문 불가 처리] & [주문 불가 기간] 이 유효한 고객 기준으로, 어드민에 설정된 메시지 팝업으로 노출\n- 결제 (KOREA PAYMENT NETWORKS) 팝업이나 페이지로 이동 불가 처리",
+          "html": "[결제] 버튼<div>- 어드민에서 악성 고객으로 등록되어 있으면서, [주문 불가 처리] &amp; [주문 불가 기간] 이 유효한 고객 기준으로, 어드민에 설정된 메시지 팝업으로 노출</div><div>- 결제 (KOREA PAYMENT NETWORKS) 팝업이나 페이지로 이동 불가 처리</div>",
+          "x": 924,
+          "y": 372,
+          "pins": {
+            "pc": {
+              "x": 924,
+              "y": 372,
+              "active": true
+            },
+            "mobile": {
+              "x": 65,
+              "y": 646,
+              "active": true
+            },
+            "left": {
+              "x": 924,
+              "y": 372,
+              "active": true
+            },
+            "right": {
+              "x": 65,
+              "y": 646,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "viewport"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "상품 단위 [바로구매] 버튼에도 DESCRIPTION 1 번과 동일한 기능 적용",
+          "html": "상품 단위 [바로구매] 버튼에도 DESCRIPTION 1 번과 동일한 기능 적용",
+          "x": 614,
+          "y": 290,
+          "pins": {
+            "pc": {
+              "x": 614,
+              "y": 290,
+              "active": true
+            },
+            "mobile": {
+              "x": 231,
+              "y": 224,
+              "active": true
+            },
+            "left": {
+              "x": 614,
+              "y": 290,
+              "active": true
+            },
+            "right": {
+              "x": 231,
+              "y": 224,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     }
   },
   "assignee": "최범열",
@@ -20,7 +96,8 @@
   "notionUrl": "",
   "themeIndex": 1,
   "screenOrder": [
-    "renewal_order.html"
+    "renewal_order.html",
+    "renewal_cart.html"
   ],
   "updated": "2026-09-28 16:01:04",
   "version": 0.1

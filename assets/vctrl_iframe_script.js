@@ -1067,12 +1067,9 @@ window.v4Script = `
             }
             
             // Clean dynamic runtime engine scripts & inlined styles before saving to disk
-            const inlinedScript = c.querySelector('#v4-inlined-script');
-            if (inlinedScript) inlinedScript.innerHTML = '/* Dynamic scripts injected */';
-            const inlinedStyle = c.querySelector('#v4-inlined-style');
-            if (inlinedStyle) inlinedStyle.remove();
-            const responsiveStyle = c.querySelector('#v4-responsive-frame-style');
-            if (responsiveStyle) responsiveStyle.remove();
+            c.querySelectorAll('#v4-inlined-style, #v4-responsive-frame-style, #v4-typography-rules, #v4-scroll-pin-style, #v4-cover-theme-fix, #v4-inlined-script').forEach(function(el) {
+                el.remove();
+            });
 
             notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
         },

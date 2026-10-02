@@ -102,26 +102,37 @@ function _prepareScreenViewport(DOM, fileName) {
 }
 
 function _detectScreenResponsive(fileName, content) {
+    if (!content) return false;
+
+    // Fast-track: Cover templates and process screens are never responsive dual-frame screens
+    const scMeta = (state.projectMetadata && state.projectMetadata.screens) ? state.projectMetadata.screens[fileName] : null;
+    const scType = scMeta?.type;
+    const scTpl = scMeta?.template;
+    if (scType === 'cover' || scTpl === 'template_cover.html') return false;
+
+    // Strip scripts and styles to prevent false-positive keyword matches from engine code
+    const cleanHtml = content
+        .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
+
     return Boolean(
         (fileName && (
             fileName.toLowerCase().includes('responsive') ||
             fileName.toLowerCase().includes('mobile_compare') ||
             fileName.toLowerCase().includes('admin_pc')
         )) ||
-        content.includes('pc-browser-frame') ||
-        content.includes('class="pc-frame"') ||
-        content.includes('pc-content-area') ||
-        content.includes('mobile-compare-page') ||
-        content.includes('mobile-content-area') ||
-        content.includes('pc-content-inner') ||
-        content.includes('mobile-content-inner') ||
-        content.includes('frame-column') ||
-        (state.projectMetadata && state.projectMetadata.screens && (
-            state.projectMetadata.screens[fileName]?.type === 'responsive-ui' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_responsive_pc_mobile.html' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_admin_pc_scroll.html' ||
-            state.projectMetadata.screens[fileName]?.template === 'template_responsive_mobile_compare.html'
-        ))
+        cleanHtml.includes('pc-browser-frame') ||
+        cleanHtml.includes('class="pc-frame"') ||
+        cleanHtml.includes('pc-content-area') ||
+        cleanHtml.includes('mobile-compare-page') ||
+        cleanHtml.includes('mobile-content-area') ||
+        cleanHtml.includes('pc-content-inner') ||
+        cleanHtml.includes('mobile-content-inner') ||
+        cleanHtml.includes('frame-column') ||
+        (scType === 'responsive-ui' ||
+         scTpl === 'template_responsive_pc_mobile.html' ||
+         scTpl === 'template_admin_pc_scroll.html' ||
+         scTpl === 'template_responsive_mobile_compare.html')
     );
 }
 
@@ -147,6 +158,9 @@ function _compileScreenHtml(content, fileName, isResponsive) {
         const scopedBlock = '<style id="v4-responsive-frame-style">\n' + window.responsiveFrameStyles + '\n</style>';
         finalContent = finalContent.replace(/<style id="v4-responsive-frame-style">[\s\S]*?<\/style>/gi, '');
         finalContent = finalContent.replace('</head>', scopedBlock + '\n</head>');
+    } else {
+        // Enforce cleanup if non-responsive screen retained leftover responsive frame style
+        finalContent = finalContent.replace(/<style id="v4-responsive-frame-style">[\s\S]*?<\/style>/gi, '');
     }
 
     // Inject/Update Script
@@ -175,10 +189,18 @@ function _compileScreenHtml(content, fileName, isResponsive) {
         finalContent += '\n' + scriptBlock;
     }
 
-    // Auto-update Project Cover template metadata upon loading
+    // Auto-update Project Cover template metadata upon loading & preserve brand theme
     const isCoverScreen = (state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[fileName]?.type === 'cover') || finalContent.includes('cover-jira-id') || finalContent.includes('cover-version');
-    if (isCoverScreen && state.projectMetadata) {
-        finalContent = syncCoverMetadata(finalContent, state.projectMetadata, false, fileName);
+    if (isCoverScreen) {
+        if (state.projectMetadata) {
+            finalContent = syncCoverMetadata(finalContent, state.projectMetadata, false, fileName);
+        }
+        // Protect Cover brand theme from being overridden by generic editor tokens
+        const coverThemeBlock = '<style id="v4-cover-theme-fix">\n:root { --v4-accent: #e60012 !important; }\n.page { background: #ffffff !important; }\n</style>';
+        finalContent = finalContent.replace(/<style id="v4-cover-theme-fix">[\s\S]*?<\/style>/gi, '');
+        if (finalContent.includes('</head>')) {
+            finalContent = finalContent.replace('</head>', coverThemeBlock + '\n</head>');
+        }
     }
 
     return finalContent;

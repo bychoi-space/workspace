@@ -199,6 +199,11 @@ window.ResponsiveFrameUtils = {
                 el.style.removeProperty('will-change');
             });
 
+            // 2.2 Clean runtime injected engine styles and scripts to keep saved HTML pure and lightweight
+            root.querySelectorAll('#v4-inlined-style, #v4-responsive-frame-style, #v4-typography-rules, #v4-scroll-pin-style, #v4-cover-theme-fix, #v4-inlined-script').forEach(function(el) {
+                el.remove();
+            });
+
             // 3. Clean empty inline style rules created by browser DOM serialization
             root.querySelectorAll('[style]').forEach(function(el) {
                 const raw = el.getAttribute('style');
@@ -618,6 +623,9 @@ window.v4CommonScript = `
             root.querySelectorAll('[data-scroll-fixed], .pin-marker').forEach(function(el) {
                 el.style.removeProperty('transform');
                 el.style.removeProperty('will-change');
+            });
+            root.querySelectorAll('#v4-inlined-style, #v4-responsive-frame-style, #v4-typography-rules, #v4-scroll-pin-style, #v4-cover-theme-fix, #v4-inlined-script').forEach(function(el) {
+                el.remove();
             });
             root.querySelectorAll('[style]').forEach(function(el) {
                 var raw = el.getAttribute('style');

@@ -45,6 +45,7 @@
                     if (window.ScreenSanitizer && typeof window.ScreenSanitizer.cleanDOM === 'function') {
                         window.ScreenSanitizer.cleanDOM(clone);
                     }
+                    clone.querySelectorAll('#v4-inlined-style, #v4-responsive-frame-style, #v4-typography-rules, #v4-scroll-pin-style, #v4-cover-theme-fix, #v4-inlined-script').forEach(el => el.remove());
                     return "<!DOCTYPE html>\n" + clone.outerHTML;
                 }
             } catch (e) {

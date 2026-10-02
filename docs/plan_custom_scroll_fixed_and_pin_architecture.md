@@ -240,18 +240,18 @@ $$\Delta Y = \text{scrollTop} + (Y_{\text{target}} - \text{domTop})$$
 
 ## 🚀 8. 단계별 구현 로드맵 (Step-by-Step Roadmap)
 
-- [ ] **Phase 1: Iframe 고정 물리 엔진 구현 ([assets/vctrl_iframe_scroll_pin.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_scroll_pin.js))**
+- [x] **Phase 1: Iframe 고정 물리 엔진 구현 ([assets/vctrl_iframe_scroll_pin.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_scroll_pin.js))**
   - `updatePins()` 함수에 4대 모드(custom, sticky, viewport, host-pinned) 수식 통합.
   - `LF_SET_SCROLL_FIXED` 핸들러에 `custom`, `sticky`, `viewport` 디스패처 분기 추가.
-- [ ] **Phase 2: 인스펙터 UI 및 스타일 구현 ([viewer.html](file:///c:/Users/sisun/ai_work/viewer.html), [assets/viewer.css](file:///c:/Users/sisun/ai_work/assets/viewer.css))**
+- [x] **Phase 2: 인스펙터 UI 및 스타일 구현 ([viewer.html](file:///c:/Users/sisun/ai_work/viewer.html), [assets/viewer.css](file:///c:/Users/sisun/ai_work/assets/viewer.css))**
   - `#selection-scroll-pin-bar` 내 오브젝트용 5버튼 + 핀 전용 2버튼 세그먼트 마크업 추가.
   - 모던 다크/글래스모피즘 기반 프리미엄 UI 스타일링.
-- [ ] **Phase 3: 인스펙터 컨트롤러 로직 구현 ([assets/vctrl_inspector.js](file:///c:/Users/sisun/ai_work/assets/vctrl_inspector.js))**
+- [x] **Phase 3: 인스펙터 컨트롤러 로직 구현 ([assets/vctrl_inspector.js](file:///c:/Users/sisun/ai_work/assets/vctrl_inspector.js))**
   - `_syncScrollPinUI()`에서 핀과 일반 컴포넌트를 분기하여 알맞은 컨트롤 바 렌더링.
   - 클릭 이벤트 리스너 바인딩 및 iframe 양방향 동기화.
-- [ ] **Phase 4: 디스크립션 핀 및 사이드바 연계 ([assets/vctrl_responsive_pins.js](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_pins.js), [assets/vctrl_annotation_pins.js](file:///c:/Users/sisun/ai_work/assets/vctrl_annotation_pins.js))**
+- [x] **Phase 4: 디스크립션 핀 및 사이드바 연계 ([assets/vctrl_responsive_pins.js](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_pins.js), [assets/vctrl_annotation_pins.js](file:///c:/Users/sisun/ai_work/assets/vctrl_annotation_pins.js))**
   - 고정 핀에 미니 핀(`📌`) 아이콘 렌더링.
   - 사이드바 설명 카드 목록에 `[화면고정 📌]` 뱃지 동기화.
-- [ ] **Phase 5: 드래그 보정 및 최종 검증 ([assets/vctrl_iframe_drag.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_drag.js))**
+- [x] **Phase 5: 드래그 보정 및 최종 검증 ([assets/vctrl_iframe_drag.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_drag.js))**
   - 고정 객체/핀 드래그 시 좌표 튀김 방지 보정.
   - `scripts/check_syntax.ps1` 정적 구문 검증 100% 통과 확인.

@@ -136,7 +136,7 @@
   - **`vctrl_responsive_multiselect.js` (Responsive Multi-Selection Engine - Iframe Side)**:
     - **역할**: 반응형 프레임 환경에서 마키(Marquee) 드래그 다중 선택 시 프레임 경계 격리 및 좌표 보정 전담 (`v4ResponsiveMultiselectScript`).
   - **`vctrl_iframe_scroll_pin.js` (Responsive Scroll Pinning Engine - Iframe Side)**:
-    - **역할**: 반응형 스크린(PC & Mobile) 내 상단 헤더(`top`) 및 하단 독/CTA(`bottom`)의 인플레이스 가상 스티키 HUD GPU 가속 렌더링 및 동기화 전담 (`v4ScrollPinScript`).
+    - **역할**: 반응형 스크린(PC & Mobile) 내 오브젝트 4대 고정 모드(상단 `top`, 하단 `bottom`, 자유 플로팅 `custom`/`floating`, 임계치 스티키 `sticky`) 및 디스크립션 핀 고정(`viewport` / `host-pinned`), 스크롤 방향별 반응 효과(`data-scroll-effect`: `always`, `hide-down`, `hide-up`)의 가상 스티키 HUD GPU 가속(`translate3d`) 렌더링 및 동기화 전담 (`v4ScrollPinScript`).
   - **`vctrl_color_picker.js` (Custom Color Picker Engine - Parent Side)**:
     - **역할**: 알약형 프리셋 및 HSL/HEX/RGB 슬라이더 기반의 초경량 커스텀 컬러 피커 드롭다운 인터랙션 전담.
   - **`vctrl_table.js` (V4 Table Component Engine - Iframe Side)**:
@@ -179,7 +179,31 @@
     - **표준 DOM 스펙**: 반드시 정식 3계층 구조 **`.lf-component` ➔ `.v4-motion-container` ➔ `<img src="assets/illustrations/motion/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**을 준수해야 합니다.
     - **이벤트 무간섭**: 내부 `<img>`에 `pointer-events: none; user-select: none;`을 적용하여 브라우저 기본 고스트 드래그를 차단하고, 캔버스 드래그/리사이즈/선택 이벤트가 최외곽 `.lf-component`로 100% 정상 수신되도록 보장합니다.
     - **전용 인스펙터 분리 (Illustration / Motion Editor)**: 일반 아이콘(색상 조색 필요)과 분리된 전용 에디터 패널(`illustration-inspector-section`)을 제공합니다. 가로/세로 크기 변경 시 **비율 유지(Lock Ratio)**가 기본 활성화되며, 원본 비율 리셋 버튼(`btn-snap-illustration-ratio`)을 지원하고 불필요한 아이콘색 피커는 표시되지 않습니다.
-- **디자인 시스템 강제화 (1.6px Border)**: 모든 V4 컴포넌트의 보더 굵기는 **1.6px**로 고정합니다. 인라인 스타일의 간섭을 막기 위해 CSS에 `!important`를 사용하고, `MutationObserver`를 통해 실시간으로 굵기를 감시 및 보정해야 합니다.
+- **반응형 스크롤 핀 & 스마트 HUD 고정 엔진 아키텍처 (Responsive Scroll Pin & Smart HUD Architecture SSOT)**:
+  - **1. 오브젝트 4대 고정 모드 (`data-scroll-fixed`)**:
+    - `top` (상단 고정): 컨테이너 스크롤 시 뷰포트 최상단(Top 0px)에 항상 고정 밀착 ($\Delta Y = \text{scrollTop} - \text{domTop}$).
+    - `bottom` (하단 고정): 컨테이너 스크롤 시 뷰포트 최하단(Bottom)에 항상 고정 밀착 ($\Delta Y = \text{scrollTop} + (H_{\text{viewport}} - \text{domTop} - H_{\text{el}})$).
+    - `custom` 또는 `floating` (자유 플로팅): 사용자가 드래그하여 배치한 뷰포트 상대 $Y$ 좌표(`data-scroll-target-y`)를 유지하여 스크롤 내내 상시 플로팅 ($\Delta Y = \text{scrollTop} + (Y_{\text{target}} - \text{domTop})$).
+    - `sticky` (임계치 스티키): 본문 스크롤 도중 지정 임계 오프셋(`data-scroll-sticky-top`)에 도달하면 상단에 안착되어 고정 ($\Delta Y = \max(0, \text{scrollTop} - \text{threshold})$).
+    - `none` (일반 본문): 스크롤 시 본문과 1:1로 함께 스크롤되며 `transform` 완전 해제.
+  - **2. 디스크립션 핀 고정 모드**:
+    - `viewport` (화면 핀 고정 📌): 스크롤과 무관하게 화면 뷰포트 상대 좌표에 상시 고정. 최상위 Z-Index Tier 3 (`200,050 !important`) 보장, 캔버스 뱃지 우측 상단 미니 핀(`📌`) 아이콘 및 사이드바 카드 `[고정 📌]` 뱃지 연동.
+    - 호스트 추종 (`data-fixed-host`): 고정된 컴포넌트 위에 꽂힌 디스크립션 핀은 호스트의 `transform` 변위를 100% 동기화 추종.
+  - **3. 스크롤 방향 반응 효과 (`data-scroll-effect`)**:
+    - `always` (상시 고정): 스크롤 방향과 무관하게 항시 뷰포트에 노출 (기본값).
+    - `hide-down` (스크롤 내릴 때 숨김): 아래로 스크롤 시 상단 헤더가 위로 부드럽게 슬라이드되어 숨겨지고, 위로 스크롤 시 즉시 다시 나타남.
+    - `hide-up` (스크롤 올릴 때 숨김): 위로 스크롤 시 요소가 뷰포트 밖으로 슬라이드되어 숨겨지고, 아래로 스크롤 시 다시 나타남.
+  - **4. 인스펙터 UI/UX 아키텍처 (`#selection-scroll-pin-bar`)**:
+    - **3+2 레이아웃 표준**: 좁은 사이드바 가로폭(270px 이하)에서 버튼 텍스트 말줄임 방지를 위해 1행 3버튼(`[일반]`, `[상단]`, `[하단]`) + 2행 2버튼(`[플로팅]`, `[스티키]`)으로 분리.
+    - **동적 효과 바 (`#scroll-pin-effect-bar`)**: `[상단]` 또는 `[하단]` 선택 시 활성화되어 드롭다운으로 `상시 고정`, `스크롤 내릴 때 숨김`, `스크롤 올릴 때 숨김` 선택 제어.
+    - **동적 오프셋 바 (`#scroll-pin-offset-bar`)**: `[플로팅]` 또는 `[스티키]` 선택 시 뷰포트 $Y$ / 스티키 상단 여백 조절 입력창 노출.
+    - **상태 배지 (`#scroll-pin-status-badge`)**: 현재 설정된 고정 모드 및 방향 효과(예: `PIN TOP (↓숨김)`) 실시간 표시.
+  - **5. 엔진 무결성 및 성능 보장**:
+    - `vctrl_iframe_scroll_pin.js`의 `ScrollPinEngine`:
+      - `WeakMap` 기반 스크롤 컨테이너별 독립 상태(`lastScrollTop`, `direction`, `isHidden`) 안전 격리.
+      - `requestAnimationFrame` 단일 렌더 루프 및 GPU 가속(`translate3d`)을 통한 60fps 무지연 렌더링.
+      - Z-Index 4대 티어(Tier 2: 100,000~179,999, Tier 3: 200,050) 준수.
+      - In-Place Undo 및 스크린 저장/살균(`ScreenSanitizer.cleanDOM`) 시 런타임 transform만 정제하고 DOM 데이터 속성(`data-scroll-fixed`, `data-scroll-effect`, `data-scroll-target-y`, `data-scroll-sticky-top`)은 100% 영구 보존.
 
 
 ## 🎨 UI 및 컴포넌트 규칙

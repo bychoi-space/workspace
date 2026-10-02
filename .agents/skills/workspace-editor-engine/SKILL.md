@@ -14,6 +14,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - `vctrl_component_data.js` owns V4 component library (`window.V4_COMPONENT_LIBRARY`) templates and metadata definitions SSOT.
 - `vctrl_canvas_viewport.js` owns Canvas Interaction (`adjustZoom`, `centerView`, `updateTransform`), 100% crisp snap (`toggleCrispView`), Fullscreen, and Global Space-key Panning logic (integrated with `vctrl_core.js` iframe event propagation).
 - `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, and metadata description synchronization. Pin reordering logic is fully consolidated into `window.reorderAllPins` and `LF_REORDER_PINS` SSOT inside `vctrl_responsive_pins.js`.
+- `vctrl_iframe_scroll_pin.js` owns the Responsive Scroll Pinning & Smart HUD Fixed Engine (`window.ScrollPinEngine`). It manages the 4 object pinning modes (`top`, `bottom`, `custom`/`floating`, `sticky`), viewport description pins (`data-scroll-fixed="viewport"`), host-pinned markers (`data-fixed-host`), and scroll-direction reactive reveal/hide effects (`data-scroll-effect`: `always`, `hide-down`, `hide-up`) with hardware-accelerated `translate3d` GPU transforms and `WeakMap` container state isolation.
 - `vctrl_connectors.js` owns connector spawning (`spawnLine`), 30px magnetic port snapping (`collectSnapTargets`), port highlighting, real-time anchoring (`syncAnchoredPositions`), and connector inspector routing.
 - `vctrl_iframe_ports.js` owns iframe-side port detection and port-drag connector initiation.
 - `vctrl_grouping.js` owns marquee selection, `selectedIds`, group move/delete/grouping behavior, and selected class sync.
@@ -138,5 +139,29 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - `Ctrl + 1 ~ 6` 및 `Alt + 1 ~ 6` 단축키를 단일 및 다중 선택 상태 모두에서 완벽 지원한다.
   - `items.length === 1` 분기: 일반 템플릿은 1600x900 전체 캔버스 기준, 반응형 템플릿은 PC(`1160px`) / Mobile(`360px`) 소속 프레임 내에서 1:1 정수 픽셀(`Math.round`)로 독립 정렬을 수행한다.
   - `isInputActive` 가드를 적용하여 텍스트 상자, 셀 입력, Quill 에디터 편집 중에는 단축키 간섭을 원천 방지한다.
+
+## 📌 Responsive Scroll Pin & Smart HUD Fixed Engine Architecture (vctrl_iframe_scroll_pin.js & Inspector)
+- **4 Object Pinning Modes (`data-scroll-fixed`)**:
+  - `top`: Viewport top-aligned fixed HUD. Slides into view or slides out based on `data-scroll-effect`. $\Delta Y = \text{scrollTop} - \text{domTop}$.
+  - `bottom`: Viewport bottom-aligned fixed dock/CTA. Sticks to bottom regardless of scroll. $\Delta Y = \text{scrollTop} + (H_{\text{viewport}} - \text{domTop} - H_{\text{el}})$.
+  - `custom` / `floating`: Viewport-relative floating HUD maintaining designer's dragged position ($Y_{\text{target}}$ via `data-scroll-target-y`). $\Delta Y = \text{scrollTop} + (Y_{\text{target}} - \text{domTop})$.
+  - `sticky`: Threshold sticky HUD that flows with the document until reaching threshold offset ($Y_{\text{stickyOffset}}$ via `data-scroll-sticky-top`), then sticks. $\Delta Y = \max(0, \text{scrollTop} - \text{threshold})$.
+  - `none`: Unpinned standard flow element ($\Delta Y = 0$, `transform` removed).
+- **Description Pin Anchoring**:
+  - `viewport` (화면 핀 고정 📌): Independent viewport-anchored pin marker (`z-index: 200050 !important`). Displays mini pin icon on canvas and `[고정 📌]` badge in sidebar description list.
+  - `host-pinned`: Follows host element's dynamic transform with zero jitter (`data-fixed-host`).
+- **Scroll Direction Effects (`data-scroll-effect`)**:
+  - `always`: Always visible and fixed (default).
+  - `hide-down`: Smoothly slides up/out when scrolling down, instantly reveals when scrolling up.
+  - `hide-up`: Smoothly slides down/out when scrolling up, instantly reveals when scrolling down.
+- **Inspector UX Architecture (`#selection-scroll-pin-bar`)**:
+  - **3+2 Segments**: Row 1 (`[일반]`, `[상단]`, `[하단]`) + Row 2 (`[플로팅]`, `[스티키]`) eliminates text ellipsis in tight sidebars.
+  - **Dynamic `#scroll-pin-effect-bar`**: Select dropdown for `always`, `hide-down`, `hide-up` active on top/bottom pinned modes.
+  - **Dynamic `#scroll-pin-offset-bar`**: Numeric px input for target Y or sticky top threshold.
+- **Engine Safety & Robustness**:
+  - Container-level state (`lastScrollTop`, `direction`, `isHidden`) is held in a `WeakMap`, preventing memory leaks and cross-container bleed.
+  - Transforms are applied via single `requestAnimationFrame` loop, avoiding layout reflows and preserving smooth 60fps scrolling.
+  - In-Place Undo cleanly resets and restores element transforms without dropping pinning attributes.
+
 
 

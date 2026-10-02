@@ -242,5 +242,24 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 컴포넌트, 테이블 셀, 입력 폼, iframe 내부 스타일에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 적용 및 유지한다.
 - **블러 필터 지양**: `backdrop-filter: blur(...)`처럼 캔버스 줌/스케일 환경에서 폰트 서브픽셀 래스터화를 뭉개는 속성은 텍스트 영역에 사용을 금지한다.
 
+## 📌 Scroll Pin Inspector UI & Dynamic Effect Controls (#selection-scroll-pin-bar)
+- **3+2 Row Layout Hierarchy**:
+  - 사이드바(너비 270px 이하) 내에서 5개 버튼이 한 줄에 배치될 경우 한글 텍스트가 `플...`, `스...`처럼 단일 글자로 잘리는 문제를 방지하기 위해 **3+2 2단 그리드 구조**를 엄격 준수한다.
+  - **1행 (3버튼)**: `[일반]` (Scroll), `[상단]` (Top), `[하단]` (Bottom) - 2글자 컴팩트 버튼으로 균등 분할.
+  - **2행 (2버튼)**: `[플로팅]` (Floating), `[스티키]` (Sticky) - 3글자 버튼으로 ~110px의 여유로운 폭 확보.
+- **Dynamic Effect Selection Bar (`#scroll-pin-effect-bar`)**:
+  - `[상단]` 또는 `[하단]` 고정 모드 활성화 시 표시되는 드롭다운 컨트롤.
+  - 선택 옵션 3종:
+    1. `상시 고정 (기본)` (`always`): 스크롤 방향과 무관하게 항상 뷰포트에 밀착 노출.
+    2. `스크롤 내릴 때 숨김` (`hide-down`): 스크롤 다운 시 상단 헤더가 위로 부드럽게 숨겨지고, 스크롤 업 시 즉각 다시 슬라이드 다운되어 노출.
+    3. `스크롤 올릴 때 숨김` (`hide-up`): 스크롤 업 시 요소가 화면 밖으로 숨겨지고 스크롤 다운 시 다시 노출.
+  - 다크 테마 기반 `#0b0e14` 배경, `rgba(0, 229, 255, 0.4)` 포커스 링, 실시간 변경 시 `LF_SET_SCROLL_EFFECT`를 iframe으로 즉시 발행.
+- **Dynamic Offset Controls (`#scroll-pin-offset-bar`)**:
+  - `[플로팅]` 선택 시: 현재 요소의 뷰포트 상대 $Y$ 좌표를 자동 캡처하여 표시하며, 수동 조절 가능 (`#scroll-pin-offset-input`).
+  - `[스티키]` 선택 시: 헤더 아래 임계 여백 오프셋(`px`)을 직접 입력 가능.
+- **Pin Marker Dynamic Inspector Mode**:
+  - 선택 대상이 디스크립션 핀(번호 마커 `.pin-marker`)인 경우, `#selection-scroll-pin-bar`는 핀 전용 2단 토글(`[ 본문 배치 (일반) ]` vs `[ 화면 핀 고정 📌 ]`)로 다형성 전환되어 뷰포트 고정 핀(`data-scroll-fixed="viewport"`)을 원터치 설정/해제 가능.
+
+
 
 

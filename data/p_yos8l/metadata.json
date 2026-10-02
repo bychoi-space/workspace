@@ -4,7 +4,7 @@
     "00_Cover_827.html": {
       "title": "00_Cover_827",
       "type": "cover",
-      "updatedAt": "2026-09-29T02:05:48.768Z",
+      "updatedAt": "2026-10-02T05:37:19.051Z",
       "template": "template_cover.html",
       "version": 0.1,
       "description": [],
@@ -40,7 +40,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         },
         {
           "type": "pin",
@@ -66,7 +67,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -104,7 +106,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -279,7 +282,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -381,7 +385,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-02 14:21:26",
+  "updated": "2026-10-02 14:37:18",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

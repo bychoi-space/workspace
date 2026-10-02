@@ -189,18 +189,10 @@ function _compileScreenHtml(content, fileName, isResponsive) {
         finalContent += '\n' + scriptBlock;
     }
 
-    // Auto-update Project Cover template metadata upon loading & preserve brand theme
+    // Auto-update Project Cover template metadata upon loading
     const isCoverScreen = (state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[fileName]?.type === 'cover') || finalContent.includes('cover-jira-id') || finalContent.includes('cover-version');
-    if (isCoverScreen) {
-        if (state.projectMetadata) {
-            finalContent = syncCoverMetadata(finalContent, state.projectMetadata, false, fileName);
-        }
-        // Protect Cover brand theme from being overridden by generic editor tokens
-        const coverThemeBlock = '<style id="v4-cover-theme-fix">\n:root { --v4-accent: #e60012 !important; }\n.page { background: #ffffff !important; }\n</style>';
-        finalContent = finalContent.replace(/<style id="v4-cover-theme-fix">[\s\S]*?<\/style>/gi, '');
-        if (finalContent.includes('</head>')) {
-            finalContent = finalContent.replace('</head>', coverThemeBlock + '\n</head>');
-        }
+    if (isCoverScreen && state.projectMetadata) {
+        finalContent = syncCoverMetadata(finalContent, state.projectMetadata, false, fileName);
     }
 
     return finalContent;

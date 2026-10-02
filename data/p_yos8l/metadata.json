@@ -290,7 +290,7 @@
     "cart_block.html": {
       "title": "장바구니_주문제한",
       "type": "ui",
-      "updatedAt": "2026-10-02T03:21:07.856Z",
+      "updatedAt": "2026-10-02T03:23:17.285Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -298,32 +298,32 @@
           "target": "frame",
           "text": "[결제] 버튼\n- 어드민에서 악성 고객으로 등록되어 있으면서, [주문 불가 처리] & [주문 불가 기간] 이 유효한 고객 기준으로, 어드민에 설정된 메시지 팝업으로 노출\n- 결제 (KOREA PAYMENT NETWORKS) 팝업이나 페이지로 이동 불가 처리",
           "html": "[결제] 버튼<div>- 어드민에서 악성 고객으로 등록되어 있으면서, [주문 불가 처리] &amp; [주문 불가 기간] 이 유효한 고객 기준으로, 어드민에 설정된 메시지 팝업으로 노출</div><div>- 결제 (KOREA PAYMENT NETWORKS) 팝업이나 페이지로 이동 불가 처리</div>",
-          "x": 910,
-          "y": 377,
+          "x": 924,
+          "y": 372,
           "pins": {
             "pc": {
-              "x": 910,
-              "y": 377,
+              "x": 924,
+              "y": 372,
               "active": true
             },
             "mobile": {
-              "x": 70,
-              "y": 648,
+              "x": 65,
+              "y": 646,
               "active": true
             },
             "left": {
-              "x": 910,
-              "y": 377,
+              "x": 924,
+              "y": 372,
               "active": true
             },
             "right": {
-              "x": 70,
-              "y": 648,
+              "x": 65,
+              "y": 646,
               "active": true
             }
           },
           "standardized": true,
-          "scrollFixed": "none"
+          "scrollFixed": "viewport"
         },
         {
           "type": "pin",
@@ -381,7 +381,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-02 12:21:07",
+  "updated": "2026-10-02 12:23:17",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

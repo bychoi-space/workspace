@@ -115,16 +115,69 @@
     "09_Admin_PC_Scroll_246.html": {
       "title": "회원상세 - 악성고객",
       "type": "admin",
-      "updatedAt": "2026-09-30T08:24:32.174Z",
+      "updatedAt": "2026-10-02T01:08:15.026Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[악성고객 설정] 버튼 클릭 시, 상세 설정 팝업 호출",
+          "html": "[악성고객 설정] 버튼 클릭 시, 상세 설정 팝업 호출",
+          "x": 214,
+          "y": 476,
+          "pins": {
+            "pc": {
+              "x": 214,
+              "y": 476,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 214,
+              "y": 476,
+              "active": true
+            }
+          },
+          "standardized": true
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[악성고객여부] default value 'N'\n하위 항목 모두 Disable",
+          "html": "[악성고객여부] default value 'N'<div>하위 항목 모두 Disable</div>",
+          "x": 394,
+          "y": 200,
+          "pins": {
+            "pc": {
+              "x": 394,
+              "y": 200,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 394,
+              "y": 200,
+              "active": true
+            }
+          },
+          "standardized": true
+        }
+      ],
       "connectors": [],
       "version": 0.1
     },
     "09_Admin_PC_Scroll_247.html": {
       "title": "회원상세 - 악성고객(활성화)",
       "type": "admin",
-      "updatedAt": "2026-10-02T01:05:51.366Z",
+      "updatedAt": "2026-09-30T09:13:53.342Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -265,7 +318,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-02 10:05:51",
+  "updated": "2026-10-02 10:08:15",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

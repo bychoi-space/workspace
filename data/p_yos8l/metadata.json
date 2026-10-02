@@ -181,7 +181,7 @@
     "09_Admin_PC_Scroll_247.html": {
       "title": "회원상세 - 악성고객(활성화)",
       "type": "admin",
-      "updatedAt": "2026-10-02T02:37:33.667Z",
+      "updatedAt": "2026-10-02T02:37:50.359Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -214,8 +214,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[주문 불가 처리] 항목 default value 'Y'",
-          "html": "[주문 불가 처리] 항목 default value 'Y'",
+          "text": "[주문 불가 처리] default value 'Y'",
+          "html": "[주문 불가 처리] default value 'Y'",
           "x": 61,
           "y": 207,
           "pins": {
@@ -379,7 +379,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-02 11:37:33",
+  "updated": "2026-10-02 11:37:50",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

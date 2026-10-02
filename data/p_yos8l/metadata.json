@@ -368,9 +368,9 @@
       "screenDesc": "[object Object],[object Object]"
     },
     "01_Project_Summary_828.html": {
-      "title": "과제 개요 _ 회장님용",
+      "title": "과제 개요",
       "type": "plan",
-      "updatedAt": "2026-10-02T08:21:14.267Z",
+      "updatedAt": "2026-10-02T08:23:27.964Z",
       "template": "template_project_summary.html",
       "version": 0.1,
       "description": [],

@@ -43,7 +43,7 @@
             width: item.width || (isIllustration ? '200px' : (isIcon ? '30px' : '120px')), 
             height: item.height || (isIllustration ? '200px' : (isIcon ? '30px' : '40px')) 
         };
-        if (item.id === 'v4-search-bar' || item.id === 'v4-premium-gnb' || item.id === 'v4-mobile-fixed-header' || item.id === 'v4-mobile-fixed-bottom-cta' || item.id === 'v4-mobile-fixed-bottom-nav') {
+        if (item.id === 'v4-search-bar' || item.id === 'v4-premium-gnb') {
             style.width = item.width || '100%';
             style.height = item.height || 'auto';
         }

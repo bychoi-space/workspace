@@ -1194,8 +1194,12 @@ body.fullscreen-mode #btn-fullscreen-exit {
 }
 .component-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible !important;
 }
 #v4-shapes-container {
     margin-bottom: 16px;
@@ -1957,7 +1961,11 @@ body.fullscreen-mode .stage {
 }
 
 .components-body {
-    padding: 12px;
+    padding: 10px 8px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible !important;
 }
 #molecules-body {
     overflow: visible !important;

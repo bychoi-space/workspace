@@ -652,8 +652,13 @@ body {
 
 /* Asset Cards Grid in Library */
 .component-grid {
-    padding: 8px 10px !important;
-    gap: 8px !important;
+    padding: 0 !important;
+    gap: 6px !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
 }
 
 .component-grid > div,

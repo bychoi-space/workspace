@@ -306,7 +306,7 @@
 
 /* --- 6. Sidebar Atomic Cards (56 Components) --- */
 .v4-card-atom {
-    padding: 8px !important;
+    padding: 8px 4px !important;
     border-radius: var(--radius-lg, 8px) !important;
     background: rgba(110, 86, 207, 0.05) !important;
     border: 1.6px solid rgba(110, 86, 207, 0.12) !important;
@@ -319,6 +319,10 @@
     box-sizing: border-box !important;
     text-align: center !important;
     transition: all 0.15s ease !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
 }
 
 .v4-card-atom:hover {
@@ -382,11 +386,14 @@
     color: var(--text-secondary, #94a3b8) !important;
     text-align: center !important;
     width: 100% !important;
+    max-width: 100% !important;
     display: block !important;
     line-height: 1.2 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+    box-sizing: border-box !important;
+    padding: 0 2px !important;
 }
 
 /* --- 7. Modals & Template Chooser Utilities --- */

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ui_library_fallback.js
  * Fallback data for offline file:// protocol execution.
  * Auto-generated.
@@ -81,8 +81,7 @@ window.VCTRL_UI_FALLBACK_ATOMIC = `
         <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-cursor')" data-ko="마우스 커서 마우스커서 포인터 화살표 손가락 마우스호버 키인 클릭이벤트 디스크립션 cursor mouse pointer">
             <span class="material-icons-outlined v4-card-atom-icon">near_me</span>
             <span class="v4-card-atom-label">Mouse Cursor</span>
-        </div>
-
+        </div>
 `;
 
 window.VCTRL_UI_FALLBACK_ICON = `

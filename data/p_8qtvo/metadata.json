@@ -11,17 +11,6 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": ""
-    },
-    "renewal_cart.html": {
-      "title": "renewal_cart",
-      "type": "ui",
-      "updatedAt": "2026-09-28T07:01:05.084Z",
-      "template": "template_responsive_pc_mobile.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1,
-      "defaultTab": "description",
-      "screenDesc": ""
     }
   },
   "assignee": "최범열",
@@ -31,7 +20,6 @@
   "notionUrl": "",
   "themeIndex": 1,
   "screenOrder": [
-    "renewal_cart.html",
     "renewal_order.html"
   ],
   "updated": "2026-09-28 16:01:04",

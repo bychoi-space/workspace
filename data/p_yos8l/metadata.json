@@ -181,9 +181,64 @@
     "09_Admin_PC_Scroll_247.html": {
       "title": "회원상세 - 악성고객(활성화)",
       "type": "admin",
-      "updatedAt": "2026-10-02T02:35:22.982Z",
+      "updatedAt": "2026-10-02T02:37:33.667Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[악성고객여부] 항목 Y 설정 시, 하단 항목 Enable 처리",
+          "html": "[악성고객여부] 항목 Y 설정 시, 하단 항목 Enable 처리",
+          "x": 61,
+          "y": 124,
+          "pins": {
+            "pc": {
+              "x": 61,
+              "y": 124,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 61,
+              "y": 124,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[주문 불가 처리] 항목 default value 'Y'",
+          "html": "[주문 불가 처리] 항목 default value 'Y'",
+          "x": 61,
+          "y": 207,
+          "pins": {
+            "pc": {
+              "x": 61,
+              "y": 207,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 61,
+              "y": 207,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -324,7 +379,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
   "themeIndex": 0,
-  "updated": "2026-10-02 11:02:46",
+  "updated": "2026-10-02 11:37:33",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_827.html",

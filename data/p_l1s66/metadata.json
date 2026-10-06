@@ -13,9 +13,37 @@
     "09_Admin_PC_Scroll_630.html": {
       "title": "09_Admin_PC_Scroll_630",
       "type": "admin",
-      "updatedAt": "2026-10-06T07:53:39.226Z",
+      "updatedAt": "2026-10-06T07:54:19.605Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[주문상세내역] > [반품/교환] TAB 에 존재하는 '변경사유' 데이터 표현",
+          "html": "[주문상세내역] &gt; [반품/교환] TAB 에 존재하는 '변경사유' 데이터 표현",
+          "x": 973,
+          "y": 614,
+          "pins": {
+            "pc": {
+              "x": 973,
+              "y": 614,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 973,
+              "y": 614,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -28,6 +56,6 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 4,
-  "updated": "2026-10-06 16:53:16",
+  "updated": "2026-10-06 16:54:19",
   "version": 0.1
 }

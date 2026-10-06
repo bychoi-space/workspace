@@ -12,6 +12,17 @@
       "screenDesc": "패션 이커머스 7대 핵심 도메인 비즈니스 프로세스 & 시스템 아키텍처 맵 (Front 저니맵 ⇄ Core 도메인 ⇄ Admin 백오피스)",
       "defaultTab": "editor"
     },
+    "02_Front_UI_User_Experience_Impact_900.html": {
+      "title": "02_Front UI 개선 유저 경험 효과",
+      "type": "architecture",
+      "updatedAt": "2026-10-06T15:55:00.000Z",
+      "template": "template_process.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.2,
+      "screenDesc": "Front UI 개선의 6대 유저 경험 효과 (인지 피로 감소, 구매 불안감 해소, 실수 방지, 초고속 시간 절약, 개인화 딜라이트, 모바일 썸존 접근성 & 전용 Animated WebP)",
+      "defaultTab": "editor"
+    },
     "03_Admin_System_Development_Roadmap_900.html": {
       "title": "03_Admin 시스템 개발 로드맵",
       "type": "architecture",
@@ -68,6 +79,7 @@
   "screenOrder": [
     "00_Cover_403.html",
     "01_Fashion_Ecommerce_Process_Map_900.html",
+    "02_Front_UI_User_Experience_Impact_900.html",
     "99_Blank_14.html",
     "04_Front_System_Milestone_Timeline_900.html",
     "03_Admin_System_Development_Roadmap_900.html",

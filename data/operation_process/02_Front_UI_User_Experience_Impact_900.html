@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 13px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;">
+<head>
+    <meta charset="UTF-8">
+    <title>Front UI 개선의 6대 유저 경험 효과 (UX Impact)</title>
+    <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --v4-primary: #2563eb;
+            --v4-accent: #38bdf8;
+            --v4-bg: #0f172a;
+            --v4-surface: #ffffff;
+            --v4-border: #cbd5e1;
+            --v4-text: #0f172a;
+            --v4-text-muted: #64748b;
+            --v4-font-size: 13px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            background: #0f172a;
+            font-family: 'Pretendard Variable', 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+            color: var(--v4-text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        .canvas {
+            width: 1600px; height: 900px;
+            position: relative;
+            background: #f8fafc;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .lf-component {
+            position: absolute !important;
+            box-sizing: border-box !important;
+            user-select: none;
+        }
+        .v4-shape {
+            box-sizing: border-box;
+            transition: border-color 0.15s ease;
+        }
+        .v4-editable-cell {
+            outline: none;
+            word-break: keep-all;
+            font-family: inherit;
+        }
+        .lf-icon {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+    <style id="v4-typography-rules">
+    :root {
+        --v4-text-color: #0f172a;
+        --v4-font-size: 13px;
+        --v4-font-weight: 400;
+        --v4-font-family: 'Pretendard Variable', 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        --v4-placeholder-color: #94a3b8;
+    }
+    .v4-editable-cell, .v4-shape, .v4-shape-rect, .text-marker, .v4-text-box, .v4-text-shape {
+        color: var(--v4-text-color, #0f172a);
+        font-family: var(--v4-font-family, inherit);
+    }
+    .v4-shape-text-content p,
+    .v4-shape-text-content span,
+    .v4-shape-text-content strong,
+    .v4-shape-text-content * {
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+    </style>
+</head>
+<body>
+    <div class="canvas" id="canvas" style="background-color: #f8fafc;">
+
+        <!-- [BACKGROUND LAYER] 캔버스 최하단 무간섭 배경 이미지 레이어 -->
+        <div id="canvas_bg_layer" style="position: absolute; top: 0; left: 0; width: 1600px; height: 900px; z-index: 0; pointer-events: none !important; user-select: none; overflow: hidden;">
+            <img id="canvas_bg_img" src="assets/illustrations/ecommerce_ui_bg.jpg" alt="Background" style="width: 100%; height: 100%; object-fit: cover; user-select: none; display: block; pointer-events: none !important; opacity: 0.35;">
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [0] GLOBAL HEADER (Top: 20px, Left: 20px, W: 1560px, H: 50px) -->
+        <!-- ======================================================== -->
+        <div id="hdr_bg" class="lf-component" style="position: absolute; top: 20px; left: 20px; width: 1560px; height: 50px; z-index: 100;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 8px; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="hdr_icon" class="lf-component" style="position: absolute; top: 32px; left: 38px; width: 26px; height: 26px; z-index: 105;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;">
+                <polygon points="12 2 2 7 12 12 22 7 12 2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
+                <polyline points="2 17 12 22 22 17" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polyline>
+                <polyline points="2 12 12 17 22 12" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polyline>
+            </svg>
+        </div>
+
+        <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 34px; left: 76px; width: 850px; height: 26px; z-index: 105; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 17px; white-space: nowrap !important;">[기획/UX] Front UI 개선의 6대 유저 경험 효과 (Customer Satisfaction &amp; UX Impact)</strong></p>
+            </div>
+        </div>
+
+        <div id="hdr_badge" class="lf-component" style="position: absolute; top: 31px; left: 1390px; width: 170px; height: 28px; z-index: 105;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: rgba(56, 189, 248, 0.15); border: 1.6px solid rgba(56, 189, 248, 0.4); border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #38bdf8; font-size: 13px;">UX VALUE FRAMEWORK</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- [1] INTRO SUMMARY STRIP (Top: 82px, Left: 20px, W: 1560px, H: 44px) -->
+        <!-- ======================================================== -->
+        <div id="intro_bg" class="lf-component" style="position: absolute; top: 82px; left: 20px; width: 1560px; height: 44px; z-index: 90;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="intro_badge" class="lf-component" style="position: absolute; top: 90px; left: 34px; width: 96px; height: 26px; z-index: 95;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border: 1.6px solid transparent; border-radius: 4px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 13px;">CORE VALUE</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="intro_text" class="lf-component v4-text-shape" style="position: absolute; top: 93px; left: 142px; width: 1420px; height: 22px; z-index: 95; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 500; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="color: #334155; font-size: 13.5px;">Front UI 개선은 단순한 편의와 재방문을 넘어, </span><strong style="color: #0f172a; font-size: 13.5px;">유저의 인지·시간·심리적 비용(Cognitive, Time, Psychological Cost)을 최소화</strong><span style="color: #334155; font-size: 13.5px;">하고 플랫폼과 고객 간의 신뢰와 정서적 유대를 완성합니다.</span></p>
+            </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- [ROW 1 - CARD 1] 인지적 피로 및 의사결정 스트레스 감소 (Left: 20px, Top: 138px) -->
+        <!-- ======================================================== -->
+        <div id="card_1_bg" class="lf-component" style="position: absolute; top: 138px; left: 20px; width: 496px; height: 356px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 14px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="card_1_num" class="lf-component" style="position: absolute; top: 154px; left: 38px; width: 44px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid transparent; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #38bdf8; font-size: 13px;">01</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_1_tag" class="lf-component" style="position: absolute; top: 154px; left: 88px; width: 145px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #dbeafe; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #2563eb; font-size: 13px;">인지적 피로 해소</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드 1 모션 인터랙션 WebP -->
+        <div id="card_1_motion" class="lf-component" style="position: absolute; top: 150px; left: 320px; width: 180px; height: 108px; z-index: 25;" data-resized="true">
+            <div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/motion/motion_user_cognitive_ease.webp" alt="인지 피로 감소 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+
+        <div id="card_1_title" class="lf-component v4-text-shape" style="position: absolute; top: 188px; left: 38px; width: 275px; height: 26px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 16px;">인지 피로 &amp; 의사결정 스트레스 감소</strong></p>
+            </div>
+        </div>
+
+        <div id="card_1_sub" class="lf-component v4-text-shape" style="position: absolute; top: 216px; left: 38px; width: 275px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 13px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="color: #64748b; font-size: 13px;">Cognitive Load &amp; Search Fatigue Reduction</span></p>
+            </div>
+        </div>
+
+        <div id="card_1_div" class="lf-component" style="position: absolute; top: 264px; left: 38px; width: 460px; height: 1px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: none; box-sizing: border-box;"></div>
+        </div>
+
+        <div id="card_1_high" class="lf-component" style="position: absolute; top: 276px; left: 38px; width: 460px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-start; padding-left: 12px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: flex-start;">
+                    <p style="margin: 0; padding: 0; text-align: left; white-space: nowrap !important;"><strong style="color: #1e293b; font-size: 13px;">💡 핵심 가치: 비교와 선택에 드는 두뇌 에너지 소모 원천 차단</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_1_b1" class="lf-component" style="position: absolute; top: 318px; left: 38px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">탐색 피로(Search Fatigue) 해소</strong>: 규격화된 스펙표와 직관적 뱃지 UI를 통해 스크롤 몇 번만으로 핵심 상품 정보를 즉각 파악합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_1_b2" class="lf-component" style="position: absolute; top: 400px; left: 38px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">결정 장애(Paradox of Choice) 완화</strong>: 옵션별 실시간 비교 툴과 명확한 위계로 수많은 상품 속 고민 스트레스를 최소화합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- [ROW 1 - CARD 2] 구매 불안감 해소 및 심리적 안정감 (Left: 552px, Top: 138px) -->
+        <!-- ======================================================== -->
+        <div id="card_2_bg" class="lf-component" style="position: absolute; top: 138px; left: 552px; width: 496px; height: 356px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 14px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="card_2_num" class="lf-component" style="position: absolute; top: 154px; left: 570px; width: 44px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid transparent; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #38bdf8; font-size: 13px;">02</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_2_tag" class="lf-component" style="position: absolute; top: 154px; left: 620px; width: 145px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f0fdf4; border: 1.6px solid #bbf7d0; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #16a34a; font-size: 13px;">심리적 안전감 확보</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드 2 모션 인터랙션 WebP -->
+        <div id="card_2_motion" class="lf-component" style="position: absolute; top: 150px; left: 852px; width: 180px; height: 108px; z-index: 25;" data-resized="true">
+            <div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/motion/motion_user_trust_safety.webp" alt="심리적 안정감 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+
+        <div id="card_2_title" class="lf-component v4-text-shape" style="position: absolute; top: 188px; left: 570px; width: 275px; height: 26px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 16px;">구매 불안감 해소 &amp; 심리적 안정감</strong></p>
+            </div>
+        </div>
+
+        <div id="card_2_sub" class="lf-component v4-text-shape" style="position: absolute; top: 216px; left: 570px; width: 275px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 13px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="color: #64748b; font-size: 13px;">Trust &amp; Psychological Safety Assurance</span></p>
+            </div>
+        </div>
+
+        <div id="card_2_div" class="lf-component" style="position: absolute; top: 264px; left: 570px; width: 460px; height: 1px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: none; box-sizing: border-box;"></div>
+        </div>
+
+        <div id="card_2_high" class="lf-component" style="position: absolute; top: 276px; left: 570px; width: 460px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-start; padding-left: 12px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: flex-start;">
+                    <p style="margin: 0; padding: 0; text-align: left; white-space: nowrap !important;"><strong style="color: #1e293b; font-size: 13px;">🛡️ 핵심 가치: 투명한 정보 공개로 '믿고 결제하는 환경' 조성</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_2_b1" class="lf-component" style="position: absolute; top: 318px; left: 570px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">불확실성 사전 제거</strong>: 추가 배송비, 쿠폰 적용 조건, 실시간 잔여 재고, 도착 예정일을 사전 노출해 숨겨진 결제 불안을 차단합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_2_b2" class="lf-component" style="position: absolute; top: 400px; left: 570px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">신뢰 자산 형성</strong>: 보안 인증 마크와 실구매자 검증 리뷰 체계로 "내 돈과 개인정보를 안전하게 지켜준다"는 확신을 부여합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- [ROW 1 - CARD 3] 유저의 실수 방지 및 뒤처리 스트레스 예방 (Left: 1084px, Top: 138px) -->
+        <!-- ======================================================== -->
+        <div id="card_3_bg" class="lf-component" style="position: absolute; top: 138px; left: 1084px; width: 496px; height: 356px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 14px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="card_3_num" class="lf-component" style="position: absolute; top: 154px; left: 1102px; width: 44px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid transparent; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #38bdf8; font-size: 13px;">03</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_3_tag" class="lf-component" style="position: absolute; top: 154px; left: 1152px; width: 145px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef3c7; border: 1.6px solid #fde68a; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #d97706; font-size: 13px;">실수 &amp; 오류 차단</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드 3 모션 인터랙션 WebP -->
+        <div id="card_3_motion" class="lf-component" style="position: absolute; top: 150px; left: 1384px; width: 180px; height: 108px; z-index: 25;" data-resized="true">
+            <div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/motion/motion_user_error_prevention.webp" alt="실수 방지 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+
+        <div id="card_3_title" class="lf-component v4-text-shape" style="position: absolute; top: 188px; left: 1102px; width: 275px; height: 26px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 16px;">유저 실수 방지 &amp; 뒤처리 스트레스 예방</strong></p>
+            </div>
+        </div>
+
+        <div id="card_3_sub" class="lf-component v4-text-shape" style="position: absolute; top: 216px; left: 1102px; width: 275px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 13px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="color: #64748b; font-size: 13px;">Error Prevention &amp; CS Fatigue Minimization</span></p>
+            </div>
+        </div>
+
+        <div id="card_3_div" class="lf-component" style="position: absolute; top: 264px; left: 1102px; width: 460px; height: 1px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: none; box-sizing: border-box;"></div>
+        </div>
+
+        <div id="card_3_high" class="lf-component" style="position: absolute; top: 276px; left: 1102px; width: 460px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-start; padding-left: 12px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: flex-start;">
+                    <p style="margin: 0; padding: 0; text-align: left; white-space: nowrap !important;"><strong style="color: #1e293b; font-size: 13px;">⚡ 핵심 가치: 실시간 인라인 검증으로 고객센터(CS) 문의 원천 예방</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_3_b1" class="lf-component" style="position: absolute; top: 318px; left: 1102px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">주문 오류 사전 차단</strong>: 실시간 인라인 유효성 검사, 품절 옵션 즉시 비활성화로 엉뚱한 사이즈나 잘못된 주소 입력을 사전에 막아줍니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_3_b2" class="lf-component" style="position: absolute; top: 400px; left: 1102px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">CS 대기 피로 증발</strong>: 잘못 결제된 주문을 취소하고 환불받기 위해 고객센터에 연락하고 대기해야 하는 불필요한 고통이 사라집니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- [ROW 2 - CARD 4] 압도적인 시간 절약 및 과업 효율성 (Left: 20px, Top: 508px) -->
+        <!-- ======================================================== -->
+        <div id="card_4_bg" class="lf-component" style="position: absolute; top: 508px; left: 20px; width: 496px; height: 356px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 14px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="card_4_num" class="lf-component" style="position: absolute; top: 524px; left: 38px; width: 44px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid transparent; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #38bdf8; font-size: 13px;">04</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_4_tag" class="lf-component" style="position: absolute; top: 524px; left: 88px; width: 145px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fefce8; border: 1.6px solid #fef08a; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #ca8a04; font-size: 13px;">시간 절약 &amp; 초고속</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드 4 모션 인터랙션 WebP -->
+        <div id="card_4_motion" class="lf-component" style="position: absolute; top: 520px; left: 320px; width: 180px; height: 108px; z-index: 25;" data-resized="true">
+            <div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/motion/motion_user_speed_efficiency.webp" alt="초고속 주문 완료 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+
+        <div id="card_4_title" class="lf-component v4-text-shape" style="position: absolute; top: 558px; left: 38px; width: 275px; height: 26px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 16px;">압도적인 시간 절약 &amp; 과업 효율성</strong></p>
+            </div>
+        </div>
+
+        <div id="card_4_sub" class="lf-component v4-text-shape" style="position: absolute; top: 586px; left: 38px; width: 275px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 13px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="color: #64748b; font-size: 13px;">Task Completion Speed &amp; 1-Click Efficiency</span></p>
+            </div>
+        </div>
+
+        <div id="card_4_div" class="lf-component" style="position: absolute; top: 634px; left: 38px; width: 460px; height: 1px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: none; box-sizing: border-box;"></div>
+        </div>
+
+        <div id="card_4_high" class="lf-component" style="position: absolute; top: 646px; left: 38px; width: 460px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-start; padding-left: 12px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: flex-start;">
+                    <p style="margin: 0; padding: 0; text-align: left; white-space: nowrap !important;"><strong style="color: #1e293b; font-size: 13px;">⏱️ 핵심 가치: 결제 여정 극단적 단축(5분 ➔ 30초)으로 시간 보존</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_4_b1" class="lf-component" style="position: absolute; top: 688px; left: 38px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">1-Click 초간편 결제</strong>: 최근 배송지 원터치 선택과 스마트 간편결제 결합으로 장바구니에서 최종 결제까지 불과 30초 내로 도달합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_4_b2" class="lf-component" style="position: absolute; top: 770px; left: 38px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">사후 관리 초고속 접근</strong>: 마이페이지에서 주문 내역, 배송 트래킹, 전자 영수증을 복잡한 탐색 없이 원클릭으로 열람합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- [ROW 2 - CARD 5] '존중받는 느낌'을 주는 개인화 경험 (Left: 552px, Top: 508px) -->
+        <!-- ======================================================== -->
+        <div id="card_5_bg" class="lf-component" style="position: absolute; top: 508px; left: 552px; width: 496px; height: 356px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 14px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="card_5_num" class="lf-component" style="position: absolute; top: 524px; left: 570px; width: 44px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid transparent; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #38bdf8; font-size: 13px;">05</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_5_tag" class="lf-component" style="position: absolute; top: 524px; left: 620px; width: 145px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fdf2f8; border: 1.6px solid #fbcfe8; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #db2777; font-size: 13px;">개인화 &amp; 감성 딜라이트</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드 5 모션 인터랙션 WebP -->
+        <div id="card_5_motion" class="lf-component" style="position: absolute; top: 520px; left: 852px; width: 180px; height: 108px; z-index: 25;" data-resized="true">
+            <div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/motion/motion_user_personal_delight.webp" alt="개인화 맞춤 경험 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+
+        <div id="card_5_title" class="lf-component v4-text-shape" style="position: absolute; top: 558px; left: 570px; width: 275px; height: 26px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 16px;">'존중받는 느낌'을 주는 개인화 경험</strong></p>
+            </div>
+        </div>
+
+        <div id="card_5_sub" class="lf-component v4-text-shape" style="position: absolute; top: 586px; left: 570px; width: 275px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 13px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="color: #64748b; font-size: 13px;">Emotional Delight &amp; Tailored Relevance</span></p>
+            </div>
+        </div>
+
+        <div id="card_5_div" class="lf-component" style="position: absolute; top: 634px; left: 570px; width: 460px; height: 1px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: none; box-sizing: border-box;"></div>
+        </div>
+
+        <div id="card_5_high" class="lf-component" style="position: absolute; top: 646px; left: 570px; width: 460px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-start; padding-left: 12px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: flex-start;">
+                    <p style="margin: 0; padding: 0; text-align: left; white-space: nowrap !important;"><strong style="color: #1e293b; font-size: 13px;">💖 핵심 가치: 정보 공해 차단 및 나만을 배려하는 섬세한 대접</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_5_b1" class="lf-component" style="position: absolute; top: 688px; left: 570px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">정보 공해 원천 정제</strong>: 무의미한 광고 배너 대신 최근 열람 상품, 체형/사이즈, 관심 브랜드에 집중된 정제된 큐레이션만 제공합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_5_b2" class="lf-component" style="position: absolute; top: 770px; left: 570px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">감성적 유대감 형성</strong>: 서비스가 나의 상황을 이해하고 세심하게 배려한다는 느낌(Delight)을 전달하여 강력한 브랜드 팬덤을 만듭니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- [ROW 2 - CARD 6] 디바이스·환경의 제약 없는 사용성 (Left: 1084px, Top: 508px) -->
+        <!-- ======================================================== -->
+        <div id="card_6_bg" class="lf-component" style="position: absolute; top: 508px; left: 1084px; width: 496px; height: 356px; z-index: 10;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 14px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="card_6_num" class="lf-component" style="position: absolute; top: 524px; left: 1102px; width: 44px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid transparent; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #38bdf8; font-size: 13px;">06</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_6_tag" class="lf-component" style="position: absolute; top: 524px; left: 1152px; width: 145px; height: 24px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ede9fe; border: 1.6px solid #ddd6fe; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <p style="margin: 0; padding: 0; text-align: center; white-space: nowrap !important;"><strong style="color: #7c3aed; font-size: 13px;">접근성 &amp; 썸존 편의</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드 6 모션 인터랙션 WebP -->
+        <div id="card_6_motion" class="lf-component" style="position: absolute; top: 520px; left: 1384px; width: 180px; height: 108px; z-index: 25;" data-resized="true">
+            <div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
+                <img src="assets/illustrations/motion/motion_user_mobile_adaptive.webp" alt="엄지존 원터치 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+
+        <div id="card_6_title" class="lf-component v4-text-shape" style="position: absolute; top: 558px; left: 1102px; width: 275px; height: 26px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 16px;">디바이스·환경의 제약 없는 사용성</strong></p>
+            </div>
+        </div>
+
+        <div id="card_6_sub" class="lf-component v4-text-shape" style="position: absolute; top: 586px; left: 1102px; width: 275px; height: 20px; z-index: 20; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #64748b; font-size: 13px; font-weight: 600; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 0px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><span style="color: #64748b; font-size: 13px;">Accessibility &amp; Thumb-Zone Inclusivity</span></p>
+            </div>
+        </div>
+
+        <div id="card_6_div" class="lf-component" style="position: absolute; top: 634px; left: 1102px; width: 460px; height: 1px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #e2e8f0; border: none; box-sizing: border-box;"></div>
+        </div>
+
+        <div id="card_6_high" class="lf-component" style="position: absolute; top: 646px; left: 1102px; width: 460px; height: 32px; z-index: 20;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-start; padding-left: 12px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: flex-start;">
+                    <p style="margin: 0; padding: 0; text-align: left; white-space: nowrap !important;"><strong style="color: #1e293b; font-size: 13px;">📱 핵심 가치: 모바일 한 손 조작성 극대화 및 디지털 약자 포용</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_6_b1" class="lf-component" style="position: absolute; top: 688px; left: 1102px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">모바일 엄지존(Thumb Zone) 최적화</strong>: 대중교통 이동 중에도 한 손으로 닿기 쉬운 하단 바(Sticky CTA)와 넉넉한 탭 타깃을 보장합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="card_6_b2" class="lf-component" style="position: absolute; top: 770px; left: 1102px; width: 460px; height: 72px; z-index: 20;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13.5px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0; padding: 0; line-height: 1.45; white-space: normal !important; word-break: break-word !important; text-align: left;">
+                            • <strong style="color: #0f172a;">고령층·저시력자 포용</strong>: 권장 명도 대비(4.5:1 이상)와 최소 13px 이상의 또렷한 서체 규격으로 눈의 피로 없이 누구나 편안히 이용합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

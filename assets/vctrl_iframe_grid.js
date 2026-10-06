@@ -254,7 +254,7 @@ window.v4GridScript = `
                         var cols = JSON.parse(gridContainer.getAttribute("data-columns") || "[]");
                         if (currentIdx >= 0 && cols[currentIdx]) {
                             var badgeEl = cell.querySelector(".v4-col-badge");
-                            var cleanName = cell.innerText.replace(" \u21C5", "").trim();
+                            var cleanName = cell.innerText.replace(" \u21C5", "").replace("\u21C5", "").replace(" ⇅", "").replace("⇅", "").trim();
                             if (badgeEl && badgeEl.innerText) {
                                 cleanName = cleanName.replace(badgeEl.innerText, "").trim();
                             }
@@ -425,13 +425,14 @@ window.v4GridScript = `
                 if (hl && hl.enabled && hl.badgeText) {
                     badgeHtml = '<span class="v4-col-badge" contenteditable="false" style="background:' + hl.badgeBg + '; color:' + hl.badgeColor + ';">' + hl.badgeText + '</span>';
                 }
-                var desiredHtml = (col.name || "") + " \u21C5" + badgeHtml;
+                var desiredHtml = (col.name || "") + badgeHtml;
                 var existingBadge = th.querySelector(".v4-col-badge");
-                var existingText = th.innerText.replace(" \u21C5", "").trim();
+                var existingText = th.innerText.replace(" \u21C5", "").replace("\u21C5", "").replace(" ⇅", "").replace("⇅", "").trim();
                 if (existingBadge && existingBadge.innerText) {
                     existingText = existingText.replace(existingBadge.innerText, "").trim();
                 }
-                if (existingText !== (col.name || "") || (!existingBadge !== !badgeHtml) || (existingBadge && existingBadge.innerText !== (hl ? hl.badgeText : ""))) {
+                var hasLegacyArrow = th.innerHTML.indexOf("\u21C5") >= 0 || th.innerHTML.indexOf("⇅") >= 0;
+                if (hasLegacyArrow || existingText !== (col.name || "") || (!existingBadge !== !badgeHtml) || (existingBadge && existingBadge.innerText !== (hl ? hl.badgeText : ""))) {
                     th.innerHTML = desiredHtml;
                 }
                 bindGridCellEvents(th, true, idx);
@@ -623,7 +624,7 @@ window.v4GridScript = `
             if (col.type === "checkbox") {
                 headerHtml += '<th class="v4-grid-cell v4-grid-check-col' + hlClass + '" data-type="checkbox" data-align="center" style="display:table-cell; vertical-align:middle; text-align:center; height:' + rowHeightVal + ' !important;' + borderRight + hlShadow + ' box-sizing:border-box; padding:0; font-weight:normal; position:sticky; top:0; z-index:10; background:' + hlBg + ';"><input type="checkbox"></th>';
             } else {
-                headerHtml += '<th class="v4-grid-cell v4-editable-cell' + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '" style="display:table-cell; vertical-align:middle; text-align:' + align + '; height:' + rowHeightVal + ' !important; padding:0 8px;' + borderRight + hlShadow + ' box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; user-select:none; position:sticky; top:0; z-index:10; background:' + hlBg + ';">' + (col.name || "") + " \u21C5" + badgeHtml + "</th>";
+                headerHtml += '<th class="v4-grid-cell v4-editable-cell' + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '" style="display:table-cell; vertical-align:middle; text-align:' + align + '; height:' + rowHeightVal + ' !important; padding:0 8px;' + borderRight + hlShadow + ' box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; user-select:none; position:sticky; top:0; z-index:10; background:' + hlBg + ';">' + (col.name || "") + badgeHtml + "</th>";
             }
         });
         headerHtml += "</tr>";

@@ -341,6 +341,11 @@
     width: 18px !important;
     height: 18px !important;
     stroke: var(--accent-light, #9e8cfc) !important;
+    color: var(--accent-light, #9e8cfc) !important;
+}
+
+.v4-card-atom-svg * {
+    stroke: var(--accent-light, #9e8cfc) !important;
 }
 
 .v4-card-atom-check-box {

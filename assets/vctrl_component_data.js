@@ -322,49 +322,7 @@ window.V4_COMPONENT_LIBRARY = {
             </div>`
         },
 
-        {
-            id: 'v4-tool-text',
-            name: 'Text',
-            koName: '텍스트 글상자',
-            category: 'Shapes',
-            isTool: true,
-            toolName: 'text',
-            icon: 'title',
-            iconColor: 'var(--accent)',
-            cardStyle: 'background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.1) !important;',
-            html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5; white-space:nowrap;">Edit Text</div>'
-        },
-        {
-            id: 'v4-data-table',
-            name: 'Table',
-            koName: '표 테이블',
-            category: 'Shapes',
-            icon: 'table_chart',
-            iconColor: '#818cf8',
-            width: '200px',
-            height: '100px',
-            cardStyle: 'background: rgba(99, 102, 241, 0.05); border: 1.6px solid rgba(99, 102, 241, 0.1) !important;',
-            previewHtml: `<div style="width: 80px; height: 40px; border: 1.6px solid var(--v4-border-color, #475569); background: var(--v4-disabled-bg, #e2e8f0); border-radius: 4px;"></div>`,
-            html: `
-            <table class="v4-premium-table" style="background: var(--v4-disabled-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box;">
-                <colgroup>
-                    <col style="width: 100px;">
-                    <col style="width: 100px;">
-                </colgroup>
-                <thead>
-                    <tr style="height: 50px;">
-                        <th contenteditable="true" class="v4-editable-cell" style="background: var(--v4-input-bg, #f8fafc); color: var(--v4-text-color, #0f172a); border: 1.6px solid var(--v4-border-color, #cbd5e1); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">구분</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: var(--v4-input-bg, #f8fafc); color: var(--v4-text-color, #0f172a); border: 1.6px solid var(--v4-border-color, #cbd5e1); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">상세 내용</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="height: 50px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">내용</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">정보</td>
-                    </tr>
-                </tbody>
-            </table>`
-        },
+        // --- Row 1: Basic Geometry (Rect, Circle, Triangle) ---
         {
             id: 'v4-shape-rect',
             name: 'Rect',
@@ -398,19 +356,6 @@ window.V4_COMPONENT_LIBRARY = {
             </div>`
         },
         {
-            id: 'v4-atom-image',
-            name: 'Image',
-            koName: '이미지 사진 첨부 업로드 파일 그림 png jpg',
-            category: 'Shapes',
-            icon: 'image',
-            iconColor: '#00e5ff',
-            width: '120px',
-            height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 40px; height: 30px; background: rgba(0, 229, 255, 0.1); border: 1.6px solid rgba(0, 229, 255, 0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center;"><span class="material-icons-outlined" style="font-size: 18px; color: #00e5ff;">image</span></div>`,
-            html: `<div class="v4-shape v4-shape-image" data-natural-width="120" data-natural-height="100" data-aspect-ratio="1.2" style="width: 100%; height: 100%; background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23cbd5e1%22 stroke-width=%221.6%22><rect width=%2220%22 height=%2220%22 x=%222%22 y=%222%22 rx=%222%22 ry=%222%22/><circle cx=%228.5%22 cy=%228.5%22 r=%221.5%22/><path d=%22M21 15l-5-5L5 21%22/></svg>'); background-size: cover; background-position: center; background-repeat: no-repeat; box-sizing: border-box; border: 1.6px solid transparent;"></div>`
-        },
-        {
             id: 'v4-shape-triangle',
             name: 'Triangle',
             koName: '삼각형 삼각 세모',
@@ -429,14 +374,16 @@ window.V4_COMPONENT_LIBRARY = {
                 <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
             </div>`
         },
+
+        // --- Row 2: Flow & Connectors (Diamond, Line, Arrow) ---
         {
             id: 'v4-shape-diamond',
             name: 'Diamond',
             koName: '다이아몬드 마름모 조건 의사결정',
             category: 'Shapes',
-            icon: 'crop_square',
+            iconType: 'svg',
+            iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 18px; height: 18px;"><polygon points="12 2 22 12 12 22 2 12"></polygon></svg>',
             iconColor: '#00e5ff',
-            iconStyle: 'transform: rotate(45deg);',
             width: '100px',
             height: '100px',
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
@@ -447,25 +394,6 @@ window.V4_COMPONENT_LIBRARY = {
                     <polygon points="50,1 99,50 50,99 1,50" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
                 </svg>
                 <div contenteditable="true" class="v4-editable-cell" style="width: 60%; height: 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
-            </div>`
-        },
-        {
-            id: 'v4-shape-arrow',
-            name: 'Arrow',
-            koName: '화살표 방향 지시 흐름도',
-            category: 'Shapes',
-            icon: 'trending_flat',
-            iconColor: '#00e5ff',
-            width: '100px',
-            height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<svg viewBox="0 0 100 100" style="width: 30px; height: 30px; overflow: visible;"><path d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
-            html: `
-            <div class="v4-shape v4-shape-arrow" data-arrow-dir="right" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <path class="v4-arrow-path" d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
-                </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 50%; height: 40%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
             </div>`
         },
         {
@@ -487,38 +415,84 @@ window.V4_COMPONENT_LIBRARY = {
             </div>`
         },
         {
-            id: 'v4-shape-pattern-grid',
-            name: 'Pattern',
-            koName: '패턴 격자 그리드 모눈종이',
+            id: 'v4-shape-arrow',
+            name: 'Arrow',
+            koName: '화살표 방향 지시 흐름도',
             category: 'Shapes',
-            icon: 'grid_4x4',
-            iconColor: '#fff',
-            cardStyle: 'background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.1) !important;',
-            previewHtml: `<div class="v4-shape-pattern-grid" style="width: 40px; height: 30px; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200);"></div>`,
+            icon: 'trending_flat',
+            iconColor: '#00e5ff',
+            width: '100px',
+            height: '100px',
+            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            previewHtml: `<svg viewBox="0 0 100 100" style="width: 30px; height: 30px; overflow: visible;"><path d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
             html: `
-            <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            <div class="v4-shape v4-shape-arrow" data-arrow-dir="right" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
+                    <path class="v4-arrow-path" d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
+                </svg>
+                <div contenteditable="true" class="v4-editable-cell" style="width: 50%; height: 40%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
             </div>`
+        },
+
+        // --- Row 3: Content Media (Text, Table, Image) ---
+        {
+            id: 'v4-tool-text',
+            name: 'Text',
+            koName: '텍스트 글상자',
+            category: 'Shapes',
+            isTool: true,
+            toolName: 'text',
+            icon: 'title',
+            iconColor: '#00e5ff',
+            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5; white-space:nowrap;">Edit Text</div>'
         },
         {
-            id: 'v4-shape-wave',
-            name: 'Wave',
-            koName: '물결 웨이브 파도 구분선',
+            id: 'v4-data-table',
+            name: 'Table',
+            koName: '표 테이블',
             category: 'Shapes',
-            icon: 'waves',
-            iconColor: '#fb923c',
-            cardStyle: 'background: rgba(251, 146, 60, 0.05); border: 1.6px solid rgba(251, 146, 60, 0.1) !important;',
-            width: '360px',
-            height: '20px',
-            previewHtml: `<svg viewBox="0 0 100 20" preserveAspectRatio="none" style="width: 45px; height: 15px;"><polygon points="0,6 12.5,2 25,6 37.5,2 50,6 62.5,2 75,6 87.5,2 100,6 100,16 87.5,12 75,16 62.5,12 50,16 37.5,12 25,16 12.5,12 0,16" style="fill: #ffedd5; stroke: #fb923c; stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
+            icon: 'table_chart',
+            iconColor: '#00e5ff',
+            width: '200px',
+            height: '100px',
+            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            previewHtml: `<div style="width: 80px; height: 40px; border: 1.6px solid var(--v4-border-color, #475569); background: var(--v4-disabled-bg, #e2e8f0); border-radius: 4px;"></div>`,
             html: `
-            <div class="v4-shape v4-shape-wave" data-wave-dir="horizontal" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
-                <svg viewBox="0 0 360 20" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16" style="fill: #ffedd5; stroke: #fb923c; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
-                </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative; color: var(--v4-text-color, #0f172a);"></div>
-            </div>`
+            <table class="v4-premium-table" style="background: var(--v4-disabled-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box;">
+                <colgroup>
+                    <col style="width: 100px;">
+                    <col style="width: 100px;">
+                </colgroup>
+                <thead>
+                    <tr style="height: 50px;">
+                        <th contenteditable="true" class="v4-editable-cell" style="background: var(--v4-input-bg, #f8fafc); color: var(--v4-text-color, #0f172a); border: 1.6px solid var(--v4-border-color, #cbd5e1); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">구분</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: var(--v4-input-bg, #f8fafc); color: var(--v4-text-color, #0f172a); border: 1.6px solid var(--v4-border-color, #cbd5e1); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">상세 내용</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="height: 50px;">
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">내용</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">정보</td>
+                    </tr>
+                </tbody>
+            </table>`
         },
+        {
+            id: 'v4-atom-image',
+            name: 'Image',
+            koName: '이미지 사진 첨부 업로드 파일 그림 png jpg',
+            category: 'Shapes',
+            icon: 'image',
+            iconColor: '#00e5ff',
+            width: '120px',
+            height: '100px',
+            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            previewHtml: `<div style="width: 40px; height: 30px; background: rgba(0, 229, 255, 0.1); border: 1.6px solid rgba(0, 229, 255, 0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center;"><span class="material-icons-outlined" style="font-size: 18px; color: #00e5ff;">image</span></div>`,
+            html: `<div class="v4-shape v4-shape-image" data-natural-width="120" data-natural-height="100" data-aspect-ratio="1.2" style="width: 100%; height: 100%; background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23cbd5e1%22 stroke-width=%221.6%22><rect width=%2220%22 height=%2220%22 x=%222%22 y=%222%22 rx=%222%22 ry=%222%22/><circle cx=%228.5%22 cy=%228.5%22 r=%221.5%22/><path d=%22M21 15l-5-5L5 21%22/></svg>'); background-size: cover; background-position: center; background-repeat: no-repeat; box-sizing: border-box; border: 1.6px solid transparent;"></div>`
+        },
+
+        // --- Row 4: Frame & Decoration (Webpage, Pattern, Wave) ---
         {
             id: 'v4-shape-webpage',
             name: 'Webpage',
@@ -542,6 +516,39 @@ window.V4_COMPONENT_LIBRARY = {
                     <div style="width: 40px; flex-shrink: 0;"></div>
                 </div>
                 <div contenteditable="true" class="v4-editable-cell" style="flex: 1 1 auto; width: 100%; height: calc(100% - 26px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; color: var(--v4-text-color, #0f172a);"></div>
+            </div>`
+        },
+        {
+            id: 'v4-shape-pattern-grid',
+            name: 'Pattern',
+            koName: '패턴 격자 그리드 모눈종이',
+            category: 'Shapes',
+            icon: 'grid_4x4',
+            iconColor: '#00e5ff',
+            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            previewHtml: `<div class="v4-shape-pattern-grid" style="width: 40px; height: 30px; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200);"></div>`,
+            html: `
+            <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            </div>`
+        },
+        {
+            id: 'v4-shape-wave',
+            name: 'Wave',
+            koName: '물결 웨이브 파도 구분선',
+            category: 'Shapes',
+            icon: 'waves',
+            iconColor: '#00e5ff',
+            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            width: '360px',
+            height: '20px',
+            previewHtml: `<svg viewBox="0 0 100 20" preserveAspectRatio="none" style="width: 45px; height: 15px;"><polygon points="0,6 12.5,2 25,6 37.5,2 50,6 62.5,2 75,6 87.5,2 100,6 100,16 87.5,12 75,16 62.5,12 50,16 37.5,12 25,16 12.5,12 0,16" style="fill: #ffedd5; stroke: #00e5ff; stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
+            html: `
+            <div class="v4-shape v4-shape-wave" data-wave-dir="horizontal" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
+                <svg viewBox="0 0 360 20" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
+                    <polygon points="0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16" style="fill: #ffedd5; stroke: #fb923c; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
+                </svg>
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative; color: var(--v4-text-color, #0f172a);"></div>
             </div>`
         }
     ],
@@ -657,7 +664,7 @@ window.V4_ATOMIC_TEMPLATES = {
         style: { width: '180px', height: '36px' }
     },
     'Grid UI': {
-        html: '<div class="v4-grid-container" data-pagination="true" data-row-count="5" data-columns="[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;checkbox&quot;,&quot;width&quot;:&quot;60px&quot;,&quot;align&quot;:&quot;center&quot;},{&quot;name&quot;:&quot;번호&quot;,&quot;type&quot;:&quot;number&quot;,&quot;width&quot;:&quot;80px&quot;,&quot;align&quot;:&quot;center&quot;},{&quot;name&quot;:&quot;항목명&quot;,&quot;type&quot;:&quot;text&quot;,&quot;width&quot;:&quot;460px&quot;,&quot;align&quot;:&quot;center&quot;}]" style="width:100%; height:100%; display:flex; flex-direction:column; background:#ffffff; border:1.6px solid rgb(226,232,240); border-radius:8px; overflow:hidden; box-sizing:border-box;"><div class="v4-grid-table-wrapper" style="width:100%; height:calc(100% - 36px); overflow:auto; box-sizing:border-box;"><table style="width:600px; min-width:600px; table-layout:fixed; border-collapse:collapse; background:#ffffff; box-sizing:border-box;"><colgroup><col style="width:60px;"><col style="width:80px;"><col style="width:460px;"></colgroup><thead><tr style="height:40px; background:#f8fafc; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box;"><th class="v4-grid-cell v4-grid-check-col" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0; font-weight:normal;" data-type="checkbox" data-align="center"><input type="checkbox"></th><th class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; font-family:inherit; user-select:none;" data-type="number" data-align="center">번호 ⇅</th><th class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; font-family:inherit; user-select:none;" data-type="text" data-align="center">항목명 ⇅</th></tr></thead><tbody style="box-sizing:border-box;"><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr><tr style="height:40px; border-bottom:none; box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr></tbody></table></div><div class="v4-grid-footer" style="height:36px; padding:0 12px; display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border-top:1.6px solid rgb(226,232,240); box-sizing:border-box; width:100%; flex-shrink:0;"><span style="font-size:11px; color:#64748b; font-family:inherit;">1/27</span><div class="v4-grid-pages" style="font-size:11px; color:#64748b; cursor:pointer; font-family:inherit;">◀ 1 2 3 4 5 ▶</div><span style="font-size:11px; color:#64748b; font-family:inherit;">Page Size 100</span></div></div>',
+        html: '<div class="v4-grid-container" data-pagination="true" data-row-count="5" data-columns="[{&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;checkbox&quot;,&quot;width&quot;:&quot;60px&quot;,&quot;align&quot;:&quot;center&quot;},{&quot;name&quot;:&quot;번호&quot;,&quot;type&quot;:&quot;number&quot;,&quot;width&quot;:&quot;80px&quot;,&quot;align&quot;:&quot;center&quot;},{&quot;name&quot;:&quot;항목명&quot;,&quot;type&quot;:&quot;text&quot;,&quot;width&quot;:&quot;460px&quot;,&quot;align&quot;:&quot;center&quot;}]" style="width:100%; height:100%; display:flex; flex-direction:column; background:#ffffff; border:1.6px solid rgb(226,232,240); border-radius:8px; overflow:hidden; box-sizing:border-box;"><div class="v4-grid-table-wrapper" style="width:100%; height:calc(100% - 36px); overflow:auto; box-sizing:border-box;"><table style="width:600px; min-width:600px; table-layout:fixed; border-collapse:collapse; background:#ffffff; box-sizing:border-box;"><colgroup><col style="width:60px;"><col style="width:80px;"><col style="width:460px;"></colgroup><thead><tr style="height:40px; background:#f8fafc; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box;"><th class="v4-grid-cell v4-grid-check-col" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0; font-weight:normal;" data-type="checkbox" data-align="center"><input type="checkbox"></th><th class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; font-family:inherit; user-select:none;" data-type="number" data-align="center">번호</th><th class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; font-family:inherit; user-select:none;" data-type="text" data-align="center">항목명</th></tr></thead><tbody style="box-sizing:border-box;"><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr><tr style="height:40px; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr><tr style="height:40px; border-bottom:none; box-sizing:border-box; background:#ffffff;"><td class="v4-grid-cell" style="display:table-cell; vertical-align:middle; text-align:center; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; padding:0;" data-type="checkbox" data-align="center"><input type="checkbox"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:1.6px solid rgb(226,232,240); box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="number" data-align="center"></td><td class="v4-grid-cell v4-editable-cell" contenteditable="true" style="display:table-cell; vertical-align:middle; text-align:center; padding:0 8px; border-right:none; box-sizing:border-box; font-size:12px; font-weight:400; color:var(--v4-text-color, #0f172a); font-family:inherit;" data-type="text" data-align="center"></td></tr></tbody></table></div><div class="v4-grid-footer" style="height:36px; padding:0 12px; display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border-top:1.6px solid rgb(226,232,240); box-sizing:border-box; width:100%; flex-shrink:0;"><span style="font-size:11px; color:#64748b; font-family:inherit;">1/27</span><div class="v4-grid-pages" style="font-size:11px; color:#64748b; cursor:pointer; font-family:inherit;">◀ 1 2 3 4 5 ▶</div><span style="font-size:11px; color:#64748b; font-family:inherit;">Page Size 100</span></div></div>',
         style: { width: '600px', height: '400px' }
     },
     'Search Bar': {

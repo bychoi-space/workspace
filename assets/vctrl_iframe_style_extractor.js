@@ -178,7 +178,7 @@ if (!window.v4IframeStyleExtractorScript) {
         const cursorText = cursorContainer ? (cursorContainer.getAttribute('data-cursor-text') || cursorContainer.querySelector('.v4-cursor-text')?.innerText || 'Click Event') : 'Click Event';
         const showCursorText = cursorContainer ? (cursorContainer.getAttribute('data-show-text') !== 'false') : true;
         const cursorBadgeStyle = cursorContainer ? (cursorContainer.getAttribute('data-badge-style') || 'dark') : 'dark';
-        const gridHeaders = gridContainer ? Array.from(gridContainer.querySelectorAll('.v4-grid-header-row .v4-grid-cell')).slice(1).map(cell => cell.innerText.replace(' ⇅', '')) : [];
+        const gridHeaders = gridContainer ? Array.from(gridContainer.querySelectorAll('.v4-grid-header-row .v4-grid-cell')).slice(1).map(cell => cell.innerText.replace(' ⇅', '').replace('\u21C5', '').replace('⇅', '').trim()) : [];
         const gridRowCount = gridContainer ? (parseInt(gridContainer.getAttribute('data-row-count')) || 0) : 0;
         const gridShowPagination = gridContainer ? gridContainer.getAttribute('data-pagination') !== 'false' : true;
         const gridRowHeight = gridContainer ? (parseInt(gridContainer.getAttribute('data-row-height')) || 50) : 50;
@@ -206,7 +206,7 @@ if (!window.v4IframeStyleExtractorScript) {
                 var tableHeaders = Array.from(gridContainer.querySelectorAll('thead th'));
                 if (tableHeaders.length > 0) {
                     gridColumns = tableHeaders.map(function(cell, index) {
-                        var name = cell.innerText.replace(' ⇅', '').trim();
+                        var name = cell.innerText.replace(' ⇅', '').replace('\u21C5', '').replace('⇅', '').trim();
                         var colEl = tableCols[index];
                         var width = colEl ? (colEl.style.width || colEl.getAttribute('width') || '120px') : '120px';
                         var type = cell.getAttribute('data-type') || 'text';
@@ -234,7 +234,7 @@ if (!window.v4IframeStyleExtractorScript) {
                     const headerCells = Array.from(gridContainer.querySelectorAll('.v4-grid-header-row .v4-grid-cell'));
                     const gridTemplateCols = (gridContainer.querySelector('.v4-grid-header-row') && gridContainer.querySelector('.v4-grid-header-row').style.gridTemplateColumns || '').split(/\s+/).filter(Boolean);
                     gridColumns = headerCells.map((cell, index) => {
-                        const name = cell.innerText.replace(' ⇅', '').trim();
+                        const name = cell.innerText.replace(' ⇅', '').replace('\u21C5', '').replace('⇅', '').trim();
                         const width = gridTemplateCols[index] || '120px';
                         let type = 'text';
                         if (cell.classList.contains('v4-grid-check-col') || cell.querySelector('input[type="checkbox"]')) {

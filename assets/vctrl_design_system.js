@@ -1001,7 +1001,7 @@ window.v4DesignSystemScript = `
                                         const cols = JSON.parse(gridContainer.getAttribute('data-columns') || '[]');
                                         const idx = Array.from(thCell.parentElement.children).indexOf(thCell);
                                         if (cols[idx]) {
-                                            cols[idx].name = thCell.innerText.replace(' ⇅', '').trim();
+                                            cols[idx].name = thCell.innerText.replace(' ⇅', '').replace('\u21C5', '').replace('⇅', '').trim();
                                             gridContainer.setAttribute('data-columns', JSON.stringify(cols));
                                         }
                                     }

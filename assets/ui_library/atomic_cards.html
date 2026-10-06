@@ -1,4 +1,4 @@
-
+        <!-- Row 1: Form Inputs (Textbox, Textarea, Search Bar) -->
         <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-textbox')" data-ko="텍스트박스 텍스트 입력창">
             <span class="material-icons-outlined v4-card-atom-icon">input</span>
             <span class="v4-card-atom-label">Textbox</span>
@@ -7,37 +7,19 @@
             <span class="material-icons-outlined v4-card-atom-icon">notes</span>
             <span class="v4-card-atom-label">Textarea</span>
         </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-stepper')" data-ko="수량선택기 수량 스텝퍼 증감">
-            <span class="material-icons-outlined v4-card-atom-icon">unfold_more</span>
-            <span class="v4-card-atom-label">Stepper</span>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-searchbar')" data-ko="검색창 검색 인풋 입력란 통합검색">
+            <span class="material-icons-outlined v4-card-atom-icon">search</span>
+            <span class="v4-card-atom-label">Search Bar</span>
         </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-selectbox')" data-ko="셀렉트박스 셀렉트 드롭다운 옵션">
-            <span class="material-icons-outlined v4-card-atom-icon">arrow_drop_down_circle</span>
+
+        <!-- Row 2: Choice & Options (Selectbox, Check Box, Radio) -->
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-selectbox')" data-ko="셀렉트박스 셀렉트 드롭다운 옵션 선택 콤보박스 select combobox dropdown">
+            <svg class="v4-card-atom-svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-light, #9e8cfc)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+                <polyline points="14 11 16.5 13.5 19 11"></polyline>
+                <line x1="6.5" y1="12" x2="11.5" y2="12" stroke-dasharray="1.5 1.5"></line>
+            </svg>
             <span class="v4-card-atom-label">Selectbox</span>
-        </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-fileupload')" data-ko="파일업로드 파일 업로드 첨부파일">
-            <span class="material-icons-outlined v4-card-atom-icon">file_upload</span>
-            <span class="v4-card-atom-label">File Upload</span>
-        </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-alert')" data-ko="얼럿창 얼럿 경고 팝업 모달">
-            <span class="material-icons-outlined v4-card-atom-icon">report_problem</span>
-            <span class="v4-card-atom-label">Alert</span>
-        </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-button')" data-ko="버튼 클릭 실행">
-            <span class="material-icons-outlined v4-card-atom-icon">smart_button</span>
-            <span class="v4-card-atom-label">Button</span>
-        </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-datepicker')" data-ko="날짜선택 날짜 캘린더 달력 데이트피커">
-            <svg class="v4-card-atom-svg" viewBox="0 0 24 24" fill="none" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            <span class="v4-card-atom-label">Date Picker</span>
-        </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-toggle')" data-ko="토글 스위치 토글버튼 On Off toggle">
-            <span class="material-icons-outlined v4-card-atom-icon">toggle_on</span>
-            <span class="v4-card-atom-label">Toggle Button</span>
-        </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-accordion')" data-ko="아코디언 아코디언ui 드롭다운 리스트 계층">
-            <span class="material-icons-outlined v4-card-atom-icon">menu_open</span>
-            <span class="v4-card-atom-label">Accordion</span>
         </div>
         <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-checkbox')" data-ko="체크박스 체크 선택 체크형">
             <div class="v4-card-atom-check-box">
@@ -51,27 +33,59 @@
             </div>
             <span class="v4-card-atom-label">Radio</span>
         </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-grid')" data-ko="그리드 grid 테이블 table 표 데이터 리스트 aggrid">
-            <span class="material-icons-outlined v4-card-atom-icon">grid_on</span>
-            <span class="v4-card-atom-label">Grid UI</span>
+
+        <!-- Row 3: Value & State (Toggle Button, Stepper, Date Picker) -->
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-toggle')" data-ko="토글 스위치 토글버튼 On Off toggle">
+            <span class="material-icons-outlined v4-card-atom-icon">toggle_on</span>
+            <span class="v4-card-atom-label">Toggle Button</span>
         </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-searchbar')" data-ko="검색창 검색 인풋 입력란 통합검색">
-            <span class="material-icons-outlined v4-card-atom-icon">search</span>
-            <span class="v4-card-atom-label">Search Bar</span>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-stepper')" data-ko="수량선택기 수량 스텝퍼 증감">
+            <span class="material-icons-outlined v4-card-atom-icon">unfold_more</span>
+            <span class="v4-card-atom-label">Stepper</span>
+        </div>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-datepicker')" data-ko="날짜선택 날짜 캘린더 달력 데이트피커">
+            <svg class="v4-card-atom-svg" viewBox="0 0 24 24" fill="none" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span class="v4-card-atom-label">Date Picker</span>
+        </div>
+
+        <!-- Row 4: Action & Triggers (Button, File Upload, Query Item) -->
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-button')" data-ko="버튼 클릭 실행">
+            <span class="material-icons-outlined v4-card-atom-icon">smart_button</span>
+            <span class="v4-card-atom-label">Button</span>
+        </div>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-fileupload')" data-ko="파일업로드 파일 업로드 첨부파일">
+            <span class="material-icons-outlined v4-card-atom-icon">file_upload</span>
+            <span class="v4-card-atom-label">File Upload</span>
         </div>
         <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-admin-settings')" data-ko="조회항목 어드민 검색 조건 설정 항목 admin조회">
             <span class="material-icons-outlined v4-card-atom-icon">tune</span>
             <span class="v4-card-atom-label">Query Item</span>
         </div>
-        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-popup')" data-ko="팝업 팝업창 모달 다이얼로그 레이어 popup">
-            <span class="material-icons-outlined v4-card-atom-icon">picture_in_picture</span>
-            <span class="v4-card-atom-label">Popup</span>
-        </div>
+
+        <!-- Row 5: Layout & Data (Tab, Accordion, Grid UI) -->
         <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-tab')" data-ko="탭 탭바 탭메뉴 tab tabbar">
             <span class="material-icons-outlined v4-card-atom-icon">tab</span>
             <span class="v4-card-atom-label">Tab</span>
         </div>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-accordion')" data-ko="아코디언 아코디언ui 드롭다운 리스트 계층">
+            <span class="material-icons-outlined v4-card-atom-icon">menu_open</span>
+            <span class="v4-card-atom-label">Accordion</span>
+        </div>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-grid')" data-ko="그리드 grid 테이블 table 표 데이터 리스트 aggrid">
+            <span class="material-icons-outlined v4-card-atom-icon">grid_on</span>
+            <span class="v4-card-atom-label">Grid UI</span>
+        </div>
+
+        <!-- Row 6: Overlay & Marker (Popup, Alert, Mouse Cursor) -->
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-popup')" data-ko="팝업 팝업창 모달 다이얼로그 레이어 popup">
+            <span class="material-icons-outlined v4-card-atom-icon">picture_in_picture</span>
+            <span class="v4-card-atom-label">Popup</span>
+        </div>
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-alert')" data-ko="얼럿창 얼럿 경고 팝업 모달">
+            <span class="material-icons-outlined v4-card-atom-icon">report_problem</span>
+            <span class="v4-card-atom-label">Alert</span>
+        </div>
         <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-cursor')" data-ko="마우스 커서 마우스커서 포인터 화살표 손가락 마우스호버 키인 클릭이벤트 디스크립션 cursor mouse pointer">
             <span class="material-icons-outlined v4-card-atom-icon">near_me</span>
             <span class="v4-card-atom-label">Mouse Cursor</span>
-        </div>
+        </div>

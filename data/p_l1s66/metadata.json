@@ -13,14 +13,14 @@
     "09_Admin_PC_Scroll_630.html": {
       "title": "09_Admin_PC_Scroll_630",
       "type": "admin",
-      "updatedAt": "2026-10-06T07:54:45.960Z",
+      "updatedAt": "2026-10-06T07:55:29.712Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "[주문상세내역] > [반품/교환] TAB 에 존재하는 '변경사유' 데이터 표현",
-          "html": "[주문상세내역] &gt; [반품/교환] TAB 에 존재하는 '변경사유' 데이터 표현",
+          "text": "[주문상세내역] > [반품/교환] TAB 에 존재하는 '변경사유' 데이터 표현\n\n\n※ 물류운영 김진용 차장님 요청사항 (9/4)",
+          "html": "[주문상세내역] &gt; [반품/교환] TAB 에 존재하는 '변경사유' 데이터 표현<div><br></div><div>※ 물류운영 김진용 차장님 요청사항 (9/4)</div>",
           "x": 973,
           "y": 614,
           "pins": {
@@ -56,6 +56,6 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 4,
-  "updated": "2026-10-06 16:54:45",
+  "updated": "2026-10-06 16:55:29",
   "version": 0.1
 }

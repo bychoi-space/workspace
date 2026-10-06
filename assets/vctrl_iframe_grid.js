@@ -125,13 +125,23 @@ window.v4GridScript = `
             badgeBg: "#ef4444", 
             badgeColor: "#ffffff" 
         },
-        "mod": { 
+        "del": { 
             enabled: true, 
-            preset: "mod",
+            preset: "del",
             border: "#f97316", 
             bg: "rgba(255, 247, 237, 0.65)", 
             headerBg: "rgba(255, 247, 237, 0.85)",
-            badgeText: "MOD", 
+            badgeText: "DEL", 
+            badgeBg: "#f97316", 
+            badgeColor: "#ffffff" 
+        },
+        "mod": { 
+            enabled: true, 
+            preset: "del",
+            border: "#f97316", 
+            bg: "rgba(255, 247, 237, 0.65)", 
+            headerBg: "rgba(255, 247, 237, 0.85)",
+            badgeText: "DEL", 
             badgeBg: "#f97316", 
             badgeColor: "#ffffff" 
         },
@@ -151,12 +161,14 @@ window.v4GridScript = `
         if (!col || !col.highlight) return null;
         var hl = col.highlight;
         if (typeof hl === "string") {
+            if (hl === "mod") hl = "del";
             return HIGHLIGHT_PRESETS[hl] || null;
         }
         if (hl.enabled === false || hl.preset === "none") {
             return null;
         }
         var presetKey = hl.preset;
+        if (presetKey === "mod") presetKey = "del";
         var base = (presetKey && HIGHLIGHT_PRESETS[presetKey]) ? HIGHLIGHT_PRESETS[presetKey] : HIGHLIGHT_PRESETS["new"];
         return {
             enabled: true,
@@ -164,7 +176,7 @@ window.v4GridScript = `
             border: hl.borderColor || base.border,
             bg: hl.bgColor || base.bg,
             headerBg: hl.headerBg || base.headerBg,
-            badgeText: (hl.badgeText !== undefined) ? hl.badgeText : base.badgeText,
+            badgeText: (hl.badgeText !== undefined && hl.badgeText !== "MOD") ? hl.badgeText : base.badgeText,
             badgeBg: hl.badgeBg || base.badgeBg,
             badgeColor: hl.badgeColor || base.badgeColor
         };

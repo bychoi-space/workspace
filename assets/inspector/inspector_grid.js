@@ -215,12 +215,12 @@
                     <div class="grid-highlight-wrapper" style="display:flex; flex-direction:column; gap:4px; margin-top:2px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06); width:100%; box-sizing:border-box;">
                         <div style="display:flex; align-items:center; justify-content:space-between;">
                             <label style="font-size: 8px; color: #94a3b8; font-weight:600;">컬럼 강조 (Highlight)</label>
-                            <span class="grid-hl-active-label" style="font-size: 8.5px; font-weight:bold; color: ${hlPreset === 'none' ? '#64748b' : (hlPreset === 'new' ? '#ef4444' : (hlPreset === 'mod' ? '#f97316' : '#38bdf8'))};">${hlPreset === 'none' ? '일반' : (hlPreset === 'new' ? '신규 (NEW)' : (hlPreset === 'mod' ? '변경 (MOD)' : '포커스 (BLUE)'))}</span>
+                            <span class="grid-hl-active-label" style="font-size: 8.5px; font-weight:bold; color: ${hlPreset === 'none' ? '#64748b' : (hlPreset === 'new' ? '#ef4444' : ((hlPreset === 'del' || hlPreset === 'mod') ? '#f97316' : '#38bdf8'))};">${hlPreset === 'none' ? '일반' : (hlPreset === 'new' ? '신규 (NEW)' : ((hlPreset === 'del' || hlPreset === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'))}</span>
                         </div>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px; width:100%; box-sizing:border-box;">
                             <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-none" data-preset="none" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'none' ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;'}">없음</button>
                             <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-new" data-preset="new" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'new' ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;'}">🔴 신규</button>
-                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-mod" data-preset="mod" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'mod' ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;'}">🟠 변경</button>
+                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-del btn-col-hl-mod" data-preset="del" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${(hlPreset === 'del' || hlPreset === 'mod') ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;'}">🟠 삭제</button>
                             <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-focus" data-preset="focus" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'focus' ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;'}">🔵 포커스</button>
                         </div>
                     </div>
@@ -256,12 +256,13 @@
                         const pPreset = cCard.getAttribute('data-highlight-preset') || 'none';
                         let hlObj = null;
                         if (pPreset && pPreset !== 'none') {
+                            const isDel = (pPreset === 'del' || pPreset === 'mod');
                             hlObj = {
                                 enabled: true,
-                                preset: pPreset,
-                                borderColor: pPreset === 'new' ? '#ef4444' : (pPreset === 'mod' ? '#f97316' : '#2563eb'),
-                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (pPreset === 'mod' ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
-                                badgeText: pPreset === 'new' ? 'NEW' : (pPreset === 'mod' ? 'MOD' : '')
+                                preset: isDel ? 'del' : pPreset,
+                                borderColor: pPreset === 'new' ? '#ef4444' : (isDel ? '#f97316' : '#2563eb'),
+                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (isDel ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
+                                badgeText: pPreset === 'new' ? 'NEW' : (isDel ? 'DEL' : '')
                             };
                         }
                         return {
@@ -295,7 +296,7 @@
                                 b.style.cssText = baseStyle + (isSelected ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;');
                             } else if (bKey === 'new') {
                                 b.style.cssText = baseStyle + (isSelected ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;');
-                            } else if (bKey === 'mod') {
+                            } else if (bKey === 'del' || bKey === 'mod') {
                                 b.style.cssText = baseStyle + (isSelected ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;');
                             } else if (bKey === 'focus') {
                                 b.style.cssText = baseStyle + (isSelected ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;');
@@ -303,8 +304,8 @@
                         });
                         
                         if (hlLabel) {
-                            hlLabel.textContent = (pKey === 'none') ? '일반' : ((pKey === 'new') ? '신규 (NEW)' : ((pKey === 'mod') ? '변경 (MOD)' : '포커스 (BLUE)'));
-                            hlLabel.style.color = (pKey === 'none') ? '#64748b' : ((pKey === 'new') ? '#ef4444' : ((pKey === 'mod') ? '#f97316' : '#38bdf8'));
+                            hlLabel.textContent = (pKey === 'none') ? '일반' : ((pKey === 'new') ? '신규 (NEW)' : ((pKey === 'del' || pKey === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'));
+                            hlLabel.style.color = (pKey === 'none') ? '#64748b' : ((pKey === 'new') ? '#ef4444' : ((pKey === 'del' || pKey === 'mod') ? '#f97316' : '#38bdf8'));
                         }
                         
                         triggerColUpdate();
@@ -525,12 +526,13 @@
                         const pPreset = cCard.getAttribute('data-highlight-preset') || 'none';
                         let hlObj = null;
                         if (pPreset && pPreset !== 'none') {
+                            const isDel = (pPreset === 'del' || pPreset === 'mod');
                             hlObj = {
                                 enabled: true,
-                                preset: pPreset,
-                                borderColor: pPreset === 'new' ? '#ef4444' : (pPreset === 'mod' ? '#f97316' : '#2563eb'),
-                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (pPreset === 'mod' ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
-                                badgeText: pPreset === 'new' ? 'NEW' : (pPreset === 'mod' ? 'MOD' : '')
+                                preset: isDel ? 'del' : pPreset,
+                                borderColor: pPreset === 'new' ? '#ef4444' : (isDel ? '#f97316' : '#2563eb'),
+                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (isDel ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
+                                badgeText: pPreset === 'new' ? 'NEW' : (isDel ? 'DEL' : '')
                             };
                         }
                         return {
@@ -574,12 +576,13 @@
                         const pPreset = cCard.getAttribute('data-highlight-preset') || 'none';
                         let hlObj = null;
                         if (pPreset && pPreset !== 'none') {
+                            const isDel = (pPreset === 'del' || pPreset === 'mod');
                             hlObj = {
                                 enabled: true,
-                                preset: pPreset,
-                                borderColor: pPreset === 'new' ? '#ef4444' : (pPreset === 'mod' ? '#f97316' : '#2563eb'),
-                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (pPreset === 'mod' ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
-                                badgeText: pPreset === 'new' ? 'NEW' : (pPreset === 'mod' ? 'MOD' : '')
+                                preset: isDel ? 'del' : pPreset,
+                                borderColor: pPreset === 'new' ? '#ef4444' : (isDel ? '#f97316' : '#2563eb'),
+                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (isDel ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
+                                badgeText: pPreset === 'new' ? 'NEW' : (isDel ? 'DEL' : '')
                             };
                         }
                         return {

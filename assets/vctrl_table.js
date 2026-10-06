@@ -85,6 +85,172 @@ window.v4TableScript = `
         return newCell;
     }
 
+    // ==========================================
+    // Table Shape Arrow Keyboard Navigation Engine
+    // ==========================================
+    function isCaretAtStart(cell) {
+        try {
+            const sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || !sel.isCollapsed) return false;
+            const range = sel.getRangeAt(0);
+            if (!cell.contains(range.startContainer)) return false;
+
+            const preRange = document.createRange();
+            preRange.selectNodeContents(cell);
+            preRange.setEnd(range.startContainer, range.startOffset);
+
+            const textBefore = (preRange.toString() || '').replace(new RegExp('[\\r\\n\\u200B]+', 'g'), '').trim();
+            return textBefore.length === 0;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    function isCaretAtEnd(cell) {
+        try {
+            const sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || !sel.isCollapsed) return false;
+            const range = sel.getRangeAt(0);
+            if (!cell.contains(range.endContainer)) return false;
+
+            const postRange = document.createRange();
+            postRange.selectNodeContents(cell);
+            postRange.setStart(range.endContainer, range.endOffset);
+
+            const textAfter = (postRange.toString() || '').replace(new RegExp('[\\r\\n\\u200B]+', 'g'), '').trim();
+            return textAfter.length === 0;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    function isCaretAtFirstLine(cell) {
+        try {
+            const sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || !sel.isCollapsed) return false;
+            const range = sel.getRangeAt(0);
+            if (!cell.contains(range.startContainer)) return false;
+
+            const rawText = (cell.innerText || '').trim();
+            if (rawText.length === 0) return true;
+
+            let caretRect = null;
+            const rects = range.getClientRects();
+            if (rects && rects.length > 0) {
+                caretRect = rects[0];
+            } else {
+                caretRect = range.getBoundingClientRect();
+            }
+            if (!caretRect || caretRect.height === 0) {
+                return isCaretAtStart(cell);
+            }
+
+            const startRange = document.createRange();
+            startRange.selectNodeContents(cell);
+            startRange.collapse(true);
+            const startRect = startRange.getBoundingClientRect();
+
+            if (!startRect || startRect.height === 0) return true;
+            return (caretRect.top <= startRect.top + 8);
+        } catch (err) {
+            return isCaretAtStart(cell);
+        }
+    }
+
+    function isCaretAtLastLine(cell) {
+        try {
+            const sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || !sel.isCollapsed) return false;
+            const range = sel.getRangeAt(0);
+            if (!cell.contains(range.startContainer)) return false;
+
+            const rawText = (cell.innerText || '').trim();
+            if (rawText.length === 0) return true;
+
+            let caretRect = null;
+            const rects = range.getClientRects();
+            if (rects && rects.length > 0) {
+                caretRect = rects[0];
+            } else {
+                caretRect = range.getBoundingClientRect();
+            }
+            if (!caretRect || caretRect.height === 0) {
+                return isCaretAtEnd(cell);
+            }
+
+            const endRange = document.createRange();
+            endRange.selectNodeContents(cell);
+            endRange.collapse(false);
+            const endRect = endRange.getBoundingClientRect();
+
+            if (!endRect || endRect.height === 0) return true;
+            return (caretRect.bottom >= endRect.bottom - 8);
+        } catch (err) {
+            return isCaretAtEnd(cell);
+        }
+    }
+
+    function findAdjacentTableCell(table, currentCell, direction) {
+        const grid = getTableGridMap(table);
+        const bounds = getCellBounds(table);
+        const b = bounds.get(currentCell);
+        if (!b) return null;
+
+        let targetCell = null;
+
+        if (direction === 'left') {
+            const targetCol = b.minCol - 1;
+            if (targetCol >= 0 && grid[b.minRow]) {
+                targetCell = grid[b.minRow][targetCol];
+            }
+        } else if (direction === 'right') {
+            const targetCol = b.maxCol + 1;
+            if (grid[b.minRow] && targetCol < grid[b.minRow].length) {
+                targetCell = grid[b.minRow][targetCol];
+            }
+        } else if (direction === 'up') {
+            const targetRow = b.minRow - 1;
+            if (targetRow >= 0 && grid[targetRow]) {
+                targetCell = grid[targetRow][b.minCol];
+            }
+        } else if (direction === 'down') {
+            const targetRow = b.maxRow + 1;
+            if (targetRow < grid.length && grid[targetRow]) {
+                targetCell = grid[targetRow][b.minCol];
+            }
+        }
+
+        if (targetCell && targetCell !== currentCell) {
+            return targetCell;
+        }
+        return null;
+    }
+
+    function focusTableCellAndSetCaret(targetCell, position) {
+        if (!targetCell) return;
+        const editable = targetCell.querySelector('.v4-editable-cell, [contenteditable="true"]') || targetCell;
+        
+        TableSelection.clearSelection(targetCell.closest('table'), true);
+        editable.focus();
+
+        try {
+            const sel = window.getSelection();
+            if (!sel) return;
+
+            const range = document.createRange();
+            if (position === 'start') {
+                range.selectNodeContents(editable);
+                range.collapse(true);
+            } else {
+                range.selectNodeContents(editable);
+                range.collapse(false);
+            }
+
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } catch (err) {}
+    }
+
     // Table Selection Engine
     const TableSelection = {
         isDragging: false,
@@ -141,6 +307,79 @@ window.v4TableScript = `
 
                 e.preventDefault();
                 this.notifySelectionChanged();
+            });
+
+            table.addEventListener('keydown', (e) => {
+                if (table.closest('.v4-grid-container')) return;
+                const cell = e.target.closest('td, th');
+                if (!cell || !table.contains(cell)) return;
+
+                if (e.key === 'Escape' || e.code === 'Escape') {
+                    e.stopPropagation();
+                    if (document.activeElement) document.activeElement.blur();
+                    TableSelection.clearSelection(table);
+                    return;
+                }
+
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const dir = e.shiftKey ? 'left' : 'right';
+                    const target = findAdjacentTableCell(table, cell, dir);
+                    if (target) {
+                        focusTableCellAndSetCaret(target, dir === 'left' ? 'end' : 'start');
+                    }
+                    return;
+                }
+
+                if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) return;
+
+                const key = e.key;
+                if (key !== 'ArrowLeft' && key !== 'ArrowRight' && key !== 'ArrowUp' && key !== 'ArrowDown') {
+                    e.stopPropagation();
+                    return;
+                }
+
+                const editable = cell.querySelector('.v4-editable-cell, [contenteditable="true"]') || cell;
+                let direction = null;
+                let caretPos = 'start';
+
+                if (key === 'ArrowLeft') {
+                    if (isCaretAtStart(editable)) {
+                        direction = 'left';
+                        caretPos = 'end';
+                    }
+                } else if (key === 'ArrowRight') {
+                    if (isCaretAtEnd(editable)) {
+                        direction = 'right';
+                        caretPos = 'start';
+                    }
+                } else if (key === 'ArrowUp') {
+                    if (isCaretAtFirstLine(editable)) {
+                        direction = 'up';
+                        caretPos = 'end';
+                    }
+                } else if (key === 'ArrowDown') {
+                    if (isCaretAtLastLine(editable)) {
+                        direction = 'down';
+                        caretPos = 'start';
+                    }
+                }
+
+                if (!direction) {
+                    e.stopPropagation();
+                    return;
+                }
+
+                const targetCell = findAdjacentTableCell(table, cell, direction);
+                if (targetCell) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    focusTableCellAndSetCaret(targetCell, caretPos);
+                } else {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             });
 
             table.addEventListener('mouseenter', (e) => {
@@ -944,6 +1183,13 @@ window.v4TableScript = `
             setTimeout(window.syncTableComponentSize, 50);
         }
     };
+
+    // Auto-bind existing tables
+    try {
+        document.querySelectorAll('table.v4-premium-table, table.v4-table').forEach(t => {
+            TableSelection.bindEvents(t);
+        });
+    } catch (_) {}
 
     // Export to window
     window.TableSelection = TableSelection;

@@ -183,6 +183,308 @@ window.v4GridScript = `
         parent.insertBefore(minNode, nextOfMax);
     };
 
+    // ==========================================
+    // Grid Cell Arrow Keyboard Navigation Engine
+    // ==========================================
+    var isCaretAtStart = function(cell) {
+        try {
+            var sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || !sel.isCollapsed) return false;
+            var range = sel.getRangeAt(0);
+            if (!cell.contains(range.startContainer)) return false;
+
+            var preRange = document.createRange();
+            preRange.selectNodeContents(cell);
+            preRange.setEnd(range.startContainer, range.startOffset);
+
+            var textBefore = (preRange.toString() || "").replace(new RegExp("[\\r\\n\\u200B]+", "g"), "").trim();
+            return textBefore.length === 0;
+        } catch(err) {
+            return false;
+        }
+    };
+
+    var isCaretAtEnd = function(cell) {
+        try {
+            var sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || !sel.isCollapsed) return false;
+            var range = sel.getRangeAt(0);
+            if (!cell.contains(range.endContainer)) return false;
+
+            var postRange = document.createRange();
+            postRange.selectNodeContents(cell);
+            postRange.setStart(range.endContainer, range.endOffset);
+
+            var clone = postRange.cloneContents();
+            if (clone.querySelectorAll) {
+                var badges = clone.querySelectorAll("[contenteditable='false']");
+                Array.from(badges).forEach(function(b) { b.remove(); });
+            }
+            var textAfter = (clone.textContent || "").replace(new RegExp("[\\r\\n\\u200B]+", "g"), "").trim();
+            return textAfter.length === 0;
+        } catch(err) {
+            return false;
+        }
+    };
+
+    var isCaretAtFirstLine = function(cell) {
+        try {
+            var sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || !sel.isCollapsed) return false;
+            var range = sel.getRangeAt(0);
+            if (!cell.contains(range.startContainer)) return false;
+
+            var rawText = (cell.innerText || "").trim();
+            if (rawText.length === 0) return true;
+
+            var caretRect = null;
+            var rects = range.getClientRects();
+            if (rects && rects.length > 0) {
+                caretRect = rects[0];
+            } else {
+                caretRect = range.getBoundingClientRect();
+            }
+            if (!caretRect || caretRect.height === 0) {
+                return isCaretAtStart(cell);
+            }
+
+            var startRange = document.createRange();
+            startRange.selectNodeContents(cell);
+            startRange.collapse(true);
+            var startRect = startRange.getBoundingClientRect();
+
+            if (!startRect || startRect.height === 0) {
+                return true;
+            }
+
+            return (caretRect.top <= startRect.top + 8);
+        } catch(err) {
+            return isCaretAtStart(cell);
+        }
+    };
+
+    var isCaretAtLastLine = function(cell) {
+        try {
+            var sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || !sel.isCollapsed) return false;
+            var range = sel.getRangeAt(0);
+            if (!cell.contains(range.startContainer)) return false;
+
+            var rawText = (cell.innerText || "").trim();
+            if (rawText.length === 0) return true;
+
+            var caretRect = null;
+            var rects = range.getClientRects();
+            if (rects && rects.length > 0) {
+                caretRect = rects[0];
+            } else {
+                caretRect = range.getBoundingClientRect();
+            }
+            if (!caretRect || caretRect.height === 0) {
+                return isCaretAtEnd(cell);
+            }
+
+            var endRange = document.createRange();
+            endRange.selectNodeContents(cell);
+            endRange.collapse(false);
+            var endRect = endRange.getBoundingClientRect();
+
+            if (!endRect || endRect.height === 0) {
+                return true;
+            }
+
+            return (caretRect.bottom >= endRect.bottom - 8);
+        } catch(err) {
+            return isCaretAtEnd(cell);
+        }
+    };
+
+    var isEditableCell = function(el) {
+        if (!el) return false;
+        var type = el.getAttribute("data-type");
+        if (type === "checkbox" || type === "action") return false;
+        if (el.getAttribute("contenteditable") === "false") return false;
+        return el.classList.contains("v4-editable-cell") || el.getAttribute("contenteditable") === "true";
+    };
+
+    var findAdjacentGridCell = function(currentCell, direction) {
+        var currentTr = currentCell.closest("tr");
+        if (!currentTr) return null;
+        var table = currentCell.closest("table");
+        if (!table) return null;
+
+        var rowCells = Array.from(currentTr.children);
+        var colIdx = rowCells.indexOf(currentCell);
+        if (colIdx < 0) return null;
+
+        if (direction === "left") {
+            for (var i = colIdx - 1; i >= 0; i--) {
+                if (isEditableCell(rowCells[i])) {
+                    return rowCells[i];
+                }
+            }
+            return null;
+        }
+
+        if (direction === "right") {
+            for (var j = colIdx + 1; j < rowCells.length; j++) {
+                if (isEditableCell(rowCells[j])) {
+                    return rowCells[j];
+                }
+            }
+            return null;
+        }
+
+        if (direction === "up") {
+            var prevTr = currentTr.previousElementSibling;
+            if (!prevTr) {
+                if (currentTr.parentNode && currentTr.parentNode.tagName === "TBODY") {
+                    var theadTr = table.querySelector("thead tr");
+                    if (theadTr && theadTr !== currentTr) {
+                        prevTr = theadTr;
+                    }
+                }
+            }
+            if (prevTr && prevTr.children) {
+                if (prevTr.children[colIdx] && isEditableCell(prevTr.children[colIdx])) {
+                    return prevTr.children[colIdx];
+                }
+                for (var offset = 1; offset < prevTr.children.length; offset++) {
+                    if (colIdx - offset >= 0 && isEditableCell(prevTr.children[colIdx - offset])) {
+                        return prevTr.children[colIdx - offset];
+                    }
+                    if (colIdx + offset < prevTr.children.length && isEditableCell(prevTr.children[colIdx + offset])) {
+                        return prevTr.children[colIdx + offset];
+                    }
+                }
+            }
+            return null;
+        }
+
+        if (direction === "down") {
+            var nextTr = currentTr.nextElementSibling;
+            if (!nextTr) {
+                if (currentTr.parentNode && currentTr.parentNode.tagName === "THEAD") {
+                    nextTr = table.querySelector("tbody tr:first-child");
+                }
+            }
+            if (nextTr && nextTr.children) {
+                if (nextTr.children[colIdx] && isEditableCell(nextTr.children[colIdx])) {
+                    return nextTr.children[colIdx];
+                }
+                for (var off = 1; off < nextTr.children.length; off++) {
+                    if (colIdx - off >= 0 && isEditableCell(nextTr.children[colIdx - off])) {
+                        return nextTr.children[colIdx - off];
+                    }
+                    if (colIdx + off < nextTr.children.length && isEditableCell(nextTr.children[colIdx + off])) {
+                        return nextTr.children[colIdx + off];
+                    }
+                }
+            }
+            return null;
+        }
+
+        return null;
+    };
+
+    var focusGridCellAndSetCaret = function(targetCell, position) {
+        if (!targetCell) return;
+        targetCell.focus();
+
+        try {
+            var sel = window.getSelection();
+            if (!sel) return;
+
+            var range = document.createRange();
+            var badge = targetCell.querySelector(".v4-col-badge");
+
+            if (position === "start") {
+                range.selectNodeContents(targetCell);
+                range.collapse(true);
+            } else {
+                if (badge) {
+                    range.setStartBefore(badge);
+                    range.collapse(true);
+                } else {
+                    range.selectNodeContents(targetCell);
+                    range.collapse(false);
+                }
+            }
+
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } catch(err) {}
+
+        try {
+            var wrapper = targetCell.closest(".v4-grid-table-wrapper");
+            if (wrapper) {
+                var cellRect = targetCell.getBoundingClientRect();
+                var wrapRect = wrapper.getBoundingClientRect();
+                if (cellRect.left < wrapRect.left) {
+                    wrapper.scrollLeft -= (wrapRect.left - cellRect.left + 24);
+                } else if (cellRect.right > wrapRect.right) {
+                    wrapper.scrollLeft += (cellRect.right - wrapRect.right + 24);
+                }
+                if (cellRect.top < wrapRect.top) {
+                    wrapper.scrollTop -= (wrapRect.top - cellRect.top + 24);
+                } else if (cellRect.bottom > wrapRect.bottom) {
+                    wrapper.scrollTop += (cellRect.bottom - wrapRect.bottom + 24);
+                }
+            }
+        } catch(scrollErr) {}
+    };
+
+    var handleGridCellArrowNavigation = function(e, cell) {
+        if (!e || !cell) return false;
+        if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) return false;
+
+        var key = e.key;
+        if (key !== "ArrowLeft" && key !== "ArrowRight" && key !== "ArrowUp" && key !== "ArrowDown") {
+            return false;
+        }
+
+        var direction = null;
+        var caretPos = "start";
+
+        if (key === "ArrowLeft") {
+            if (isCaretAtStart(cell)) {
+                direction = "left";
+                caretPos = "end";
+            }
+        } else if (key === "ArrowRight") {
+            if (isCaretAtEnd(cell)) {
+                direction = "right";
+                caretPos = "start";
+            }
+        } else if (key === "ArrowUp") {
+            if (isCaretAtFirstLine(cell)) {
+                direction = "up";
+                caretPos = "end";
+            }
+        } else if (key === "ArrowDown") {
+            if (isCaretAtLastLine(cell)) {
+                direction = "down";
+                caretPos = "start";
+            }
+        }
+
+        if (!direction) {
+            return false;
+        }
+
+        var targetCell = findAdjacentGridCell(cell, direction);
+        if (targetCell) {
+            e.preventDefault();
+            e.stopPropagation();
+            focusGridCellAndSetCaret(targetCell, caretPos);
+            return true;
+        } else {
+            e.preventDefault();
+            e.stopPropagation();
+            return true;
+        }
+    };
+
     var bindGridCellEvents = function(cell, isHeader, colIdx) {
         if (!cell || cell.dataset.eventsBound) return;
         cell.dataset.eventsBound = "true";
@@ -236,6 +538,12 @@ window.v4GridScript = `
                 cell.blur();
                 return;
             }
+
+            // Arrow key navigation between cells when boundary reached
+            if (handleGridCellArrowNavigation(e, cell)) {
+                return;
+            }
+
             // Stop propagation so global shortcuts (Delete/Backspace/Arrows/Space) do not delete or move component
             e.stopPropagation();
         });

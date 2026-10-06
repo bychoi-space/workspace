@@ -9,34 +9,18 @@
     'use strict';
     console.log("%c [VCTRL CORE ROUTER] Initializing Core Message Router... ", "background: #0ea5e9; color: #fff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
-    // Central MessageHub SSOT
-    window.MessageHub = {
-        handlers: {},
+    // Global mouseup handler to release active drag/marquee states when releasing mouse outside of iframe
+    function setupParentMouseUpProxy() {
+        window.addEventListener('mouseup', function () {
+            const DOM = window.DOM;
+            if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
+                DOM.iframe.contentWindow.postMessage({ type: 'LF_PARENT_MOUSEUP' }, '*');
+            }
+        });
+    }
 
-        // Support multiple subscribers for the same message type
-        subscribe: function (type, callback) {
-            if (!this.handlers[type]) this.handlers[type] = [];
-            this.handlers[type].push(callback);
-        },
-
-        register: function (type, callback) {
-            console.warn('[MessageHub] register() is deprecated. Use subscribe() instead.');
-            this.subscribe(type, callback);
-        },
-
-        init: function () {
-            const self = this;
-
-            // Global mouseup handler to release active drag/marquee states when releasing mouse outside of iframe
-            window.addEventListener('mouseup', function () {
-                const DOM = window.DOM;
-                if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                    DOM.iframe.contentWindow.postMessage({ type: 'LF_PARENT_MOUSEUP' }, '*');
-                }
-            });
-
-            // Modular Parent Core Message Handlers Table Map
-            const v4ParentCoreHandlers = {
+    // Modular Parent Core Message Handlers Table Map (SSOT)
+    const v4ParentCoreHandlers = {
                 'LF_FOCUS_PARENT_QUILL': function () {
                     if (window.SmartGuide) window.SmartGuide.clearGuides(true);
                     if (window.quillEditor) {
@@ -475,55 +459,84 @@
                     };
                     img.src = base64;
                 }
-            };
+    };
 
-            // Parent-side paste event listener for handling pasted image files when parent has focus
-            window.addEventListener('paste', function (e) {
-                const activeEl = document.activeElement;
-                const isInput = activeEl && (activeEl.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) || activeEl.closest('.ql-editor'));
-                if (isInput) return;
+    // Expose parent core handlers table map for extensible hook wiring
+    window.v4ParentCoreHandlers = v4ParentCoreHandlers;
 
-                const items = (e.clipboardData || window.clipboardData)?.items;
-                if (!items) return;
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].type.indexOf('image') !== -1) {
-                        const file = items[i].getAsFile();
-                        if (!file) continue;
-                        const reader = new FileReader();
-                        reader.onload = function (evt) {
-                            const base64 = evt.target.result;
-                            const img = new Image();
-                            img.onload = function () {
-                                const origW = img.naturalWidth || 200;
-                                const origH = img.naturalHeight || 200;
-                                const naturalRatio = origW / origH;
-                                let w = origW;
-                                let h = origH;
-                                if (naturalRatio < 0.65) {
-                                    w = 320;
-                                    h = Math.round(w / naturalRatio);
-                                    if (h > 750) {
-                                        h = 750;
-                                        w = Math.round(h * naturalRatio);
-                                    }
-                                } else if (w > 560 || h > 450) {
-                                    const scale = Math.min(560 / w, 450 / h);
-                                    w = Math.round(w * scale);
-                                    h = Math.round(h * scale);
+    // Parent-side paste event listener for handling pasted image files when parent has focus
+    function setupParentPasteProxy() {
+        window.addEventListener('paste', function (e) {
+            const activeEl = document.activeElement;
+            const isInput = activeEl && (activeEl.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) || activeEl.closest('.ql-editor'));
+            if (isInput) return;
+
+            const items = (e.clipboardData || window.clipboardData)?.items;
+            if (!items) return;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    if (!file) continue;
+                    const reader = new FileReader();
+                    reader.onload = function (evt) {
+                        const base64 = evt.target.result;
+                        const img = new Image();
+                        img.onload = function () {
+                            const origW = img.naturalWidth || 200;
+                            const origH = img.naturalHeight || 200;
+                            const naturalRatio = origW / origH;
+                            let w = origW;
+                            let h = origH;
+                            if (naturalRatio < 0.65) {
+                                w = 320;
+                                h = Math.round(w / naturalRatio);
+                                if (h > 750) {
+                                    h = 750;
+                                    w = Math.round(h * naturalRatio);
                                 }
+                            } else if (w > 560 || h > 450) {
+                                const scale = Math.min(560 / w, 450 / h);
+                                w = Math.round(w * scale);
+                                h = Math.round(h * scale);
+                            }
 
-                                if (typeof window.insertImageComponent === 'function') {
-                                    window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
-                                }
-                            };
-                            img.src = base64;
+                            if (typeof window.insertImageComponent === 'function') {
+                                window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
+                            }
                         };
-                        reader.readAsDataURL(file);
-                        e.preventDefault();
-                        break;
-                    }
+                        img.src = base64;
+                    };
+                    reader.readAsDataURL(file);
+                    e.preventDefault();
+                    break;
                 }
-            });
+            }
+        });
+    }
+
+    // Central MessageHub SSOT
+    window.MessageHub = {
+        handlers: {},
+        _initialized: false,
+
+        // Support multiple subscribers for the same message type
+        subscribe: function (type, callback) {
+            if (!this.handlers[type]) this.handlers[type] = [];
+            this.handlers[type].push(callback);
+        },
+
+        register: function (type, callback) {
+            console.warn('[MessageHub] register() is deprecated. Use subscribe() instead.');
+            this.subscribe(type, callback);
+        },
+
+        init: function () {
+            if (this._initialized) return;
+            this._initialized = true;
+            const self = this;
+
+            setupParentMouseUpProxy();
+            setupParentPasteProxy();
 
             window.addEventListener('message', function (e) {
                 const data = e.data;

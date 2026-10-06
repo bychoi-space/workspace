@@ -265,6 +265,428 @@ window.v4FormatPainterScript = `
         return styleData;
     };
 
+    function applyTypographyDeep(cell, textData) {
+        if (!cell || !textData) return;
+
+        // 1. Remove bold tags if not bold
+        if (!textData.isBold) {
+            cell.querySelectorAll('strong, b').forEach(function(bTag) {
+                while (bTag.firstChild) {
+                    bTag.parentNode.insertBefore(bTag.firstChild, bTag);
+                }
+                bTag.remove();
+            });
+        }
+
+        // 2. Remove italic tags if not italic
+        if (!textData.isItalic) {
+            cell.querySelectorAll('em, i').forEach(function(iTag) {
+                while (iTag.firstChild) {
+                    iTag.parentNode.insertBefore(iTag.firstChild, iTag);
+                }
+                iTag.remove();
+            });
+        }
+
+        // 3. Remove underline if not underline
+        if (!textData.isUnderline) {
+            cell.querySelectorAll('u').forEach(function(uTag) {
+                while (uTag.firstChild) {
+                    uTag.parentNode.insertBefore(uTag.firstChild, uTag);
+                }
+                uTag.remove();
+            });
+        }
+
+        // 4. Remove strike if not strike
+        if (!textData.isStrike) {
+            cell.querySelectorAll('s, strike').forEach(function(sTag) {
+                while (sTag.firstChild) {
+                    sTag.parentNode.insertBefore(sTag.firstChild, sTag);
+                }
+                sTag.remove();
+            });
+        }
+
+        // 5. Wrap plain text in <p> if no block child exists
+        if (cell.children.length === 0 && cell.textContent.trim().length > 0) {
+            const txt = cell.textContent;
+            cell.innerHTML = '<p>' + txt + '</p>';
+        }
+
+        // 6. Wrap in <strong> if isBold
+        if (textData.isBold) {
+            const pList = cell.querySelectorAll('p');
+            if (pList.length > 0) {
+                pList.forEach(function(p) {
+                    if (p.querySelectorAll('strong, b').length === 0 && p.childNodes.length > 0) {
+                        const str = document.createElement('strong');
+                        while (p.firstChild) str.appendChild(p.firstChild);
+                        p.appendChild(str);
+                    }
+                });
+            } else if (cell.childNodes.length > 0 && cell.querySelectorAll('strong, b').length === 0) {
+                const str = document.createElement('strong');
+                while (cell.firstChild) str.appendChild(cell.firstChild);
+                cell.appendChild(str);
+            }
+        }
+
+        // 7. Wrap in <em> if isItalic
+        if (textData.isItalic) {
+            const pList = cell.querySelectorAll('p');
+            if (pList.length > 0) {
+                pList.forEach(function(p) {
+                    if (p.querySelectorAll('em, i').length === 0 && p.childNodes.length > 0) {
+                        const em = document.createElement('em');
+                        while (p.firstChild) em.appendChild(p.firstChild);
+                        p.appendChild(em);
+                    }
+                });
+            } else if (cell.childNodes.length > 0 && cell.querySelectorAll('em, i').length === 0) {
+                const em = document.createElement('em');
+                while (cell.firstChild) em.appendChild(cell.firstChild);
+                cell.appendChild(em);
+            }
+        }
+
+        // 8. Wrap in <u> if isUnderline
+        if (textData.isUnderline) {
+            const pList = cell.querySelectorAll('p');
+            if (pList.length > 0) {
+                pList.forEach(function(p) {
+                    if (p.querySelectorAll('u').length === 0 && p.childNodes.length > 0) {
+                        const uEl = document.createElement('u');
+                        while (p.firstChild) uEl.appendChild(p.firstChild);
+                        p.appendChild(uEl);
+                    }
+                });
+            } else if (cell.childNodes.length > 0 && cell.querySelectorAll('u').length === 0) {
+                const uEl = document.createElement('u');
+                while (cell.firstChild) uEl.appendChild(cell.firstChild);
+                cell.appendChild(uEl);
+            }
+        }
+
+        // 9. Wrap in <s> if isStrike
+        if (textData.isStrike) {
+            const pList = cell.querySelectorAll('p');
+            if (pList.length > 0) {
+                pList.forEach(function(p) {
+                    if (p.querySelectorAll('s, strike').length === 0 && p.childNodes.length > 0) {
+                        const sEl = document.createElement('s');
+                        while (p.firstChild) sEl.appendChild(p.firstChild);
+                        p.appendChild(sEl);
+                    }
+                });
+            } else if (cell.childNodes.length > 0 && cell.querySelectorAll('s, strike').length === 0) {
+                const sEl = document.createElement('s');
+                while (cell.firstChild) sEl.appendChild(cell.firstChild);
+                cell.appendChild(sEl);
+            }
+        }
+
+        // 10. Ensure each paragraph has span wrapper for clean Quill format parsing
+        const pNodes = cell.querySelectorAll('p');
+        if (pNodes.length > 0) {
+            pNodes.forEach(function(p) {
+                if (p.querySelectorAll('span').length === 0 && p.childNodes.length > 0) {
+                    const span = document.createElement('span');
+                    while (p.firstChild) span.appendChild(p.firstChild);
+                    p.appendChild(span);
+                }
+            });
+        } else if (cell.querySelectorAll('span').length === 0 && cell.childNodes.length > 0) {
+            const span = document.createElement('span');
+            while (cell.firstChild) span.appendChild(cell.firstChild);
+            cell.appendChild(span);
+        }
+
+        // 11. Apply styles to outer container
+        if (textData.color) cell.style.setProperty('color', textData.color, 'important');
+        if (textData.fontSize) cell.style.setProperty('font-size', textData.fontSize + 'px', 'important');
+        if (textData.fontFamily && textData.fontFamily !== 'inherit') cell.style.setProperty('font-family', textData.fontFamily, 'important');
+        cell.style.setProperty('font-weight', textData.isBold ? '700' : 'normal', 'important');
+        cell.style.setProperty('font-style', textData.isItalic ? 'italic' : 'normal', 'important');
+
+        // 12. Deeply apply to all descendants to override inline styles
+        cell.querySelectorAll('*').forEach(function(child) {
+            if (textData.color) child.style.setProperty('color', textData.color, 'important');
+            if (textData.fontSize) child.style.setProperty('font-size', textData.fontSize + 'px', 'important');
+            if (textData.fontFamily && textData.fontFamily !== 'inherit') child.style.setProperty('font-family', textData.fontFamily, 'important');
+            
+            child.style.setProperty('font-weight', textData.isBold ? '700' : 'normal', 'important');
+            child.style.setProperty('font-style', textData.isItalic ? 'italic' : 'normal', 'important');
+
+            if (textData.textBg) {
+                if (child.tagName === 'SPAN') {
+                    child.style.setProperty('background-color', textData.textBg, 'important');
+                }
+            } else {
+                child.style.removeProperty('background-color');
+                child.style.removeProperty('background');
+            }
+
+            if (textData.isUnderline && textData.isStrike) {
+                child.style.setProperty('text-decoration', 'underline line-through', 'important');
+            } else if (textData.isUnderline) {
+                child.style.setProperty('text-decoration', 'underline', 'important');
+            } else if (textData.isStrike) {
+                child.style.setProperty('text-decoration', 'line-through', 'important');
+            } else {
+                child.style.removeProperty('text-decoration');
+                child.style.removeProperty('text-decoration-line');
+            }
+
+            if (textData.textAlign && (child.tagName === 'P' || child.classList.contains('ql-editor'))) {
+                child.style.setProperty('text-align', textData.textAlign, 'important');
+                child.style.setProperty('width', '100%', 'important');
+                child.style.setProperty('padding', '0px', 'important');
+                child.style.setProperty('margin', '0px', 'important');
+            }
+        });
+    }
+
+    function applyStyleToSingleComponent(comp, styleData) {
+        if (!comp || !styleData) return false;
+
+        const shape = comp.querySelector('.v4-shape') || (comp.classList.contains('v4-shape') ? comp : null);
+        const isSvgContainer = shape && (shape.classList.contains('v4-shape-diamond') || shape.classList.contains('v4-shape-triangle') || shape.classList.contains('v4-shape-wave') || shape.classList.contains('v4-shape-arrow') || shape.classList.contains('v4-shape-line'));
+        const svgShape = shape ? shape.querySelector('path, polygon, rect, circle, line') : null;
+        const isLine = comp.classList.contains('v4-shape-line') || (shape && shape.classList.contains('v4-shape-line')) || comp.classList.contains('connector-line');
+        const isButton = comp.classList.contains('v4-btn-container') || !!comp.querySelector('.v4-btn-container');
+        const customBtn = comp.querySelector('.v4-custom-btn');
+        const isTextBox = comp.classList.contains('v4-text-box') || comp.classList.contains('v4-text-shape') || comp.classList.contains('text-marker');
+
+        // 1. Line Target Handling
+        if (isLine) {
+            const lineTarget = (shape && shape.classList.contains('v4-shape-line')) ? shape : comp;
+            const lineEl = lineTarget.querySelector('line, path') || svgShape;
+            const strokeColor = (styleData.line && styleData.line.lineColor) || (styleData.border && styleData.border.color) || (styleData.fill && styleData.fill.bg) || '#c8c8c8';
+            const strokeWidth = (styleData.line && styleData.line.lineThickness) || 1.6;
+            const lineStyle = (styleData.line && styleData.line.lineStyle) || (styleData.border && styleData.border.style) || 'solid';
+
+            lineTarget.setAttribute('data-line-color', strokeColor);
+            lineTarget.setAttribute('data-line-width', strokeWidth);
+            lineTarget.setAttribute('data-line-style', lineStyle);
+
+            if (lineEl) {
+                lineEl.style.stroke = strokeColor;
+                lineEl.setAttribute('stroke', strokeColor);
+                lineEl.style.strokeWidth = strokeWidth;
+                lineEl.setAttribute('stroke-width', strokeWidth);
+                if (lineStyle === 'dashed') {
+                    lineEl.style.strokeDasharray = '6 4';
+                    lineEl.setAttribute('stroke-dasharray', '6 4');
+                } else if (lineStyle === 'dotted') {
+                    lineEl.style.strokeDasharray = '1 5';
+                    lineEl.setAttribute('stroke-dasharray', '1 5');
+                } else {
+                    lineEl.style.strokeDasharray = 'none';
+                    lineEl.removeAttribute('stroke-dasharray');
+                }
+            }
+            return true;
+        }
+
+        // 2. Shape Target Handling
+        if (shape) {
+            // Background Fill
+            let targetFill = '';
+            if (styleData.fill) {
+                if (styleData.fill.isBgTransparent || !styleData.fill.bg || styleData.fill.bg === 'transparent' || styleData.fill.bg === 'none') {
+                    targetFill = 'transparent';
+                } else if (styleData.fill.bgOpacity !== undefined && styleData.fill.bgOpacity < 100) {
+                    const alpha = styleData.fill.bgOpacity > 1 ? (styleData.fill.bgOpacity / 100) : styleData.fill.bgOpacity;
+                    targetFill = (typeof window.hexToRgba === 'function') ? window.hexToRgba(styleData.fill.bg, alpha) : styleData.fill.bg;
+                } else {
+                    targetFill = styleData.fill.bg;
+                }
+            }
+
+            if (isSvgContainer) {
+                shape.style.background = 'transparent';
+                shape.style.backgroundColor = 'transparent';
+                if (svgShape && targetFill) {
+                    svgShape.style.fill = (targetFill === 'transparent') ? 'none' : targetFill;
+                    svgShape.setAttribute('fill', (targetFill === 'transparent') ? 'none' : targetFill);
+                }
+            } else {
+                if (targetFill) {
+                    shape.style.backgroundColor = targetFill;
+                    shape.style.background = targetFill;
+                }
+            }
+
+            if (styleData.fill && styleData.fill.patternType && shape.classList.contains('v4-shape-pattern-grid')) {
+                shape.setAttribute('data-pattern-type', styleData.fill.patternType);
+            }
+
+            // Border
+            if (styleData.border) {
+                if (styleData.border.isBorderTransparent || !styleData.border.color || styleData.border.color === 'transparent') {
+                    if (svgShape) {
+                        svgShape.style.stroke = 'none';
+                        svgShape.setAttribute('stroke', 'none');
+                    }
+                    shape.style.borderColor = 'transparent';
+                } else {
+                    const bColor = styleData.border.color || '#c8c8c8';
+                    const bStyle = styleData.border.style || 'solid';
+                    if (svgShape) {
+                        svgShape.style.stroke = bColor;
+                        svgShape.setAttribute('stroke', bColor);
+                        svgShape.style.strokeWidth = '1.6';
+                        svgShape.setAttribute('stroke-width', '1.6');
+                        if (bStyle === 'dashed') {
+                            svgShape.style.strokeDasharray = '6 4';
+                            svgShape.setAttribute('stroke-dasharray', '6 4');
+                        } else if (bStyle === 'dotted') {
+                            svgShape.style.strokeDasharray = '1 5';
+                            svgShape.setAttribute('stroke-dasharray', '1 5');
+                        } else {
+                            svgShape.style.strokeDasharray = 'none';
+                            svgShape.removeAttribute('stroke-dasharray');
+                        }
+                    }
+                    shape.style.borderColor = bColor;
+                    shape.style.borderWidth = '1.6px';
+                    shape.style.borderStyle = bStyle;
+                }
+
+                if (shape.classList.contains('v4-shape-rect') || shape.classList.contains('v4-shape-webpage')) {
+                    const rad = (styleData.border.radius !== undefined) ? parseInt(styleData.border.radius) : 0;
+                    shape.style.setProperty('border-radius', rad + 'px', 'important');
+                }
+            }
+
+            // Wave Direction
+            if (shape.classList.contains('v4-shape-wave') && styleData.wave && styleData.wave.waveDir) {
+                const waveDir = styleData.wave.waveDir;
+                shape.setAttribute('data-wave-dir', waveDir);
+                const svgEl = shape.querySelector('svg');
+                const polyEl = shape.querySelector('polygon');
+                const curW = comp.offsetWidth || parseFloat(comp.style.width) || 360;
+                const curH = comp.offsetHeight || parseFloat(comp.style.height) || 20;
+                if (waveDir === 'vertical') {
+                    if (curW > curH) {
+                        comp.style.width = Math.min(curH, 20) + 'px';
+                        comp.style.height = Math.max(curW, 100) + 'px';
+                    }
+                    if (svgEl) svgEl.setAttribute('viewBox', '0 0 20 360');
+                    if (polyEl) polyEl.setAttribute('points', '6,0 2,45 6,90 2,135 6,180 2,225 6,270 2,315 6,360 16,360 12,315 16,270 12,225 16,180 12,135 16,90 12,45 16,0');
+                } else {
+                    if (curH > curW) {
+                        comp.style.width = Math.max(curH, 100) + 'px';
+                        comp.style.height = Math.min(curW, 20) + 'px';
+                    }
+                    if (svgEl) svgEl.setAttribute('viewBox', '0 0 360 20');
+                    if (polyEl) polyEl.setAttribute('points', '0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16');
+                }
+            }
+
+            // Text Styling & Alignment & Padding
+            if (styleData.text) {
+                const textData = styleData.text;
+                const textCells = shape.querySelectorAll('.v4-shape-text-content, .v4-shape-text-overlay, .v4-editable-cell');
+
+                if (textData.textAlign) {
+                    shape.setAttribute('data-align', textData.textAlign);
+                    comp.setAttribute('data-align', textData.textAlign);
+                    shape.style.setProperty('text-align', textData.textAlign, 'important');
+                }
+
+                if (textData.vAlign) {
+                    const normV = textData.vAlign === 'top' ? 'top' : (textData.vAlign === 'bottom' ? 'bottom' : 'middle');
+                    const jc = normV === 'top' ? 'flex-start' : (normV === 'bottom' ? 'flex-end' : 'center');
+                    shape.setAttribute('data-valign', normV);
+                    comp.setAttribute('data-valign', normV);
+                    shape.style.setProperty('justify-content', jc, 'important');
+                }
+
+                const pt = textData.padTop !== undefined ? parseInt(textData.padTop) : 5;
+                const pr = textData.padRight !== undefined ? parseInt(textData.padRight) : 10;
+                const pb = textData.padBottom !== undefined ? parseInt(textData.padBottom) : 5;
+                const pl = textData.padLeft !== undefined ? parseInt(textData.padLeft) : 10;
+
+                shape.setAttribute('data-pad-top', pt);
+                shape.setAttribute('data-pad-right', pr);
+                shape.setAttribute('data-pad-bottom', pb);
+                shape.setAttribute('data-pad-left', pl);
+                shape.style.setProperty('--v4-shape-pad-top', pt + 'px');
+                shape.style.setProperty('--v4-shape-pad-right', pr + 'px');
+                shape.style.setProperty('--v4-shape-pad-bottom', pb + 'px');
+                shape.style.setProperty('--v4-shape-pad-left', pl + 'px');
+
+                textCells.forEach(function(cell) {
+                    applyTypographyDeep(cell, textData);
+
+                    cell.setAttribute('data-pad-top', pt);
+                    cell.setAttribute('data-pad-right', pr);
+                    cell.setAttribute('data-pad-bottom', pb);
+                    cell.setAttribute('data-pad-left', pl);
+                    cell.style.setProperty('padding-top', pt + 'px', 'important');
+                    cell.style.setProperty('padding-right', pr + 'px', 'important');
+                    cell.style.setProperty('padding-bottom', pb + 'px', 'important');
+                    cell.style.setProperty('padding-left', pl + 'px', 'important');
+                    cell.style.setProperty('padding', pt + 'px ' + pr + 'px ' + pb + 'px ' + pl + 'px', 'important');
+                    cell.style.setProperty('box-sizing', 'border-box', 'important');
+
+                    if (textData.textAlign) {
+                        cell.style.setProperty('text-align', textData.textAlign, 'important');
+                        cell.querySelectorAll('p, span, .ql-editor, .ql-editor p').forEach(function(child) {
+                            child.style.setProperty('text-align', textData.textAlign, 'important');
+                        });
+                    }
+                    if (textData.vAlign) {
+                        const jc = textData.vAlign === 'top' ? 'flex-start' : (textData.vAlign === 'bottom' ? 'flex-end' : 'center');
+                        cell.style.setProperty('justify-content', jc, 'important');
+                        cell.querySelectorAll('p, span, .ql-editor, .ql-editor p').forEach(function(child) {
+                            child.style.setProperty('justify-content', jc, 'important');
+                        });
+                    }
+                });
+            }
+
+            return true;
+        }
+
+        // 3. Button Target Handling
+        if (isButton && customBtn) {
+            if (styleData.fill && styleData.fill.bg) {
+                customBtn.style.backgroundColor = styleData.fill.bg;
+                customBtn.style.background = styleData.fill.bg;
+            }
+            if (styleData.border && styleData.border.color) {
+                customBtn.style.borderColor = styleData.border.color;
+                if (styleData.border.radius !== undefined) {
+                    customBtn.style.borderRadius = styleData.border.radius + 'px';
+                }
+            }
+            if (styleData.text) {
+                applyTypographyDeep(customBtn, styleData.text);
+            }
+            return true;
+        }
+
+        // 4. Text Box / Marker Target Handling
+        if (isTextBox) {
+            const cell = comp.querySelector('.v4-editable-cell') || comp;
+            if (cell && styleData.text) {
+                applyTypographyDeep(cell, styleData.text);
+            }
+            if (styleData.fill && styleData.fill.bg && !styleData.fill.isBgTransparent) {
+                comp.style.backgroundColor = styleData.fill.bg;
+            }
+            if (styleData.border && styleData.border.color && !styleData.border.isBorderTransparent) {
+                comp.style.borderColor = styleData.border.color;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
     window.pasteCopiedObjectStyle = function(explicitStyleData) {
         let styleData = explicitStyleData || v4StyleClipboard;
         if (!styleData && window.top) {
@@ -297,429 +719,10 @@ window.v4FormatPainterScript = `
 
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
-        function applyTypographyDeep(cell, textData) {
-            if (!cell || !textData) return;
-
-            // 1. Remove bold tags if not bold
-            if (!textData.isBold) {
-                cell.querySelectorAll('strong, b').forEach(function(bTag) {
-                    while (bTag.firstChild) {
-                        bTag.parentNode.insertBefore(bTag.firstChild, bTag);
-                    }
-                    bTag.remove();
-                });
-            }
-
-            // 2. Remove italic tags if not italic
-            if (!textData.isItalic) {
-                cell.querySelectorAll('em, i').forEach(function(iTag) {
-                    while (iTag.firstChild) {
-                        iTag.parentNode.insertBefore(iTag.firstChild, iTag);
-                    }
-                    iTag.remove();
-                });
-            }
-
-            // 3. Remove underline if not underline
-            if (!textData.isUnderline) {
-                cell.querySelectorAll('u').forEach(function(uTag) {
-                    while (uTag.firstChild) {
-                        uTag.parentNode.insertBefore(uTag.firstChild, uTag);
-                    }
-                    uTag.remove();
-                });
-            }
-
-            // 4. Remove strike if not strike
-            if (!textData.isStrike) {
-                cell.querySelectorAll('s, strike').forEach(function(sTag) {
-                    while (sTag.firstChild) {
-                        sTag.parentNode.insertBefore(sTag.firstChild, sTag);
-                    }
-                    sTag.remove();
-                });
-            }
-
-            // 5. Wrap plain text in <p> if no block child exists
-            if (cell.children.length === 0 && cell.textContent.trim().length > 0) {
-                const txt = cell.textContent;
-                cell.innerHTML = '<p>' + txt + '</p>';
-            }
-
-            // 6. Wrap in <strong> if isBold
-            if (textData.isBold) {
-                const pList = cell.querySelectorAll('p');
-                if (pList.length > 0) {
-                    pList.forEach(function(p) {
-                        if (p.querySelectorAll('strong, b').length === 0 && p.childNodes.length > 0) {
-                            const str = document.createElement('strong');
-                            while (p.firstChild) str.appendChild(p.firstChild);
-                            p.appendChild(str);
-                        }
-                    });
-                } else if (cell.childNodes.length > 0 && cell.querySelectorAll('strong, b').length === 0) {
-                    const str = document.createElement('strong');
-                    while (cell.firstChild) str.appendChild(cell.firstChild);
-                    cell.appendChild(str);
-                }
-            }
-
-            // 7. Wrap in <em> if isItalic
-            if (textData.isItalic) {
-                const pList = cell.querySelectorAll('p');
-                if (pList.length > 0) {
-                    pList.forEach(function(p) {
-                        if (p.querySelectorAll('em, i').length === 0 && p.childNodes.length > 0) {
-                            const em = document.createElement('em');
-                            while (p.firstChild) em.appendChild(p.firstChild);
-                            p.appendChild(em);
-                        }
-                    });
-                } else if (cell.childNodes.length > 0 && cell.querySelectorAll('em, i').length === 0) {
-                    const em = document.createElement('em');
-                    while (cell.firstChild) em.appendChild(cell.firstChild);
-                    cell.appendChild(em);
-                }
-            }
-
-            // 8. Wrap in <u> if isUnderline
-            if (textData.isUnderline) {
-                const pList = cell.querySelectorAll('p');
-                if (pList.length > 0) {
-                    pList.forEach(function(p) {
-                        if (p.querySelectorAll('u').length === 0 && p.childNodes.length > 0) {
-                            const uEl = document.createElement('u');
-                            while (p.firstChild) uEl.appendChild(p.firstChild);
-                            p.appendChild(uEl);
-                        }
-                    });
-                } else if (cell.childNodes.length > 0 && cell.querySelectorAll('u').length === 0) {
-                    const uEl = document.createElement('u');
-                    while (cell.firstChild) uEl.appendChild(cell.firstChild);
-                    cell.appendChild(uEl);
-                }
-            }
-
-            // 9. Wrap in <s> if isStrike
-            if (textData.isStrike) {
-                const pList = cell.querySelectorAll('p');
-                if (pList.length > 0) {
-                    pList.forEach(function(p) {
-                        if (p.querySelectorAll('s, strike').length === 0 && p.childNodes.length > 0) {
-                            const sEl = document.createElement('s');
-                            while (p.firstChild) sEl.appendChild(p.firstChild);
-                            p.appendChild(sEl);
-                        }
-                    });
-                } else if (cell.childNodes.length > 0 && cell.querySelectorAll('s, strike').length === 0) {
-                    const sEl = document.createElement('s');
-                    while (cell.firstChild) sEl.appendChild(cell.firstChild);
-                    cell.appendChild(sEl);
-                }
-            }
-
-            // 10. Ensure each paragraph has span wrapper for clean Quill format parsing
-            const pNodes = cell.querySelectorAll('p');
-            if (pNodes.length > 0) {
-                pNodes.forEach(function(p) {
-                    if (p.querySelectorAll('span').length === 0 && p.childNodes.length > 0) {
-                        const span = document.createElement('span');
-                        while (p.firstChild) span.appendChild(p.firstChild);
-                        p.appendChild(span);
-                    }
-                });
-            } else if (cell.querySelectorAll('span').length === 0 && cell.childNodes.length > 0) {
-                const span = document.createElement('span');
-                while (cell.firstChild) span.appendChild(cell.firstChild);
-                cell.appendChild(span);
-            }
-
-            // 11. Apply styles to outer container
-            if (textData.color) cell.style.setProperty('color', textData.color, 'important');
-            if (textData.fontSize) cell.style.setProperty('font-size', textData.fontSize + 'px', 'important');
-            if (textData.fontFamily && textData.fontFamily !== 'inherit') cell.style.setProperty('font-family', textData.fontFamily, 'important');
-            cell.style.setProperty('font-weight', textData.isBold ? '700' : 'normal', 'important');
-            cell.style.setProperty('font-style', textData.isItalic ? 'italic' : 'normal', 'important');
-
-            // 12. Deeply apply to all descendants to override inline styles
-            cell.querySelectorAll('*').forEach(function(child) {
-                if (textData.color) child.style.setProperty('color', textData.color, 'important');
-                if (textData.fontSize) child.style.setProperty('font-size', textData.fontSize + 'px', 'important');
-                if (textData.fontFamily && textData.fontFamily !== 'inherit') child.style.setProperty('font-family', textData.fontFamily, 'important');
-                
-                child.style.setProperty('font-weight', textData.isBold ? '700' : 'normal', 'important');
-                child.style.setProperty('font-style', textData.isItalic ? 'italic' : 'normal', 'important');
-
-                if (textData.textBg) {
-                    if (child.tagName === 'SPAN') {
-                        child.style.setProperty('background-color', textData.textBg, 'important');
-                    }
-                } else {
-                    child.style.removeProperty('background-color');
-                    child.style.removeProperty('background');
-                }
-
-                if (textData.isUnderline && textData.isStrike) {
-                    child.style.setProperty('text-decoration', 'underline line-through', 'important');
-                } else if (textData.isUnderline) {
-                    child.style.setProperty('text-decoration', 'underline', 'important');
-                } else if (textData.isStrike) {
-                    child.style.setProperty('text-decoration', 'line-through', 'important');
-                } else {
-                    child.style.removeProperty('text-decoration');
-                    child.style.removeProperty('text-decoration-line');
-                }
-
-                if (textData.textAlign && (child.tagName === 'P' || child.classList.contains('ql-editor'))) {
-                    child.style.setProperty('text-align', textData.textAlign, 'important');
-                    child.style.setProperty('width', '100%', 'important');
-                    child.style.setProperty('padding', '0px', 'important');
-                    child.style.setProperty('margin', '0px', 'important');
-                }
-            });
-        }
-
         let appliedCount = 0;
-
         selected.forEach(function(comp) {
-            if (!comp) return;
-
-            const shape = comp.querySelector('.v4-shape') || (comp.classList.contains('v4-shape') ? comp : null);
-            const isSvgContainer = shape && (shape.classList.contains('v4-shape-diamond') || shape.classList.contains('v4-shape-triangle') || shape.classList.contains('v4-shape-wave') || shape.classList.contains('v4-shape-arrow') || shape.classList.contains('v4-shape-line'));
-            const svgShape = shape ? shape.querySelector('path, polygon, rect, circle, line') : null;
-            const isLine = comp.classList.contains('v4-shape-line') || (shape && shape.classList.contains('v4-shape-line')) || comp.classList.contains('connector-line');
-            const isButton = comp.classList.contains('v4-btn-container') || !!comp.querySelector('.v4-btn-container');
-            const customBtn = comp.querySelector('.v4-custom-btn');
-            const isTextBox = comp.classList.contains('v4-text-box') || comp.classList.contains('v4-text-shape') || comp.classList.contains('text-marker');
-
-            // 1. Line Target Handling
-            if (isLine) {
-                const lineTarget = (shape && shape.classList.contains('v4-shape-line')) ? shape : comp;
-                const lineEl = lineTarget.querySelector('line, path') || svgShape;
-                const strokeColor = (styleData.line && styleData.line.lineColor) || (styleData.border && styleData.border.color) || (styleData.fill && styleData.fill.bg) || '#c8c8c8';
-                const strokeWidth = (styleData.line && styleData.line.lineThickness) || 1.6;
-                const lineStyle = (styleData.line && styleData.line.lineStyle) || (styleData.border && styleData.border.style) || 'solid';
-
-                lineTarget.setAttribute('data-line-color', strokeColor);
-                lineTarget.setAttribute('data-line-width', strokeWidth);
-                lineTarget.setAttribute('data-line-style', lineStyle);
-
-                if (lineEl) {
-                    lineEl.style.stroke = strokeColor;
-                    lineEl.setAttribute('stroke', strokeColor);
-                    lineEl.style.strokeWidth = strokeWidth;
-                    lineEl.setAttribute('stroke-width', strokeWidth);
-                    if (lineStyle === 'dashed') {
-                        lineEl.style.strokeDasharray = '6 4';
-                        lineEl.setAttribute('stroke-dasharray', '6 4');
-                    } else if (lineStyle === 'dotted') {
-                        lineEl.style.strokeDasharray = '1 5';
-                        lineEl.setAttribute('stroke-dasharray', '1 5');
-                    } else {
-                        lineEl.style.strokeDasharray = 'none';
-                        lineEl.removeAttribute('stroke-dasharray');
-                    }
-                }
+            if (applyStyleToSingleComponent(comp, styleData)) {
                 appliedCount++;
-                return;
-            }
-
-            // 2. Shape Target Handling
-            if (shape) {
-                // Background Fill
-                let targetFill = '';
-                if (styleData.fill) {
-                    if (styleData.fill.isBgTransparent || !styleData.fill.bg || styleData.fill.bg === 'transparent' || styleData.fill.bg === 'none') {
-                        targetFill = 'transparent';
-                    } else if (styleData.fill.bgOpacity !== undefined && styleData.fill.bgOpacity < 100) {
-                        const alpha = styleData.fill.bgOpacity > 1 ? (styleData.fill.bgOpacity / 100) : styleData.fill.bgOpacity;
-                        targetFill = (typeof window.hexToRgba === 'function') ? window.hexToRgba(styleData.fill.bg, alpha) : styleData.fill.bg;
-                    } else {
-                        targetFill = styleData.fill.bg;
-                    }
-                }
-
-                if (isSvgContainer) {
-                    shape.style.background = 'transparent';
-                    shape.style.backgroundColor = 'transparent';
-                    if (svgShape && targetFill) {
-                        svgShape.style.fill = (targetFill === 'transparent') ? 'none' : targetFill;
-                        svgShape.setAttribute('fill', (targetFill === 'transparent') ? 'none' : targetFill);
-                    }
-                } else {
-                    if (targetFill) {
-                        shape.style.backgroundColor = targetFill;
-                        shape.style.background = targetFill;
-                    }
-                }
-
-                if (styleData.fill && styleData.fill.patternType && shape.classList.contains('v4-shape-pattern-grid')) {
-                    shape.setAttribute('data-pattern-type', styleData.fill.patternType);
-                }
-
-                // Border
-                if (styleData.border) {
-                    if (styleData.border.isBorderTransparent || !styleData.border.color || styleData.border.color === 'transparent') {
-                        if (svgShape) {
-                            svgShape.style.stroke = 'none';
-                            svgShape.setAttribute('stroke', 'none');
-                        }
-                        shape.style.borderColor = 'transparent';
-                    } else {
-                        const bColor = styleData.border.color || '#c8c8c8';
-                        const bStyle = styleData.border.style || 'solid';
-                        if (svgShape) {
-                            svgShape.style.stroke = bColor;
-                            svgShape.setAttribute('stroke', bColor);
-                            svgShape.style.strokeWidth = '1.6';
-                            svgShape.setAttribute('stroke-width', '1.6');
-                            if (bStyle === 'dashed') {
-                                svgShape.style.strokeDasharray = '6 4';
-                                svgShape.setAttribute('stroke-dasharray', '6 4');
-                            } else if (bStyle === 'dotted') {
-                                svgShape.style.strokeDasharray = '1 5';
-                                svgShape.setAttribute('stroke-dasharray', '1 5');
-                            } else {
-                                svgShape.style.strokeDasharray = 'none';
-                                svgShape.removeAttribute('stroke-dasharray');
-                            }
-                        }
-                        shape.style.borderColor = bColor;
-                        shape.style.borderWidth = '1.6px';
-                        shape.style.borderStyle = bStyle;
-                    }
-
-                    if (shape.classList.contains('v4-shape-rect') || shape.classList.contains('v4-shape-webpage')) {
-                        const rad = (styleData.border.radius !== undefined) ? parseInt(styleData.border.radius) : 0;
-                        shape.style.setProperty('border-radius', rad + 'px', 'important');
-                    }
-                }
-
-                // Wave Direction
-                if (shape.classList.contains('v4-shape-wave') && styleData.wave && styleData.wave.waveDir) {
-                    const waveDir = styleData.wave.waveDir;
-                    shape.setAttribute('data-wave-dir', waveDir);
-                    const svgEl = shape.querySelector('svg');
-                    const polyEl = shape.querySelector('polygon');
-                    const curW = comp.offsetWidth || parseFloat(comp.style.width) || 360;
-                    const curH = comp.offsetHeight || parseFloat(comp.style.height) || 20;
-                    if (waveDir === 'vertical') {
-                        if (curW > curH) {
-                            comp.style.width = Math.min(curH, 20) + 'px';
-                            comp.style.height = Math.max(curW, 100) + 'px';
-                        }
-                        if (svgEl) svgEl.setAttribute('viewBox', '0 0 20 360');
-                        if (polyEl) polyEl.setAttribute('points', '6,0 2,45 6,90 2,135 6,180 2,225 6,270 2,315 6,360 16,360 12,315 16,270 12,225 16,180 12,135 16,90 12,45 16,0');
-                    } else {
-                        if (curH > curW) {
-                            comp.style.width = Math.max(curH, 100) + 'px';
-                            comp.style.height = Math.min(curW, 20) + 'px';
-                        }
-                        if (svgEl) svgEl.setAttribute('viewBox', '0 0 360 20');
-                        if (polyEl) polyEl.setAttribute('points', '0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16');
-                    }
-                }
-
-                // Text Styling & Alignment & Padding
-                if (styleData.text) {
-                    const textData = styleData.text;
-                    const textCells = shape.querySelectorAll('.v4-shape-text-content, .v4-shape-text-overlay, .v4-editable-cell');
-
-                    if (textData.textAlign) {
-                        shape.setAttribute('data-align', textData.textAlign);
-                        comp.setAttribute('data-align', textData.textAlign);
-                        shape.style.setProperty('text-align', textData.textAlign, 'important');
-                    }
-
-                    if (textData.vAlign) {
-                        const normV = textData.vAlign === 'top' ? 'top' : (textData.vAlign === 'bottom' ? 'bottom' : 'middle');
-                        const jc = normV === 'top' ? 'flex-start' : (normV === 'bottom' ? 'flex-end' : 'center');
-                        shape.setAttribute('data-valign', normV);
-                        comp.setAttribute('data-valign', normV);
-                        shape.style.setProperty('justify-content', jc, 'important');
-                    }
-
-                    const pt = textData.padTop !== undefined ? parseInt(textData.padTop) : 5;
-                    const pr = textData.padRight !== undefined ? parseInt(textData.padRight) : 10;
-                    const pb = textData.padBottom !== undefined ? parseInt(textData.padBottom) : 5;
-                    const pl = textData.padLeft !== undefined ? parseInt(textData.padLeft) : 10;
-
-                    shape.setAttribute('data-pad-top', pt);
-                    shape.setAttribute('data-pad-right', pr);
-                    shape.setAttribute('data-pad-bottom', pb);
-                    shape.setAttribute('data-pad-left', pl);
-                    shape.style.setProperty('--v4-shape-pad-top', pt + 'px');
-                    shape.style.setProperty('--v4-shape-pad-right', pr + 'px');
-                    shape.style.setProperty('--v4-shape-pad-bottom', pb + 'px');
-                    shape.style.setProperty('--v4-shape-pad-left', pl + 'px');
-
-                    textCells.forEach(function(cell) {
-                        applyTypographyDeep(cell, textData);
-
-                        cell.setAttribute('data-pad-top', pt);
-                        cell.setAttribute('data-pad-right', pr);
-                        cell.setAttribute('data-pad-bottom', pb);
-                        cell.setAttribute('data-pad-left', pl);
-                        cell.style.setProperty('padding-top', pt + 'px', 'important');
-                        cell.style.setProperty('padding-right', pr + 'px', 'important');
-                        cell.style.setProperty('padding-bottom', pb + 'px', 'important');
-                        cell.style.setProperty('padding-left', pl + 'px', 'important');
-                        cell.style.setProperty('padding', pt + 'px ' + pr + 'px ' + pb + 'px ' + pl + 'px', 'important');
-                        cell.style.setProperty('box-sizing', 'border-box', 'important');
-
-                        if (textData.textAlign) {
-                            cell.style.setProperty('text-align', textData.textAlign, 'important');
-                            cell.querySelectorAll('p, span, .ql-editor, .ql-editor p').forEach(function(child) {
-                                child.style.setProperty('text-align', textData.textAlign, 'important');
-                            });
-                        }
-                        if (textData.vAlign) {
-                            const jc = textData.vAlign === 'top' ? 'flex-start' : (textData.vAlign === 'bottom' ? 'flex-end' : 'center');
-                            cell.style.setProperty('justify-content', jc, 'important');
-                            cell.querySelectorAll('p, span, .ql-editor, .ql-editor p').forEach(function(child) {
-                                child.style.setProperty('justify-content', jc, 'important');
-                            });
-                        }
-                    });
-                }
-
-                appliedCount++;
-                return;
-            }
-
-            // 3. Button Target Handling
-            if (isButton && customBtn) {
-                if (styleData.fill && styleData.fill.bg) {
-                    customBtn.style.backgroundColor = styleData.fill.bg;
-                    customBtn.style.background = styleData.fill.bg;
-                }
-                if (styleData.border && styleData.border.color) {
-                    customBtn.style.borderColor = styleData.border.color;
-                    if (styleData.border.radius !== undefined) {
-                        customBtn.style.borderRadius = styleData.border.radius + 'px';
-                    }
-                }
-                if (styleData.text) {
-                    applyTypographyDeep(customBtn, styleData.text);
-                }
-                appliedCount++;
-                return;
-            }
-
-            // 4. Text Box / Marker Target Handling
-            if (isTextBox) {
-                const cell = comp.querySelector('.v4-editable-cell') || comp;
-                if (cell && styleData.text) {
-                    applyTypographyDeep(cell, styleData.text);
-                }
-                if (styleData.fill && styleData.fill.bg && !styleData.fill.isBgTransparent) {
-                    comp.style.backgroundColor = styleData.fill.bg;
-                }
-                if (styleData.border && styleData.border.color && !styleData.border.isBorderTransparent) {
-                    comp.style.borderColor = styleData.border.color;
-                }
-                appliedCount++;
-                return;
             }
         });
 

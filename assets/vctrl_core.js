@@ -42,6 +42,7 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'Table', key: 'v4TableScript' },
     { name: 'TextMeasurer', key: 'v4TextMeasurerScript' },
     { name: 'UIAtoms', key: 'v4UIAtomsScript' },
+    { name: 'UIAtomsInputs', key: 'v4UIAtomsInputsScript' },
     { name: 'UIAtomsCursor', key: 'v4UIAtomsCursorScript' },
     { name: 'DesignSystem', key: 'v4DesignSystemScript' },
     { name: 'ClipboardObjects', key: 'v4ClipboardObjectsScript' },
@@ -171,7 +172,7 @@ function _compileScreenHtml(content, fileName, isResponsive) {
     const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
     const keywords = [
         'V4UndoManager', 'reorderAllPins', 'v4Script', 'v4ShortcutsScript',
-        'v4DesignSystemScript', 'v4TextMeasurerScript', 'v4UIAtomsScript', 'v4UIAtomsCursorScript',
+        'v4DesignSystemScript', 'v4TextMeasurerScript', 'v4UIAtomsScript', 'v4UIAtomsInputsScript', 'v4UIAtomsCursorScript',
         'v4CommonScript', 'v4ObjectTextScript', 'v4ObjectShapeScript',
         'v4ObjectTableScript', 'v4ObjectConnectorScript', 'v4ConnectorScript',
         'v4GridScript', 'v4AccordionScript', 'v4TabScript', 'v4ResponsivePinsScript', 'spawnResponsiveDualPins',
@@ -772,44 +773,6 @@ window.init = async function () {
         console.error("Initialization failed:", err);
     }
 };
-
-if (typeof window.showToast !== 'function') {
-    window.showToast = function (message, type = 'success') {
-        let container = document.getElementById('v4-toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'v4-toast-container';
-            document.body.appendChild(container);
-        }
-
-        const toast = document.createElement('div');
-        toast.className = `v4-toast ${type}`;
-
-        let iconName = 'info';
-        if (type === 'success') iconName = 'check_circle';
-        else if (type === 'error') iconName = 'error';
-        else if (type === 'warning') iconName = 'warning';
-
-        toast.innerHTML = `
-            <span class="material-icons-outlined v4-toast-icon">${iconName}</span>
-            <span style="flex-grow: 1;">${message}</span>
-        `;
-
-        container.appendChild(toast);
-
-        requestAnimationFrame(() => {
-            toast.classList.add('show');
-        });
-
-        setTimeout(() => {
-            toast.classList.remove('show');
-            toast.classList.add('hide');
-            setTimeout(() => {
-                toast.remove();
-            }, 400);
-        }, 3500);
-    };
-}
 
 window.toggleResponsiveGrid = function () {
     if (!state.isCurrentResponsiveScreen) return;

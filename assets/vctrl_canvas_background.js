@@ -31,20 +31,7 @@
 
     function rgbToHex(rgb) {
         if (!rgb) return '#f8fafc';
-        const str = rgb.trim().toLowerCase();
-        if (str.startsWith('#')) {
-            if (str.length === 4) {
-                return '#' + str[1] + str[1] + str[2] + str[2] + str[3] + str[3];
-            }
-            return str;
-        }
-        if (str === 'transparent' || str === 'rgba(0, 0, 0, 0)') return '#f8fafc';
-        const match = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)\)?/);
-        if (!match) return '#f8fafc';
-        const r = parseInt(match[1], 10).toString(16).padStart(2, '0');
-        const g = parseInt(match[2], 10).toString(16).padStart(2, '0');
-        const b = parseInt(match[3], 10).toString(16).padStart(2, '0');
-        return '#' + r + g + b;
+        return (window.rgbToHex && window.rgbToHex(rgb)) || ((typeof rgb === 'string' && rgb.startsWith('#')) ? rgb : '#f8fafc');
     }
 
     function isDarkColor(hex) {

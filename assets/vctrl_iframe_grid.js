@@ -317,337 +317,281 @@ window.v4GridScript = `
         });
     };
 
-    window.renderGrid = function(container, columns, rowCount, showPagination, rowHeight, showZebra, fillMock) {
-        if (!container) return;
-        
-        container.setAttribute("data-columns", JSON.stringify(columns));
-        container.setAttribute("data-row-count", rowCount);
-        container.setAttribute("data-pagination", showPagination ? "true" : "false");
-        if (rowHeight !== undefined) {
-            container.setAttribute("data-row-height", rowHeight);
+    var updateGridColgroup = function(table, columns) {
+        var colgroup = table.querySelector("colgroup");
+        if (!colgroup) return;
+        var cols = Array.from(colgroup.querySelectorAll("col"));
+        while (cols.length < columns.length) {
+            var newCol = document.createElement("col");
+            colgroup.appendChild(newCol);
+            cols.push(newCol);
         }
-        if (showZebra !== undefined) {
-            container.setAttribute("data-zebra", showZebra ? "true" : "false");
+        while (cols.length > columns.length) {
+            colgroup.removeChild(cols.pop());
         }
-        var rowHeightVal = container.getAttribute("data-row-height") || "40px";
-        if (/^\\d+$/.test(String(rowHeightVal).trim())) {
-            rowHeightVal = String(rowHeightVal).trim() + "px";
-        }
-        var isZebra = container.getAttribute("data-zebra") === "true";
-
-        var totalColWidth = 0;
-        columns.forEach(function(col) {
+        columns.forEach(function(col, idx) {
             var w = col.width;
             if (!w) {
-                w = (col.type === "checkbox" ? 50 : (col.type === "number" || col.type === "action" ? 80 : 120));
+                w = (col.type === "checkbox" ? "50px" : (col.type === "number" || col.type === "action" ? "80px" : "120px"));
             } else {
-                w = parseInt(w) || (col.type === "checkbox" ? 50 : (col.type === "number" || col.type === "action" ? 80 : 120));
+                w = w.trim();
+                if (/^\\d+$/.test(w) || /^\\d*\\.\\d+$/.test(w)) {
+                    w = w + "px";
+                }
             }
-            totalColWidth += w;
+            cols[idx].style.width = w;
         });
+    };
 
-        var table = container.querySelector("table");
-        if (table) {
-            table.style.setProperty("height", "auto", "important");
-            table.style.setProperty("width", totalColWidth + "px", "important");
-            table.style.setProperty("min-width", totalColWidth + "px", "important");
-            table.style.setProperty("table-layout", "fixed", "important");
-            var colgroup = table.querySelector("colgroup");
-            if (colgroup) {
-                var cols = Array.from(colgroup.querySelectorAll("col"));
-                while (cols.length < columns.length) {
-                    var newCol = document.createElement("col");
-                    colgroup.appendChild(newCol);
-                    cols.push(newCol);
-                }
-                while (cols.length > columns.length) {
-                    colgroup.removeChild(cols.pop());
-                }
-                columns.forEach(function(col, idx) {
-                    var w = col.width;
-                    if (!w) {
-                        w = (col.type === "checkbox" ? "50px" : (col.type === "number" || col.type === "action" ? "80px" : "120px"));
-                    } else {
-                        w = w.trim();
-                        if (/^\\d+$/.test(w) || /^\\d*\\.\\d+$/.test(w)) {
-                            w = w + "px";
-                        }
-                    }
-                    cols[idx].style.width = w;
-                });
-            }
+    var updateGridThead = function(table, columns, rowHeightVal) {
+        var thead = table.querySelector("thead");
+        if (!thead) return;
+        var headerRow = thead.querySelector("tr");
+        if (!headerRow) return;
 
-            var thead = table.querySelector("thead");
-            if (thead) {
-                var headerRow = thead.querySelector("tr");
-                if (headerRow) {
-                    headerRow.style.setProperty("height", rowHeightVal, "important");
-                    headerRow.style.setProperty("min-height", rowHeightVal, "important");
-                    var ths = Array.from(headerRow.querySelectorAll("th"));
-                    while (ths.length < columns.length) {
-                        var newTh = document.createElement("th");
-                        newTh.className = "v4-grid-cell v4-editable-cell";
-                        newTh.contentEditable = "true";
-                        newTh.style.display = "table-cell";
-                        newTh.style.verticalAlign = "middle";
-                        newTh.style.boxSizing = "border-box";
-                        newTh.style.fontSize = "12px";
-                        newTh.style.fontWeight = "500";
-                        newTh.style.color = "#334155";
-                        headerRow.appendChild(newTh);
-                        ths.push(newTh);
-                    }
-                    while (ths.length > columns.length) {
-                        headerRow.removeChild(ths.pop());
-                    }
-                    
-                    columns.forEach(function(col, idx) {
-                        var th = ths[idx];
-                        var bg = th.style.background || th.style.backgroundColor;
-                        var color = th.style.color;
-                        var fontSize = th.style.fontSize;
-                        var fontFamily = th.style.fontFamily;
-                        var align = getResolvedAlign(col);
-                        var w = col.width;
-                        if (!w) {
-                            w = (col.type === "checkbox" ? "50px" : (col.type === "number" || col.type === "action" ? "80px" : "120px"));
-                        } else {
-                            w = w.trim();
-                            if (/^\\d+$/.test(w) || /^\\d*\\.\\d+$/.test(w)) {
-                                w = w + "px";
-                            }
-                        }
-
-                        th.style.setProperty("width", w, "important");
-                        th.style.setProperty("min-width", w, "important");
-                        th.style.setProperty("max-width", w, "important");
-                        th.style.borderRight = "1.6px solid rgb(226, 232, 240)";
-                        th.style.setProperty("text-align", align, "important");
-                        th.style.setProperty("padding", col.type === "checkbox" ? "0" : "0 8px", "important");
-                        th.style.fontWeight = "500";
-                        th.style.color = "#334155";
-                        th.style.setProperty("height", rowHeightVal, "important");
-                        th.style.setProperty("min-height", rowHeightVal, "important");
-                        th.style.setProperty("vertical-align", "middle", "important");
-                        th.setAttribute("data-align", align);
-
-                        var hl = getResolvedHighlight(col);
-                        if (hl && hl.enabled) {
-                            th.classList.add("v4-grid-col-highlight");
-                            th.style.setProperty("background-color", hl.headerBg || hl.bg, "important");
-                            th.style.setProperty("box-shadow", "inset 0 2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
-                        } else {
-                            th.classList.remove("v4-grid-col-highlight");
-                            th.style.removeProperty("box-shadow");
-                            th.style.setProperty("background-color", "#f8fafc", "important");
-                        }
-
-                        if (col.type === "checkbox") {
-                            th.className = "v4-grid-cell v4-grid-check-col" + (hl && hl.enabled ? " v4-grid-col-highlight" : "");
-                            th.contentEditable = "false";
-                            th.setAttribute("data-type", "checkbox");
-                            if (!th.querySelector("input[type='checkbox']")) {
-                                th.innerHTML = '<input type="checkbox">';
-                            }
-                        } else {
-                            th.className = "v4-grid-cell v4-editable-cell" + (hl && hl.enabled ? " v4-grid-col-highlight" : "");
-                            th.contentEditable = "true";
-                            th.setAttribute("data-type", col.type);
-                            var badgeHtml = "";
-                            if (hl && hl.enabled && hl.badgeText) {
-                                badgeHtml = '<span class="v4-col-badge" contenteditable="false" style="background:' + hl.badgeBg + '; color:' + hl.badgeColor + ';">' + hl.badgeText + '</span>';
-                            }
-                            var desiredHtml = (col.name || "") + " \u21C5" + badgeHtml;
-                            var existingBadge = th.querySelector(".v4-col-badge");
-                            var existingText = th.innerText.replace(" \u21C5", "").trim();
-                            if (existingBadge && existingBadge.innerText) {
-                                existingText = existingText.replace(existingBadge.innerText, "").trim();
-                            }
-                            if (existingText !== (col.name || "") || (!existingBadge !== !badgeHtml) || (existingBadge && existingBadge.innerText !== (hl ? hl.badgeText : ""))) {
-                                th.innerHTML = desiredHtml;
-                            }
-                            bindGridCellEvents(th, true, idx);
-                        }
-
-                        if (!hl || !hl.enabled) {
-                            if (bg) th.style.setProperty("background", bg, "important");
-                        }
-                        if (color) th.style.setProperty("color", color, "important");
-                        if (fontSize) th.style.setProperty("font-size", fontSize, "important");
-                        if (fontFamily) th.style.setProperty("font-family", fontFamily, "important");
-                    });
-                }
-            }
-            
-            var tbody = table.querySelector("tbody");
-            if (tbody) {
-                var rows = Array.from(tbody.querySelectorAll("tr"));
-                while (rows.length < rowCount) {
-                    var newRow = document.createElement("tr");
-                    newRow.style.setProperty("height", rowHeightVal, "important");
-                    newRow.style.setProperty("min-height", rowHeightVal, "important");
-                    newRow.style.background = "#ffffff";
-                    newRow.style.boxSizing = "border-box";
-                    tbody.appendChild(newRow);
-                    rows.push(newRow);
-                }
-                while (rows.length > rowCount) {
-                    tbody.removeChild(rows.pop());
-                }
-                
-                rows.forEach(function(row, rIdx) {
-                    row.style.borderBottom = "1.6px solid rgb(226,232,240)";
-                    row.style.setProperty("height", rowHeightVal, "important");
-                    row.style.setProperty("min-height", rowHeightVal, "important");
-                    if (!isZebra) {
-                        row.style.background = "#ffffff";
-                    } else {
-                        row.style.removeProperty("background");
-                    }
-                    
-                    var tds = Array.from(row.querySelectorAll("td"));
-                    while (tds.length < columns.length) {
-                        var newTd = document.createElement("td");
-                        newTd.className = "v4-grid-cell v4-editable-cell";
-                        newTd.contentEditable = "true";
-                        newTd.style.display = "table-cell";
-                        newTd.style.verticalAlign = "middle";
-                        newTd.style.boxSizing = "border-box";
-                        newTd.style.fontSize = "12px";
-                        row.appendChild(newTd);
-                        tds.push(newTd);
-                    }
-                    while (tds.length > columns.length) {
-                        row.removeChild(tds.pop());
-                    }
-                    
-                    columns.forEach(function(col, cIdx) {
-                        var td = tds[cIdx];
-                        var align = getResolvedAlign(col);
-                        td.style.borderRight = "1.6px solid rgb(226,232,240)";
-                        td.style.setProperty("height", rowHeightVal, "important");
-                        td.style.setProperty("min-height", rowHeightVal, "important");
-                        td.style.setProperty("vertical-align", "middle", "important");
-                        td.style.setProperty("box-sizing", "border-box", "important");
-                        td.style.setProperty("padding", col.type === "checkbox" ? "0" : "0 8px", "important");
-                        td.style.setProperty("text-align", align, "important");
-                        td.setAttribute("data-align", align);
-
-                        var hl = getResolvedHighlight(col);
-                        if (hl && hl.enabled) {
-                            td.classList.add("v4-grid-col-highlight");
-                            td.style.setProperty("background-color", hl.bg, "important");
-                            if (rIdx === rows.length - 1) {
-                                td.style.setProperty("box-shadow", "inset 0 -2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
-                            } else {
-                                td.style.setProperty("box-shadow", "inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
-                            }
-                        } else {
-                            td.classList.remove("v4-grid-col-highlight");
-                            td.style.removeProperty("box-shadow");
-                            td.style.removeProperty("background-color");
-                        }
-
-                        var isClickable = !!col.clickable && col.type !== "checkbox" && col.type !== "action";
-                        td.setAttribute("data-clickable", isClickable ? "true" : "false");
-                        if (isClickable) {
-                            td.classList.add("v4-grid-clickable-cell");
-                            td.style.setProperty("color", "#2563eb", "important");
-                            td.style.setProperty("cursor", "pointer", "important");
-                        } else {
-                            td.classList.remove("v4-grid-clickable-cell");
-                            td.style.removeProperty("cursor");
-                            if (td.style.color === "rgb(37, 99, 235)" || td.style.color === "#2563eb") {
-                                td.style.removeProperty("color");
-                            }
-                        }
-
-                        var prevType = td.getAttribute("data-type");
-                        if (!prevType && (td.classList.contains("v4-grid-check-col") || td.querySelector("input[type='checkbox']"))) {
-                            prevType = "checkbox";
-                            td.setAttribute("data-type", "checkbox");
-                        }
-
-                        if (col.type !== "checkbox" && col.type !== "action") {
-                            bindGridCellEvents(td, false, cIdx);
-                        }
-
-                        var isUserModified = td.getAttribute("data-user-modified") === "true";
-                        var currentText = td.innerText || "";
-                        var shouldOverwrite = false;
-
-                        if (prevType !== col.type) {
-                            shouldOverwrite = true;
-                        } else if (fillMock && (!isUserModified && (isMockValue(currentText, prevType) || td.innerHTML === ""))) {
-                            shouldOverwrite = true;
-                        } else if (td.innerHTML === "" && (col.type === "checkbox" || col.type === "action")) {
-                            shouldOverwrite = true;
-                        }
-
-                        if (shouldOverwrite) {
-                            var bg = td.style.background || td.style.backgroundColor;
-                            var color = td.style.color;
-                            var fontSize = td.style.fontSize;
-                            var fontFamily = td.style.fontFamily;
-
-                            td.setAttribute("data-type", col.type);
-                            var hlClass = (hl && hl.enabled) ? " v4-grid-col-highlight" : "";
-                            if (col.type === "checkbox") {
-                                td.className = "v4-grid-cell" + hlClass;
-                                td.contentEditable = "false";
-                                td.innerHTML = '<input type="checkbox">';
-                            } else if (col.type === "action") {
-                                td.className = "v4-grid-cell" + hlClass;
-                                td.contentEditable = "false";
-                                td.innerHTML = '<button type="button" class="v4-grid-action-btn">\uC0C1\uC138</button>';
-                            } else {
-                                td.className = "v4-grid-cell v4-editable-cell" + (isClickable ? " v4-grid-clickable-cell" : "") + hlClass;
-                                td.contentEditable = "true";
-                                td.style.color = "";
-                                td.style.fontWeight = "";
-                                td.style.fontSize = "";
-                                td.innerHTML = getCellContentForType(col.type, rIdx, col, isClickable, fillMock);
-                            }
-
-                            if (!hl || !hl.enabled) {
-                                if (bg) td.style.setProperty("background", bg, "important");
-                            }
-                            if (col.type === "status" || col.type === "badge" || col.type === "checkbox") {
-                                if (color) td.style.setProperty("color", color, "important");
-                                if (fontSize) td.style.setProperty("font-size", fontSize, "important");
-                                if (fontFamily) td.style.setProperty("font-family", fontFamily, "important");
-                            }
-                        }
-                    });
-                });
-            }
-            
-            var footer = container.querySelector(".v4-grid-footer");
-            if (footer) {
-                footer.style.display = showPagination ? "flex" : "none";
-            }
-            var wrapper = container.querySelector(".v4-grid-table-wrapper");
-            if (wrapper) {
-                wrapper.style.height = showPagination ? "calc(100% - 36px)" : "100%";
-            }
-            
-            bindTableCheckboxInteractions(table);
-
-            var compEl = container.closest(".lf-component");
-            if (compEl) {
-                if (!compEl.style.height) {
-                    var rowHNum = parseInt(rowHeightVal) || 40;
-                    var headerH = 40;
-                    var footerH = showPagination ? 36 : 0;
-                    var calculatedHeight = headerH + (rowCount * rowHNum) + footerH;
-                    compEl.style.height = calculatedHeight + "px";
-                }
-                if (window.updateHandles) window.updateHandles(compEl);
-            }
-            return;
+        headerRow.style.setProperty("height", rowHeightVal, "important");
+        headerRow.style.setProperty("min-height", rowHeightVal, "important");
+        var ths = Array.from(headerRow.querySelectorAll("th"));
+        while (ths.length < columns.length) {
+            var newTh = document.createElement("th");
+            newTh.className = "v4-grid-cell v4-editable-cell";
+            newTh.contentEditable = "true";
+            newTh.style.display = "table-cell";
+            newTh.style.verticalAlign = "middle";
+            newTh.style.boxSizing = "border-box";
+            newTh.style.fontSize = "12px";
+            newTh.style.fontWeight = "500";
+            newTh.style.color = "#334155";
+            headerRow.appendChild(newTh);
+            ths.push(newTh);
         }
+        while (ths.length > columns.length) {
+            headerRow.removeChild(ths.pop());
+        }
+        
+        columns.forEach(function(col, idx) {
+            var th = ths[idx];
+            var bg = th.style.background || th.style.backgroundColor;
+            var color = th.style.color;
+            var fontSize = th.style.fontSize;
+            var fontFamily = th.style.fontFamily;
+            var align = getResolvedAlign(col);
+            var w = col.width;
+            if (!w) {
+                w = (col.type === "checkbox" ? "50px" : (col.type === "number" || col.type === "action" ? "80px" : "120px"));
+            } else {
+                w = w.trim();
+                if (/^\\d+$/.test(w) || /^\\d*\\.\\d+$/.test(w)) {
+                    w = w + "px";
+                }
+            }
 
-        // Fresh Container Builder
+            th.style.setProperty("width", w, "important");
+            th.style.setProperty("min-width", w, "important");
+            th.style.setProperty("max-width", w, "important");
+            th.style.borderRight = "1.6px solid rgb(226, 232, 240)";
+            th.style.setProperty("text-align", align, "important");
+            th.style.setProperty("padding", col.type === "checkbox" ? "0" : "0 8px", "important");
+            th.style.fontWeight = "500";
+            th.style.color = "#334155";
+            th.style.setProperty("height", rowHeightVal, "important");
+            th.style.setProperty("min-height", rowHeightVal, "important");
+            th.style.setProperty("vertical-align", "middle", "important");
+            th.setAttribute("data-align", align);
+
+            var hl = getResolvedHighlight(col);
+            if (hl && hl.enabled) {
+                th.classList.add("v4-grid-col-highlight");
+                th.style.setProperty("background-color", hl.headerBg || hl.bg, "important");
+                th.style.setProperty("box-shadow", "inset 0 2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
+            } else {
+                th.classList.remove("v4-grid-col-highlight");
+                th.style.removeProperty("box-shadow");
+                th.style.setProperty("background-color", "#f8fafc", "important");
+            }
+
+            if (col.type === "checkbox") {
+                th.className = "v4-grid-cell v4-grid-check-col" + (hl && hl.enabled ? " v4-grid-col-highlight" : "");
+                th.contentEditable = "false";
+                th.setAttribute("data-type", "checkbox");
+                if (!th.querySelector("input[type='checkbox']")) {
+                    th.innerHTML = '<input type="checkbox">';
+                }
+            } else {
+                th.className = "v4-grid-cell v4-editable-cell" + (hl && hl.enabled ? " v4-grid-col-highlight" : "");
+                th.contentEditable = "true";
+                th.setAttribute("data-type", col.type);
+                var badgeHtml = "";
+                if (hl && hl.enabled && hl.badgeText) {
+                    badgeHtml = '<span class="v4-col-badge" contenteditable="false" style="background:' + hl.badgeBg + '; color:' + hl.badgeColor + ';">' + hl.badgeText + '</span>';
+                }
+                var desiredHtml = (col.name || "") + " \u21C5" + badgeHtml;
+                var existingBadge = th.querySelector(".v4-col-badge");
+                var existingText = th.innerText.replace(" \u21C5", "").trim();
+                if (existingBadge && existingBadge.innerText) {
+                    existingText = existingText.replace(existingBadge.innerText, "").trim();
+                }
+                if (existingText !== (col.name || "") || (!existingBadge !== !badgeHtml) || (existingBadge && existingBadge.innerText !== (hl ? hl.badgeText : ""))) {
+                    th.innerHTML = desiredHtml;
+                }
+                bindGridCellEvents(th, true, idx);
+            }
+
+            if (!hl || !hl.enabled) {
+                if (bg) th.style.setProperty("background", bg, "important");
+            }
+            if (color) th.style.setProperty("color", color, "important");
+            if (fontSize) th.style.setProperty("font-size", fontSize, "important");
+            if (fontFamily) th.style.setProperty("font-family", fontFamily, "important");
+        });
+    };
+
+    var updateGridTbody = function(table, columns, rowCount, rowHeightVal, isZebra, fillMock) {
+        var tbody = table.querySelector("tbody");
+        if (!tbody) return;
+
+        var rows = Array.from(tbody.querySelectorAll("tr"));
+        while (rows.length < rowCount) {
+            var newRow = document.createElement("tr");
+            newRow.style.setProperty("height", rowHeightVal, "important");
+            newRow.style.setProperty("min-height", rowHeightVal, "important");
+            newRow.style.background = "#ffffff";
+            newRow.style.boxSizing = "border-box";
+            tbody.appendChild(newRow);
+            rows.push(newRow);
+        }
+        while (rows.length > rowCount) {
+            tbody.removeChild(rows.pop());
+        }
+        
+        rows.forEach(function(row, rIdx) {
+            row.style.borderBottom = "1.6px solid rgb(226,232,240)";
+            row.style.setProperty("height", rowHeightVal, "important");
+            row.style.setProperty("min-height", rowHeightVal, "important");
+            if (!isZebra) {
+                row.style.background = "#ffffff";
+            } else {
+                row.style.removeProperty("background");
+            }
+            
+            var tds = Array.from(row.querySelectorAll("td"));
+            while (tds.length < columns.length) {
+                var newTd = document.createElement("td");
+                newTd.className = "v4-grid-cell v4-editable-cell";
+                newTd.contentEditable = "true";
+                newTd.style.display = "table-cell";
+                newTd.style.verticalAlign = "middle";
+                newTd.style.boxSizing = "border-box";
+                newTd.style.fontSize = "12px";
+                row.appendChild(newTd);
+                tds.push(newTd);
+            }
+            while (tds.length > columns.length) {
+                row.removeChild(tds.pop());
+            }
+            
+            columns.forEach(function(col, cIdx) {
+                var td = tds[cIdx];
+                var align = getResolvedAlign(col);
+                td.style.borderRight = "1.6px solid rgb(226,232,240)";
+                td.style.setProperty("height", rowHeightVal, "important");
+                td.style.setProperty("min-height", rowHeightVal, "important");
+                td.style.setProperty("vertical-align", "middle", "important");
+                td.style.setProperty("box-sizing", "border-box", "important");
+                td.style.setProperty("padding", col.type === "checkbox" ? "0" : "0 8px", "important");
+                td.style.setProperty("text-align", align, "important");
+                td.setAttribute("data-align", align);
+
+                var hl = getResolvedHighlight(col);
+                if (hl && hl.enabled) {
+                    td.classList.add("v4-grid-col-highlight");
+                    td.style.setProperty("background-color", hl.bg, "important");
+                    if (rIdx === rows.length - 1) {
+                        td.style.setProperty("box-shadow", "inset 0 -2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
+                    } else {
+                        td.style.setProperty("box-shadow", "inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
+                    }
+                } else {
+                    td.classList.remove("v4-grid-col-highlight");
+                    td.style.removeProperty("box-shadow");
+                    td.style.removeProperty("background-color");
+                }
+
+                var isClickable = !!col.clickable && col.type !== "checkbox" && col.type !== "action";
+                td.setAttribute("data-clickable", isClickable ? "true" : "false");
+                if (isClickable) {
+                    td.classList.add("v4-grid-clickable-cell");
+                    td.style.setProperty("color", "#2563eb", "important");
+                    td.style.setProperty("cursor", "pointer", "important");
+                } else {
+                    td.classList.remove("v4-grid-clickable-cell");
+                    td.style.removeProperty("cursor");
+                    if (td.style.color === "rgb(37, 99, 235)" || td.style.color === "#2563eb") {
+                        td.style.removeProperty("color");
+                    }
+                }
+
+                var prevType = td.getAttribute("data-type");
+                if (!prevType && (td.classList.contains("v4-grid-check-col") || td.querySelector("input[type='checkbox']"))) {
+                    prevType = "checkbox";
+                    td.setAttribute("data-type", "checkbox");
+                }
+
+                if (col.type !== "checkbox" && col.type !== "action") {
+                    bindGridCellEvents(td, false, cIdx);
+                }
+
+                var isUserModified = td.getAttribute("data-user-modified") === "true";
+                var currentText = td.innerText || "";
+                var shouldOverwrite = false;
+
+                if (prevType !== col.type) {
+                    shouldOverwrite = true;
+                } else if (fillMock && (!isUserModified && (isMockValue(currentText, prevType) || td.innerHTML === ""))) {
+                    shouldOverwrite = true;
+                } else if (td.innerHTML === "" && (col.type === "checkbox" || col.type === "action")) {
+                    shouldOverwrite = true;
+                }
+
+                if (shouldOverwrite) {
+                    var bg = td.style.background || td.style.backgroundColor;
+                    var color = td.style.color;
+                    var fontSize = td.style.fontSize;
+                    var fontFamily = td.style.fontFamily;
+
+                    td.setAttribute("data-type", col.type);
+                    var hlClass = (hl && hl.enabled) ? " v4-grid-col-highlight" : "";
+                    if (col.type === "checkbox") {
+                        td.className = "v4-grid-cell" + hlClass;
+                        td.contentEditable = "false";
+                        td.innerHTML = '<input type="checkbox">';
+                    } else if (col.type === "action") {
+                        td.className = "v4-grid-cell" + hlClass;
+                        td.contentEditable = "false";
+                        td.innerHTML = '<button type="button" class="v4-grid-action-btn">\uC0C1\uC138</button>';
+                    } else {
+                        td.className = "v4-grid-cell v4-editable-cell" + (isClickable ? " v4-grid-clickable-cell" : "") + hlClass;
+                        td.contentEditable = "true";
+                        td.style.color = "";
+                        td.style.fontWeight = "";
+                        td.style.fontSize = "";
+                        td.innerHTML = getCellContentForType(col.type, rIdx, col, isClickable, fillMock);
+                    }
+
+                    if (!hl || !hl.enabled) {
+                        if (bg) td.style.setProperty("background", bg, "important");
+                    }
+                    if (col.type === "status" || col.type === "badge" || col.type === "checkbox") {
+                        if (color) td.style.setProperty("color", color, "important");
+                        if (fontSize) td.style.setProperty("font-size", fontSize, "important");
+                        if (fontFamily) td.style.setProperty("font-family", fontFamily, "important");
+                    }
+                }
+            });
+        });
+    };
+
+    var buildFreshGridHtml = function(columns, rowCount, showPagination, rowHeightVal, isZebra, totalColWidth) {
         var colgroupHtml = "<colgroup>";
         columns.forEach(function(col) {
             var w = col.width;
@@ -741,7 +685,79 @@ window.v4GridScript = `
                          '<span style="font-size:11px; color:#64748b; font-family:Inter,sans-serif;">Page Size 100</span>' +
                          '</div>';
         
-        container.innerHTML = tableContainerHtml + footerHtml;
+        return tableContainerHtml + footerHtml;
+    };
+
+    var syncGridComponentHeight = function(container, rowHeightVal, rowCount, showPagination) {
+        var compEl = container.closest(".lf-component");
+        if (compEl) {
+            if (!compEl.style.height) {
+                var rowHNum = parseInt(rowHeightVal) || 40;
+                var headerH = 40;
+                var footerH = showPagination ? 36 : 0;
+                var calculatedHeight = headerH + (rowCount * rowHNum) + footerH;
+                compEl.style.height = calculatedHeight + "px";
+            }
+            if (window.updateHandles) window.updateHandles(compEl);
+        }
+    };
+
+    window.renderGrid = function(container, columns, rowCount, showPagination, rowHeight, showZebra, fillMock) {
+        if (!container) return;
+        
+        container.setAttribute("data-columns", JSON.stringify(columns));
+        container.setAttribute("data-row-count", rowCount);
+        container.setAttribute("data-pagination", showPagination ? "true" : "false");
+        if (rowHeight !== undefined) {
+            container.setAttribute("data-row-height", rowHeight);
+        }
+        if (showZebra !== undefined) {
+            container.setAttribute("data-zebra", showZebra ? "true" : "false");
+        }
+        var rowHeightVal = container.getAttribute("data-row-height") || "40px";
+        if (/^\\d+$/.test(String(rowHeightVal).trim())) {
+            rowHeightVal = String(rowHeightVal).trim() + "px";
+        }
+        var isZebra = container.getAttribute("data-zebra") === "true";
+
+        var totalColWidth = 0;
+        columns.forEach(function(col) {
+            var w = col.width;
+            if (!w) {
+                w = (col.type === "checkbox" ? 50 : (col.type === "number" || col.type === "action" ? 80 : 120));
+            } else {
+                w = parseInt(w) || (col.type === "checkbox" ? 50 : (col.type === "number" || col.type === "action" ? 80 : 120));
+            }
+            totalColWidth += w;
+        });
+
+        var table = container.querySelector("table");
+        if (table) {
+            table.style.setProperty("height", "auto", "important");
+            table.style.setProperty("width", totalColWidth + "px", "important");
+            table.style.setProperty("min-width", totalColWidth + "px", "important");
+            table.style.setProperty("table-layout", "fixed", "important");
+
+            updateGridColgroup(table, columns);
+            updateGridThead(table, columns, rowHeightVal);
+            updateGridTbody(table, columns, rowCount, rowHeightVal, isZebra, fillMock);
+            
+            var footer = container.querySelector(".v4-grid-footer");
+            if (footer) {
+                footer.style.display = showPagination ? "flex" : "none";
+            }
+            var wrapper = container.querySelector(".v4-grid-table-wrapper");
+            if (wrapper) {
+                wrapper.style.height = showPagination ? "calc(100% - 36px)" : "100%";
+            }
+            
+            bindTableCheckboxInteractions(table);
+            syncGridComponentHeight(container, rowHeightVal, rowCount, showPagination);
+            return;
+        }
+
+        // Fresh Container Builder
+        container.innerHTML = buildFreshGridHtml(columns, rowCount, showPagination, rowHeightVal, isZebra, totalColWidth);
 
         var renderedTable = container.querySelector("table");
         if (renderedTable) {
@@ -760,17 +776,7 @@ window.v4GridScript = `
             });
         }
 
-        var compEl = container.closest(".lf-component");
-        if (compEl) {
-            if (!compEl.style.height) {
-                var rowHNum = parseInt(rowHeightVal) || 40;
-                var headerH = 40;
-                var footerH = showPagination ? 36 : 0;
-                var calculatedHeight = headerH + (rowCount * rowHNum) + footerH;
-                compEl.style.height = calculatedHeight + "px";
-            }
-            if (window.updateHandles) window.updateHandles(compEl);
-        }
+        syncGridComponentHeight(container, rowHeightVal, rowCount, showPagination);
     };
 
     var PRESETS = {

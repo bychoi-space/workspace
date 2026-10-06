@@ -89,7 +89,7 @@ splitCandidates.forEach((c, idx) => {
 // -------------------------------------------------------------
 // [CRITERION 2] UNREFERENCED / DEAD CODE CANDIDATES
 // -------------------------------------------------------------
-console.log('\n[SECTION 3] Unreferenced / Orphan Source Code (Criterion 2)');
+console.log('\n[SECTION 3] Unreferenced / Orphan Source Code & Assets (Criterion 2)');
 const viewerHtmlPath = path.join(rootDir, 'viewer.html');
 const viewerContent = fs.readFileSync(viewerHtmlPath, 'utf8');
 const indexHtmlPath = path.join(rootDir, 'index.html');
@@ -97,7 +97,8 @@ const indexContent = fs.readFileSync(indexHtmlPath, 'utf8');
 const vctrlCorePath = path.join(assetsDir, 'vctrl_core.js');
 const vctrlCoreContent = fs.readFileSync(vctrlCorePath, 'utf8');
 
-const unreferencedFiles = [];
+// 3.1 JavaScript Orphan check
+const unreferencedJs = [];
 for (const f of allAssetJs) {
     const basename = path.basename(f);
     const rel = path.relative(rootDir, f).replace(/\\/g, '/');
@@ -117,13 +118,56 @@ for (const f of allAssetJs) {
     }
 
     if (!inViewer && !inIndex && !inCore && !isBuildArtifact && !inOtherFiles) {
-        unreferencedFiles.push({ file: rel, sizeKb: (fs.statSync(f).size / 1024).toFixed(1) });
+        unreferencedJs.push({ file: rel, sizeKb: (fs.statSync(f).size / 1024).toFixed(1) });
     }
 }
-if (unreferencedFiles.length === 0) {
-    console.log('  -> [PASS] No unreferenced or orphan JavaScript files found.');
+if (unreferencedJs.length === 0) {
+    console.log('  -> [PASS] No unreferenced or orphan JavaScript files found (0 Orphans).');
 } else {
-    unreferencedFiles.forEach(u => console.log(`  * [ORPHAN] ${u.file} (${u.sizeKb} KB)`));
+    unreferencedJs.forEach(u => console.log(`  * [ORPHAN JS] ${u.file} (${u.sizeKb} KB)`));
+}
+
+// 3.2 CSS Orphan check
+const unreferencedCss = [];
+for (const f of allAssetCss) {
+    const basename = path.basename(f);
+    const rel = path.relative(rootDir, f).replace(/\\/g, '/');
+    const inViewer = viewerContent.includes(basename);
+    const inIndex = indexContent.includes(basename);
+    
+    // Check if referenced in any other file
+    let referenced = false;
+    for (const other of allAssetJs) {
+        const code = fs.readFileSync(other, 'utf8');
+        if (code.includes(basename)) { referenced = true; break; }
+    }
+    if (!inViewer && !inIndex && !referenced) {
+        unreferencedCss.push({ file: rel, sizeKb: (fs.statSync(f).size / 1024).toFixed(1) });
+    }
+}
+if (unreferencedCss.length > 0) {
+    console.log(`  * Unlinked / Orphan CSS Files (${unreferencedCss.length} files):`);
+    unreferencedCss.forEach(u => console.log(`    - [ORPHAN CSS] ${u.file} (${u.sizeKb} KB)`));
+}
+
+// 3.3 Media Assets Orphan check
+const allAssetMedia = getAllFiles(assetsDir, ['.png', '.jpg', '.jpeg', '.svg', '.webp']);
+const unreferencedMedia = [];
+let allSourceText = viewerContent + '\n' + indexContent;
+for (const f of allAssetJs.concat(allAssetCss)) {
+    allSourceText += '\n' + fs.readFileSync(f, 'utf8');
+}
+for (const m of allAssetMedia) {
+    const basename = path.basename(m);
+    const rel = path.relative(rootDir, m).replace(/\\/g, '/');
+    if (!allSourceText.includes(basename)) {
+        unreferencedMedia.push({ file: rel, sizeKb: (fs.statSync(m).size / 1024).toFixed(1) });
+    }
+}
+if (unreferencedMedia.length > 0) {
+    console.log(`  * Unreferenced Media Assets (${unreferencedMedia.length} files, ~${(unreferencedMedia.reduce((a,b)=>a+parseFloat(b.sizeKb),0)/1024).toFixed(1)} MB):`);
+    unreferencedMedia.slice(0, 10).forEach(u => console.log(`    - [ORPHAN MEDIA] ${u.file} (${u.sizeKb} KB)`));
+    if (unreferencedMedia.length > 10) console.log(`    ... and ${unreferencedMedia.length - 10} more unreferenced media files.`);
 }
 
 // -------------------------------------------------------------
@@ -163,40 +207,85 @@ duplicates.slice(0, 15).forEach(d => {
 // [CRITERION 4] HIGH COMPLEXITY / OVERSIZED FUNCTIONS
 // -------------------------------------------------------------
 console.log('\n[SECTION 5] High Complexity / Oversized Functions (> 150 lines) (Criterion 4)');
-const hugeFns = [];
-for (const f of allAssetJs) {
-    const basename = path.basename(f);
-    if (basename === 'templates.js' || basename === 'ui_library_fallback.js') continue;
-    const content = fs.readFileSync(f, 'utf8');
-    const rel = path.relative(rootDir, f).replace(/\\/g, '/');
+
+function findFunctionsAccurately(filePath) {
+    const content = fs.readFileSync(filePath, 'utf8');
     const lines = content.split('\n');
-    let currentFn = null;
-    let braceDepth = 0;
-    let startLine = 0;
+    const fns = [];
+    const stack = [];
+    let depth = 0;
+
+    const patterns = [
+        /function\s+([a-zA-Z0-9_$]+)\s*\(/,
+        /(?:const|let|var)\s+([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?function\b/,
+        /([a-zA-Z0-9_$]+)\s*:\s*(?:async\s*)?function\b/,
+        /([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?function\b/,
+        /window\.([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?function\b/,
+        /(?:async\s+)?([a-zA-Z0-9_$]+)\s*\([^)]*\)\s*\{/
+    ];
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        const match = line.match(/(?:function\s+([a-zA-Z0-9_$]+)|([a-zA-Z0-9_$]+)\s*[:=]\s*function\b|window\.([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?function)/);
-        if (match && braceDepth === 0) {
-            currentFn = match[1] || match[2] || match[3] || 'anonymous';
-            startLine = i + 1;
+        const lineNum = i + 1;
+        let detected = null;
+
+        for (const p of patterns) {
+            const m = line.match(p);
+            if (m) {
+                const name = m[1];
+                if (!['if', 'for', 'while', 'switch', 'catch'].includes(name)) {
+                    detected = name;
+                    break;
+                }
+            }
         }
-        for (let c of line) {
-            if (c === '{') braceDepth++;
-            if (c === '}') {
-                braceDepth--;
-                if (braceDepth === 0 && currentFn) {
-                    const fnLen = (i + 1) - startLine;
-                    if (fnLen > 150) {
-                        hugeFns.push({ file: rel, fnName: currentFn, lines: fnLen, start: startLine, end: i + 1 });
+
+        let inStr = false;
+        let strChar = '';
+        for (let j = 0; j < line.length; j++) {
+            const c = line[j];
+            const prev = j > 0 ? line[j - 1] : '';
+            if (!inStr && c === '/' && line[j + 1] === '/') break;
+            if (!inStr && (c === '"' || c === "'" || c === '`')) {
+                inStr = true;
+                strChar = c;
+            } else if (inStr && c === strChar && prev !== '\\') {
+                inStr = false;
+            } else if (!inStr) {
+                if (c === '{') {
+                    depth++;
+                    if (detected) {
+                        stack.push({ name: detected, start: lineNum, depth });
+                        detected = null;
                     }
-                    currentFn = null;
+                } else if (c === '}') {
+                    while (stack.length > 0 && stack[stack.length - 1].depth >= depth) {
+                        const top = stack.pop();
+                        const len = lineNum - top.start + 1;
+                        fns.push({ name: top.name, start: top.start, end: lineNum, lines: len });
+                    }
+                    depth--;
                 }
             }
         }
     }
+    return fns;
+}
+
+const hugeFns = [];
+for (const f of allAssetJs) {
+    const basename = path.basename(f);
+    if (basename === 'templates.js' || basename === 'ui_library_fallback.js') continue;
+    const rel = path.relative(rootDir, f).replace(/\\/g, '/');
+    const fns = findFunctionsAccurately(f);
+    for (const fn of fns) {
+        if (fn.lines >= 150) {
+            hugeFns.push({ file: rel, fnName: fn.name, lines: fn.lines, start: fn.start, end: fn.end });
+        }
+    }
 }
 hugeFns.sort((a, b) => b.lines - a.lines);
+console.log(`  * Total oversized functions (> 150 lines): ${hugeFns.length} functions detected`);
 hugeFns.slice(0, 15).forEach((h, idx) => {
     console.log(`  ${idx + 1}. ${h.file} :: ${h.fnName}() -> ${h.lines} lines (L${h.start}-L${h.end})`);
 });
@@ -215,8 +304,12 @@ for (const f of allAssetJs) {
         missingInAgents.push(path.relative(rootDir, f).replace(/\\/g, '/'));
     }
 }
-console.log(`  * Modules active in assets/ but missing in AGENTS.md modular architecture definition (${missingInAgents.length} files):`);
-missingInAgents.forEach(m => console.log(`    - ${m}`));
+if (missingInAgents.length === 0) {
+    console.log('  -> [PASS] All active modules are fully documented in AGENTS.md modular architecture definition.');
+} else {
+    console.log(`  * Modules active in assets/ but missing in AGENTS.md modular architecture definition (${missingInAgents.length} files):`);
+    missingInAgents.forEach(m => console.log(`    - ${m}`));
+}
 
 // -------------------------------------------------------------
 // [CRITERION 6] OTHER SYSTEM IMPROVEMENTS (Build Sync, CSS, etc.)
@@ -248,6 +341,17 @@ if (fs.existsSync(uiFallbackJsPath)) {
     if (latestMtime > statU.mtimeMs) uiStatus = 'OUTDATED - Needs scripts/build_ui_fallback.ps1';
 }
 console.log(`  * ui_library_fallback.js offline bundle: [${uiStatus}]`);
+
+// Verify static verification script coverage
+const checkSyntaxPath = path.join(scriptsDir, 'check_syntax.ps1');
+const checkSyntaxContent = fs.readFileSync(checkSyntaxPath, 'utf8');
+const missingInCheckSyntax = allAssetJs.filter(f => !checkSyntaxContent.includes(path.basename(f)));
+console.log(`  * scripts/check_syntax.ps1 coverage: [${missingInCheckSyntax.length === 0 ? '100% COMPLETE' : 'INCOMPLETE: ' + missingInCheckSyntax.length + ' missing'}]`);
+
+const verifyAllPath = path.join(scriptsDir, 'verify_all.ps1');
+const verifyAllContent = fs.readFileSync(verifyAllPath, 'utf8');
+const missingInVerifyAll = allAssetJs.filter(f => !verifyAllContent.includes(path.basename(f)));
+console.log(`  * scripts/verify_all.ps1 coverage: [${missingInVerifyAll.length === 0 ? '100% COMPLETE' : 'INCOMPLETE: ' + missingInVerifyAll.length + ' missing'}]`);
 
 console.log('\n================================================================');
 console.log('              DIAGNOSIS ENGINE COMPLETED SUCCESSFULLY           ');

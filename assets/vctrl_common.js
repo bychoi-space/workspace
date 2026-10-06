@@ -495,6 +495,21 @@ window.v4CommonScript = `
         sendToParent: function(data) { window.notifyParent(data); }
     };
 
+    // Universal Responsive Screen Detector (Iframe SSOT)
+    window.isResponsiveDocument = function(targetDoc) {
+        var doc = targetDoc || document;
+        return !!(doc && doc.querySelector && (
+            doc.querySelector('.pc-content-inner') || 
+            doc.querySelector('.mobile-content-inner') || 
+            doc.querySelector('.pc-browser-frame') ||
+            doc.querySelector('.pc-content-area') ||
+            doc.querySelector('.mobile-compare-page') ||
+            doc.querySelector('.frame-column') ||
+            doc.querySelector('.mobile-content-area')
+        ));
+    };
+    window.isResponsiveScreen = window.isResponsiveDocument;
+
     // Universal RGB to HEX Converter
     window.rgbToHex = function(rgb) {
         if (!rgb || rgb === "transparent" || rgb === "none" || rgb.includes("rgba(0, 0, 0, 0)")) return null;

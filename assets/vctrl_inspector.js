@@ -518,157 +518,195 @@ const ATOM_PROP_SYNC_MAP = {
     cursor: { sec: 'cursorPropSection', secId: 'cursor-inspector-section', method: 'syncCursor', legacy: '_syncCursorProps' }
 };
 
+function _syncShapeOrPinTypeProps(compStyles) {
+    if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'block';
+    if (window.InspectorShapes && typeof window.InspectorShapes.sync === 'function') {
+        window.InspectorShapes.sync(compStyles);
+    }
+    if (DOM.textPropSection && !compStyles.isImage && !compStyles.isMultiSameType) {
+        DOM.textPropSection.style.display = 'block';
+    }
+
+    const patternGroup = document.getElementById('shape-pattern-type-group');
+    const bgColorGroup = document.getElementById('shape-bg-color-group');
+    const bgOpacityGroup = document.getElementById('shape-bg-opacity-group');
+    const isPattern = (compStyles.shapeType === 'pattern');
+    
+    if (patternGroup) {
+        patternGroup.style.display = isPattern ? 'block' : 'none';
+        if (isPattern && compStyles.patternType && typeof window._syncPatternVisualBtns === 'function') {
+            window._syncPatternVisualBtns(compStyles.patternType);
+        }
+    }
+    if (bgColorGroup) bgColorGroup.style.display = isPattern ? 'none' : 'grid';
+    if (bgOpacityGroup) bgOpacityGroup.style.display = isPattern ? 'none' : 'block';
+
+    const cornerGroup = document.getElementById('shape-corner-style-group');
+    const arrowGroup = document.getElementById('shape-arrow-direction-group');
+    const waveGroup = document.getElementById('shape-wave-direction-group');
+    const isRect = (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage');
+    const isArrowOrTriangle = (compStyles.shapeType === 'arrow' || compStyles.id === 'v4-shape-arrow' || compStyles.shapeType === 'triangle' || compStyles.id === 'v4-shape-triangle');
+    const isWave = (compStyles.shapeType === 'wave' || compStyles.id === 'v4-shape-wave' || (compStyles.classList && compStyles.classList.includes('v4-shape-wave')));
+
+    if (cornerGroup) cornerGroup.style.display = isRect ? 'block' : 'none';
+    if (arrowGroup) {
+        arrowGroup.style.display = isArrowOrTriangle ? 'block' : 'none';
+        if (isArrowOrTriangle && typeof window._syncArrowDirBtns === 'function') {
+            window._syncArrowDirBtns(compStyles.direction || compStyles.arrowDir || 'right');
+        }
+    }
+    if (waveGroup) {
+        waveGroup.style.display = isWave ? 'block' : 'none';
+        if (isWave && typeof window._syncWaveDirBtns === 'function') {
+            window._syncWaveDirBtns(compStyles.waveDir || 'horizontal');
+        }
+    }
+}
+
+function _syncTableTypeProps() {
+    if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'block';
+}
+
+function _syncLineTypeProps(compStyles) {
+    if (DOM.linePropSection) DOM.linePropSection.style.display = 'block';
+    if (typeof window._syncLineEditorProps === 'function') {
+        window._syncLineEditorProps(compStyles);
+    }
+}
+
+function _syncIllustrationTypeProps(compStyles) {
+    if (DOM.illustrationPropSection) DOM.illustrationPropSection.style.display = 'block';
+    if (typeof window._syncIllustrationProps === 'function') {
+        window._syncIllustrationProps(compStyles);
+    }
+}
+
+function _syncIconTypeProps(compStyles) {
+    if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'block';
+    if (compStyles.isCheckbox || compStyles.isRadio) {
+        if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
+        if (typeof _syncCheckboxRadioProps === 'function') {
+            _syncCheckboxRadioProps(compStyles);
+        }
+    }
+}
+
+function _syncAtomTypeProps(compStyles, editingType) {
+    const item = ATOM_PROP_SYNC_MAP[editingType];
+    if (!item) return;
+    const sec = DOM[item.sec] || (item.secId ? document.getElementById(item.secId) : null);
+    if (sec) sec.style.display = 'block';
+    if (typeof window[item.legacy] === 'function') {
+        window[item.legacy](compStyles);
+    } else if (window.InspectorAtoms && typeof window.InspectorAtoms[item.method] === 'function') {
+        window.InspectorAtoms[item.method](compStyles);
+    }
+}
+
+function _syncPopupTypeProps(compStyles) {
+    const popupSec = DOM.popupPropSection || document.getElementById('popup-inspector-section');
+    if (popupSec) popupSec.style.display = 'block';
+    if (window.InspectorPopup && typeof window.InspectorPopup.sync === 'function') {
+        window.InspectorPopup.sync(compStyles);
+    }
+    if (window.InspectorPopup && typeof window.InspectorPopup.init === 'function') {
+        window.InspectorPopup.init();
+    }
+}
+
+function _syncAccordionTypeProps(compStyles) {
+    if (DOM.accordionPropSection) DOM.accordionPropSection.style.display = 'block';
+    if (typeof _syncAccordionProps === 'function') {
+        _syncAccordionProps(compStyles);
+    }
+}
+
+function _syncGridTypeProps(compStyles) {
+    if (DOM.gridPropSection) DOM.gridPropSection.style.display = 'block';
+    const activeEl = document.activeElement;
+    const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+    const isTypingInGrid = !isBtn && activeEl && (
+        activeEl.classList.contains('grid-col-width-input') || 
+        activeEl.classList.contains('grid-col-name-input') || 
+        activeEl.classList.contains('grid-col-options-input') || 
+        (activeEl.tagName === 'INPUT' && activeEl.closest('#grid-inspector-section')) || 
+        (activeEl.tagName === 'TEXTAREA' && activeEl.closest('#grid-inspector-section'))
+    );
+    if (!isTypingInGrid) {
+        if (typeof _syncGridProps === 'function') {
+            _syncGridProps(compStyles);
+        }
+    }
+    if (typeof window.initGridEvents === 'function') {
+        window.initGridEvents();
+    }
+}
+
+function _syncAdminSettingsTypeProps(compStyles) {
+    if (DOM.adminSettingsPropSection) DOM.adminSettingsPropSection.style.display = 'block';
+    const activeEl = document.activeElement;
+    const isBtn = activeEl && activeEl.tagName === 'BUTTON';
+    const isTypingInAdminProps = !isBtn && activeEl && (
+        activeEl.classList.contains('admin-col-label-input') || 
+        activeEl.classList.contains('admin-row-height-input') || 
+        activeEl.id === 'prop-admin-group-header-title' || 
+        activeEl.id === 'prop-admin-label-width-slider' || 
+        activeEl.id === 'prop-admin-label-width-number'
+    );
+    if (!isTypingInAdminProps) {
+        if (typeof window._syncAdminSettingsProps === 'function') {
+            window._syncAdminSettingsProps(compStyles);
+        }
+    }
+}
+
+function _syncCheckboxRadioTypeProps(compStyles) {
+    const activeEl = document.activeElement;
+    const isTypingCheckboxLabel = activeEl && activeEl.id === 'prop-atom-text-content';
+    if (!isTypingCheckboxLabel) {
+        if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
+        if (typeof _syncCheckboxRadioProps === 'function') {
+            _syncCheckboxRadioProps(compStyles);
+        }
+    }
+}
+
+function _syncTabTypeProps(compStyles) {
+    if (DOM.tabPropSection) DOM.tabPropSection.style.display = 'block';
+    if (window.InspectorTab && typeof window.InspectorTab.sync === 'function') {
+        window.InspectorTab.sync(compStyles);
+    }
+    if (window.InspectorTab && typeof window.InspectorTab.bindEvents === 'function') {
+        window.InspectorTab.bindEvents();
+    }
+}
+
+// Strategy Dispatcher Map for Component Property Synchronization
+const TYPE_SYNC_STRATEGIES = {
+    'table': _syncTableTypeProps,
+    'line': _syncLineTypeProps,
+    'illustration': _syncIllustrationTypeProps,
+    'icon': _syncIconTypeProps,
+    'popup': _syncPopupTypeProps,
+    'accordion': _syncAccordionTypeProps,
+    'grid': _syncGridTypeProps,
+    'admin-settings': _syncAdminSettingsTypeProps,
+    'tab': _syncTabTypeProps
+};
+
 function _syncComponentTypeProperties(compStyles, editingType) {
     if (editingType === 'pin' || editingType === 'shape') {
-        if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'block';
-        if (window.InspectorShapes && typeof window.InspectorShapes.sync === 'function') {
-            window.InspectorShapes.sync(compStyles);
-        }
-        if (DOM.textPropSection && !compStyles.isImage && !compStyles.isMultiSameType) {
-            DOM.textPropSection.style.display = 'block';
-        }
-
-        const patternGroup = document.getElementById('shape-pattern-type-group');
-        const bgColorGroup = document.getElementById('shape-bg-color-group');
-        const bgOpacityGroup = document.getElementById('shape-bg-opacity-group');
-        const isPattern = (compStyles.shapeType === 'pattern');
-        
-        if (patternGroup) {
-            patternGroup.style.display = isPattern ? 'block' : 'none';
-            if (isPattern && compStyles.patternType) {
-                if (typeof window._syncPatternVisualBtns === 'function') {
-                    window._syncPatternVisualBtns(compStyles.patternType);
-                }
-            }
-        }
-        if (bgColorGroup) {
-            bgColorGroup.style.display = isPattern ? 'none' : 'grid';
-        }
-        if (bgOpacityGroup) {
-            bgOpacityGroup.style.display = isPattern ? 'none' : 'block';
-        }
-
-        const arrowGroup = document.getElementById('shape-arrow-direction-group');
-        const cornerGroup = document.getElementById('shape-corner-style-group');
-        const waveGroup = document.getElementById('shape-wave-direction-group');
-        const isRect = (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage');
-        const isArrow = (compStyles.shapeType === 'arrow' || compStyles.id === 'v4-shape-arrow');
-        const isTriangle = (compStyles.shapeType === 'triangle' || compStyles.id === 'v4-shape-triangle');
-        const isArrowOrTriangle = isArrow || isTriangle;
-        const isWave = (compStyles.shapeType === 'wave' || compStyles.id === 'v4-shape-wave' || (compStyles.classList && compStyles.classList.includes('v4-shape-wave')));
-
-        if (cornerGroup) cornerGroup.style.display = isRect ? 'block' : 'none';
-        if (arrowGroup) {
-            if (isArrowOrTriangle) {
-                arrowGroup.style.display = 'block';
-                const currentDir = compStyles.direction || compStyles.arrowDir || 'right';
-                if (typeof window._syncArrowDirBtns === 'function') {
-                    window._syncArrowDirBtns(currentDir);
-                }
-            } else {
-                arrowGroup.style.display = 'none';
-            }
-        }
-        if (waveGroup) {
-            if (isWave) {
-                waveGroup.style.display = 'block';
-                const currentWaveDir = compStyles.waveDir || 'horizontal';
-                if (typeof window._syncWaveDirBtns === 'function') {
-                    window._syncWaveDirBtns(currentWaveDir);
-                }
-            } else {
-                waveGroup.style.display = 'none';
-            }
-        }
-    } else if (editingType === 'table') {
-        if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'block';
-    } else if (editingType === 'line') {
-        if (DOM.linePropSection) DOM.linePropSection.style.display = 'block';
-        if (typeof window._syncLineEditorProps === 'function') {
-            window._syncLineEditorProps(compStyles);
-        }
-    } else if (editingType === 'illustration') {
-        if (DOM.illustrationPropSection) DOM.illustrationPropSection.style.display = 'block';
-        if (typeof window._syncIllustrationProps === 'function') {
-            window._syncIllustrationProps(compStyles);
-        }
-    } else if (editingType === 'icon') {
-        if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'block';
-        if (compStyles.isCheckbox || compStyles.isRadio) {
-            if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
-            if (typeof _syncCheckboxRadioProps === 'function') {
-                _syncCheckboxRadioProps(compStyles);
-            }
-        }
-    } else if (ATOM_PROP_SYNC_MAP[editingType]) {
-        const item = ATOM_PROP_SYNC_MAP[editingType];
-        const sec = DOM[item.sec] || (item.secId ? document.getElementById(item.secId) : null);
-        if (sec) sec.style.display = 'block';
-        if (typeof window[item.legacy] === 'function') {
-            window[item.legacy](compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms[item.method] === 'function') {
-            window.InspectorAtoms[item.method](compStyles);
-        }
-    } else if (editingType === 'popup') {
-        const popupSec = DOM.popupPropSection || document.getElementById('popup-inspector-section');
-        if (popupSec) popupSec.style.display = 'block';
-        if (window.InspectorPopup && typeof window.InspectorPopup.sync === 'function') {
-            window.InspectorPopup.sync(compStyles);
-        }
-        if (window.InspectorPopup && typeof window.InspectorPopup.init === 'function') {
-            window.InspectorPopup.init();
-        }
-    } else if (editingType === 'accordion') {
-        if (DOM.accordionPropSection) DOM.accordionPropSection.style.display = 'block';
-        if (typeof _syncAccordionProps === 'function') {
-            _syncAccordionProps(compStyles);
-        }
-    } else if (editingType === 'grid') {
-        if (DOM.gridPropSection) DOM.gridPropSection.style.display = 'block';
-        const activeEl = document.activeElement;
-        const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-        const isTypingInGrid = !isBtn && activeEl && (
-            activeEl.classList.contains('grid-col-width-input') || 
-            activeEl.classList.contains('grid-col-name-input') || 
-            activeEl.classList.contains('grid-col-options-input') || 
-            (activeEl.tagName === 'INPUT' && activeEl.closest('#grid-inspector-section')) || 
-            (activeEl.tagName === 'TEXTAREA' && activeEl.closest('#grid-inspector-section'))
-        );
-        if (!isTypingInGrid) {
-            if (typeof _syncGridProps === 'function') {
-                _syncGridProps(compStyles);
-            }
-        }
-        if (typeof window.initGridEvents === 'function') {
-            window.initGridEvents();
-        }
-    } else if (editingType === 'admin-settings') {
-        if (DOM.adminSettingsPropSection) DOM.adminSettingsPropSection.style.display = 'block';
-        const activeEl = document.activeElement;
-        const isBtn = activeEl && activeEl.tagName === 'BUTTON';
-        const isTypingInAdminProps = !isBtn && activeEl && (activeEl.classList.contains('admin-col-label-input') || activeEl.classList.contains('admin-row-height-input') || activeEl.id === 'prop-admin-group-header-title' || activeEl.id === 'prop-admin-label-width-slider' || activeEl.id === 'prop-admin-label-width-number');
-        if (!isTypingInAdminProps) {
-            if (typeof window._syncAdminSettingsProps === 'function') {
-                window._syncAdminSettingsProps(compStyles);
-            }
-        }
-    } else if (compStyles && (compStyles.isCheckbox || compStyles.isRadio)) {
-        const activeEl = document.activeElement;
-        const isTypingCheckboxLabel = activeEl && activeEl.id === 'prop-atom-text-content';
-        if (!isTypingCheckboxLabel) {
-            if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
-            if (typeof _syncCheckboxRadioProps === 'function') {
-                _syncCheckboxRadioProps(compStyles);
-            }
-        }
-    } else if (editingType === 'tab') {
-        if (DOM.tabPropSection) DOM.tabPropSection.style.display = 'block';
-        if (window.InspectorTab && typeof window.InspectorTab.sync === 'function') {
-            window.InspectorTab.sync(compStyles);
-        }
-        if (window.InspectorTab && typeof window.InspectorTab.bindEvents === 'function') {
-            window.InspectorTab.bindEvents();
-        }
+        return _syncShapeOrPinTypeProps(compStyles);
+    }
+    if (ATOM_PROP_SYNC_MAP[editingType]) {
+        return _syncAtomTypeProps(compStyles, editingType);
+    }
+    const strategy = TYPE_SYNC_STRATEGIES[editingType];
+    if (typeof strategy === 'function') {
+        return strategy(compStyles);
+    }
+    if (compStyles && (compStyles.isCheckbox || compStyles.isRadio)) {
+        return _syncCheckboxRadioTypeProps(compStyles);
     }
 }
 
@@ -864,8 +902,6 @@ function _syncSelectionActionBar(compStyles) {
             }
             if (groupDimWidth) groupDimWidth.innerText = wVal + 'px';
             if (groupDimHeight) groupDimHeight.innerText = hVal + 'px';
-        } else {
-            groupDimBar.style.setProperty('display', 'none', 'important');
         }
     }
 
@@ -873,364 +909,12 @@ function _syncSelectionActionBar(compStyles) {
     _syncScrollPinUI(compStyles);
 }
 
-// 3.8.1 Scroll Pin (Sticky/Fixed Navigation HUD & Viewport Pin) Synchronization & Binding
-function _setScrollPin(mode, extraOptions) {
-    const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-    if (!selIds || selIds.length === 0) return;
+// 3.8.1 Scroll Pin (Delegated to assets/inspector/inspector_scroll_pin.js SSOT)
+const _setScrollPin = (mode, opt) => (window.InspectorScrollPin ? window.InspectorScrollPin.setScrollPin(mode, opt) : window._setScrollPin?.(mode, opt));
+const _updateScrollPinButtonsUI = (mode, isPin, payload) => (window.InspectorScrollPin ? window.InspectorScrollPin.updateButtonsUI(mode, isPin, payload) : window._updateScrollPinButtonsUI?.(mode, isPin, payload));
+const _syncScrollPinUI = (compStyles) => (window.InspectorScrollPin ? window.InspectorScrollPin.syncUI(compStyles) : window._syncScrollPinUI?.(compStyles));
+const _bindScrollPinEvents = () => (window.InspectorScrollPin ? window.InspectorScrollPin.bindEvents() : window._bindScrollPinEvents?.());
 
-    const iframe = document.getElementById('main-iframe');
-    const iframeDoc = iframe?.contentDocument;
-    const el = iframeDoc?.getElementById(selIds[0]);
-    const isPin = el?.classList.contains('pin-marker') || el?.classList.contains('text-marker');
-
-    const payload = {
-        ids: selIds,
-        id: selIds[0],
-        mode: mode
-    };
-
-    if (!isPin && el) {
-        if (mode === 'custom' || mode === 'floating') {
-            const domTop = parseFloat(el.style.top) || el.offsetTop || 0;
-            const targetY = (extraOptions && extraOptions.targetY !== undefined) ? extraOptions.targetY : domTop;
-            payload.targetY = targetY;
-        } else if (mode === 'sticky') {
-            const stickyTop = (extraOptions && extraOptions.stickyTop !== undefined) ? extraOptions.stickyTop : 0;
-            payload.stickyTop = stickyTop;
-        }
-
-        if (extraOptions && extraOptions.effect !== undefined) {
-            payload.effect = extraOptions.effect;
-        } else if (mode === 'none') {
-            payload.effect = 'always';
-        } else {
-            const curEffect = el.getAttribute('data-scroll-effect') || 'always';
-            payload.effect = curEffect;
-        }
-    }
-
-    if (iframe && iframe.contentWindow && window.MessageHub) {
-        window.MessageHub.send(iframe.contentWindow, 'LF_SET_SCROLL_FIXED', payload);
-    }
-    if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
-        window.EditorBus.sendToIframe('LF_SET_SCROLL_FIXED', payload);
-    }
-
-    if (state.selectedComponent) {
-        state.selectedComponent.scrollFixed = mode;
-        if (payload.effect) state.selectedComponent.scrollEffect = payload.effect;
-    }
-    if (state.selectedComponentStyles) {
-        state.selectedComponentStyles.scrollFixed = mode;
-        if (payload.effect) state.selectedComponentStyles.scrollEffect = payload.effect;
-    }
-
-    if (isPin && el) {
-        let pIdx = parseInt(el.getAttribute('data-index'));
-        if (isNaN(pIdx)) {
-            pIdx = parseInt((el.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-        }
-        if (!isNaN(pIdx) && window.state && window.state.activeFile && window.state.activeFile.meta && window.state.activeFile.meta.description) {
-            const descItem = window.state.activeFile.meta.description[pIdx];
-            if (descItem) {
-                descItem.scrollFixed = mode;
-                if (typeof window.markAsDirty === 'function') window.markAsDirty();
-            }
-            const descRow = document.querySelector('.desc-row[data-index="' + pIdx + '"]');
-            if (descRow) {
-                const existingBadge = descRow.querySelector('.desc-pin-fixed-badge');
-                const isFixedPin = (mode === 'viewport' || mode === 'fixed' || mode === 'top');
-                if (isFixedPin) {
-                    if (!existingBadge) {
-                        const labelEl = descRow.querySelector('.desc-header-label');
-                        if (labelEl) {
-                            const bSpan = document.createElement('span');
-                            bSpan.className = 'desc-pin-fixed-badge';
-                            bSpan.innerText = '📌 고정';
-                            labelEl.parentNode.insertBefore(bSpan, labelEl.nextSibling);
-                        }
-                    }
-                } else {
-                    if (existingBadge) existingBadge.remove();
-                }
-                const anchorBtn = descRow.querySelector('.desc-pin-anchor-btn');
-                if (anchorBtn) {
-                    anchorBtn.classList.toggle('is-fixed', isFixedPin);
-                    anchorBtn.title = isFixedPin ? '화면 고정 해제 (본문 스크롤 모드로 전환)' : '화면 고정 (스크롤 시 화면에 항상 고정)';
-                    const anchorTxt = anchorBtn.querySelector('.anchor-txt');
-                    if (anchorTxt) anchorTxt.innerText = isFixedPin ? '화면 고정' : '본문 배치';
-                }
-            }
-        }
-    }
-
-    _updateScrollPinButtonsUI(mode, isPin, payload);
-}
-
-function _updateScrollPinButtonsUI(mode, isPin, payload) {
-    const btnNone = document.getElementById('btn-scroll-pin-none');
-    const btnTop = document.getElementById('btn-scroll-pin-top');
-    const btnBottom = document.getElementById('btn-scroll-pin-bottom');
-    const btnCustom = document.getElementById('btn-scroll-pin-custom');
-    const btnSticky = document.getElementById('btn-scroll-pin-sticky');
-
-    const btnPinContent = document.getElementById('btn-pin-pos-content');
-    const btnPinFixed = document.getElementById('btn-pin-pos-fixed');
-
-    const badge = document.getElementById('scroll-pin-status-badge');
-    const titleText = document.getElementById('scroll-pin-title-text');
-    const objGroup = document.getElementById('scroll-pin-object-group');
-    const markerGroup = document.getElementById('scroll-pin-marker-group');
-    const offsetBar = document.getElementById('scroll-pin-offset-bar');
-    const offsetLabel = document.getElementById('scroll-pin-offset-label');
-    const offsetInput = document.getElementById('scroll-pin-offset-input');
-    const effectBar = document.getElementById('scroll-pin-effect-bar');
-    const effectSelect = document.getElementById('scroll-pin-effect-select');
-
-    if (isPin) {
-        if (titleText) titleText.innerText = 'PIN ANCHOR';
-        if (objGroup) objGroup.style.display = 'none';
-        if (markerGroup) markerGroup.style.display = 'flex';
-        if (offsetBar) offsetBar.style.display = 'none';
-        if (effectBar) effectBar.style.display = 'none';
-
-        const isFixedPin = (mode === 'viewport' || mode === 'fixed' || mode === 'top');
-        if (btnPinContent) btnPinContent.classList.toggle('active', !isFixedPin);
-        if (btnPinFixed) btnPinFixed.classList.toggle('active', isFixedPin);
-
-        if (badge) {
-            badge.className = 'scroll-pin-badge';
-            if (isFixedPin) {
-                badge.innerText = 'FIXED PIN 📌';
-                badge.classList.add('badge-viewport');
-            } else {
-                badge.innerText = 'CONTENT PIN';
-            }
-        }
-    } else {
-        if (titleText) titleText.innerText = 'SCROLL PIN';
-        if (objGroup) objGroup.style.display = 'flex';
-        if (markerGroup) markerGroup.style.display = 'none';
-
-        const pinMode = (mode === 'top' || mode === 'bottom' || mode === 'custom' || mode === 'floating' || mode === 'sticky') ? mode : 'none';
-
-        if (btnNone) btnNone.classList.toggle('active', pinMode === 'none');
-        if (btnTop) btnTop.classList.toggle('active', pinMode === 'top');
-        if (btnBottom) btnBottom.classList.toggle('active', pinMode === 'bottom');
-        if (btnCustom) btnCustom.classList.toggle('active', pinMode === 'custom' || pinMode === 'floating');
-        if (btnSticky) btnSticky.classList.toggle('active', pinMode === 'sticky');
-
-        // Scroll Reaction (Hide on scroll up / down) Sub-bar
-        // Available for top & bottom pinned objects (and custom if desired)
-        if (effectBar) {
-            if (pinMode === 'top' || pinMode === 'bottom' || pinMode === 'custom') {
-                effectBar.style.display = 'flex';
-                if (effectSelect) {
-                    const currentEffect = (payload && payload.effect) ? payload.effect : 'always';
-                    effectSelect.value = currentEffect;
-                }
-            } else {
-                effectBar.style.display = 'none';
-            }
-        }
-
-        if (offsetBar && offsetLabel && offsetInput) {
-            if (pinMode === 'custom' || pinMode === 'floating') {
-                offsetBar.style.display = 'flex';
-                offsetLabel.innerText = 'VIEWPORT Y';
-                if (payload && payload.targetY !== undefined) {
-                    offsetInput.value = Math.round(payload.targetY);
-                }
-            } else if (pinMode === 'sticky') {
-                offsetBar.style.display = 'flex';
-                offsetLabel.innerText = 'STICKY TOP';
-                if (payload && payload.stickyTop !== undefined) {
-                    offsetInput.value = Math.round(payload.stickyTop);
-                }
-            } else {
-                offsetBar.style.display = 'none';
-            }
-        }
-
-        if (badge) {
-            badge.className = 'scroll-pin-badge';
-            const eff = (payload && payload.effect) ? payload.effect : 'always';
-            const effSuffix = (eff === 'hide-down') ? ' (↓숨김)' : (eff === 'hide-up') ? ' (↑숨김)' : '';
-
-            if (pinMode === 'top') {
-                badge.innerText = 'PIN TOP' + effSuffix;
-                badge.classList.add('badge-top');
-            } else if (pinMode === 'bottom') {
-                badge.innerText = 'PIN BOTTOM' + effSuffix;
-                badge.classList.add('badge-bottom');
-            } else if (pinMode === 'custom' || pinMode === 'floating') {
-                badge.innerText = 'FLOATING' + effSuffix;
-                badge.classList.add('badge-custom');
-            } else if (pinMode === 'sticky') {
-                badge.innerText = 'STICKY';
-                badge.classList.add('badge-sticky');
-            } else {
-                badge.innerText = 'SCROLL';
-            }
-        }
-    }
-}
-
-function _syncScrollPinUI(compStyles) {
-    const scrollPinBar = document.getElementById('selection-scroll-pin-bar');
-    if (!scrollPinBar) return;
-
-    const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-    if (selIds.length === 0) {
-        scrollPinBar.style.setProperty('display', 'none', 'important');
-        return;
-    }
-
-    // Check if current screen or element is in a responsive / scrollable frame
-    let isResponsiveScreen = false;
-    let isPin = false;
-    let currentFixed = (compStyles && compStyles.scrollFixed) || 'none';
-    let currentEffect = (compStyles && compStyles.scrollEffect) || 'always';
-    let targetY = undefined;
-    let stickyTop = undefined;
-
-    try {
-        const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-        if (iframeDoc) {
-            if (typeof window.isResponsiveDocument === 'function') {
-                isResponsiveScreen = window.isResponsiveDocument(iframeDoc);
-            }
-            if (!isResponsiveScreen) {
-                isResponsiveScreen = !!iframeDoc.querySelector('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content, .pc-browser-frame, .mobile-frame, .responsive-compare-container, .dual-mobile-container');
-            }
-
-            const el = iframeDoc.getElementById(selIds[0]);
-            if (el) {
-                isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
-                currentFixed = el.getAttribute('data-scroll-fixed') || currentFixed || 'none';
-                if (el.hasAttribute('data-scroll-effect')) {
-                    currentEffect = el.getAttribute('data-scroll-effect');
-                }
-                if (el.hasAttribute('data-scroll-target-y')) {
-                    targetY = parseFloat(el.getAttribute('data-scroll-target-y'));
-                } else {
-                    targetY = parseFloat(el.style.top) || el.offsetTop || 0;
-                }
-                if (el.hasAttribute('data-scroll-sticky-top')) {
-                    stickyTop = parseFloat(el.getAttribute('data-scroll-sticky-top'));
-                } else {
-                    stickyTop = 0;
-                }
-            }
-        }
-    } catch(e) {}
-
-    const shouldShow = isResponsiveScreen || (currentFixed !== 'none') || (compStyles && compStyles.isScrollPinnable);
-
-    if (shouldShow) {
-        scrollPinBar.style.setProperty('display', 'flex', 'important');
-        _updateScrollPinButtonsUI(currentFixed, isPin, { targetY: targetY, stickyTop: stickyTop, effect: currentEffect });
-    } else {
-        scrollPinBar.style.setProperty('display', 'none', 'important');
-    }
-}
-
-function _bindScrollPinEvents() {
-    const btnNone = document.getElementById('btn-scroll-pin-none');
-    const btnTop = document.getElementById('btn-scroll-pin-top');
-    const btnBottom = document.getElementById('btn-scroll-pin-bottom');
-    const btnCustom = document.getElementById('btn-scroll-pin-custom');
-    const btnSticky = document.getElementById('btn-scroll-pin-sticky');
-
-    const btnPinContent = document.getElementById('btn-pin-pos-content');
-    const btnPinFixed = document.getElementById('btn-pin-pos-fixed');
-    const offsetInput = document.getElementById('scroll-pin-offset-input');
-    const effectSelect = document.getElementById('scroll-pin-effect-select');
-
-    if (btnNone) {
-        btnNone.onclick = (e) => {
-            e.stopPropagation();
-            _setScrollPin('none');
-        };
-    }
-    if (btnTop) {
-        btnTop.onclick = (e) => {
-            e.stopPropagation();
-            _setScrollPin('top');
-        };
-    }
-    if (btnBottom) {
-        btnBottom.onclick = (e) => {
-            e.stopPropagation();
-            _setScrollPin('bottom');
-        };
-    }
-    if (btnCustom) {
-        btnCustom.onclick = (e) => {
-            e.stopPropagation();
-            _setScrollPin('custom');
-        };
-    }
-    if (btnSticky) {
-        btnSticky.onclick = (e) => {
-            e.stopPropagation();
-            _setScrollPin('sticky');
-        };
-    }
-
-    if (effectSelect) {
-        effectSelect.onchange = (e) => {
-            e.stopPropagation();
-            const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-            if (!selIds || selIds.length === 0) return;
-            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-            const el = iframeDoc?.getElementById(selIds[0]);
-            if (!el) return;
-            const curMode = el.getAttribute('data-scroll-fixed') || 'none';
-            if (curMode !== 'none') {
-                _setScrollPin(curMode, { effect: effectSelect.value });
-            }
-        };
-    }
-
-    if (btnPinContent) {
-        btnPinContent.onclick = (e) => {
-            e.stopPropagation();
-            _setScrollPin('none');
-        };
-    }
-    if (btnPinFixed) {
-        btnPinFixed.onclick = (e) => {
-            e.stopPropagation();
-            _setScrollPin('viewport');
-        };
-    }
-
-    if (offsetInput) {
-        const handleOffsetChange = () => {
-            const val = parseFloat(offsetInput.value);
-            if (isNaN(val)) return;
-            const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-            if (selIds.length === 0) return;
-            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-            const el = iframeDoc?.getElementById(selIds[0]);
-            if (!el) return;
-            const curMode = el.getAttribute('data-scroll-fixed');
-            if (curMode === 'custom' || curMode === 'floating') {
-                _setScrollPin('custom', { targetY: val });
-            } else if (curMode === 'sticky') {
-                _setScrollPin('sticky', { stickyTop: val });
-            }
-        };
-        offsetInput.onchange = handleOffsetChange;
-        offsetInput.onkeydown = (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleOffsetChange();
-            }
-        };
-    }
-}
 
 // 3.9 Synchronize Content to Quill Editor
 function _syncQuillContent(compStyles, editingType) {
@@ -1576,25 +1260,7 @@ window._syncGridProps = _syncGridProps;
 window._syncCheckboxRadioProps = _syncCheckboxRadioProps;
 window._syncDatePickerProps = _syncDatePickerProps;
 
-if (typeof window.getCategoryData !== 'function') {
-    window.getCategoryData = function(type) {
-        const categories = {
-            'cover': { label: 'COVER', code: 'CO', class: 'badge-cover' },
-            'architecture': { label: 'ARCH', code: 'AR', class: 'badge-architecture' },
-            'plan': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
-            'plan-delivery': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
-            'case-study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
-            'case_study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
-            'ui': { label: 'UI', code: 'UI', class: 'badge-ui' },
-            'responsive-ui': { label: 'PC+MO', code: 'PC', class: 'badge-responsive-ui' },
-            'mobile-ui': { label: 'MOBILE', code: 'MO', class: 'badge-mobile-ui' },
-            'admin': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
-            'admin-nbos': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
-            'admin-onesphere': { label: 'ADMIN', code: 'AD', class: 'badge-admin' }
-        };
-        return categories[type] || { label: 'ETC', code: (type || 'ET').slice(0, 2).toUpperCase(), class: 'badge-default' };
-    };
-}
+// Category metadata is unified in assets/vctrl_common.js SSOT (window.getCategoryData)
 
 let flyoutHideTimer = null;
 let currentFlyoutScreen = null;

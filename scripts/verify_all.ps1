@@ -17,6 +17,7 @@ $jsFiles = @(
     "assets/vctrl_undo.js",
     "assets/vctrl_text_measurer.js",
     "assets/vctrl_ui_atoms.js",
+    "assets/vctrl_ui_atoms_inputs.js",
     "assets/vctrl_ui_atoms_cursor.js",
     "assets/vctrl_component_illustrations.js",
     "assets/vctrl_design_system.js",
@@ -50,6 +51,7 @@ $jsFiles = @(
     "assets/vctrl_color_picker.js",
     "assets/vctrl_system_modals.js",
     "assets/inspector/inspector_quill.js",
+    "assets/inspector/inspector_scroll_pin.js",
     "assets/vctrl_inspector.js",
     "assets/vctrl_screen_manager.js",
     "assets/vctrl_revision_history.js",
@@ -67,7 +69,15 @@ $jsFiles = @(
     "assets/inspector/inspector_atoms.js",
     "assets/inspector/inspector_admin_settings.js",
     "assets/inspector/inspector_text_formatter.js",
-    "assets/inspector/inspector_table.js"
+    "assets/inspector/inspector_table.js",
+    "assets/inspector/inspector_popup.js",
+    "assets/dashboard.js",
+    "assets/vctrl_canvas_background.js",
+    "assets/vctrl_component_data.js",
+    "assets/vctrl_core_router.js",
+    "assets/vctrl_parent_shortcuts.js",
+    "assets/vctrl_pdf_exporter.js",
+    "assets/vctrl_storage.js"
 )
 
 $scriptsTags = ($jsFiles | ForEach-Object { "<script src='../$_' onerror=`"window.errors.push({ script: '$_' })`"></script>" }) -join "`n"
@@ -102,8 +112,11 @@ $htmlContent = @"
             { name: 'v4TableScript', code: window.v4TableScript },
             { name: 'v4TextMeasurerScript', code: window.v4TextMeasurerScript },
             { name: 'v4UIAtomsScript', code: window.v4UIAtomsScript },
+            { name: 'v4UIAtomsInputsScript', code: window.v4UIAtomsInputsScript },
             { name: 'v4UIAtomsCursorScript', code: window.v4UIAtomsCursorScript },
             { name: 'v4DesignSystemScript', code: window.v4DesignSystemScript },
+            { name: 'v4ClipboardObjectsScript', code: window.v4ClipboardObjectsScript },
+            { name: 'v4FormatPainterScript', code: window.v4FormatPainterScript },
             { name: 'v4ShortcutsScript', code: window.v4ShortcutsScript },
             { name: 'v4CommonScript', code: window.v4CommonScript },
             { name: 'v4ObjectShapeScript', code: window.v4ObjectShapeScript },
@@ -115,9 +128,12 @@ $htmlContent = @"
             { name: 'v4TabScript', code: window.v4TabScript },
             { name: 'v4ResponsiveSmartGuideMathScript', code: window.v4ResponsiveSmartGuideMathScript },
             { name: 'v4ResponsiveSmartGuideScript', code: window.v4ResponsiveSmartGuideScript },
+            { name: 'v4ResponsivePinsScript', code: window.v4ResponsivePinsScript },
+            { name: 'v4IframeStyleExtractorScript', code: window.v4IframeStyleExtractorScript },
+            { name: 'v4IframeLayeringScript', code: window.v4IframeLayeringScript },
+            { name: 'v4IframeInserterScript', code: window.v4IframeInserterScript },
             { name: 'v4Script', code: window.v4Script },
             { name: 'v4ResponsiveMultiselectScript', code: window.v4ResponsiveMultiselectScript },
-            { name: 'v4ResponsivePinsScript', code: window.v4ResponsivePinsScript },
             { name: 'v4ScrollPinScript', code: window.v4ScrollPinScript }
         ];
 

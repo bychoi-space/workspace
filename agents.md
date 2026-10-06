@@ -101,9 +101,10 @@
   - **`vctrl_grouping.js` (Interaction Layer)**:
     - **역할**: 다중 요소 관리자. 드래그 범위 선택(Marquee), 다중 선택 상태(`selectedIds`), 그룹 이동/삭제/그룹화 연산 로직 전담.
   - **`vctrl_inspector.js` 및 `assets/inspector/*` (UI Controller & Domain Inspectors)**:
-    - **역할**: 시스템의 '얼굴'. `vctrl_inspector.js`는 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 및 플로팅 카드를 총괄하며, 각 컴포넌트별 상세 속성 제어는 분리된 도메인 인스펙터(`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_popup.js`, `inspector_admin_settings.js`, `inspector_text_formatter.js`)가 전담합니다.
+    - **역할**: 시스템의 '얼굴'. `vctrl_inspector.js`는 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 및 플로팅 카드를 총괄하며, 각 컴포넌트별 상세 속성 제어는 분리된 도메인 인스펙터(`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_popup.js`, `inspector_admin_settings.js`, `inspector_text_formatter.js`, `inspector_scroll_pin.js`)가 전담합니다.
     - **`inspector_atoms.js` (`window.InspectorAtoms`)**: 체크박스/라디오, 텍스트박스/텍스트에어리어, 서치바, 데이트피커 등 아톰 속성 인스펙터 동기화 전담 SSOT 모듈.
     - **`inspector_popup.js` (`window.InspectorPopup`)**: 팝업 윈도우 컴포넌트(`v4-atom-popup`)의 크기, 테두리, 배경색, 타이틀, 버튼 텍스트/스타일 등 인스펙터 속성 동기화 및 캔버스 양방향 이벤트 제어 전담 SSOT 모듈.
+    - **`inspector_scroll_pin.js` (`window.InspectorScrollPin`)**: 반응형 화면 및 캔버스 요소의 스크롤 핀(상단/하단/커스텀/스티키), 뷰포트 고정 모드 및 이펙트(`data-scroll-effect`) 인스펙터 바인딩과 UI 동기화 전담 SSOT 모듈.
     - **`inspector_text_formatter.js` (`window.InspectorTextFormatter`)**: Quill 에디터와 캔버스 텍스트 셀 간 연속 공백 보존(`preserveConsecutiveSpaces`, 선행/다중 공백 NBSP 변환) 및 폰트 사이즈 인라인 정규화(`normalizeHtmlForQuill`)를 전담합니다.
   - **`vctrl_common.js` (Common Bus, Sanitizer & Utilities)**:
     - **역할**: 
@@ -120,7 +121,9 @@
   - **`vctrl_presentation_pen.js` (Presentation Drawing Engine)**:
     - **역할**: 풀스크린 모드(`F`)에서 `Shift` 키 홀드 시 캔버스 형광펜/레이저 포인터 실시간 드로잉 인터랙션 전담.
   - **`vctrl_ui_atoms.js` (UI Atoms Engine & Template Registry - Iframe Side)**:
-    - **역할**: 버튼, 배지, 체크박스, 라디오, 토글, 셀렉트박스, 데이트피커, 파일업로드, 알림 등 V4 아톰 컴포넌트의 마크업 생성 및 동적 렌더링 SSOT (`v4UIAtomsScript`).
+    - **역할**: 버튼, 배지, 체크박스, 라디오, 팝업, 알림, 관리자 설정 등 V4 디스플레이/위젯 아톰 컴포넌트의 마크업 생성 및 동적 렌더링 SSOT (`v4UIAtomsScript`).
+  - **`vctrl_ui_atoms_inputs.js` (UI Atoms Inputs & Controls Engine - Iframe Side)**:
+    - **역할**: 스테퍼(Stepper), 파일업로드, 토글, 셀렉트박스, 데이트피커, 텍스트박스/텍스트에어리어, 검색바 등 사용자 입력 및 폼 컨트롤 아톰 컴포넌트의 이벤트 바인딩 및 동적 상태/프로퍼티 갱신 전담 (`v4UIAtomsInputsScript`).
   - **`vctrl_ui_atoms_cursor.js` (UI Atoms Cursor Engine - Iframe Side)**:
     - **역할**: 포인터/아이빔(I-Beam) 마우스 커서 아톰 컴포넌트 이벤트 바인딩, 자동 너비 맞춤(`fitCursorWidth`), 배지 스타일 및 프로퍼티 동기화 전담 (`v4UIAtomsCursorScript`).
   - **`vctrl_clipboard_objects.js` (Canvas Object Clipboard Engine - Iframe Side)**:

@@ -946,12 +946,6 @@ window.v4Script = `
     };
 
     // --- Helper Handlers for Iframe Core Message Registry ---
-    // --- Component Inserter Delegate (SSOT: assets/vctrl_iframe_inserter.js) ---
-    function handleInsertComponent(d) {
-        if (typeof window.handleInsertComponent === 'function') {
-            return window.handleInsertComponent(d);
-        }
-    }
 
     function handleDeselectAll(d) {
         document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
@@ -1081,8 +1075,16 @@ window.v4Script = `
             notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
         },
 
-        'LF_INSERT_COMPONENT': handleInsertComponent,
-        'LF_INSERT_V4_COMP': handleInsertComponent,
+        'LF_INSERT_COMPONENT': function(d) {
+            if (typeof window.handleInsertComponent === 'function') {
+                return window.handleInsertComponent(d);
+            }
+        },
+        'LF_INSERT_V4_COMP': function(d) {
+            if (typeof window.handleInsertComponent === 'function') {
+                return window.handleInsertComponent(d);
+            }
+        },
 
         'LF_INSERT_COMPONENTS': function(d) {
             const host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;

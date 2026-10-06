@@ -12,6 +12,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_parent_shortcuts.js",
     "c:\Users\sisun\ai_work\assets\vctrl_system_modals.js",
     "c:\Users\sisun\ai_work\assets\inspector\inspector_quill.js",
+    "c:\Users\sisun\ai_work\assets\inspector\inspector_scroll_pin.js",
     "c:\Users\sisun\ai_work\assets\vctrl_inspector.js",
     "c:\Users\sisun\ai_work\assets\vctrl_annotation_pins.js",
     "c:\Users\sisun\ai_work\assets\vctrl_canvas_viewport.js",
@@ -52,6 +53,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_connectors.js",
     "c:\Users\sisun\ai_work\assets\inspector\inspector_admin_settings.js",
     "c:\Users\sisun\ai_work\assets\vctrl_ui_atoms.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_ui_atoms_inputs.js",
     "c:\Users\sisun\ai_work\assets\vctrl_ui_atoms_cursor.js",
     "c:\Users\sisun\ai_work\assets\vctrl_grouping.js",
     "c:\Users\sisun\ai_work\assets\vctrl_table.js",
@@ -62,6 +64,8 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_component_data.js",
     "c:\Users\sisun\ai_work\assets\vctrl_component_illustrations.js",
     "c:\Users\sisun\ai_work\assets\app.js",
+    "c:\Users\sisun\ai_work\assets\dashboard.js",
+    "c:\Users\sisun\ai_work\assets\templates.js",
     "c:\Users\sisun\ai_work\assets\vctrl_undo.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_ports.js",
     "c:\Users\sisun\ai_work\viewer.html"
@@ -100,7 +104,7 @@ vm.createContext(context);
 
 const scriptsToLoad = [
     'vctrl_typography.js', 'vctrl_undo.js', 'vctrl_table.js', 'vctrl_text_measurer.js',
-    'vctrl_ui_atoms.js', 'vctrl_ui_atoms_cursor.js', 'vctrl_design_system.js', 'vctrl_clipboard_objects.js', 'vctrl_format_painter.js', 'vctrl_shortcuts.js', 'vctrl_common.js',
+    'vctrl_ui_atoms.js', 'vctrl_ui_atoms_inputs.js', 'vctrl_ui_atoms_cursor.js', 'vctrl_design_system.js', 'vctrl_clipboard_objects.js', 'vctrl_format_painter.js', 'vctrl_shortcuts.js', 'vctrl_common.js',
     'vctrl_object_shape.js', 'vctrl_object_connector.js', 'vctrl_iframe_drag.js',
     'vctrl_iframe_ports.js', 'vctrl_iframe_grid.js', 'vctrl_iframe_accordion.js',
     'vctrl_iframe_tab.js', 'vctrl_responsive_smartguide_math.js', 'vctrl_responsive_smartguide.js', 'vctrl_responsive_pins.js',
@@ -117,7 +121,7 @@ scriptsToLoad.forEach(s => {
 
 const vars = [
     'v4TypographyScript', 'v4UndoScript', 'v4TableScript', 'v4TextMeasurerScript',
-    'v4UIAtomsScript', 'v4UIAtomsCursorScript', 'v4DesignSystemScript', 'v4ClipboardObjectsScript', 'v4FormatPainterScript', 'v4ShortcutsScript', 'v4CommonScript',
+    'v4UIAtomsScript', 'v4UIAtomsInputsScript', 'v4UIAtomsCursorScript', 'v4DesignSystemScript', 'v4ClipboardObjectsScript', 'v4FormatPainterScript', 'v4ShortcutsScript', 'v4CommonScript',
     'v4ObjectShapeScript', 'v4ObjectConnectorScript', 'v4DragResizeScript',
     'v4PortConnectorScript', 'v4GridScript', 'v4AccordionScript', 'v4TabScript',
     'v4ResponsiveSmartGuideMathScript', 'v4ResponsiveSmartGuideScript', 'v4ResponsivePinsScript',

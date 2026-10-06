@@ -196,10 +196,11 @@ function checkEnvironment() {
             </div>
             <button class="btn-close-banner">오늘 하루 보지 않기</button>
         `;
-        document.body.appendChild(banner);
-        
-        // Animate in
-        setTimeout(() => banner.classList.add('active'), 100);
+        if (document.body) {
+            document.body.appendChild(banner);
+            // Animate in
+            setTimeout(() => banner.classList.add('active'), 100);
+        }
 
         banner.querySelector('.btn-close-banner').onclick = () => {
             localStorage.setItem('hide_env_warning', today);
@@ -668,37 +669,41 @@ function initDatePicker(defaultValue = null) {
     });
 }
 
-DOM.btnCreateProject.onclick = async () => {
-    if (ghConfig.isReadOnly) return showAuthModal();
-    context.isCreateMode = true;
-    context.currentEditingProject = null;
-    DOM.modalMainTitle.innerText = "새 프로젝트 생성";
-    DOM.groupIdField.style.display = "none";
-    DOM.modalFilenameDisplay.innerText = "새로운 프로젝트를 생성합니다. 제목을 입력하면 ID가 자동 생성됩니다.";
-    DOM.metaProjectId.value = "";
-    DOM.metaTitle.value = "";
-    DOM.metaPeriod.value = "";
-    DOM.metaAssignee.value = "";
-    DOM.metaFigma.value = "";
-    DOM.metaNotion.value = "";
-    initDatePicker();
-    
-    // Initialize theme presets to Auto (-1)
-    const indexInput = document.getElementById('meta-theme-index');
-    if (indexInput) indexInput.value = "-1";
-    renderThemePresets(-1);
+if (DOM.btnCreateProject) {
+    DOM.btnCreateProject.onclick = async () => {
+        if (ghConfig.isReadOnly) return showAuthModal();
+        context.isCreateMode = true;
+        context.currentEditingProject = null;
+        if (DOM.modalMainTitle) DOM.modalMainTitle.innerText = "새 프로젝트 생성";
+        if (DOM.groupIdField) DOM.groupIdField.style.display = "none";
+        if (DOM.modalFilenameDisplay) DOM.modalFilenameDisplay.innerText = "새로운 프로젝트를 생성합니다. 제목을 입력하면 ID가 자동 생성됩니다.";
+        if (DOM.metaProjectId) DOM.metaProjectId.value = "";
+        if (DOM.metaTitle) DOM.metaTitle.value = "";
+        if (DOM.metaPeriod) DOM.metaPeriod.value = "";
+        if (DOM.metaAssignee) DOM.metaAssignee.value = "";
+        if (DOM.metaFigma) DOM.metaFigma.value = "";
+        if (DOM.metaNotion) DOM.metaNotion.value = "";
+        initDatePicker();
+        
+        // Initialize theme presets to Auto (-1)
+        const indexInput = document.getElementById('meta-theme-index');
+        if (indexInput) indexInput.value = "-1";
+        renderThemePresets(-1);
 
-    DOM.modal.classList.add('active');
-    DOM.metaTitle.oninput = () => {
-        if (context.isCreateMode) DOM.metaProjectId.value = slugify(DOM.metaTitle.value);
+        if (DOM.modal) DOM.modal.classList.add('active');
+        if (DOM.metaTitle) {
+            DOM.metaTitle.oninput = () => {
+                if (context.isCreateMode && DOM.metaProjectId) DOM.metaProjectId.value = slugify(DOM.metaTitle.value);
+            };
+        }
     };
-};
+}
 
 async function openEditProjectModal(projectName) {
     context.isCreateMode = false;
     context.currentEditingProject = projectName;
-    DOM.modalMainTitle.innerText = "프로젝트 정보 수정";
-    DOM.groupIdField.style.display = "none";
+    if (DOM.modalMainTitle) DOM.modalMainTitle.innerText = "프로젝트 정보 수정";
+    if (DOM.groupIdField) DOM.groupIdField.style.display = "none";
     updateStatusUI('메타데이터 로딩 중... ⏳', '#facc15');
     
     let m = null;
@@ -711,12 +716,12 @@ async function openEditProjectModal(projectName) {
     }
     updateStatusUI('', '');
 
-    DOM.modalFilenameDisplay.innerText = `Project: ${projectName}`;
-    DOM.metaTitle.value = (m && m.title) || projectName;
-    DOM.metaPeriod.value = (m && m.period) || '';
-    DOM.metaAssignee.value = (m && m.assignee) || '';
-    DOM.metaFigma.value = (m && m.figmaUrl) || '';
-    DOM.metaNotion.value = (m && m.notionUrl) || '';
+    if (DOM.modalFilenameDisplay) DOM.modalFilenameDisplay.innerText = `Project: ${projectName}`;
+    if (DOM.metaTitle) DOM.metaTitle.value = (m && m.title) || projectName;
+    if (DOM.metaPeriod) DOM.metaPeriod.value = (m && m.period) || '';
+    if (DOM.metaAssignee) DOM.metaAssignee.value = (m && m.assignee) || '';
+    if (DOM.metaFigma) DOM.metaFigma.value = (m && m.figmaUrl) || '';
+    if (DOM.metaNotion) DOM.metaNotion.value = (m && m.notionUrl) || '';
     initDatePicker(m ? m.period : '');
     
     // Load existing theme index, fallback to -1
@@ -725,12 +730,15 @@ async function openEditProjectModal(projectName) {
     if (indexInput) indexInput.value = themeIndex.toString();
     renderThemePresets(themeIndex);
 
-    DOM.modal.classList.add('active');
+    if (DOM.modal) DOM.modal.classList.add('active');
 }
 
-DOM.btnModalClose.onclick = () => DOM.modal.classList.remove('active');
+if (DOM.btnModalClose) {
+    DOM.btnModalClose.onclick = () => DOM.modal && DOM.modal.classList.remove('active');
+}
 
-DOM.btnModalSave.onclick = async () => {
+if (DOM.btnModalSave) {
+    DOM.btnModalSave.onclick = async () => {
     let projectName = context.isCreateMode ? DOM.metaProjectId.value.trim() : context.currentEditingProject;
     
     // Auto-generate ID if missing in Create Mode
@@ -803,6 +811,7 @@ DOM.btnModalSave.onclick = async () => {
         await Notification.alert(`저장 중 오류가 발생했습니다: ${err.message}`, "저장 오류", "error");
     }
 };
+}
 
 async function handleFiles(fileList) {
     const newFiles = Array.from(fileList).filter(f => f.name.endsWith('.html') || f.name.endsWith('.htm'));
@@ -923,6 +932,16 @@ if (searchInput && searchDropdown) {
     });
 }
 
-// Start system
-checkEnvironment();
-refreshFileList();
+// Start system when running on dashboard page
+function initDashboard() {
+    checkEnvironment();
+    if (document.getElementById('file-list')) {
+        refreshFileList();
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDashboard);
+} else {
+    initDashboard();
+}

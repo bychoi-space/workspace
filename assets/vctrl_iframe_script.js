@@ -382,6 +382,7 @@ window.v4Script = `
             });
         } else {
             isMarquee = true;
+            window.isMarqueeActive = true;
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
             if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
                 window.SelectionAdorner.clear();
@@ -410,12 +411,17 @@ window.v4Script = `
                     parent = parent.parentElement;
                 }
 
+                let compW = parseFloat(c.style.width);
+                let compH = parseFloat(c.style.height);
+                if (isNaN(compW) || compW <= 0) compW = c.offsetWidth;
+                if (isNaN(compH) || compH <= 0) compH = c.offsetHeight;
+
                 targets.push({
                     id: c.id,
                     x: absL,
                     y: absT,
-                    w: c.offsetWidth,
-                    h: c.offsetHeight,
+                    w: compW,
+                    h: compH,
                     isGroupChild: isChild
                 });
             });
@@ -549,6 +555,7 @@ window.v4Script = `
 
         if (isMarquee) {
             isMarquee = false;
+            window.isMarqueeActive = false;
             if (marqueeRafId) {
                 cancelAnimationFrame(marqueeRafId);
                 marqueeRafId = null;

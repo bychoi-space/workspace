@@ -1059,15 +1059,18 @@ window.v4DesignSystemScript = `
     let enforceQueued = false;
     const runEnforceSafe = (mutationsList) => {
         if (enforceQueued) return;
+        if (window.isMarqueeActive) return;
 
-        // Skip mutation if caused solely by SmartGuide overlays, drag handles, or resizers
+        // Skip mutation if caused solely by SmartGuide overlays, drag handles, resizers, or selection class toggling
         if (mutationsList && Array.isArray(mutationsList) && mutationsList.length > 0) {
-            const isOnlyOverlayMutation = mutationsList.every(m => {
+            const isIgnorableMutation = mutationsList.every(m => {
                 const target = m.target;
                 if (!target) return true;
                 const el = target.nodeType === 1 ? target : target.parentElement;
                 if (!el) return true;
-                return !!(
+
+                // 1. Overlay / Guide / Handle mutations
+                const isOverlay = !!(
                     el.closest('.v4-responsive-guide-layer') ||
                     el.closest('.pc-guide-layer') ||
                     el.closest('.mobile-guide-layer') ||
@@ -1077,8 +1080,19 @@ window.v4DesignSystemScript = `
                     el.classList.contains('pc-guide-layer') ||
                     el.classList.contains('mobile-guide-layer')
                 );
+                if (isOverlay) return true;
+
+                // 2. Selection class toggle mutations (only 'selected' class added or removed)
+                if (m.type === 'attributes' && m.attributeName === 'class') {
+                    const oldClass = (m.oldValue || '').replace(/\bselected\b/g, '').replace(/\s+/g, ' ').trim();
+                    const currentClass = (el.className || '').replace(/\bselected\b/g, '').replace(/\s+/g, ' ').trim();
+                    if (oldClass === currentClass) {
+                        return true;
+                    }
+                }
+                return false;
             });
-            if (isOnlyOverlayMutation) return;
+            if (isIgnorableMutation) return;
         }
 
         enforceQueued = true;
@@ -1090,7 +1104,7 @@ window.v4DesignSystemScript = `
                 console.error("[DesignSystem] enforceDesignSystem error:", e);
             }
             if (dsObserver) {
-                dsObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+                dsObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'], attributeOldValue: true });
             }
             enforceQueued = false;
         });

@@ -85,26 +85,47 @@ window.v4ResponsiveMultiselectScript = `
     // --- Registered Modular Message Handlers for Multi-Selection & Grouping ---
     window.v4MessageHandlers = window.v4MessageHandlers || {};
 
+    let prevMarqueeSelectedIds = new Set();
+
     window.v4MessageHandlers['LF_UPDATE_MARQUEE_SELECTION'] = function(d) {
         const ids = d.ids || [];
         const isDragging = !!d.isDragging;
         const idSet = new Set(ids);
 
-        // Fast diff DOM update: only touch elements whose .selected status actually changes
-        const allComps = document.querySelectorAll('.lf-component');
-        for (let i = 0; i < allComps.length; i++) {
-            const x = allComps[i];
-            const shouldBeSelected = idSet.has(x.id);
-            const isCurrentlySelected = x.classList.contains('selected');
-            if (shouldBeSelected !== isCurrentlySelected) {
-                x.classList.toggle('selected', shouldBeSelected);
+        if (isDragging) {
+            // O(Δ) Delta DOM Update: Touch ONLY newly added or newly removed elements
+            idSet.forEach(function(id) {
+                if (!prevMarqueeSelectedIds.has(id)) {
+                    const el = document.getElementById(id);
+                    if (el && !el.classList.contains('selected')) {
+                        el.classList.add('selected');
+                    }
+                }
+            });
+            prevMarqueeSelectedIds.forEach(function(id) {
+                if (!idSet.has(id)) {
+                    const el = document.getElementById(id);
+                    if (el && el.classList.contains('selected')) {
+                        el.classList.remove('selected');
+                    }
+                }
+            });
+            prevMarqueeSelectedIds = idSet;
+        } else {
+            // Drag finished: Ensure 100% full integrity sync and reset state
+            const allComps = document.querySelectorAll('.lf-component');
+            for (let i = 0; i < allComps.length; i++) {
+                const x = allComps[i];
+                const shouldBeSelected = idSet.has(x.id);
+                const isCurrentlySelected = x.classList.contains('selected');
+                if (shouldBeSelected !== isCurrentlySelected) {
+                    x.classList.toggle('selected', shouldBeSelected);
+                }
             }
-        }
+            prevMarqueeSelectedIds = new Set(ids);
 
-        // PERFORMANCE GUARD:
-        // During real-time dragging, skip heavy DOM adorner re-creation and 18-query inspector styling.
-        // They will run only when dragging finishes (isDragging is false or undefined).
-        if (!isDragging) {
+            // PERFORMANCE GUARD:
+            // Heavy adorner & style extraction run ONLY when drag finishes
             if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
                 window.SelectionAdorner.update();
             }

@@ -13,6 +13,7 @@ window.GroupingManager = (function() {
     let currentTargets = [];
     let selectedIdsIsGroupMap = {};
     let cachedConnectors = [];
+    let cachedSelectedConnectorIds = [];
     let initialSelectedIds = [];
 
     const init = () => {
@@ -273,8 +274,24 @@ window.GroupingManager = (function() {
                  }
              });
          }
-         if (window.ConnectorEngine && typeof window.ConnectorEngine.setSelectedIds === 'function') {
-             window.ConnectorEngine.setSelectedIds(connectorIdsToSelect);
+
+         // Connector Diffing Guard: Only invoke ConnectorEngine if connector selection actually changed
+         let isConnectorChanged = false;
+         if (connectorIdsToSelect.length !== cachedSelectedConnectorIds.length) {
+             isConnectorChanged = true;
+         } else {
+             for (let i = 0; i < connectorIdsToSelect.length; i++) {
+                 if (connectorIdsToSelect[i] !== cachedSelectedConnectorIds[i]) {
+                     isConnectorChanged = true;
+                     break;
+                 }
+             }
+         }
+         if (isConnectorChanged) {
+             cachedSelectedConnectorIds = [...connectorIdsToSelect];
+             if (window.ConnectorEngine && typeof window.ConnectorEngine.setSelectedIds === 'function') {
+                 window.ConnectorEngine.setSelectedIds(connectorIdsToSelect);
+             }
          }
 
          const newSelectedIds = Array.from(newSelectedSet);
@@ -321,6 +338,7 @@ window.GroupingManager = (function() {
      const endMarquee = () => {
          isSelecting = false;
          cachedConnectors = [];
+         cachedSelectedConnectorIds = [];
          initialSelectedIds = [];
          if (marqueeBox) {
              marqueeBox.remove();

@@ -544,6 +544,48 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/motion/motion_user_mobile_adaptive.webp',
             previewHtml: `<img src="assets/illustrations/motion/motion_user_mobile_adaptive.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_user_mobile_adaptive.webp" alt="엄지존 원터치 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-motion-admin-display-sync',
+            name: '[모션] 전시 카테고리 동기화',
+            title: '통합 카테고리 SSOT Hub & 컴포넌트 자동 발행 (Animated WebP)',
+            koName: '모션 전시관리 display cms 카테고리 동기화 ssot 자동발행 운영효율',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '240px',
+            height: '140px',
+            thumb: 'assets/illustrations/motion/motion_admin_display_sync.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_admin_display_sync.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_admin_display_sync.webp" alt="전시 카테고리 동기화 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-motion-admin-product-ai',
+            name: '[모션] AI 상품 인텔리전스',
+            title: 'ERP 연동 LLM 상품 정보 자동 생성 & TPO 태깅 (Animated WebP)',
+            koName: '모션 상품관리 pim ai llm 상세생성 tpo 태깅 자동화 md효율',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '240px',
+            height: '140px',
+            thumb: 'assets/illustrations/motion/motion_admin_product_ai.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_admin_product_ai.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_admin_product_ai.webp" alt="AI 상품 인텔리전스 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-motion-admin-logistics-live',
+            name: '[모션] 실시간 물류·도착예측',
+            title: '물류 재고 실시간 연계 & 배송예정일 시뮬레이션 (Animated WebP)',
+            koName: '모션 배송관리 물류 logistics 실시간재고 도착예정일 시뮬레이션 wms',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '240px',
+            height: '140px',
+            thumb: 'assets/illustrations/motion/motion_admin_logistics_live.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_admin_logistics_live.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_admin_logistics_live.webp" alt="실시간 물류 도착예측 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
 ];
 

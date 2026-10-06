@@ -1,6 +1,14 @@
 {
   "title": "[물류] 업무 효율 요청사항",
-  "screens": {},
+  "screens": {
+    "00_Cover_268.html": {
+      "title": "00_Cover_268",
+      "type": "cover",
+      "updatedAt": "2026-10-06T00:13:39.989Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.10.06(화) ~ 2026.10.30(금)",

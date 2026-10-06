@@ -13,11 +13,13 @@
     "09_Admin_PC_Scroll_630.html": {
       "title": "09_Admin_PC_Scroll_630",
       "type": "admin",
-      "updatedAt": "2026-10-06T07:53:16.612Z",
+      "updatedAt": "2026-10-06T07:53:39.226Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
-      "version": 0.1
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

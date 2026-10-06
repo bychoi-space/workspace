@@ -70,7 +70,7 @@
   - **`vctrl_revision_history.js` (Project Revision History Engine - Parent Side)**:
     - **역할**: 프로젝트 재개정 이력 전용 도메인 모듈. 재개정 이력 팝업 모달(`#history-modal`), 버전/일자/작성자/개발자/변경내용 인라인 추가/수정/삭제 렌더링(`window.renderHistoryPopup`) 및 메타데이터 동기화를 전담합니다.
   - **`vctrl_clipboard.js` (Clipboard & URL Manager - Parent Side)**:
-    - **역할**: 프로젝트 URL 및 스크린 공유 URL 복사, 헤더 드롭다운 메뉴 제어, 시스템 클립보드 비동기 복사 fallback(`copyTextToClipboard`)을 전담합니다.
+    - **역할**: 프로젝트 URL 및 스크린 공유 URL 복사, 헤더 드롭다운 메뉴 제어, 시스템 클립보드 비동기 복사 fallback(`copyTextToClipboard`), 프로젝트 간(Cross-Project) 및 탭 간(Cross-Tab) 오브젝트/서식 클립보드 하이브리드 영속화(`window.top` 메모리 + `localStorage` dual-layer SSOT)를 전담합니다.
   - **`vctrl_component_data.js` (Component Definition SSOT - Parent Side)**:
     - **역할**: V4 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, SVG 아이콘, 아톰 템플릿 마크업 및 카테고리 메타데이터를 전담 정의합니다.
   - **`vctrl_component_illustrations.js` (Illustration Catalog SSOT - Parent Side)**:
@@ -239,7 +239,7 @@
   - 3. **Delete 삭제 보장**: 사이드바 버튼 외에도 `Delete` 또는 `Backspace` 키보드 입력만으로 즉시 삭제되어야 합니다.
   - 4. **Ctrl+Z (Undo) 보장**: 모든 객체의 이동, 생성, 삭제, 그룹화 동작은 `V4UndoManager.saveState()`를 거쳐 실행 취소가 가능해야 합니다.
   - 5. **Ctrl+C / Ctrl+V / Ctrl+X 복사, 붙여넣기, 잘라내기 보장 (크로스 스크린 & 스마트 위치 결정)**:
-    - **전역 SSOT**: 서로 다른 스크린 iframe 간 복사/붙여넣기를 완벽 지원하기 위해 `window.top.__lf_global_clipboard__`를 전역 클립보드 SSOT로 사용합니다.
+    - **전역 SSOT (하이브리드 영속화)**: 동일 프로젝트 내 스크린 간 및 다른 프로젝트 스크린 간(Cross-Project), 멀티 탭 간 오브젝트 복사/붙여넣기를 완벽 지원하기 위해 `window.top.__lf_global_clipboard__` 메모리 변수와 브라우저 `localStorage`를 결합한 듀얼 레이어 하이브리드 SSOT를 사용합니다. 페이지 새로고침 시에도 `localStorage`로부터 자동 복원(Hydration)됩니다.
     - **그룹 내부 자식 컴포넌트 단독 복사 좌표 정규화**: 그룹(`.lf-group`) 내부의 자식 컴포넌트를 단일 선택하여 복사할 때, 조상 그룹 체인의 오프셋(`offsetLeft`, `offsetTop`)을 재귀적으로 누적 합산하여 캔버스/반응형 프레임 호스트 기준의 절대 위치(`absL`, `absT`)로 정규화하여 저장합니다. 이를 통해 붙여넣기 시 스크린 최상단(0, 0)으로 튀는 현상을 원천 방지하고 독립 오브젝트로 안전하게 복제 생성합니다.
     - **스마트 붙여넣기 위치 결정 (Smart Paste Positioning)**: 동일 스크린 및 동일 프레임 내 붙여넣기 시에는 원본 대비 겹침 방지 오프셋(+15px)을 적용하고, 다른 스크린이나 타 프레임으로 붙여넣을 때 또는 원본 위치가 스크롤 뷰포트를 벗어난 경우 현재 스크롤 뷰포트 정중앙(Viewport Center)에 지능적으로 자동 배치합니다.
     - **붙여넣기 후 자동 선택 전환**: 복제 생성 완료 즉시 새로 생성된 객체들만 자동으로 선택(`.selected`) 상태로 전환하여 연속 이동 및 편집을 보장합니다.

@@ -146,7 +146,7 @@
         return false;
     }
 
-    // --- 5. Iframe Object & Style Clipboard PostMessage Bridge (SSOT) ---
+    // --- 5. Iframe Object & Style Clipboard PostMessage Bridge & Cross-Project Persistence (SSOT) ---
     function notifyIframe(data) {
         if (typeof window.notifyIframe === 'function') {
             window.notifyIframe(data);
@@ -158,43 +158,126 @@
         }
     }
 
+    // --- Safe Storage Persistence Helpers for Cross-Project Clipboard ---
+    function safeSetStorage(key, value) {
+        try {
+            if (typeof localStorage === 'undefined') return false;
+            const serialized = JSON.stringify(value);
+            localStorage.setItem(key, serialized);
+            return true;
+        } catch (err) {
+            console.warn('[ClipboardManager] Storage write failed (Quota or Security):', err);
+            return false;
+        }
+    }
+
+    function safeGetStorage(key, isArrayExpected) {
+        try {
+            if (typeof localStorage === 'undefined') return null;
+            const item = localStorage.getItem(key);
+            if (!item) return null;
+            const parsed = JSON.parse(item);
+            if (isArrayExpected) {
+                return Array.isArray(parsed) ? parsed : null;
+            }
+            return (parsed && typeof parsed === 'object') ? parsed : null;
+        } catch (err) {
+            console.warn('[ClipboardManager] Storage read failed:', err);
+            return null;
+        }
+    }
+
+    // Initial Startup Hydration from LocalStorage
+    try {
+        const initialData = safeGetStorage('__lf_global_clipboard__', true);
+        if (initialData && initialData.length > 0) {
+            (window.top || window).__lf_global_clipboard__ = initialData;
+        }
+        const initialStyle = safeGetStorage('__lf_global_style_clipboard__', false);
+        if (initialStyle) {
+            (window.top || window).__lf_global_style_clipboard__ = initialStyle;
+        }
+    } catch (hydrateErr) {
+        console.warn('[ClipboardManager] Initial storage hydration error:', hydrateErr);
+    }
+
+    // Multi-tab Storage Synchronization
+    window.addEventListener('storage', function (e) {
+        if (e.key === '__lf_global_clipboard__' && e.newValue) {
+            try {
+                (window.top || window).__lf_global_clipboard__ = JSON.parse(e.newValue);
+            } catch (err) { }
+        } else if (e.key === '__lf_global_style_clipboard__' && e.newValue) {
+            try {
+                (window.top || window).__lf_global_style_clipboard__ = JSON.parse(e.newValue);
+            } catch (err) { }
+        }
+    });
+
     window.addEventListener('message', function (e) {
         const data = e.data;
         if (!data || !data.type) return;
 
         if (data.type === 'LF_SAVE_CLIPBOARD') {
-            console.log('[ClipboardManager] Parent saved clipboard data to window.top SSOT:', data.clipboard);
+            console.log('[ClipboardManager] Parent saving clipboard to Memory & LocalStorage:', data.clipboard);
             try {
                 (window.top || window).__lf_global_clipboard__ = data.clipboard;
             } catch (err) {
                 window.__lf_global_clipboard__ = data.clipboard;
             }
+            safeSetStorage('__lf_global_clipboard__', data.clipboard);
+
         } else if (data.type === 'LF_REQUEST_CLIPBOARD') {
-            let storedData = [];
+            let storedData = null;
             try {
-                storedData = (window.top || window).__lf_global_clipboard__ || [];
+                storedData = (window.top || window).__lf_global_clipboard__;
             } catch (err) {
-                storedData = window.__lf_global_clipboard__ || [];
+                storedData = window.__lf_global_clipboard__;
             }
+
+            // Fallback & Hydrate from LocalStorage if in-memory clipboard is empty
+            if (!storedData || !Array.isArray(storedData) || storedData.length === 0) {
+                storedData = safeGetStorage('__lf_global_clipboard__', true) || [];
+                try {
+                    (window.top || window).__lf_global_clipboard__ = storedData;
+                } catch (err) {
+                    window.__lf_global_clipboard__ = storedData;
+                }
+            }
+
             console.log('[ClipboardManager] Parent responding to LF_REQUEST_CLIPBOARD with ' + storedData.length + ' item(s).');
             notifyIframe({
                 type: 'LF_RESPONSE_CLIPBOARD',
                 clipboard: storedData
             });
+
         } else if (data.type === 'LF_SAVE_STYLE_CLIPBOARD') {
-            console.log('[ClipboardManager] Parent saved style clipboard data to window.top SSOT:', data.styleClipboard);
+            console.log('[ClipboardManager] Parent saving style clipboard to Memory & LocalStorage:', data.styleClipboard);
             try {
                 (window.top || window).__lf_global_style_clipboard__ = data.styleClipboard;
             } catch (err) {
                 window.__lf_global_style_clipboard__ = data.styleClipboard;
             }
+            safeSetStorage('__lf_global_style_clipboard__', data.styleClipboard);
+
         } else if (data.type === 'LF_REQUEST_STYLE_CLIPBOARD') {
             let storedStyle = null;
             try {
-                storedStyle = (window.top || window).__lf_global_style_clipboard__ || null;
+                storedStyle = (window.top || window).__lf_global_style_clipboard__;
             } catch (err) {
-                storedStyle = window.__lf_global_style_clipboard__ || null;
+                storedStyle = window.__lf_global_style_clipboard__;
             }
+
+            // Fallback & Hydrate from LocalStorage if in-memory style clipboard is empty
+            if (!storedStyle) {
+                storedStyle = safeGetStorage('__lf_global_style_clipboard__', false);
+                try {
+                    (window.top || window).__lf_global_style_clipboard__ = storedStyle;
+                } catch (err) {
+                    window.__lf_global_style_clipboard__ = storedStyle;
+                }
+            }
+
             console.log('[ClipboardManager] Parent responding to LF_REQUEST_STYLE_CLIPBOARD.');
             notifyIframe({
                 type: 'LF_RESPONSE_STYLE_CLIPBOARD',
@@ -205,7 +288,9 @@
 
     window.ClipboardManager = {
         copyTextToClipboard: copyTextToClipboard,
-        handleUrlCopyClick: handleUrlCopyClick
+        handleUrlCopyClick: handleUrlCopyClick,
+        safeGetStorage: safeGetStorage,
+        safeSetStorage: safeSetStorage
     };
     window.copyTextToClipboard = copyTextToClipboard;
 })();

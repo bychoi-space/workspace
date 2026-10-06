@@ -15,7 +15,7 @@
     "02_Front_UI_User_Experience_Impact_900.html": {
       "title": "02_Front UI 개선 유저 경험 효과",
       "type": "architecture",
-      "updatedAt": "2026-10-06T07:09:21.722Z",
+      "updatedAt": "2026-10-06T15:55:00.000Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -79,8 +79,8 @@
   "screenOrder": [
     "00_Cover_403.html",
     "01_Fashion_Ecommerce_Process_Map_900.html",
-    "02_Front_UI_User_Experience_Impact_900.html",
     "99_Blank_14.html",
+    "02_Front_UI_User_Experience_Impact_900.html",
     "04_Front_System_Milestone_Timeline_900.html",
     "03_Admin_System_Development_Roadmap_900.html",
     "05_Admin_System_Milestone_Timeline_900.html"

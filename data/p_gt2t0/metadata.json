@@ -206,7 +206,7 @@
     "10_Mobile_Compare_19.html": {
       "title": "Mobile UI 변경 정리 v2",
       "type": "ui",
-      "updatedAt": "2026-10-07T05:48:17.794Z",
+      "updatedAt": "2026-10-07T05:48:45.979Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
@@ -257,6 +257,23 @@
           },
           "standardized": true,
           "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "canvas",
+          "text": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)\n\n\n변경안은 '그룹에 관계 없이 상품 10개 (5행)' 가 최초 랜더링 시 그려지는 구조",
+          "html": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)<div><br></div><div>변경안은 '그룹에 관계 없이 상품 10개 (5행)' 가 최초 랜더링 시 그려지는 구조</div>",
+          "x": 1349,
+          "y": 562,
+          "pins": {
+            "canvas": {
+              "x": 1349,
+              "y": 562,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -271,7 +288,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-10-07 14:48:17",
+  "updated": "2026-10-07 14:48:45",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

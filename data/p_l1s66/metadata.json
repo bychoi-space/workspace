@@ -102,6 +102,99 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": ""
+    },
+    "09_Admin_PC_Scroll_631.html": {
+      "title": "09_Admin_PC_Scroll_631",
+      "type": "admin",
+      "updatedAt": "2026-10-07T01:36:29.079Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[주문상세내역] > [반품/교환] TAB 에 존재하는 '변경사유' 데이터 표현\n\n\n※ 물류운영 김진용 차장님 요청사항 (9/4)",
+          "html": "[주문상세내역] &gt; [반품/교환] TAB 에 존재하는 '변경사유' 데이터 표현<div><br></div><div>※ 물류운영 김진용 차장님 요청사항 (9/4)</div>",
+          "x": 973,
+          "y": 615,
+          "pins": {
+            "pc": {
+              "x": 973,
+              "y": 615,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 973,
+              "y": 615,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "물류운영에서 불필요한 컬럼으로 정의하고 삭제 요청하였습니다.\n\n\n커머스정보팀에서 검토해주시어, 불필요한 컬럼이 맞다면 삭제 처리 부탁드립니다.",
+          "html": "물류운영에서 불필요한 컬럼으로 정의하고 삭제 요청하였습니다.<div><br></div><div>커머스정보팀에서 검토해주시어, 불필요한 컬럼이 맞다면 삭제 처리 부탁드립니다.</div>",
+          "x": 613,
+          "y": 615,
+          "pins": {
+            "pc": {
+              "x": 613,
+              "y": 615,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 613,
+              "y": 615,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "물류운영에서 불필요한 컬럼으로 정의하고 삭제 요청하였습니다.\n\n\n커머스정보팀에서 검토해주시어, 불필요한 컬럼이 맞다면 삭제 처리 부탁드립니다.",
+          "html": "물류운영에서 불필요한 컬럼으로 정의하고 삭제 요청하였습니다.<div><br></div><div>커머스정보팀에서 검토해주시어, 불필요한 컬럼이 맞다면 삭제 처리 부탁드립니다.</div>",
+          "x": 852,
+          "y": 615,
+          "pins": {
+            "pc": {
+              "x": 852,
+              "y": 615,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 852,
+              "y": 615,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",
@@ -111,5 +204,10 @@
   "notionUrl": "",
   "themeIndex": 4,
   "updated": "2026-10-06 18:55:35",
-  "version": 0.1
+  "version": 0.1,
+  "screenOrder": [
+    "00_Cover_268.html",
+    "09_Admin_PC_Scroll_630.html",
+    "09_Admin_PC_Scroll_631.html"
+  ]
 }

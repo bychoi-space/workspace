@@ -394,7 +394,7 @@
         'table-border-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: 'table', style: { borderColor: val }, subSelector: 'td, th', subStyle: { borderColor: val } }),
         'shape-font-size': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { fontSize: val + 'px' } }),
         'shape-text-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { color: val } }),
-        'shape-border-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape', style: { borderColor: val } }),
+        'shape-border-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: val } }),
         'shape-border-radius': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape-rect, .v4-shape-webpage', style: { borderRadius: val + 'px' } }),
         'text-color-picker': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-editable-cell', style: { color: val } }),
         'icon-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: 'img, .lf-icon', style: { color: val } })
@@ -413,6 +413,9 @@
             const msg = msgCreator(e.target.value);
             MessageHub.send(iframeWin, msg.type, { ...msg, id: targetIds[0], ids: targetIds });
             
+            const wrapper = e.target.closest('.v4-color-wrapper');
+            if (wrapper) wrapper.classList.remove('transparent-active');
+
             const txtEl = document.getElementById('txt-' + id);
             if (txtEl) {
                 txtEl.innerText = e.target.value;
@@ -452,13 +455,13 @@
 
     // Custom Transparency Buttons (V4 Addon Declarative Migration)
     const TRANSPARENCY_BUTTONS = {
-        'btn-shape-bg-none': { wrapper: 'shape-bg-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape', style: { background: 'transparent', backgroundColor: 'transparent' } }), extra: () => {
+        'btn-shape-bg-none': { wrapper: 'shape-bg-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { background: 'transparent', backgroundColor: 'transparent' } }), extra: () => {
             const slider = document.getElementById('shape-bg-opacity');
             const txt = document.getElementById('txt-shape-bg-opacity');
             if (slider) slider.value = 0;
             if (txt) txt.innerText = 0;
         }},
-        'btn-shape-border-none': { wrapper: 'shape-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape', style: { borderColor: 'transparent' } }) },
+        'btn-shape-border-none': { wrapper: 'shape-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: 'transparent' } }) },
         'btn-table-border-none': { wrapper: 'table-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-table', style: { borderColor: 'transparent' } }) },
         'btn-icon-border-none': { wrapper: 'icon-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.lf-icon', style: { borderColor: 'transparent' } }) },
         'btn-line-color-none': {

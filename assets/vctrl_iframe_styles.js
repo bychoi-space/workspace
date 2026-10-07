@@ -419,8 +419,8 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .text-marker .v4-editable-cell p:not([style*="line-height"]), .v4-text-box .v4-editable-cell p:not([style*="line-height"]), .v4-text-shape .v4-editable-cell p:not([style*="line-height"]) { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; display: block !important; width: 100% !important; text-align: inherit !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; white-space: nowrap !important; }
 .text-marker .v4-editable-cell p[style*="line-height"], .v4-text-box .v4-editable-cell p[style*="line-height"], .v4-text-shape .v4-editable-cell p[style*="line-height"] { margin: 0 !important; padding: 0 !important; display: block !important; width: 100% !important; text-align: inherit !important; transform: translateY(var(--v4-text-adjust-y, 0px)) !important; white-space: nowrap !important; }
 .text-marker .v4-editable-cell *, .v4-text-box .v4-editable-cell *, .v4-text-shape .v4-editable-cell * { white-space: nowrap !important; }
-.text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { border-color: transparent !important; background: transparent; box-shadow: none; }
-.text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { border-color: transparent !important; outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
+.text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { box-shadow: none; }
+.text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
 
 /* Premium Pin Marker Styling */
 .pin-marker {

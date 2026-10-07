@@ -166,6 +166,20 @@
                 'LF_TABLE_SIZE_CHANGED': function () {
                     if (typeof window.markAsDirty === 'function') window.markAsDirty();
                 },
+                'LF_GRID_COL_FOCUSED': function (data) {
+                    if (window.InspectorGrid && typeof window.InspectorGrid.focusColumnCard === 'function') {
+                        if (data && typeof data.activeColIndex === 'number' && data.activeColIndex >= 0) {
+                            window.InspectorGrid.focusColumnCard(data.activeColIndex);
+                        }
+                    }
+                },
+                'LF_QUERY_ITEM_FOCUSED': function (data) {
+                    if (window.InspectorAdminSettings && typeof window.InspectorAdminSettings.focusRowBlock === 'function') {
+                        if (data && (typeof data.activeRowIndex === 'number' || data.isGroupHeader)) {
+                            window.InspectorAdminSettings.focusRowBlock(data.activeRowIndex, data.activeColIndex, data.isGroupHeader);
+                        }
+                    }
+                },
                 'LF_COMP_SELECTED': function (data) {
                     const state = window.state || {};
                     const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));

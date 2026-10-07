@@ -269,13 +269,25 @@
                 window._currentStickyFormat.align = curAlign;
             }
 
-            // Paddings
-            syncShapePaddingInputs({
-                padTop: parseInt(s.padTop !== undefined ? s.padTop : (s.paddingTop || 0)),
-                padBottom: parseInt(s.padBottom !== undefined ? s.padBottom : (s.paddingBottom || 0)),
-                padLeft: parseInt(s.padLeft !== undefined ? s.padLeft : (s.paddingLeft || 0)),
-                padRight: parseInt(s.padRight !== undefined ? s.padRight : (s.paddingRight || 0))
-            });
+            // Paddings (Applicable only to geometry container shapes)
+            const isTextShape = !!compStyles.isTextShape || (compStyles.id && compStyles.id.startsWith('v4-text-')) || (compStyles.classList && (compStyles.classList.includes('v4-text-shape') || compStyles.classList.includes('v4-text-box'))) || (!compStyles.isShape && compStyles.isPin);
+            const isImage = !!compStyles.isImage;
+            const isPinMarker = (compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex)) || !!compStyles.isDescriptionPin;
+            const supportsTextPadding = compStyles.isShape && !isImage && !isTextShape && !isPinMarker;
+
+            const padGroup = document.getElementById('shape-padding-group');
+            if (padGroup) {
+                padGroup.style.display = supportsTextPadding ? 'block' : 'none';
+            }
+
+            if (supportsTextPadding) {
+                syncShapePaddingInputs({
+                    padTop: parseInt(s.padTop !== undefined ? s.padTop : (s.paddingTop || 0)),
+                    padBottom: parseInt(s.padBottom !== undefined ? s.padBottom : (s.paddingBottom || 0)),
+                    padLeft: parseInt(s.padLeft !== undefined ? s.padLeft : (s.paddingLeft || 0)),
+                    padRight: parseInt(s.padRight !== undefined ? s.padRight : (s.paddingRight || 0))
+                });
+            }
 
             // Pattern
             if (compStyles.patternType) {
@@ -460,7 +472,7 @@
                 type: 'LF_UPDATE_STYLE',
                 id: targetIds[0] || undefined,
                 ids: targetIds.length > 0 ? targetIds : undefined,
-                selector: '.v4-shape',
+                selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker',
                 style: { background: rgbaColor, backgroundColor: rgbaColor }
             });
 
@@ -481,7 +493,7 @@
                 type: 'LF_UPDATE_STYLE',
                 id: targetIds[0] || undefined,
                 ids: targetIds.length > 0 ? targetIds : undefined,
-                selector: '.v4-shape',
+                selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker',
                 style: { background: rgbaColor, backgroundColor: rgbaColor }
             });
 

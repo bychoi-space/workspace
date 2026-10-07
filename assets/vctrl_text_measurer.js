@@ -612,6 +612,31 @@ window.v4TextMeasurerScript = `
                         t.querySelectorAll('p, span, font, strong, b, em, i, u, s').forEach(child => {
                             child.style.fontSize = val;
                         });
+                    } else if (key === 'borderColor' || key === 'border' || key === 'borderStyle' || key === 'borderWidth') {
+                        if (key === 'borderColor') {
+                            if (val === 'transparent' || val === 'none') {
+                                s.style.borderColor = 'transparent';
+                            } else {
+                                s.style.borderColor = val;
+                                s.style.borderStyle = 'solid';
+                                s.style.borderWidth = '1.6px';
+                            }
+                        } else {
+                            s.style[key] = val;
+                        }
+                        if (t && t !== s) {
+                            t.style.removeProperty('border');
+                            t.style.removeProperty('border-color');
+                            t.style.removeProperty('border-style');
+                            t.style.removeProperty('border-width');
+                        }
+                    } else if (key === 'background' || key === 'backgroundColor') {
+                        s.style.background = val;
+                        s.style.backgroundColor = val;
+                        if (t && t !== s) {
+                            t.style.removeProperty('background');
+                            t.style.removeProperty('background-color');
+                        }
                     } else {
                         t.style[key] = val;
                     }

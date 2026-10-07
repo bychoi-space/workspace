@@ -450,6 +450,8 @@ function _hideAllPropertySections(isTypingInAdminProps) {
     if (arrowGroupInit) arrowGroupInit.style.display = 'none';
     const waveGroupInit = document.getElementById('shape-wave-direction-group');
     if (waveGroupInit) waveGroupInit.style.display = 'none';
+    const paddingGroupInit = document.getElementById('shape-padding-group');
+    if (paddingGroupInit) paddingGroupInit.style.display = 'none';
     if (DOM.textPropSection) DOM.textPropSection.style.display = 'none';
     if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'none';
     if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'none';
@@ -560,6 +562,16 @@ function _syncShapeOrPinTypeProps(compStyles) {
         if (isWave && typeof window._syncWaveDirBtns === 'function') {
             window._syncWaveDirBtns(compStyles.waveDir || 'horizontal');
         }
+    }
+
+    const isTextShape = !!compStyles.isTextShape || (compStyles.id && compStyles.id.startsWith('v4-text-')) || (compStyles.classList && (compStyles.classList.includes('v4-text-shape') || compStyles.classList.includes('v4-text-box'))) || (!compStyles.isShape && compStyles.isPin);
+    const isImage = !!compStyles.isImage;
+    const isPinMarker = (compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex)) || !!compStyles.isDescriptionPin;
+    const supportsTextPadding = compStyles.isShape && !isImage && !isTextShape && !isPinMarker;
+
+    const paddingGroup = document.getElementById('shape-padding-group');
+    if (paddingGroup) {
+        paddingGroup.style.display = supportsTextPadding ? 'block' : 'none';
     }
 }
 
@@ -729,7 +741,7 @@ function _syncCommonPropertyControls(compStyles, editingType) {
             shapeBgInput.value = validBg;
             const wrapper = document.getElementById('shape-bg-wrapper');
             if (wrapper) {
-                if (s.bg === 'transparent' || s.bgOpacity === 0) wrapper.classList.add('transparent-active');
+                if (s.bg === 'transparent' || !s.bg || s.bgOpacity === 0 || s.isBgTransparent) wrapper.classList.add('transparent-active');
                 else wrapper.classList.remove('transparent-active');
             }
         }
@@ -738,7 +750,7 @@ function _syncCommonPropertyControls(compStyles, editingType) {
             shapeBorderInput.value = validBorder;
             const wrapper = document.getElementById('shape-border-wrapper');
             if (wrapper) {
-                if (s.border === 'transparent') wrapper.classList.add('transparent-active');
+                if (s.border === 'transparent' || !s.border || s.isBorderTransparent) wrapper.classList.add('transparent-active');
                 else wrapper.classList.remove('transparent-active');
             }
         }
@@ -749,7 +761,7 @@ function _syncCommonPropertyControls(compStyles, editingType) {
         if (txt) txt.innerText = opacityVal;
         const wrapper = document.getElementById('shape-bg-wrapper');
         if (wrapper) {
-            if (s.bg === 'transparent' || opacityVal === 0) wrapper.classList.add('transparent-active');
+            if (s.bg === 'transparent' || !s.bg || opacityVal === 0 || s.isBgTransparent) wrapper.classList.add('transparent-active');
             else wrapper.classList.remove('transparent-active');
         }
     }

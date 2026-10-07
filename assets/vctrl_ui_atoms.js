@@ -36,8 +36,46 @@ window.v4UIAtomsScript = `
     };
 
 
+    const bindAdminSettingsEvents = () => {
+        document.querySelectorAll('.v4-admin-settings-container').forEach(container => {
+            const comp = container.closest('.lf-component');
+            const headerEl = container.querySelector('.v4-admin-group-header');
+            if (headerEl && !headerEl.dataset.focusBound) {
+                headerEl.dataset.focusBound = 'true';
+                headerEl.addEventListener('focus', function() {
+                    notifyParent({
+                        type: 'LF_QUERY_ITEM_FOCUSED',
+                        compId: comp ? comp.id : null,
+                        isGroupHeader: true,
+                        activeRowIndex: null,
+                        activeColIndex: null
+                    });
+                });
+            }
+            const rows = container.querySelectorAll('.v4-admin-row');
+            rows.forEach((rowEl, rIdx) => {
+                const labelCells = rowEl.querySelectorAll('.v4-admin-label-cell');
+                labelCells.forEach((labelCell, cIdx) => {
+                    if (!labelCell.dataset.focusBound) {
+                        labelCell.dataset.focusBound = 'true';
+                        labelCell.addEventListener('focus', function() {
+                            notifyParent({
+                                type: 'LF_QUERY_ITEM_FOCUSED',
+                                compId: comp ? comp.id : null,
+                                isGroupHeader: false,
+                                activeRowIndex: rIdx + 1,
+                                activeColIndex: cIdx
+                            });
+                        });
+                    }
+                });
+            });
+        });
+    };
+
     // Attach to global window object
     window.bindAccordionEvents = bindAccordionEvents;
+    window.bindAdminSettingsEvents = bindAdminSettingsEvents;
     window.bindCursorEvents = function() { if (window.fitCursorWidth && typeof window.bindCursorEvents === "function") window.bindCursorEvents(); };
 
     // --- Registered Modular Message Handlers for UI Atoms & Widgets ---
@@ -498,6 +536,19 @@ window.v4UIAtomsScript = `
                                     }
                                 };
                             }
+                            if (!headerEl.dataset.focusBound) {
+                                headerEl.dataset.focusBound = 'true';
+                                headerEl.addEventListener('focus', function() {
+                                    var comp = container.closest('.lf-component') || s;
+                                    notifyParent({
+                                        type: 'LF_QUERY_ITEM_FOCUSED',
+                                        compId: comp ? comp.id : null,
+                                        isGroupHeader: true,
+                                        activeRowIndex: null,
+                                        activeColIndex: null
+                                    });
+                                });
+                            }
                         } else {
                             if (headerEl) headerEl.remove();
                         }
@@ -584,6 +635,21 @@ window.v4UIAtomsScript = `
                                                     }, '*');
                                                 }
                                             };
+                                        }
+                                        if (!labelCell.dataset.focusBound) {
+                                            labelCell.dataset.focusBound = 'true';
+                                            (function(rowIdx, colIdx) {
+                                                labelCell.addEventListener('focus', function() {
+                                                    var comp = container.closest('.lf-component') || s;
+                                                    notifyParent({
+                                                        type: 'LF_QUERY_ITEM_FOCUSED',
+                                                        compId: comp ? comp.id : null,
+                                                        isGroupHeader: false,
+                                                        activeRowIndex: rowIdx,
+                                                        activeColIndex: colIdx
+                                                    });
+                                                });
+                                            })(i, c);
                                         }
                                         rowEl.appendChild(labelCell);
                                         

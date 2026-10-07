@@ -327,6 +327,8 @@
 
             const rowDiv = document.createElement('div');
             rowDiv.className = 'admin-row-config-block';
+            rowDiv.setAttribute('data-row-index', i);
+            rowDiv.id = 'admin-row-block-' + i;
             rowDiv.style.cssText = 'border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 8px;';
             
             let htmlContent = `
@@ -625,7 +627,65 @@
         }
     }
 
-    // 7. Main Coordinator: Fragmented clean coordinator for Admin Settings Inspector
+    // 7. Focus & Auto-Scroll Coordinator for Canvas Row / Header Selection
+    function focusRowBlock(rowIndex, colIndex, isGroupHeader) {
+        const inspectorSection = document.getElementById('admin-settings-inspector-section');
+        if (!inspectorSection) return;
+
+        // Guard: Do not interrupt if user is actively typing in inspector inputs
+        const activeEl = document.activeElement;
+        if (activeEl && inspectorSection.contains(activeEl)) {
+            return;
+        }
+
+        let targetEl = null;
+        let targetColInput = null;
+
+        if (isGroupHeader) {
+            targetEl = document.getElementById('admin-group-header-config-sub')?.closest('.prop-group') || document.getElementById('prop-admin-group-header-enable')?.closest('.prop-group');
+        } else if (typeof rowIndex === 'number' && !isNaN(rowIndex) && rowIndex >= 1) {
+            targetEl = document.getElementById('admin-row-block-' + rowIndex);
+            if (targetEl && typeof colIndex === 'number' && !isNaN(colIndex) && colIndex >= 0) {
+                targetColInput = targetEl.querySelector('.admin-col-label-input[data-col-idx="' + colIndex + '"]');
+            }
+        }
+
+        if (!targetEl) return;
+
+        // Smoothly scroll target element into view (nearest prevents jarring jumps)
+        try {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        } catch (e) {
+            targetEl.scrollIntoView(false);
+        }
+
+        // Remove previous focus states
+        inspectorSection.querySelectorAll('.v4-admin-row-block-focused').forEach(el => {
+            el.classList.remove('v4-admin-row-block-focused');
+        });
+        inspectorSection.querySelectorAll('.v4-admin-col-focused').forEach(el => {
+            el.classList.remove('v4-admin-col-focused');
+        });
+
+        // Trigger CSS keyframe animation via forced reflow
+        void targetEl.offsetWidth;
+        targetEl.classList.add('v4-admin-row-block-focused');
+
+        if (targetColInput) {
+            void targetColInput.offsetWidth;
+            targetColInput.classList.add('v4-admin-col-focused');
+        }
+
+        if (window._adminFocusTimer) {
+            clearTimeout(window._adminFocusTimer);
+        }
+        window._adminFocusTimer = setTimeout(() => {
+            if (targetEl) targetEl.classList.remove('v4-admin-row-block-focused');
+            if (targetColInput) targetColInput.classList.remove('v4-admin-col-focused');
+        }, 1600);
+    }
+
+    // 8. Main Coordinator: Fragmented clean coordinator for Admin Settings Inspector
     function _syncAdminSettingsProps(comp, forceRebuild = false) {
         if (!comp) return;
         const rowCountText = document.getElementById('txt-admin-row-count');
@@ -637,7 +697,36 @@
         const headerElements = _syncAdminGroupHeader(comp);
         _renderAdminRowBlocks(comp, forceRebuild, headerElements);
         _bindAdminRowCountButtons(rowCountText, comp, headerElements);
+
+        if (comp.activeRowIndex !== undefined || comp.isGroupHeader) {
+            setTimeout(() => {
+                focusRowBlock(comp.activeRowIndex, comp.activeColIndex, comp.isGroupHeader);
+            }, 60);
+        }
     }
 
+    // Listen for direct query item focus events from canvas
+    if (!window._adminFocusListenerBound) {
+        window._adminFocusListenerBound = true;
+        if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
+            window.MessageHub.subscribe('LF_QUERY_ITEM_FOCUSED', (data) => {
+                if (data && (typeof data.activeRowIndex === 'number' || data.isGroupHeader)) {
+                    focusRowBlock(data.activeRowIndex, data.activeColIndex, data.isGroupHeader);
+                }
+            });
+        }
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'LF_QUERY_ITEM_FOCUSED') {
+                focusRowBlock(e.data.activeRowIndex, e.data.activeColIndex, e.data.isGroupHeader);
+            }
+        });
+    }
+
+    window.InspectorAdminSettings = {
+        sync: _syncAdminSettingsProps,
+        focusRowBlock: focusRowBlock
+    };
+    window.focusAdminRowBlock = focusRowBlock;
     window._syncAdminSettingsProps = _syncAdminSettingsProps;
 })();
+

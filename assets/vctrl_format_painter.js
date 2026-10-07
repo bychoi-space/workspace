@@ -675,11 +675,22 @@ window.v4FormatPainterScript = `
             if (cell && styleData.text) {
                 applyTypographyDeep(cell, styleData.text);
             }
-            if (styleData.fill && styleData.fill.bg && !styleData.fill.isBgTransparent) {
-                comp.style.backgroundColor = styleData.fill.bg;
+            if (styleData.fill) {
+                if (styleData.fill.isBgTransparent || !styleData.fill.bg || styleData.fill.bg === 'transparent') {
+                    comp.style.backgroundColor = 'transparent';
+                    comp.style.background = 'transparent';
+                } else {
+                    comp.style.backgroundColor = styleData.fill.bg;
+                }
             }
-            if (styleData.border && styleData.border.color && !styleData.border.isBorderTransparent) {
-                comp.style.borderColor = styleData.border.color;
+            if (styleData.border) {
+                if (styleData.border.isBorderTransparent || !styleData.border.color || styleData.border.color === 'transparent') {
+                    comp.style.borderColor = 'transparent';
+                } else {
+                    comp.style.borderColor = styleData.border.color;
+                    comp.style.borderStyle = 'solid';
+                    comp.style.borderWidth = '1.6px';
+                }
             }
             return true;
         }

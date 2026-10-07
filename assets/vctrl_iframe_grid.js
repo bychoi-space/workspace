@@ -501,6 +501,14 @@ window.v4GridScript = `
         if (!cell || cell.dataset.eventsBound) return;
         cell.dataset.eventsBound = "true";
 
+        var getActiveColIndex = function() {
+            if (cell.parentNode) {
+                var idx = Array.from(cell.parentNode.children).indexOf(cell);
+                if (idx >= 0) return idx;
+            }
+            return (typeof colIdx === "number") ? colIdx : -1;
+        };
+
         var selectParentComponent = function(e) {
             var comp = cell.closest(".lf-component");
             if (comp) {
@@ -513,11 +521,22 @@ window.v4GridScript = `
                 }
                 if (window.updateHandles) window.updateHandles(comp);
                 
+                var cIdx = getActiveColIndex();
+                var compStyles = (window._getCompStyles ? window._getCompStyles(comp) : {}) || {};
+                if (cIdx >= 0) {
+                    compStyles.activeColIndex = cIdx;
+                }
+
+                var payload = Object.assign({
+                    type: "LF_COMP_SELECTED",
+                    shiftKey: isMulti,
+                    activeColIndex: cIdx
+                }, compStyles);
+
                 if (typeof notifyParent === "function") {
-                    notifyParent(Object.assign({
-                        type: "LF_COMP_SELECTED",
-                        shiftKey: isMulti
-                    }, (window._getCompStyles ? window._getCompStyles(comp) : {})));
+                    notifyParent(payload);
+                } else if (window.parent) {
+                    window.parent.postMessage(payload, "*");
                 }
             }
         };
@@ -538,6 +557,20 @@ window.v4GridScript = `
 
         cell.addEventListener("focus", function() {
             cell.classList.add("active-cell-editing");
+            var cIdx = getActiveColIndex();
+            var comp = cell.closest(".lf-component");
+            if (cIdx >= 0) {
+                var msg = {
+                    type: "LF_GRID_COL_FOCUSED",
+                    compId: comp ? comp.id : null,
+                    activeColIndex: cIdx
+                };
+                if (typeof notifyParent === "function") {
+                    notifyParent(msg);
+                } else if (window.parent) {
+                    window.parent.postMessage(msg, "*");
+                }
+            }
         });
 
         cell.addEventListener("blur", function() {
@@ -570,7 +603,7 @@ window.v4GridScript = `
                 try {
                     var gridContainer = cell.closest(".v4-grid-container");
                     if (gridContainer) {
-                        var currentIdx = cell.parentNode ? Array.from(cell.parentNode.children).indexOf(cell) : colIdx;
+                        var currentIdx = getActiveColIndex();
                         var cols = JSON.parse(gridContainer.getAttribute("data-columns") || "[]");
                         if (currentIdx >= 0 && cols[currentIdx]) {
                             var badgeEl = cell.querySelector(".v4-col-badge");
@@ -691,7 +724,6 @@ window.v4GridScript = `
         
         columns.forEach(function(col, idx) {
             var th = ths[idx];
-            var bg = th.style.background || th.style.backgroundColor;
             var color = th.style.color;
             var fontSize = th.style.fontSize;
             var fontFamily = th.style.fontFamily;
@@ -722,11 +754,14 @@ window.v4GridScript = `
             var hl = getResolvedHighlight(col);
             if (hl && hl.enabled) {
                 th.classList.add("v4-grid-col-highlight");
+                th.style.removeProperty("background");
                 th.style.setProperty("background-color", hl.headerBg || hl.bg, "important");
                 th.style.setProperty("box-shadow", "inset 0 2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
             } else {
                 th.classList.remove("v4-grid-col-highlight");
                 th.style.removeProperty("box-shadow");
+                th.style.removeProperty("background");
+                th.style.removeProperty("background-color");
                 th.style.setProperty("background-color", "#f8fafc", "important");
             }
 
@@ -737,6 +772,7 @@ window.v4GridScript = `
                 if (!th.querySelector("input[type='checkbox']")) {
                     th.innerHTML = '<input type="checkbox">';
                 }
+                bindGridCellEvents(th, true, idx);
             } else {
                 th.className = "v4-grid-cell v4-editable-cell" + (hl && hl.enabled ? " v4-grid-col-highlight" : "");
                 th.contentEditable = "true";
@@ -758,9 +794,6 @@ window.v4GridScript = `
                 bindGridCellEvents(th, true, idx);
             }
 
-            if (!hl || !hl.enabled) {
-                if (bg) th.style.setProperty("background", bg, "important");
-            }
             if (color) th.style.setProperty("color", color, "important");
             if (fontSize) th.style.setProperty("font-size", fontSize, "important");
             if (fontFamily) th.style.setProperty("font-family", fontFamily, "important");
@@ -826,6 +859,7 @@ window.v4GridScript = `
                 var hl = getResolvedHighlight(col);
                 if (hl && hl.enabled) {
                     td.classList.add("v4-grid-col-highlight");
+                    td.style.removeProperty("background");
                     td.style.setProperty("background-color", hl.bg, "important");
                     if (rIdx === rows.length - 1) {
                         td.style.setProperty("box-shadow", "inset 0 -2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border, "important");
@@ -835,6 +869,7 @@ window.v4GridScript = `
                 } else {
                     td.classList.remove("v4-grid-col-highlight");
                     td.style.removeProperty("box-shadow");
+                    td.style.removeProperty("background");
                     td.style.removeProperty("background-color");
                 }
 
@@ -858,9 +893,7 @@ window.v4GridScript = `
                     td.setAttribute("data-type", "checkbox");
                 }
 
-                if (col.type !== "checkbox" && col.type !== "action") {
-                    bindGridCellEvents(td, false, cIdx);
-                }
+                bindGridCellEvents(td, false, cIdx);
 
                 var isUserModified = td.getAttribute("data-user-modified") === "true";
                 var currentText = td.innerText || "";
@@ -875,7 +908,8 @@ window.v4GridScript = `
                 }
 
                 if (shouldOverwrite) {
-                    var bg = td.style.background || td.style.backgroundColor;
+                    var isPrevHl = td.classList.contains("v4-grid-col-highlight");
+                    var bg = isPrevHl ? "" : (td.style.background || td.style.backgroundColor);
                     var color = td.style.color;
                     var fontSize = td.style.fontSize;
                     var fontFamily = td.style.fontFamily;
@@ -900,7 +934,7 @@ window.v4GridScript = `
                     }
 
                     if (!hl || !hl.enabled) {
-                        if (bg) td.style.setProperty("background", bg, "important");
+                        if (bg && !isPrevHl) td.style.setProperty("background", bg, "important");
                     }
                     if (col.type === "status" || col.type === "badge" || col.type === "checkbox") {
                         if (color) td.style.setProperty("color", color, "important");
@@ -1085,15 +1119,11 @@ window.v4GridScript = `
             bindTableCheckboxInteractions(renderedTable);
             var allThs = Array.from(renderedTable.querySelectorAll("thead th"));
             allThs.forEach(function(th, idx) {
-                if (!th.classList.contains("v4-grid-check-col")) {
-                    bindGridCellEvents(th, true, idx);
-                }
+                bindGridCellEvents(th, true, idx);
             });
             var allTds = Array.from(renderedTable.querySelectorAll("tbody td"));
             allTds.forEach(function(td, idx) {
-                if (td.getAttribute("data-type") !== "checkbox" && td.getAttribute("data-type") !== "action") {
-                    bindGridCellEvents(td, false, idx % columns.length);
-                }
+                bindGridCellEvents(td, false, idx % columns.length);
             });
         }
 
@@ -1134,6 +1164,29 @@ window.v4GridScript = `
             { name: "\uAD00\uB9AC", type: "action", width: "90px", align: "center" }
         ]
     };
+
+    var initExistingGridEvents = function() {
+        document.querySelectorAll(".v4-grid-container").forEach(function(container) {
+            var table = container.querySelector("table");
+            if (table) {
+                bindTableCheckboxInteractions(table);
+                var allThs = Array.from(table.querySelectorAll("thead th"));
+                allThs.forEach(function(th, idx) {
+                    bindGridCellEvents(th, true, idx);
+                });
+                var allTds = Array.from(table.querySelectorAll("tbody td"));
+                var colCount = allThs.length || 1;
+                allTds.forEach(function(td, idx) {
+                    bindGridCellEvents(td, false, idx % colCount);
+                });
+            }
+        });
+    };
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initExistingGridEvents);
+    } else {
+        initExistingGridEvents();
+    }
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};
     window.v4MessageHandlers["LF_UPDATE_GRID_PROPERTIES"] = function(d) {

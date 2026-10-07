@@ -35,6 +35,7 @@ if (!window.v4IframeStyleExtractorScript) {
             isMedia
         );
         const isDescriptionPin = isGroup ? false : c.classList.contains('pin-marker');
+        const isTextShape = isGroup ? false : (c.classList.contains('v4-text-shape') || c.classList.contains('v4-text-box') || (c.id && c.id.indexOf('v4-text-') === 0));
         
         // Checkbox / Radio Atom Detection
         const isCheckbox = isGroup ? false : (!!c.querySelector('.v4-checkbox') || c.classList.contains('v4-checkbox') || !!c.querySelector('.v4-checkbox-container') || c.classList.contains('v4-checkbox-container'));
@@ -314,7 +315,10 @@ if (!window.v4IframeStyleExtractorScript) {
         const getCompBg = () => {
             if (shape) return getShapeColor("backgroundColor");
             if (table) return _getVal(table, "backgroundColor");
-            if (isPin) return _getVal(c, "backgroundColor");
+            if (isPin) {
+                const bg = c.style.backgroundColor || c.style.background || (textCell && (textCell.style.backgroundColor || textCell.style.background)) || _getVal(c, "backgroundColor");
+                return (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') ? bg : "";
+            }
             if (boxEl) return _getVal(boxEl, "backgroundColor");
             if (buttonEl) return _getVal(buttonEl, "backgroundColor");
             if (inputContainer) return _getVal(inputContainer, "backgroundColor");
@@ -334,7 +338,10 @@ if (!window.v4IframeStyleExtractorScript) {
         const getCompBorder = () => {
             if (shape) return getShapeColor("borderColor");
             if (table) return _getVal(table, "borderColor");
-            if (isPin) return _getVal(c, "borderColor");
+            if (isPin) {
+                const border = c.style.borderColor || (textCell && textCell.style.borderColor) || _getVal(c, "borderColor");
+                return (border && border !== 'transparent' && border !== 'rgba(0, 0, 0, 0)') ? border : "";
+            }
             if (boxEl) return _getVal(boxEl, "borderColor");
             if (buttonEl) return _getVal(buttonEl, "borderColor");
             if (inputContainer) return _getVal(inputContainer, "borderColor");
@@ -403,6 +410,7 @@ if (!window.v4IframeStyleExtractorScript) {
             patternType: shape && shape.classList.contains('v4-shape-pattern-grid') ? (shape.getAttribute('data-pattern-type') || 'grid') : '',
             isTable: !!table && !isGrid,
             isShape: !!shape,
+            isTextShape: isTextShape,
             isIllustration: isIllustration,
             isMotion: isMotion,
             isMedia: isMedia,

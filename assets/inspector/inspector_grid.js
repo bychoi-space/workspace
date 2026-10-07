@@ -55,6 +55,11 @@
             if (typeof this.renderColumnCards === 'function') {
                 this.renderColumnCards(comp.gridColumns || [], comp.gridHeaders || [], true);
             }
+            if (typeof comp.activeColIndex === 'number' && comp.activeColIndex >= 0) {
+                setTimeout(() => {
+                    this.focusColumnCard(comp.activeColIndex);
+                }, 60);
+            }
             
             const s = comp.currentStyles || {};
             const syncColor = (id, wrapperId, color, isTransparent) => {
@@ -153,10 +158,12 @@
 
                 const div = document.createElement('div');
                 div.className = 'grid-col-card';
+                div.id = 'grid-col-card-' + index;
+                div.setAttribute('data-col-index', index);
                 div.setAttribute('data-clickable', isClickable ? 'true' : 'false');
                 div.setAttribute('data-align', align);
                 div.setAttribute('data-highlight-preset', hlPreset);
-                div.style.cssText = 'display:flex; flex-direction:column; gap:6px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;';
+                div.style.cssText = 'display:flex; flex-direction:column; gap:6px; margin-bottom: 10px; padding: 8px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; background: rgba(255,255,255,0.02);';
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <label style="font-size: 10px; color: #00e5ff; font-weight: bold;">COLUMN ${index + 1}</label>
@@ -443,6 +450,42 @@
             });
         },
 
+        focusColumnCard: function(colIdx) {
+            if (typeof colIdx !== 'number' || isNaN(colIdx) || colIdx < 0) return;
+            const container = document.getElementById('grid-columns-container');
+            if (!container) return;
+
+            // Guard: Do not interrupt if user is actively typing in inspector inputs
+            const activeEl = document.activeElement;
+            if (activeEl && container.contains(activeEl)) {
+                return;
+            }
+
+            const targetCard = container.querySelector('.grid-col-card[data-col-index="' + colIdx + '"]') || container.children[colIdx];
+            if (!targetCard) return;
+
+            // Smoothly scroll target card into view (nearest prevents jarring jumps)
+            try {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+            } catch (e) {
+                targetCard.scrollIntoView(false);
+            }
+
+            // Visual neon pulse animation highlight
+            container.querySelectorAll('.grid-col-card.v4-grid-col-card-focused').forEach(c => {
+                c.classList.remove('v4-grid-col-card-focused');
+            });
+            void targetCard.offsetWidth; // Force reflow to restart CSS keyframe animation
+            targetCard.classList.add('v4-grid-col-card-focused');
+
+            if (this._focusTimer) {
+                clearTimeout(this._focusTimer);
+            }
+            this._focusTimer = setTimeout(() => {
+                targetCard.classList.remove('v4-grid-col-card-focused');
+            }, 1600);
+        },
+
         bindEvents: function() {
             const rowCountInp = document.getElementById('prop-grid-row-count');
             const rowHeightInp = document.getElementById('prop-grid-row-height');
@@ -678,6 +721,23 @@
                     if (wrapper) wrapper.classList.add('transparent-active');
                     notifyGrid({ border: 'transparent' });
                 };
+            }
+
+            // Listen for direct grid column focus events from canvas cells
+            if (!this._colFocusListenerBound) {
+                this._colFocusListenerBound = true;
+                if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
+                    window.MessageHub.subscribe('LF_GRID_COL_FOCUSED', (data) => {
+                        if (data && typeof data.activeColIndex === 'number' && data.activeColIndex >= 0) {
+                            this.focusColumnCard(data.activeColIndex);
+                        }
+                    });
+                }
+                window.addEventListener('message', (e) => {
+                    if (e.data && e.data.type === 'LF_GRID_COL_FOCUSED' && typeof e.data.activeColIndex === 'number' && e.data.activeColIndex >= 0) {
+                        this.focusColumnCard(e.data.activeColIndex);
+                    }
+                });
             }
         }
     };

@@ -56,6 +56,7 @@ window.v4DesignSystemScript = `
         try { if (window.bindStepperEvents) window.bindStepperEvents(); } catch(e) { console.error("Error in bindStepperEvents:", e); }
         try { if (window.bindFileuploadEvents) window.bindFileuploadEvents(); } catch(e) { console.error("Error in bindFileuploadEvents:", e); }
         try { if (window.bindAccordionEvents) window.bindAccordionEvents(); } catch(e) { console.error("Error in bindAccordionEvents:", e); }
+        try { if (window.bindAdminSettingsEvents) window.bindAdminSettingsEvents(); } catch(e) { console.error("Error in bindAdminSettingsEvents:", e); }
         try { if (window.bindToggleEvents) window.bindToggleEvents(); } catch(e) { console.error("Error in bindToggleEvents:", e); }
         try { if (window.bindCursorEvents) window.bindCursorEvents(); } catch(e) { console.error("Error in bindCursorEvents:", e); }
 

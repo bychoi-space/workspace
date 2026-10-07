@@ -663,7 +663,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
 
-            <div id="shape-padding-group" class="prop-group top-divider mt-12">
+            <div id="shape-padding-group" class="prop-group top-divider mt-12" style="display: none;">
                 <div class="v4-section-header mb-8">
                     <label class="v4-section-header-title mb-0">TEXT PADDING (안쪽 여백)</label>
                     <div class="v4-flex-gap-4">

@@ -374,12 +374,54 @@ window.v4Script = `
                 }
             }
             window.updateHandles(c);
-            notifyParent({ 
+
+            var queryItemInfo = null;
+            var adminContainer = c.classList.contains('v4-admin-settings-container') ? c : c.querySelector('.v4-admin-settings-container');
+            if (adminContainer) {
+                var isHeader = !!e.target.closest('.v4-admin-group-header');
+                var rowEl = e.target.closest('.v4-admin-row');
+                var rIdx = -1;
+                var cIdx = -1;
+                if (rowEl) {
+                    var rows = Array.from(adminContainer.querySelectorAll('.v4-admin-row'));
+                    rIdx = rows.indexOf(rowEl);
+                    var labelCell = e.target.closest('.v4-admin-label-cell');
+                    if (labelCell) {
+                        var labelCells = Array.from(rowEl.querySelectorAll('.v4-admin-label-cell'));
+                        cIdx = labelCells.indexOf(labelCell);
+                    }
+                }
+                if (isHeader || rIdx >= 0) {
+                    queryItemInfo = {
+                        isGroupHeader: isHeader,
+                        activeRowIndex: rIdx >= 0 ? (rIdx + 1) : null,
+                        activeColIndex: cIdx >= 0 ? cIdx : null
+                    };
+                }
+            }
+
+            var compStyles = (window._getCompStyles ? window._getCompStyles(c) : {}) || {};
+            if (queryItemInfo) {
+                if (queryItemInfo.isGroupHeader) compStyles.isGroupHeader = true;
+                if (queryItemInfo.activeRowIndex !== null) compStyles.activeRowIndex = queryItemInfo.activeRowIndex;
+                if (queryItemInfo.activeColIndex !== null) compStyles.activeColIndex = queryItemInfo.activeColIndex;
+            }
+
+            notifyParent(Object.assign({ 
                 type: "LF_COMP_SELECTED", 
                 shiftKey: isMulti,
-                isResponsive: !!isResp,
-                ...window._getCompStyles(c)
-            });
+                isResponsive: !!isResp
+            }, compStyles));
+
+            if (queryItemInfo) {
+                notifyParent({
+                    type: "LF_QUERY_ITEM_FOCUSED",
+                    compId: c.id,
+                    isGroupHeader: queryItemInfo.isGroupHeader,
+                    activeRowIndex: queryItemInfo.activeRowIndex,
+                    activeColIndex: queryItemInfo.activeColIndex
+                });
+            }
         } else {
             isMarquee = true;
             window.isMarqueeActive = true;

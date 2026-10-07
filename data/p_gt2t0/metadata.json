@@ -13,7 +13,7 @@
     "08_Responsive_PC_Mobile_498.html": {
       "title": "기획전 As-Is 현황",
       "type": "ui",
-      "updatedAt": "2026-10-07T05:12:34.583Z",
+      "updatedAt": "2026-10-07T05:12:52.742Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -34,7 +34,8 @@
             }
           },
           "standardized": true,
-          "scrollFixed": "none"
+          "scrollFixed": "none",
+          "type": "pin"
         },
         {
           "text": "[PC - 상품 2번 그룹 영역]\n- 스크롤이 해당 위치를 지나면, 상단 고정 영역 TAB 에서 2번 TAB 활성화 처리\n\n\n[Mobile - 상품 2번 그룹 영역]\n- 스크롤이 해당 위치를 지나면, 상단 고정 영역 SEELCT BOX 에서 2번 항목 활성화 처리",
@@ -54,24 +55,8 @@
             }
           },
           "standardized": true,
-          "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "canvas",
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-          "x": 1613,
-          "y": 545,
-          "pins": {
-            "canvas": {
-              "x": 1613,
-              "y": 545,
-              "active": true
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
+          "scrollFixed": "none",
+          "type": "pin"
         }
       ],
       "connectors": [],
@@ -222,7 +207,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-10-07 14:12:34",
+  "updated": "2026-10-07 14:12:52",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

@@ -145,8 +145,8 @@
               "active": true
             },
             "right": {
-              "x": 0,
-              "y": 545,
+              "x": 900,
+              "y": 641,
               "active": true
             },
             "pc": {
@@ -155,8 +155,8 @@
               "active": true
             },
             "mobile": {
-              "x": 0,
-              "y": 545,
+              "x": 900,
+              "y": 641,
               "active": true
             }
           },
@@ -206,7 +206,7 @@
     "10_Mobile_Compare_19.html": {
       "title": "Mobile UI 변경 정리 v2",
       "type": "ui",
-      "updatedAt": "2026-10-07T05:45:41.760Z",
+      "updatedAt": "2026-10-07T05:48:17.794Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
@@ -240,6 +240,23 @@
           },
           "standardized": true,
           "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "canvas",
+          "text": "기존안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작\n\n\n기존안은 '모든 그룹 + 그룹 별 상품 24개' 가 최초 랜더링 시 그려지는 구조",
+          "html": "기존안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작<div><br></div><div>기존안은 '모든 그룹 + 그룹 별 상품 24개' 가 최초 랜더링 시 그려지는 구조</div>",
+          "x": 134,
+          "y": 382,
+          "pins": {
+            "canvas": {
+              "x": 134,
+              "y": 382,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -254,7 +271,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-10-07 14:45:41",
+  "updated": "2026-10-07 14:48:17",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

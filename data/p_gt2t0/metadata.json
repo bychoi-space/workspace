@@ -206,16 +206,16 @@
     "10_Mobile_Compare_19.html": {
       "title": "Mobile UI 변경 정리 v2",
       "type": "ui",
-      "updatedAt": "2026-10-07T05:32:14.248Z",
+      "updatedAt": "2026-10-07T05:37:46.067Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
           "type": "pin",
-          "target": "frame",
+          "target": "canvas",
           "text": "[상품 그룹 선택 영역 (상단 고정)]\n- 최초 랜더링 시 [전체보기] 기본값으로 개선",
           "html": "[상품 그룹 선택 영역 (상단 고정)]<div>- 최초 랜더링 시 [전체보기] 기본값으로 개선</div>",
-          "x": 0,
-          "y": 545,
+          "x": 100,
+          "y": 402,
           "pins": {
             "left": {
               "x": 0,
@@ -235,6 +235,11 @@
             "mobile": {
               "x": 0,
               "y": 545,
+              "active": true
+            },
+            "canvas": {
+              "x": 100,
+              "y": 402,
               "active": true
             }
           },
@@ -257,23 +262,6 @@
           },
           "standardized": true,
           "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "canvas",
-          "text": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)\n\n\n변경안은 '그룹에 관계 없이 상품 10개 (5행)' 가 최초 랜더링 시 그려지는 구조",
-          "html": "<span style=\"font-weight: bold; color: rgb(251, 191, 36);\">변경</span>안 : Select Box 를 활성화하여, 다른 항목을 선택하면, <span style=\"font-weight: bold; color: rgb(251, 191, 36);\">상품 그룹 영역 재 조회</span> (리랜더링)<div><br></div><div>변경안은 '<span style=\"text-decoration-line: underline;\">그룹에 관계 없이 상품 10개 (5행)</span>' 가 최초 랜더링 시 그려지는 구조</div>",
-          "x": 1409,
-          "y": 375,
-          "pins": {
-            "canvas": {
-              "x": 1409,
-              "y": 375,
-              "active": true
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -288,7 +276,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-10-07 14:12:52",
+  "updated": "2026-10-07 14:37:45",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

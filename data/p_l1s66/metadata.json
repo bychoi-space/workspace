@@ -106,7 +106,7 @@
     "09_Admin_PC_Scroll_631.html": {
       "title": "09_Admin_PC_Scroll_631",
       "type": "admin",
-      "updatedAt": "2026-10-07T03:26:13.332Z",
+      "updatedAt": "2026-10-07T05:19:38.445Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -149,7 +149,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 4,
-  "updated": "2026-10-07 12:26:12",
+  "updated": "2026-10-07 14:19:37",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_268.html",

@@ -106,9 +106,37 @@
     "09_Admin_PC_Scroll_631.html": {
       "title": "09_Admin_PC_Scroll_631",
       "type": "admin",
-      "updatedAt": "2026-10-07T02:41:07.165Z",
+      "updatedAt": "2026-10-07T02:41:58.143Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[몰구분] 항목\n- 현재 기본값 : [전체]\n- 변경 기본값 : [10]자사몰",
+          "html": "<div>[몰구분] 항목</div>- 현재 기본값 : [전체]<div>- 변경 기본값 : [10]자사몰</div>",
+          "x": 411,
+          "y": 207,
+          "pins": {
+            "pc": {
+              "x": 411,
+              "y": 207,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 411,
+              "y": 207,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -121,7 +149,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 4,
-  "updated": "2026-10-07 11:41:06",
+  "updated": "2026-10-07 11:41:58",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_268.html",

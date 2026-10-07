@@ -206,9 +206,42 @@
     "10_Mobile_Compare_19.html": {
       "title": "Mobile UI 변경 정리 v2",
       "type": "ui",
-      "updatedAt": "2026-10-07T05:44:50.331Z",
+      "updatedAt": "2026-10-07T05:45:41.760Z",
       "template": "template_responsive_mobile_compare.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[상품 그룹 선택 영역 (상단 고정)]\n- 최초 랜더링 시 [전체보기] 기본값으로 개선",
+          "html": "[상품 그룹 선택 영역 (상단 고정)]<div>- 최초 랜더링 시 [전체보기] 기본값으로 개선</div>",
+          "x": 7,
+          "y": 553,
+          "pins": {
+            "left": {
+              "x": 7,
+              "y": 553,
+              "active": true
+            },
+            "right": {
+              "x": 7,
+              "y": 558,
+              "active": true
+            },
+            "pc": {
+              "x": 7,
+              "y": 553,
+              "active": true
+            },
+            "mobile": {
+              "x": 7,
+              "y": 558,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -221,7 +254,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-10-07 14:44:50",
+  "updated": "2026-10-07 14:45:41",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

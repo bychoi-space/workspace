@@ -206,7 +206,7 @@
     "10_Mobile_Compare_19.html": {
       "title": "Mobile UI 변경 정리 v2",
       "type": "ui",
-      "updatedAt": "2026-10-07T05:51:22.420Z",
+      "updatedAt": "2026-10-07T05:53:40.961Z",
       "template": "template_responsive_mobile_compare.html",
       "description": [
         {
@@ -293,7 +293,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/CDN-3dcf6986169c808bb35ae09f0c889802?source=copy_link",
   "themeIndex": 1,
-  "updated": "2026-10-07 14:51:22",
+  "updated": "2026-10-07 14:53:40",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_152.html",

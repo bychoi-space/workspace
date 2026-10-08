@@ -933,9 +933,9 @@
                 } else if (self.currentFocus === 'pc') {
                     self.focusFrame('pc');
                 } else if (window.centerView) {
-                    window.centerView(false);
+                    window.centerView(true);
                 }
-            }, 260);
+            }, 120);
         },
 
         handleSingleTap: function() {

@@ -14,7 +14,21 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css?v=V347_WHIMSICAL_UNIFIED">
     <link rel="stylesheet" href="assets/theme.css?v=V347_WHIMSICAL_UNIFIED">
-    <link rel="stylesheet" href="assets/dashboard.css?v=V347_WHIMSICAL_UNIFIED">
+    <link rel="stylesheet" href="assets/dashboard.css?v=V370_MOBILE_DASHBOARD_SSOT">
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0e0f17">
+    <script>
+        // Register Service Worker for PWA Installation
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js').catch(function() {});
+            });
+        }
+    </script>
     <!-- Flatpickr (Date Picker) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

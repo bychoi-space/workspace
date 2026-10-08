@@ -24,7 +24,8 @@
                (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
                document.body.classList.contains('res-narrow') || 
                document.body.classList.contains('touch-capable') ||
-               window.innerWidth <= 1050;
+               window.innerWidth <= 1050 ||
+               (window.innerHeight <= 550 && window.innerWidth <= 1100);
     }
 
     // Initialize and inject Presentation Pen Overlay Canvas
@@ -258,6 +259,13 @@
     let fadeTimeout = null;
 
     function showTooltip(autoHide = true) {
+        if (isMobileOrTouchDevice()) {
+            if (tooltip) {
+                tooltip.style.display = 'none';
+                tooltip.style.opacity = '0';
+            }
+            return;
+        }
         initTooltip();
         if (!tooltip) return;
 
@@ -292,6 +300,7 @@
     }
 
     function initTooltip() {
+        if (isMobileOrTouchDevice()) return;
         if (tooltip) return;
         tooltip = document.createElement('div');
         tooltip.id = 'presentation-pen-tooltip';
@@ -340,6 +349,14 @@
         if (isFullscreen !== wasFullscreen) {
             wasFullscreen = isFullscreen;
             if (isFullscreen) {
+                if (isMobileOrTouchDevice()) {
+                    if (canvas) canvas.style.display = 'none';
+                    if (tooltip) {
+                        tooltip.style.display = 'none';
+                        tooltip.style.opacity = '0';
+                    }
+                    return;
+                }
                 // Entering Fullscreen Presentation Mode
                 resizeCanvas();
                 if (canvas) {

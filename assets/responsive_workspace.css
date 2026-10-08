@@ -885,15 +885,20 @@ body.res-narrow #v4-bottom-sheet,
 body.res-narrow #v4-bottom-sheet-backdrop,
 body.res-narrow #v4-zen-exit-pill,
 body.res-narrow #presentation-pen-canvas,
+body.res-narrow #presentation-pen-tooltip,
 body.touch-capable #presentation-pen-canvas,
+body.touch-capable #presentation-pen-tooltip,
 .v4-zen-toast {
     display: none !important;
 }
 
-@media (pointer: coarse) {
-    #presentation-pen-canvas {
+@media (pointer: coarse), (max-width: 1050px) {
+    #presentation-pen-canvas,
+    #presentation-pen-tooltip {
         display: none !important;
+        opacity: 0 !important;
         pointer-events: none !important;
+        visibility: hidden !important;
     }
 }
 

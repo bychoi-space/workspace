@@ -67,9 +67,9 @@
       "version": 0.2
     },
     "06_Admin_System_Core_Value_Impact_900.html": {
-      "title": "06_Admin 핵심 도메인 개선 효과",
+      "title": "Admin 리팩토링 기대효과",
       "type": "architecture",
-      "updatedAt": "2026-10-06T16:18:00.000Z",
+      "updatedAt": "2026-10-08T09:28:10.000Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],

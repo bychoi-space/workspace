@@ -28,5 +28,13 @@
       "type": "image/svg+xml",
       "purpose": "any"
     }
-  ]
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://bychoi-space.github.io/workspace/manifest.json",
+      "id": "./index.html"
+    }
+  ],
+  "prefer_related_applications": false
 }

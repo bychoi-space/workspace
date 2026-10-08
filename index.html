@@ -32,8 +32,6 @@
             e.preventDefault(); // MANDATORY in Chromium/Samsung Internet to defer prompt for user click
             window._deferredInstallPrompt = e;
             console.log('[PWA] beforeinstallprompt captured early in <head>');
-            var btn = document.getElementById('btn-install-app');
-            if (btn) btn.style.display = 'inline-flex';
             window.dispatchEvent(new CustomEvent('pwa-prompt-ready'));
         });
 

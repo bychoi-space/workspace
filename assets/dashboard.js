@@ -943,21 +943,20 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault(); // MANDATORY in Chromium & Samsung Internet to defer prompt for user click
     window._deferredInstallPrompt = e;
     deferredInstallPrompt = e;
-    const btn = document.getElementById('btn-install-app');
-    if (btn && !isRunningStandalone()) {
-        btn.style.display = 'inline-flex';
-    }
+    // An active beforeinstallprompt proves the app is NOT installed on this device!
+    localStorage.removeItem('pwa_app_installed');
+    showPWAInstallUI();
 });
 
 window.addEventListener('pwa-prompt-ready', () => {
     deferredInstallPrompt = window._deferredInstallPrompt;
-    const btn = document.getElementById('btn-install-app');
-    if (btn && !isRunningStandalone()) {
-        btn.style.display = 'inline-flex';
-    }
+    localStorage.removeItem('pwa_app_installed');
+    showPWAInstallUI();
 });
 
 window.addEventListener('appinstalled', () => {
+    // Permanently record that user installed the app on this device
+    localStorage.setItem('pwa_app_installed', 'true');
     window._deferredInstallPrompt = null;
     deferredInstallPrompt = null;
     hidePWAInstallUI();
@@ -969,15 +968,43 @@ function isRunningStandalone() {
            document.referrer.includes('android-app://');
 }
 
-function detectBrowserType() {
-    const ua = navigator.userAgent || '';
-    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-    const isSamsung = /SamsungBrowser/i.test(ua);
-    const isChrome = /Chrome/i.test(ua) && !isSamsung && !/Edg/i.test(ua);
-    if (isIOS) return 'ios';
-    if (isSamsung) return 'samsung';
-    if (isChrome) return 'chrome';
-    return 'other';
+async function isAppAlreadyInstalled() {
+    // 1. Currently running inside standalone PWA app
+    if (isRunningStandalone()) return true;
+
+    // 2. Previously installed on this browser (recorded via appinstalled)
+    // Note: If beforeinstallprompt has fired, that event takes precedence (means app was uninstalled)
+    if (localStorage.getItem('pwa_app_installed') === 'true' && !window._deferredInstallPrompt) {
+        return true;
+    }
+
+    // 3. Android OS Package query API (Chrome & Samsung Internet official WebAPK detection)
+    if ('getInstalledRelatedApps' in navigator) {
+        try {
+            const relatedApps = await navigator.getInstalledRelatedApps();
+            if (relatedApps && relatedApps.length > 0) {
+                localStorage.setItem('pwa_app_installed', 'true');
+                return true;
+            }
+        } catch (_) {}
+    }
+
+    return false;
+}
+
+function showPWAInstallUI() {
+    if (isRunningStandalone()) return;
+    if (localStorage.getItem('pwa_app_installed') === 'true' && !window._deferredInstallPrompt) return;
+
+    const btn = document.getElementById('btn-install-app');
+    if (btn) btn.style.display = 'inline-flex';
+
+    const isMobile = window.innerWidth <= 820 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isDismissed = sessionStorage.getItem('dismiss_pwa_banner') === 'true';
+    if (isMobile && !isDismissed) {
+        const banner = document.getElementById('pwa-install-banner');
+        if (banner) banner.style.display = 'flex';
+    }
 }
 
 function hidePWAInstallUI() {
@@ -987,6 +1014,17 @@ function hidePWAInstallUI() {
     if (banner) banner.style.display = 'none';
     const modal = document.getElementById('modal-install-guide');
     if (modal) modal.style.display = 'none';
+}
+
+function detectBrowserType() {
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isSamsung = /SamsungBrowser/i.test(ua);
+    const isChrome = /Chrome/i.test(ua) && !isSamsung && !/Edg/i.test(ua);
+    if (isIOS) return 'ios';
+    if (isSamsung) return 'samsung';
+    if (isChrome) return 'chrome';
+    return 'other';
 }
 
 function switchPWAInstallTab(tabId) {
@@ -1021,6 +1059,7 @@ function handlePWAInstallTrigger() {
         promptEvent.prompt();
         promptEvent.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
+                localStorage.setItem('pwa_app_installed', 'true');
                 hidePWAInstallUI();
             }
             window._deferredInstallPrompt = null;
@@ -1048,7 +1087,10 @@ function handlePWAInstallTrigger() {
                 if (btn) btn.innerHTML = originalHtml;
                 readyPrompt.prompt();
                 readyPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') hidePWAInstallUI();
+                    if (choiceResult.outcome === 'accepted') {
+                        localStorage.setItem('pwa_app_installed', 'true');
+                        hidePWAInstallUI();
+                    }
                     window._deferredInstallPrompt = null;
                     deferredInstallPrompt = null;
                 });
@@ -1065,28 +1107,18 @@ function handlePWAInstallTrigger() {
     openPWAInstallGuideModal();
 }
 
-function initPWAInstallEngine() {
-    if (isRunningStandalone()) {
+async function initPWAInstallEngine() {
+    // Step 1: Check if already installed
+    const alreadyInstalled = await isAppAlreadyInstalled();
+    if (alreadyInstalled) {
         hidePWAInstallUI();
         return;
     }
 
+    // Step 2: Bind click triggers
     const installBtn = document.getElementById('btn-install-app');
     if (installBtn) {
-        installBtn.style.display = 'inline-flex';
         installBtn.onclick = handlePWAInstallTrigger;
-    }
-
-    // Floating banner for mobile visitors (Safari / Samsung / Chrome) if not dismissed
-    const isMobile = window.innerWidth <= 820 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isDismissed = sessionStorage.getItem('dismiss_pwa_banner') === 'true';
-    if (isMobile && !isDismissed) {
-        setTimeout(() => {
-            if (!isRunningStandalone()) {
-                const banner = document.getElementById('pwa-install-banner');
-                if (banner) banner.style.display = 'flex';
-            }
-        }, 1200);
     }
 
     const bannerBtn = document.getElementById('btn-pwa-banner-install');
@@ -1101,6 +1133,18 @@ function initPWAInstallEngine() {
             if (banner) banner.style.display = 'none';
             sessionStorage.setItem('dismiss_pwa_banner', 'true');
         };
+    }
+
+    // Step 3: For iOS Safari (which never fires beforeinstallprompt) vs Chromium
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+        showPWAInstallUI();
+    } else if (window._deferredInstallPrompt) {
+        // If Chromium/Samsung prompt event already arrived before init
+        showPWAInstallUI();
+    } else {
+        // Keep hidden until beforeinstallprompt explicitly fires
+        hidePWAInstallUI();
     }
 
     // Modal tabs
@@ -1119,7 +1163,15 @@ function initPWAInstallEngine() {
     };
 
     if (guideCloseBtn) guideCloseBtn.onclick = closeGuide;
-    if (guideOkBtn) guideOkBtn.onclick = closeGuide;
+    if (guideOkBtn) {
+        guideOkBtn.onclick = () => {
+            closeGuide();
+            if (isIOS) {
+                localStorage.setItem('pwa_app_installed', 'true');
+                hidePWAInstallUI();
+            }
+        };
+    }
     if (guideModal) {
         guideModal.onclick = (e) => {
             if (e.target === guideModal) closeGuide();

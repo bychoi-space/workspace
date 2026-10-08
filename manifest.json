@@ -1,0 +1,19 @@
+{
+  "name": "bychoi workspace - Editor",
+  "short_name": "Workspace",
+  "description": "Interactive Resolution-Driven Workspace Editor & Viewer",
+  "start_url": "./viewer.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f1115",
+  "theme_color": "#12151c",
+  "icons": [
+    {
+      "src": "assets/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

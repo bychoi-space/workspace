@@ -23,8 +23,14 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
     <link rel="stylesheet" href="assets/viewer.css?v=V350_ILLUSTRATION_2COL">
-    <link rel="stylesheet" href="assets/ui_library.css?v=V349_INSPECTOR_FIX">
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V368_MOBILE_FIXES_SSOT">
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#12151c">
+
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V369_PWA_IMMERSIVE_SSOT">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -44,6 +50,13 @@
                 originalLog.apply(console, args);
             };
         })();
+
+        // Register Service Worker for PWA Installation
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js').catch(function() {});
+            });
+        }
 
         window.onerror = function(msg, url, line, col, error) {
             const dc = document.getElementById('debug-console');
@@ -676,10 +689,35 @@
         </div>
     </div>
 
+    <!-- Smart Dual-Frame Focus Switcher (Mobile App / PC Web / Full) -->
+    <div id="v4-frame-switcher" class="v4-frame-switcher" style="display: none;">
+        <button type="button" class="v4-frame-switch-btn active" id="btn-focus-mobile" data-focus="mobile" title="모바일 앱 화면 1:1 확대 (실기기 핏)">
+            <span class="material-icons-outlined">smartphone</span>
+            <span>모바일 1:1</span>
+        </button>
+        <button type="button" class="v4-frame-switch-btn" id="btn-focus-pc" data-focus="pc" title="PC 웹 화면 핏">
+            <span class="material-icons-outlined">desktop_windows</span>
+            <span>PC 핏</span>
+        </button>
+        <button type="button" class="v4-frame-switch-btn" id="btn-focus-full" data-focus="full" title="전체 캔버스 보기">
+            <span class="material-icons-outlined">aspect_ratio</span>
+            <span>전체</span>
+        </button>
+    </div>
+
+    <!-- Zen Mode Exit Floating Pill -->
+    <button type="button" id="v4-zen-exit-pill" class="v4-zen-exit-pill" title="화면 UI 복원 (단축키: Esc 또는 탭)">
+        <span class="material-icons-outlined" style="font-size:15px;">fullscreen_exit</span>
+        <span>UI 복원</span>
+    </button>
+
     <!-- Mobile Bottom Floating Action Dock (Always in DOM) -->
     <nav id="v4-bottom-dock" class="v4-bottom-dock" aria-label="모바일 뷰어 컨트롤러">
         <button type="button" id="dock-btn-prev" class="v4-dock-btn" title="이전 화면">
             <span class="material-icons-outlined">chevron_left</span>
+        </button>
+        <button type="button" id="dock-btn-fullscreen" class="v4-dock-btn" title="전체화면 전환 (브라우저 주소창 숨김)">
+            <span class="material-icons-outlined" id="dock-fullscreen-icon">fullscreen</span>
         </button>
         <button type="button" id="dock-btn-fit" class="v4-dock-btn" title="화면 맞춤">
             <span class="material-icons-outlined">fit_screen</span>
@@ -807,6 +845,6 @@
     <script src="assets/inspector/inspector_admin_settings.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_table.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_popup.js?v=V361_POPUP_INSPECTOR"></script>
-    <script src="assets/vctrl_resolution_engine.js?v=V368_MOBILE_FIXES_SSOT"></script>
+    <script src="assets/vctrl_resolution_engine.js?v=V369_PWA_IMMERSIVE_SSOT"></script>
 </body>
 </html>

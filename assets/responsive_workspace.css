@@ -675,3 +675,152 @@ body.res-narrow .stage,
 body.touch-capable .stage {
     will-change: transform;
 }
+
+/* ==========================================================================
+   7. Smart Dual-Frame Focus Switcher (Mobile 1:1, PC Fit, Full)
+   ========================================================================== */
+.v4-frame-switcher {
+    display: none;
+    position: fixed !important;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(0) !important;
+    z-index: 999980 !important;
+    background: rgba(18, 21, 28, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 229, 255, 0.12);
+    border-radius: 20px;
+    padding: 3px 5px;
+    align-items: center;
+    gap: 3px;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: auto;
+}
+
+body.res-narrow .v4-frame-switcher.is-available,
+body.res-compact .v4-frame-switcher.is-available {
+    display: flex !important;
+}
+
+@media (max-width: 900px) {
+    .v4-frame-switcher.is-available {
+        display: flex !important;
+    }
+}
+
+.v4-frame-switch-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 15px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    outline: none;
+    white-space: nowrap;
+    touch-action: manipulation;
+}
+
+.v4-frame-switch-btn .material-icons-outlined {
+    font-size: 16px;
+    color: inherit;
+}
+
+.v4-frame-switch-btn:hover {
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.v4-frame-switch-btn:active {
+    transform: scale(0.96);
+}
+
+.v4-frame-switch-btn.active {
+    background: rgba(0, 229, 255, 0.18);
+    color: #00e5ff;
+    box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.45);
+}
+
+/* ==========================================================================
+   8. Tap-to-Hide Immersive Zen View & Exit Pill
+   ========================================================================== */
+.toolbar {
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+}
+
+body.zen-mode .toolbar {
+    transform: translateY(-110%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+body.zen-mode .v4-bottom-dock {
+    transform: translateX(-50%) translateY(calc(100% + 60px)) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+body.zen-mode .v4-frame-switcher {
+    transform: translateX(-50%) translateY(calc(100% + 120px)) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+body.res-narrow.zen-mode #workspace-view {
+    height: 100% !important;
+    top: 0 !important;
+}
+
+.v4-zen-exit-pill {
+    display: none;
+    position: fixed !important;
+    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right: 14px !important;
+    z-index: 999999 !important;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: rgba(18, 21, 28, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    color: #cbd5e1;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.v4-zen-exit-pill:hover,
+.v4-zen-exit-pill:active {
+    background: rgba(18, 21, 28, 0.98);
+    color: #00e5ff;
+    border-color: rgba(0, 229, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3);
+}
+
+body.zen-mode .v4-zen-exit-pill {
+    display: inline-flex !important;
+}
+
+/* Dock Fullscreen active indicator */
+#dock-btn-fullscreen.active {
+    color: var(--res-dock-accent, #00e5ff);
+    background: rgba(0, 229, 255, 0.15);
+}

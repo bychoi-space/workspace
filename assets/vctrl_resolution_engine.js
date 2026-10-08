@@ -24,6 +24,7 @@
 
     var ResolutionEngine = {
         currentTier: 'wide', // 'wide' | 'compact' | 'narrow'
+        currentFocus: 'full', // 'mobile' | 'pc' | 'full'
         isTouchDevice: false,
         _initialized: false,
         _resizeTimer: null,
@@ -32,6 +33,10 @@
             touchCount: 0,
             startX: 0,
             startY: 0,
+            tapStartX: 0,
+            tapStartY: 0,
+            tapStartTime: 0,
+            hasMoved: false,
             initialDistance: 0,
             initialScale: 1,
             midX: 0,
@@ -52,13 +57,14 @@
             this.initListeners();
             this.initTouchGestures();
             this.syncScreenList();
+            this.checkAndInitFrameSwitcher();
             this._initialized = true;
 
-            // Delayed sync guards for asynchronous metadata hydration
+            // Delayed sync guards for asynchronous metadata hydration & iframe load
             var self = this;
-            setTimeout(function() { self.syncScreenList(); }, 400);
-            setTimeout(function() { self.syncScreenList(); }, 1200);
-            setTimeout(function() { self.syncScreenList(); }, 2500);
+            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); }, 400);
+            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); }, 1200);
+            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); }, 2500);
 
             console.log("[VCTRL RESOLUTION ENGINE] Initialized successfully. Current Tier:", this.currentTier);
         },
@@ -75,6 +81,9 @@
                     '<button type="button" id="dock-btn-prev" class="v4-dock-btn" title="이전 화면">' +
                         '<span class="material-icons-outlined">chevron_left</span>' +
                     '</button>' +
+                    '<button type="button" id="dock-btn-fullscreen" class="v4-dock-btn" title="전체화면 전환 (주소창 숨김)">' +
+                        '<span class="material-icons-outlined" id="dock-fullscreen-icon">fullscreen</span>' +
+                    '</button>' +
                     '<button type="button" id="dock-btn-fit" class="v4-dock-btn" title="화면 맞춤">' +
                         '<span class="material-icons-outlined">fit_screen</span>' +
                     '</button>' +
@@ -89,6 +98,39 @@
                         '<span class="material-icons-outlined">layers</span>' +
                     '</button>';
                 document.body.appendChild(dock);
+            }
+
+            // Inject Frame Switcher if not present
+            if (!document.getElementById('v4-frame-switcher')) {
+                var switcher = document.createElement('div');
+                switcher.id = 'v4-frame-switcher';
+                switcher.className = 'v4-frame-switcher';
+                switcher.style.display = 'none';
+                switcher.innerHTML = 
+                    '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-mobile" data-focus="mobile" title="모바일 앱 화면 1:1 확대 (실기기 핏)">' +
+                        '<span class="material-icons-outlined">smartphone</span>' +
+                        '<span>모바일 1:1</span>' +
+                    '</button>' +
+                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-pc" data-focus="pc" title="PC 웹 화면 핏">' +
+                        '<span class="material-icons-outlined">desktop_windows</span>' +
+                        '<span>PC 핏</span>' +
+                    '</button>' +
+                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-full" data-focus="full" title="전체 캔버스 보기">' +
+                        '<span class="material-icons-outlined">aspect_ratio</span>' +
+                        '<span>전체</span>' +
+                    '</button>';
+                document.body.appendChild(switcher);
+            }
+
+            // Inject Zen Mode Exit Floating Pill if not present
+            if (!document.getElementById('v4-zen-exit-pill')) {
+                var zenPill = document.createElement('button');
+                zenPill.type = 'button';
+                zenPill.id = 'v4-zen-exit-pill';
+                zenPill.className = 'v4-zen-exit-pill';
+                zenPill.title = '화면 UI 복원 (단축키: Esc 또는 탭)';
+                zenPill.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">fullscreen_exit</span><span>UI 복원</span>';
+                document.body.appendChild(zenPill);
             }
 
             // Inject Bottom Sheet Backdrop
@@ -226,16 +268,21 @@
             // Bottom Dock Button Listeners
             var btnPrev = document.getElementById('dock-btn-prev');
             var btnNext = document.getElementById('dock-btn-next');
+            var btnFullscreen = document.getElementById('dock-btn-fullscreen');
             var btnFit = document.getElementById('dock-btn-fit');
             var btnCrisp = document.getElementById('dock-btn-crisp');
             var btnScreens = document.getElementById('dock-btn-screens');
+            var btnZenExit = document.getElementById('v4-zen-exit-pill');
 
             if (btnPrev) btnPrev.addEventListener('click', function() { self.navigateScreen(-1); });
             if (btnNext) btnNext.addEventListener('click', function() { self.navigateScreen(1); });
+            if (btnFullscreen) btnFullscreen.addEventListener('click', function() { self.toggleFullscreen(); });
+            if (btnZenExit) btnZenExit.addEventListener('click', function() { self.toggleZenMode(false); });
             if (btnFit) btnFit.addEventListener('click', function() {
                 if (window.state) window.state.viewMode = 'fit';
                 if (window.centerView) window.centerView(true);
                 self.syncDockZoom();
+                self.updateFocusButtonUI('full');
             });
             if (btnCrisp) btnCrisp.addEventListener('click', function() {
                 if (window.toggleCrispView) window.toggleCrispView();
@@ -244,6 +291,43 @@
             if (btnScreens) btnScreens.addEventListener('click', function() {
                 self.toggleBottomSheet();
             });
+
+            // Frame Switcher Buttons Listeners
+            var btnFocusMobile = document.getElementById('btn-focus-mobile');
+            var btnFocusPc = document.getElementById('btn-focus-pc');
+            var btnFocusFull = document.getElementById('btn-focus-full');
+            if (btnFocusMobile) btnFocusMobile.addEventListener('click', function() { self.focusFrame('mobile'); });
+            if (btnFocusPc) btnFocusPc.addEventListener('click', function() { self.focusFrame('pc'); });
+            if (btnFocusFull) btnFocusFull.addEventListener('click', function() { self.focusFrame('full'); });
+
+            // Keyboard Escape for Zen Mode
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && document.body.classList.contains('zen-mode')) {
+                    self.toggleZenMode(false);
+                }
+            });
+
+            // Native Fullscreen Change Listener
+            var onFsChange = function() {
+                var isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+                var fsIcon = document.getElementById('dock-fullscreen-icon');
+                if (fsIcon) fsIcon.innerText = isFull ? 'fullscreen_exit' : 'fullscreen';
+                if (btnFullscreen) {
+                    btnFullscreen.classList.toggle('active', isFull);
+                    btnFullscreen.title = isFull ? '전체화면 종료' : '전체화면 전환 (주소창 숨김)';
+                }
+                setTimeout(function() {
+                    if (self.currentFocus === 'mobile') {
+                        self.focusFrame('mobile');
+                    } else if (self.currentFocus === 'pc') {
+                        self.focusFrame('pc');
+                    } else if (window.centerView) {
+                        window.centerView(false);
+                    }
+                }, 200);
+            };
+            document.addEventListener('fullscreenchange', onFsChange);
+            document.addEventListener('webkitfullscreenchange', onFsChange);
 
             // Bottom Sheet Close & Backdrop
             var backdrop = document.getElementById('v4-bottom-sheet-backdrop');
@@ -313,16 +397,29 @@
             if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
                 window.MessageHub.subscribe('SCREEN_LOADED', function() {
                     self.syncScreenList();
-                    self.checkAndApplyNativeFrameFocus();
+                    self.checkAndInitFrameSwitcher();
+                    self.attachIframeTapListener();
                 });
                 window.MessageHub.subscribe('SCREEN_CHANGED', function() {
                     self.syncScreenList();
-                    self.checkAndApplyNativeFrameFocus();
+                    self.checkAndInitFrameSwitcher();
+                    self.attachIframeTapListener();
+                });
+            }
+
+            // Fallback iframe load listener
+            var DOM = window.DOM;
+            if (DOM && DOM.iframe) {
+                DOM.iframe.addEventListener('load', function() {
+                    setTimeout(function() {
+                        self.checkAndInitFrameSwitcher();
+                        self.attachIframeTapListener();
+                    }, 150);
                 });
             }
         },
 
-        // --- 5. Touch Gestures Engine (Pinch-to-zoom, 1-Finger Pan, Double-Tap) ---
+        // --- 5. Touch Gestures Engine (Pinch-to-zoom, 1-Finger Pan, Single-Tap Zen, Double-Tap) ---
         initTouchGestures: function() {
             var self = this;
             var canvas = document.getElementById('canvas');
@@ -331,8 +428,8 @@
             var touchState = this._touchState;
 
             canvas.addEventListener('touchstart', function(e) {
-                // Ignore touch on UI overlays
-                if (e.target.closest('#v4-bottom-dock, #v4-bottom-sheet, #floating-inspector-card, .modal-overlay')) {
+                // Ignore touch on interactive UI overlays
+                if (e.target.closest('#v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card')) {
                     return;
                 }
 
@@ -342,6 +439,12 @@
                     var now = Date.now();
                     var timeDiff = now - touchState.lastTapTime;
                     touchState.lastTapTime = now;
+
+                    var t = e.touches[0];
+                    touchState.tapStartX = t.clientX;
+                    touchState.tapStartY = t.clientY;
+                    touchState.tapStartTime = now;
+                    touchState.hasMoved = false;
 
                     // Double-tap detected (within 300ms)
                     if (timeDiff > 40 && timeDiff < 320) {
@@ -354,7 +457,6 @@
                     }
 
                     // 1-Finger Pan Initiation
-                    var t = e.touches[0];
                     var state = window.state;
                     if (state && state.transform) {
                         touchState.isTracking = true;
@@ -364,6 +466,7 @@
                 } else if (e.touches.length === 2) {
                     // Pinch Zoom Initiation
                     e.preventDefault();
+                    touchState.hasMoved = true;
                     touchState.isTracking = true;
                     var t1 = e.touches[0], t2 = e.touches[1];
                     var dx = t1.clientX - t2.clientX;
@@ -386,10 +489,14 @@
                 if (!state || !state.transform) return;
 
                 if (e.touches.length === 1 && touchState.touchCount === 1) {
+                    var t = e.touches[0];
+                    if (Math.hypot(t.clientX - touchState.tapStartX, t.clientY - touchState.tapStartY) > 8) {
+                        touchState.hasMoved = true;
+                    }
+
                     // 1-Finger Pan in progress (Only if in narrow mode or hand mode)
                     if (self.currentTier === 'narrow' || state.tool === 'hand' || state.isHandMode) {
                         e.preventDefault();
-                        var t = e.touches[0];
                         state.transform.x = Math.round(t.clientX - touchState.startX);
                         state.transform.y = Math.round(t.clientY - touchState.startY);
                         state.viewMode = 'custom';
@@ -397,6 +504,7 @@
                     }
                 } else if (e.touches.length === 2) {
                     // Pinch Zoom in progress
+                    touchState.hasMoved = true;
                     e.preventDefault();
                     var t1 = e.touches[0], t2 = e.touches[1];
                     var currentDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
@@ -420,6 +528,12 @@
 
             canvas.addEventListener('touchend', function(e) {
                 if (e.touches.length === 0) {
+                    // Single tap detection (no significant drag and quick release)
+                    var elapsed = Date.now() - (touchState.tapStartTime || 0);
+                    if (!touchState.hasMoved && elapsed > 30 && elapsed < 280) {
+                        self.handleSingleTap();
+                    }
+
                     touchState.isTracking = false;
                     touchState.touchCount = 0;
                     touchState.initialDistance = 0;
@@ -652,46 +766,223 @@
         },
 
         // --- 8. Smart Frame Focus (Native 1:1 Mobile Frame Preview) ---
-        checkAndApplyNativeFrameFocus: function() {
-            var self = this;
-            if (this.currentTier !== 'narrow') return;
-
+        getFrameElements: function() {
             var DOM = window.DOM;
-            if (!DOM || !DOM.iframe) return;
-
+            if (!DOM || !DOM.iframe) return { mobile: null, pc: null };
             try {
                 var doc = DOM.iframe.contentDocument;
-                if (!doc) return;
+                if (!doc) return { mobile: null, pc: null };
 
-                // Check for mobile frames
-                var mobileFrame = doc.querySelector('.mobile-content-inner') || 
-                                  doc.querySelector('.mobile-browser-frame') || 
-                                  doc.querySelector('.mobile-content-area');
+                var mobileEl = doc.querySelector('.frame-column.mobile-column') || 
+                               doc.querySelector('.mobile-frame') || 
+                               doc.querySelector('.mobile-browser-frame') || 
+                               doc.querySelector('.mobile-column-left') || 
+                               doc.querySelector('.mobile-content-inner') ||
+                               doc.querySelector('[data-frame="mobile"]');
 
-                if (mobileFrame && window.state && window.state.transform) {
-                    var frameRect = mobileFrame.getBoundingClientRect();
-                    var frameW = frameRect.width || 375;
-                    var frameLeft = mobileFrame.offsetLeft || 0;
-                    var frameTop = mobileFrame.offsetTop || 0;
+                var pcEl = doc.querySelector('.frame-column.pc-column') || 
+                           doc.querySelector('.pc-browser-frame') || 
+                           doc.querySelector('.pc-frame') || 
+                           doc.querySelector('.pc-content-inner') ||
+                           doc.querySelector('[data-frame="pc"]');
 
-                    var screenW = window.innerWidth;
-                    // Fit mobile frame to ~96% of device screen
-                    var targetScale = Math.min((screenW * 0.96) / frameW, 1.25);
-
-                    var state = window.state;
-                    state.transform.scale = targetScale;
-                    state.transform.x = Math.round((screenW - (frameW * targetScale)) / 2 - (frameLeft * targetScale));
-                    state.transform.y = 15; // 15px top margin
-                    state.viewMode = 'custom';
-
-                    if (window.updateTransform) window.updateTransform();
-                    self.syncDockZoom();
-
-                    console.log("[VCTRL RESOLUTION ENGINE] Smart Mobile Frame Focus applied: Scale =", targetScale);
-                }
-            } catch (e) {
-                // SOP / Sandboxed guard
+                return { mobile: mobileEl, pc: pcEl, doc: doc };
+            } catch (_) {
+                return { mobile: null, pc: null };
             }
+        },
+
+        checkAndInitFrameSwitcher: function() {
+            var switcher = document.getElementById('v4-frame-switcher');
+            if (!switcher) return;
+
+            var frames = this.getFrameElements();
+            var hasMobile = !!frames.mobile;
+
+            if (hasMobile) {
+                switcher.classList.add('is-available');
+                // On narrow tier, default focus to mobile 1:1 on initial load or if not explicitly set
+                if (this.currentTier === 'narrow' && (!this.currentFocus || this.currentFocus === 'mobile')) {
+                    this.focusFrame('mobile');
+                } else if (this.currentFocus) {
+                    this.updateFocusButtonUI(this.currentFocus);
+                }
+            } else {
+                switcher.classList.remove('is-available');
+                this.currentFocus = 'full';
+                this.updateFocusButtonUI('full');
+            }
+        },
+
+        focusFrame: function(type) {
+            this.currentFocus = type;
+            this.updateFocusButtonUI(type);
+
+            if (type === 'full') {
+                if (window.centerView) window.centerView(true);
+                this.syncDockZoom();
+                return;
+            }
+
+            var DOM = window.DOM;
+            if (!DOM || !DOM.canvas || !window.state || !window.state.transform) return;
+
+            var frames = this.getFrameElements();
+            var targetEl = (type === 'mobile') ? frames.mobile : frames.pc;
+            if (!targetEl) {
+                if (window.centerView) window.centerView(true);
+                return;
+            }
+
+            // Calculate element offset inside iframe relative to body
+            var left = 0, top = 0;
+            var curr = targetEl;
+            var body = (frames.doc && frames.doc.body) || (curr && curr.ownerDocument && curr.ownerDocument.body);
+            while (curr && curr !== body) {
+                left += curr.offsetLeft || 0;
+                top += curr.offsetTop || 0;
+                curr = curr.offsetParent;
+            }
+
+            var elW = targetEl.offsetWidth || (type === 'mobile' ? 375 : 1160);
+            var cw = DOM.canvas.clientWidth;
+            var ch = DOM.canvas.clientHeight;
+            if (cw <= 0) return;
+
+            var scale, x, y;
+            if (type === 'mobile') {
+                // Smartphone 1:1 native app scale (clamped to fit canvas width with 8px margin)
+                scale = Math.min((cw - 8) / elW, 1.15);
+                if (cw >= 375 && scale >= 0.95 && scale <= 1.08) {
+                    scale = 1.0; // Crisp 1:1 pixel snap
+                }
+                x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
+                var topPad = document.body.classList.contains('zen-mode') ? 10 : 8;
+                y = Math.round(topPad - top * scale);
+            } else {
+                // PC Web Frame fit to canvas width
+                scale = Math.min((cw - 16) / elW, 0.95);
+                x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
+                var pcTopPad = document.body.classList.contains('zen-mode') ? 12 : 10;
+                y = Math.round(pcTopPad - top * scale);
+            }
+
+            var state = window.state;
+            state.transform.x = x;
+            state.transform.y = y;
+            state.transform.scale = scale;
+            state.viewMode = 'custom';
+
+            if (window.updateTransform) window.updateTransform();
+            this.syncDockZoom();
+
+            console.log("[VCTRL RESOLUTION ENGINE] Frame Focused:", type, "Scale:", scale, "x:", x, "y:", y);
+        },
+
+        updateFocusButtonUI: function(type) {
+            var buttons = document.querySelectorAll('.v4-frame-switch-btn');
+            buttons.forEach(function(b) {
+                b.classList.toggle('active', b.getAttribute('data-focus') === type);
+            });
+        },
+
+        checkAndApplyNativeFrameFocus: function() {
+            this.checkAndInitFrameSwitcher();
+        },
+
+        // --- 9. Fullscreen API & Tap-to-Hide Immersive Zen View ---
+        toggleFullscreen: function() {
+            var doc = document;
+            var docEl = doc.documentElement;
+            var isFull = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+
+            if (!isFull) {
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen().catch(function() {});
+                } else if (docEl.webkitRequestFullscreen) {
+                    docEl.webkitRequestFullscreen();
+                } else if (docEl.msRequestFullscreen) {
+                    docEl.msRequestFullscreen();
+                }
+                // Automatically enter Zen Mode when entering fullscreen on mobile
+                if (this.currentTier === 'narrow') {
+                    this.toggleZenMode(true);
+                }
+            } else {
+                if (doc.exitFullscreen) {
+                    doc.exitFullscreen().catch(function() {});
+                } else if (doc.webkitExitFullscreen) {
+                    doc.webkitExitFullscreen();
+                } else if (doc.msExitFullscreen) {
+                    doc.msExitFullscreen();
+                }
+                this.toggleZenMode(false);
+            }
+        },
+
+        toggleZenMode: function(forceState) {
+            var isCurrentlyZen = document.body.classList.contains('zen-mode');
+            var nextZen = (typeof forceState === 'boolean') ? forceState : !isCurrentlyZen;
+
+            document.body.classList.toggle('zen-mode', nextZen);
+
+            var self = this;
+            setTimeout(function() {
+                if (self.currentFocus === 'mobile') {
+                    self.focusFrame('mobile');
+                } else if (self.currentFocus === 'pc') {
+                    self.focusFrame('pc');
+                } else if (window.centerView) {
+                    window.centerView(false);
+                }
+            }, 260);
+        },
+
+        handleSingleTap: function() {
+            // Single tap toggles Zen Mode on narrow mobile screens, or exits Zen Mode if active
+            if (this.currentTier === 'narrow' || document.body.classList.contains('zen-mode')) {
+                this.toggleZenMode();
+            }
+        },
+
+        attachIframeTapListener: function() {
+            var DOM = window.DOM;
+            if (!DOM || !DOM.iframe) return;
+            try {
+                var doc = DOM.iframe.contentDocument;
+                if (!doc || doc._zenTapWired) return;
+                var self = this;
+                var ifTouch = { x: 0, y: 0, time: 0, moved: false };
+
+                doc.addEventListener('touchstart', function(e) {
+                    if (e.touches.length === 1) {
+                        ifTouch.x = e.touches[0].clientX;
+                        ifTouch.y = e.touches[0].clientY;
+                        ifTouch.time = Date.now();
+                        ifTouch.moved = false;
+                    }
+                }, { passive: true });
+
+                doc.addEventListener('touchmove', function(e) {
+                    if (e.touches.length === 1) {
+                        if (Math.hypot(e.touches[0].clientX - ifTouch.x, e.touches[0].clientY - ifTouch.y) > 8) {
+                            ifTouch.moved = true;
+                        }
+                    }
+                }, { passive: true });
+
+                doc.addEventListener('touchend', function(e) {
+                    var elapsed = Date.now() - ifTouch.time;
+                    if (!ifTouch.moved && elapsed > 30 && elapsed < 280) {
+                        // If in Zen Mode, tapping inside iframe restores UI
+                        if (document.body.classList.contains('zen-mode')) {
+                            self.toggleZenMode(false);
+                        }
+                    }
+                }, { passive: true });
+
+                doc._zenTapWired = true;
+            } catch (_) {}
         }
     };
 

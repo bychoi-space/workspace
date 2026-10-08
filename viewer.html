@@ -25,18 +25,30 @@
     <link rel="stylesheet" href="assets/viewer.css?v=V371_INSPECTOR_RESTORATION">
     <link rel="stylesheet" href="assets/ui_library.css?v=V371_INSPECTOR_RESTORATION">
     <!-- PWA & Mobile Web App Meta Tags -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json?v=V379_PWA_DASHBOARD">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#12151c">
 
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V378_ORIENTATION_FIT_AND_NAV_OVERLAY">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V379_PWA_DASHBOARD">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="assets/vctrl_pdf_exporter.js?v=V347_WHIMSICAL_UNIFIED"></script>
     <script>
+        // PWA & Direct-Entry Project Parameter Guard:
+        // If viewer is launched without a valid project query parameter, immediately bounce to Dashboard index.html
+        (function() {
+            try {
+                var params = new URLSearchParams(window.location.search);
+                var project = params.get('project');
+                if (!project || project.trim() === '' || project === 'Default_Project') {
+                    window.location.replace('index.html');
+                }
+            } catch (_) {}
+        })();
+
         // --- Console Log Auto-Clearing Guard (Disabled console.clear for better debugging visibility) ---
         (function() {
             let logCount = 0;
@@ -800,7 +812,7 @@
     <script src="assets/vctrl_iframe_drag.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_core.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_core.js?v=V379_PWA_DASHBOARD"></script>
     <script src="assets/vctrl_storage.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_core_router.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_parent_shortcuts.js?v=V360_RECURSION_HOTFIX"></script>
@@ -823,7 +835,7 @@
     <script src="assets/vctrl_screen_manager.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_revision_history.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_annotation_pins.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_canvas_viewport.js?v=V378_ORIENTATION_FIT_AND_NAV_OVERLAY"></script>
+    <script src="assets/vctrl_canvas_viewport.js?v=V379_PWA_DASHBOARD"></script>
     <script src="assets/vctrl_properties.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_connectors.js?v=V360_RECURSION_HOTFIX"></script>
     
@@ -839,6 +851,6 @@
     <script src="assets/inspector/inspector_admin_settings.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_table.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_popup.js?v=V361_POPUP_INSPECTOR"></script>
-    <script src="assets/vctrl_resolution_engine.js?v=V378_ORIENTATION_FIT_AND_NAV_OVERLAY"></script>
+    <script src="assets/vctrl_resolution_engine.js?v=V379_PWA_DASHBOARD"></script>
 </body>
 </html>

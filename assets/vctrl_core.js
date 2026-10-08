@@ -750,7 +750,12 @@ window.init = async function () {
         checkEnvironment();
 
         const params = new URLSearchParams(window.location.search);
-        let project = params.get('project') || 'Default_Project';
+        let project = params.get('project');
+        if (!project || project === 'Default_Project' || project.trim() === '') {
+            console.log("[INIT] No valid project specified. Redirecting to Dashboard index.html...");
+            window.location.replace('index.html');
+            return;
+        }
         let fileName = params.get('file') || params.get('screen');
 
         state.currentProject = project;

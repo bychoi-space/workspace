@@ -1,8 +1,9 @@
 {
-  "name": "bychoi workspace - Editor",
+  "name": "bychoi workspace",
   "short_name": "Workspace",
-  "description": "Interactive Resolution-Driven Workspace Editor & Viewer",
+  "description": "Interactive Resolution-Driven Workspace Dashboard & Viewer",
   "start_url": "./index.html",
+  "id": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

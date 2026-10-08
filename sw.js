@@ -1,4 +1,4 @@
-// sw.js - Ultra-lightweight passthrough service worker for PWA installation
+// sw.js - Ultra-lightweight passthrough service worker for PWA installation (v=V379_PWA_DASHBOARD)
 self.addEventListener('install', function(e) {
     self.skipWaiting();
 });

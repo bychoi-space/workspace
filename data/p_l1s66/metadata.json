@@ -145,7 +145,7 @@
     "09_Admin_PC_Scroll_632.html": {
       "title": "09_Admin_PC_Scroll_632",
       "type": "admin",
-      "updatedAt": "2026-10-08T05:42:58.218Z",
+      "updatedAt": "2026-10-08T06:27:21.807Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -160,7 +160,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 4,
-  "updated": "2026-10-08 14:42:58",
+  "updated": "2026-10-08 15:27:21",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_268.html",

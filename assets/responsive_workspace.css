@@ -648,47 +648,127 @@ body.res-narrow .v4-bottom-dock {
         padding: 0 !important;
     }
 
-    /* 3. Ultra-Minimal Mobile Navigation Dock: [ ‹  01/10  › ] */
+    /* 3. Screen Edge Margin Navigation: Left Arrow (‹), Right Arrow (›), Bottom Page Pill */
     .v4-bottom-dock {
+        position: static !important;
+        display: block !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Left Arrow Button: Anchored in Left Screen Margin */
+    #dock-btn-prev {
         display: flex !important;
         position: fixed !important;
-        bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+        left: calc(14px + env(safe-area-inset-left, 0px)) !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        border-radius: 22px !important;
+        background: rgba(15, 23, 42, 0.82) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+        color: #ffffff !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 999990 !important;
+        pointer-events: auto !important;
+        transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+    }
+
+    #dock-btn-prev .material-icons-outlined {
+        font-size: 28px !important;
+        line-height: 1 !important;
+    }
+
+    #dock-btn-prev:hover {
+        background: rgba(30, 41, 59, 0.95) !important;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 229, 255, 0.2) !important;
+    }
+
+    #dock-btn-prev:active {
+        transform: translateY(-50%) scale(0.92) !important;
+    }
+
+    /* Right Arrow Button: Anchored in Right Screen Margin */
+    #dock-btn-next {
+        display: flex !important;
+        position: fixed !important;
+        right: calc(14px + env(safe-area-inset-right, 0px)) !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        border-radius: 22px !important;
+        background: rgba(15, 23, 42, 0.82) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+        color: #ffffff !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 999990 !important;
+        pointer-events: auto !important;
+        transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+    }
+
+    #dock-btn-next .material-icons-outlined {
+        font-size: 28px !important;
+        line-height: 1 !important;
+    }
+
+    #dock-btn-next:hover {
+        background: rgba(30, 41, 59, 0.95) !important;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 229, 255, 0.2) !important;
+    }
+
+    #dock-btn-next:active {
+        transform: translateY(-50%) scale(0.92) !important;
+    }
+
+    /* Page Indicator: Minimal Floating Pill at Bottom Center */
+    #dock-page-indicator {
+        display: flex !important;
+        position: fixed !important;
+        bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        z-index: 999990 !important;
+        height: 30px !important;
+        padding: 0 14px !important;
+        border-radius: 15px !important;
         background: rgba(15, 23, 42, 0.82) !important;
         border: 1px solid rgba(255, 255, 255, 0.16) !important;
         backdrop-filter: blur(18px) !important;
         -webkit-backdrop-filter: blur(18px) !important;
-        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.08) !important;
-        border-radius: 22px !important;
-        padding: 3px 8px !important;
-        align-items: center !important;
-        gap: 4px !important;
-        width: auto !important;
-        min-width: 140px !important;
-        justify-content: center !important;
-    }
-
-    .v4-bottom-dock .v4-dock-btn {
-        width: 36px !important;
-        height: 36px !important;
-        min-width: 36px !important;
-        padding: 0 !important;
-        border-radius: 18px !important;
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: #ffffff !important;
-        display: flex !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+        z-index: 999990 !important;
+        pointer-events: auto !important;
+        font-size: 12.5px !important;
+        font-weight: 700 !important;
+        color: #f1f5f9 !important;
+        letter-spacing: 0.5px !important;
         align-items: center !important;
         justify-content: center !important;
-    }
-
-    .v4-bottom-dock .v4-dock-btn:hover {
-        background: rgba(255, 255, 255, 0.18) !important;
-    }
-
-    .v4-bottom-dock .v4-dock-btn:active {
-        transform: scale(0.92) !important;
+        transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
     }
 
     /* Hide bloated buttons in dock and extra modals on mobile */
@@ -886,12 +966,60 @@ body.fullscreen-mode .toolbar {
         pointer-events: none !important;
         transform: translateY(-24px) !important;
     }
+
+    body.zen-mode #dock-btn-prev,
+    body.fullscreen-mode #dock-btn-prev {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateY(-50%) translateX(-24px) !important;
+    }
+
+    body.zen-mode #dock-btn-next,
+    body.fullscreen-mode #dock-btn-next {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateY(-50%) translateX(24px) !important;
+    }
+
+    body.zen-mode #dock-page-indicator,
+    body.fullscreen-mode #dock-page-indicator {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateX(-50%) translateY(20px) !important;
+    }
 }
 
-body.zen-mode .v4-bottom-dock {
-    transform: translateX(-50%) translateY(calc(100% + 60px)) !important;
+/* Custom In-App Zen Toast: "화면을 터치하면 전체보기가 취소됩니다." */
+.v4-zen-toast {
+    position: fixed !important;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(16px) !important;
+    background: rgba(15, 23, 42, 0.92) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 10px rgba(0, 229, 255, 0.15) !important;
+    border-radius: 20px !important;
+    padding: 7px 16px !important;
+    color: #f1f5f9 !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    z-index: 999999 !important;
     opacity: 0 !important;
     pointer-events: none !important;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    white-space: nowrap !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+.v4-zen-toast.show {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
 }
 
 body.zen-mode .v4-frame-switcher {

@@ -957,40 +957,13 @@
 
         toggleZenMode: function(forceState) {
             var doc = document;
-            var docEl = doc.documentElement;
             var isCurrentlyZen = doc.body.classList.contains('zen-mode');
             var nextZen = (typeof forceState === 'boolean') ? forceState : !isCurrentlyZen;
 
             doc.body.classList.toggle('zen-mode', nextZen);
 
-            // 🌟 Mobile Browser URL Bar Auto-Slide via Native Fullscreen API
-            // Direct user-gesture (tap/click) triggers Chrome/Samsung Internet edge-to-edge fullscreen
-            if (this.currentTier === 'narrow' || this.isTouchDevice) {
-                if (nextZen) {
-                    var requestFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
-                    if (requestFs) {
-                        try {
-                            var p = requestFs.call(docEl);
-                            if (p && typeof p.catch === 'function') {
-                                p.catch(function() {});
-                            }
-                        } catch (_) {}
-                    }
-                } else {
-                    var isFull = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
-                    if (isFull) {
-                        var exitFs = doc.exitFullscreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-                        if (exitFs) {
-                            try {
-                                var ep = exitFs.call(doc);
-                                if (ep && typeof ep.catch === 'function') {
-                                    ep.catch(function() {});
-                                }
-                            } catch (_) {}
-                        }
-                    }
-                }
-            }
+            // 🌟 In-App Zen Mode Feedback Toast: "화면을 터치하면 전체보기가 취소됩니다."
+            this.showZenToast(nextZen);
 
             var self = this;
             setTimeout(function() {
@@ -1003,6 +976,29 @@
                     window.centerView(false);
                 }
             }, 100);
+        },
+
+        showZenToast: function(isZen) {
+            var toast = document.getElementById('v4-zen-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'v4-zen-toast';
+                toast.className = 'v4-zen-toast';
+                toast.innerHTML = '<span class="material-icons-outlined" style="font-size: 16px;">touch_app</span>' +
+                                  '<span>화면을 터치하면 전체보기가 취소됩니다.</span>';
+                document.body.appendChild(toast);
+            }
+
+            clearTimeout(this._zenToastTimer);
+
+            if (isZen) {
+                toast.classList.add('show');
+                this._zenToastTimer = setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 2200);
+            } else {
+                toast.classList.remove('show');
+            }
         },
 
         handleSingleTap: function() {

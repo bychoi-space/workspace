@@ -48,7 +48,7 @@
     "99_Blank_14.html": {
       "title": "Front 리뉴얼 방향",
       "type": "architecture",
-      "updatedAt": "2026-10-08T09:22:16.078Z",
+      "updatedAt": "2026-10-08T09:22:30.224Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -102,7 +102,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-10-08 18:19:08",
+  "updated": "2026-10-08 18:22:29",
   "version": 0.2,
   "period": ""
 }

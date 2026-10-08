@@ -2,7 +2,7 @@
   "name": "bychoi workspace - Editor",
   "short_name": "Workspace",
   "description": "Interactive Resolution-Driven Workspace Editor & Viewer",
-  "start_url": "./viewer.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

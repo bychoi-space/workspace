@@ -69,7 +69,7 @@
     "06_Admin_System_Core_Value_Impact_900.html": {
       "title": "06_Admin 핵심 도메인 개선 효과",
       "type": "architecture",
-      "updatedAt": "2026-10-08T09:13:19.422Z",
+      "updatedAt": "2026-10-08T09:16:57.647Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -102,7 +102,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-10-08 18:13:19",
+  "updated": "2026-10-08 18:16:57",
   "version": 0.2,
   "period": ""
 }

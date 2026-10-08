@@ -15,7 +15,7 @@
     "02_Front_UI_User_Experience_Impact_900.html": {
       "title": "02_Front UI 개선 유저 경험 효과",
       "type": "architecture",
-      "updatedAt": "2026-10-08T07:18:16.886Z",
+      "updatedAt": "2026-10-08T07:21:14.263Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -102,7 +102,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-10-08 16:18:16",
+  "updated": "2026-10-08 16:21:14",
   "version": 0.2,
   "period": ""
 }

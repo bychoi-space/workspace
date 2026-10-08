@@ -61,7 +61,7 @@
       "type": "architecture",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-10-06T05:33:50.294Z",
+      "updatedAt": "2026-10-08T09:17:22.207Z",
       "description": [],
       "connectors": [],
       "version": 0.2
@@ -69,7 +69,7 @@
     "06_Admin_System_Core_Value_Impact_900.html": {
       "title": "06_Admin 핵심 도메인 개선 효과",
       "type": "architecture",
-      "updatedAt": "2026-10-08T09:16:57.647Z",
+      "updatedAt": "2026-10-06T16:18:00.000Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -102,7 +102,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-10-08 18:16:57",
+  "updated": "2026-10-08 18:17:22",
   "version": 0.2,
   "period": ""
 }

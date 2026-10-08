@@ -130,9 +130,9 @@
                 switcher.className = 'v4-frame-switcher';
                 switcher.style.display = 'none';
                 switcher.innerHTML = 
-                    '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-mobile" data-focus="mobile" title="모바일 앱 화면 1:1 확대 (실기기 핏)">' +
+                    '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-mobile" data-focus="mobile" title="모바일 화면 핏">' +
                         '<span class="material-icons-outlined">smartphone</span>' +
-                        '<span>모바일 1:1</span>' +
+                        '<span>모바일 핏</span>' +
                     '</button>' +
                     '<button type="button" class="v4-frame-switch-btn" id="btn-focus-pc" data-focus="pc" title="PC 웹 화면 핏">' +
                         '<span class="material-icons-outlined">desktop_windows</span>' +
@@ -366,6 +366,25 @@
             if (btnFocusPc) btnFocusPc.addEventListener('click', function() { self.focusFrame('pc'); });
             if (btnFocusFull) btnFocusFull.addEventListener('click', function() { self.focusFrame('full'); });
 
+            // Canvas mouse wheel vertical scroll handler when focused on frame
+            var canvasEl = document.getElementById('canvas');
+            if (canvasEl) {
+                canvasEl.addEventListener('wheel', function(e) {
+                    if (e.ctrlKey || e.metaKey) return;
+                    if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
+                        e.preventDefault();
+                        var state = window.state;
+                        if (!state || !state.transform) return;
+                        state.transform.y -= Math.round(e.deltaY);
+                        if (typeof self._focusLockedX === 'number') {
+                            state.transform.x = self._focusLockedX;
+                        }
+                        state.viewMode = 'custom';
+                        if (window.updateTransform) window.updateTransform();
+                    }
+                }, { passive: false });
+            }
+
             // Keyboard Escape for Zen Mode
             window.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && document.body.classList.contains('zen-mode')) {
@@ -571,8 +590,12 @@
                     // 1-Finger Pan in progress (Only if in narrow mode or hand mode)
                     if (self.currentTier === 'narrow' || self.isTouchDevice || state.tool === 'hand' || state.isHandMode) {
                         if (e.cancelable) e.preventDefault();
-                        state.transform.x = Math.round(t.clientX - touchState.startX);
                         state.transform.y = Math.round(t.clientY - touchState.startY);
+                        if ((self.currentFocus === 'mobile' || self.currentFocus === 'pc') && typeof self._focusLockedX === 'number') {
+                            state.transform.x = self._focusLockedX;
+                        } else {
+                            state.transform.x = Math.round(t.clientX - touchState.startX);
+                        }
                         state.viewMode = 'custom';
                         if (window.updateTransform) window.updateTransform();
                     }
@@ -887,7 +910,7 @@
             }
         },
 
-        // --- 8. Smart Frame Focus (Native 1:1 Mobile Frame Preview) ---
+        // --- 8. Smart Frame Focus (Native 1:1 Mobile Frame Preview & PC Fit) ---
         getFrameElements: function() {
             var DOM = window.DOM;
             if (!DOM || !DOM.iframe) return { mobile: null, pc: null };
@@ -895,14 +918,17 @@
                 var doc = DOM.iframe.contentDocument;
                 if (!doc) return { mobile: null, pc: null };
 
-                var mobileEl = doc.querySelector('.frame-column.mobile-column') || 
+                var mobileEl = doc.querySelector('.frame-column.mobile-column:not(.pc-column)') || 
+                               doc.querySelector('.mobile-column') || 
+                               doc.querySelector('.mobile-column-left') || 
                                doc.querySelector('.mobile-frame') || 
                                doc.querySelector('.mobile-browser-frame') || 
-                               doc.querySelector('.mobile-column-left') || 
                                doc.querySelector('.mobile-content-inner') ||
                                doc.querySelector('[data-frame="mobile"]');
 
-                var pcEl = doc.querySelector('.frame-column.pc-column') || 
+                var pcEl = doc.querySelector('.frame-column.pc-column:not(.mobile-column)') || 
+                           doc.querySelector('.pc-column') || 
+                           doc.querySelector('.mobile-column-right') || 
                            doc.querySelector('.pc-browser-frame') || 
                            doc.querySelector('.pc-frame') || 
                            doc.querySelector('.pc-content-inner') ||
@@ -914,16 +940,44 @@
             }
         },
 
+        syncResponsiveContentHeight: function(frames) {
+            var DOM = window.DOM;
+            if (!DOM || !DOM.iframe || !frames || !frames.doc) return;
+            try {
+                var doc = frames.doc;
+                var pcInner = doc.querySelector('.pc-content-inner') || doc.querySelector('.pc-content-area') || doc.querySelector('.pc-column');
+                var mobInner = doc.querySelector('.mobile-content-inner') || doc.querySelector('.mobile-content') || doc.querySelector('.mobile-column');
+
+                var maxContentH = Math.max(
+                    pcInner ? (pcInner.scrollHeight || pcInner.offsetHeight || 0) : 0,
+                    mobInner ? (mobInner.scrollHeight || mobInner.offsetHeight || 0) : 0,
+                    doc.body ? doc.body.scrollHeight : 0
+                );
+
+                if (maxContentH > 850) {
+                    var targetH = Math.round(maxContentH + 120);
+                    if (parseInt(DOM.iframe.style.height || 0) < targetH) {
+                        DOM.iframe.style.height = targetH + 'px';
+                        var wrapper = (DOM && DOM.artboardWrapper) || document.getElementById('artboard-wrapper');
+                        if (wrapper) wrapper.style.height = targetH + 'px';
+                        var pageEl = doc.querySelector('.page, .artboard');
+                        if (pageEl) pageEl.style.minHeight = targetH + 'px';
+                    }
+                }
+            } catch (_) {}
+        },
+
         checkAndInitFrameSwitcher: function() {
             var switcher = document.getElementById('v4-frame-switcher');
             if (!switcher) return;
 
             var frames = this.getFrameElements();
-            var hasMobile = !!frames.mobile;
+            var hasFrames = !!(frames.mobile || frames.pc);
 
-            if (hasMobile) {
+            if (hasFrames) {
+                this.syncResponsiveContentHeight(frames);
                 switcher.classList.add('is-available');
-                // On narrow tier, default focus to mobile 1:1 on initial load or if not explicitly set
+                // On narrow tier, default focus to mobile on initial load or if not explicitly set
                 if (this.currentTier === 'narrow' && (!this.currentFocus || this.currentFocus === 'mobile')) {
                     this.focusFrame('mobile');
                 } else if (this.currentFocus) {
@@ -941,6 +995,7 @@
             this.updateFocusButtonUI(type);
 
             if (type === 'full') {
+                this._focusLockedX = null;
                 if (window.centerView) window.centerView(true);
                 this.syncDockZoom();
                 return;
@@ -950,8 +1005,11 @@
             if (!DOM || !DOM.canvas || !window.state || !window.state.transform) return;
 
             var frames = this.getFrameElements();
+            this.syncResponsiveContentHeight(frames);
+
             var targetEl = (type === 'mobile') ? frames.mobile : frames.pc;
             if (!targetEl) {
+                this._focusLockedX = null;
                 if (window.centerView) window.centerView(true);
                 return;
             }
@@ -973,19 +1031,19 @@
 
             var scale, x, y;
             if (type === 'mobile') {
-                // Smartphone 1:1 native app scale (clamped to fit canvas width with 8px margin)
+                // Smartphone fit to canvas width (clamped to fit canvas width with 8px margin)
                 scale = Math.min((cw - 8) / elW, 1.15);
                 if (cw >= 375 && scale >= 0.95 && scale <= 1.08) {
                     scale = 1.0; // Crisp 1:1 pixel snap
                 }
                 x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
-                var topPad = document.body.classList.contains('zen-mode') ? 10 : 8;
+                var topPad = (document.body.classList.contains('zen-mode') || this.currentTier === 'narrow') ? 12 : 10;
                 y = Math.round(topPad - top * scale);
             } else {
                 // PC Web Frame fit to canvas width
-                scale = Math.min((cw - 16) / elW, 0.95);
+                scale = Math.min((cw - 16) / elW, 1.0);
                 x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
-                var pcTopPad = document.body.classList.contains('zen-mode') ? 12 : 10;
+                var pcTopPad = (document.body.classList.contains('zen-mode') || this.currentTier === 'narrow') ? 12 : 10;
                 y = Math.round(pcTopPad - top * scale);
             }
 
@@ -994,6 +1052,9 @@
             state.transform.y = y;
             state.transform.scale = scale;
             state.viewMode = 'custom';
+
+            // Store locked X position for smooth vertical scrolling down the frame
+            this._focusLockedX = x;
 
             if (window.updateTransform) window.updateTransform();
             this.syncDockZoom();
@@ -1117,7 +1178,28 @@
 
                 if (doc._zenTapWired) return;
                 var self = this;
-                var ifTouch = { x: 0, y: 0, time: 0, moved: false };
+                var ifTouch = { x: 0, y: 0, time: 0, moved: false, initialY: 0 };
+
+                // Forward mouse wheel over iframe for smooth vertical scrolling
+                doc.addEventListener('wheel', function(e) {
+                    if (e.ctrlKey || e.metaKey) return;
+                    var state = window.state;
+                    if (!state || !state.transform) return;
+
+                    if (self.currentFocus === 'mobile' || self.currentFocus === 'pc' || document.body.classList.contains('zen-mode') || self.currentTier === 'narrow') {
+                        e.preventDefault();
+                        state.transform.y -= Math.round(e.deltaY);
+                        if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
+                            if (typeof self._focusLockedX === 'number') {
+                                state.transform.x = self._focusLockedX;
+                            }
+                        } else {
+                            state.transform.x -= Math.round(e.deltaX);
+                        }
+                        state.viewMode = 'custom';
+                        if (window.updateTransform) window.updateTransform();
+                    }
+                }, { passive: false });
 
                 doc.addEventListener('touchstart', function(e) {
                     if (e.touches.length === 1) {
@@ -1125,13 +1207,32 @@
                         ifTouch.y = e.touches[0].clientY;
                         ifTouch.time = Date.now();
                         ifTouch.moved = false;
+                        var state = window.state;
+                        if (state && state.transform) {
+                            ifTouch.initialY = state.transform.y;
+                        }
                     }
                 }, { passive: true });
 
                 doc.addEventListener('touchmove', function(e) {
                     if (e.touches.length === 1) {
-                        if (Math.hypot(e.touches[0].clientX - ifTouch.x, e.touches[0].clientY - ifTouch.y) > 10) {
+                        var dy = e.touches[0].clientY - ifTouch.y;
+                        var dx = e.touches[0].clientX - ifTouch.x;
+                        if (Math.hypot(dx, dy) > 8) {
                             ifTouch.moved = true;
+                        }
+                        if (self.currentFocus === 'mobile' || self.currentFocus === 'pc' || self.currentTier === 'narrow') {
+                            var state = window.state;
+                            if (state && state.transform && typeof ifTouch.initialY === 'number') {
+                                state.transform.y = Math.round(ifTouch.initialY + dy);
+                                if ((self.currentFocus === 'mobile' || self.currentFocus === 'pc') && typeof self._focusLockedX === 'number') {
+                                    state.transform.x = self._focusLockedX;
+                                } else {
+                                    state.transform.x = Math.round((ifTouch.initialX || state.transform.x) + dx);
+                                }
+                                state.viewMode = 'custom';
+                                if (window.updateTransform) window.updateTransform();
+                            }
                         }
                     }
                 }, { passive: true });

@@ -792,8 +792,6 @@ body.res-narrow #dock-page-indicator {
     .v4-bottom-dock #dock-btn-crisp,
     .v4-bottom-dock .v4-dock-divider,
     .v4-bottom-dock #dock-btn-screens,
-    .v4-frame-switcher,
-    #v4-frame-switcher,
     #v4-bottom-sheet,
     #v4-bottom-sheet-backdrop,
     #v4-zen-exit-pill {
@@ -883,7 +881,6 @@ body.res-narrow .btn-toolbar-mobile-more,
 body.res-narrow #btn-toolbar-mobile-more,
 body.res-narrow #v4-bottom-sheet,
 body.res-narrow #v4-bottom-sheet-backdrop,
-body.res-narrow #v4-frame-switcher,
 body.res-narrow #v4-zen-exit-pill {
     display: none !important;
 }
@@ -908,34 +905,42 @@ body.touch-capable .stage {
 .v4-frame-switcher {
     display: none;
     position: fixed !important;
-    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
-    left: 50% !important;
-    transform: translateX(-50%) translateY(0) !important;
+    top: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    right: 14px !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
     z-index: 999980 !important;
     background: rgba(18, 21, 28, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 229, 255, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 229, 255, 0.15);
     border-radius: 20px;
-    padding: 3px 5px;
+    padding: 3px 4px;
     align-items: center;
     gap: 3px;
     user-select: none;
     -webkit-user-select: none;
-    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), top 0.25s ease;
     pointer-events: auto;
 }
 
-body.res-narrow .v4-frame-switcher.is-available,
-body.res-compact .v4-frame-switcher.is-available {
+/* Smart Frame Switcher is shown whenever responsive frame columns exist */
+.v4-frame-switcher.is-available {
     display: flex !important;
 }
 
-@media (max-width: 960px), (max-height: 600px) and (max-width: 1050px) {
-    .v4-frame-switcher.is-available {
-        display: flex !important;
-    }
+body.res-narrow .v4-frame-switcher,
+body.zen-mode .v4-frame-switcher,
+body.fullscreen-mode .v4-frame-switcher {
+    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right: 12px !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    opacity: 0.96 !important;
+    pointer-events: auto !important;
 }
 
 .v4-frame-switch-btn {
@@ -1067,9 +1072,13 @@ body.fullscreen-mode #dock-page-indicator {
 }
 
 body.zen-mode .v4-frame-switcher {
-    transform: translateX(-50%) translateY(calc(100% + 120px)) !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right: 12px !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    opacity: 0.96 !important;
+    pointer-events: auto !important;
 }
 
 /* In Zen Mode or Fullscreen Mode: Workspace View takes 100% full screen with ZERO top margin/gap */

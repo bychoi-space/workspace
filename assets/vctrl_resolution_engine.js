@@ -58,45 +58,56 @@
             this.initTouchGestures();
             this.syncScreenList();
             this.checkAndInitFrameSwitcher();
+            this.attachIframeTapListener();
             this._initialized = true;
 
             // Delayed sync guards for asynchronous metadata hydration & iframe load
             var self = this;
-            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); }, 400);
-            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); }, 1200);
-            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); }, 2500);
+            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 400);
+            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 1200);
+            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 2500);
 
             console.log("[VCTRL RESOLUTION ENGINE] Initialized successfully. Current Tier:", this.currentTier);
         },
 
         // --- 2. DOM Injection (Bottom Dock & Bottom Sheet) ---
         injectDOMElements: function() {
-            // Inject Bottom Dock if not present
+            // Inject Navigation Controls (Left Arrow, Right Arrow, Bottom Page Indicator) directly into body
+            if (!document.getElementById('dock-btn-prev')) {
+                var btnPrev = document.createElement('button');
+                btnPrev.type = 'button';
+                btnPrev.id = 'dock-btn-prev';
+                btnPrev.className = 'v4-edge-nav-btn v4-edge-nav-prev';
+                btnPrev.setAttribute('aria-label', '이전 화면');
+                btnPrev.title = '이전 화면';
+                btnPrev.innerHTML = '<span class="material-icons-outlined">chevron_left</span>';
+                document.body.appendChild(btnPrev);
+            }
+
+            if (!document.getElementById('dock-btn-next')) {
+                var btnNext = document.createElement('button');
+                btnNext.type = 'button';
+                btnNext.id = 'dock-btn-next';
+                btnNext.className = 'v4-edge-nav-btn v4-edge-nav-next';
+                btnNext.setAttribute('aria-label', '다음 화면');
+                btnNext.title = '다음 화면';
+                btnNext.innerHTML = '<span class="material-icons-outlined">chevron_right</span>';
+                document.body.appendChild(btnNext);
+            }
+
+            if (!document.getElementById('dock-page-indicator')) {
+                var indicator = document.createElement('div');
+                indicator.id = 'dock-page-indicator';
+                indicator.className = 'v4-edge-page-indicator';
+                indicator.innerText = '01 / 01';
+                document.body.appendChild(indicator);
+            }
+
+            // Hidden dummy container for legacy compatibility
             if (!document.getElementById('v4-bottom-dock')) {
-                var dock = document.createElement('nav');
+                var dock = document.createElement('div');
                 dock.id = 'v4-bottom-dock';
-                dock.className = 'v4-bottom-dock';
-                dock.setAttribute('aria-label', '모바일 뷰어 컨트롤러');
-                dock.innerHTML = 
-                    '<button type="button" id="dock-btn-prev" class="v4-dock-btn" title="이전 화면">' +
-                        '<span class="material-icons-outlined">chevron_left</span>' +
-                    '</button>' +
-                    '<button type="button" id="dock-btn-fullscreen" class="v4-dock-btn" title="전체화면 전환 (주소창 숨김)">' +
-                        '<span class="material-icons-outlined" id="dock-fullscreen-icon">fullscreen</span>' +
-                    '</button>' +
-                    '<button type="button" id="dock-btn-fit" class="v4-dock-btn" title="화면 맞춤">' +
-                        '<span class="material-icons-outlined">fit_screen</span>' +
-                    '</button>' +
-                    '<button type="button" id="dock-btn-crisp" class="v4-dock-btn" title="100% 선명 뷰">' +
-                        '<span class="v4-dock-btn-txt" id="dock-zoom-txt">100%</span>' +
-                    '</button>' +
-                    '<button type="button" id="dock-btn-next" class="v4-dock-btn" title="다음 화면">' +
-                        '<span class="material-icons-outlined">chevron_right</span>' +
-                    '</button>' +
-                    '<div class="v4-dock-divider"></div>' +
-                    '<button type="button" id="dock-btn-screens" class="v4-dock-btn" title="화면 목록 (바텀 시트)">' +
-                        '<span class="material-icons-outlined">layers</span>' +
-                    '</button>';
+                dock.style.display = 'none';
                 document.body.appendChild(dock);
             }
 
@@ -195,10 +206,16 @@
             }
         },
 
-        // --- 3. Viewport Resolution Watcher ---
         getResolutionTier: function() {
             var w = window.innerWidth;
-            if (w <= BREAKPOINTS.NARROW_MAX) return 'narrow';
+            var h = window.innerHeight;
+            var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+            // Any smartphone or tablet in landscape (height <= 600px and width <= 1050px)
+            // or any narrow screen (width <= 960px) or touch device with height <= 550px is treated as 'narrow'!
+            if (w <= 960 || (h <= 600 && w <= 1050) || (isTouch && h <= 550)) {
+                return 'narrow';
+            }
             if (w <= BREAKPOINTS.COMPACT_MAX) return 'compact';
             return 'wide';
         },
@@ -274,8 +291,24 @@
             var btnScreens = document.getElementById('dock-btn-screens');
             var btnZenExit = document.getElementById('v4-zen-exit-pill');
 
-            if (btnPrev) btnPrev.addEventListener('click', function() { self.navigateScreen(-1); });
-            if (btnNext) btnNext.addEventListener('click', function() { self.navigateScreen(1); });
+            if (btnPrev) {
+                btnPrev.addEventListener('click', function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    self.navigateScreen(-1);
+                });
+                btnPrev.addEventListener('touchstart', function(e) {
+                    if (e) e.stopPropagation();
+                }, { passive: true });
+            }
+            if (btnNext) {
+                btnNext.addEventListener('click', function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    self.navigateScreen(1);
+                });
+                btnNext.addEventListener('touchstart', function(e) {
+                    if (e) e.stopPropagation();
+                }, { passive: true });
+            }
             if (btnFullscreen) btnFullscreen.addEventListener('click', function() { self.toggleFullscreen(); });
             if (btnZenExit) btnZenExit.addEventListener('click', function() { self.toggleZenMode(false); });
             if (btnFit) btnFit.addEventListener('click', function() {
@@ -433,7 +466,7 @@
 
             canvas.addEventListener('touchstart', function(e) {
                 // Ignore touch on interactive UI overlays
-                if (e.target.closest('#v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card')) {
+                if (e.target.closest('#dock-btn-prev, #dock-btn-next, #dock-page-indicator, #v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card, .toolbar')) {
                     return;
                 }
 
@@ -538,14 +571,14 @@
                     var deltaY = t ? (t.clientY - touchState.tapStartY) : 0;
 
                     // Swipe left / right to navigate screens on mobile
-                    if (self.currentTier === 'narrow' && Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.8 && elapsed < 400) {
+                    if ((self.currentTier === 'narrow' || self.isTouchDevice) && Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.8 && elapsed < 400) {
                         if (deltaX < 0) {
                             self.navigateScreen(1); // Swipe left -> Next screen
                         } else {
                             self.navigateScreen(-1); // Swipe right -> Prev screen
                         }
-                    } else if (!touchState.hasMoved && elapsed > 30 && elapsed < 280) {
-                        // Single tap detection (no significant drag and quick release)
+                    } else if (!touchState.hasMoved && elapsed > 20 && elapsed < 400) {
+                        // Single tap detection (no significant drag and natural touch release)
                         self.handleSingleTap();
                     }
 
@@ -566,10 +599,10 @@
 
             // Fallback click listener for simulated mouse click in device preview
             canvas.addEventListener('click', function(e) {
-                if (e.target.closest('#v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card, .toolbar')) {
+                if (e.target.closest('#dock-btn-prev, #dock-btn-next, #dock-page-indicator, #v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card, .toolbar')) {
                     return;
                 }
-                if (self.currentTier === 'narrow') {
+                if (self.currentTier === 'narrow' || self.isTouchDevice || document.body.classList.contains('zen-mode')) {
                     if (Date.now() - (touchState.tapStartTime || 0) > 350) {
                         self.handleSingleTap();
                     }
@@ -790,6 +823,9 @@
 
                 listEl.appendChild(li);
             }
+
+            // Ensure iframe tap listener is wired to current screen
+            this.attachIframeTapListener();
         },
 
         syncDockZoom: function() {
@@ -1002,17 +1038,18 @@
         },
 
         handleSingleTap: function() {
-            // Single tap toggles Zen Mode on narrow mobile screens, or exits Zen Mode if active
-            if (this.currentTier === 'narrow' || document.body.classList.contains('zen-mode')) {
+            // Single tap toggles Zen Mode on mobile/touch screens, or exits Zen Mode if active
+            if (this.currentTier === 'narrow' || this.isTouchDevice || document.body.classList.contains('zen-mode')) {
                 this.toggleZenMode();
             }
         },
 
         attachIframeTapListener: function() {
             var DOM = window.DOM;
-            if (!DOM || !DOM.iframe) return;
+            var iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe') || document.querySelector('iframe');
+            if (!iframe) return;
             try {
-                var doc = DOM.iframe.contentDocument;
+                var doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
                 if (!doc || doc._zenTapWired) return;
                 var self = this;
                 var ifTouch = { x: 0, y: 0, time: 0, moved: false };
@@ -1028,7 +1065,7 @@
 
                 doc.addEventListener('touchmove', function(e) {
                     if (e.touches.length === 1) {
-                        if (Math.hypot(e.touches[0].clientX - ifTouch.x, e.touches[0].clientY - ifTouch.y) > 8) {
+                        if (Math.hypot(e.touches[0].clientX - ifTouch.x, e.touches[0].clientY - ifTouch.y) > 10) {
                             ifTouch.moved = true;
                         }
                     }
@@ -1036,14 +1073,28 @@
 
                 doc.addEventListener('touchend', function(e) {
                     var elapsed = Date.now() - ifTouch.time;
-                    if (!ifTouch.moved && elapsed > 30 && elapsed < 280) {
-                        // Tapping anywhere inside slide toggles Zen Mode & Fullscreen
+                    var t = (e.changedTouches && e.changedTouches[0]) || null;
+                    var deltaX = t ? (t.clientX - ifTouch.x) : 0;
+                    var deltaY = t ? (t.clientY - ifTouch.y) : 0;
+
+                    // Swipe left / right inside iframe to switch screens
+                    if ((self.currentTier === 'narrow' || self.isTouchDevice) && Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.8 && elapsed < 400) {
+                        if (deltaX < 0) {
+                            self.navigateScreen(1); // Swipe left -> Next screen
+                        } else {
+                            self.navigateScreen(-1); // Swipe right -> Prev screen
+                        }
+                        return;
+                    }
+
+                    if (!ifTouch.moved && elapsed > 20 && elapsed < 400) {
+                        // Tapping anywhere inside slide toggles Zen Mode
                         self.handleSingleTap();
                     }
                 }, { passive: true });
 
                 doc.addEventListener('click', function(e) {
-                    if (self.currentTier === 'narrow') {
+                    if (self.currentTier === 'narrow' || self.isTouchDevice || document.body.classList.contains('zen-mode')) {
                         if (Date.now() - ifTouch.time > 350) {
                             self.handleSingleTap();
                         }

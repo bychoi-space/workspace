@@ -1049,29 +1049,7 @@
 
             doc.body.classList.toggle('zen-mode', nextZen);
 
-            // Request or Exit Native Fullscreen to hide mobile browser address bar & fill screen
-            try {
-                var docEl = doc.documentElement;
-                var isFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
-                if (nextZen && !isFs) {
-                    if (docEl.requestFullscreen) {
-                        docEl.requestFullscreen().catch(function() {});
-                    } else if (docEl.webkitRequestFullscreen) {
-                        docEl.webkitRequestFullscreen();
-                    } else if (docEl.msRequestFullscreen) {
-                        docEl.msRequestFullscreen();
-                    }
-                } else if (!nextZen && isFs) {
-                    if (doc.exitFullscreen) {
-                        doc.exitFullscreen().catch(function() {});
-                    } else if (doc.webkitExitFullscreen) {
-                        doc.webkitExitFullscreen();
-                    } else if (doc.msExitFullscreen) {
-                        doc.msExitFullscreen();
-                    }
-                }
-            } catch (_) {}
-
+            // Pure In-App Immersive Zen View (Zero native OS security toast)
             // 🌟 In-App Zen Mode Feedback Toast: "화면을 터치하면 전체보기가 취소됩니다."
             this.showZenToast(nextZen);
 
@@ -1085,7 +1063,7 @@
                     // Recalculate fit to fill 100% of newly expanded screen height
                     window.centerView(true);
                 }
-            }, 250);
+            }, 120);
         },
 
         showZenToast: function(isZen) {

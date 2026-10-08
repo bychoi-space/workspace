@@ -118,8 +118,9 @@
     - **역할**: 캔버스 배경 이미지 업로드, 클라이언트 브라우저 실시간 스마트 압축(JPEG 85% / 1920px max), 실시간 투명도(Opacity) 슬라이더 조절, 저채도 프리셋 렌더링 및 활성 iframe(`LF_SET_CANVAS_BACKGROUND`) 동기화를 독립 전담합니다.
   - **`vctrl_pdf_exporter.js` (PDF Export Engine)**:
     - **역할**: `metadata.json`의 `screenOrder` 기준 전체 스크린 일괄 고해상도 PDF 결합 생성 및 장문 캔버스 캡처 전담.
-  - **`vctrl_presentation_pen.js` (Presentation Drawing Engine)**:
-    - **역할**: 풀스크린 모드(`F`)에서 `Shift` 키 홀드 시 캔버스 형광펜/레이저 포인터 실시간 드로잉 인터랙션 전담.
+  - **`vctrl_presentation_pen.js` (Presentation Drawing Engine - PC Dedicated)**:
+    - **역할**: 데스크톱 PC 풀스크린 모드(`F`)에서 `Shift` 키 홀드 시 캔버스 형광펜/레이저 포인터 실시간 드로잉 인터랙션 전담.
+    - **모바일 절대 격리**: 모바일/터치 디바이스(`isMobileOrTouchDevice()`, `pointer: coarse`, `max-width: 1050px`)에서는 키보드 단축키 툴팁(`presentation-pen-tooltip`) 및 캔버스를 100% 원천 비활성화/숨김 처리하여 모바일 뷰어 화면에 노출되지 않도록 엄격히 차단합니다.
   - **`vctrl_ui_atoms.js` (UI Atoms Engine & Template Registry - Iframe Side)**:
     - **역할**: 버튼, 배지, 체크박스, 라디오, 팝업, 알림, 관리자 설정 등 V4 디스플레이/위젯 아톰 컴포넌트의 마크업 생성 및 동적 렌더링 SSOT (`v4UIAtomsScript`).
   - **`vctrl_ui_atoms_inputs.js` (UI Atoms Inputs & Controls Engine - Iframe Side)**:
@@ -162,8 +163,10 @@
     - **역할**: 테이블 열/행 치수 제어, 행 추가/삭제, 셀 정렬 및 인스펙터 UI 동기화 전담.
   - **`inspector/inspector_quill.js` (Quill Rich Text Controller - Parent Side)**:
     - **역할**: Quill 리치 텍스트 에디터 초기화, 커스텀 폰트 크기/컬러 피커 툴바 바인딩 및 캔버스 텍스트 셀 양방향 동기화 전담.
+  - **`vctrl_resolution_engine.js` (Resolution & Mobile Read-Only Engine - Parent Side)**:
+    - **역할**: 뷰포트 해상도 반응형 엔진(`res-narrow`, `res-compact`, `res-wide`), 스마트 프레임 포커스 스위처(`v4-frame-switcher`, `focusFrame`), 모바일 네이티브 브라우저 전체화면(`requestFullscreen`/`exitFullscreen`)과 젠 모드(`toggleZenMode`), 화면 회전 토스트(`showRotationToast`) 및 모바일 뷰어 인터랙션 제어 전담.
   - **`app.js` & `dashboard.js` (Dashboard & Project Workspace Controller)**:
-    - **역할**: `index.html` 기반의 대시보드 프로젝트 목록 그리드 렌더링, 신규 프로젝트 생성, 프로젝트 검색 필터링 및 GitHub 원격 연동 전담.
+    - **역할**: `index.html` 기반의 대시보드 프로젝트 목록 그리드 렌더링, 신규 프로젝트 생성, 프로젝트 검색 필터링, 모바일 슬림 1줄 헤더 및 GitHub 원격 연동 전담.
 - **오프라인 템플릿 및 UI 라이브러리 빌드 파이프라인 (Offline Build Pipeline SSOT)**:
   - `assets/templates/*.html`을 추가/수정했을 때는 반드시 **`powershell -ExecutionPolicy Bypass -File scripts/build_templates.ps1`**을 실행하여 `assets/templates.js` 번들을 재컴파일해야 오프라인(`file://`) 환경에서 즉시 반영됩니다.
   - `assets/ui_library/*.html` (atomic_cards, icon_cards, inspector_panels, modals)을 수정했을 때는 반드시 **`powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1`**을 실행하여 `assets/ui_library_fallback.js`를 재컴파일해야 합니다.
@@ -208,6 +211,29 @@
       - Z-Index 4대 티어(Tier 2: 100,000~179,999, Tier 3: 200,050) 준수.
       - In-Place Undo 및 스크린 저장/살균(`ScreenSanitizer.cleanDOM`) 시 런타임 transform만 정제하고 DOM 데이터 속성(`data-scroll-fixed`, `data-scroll-effect`, `data-scroll-target-y`, `data-scroll-sticky-top`)은 100% 영구 보존.
 
+
+- **모바일 전용 읽기 모드 및 뷰포트 아키텍처 절대 불변 규칙 (Mobile Read-Only Architecture SSOT)**:
+  - **1. 모바일 환경의 본질 (100% 읽기/조회/뷰어 전용 모드)**:
+    - 스마트폰 터치 환경에서 캔버스 저작 및 생성은 불가합니다. 모바일 사용자의 목적은 100% **"기존 결과물 확인, 링크 공유 열람, 프레젠테이션 검토 및 데모"**입니다.
+    - 대시보드(`index.html`)의 `[+ New Project]` 버튼은 모바일(세로 `max-width: 768px`, 가로 `max-height: 520px`)에서 무조건 `display: none !important;`로 숨깁니다.
+    - 캔버스 에디터의 사이드바, 글로벌 저장, 편집 툴바, 인스펙터 등 저작 도구는 모바일 환경에서 전면 숨김 처리합니다.
+  - **2. 브라우저 네이티브 전체화면(`requestFullscreen`) 보존 원칙 (절대 금지 안티패턴 방지)**:
+    - **절대 금지**: "안드로이드 OS 자체의 전체화면 보안 안내 토스트를 없앤다"는 이유로 모바일에서 `requestFullscreen()` 호출을 막는 행위는 엄격히 금지됩니다.
+    - 모바일 [전체보기]의 핵심은 **상단 브라우저 주소창과 상태바를 완전히 없애고 1600x900 화면이 모바일 화면에 꽉 차게 핏(Fit)되도록 만드는 것**입니다. `requestFullscreen()`을 호출하지 않으면 일반 뷰와 아무런 차이가 없게 됩니다.
+    - 모바일 및 PC 모두에서 `requestFullscreen()` / `webkitRequestFullscreen()` / `exitFullscreen()`은 반드시 정상 실행되어야 합니다.
+  - **3. PC 전용 단축키 툴팁 및 레이저 포인터/펜 모바일 차단 원칙**:
+    - `vctrl_presentation_pen.js`의 프레젠테이션 펜/레이저 포인터 모듈은 PC 키보드/마우스 전용입니다.
+    - 단축키 안내 툴팁(`Shift + Drag : Highlighter | C : Clear`, `#presentation-pen-tooltip`)과 캔버스(`#presentation-pen-canvas`)는 모바일/터치 환경(`isMobileOrTouchDevice()`, `pointer: coarse`, `max-width: 1050px`)에서 **절대 생성되거나 노출되지 않도록 JS와 CSS 양쪽에서 이중 차단**(`display: none !important;`)되어야 합니다.
+    - 사용자가 "안내 메시지를 지워달라"고 했을 때의 '안내 메시지'는 바로 이 키보드 단축키 툴팁(`presentation-pen-tooltip`)과 앱 내부 토스트(`v4-zen-toast`)를 의미합니다. (OS 시스템 토스트로 오인하여 전체화면을 끄지 말 것!)
+  - **4. 스마트 프레임 포커스 스위처 (`v4-frame-switcher`) 규칙**:
+    - 반응형 프레임(PC/Mobile 컬럼)이 존재할 때만 우측 상단에 콤팩트한 아이콘 알약 형태로 노출됩니다.
+    - PC 전용 화면(예: `09_Admin_PC_Scroll_639.html` 등 모바일 프레임이 아예 없는 화면)에서는 `[모바일핏]` 버튼을 아예 숨김(`is-hidden`, `display: none !important;`) 처리합니다.
+    - 기본값은 무조건 `[전체](full)`. 사용자가 명시적으로 클릭할 때만 `[모바일핏](mobile)`(세로 핏) 또는 `[PC핏](pc)`(가로 핏)으로 전환합니다.
+  - **5. 대시보드(`index.html`) 모바일 가로/세로 최적화 규칙**:
+    - 가로모드(`orientation: landscape` & `max-height: 520px`): 상단 툴바 숨김, 1줄 슬림 헤더(`[로고 + My Projects]` + `[검색창]`), 하단 프로젝트 카드 영역 85% 이상 시원하게 노출합니다.
+    - 세로모드(`max-width: 768px`): `[+ New Project]` 숨김, 헤더 높이 최소화하여 첫 화면에서 스크롤 없이 카드 목록을 즉시 노출합니다.
+  - **6. 모바일 캔버스 인터랙션 불변성 (Non-interactive Canvas)**:
+    - 캔버스 내부 오브젝트나 iframe은 `pointer-events: none !important;` 및 `user-select: none !important;`로 설정되어, 터치 스크롤이나 핀치 줌 시 실수로 오브젝트가 선택되거나 텍스트가 긁히는 것을 방지하고 순수하게 캔버스 뷰포트 조작만 작동하도록 보장합니다.
 
 ## 🎨 UI 및 컴포넌트 규칙
 - **통합 스타일 및 크기 컨트롤러 (Unified Style & Dimension Controller)**:

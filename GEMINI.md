@@ -25,3 +25,5 @@
 @./.agents/skills/workspace-editor-screen-authoring/SKILL.md
 
 @./.agents/skills/workspace-editor-system-diagnosis/SKILL.md
+
+@./.agents/skills/workspace-editor-mobile-mode/SKILL.md

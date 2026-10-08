@@ -34,6 +34,10 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
 - Preserve function declarations, class definitions, global initialization, and module-call names such as `window.updateProperties`.
 - In core engine edits, check cross-file function-name consistency before finishing.
 - For SVG shapes such as diamonds and triangles, keep `borderColor`, SVG `stroke`, and 1.6px stroke standards synchronized.
+- **Mobile Read-Only Safety & Anti-Pattern Prevention Protocol**:
+  - **Never Suppress `requestFullscreen` on Mobile**: When the user requests a clean fullscreen experience or reports unwanted guide messages, do NOT disable native `requestFullscreen()`. Disabling `requestFullscreen()` leaves the mobile browser address bar and system status bar visible, breaking the core fullscreen fit experience.
+  - **Differentiate System Prompts vs In-App Tooltips**: When the user requests removing "guide messages" in mobile fullscreen, identify that they mean the desktop keyboard tooltip (`#presentation-pen-tooltip`: `Shift + Drag : Highlighter | C : Clear`) or in-app toast (`.v4-zen-toast`), NOT the Android OS system prompt. Suppress the desktop tooltip on touch/mobile devices via both JS and CSS.
+  - **Preserve Desktop Authoring**: Never hide `[+ New Project]` or editor tools globally. Scrape or hide them strictly inside mobile media queries (`max-width: 768px`, `orientation: landscape and max-height: 520px`).
 
 ## Verification And Reporting
 - Define success criteria before editing.

@@ -14,20 +14,33 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css?v=V347_WHIMSICAL_UNIFIED">
     <link rel="stylesheet" href="assets/theme.css?v=V347_WHIMSICAL_UNIFIED">
-    <link rel="stylesheet" href="assets/dashboard.css?v=V380_PWA_INSTALL_BUTTON">
+    <link rel="stylesheet" href="assets/dashboard.css?v=V381_PWA_PNG_ICONS">
     <!-- PWA & Mobile Web App Meta Tags -->
-    <link rel="manifest" href="manifest.json?v=V380_PWA_INSTALL_BUTTON">
+    <link rel="manifest" href="manifest.json?v=V381_PWA_PNG_ICONS">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Workspace">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="assets/logo.svg">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
     <meta name="theme-color" content="#0e0f17">
     <script>
+        // Global PWA Install Capture (Early execution in <head> for Chrome & Samsung Internet)
+        window._deferredInstallPrompt = null;
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault(); // MANDATORY in Chromium/Samsung Internet to defer prompt for user click
+            window._deferredInstallPrompt = e;
+            console.log('[PWA] beforeinstallprompt captured early in <head>');
+            var btn = document.getElementById('btn-install-app');
+            if (btn) btn.style.display = 'inline-flex';
+            window.dispatchEvent(new CustomEvent('pwa-prompt-ready'));
+        });
+
         // Register Service Worker for PWA Installation
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js').catch(function() {});
+                navigator.serviceWorker.register('sw.js?v=V381_PWA_PNG_ICONS').catch(function() {});
             });
         }
     </script>
@@ -326,6 +339,6 @@
     <script src="assets/templates.js?v=V347_WHIMSICAL_UNIFIED"></script>
     <script src="assets/vctrl_clipboard.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/app.js?v=V347_WHIMSICAL_UNIFIED"></script>
-    <script src="assets/dashboard.js?v=V380_PWA_INSTALL_BUTTON"></script>
+    <script src="assets/dashboard.js?v=V381_PWA_PNG_ICONS"></script>
 </body>
 </html>

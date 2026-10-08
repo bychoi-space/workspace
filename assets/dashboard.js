@@ -938,9 +938,10 @@ if (searchInput && searchDropdown) {
 
 let deferredInstallPrompt = null;
 
-// Listen for beforeinstallprompt early (Chromium browsers: Chrome, Samsung Internet, Edge)
+// Listen for beforeinstallprompt (Chromium browsers: Chrome, Samsung Internet, Edge)
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Keep reference so users can trigger prompt at any time via buttons
+    e.preventDefault(); // MANDATORY in Chromium & Samsung Internet to defer prompt for user click
+    window._deferredInstallPrompt = e;
     deferredInstallPrompt = e;
     const btn = document.getElementById('btn-install-app');
     if (btn && !isRunningStandalone()) {
@@ -948,7 +949,16 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
+window.addEventListener('pwa-prompt-ready', () => {
+    deferredInstallPrompt = window._deferredInstallPrompt;
+    const btn = document.getElementById('btn-install-app');
+    if (btn && !isRunningStandalone()) {
+        btn.style.display = 'inline-flex';
+    }
+});
+
 window.addEventListener('appinstalled', () => {
+    window._deferredInstallPrompt = null;
     deferredInstallPrompt = null;
     hidePWAInstallUI();
 });
@@ -1005,19 +1015,54 @@ function openPWAInstallGuideModal() {
 }
 
 function handlePWAInstallTrigger() {
-    if (deferredInstallPrompt) {
-        deferredInstallPrompt.prompt();
-        deferredInstallPrompt.userChoice.then((choiceResult) => {
+    // 1. Immediately invoke native install prompt if captured
+    const promptEvent = window._deferredInstallPrompt || deferredInstallPrompt;
+    if (promptEvent) {
+        promptEvent.prompt();
+        promptEvent.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
                 hidePWAInstallUI();
             }
+            window._deferredInstallPrompt = null;
             deferredInstallPrompt = null;
-        }).catch(() => {
+        }).catch((err) => {
+            console.warn('[PWA] Prompt execution failed:', err);
             openPWAInstallGuideModal();
         });
-    } else {
-        openPWAInstallGuideModal();
+        return;
     }
+
+    // 2. On Android (Samsung Internet or Chrome), if prompt event is in-flight during early page interaction, wait briefly
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (isAndroid) {
+        const btn = document.getElementById('btn-install-app');
+        const originalHtml = btn ? btn.innerHTML : '';
+        if (btn) btn.innerHTML = '<span class="material-icons-outlined" style="animation:spin 1s linear infinite">sync</span><span>설치 준비 중...</span>';
+
+        let attempts = 0;
+        const checkTimer = setInterval(() => {
+            attempts++;
+            const readyPrompt = window._deferredInstallPrompt || deferredInstallPrompt;
+            if (readyPrompt) {
+                clearInterval(checkTimer);
+                if (btn) btn.innerHTML = originalHtml;
+                readyPrompt.prompt();
+                readyPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') hidePWAInstallUI();
+                    window._deferredInstallPrompt = null;
+                    deferredInstallPrompt = null;
+                });
+            } else if (attempts >= 10) { // 1.5s timeout
+                clearInterval(checkTimer);
+                if (btn) btn.innerHTML = originalHtml;
+                openPWAInstallGuideModal();
+            }
+        }, 150);
+        return;
+    }
+
+    // 3. Apple iOS Safari (no programmatic install prompt API exists in iOS)
+    openPWAInstallGuideModal();
 }
 
 function initPWAInstallEngine() {

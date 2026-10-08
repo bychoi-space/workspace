@@ -25,6 +25,7 @@
     var ResolutionEngine = {
         currentTier: 'wide', // 'wide' | 'compact' | 'narrow'
         currentFocus: 'full', // 'mobile' | 'pc' | 'full'
+        _userSelectedFocus: null, // 'mobile' | 'pc' | 'full' | null
         isTouchDevice: false,
         _initialized: false,
         _resizeTimer: null,
@@ -362,9 +363,27 @@
             var btnFocusMobile = document.getElementById('btn-focus-mobile');
             var btnFocusPc = document.getElementById('btn-focus-pc');
             var btnFocusFull = document.getElementById('btn-focus-full');
-            if (btnFocusMobile) btnFocusMobile.addEventListener('click', function() { self.focusFrame('mobile'); });
-            if (btnFocusPc) btnFocusPc.addEventListener('click', function() { self.focusFrame('pc'); });
-            if (btnFocusFull) btnFocusFull.addEventListener('click', function() { self.focusFrame('full'); });
+            if (btnFocusMobile) {
+                btnFocusMobile.addEventListener('click', function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    self._userSelectedFocus = 'mobile';
+                    self.focusFrame('mobile');
+                });
+            }
+            if (btnFocusPc) {
+                btnFocusPc.addEventListener('click', function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    self._userSelectedFocus = 'pc';
+                    self.focusFrame('pc');
+                });
+            }
+            if (btnFocusFull) {
+                btnFocusFull.addEventListener('click', function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    self._userSelectedFocus = 'full';
+                    self.focusFrame('full');
+                });
+            }
 
             // Canvas mouse wheel vertical scroll handler when focused on frame
             var canvasEl = document.getElementById('canvas');
@@ -372,15 +391,12 @@
                 canvasEl.addEventListener('wheel', function(e) {
                     if (e.ctrlKey || e.metaKey) return;
                     if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
-                        e.preventDefault();
-                        var state = window.state;
-                        if (!state || !state.transform) return;
-                        state.transform.y -= Math.round(e.deltaY);
-                        if (typeof self._focusLockedX === 'number') {
-                            state.transform.x = self._focusLockedX;
+                        var scrollEl = self.getActiveScrollContainer();
+                        if (scrollEl) {
+                            e.preventDefault();
+                            scrollEl.scrollTop += Math.round(e.deltaY);
+                            return;
                         }
-                        state.viewMode = 'custom';
-                        if (window.updateTransform) window.updateTransform();
                     }
                 }, { passive: false });
             }
@@ -485,11 +501,13 @@
             // Listen to screen load events to re-sync bottom sheet & smart focus
             if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
                 window.MessageHub.subscribe('SCREEN_LOADED', function() {
+                    self._userSelectedFocus = null;
                     self.syncScreenList();
                     self.checkAndInitFrameSwitcher();
                     self.attachIframeTapListener();
                 });
                 window.MessageHub.subscribe('SCREEN_CHANGED', function() {
+                    self._userSelectedFocus = null;
                     self.syncScreenList();
                     self.checkAndInitFrameSwitcher();
                     self.attachIframeTapListener();
@@ -532,6 +550,8 @@
                     var t = e.touches[0];
                     touchState.tapStartX = t.clientX;
                     touchState.tapStartY = t.clientY;
+                    touchState.lastClientX = t.clientX;
+                    touchState.lastClientY = t.clientY;
                     touchState.tapStartTime = now;
                     touchState.hasMoved = false;
 
@@ -587,15 +607,24 @@
                         touchState.hasMoved = true;
                     }
 
-                    // 1-Finger Pan in progress (Only if in narrow mode or hand mode)
+                    // Direct internal scroll when focused on mobile or pc frame
+                    if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
+                        var scrollEl = self.getActiveScrollContainer();
+                        if (scrollEl) {
+                            if (e.cancelable) e.preventDefault();
+                            var dy = touchState.lastClientY - t.clientY;
+                            touchState.lastClientY = t.clientY;
+                            touchState.lastClientX = t.clientX;
+                            scrollEl.scrollTop += dy;
+                            return;
+                        }
+                    }
+
+                    // 1-Finger Pan in progress (Canvas stage panning when in full view or hand mode)
                     if (self.currentTier === 'narrow' || self.isTouchDevice || state.tool === 'hand' || state.isHandMode) {
                         if (e.cancelable) e.preventDefault();
                         state.transform.y = Math.round(t.clientY - touchState.startY);
-                        if ((self.currentFocus === 'mobile' || self.currentFocus === 'pc') && typeof self._focusLockedX === 'number') {
-                            state.transform.x = self._focusLockedX;
-                        } else {
-                            state.transform.x = Math.round(t.clientX - touchState.startX);
-                        }
+                        state.transform.x = Math.round(t.clientX - touchState.startX);
                         state.viewMode = 'custom';
                         if (window.updateTransform) window.updateTransform();
                     }
@@ -913,10 +942,11 @@
         // --- 8. Smart Frame Focus (Native 1:1 Mobile Frame Preview & PC Fit) ---
         getFrameElements: function() {
             var DOM = window.DOM;
-            if (!DOM || !DOM.iframe) return { mobile: null, pc: null };
+            var iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe') || document.querySelector('iframe');
+            if (!iframe) return { mobile: null, pc: null, hasMobile: false, hasPc: false, doc: null };
             try {
-                var doc = DOM.iframe.contentDocument;
-                if (!doc) return { mobile: null, pc: null };
+                var doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+                if (!doc) return { mobile: null, pc: null, hasMobile: false, hasPc: false, doc: null };
 
                 var mobileEl = doc.querySelector('.frame-column.mobile-column:not(.pc-column)') || 
                                doc.querySelector('.mobile-column') || 
@@ -931,62 +961,93 @@
                            doc.querySelector('.mobile-column-right') || 
                            doc.querySelector('.pc-browser-frame') || 
                            doc.querySelector('.pc-frame') || 
+                           doc.querySelector('.full-pc-page') || 
                            doc.querySelector('.pc-content-inner') ||
                            doc.querySelector('[data-frame="pc"]');
 
-                return { mobile: mobileEl, pc: pcEl, doc: doc };
+                return {
+                    mobile: mobileEl,
+                    pc: pcEl,
+                    hasMobile: !!mobileEl,
+                    hasPc: !!pcEl,
+                    doc: doc
+                };
             } catch (_) {
-                return { mobile: null, pc: null };
+                return { mobile: null, pc: null, hasMobile: false, hasPc: false, doc: null };
             }
         },
 
-        syncResponsiveContentHeight: function(frames) {
-            var DOM = window.DOM;
-            if (!DOM || !DOM.iframe || !frames || !frames.doc) return;
-            try {
-                var doc = frames.doc;
-                var pcInner = doc.querySelector('.pc-content-inner') || doc.querySelector('.pc-content-area') || doc.querySelector('.pc-column');
-                var mobInner = doc.querySelector('.mobile-content-inner') || doc.querySelector('.mobile-content') || doc.querySelector('.mobile-column');
+        getActiveScrollContainer: function() {
+            var frames = this.getFrameElements();
+            if (!frames.doc) return null;
+            var doc = frames.doc;
 
-                var maxContentH = Math.max(
-                    pcInner ? (pcInner.scrollHeight || pcInner.offsetHeight || 0) : 0,
-                    mobInner ? (mobInner.scrollHeight || mobInner.offsetHeight || 0) : 0,
-                    doc.body ? doc.body.scrollHeight : 0
-                );
-
-                if (maxContentH > 850) {
-                    var targetH = Math.round(maxContentH + 120);
-                    if (parseInt(DOM.iframe.style.height || 0) < targetH) {
-                        DOM.iframe.style.height = targetH + 'px';
-                        var wrapper = (DOM && DOM.artboardWrapper) || document.getElementById('artboard-wrapper');
-                        if (wrapper) wrapper.style.height = targetH + 'px';
-                        var pageEl = doc.querySelector('.page, .artboard');
-                        if (pageEl) pageEl.style.minHeight = targetH + 'px';
-                    }
-                }
-            } catch (_) {}
+            if (this.currentFocus === 'mobile') {
+                return doc.querySelector('.mobile-column .mobile-content') || 
+                       doc.querySelector('.mobile-frame .mobile-content') || 
+                       doc.querySelector('.mobile-content') || 
+                       doc.querySelector('.mobile-content-area');
+            } else if (this.currentFocus === 'pc') {
+                return doc.querySelector('.pc-column .pc-content-area') || 
+                       doc.querySelector('.pc-browser-frame .pc-content-area') || 
+                       doc.querySelector('.pc-content-area') || 
+                       doc.querySelector('.chrome-content-area') || 
+                       doc.querySelector('.pc-content');
+            }
+            return null;
         },
 
         checkAndInitFrameSwitcher: function() {
             var switcher = document.getElementById('v4-frame-switcher');
             if (!switcher) return;
 
-            var frames = this.getFrameElements();
-            var hasFrames = !!(frames.mobile || frames.pc);
-
-            if (hasFrames) {
-                this.syncResponsiveContentHeight(frames);
-                switcher.classList.add('is-available');
-                // On narrow tier, default focus to mobile on initial load or if not explicitly set
-                if (this.currentTier === 'narrow' && (!this.currentFocus || this.currentFocus === 'mobile')) {
-                    this.focusFrame('mobile');
-                } else if (this.currentFocus) {
-                    this.updateFocusButtonUI(this.currentFocus);
+            var DOM = window.DOM;
+            // Always restore base artboard height to standard 900px if previously inflated
+            if (DOM && DOM.iframe) {
+                var curH = parseInt(DOM.iframe.style.height, 10) || 900;
+                if (curH > 900) {
+                    DOM.iframe.style.height = '900px';
+                    var wrapper = (DOM && DOM.artboardWrapper) || document.getElementById('artboard-wrapper');
+                    if (wrapper) wrapper.style.height = '900px';
                 }
-            } else {
+            }
+
+            var frames = this.getFrameElements();
+            var hasAny = frames.hasMobile || frames.hasPc;
+
+            if (!hasAny) {
                 switcher.classList.remove('is-available');
+                switcher.style.display = 'none';
                 this.currentFocus = 'full';
                 this.updateFocusButtonUI('full');
+                return;
+            }
+
+            switcher.classList.add('is-available');
+            switcher.style.display = 'flex';
+
+            var btnMobile = document.getElementById('btn-focus-mobile');
+            var btnPc = document.getElementById('btn-focus-pc');
+            var btnFull = document.getElementById('btn-focus-full');
+
+            if (btnMobile) btnMobile.style.display = frames.hasMobile ? 'inline-flex' : 'none';
+            if (btnPc) btnPc.style.display = frames.hasPc ? 'inline-flex' : 'none';
+            if (btnFull) btnFull.style.display = 'inline-flex';
+
+            // Respect user manual selection if already made; otherwise auto-select on narrow tier
+            var chosenFocus = this._userSelectedFocus;
+            if (this.currentTier === 'narrow' || this.isTouchDevice) {
+                if (!chosenFocus) {
+                    chosenFocus = frames.hasMobile ? 'mobile' : (frames.hasPc ? 'pc' : 'full');
+                } else if (chosenFocus === 'mobile' && !frames.hasMobile) {
+                    chosenFocus = frames.hasPc ? 'pc' : 'full';
+                } else if (chosenFocus === 'pc' && !frames.hasPc) {
+                    chosenFocus = frames.hasMobile ? 'mobile' : 'full';
+                }
+                this.focusFrame(chosenFocus);
+            } else {
+                if (!chosenFocus) chosenFocus = 'full';
+                this.focusFrame(chosenFocus);
             }
         },
 
@@ -994,29 +1055,44 @@
             this.currentFocus = type;
             this.updateFocusButtonUI(type);
 
+            var DOM = window.DOM;
+            if (!DOM || !DOM.canvas || !window.state || !window.state.transform) return;
+
+            // Ensure iframe and artboardWrapper height stay 900px
+            if (DOM.iframe) {
+                var curH = parseInt(DOM.iframe.style.height, 10) || 900;
+                if (curH > 900) {
+                    DOM.iframe.style.height = '900px';
+                    var wrapper = (DOM && DOM.artboardWrapper) || document.getElementById('artboard-wrapper');
+                    if (wrapper) wrapper.style.height = '900px';
+                }
+            }
+
             if (type === 'full') {
                 this._focusLockedX = null;
+                this._focusLockedY = null;
                 if (window.centerView) window.centerView(true);
                 this.syncDockZoom();
                 return;
             }
 
-            var DOM = window.DOM;
-            if (!DOM || !DOM.canvas || !window.state || !window.state.transform) return;
-
             var frames = this.getFrameElements();
-            this.syncResponsiveContentHeight(frames);
-
             var targetEl = (type === 'mobile') ? frames.mobile : frames.pc;
             if (!targetEl) {
                 this._focusLockedX = null;
+                this._focusLockedY = null;
                 if (window.centerView) window.centerView(true);
                 return;
             }
 
+            // Prefer the inner visual frame if targetEl is a column wrapper
+            var visualFrame = (type === 'mobile')
+                ? (targetEl.querySelector('.mobile-frame, .mobile-browser-frame') || targetEl)
+                : (targetEl.querySelector('.pc-browser-frame, .pc-frame') || targetEl);
+
             // Calculate element offset inside iframe relative to body
             var left = 0, top = 0;
-            var curr = targetEl;
+            var curr = visualFrame;
             var body = (frames.doc && frames.doc.body) || (curr && curr.ownerDocument && curr.ownerDocument.body);
             while (curr && curr !== body) {
                 left += curr.offsetLeft || 0;
@@ -1024,27 +1100,38 @@
                 curr = curr.offsetParent;
             }
 
-            var elW = targetEl.offsetWidth || (type === 'mobile' ? 375 : 1160);
+            var elW = visualFrame.offsetWidth || (type === 'mobile' ? 382 : 1160);
+            var elH = visualFrame.offsetHeight || 848;
             var cw = DOM.canvas.clientWidth;
             var ch = DOM.canvas.clientHeight;
-            if (cw <= 0) return;
+            if (cw <= 0 || ch <= 0) return;
 
             var scale, x, y;
+            var isNarrow = (this.currentTier === 'narrow' || this.isTouchDevice);
+            var isPortrait = (ch > cw);
+
             if (type === 'mobile') {
-                // Smartphone fit to canvas width (clamped to fit canvas width with 8px margin)
-                scale = Math.min((cw - 8) / elW, 1.15);
-                if (cw >= 375 && scale >= 0.95 && scale <= 1.08) {
-                    scale = 1.0; // Crisp 1:1 pixel snap
+                if (isPortrait) {
+                    scale = Math.min((cw - 16) / elW, 1.15);
+                    if (scale >= 0.95 && scale <= 1.05) scale = 1.0;
+                    x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
+                    y = Math.round(14 - (top * scale));
+                } else {
+                    scale = Math.min((ch - 24) / elH, (cw - 24) / elW, 1.15);
+                    if (scale >= 0.95 && scale <= 1.05) scale = 1.0;
+                    x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
+                    y = Math.round(10 - (top * scale));
                 }
-                x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
-                var topPad = (document.body.classList.contains('zen-mode') || this.currentTier === 'narrow') ? 12 : 10;
-                y = Math.round(topPad - top * scale);
             } else {
-                // PC Web Frame fit to canvas width
-                scale = Math.min((cw - 16) / elW, 1.0);
-                x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
-                var pcTopPad = (document.body.classList.contains('zen-mode') || this.currentTier === 'narrow') ? 12 : 10;
-                y = Math.round(pcTopPad - top * scale);
+                if (isPortrait) {
+                    scale = Math.min((cw - 12) / elW, 1.0);
+                    x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
+                    y = Math.round(14 - (top * scale));
+                } else {
+                    scale = Math.min((cw - 24) / elW, (ch - 24) / elH, 1.0);
+                    x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
+                    y = Math.round(10 - (top * scale));
+                }
             }
 
             var state = window.state;
@@ -1053,8 +1140,8 @@
             state.transform.scale = scale;
             state.viewMode = 'custom';
 
-            // Store locked X position for smooth vertical scrolling down the frame
             this._focusLockedX = x;
+            this._focusLockedY = y;
 
             if (window.updateTransform) window.updateTransform();
             this.syncDockZoom();
@@ -1178,26 +1265,18 @@
 
                 if (doc._zenTapWired) return;
                 var self = this;
-                var ifTouch = { x: 0, y: 0, time: 0, moved: false, initialY: 0 };
+                var ifTouch = { x: 0, y: 0, lastY: 0, time: 0, moved: false };
 
                 // Forward mouse wheel over iframe for smooth vertical scrolling
                 doc.addEventListener('wheel', function(e) {
                     if (e.ctrlKey || e.metaKey) return;
-                    var state = window.state;
-                    if (!state || !state.transform) return;
-
-                    if (self.currentFocus === 'mobile' || self.currentFocus === 'pc' || document.body.classList.contains('zen-mode') || self.currentTier === 'narrow') {
-                        e.preventDefault();
-                        state.transform.y -= Math.round(e.deltaY);
-                        if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
-                            if (typeof self._focusLockedX === 'number') {
-                                state.transform.x = self._focusLockedX;
-                            }
-                        } else {
-                            state.transform.x -= Math.round(e.deltaX);
+                    if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
+                        var scrollEl = self.getActiveScrollContainer();
+                        if (scrollEl) {
+                            e.preventDefault();
+                            scrollEl.scrollTop += Math.round(e.deltaY);
+                            return;
                         }
-                        state.viewMode = 'custom';
-                        if (window.updateTransform) window.updateTransform();
                     }
                 }, { passive: false });
 
@@ -1205,46 +1284,36 @@
                     if (e.touches.length === 1) {
                         ifTouch.x = e.touches[0].clientX;
                         ifTouch.y = e.touches[0].clientY;
+                        ifTouch.lastY = e.touches[0].clientY;
                         ifTouch.time = Date.now();
                         ifTouch.moved = false;
-                        var state = window.state;
-                        if (state && state.transform) {
-                            ifTouch.initialY = state.transform.y;
-                        }
                     }
-                }, { passive: true });
+                }, { passive: false });
 
                 doc.addEventListener('touchmove', function(e) {
                     if (e.touches.length === 1) {
-                        var dy = e.touches[0].clientY - ifTouch.y;
-                        var dx = e.touches[0].clientX - ifTouch.x;
-                        if (Math.hypot(dx, dy) > 8) {
+                        var t = e.touches[0];
+                        var deltaY = ifTouch.lastY - t.clientY;
+                        ifTouch.lastY = t.clientY;
+
+                        if (Math.hypot(t.clientX - ifTouch.x, t.clientY - ifTouch.y) > 8) {
                             ifTouch.moved = true;
                         }
-                        if (self.currentFocus === 'mobile' || self.currentFocus === 'pc' || self.currentTier === 'narrow') {
-                            var state = window.state;
-                            if (state && state.transform && typeof ifTouch.initialY === 'number') {
-                                state.transform.y = Math.round(ifTouch.initialY + dy);
-                                if ((self.currentFocus === 'mobile' || self.currentFocus === 'pc') && typeof self._focusLockedX === 'number') {
-                                    state.transform.x = self._focusLockedX;
-                                } else {
-                                    state.transform.x = Math.round((ifTouch.initialX || state.transform.x) + dx);
-                                }
-                                state.viewMode = 'custom';
-                                if (window.updateTransform) window.updateTransform();
+                        if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
+                            var scrollEl = self.getActiveScrollContainer();
+                            if (scrollEl) {
+                                if (e.cancelable) e.preventDefault();
+                                scrollEl.scrollTop += deltaY;
+                                return;
                             }
                         }
                     }
-                }, { passive: true });
+                }, { passive: false });
 
                 doc.addEventListener('touchend', function(e) {
                     var elapsed = Date.now() - ifTouch.time;
-                    var t = (e.changedTouches && e.changedTouches[0]) || null;
-                    var deltaX = t ? (t.clientX - ifTouch.x) : 0;
-                    var deltaY = t ? (t.clientY - ifTouch.y) : 0;
-
                     if (!ifTouch.moved && elapsed > 20 && elapsed < 400) {
-                        // Tapping anywhere inside slide toggles Zen Mode
+                        // Stationary tap inside slide toggles Zen Mode
                         self.handleSingleTap();
                     }
                 }, { passive: true });

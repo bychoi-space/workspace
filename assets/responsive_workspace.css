@@ -634,10 +634,10 @@ body.res-narrow #dock-page-indicator {
     }
 
     .toolbar-file-name {
-        font-size: 12.5px !important;
+        font-size: 12px !important;
         font-weight: 600 !important;
         color: #f1f5f9 !important;
-        max-width: 240px !important;
+        max-width: calc(100vw - 220px) !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
@@ -931,7 +931,29 @@ body.touch-capable .stage {
     display: flex !important;
 }
 
-body.res-narrow .v4-frame-switcher,
+body.res-narrow .v4-frame-switcher {
+    top: calc(7px + env(safe-area-inset-top, 0px)) !important;
+    right: 8px !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    opacity: 0.96 !important;
+    padding: 2px 3px !important;
+    gap: 2px !important;
+    pointer-events: auto !important;
+}
+
+body.res-narrow .v4-frame-switch-btn {
+    height: 26px !important;
+    padding: 0 7px !important;
+    font-size: 11px !important;
+    gap: 3px !important;
+}
+
+body.res-narrow .v4-frame-switch-btn .material-icons-outlined {
+    font-size: 14px !important;
+}
+
 body.zen-mode .v4-frame-switcher,
 body.fullscreen-mode .v4-frame-switcher {
     top: calc(12px + env(safe-area-inset-top, 0px)) !important;

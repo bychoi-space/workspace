@@ -984,6 +984,11 @@ body.fullscreen-mode .v4-frame-switcher {
     outline: none !important;
     flex-shrink: 0 !important;
     touch-action: manipulation !important;
+    overflow: hidden !important;
+}
+
+.v4-frame-switch-btn span:not(.material-icons-outlined) {
+    display: none !important;
 }
 
 .v4-frame-switch-btn .material-icons-outlined {

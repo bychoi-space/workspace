@@ -161,3 +161,30 @@ graph TD
 1. **기존 데이터 보존**: 기존 `metadata.json`, 화면 HTML 파일들의 DOM/인라인 코드를 일체 변조하지 않습니다.
 2. **PC 데스크톱 영향도 0%**: 데스크톱 와이드 해상도(>= 1200px)에서는 기존 편집기 및 뷰포트가 100% 동일하게 유지됩니다.
 3. **정적 및 헤드리스 검증**: 각 단계 완료 시마다 `scripts/check_syntax.ps1` 및 `scripts/verify_all.ps1`을 실행하여 0 Syntax Errors, 0 Runtime Errors를 검증합니다.
+
+---
+
+## 7. 🛠️ Phase 4 구현 내역: 상단 암전 밴드 제거 & Dashboard (`index.html`) 모바일 완결 (2026-10-08 완료)
+
+### 7.1 모바일 전체보기/젠모드 상단 암전 영역(Top Dark Band) 소멸
+* **원인 분석**:
+  - `.toolbar` 숨김 처리 시 `transform: translateY(-110%)` 방식 사용으로 인해 플렉스 박스 레이아웃상의 46px 높이가 그대로 유지되어, 캔버스 상단이 아래로 밀려나고 상단에 어두운 배경색이 고정 노출되는 현상 발생.
+  - 가로 모드(Landscape) 등 컴팩트 뷰포트에서 `#workspace-view`에 잔존하던 `height: calc(100% - 46px)` 스타일이 캔버스 최상단을 가림.
+* **해결 조치**:
+  - `body.zen-mode .toolbar, body.fullscreen-mode .toolbar`에 `display: none !important; height: 0 !important; margin: 0 !important; padding: 0 !important;`를 부여하여 레이아웃 점유 공간을 원천 소멸.
+  - `body.zen-mode #workspace-view`를 `position: absolute !important; top: 0 !important; height: 100% !important; height: 100vh !important;`로 설정하여 스크린 상단(`y = 0`)부터 완벽히 100% 면적을 채우도록 재정렬.
+  - 젠 모드 전환 시 `window.centerView(true)` 자동 호출을 통해 전체 뷰포트 정중앙으로 스케일과 카메라 위치가 즉각 재연산되도록 조치.
+
+### 7.2 대시보드 (`index.html`) 모바일 & 태블릿 전면 최적화
+* **헤더 2열 그리드 레이아웃**:
+  - 기존 440px 고정 폭 중앙 절대배치 검색창(`position: absolute; left: 50%`)이 393px 스마트폰에서 제목 및 [새 프로젝트] 버튼과 충돌하던 문제 해결.
+  - CSS Grid를 적용하여 1열: `[My Projects]` 타이틀 + `[+ 새 프로젝트]` 버튼, 2열: `[🔍 프로젝트 검색창 (100% 전폭)]`으로 깔끔하게 자동 재배치.
+* **터치 친화형 프로젝트 카드 액션 버튼**:
+  - 마우스 호버(`:hover`) 시에만 노출되던 카드 편집/삭제/PDF/URL 복사 버튼(`opacity: 0`)을 모바일 뷰포트에서는 상시 88% 불투명도로 노출하여 터치 한 번으로 즉시 접근 가능하도록 구현.
+* **프로젝트 카드 1열 모바일 카드 피드**:
+  - 모바일에서는 1열 전폭 카드로 전환하여 썸네일과 프로젝트 메타 정보(날짜, 태그)가 시원하게 표시되도록 패딩 및 폰트 튜닝.
+* **모바일 맞춤 모달창 (반응형 팝업)**:
+  - 프로젝트 생성 및 GitHub 인증 모달 폭을 `calc(100vw - 28px)` 및 `max-height: 86vh`로 가변 조절하여 키보드가 올라와도 잘림 없이 스크롤 가능하도록 안전 레이어 확보.
+* **PWA Web App 지원**:
+  - `index.html`에도 `<link rel="manifest" href="manifest.json">`, `mobile-web-app-capable`, `apple-mobile-web-app-capable`, `theme-color`, 초경량 Service Worker 등록 스크립트를 통합하여 홈 화면 설치 시 주소창 없는 순수 대시보드 앱으로 구동 가능.
+

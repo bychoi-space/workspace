@@ -31,7 +31,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#12151c">
 
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V370_IMMERSIVE_ZEN_FIX">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V372_ULTRA_MINIMAL_VIEWER">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -712,25 +712,26 @@
         <span>UI 복원</span>
     </button>
 
-    <!-- Mobile Bottom Floating Action Dock (Always in DOM) -->
-    <nav id="v4-bottom-dock" class="v4-bottom-dock" aria-label="모바일 뷰어 컨트롤러">
+    <!-- Mobile Bottom Minimal Navigation Pill -->
+    <nav id="v4-bottom-dock" class="v4-bottom-dock" aria-label="모바일 뷰어 화면 이동 컨트롤러">
         <button type="button" id="dock-btn-prev" class="v4-dock-btn" title="이전 화면">
             <span class="material-icons-outlined">chevron_left</span>
         </button>
-        <button type="button" id="dock-btn-fullscreen" class="v4-dock-btn" title="전체화면 전환 (브라우저 주소창 숨김)">
-            <span class="material-icons-outlined" id="dock-fullscreen-icon">fullscreen</span>
-        </button>
-        <button type="button" id="dock-btn-fit" class="v4-dock-btn" title="화면 맞춤">
-            <span class="material-icons-outlined">fit_screen</span>
-        </button>
-        <button type="button" id="dock-btn-crisp" class="v4-dock-btn" title="100% 선명 뷰">
-            <span class="v4-dock-btn-txt" id="dock-zoom-txt">100%</span>
-        </button>
+        <span class="v4-dock-page-indicator" id="dock-page-indicator">01 / 10</span>
         <button type="button" id="dock-btn-next" class="v4-dock-btn" title="다음 화면">
             <span class="material-icons-outlined">chevron_right</span>
         </button>
-        <div class="v4-dock-divider"></div>
-        <button type="button" id="dock-btn-screens" class="v4-dock-btn" title="화면 목록">
+        <button type="button" id="dock-btn-fullscreen" class="v4-dock-btn" title="전체화면" style="display: none;">
+            <span class="material-icons-outlined" id="dock-fullscreen-icon">fullscreen</span>
+        </button>
+        <button type="button" id="dock-btn-fit" class="v4-dock-btn" title="화면 맞춤" style="display: none;">
+            <span class="material-icons-outlined">fit_screen</span>
+        </button>
+        <button type="button" id="dock-btn-crisp" class="v4-dock-btn" title="100% 선명 뷰" style="display: none;">
+            <span class="v4-dock-btn-txt" id="dock-zoom-txt">100%</span>
+        </button>
+        <div class="v4-dock-divider" style="display: none;"></div>
+        <button type="button" id="dock-btn-screens" class="v4-dock-btn" title="화면 목록" style="display: none;">
             <span class="material-icons-outlined">layers</span>
         </button>
     </nav>
@@ -846,6 +847,6 @@
     <script src="assets/inspector/inspector_admin_settings.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_table.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_popup.js?v=V361_POPUP_INSPECTOR"></script>
-    <script src="assets/vctrl_resolution_engine.js?v=V370_IMMERSIVE_ZEN_FIX"></script>
+    <script src="assets/vctrl_resolution_engine.js?v=V372_ULTRA_MINIMAL_VIEWER"></script>
 </body>
 </html>

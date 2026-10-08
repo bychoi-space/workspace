@@ -52,6 +52,20 @@
     pointer-events: auto;
 }
 
+.v4-dock-page-indicator {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #f1f5f9 !important;
+    letter-spacing: 0.5px !important;
+    padding: 0 8px !important;
+    min-width: 58px !important;
+    text-align: center !important;
+    font-variant-numeric: tabular-nums !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    white-space: nowrap !important;
+}
+
 body.res-narrow .v4-bottom-dock {
     display: flex !important;
 }
@@ -520,27 +534,61 @@ body.res-narrow .v4-bottom-dock {
         z-index: 999990 !important;
     }
 
-    /* Minimalist Narrow Header Toolbar */
+    /* 1. Ultra-Minimal Floating Back & Title Pill (Back to index + Active Screen Title) */
     .toolbar {
-        height: 46px !important;
-        min-height: 46px !important;
-        padding: 0 10px !important;
+        position: fixed !important;
+        top: calc(10px + env(safe-area-inset-top, 0px)) !important;
+        left: 12px !important;
+        right: auto !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        max-width: calc(100vw - 24px) !important;
+        background: rgba(15, 23, 42, 0.82) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        border-radius: 20px !important;
+        padding: 3px 14px 3px 4px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+        z-index: 999990 !important;
+        box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
-        justify-content: space-between !important;
-        box-sizing: border-box !important;
-        width: 100% !important;
-        max-width: 100vw !important;
-        overflow: hidden !important;
+        transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
 
     .toolbar .brand {
-        gap: 6px !important;
+        gap: 8px !important;
         flex: 1 !important;
         min-width: 0 !important;
         overflow: hidden !important;
         display: flex !important;
         align-items: center !important;
+    }
+
+    .toolbar #btn-back {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+        border-radius: 15px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+        border: none !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        flex-shrink: 0 !important;
+    }
+
+    .toolbar #btn-back:hover {
+        background: rgba(255, 255, 255, 0.22) !important;
+    }
+
+    .toolbar #btn-back .material-icons-outlined {
+        font-size: 18px !important;
     }
 
     .brand-logo,
@@ -551,57 +599,103 @@ body.res-narrow .v4-bottom-dock {
     }
 
     .toolbar-file-name {
-        font-size: 13px !important;
+        font-size: 12.5px !important;
         font-weight: 600 !important;
         color: #f1f5f9 !important;
-        max-width: 160px !important;
+        max-width: 240px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
-        cursor: pointer !important;
         flex-shrink: 1 !important;
         min-width: 0 !important;
     }
 
-    /* Hide PC Desktop Toolbar Groups on Mobile/Tablet */
+    /* Completely eliminate desktop groups and save/more actions on mobile */
     .header-metadata,
     .toolbar .zoom-controls,
     .action-pill-group,
     .url-copy-dropdown-wrapper,
     .btn-export-pdf,
-    .header-sidebar-toggle {
+    .header-sidebar-toggle,
+    .toolbar .actions,
+    .btn-global-save,
+    #btn-global-save,
+    .btn-toolbar-mobile-more,
+    #btn-toolbar-mobile-more {
         display: none !important;
     }
 
-    .toolbar .actions {
-        gap: 6px !important;
+    /* 2. Fullscreen Canvas View: Starts at y=0, fills 100% of display */
+    #workspace-view {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        height: 100% !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 3. Ultra-Minimal Mobile Navigation Dock: [ ‹  01/10  › ] */
+    .v4-bottom-dock {
+        display: flex !important;
+        position: fixed !important;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 999990 !important;
+        background: rgba(15, 23, 42, 0.82) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.08) !important;
+        border-radius: 22px !important;
+        padding: 3px 8px !important;
+        align-items: center !important;
+        gap: 4px !important;
+        width: auto !important;
+        min-width: 140px !important;
+        justify-content: center !important;
+    }
+
+    .v4-bottom-dock .v4-dock-btn {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        padding: 0 !important;
+        border-radius: 18px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #ffffff !important;
         display: flex !important;
         align-items: center !important;
-        flex-shrink: 0 !important;
-    }
-
-    .btn-global-save {
-        height: 32px !important;
-        padding: 0 10px !important;
-        font-size: 12px !important;
-        border-radius: 16px !important;
-        white-space: nowrap !important;
-        flex-shrink: 0 !important;
-    }
-
-    /* Toolbar Mobile More Button */
-    .btn-toolbar-mobile-more {
-        display: inline-flex !important;
-        align-items: center !important;
         justify-content: center !important;
-        width: 34px !important;
-        height: 34px !important;
-        border-radius: 17px !important;
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 1px solid rgba(255, 255, 255, 0.14) !important;
-        color: #cbd5e1 !important;
-        cursor: pointer !important;
-        flex-shrink: 0 !important;
+    }
+
+    .v4-bottom-dock .v4-dock-btn:hover {
+        background: rgba(255, 255, 255, 0.18) !important;
+    }
+
+    .v4-bottom-dock .v4-dock-btn:active {
+        transform: scale(0.92) !important;
+    }
+
+    /* Hide bloated buttons in dock and extra modals on mobile */
+    .v4-bottom-dock #dock-btn-fullscreen,
+    .v4-bottom-dock #dock-btn-fit,
+    .v4-bottom-dock #dock-btn-crisp,
+    .v4-bottom-dock .v4-dock-divider,
+    .v4-bottom-dock #dock-btn-screens,
+    .v4-frame-switcher,
+    #v4-frame-switcher,
+    #v4-bottom-sheet,
+    #v4-bottom-sheet-backdrop,
+    #v4-zen-exit-pill {
+        display: none !important;
     }
 
     /* CRITICAL: Hide Both Sidebars on <= 900px to give full canvas width! */
@@ -637,29 +731,32 @@ body.res-narrow {
 }
 
 body.res-narrow #workspace-view {
-    height: calc(100% - 46px) !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 body.res-narrow .sidebar-left,
 body.res-narrow #sidebar-left,
 body.res-narrow .sidebar-right,
 body.res-narrow #sidebar-right,
-body.res-narrow #floating-inspector-card {
+body.res-narrow #floating-inspector-card,
+body.res-narrow .btn-global-save,
+body.res-narrow #btn-global-save,
+body.res-narrow .btn-toolbar-mobile-more,
+body.res-narrow #btn-toolbar-mobile-more,
+body.res-narrow #v4-bottom-sheet,
+body.res-narrow #v4-bottom-sheet-backdrop,
+body.res-narrow #v4-frame-switcher,
+body.res-narrow #v4-zen-exit-pill {
     display: none !important;
-}
-
-body.res-narrow .header-metadata,
-body.res-narrow .toolbar .zoom-controls,
-body.res-narrow .action-pill-group,
-body.res-narrow .url-copy-dropdown-wrapper,
-body.res-narrow .btn-export-pdf,
-body.res-narrow .header-sidebar-toggle {
-    display: none !important;
-}
-
-body.res-narrow .btn-toolbar-mobile-more {
-    display: inline-flex !important;
 }
 
 /* ==========================================================================

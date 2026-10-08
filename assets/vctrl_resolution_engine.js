@@ -528,9 +528,20 @@
 
             canvas.addEventListener('touchend', function(e) {
                 if (e.touches.length === 0) {
-                    // Single tap detection (no significant drag and quick release)
                     var elapsed = Date.now() - (touchState.tapStartTime || 0);
-                    if (!touchState.hasMoved && elapsed > 30 && elapsed < 280) {
+                    var t = (e.changedTouches && e.changedTouches[0]) || null;
+                    var deltaX = t ? (t.clientX - touchState.tapStartX) : 0;
+                    var deltaY = t ? (t.clientY - touchState.tapStartY) : 0;
+
+                    // Swipe left / right to navigate screens on mobile
+                    if (self.currentTier === 'narrow' && Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.8 && elapsed < 400) {
+                        if (deltaX < 0) {
+                            self.navigateScreen(1); // Swipe left -> Next screen
+                        } else {
+                            self.navigateScreen(-1); // Swipe right -> Prev screen
+                        }
+                    } else if (!touchState.hasMoved && elapsed > 30 && elapsed < 280) {
+                        // Single tap detection (no significant drag and quick release)
                         self.handleSingleTap();
                     }
 
@@ -708,6 +719,14 @@
             var hasMultiple = (screens.length > 1);
             if (btnPrev) btnPrev.disabled = !hasMultiple;
             if (btnNext) btnNext.disabled = !hasMultiple;
+
+            // Update Page Indicator in Bottom Pill
+            var pageIndicator = document.getElementById('dock-page-indicator');
+            if (pageIndicator) {
+                var curNum = (curIdx >= 0) ? (curIdx + 1 < 10 ? '0' + (curIdx + 1) : (curIdx + 1)) : '01';
+                var totNum = (screens.length < 10 ? '0' + screens.length : screens.length);
+                pageIndicator.innerText = curNum + ' / ' + totNum;
+            }
 
             // Render Sheet List Items
             var listEl = document.getElementById('v4-sheet-list');

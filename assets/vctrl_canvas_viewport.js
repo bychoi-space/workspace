@@ -36,6 +36,10 @@
             ? (cw / iw)
             : Math.min(cw / iw, ch / ih);
 
+        if (isMobile && forceReset) {
+            state.viewMode = 'fit';
+        }
+
         var s;
         if (state.viewMode === 'custom' && !forceReset && state.transform && state.transform.scale) {
             // [사용자 커스텀 줌 모드 보존]: 사용자가 직접 조절한 확대/축소 배율을 유지
@@ -263,9 +267,20 @@
             if (state) state.isDragging = false;
         });
 
-        window.addEventListener('resize', function() {
-            if (window.centerView) window.centerView(false);
-        });
+        var _vpResizeTimer;
+        var onVpResizeOrOrientation = function() {
+            clearTimeout(_vpResizeTimer);
+            _vpResizeTimer = setTimeout(function() {
+                var isMobile = (window.innerWidth <= 960 || (window.innerHeight <= 600 && window.innerWidth <= 1050) || document.body.classList.contains('res-narrow'));
+                if (window.centerView) window.centerView(isMobile ? true : false);
+            }, 60);
+            setTimeout(function() {
+                var isMobile = (window.innerWidth <= 960 || (window.innerHeight <= 600 && window.innerWidth <= 1050) || document.body.classList.contains('res-narrow'));
+                if (isMobile && window.centerView) window.centerView(true);
+            }, 300);
+        };
+        window.addEventListener('resize', onVpResizeOrOrientation);
+        window.addEventListener('orientationchange', onVpResizeOrOrientation);
 
         window.addEventListener('keydown', function(e) {
             if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable || e.target.classList.contains('v4-editable-cell') || (e.target.closest && e.target.closest('.ql-editor')))) {

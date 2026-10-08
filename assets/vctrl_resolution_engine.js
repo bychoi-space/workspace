@@ -76,8 +76,9 @@
         // --- 2. DOM Injection (Bottom Dock & Bottom Sheet) ---
         injectDOMElements: function() {
             // Inject Navigation Controls (Left Arrow, Right Arrow, Bottom Page Indicator) directly into body
-            if (!document.getElementById('dock-btn-prev')) {
-                var btnPrev = document.createElement('button');
+            var btnPrev = document.getElementById('dock-btn-prev');
+            if (!btnPrev) {
+                btnPrev = document.createElement('button');
                 btnPrev.type = 'button';
                 btnPrev.id = 'dock-btn-prev';
                 btnPrev.className = 'v4-edge-nav-btn v4-edge-nav-prev';
@@ -85,10 +86,13 @@
                 btnPrev.title = '이전 화면';
                 btnPrev.innerHTML = '<span class="material-icons-outlined">chevron_left</span>';
                 document.body.appendChild(btnPrev);
+            } else if (btnPrev.parentNode !== document.body) {
+                document.body.appendChild(btnPrev);
             }
 
-            if (!document.getElementById('dock-btn-next')) {
-                var btnNext = document.createElement('button');
+            var btnNext = document.getElementById('dock-btn-next');
+            if (!btnNext) {
+                btnNext = document.createElement('button');
                 btnNext.type = 'button';
                 btnNext.id = 'dock-btn-next';
                 btnNext.className = 'v4-edge-nav-btn v4-edge-nav-next';
@@ -96,13 +100,18 @@
                 btnNext.title = '다음 화면';
                 btnNext.innerHTML = '<span class="material-icons-outlined">chevron_right</span>';
                 document.body.appendChild(btnNext);
+            } else if (btnNext.parentNode !== document.body) {
+                document.body.appendChild(btnNext);
             }
 
-            if (!document.getElementById('dock-page-indicator')) {
-                var indicator = document.createElement('div');
+            var indicator = document.getElementById('dock-page-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
                 indicator.id = 'dock-page-indicator';
                 indicator.className = 'v4-edge-page-indicator';
                 indicator.innerText = '01 / 01';
+                document.body.appendChild(indicator);
+            } else if (indicator.parentNode !== document.body) {
                 document.body.appendChild(indicator);
             }
 
@@ -283,13 +292,28 @@
         initListeners: function() {
             var self = this;
 
-            // Debounced Window Resize
-            window.addEventListener('resize', function() {
+            // Debounced Window Resize & Orientation Change Auto-Fit
+            var onResizeOrOrientation = function() {
                 clearTimeout(self._resizeTimer);
                 self._resizeTimer = setTimeout(function() {
-                    self.updateBreakpoint(false);
-                }, 60);
-            });
+                    self.updateBreakpoint(true);
+                    if (window.centerView) {
+                        window.centerView(true);
+                    }
+                }, 80);
+                setTimeout(function() {
+                    self.updateBreakpoint(true);
+                    if (window.centerView) {
+                        window.centerView(true);
+                    }
+                }, 320);
+            };
+
+            window.addEventListener('resize', onResizeOrOrientation);
+            window.addEventListener('orientationchange', onResizeOrOrientation);
+            if (window.screen && window.screen.orientation && window.screen.orientation.addEventListener) {
+                window.screen.orientation.addEventListener('change', onResizeOrOrientation);
+            }
 
             // Bottom Dock Button Listeners
             var btnPrev = document.getElementById('dock-btn-prev');

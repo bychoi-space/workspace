@@ -996,18 +996,34 @@ body.res-narrow.fullscreen-mode .toolbar {
     transform: translateY(-150%) !important;
 }
 
+/* Screen Navigation Arrows remain accessible as sleek overlay in Zen/Fullscreen Mode */
 body.zen-mode #dock-btn-prev,
-body.fullscreen-mode #dock-btn-prev {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transform: translateY(-50%) translateX(-28px) !important;
+body.fullscreen-mode #dock-btn-prev,
+body.res-narrow.zen-mode #dock-btn-prev,
+body.res-narrow.fullscreen-mode #dock-btn-prev {
+    display: flex !important;
+    opacity: 0.85 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    transform: translateY(-50%) !important;
 }
 
 body.zen-mode #dock-btn-next,
-body.fullscreen-mode #dock-btn-next {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transform: translateY(-50%) translateX(28px) !important;
+body.fullscreen-mode #dock-btn-next,
+body.res-narrow.zen-mode #dock-btn-next,
+body.res-narrow.fullscreen-mode #dock-btn-next {
+    display: flex !important;
+    opacity: 0.85 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    transform: translateY(-50%) !important;
+}
+
+body.zen-mode #dock-btn-prev:hover,
+body.zen-mode #dock-btn-next:hover,
+body.zen-mode #dock-btn-prev:active,
+body.zen-mode #dock-btn-next:active {
+    opacity: 1 !important;
 }
 
 body.zen-mode #dock-page-indicator,

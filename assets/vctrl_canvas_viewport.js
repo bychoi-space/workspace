@@ -142,14 +142,53 @@
 
     window.toggleFullscreen = function(forceExit) {
         var DOM = window.DOM;
-        var isActive = document.body.classList.contains('fullscreen-mode');
+        var doc = document;
+        var docEl = doc.documentElement;
+        var isFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+        var isActive = doc.body.classList.contains('fullscreen-mode') || isFs;
         var shouldExit = forceExit === true || (forceExit === undefined && isActive);
-        document.body.classList.toggle('fullscreen-mode', !shouldExit);
-        if (DOM && DOM.btnFullscreen) DOM.btnFullscreen.querySelector('span').innerText = shouldExit ? 'fullscreen' : 'fullscreen_exit';
+
+        doc.body.classList.toggle('fullscreen-mode', !shouldExit);
+        doc.body.classList.toggle('zen-mode', !shouldExit);
+
+        // Native Browser Fullscreen to hide mobile browser address bar & top area
+        try {
+            if (!shouldExit && !isFs) {
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen().catch(function() {});
+                } else if (docEl.webkitRequestFullscreen) {
+                    docEl.webkitRequestFullscreen();
+                } else if (docEl.msRequestFullscreen) {
+                    docEl.msRequestFullscreen();
+                }
+            } else if (shouldExit && isFs) {
+                if (doc.exitFullscreen) {
+                    doc.exitFullscreen().catch(function() {});
+                } else if (doc.webkitExitFullscreen) {
+                    doc.webkitExitFullscreen();
+                } else if (doc.msExitFullscreen) {
+                    doc.msExitFullscreen();
+                }
+            }
+        } catch (_) {}
+
+        if (DOM && DOM.btnFullscreen) {
+            var icon = DOM.btnFullscreen.querySelector('span');
+            if (icon) icon.innerText = shouldExit ? 'fullscreen' : 'fullscreen_exit';
+        }
         if (shouldExit && typeof window.clearPresentationPen === 'function') {
             window.clearPresentationPen();
         }
-        setTimeout(window.centerView, 350);
+        if (window.ResolutionEngine && typeof window.ResolutionEngine.showZenToast === 'function') {
+            window.ResolutionEngine.showZenToast(!shouldExit);
+        }
+        setTimeout(function() {
+            if (window.ResolutionEngine && window.ResolutionEngine.currentFocus && window.ResolutionEngine.currentFocus !== 'full') {
+                window.ResolutionEngine.focusFrame(window.ResolutionEngine.currentFocus);
+            } else if (window.centerView) {
+                window.centerView(true);
+            }
+        }, 200);
     };
 
     window.setTool = function(t) {
@@ -271,12 +310,20 @@
         var onVpResizeOrOrientation = function() {
             clearTimeout(_vpResizeTimer);
             _vpResizeTimer = setTimeout(function() {
-                var isMobile = (window.innerWidth <= 960 || (window.innerHeight <= 600 && window.innerWidth <= 1050) || document.body.classList.contains('res-narrow'));
-                if (window.centerView) window.centerView(isMobile ? true : false);
+                if (window.ResolutionEngine && window.ResolutionEngine.currentFocus && window.ResolutionEngine.currentFocus !== 'full') {
+                    window.ResolutionEngine.focusFrame(window.ResolutionEngine.currentFocus);
+                } else if (window.centerView) {
+                    var isMobile = (window.innerWidth <= 960 || (window.innerHeight <= 600 && window.innerWidth <= 1050) || document.body.classList.contains('res-narrow'));
+                    window.centerView(isMobile ? true : false);
+                }
             }, 60);
             setTimeout(function() {
-                var isMobile = (window.innerWidth <= 960 || (window.innerHeight <= 600 && window.innerWidth <= 1050) || document.body.classList.contains('res-narrow'));
-                if (isMobile && window.centerView) window.centerView(true);
+                if (window.ResolutionEngine && window.ResolutionEngine.currentFocus && window.ResolutionEngine.currentFocus !== 'full') {
+                    window.ResolutionEngine.focusFrame(window.ResolutionEngine.currentFocus);
+                } else if (window.centerView) {
+                    var isMobile = (window.innerWidth <= 960 || (window.innerHeight <= 600 && window.innerWidth <= 1050) || document.body.classList.contains('res-narrow'));
+                    if (isMobile) window.centerView(true);
+                }
             }, 300);
         };
         window.addEventListener('resize', onVpResizeOrOrientation);
@@ -308,7 +355,11 @@
                 for (var i = 0; i < entries.length; i++) {
                     var entry = entries[i];
                     if (entry.contentRect.width > 100 && entry.contentRect.height > 100) {
-                        if (window.centerView) window.centerView(false);
+                        if (window.ResolutionEngine && window.ResolutionEngine.currentFocus && window.ResolutionEngine.currentFocus !== 'full') {
+                            window.ResolutionEngine.focusFrame(window.ResolutionEngine.currentFocus);
+                        } else if (window.centerView) {
+                            window.centerView(false);
+                        }
                     }
                 }
             });

@@ -131,7 +131,7 @@
                 switcher.className = 'v4-frame-switcher';
                 switcher.style.display = 'none';
                 switcher.innerHTML = 
-                    '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-mobile" data-focus="mobile" title="모바일 화면 핏">' +
+                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-mobile" data-focus="mobile" title="모바일 화면 핏">' +
                         '<span class="material-icons-outlined">smartphone</span>' +
                         '<span>모바일 핏</span>' +
                     '</button>' +
@@ -139,7 +139,7 @@
                         '<span class="material-icons-outlined">desktop_windows</span>' +
                         '<span>PC 핏</span>' +
                     '</button>' +
-                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-full" data-focus="full" title="전체 캔버스 보기">' +
+                    '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-full" data-focus="full" title="전체 캔버스 보기">' +
                         '<span class="material-icons-outlined">aspect_ratio</span>' +
                         '<span>전체</span>' +
                     '</button>';
@@ -298,13 +298,17 @@
                 clearTimeout(self._resizeTimer);
                 self._resizeTimer = setTimeout(function() {
                     self.updateBreakpoint(true);
-                    if (window.centerView) {
+                    if (self.currentFocus && self.currentFocus !== 'full') {
+                        self.focusFrame(self.currentFocus);
+                    } else if (window.centerView) {
                         window.centerView(true);
                     }
                 }, 80);
                 setTimeout(function() {
                     self.updateBreakpoint(true);
-                    if (window.centerView) {
+                    if (self.currentFocus && self.currentFocus !== 'full') {
+                        self.focusFrame(self.currentFocus);
+                    } else if (window.centerView) {
                         window.centerView(true);
                     }
                 }, 320);
@@ -411,21 +415,20 @@
             // Native Fullscreen Change Listener
             var onFsChange = function() {
                 var isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+                document.body.classList.toggle('fullscreen-mode', isFull);
+                document.body.classList.toggle('zen-mode', isFull);
+
                 var fsIcon = document.getElementById('dock-fullscreen-icon');
                 if (fsIcon) fsIcon.innerText = isFull ? 'fullscreen_exit' : 'fullscreen';
+                var btnFullscreen = document.getElementById('btn-fullscreen-toggle') || document.getElementById('dock-btn-fullscreen');
                 if (btnFullscreen) {
                     btnFullscreen.classList.toggle('active', isFull);
-                    btnFullscreen.title = isFull ? '전체화면 종료' : '전체화면 전환 (주소창 숨김)';
-                }
-                // If exited native fullscreen from system gesture, synchronize zen-mode
-                if (!isFull && self.currentTier === 'narrow') {
-                    document.body.classList.remove('zen-mode');
+                    var icon = btnFullscreen.querySelector('span');
+                    if (icon) icon.innerText = isFull ? 'fullscreen_exit' : 'fullscreen';
                 }
                 setTimeout(function() {
-                    if (self.currentFocus === 'mobile') {
-                        self.focusFrame('mobile');
-                    } else if (self.currentFocus === 'pc') {
-                        self.focusFrame('pc');
+                    if (self.currentFocus && self.currentFocus !== 'full') {
+                        self.focusFrame(self.currentFocus);
                     } else if (window.centerView) {
                         window.centerView(true);
                     }
@@ -796,6 +799,7 @@
             var targetFile = typeof target === 'string' ? target : (target.name || target.file);
             if (!targetFile) return;
 
+            self._userSelectedFocus = null;
             if (typeof window.loadScreen === 'function') {
                 window.loadScreen(targetFile);
             }
@@ -909,6 +913,7 @@
                 (function(targetFile) {
                     li.addEventListener('click', function() {
                         self.closeBottomSheet();
+                        self._userSelectedFocus = null;
                         if (typeof window.loadScreen === 'function') {
                             window.loadScreen(targetFile);
                         }
@@ -1034,21 +1039,14 @@
             if (btnPc) btnPc.style.display = frames.hasPc ? 'inline-flex' : 'none';
             if (btnFull) btnFull.style.display = 'inline-flex';
 
-            // Respect user manual selection if already made; otherwise auto-select on narrow tier
-            var chosenFocus = this._userSelectedFocus;
-            if (this.currentTier === 'narrow' || this.isTouchDevice) {
-                if (!chosenFocus) {
-                    chosenFocus = frames.hasMobile ? 'mobile' : (frames.hasPc ? 'pc' : 'full');
-                } else if (chosenFocus === 'mobile' && !frames.hasMobile) {
-                    chosenFocus = frames.hasPc ? 'pc' : 'full';
-                } else if (chosenFocus === 'pc' && !frames.hasPc) {
-                    chosenFocus = frames.hasMobile ? 'mobile' : 'full';
-                }
-                this.focusFrame(chosenFocus);
-            } else {
-                if (!chosenFocus) chosenFocus = 'full';
-                this.focusFrame(chosenFocus);
+            // Point 2: The default is UNCONDITIONALLY 'full' unless user explicitly clicked a button!
+            var chosenFocus = this._userSelectedFocus || 'full';
+            if (chosenFocus === 'mobile' && !frames.hasMobile) {
+                chosenFocus = 'full';
+            } else if (chosenFocus === 'pc' && !frames.hasPc) {
+                chosenFocus = 'full';
             }
+            this.focusFrame(chosenFocus);
         },
 
         focusFrame: function(type) {
@@ -1090,48 +1088,65 @@
                 ? (targetEl.querySelector('.mobile-frame, .mobile-browser-frame') || targetEl)
                 : (targetEl.querySelector('.pc-browser-frame, .pc-frame') || targetEl);
 
-            // Calculate element offset inside iframe relative to body
-            var left = 0, top = 0;
-            var curr = visualFrame;
-            var body = (frames.doc && frames.doc.body) || (curr && curr.ownerDocument && curr.ownerDocument.body);
-            while (curr && curr !== body) {
-                left += curr.offsetLeft || 0;
-                top += curr.offsetTop || 0;
-                curr = curr.offsetParent;
+            var left = 0, top = 0, elW = 0, elH = 0;
+            if (typeof visualFrame.getBoundingClientRect === 'function') {
+                var bcr = visualFrame.getBoundingClientRect();
+                var scrollX = (frames.doc.defaultView && frames.doc.defaultView.scrollX) || 0;
+                var scrollY = (frames.doc.defaultView && frames.doc.defaultView.scrollY) || 0;
+                left = bcr.left + scrollX;
+                top = bcr.top + scrollY;
+                elW = bcr.width;
+                elH = bcr.height;
+            }
+            if (!elW || !elH) {
+                var curr = visualFrame;
+                var body = (frames.doc && frames.doc.body) || (curr && curr.ownerDocument && curr.ownerDocument.body);
+                while (curr && curr !== body) {
+                    left += curr.offsetLeft || 0;
+                    top += curr.offsetTop || 0;
+                    curr = curr.offsetParent;
+                }
+                elW = visualFrame.offsetWidth || (type === 'mobile' ? 382 : 1160);
+                elH = visualFrame.offsetHeight || (type === 'mobile' ? 848 : 810);
             }
 
-            var elW = visualFrame.offsetWidth || (type === 'mobile' ? 382 : 1160);
-            var elH = visualFrame.offsetHeight || 848;
             var cw = DOM.canvas.clientWidth;
             var ch = DOM.canvas.clientHeight;
             if (cw <= 0 || ch <= 0) return;
 
-            var scale, x, y;
-            var isNarrow = (this.currentTier === 'narrow' || this.isTouchDevice);
-            var isPortrait = (ch > cw);
-
+            // Fit the frame cleanly on screen:
+            // "사용자가 의도적으로 [모바일핏] 을 클릭하면, 그냥 '세로형태' 로만 바로 보여지게 해주면 돼.
+            //  [PC핏] 을 클릭하면 그냥 '가로형태' 로만 보여지게 해주면 돼."
+            var scale;
             if (type === 'mobile') {
-                if (isPortrait) {
+                if (ch > cw) {
+                    // Mobile Portrait: Fit width nicely (near 1:1 on mobile devices)
                     scale = Math.min((cw - 16) / elW, 1.15);
                     if (scale >= 0.95 && scale <= 1.05) scale = 1.0;
-                    x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
-                    y = Math.round(14 - (top * scale));
                 } else {
-                    scale = Math.min((ch - 24) / elH, (cw - 24) / elW, 1.15);
-                    if (scale >= 0.95 && scale <= 1.05) scale = 1.0;
-                    x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
-                    y = Math.round(10 - (top * scale));
+                    // Landscape: Fit height so the vertical mobile frame fits cleanly on screen
+                    scale = Math.min((ch - 24) / elH, (cw - 24) / elW, 1.0);
                 }
             } else {
-                if (isPortrait) {
-                    scale = Math.min((cw - 12) / elW, 1.0);
-                    x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
-                    y = Math.round(14 - (top * scale));
+                // PC Frame Fit
+                if (ch > cw) {
+                    // Portrait: Fit PC width to portrait screen
+                    scale = Math.min((cw - 16) / elW, 1.0);
                 } else {
+                    // Landscape: Fit PC frame comfortably to screen
                     scale = Math.min((cw - 24) / elW, (ch - 24) / elH, 1.0);
-                    x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
-                    y = Math.round(10 - (top * scale));
                 }
+            }
+
+            // Center horizontally
+            var x = Math.round((cw / 2) - (left + (elW / 2)) * scale);
+            // Center vertically, or align top with safe margin when rendered height exceeds canvas
+            var y;
+            var renderedH = elH * scale;
+            if (renderedH > ch - 20) {
+                y = Math.round(12 - (top * scale));
+            } else {
+                y = Math.round((ch / 2) - (top + (elH / 2)) * scale);
             }
 
             var state = window.state;
@@ -1161,57 +1176,55 @@
         },
 
         // --- 9. Fullscreen API & Tap-to-Hide Immersive Zen View ---
-        toggleFullscreen: function() {
+        toggleFullscreen: function(forceState) {
             var doc = document;
-            var docEl = doc.documentElement;
-            var isFull = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
-
-            if (!isFull) {
-                if (docEl.requestFullscreen) {
-                    docEl.requestFullscreen().catch(function() {});
-                } else if (docEl.webkitRequestFullscreen) {
-                    docEl.webkitRequestFullscreen();
-                } else if (docEl.msRequestFullscreen) {
-                    docEl.msRequestFullscreen();
-                }
-                // Automatically enter Zen Mode when entering fullscreen on mobile
-                if (this.currentTier === 'narrow') {
-                    this.toggleZenMode(true);
-                }
-            } else {
-                if (doc.exitFullscreen) {
-                    doc.exitFullscreen().catch(function() {});
-                } else if (doc.webkitExitFullscreen) {
-                    doc.webkitExitFullscreen();
-                } else if (doc.msExitFullscreen) {
-                    doc.msExitFullscreen();
-                }
-                this.toggleZenMode(false);
-            }
+            var isFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+            var nextZen = (typeof forceState === 'boolean') ? forceState : !isFs;
+            this.toggleZenMode(nextZen);
         },
 
         toggleZenMode: function(forceState) {
             var doc = document;
-            var isCurrentlyZen = doc.body.classList.contains('zen-mode');
+            var docEl = doc.documentElement;
+            var isFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+            var isCurrentlyZen = doc.body.classList.contains('zen-mode') || isFs;
             var nextZen = (typeof forceState === 'boolean') ? forceState : !isCurrentlyZen;
 
             doc.body.classList.toggle('zen-mode', nextZen);
+            doc.body.classList.toggle('fullscreen-mode', nextZen);
 
-            // Pure In-App Immersive Zen View (Zero native OS security toast)
-            // 🌟 In-App Zen Mode Feedback Toast: "화면을 터치하면 전체보기가 취소됩니다."
+            // Request or Exit Native Fullscreen to hide mobile browser address bar & fill screen
+            try {
+                if (nextZen && !isFs) {
+                    if (docEl.requestFullscreen) {
+                        docEl.requestFullscreen().catch(function() {});
+                    } else if (docEl.webkitRequestFullscreen) {
+                        docEl.webkitRequestFullscreen();
+                    } else if (docEl.msRequestFullscreen) {
+                        docEl.msRequestFullscreen();
+                    }
+                } else if (!nextZen && isFs) {
+                    if (doc.exitFullscreen) {
+                        doc.exitFullscreen().catch(function() {});
+                    } else if (doc.webkitExitFullscreen) {
+                        doc.webkitExitFullscreen();
+                    } else if (doc.msExitFullscreen) {
+                        doc.msExitFullscreen();
+                    }
+                }
+            } catch (_) {}
+
+            // In-App Zen Mode Feedback Toast
             this.showZenToast(nextZen);
 
             var self = this;
             setTimeout(function() {
-                if (self.currentFocus === 'mobile') {
-                    self.focusFrame('mobile');
-                } else if (self.currentFocus === 'pc') {
-                    self.focusFrame('pc');
+                if (self.currentFocus && self.currentFocus !== 'full') {
+                    self.focusFrame(self.currentFocus);
                 } else if (window.centerView) {
-                    // Recalculate fit to fill 100% of newly expanded screen height
                     window.centerView(true);
                 }
-            }, 120);
+            }, 200);
         },
 
         showZenToast: function(isZen) {

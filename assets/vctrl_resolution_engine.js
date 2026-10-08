@@ -1234,29 +1234,39 @@
             doc.body.classList.toggle('zen-mode', nextZen);
             doc.body.classList.toggle('fullscreen-mode', nextZen);
 
-            // Request or Exit Native Fullscreen to hide mobile browser address bar & fill screen
-            try {
-                if (nextZen && !isFs) {
-                    if (docEl.requestFullscreen) {
-                        docEl.requestFullscreen().catch(function() {});
-                    } else if (docEl.webkitRequestFullscreen) {
-                        docEl.webkitRequestFullscreen();
-                    } else if (docEl.msRequestFullscreen) {
-                        docEl.msRequestFullscreen();
-                    }
-                } else if (!nextZen && isFs) {
-                    if (doc.exitFullscreen) {
-                        doc.exitFullscreen().catch(function() {});
-                    } else if (doc.webkitExitFullscreen) {
-                        doc.webkitExitFullscreen();
-                    } else if (doc.msExitFullscreen) {
-                        doc.msExitFullscreen();
-                    }
-                }
-            } catch (_) {}
+            var isMobileOrTouch = ('ontouchstart' in window) || 
+                                  (navigator.maxTouchPoints > 0) || 
+                                  (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+                                  doc.body.classList.contains('res-narrow') || 
+                                  window.innerWidth <= 1050;
 
-            // In-App Zen Mode Feedback Toast
-            this.showZenToast(nextZen);
+            // Request or Exit Native Fullscreen only on desktop PC (non-touch)
+            // Never call requestFullscreen on mobile/touch, completely preventing Chrome Android's security notice
+            if (!isMobileOrTouch) {
+                try {
+                    if (nextZen && !isFs) {
+                        if (docEl.requestFullscreen) {
+                            docEl.requestFullscreen().catch(function() {});
+                        } else if (docEl.webkitRequestFullscreen) {
+                            docEl.webkitRequestFullscreen();
+                        } else if (docEl.msRequestFullscreen) {
+                            docEl.msRequestFullscreen();
+                        }
+                    } else if (!nextZen && isFs) {
+                        if (doc.exitFullscreen) {
+                            doc.exitFullscreen().catch(function() {});
+                        } else if (doc.webkitExitFullscreen) {
+                            doc.webkitExitFullscreen();
+                        } else if (doc.msExitFullscreen) {
+                            doc.msExitFullscreen();
+                        }
+                    }
+                } catch (_) {}
+            }
+
+            if (typeof window.clearPresentationPen === 'function') {
+                window.clearPresentationPen();
+            }
 
             var self = this;
             setTimeout(function() {
@@ -1268,27 +1278,8 @@
             }, 200);
         },
 
-        showZenToast: function(isZen) {
-            var toast = document.getElementById('v4-zen-toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'v4-zen-toast';
-                toast.className = 'v4-zen-toast';
-                toast.innerHTML = '<span class="material-icons-outlined" style="font-size: 16px;">touch_app</span>' +
-                                  '<span>화면을 터치하면 전체보기가 취소됩니다.</span>';
-                document.body.appendChild(toast);
-            }
-
-            clearTimeout(this._zenToastTimer);
-
-            if (isZen) {
-                toast.classList.add('show');
-                this._zenToastTimer = setTimeout(function() {
-                    toast.classList.remove('show');
-                }, 2200);
-            } else {
-                toast.classList.remove('show');
-            }
+        showZenToast: function() {
+            // Suppressed to keep fullscreen view completely clean without guidance messages
         },
 
         showRotationToast: function(message, iconName) {

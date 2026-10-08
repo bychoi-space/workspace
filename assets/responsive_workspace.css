@@ -883,8 +883,18 @@ body.res-narrow .btn-toolbar-mobile-more,
 body.res-narrow #btn-toolbar-mobile-more,
 body.res-narrow #v4-bottom-sheet,
 body.res-narrow #v4-bottom-sheet-backdrop,
-body.res-narrow #v4-zen-exit-pill {
+body.res-narrow #v4-zen-exit-pill,
+body.res-narrow #presentation-pen-canvas,
+body.touch-capable #presentation-pen-canvas,
+.v4-zen-toast {
     display: none !important;
+}
+
+@media (pointer: coarse) {
+    #presentation-pen-canvas {
+        display: none !important;
+        pointer-events: none !important;
+    }
 }
 
 /* ==========================================================================

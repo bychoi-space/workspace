@@ -16,11 +16,24 @@
     let currentStroke = null;
     let isDrawingPen = false;
     let isShiftPressed = false;
-    let lastMousePos = null;
     let animationFrameId = null;
+
+    function isMobileOrTouchDevice() {
+        return ('ontouchstart' in window) || 
+               (navigator.maxTouchPoints > 0) || 
+               (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+               document.body.classList.contains('res-narrow') || 
+               document.body.classList.contains('touch-capable') ||
+               window.innerWidth <= 1050;
+    }
 
     // Initialize and inject Presentation Pen Overlay Canvas
     function initPenCanvas() {
+        if (isMobileOrTouchDevice()) {
+            var c = document.getElementById('presentation-pen-canvas');
+            if (c) c.style.display = 'none';
+            return;
+        }
         // Create and inject canvas if not exists directly to body
         canvas = document.getElementById('presentation-pen-canvas');
         const isFullscreen = document.body.classList.contains('fullscreen-mode');
@@ -66,6 +79,13 @@
             currentStroke = null;
         });
 
+        // Touch event guard: Immediately clear coordinates on touch
+        window.addEventListener('touchstart', () => {
+            if (lastMousePos !== null || laserPoints.length > 0) {
+                clearDrawings();
+            }
+        }, { passive: true });
+
         // Start drawing frame loop
         startDrawLoop();
     }
@@ -83,6 +103,7 @@
 
     // Global Proxy Event Listeners for Iframe communication
     window.__lf_proxy_mousemove__ = function(e, iframeEl) {
+        if (isMobileOrTouchDevice()) return;
         const isFullscreen = document.body.classList.contains('fullscreen-mode');
         if (!isFullscreen || !iframeEl) return;
         
@@ -170,6 +191,7 @@
     }
 
     function handleMouseDown(e) {
+        if (isMobileOrTouchDevice()) return;
         if (!isShiftPressed || e.button !== 0) return; // Only left click with Shift draws pen strokes
         
         isDrawingPen = true;
@@ -178,6 +200,7 @@
     }
 
     function handleMouseMove(e) {
+        if (isMobileOrTouchDevice()) return;
         const isFullscreen = document.body.classList.contains('fullscreen-mode');
         if (!isFullscreen) return;
 
@@ -371,7 +394,7 @@
             }
 
             const isFullscreen = document.body.classList.contains('fullscreen-mode');
-            if (!isFullscreen) {
+            if (!isFullscreen || isMobileOrTouchDevice()) {
                 if (lastMousePos !== null || laserPoints.length > 0 || penStrokes.length > 0) {
                     clearDrawings();
                 }

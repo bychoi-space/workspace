@@ -151,36 +151,42 @@
         doc.body.classList.toggle('fullscreen-mode', !shouldExit);
         doc.body.classList.toggle('zen-mode', !shouldExit);
 
-        // Native Browser Fullscreen to hide mobile browser address bar & top area
-        try {
-            if (!shouldExit && !isFs) {
-                if (docEl.requestFullscreen) {
-                    docEl.requestFullscreen().catch(function() {});
-                } else if (docEl.webkitRequestFullscreen) {
-                    docEl.webkitRequestFullscreen();
-                } else if (docEl.msRequestFullscreen) {
-                    docEl.msRequestFullscreen();
+        var isMobileOrTouch = ('ontouchstart' in window) || 
+                              (navigator.maxTouchPoints > 0) || 
+                              (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+                              doc.body.classList.contains('res-narrow') || 
+                              window.innerWidth <= 1050;
+
+        // Native Browser Fullscreen: strictly for desktop PC (non-touch) only!
+        // Never call requestFullscreen on mobile/touch, completely preventing Chrome Android's security notice
+        if (!isMobileOrTouch) {
+            try {
+                if (!shouldExit && !isFs) {
+                    if (docEl.requestFullscreen) {
+                        docEl.requestFullscreen().catch(function() {});
+                    } else if (docEl.webkitRequestFullscreen) {
+                        docEl.webkitRequestFullscreen();
+                    } else if (docEl.msRequestFullscreen) {
+                        docEl.msRequestFullscreen();
+                    }
+                } else if (shouldExit && isFs) {
+                    if (doc.exitFullscreen) {
+                        doc.exitFullscreen().catch(function() {});
+                    } else if (doc.webkitExitFullscreen) {
+                        doc.webkitExitFullscreen();
+                    } else if (doc.msExitFullscreen) {
+                        doc.msExitFullscreen();
+                    }
                 }
-            } else if (shouldExit && isFs) {
-                if (doc.exitFullscreen) {
-                    doc.exitFullscreen().catch(function() {});
-                } else if (doc.webkitExitFullscreen) {
-                    doc.webkitExitFullscreen();
-                } else if (doc.msExitFullscreen) {
-                    doc.msExitFullscreen();
-                }
-            }
-        } catch (_) {}
+            } catch (_) {}
+        }
 
         if (DOM && DOM.btnFullscreen) {
             var icon = DOM.btnFullscreen.querySelector('span');
             if (icon) icon.innerText = shouldExit ? 'fullscreen' : 'fullscreen_exit';
         }
-        if (shouldExit && typeof window.clearPresentationPen === 'function') {
+        if (typeof window.clearPresentationPen === 'function') {
             window.clearPresentationPen();
-        }
-        if (window.ResolutionEngine && typeof window.ResolutionEngine.showZenToast === 'function') {
-            window.ResolutionEngine.showZenToast(!shouldExit);
         }
         setTimeout(function() {
             if (window.ResolutionEngine && window.ResolutionEngine.currentFocus && window.ResolutionEngine.currentFocus !== 'full') {

@@ -626,15 +626,9 @@
                     var deltaX = t ? (t.clientX - touchState.tapStartX) : 0;
                     var deltaY = t ? (t.clientY - touchState.tapStartY) : 0;
 
-                    // Swipe left / right to navigate screens on mobile (Forbidden if user was pinching)
-                    if (!touchState.wasPinching && (self.currentTier === 'narrow' || self.isTouchDevice) && Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.8 && elapsed < 400) {
-                        if (deltaX < 0) {
-                            self.navigateScreen(1); // Swipe left -> Next screen
-                        } else {
-                            self.navigateScreen(-1); // Swipe right -> Prev screen
-                        }
-                    } else if (!touchState.wasPinching && !touchState.hasMoved && elapsed > 20 && elapsed < 400) {
-                        // Single tap detection (no pinch and no significant drag)
+                    // Single tap detection (no pinch and no drag movement) to toggle Zen Mode
+                    // Swipe screen navigation is intentionally disabled so 1-finger panning around zoomed slides is 100% seamless
+                    if (!touchState.wasPinching && !touchState.hasMoved && elapsed > 20 && elapsed < 400) {
                         self.handleSingleTap();
                     }
 
@@ -1169,16 +1163,6 @@
                     var t = (e.changedTouches && e.changedTouches[0]) || null;
                     var deltaX = t ? (t.clientX - ifTouch.x) : 0;
                     var deltaY = t ? (t.clientY - ifTouch.y) : 0;
-
-                    // Swipe left / right inside iframe to switch screens
-                    if ((self.currentTier === 'narrow' || self.isTouchDevice) && Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.8 && elapsed < 400) {
-                        if (deltaX < 0) {
-                            self.navigateScreen(1); // Swipe left -> Next screen
-                        } else {
-                            self.navigateScreen(-1); // Swipe right -> Prev screen
-                        }
-                        return;
-                    }
 
                     if (!ifTouch.moved && elapsed > 20 && elapsed < 400) {
                         // Tapping anywhere inside slide toggles Zen Mode

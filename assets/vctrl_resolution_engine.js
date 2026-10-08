@@ -316,6 +316,10 @@
                     btnFullscreen.classList.toggle('active', isFull);
                     btnFullscreen.title = isFull ? '전체화면 종료' : '전체화면 전환 (주소창 숨김)';
                 }
+                // If exited native fullscreen from system gesture, synchronize zen-mode
+                if (!isFull && self.currentTier === 'narrow') {
+                    document.body.classList.remove('zen-mode');
+                }
                 setTimeout(function() {
                     if (self.currentFocus === 'mobile') {
                         self.focusFrame('mobile');
@@ -556,6 +560,18 @@
                     if (state && state.transform) {
                         touchState.startX = t.clientX - state.transform.x;
                         touchState.startY = t.clientY - state.transform.y;
+                    }
+                }
+            });
+
+            // Fallback click listener for simulated mouse click in device preview
+            canvas.addEventListener('click', function(e) {
+                if (e.target.closest('#v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card, .toolbar')) {
+                    return;
+                }
+                if (self.currentTier === 'narrow') {
+                    if (Date.now() - (touchState.tapStartTime || 0) > 350) {
+                        self.handleSingleTap();
                     }
                 }
             });
@@ -940,10 +956,41 @@
         },
 
         toggleZenMode: function(forceState) {
-            var isCurrentlyZen = document.body.classList.contains('zen-mode');
+            var doc = document;
+            var docEl = doc.documentElement;
+            var isCurrentlyZen = doc.body.classList.contains('zen-mode');
             var nextZen = (typeof forceState === 'boolean') ? forceState : !isCurrentlyZen;
 
-            document.body.classList.toggle('zen-mode', nextZen);
+            doc.body.classList.toggle('zen-mode', nextZen);
+
+            // 🌟 Mobile Browser URL Bar Auto-Slide via Native Fullscreen API
+            // Direct user-gesture (tap/click) triggers Chrome/Samsung Internet edge-to-edge fullscreen
+            if (this.currentTier === 'narrow' || this.isTouchDevice) {
+                if (nextZen) {
+                    var requestFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
+                    if (requestFs) {
+                        try {
+                            var p = requestFs.call(docEl);
+                            if (p && typeof p.catch === 'function') {
+                                p.catch(function() {});
+                            }
+                        } catch (_) {}
+                    }
+                } else {
+                    var isFull = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+                    if (isFull) {
+                        var exitFs = doc.exitFullscreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+                        if (exitFs) {
+                            try {
+                                var ep = exitFs.call(doc);
+                                if (ep && typeof ep.catch === 'function') {
+                                    ep.catch(function() {});
+                                }
+                            } catch (_) {}
+                        }
+                    }
+                }
+            }
 
             var self = this;
             setTimeout(function() {
@@ -952,9 +999,10 @@
                 } else if (self.currentFocus === 'pc') {
                     self.focusFrame('pc');
                 } else if (window.centerView) {
-                    window.centerView(true);
+                    // Do not force reset transform so user zoom/pinch is preserved
+                    window.centerView(false);
                 }
-            }, 120);
+            }, 100);
         },
 
         handleSingleTap: function() {
@@ -993,12 +1041,18 @@
                 doc.addEventListener('touchend', function(e) {
                     var elapsed = Date.now() - ifTouch.time;
                     if (!ifTouch.moved && elapsed > 30 && elapsed < 280) {
-                        // If in Zen Mode, tapping inside iframe restores UI
-                        if (document.body.classList.contains('zen-mode')) {
-                            self.toggleZenMode(false);
-                        }
+                        // Tapping anywhere inside slide toggles Zen Mode & Fullscreen
+                        self.handleSingleTap();
                     }
                 }, { passive: true });
+
+                doc.addEventListener('click', function(e) {
+                    if (self.currentTier === 'narrow') {
+                        if (Date.now() - ifTouch.time > 350) {
+                            self.handleSingleTap();
+                        }
+                    }
+                });
 
                 doc._zenTapWired = true;
             } catch (_) {}

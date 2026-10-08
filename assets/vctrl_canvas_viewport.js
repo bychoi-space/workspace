@@ -28,12 +28,13 @@
         if (cw <= 0 || ch <= 0) return;
 
         var isMobilePortrait = (cw <= 600 || (cw < 900 && ch > cw * 1.2));
+        var isMobile = (cw <= 900);
 
         // 브라우저 캔버스 영역에 맞춘 반응형 가변 배율(Fit Scale) 계산
-        // 모바일 세로 모드에서는 세로 높이에 억지로 맞추지 않고 가로폭 맞춤(Fit to Width) 기준 적용
+        // 모바일 세로 모드에서는 가로폭(Fit to Width) 기준 적용 (스크린 좌우 꽉 참)
         var fitScale = isMobilePortrait 
-            ? ((cw * 0.98) / iw)
-            : Math.min((cw * 0.98) / iw, (ch * 0.98) / ih);
+            ? (cw / iw)
+            : Math.min(cw / iw, ch / ih);
 
         var s;
         if (state.viewMode === 'custom' && !forceReset && state.transform && state.transform.scale) {
@@ -44,13 +45,16 @@
             s = 1.0;
         } else {
             // [화면 맞춤(Fit) 모드]:
-            // 1. 스마트 스냅 밴드 (Smart Snap Band): 0.95 이상일 때는 1.0(100%) 강제 스냅!
-            if (fitScale >= 0.95) {
+            if (isMobile) {
+                // 모바일/태블릿: 5% 단위 그리드 스냅(floor)으로 인한 인위적 축소 방지 -> 화면에 100% 핏
+                s = fitScale;
+            } else if (fitScale >= 0.95) {
+                // 1. 데스크톱 스마트 스냅 밴드 (Smart Snap Band): 0.95 이상일 때는 1.0(100%) 강제 스냅!
                 s = 1.0;
             } else if (cw >= 1700 && ch >= 880) {
                 s = 1.0;
             } else {
-                // 2. 소형 노트북/저해상도 화면(fitScale < 0.95): 5% 단위 그리드 스냅 (0.90, 0.85, 0.80...)
+                // 2. 소형 노트북/저해상도 PC(fitScale < 0.95): 5% 단위 그리드 스냅 (0.90, 0.85, 0.80...)
                 s = Math.max(0.2, Math.floor(fitScale * 20) / 20);
             }
         }
@@ -62,9 +66,9 @@
             y = state.transform.y;
         } else {
             x = Math.round((cw - (iw * s)) / 2);
-            // 모바일 세로모드에서는 화면 중앙에 붕 뜨지 않고 상단 12px에 깔끔하게 안착!
+            // 모바일 세로모드: 상/하단 플로팅 컨트롤이 레이어로 떠도 간섭 없는 세로 정중앙 배치
             if (isMobilePortrait) {
-                y = 12;
+                y = Math.max(10, Math.round((ch - (ih * s)) / 2));
             } else if (ih * s > ch) {
                 // 세로 높이가 뷰포트를 초과하는 경우 상단 10px 안전 여백으로 배치
                 y = 10;

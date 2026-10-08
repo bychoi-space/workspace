@@ -566,6 +566,7 @@ body.res-narrow #dock-page-indicator {
         height: 100% !important;
         overflow: hidden !important;
         padding-bottom: 0 !important;
+        touch-action: none !important;
     }
 
     /* 1. Ultra-Minimal Floating Back & Title Pill (Back to index + Active Screen Title) */
@@ -821,6 +822,16 @@ body.res-narrow #dock-page-indicator {
         max-height: 85vh !important;
         margin: 12px auto !important;
     }
+
+    /* Mobile Read-Only Presentation Mode: Non-interactive slide canvas (prevents accidental object selection & enables direct canvas pinch-zoom) */
+    #main-iframe,
+    .canvas iframe,
+    .artboard-wrapper,
+    .pins-layer {
+        pointer-events: none !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+    }
 }
 
 /* Scoped body class fallback if media query delayed */
@@ -842,6 +853,23 @@ body.res-narrow #workspace-view {
     overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
+}
+
+body.res-narrow #main-iframe,
+body.res-narrow .canvas iframe,
+body.res-narrow .artboard-wrapper,
+body.res-narrow .pins-layer,
+body.touch-capable.res-narrow #main-iframe,
+body.touch-capable.res-narrow .canvas iframe,
+body.touch-capable.res-narrow .artboard-wrapper,
+body.touch-capable.res-narrow .pins-layer,
+body.touch-capable.zen-mode #main-iframe,
+body.touch-capable.zen-mode .canvas iframe,
+body.touch-capable.zen-mode .artboard-wrapper,
+body.touch-capable.zen-mode .pins-layer {
+    pointer-events: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
 }
 
 body.res-narrow .sidebar-left,
@@ -958,10 +986,14 @@ body.res-compact .v4-frame-switcher.is-available {
 }
 
 body.zen-mode .toolbar,
-body.fullscreen-mode .toolbar {
+body.fullscreen-mode .toolbar,
+body.res-narrow.zen-mode .toolbar,
+body.res-narrow.fullscreen-mode .toolbar {
+    display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
-    transform: translateY(-30px) !important;
+    visibility: hidden !important;
+    transform: translateY(-150%) !important;
 }
 
 body.zen-mode #dock-btn-prev,
@@ -983,18 +1015,6 @@ body.fullscreen-mode #dock-page-indicator {
     opacity: 0 !important;
     pointer-events: none !important;
     transform: translateX(-50%) translateY(24px) !important;
-}
-
-@media (max-width: 960px), (max-height: 600px) and (max-width: 1050px) {
-    body.zen-mode .toolbar,
-    body.fullscreen-mode .toolbar,
-    body.res-narrow.zen-mode .toolbar,
-    body.res-narrow.fullscreen-mode .toolbar {
-        display: flex !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        transform: translateY(-24px) !important;
-    }
 }
 
 /* Custom In-App Zen Toast: "화면을 터치하면 전체보기가 취소됩니다." */

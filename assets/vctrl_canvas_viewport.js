@@ -28,7 +28,7 @@
         if (cw <= 0 || ch <= 0) return;
 
         var isMobilePortrait = (cw <= 600 || (cw < 900 && ch > cw * 1.2));
-        var isMobile = (cw <= 900);
+        var isMobile = (cw <= 960 || (ch <= 600 && cw <= 1050) || document.body.classList.contains('res-narrow'));
 
         // 브라우저 캔버스 영역에 맞춘 반응형 가변 배율(Fit Scale) 계산
         // 모바일 세로 모드에서는 가로폭(Fit to Width) 기준 적용 (스크린 좌우 꽉 참)
@@ -69,6 +69,9 @@
             // 모바일 세로모드: 상/하단 플로팅 컨트롤이 레이어로 떠도 간섭 없는 세로 정중앙 배치
             if (isMobilePortrait) {
                 y = Math.max(10, Math.round((ch - (ih * s)) / 2));
+            } else if (isMobile) {
+                // 모바일 가로모드: 화면에 꽉 찬 세로 정중앙 배치
+                y = Math.round((ch - (ih * s)) / 2);
             } else if (ih * s > ch) {
                 // 세로 높이가 뷰포트를 초과하는 경우 상단 10px 안전 여백으로 배치
                 y = 10;
@@ -150,7 +153,8 @@
         if (!state || !DOM) return;
         state.tool = t;
         if (DOM.canvas) DOM.canvas.classList.toggle('hand-active', t === 'hand');
-        if (DOM.iframe) DOM.iframe.style.pointerEvents = t === 'hand' ? 'none' : 'auto';
+        var isMobile = (document.body.classList.contains('res-narrow') || window.innerWidth <= 960 || (window.innerHeight <= 600 && window.innerWidth <= 1050));
+        if (DOM.iframe) DOM.iframe.style.pointerEvents = isMobile ? 'none' : (t === 'hand' ? 'none' : 'auto');
         if (DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
     };
 

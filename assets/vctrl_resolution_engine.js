@@ -31,6 +31,7 @@
         _touchState: {
             isTracking: false,
             touchCount: 0,
+            wasPinching: false,
             startX: 0,
             startY: 0,
             tapStartX: 0,
@@ -39,6 +40,8 @@
             hasMoved: false,
             initialDistance: 0,
             initialScale: 1,
+            initialContentX: 0,
+            initialContentY: 0,
             midX: 0,
             midY: 0,
             lastTapTime: 0
@@ -259,6 +262,12 @@
                 this.closeBottomSheet();
             }
 
+            // Mobile read-only mode: disable iframe pointer events to prevent object selection & enable canvas gestures
+            var iframe = (window.DOM && window.DOM.iframe) || document.getElementById('main-iframe');
+            if (iframe) {
+                iframe.style.pointerEvents = (newTier === 'narrow') ? 'none' : 'auto';
+            }
+
             // Sync dock crisp button label with current scale
             this.syncDockZoom();
 
@@ -359,7 +368,7 @@
                     } else if (self.currentFocus === 'pc') {
                         self.focusFrame('pc');
                     } else if (window.centerView) {
-                        window.centerView(false);
+                        window.centerView(true);
                     }
                 }, 200);
             };
@@ -502,7 +511,9 @@
                     }
                 } else if (e.touches.length === 2) {
                     // Pinch Zoom Initiation
-                    e.preventDefault();
+                    if (e.cancelable) e.preventDefault();
+                    touchState.touchCount = 2;
+                    touchState.wasPinching = true;
                     touchState.hasMoved = true;
                     touchState.isTracking = true;
                     var t1 = e.touches[0], t2 = e.touches[1];
@@ -512,6 +523,8 @@
 
                     var state = window.state;
                     touchState.initialScale = (state && state.transform && state.transform.scale) || 1.0;
+                    touchState.initialContentX = (state && state.transform && state.transform.x) || 0;
+                    touchState.initialContentY = (state && state.transform && state.transform.y) || 0;
 
                     var rect = canvas.getBoundingClientRect();
                     touchState.midX = ((t1.clientX + t2.clientX) / 2) - rect.left;
@@ -532,8 +545,8 @@
                     }
 
                     // 1-Finger Pan in progress (Only if in narrow mode or hand mode)
-                    if (self.currentTier === 'narrow' || state.tool === 'hand' || state.isHandMode) {
-                        e.preventDefault();
+                    if (self.currentTier === 'narrow' || self.isTouchDevice || state.tool === 'hand' || state.isHandMode) {
+                        if (e.cancelable) e.preventDefault();
                         state.transform.x = Math.round(t.clientX - touchState.startX);
                         state.transform.y = Math.round(t.clientY - touchState.startY);
                         state.viewMode = 'custom';
@@ -541,19 +554,38 @@
                     }
                 } else if (e.touches.length === 2) {
                     // Pinch Zoom in progress
+                    touchState.touchCount = 2;
+                    touchState.wasPinching = true;
                     touchState.hasMoved = true;
-                    e.preventDefault();
+                    if (e.cancelable) e.preventDefault();
                     var t1 = e.touches[0], t2 = e.touches[1];
                     var currentDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-                    if (touchState.initialDistance > 0) {
+
+                    // Dynamic initialization guard if second finger touched during movement
+                    if (!touchState.initialDistance || touchState.initialDistance < 5) {
+                        touchState.initialDistance = currentDist;
+                        touchState.initialScale = (state && state.transform && state.transform.scale) || 1.0;
+                        touchState.initialContentX = (state && state.transform && state.transform.x) || 0;
+                        touchState.initialContentY = (state && state.transform && state.transform.y) || 0;
+                        var r0 = canvas.getBoundingClientRect();
+                        touchState.midX = ((t1.clientX + t2.clientX) / 2) - r0.left;
+                        touchState.midY = ((t1.clientY + t2.clientY) / 2) - r0.top;
+                    }
+
+                    if (touchState.initialDistance > 5) {
                         var factor = currentDist / touchState.initialDistance;
                         var newScale = Math.max(0.15, Math.min(touchState.initialScale * factor, 8.0));
 
-                        var s = state.transform.scale;
-                        var mx = touchState.midX, my = touchState.midY;
+                        var rect = canvas.getBoundingClientRect();
+                        var curMidX = ((t1.clientX + t2.clientX) / 2) - rect.left;
+                        var curMidY = ((t1.clientY + t2.clientY) / 2) - rect.top;
 
-                        state.transform.x = Math.round(mx - (mx - state.transform.x) * (newScale / s));
-                        state.transform.y = Math.round(my - (my - state.transform.y) * (newScale / s));
+                        // Point under the initial midpoint in unscaled stage coordinates
+                        var p0X = (touchState.midX - touchState.initialContentX) / touchState.initialScale;
+                        var p0Y = (touchState.midY - touchState.initialContentY) / touchState.initialScale;
+
+                        state.transform.x = Math.round(curMidX - p0X * newScale);
+                        state.transform.y = Math.round(curMidY - p0Y * newScale);
                         state.transform.scale = newScale;
                         state.viewMode = 'custom';
 
@@ -570,21 +602,22 @@
                     var deltaX = t ? (t.clientX - touchState.tapStartX) : 0;
                     var deltaY = t ? (t.clientY - touchState.tapStartY) : 0;
 
-                    // Swipe left / right to navigate screens on mobile
-                    if ((self.currentTier === 'narrow' || self.isTouchDevice) && Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.8 && elapsed < 400) {
+                    // Swipe left / right to navigate screens on mobile (Forbidden if user was pinching)
+                    if (!touchState.wasPinching && (self.currentTier === 'narrow' || self.isTouchDevice) && Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.8 && elapsed < 400) {
                         if (deltaX < 0) {
                             self.navigateScreen(1); // Swipe left -> Next screen
                         } else {
                             self.navigateScreen(-1); // Swipe right -> Prev screen
                         }
-                    } else if (!touchState.hasMoved && elapsed > 20 && elapsed < 400) {
-                        // Single tap detection (no significant drag and natural touch release)
+                    } else if (!touchState.wasPinching && !touchState.hasMoved && elapsed > 20 && elapsed < 400) {
+                        // Single tap detection (no pinch and no significant drag)
                         self.handleSingleTap();
                     }
 
                     touchState.isTracking = false;
                     touchState.touchCount = 0;
                     touchState.initialDistance = 0;
+                    touchState.wasPinching = false;
                 } else if (e.touches.length === 1) {
                     // Transitioned from 2 fingers to 1 finger
                     touchState.touchCount = 1;
@@ -998,6 +1031,29 @@
 
             doc.body.classList.toggle('zen-mode', nextZen);
 
+            // Request or Exit Native Fullscreen to hide mobile browser address bar & fill screen
+            try {
+                var docEl = doc.documentElement;
+                var isFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+                if (nextZen && !isFs) {
+                    if (docEl.requestFullscreen) {
+                        docEl.requestFullscreen().catch(function() {});
+                    } else if (docEl.webkitRequestFullscreen) {
+                        docEl.webkitRequestFullscreen();
+                    } else if (docEl.msRequestFullscreen) {
+                        docEl.msRequestFullscreen();
+                    }
+                } else if (!nextZen && isFs) {
+                    if (doc.exitFullscreen) {
+                        doc.exitFullscreen().catch(function() {});
+                    } else if (doc.webkitExitFullscreen) {
+                        doc.webkitExitFullscreen();
+                    } else if (doc.msExitFullscreen) {
+                        doc.msExitFullscreen();
+                    }
+                }
+            } catch (_) {}
+
             // 🌟 In-App Zen Mode Feedback Toast: "화면을 터치하면 전체보기가 취소됩니다."
             this.showZenToast(nextZen);
 
@@ -1008,10 +1064,10 @@
                 } else if (self.currentFocus === 'pc') {
                     self.focusFrame('pc');
                 } else if (window.centerView) {
-                    // Do not force reset transform so user zoom/pinch is preserved
-                    window.centerView(false);
+                    // Recalculate fit to fill 100% of newly expanded screen height
+                    window.centerView(true);
                 }
-            }, 100);
+            }, 250);
         },
 
         showZenToast: function(isZen) {
@@ -1050,7 +1106,20 @@
             if (!iframe) return;
             try {
                 var doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
-                if (!doc || doc._zenTapWired) return;
+                if (!doc) return;
+
+                // Double-Layer Mobile Read-Only Guard: Prevent any element inside iframe from receiving pointer/touch events
+                if (this.currentTier === 'narrow' || this.isTouchDevice) {
+                    var styleEl = doc.getElementById('mobile-readonly-guard-style');
+                    if (!styleEl && (doc.head || doc.body || doc.documentElement)) {
+                        styleEl = doc.createElement('style');
+                        styleEl.id = 'mobile-readonly-guard-style';
+                        styleEl.textContent = '* { pointer-events: none !important; user-select: none !important; -webkit-user-select: none !important; }';
+                        (doc.head || doc.body || doc.documentElement).appendChild(styleEl);
+                    }
+                }
+
+                if (doc._zenTapWired) return;
                 var self = this;
                 var ifTouch = { x: 0, y: 0, time: 0, moved: false };
 

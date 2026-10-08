@@ -57,11 +57,11 @@
       "version": 0.2
     },
     "05_Admin_System_Milestone_Timeline_900.html": {
-      "title": "Admin Milestone",
+      "title": "Admin 리팩토링 마일스톤",
       "type": "architecture",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-10-06T05:33:50.294Z",
+      "updatedAt": "2026-10-08T09:27:58.112Z",
       "description": [],
       "connectors": [],
       "version": 0.2

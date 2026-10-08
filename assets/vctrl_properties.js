@@ -12,12 +12,12 @@
     let activeIllustrationRatio = null; // w/h ratio for illustration & motion (default 1:1 or natural)
 
     const UNIFIED_LABELS = {
-        background: '배경색 (BG)',
+        background: '배경색 (Background)',
         borderColor: '테두리색 (Border)',
         color: '글자색 (Text)',
         iconColor: '아이콘색 (Icon)',
-        width: '가로 크기 (Width)',
-        height: '세로 크기 (Height)'
+        width: '가로 크기 (W)',
+        height: '세로 크기 (H)'
     };
 
     function initLabels() {

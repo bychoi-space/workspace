@@ -24,6 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
     <link rel="stylesheet" href="assets/viewer.css?v=V350_ILLUSTRATION_2COL">
     <link rel="stylesheet" href="assets/ui_library.css?v=V349_INSPECTOR_FIX">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V368_MOBILE_FIXES_SSOT">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -148,6 +149,9 @@
                 <span>PDF 다운로드</span>
             </button>
             <button id="btn-global-save" class="btn-accent btn-global-save">전체 저장</button>
+            <button type="button" id="btn-toolbar-mobile-more" class="btn-toolbar-mobile-more" title="더보기 메뉴">
+                <span class="material-icons-outlined">more_vert</span>
+            </button>
             <div class="toolbar-divider action-divider"></div>
             <button class="panel-toggle-btn header-sidebar-toggle" id="btn-toggle-right" onclick="window.toggleSidebar('right')" title="우측 패널 접기/펼치기 (R)">
                 <span class="material-icons-outlined">chevron_right</span>
@@ -292,12 +296,12 @@
                                 </div>
                                 <!-- Scroll Behavior / Hide Direction Bar -->
                                 <div id="scroll-pin-effect-bar" class="scroll-pin-effect-bar" style="display: none;">
-                                    <span class="scroll-pin-effect-label">스크롤 반응</span>
+                                    <span class="scroll-pin-effect-label">스크롤 반응 (Effect)</span>
                                     <div class="scroll-pin-effect-select-wrap">
-                                        <select id="scroll-pin-effect-select" class="scroll-pin-effect-select">
-                                            <option value="always">상시 고정 (기본)</option>
-                                            <option value="hide-down">스크롤 내릴 때 숨김</option>
-                                            <option value="hide-up">스크롤 올릴 때 숨김</option>
+                                        <select id="scroll-pin-effect-select" class="v4-prop-select scroll-pin-effect-select">
+                                            <option value="always">상시 고정 (Always)</option>
+                                            <option value="hide-down">스크롤 내릴 때 숨김 (Hide Down)</option>
+                                            <option value="hide-up">스크롤 올릴 때 숨김 (Hide Up)</option>
                                         </select>
                                     </div>
                                 </div>
@@ -672,6 +676,63 @@
         </div>
     </div>
 
+    <!-- Mobile Bottom Floating Action Dock (Always in DOM) -->
+    <nav id="v4-bottom-dock" class="v4-bottom-dock" aria-label="모바일 뷰어 컨트롤러">
+        <button type="button" id="dock-btn-prev" class="v4-dock-btn" title="이전 화면">
+            <span class="material-icons-outlined">chevron_left</span>
+        </button>
+        <button type="button" id="dock-btn-fit" class="v4-dock-btn" title="화면 맞춤">
+            <span class="material-icons-outlined">fit_screen</span>
+        </button>
+        <button type="button" id="dock-btn-crisp" class="v4-dock-btn" title="100% 선명 뷰">
+            <span class="v4-dock-btn-txt" id="dock-zoom-txt">100%</span>
+        </button>
+        <button type="button" id="dock-btn-next" class="v4-dock-btn" title="다음 화면">
+            <span class="material-icons-outlined">chevron_right</span>
+        </button>
+        <div class="v4-dock-divider"></div>
+        <button type="button" id="dock-btn-screens" class="v4-dock-btn" title="화면 목록">
+            <span class="material-icons-outlined">layers</span>
+        </button>
+    </nav>
+
+    <!-- Mobile Bottom Sheet Backdrop & Drawer (Always in DOM) -->
+    <div id="v4-bottom-sheet-backdrop" class="v4-bottom-sheet-backdrop"></div>
+    <aside id="v4-bottom-sheet" class="v4-bottom-sheet" aria-label="프로젝트 화면 목록 및 메타데이터">
+        <div class="v4-sheet-handle-bar" id="v4-sheet-handle">
+            <div class="v4-sheet-handle-pill"></div>
+        </div>
+        <div class="v4-sheet-header">
+            <div class="v4-sheet-title-group">
+                <span class="material-icons-outlined v4-sheet-title-icon">dashboard</span>
+                <span class="v4-sheet-title-text">프로젝트 스크린</span>
+                <span class="v4-sheet-screen-count" id="v4-sheet-screen-count">0</span>
+            </div>
+            <button type="button" class="v4-sheet-close-btn" id="v4-sheet-close" title="닫기">
+                <span class="material-icons-outlined">close</span>
+            </button>
+        </div>
+        <div class="v4-sheet-meta-card">
+            <div class="v4-sheet-meta-info">
+                <span class="v4-sheet-meta-title" id="v4-sheet-meta-title">Project</span>
+                <span class="v4-sheet-meta-sub" id="v4-sheet-meta-updated">최종 수정: -</span>
+            </div>
+            <div class="v4-sheet-meta-actions">
+                <button type="button" id="v4-sheet-btn-history" class="v4-sheet-action-chip" title="재개정 이력">
+                    <span class="material-icons-outlined" style="font-size:15px;">history</span> 이력
+                </button>
+                <button type="button" id="v4-sheet-btn-pdf" class="v4-sheet-action-chip" title="PDF 다운로드">
+                    <span class="material-icons-outlined" style="font-size:15px;">picture_as_pdf</span> PDF
+                </button>
+                <button type="button" id="v4-sheet-btn-copy-url" class="v4-sheet-action-chip" title="URL 복사">
+                    <span class="material-icons-outlined" style="font-size:15px;">link</span> URL
+                </button>
+            </div>
+        </div>
+        <div class="v4-sheet-body">
+            <ul class="v4-sheet-list" id="v4-sheet-list"></ul>
+        </div>
+    </aside>
 
     <!-- Script modularization: Pure Vanilla V3 Migration -->
     <script src="assets/vctrl_typography.js?v=V360_RECURSION_HOTFIX"></script>
@@ -730,7 +791,7 @@
     <script src="assets/vctrl_screen_manager.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_revision_history.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_annotation_pins.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_canvas_viewport.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_canvas_viewport.js?v=V367_MOBILE_PORTRAIT_TOP"></script>
     <script src="assets/vctrl_properties.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_connectors.js?v=V360_RECURSION_HOTFIX"></script>
     
@@ -746,5 +807,6 @@
     <script src="assets/inspector/inspector_admin_settings.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_table.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_popup.js?v=V361_POPUP_INSPECTOR"></script>
+    <script src="assets/vctrl_resolution_engine.js?v=V368_MOBILE_FIXES_SSOT"></script>
 </body>
 </html>

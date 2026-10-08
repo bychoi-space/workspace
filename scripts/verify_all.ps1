@@ -77,7 +77,8 @@ $jsFiles = @(
     "assets/vctrl_core_router.js",
     "assets/vctrl_parent_shortcuts.js",
     "assets/vctrl_pdf_exporter.js",
-    "assets/vctrl_storage.js"
+    "assets/vctrl_storage.js",
+    "assets/vctrl_resolution_engine.js"
 )
 
 $scriptsTags = ($jsFiles | ForEach-Object { "<script src='../$_' onerror=`"window.errors.push({ script: '$_' })`"></script>" }) -join "`n"

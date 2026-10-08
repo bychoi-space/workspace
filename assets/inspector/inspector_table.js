@@ -28,12 +28,9 @@
         const btnRight = document.getElementById('btn-cell-align-right');
         if (!btnLeft || !btnCenter || !btnRight) return;
 
-        btnLeft.style.background = align === 'left' ? 'rgba(0,229,255,0.15)' : 'rgba(255,255,255,0.05)';
-        btnLeft.style.borderColor = align === 'left' ? 'rgba(0,229,255,0.3)' : 'rgba(255,255,255,0.1)';
-        btnCenter.style.background = align === 'center' ? 'rgba(0,229,255,0.15)' : 'rgba(255,255,255,0.05)';
-        btnCenter.style.borderColor = align === 'center' ? 'rgba(0,229,255,0.3)' : 'rgba(255,255,255,0.1)';
-        btnRight.style.background = align === 'right' ? 'rgba(0,229,255,0.15)' : 'rgba(255,255,255,0.05)';
-        btnRight.style.borderColor = align === 'right' ? 'rgba(0,229,255,0.3)' : 'rgba(255,255,255,0.1)';
+        highlightActive(btnLeft, align === 'left');
+        highlightActive(btnCenter, align === 'center');
+        highlightActive(btnRight, align === 'right');
     }
 
     // --- 2. Cell Dimensions (Width & Height) ---

@@ -166,17 +166,17 @@
                 div.style.cssText = 'display:flex; flex-direction:column; gap:6px; margin-bottom: 10px; padding: 8px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; background: rgba(255,255,255,0.02);';
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <label style="font-size: 10px; color: #00e5ff; font-weight: bold;">COLUMN ${index + 1}</label>
+                        <label style="font-size: 10px; color: var(--accent-light, #9e8cfc); font-weight: bold;">COLUMN ${index + 1}</label>
                         <div style="display: flex; gap: 4px;">
-                            <button class="v4-inspector-btn btn-move-col-up" data-index="${index}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer;" title="위로 이동" ${index === 0 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>▲</button>
-                            <button class="v4-inspector-btn btn-move-col-down" data-index="${index}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer;" title="아래로 이동" ${index === colsList.length - 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>▼</button>
-                            <button class="v4-inspector-btn btn-delete-col" data-index="${index}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; cursor: pointer;" title="삭제" ${colsList.length <= 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>&times;</button>
+                            <button class="v4-btn-action-sm btn-move-col-up" data-index="${index}" title="위로 이동" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <button class="v4-btn-action-sm btn-move-col-down" data-index="${index}" title="아래로 이동" ${index === colsList.length - 1 ? 'disabled' : ''}>▼</button>
+                            <button class="v4-btn-action-sm danger btn-delete-col" data-index="${index}" title="삭제" ${colsList.length <= 1 ? 'disabled' : ''}>&times;</button>
                         </div>
                     </div>
-                    <div style="display:grid; grid-template-columns: 1.2fr 1fr 0.8fr; gap:6px;">
+                    <div style="display:grid; grid-template-columns: 1.15fr 1fr 1fr; gap:6px;">
                         <div style="display:flex; flex-direction:column; gap:2px;">
-                            <label style="font-size: 8px; color: #94a3b8;">항목타입</label>
-                            <select class="v4-prop-input grid-col-type-select" data-index="${index}" style="width:100%; background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 3px 4px; border-radius: 4px; font-size: 10px; outline:none; height:24px;">
+                            <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">항목 타입 (Type)</label>
+                            <select class="v4-prop-select grid-col-type-select" data-index="${index}" style="height: 24px; font-size: 10px; padding: 0 18px 0 6px;">
                                 <option value="checkbox" ${col.type === 'checkbox' ? 'selected' : ''}>체크박스</option>
                                 <option value="number" ${col.type === 'number' ? 'selected' : ''}>번호/순번</option>
                                 <option value="text" ${col.type === 'text' ? 'selected' : ''}>일반 텍스트</option>
@@ -189,32 +189,32 @@
                             </select>
                         </div>
                         <div style="display:flex; flex-direction:column; gap:2px;">
-                            <label style="font-size: 8px; color: #94a3b8;">항목명</label>
-                            <input type="text" class="v4-prop-input grid-col-name-input" data-index="${index}" value="${isCheckbox ? '' : (col.name || '')}" ${isCheckbox ? 'disabled' : ''} style="width:100%; background: ${isCheckbox ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.3)'}; border: 1px solid ${isCheckbox ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.1)'}; color: ${isCheckbox ? '#64748b' : '#fff'}; padding: 4px 6px; border-radius: 4px; font-size: 11px;">
+                            <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">항목명 (Name)</label>
+                            <input type="text" class="v4-prop-input grid-col-name-input" data-index="${index}" value="${isCheckbox ? '' : (col.name || '')}" ${isCheckbox ? 'disabled' : ''} style="width:100%; height: 24px; box-sizing: border-box; background: ${isCheckbox ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.3)'}; border: 1.6px solid ${isCheckbox ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.12)'}; color: ${isCheckbox ? '#64748b' : '#fff'}; padding: 2px 6px; border-radius: 6px; font-size: 11px;">
                         </div>
                         <div style="display:flex; flex-direction:column; gap:2px;">
-                            <label style="font-size: 8px; color: #94a3b8;">가로크기(px)</label>
-                            <input type="number" min="10" max="1000" class="v4-prop-input grid-col-width-input" data-index="${index}" value="${numericWidth}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 11px;">
+                            <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">가로 크기 (Width)</label>
+                            <input type="number" min="10" max="1000" class="v4-prop-input grid-col-width-input" data-index="${index}" value="${numericWidth}" style="width:100%; height: 24px; box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1.6px solid rgba(255,255,255,0.12); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; text-align: right;">
                         </div>
                         ${statusOptionsHtml}
                     </div>
 
                     <!-- Alignment Control -->
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:2px;">
-                        <label style="font-size: 8px; color: #94a3b8;">텍스트 정렬 (Align)</label>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+                        <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">텍스트 정렬 (Alignment)</label>
                         <div style="display: flex; gap: 4px;">
-                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-left" data-align="left" style="height: 18px; width: 22px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'left' ? 'background:rgba(0, 229, 255, 0.25); border:1px solid rgba(0, 229, 255, 0.6); color:#00e5ff; font-weight:bold;' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">좌</button>
-                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-center" data-align="center" style="height: 18px; width: 22px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'center' ? 'background:rgba(0, 229, 255, 0.25); border:1px solid rgba(0, 229, 255, 0.6); color:#00e5ff; font-weight:bold;' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">중</button>
-                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-right" data-align="right" style="height: 18px; width: 22px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'right' ? 'background:rgba(0, 229, 255, 0.25); border:1px solid rgba(0, 229, 255, 0.6); color:#00e5ff; font-weight:bold;' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">우</button>
+                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-left" data-align="left" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'left' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">좌</button>
+                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-center" data-align="center" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'center' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">중</button>
+                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-right" data-align="right" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'right' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">우</button>
                         </div>
                     </div>
 
                     <!-- Clickable Control -->
-                    <div class="grid-clickable-wrapper" style="display:${isCheckbox || isAction ? 'none' : 'flex'}; align-items:center; justify-content:space-between; margin-top:2px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06);">
-                        <label style="font-size: 8px; color: #94a3b8;">Clickable (링크 스타일)</label>
-                        <div style="display: flex; gap: 4px;">
-                            <button class="v4-inspector-btn btn-col-clickable-y" data-index="${index}" style="height: 18px; width: 28px; border-radius: 9px; font-size: 9px; padding: 0; cursor: pointer; ${isClickable ? 'background:rgba(0, 229, 255, 0.25); border:1px solid rgba(0, 229, 255, 0.6); color:#00e5ff; font-weight:bold;' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">Y</button>
-                            <button class="v4-inspector-btn btn-col-clickable-n" data-index="${index}" style="height: 18px; width: 28px; border-radius: 9px; font-size: 9px; padding: 0; cursor: pointer; ${!isClickable ? 'background:rgba(0, 229, 255, 0.25); border:1px solid rgba(0, 229, 255, 0.6); color:#00e5ff; font-weight:bold;' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">N</button>
+                    <div class="grid-clickable-wrapper" style="display:${isCheckbox || isAction ? 'none' : 'flex'}; align-items:center; justify-content:space-between; margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06);">
+                        <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">클릭 링크 (Clickable)</label>
+                        <div style="display: flex; gap: 4px; width: 68px;">
+                            <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-y ${isClickable ? 'active cyan' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">Y</button>
+                            <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-n ${!isClickable ? 'active cyan' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">N</button>
                         </div>
                     </div>
 
@@ -326,10 +326,7 @@
                         div.setAttribute('data-align', targetAlign);
                         alignBtns.forEach(b => {
                             const isSelected = (b === btn);
-                            b.style.background = isSelected ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-                            b.style.borderColor = isSelected ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.1)';
-                            b.style.color = isSelected ? '#00e5ff' : '#94a3b8';
-                            b.style.fontWeight = isSelected ? 'bold' : 'normal';
+                            highlightActive(b, isSelected);
                         });
                         triggerColUpdate();
                     };

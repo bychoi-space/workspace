@@ -223,10 +223,15 @@ window.ResponsiveFrameUtils = {
 
 window.highlightActive = function(btn, isActive) {
     if (!btn) return;
-    btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-    btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-    btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-    btn.style.fontWeight = isActive ? 'bold' : 'normal';
+    const active = Boolean(isActive);
+    if (btn.classList) {
+        btn.classList.toggle('active', active);
+    }
+    btn.style.background = active ? 'rgba(110, 86, 207, 0.25)' : 'rgba(255, 255, 255, 0.05)';
+    btn.style.borderColor = active ? '#6e56cf' : 'rgba(255, 255, 255, 0.15)';
+    btn.style.color = active ? '#ffffff' : '#94a3b8';
+    btn.style.fontWeight = active ? 'bold' : 'normal';
+    btn.style.boxShadow = active ? '0 0 6px rgba(110, 86, 207, 0.3)' : 'none';
 };
 
 window.rgbToHex = function(rgb) {

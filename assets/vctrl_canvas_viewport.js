@@ -27,8 +27,13 @@
         var cw = DOM.canvas.clientWidth, ch = DOM.canvas.clientHeight;
         if (cw <= 0 || ch <= 0) return;
 
-        // 브라우저 캔버스 영역에 맞춘 반응형 가변 배율(Fit Scale) 계산 (상하좌우 2% 안전 여백 반영)
-        var fitScale = Math.min((cw * 0.98) / iw, (ch * 0.98) / ih);
+        var isMobilePortrait = (cw <= 600 || (cw < 900 && ch > cw * 1.2));
+
+        // 브라우저 캔버스 영역에 맞춘 반응형 가변 배율(Fit Scale) 계산
+        // 모바일 세로 모드에서는 세로 높이에 억지로 맞추지 않고 가로폭 맞춤(Fit to Width) 기준 적용
+        var fitScale = isMobilePortrait 
+            ? ((cw * 0.98) / iw)
+            : Math.min((cw * 0.98) / iw, (ch * 0.98) / ih);
 
         var s;
         if (state.viewMode === 'custom' && !forceReset && state.transform && state.transform.scale) {
@@ -57,8 +62,11 @@
             y = state.transform.y;
         } else {
             x = Math.round((cw - (iw * s)) / 2);
-            // 세로 높이가 뷰포트를 초과하는 경우 상단 10px 안전 여백으로 배치
-            if (ih * s > ch) {
+            // 모바일 세로모드에서는 화면 중앙에 붕 뜨지 않고 상단 12px에 깔끔하게 안착!
+            if (isMobilePortrait) {
+                y = 12;
+            } else if (ih * s > ch) {
+                // 세로 높이가 뷰포트를 초과하는 경우 상단 10px 안전 여백으로 배치
                 y = 10;
             } else {
                 y = Math.round((ch - (ih * s)) / 2);

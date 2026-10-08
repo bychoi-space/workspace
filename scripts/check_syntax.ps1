@@ -68,6 +68,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\templates.js",
     "c:\Users\sisun\ai_work\assets\vctrl_undo.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_ports.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_resolution_engine.js",
     "c:\Users\sisun\ai_work\viewer.html"
 )
 

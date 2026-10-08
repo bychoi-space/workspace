@@ -77,7 +77,7 @@
             radio.className = 'tab-active-radio';
             radio.checked = isChecked;
             radio.title = '활성 탭으로 설정 (단일 선택)';
-            radio.style.cssText = 'accent-color: #00e5ff; cursor: pointer; flex-shrink: 0; width: 14px; height: 14px; margin: 0;';
+            radio.style.cssText = 'accent-color: var(--accent, #6e56cf); cursor: pointer; flex-shrink: 0; width: 14px; height: 14px; margin: 0;';
 
             (function(idx) {
                 radio.addEventListener('change', function() {
@@ -87,7 +87,7 @@
 
             const tag = document.createElement('span');
             tag.innerText = (i + 1);
-            tag.style.cssText = 'font-size: 10px; font-weight: bold; color: ' + (isChecked ? '#38bdf8' : '#64748b') + '; width: 14px; text-align: center; flex-shrink: 0;';
+            tag.style.cssText = 'font-size: 10px; font-weight: bold; color: ' + (isChecked ? 'var(--accent-light, #9e8cfc)' : '#64748b') + '; width: 14px; text-align: center; flex-shrink: 0;';
 
             const inputWrap = document.createElement('div');
             inputWrap.style.cssText = 'flex: 1;';

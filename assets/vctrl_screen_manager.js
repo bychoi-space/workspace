@@ -250,6 +250,9 @@ window.renderScreenList = function(screens, activeName) {
     if (activeItem) {
         setTimeout(() => activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 800);
     }
+    if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
+        window.ResolutionEngine.syncScreenList();
+    }
 };
 
 window.updateActiveScreenInUI = function(activeName) {
@@ -260,6 +263,9 @@ window.updateActiveScreenInUI = function(activeName) {
         item.classList.toggle('active', isActive);
         if (isActive) item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
+    if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
+        window.ResolutionEngine.syncScreenList();
+    }
 };
 
 function getCategoryBadge(type) {
@@ -386,23 +392,151 @@ window.handleCopyScreen = async function(sourceFileName) {
         sourceInfoEl.innerText = `현재: [${sourceProject}] ${sourceFileName} (${sourceTitle})`;
     }
 
-    if (titleInput) {
-        titleInput.value = `${sourceTitle} (복사본)`;
-    }
+    const generateUniqueFilename = (baseName, existingFiles = []) => {
+        let clean = (baseName || '').replace(/\.html$/i, '');
+        clean = clean.replace(/_copy\d*$/i, '').trim();
 
-    const generateUniqueFilename = (baseName, existingFiles) => {
-        const cleanName = baseName.replace(/\.html$/i, '');
-        const rootName = cleanName.replace(/_copy\d*$/i, '');
-        let candidate = `${rootName}_copy.html`;
+        // 1. Trailing digits (e.g., "09_Admin_PC_Scroll_245" -> "09_Admin_PC_Scroll_246")
+        const trailingMatch = clean.match(/^(.*?)(\d+)$/);
+        if (trailingMatch) {
+            const prefix = trailingMatch[1];
+            const numStr = trailingMatch[2];
+            const padLen = numStr.length;
+            let num = parseInt(numStr, 10) + 1;
+            let candidate = `${prefix}${String(num).padStart(padLen, '0')}.html`;
+            while (existingFiles && existingFiles.includes(candidate)) {
+                num++;
+                candidate = `${prefix}${String(num).padStart(padLen, '0')}.html`;
+            }
+            return candidate;
+        }
+
+        // 2. Leading digits with separator (e.g., "01_Screen" -> "02_Screen")
+        const leadingMatch = clean.match(/^(\d+)([\s_\.\-].*)$/);
+        if (leadingMatch) {
+            const numStr = leadingMatch[1];
+            const rest = leadingMatch[2];
+            const padLen = numStr.length;
+            let num = parseInt(numStr, 10) + 1;
+            let candidate = `${String(num).padStart(padLen, '0')}${rest}.html`;
+            while (existingFiles && existingFiles.includes(candidate)) {
+                num++;
+                candidate = `${String(num).padStart(padLen, '0')}${rest}.html`;
+            }
+            return candidate;
+        }
+
+        // 3. No digits found (e.g., "cart_block" -> "cart_block_2.html")
         let counter = 2;
+        let candidate = `${clean}_${counter}.html`;
         while (existingFiles && existingFiles.includes(candidate)) {
-            candidate = `${rootName}_copy${counter}.html`;
             counter++;
+            candidate = `${clean}_${counter}.html`;
+        }
+        return candidate;
+    };
+
+    const generateUniqueTitle = (sourceTitle, existingTitles = []) => {
+        let clean = (sourceTitle || '').replace(/\s*\(복사본\)\s*/g, ' ').trim();
+
+        // 1. Parenthesized number at end (e.g., "화면 (1)" -> "화면 (2)")
+        const parenMatch = clean.match(/^(.*?)\((\d+)\)$/);
+        if (parenMatch) {
+            const prefix = parenMatch[1];
+            const numStr = parenMatch[2];
+            const padLen = numStr.length;
+            let num = parseInt(numStr, 10) + 1;
+            let candidate = `${prefix}(${String(num).padStart(padLen, '0')})`;
+            while (existingTitles && existingTitles.includes(candidate)) {
+                num++;
+                candidate = `${prefix}(${String(num).padStart(padLen, '0')})`;
+            }
+            return candidate;
+        }
+
+        // 2. Korean "차" suffix (e.g., "리뉴얼 2차" -> "리뉴얼 3차")
+        const chaMatch = clean.match(/^(.*?)(\d+)(차)$/);
+        if (chaMatch) {
+            const prefix = chaMatch[1];
+            const numStr = chaMatch[2];
+            const suffix = chaMatch[3];
+            let num = parseInt(numStr, 10) + 1;
+            let candidate = `${prefix}${num}${suffix}`;
+            while (existingTitles && existingTitles.includes(candidate)) {
+                num++;
+                candidate = `${prefix}${num}${suffix}`;
+            }
+            return candidate;
+        }
+
+        // 3. Trailing digits (e.g., "09_Admin_PC_Scroll_245", "화면 1", "화면_01", "화면-2")
+        const trailingMatch = clean.match(/^(.*?)(\d+)$/);
+        if (trailingMatch) {
+            const prefix = trailingMatch[1];
+            const numStr = trailingMatch[2];
+            const padLen = numStr.length;
+            let num = parseInt(numStr, 10) + 1;
+            let candidate = `${prefix}${String(num).padStart(padLen, '0')}`;
+            while (existingTitles && existingTitles.includes(candidate)) {
+                num++;
+                candidate = `${prefix}${String(num).padStart(padLen, '0')}`;
+            }
+            return candidate;
+        }
+
+        // 4. Leading bracket or separator (e.g., "[01] 기획전", "01_비즈니스 프로세스 맵", "1. 개요")
+        const leadingBracketMatch = clean.match(/^\[(\d+)\](.*)$/);
+        if (leadingBracketMatch) {
+            const numStr = leadingBracketMatch[1];
+            const rest = leadingBracketMatch[2];
+            const padLen = numStr.length;
+            let num = parseInt(numStr, 10) + 1;
+            let candidate = `[${String(num).padStart(padLen, '0')}]${rest}`;
+            while (existingTitles && existingTitles.includes(candidate)) {
+                num++;
+                candidate = `[${String(num).padStart(padLen, '0')}]${rest}`;
+            }
+            return candidate;
+        }
+
+        const leadingMatch = clean.match(/^(\d+)([\s_\.\-].*)$/);
+        if (leadingMatch) {
+            const numStr = leadingMatch[1];
+            const rest = leadingMatch[2];
+            const padLen = numStr.length;
+            let num = parseInt(numStr, 10) + 1;
+            let candidate = `${String(num).padStart(padLen, '0')}${rest}`;
+            while (existingTitles && existingTitles.includes(candidate)) {
+                num++;
+                candidate = `${String(num).padStart(padLen, '0')}${rest}`;
+            }
+            return candidate;
+        }
+
+        // 5. No digits found (e.g., "기획전 목록", "장바구니", "회원상세" -> "기획전 목록 2")
+        let counter = 2;
+        let candidate = `${clean} ${counter}`;
+        while (existingTitles && existingTitles.includes(candidate)) {
+            counter++;
+            candidate = `${clean} ${counter}`;
         }
         return candidate;
     };
 
     const projectScreensCache = {};
+    const projectTitlesCache = {};
+
+    const currentFiles = (state.screens || []).map(s => s.name);
+    const currentTitles = (state.screens || []).map(s => s.title).filter(Boolean);
+    projectScreensCache[sourceProject] = currentFiles;
+    projectTitlesCache[sourceProject] = currentTitles;
+
+    if (titleInput) {
+        titleInput.value = generateUniqueTitle(sourceTitle, currentTitles);
+    }
+    if (filenameInput) {
+        filenameInput.value = generateUniqueFilename(sourceFileName, currentFiles);
+    }
 
     if (targetProjectSelect) {
         targetProjectSelect.innerHTML = '<option value="">프로젝트 목록 불러오는 중...</option>';
@@ -436,13 +570,6 @@ window.handleCopyScreen = async function(sourceFileName) {
             }
             targetProjectSelect.disabled = false;
 
-            const currentFiles = (state.screens || []).map(s => s.name);
-            projectScreensCache[sourceProject] = currentFiles;
-
-            if (filenameInput) {
-                filenameInput.value = generateUniqueFilename(sourceFileName, currentFiles);
-            }
-
             // Async load project titles to enhance options
             (async () => {
                 for (const folder of folders) {
@@ -466,11 +593,6 @@ window.handleCopyScreen = async function(sourceFileName) {
             console.error("[CopyScreen] Failed to list projects:", err);
             targetProjectSelect.innerHTML = `<option value="${sourceProject}">${sourceProject} (현재 프로젝트)</option>`;
             targetProjectSelect.disabled = false;
-            const currentFiles = (state.screens || []).map(s => s.name);
-            projectScreensCache[sourceProject] = currentFiles;
-            if (filenameInput) {
-                filenameInput.value = generateUniqueFilename(sourceFileName, currentFiles);
-            }
         }
     }
 
@@ -490,17 +612,21 @@ window.handleCopyScreen = async function(sourceFileName) {
         }
 
         let targetFiles = projectScreensCache[targetProj];
-        if (!targetFiles) {
+        let targetTitles = projectTitlesCache[targetProj];
+        if (!targetFiles || !targetTitles) {
             try {
                 if (noticeEl) {
-                    noticeEl.innerText = '대상 프로젝트 파일 목록 확인 중...';
+                    noticeEl.innerText = '대상 프로젝트 정보 확인 중...';
                     noticeEl.style.color = '#94a3b8';
                 }
                 const targetMeta = typeof fetchProjectMetadata === 'function' ? await fetchProjectMetadata(targetProj) : null;
                 targetFiles = targetMeta && targetMeta.screens ? Object.keys(targetMeta.screens) : [];
+                targetTitles = targetMeta && targetMeta.screens ? Object.values(targetMeta.screens).map(s => s.title).filter(Boolean) : [];
                 projectScreensCache[targetProj] = targetFiles;
+                projectTitlesCache[targetProj] = targetTitles;
             } catch (e) {
                 targetFiles = [];
+                targetTitles = [];
             }
         }
 
@@ -508,6 +634,12 @@ window.handleCopyScreen = async function(sourceFileName) {
             const currentVal = filenameInput.value.trim();
             if (!currentVal || targetFiles.includes(currentVal)) {
                 filenameInput.value = generateUniqueFilename(sourceFileName, targetFiles);
+            }
+        }
+        if (titleInput) {
+            const currentTitle = titleInput.value.trim();
+            if (!currentTitle || targetTitles.includes(currentTitle)) {
+                titleInput.value = generateUniqueTitle(sourceTitle, targetTitles);
             }
         }
         if (noticeEl) {

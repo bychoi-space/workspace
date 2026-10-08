@@ -35,16 +35,7 @@
 
     const setBtnActive = (btn, isActive) => {
         if (!btn) return;
-        if (isActive) {
-            btn.classList.add('v4-btn-accent-active-sm');
-            btn.classList.remove('v4-btn-accent-inactive-sm');
-        } else {
-            btn.classList.add('v4-btn-accent-inactive-sm');
-            btn.classList.remove('v4-btn-accent-active-sm');
-        }
-        btn.style.removeProperty('background');
-        btn.style.removeProperty('border-color');
-        btn.style.removeProperty('color');
+        highlightActive(btn, isActive);
     };
 
     // --- State Synchronization (Read) ---
@@ -95,8 +86,8 @@
         document.querySelectorAll('.v4-pattern-type-btn').forEach(btn => {
             const bType = btn.dataset.type;
             if (bType === selectedType) {
-                btn.style.setProperty('border', '1.6px solid #00e5ff', 'important');
-                btn.style.setProperty('box-shadow', '0 0 8px rgba(0, 229, 255, 0.4)', 'important');
+                btn.style.setProperty('border', '1.6px solid var(--accent, #6e56cf)', 'important');
+                btn.style.setProperty('box-shadow', '0 0 8px rgba(110, 86, 207, 0.4)', 'important');
             } else {
                 btn.style.setProperty('border', '1.6px solid rgba(255, 255, 255, 0.15)', 'important');
                 btn.style.setProperty('box-shadow', 'none', 'important');
@@ -108,13 +99,7 @@
         const waveDir = dir || 'horizontal';
         document.querySelectorAll('.v4-wave-dir-btn').forEach(b => {
             const btnDir = b.dataset.dir;
-            if (btnDir === waveDir) {
-                b.classList.add('v4-btn-accent-active-md');
-                b.classList.remove('v4-btn-accent-inactive-md');
-            } else {
-                b.classList.add('v4-btn-accent-inactive-md');
-                b.classList.remove('v4-btn-accent-active-md');
-            }
+            highlightActive(b, btnDir === waveDir);
         });
     };
     window._syncWaveDirBtns = syncWaveDirBtns;
@@ -368,15 +353,17 @@
         document.querySelectorAll('.btn-btn-corner').forEach(btn => {
             const br = parseInt(btn.getAttribute('data-radius'), 10) || 0;
             if (br === r) {
-                btn.classList.add('primary');
-                btn.style.borderColor = '#00e5ff';
-                btn.style.color = '#00e5ff';
-                btn.style.background = 'rgba(0, 229, 255, 0.15)';
+                btn.classList.add('active');
+                btn.style.borderColor = 'var(--accent, #6e56cf)';
+                btn.style.color = '#ffffff';
+                btn.style.background = 'rgba(110, 86, 207, 0.25)';
+                btn.style.boxShadow = '0 0 6px rgba(110, 86, 207, 0.3)';
             } else {
-                btn.classList.remove('primary');
+                btn.classList.remove('active');
                 btn.style.borderColor = '';
                 btn.style.color = '';
                 btn.style.background = '';
+                btn.style.boxShadow = '';
             }
         });
     }

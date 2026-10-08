@@ -305,6 +305,9 @@ function _syncScreenStateAndMetadata(fileName, content, DOM) {
     }
 
     setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 150);
+    if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
+        window.ResolutionEngine.syncScreenList();
+    }
 }
 
 // --- Core Screen Loader Coordinator ---
@@ -500,6 +503,9 @@ async function _initProjectMetadataAndScreens(project, fileNameParam) {
     }
 
     if (typeof renderScreenList === 'function') renderScreenList(state.screens, fileName);
+    if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
+        window.ResolutionEngine.syncScreenList();
+    }
     if (typeof renderAtomicLibrary === 'function') renderAtomicLibrary();
     if (typeof initQuillEditor === 'function') initQuillEditor();
     if (typeof initResponsiveGridToggle === 'function') initResponsiveGridToggle();

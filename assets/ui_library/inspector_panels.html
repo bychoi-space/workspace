@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="prop-group mb-8">
-                <label class="v4-prop-label">행 / 열 조작</label>
+                <label class="v4-prop-label">행 / 열 조작 (Row / Col)</label>
                 <div class="v4-tool-grid v4-prop-grid-4 gap-4">
                     <button id="btn-add-row" class="v4-inspector-btn v4-btn-xs-h26" title="행 추가">+행</button>
                     <button id="btn-del-row" class="v4-inspector-btn danger v4-btn-xs-h26" title="행 삭제">-행</button>
@@ -50,7 +50,7 @@
             
             <div class="v4-prop-grid-1 mb-8">
                 <div class="prop-group">
-                    <label class="v4-prop-label">표 테두리</label>
+                    <label class="v4-prop-label">표 테두리 (Border)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="table-border-wrapper">
                             <input type="color" id="table-border-color" value="#475569">
@@ -70,10 +70,10 @@
 
             <!-- CELL PROPERTIES (셀 편집) -->
             <div class="top-divider mt-12 mb-12">
-                <span class="v4-section-header-title mb-8">CELL PROPERTIES (셀 편집)</span>
+                <span class="v4-section-header-title mb-8">CELL PROPERTIES</span>
                 <div class="v4-prop-grid-2 mb-8">
                     <div class="prop-group">
-                        <label class="v4-prop-label">셀 배경색</label>
+                        <label class="v4-prop-label">셀 배경색 (Background)</label>
                         <div class="v4-prop-flex-gap-4">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="cell-bg-wrapper">
                                 <input type="color" id="cell-bg-color" value="#ffffff">
@@ -82,14 +82,14 @@
                         </div>
                     </div>
                     <div class="prop-group">
-                        <label class="v4-prop-label">셀 글자색</label>
+                        <label class="v4-prop-label">셀 글자색 (Text)</label>
                         <div class="v4-color-wrapper v4-checkerboard-bg">
                             <input type="color" id="cell-text-color" value="#000000">
                         </div>
                     </div>
                 </div>
                 <div class="prop-group mb-8">
-                    <label class="v4-prop-label">셀 텍스트 정렬</label>
+                    <label class="v4-prop-label">셀 정렬 (Alignment)</label>
                     <div class="v4-flex-gap-4">
                         <button class="v4-cell-align-btn" id="btn-cell-align-left" title="Align Left">
                             <span class="material-icons-outlined font-14">format_align_left</span>
@@ -103,7 +103,7 @@
                     </div>
                 </div>
                 <div class="prop-group mb-8">
-                    <label class="v4-prop-label">셀 테두리 설정 (CELL BORDERS)</label>
+                    <label class="v4-prop-label">셀 테두리 설정 (Borders)</label>
                     <div class="v4-prop-grid-6">
                         <button class="v4-cell-align-btn" id="btn-cell-border-all" title="전체 테두리">
                             <span class="material-icons-outlined font-14">border_all</span>
@@ -127,14 +127,14 @@
                 </div>
                                 <div class="v4-prop-grid-2 mb-8">
                     <div class="prop-group">
-                        <label class="v4-prop-label bold">선택 열 너비</label>
+                        <label class="v4-prop-label bold">열 너비 (Width)</label>
                         <div class="v4-prop-input-wrap">
                             <input class="v4-prop-input-styled" type="number" id="cell-col-width-num" min="30" max="1000" value="150">
                             <span class="v4-prop-unit">px</span>
                         </div>
                     </div>
                     <div class="prop-group">
-                        <label class="v4-prop-label bold">선택 행 높이</label>
+                        <label class="v4-prop-label bold">행 높이 (Height)</label>
                         <div class="v4-prop-input-wrap">
                             <input class="v4-prop-input-styled" type="number" id="cell-row-height-num" min="20" max="500" value="50">
                             <span class="v4-prop-unit">px</span>
@@ -173,17 +173,17 @@
                         </div>
                     </div>
                 </div>
-                <!-- Preserve Aspect Ratio row: shown only when image selected -->
+                <!-- 가로세로 비율 유지 (Aspect Ratio) row: shown only when image selected -->
                 <div class="mt-4" id="shape-aspect-ratio-row">
                     <label class="v4-flex-checkbox-label dim">
-                        <input class="v4-checkbox-cyan" type="checkbox" id="chk-preserve-aspect-ratio">
-                        <span>Preserve Aspect Ratio</span>
+                        <input type="checkbox" id="chk-preserve-aspect-ratio" style="cursor: pointer; accent-color: var(--accent, #6e56cf); width: 14px; height: 14px; margin: 0;">
+                        <span>가로세로 비율 유지 (Aspect Ratio)</span>
                     </label>
-                    <button class="v4-badge-btn-cyan" type="button" id="btn-snap-image-ratio" title="Reset container to image natural ratio (여백 0px 맞춤)">비율 자동 맞춤</button>
+                    <button class="v4-inspector-btn v4-btn-xs" type="button" id="btn-snap-image-ratio" title="Reset container to image natural ratio (여백 0px 맞춤)">비율 자동 맞춤</button>
                 </div>
             </div>
             <div id="shape-pattern-type-group" class="prop-group mb-12 mt-4" style="display: none;">
-                <label class="v4-section-header-title mb-8">PATTERN TYPE</label>
+                <label class="v4-prop-label mb-8">패턴 타입 (Pattern)</label>
                 <div class="v4-pattern-visual-select v4-prop-grid-5">
                     <button class="v4-pattern-type-btn v4-pattern-checker" data-type="grid" title="Grid (격자)"></button>
                     <button class="v4-pattern-type-btn v4-pattern-dots" data-type="dots" title="Dots (도트)"></button>
@@ -194,7 +194,7 @@
             </div>
             <div class="v4-prop-grid-2 mb-12">
                 <div class="prop-group" id="shape-bg-color-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="shape-bg-wrapper">
                             <input type="color" id="shape-bg-color" class="v4-color-input" data-prop="background" value="#ffffff">
@@ -203,7 +203,7 @@
                     </div>
                 </div>
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="shape-border-wrapper">
                             <input type="color" id="shape-border-color" class="v4-color-input" data-prop="borderColor" value="#c8c8c8">
@@ -213,37 +213,37 @@
                 </div>
             </div>
             <div class="prop-group mb-12 mt-4" id="shape-bg-opacity-group">
-                <label class="v4-prop-label">BG Opacity (<span id="txt-shape-bg-opacity">100</span>%)</label>
+                <label class="v4-prop-label">배경 투명도 (Opacity <span id="txt-shape-bg-opacity">100</span>%)</label>
                 <input class="v4-range-slider" type="range" id="shape-bg-opacity" min="0" max="100" value="100">
             </div>
             
 
             <div class="prop-group top-divider mt-12">
-                <label class="v4-section-header-title mb-6">TEXT ALIGN</label>
+                <label class="v4-prop-label mb-6">텍스트 정렬 (Alignment)</label>
                 <div class="v4-prop-grid-3 gap-4 mb-4">
-                    <button class="v4-btn-accent-inactive-sm" id="btn-shape-align-left" title="Align Left">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn" id="btn-shape-align-left" title="Align Left">
                         <span class="material-icons-outlined font-13">format_align_left</span>
                         좌측
                     </button>
-                    <button class="v4-btn-accent-active-sm" id="btn-shape-align-center" title="Align Center">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn active" id="btn-shape-align-center" title="Align Center">
                         <span class="material-icons-outlined font-13">format_align_center</span>
                         중앙
                     </button>
-                    <button class="v4-btn-accent-inactive-sm" id="btn-shape-align-right" title="Align Right">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn" id="btn-shape-align-right" title="Align Right">
                         <span class="material-icons-outlined font-13">format_align_right</span>
                         우측
                     </button>
                 </div>
                 <div class="v4-prop-grid-3 gap-4">
-                    <button class="v4-btn-accent-inactive-sm" id="btn-shape-valign-top" title="Align Top">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn" id="btn-shape-valign-top" title="Align Top">
                         <span class="material-icons-outlined font-13">vertical_align_top</span>
                         상단
                     </button>
-                    <button class="v4-btn-accent-active-sm" id="btn-shape-valign-middle" title="Align Middle">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn active" id="btn-shape-valign-middle" title="Align Middle">
                         <span class="material-icons-outlined font-13">vertical_align_center</span>
                         센터
                     </button>
-                    <button class="v4-btn-accent-inactive-sm" id="btn-shape-valign-bottom" title="Align Bottom">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn" id="btn-shape-valign-bottom" title="Align Bottom">
                         <span class="material-icons-outlined font-13">vertical_align_bottom</span>
                         하단
                     </button>
@@ -252,10 +252,10 @@
 
             <div id="shape-padding-group" class="prop-group top-divider mt-12" style="display: none;">
                 <div class="v4-section-header mb-8">
-                    <label class="v4-section-header-title mb-0">TEXT PADDING (안쪽 여백)</label>
+                    <label class="v4-prop-label mb-0">안쪽 여백 (Padding)</label>
                     <div class="v4-flex-gap-4">
-                        <button class="v4-badge-btn-gray" id="btn-shape-pad-default" title="기본 여백 (상하 5px / 좌우 10px)">기본</button>
-                        <button class="v4-badge-btn-gray" id="btn-shape-pad-zero" title="여백 없음 (0px)">0px</button>
+                        <button class="v4-inspector-btn v4-btn-xs" id="btn-shape-pad-default" title="기본 여백 (상하 5px / 좌우 10px)">기본</button>
+                        <button class="v4-inspector-btn v4-btn-xs" id="btn-shape-pad-zero" title="여백 없음 (0px)">0px</button>
                     </div>
                 </div>
                 <div class="v4-prop-grid-2 gap-6">
@@ -291,39 +291,39 @@
             </div>
 
             <div id="shape-corner-style-group" class="prop-group top-divider mt-12">
-                <label class="v4-section-header-title mb-8">CORNER STYLE</label>
+                <label class="v4-prop-label mb-8">모서리 스타일 (Corner)</label>
                 <div class="v4-prop-grid-2 gap-6 mb-8">
-                    <button class="v4-btn-accent-active-sm" id="btn-shape-corner-sharp" title="Sharp Corners">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn active" id="btn-shape-corner-sharp" title="Sharp Corners">
                         <svg class="v4-svg-icon-13" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12"/></svg>
                         직각
                     </button>
-                    <button class="v4-btn-accent-inactive-sm" id="btn-shape-corner-round" title="Rounded Corners">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn" id="btn-shape-corner-round" title="Rounded Corners">
                         <svg class="v4-svg-icon-13" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="4"/></svg>
                         라운드
                     </button>
                 </div>
-                <label class="v4-prop-label">Radius (<span id="txt-shape-border-radius">8</span>px)</label>
+                <label class="v4-prop-label">모서리 곡률 (Radius <span id="txt-shape-border-radius">8</span>px)</label>
                 <input class="v4-range-slider" type="range" id="shape-border-radius" min="0" max="100" value="8">
             </div>
 
             <div id="shape-arrow-direction-group" class="prop-group mt-12 top-divider" style="display: none;">
-                <label class="v4-section-header-title mb-8">ARROW DIRECTION</label>
+                <label class="v4-prop-label mb-8">화살표 방향 (Direction)</label>
                 <div class="v4-prop-grid-4 gap-6 mb-8">
-                    <button class="v4-arrow-dir-btn v4-btn-cell-gray" data-dir="up" title="Arrow Up">상</button>
-                    <button class="v4-arrow-dir-btn v4-btn-cell-gray" data-dir="down" title="Arrow Down">하</button>
-                    <button class="v4-arrow-dir-btn v4-btn-cell-gray" data-dir="left" title="Arrow Left">좌</button>
-                    <button class="v4-arrow-dir-btn v4-btn-cell-gray" data-dir="right" title="Arrow Right">우</button>
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn v4-arrow-dir-btn" data-dir="up" title="Arrow Up">상</button>
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn v4-arrow-dir-btn" data-dir="down" title="Arrow Down">하</button>
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn v4-arrow-dir-btn" data-dir="left" title="Arrow Left">좌</button>
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn v4-arrow-dir-btn" data-dir="right" title="Arrow Right">우</button>
                 </div>
             </div>
 
             <div id="shape-wave-direction-group" class="prop-group mt-12 top-divider" style="display: none;">
-                <label class="v4-section-header-title mb-8">웨이브 방향 (ORIENTATION)</label>
+                <label class="v4-prop-label mb-8">웨이브 방향 (Orientation)</label>
                 <div class="v4-prop-grid-2 gap-4">
-                    <button id="btn-wave-dir-h" class="v4-wave-dir-btn v4-btn-accent-active-md" data-dir="horizontal" title="가로 웨이브 (Horizontal)">
+                    <button id="btn-wave-dir-h" class="v4-inspector-btn v4-inspector-toggle-btn v4-wave-dir-btn active" data-dir="horizontal" title="가로 웨이브 (Horizontal)">
                         <span class="material-icons-outlined font-16">horizontal_rule</span>
                         가로 (H)
                     </button>
-                    <button id="btn-wave-dir-v" class="v4-wave-dir-btn v4-btn-accent-inactive-md" data-dir="vertical" title="세로 웨이브 (Vertical)">
+                    <button id="btn-wave-dir-v" class="v4-inspector-btn v4-inspector-toggle-btn v4-wave-dir-btn" data-dir="vertical" title="세로 웨이브 (Vertical)">
                         <span class="material-icons-outlined font-16 rot-90">horizontal_rule</span>
                         세로 (V)
                     </button>
@@ -338,7 +338,7 @@
             </div>
             <!-- Unified Dimension (Top) -->
             <div class="prop-group v4-prop-group-divider">
-                <label class="v4-section-header-title mb-4" id="lbl-line-length">선 길이 (LENGTH)</label>
+                <label class="v4-prop-label mb-4" id="lbl-line-length">선 길이 (Length)</label>
                 <div class="v4-prop-input-wrap">
                     <input type="number" id="prop-line-length" value="200" min="1" step="10" class="v4-prop-input v4-prop-input-styled">
                     <span class="v4-prop-unit">px</span>
@@ -347,13 +347,13 @@
 
             <!-- 1. Direction / Orientation -->
             <div class="prop-group mb-8">
-                <label class="v4-section-header-title mb-4">선 방향 (ORIENTATION)</label>
+                <label class="v4-prop-label mb-4">선 방향 (Orientation)</label>
                 <div class="v4-prop-grid-2 gap-4">
-                    <button id="btn-line-dir-h" class="v4-line-dir-btn v4-btn-accent-active-md" data-dir="horizontal" title="가로선 (Horizontal)">
+                    <button id="btn-line-dir-h" class="v4-inspector-btn v4-inspector-toggle-btn v4-line-dir-btn active" data-dir="horizontal" title="가로선 (Horizontal)">
                         <span class="material-icons-outlined font-16">horizontal_rule</span>
                         가로 (H)
                     </button>
-                    <button id="btn-line-dir-v" class="v4-line-dir-btn v4-btn-accent-inactive-md" data-dir="vertical" title="세로선 (Vertical)">
+                    <button id="btn-line-dir-v" class="v4-inspector-btn v4-inspector-toggle-btn v4-line-dir-btn" data-dir="vertical" title="세로선 (Vertical)">
                         <span class="material-icons-outlined font-16 rot-90">horizontal_rule</span>
                         세로 (V)
                     </button>
@@ -362,15 +362,15 @@
 
             <!-- 2. Line Style (Solid, Dashed, Dotted) -->
             <div class="prop-group mb-8">
-                <label class="v4-section-header-title mb-4">선 스타일 (STYLE)</label>
+                <label class="v4-prop-label mb-4">선 스타일 (Style)</label>
                 <div class="v4-prop-grid-3 gap-4">
-                    <button id="btn-line-style-solid" class="v4-line-style-btn v4-btn-accent-active-sm" data-style="solid" title="실선">
+                    <button id="btn-line-style-solid" class="v4-inspector-btn v4-inspector-toggle-btn v4-line-style-btn active" data-style="solid" title="실선">
                         Solid
                     </button>
-                    <button id="btn-line-style-dashed" class="v4-line-style-btn v4-btn-accent-inactive-sm" data-style="dashed" title="대시 점선">
+                    <button id="btn-line-style-dashed" class="v4-inspector-btn v4-inspector-toggle-btn v4-line-style-btn" data-style="dashed" title="대시 점선">
                         Dashed
                     </button>
-                    <button id="btn-line-style-dotted" class="v4-line-style-btn v4-btn-accent-inactive-sm" data-style="dotted" title="도트 점선">
+                    <button id="btn-line-style-dotted" class="v4-inspector-btn v4-inspector-toggle-btn v4-line-style-btn" data-style="dotted" title="도트 점선">
                         Dotted
                     </button>
                 </div>
@@ -379,7 +379,7 @@
             <!-- 3. Color & Thickness -->
             <div class="v4-prop-grid-2 mb-8">
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label">선 색상</label>
+                    <label class="v4-color-label v4-prop-label">선 색상 (Color)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg v4-prop-input-frame" id="line-color-wrapper">
                             <input type="color" id="line-stroke-color" class="v4-color-input" data-prop="borderColor" value="#c8c8c8">
@@ -388,7 +388,7 @@
                     </div>
                 </div>
                 <div class="prop-group">
-                    <label class="v4-prop-label">선 두께 (<span id="txt-line-stroke-width">1.6</span>px)</label>
+                    <label class="v4-prop-label">선 두께 (Stroke) (<span id="txt-line-stroke-width">1.6</span>px)</label>
                     <input type="number" id="line-stroke-width" min="0.5" max="20" step="0.5" value="1.6" class="v4-prop-input v4-prop-input-base">
                 </div>
             </div>
@@ -472,7 +472,7 @@
         <!-- checkbox-radio-inspector-section -->
         <div class="v4-card-section mt-12" id="checkbox-radio-inspector-section" style="display: none;">
             <div class="v4-section-header">
-                <span class="v4-section-header-title">CHECKBOX / RADIO OPTION</span>
+                <span class="v4-section-header-title">CHECKBOX / RADIO PROPERTIES</span>
             </div>
             <!-- Unified Dimensions (Top) -->
             <div class="v4-dimensions-group prop-group v4-prop-group-divider">
@@ -493,33 +493,31 @@
                     </div>
                 </div>
             </div>
-            <div class="v4-prop-grid-2 gap-12 mb-12">
-                <!-- Checked/Unchecked Toggle -->
-                <div class="prop-group">
-                    <label class="v4-prop-label mb-6">ACTIVATED (활성화)</label>
-                    <div class="v4-flex-gap-4">
-                        <button id="btn-atom-active-y" class="v4-inspector-btn v4-pill-btn-medium">Y</button>
-                        <button id="btn-atom-active-n" class="v4-inspector-btn v4-pill-btn-medium">N</button>
-                    </div>
+            <!-- Checked/Unchecked Toggle -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">활성화 상태 (Active)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-atom-active-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-atom-active-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
-                <!-- Text Enabled Toggle -->
-                <div class="prop-group">
-                    <label class="v4-prop-label mb-6">TEXT ON (텍스트 사용)</label>
-                    <div class="v4-flex-gap-4">
-                        <button id="btn-atom-text-y" class="v4-inspector-btn v4-pill-btn-medium">Y</button>
-                        <button id="btn-atom-text-n" class="v4-inspector-btn v4-pill-btn-medium">N</button>
-                    </div>
+            </div>
+            <!-- Text Enabled Toggle -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">텍스트 표시 (Text)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-atom-text-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-atom-text-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
             </div>
             <!-- Label Text Input -->
             <div class="prop-group mb-12 top-divider" id="atom-text-content-group">
-                <label class="v4-prop-label">LABEL TEXT (라벨 텍스트)</label>
+                <label class="v4-prop-label">라벨 텍스트 (Label Text)</label>
                 <input class="v4-prop-input-base pad-6-10" type="text" id="prop-atom-text-content">
             </div>
             <div class="v4-prop-grid-2 gap-12 top-divider">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="atom-bg-wrapper">
                             <input type="color" id="atom-bg-color" class="v4-color-input" data-prop="background" value="#1e293b">
@@ -529,7 +527,7 @@
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="atom-border-wrapper">
                             <input type="color" id="atom-border-color" class="v4-color-input" data-prop="borderColor" value="#ffffff">
@@ -540,10 +538,10 @@
             </div>
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
         </div>
@@ -551,7 +549,7 @@
         <!-- accordion-inspector-section -->
         <div class="v4-card-section mt-12" id="accordion-inspector-section" style="display: none;">
             <div class="v4-section-header">
-                <span class="v4-section-header-title">ACCORDION UI OPTION</span>
+                <span class="v4-section-header-title">ACCORDION UI PROPERTIES</span>
             </div>
             <!-- Unified Dimensions (Top) -->
             <div class="v4-dimensions-group prop-group v4-prop-group-divider">
@@ -573,20 +571,21 @@
                 </div>
             </div>
             <div class="prop-group mb-12">
-                <label class="v4-prop-label">HEADER TEXT (항목 명칭)</label>
+                <label class="v4-prop-label">헤더 텍스트 (Header Text)</label>
                 <input type="text" id="prop-accordion-header-text" class="v4-prop-input v4-prop-input-base pad-6-8">
             </div>
-            <div class="prop-group mb-12">
-                <label class="v4-prop-label mb-6">EXPANDED (펼침 여부)</label>
-                <div class="v4-flex-gap-4">
-                    <button id="btn-accordion-expand-y" class="v4-inspector-btn v4-pill-btn-medium">Y</button>
-                    <button id="btn-accordion-expand-n" class="v4-inspector-btn v4-pill-btn-medium">N</button>
+            <!-- Expanded Toggle -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">펼침 상태 (Expanded)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-accordion-expand-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-accordion-expand-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
             </div>
             <div class="v4-prop-grid-2 gap-12 mb-12">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-bg-wrapper">
                             <input type="color" id="accordion-bg-color" class="v4-color-input" data-prop="background" value="#1e293b">
@@ -596,7 +595,7 @@
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-border-wrapper">
                             <input type="color" id="accordion-border-color" class="v4-color-input" data-prop="borderColor" value="#ffffff">
@@ -608,25 +607,25 @@
             
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
             <!-- Depth Type -->
             <div class="prop-group mb-12 top-divider">
-                <label class="v4-prop-label mb-6">DEPTH TYPE (계층 모드)</label>
+                <label class="v4-prop-label">계층 모드 (Hierarchy)</label>
                 <div class="v4-flex-gap-4">
-                    <button id="btn-accordion-depth-1" class="v4-inspector-btn v4-pill-btn-medium">1 Depth</button>
-                    <button id="btn-accordion-depth-2" class="v4-inspector-btn v4-pill-btn-medium">2 Depth</button>
+                    <button id="btn-accordion-depth-1" class="v4-inspector-btn v4-inspector-toggle-btn">1 Depth</button>
+                    <button id="btn-accordion-depth-2" class="v4-inspector-btn v4-inspector-toggle-btn">2 Depth</button>
                 </div>
             </div>
 
             <!-- 1 Depth Settings -->
             <div id="accordion-1depth-settings">
                 <div class="prop-group mb-12 top-divider">
-                    <label class="v4-prop-label">SUB-ITEM COUNT (하위 항목 개수)</label>
+                    <label class="v4-prop-label">하위 항목 개수 (Sub-items)</label>
                     <input type="number" id="prop-accordion-sub-count" min="0" max="10" value="3" class="v4-prop-input v4-prop-input-base pad-6-8">
                 </div>
                 <div id="accordion-sub-items-container" class="prop-group v4-flex-col-gap-8">
@@ -637,7 +636,7 @@
             <!-- 2 Depth Settings -->
             <div class="top-divider" id="accordion-2depth-settings" style="display: none;">
                 <div class="v4-section-header mb-8">
-                    <label class="v4-prop-label mb-0">HIERARCHY ITEMS (계층구조 설정)</label>
+                    <label class="v4-prop-label">계층구조 설정 (Hierarchy)</label>
                     <button id="btn-accordion-add-tier1" class="v4-inspector-btn primary v4-btn-pill-xs">+ 1티어 추가</button>
                 </div>
                 <div class="v4-flex-col-gap-10 pr-4" id="accordion-hierarchy-container">
@@ -649,7 +648,7 @@
         <!-- grid-inspector-section -->
         <div class="v4-card-section mt-12" id="grid-inspector-section" style="display: none;">
             <div class="v4-section-header">
-                <span class="v4-section-header-title">GRID UI OPTION</span>
+                <span class="v4-section-header-title">GRID UI PROPERTIES</span>
             </div>
             <!-- Unified Dimensions (Top) -->
             <div class="v4-dimensions-group prop-group v4-prop-group-divider">
@@ -672,8 +671,8 @@
             </div>
             
             <div class="prop-group mb-12">
-                <label class="v4-prop-label">도메인 템플릿 프리셋</label>
-                <select id="prop-grid-preset" class="v4-prop-input v4-prop-input-cyan">
+                <label class="v4-prop-label">도메인 템플릿 프리셋 (Preset)</label>
+                <select id="prop-grid-preset" class="v4-prop-select">
                     <option value="">(프리셋 선택 시 즉시 변경)</option>
                     <option value="standard">기본 표준 그리드 (빈 셀 초기화)</option>
                     <option value="product">이커머스 상품 관리</option>
@@ -684,35 +683,35 @@
 
             <div class="v4-prop-grid-2 mb-10">
                 <div class="prop-group">
-                    <label class="v4-prop-label">출력 행 개수</label>
+                    <label class="v4-prop-label">출력 행 수 (Row Count)</label>
                     <input type="number" id="prop-grid-row-count" min="0" max="20" value="5" class="v4-prop-input v4-prop-input-base pad-4-6">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-prop-label">행 높이(px)</label>
+                    <label class="v4-prop-label">행 높이 (Height)</label>
                     <input type="number" id="prop-grid-row-height" min="20" max="200" value="40" class="v4-prop-input v4-prop-input-base pad-4-6">
                 </div>
             </div>
-            <div class="v4-prop-grid-2 mb-12">
-                <div class="prop-group">
-                    <label class="v4-prop-label">페이지네이션</label>
-                    <div class="v4-flex-gap-4">
-                        <button id="btn-grid-pagination-y" class="v4-inspector-btn v4-pill-btn-24">Y</button>
-                        <button id="btn-grid-pagination-n" class="v4-inspector-btn v4-pill-btn-24">N</button>
-                    </div>
+            <!-- Pagination Toggle -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">페이지네이션 (Pagination)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-grid-pagination-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-grid-pagination-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
-                <div class="prop-group">
-                    <label class="v4-prop-label">줄무늬 (Zebra)</label>
-                    <div class="v4-flex-gap-4">
-                        <button id="btn-grid-zebra-y" class="v4-inspector-btn v4-pill-btn-24">Y</button>
-                        <button id="btn-grid-zebra-n" class="v4-inspector-btn v4-pill-btn-24">N</button>
-                    </div>
+            </div>
+            <!-- Zebra Toggle -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">줄무늬 (Zebra)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-grid-zebra-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-grid-zebra-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
             </div>
 
             <div class="v4-prop-grid-2 gap-12 mb-12 top-divider">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="grid-bg-wrapper">
                             <input type="color" id="grid-bg-color" class="v4-color-input" data-prop="background" value="#ffffff">
@@ -722,7 +721,7 @@
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="grid-border-wrapper">
                             <input type="color" id="grid-border-color" class="v4-color-input" data-prop="borderColor" value="#e2e8f0">
@@ -736,7 +735,7 @@
 
             <div class="v4-flex-col-gap-8 mb-12 top-divider">
                 <div class="v4-prop-flex-between">
-                    <label class="v4-prop-label mb-0">열 정보 설정 (Columns Config)</label>
+                    <label class="v4-prop-label">열 정보 설정 (Columns Config)</label>
                     <button id="btn-grid-add-col" class="v4-inspector-btn primary v4-btn-pill-xs">+ 열 추가</button>
                 </div>
                 <div class="v4-flex-col-gap-8 pr-4" id="grid-columns-container">
@@ -770,36 +769,34 @@
                 </div>
             </div>
             <div class="prop-group mb-12">
-                <label class="v4-prop-label">Placeholder 텍스트</label>
+                <label class="v4-prop-label">대체 텍스트 (Placeholder)</label>
                 <input class="v4-prop-input-base pad-6-10" type="text" id="prop-input-placeholder" placeholder="Placeholder 내용을 입력하세요">
             </div>
-            <div class="v4-prop-grid-2 gap-12 mb-12">
-                <!-- Show Counter Toggle -->
-                <div class="prop-group">
-                    <label class="v4-prop-label mb-6">글자수 제한 표시</label>
-                    <div class="v4-flex-gap-4">
-                        <button id="btn-input-counter-y" class="v4-inspector-btn v4-pill-btn-medium">Y</button>
-                        <button id="btn-input-counter-n" class="v4-inspector-btn v4-pill-btn-medium">N</button>
-                    </div>
+            <!-- Show Counter Toggle -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">글자수 제한 표시 (Counter)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-input-counter-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-input-counter-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
-                <!-- Max Length -->
-                <div class="prop-group">
-                    <label class="v4-prop-label">최대 글자수 (<span id="txt-input-maxlength">100</span>자)</label>
-                    <input class="v4-prop-input-base" type="number" id="prop-input-maxlength" value="100" min="1" max="1000">
-                </div>
+            </div>
+            <!-- Max Length -->
+            <div class="prop-group mb-12">
+                <label class="v4-prop-label">최대 글자수 (<span id="txt-input-maxlength">100</span>자)</label>
+                <input class="v4-prop-input-base" type="number" id="prop-input-maxlength" value="100" min="1" max="1000">
             </div>
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
             <div class="v4-prop-grid-2 gap-12 top-divider">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="input-bg-wrapper">
                             <input type="color" id="input-bg-color" class="v4-color-input" data-prop="background" value="#fafaf2">
@@ -809,7 +806,7 @@
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="input-border-wrapper">
                             <input type="color" id="input-border-color" class="v4-color-input" data-prop="borderColor" value="#cccccc">
@@ -827,8 +824,8 @@
                 </div>
                 <!-- Font Family -->
                 <div class="prop-group">
-                    <label class="v4-prop-label">폰트 종류</label>
-                    <select class="v4-prop-input-base h-23" id="prop-input-fontfamily">
+                    <label class="v4-prop-label">글꼴 종류 (Font Family)</label>
+                    <select class="v4-prop-select" id="prop-input-fontfamily">
                         <option value="inherit">Default</option>
                         <option value="'Inter', sans-serif">Inter</option>
                         <option value="system-ui, -apple-system, sans-serif">System UI</option>
@@ -865,13 +862,13 @@
                 </div>
             </div>
             <div class="prop-group mb-12">
-                <label class="v4-prop-label">Placeholder 텍스트</label>
+                <label class="v4-prop-label">대체 텍스트 (Placeholder)</label>
                 <input class="v4-prop-input-base pad-6-10" type="text" id="prop-searchbar-placeholder" placeholder="Placeholder 내용을 입력하세요">
             </div>
             <div class="v4-prop-grid-2 gap-12 top-divider">
                 <!-- Background Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="searchbar-bg-wrapper">
                             <input type="color" id="searchbar-bg-color" class="v4-color-input" data-prop="background" value="#ffffff">
@@ -881,7 +878,7 @@
                 </div>
                 <!-- Border Color -->
                 <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
                     <div class="v4-prop-flex-gap-4">
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="searchbar-border-wrapper">
                             <input type="color" id="searchbar-border-color" class="v4-color-input" data-prop="borderColor" value="#cccccc">
@@ -892,10 +889,10 @@
             </div>
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
             
@@ -935,40 +932,38 @@
             <div class="v4-prop-grid-2 gap-12 mb-12">
                 <!-- Min Value -->
                 <div class="prop-group">
-                    <label class="v4-prop-label">MIN VALUE (최소값)</label>
+                    <label class="v4-prop-label">최소값 (Min)</label>
                     <input class="v4-prop-input-base" type="number" id="prop-stepper-min" value="1">
                 </div>
                 <!-- Max Value -->
                 <div class="prop-group">
-                    <label class="v4-prop-label">MAX VALUE (최대값)</label>
+                    <label class="v4-prop-label">최대값 (Max)</label>
                     <input class="v4-prop-input-base" type="number" id="prop-stepper-max" value="99">
                 </div>
             </div>
             <div class="prop-group mb-12">
-                <label class="v4-prop-label">STEP VALUE (증감 단위)</label>
+                <label class="v4-prop-label">증감 단위 (Step)</label>
                 <input class="v4-prop-input-base" type="number" id="prop-stepper-step" min="1" max="1000" value="1">
             </div>
-            <div class="v4-prop-grid-2 gap-12 mb-12 top-divider">
-                <!-- Button Enabled Toggle -->
-                <div class="prop-group">
-                    <label class="v4-prop-label mb-6">BUTTON ON (버튼 노출)</label>
-                    <div class="v4-flex-gap-4">
-                        <button id="btn-stepper-btn-y" class="v4-inspector-btn v4-pill-btn-medium">Y</button>
-                        <button id="btn-stepper-btn-n" class="v4-inspector-btn v4-pill-btn-medium">N</button>
-                    </div>
+            <!-- Button Enabled Toggle -->
+            <div class="prop-group v4-section-header top-divider mb-8">
+                <label class="v4-prop-label mb-0">버튼 표시 (Button)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-stepper-btn-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-stepper-btn-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
-                <!-- Button Text -->
-                <div class="prop-group">
-                    <label class="v4-prop-label">BUTTON TEXT (버튼 명칭)</label>
-                    <input class="v4-prop-input-base" type="text" id="prop-stepper-btn-text" value="적용">
-                </div>
+            </div>
+            <!-- Button Text -->
+            <div class="prop-group mb-12">
+                <label class="v4-prop-label">버튼 텍스트 (Button Text)</label>
+                <input class="v4-prop-input-base" type="text" id="prop-stepper-btn-text" value="적용">
             </div>
             <!-- Stepper Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button id="btn-stepper-disabled-y" class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button id="btn-stepper-disabled-n" class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button id="btn-stepper-disabled-y" class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button id="btn-stepper-disabled-n" class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
         </div>
@@ -997,21 +992,19 @@
                     </div>
                 </div>
             </div>
-            <div class="v4-prop-grid-2 gap-12 mb-12">
-                <!-- Dropdown Active Toggle -->
-                <div class="prop-group">
-                    <label class="v4-prop-label mb-6">DROPDOWN ON (활성화)</label>
-                    <div class="v4-flex-gap-4">
-                        <button id="btn-selectbox-dropdown-y" class="v4-inspector-btn v4-pill-btn-medium">Y</button>
-                        <button id="btn-selectbox-dropdown-n" class="v4-inspector-btn v4-pill-btn-medium">N</button>
-                    </div>
+            <!-- Dropdown Active Toggle -->
+            <div class="prop-group v4-section-header mb-12">
+                <label class="v4-prop-label mb-0">드롭다운 표시 (Dropdown)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-selectbox-dropdown-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-selectbox-dropdown-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
             </div>
             
             <!-- Default State Controls -->
             <div class="top-divider mb-12" id="selectbox-default-controls">
                 <div class="prop-group">
-                    <label class="v4-prop-label">DEFAULT TEXT (기본 텍스트)</label>
+                    <label class="v4-prop-label">기본 텍스트 (Default Text)</label>
                     <input class="v4-prop-input-base" type="text" id="prop-selectbox-default-text" value="선택하세요">
                 </div>
             </div>
@@ -1019,11 +1012,11 @@
             <!-- Dropdown Option List Controls -->
             <div class="top-divider" id="selectbox-dropdown-controls" style="display: none;">
                 <div class="prop-group mb-12">
-                    <label class="v4-prop-label">ITEM COUNT (항목 개수)</label>
+                    <label class="v4-prop-label">항목 개수 (Item Count)</label>
                     <input class="v4-prop-input-base" type="number" id="prop-selectbox-option-count" min="1" max="20" value="3">
                 </div>
                 <div class="prop-group">
-                    <label class="v4-prop-label mb-6">OPTION ITEMS (항목 설정)</label>
+                    <label class="v4-prop-label">항목 설정 (Options)</label>
                     <div class="v4-flex-col-scroll-md" id="selectbox-options-inputs-container">
                         <!-- Dynamic Inputs for options will go here -->
                     </div>
@@ -1031,10 +1024,10 @@
             </div>
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
             
@@ -1064,20 +1057,18 @@
                     </div>
                 </div>
             </div>
-            <div class="v4-prop-grid-2 gap-12 mb-12">
-                <!-- File Selected Toggle -->
-                <div class="prop-group">
-                    <label class="v4-prop-label mb-6">FILE SELECTED (파일 선택됨)</label>
-                    <div class="v4-flex-gap-4">
-                        <button id="btn-fileupload-selected-y" class="v4-inspector-btn v4-pill-btn-medium">Y</button>
-                        <button id="btn-fileupload-selected-n" class="v4-inspector-btn v4-pill-btn-medium">N</button>
-                    </div>
+            <!-- File Selected Toggle -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">파일 선택 상태 (Selected)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-fileupload-selected-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-fileupload-selected-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
-                <!-- Button Text -->
-                <div class="prop-group">
-                    <label class="v4-prop-label">BUTTON TEXT (버튼 명칭)</label>
-                    <input class="v4-prop-input-base" type="text" id="prop-fileupload-btn-text" value="파일첨부">
-                </div>
+            </div>
+            <!-- Button Text -->
+            <div class="prop-group mb-12">
+                <label class="v4-prop-label">버튼 텍스트 (Button Text)</label>
+                <input class="v4-prop-input-base" type="text" id="prop-fileupload-btn-text" value="파일첨부">
             </div>
             
             <!-- File Name (Visible only when selected=Y) -->
@@ -1097,10 +1088,10 @@
             </div>
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
             
@@ -1132,31 +1123,31 @@
             </div>
             <!-- Show Description Toggle -->
             <div class="prop-group v4-section-header mb-8">
-                <label class="v4-prop-label mb-0">설명문구 활성화</label>
+                <label class="v4-prop-label">설명문구 활성화 (Description)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button id="btn-alert-desc-y" class="v4-inspector-btn v4-pill-btn-mini">Y</button>
-                    <button id="btn-alert-desc-n" class="v4-inspector-btn v4-pill-btn-mini">N</button>
+                    <button id="btn-alert-desc-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-alert-desc-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
             </div>
             <!-- Description Text -->
             <div class="prop-group mb-8">
-                <label class="v4-prop-label">설명문구 내용</label>
+                <label class="v4-prop-label">설명문구 내용 (Content)</label>
                 <input class="v4-prop-input-base" type="text" id="prop-alert-desc" value="얼럿 노출 케이스" placeholder="예: 로그인 체크">
             </div>
             <div class="prop-group mb-8">
-                <label class="v4-prop-label">얼럿 메시지</label>
+                <label class="v4-prop-label">알럿 메시지 (Message)</label>
                 <textarea class="v4-prop-input-base resize-v" id="prop-alert-message" rows="2"></textarea>
             </div>
             <div class="prop-group mb-8">
                 <label class="v4-prop-label">버튼 개수 설정 (1~3개)</label>
                 <div class="v4-flex-gap-4">
-                    <button id="btn-alert-count-1" class="v4-inspector-btn v4-pill-btn-24 pad-0">1개</button>
-                    <button id="btn-alert-count-2" class="v4-inspector-btn v4-pill-btn-24 pad-0">2개</button>
-                    <button id="btn-alert-count-3" class="v4-inspector-btn v4-pill-btn-24 pad-0">3개</button>
+                    <button id="btn-alert-count-1" class="v4-inspector-btn v4-inspector-toggle-btn pad-0">1개</button>
+                    <button id="btn-alert-count-2" class="v4-inspector-btn v4-inspector-toggle-btn pad-0">2개</button>
+                    <button id="btn-alert-count-3" class="v4-inspector-btn v4-inspector-toggle-btn pad-0">3개</button>
                 </div>
             </div>
             <div class="prop-group mb-8 top-divider-sm">
-                <label class="v4-prop-label mb-6">버튼 설정</label>
+                <label class="v4-prop-label">버튼 설정 (Buttons)</label>
                 <div class="v4-flex-col-gap-10">
                     <div class="v4-flex-col-gap-4">
                         <div class="v4-prop-flex-gap-8">
@@ -1165,7 +1156,7 @@
                         </div>
                         <div class="v4-prop-flex-gap-8">
                             <span class="v4-prop-label-w45">타입</span>
-                            <select class="v4-prop-input-base flex-1 cursor-pointer" id="prop-alert-btn-style-1">
+                            <select class="v4-prop-select flex-1" id="prop-alert-btn-style-1">
                                 <option value="normal">일반형 (흰배경+검정글씨)</option>
                                 <option value="primary">강조형 (진한배경+흰글씨)</option>
                                 <option value="negative">부정형 (회색배경+검정글씨)</option>
@@ -1179,7 +1170,7 @@
                         </div>
                         <div class="v4-prop-flex-gap-8">
                             <span class="v4-prop-label-w45">타입</span>
-                            <select class="v4-prop-input-base flex-1 cursor-pointer" id="prop-alert-btn-style-2">
+                            <select class="v4-prop-select flex-1" id="prop-alert-btn-style-2">
                                 <option value="normal">일반형 (흰배경+검정글씨)</option>
                                 <option value="primary">강조형 (진한배경+흰글씨)</option>
                                 <option value="negative">부정형 (회색배경+검정글씨)</option>
@@ -1193,7 +1184,7 @@
                         </div>
                         <div class="v4-prop-flex-gap-8">
                             <span class="v4-prop-label-w45">타입</span>
-                            <select class="v4-prop-input-base flex-1 cursor-pointer" id="prop-alert-btn-style-3">
+                            <select class="v4-prop-select flex-1" id="prop-alert-btn-style-3">
                                 <option value="normal">일반형 (흰배경+검정글씨)</option>
                                 <option value="primary">강조형 (진한배경+흰글씨)</option>
                                 <option value="negative">부정형 (회색배경+검정글씨)</option>
@@ -1236,18 +1227,18 @@
             </div>
             <!-- Show Close Button (Y/N) -->
             <div class="prop-group v4-section-header mb-8">
-                <label class="v4-prop-label mb-0">닫기 버튼 (CLOSE X)</label>
+                <label class="v4-prop-label">닫기 버튼 (CLOSE X)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button id="btn-popup-close-y" class="v4-inspector-btn v4-pill-btn-mini">Y</button>
-                    <button id="btn-popup-close-n" class="v4-inspector-btn v4-pill-btn-mini">N</button>
+                    <button id="btn-popup-close-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-popup-close-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
             </div>
             <!-- Colors: Header Bg, Header Text, Body Bg, Border -->
             <div class="prop-group mb-8 top-divider-sm">
-                <label class="v4-prop-label mb-6">색상 설정 (COLORS)</label>
+                <label class="v4-prop-label">색상 설정 (COLORS)</label>
                 <div class="v4-prop-grid-2 gap-8 mb-6">
                     <div class="prop-group">
-                        <label class="v4-color-label v4-prop-label" data-prop="headerBg">헤더 배경색</label>
+                        <label class="v4-color-label v4-prop-label" data-prop="headerBg">헤더 배경색 (Header BG)</label>
                         <div class="v4-prop-flex-gap-4">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="popup-header-bg-wrapper">
                                 <input type="color" id="prop-popup-header-bg" class="v4-color-input" data-prop="headerBg" value="#f1f5f9">
@@ -1255,7 +1246,7 @@
                         </div>
                     </div>
                     <div class="prop-group">
-                        <label class="v4-color-label v4-prop-label" data-prop="headerColor">헤더 글자색</label>
+                        <label class="v4-color-label v4-prop-label" data-prop="headerColor">헤더 글자색 (Header Text)</label>
                         <div class="v4-prop-flex-gap-4">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="popup-header-color-wrapper">
                                 <input type="color" id="prop-popup-header-color" class="v4-color-input" data-prop="headerColor" value="#0f172a">
@@ -1265,7 +1256,7 @@
                 </div>
                 <div class="v4-prop-grid-2 gap-8">
                     <div class="prop-group">
-                        <label class="v4-color-label v4-prop-label" data-prop="bodyBg">본문 배경색</label>
+                        <label class="v4-color-label v4-prop-label" data-prop="bodyBg">본문 배경색 (Body BG)</label>
                         <div class="v4-prop-flex-gap-4">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="popup-body-bg-wrapper">
                                 <input type="color" id="prop-popup-body-bg" class="v4-color-input" data-prop="bodyBg" value="#ffffff">
@@ -1273,7 +1264,7 @@
                         </div>
                     </div>
                     <div class="prop-group">
-                        <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                        <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
                         <div class="v4-prop-flex-gap-4">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="popup-border-wrapper">
                                 <input type="color" id="prop-popup-border-color" class="v4-color-input" data-prop="borderColor" value="#cccccc">
@@ -1285,15 +1276,15 @@
             <!-- Border Radius -->
             <div class="prop-group mb-12 top-divider-sm">
                 <div class="v4-section-header mb-6">
-                    <label class="v4-prop-label mb-0">둥근 모서리 (Radius)</label>
-                    <span class="v4-section-header-title" id="txt-popup-border-radius">8</span>
+                    <label class="v4-prop-label">둥근 모서리 (Radius)</label>
+                    <span class="v4-prop-value-badge" id="txt-popup-border-radius">8</span>
                 </div>
                 <div class="v4-prop-grid-3 gap-4 mb-6">
-                    <button id="btn-popup-corner-sharp" class="v4-inspector-btn v4-btn-xs" data-radius="0">직각</button>
-                    <button id="btn-popup-corner-round" class="v4-inspector-btn v4-btn-xs" data-radius="8">라운드</button>
-                    <button id="btn-popup-corner-pill" class="v4-inspector-btn v4-btn-xs" data-radius="16">더 둥글게</button>
+                    <button id="btn-popup-corner-sharp" class="v4-inspector-btn v4-inspector-toggle-btn" data-radius="0">직각</button>
+                    <button id="btn-popup-corner-round" class="v4-inspector-btn v4-inspector-toggle-btn" data-radius="8">라운드</button>
+                    <button id="btn-popup-corner-pill" class="v4-inspector-btn v4-inspector-toggle-btn" data-radius="16">더 둥글게</button>
                 </div>
-                <input class="w-full cursor-pointer" type="range" id="prop-popup-border-radius" min="0" max="40" value="8">
+                <input class="v4-range-slider" type="range" id="prop-popup-border-radius" min="0" max="40" value="8">
             </div>
         </div>
 
@@ -1306,7 +1297,7 @@
             <div class="v4-dimensions-group prop-group v4-prop-group-divider">
                 <div class="v4-section-header mb-6">
                     <span class="v4-prop-label bold">크기 설정 (DIMENSIONS)</span>
-                    <button id="btn-button-fit-text" class="v4-inspector-btn v4-btn-action-cyan" title="글자 길이에 맞게 가로 크기 자동 조절">텍스트 맞춤</button>
+                    <button id="btn-button-fit-text" class="v4-inspector-btn v4-btn-xs" title="글자 길이에 맞게 가로 크기 자동 조절">텍스트 맞춤</button>
                 </div>                <div class="v4-prop-grid-2">
                     <div class="prop-subgroup">
                         <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
@@ -1325,16 +1316,16 @@
                 </div>
             </div>
             <div class="prop-group mb-12">
-                <label class="v4-prop-label">버튼 텍스트</label>
+                <label class="v4-prop-label">버튼 텍스트 (Button Text)</label>
                 <input class="v4-prop-input-base pad-6-10" type="text" id="prop-button-text">
             </div>
             <div class="prop-group mb-12">
-                <label class="v4-prop-label">버튼 폰트 크기 (px)</label>
+                <label class="v4-prop-label">글꼴 크기 (Font Size)</label>
                 <input class="v4-prop-input-base pad-6-10" type="number" id="prop-button-font-size" min="8" max="60" value="12">
             </div>
             <div class="prop-group mb-12">
-                <label class="v4-prop-label mb-6">버튼 타입 설정</label>
-                <select class="v4-prop-input-base cursor-pointer" id="prop-button-style">
+                <label class="v4-prop-label">버튼 타입 (Type)</label>
+                <select class="v4-prop-select" id="prop-button-style">
                     <option value="normal">일반형 (흰배경+검정글씨)</option>
                     <option value="primary">강조형 (진한배경+흰글씨)</option>
                     <option value="negative">부정형 (회색배경+검정글씨)</option>
@@ -1345,7 +1336,7 @@
             <div class="top-divider mt-12 mb-12" id="prop-button-custom-colors" style="display: none;">
                 <div class="v4-prop-grid-3 gap-8">
                     <div class="prop-group">
-                        <label class="v4-color-label v4-prop-label" data-prop="background">배경색</label>
+                        <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
                         <div class="v4-prop-flex-gap-4">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="button-bg-wrapper">
                                 <input type="color" id="prop-button-bg-color" class="v4-color-input" data-prop="background" value="#ffffff">
@@ -1354,7 +1345,7 @@
                         </div>
                     </div>
                     <div class="prop-group">
-                        <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색</label>
+                        <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
                         <div class="v4-prop-flex-gap-4">
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="button-border-wrapper">
                                 <input type="color" id="prop-button-border-color" class="v4-color-input" data-prop="borderColor" value="#cbd5e1">
@@ -1363,7 +1354,7 @@
                         </div>
                     </div>
                     <div class="prop-group">
-                        <label class="v4-color-label v4-prop-label" data-prop="color">글자색</label>
+                        <label class="v4-color-label v4-prop-label" data-prop="color">글자색 (Text)</label>
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="button-text-wrapper">
                             <input type="color" id="prop-button-text-color" class="v4-color-input" data-prop="color" value="#1f2937">
                         </div>
@@ -1372,23 +1363,23 @@
             </div>
             <div class="prop-group mb-12">
                 <div class="v4-section-header mb-6">
-                    <label class="v4-prop-label mb-0">둥근 모서리 (Radius)</label>
-                    <span class="v4-section-header-title" id="txt-button-border-radius">6</span>
+                    <label class="v4-prop-label">둥근 모서리 (Radius)</label>
+                    <span class="v4-prop-value-badge" id="txt-button-border-radius">6</span>
                 </div>
                 <!-- 원터치 코너 프리셋 버튼 -->
                 <div class="v4-prop-grid-3 gap-4 mb-6">
-                    <button id="btn-button-corner-sharp" class="v4-inspector-btn btn-btn-corner v4-btn-xs" data-radius="0">직각</button>
-                    <button id="btn-button-corner-round" class="v4-inspector-btn btn-btn-corner v4-btn-xs" data-radius="6">라운드</button>
-                    <button id="btn-button-corner-pill" class="v4-inspector-btn btn-btn-corner v4-btn-xs" data-radius="20">알약</button>
+                    <button id="btn-button-corner-sharp" class="v4-inspector-btn btn-btn-corner v4-inspector-toggle-btn" data-radius="0">직각</button>
+                    <button id="btn-button-corner-round" class="v4-inspector-btn btn-btn-corner v4-inspector-toggle-btn" data-radius="6">라운드</button>
+                    <button id="btn-button-corner-pill" class="v4-inspector-btn btn-btn-corner v4-inspector-toggle-btn" data-radius="20">알약</button>
                 </div>
-                <input class="w-full cursor-pointer" type="range" id="prop-button-border-radius" min="0" max="100" value="6">
+                <input class="v4-range-slider" type="range" id="prop-button-border-radius" min="0" max="100" value="6">
             </div>
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
         </div>
@@ -1401,55 +1392,55 @@
 
             <!-- Date Picker Mode Selector -->
             <div class="prop-group v4-prop-group-divider-sm">
-                <label class="v4-prop-label">데이트피커 타입</label>
+                <label class="v4-prop-label">선택 모드 (Type)</label>
                 <div class="v4-flex-gap-4">
-                    <button id="btn-dp-mode-simple" class="v4-inspector-btn v4-pill-btn-medium nowrap">조회용</button>
-                    <button id="btn-dp-mode-detailed" class="v4-inspector-btn v4-pill-btn-medium nowrap">기간/시간 설정용</button>
+                    <button id="btn-dp-mode-simple" class="v4-inspector-btn v4-inspector-toggle-btn nowrap">조회용</button>
+                    <button id="btn-dp-mode-detailed" class="v4-inspector-btn v4-inspector-toggle-btn nowrap">기간/시간 설정용</button>
                 </div>
             </div>
 
             <!-- Show Presets Toggle -->
             <div id="dp-presets-toggle-wrapper" class="prop-group v4-section-header mb-8">
-                <label class="v4-prop-label mb-0">빠른 선택 버튼 표시</label>
+                <label class="v4-prop-label">빠른 프리셋 (Presets)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button id="btn-dp-presets-y" class="v4-inspector-btn v4-pill-btn-mini">Y</button>
-                    <button id="btn-dp-presets-n" class="v4-inspector-btn v4-pill-btn-mini">N</button>
+                    <button id="btn-dp-presets-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-dp-presets-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
             </div>
 
             <!-- Show End Date Toggle -->
             <div id="dp-show-end-toggle-wrapper" class="prop-group mb-8 top-divider-sm">
-                <label class="v4-prop-label">종료일자 표시 여부</label>
+                <label class="v4-prop-label">종료일자 표시 (End Date)</label>
                 <div class="v4-flex-gap-4">
-                    <button id="btn-dp-show-end-y" class="v4-inspector-btn v4-pill-btn-24 pad-0">종료일자 포함</button>
-                    <button id="btn-dp-show-end-n" class="v4-inspector-btn v4-pill-btn-24 pad-0">시작일자만</button>
+                    <button id="btn-dp-show-end-y" class="v4-inspector-btn v4-inspector-toggle-btn pad-0">종료일자 포함</button>
+                    <button id="btn-dp-show-end-n" class="v4-inspector-btn v4-inspector-toggle-btn pad-0">시작일자만</button>
                 </div>
             </div>
 
             <!-- Default Preset Selection -->
             <div id="dp-default-preset-wrapper" class="prop-group mb-8 top-divider-sm">
-                <label class="v4-prop-label mb-6">기본 기간 선택 (Default Preset)</label>
+                <label class="v4-prop-label">기본 기간 선택 (Default Preset)</label>
                 <div class="v4-prop-grid-3 gap-4">
-                    <button id="btn-dp-default-none" class="v4-inspector-btn v4-btn-xs">전체 해제</button>
-                    <button id="btn-dp-default-1D" class="v4-inspector-btn v4-btn-xs">1D</button>
-                    <button id="btn-dp-default-1W" class="v4-inspector-btn v4-btn-xs">1W</button>
-                    <button id="btn-dp-default-1M" class="v4-inspector-btn v4-btn-xs">1M</button>
-                    <button id="btn-dp-default-6M" class="v4-inspector-btn v4-btn-xs">6M</button>
-                    <button id="btn-dp-default-all" class="v4-inspector-btn v4-btn-xs">전체</button>
+                    <button id="btn-dp-default-none" class="v4-inspector-btn v4-inspector-toggle-btn">전체 해제</button>
+                    <button id="btn-dp-default-1D" class="v4-inspector-btn v4-inspector-toggle-btn">1D</button>
+                    <button id="btn-dp-default-1W" class="v4-inspector-btn v4-inspector-toggle-btn">1W</button>
+                    <button id="btn-dp-default-1M" class="v4-inspector-btn v4-inspector-toggle-btn">1M</button>
+                    <button id="btn-dp-default-6M" class="v4-inspector-btn v4-inspector-toggle-btn">6M</button>
+                    <button id="btn-dp-default-all" class="v4-inspector-btn v4-inspector-toggle-btn">전체</button>
                 </div>
                 <p class="v4-prop-sub-label">버튼 선택 시 해당 기간으로 시작/종료 일자가 자동 계산됩니다.</p>
             </div>
 
             <!-- Direct Date Input -->
             <div class="top-divider-sm mb-8">
-                <label class="v4-prop-label mb-6">날짜 직접 입력 (YYYY/MM/DD)</label>
+                <label class="v4-prop-label">날짜 직접 입력 (YYYY/MM/DD)</label>
                 <div class="v4-prop-grid-2">
                     <div class="prop-group">
-                        <label class="v4-prop-label">시작 일자</label>
+                        <label class="v4-prop-label">시작 일자 (Start Date)</label>
                         <input class="v4-prop-input-base" type="text" id="prop-dp-start-date" placeholder="YYYY/MM/DD">
                     </div>
                     <div class="prop-group">
-                        <label class="v4-prop-label">종료 일자</label>
+                        <label class="v4-prop-label">종료 일자 (End Date)</label>
                         <input class="v4-prop-input-base" type="text" id="prop-dp-end-date" placeholder="YYYY/MM/DD">
                     </div>
                 </div>
@@ -1457,24 +1448,24 @@
 
             <!-- Direct Time Input (Only for Detailed Mode) -->
             <div class="top-divider-sm mt-8" id="dp-time-inputs-wrapper" style="display: none;">
-                <label class="v4-prop-label mb-6">시간 직접 입력 (HH:MM:SS)</label>
+                <label class="v4-prop-label">시간 직접 입력 (HH:MM:SS)</label>
                 <div class="v4-prop-grid-2">
                     <div class="prop-group">
-                        <label class="v4-prop-label">시작 시간</label>
+                        <label class="v4-prop-label">시작 시간 (Start Time)</label>
                         <input class="v4-prop-input-base" type="text" id="prop-dp-start-time" placeholder="HH:MM:SS">
                     </div>
                     <div class="prop-group">
-                        <label class="v4-prop-label">종료 시간</label>
+                        <label class="v4-prop-label">종료 시간 (End Time)</label>
                         <input class="v4-prop-input-base" type="text" id="prop-dp-end-time" placeholder="HH:MM:SS">
                     </div>
                 </div>
             </div>
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
         </div>
@@ -1508,8 +1499,8 @@
             <div class="prop-group mb-12">
                 <label class="v4-prop-label mb-8">기본 상태 (Default State)</label>
                 <div class="v4-prop-grid-2">
-                    <button id="btn-toggle-on" class="v4-inspector-btn v4-btn-medium">On</button>
-                    <button id="btn-toggle-off" class="v4-inspector-btn v4-btn-medium">Off</button>
+                    <button id="btn-toggle-on" class="v4-inspector-btn v4-inspector-toggle-btn">On</button>
+                    <button id="btn-toggle-off" class="v4-inspector-btn v4-inspector-toggle-btn">Off</button>
                 </div>
             </div>
 
@@ -1524,10 +1515,10 @@
 
             <!-- Atom Disabled Toggle -->
             <div class="prop-group v4-section-header top-divider-sm mb-8">
-                <label class="v4-prop-label mb-0">비활성화 (DISABLE)</label>
+                <label class="v4-prop-label">비활성화 (Disabled)</label>
                 <div class="v4-flex-gap-4 w-84">
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="true">Y</button>
-                    <button class="v4-inspector-btn btn-atom-disabled v4-pill-btn-mini" data-disabled="false">N</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="true">Y</button>
+                    <button class="v4-inspector-btn btn-atom-disabled v4-inspector-toggle-btn" data-disabled="false">N</button>
                 </div>
             </div>
         </div>
@@ -1561,15 +1552,15 @@
             <div class="prop-group mb-12">
                 <label class="v4-prop-label">행 개수 설정 (Row Count)</label>
                 <div class="v4-prop-flex-gap-8">
-                    <button id="btn-admin-row-dec" class="v4-inspector-btn danger v4-btn-medium bold flex-1">- 행 삭제</button>
+                    <button id="btn-admin-row-dec" class="v4-inspector-btn danger v4-inspector-toggle-btn bold flex-1">- 행 삭제</button>
                     <span class="v4-text-center-w30" id="txt-admin-row-count">1</span>
-                    <button id="btn-admin-row-inc" class="v4-inspector-btn primary v4-btn-medium bold flex-1">+ 행 추가</button>
+                    <button id="btn-admin-row-inc" class="v4-inspector-btn primary v4-inspector-toggle-btn bold flex-1">+ 행 추가</button>
                 </div>
             </div>
 
                         <!-- Label Width Configuration -->
             <div class="prop-group mb-12 top-divider">
-                <label class="v4-prop-label bold">항목명 가로 넓이</label>
+                <label class="v4-prop-label bold">항목명 너비 (Label Width)</label>
                 <div class="v4-prop-input-wrap">
                     <input class="v4-prop-input-styled" type="number" id="prop-admin-label-width-number" min="60" max="300" value="140">
                     <span class="v4-prop-unit">px</span>
@@ -1585,12 +1576,12 @@
                 
                 <div class="v4-flex-col-gap-8 mt-8" id="admin-group-header-config-sub" style="display: none;">
                     <div class="prop-group">
-                        <label class="v4-prop-label">그룹 타이틀 명칭</label>
+                        <label class="v4-prop-label">그룹 타이틀 (Group Title)</label>
                         <input class="v4-prop-input-base" type="text" id="prop-admin-group-header-title" value="그룹명">
                     </div>
                     <div class="v4-prop-grid-2">
                         <div class="prop-group">
-                            <label class="v4-prop-label">배경색</label>
+                            <label class="v4-prop-label">배경색 (Background)</label>
                             <div class="v4-prop-flex-gap-4">
                                 <div class="v4-color-wrapper v4-checkerboard-bg" id="admin-group-header-bg-wrapper">
                                     <input type="color" id="prop-admin-group-header-bg" class="v4-admin-header-color-input" data-admin-prop="background" value="#73829c">
@@ -1599,7 +1590,7 @@
                             </div>
                         </div>
                         <div class="prop-group">
-                            <label class="v4-prop-label">글자색</label>
+                            <label class="v4-prop-label">글자색 (Text)</label>
                             <div class="v4-color-wrapper v4-checkerboard-bg" id="admin-group-header-color-wrapper">
                                 <input type="color" id="prop-admin-group-header-color" class="v4-admin-header-color-input" data-admin-prop="color" value="#ffffff">
                             </div>
@@ -1647,20 +1638,20 @@
             <!-- Tab Count Control (Min 1 ~ Max 10) -->
             <div class="prop-group mb-12">
                 <div class="v4-section-header mb-6">
-                    <label class="v4-prop-label mb-0">탭 개수 (Min 1 ~ Max 10)</label>
-                    <span class="v4-section-header-title sky" id="txt-tab-count-val">3</span>
+                    <label class="v4-prop-label">탭 개수 (Min 1 ~ Max 10)</label>
+                    <span class="v4-prop-value-badge" id="txt-tab-count-val">3</span>
                 </div>
                 <div class="v4-prop-flex-gap-6">
-                    <button id="btn-tab-count-dec" class="v4-inspector-btn v4-btn-medium bold flex-1" title="탭 개수 감소">-</button>
+                    <button id="btn-tab-count-dec" class="v4-inspector-btn v4-inspector-toggle-btn bold flex-1" title="탭 개수 감소">-</button>
                     <input class="v4-prop-input-num-sm" type="number" id="prop-tab-count" min="1" max="10" value="3">
-                    <button id="btn-tab-count-inc" class="v4-inspector-btn v4-btn-medium bold flex-1" title="탭 개수 증가">+</button>
+                    <button id="btn-tab-count-inc" class="v4-inspector-btn v4-inspector-toggle-btn bold flex-1" title="탭 개수 증가">+</button>
                 </div>
             </div>
 
             <!-- Tab Items List (Names & Single-Active Radio) -->
             <div class="prop-group mb-12">
                 <div class="v4-section-header mb-6">
-                    <label class="v4-prop-label mb-0">탭 목록 설정 (활성화 &amp; 명칭)</label>
+                    <label class="v4-prop-label">탭 목록 설정 (활성화 &amp; 명칭)</label>
                     <span class="v4-prop-micro-label">* 활성화는 1개만 가능</span>
                 </div>
                 <div class="v4-flex-col-scroll-sm" id="tab-items-list-container">
@@ -1671,7 +1662,7 @@
             <!-- Active Indicator Accent Color -->
             <div class="prop-group mb-12 top-divider-10">
                 <div class="v4-prop-flex-between gap-12">
-                    <label class="v4-prop-label-nowrap">포인트 컬러</label>
+                    <label class="v4-prop-label-nowrap">포인트 컬러 (Accent Color)</label>
                     <div class="v4-color-wrapper v4-prop-input-frame" id="tab-accent-color-wrapper">
                         <input type="color" id="tab-accent-color" class="v4-color-input" value="#2563eb">
                     </div>
@@ -1714,13 +1705,13 @@
             <div class="prop-group mb-12">
                 <label class="v4-prop-label mb-8">마우스 커서 모양 (Cursor Type)</label>
                 <div class="v4-prop-grid-3 gap-6">
-                    <button id="btn-cursor-type-default" class="v4-inspector-btn v4-btn-medium active" data-type="default" title="일반 화살표 커서">
+                    <button id="btn-cursor-type-default" class="v4-inspector-btn v4-inspector-toggle-btn active" data-type="default" title="일반 화살표 커서">
                         <span style="font-size: 13px; font-weight: bold; margin-right: 2px;">↖</span> 일반
                     </button>
-                    <button id="btn-cursor-type-pointer" class="v4-inspector-btn v4-btn-medium" data-type="pointer" title="호버 손가락 포인터">
+                    <button id="btn-cursor-type-pointer" class="v4-inspector-btn v4-inspector-toggle-btn" data-type="pointer" title="호버 손가락 포인터">
                         <span style="font-size: 13px; margin-right: 2px;">👆</span> 호버
                     </button>
-                    <button id="btn-cursor-type-text" class="v4-inspector-btn v4-btn-medium" data-type="text" title="텍스트 입력 I-Beam 커서">
+                    <button id="btn-cursor-type-text" class="v4-inspector-btn v4-inspector-toggle-btn" data-type="text" title="텍스트 입력 I-Beam 커서">
                         <span style="font-size: 13px; font-weight: bold; margin-right: 2px;">⌶</span> 키인
                     </button>
                 </div>
@@ -1734,26 +1725,26 @@
 
                 <!-- Show/Hide Description Badge -->
                 <div class="prop-group v4-section-header mb-10">
-                    <label class="v4-prop-label mb-0">설명 텍스트 박스 노출</label>
+                    <label class="v4-prop-label mb-0">설명 박스 표시 (Description)</label>
                     <div class="v4-flex-gap-4 w-84">
-                        <button id="btn-cursor-text-y" class="v4-inspector-btn v4-pill-btn-mini active" data-show="true">Y</button>
-                        <button id="btn-cursor-text-n" class="v4-inspector-btn v4-pill-btn-mini" data-show="false">N</button>
+                        <button id="btn-cursor-text-y" class="v4-inspector-btn v4-inspector-toggle-btn active" data-show="true">Y</button>
+                        <button id="btn-cursor-text-n" class="v4-inspector-btn v4-inspector-toggle-btn" data-show="false">N</button>
                     </div>
                 </div>
 
                 <!-- Description Text Input -->
                 <div class="prop-group mb-12" id="cursor-text-input-group">
-                    <label class="v4-prop-label mb-6">디스크립션 텍스트 내용</label>
+                    <label class="v4-prop-label">설명 텍스트 (Content)</label>
                     <input type="text" id="prop-cursor-text" class="v4-prop-input-base pad-6-10" placeholder="클릭 이벤트 설명 입력..." value="Click Event">
                 </div>
 
                 <!-- Badge Theme Preset Buttons -->
                 <div class="prop-group mb-8" id="cursor-badge-theme-group">
-                    <label class="v4-prop-label mb-6">디스크립션 스타일 테마</label>
+                    <label class="v4-prop-label">스타일 테마 (Theme)</label>
                     <div class="v4-prop-grid-3 gap-6">
-                        <button id="btn-cursor-theme-dark" class="v4-inspector-btn v4-btn-medium active" data-theme="dark">Dark</button>
-                        <button id="btn-cursor-theme-blue" class="v4-inspector-btn v4-btn-medium" data-theme="blue">Blue</button>
-                        <button id="btn-cursor-theme-light" class="v4-inspector-btn v4-btn-medium" data-theme="light">Light</button>
+                        <button id="btn-cursor-theme-dark" class="v4-inspector-btn v4-inspector-toggle-btn active" data-theme="dark">Dark</button>
+                        <button id="btn-cursor-theme-blue" class="v4-inspector-btn v4-inspector-toggle-btn" data-theme="blue">Blue</button>
+                        <button id="btn-cursor-theme-light" class="v4-inspector-btn v4-inspector-toggle-btn" data-theme="light">Light</button>
                     </div>
                 </div>
             </div>

@@ -7,11 +7,14 @@
     console.log("[Inspector Accordion] Domain module loaded.");
 
     const highlightActive = (btn, isActive) => {
-        if (!btn) return;
-        btn.style.background = isActive ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-        btn.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-        btn.style.color = isActive ? '#00e5ff' : '#94a3b8';
-        btn.style.fontWeight = isActive ? 'bold' : 'normal';
+        if (window.highlightActive) {
+            window.highlightActive(btn, isActive);
+        } else if (btn) {
+            btn.style.background = isActive ? 'rgba(110, 86, 207, 0.25)' : 'rgba(255, 255, 255, 0.05)';
+            btn.style.borderColor = isActive ? '#6e56cf' : 'rgba(255, 255, 255, 0.15)';
+            btn.style.color = isActive ? '#ffffff' : '#94a3b8';
+            btn.style.fontWeight = isActive ? 'bold' : 'normal';
+        }
     };
 
     const notifyAccordion = (data) => {
@@ -55,7 +58,7 @@
             div.className = 'v4-prop-row';
             div.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-bottom: 6px;';
             div.innerHTML = 
-                '<input type="radio" name="sidebar-accordion-active" class="sidebar-accordion-radio" ' + (index === activeIndex ? 'checked' : '') + ' style="accent-color: #00e5ff; cursor: pointer; flex-shrink: 0;">' +
+                '<input type="radio" name="sidebar-accordion-active" class="sidebar-accordion-radio" ' + (index === activeIndex ? 'checked' : '') + ' style="accent-color: var(--accent, #6e56cf); cursor: pointer; flex-shrink: 0;">' +
                 '<span style="font-size: 11px; color: #94a3b8; width: 45px; flex-shrink: 0;">Sub ' + (index + 1) + '</span>' +
                 '<div style="flex: 1;">' +
                     '<input type="text" class="v4-prop-input accordion-sub-input" data-index="' + index + '" value="' + (text || '') + '" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 11px; outline: none; box-sizing: border-box;">' +
@@ -115,9 +118,9 @@
             const t1Header = document.createElement('div');
             t1Header.style.cssText = 'display: flex; align-items: center; gap: 6px; margin-bottom: 6px;';
             t1Header.innerHTML = 
-                '<span style="font-size: 11px; font-weight: bold; color: #38bdf8; width: 45px; flex-shrink: 0;">1T-' + (i1 + 1) + '</span>' +
+                '<span style="font-size: 11px; font-weight: bold; color: var(--accent-light, #9e8cfc); width: 45px; flex-shrink: 0;">1T-' + (i1 + 1) + '</span>' +
                 '<input type="text" class="v4-prop-input accordion-h-input" value="' + (t1.title || '') + '" style="flex:1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 11px; outline: none; box-sizing: border-box;">' +
-                '<button class="btn-del-tier1 btn-secondary" style="width: 20px; height: 20px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 3px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: #ef4444; cursor: pointer; font-size: 12px;">&times;</button>';
+                '<button class="v4-btn-action-sm danger btn-del-tier1" title="삭제">&times;</button>';
             
             const t1Input = t1Header.querySelector('input');
             if (t1Input) {
@@ -137,16 +140,16 @@
             t1Div.appendChild(t1Header);
 
             const t2Container = document.createElement('div');
-            t2Container.style.cssText = 'padding-left: 12px; display: flex; flex-direction: column; gap: 4px; border-left: 2px solid rgba(56, 189, 248, 0.2); margin-left: 8px; margin-bottom: 6px;';
+            t2Container.style.cssText = 'padding-left: 12px; display: flex; flex-direction: column; gap: 4px; border-left: 2px solid rgba(110, 86, 207, 0.25); margin-left: 8px; margin-bottom: 6px;';
             
             (t1.items || []).forEach((t2, i2) => {
                 const t2Div = document.createElement('div');
                 t2Div.style.cssText = 'display: flex; align-items: center; gap: 6px;';
                 t2Div.innerHTML = 
-                    '<input type="radio" name="sidebar-accordion-active" class="sidebar-accordion-radio" ' + (t2.active ? 'checked' : '') + ' style="accent-color: #00e5ff; cursor: pointer; flex-shrink: 0;">' +
+                    '<input type="radio" name="sidebar-accordion-active" class="sidebar-accordion-radio" ' + (t2.active ? 'checked' : '') + ' style="accent-color: var(--accent, #6e56cf); cursor: pointer; flex-shrink: 0;">' +
                     '<span style="font-size: 10px; color: #94a3b8; width: 35px; flex-shrink: 0;">2T-' + (i2 + 1) + '</span>' +
                     '<input type="text" class="v4-prop-input accordion-h-input" value="' + (t2.text || '') + '" style="flex:1; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 3px 5px; border-radius: 3px; font-size: 10px; outline: none; box-sizing: border-box;">' +
-                    '<button class="btn-del-tier2 btn-secondary" style="width: 18px; height: 18px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 3px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: #ef4444; cursor: pointer; font-size: 11px;">&times;</button>';
+                    '<button class="v4-btn-action-sm danger btn-del-tier2" title="삭제">&times;</button>';
                 
                 const t2Radio = t2Div.querySelector('.sidebar-accordion-radio');
                 if (t2Radio) {

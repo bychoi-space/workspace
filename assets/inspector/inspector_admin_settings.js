@@ -333,17 +333,17 @@
             
             let htmlContent = `
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="font-size: 10px; font-weight: bold; color: #00e5ff;">ROW ${i} CONFIG</div>
+                    <div style="font-size: 10px; font-weight: bold; color: var(--accent-light, #9e8cfc);">ROW ${i} CONFIG</div>
                     <div style="display: flex; gap: 4px;">
-                        <button class="v4-inspector-btn btn-move-row-up" data-row="${i}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer;" title="위로 이동" ${i === 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>▲</button>
-                        <button class="v4-inspector-btn btn-move-row-down" data-row="${i}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer;" title="아래로 이동" ${i === rowCount ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>▼</button>
-                        <button class="v4-inspector-btn btn-delete-row" data-row="${i}" style="height: 18px; width: 18px; display: flex; align-items: center; justify-content: center; font-size: 8px; border-radius: 4px; padding: 0; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; cursor: pointer;" title="삭제" ${rowCount <= 1 ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>&times;</button>
+                        <button class="v4-btn-action-sm btn-move-row-up" data-row="${i}" title="위로 이동" ${i === 1 ? 'disabled' : ''}>▲</button>
+                        <button class="v4-btn-action-sm btn-move-row-down" data-row="${i}" title="아래로 이동" ${i === rowCount ? 'disabled' : ''}>▼</button>
+                        <button class="v4-btn-action-sm danger btn-delete-row" data-row="${i}" title="삭제" ${rowCount <= 1 ? 'disabled' : ''}>&times;</button>
                     </div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div class="v4-prop-grid-2">
                     <div class="prop-group">
-                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">조회 컬럼 개수</label>
-                        <select class="v4-prop-input admin-row-cols" data-row="${i}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px; height: 23px; box-sizing: border-box;">
+                        <label class="v4-prop-label">컬럼 수 (Cols)</label>
+                        <select class="v4-prop-select admin-row-cols" data-row="${i}">
                             <option value="1" ${colsVal === 1 ? 'selected' : ''}>1개 컬럼</option>
                             <option value="2" ${colsVal === 2 ? 'selected' : ''}>2개 컬럼</option>
                             <option value="3" ${colsVal === 3 ? 'selected' : ''}>3개 컬럼</option>
@@ -351,14 +351,14 @@
                         </select>
                     </div>
                     <div class="prop-group">
-                        <label style="font-size: 9px; color: #94a3b8; display: block; margin-bottom: 4px;">행 높이 (Height px)</label>
-                        <input type="number" class="v4-prop-input admin-row-height-input" data-row="${i}" value="${specificHeightVal}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box; outline: none; font-family: inherit; height: 23px;">
+                        <label class="v4-prop-label">행 높이 (Height)</label>
+                        <input type="number" class="v4-prop-input-styled admin-row-height-input" data-row="${i}" value="${specificHeightVal}">
                     </div>
                 </div>
-                <div class="admin-row-ratio-container" data-row="${i}" style="display: ${colsVal === 2 ? 'block' : 'none'};">
+                <div class="admin-row-ratio-container" data-row="${i}" style="display: ${colsVal === 2 ? 'block' : 'none'}; margin-top: 6px;">
                     <div class="prop-group">
-                        <label style="font-size: 9px; color: #00e5ff; font-weight: 600; display: block; margin-bottom: 4px;">2컬럼 분할 비율</label>
-                        <select class="v4-prop-input admin-row-ratio-select" data-row="${i}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,229,255,0.3); color: #00e5ff; padding: 4px 8px; border-radius: 4px; font-size: 11px; height: 23px; box-sizing: border-box;">
+                        <label class="v4-prop-label">2컬럼 분할 비율 (Ratio)</label>
+                        <select class="v4-prop-select admin-row-ratio-select" data-row="${i}">
                             <option value="1:1" ${ratioVal === '1:1' ? 'selected' : ''}>1 : 1 (하프 50% : 50%)</option>
                             <option value="1:2" ${ratioVal === '1:2' ? 'selected' : ''}>1 : 2 (1/3 분할 33% : 67%)</option>
                             <option value="2:1" ${ratioVal === '2:1' ? 'selected' : ''}>2 : 1 (2/3 분할 67% : 33%)</option>
@@ -367,7 +367,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="admin-row-labels-container" style="display: flex; flex-direction: column; gap: 8px;">
+                <div class="admin-row-labels-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
             `;
 
             for (let c = 0; c < colsVal; c++) {
@@ -376,13 +376,13 @@
                 htmlContent += `
                     <div class="prop-group">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <label style="font-size: 9px; color: #94a3b8; margin: 0;">컬럼 ${c + 1} 항목명</label>
-                            <label title="필수값 (*)" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; font-size: 9px; color: #f87171; font-weight: 600; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 4px; padding: 1px 6px; user-select: none;">
-                                <input type="checkbox" class="admin-col-required-chk" data-col-idx="${c}" ${isColReq ? 'checked' : ''} style="cursor: pointer; accent-color: #ef4444; margin: 0; width: 12px; height: 12px;">
+                            <label class="v4-prop-label" style="margin: 0;">컬럼 ${c + 1} 항목명 (Col ${c + 1} Name)</label>
+                            <label title="필수값 (*)" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; font-size: 9px; color: ${isColReq ? '#ffffff' : '#94a3b8'}; font-weight: 600; background: ${isColReq ? 'rgba(110, 86, 207, 0.25)' : 'rgba(255, 255, 255, 0.05)'}; border: 1px solid ${isColReq ? 'var(--accent, #6e56cf)' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 4px; padding: 2px 6px; user-select: none; transition: all 0.15s ease;">
+                                <input type="checkbox" class="admin-col-required-chk" data-col-idx="${c}" ${isColReq ? 'checked' : ''} style="cursor: pointer; accent-color: var(--accent, #6e56cf); margin: 0; width: 12px; height: 12px;">
                                 필수 (*)
                             </label>
                         </div>
-                        <input type="text" class="v4-prop-input admin-col-label-input" data-col-idx="${c}" value="${currentLabel}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box;">
+                        <input type="text" class="admin-col-label-input" data-col-idx="${c}" value="${currentLabel}">
                     </div>
                 `;
             }
@@ -494,13 +494,13 @@
                     newHtml += `
                         <div class="prop-group">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <label style="font-size: 9px; color: #94a3b8; margin: 0;">컬럼 ${c + 1} 항목명</label>
-                                <label title="필수값 (*)" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; font-size: 9px; color: #f87171; font-weight: 600; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 4px; padding: 1px 6px; user-select: none;">
-                                    <input type="checkbox" class="admin-col-required-chk" data-col-idx="${c}" ${isColReq ? 'checked' : ''} style="cursor: pointer; accent-color: #ef4444; margin: 0; width: 12px; height: 12px;">
+                                <label class="v4-prop-label" style="margin: 0;">컬럼 ${c + 1} 항목명 (Col ${c + 1} Name)</label>
+                                <label title="필수값 (*)" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; font-size: 9px; color: ${isColReq ? '#ffffff' : '#94a3b8'}; font-weight: 600; background: ${isColReq ? 'rgba(110, 86, 207, 0.25)' : 'rgba(255, 255, 255, 0.05)'}; border: 1px solid ${isColReq ? 'var(--accent, #6e56cf)' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 4px; padding: 2px 6px; user-select: none; transition: all 0.15s ease;">
+                                    <input type="checkbox" class="admin-col-required-chk" data-col-idx="${c}" ${isColReq ? 'checked' : ''} style="cursor: pointer; accent-color: var(--accent, #6e56cf); margin: 0; width: 12px; height: 12px;">
                                     필수 (*)
                                 </label>
                             </div>
-                            <input type="text" class="v4-prop-input admin-col-label-input" data-col-idx="${c}" value="${currentLabel}" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; box-sizing: border-box;">
+                            <input type="text" class="admin-col-label-input" data-col-idx="${c}" value="${currentLabel}">
                         </div>
                     `;
                 }

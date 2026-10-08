@@ -551,29 +551,13 @@ window.ConnectorEngine = (function() {
 
         document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
             const btnDir = b.dataset.dir;
-            if (btnDir === dir) {
-                b.style.background = 'rgba(0, 229, 255, 0.15)';
-                b.style.borderColor = 'rgba(0, 229, 255, 0.4)';
-                b.style.color = '#00e5ff';
-            } else {
-                b.style.background = 'rgba(255, 255, 255, 0.05)';
-                b.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                b.style.color = '#94a3b8';
-            }
+            highlightActive(b, btnDir === dir);
         });
 
         ['solid', 'dashed', 'dotted'].forEach(s => {
             const btn = document.getElementById('btn-line-style-' + s);
             if (btn) {
-                if (s === style) {
-                    btn.style.background = 'rgba(0, 229, 255, 0.15)';
-                    btn.style.borderColor = 'rgba(0, 229, 255, 0.4)';
-                    btn.style.color = '#00e5ff';
-                } else {
-                    btn.style.background = 'rgba(255, 255, 255, 0.05)';
-                    btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                    btn.style.color = '#94a3b8';
-                }
+                highlightActive(btn, s === style);
             }
         });
 
@@ -627,9 +611,7 @@ window.ConnectorEngine = (function() {
                 });
                 document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
                     const isActive = b.dataset.dir === dir;
-                    b.style.background = isActive ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)';
-                    b.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
-                    b.style.color = isActive ? '#00e5ff' : '#94a3b8';
+                    highlightActive(b, isActive);
                 });
                 const lengthLabel = document.getElementById('lbl-line-length');
                 const lengthInput = document.getElementById('prop-line-length');
@@ -658,9 +640,7 @@ window.ConnectorEngine = (function() {
                     const b = document.getElementById('btn-line-style-' + s);
                     if (b) {
                         const isActive = s === st;
-                        b.style.background = isActive ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)';
-                        b.style.borderColor = isActive ? 'rgba(0, 229, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
-                        b.style.color = isActive ? '#00e5ff' : '#94a3b8';
+                        highlightActive(b, isActive);
                     }
                 });
             }

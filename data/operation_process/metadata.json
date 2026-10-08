@@ -26,7 +26,7 @@
     "03_Admin_System_Development_Roadmap_900.html": {
       "title": "Admin 리팩토링 방향",
       "type": "architecture",
-      "updatedAt": "2026-10-08T09:27:46.526Z",
+      "updatedAt": "2026-10-08T09:28:28.227Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -102,7 +102,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-10-08 18:26:59",
+  "updated": "2026-10-08 18:28:27",
   "version": 0.2,
   "period": ""
 }

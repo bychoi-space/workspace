@@ -932,12 +932,163 @@ if (searchInput && searchDropdown) {
     });
 }
 
+/* ==========================================================================
+   PWA Installation Engine (Cross-Browser Support: Chrome, Samsung, Safari)
+   ========================================================================== */
+
+let deferredInstallPrompt = null;
+
+// Listen for beforeinstallprompt early (Chromium browsers: Chrome, Samsung Internet, Edge)
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Keep reference so users can trigger prompt at any time via buttons
+    deferredInstallPrompt = e;
+    const btn = document.getElementById('btn-install-app');
+    if (btn && !isRunningStandalone()) {
+        btn.style.display = 'inline-flex';
+    }
+});
+
+window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    hidePWAInstallUI();
+});
+
+function isRunningStandalone() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+           (window.navigator.standalone === true) ||
+           document.referrer.includes('android-app://');
+}
+
+function detectBrowserType() {
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isSamsung = /SamsungBrowser/i.test(ua);
+    const isChrome = /Chrome/i.test(ua) && !isSamsung && !/Edg/i.test(ua);
+    if (isIOS) return 'ios';
+    if (isSamsung) return 'samsung';
+    if (isChrome) return 'chrome';
+    return 'other';
+}
+
+function hidePWAInstallUI() {
+    const btn = document.getElementById('btn-install-app');
+    if (btn) btn.style.display = 'none';
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
+    const modal = document.getElementById('modal-install-guide');
+    if (modal) modal.style.display = 'none';
+}
+
+function switchPWAInstallTab(tabId) {
+    document.querySelectorAll('.install-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.target === tabId);
+    });
+    document.querySelectorAll('.install-tab-content').forEach(content => {
+        content.classList.toggle('active', content.id === tabId);
+    });
+}
+
+function openPWAInstallGuideModal() {
+    const modal = document.getElementById('modal-install-guide');
+    if (!modal) return;
+    
+    const browser = detectBrowserType();
+    let targetTab = 'tab-chrome';
+    if (browser === 'ios') {
+        targetTab = 'tab-ios';
+    } else if (browser === 'samsung') {
+        targetTab = 'tab-samsung';
+    }
+    
+    switchPWAInstallTab(targetTab);
+    modal.style.display = 'flex';
+}
+
+function handlePWAInstallTrigger() {
+    if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                hidePWAInstallUI();
+            }
+            deferredInstallPrompt = null;
+        }).catch(() => {
+            openPWAInstallGuideModal();
+        });
+    } else {
+        openPWAInstallGuideModal();
+    }
+}
+
+function initPWAInstallEngine() {
+    if (isRunningStandalone()) {
+        hidePWAInstallUI();
+        return;
+    }
+
+    const installBtn = document.getElementById('btn-install-app');
+    if (installBtn) {
+        installBtn.style.display = 'inline-flex';
+        installBtn.onclick = handlePWAInstallTrigger;
+    }
+
+    // Floating banner for mobile visitors (Safari / Samsung / Chrome) if not dismissed
+    const isMobile = window.innerWidth <= 820 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isDismissed = sessionStorage.getItem('dismiss_pwa_banner') === 'true';
+    if (isMobile && !isDismissed) {
+        setTimeout(() => {
+            if (!isRunningStandalone()) {
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner) banner.style.display = 'flex';
+            }
+        }, 1200);
+    }
+
+    const bannerBtn = document.getElementById('btn-pwa-banner-install');
+    if (bannerBtn) {
+        bannerBtn.onclick = handlePWAInstallTrigger;
+    }
+
+    const bannerCloseBtn = document.getElementById('btn-pwa-banner-close');
+    if (bannerCloseBtn) {
+        bannerCloseBtn.onclick = () => {
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) banner.style.display = 'none';
+            sessionStorage.setItem('dismiss_pwa_banner', 'true');
+        };
+    }
+
+    // Modal tabs
+    document.querySelectorAll('.install-tab-btn').forEach(btn => {
+        btn.onclick = () => {
+            switchPWAInstallTab(btn.dataset.target);
+        };
+    });
+
+    const guideCloseBtn = document.getElementById('btn-install-guide-close');
+    const guideOkBtn = document.getElementById('btn-install-guide-ok');
+    const guideModal = document.getElementById('modal-install-guide');
+
+    const closeGuide = () => {
+        if (guideModal) guideModal.style.display = 'none';
+    };
+
+    if (guideCloseBtn) guideCloseBtn.onclick = closeGuide;
+    if (guideOkBtn) guideOkBtn.onclick = closeGuide;
+    if (guideModal) {
+        guideModal.onclick = (e) => {
+            if (e.target === guideModal) closeGuide();
+        };
+    }
+}
+
 // Start system when running on dashboard page
 function initDashboard() {
     checkEnvironment();
     if (document.getElementById('file-list')) {
         refreshFileList();
     }
+    initPWAInstallEngine();
 }
 
 if (document.readyState === 'loading') {
@@ -945,3 +1096,4 @@ if (document.readyState === 'loading') {
 } else {
     initDashboard();
 }
+

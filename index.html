@@ -14,12 +14,14 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css?v=V347_WHIMSICAL_UNIFIED">
     <link rel="stylesheet" href="assets/theme.css?v=V347_WHIMSICAL_UNIFIED">
-    <link rel="stylesheet" href="assets/dashboard.css?v=V370_MOBILE_DASHBOARD_SSOT">
+    <link rel="stylesheet" href="assets/dashboard.css?v=V380_PWA_INSTALL_BUTTON">
     <!-- PWA & Mobile Web App Meta Tags -->
-    <link rel="manifest" href="manifest.json?v=V379_PWA_DASHBOARD">
+    <link rel="manifest" href="manifest.json?v=V380_PWA_INSTALL_BUTTON">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Workspace">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/logo.svg">
     <meta name="theme-color" content="#0e0f17">
     <script>
         // Register Service Worker for PWA Installation
@@ -58,7 +60,12 @@
         </a>
         
         <div class="actions">
-             <div class="gh-wrapper">
+            <!-- PWA Install Button -->
+            <button id="btn-install-app" class="btn-install-app" title="홈 화면에 앱 설치하기" style="display: none;">
+                <span class="material-icons-outlined">install_mobile</span>
+                <span class="install-btn-text">앱 설치</span>
+            </button>
+            <div class="gh-wrapper">
                 <span id="gh-status"></span>
             </div>
         </div>
@@ -185,9 +192,140 @@
         </div>
     </div>
 
+    <!-- PWA Smart Install Floating Banner (Mobile Safari / Samsung / Chrome) -->
+    <div id="pwa-install-banner" class="pwa-install-banner" style="display: none;">
+        <div class="pwa-banner-left">
+            <div class="pwa-banner-icon-box">
+                <img src="assets/logo.svg" class="pwa-banner-logo" alt="Logo" loading="lazy">
+            </div>
+            <div class="pwa-banner-info">
+                <span class="pwa-banner-title">bychoi workspace 앱 설치</span>
+                <span class="pwa-banner-desc">홈 화면에 추가하여 전체화면 앱으로 더 쾌적하게 이용하세요</span>
+            </div>
+        </div>
+        <div class="pwa-banner-right">
+            <button id="btn-pwa-banner-install" class="btn-pwa-install">앱 설치</button>
+            <button id="btn-pwa-banner-close" class="btn-pwa-close" title="닫기">&times;</button>
+        </div>
+    </div>
+
+    <!-- PWA Install Guide Modal (Tailored for iOS Safari, Samsung Internet, Chrome) -->
+    <div id="modal-install-guide" class="modal-overlay" style="display: none;">
+        <div class="modal-card modal-install-card">
+            <div class="modal-header">
+                <div class="modal-title-with-icon">
+                    <span class="material-icons-outlined modal-header-icon">install_mobile</span>
+                    <h3 class="modal-title">스마트폰에 앱(PWA) 설치하기</h3>
+                </div>
+                <button id="btn-install-guide-close" class="modal-close-icon">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Browser Tabs -->
+                <div class="install-tabs">
+                    <button class="install-tab-btn" data-target="tab-ios">
+                        <span class="material-icons-outlined">apple</span>
+                        <span>사파리 (iOS)</span>
+                    </button>
+                    <button class="install-tab-btn" data-target="tab-samsung">
+                        <span class="material-icons-outlined">smartphone</span>
+                        <span>삼성 인터넷</span>
+                    </button>
+                    <button class="install-tab-btn" data-target="tab-chrome">
+                        <span class="material-icons-outlined">public</span>
+                        <span>Chrome / 기타</span>
+                    </button>
+                </div>
+
+                <!-- Tab 1: iOS Safari -->
+                <div id="tab-ios" class="install-tab-content">
+                    <div class="install-browser-badge badge-ios">Apple iOS Safari 가이드</div>
+                    <p class="install-guide-lead">Safari는 Apple 정책상 자동 설치 창이 제공되지 않으므로, 아래 3단계로 간편하게 홈 화면에 추가할 수 있습니다.</p>
+                    <div class="install-steps">
+                        <div class="install-step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-detail">
+                                <span class="step-title">사파리 하단 바의 <strong>[공유]</strong> 버튼 터치</span>
+                                <span class="step-sub">화면 맨 하단 중앙/우측의 네모에 위로 향한 화살표 아이콘 <span class="material-icons-outlined inline-icon">ios_share</span> 을 터치합니다.</span>
+                            </div>
+                        </div>
+                        <div class="install-step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-detail">
+                                <span class="step-title">공유 메뉴에서 <strong>[홈 화면에 추가]</strong> 선택</span>
+                                <span class="step-sub">메뉴 시트를 아래로 살짝 스크롤하여 <span class="material-icons-outlined inline-icon">add_box</span> <strong>홈 화면에 추가</strong>를 선택합니다.</span>
+                            </div>
+                        </div>
+                        <div class="install-step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-detail">
+                                <span class="step-title">우측 상단 <strong>[추가]</strong> 터치 완료</span>
+                                <span class="step-sub">바탕화면에 전용 앱 아이콘이 생성되며, 실행 시 주소창 없는 <strong>100% 전체화면 앱</strong>으로 동작합니다.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Samsung Internet -->
+                <div id="tab-samsung" class="install-tab-content">
+                    <div class="install-browser-badge badge-samsung">삼성 인터넷 (Samsung Internet) 가이드</div>
+                    <p class="install-guide-lead">삼성 인터넷에서는 주소창 설치 버튼 또는 하단 메뉴를 통해 바로 설치할 수 있습니다.</p>
+                    <div class="install-steps">
+                        <div class="install-step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-detail">
+                                <span class="step-title">상단 주소창 우측 <strong>[ ⤓ 다운로드 ]</strong> 터치</span>
+                                <span class="step-sub">주소창 우측에 나타나는 다운로드/설치 아이콘을 터치하면 즉시 앱이 설치됩니다.</span>
+                            </div>
+                        </div>
+                        <div class="install-step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-detail">
+                                <span class="step-title">또는 우측 하단 메뉴 <strong>[ ≡ ]</strong> ➔ <strong>[현재 페이지 추가]</strong></span>
+                                <span class="step-sub">메뉴에서 [현재 페이지 추가]를 누른 후 <strong>[홈 화면]</strong>을 선택하시면 앱으로 등록됩니다.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Chrome / Others -->
+                <div id="tab-chrome" class="install-tab-content">
+                    <div class="install-browser-badge badge-chrome">Google Chrome / Chromium 가이드</div>
+                    <p class="install-guide-lead">Chrome 브라우저에서 설치 팝업이 뜨지 않을 때는 수동으로 간편하게 설치할 수 있습니다.</p>
+                    <div class="install-steps">
+                        <div class="install-step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-detail">
+                                <span class="step-title">우측 상단 메뉴 <strong>[ ⋮ ]</strong> 터치</span>
+                                <span class="step-sub">브라우저 우측 상단의 더보기(점 3개) 버튼을 엽니다.</span>
+                            </div>
+                        </div>
+                        <div class="install-step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-detail">
+                                <span class="step-title"><strong>[홈 화면에 추가]</strong> 또는 <strong>[앱 설치]</strong> 선택</span>
+                                <span class="step-sub">메뉴 목록에서 [앱 설치]를 선택하고 확인을 누르면 전용 앱으로 설치 완료됩니다.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="install-benefit-box">
+                    <span class="material-icons-outlined benefit-icon">stars</span>
+                    <div class="benefit-text">
+                        <strong>앱으로 실행 시 혜택</strong>
+                        <span>상단 브라우저 주소창과 하단 바가 완전히 사라져 <strong>몰입형 전체화면</strong>으로 작업할 수 있습니다.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-install-guide-ok" class="btn-primary" style="min-width: 120px;">확인 완료</button>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/templates.js?v=V347_WHIMSICAL_UNIFIED"></script>
     <script src="assets/vctrl_clipboard.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/app.js?v=V347_WHIMSICAL_UNIFIED"></script>
-    <script src="assets/dashboard.js?v=V347_WHIMSICAL_UNIFIED"></script>
+    <script src="assets/dashboard.js?v=V380_PWA_INSTALL_BUTTON"></script>
 </body>
 </html>

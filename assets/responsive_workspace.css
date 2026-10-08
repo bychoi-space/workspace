@@ -575,16 +575,16 @@ body.res-narrow #dock-page-indicator {
         top: calc(10px + env(safe-area-inset-top, 0px)) !important;
         left: 12px !important;
         right: auto !important;
-        height: 38px !important;
-        min-height: 38px !important;
-        max-width: calc(100vw - 24px) !important;
-        background: rgba(15, 23, 42, 0.82) !important;
+        height: 36px !important;
+        min-height: 36px !important;
+        max-width: calc(100vw - 120px) !important;
+        background: rgba(15, 23, 42, 0.88) !important;
         backdrop-filter: blur(18px) !important;
         -webkit-backdrop-filter: blur(18px) !important;
         border: 1px solid rgba(255, 255, 255, 0.16) !important;
-        border-radius: 20px !important;
-        padding: 3px 14px 3px 4px !important;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+        border-radius: 18px !important;
+        padding: 3px 12px 3px 3px !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45) !important;
         z-index: 999990 !important;
         box-sizing: border-box !important;
         display: flex !important;
@@ -602,10 +602,10 @@ body.res-narrow #dock-page-indicator {
     }
 
     .toolbar #btn-back {
-        width: 30px !important;
-        height: 30px !important;
-        min-width: 30px !important;
-        border-radius: 15px !important;
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+        border-radius: 14px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -623,7 +623,8 @@ body.res-narrow #dock-page-indicator {
     }
 
     .toolbar #btn-back .material-icons-outlined {
-        font-size: 18px !important;
+        font-size: 17px !important;
+        line-height: 1 !important;
     }
 
     .brand-logo,
@@ -637,12 +638,13 @@ body.res-narrow #dock-page-indicator {
         font-size: 12px !important;
         font-weight: 600 !important;
         color: #f1f5f9 !important;
-        max-width: calc(100vw - 220px) !important;
+        max-width: calc(100vw - 170px) !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
         flex-shrink: 1 !important;
         min-width: 0 !important;
+        line-height: 1.2 !important;
     }
 
     /* Completely eliminate desktop groups and save/more actions on mobile */
@@ -905,25 +907,28 @@ body.touch-capable .stage {
 .v4-frame-switcher {
     display: none;
     position: fixed !important;
-    top: calc(56px + env(safe-area-inset-top, 0px)) !important;
-    right: 14px !important;
+    top: calc(10px + env(safe-area-inset-top, 0px)) !important;
+    right: 12px !important;
     left: auto !important;
     bottom: auto !important;
     transform: none !important;
     z-index: 999980 !important;
-    background: rgba(18, 21, 28, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 229, 255, 0.15);
-    border-radius: 20px;
-    padding: 3px 4px;
-    align-items: center;
-    gap: 3px;
-    user-select: none;
-    -webkit-user-select: none;
-    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), top 0.25s ease;
-    pointer-events: auto;
+    height: 36px !important;
+    min-height: 36px !important;
+    box-sizing: border-box !important;
+    background: rgba(15, 23, 42, 0.88) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 10px rgba(0, 229, 255, 0.1) !important;
+    border-radius: 18px !important;
+    padding: 3px 4px !important;
+    align-items: center !important;
+    gap: 3px !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    pointer-events: auto !important;
 }
 
 /* Smart Frame Switcher is shown whenever responsive frame columns exist */
@@ -932,77 +937,75 @@ body.touch-capable .stage {
 }
 
 body.res-narrow .v4-frame-switcher {
-    top: calc(7px + env(safe-area-inset-top, 0px)) !important;
-    right: 8px !important;
-    left: auto !important;
-    bottom: auto !important;
-    transform: none !important;
-    opacity: 0.96 !important;
-    padding: 2px 3px !important;
-    gap: 2px !important;
-    pointer-events: auto !important;
-}
-
-body.res-narrow .v4-frame-switch-btn {
-    height: 26px !important;
-    padding: 0 7px !important;
-    font-size: 11px !important;
+    top: calc(10px + env(safe-area-inset-top, 0px)) !important;
+    right: 12px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 3px 4px !important;
     gap: 3px !important;
 }
 
+body.res-narrow .v4-frame-switch-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    padding: 0 !important;
+    border-radius: 14px !important;
+}
+
 body.res-narrow .v4-frame-switch-btn .material-icons-outlined {
-    font-size: 14px !important;
+    font-size: 17px !important;
 }
 
 body.zen-mode .v4-frame-switcher,
 body.fullscreen-mode .v4-frame-switcher {
-    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    top: calc(10px + env(safe-area-inset-top, 0px)) !important;
     right: 12px !important;
-    left: auto !important;
-    bottom: auto !important;
-    transform: none !important;
+    height: 36px !important;
+    min-height: 36px !important;
     opacity: 0.96 !important;
     pointer-events: auto !important;
 }
 
 .v4-frame-switch-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    height: 30px;
-    padding: 0 10px;
-    border-radius: 15px;
-    border: none;
-    background: transparent;
-    color: #94a3b8;
-    font-size: 11.5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    outline: none;
-    white-space: nowrap;
-    touch-action: manipulation;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    padding: 0 !important;
+    border-radius: 14px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    color: #94a3b8 !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    outline: none !important;
+    flex-shrink: 0 !important;
+    touch-action: manipulation !important;
 }
 
 .v4-frame-switch-btn .material-icons-outlined {
-    font-size: 16px;
-    color: inherit;
+    font-size: 17px !important;
+    line-height: 1 !important;
+    color: inherit !important;
 }
 
 .v4-frame-switch-btn:hover {
-    color: #e2e8f0;
-    background: rgba(255, 255, 255, 0.08);
+    color: #f1f5f9 !important;
+    background: rgba(255, 255, 255, 0.08) !important;
 }
 
 .v4-frame-switch-btn:active {
-    transform: scale(0.96);
+    transform: scale(0.92) !important;
 }
 
 .v4-frame-switch-btn.active {
-    background: rgba(0, 229, 255, 0.18);
-    color: #00e5ff;
-    box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.45);
+    background: rgba(0, 229, 255, 0.16) !important;
+    color: #00e5ff !important;
+    border-color: rgba(0, 229, 255, 0.45) !important;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.25) !important;
 }
 
 /* ==========================================================================
@@ -1093,9 +1096,18 @@ body.fullscreen-mode #dock-page-indicator {
     transform: translateX(-50%) translateY(0) !important;
 }
 
+.v4-rotation-toast {
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    background: rgba(15, 23, 42, 0.94) !important;
+    border: 1px solid rgba(0, 229, 255, 0.4) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 16px rgba(0, 229, 255, 0.25) !important;
+}
+
 body.zen-mode .v4-frame-switcher {
-    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    top: calc(10px + env(safe-area-inset-top, 0px)) !important;
     right: 12px !important;
+    height: 36px !important;
+    min-height: 36px !important;
     left: auto !important;
     bottom: auto !important;
     transform: none !important;

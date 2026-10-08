@@ -131,17 +131,14 @@
                 switcher.className = 'v4-frame-switcher';
                 switcher.style.display = 'none';
                 switcher.innerHTML = 
-                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-mobile" data-focus="mobile" title="모바일 화면 핏">' +
+                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-mobile" data-focus="mobile" title="모바일 핏 (세로형)">' +
                         '<span class="material-icons-outlined">smartphone</span>' +
-                        '<span>모바일 핏</span>' +
                     '</button>' +
-                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-pc" data-focus="pc" title="PC 웹 화면 핏">' +
+                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-pc" data-focus="pc" title="PC 핏 (가로형)">' +
                         '<span class="material-icons-outlined">desktop_windows</span>' +
-                        '<span>PC 핏</span>' +
                     '</button>' +
-                    '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-full" data-focus="full" title="전체 캔버스 보기">' +
+                    '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-full" data-focus="full" title="전체 화면 핏">' +
                         '<span class="material-icons-outlined">aspect_ratio</span>' +
-                        '<span>전체</span>' +
                     '</button>';
                 document.body.appendChild(switcher);
             }
@@ -953,22 +950,31 @@
                 var doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
                 if (!doc) return { mobile: null, pc: null, hasMobile: false, hasPc: false, doc: null };
 
-                var mobileEl = doc.querySelector('.frame-column.mobile-column:not(.pc-column)') || 
-                               doc.querySelector('.mobile-column') || 
-                               doc.querySelector('.mobile-column-left') || 
-                               doc.querySelector('.mobile-frame') || 
-                               doc.querySelector('.mobile-browser-frame') || 
-                               doc.querySelector('.mobile-content-inner') ||
-                               doc.querySelector('[data-frame="mobile"]');
-
+                // Exclusion: Multi-mobile comparison screens (e.g. Dual Mobile Compare: Maximum Case vs Minimum Case)
+                var allMobileFrames = doc.querySelectorAll('.mobile-frame, .mobile-browser-frame');
                 var pcEl = doc.querySelector('.frame-column.pc-column:not(.mobile-column)') || 
                            doc.querySelector('.pc-column') || 
                            doc.querySelector('.mobile-column-right') || 
                            doc.querySelector('.pc-browser-frame') || 
                            doc.querySelector('.pc-frame') || 
                            doc.querySelector('.full-pc-page') || 
-                           doc.querySelector('.pc-content-inner') ||
+                           doc.querySelector('.pc-content-inner') || 
                            doc.querySelector('[data-frame="pc"]');
+
+                var isCompareScreen = !!(doc.querySelector('.mobile-compare-page, .dual-mobile-container, .mobile-compare-container') || (allMobileFrames.length > 1 && !pcEl));
+                if (isCompareScreen) {
+                    return { mobile: null, pc: null, hasMobile: false, hasPc: false, doc: doc };
+                }
+
+                var mobileEl = (allMobileFrames.length === 1 || doc.querySelector('.frame-column.mobile-column'))
+                    ? (doc.querySelector('.frame-column.mobile-column:not(.pc-column)') || 
+                       doc.querySelector('.mobile-column') || 
+                       doc.querySelector('.mobile-column-left') || 
+                       doc.querySelector('.mobile-frame') || 
+                       doc.querySelector('.mobile-browser-frame') || 
+                       doc.querySelector('.mobile-content-inner') || 
+                       doc.querySelector('[data-frame="mobile"]'))
+                    : null;
 
                 return {
                     mobile: mobileEl,
@@ -1069,6 +1075,11 @@
             if (type === 'full') {
                 this._focusLockedX = null;
                 this._focusLockedY = null;
+                try {
+                    if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
+                        window.screen.orientation.unlock();
+                    }
+                } catch (_) {}
                 if (window.centerView) window.centerView(true);
                 this.syncDockZoom();
                 return;
@@ -1113,6 +1124,27 @@
             var cw = DOM.canvas.clientWidth;
             var ch = DOM.canvas.clientHeight;
             if (cw <= 0 || ch <= 0) return;
+
+            // Option A: Smart orientation control & rotation guidance
+            if (type === 'pc') {
+                try {
+                    if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                        window.screen.orientation.lock('landscape').catch(function() {});
+                    }
+                } catch (_) {}
+                if (ch > cw) {
+                    this.showRotationToast('기기를 가로로 회전하면 PC 화면이 100% 꽉 차게 보입니다', 'screen_rotation');
+                }
+            } else if (type === 'mobile') {
+                try {
+                    if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                        window.screen.orientation.lock('portrait').catch(function() {});
+                    }
+                } catch (_) {}
+                if (cw > ch && (cw <= 960 || (ch <= 600 && cw <= 1050))) {
+                    this.showRotationToast('기기를 세로로 회전하면 모바일 화면이 100% 꽉 차게 보입니다', 'screen_rotation');
+                }
+            }
 
             // Fit the frame cleanly on screen:
             // "사용자가 의도적으로 [모바일핏] 을 클릭하면, 그냥 '세로형태' 로만 바로 보여지게 해주면 돼.
@@ -1248,6 +1280,23 @@
             } else {
                 toast.classList.remove('show');
             }
+        },
+
+        showRotationToast: function(message, iconName) {
+            var toast = document.getElementById('v4-rotation-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'v4-rotation-toast';
+                toast.className = 'v4-zen-toast v4-rotation-toast';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = '<span class="material-icons-outlined" style="font-size: 16px; color: #00e5ff;">' + (iconName || 'screen_rotation') + '</span>' +
+                              '<span>' + message + '</span>';
+            clearTimeout(this._rotationToastTimer);
+            toast.classList.add('show');
+            this._rotationToastTimer = setTimeout(function() {
+                toast.classList.remove('show');
+            }, 2600);
         },
 
         handleSingleTap: function() {

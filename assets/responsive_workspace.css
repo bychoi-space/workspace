@@ -968,7 +968,7 @@ body.fullscreen-mode .v4-frame-switcher {
 }
 
 .v4-frame-switch-btn {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center !important;
     justify-content: center !important;
     width: 28px !important;
@@ -985,6 +985,11 @@ body.fullscreen-mode .v4-frame-switcher {
     flex-shrink: 0 !important;
     touch-action: manipulation !important;
     overflow: hidden !important;
+}
+
+.v4-frame-switch-btn.is-hidden,
+.v4-frame-switch-btn[style*="display: none"] {
+    display: none !important;
 }
 
 .v4-frame-switch-btn span:not(.material-icons-outlined) {

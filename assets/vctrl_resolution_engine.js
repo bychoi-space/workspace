@@ -131,10 +131,10 @@
                 switcher.className = 'v4-frame-switcher';
                 switcher.style.display = 'none';
                 switcher.innerHTML = 
-                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-mobile" data-focus="mobile" title="모바일 핏 (세로형)">' +
+                    '<button type="button" class="v4-frame-switch-btn is-hidden" id="btn-focus-mobile" data-focus="mobile" title="모바일 핏 (세로형)" style="display: none !important;">' +
                         '<span class="material-icons-outlined">smartphone</span>' +
                     '</button>' +
-                    '<button type="button" class="v4-frame-switch-btn" id="btn-focus-pc" data-focus="pc" title="PC 핏 (가로형)">' +
+                    '<button type="button" class="v4-frame-switch-btn is-hidden" id="btn-focus-pc" data-focus="pc" title="PC 핏 (가로형)" style="display: none !important;">' +
                         '<span class="material-icons-outlined">desktop_windows</span>' +
                     '</button>' +
                     '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-full" data-focus="full" title="전체 화면 핏">' +
@@ -1028,22 +1028,31 @@
 
             if (!hasAny) {
                 switcher.classList.remove('is-available');
-                switcher.style.display = 'none';
+                switcher.style.setProperty('display', 'none', 'important');
                 this.currentFocus = 'full';
                 this.updateFocusButtonUI('full');
                 return;
             }
 
             switcher.classList.add('is-available');
-            switcher.style.display = 'flex';
+            switcher.style.setProperty('display', 'flex', 'important');
 
             var btnMobile = document.getElementById('btn-focus-mobile');
             var btnPc = document.getElementById('btn-focus-pc');
             var btnFull = document.getElementById('btn-focus-full');
 
-            if (btnMobile) btnMobile.style.display = frames.hasMobile ? 'inline-flex' : 'none';
-            if (btnPc) btnPc.style.display = frames.hasPc ? 'inline-flex' : 'none';
-            if (btnFull) btnFull.style.display = 'inline-flex';
+            if (btnMobile) {
+                btnMobile.style.setProperty('display', frames.hasMobile ? 'inline-flex' : 'none', 'important');
+                btnMobile.classList.toggle('is-hidden', !frames.hasMobile);
+            }
+            if (btnPc) {
+                btnPc.style.setProperty('display', frames.hasPc ? 'inline-flex' : 'none', 'important');
+                btnPc.classList.toggle('is-hidden', !frames.hasPc);
+            }
+            if (btnFull) {
+                btnFull.style.setProperty('display', 'inline-flex', 'important');
+                btnFull.classList.remove('is-hidden');
+            }
 
             // Point 2: The default is UNCONDITIONALLY 'full' unless user explicitly clicked a button!
             var chosenFocus = this._userSelectedFocus || 'full';

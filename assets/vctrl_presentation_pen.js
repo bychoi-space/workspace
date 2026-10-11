@@ -11,6 +11,7 @@
     let canvas = null;
     let ctx = null;
     
+    let lastMousePos = null;
     let laserPoints = []; // {x, y, age, maxAge}
     let penStrokes = [];  // [[{x, y}, ...]]
     let currentStroke = null;

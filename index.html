@@ -16,7 +16,14 @@
     <link rel="stylesheet" href="assets/theme.css?v=V347_WHIMSICAL_UNIFIED">
     <link rel="stylesheet" href="assets/dashboard.css?v=V390_HIDE_NEW_PROJECT_MOBILE">
     <!-- PWA & Mobile Web App Meta Tags -->
-    <link rel="manifest" href="manifest.json?v=V381_PWA_PNG_ICONS">
+    <script>
+        if (window.location.protocol.startsWith('http')) {
+            var manifestLink = document.createElement('link');
+            manifestLink.rel = 'manifest';
+            manifestLink.href = 'manifest.json?v=V381_PWA_PNG_ICONS';
+            document.head.appendChild(manifestLink);
+        }
+    </script>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Workspace">
@@ -35,8 +42,8 @@
             window.dispatchEvent(new CustomEvent('pwa-prompt-ready'));
         });
 
-        // Register Service Worker for PWA Installation
-        if ('serviceWorker' in navigator) {
+        // Register Service Worker for PWA Installation (Strictly guarded for HTTP/HTTPS environments)
+        if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('sw.js?v=V381_PWA_PNG_ICONS').catch(function() {});
             });

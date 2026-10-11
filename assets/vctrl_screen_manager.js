@@ -344,8 +344,9 @@ window.handleEditScreen = async function(fileName) {
                 updatedAt: new Date().toISOString()
             };
             
-            if (typeof window.saveProjectMetadata === 'function') {
-                const success = await window.saveProjectMetadata(state.currentProject, state.projectMetadata);
+            const saveMetaFn = window.saveProjectMetadata || (typeof saveProjectMetadata === 'function' ? saveProjectMetadata : null);
+            if (typeof saveMetaFn === 'function') {
+                const success = await saveMetaFn(state.currentProject, state.projectMetadata);
                 if (success) {
                     if (editModal) editModal.classList.remove('active');
                     location.reload(); 

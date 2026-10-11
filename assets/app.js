@@ -388,6 +388,7 @@ async function saveProjectMetadata(project, metadata, statusCallback) {
     const content = JSON.stringify(metadata, null, 2);
     return await uploadToProject(project, 'metadata.json', content, statusCallback);
 }
+window.saveProjectMetadata = saveProjectMetadata;
 
 async function fetchProjectHistory(project) {
     if (!project) return [];

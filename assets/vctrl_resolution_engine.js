@@ -202,28 +202,22 @@
                 document.body.appendChild(sheet);
             }
 
-            // Inject Mobile More Button into Toolbar if not present
-            var toolbarActions = document.querySelector('.toolbar .actions');
-            if (toolbarActions && !document.getElementById('btn-toolbar-mobile-more')) {
-                var moreBtn = document.createElement('button');
-                moreBtn.type = 'button';
-                moreBtn.id = 'btn-toolbar-mobile-more';
-                moreBtn.className = 'btn-toolbar-mobile-more';
-                moreBtn.style.display = 'none';
-                moreBtn.title = '더보기 메뉴';
-                moreBtn.innerHTML = '<span class="material-icons-outlined">more_vert</span>';
-                toolbarActions.appendChild(moreBtn);
-            }
+
         },
 
         getResolutionTier: function() {
             var w = window.innerWidth;
             var h = window.innerHeight;
             var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            var isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
 
-            // Any smartphone or tablet in landscape (height <= 600px and width <= 1050px)
-            // or any narrow screen (width <= 960px) or touch device with height <= 550px is treated as 'narrow'!
-            if (w <= 960 || (h <= 600 && w <= 1050) || (isTouch && h <= 550)) {
+            // Plan A (Unified Read-Only Viewer Mode for Mobile & Tablet):
+            // All Tablet PCs (iPad, Galaxy Tab, etc.) and Mobile touch devices run in 100% Read-Only Viewer Mode ('narrow')!
+            // 1. Any narrow window (w <= 960px)
+            // 2. Mobile landscape (h <= 600px && w <= 1050px)
+            // 3. Tablet & Mobile touch devices (isTouch with width <= 1366px, or coarse pointer without hover)
+            var isTabletOrTouch = isTouch && (isCoarse || w <= 1366);
+            if (w <= 960 || (h <= 600 && w <= 1050) || isTabletOrTouch) {
                 return 'narrow';
             }
             if (w <= BREAKPOINTS.COMPACT_MAX) return 'compact';
@@ -325,6 +319,16 @@
             var btnCrisp = document.getElementById('dock-btn-crisp');
             var btnScreens = document.getElementById('dock-btn-screens');
             var btnZenExit = document.getElementById('v4-zen-exit-pill');
+            if (btnZenExit) {
+                btnZenExit.addEventListener('click', function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    self.toggleZenMode(false);
+                });
+                btnZenExit.addEventListener('touchend', function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    self.toggleZenMode(false);
+                });
+            }
 
             if (btnPrev) {
                 btnPrev.addEventListener('click', function(e) {

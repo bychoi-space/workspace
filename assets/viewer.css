@@ -152,7 +152,10 @@
 /* ===== Fullscreen Mode ===== */
 body.fullscreen-mode .toolbar,
 body.fullscreen-mode .header-metadata,
-body.fullscreen-mode .sidebar-right {
+body.fullscreen-mode .sidebar-left,
+body.fullscreen-mode #sidebar-left,
+body.fullscreen-mode .sidebar-right,
+body.fullscreen-mode #sidebar-right {
     display: none !important;
 }
 body.fullscreen-mode #workspace-view {
@@ -164,42 +167,10 @@ body.fullscreen-mode .center-content {
 body.fullscreen-mode .canvas {
     height: 100vh !important;
 }
-/* Floating exit button */
-#btn-fullscreen-exit {
-    display: none;
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 99999;
-    padding: 8px 18px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    background: rgba(30, 33, 40, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    color: #f8fafc;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: var(--font-main, 'Pretendard Variable', sans-serif);
-    cursor: pointer;
-    gap: 6px;
-    align-items: center;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    transform: translateY(-8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-#btn-fullscreen-exit span { font-size: 16px; }
-#btn-fullscreen-exit:hover {
-    background: rgba(99, 102, 241, 0.6);
-    border-color: rgba(99, 102, 241, 0.5);
-    transform: translateY(-8px) scale(1.04);
-    box-shadow: 0 6px 28px rgba(99, 102, 241, 0.35);
-}
+/* Floating exit button (Deprecated: Unified with #v4-zen-exit-pill to prevent overlap) */
+#btn-fullscreen-exit,
 body.fullscreen-mode #btn-fullscreen-exit {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0);
+    display: none !important;
 }
 
 /* Checkerboard pattern for transparency (PNG style) */

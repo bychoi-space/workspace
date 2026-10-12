@@ -33,8 +33,10 @@
 /* Default: Hidden on Desktop (> 960px & height > 600px) */
 #dock-btn-prev,
 #dock-btn-next,
-#dock-page-indicator {
-    display: none;
+#dock-page-indicator,
+.btn-toolbar-mobile-more,
+#btn-toolbar-mobile-more {
+    display: none !important;
 }
 
 /* Left Arrow Button: Vertically centered in Left Screen Margin */
@@ -517,9 +519,9 @@ body.res-narrow #dock-page-indicator {
 }
 
 /* ==========================================================================
-   5. Tier 3: Narrow Window & Mobile/Tablet Portrait & Mobile Landscape
+   5. Tier 3: Narrow Window & Mobile/Tablet Portrait & Mobile Landscape & Tablet Coarse Pointer
    ========================================================================== */
-@media (max-width: 960px), (max-height: 600px) and (max-width: 1050px) {
+@media (max-width: 960px), (max-height: 600px) and (max-width: 1050px), (pointer: coarse) and (max-width: 1366px) {
     /* Strict Viewport Lock: Zero outer page scrolling */
     html, body {
         position: fixed !important;
@@ -881,14 +883,30 @@ body.res-narrow .btn-global-save,
 body.res-narrow #btn-global-save,
 body.res-narrow .btn-toolbar-mobile-more,
 body.res-narrow #btn-toolbar-mobile-more,
-body.res-narrow #v4-bottom-sheet,
-body.res-narrow #v4-bottom-sheet-backdrop,
-body.res-narrow #v4-zen-exit-pill,
 body.res-narrow #presentation-pen-canvas,
 body.res-narrow #presentation-pen-tooltip,
 body.touch-capable #presentation-pen-canvas,
 body.touch-capable #presentation-pen-tooltip,
+body.touch-capable .sidebar-left,
+body.touch-capable #sidebar-left,
+body.touch-capable .sidebar-right,
+body.touch-capable #sidebar-right,
+body.touch-capable #floating-inspector-card,
+body.touch-capable .btn-global-save,
+body.touch-capable #btn-global-save,
 .v4-zen-toast {
+    display: none !important;
+}
+
+/* Zen Mode & Fullscreen Mode: Strict total elimination of sidebars */
+body.zen-mode .sidebar-left,
+body.zen-mode #sidebar-left,
+body.zen-mode .sidebar-right,
+body.zen-mode #sidebar-right,
+body.fullscreen-mode .sidebar-left,
+body.fullscreen-mode #sidebar-left,
+body.fullscreen-mode .sidebar-right,
+body.fullscreen-mode #sidebar-right {
     display: none !important;
 }
 
@@ -1204,7 +1222,8 @@ body.fullscreen-mode .canvas {
     box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3);
 }
 
-body.zen-mode .v4-zen-exit-pill {
+body.zen-mode .v4-zen-exit-pill,
+body.fullscreen-mode .v4-zen-exit-pill {
     display: inline-flex !important;
 }
 

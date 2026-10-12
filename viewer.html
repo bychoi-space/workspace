@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <link rel="stylesheet" href="assets/viewer.css?v=V371_INSPECTOR_RESTORATION">
+    <link rel="stylesheet" href="assets/viewer.css?v=V393_TABLET_VIEWER_AND_FULLSCREEN_FIX">
     <link rel="stylesheet" href="assets/ui_library.css?v=V371_INSPECTOR_RESTORATION">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
@@ -42,7 +42,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
     <meta name="theme-color" content="#12151c">
 
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V391_MOBILE_RESTORE_FULLSCREEN_CLEAN">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V393_TABLET_VIEWER_AND_FULLSCREEN_FIX">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -186,9 +186,6 @@
                 <span>PDF 다운로드</span>
             </button>
             <button id="btn-global-save" class="btn-accent btn-global-save">전체 저장</button>
-            <button type="button" id="btn-toolbar-mobile-more" class="btn-toolbar-mobile-more" title="더보기 메뉴">
-                <span class="material-icons-outlined">more_vert</span>
-            </button>
             <div class="toolbar-divider action-divider"></div>
             <button class="panel-toggle-btn header-sidebar-toggle" id="btn-toggle-right" onclick="window.toggleSidebar('right')" title="우측 패널 접기/펼치기 (R)">
                 <span class="material-icons-outlined">chevron_right</span>
@@ -665,8 +662,8 @@
         </div>
     </div>
 
-    <!-- Fullscreen Exit Button (floating, visible only in fullscreen mode) -->
-    <button id="btn-fullscreen-exit" title="전체보기 취소 (F / ESC)">
+    <!-- Fullscreen Exit Button (Deprecated: Unified with #v4-zen-exit-pill) -->
+    <button id="btn-fullscreen-exit" style="display: none !important;" title="전체보기 취소 (F / ESC)">
         <span class="material-icons-outlined">fullscreen_exit</span>
         전체보기 취소
     </button>
@@ -726,10 +723,10 @@
         </button>
     </div>
 
-    <!-- Zen Mode Exit Floating Pill -->
-    <button type="button" id="v4-zen-exit-pill" class="v4-zen-exit-pill" title="화면 UI 복원 (단축키: Esc 또는 탭)">
-        <span class="material-icons-outlined" style="font-size:15px;">fullscreen_exit</span>
-        <span>UI 복원</span>
+    <!-- Zen / Fullscreen Mode Exit Floating Pill (Unified SSOT) -->
+    <button type="button" id="v4-zen-exit-pill" class="v4-zen-exit-pill" title="전체화면 종료 (단축키: Esc 또는 탭)">
+        <span class="material-icons-outlined" style="font-size:15px; color:#00e5ff;">fullscreen_exit</span>
+        <span>전체화면 종료</span>
     </button>
 
     <!-- Mobile Floating Screen Navigation Arrows & Page Indicator (Direct Body Layer) -->
@@ -859,6 +856,6 @@
     <script src="assets/inspector/inspector_admin_settings.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_table.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_popup.js?v=V361_POPUP_INSPECTOR"></script>
-    <script src="assets/vctrl_resolution_engine.js?v=V391_MOBILE_RESTORE_FULLSCREEN_CLEAN"></script>
+    <script src="assets/vctrl_resolution_engine.js?v=V393_TABLET_VIEWER_AND_FULLSCREEN_FIX"></script>
 </body>
 </html>

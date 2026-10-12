@@ -762,8 +762,8 @@ body {
     }
 }
 
-/* Mobile Viewports (<= 768px) */
-@media (max-width: 768px) {
+/* Mobile & Tablet Viewports (<= 768px, or touch coarse pointer <= 1366px) */
+@media (max-width: 768px), (pointer: coarse) and (max-width: 1366px) {
     body {
         height: 100vh;
         height: 100dvh;

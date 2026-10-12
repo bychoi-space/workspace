@@ -20,7 +20,7 @@
       "description": [],
       "connectors": [],
       "version": 0.2,
-      "screenDesc": "Front UI 개선의 6대 유저 경험 효과 (인지 피로 감소, 시각적 감성 몰입, 실수 방지, 초고속 시간 절약, 개인화 딜라이트, 모바일 썸존 접근성 & 전용 Animated WebP)",
+      "screenDesc": "Front UI 개선의 6대 유저 경험 효과 (인지 피로 감소, 구매 불안감 해소, 실수 방지, 초고속 시간 절약, 개인화 딜라이트, 모바일 썸존 접근성 & 전용 Animated WebP)",
       "defaultTab": "editor"
     },
     "03_Admin_System_Development_Roadmap_900.html": {
@@ -69,7 +69,7 @@
     "06_Admin_System_Core_Value_Impact_900.html": {
       "title": "Admin 리팩토링 기대효과",
       "type": "architecture",
-      "updatedAt": "2026-10-12T00:53:54.646Z",
+      "updatedAt": "2026-10-12T01:02:59.463Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -102,7 +102,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-10-12 09:53:54",
+  "updated": "2026-10-12 10:02:59",
   "version": 0.2,
   "period": ""
 }

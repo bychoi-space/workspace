@@ -104,15 +104,33 @@
 </head>
 <body class="dark-mode">
     <div id="debug-console"></div>
-    <!-- Premium Loading Screen Overlay -->
+    <!-- Premium Loading Screen Overlay (Adaptive for PC, Tablet & Mobile) -->
     <div id="loading-overlay" class="loading-overlay">
-        <div class="loading-spinner-wrapper">
-            <span class="material-icons-outlined loading-spinner-icon">sync</span>
+        <div class="loading-ambient-glow"></div>
+        <div class="loading-emblem-container">
+            <!-- Dual-Orbit Precision Rings for PC/Tablet (Condensed to single pulse on mobile) -->
+            <div class="orbit-ring orbit-ring-outer"></div>
+            <div class="orbit-ring orbit-ring-inner"></div>
+            <!-- Central Emblem Icon / Core Pulse -->
+            <div class="orbit-core-emblem">
+                <img src="assets/logo.svg" class="loading-core-logo" alt="Logo">
+            </div>
+            <!-- Legacy fallback icon wrapper for 100% CSS backward compatibility -->
+            <div class="loading-spinner-wrapper" style="display: none;">
+                <span class="material-icons-outlined loading-spinner-icon">sync</span>
+            </div>
         </div>
+        
         <div class="loading-bar-container">
-            <div class="loading-bar-progress"></div>
+            <div class="loading-bar-progress">
+                <div class="loading-bar-glow-head"></div>
+            </div>
         </div>
-        <div class="loading-text">Loading Project</div>
+        
+        <div class="loading-text-wrapper">
+            <div class="loading-text" id="loading-text-display">Loading Project</div>
+            <div class="loading-subtext" id="loading-subtext-display">Connecting Workspace Engine...</div>
+        </div>
     </div>
 
     <header class="toolbar">

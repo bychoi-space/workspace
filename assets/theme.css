@@ -697,11 +697,19 @@ body {
    4. Premium Loading Overlay & Screen Transition Progress Bar (Unified SSOT)
    ========================================================================== */
 .loading-overlay, #global-loader {
-    background: rgba(14, 15, 23, 0.82) !important;
+    background: rgba(11, 13, 20, 0.85) !important;
     backdrop-filter: blur(20px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     z-index: 10000 !important;
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s !important;
+    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease, visibility 0.45s !important;
+}
+
+.loading-overlay.fade-out {
+    opacity: 0 !important;
+    transform: scale(1.03) !important;
+    filter: blur(8px) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 .save-overlay {

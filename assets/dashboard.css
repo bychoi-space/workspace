@@ -458,21 +458,65 @@ body {
     font-size: 13px !important;
 }
 
-/* Loading Overlay and Animations */
+/* ==========================================================================
+   Loading Overlay, Nano Progress Line, and Cinematic Splash System
+   ========================================================================== */
+
+/* Top Slim Nano-Progress Bar (Zero-interference data loading) */
+.nano-progress-line,
+#nano-progress-line {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, var(--accent, #6e56cf) 40%, var(--accent-light, #9e8cfc) 70%, #38bdf8 100%);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 0 20px rgba(110, 86, 207, 0.5);
+    z-index: 100001;
+    pointer-events: none;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    border-radius: 0 2px 2px 0;
+}
+
 #global-loader {
-    background: rgba(14, 15, 23, 0.85) !important; /* Whimsical Deep Slate Backdrop */
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(14, 15, 23, 0.78) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
     z-index: 10000 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#global-loader.active {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+/* Mobile Narrow Mode: Suppress heavy modal popup to eliminate view blocking */
+#global-loader.mobile-nano-only {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none !important;
+}
+#global-loader.mobile-nano-only .loader-content {
+    display: none !important;
 }
 
 .loader-content {
     width: 360px !important;
     max-width: calc(100vw - 48px) !important;
-    background: rgba(22, 24, 38, 0.95) !important;
-    border: 1px solid rgba(110, 86, 207, 0.25) !important;
-    border-radius: var(--radius-card, 10px) !important;
+    background: rgba(22, 24, 38, 0.94) !important;
+    border: 1px solid rgba(110, 86, 207, 0.3) !important;
+    border-radius: var(--radius-card, 12px) !important;
     padding: 24px 28px !important;
     box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--accent-subtle), 0 0 30px var(--accent-subtle) !important;
     backdrop-filter: blur(24px) !important;
@@ -492,7 +536,7 @@ body {
 @keyframes loaderCardPop {
     from {
         opacity: 0;
-        transform: translateY(12px) scale(0.96);
+        transform: translateY(14px) scale(0.96);
     }
     to {
         opacity: 1;
@@ -517,7 +561,7 @@ body {
     background: linear-gradient(90deg, var(--accent, #6e56cf), var(--accent-light, #9e8cfc), #38bdf8) !important;
     box-shadow: 0 0 14px var(--accent-subtle) !important;
     border-radius: var(--radius-sm, 4px) !important;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .loader-status {
@@ -529,19 +573,299 @@ body {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Intro Splash Overlay */
+/* ==========================================================================
+   Cinematic Splash Overlay System
+   ========================================================================== */
 .intro-overlay {
-    background: var(--bg-base) !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #0b0c10 !important;
+    z-index: 100000 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
 }
+
+.intro-ambient-glow {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(110, 86, 207, 0.35) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 75%);
+    border-radius: 50%;
+    filter: blur(50px);
+    pointer-events: none;
+    animation: introAmbientBreath 4s infinite alternate ease-in-out;
+}
+
+@keyframes introAmbientBreath {
+    0% { transform: scale(0.9) translate3d(0, 0, 0); opacity: 0.6; }
+    100% { transform: scale(1.15) translate3d(0, 0, 0); opacity: 1; }
+}
+
+.intro-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+}
+
+.intro-logo-container {
+    position: relative !important;
+    width: 96px !important;
+    height: 96px !important;
+    min-width: 96px !important;
+    min-height: 96px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto 20px auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.intro-logo-glow-ring {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    border-radius: 50% !important;
+    border: 1.6px solid rgba(110, 86, 207, 0.45) !important;
+    box-shadow: 0 0 24px rgba(110, 86, 207, 0.35), inset 0 0 16px rgba(56, 189, 248, 0.2) !important;
+    transform-origin: center center !important;
+    pointer-events: none !important;
+    animation: logoRingPulse 2.4s infinite ease-in-out !important;
+}
+
+@keyframes logoRingPulse {
+    0%, 100% {
+        transform: scale(0.96);
+        opacity: 0.55;
+        border-color: rgba(110, 86, 207, 0.45);
+    }
+    50% {
+        transform: scale(1.06);
+        opacity: 0.95;
+        border-color: rgba(56, 189, 248, 0.7);
+        box-shadow: 0 0 32px rgba(56, 189, 248, 0.45), inset 0 0 20px rgba(110, 86, 207, 0.3);
+    }
+}
+
+.intro-logo-img {
+    position: relative !important;
+    width: 54px !important;
+    height: 54px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    object-fit: contain !important;
+    transform-origin: center center !important;
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.6)) !important;
+    animation: logoEmblemSettle 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes logoEmblemSettle {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .intro-title {
-    color: var(--text-primary) !important;
-    font-weight: 600 !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.5px !important;
+    color: #ffffff !important;
+    margin: 0 0 8px 0 !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    animation: introTitleFocus 0.65s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.intro-loader {
-    border-top-color: var(--accent) !important;
-    border-right-color: rgba(79, 70, 229, 0.1) !important;
-    border-bottom-color: rgba(79, 70, 229, 0.1) !important;
-    border-left-color: rgba(79, 70, 229, 0.1) !important;
+
+@keyframes introTitleFocus {
+    from {
+        opacity: 0;
+        filter: blur(8px);
+        transform: translateY(10px);
+        letter-spacing: 1px;
+    }
+    to {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+        letter-spacing: -0.5px;
+    }
+}
+
+.intro-subtitle {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: var(--accent-light, #9e8cfc) !important;
+    letter-spacing: 0.8px !important;
+    margin: 0 0 24px 0 !important;
+    opacity: 0.85;
+    animation: introSubtitleFade 0.6s 0.22s ease both;
+}
+
+@keyframes introSubtitleFade {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 0.85; transform: translateY(0); }
+}
+
+.intro-loader-line {
+    width: 140px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 10px rgba(110, 86, 207, 0.2);
+}
+
+.intro-loader-bar {
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--accent, #6e56cf) 50%, #38bdf8 100%);
+    border-radius: 6px;
+    animation: introBarFlow 1.3s infinite ease-in-out;
+}
+
+@keyframes introBarFlow {
+    0% { left: -50%; width: 30%; }
+    50% { width: 55%; }
+    100% { left: 110%; width: 30%; }
+}
+
+/* ==========================================================================
+   Modern Shimmer Glass Skeleton Cards (Zero-Flicker Loading State)
+   ========================================================================== */
+.file-card-skeleton {
+    background: rgba(22, 24, 38, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    pointer-events: none !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+}
+
+.file-card-skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 35%, rgba(110, 86, 207, 0.12) 50%, rgba(255, 255, 255, 0.04) 65%, transparent 100%);
+    animation: skeletonShimmerWave 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes skeletonShimmerWave {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(200%); }
+}
+
+.skeleton-thumb {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.skeleton-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skeleton-line {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+}
+
+.skeleton-title {
+    height: 16px;
+    width: 70%;
+}
+
+.skeleton-meta {
+    height: 12px;
+    width: 45%;
+    opacity: 0.6;
+}
+
+.skeleton-chips {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.skeleton-chip {
+    height: 20px;
+    width: 60px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   Staggered Cascade Card Entrance & Header Transitions
+   ========================================================================== */
+.file-card {
+    animation: cardEntranceCascade 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--card-index, 0) * 45ms);
+    will-change: transform, opacity;
+}
+
+@keyframes cardEntranceCascade {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+body.dashboard-intro-settled .toolbar {
+    animation: dashboardToolbarDock 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes dashboardToolbarDock {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body.dashboard-intro-settled .dashboard-header {
+    animation: dashboardHeaderFade 0.45s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes dashboardHeaderFade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Override properties to support custom components */

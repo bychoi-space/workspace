@@ -191,22 +191,30 @@
         </div>
     </div>
     
-    <!-- Global Loading Progress Overlay -->
-    <div id="global-loader">
+    <!-- Global Loading Progress Overlay (Nano Slim Progress Bar on Top) -->
+    <div id="global-loader" class="global-loader">
+        <div id="nano-progress-line" class="nano-progress-line"></div>
         <div class="loader-content">
             <div class="progress-container">
                 <div id="progress-bar"></div>
             </div>
-            <div class="loader-status" id="loader-status">Fetching project data...</div>
+            <div class="loader-status" id="loader-status">프로젝트 정보를 불러오는 중...</div>
         </div>
     </div>
 
-    <!-- Splash Screen (Intro) -->
+    <!-- Cinematic Splash Screen (Intro) -->
     <div id="intro-overlay" class="intro-overlay">
+        <div class="intro-ambient-glow"></div>
         <div class="intro-content">
-            <img src="assets/logo.svg" class="intro-logo-img" alt="Logo" loading="lazy">
-            <div class="intro-title">bychoi workspace</div>
-            <div class="intro-loader"></div>
+            <div class="intro-logo-container">
+                <div class="intro-logo-glow-ring"></div>
+                <img src="assets/logo.svg" class="intro-logo-img" alt="Logo">
+            </div>
+            <h1 class="intro-title">bychoi workspace</h1>
+            <p class="intro-subtitle">Next-Gen Process & UI Workspace</p>
+            <div class="intro-loader-line">
+                <div class="intro-loader-bar"></div>
+            </div>
         </div>
     </div>
 

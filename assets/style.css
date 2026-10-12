@@ -2566,7 +2566,7 @@ body.drag-active #drop-overlay {
     width: 100px;
     height: 100px;
     object-fit: contain;
-    margin-bottom: 24px;
+    margin: 0 auto;
     /* Soft cyan glow instead of heavy shadow */
     filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.4));
     animation: intro-glow 2s infinite alternate ease-in-out;
@@ -2821,7 +2821,7 @@ body.drag-active #drop-overlay {
     width: 100px;
     height: 100px;
     object-fit: contain;
-    margin-bottom: 24px;
+    margin: 0 auto;
     /* Soft cyan glow instead of heavy shadow */
     filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.4));
     animation: intro-glow 2s infinite alternate ease-in-out;

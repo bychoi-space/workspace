@@ -7,78 +7,237 @@
 .modal-overlay.active {
     display: flex !important;
 }
+/* ==========================================================================
+   Adaptive Loading Overlay System (Dual-Orbit Precision Loader)
+   ========================================================================== */
 .loading-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: #12151d;
+    background: #0b0d14;
     z-index: 10000;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
+    overflow: hidden;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease, visibility 0.5s;
+    will-change: opacity, transform, filter;
 }
+
 .loading-overlay.fade-out {
     opacity: 0;
+    transform: scale(1.03);
+    filter: blur(8px);
     visibility: hidden;
     pointer-events: none;
 }
-.loading-spinner-wrapper {
-    margin-bottom: 16px;
+
+.loading-ambient-glow {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(110, 86, 207, 0.3) 0%, rgba(56, 189, 248, 0.12) 50%, transparent 75%);
+    border-radius: 50%;
+    filter: blur(45px);
+    pointer-events: none;
+    animation: loaderAmbientPulse 3.5s infinite alternate ease-in-out;
+}
+
+@keyframes loaderAmbientPulse {
+    0% { transform: scale(0.9); opacity: 0.5; }
+    100% { transform: scale(1.15); opacity: 0.9; }
+}
+
+.loading-emblem-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.loading-spinner-icon {
-    font-size: 28px;
-    color: var(--accent, #6e56cf);
-    animation: loadingSpin 1.2s infinite linear;
-    filter: drop-shadow(0 0 10px var(--accent-subtle, rgba(110, 86, 207, 0.4)));
+
+/* Outer Orbit Ring (Clockwise) */
+.orbit-ring-outer {
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: 1.8px solid transparent;
+    border-top-color: var(--accent, #6e56cf);
+    border-right-color: #38bdf8;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    animation: orbitRotateClockwise 2s infinite linear;
 }
-@keyframes loadingSpin {
+
+/* Inner Orbit Ring (Counter-Clockwise) */
+.orbit-ring-inner {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1.8px solid transparent;
+    border-bottom-color: var(--accent-light, #9e8cfc);
+    border-left-color: #c084fc;
+    animation: orbitRotateCounter 1.5s infinite linear;
+}
+
+@keyframes orbitRotateClockwise {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+@keyframes orbitRotateCounter {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Central Emblem Icon / Core Pulse */
+.orbit-core-emblem {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background: rgba(22, 24, 38, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(110, 86, 207, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: corePulse 2s infinite ease-in-out;
+}
+
+@keyframes corePulse {
+    0%, 100% { transform: scale(0.95); box-shadow: 0 0 16px rgba(110, 86, 207, 0.35); }
+    50% { transform: scale(1.05); box-shadow: 0 0 28px rgba(56, 189, 248, 0.6); }
+}
+
+.loading-core-logo {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
 .loading-bar-container {
-    width: 220px;
-    height: 3px;
+    width: 240px;
+    height: 4px;
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 0 16px var(--accent-subtle, rgba(110, 86, 207, 0.2));
+    box-shadow: 0 0 16px rgba(110, 86, 207, 0.2);
 }
+
 .loading-bar-progress {
     position: absolute;
     top: 0;
     left: -50%;
     height: 100%;
     width: 45%;
-    background: linear-gradient(90deg, transparent, var(--accent, #6e56cf) 40%, var(--accent-light, #9e8cfc) 75%, #c084fc 100%);
-    border-radius: 10px;
-    box-shadow: 0 0 12px var(--accent-subtle, rgba(110, 86, 207, 0.6));
+    background: linear-gradient(90deg, transparent, var(--accent, #6e56cf) 40%, var(--accent-light, #9e8cfc) 75%, #38bdf8 100%);
+    border-radius: 8px;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.7);
     animation: loadingMotion 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.loading-bar-glow-head {
+    position: absolute;
+    right: 0;
+    top: -2px;
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #38bdf8, 0 0 16px #38bdf8;
+}
+
 @keyframes loadingMotion {
     0% { left: -50%; width: 30%; }
     50% { width: 60%; }
     100% { left: 110%; width: 30%; }
 }
+
+.loading-text-wrapper {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    text-align: center;
+}
+
 .loading-text {
-    margin-top: 16px;
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--accent-light, #9e8cfc);
-    letter-spacing: 2.5px;
+    letter-spacing: 2px;
     font-weight: 700;
     text-transform: uppercase;
-    text-shadow: 0 0 10px var(--accent-subtle, rgba(110, 86, 207, 0.3));
-    animation: loadingPulse 1.8s infinite ease-in-out;
+    text-shadow: 0 0 12px rgba(110, 86, 207, 0.4);
+    animation: loadingPulse 2s infinite ease-in-out;
 }
+
+.loading-subtext {
+    font-size: 11px;
+    color: #94a3b8;
+    letter-spacing: 0.3px;
+    font-weight: 400;
+}
+
 @keyframes loadingPulse {
-    0%, 100% { opacity: 0.6; transform: scale(0.98); }
+    0%, 100% { opacity: 0.75; transform: scale(0.98); }
     50% { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   PC Desktop Pro-Studio Docking & Camera Settle Transitions (Tier 1)
+   ========================================================================== */
+body.res-wide.workspace-docked .toolbar {
+    animation: studioToolbarDock 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes studioToolbarDock {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body.res-wide.workspace-docked #sidebar-left {
+    animation: studioLeftDock 0.4s 0.05s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes studioLeftDock {
+    from { opacity: 0; transform: translateX(-24px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+body.res-wide.workspace-docked #sidebar-right:not(.collapsed) {
+    animation: studioRightDock 0.4s 0.05s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes studioRightDock {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+body.res-wide.workspace-docked #artboard-wrapper {
+    animation: canvasCameraIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: transform, opacity, filter;
+}
+
+@keyframes canvasCameraIn {
+    from {
+        opacity: 0.7;
+        filter: blur(4px);
+    }
+    to {
+        opacity: 1;
+        filter: blur(0);
+    }
 }
 .sidebar { position: relative; overflow: visible !important; }
 #sidebar-right.collapsed { width: 0 !important; min-width: 0 !important; padding: 0 !important; border: none !important; overflow: hidden !important; }

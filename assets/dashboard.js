@@ -43,6 +43,7 @@ const DOM = {
     // Global Loader DOM
     globalLoader: document.getElementById('global-loader'),
     progressBar: document.getElementById('progress-bar'),
+    nanoProgressLine: document.getElementById('nano-progress-line'),
     loaderStatus: document.getElementById('loader-status')
 };
 
@@ -255,10 +256,41 @@ async function refreshFileList() {
 
 
 
+// Render modern Shimmer Glass Skeleton Cards while fetching
+function renderSkeletons(count = 6) {
+    if (!DOM.list) return;
+    const isMobile = window.innerWidth <= 768;
+    const actualCount = isMobile ? Math.min(count, 4) : count;
+    let html = '';
+    for (let i = 0; i < actualCount; i++) {
+        html += `
+            <div class="file-card file-card-skeleton" style="--card-index: ${i}">
+                <div class="skeleton-thumb"></div>
+                <div class="skeleton-body">
+                    <div class="skeleton-line skeleton-title"></div>
+                    <div class="skeleton-line skeleton-meta"></div>
+                    <div class="skeleton-chips">
+                        <div class="skeleton-chip"></div>
+                        <div class="skeleton-chip"></div>
+                    </div>
+                </div>
+            </div>`;
+    }
+    DOM.list.innerHTML = html;
+}
+
+        renderSkeletons(6);
+
         if (DOM.globalLoader) {
             DOM.globalLoader.classList.add('active');
-            DOM.progressBar.style.width = '0%';
-            DOM.loaderStatus.innerText = `프로젝트 정보를 불러오는 중... (0/${folders.length})`;
+            if (window.innerWidth <= 768) {
+                DOM.globalLoader.classList.add('mobile-nano-only');
+            } else {
+                DOM.globalLoader.classList.remove('mobile-nano-only');
+            }
+            if (DOM.progressBar) DOM.progressBar.style.width = '0%';
+            if (DOM.nanoProgressLine) DOM.nanoProgressLine.style.width = '0%';
+            if (DOM.loaderStatus) DOM.loaderStatus.innerText = `프로젝트 정보를 불러오는 중... (0/${folders.length})`;
         }
 
         let loadedCount = 0;
@@ -268,9 +300,14 @@ async function refreshFileList() {
                 const screens = meta.screens || meta.files || {};
                 
                 loadedCount++;
+                const percent = Math.round((loadedCount / folders.length) * 100);
                 if (DOM.progressBar) {
-                    const percent = Math.round((loadedCount / folders.length) * 100);
                     DOM.progressBar.style.width = percent + '%';
+                }
+                if (DOM.nanoProgressLine) {
+                    DOM.nanoProgressLine.style.width = percent + '%';
+                }
+                if (DOM.loaderStatus) {
                     DOM.loaderStatus.innerText = `프로젝트 정보를 불러오는 중... (${loadedCount}/${folders.length})`;
                 }
 
@@ -287,8 +324,12 @@ async function refreshFileList() {
         renderList();
         
         setTimeout(() => {
-            if (DOM.globalLoader) DOM.globalLoader.classList.remove('active');
-        }, 500);
+            if (DOM.globalLoader) DOM.globalLoader.classList.remove('active', 'mobile-nano-only');
+            if (DOM.nanoProgressLine) DOM.nanoProgressLine.style.width = '100%';
+            setTimeout(() => {
+                if (DOM.nanoProgressLine) DOM.nanoProgressLine.style.width = '0%';
+            }, 300);
+        }, 400);
         updateStatusUI('', '');
     } catch (err) {
         console.error("refreshFileList error:", err);
@@ -430,9 +471,11 @@ async function renderList(projectsToRender = state.projects) {
         return;
     }
     DOM.list.innerHTML = '';
-    for (const p of projectsToRender) {
+    for (let i = 0; i < projectsToRender.length; i++) {
+        const p = projectsToRender[i];
         const card = document.createElement('a');
         card.className = 'file-card';
+        card.style.setProperty('--card-index', i);
         card.href = `viewer.html?project=${encodeURIComponent(p.name)}`;
         
         const m = p.meta;
@@ -864,17 +907,28 @@ window.addEventListener('drop', async (e) => {
     if (e.dataTransfer.files) await handleFiles(e.dataTransfer.files);
 });
 
-// Splash Screen Killer
+// Splash Screen Killer (Cinematic Lens Expand & Soft Dissolve)
 (function() {
     const intro = document.getElementById('intro-overlay');
     if (!intro) return;
+    let isDismissed = false;
     const dismiss = () => {
+        if (isDismissed) return;
+        isDismissed = true;
+        intro.classList.add('dismissed');
+        intro.style.transition = 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease';
         intro.style.opacity = '0';
+        intro.style.transform = 'scale(1.05)';
+        intro.style.filter = 'blur(12px)';
         intro.style.pointerEvents = 'none';
-        setTimeout(() => { if (intro.parentNode) intro.remove(); document.body.style.overflow = 'auto'; }, 1000);
+        setTimeout(() => { 
+            if (intro.parentNode) intro.remove(); 
+            document.body.style.overflow = 'auto'; 
+            document.body.classList.add('dashboard-intro-settled');
+        }, 650);
     };
-    setTimeout(dismiss, 800);
-    window.addEventListener('load', () => setTimeout(dismiss, 1200));
+    setTimeout(dismiss, 700);
+    window.addEventListener('load', () => setTimeout(dismiss, 950));
     intro.addEventListener('click', dismiss);
 })();
 

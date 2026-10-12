@@ -1232,3 +1232,125 @@ body.fullscreen-mode .v4-zen-exit-pill {
     color: var(--res-dock-accent, #00e5ff);
     background: rgba(0, 229, 255, 0.15);
 }
+
+/* ==========================================================================
+   Resolution-Specific Loading & Entrance Motion System
+   - Tier 1: Wide Desktop (> 1200px)
+   - Tier 2: Compact / Tablet Landscape (901px ~ 1200px)
+   - Tier 3: Narrow / Mobile Portrait & Landscape (<= 900px)
+   ========================================================================== */
+
+/* --- Mobile Narrow & Touch Devices (Tier 3) --- */
+body.res-narrow .orbit-ring-outer,
+body.touch-capable .orbit-ring-outer {
+    display: none !important;
+}
+
+body.res-narrow .orbit-ring-inner,
+body.touch-capable .orbit-ring-inner {
+    width: 48px !important;
+    height: 48px !important;
+    border-width: 2px !important;
+    animation: orbitRotateClockwise 2.2s infinite linear !important;
+}
+
+body.res-narrow .loading-ambient-glow,
+body.touch-capable .loading-ambient-glow {
+    width: 200px !important;
+    height: 200px !important;
+    filter: blur(35px) !important;
+}
+
+body.res-narrow .loading-bar-container,
+body.touch-capable .loading-bar-container {
+    width: 180px !important;
+}
+
+/* Suppress PC tri-panel docking animations on mobile reading mode */
+body.res-narrow #artboard-wrapper,
+body.touch-capable #artboard-wrapper {
+    animation: none !important;
+}
+
+/* Mobile Touch Controls Entrance Animations */
+body.res-narrow #dock-btn-prev,
+body.res-narrow #dock-btn-next,
+body.touch-capable #dock-btn-prev,
+body.touch-capable #dock-btn-next {
+    animation: mobileTouchBtnBounce 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes mobileTouchBtnBounce {
+    from {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.65);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+body.res-narrow #dock-page-indicator,
+body.touch-capable #dock-page-indicator {
+    animation: mobileIndicatorSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mobileIndicatorSlideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(22px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+body.res-narrow #v4-frame-switcher.is-available,
+body.touch-capable #v4-frame-switcher.is-available {
+    animation: mobileSwitcherDrop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mobileSwitcherDrop {
+    from {
+        opacity: 0;
+        transform: translateY(-16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Tablet / Compact Devices (Tier 2) --- */
+body.res-compact.workspace-docked .toolbar {
+    animation: tabletToolbarDock 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tabletToolbarDock {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body.res-compact #dock-btn-prev,
+body.res-compact #dock-btn-next {
+    animation: tabletEdgeBtnFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes tabletEdgeBtnFade {
+    from { opacity: 0; transform: translateY(-50%) scale(0.85); }
+    to { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+/* Strict Mobile Guard: Presentation Pen Tooltip & Canvas 100% Suppressed */
+@media (pointer: coarse), (max-width: 900px) {
+    #presentation-pen-canvas,
+    #presentation-pen-tooltip,
+    .v4-zen-toast {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+}

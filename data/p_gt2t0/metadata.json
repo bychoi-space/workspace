@@ -203,89 +203,6 @@
       "defaultTab": "description",
       "screenDesc": ""
     },
-    "10_Mobile_Compare_19.html": {
-      "title": "Mobile UI 변경 정리 v2",
-      "type": "ui",
-      "updatedAt": "2026-10-07T05:53:40.961Z",
-      "template": "template_responsive_mobile_compare.html",
-      "description": [
-        {
-          "type": "pin",
-          "target": "canvas",
-          "text": "[상품 그룹 선택 영역 (상단 고정)]\n- 최초 랜더링 시 [전체보기] 기본값으로 개선",
-          "html": "[상품 그룹 선택 영역 (상단 고정)]<div>- 최초 랜더링 시 [전체보기] 기본값으로 개선</div>",
-          "x": 134,
-          "y": 382,
-          "pins": {
-            "left": {
-              "x": 7,
-              "y": 553,
-              "active": true
-            },
-            "right": {
-              "x": 7,
-              "y": 558,
-              "active": true
-            },
-            "pc": {
-              "x": 7,
-              "y": 553,
-              "active": true
-            },
-            "mobile": {
-              "x": 7,
-              "y": 558,
-              "active": true
-            },
-            "canvas": {
-              "x": 134,
-              "y": 382,
-              "active": true
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "canvas",
-          "text": "기존안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작\n\n\n기존안은 '모든 그룹 + 그룹 별 상품 24개' 가 최초 랜더링 시 그려지는 구조",
-          "html": "기존안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 페이지 내에서 스크롤 이동으로 동작<div><br></div><div>기존안은 '모든 그룹 + 그룹 별 상품 24개' 가 최초 랜더링 시 그려지는 구조</div>",
-          "x": 1357,
-          "y": 633,
-          "pins": {
-            "canvas": {
-              "x": 1357,
-              "y": 633,
-              "active": true
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "canvas",
-          "text": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)\n\n\n변경안은 '그룹에 관계 없이 상품 10개 (5행)' 가 최초 랜더링 시 그려지는 구조",
-          "html": "변경안 : Select Box 를 활성화하여, 다른 항목을 선택하면, 상품 그룹 영역 재 조회 (리랜더링)<div><br></div><div>변경안은 '그룹에 관계 없이 상품 10개 (5행)' 가 최초 랜더링 시 그려지는 구조</div>",
-          "x": 1349,
-          "y": 562,
-          "pins": {
-            "canvas": {
-              "x": 1349,
-              "y": 562,
-              "active": true
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        }
-      ],
-      "connectors": [],
-      "version": 0.1,
-      "defaultTab": "description",
-      "screenDesc": ""
-    },
     "99_Blank_43.html": {
       "title": "99_Blank_43",
       "type": "blank",
@@ -309,7 +226,6 @@
     "08_Responsive_PC_Mobile_498.html",
     "08_Responsive_PC_Mobile_498_copy.html",
     "10_Mobile_Compare_18.html",
-    "10_Mobile_Compare_19.html",
     "04_Case_Study_633.html",
     "99_Blank_43.html"
   ]

@@ -1,6 +1,14 @@
 {
   "title": "[기획전] 상품 그룹 UI 변경 및 정렬 기능 추가",
-  "screens": {},
+  "screens": {
+    "00_Cover_733.html": {
+      "title": "00_Cover_733",
+      "type": "cover",
+      "updatedAt": "2026-10-12T08:17:55.790Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.10.12(월) ~ 2026.10.30(금)",

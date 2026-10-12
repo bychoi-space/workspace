@@ -747,23 +747,75 @@ body {
    Dashboard Mobile & Tablet Responsive Engine
    ========================================================================== */
 
-/* Tablet & Compact Viewports (< 1024px) */
-@media (max-width: 1024px) {
+/* 1. Tablet Landscape Viewports (769px ~ 1366px) & Tablet Touch Devices in Landscape */
+@media (min-width: 769px) and (max-width: 1366px), 
+       (pointer: coarse) and (min-width: 769px) and (orientation: landscape) {
+    
+    .btn-new-project {
+        display: none !important;
+    }
+
     .dashboard-header {
-        padding: 0 20px;
-    }
-    .search-container {
-        width: 340px;
-    }
-    .card-grid {
-        padding: 10px 20px 80px 20px;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0 24px !important;
+        margin: 12px 0 16px 0 !important;
         gap: 16px !important;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    }
+
+    .dashboard-title {
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+    }
+
+    .search-container {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+        max-width: 380px !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    /* Crucial: Exactly 3 project cards per row on Tablet Landscape! */
+    .card-grid {
+        padding: 8px 24px 80px 24px !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+
+    .file-card {
+        padding: 12px !important;
+        border-radius: 10px !important;
+    }
+
+    .thumbnail-wrapper {
+        aspect-ratio: 16/9 !important;
     }
 }
 
-/* Mobile & Tablet Viewports (<= 768px, or touch coarse pointer <= 1366px) */
-@media (max-width: 768px), (pointer: coarse) and (max-width: 1366px) {
+/* 2. Tablet Portrait Viewports (769px ~ 1024px portrait) */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait),
+       (pointer: coarse) and (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+    .btn-new-project {
+        display: none !important;
+    }
+
+    .card-grid {
+        padding: 8px 20px 80px 20px !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+}
+
+/* 3. Pure Smartphone Mobile Viewports (<= 768px strictly) */
+@media (max-width: 768px) {
     body {
         height: 100vh;
         height: 100dvh;

@@ -476,6 +476,20 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_user_cognitive_ease.webp" alt="인지 피로 감소 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         },
         {
+            id: 'v4-motion-user-visual-delight',
+            name: '[모션] 시각적 감성 몰입',
+            title: '인터랙티브 룩북 & 스파클 펄스 (Animated WebP)',
+            koName: '모션 시각적 감성 몰입 visual delight 룩북 화보 탐색 갤러리 인터랙션',
+            group: 'motion',
+            groupTitle: '✨ 모션 인터랙션 (Animated WebP)',
+            category: 'Illustration',
+            width: '180px',
+            height: '110px',
+            thumb: 'assets/illustrations/motion/motion_user_visual_delight.webp',
+            previewHtml: `<img src="assets/illustrations/motion/motion_user_visual_delight.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_user_visual_delight.webp" alt="시각적 감성 몰입 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
             id: 'v4-motion-user-trust-safety',
             name: '[모션] 심리적 안정감',
             title: '보안 쉴드 & 안심 결제 펄스 락 (Animated WebP)',

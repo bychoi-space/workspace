@@ -24,7 +24,7 @@
     "09_Admin_PC_Scroll_59.html": {
       "title": "09_Admin_PC_Scroll_59",
       "type": "admin",
-      "updatedAt": "2026-10-13T04:50:00.078Z",
+      "updatedAt": "2026-10-13T04:50:25.480Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -42,6 +42,6 @@
     "08_Responsive_PC_Mobile_500.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-13 13:50:00",
+  "updated": "2026-10-13 13:50:25",
   "version": 0.1
 }

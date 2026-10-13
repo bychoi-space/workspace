@@ -13,7 +13,7 @@
     "08_Responsive_PC_Mobile_500.html": {
       "title": "상품 그룹 UI 변경",
       "type": "ui",
-      "updatedAt": "2026-10-13T01:26:31.697Z",
+      "updatedAt": "2026-10-13T01:29:56.253Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -32,6 +32,6 @@
     "00_Cover_733.html",
     "08_Responsive_PC_Mobile_500.html"
   ],
-  "updated": "2026-10-13 10:26:31",
+  "updated": "2026-10-13 10:29:55",
   "version": 0.1
 }

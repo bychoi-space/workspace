@@ -145,9 +145,37 @@
     "09_Admin_PC_Scroll_632.html": {
       "title": "09_Admin_PC_Scroll_632",
       "type": "admin",
-      "updatedAt": "2026-10-08T06:27:21.807Z",
+      "updatedAt": "2026-10-13T00:06:42.946Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "RT 여부 항목\n- 기존 드롭다운 [전체], Y, N 항목을 변경하려 하였으나, 수동출고처와 RT건을 분류하기 어려워 보임\n- 추후 ERP 데이터 연동 이후에 작업이 필요할 것으로 예상 됨\n\nComment 2026-10-13",
+          "html": "RT 여부 항목<div>- 기존 드롭다운 [전체], Y, N 항목을 변경하려 하였으나, 수동출고처와 RT건을 분류하기 어려워 보임</div><div>- 추후 ERP 데이터 연동 이후에 작업이 필요할 것으로 예상 됨</div><div>\nComment 2026-10-13</div>",
+          "x": 1320,
+          "y": 286,
+          "pins": {
+            "pc": {
+              "x": 1320,
+              "y": 286,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 1320,
+              "y": 286,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -160,7 +188,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 4,
-  "updated": "2026-10-08 15:27:21",
+  "updated": "2026-10-13 09:06:42",
   "version": 0.1,
   "screenOrder": [
     "00_Cover_268.html",

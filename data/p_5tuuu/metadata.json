@@ -57,7 +57,7 @@
     "09_Admin_PC_Scroll_59.html": {
       "title": "09_Admin_PC_Scroll_59",
       "type": "admin",
-      "updatedAt": "2026-10-14T04:55:00.789Z",
+      "updatedAt": "2026-10-14T04:57:16.616Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -103,6 +103,6 @@
     "08_Responsive_PC_Mobile_500.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-14 13:55:00",
+  "updated": "2026-10-14 13:57:16",
   "version": 0.1
 }

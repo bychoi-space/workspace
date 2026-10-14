@@ -96,10 +96,11 @@
     "01_Project_Summary_685.html": {
       "title": "01_Project_Summary_685",
       "type": "plan",
-      "updatedAt": "2026-10-14T05:13:40.234Z",
+      "updatedAt": "2026-10-14T05:14:11.348Z",
       "template": "template_project_summary.html",
       "description": [],
-      "connectors": []
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -114,6 +115,6 @@
     "08_Responsive_PC_Mobile_500.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-14 14:00:54",
+  "updated": "2026-10-14 14:14:10",
   "version": 0.1
 }

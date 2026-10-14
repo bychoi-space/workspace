@@ -13,14 +13,14 @@
     "08_Responsive_PC_Mobile_500.html": {
       "title": "상품 그룹 UI 변경",
       "type": "ui",
-      "updatedAt": "2026-10-14T04:43:35.473Z",
+      "updatedAt": "2026-10-14T04:44:29.038Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "상품 그룹 영역\n- UI 변경 : 기존 [SELECTBOX] > 변경 [TAB (ROUND SHAPE)]",
-          "html": "상품 그룹 영역<div>- UI 변경 : 기존 [SELECTBOX] &gt; 변경 [TAB (ROUND SHAPE)]</div>",
+          "text": "상품 그룹 영역\n- UI 변경 : 기존 [SELECTBOX] => \n                  변경 [TAB (ROUND SHAPE)]\n- 동작 방식 : PC 나열형 / Mobile 스와이프\n-",
+          "html": "상품 그룹 영역<div>- UI 변경 : 기존 [SELECTBOX] =&gt; </div><div>                  변경 [TAB (ROUND SHAPE)]</div><div>- 동작 방식 : PC 나열형 / Mobile 스와이프</div><div>- </div>",
           "x": 20,
           "y": 645,
           "pins": {
@@ -75,6 +75,6 @@
     "08_Responsive_PC_Mobile_500.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-14 13:43:35",
+  "updated": "2026-10-14 13:44:28",
   "version": 0.1
 }

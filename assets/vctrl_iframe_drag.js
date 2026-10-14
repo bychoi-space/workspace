@@ -14,6 +14,196 @@ window.v4DragResizeScript = `
     let groupChildrenStart = null;
     
 
+    function _handleResponsiveCrossFrameDrop(activeEl, isResp) {
+        var pcFrame = document.querySelector('.pc-browser-frame, .pc-frame');
+        var mobileFrame = document.querySelector('.mobile-frame, .mobile-browser-frame');
+        var pcInner = document.querySelector('.pc-content-inner');
+        var mobileInner = document.querySelector('.mobile-content-inner');
+
+        var isInsideGroup = !!(activeEl.parentElement && activeEl.parentElement.closest('.lf-group'));
+        if (isResp && pcFrame && mobileFrame && pcInner && mobileInner && !isInsideGroup) {
+            var compRect = activeEl.getBoundingClientRect();
+            var compCenterX = compRect.left + compRect.width / 2;
+            var mobileRect = mobileFrame.getBoundingClientRect();
+            var compW = activeEl.offsetWidth || 100;
+
+            var isCurrentlyInMobile = mobileInner.contains(activeEl);
+            var isCurrentlyInPc = pcInner.contains(activeEl);
+            var isDroppedOnMobile = compCenterX >= mobileRect.left;
+
+            if (isDroppedOnMobile) {
+                var mobileMaxW = Math.max(0, (mobileInner.offsetWidth || 360) - compW);
+                if (!isCurrentlyInMobile) {
+                    var mobileInnerRect = mobileInner.getBoundingClientRect();
+                    var relTop = compRect.top - mobileInnerRect.top;
+                    var relLeft = compRect.left - mobileInnerRect.left;
+                    var clampedLeft = Math.max(0, Math.min(mobileMaxW, relLeft));
+                    var clampedTop = Math.max(0, relTop);
+
+                    activeEl.style.top = clampedTop + 'px';
+                    activeEl.style.left = clampedLeft + 'px';
+                    mobileInner.appendChild(activeEl);
+                } else {
+                    var curL = parseFloat(activeEl.style.left) || 0;
+                    var curT = parseFloat(activeEl.style.top) || 0;
+                    activeEl.style.left = Math.max(0, Math.min(mobileMaxW, curL)) + 'px';
+                    activeEl.style.top = Math.max(0, curT) + 'px';
+                }
+                window.lastActiveFrame = 'mobile';
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
+            } else {
+                var pcFrameWidth = pcInner.offsetWidth || 1160;
+                var pcMaxW = Math.max(0, pcFrameWidth - compW);
+                if (!isCurrentlyInPc) {
+                    var pcInnerRect = pcInner.getBoundingClientRect();
+                    var relTop = compRect.top - pcInnerRect.top;
+                    var relLeft = compRect.left - pcInnerRect.left;
+                    var clampedLeft = Math.max(0, Math.min(pcMaxW, relLeft));
+                    var clampedTop = Math.max(0, relTop);
+
+                    activeEl.style.top = clampedTop + 'px';
+                    activeEl.style.left = clampedLeft + 'px';
+                    pcInner.appendChild(activeEl);
+                } else {
+                    var curL = parseFloat(activeEl.style.left) || 0;
+                    var curT = parseFloat(activeEl.style.top) || 0;
+                    activeEl.style.left = Math.max(0, Math.min(pcMaxW, curL)) + 'px';
+                    activeEl.style.top = Math.max(0, curT) + 'px';
+                }
+                window.lastActiveFrame = 'pc';
+                if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
+            }
+
+            if (activeEl && activeEl.getAttribute) {
+                var curFixed = activeEl.getAttribute('data-scroll-fixed');
+                if (curFixed === 'custom' || curFixed === 'floating') {
+                    var newTop = parseFloat(activeEl.style.top) || 0;
+                    activeEl.setAttribute('data-scroll-target-y', String(Math.round(newTop)));
+                }
+            }
+        }
+    }
+
+    function _handlePinMarkerDropAnchoring(pin) {
+        if (!pin || (!pin.classList.contains('text-marker') && !pin.classList.contains('pin-marker'))) return;
+        var parent = pin.parentElement;
+        var hostContainer = (parent && parent.classList && parent.classList.contains('v4-pin-layer')) ? parent.parentElement : parent;
+        var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
+            ? window.ResponsiveFrameUtils.getScrollArea(pin)
+            : (pin.closest ? pin.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content') : null);
+        var scrollTop = scrollArea ? (scrollArea.scrollTop || 0) : 0;
+
+        if (hostContainer) {
+            var pinnedHosts = Array.from(hostContainer.children).filter(function(el) {
+                return el !== pin && el !== parent && el.hasAttribute && el.hasAttribute('data-scroll-fixed') &&
+                       !el.classList.contains('pin-marker') && !el.classList.contains('text-marker');
+            });
+
+            var pinRect = pin.getBoundingClientRect();
+            var pCenterX = pinRect.left + pinRect.width / 2;
+            var pCenterY = pinRect.top + pinRect.height / 2;
+
+            var matchedHost = null;
+            for (var i = 0; i < pinnedHosts.length; i++) {
+                var hRect = pinnedHosts[i].getBoundingClientRect();
+                if (pCenterX >= hRect.left && pCenterX <= hRect.right &&
+                    pCenterY >= hRect.top && pCenterY <= hRect.bottom) {
+                    matchedHost = pinnedHosts[i];
+                    break;
+                }
+            }
+
+            if (matchedHost) {
+                var hostMode = matchedHost.getAttribute('data-scroll-fixed');
+                pin.setAttribute('data-scroll-fixed', hostMode);
+                if (matchedHost.id) pin.setAttribute('data-fixed-host', matchedHost.id);
+                pin.style.setProperty('z-index', '200050', 'important');
+                pin.style.willChange = 'transform';
+
+                var hRect = matchedHost.getBoundingClientRect();
+                var offsetInsideHostY = pinRect.top - hRect.top;
+                var offsetInsideHostX = pinRect.left - hRect.left;
+                var hostDomTop = parseFloat(matchedHost.style.top) || 0;
+                var hostDomLeft = parseFloat(matchedHost.style.left) || 0;
+
+                pin.style.top = Math.round(hostDomTop + offsetInsideHostY) + 'px';
+                pin.style.left = Math.round(hostDomLeft + offsetInsideHostX) + 'px';
+
+                if (matchedHost.style.transform) {
+                    pin.style.setProperty('transform', matchedHost.style.transform, 'important');
+                }
+
+                var trailingRef = Array.from(parent.children).find(function(c) {
+                    return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+                });
+                if (trailingRef && trailingRef.parentNode === parent) {
+                    parent.insertBefore(pin, trailingRef);
+                } else {
+                    parent.appendChild(pin);
+                }
+            } else if (pin.hasAttribute('data-scroll-fixed')) {
+                var curFixedMode = pin.getAttribute('data-scroll-fixed');
+                var isIndependentViewport = (curFixedMode === 'viewport' && !pin.hasAttribute('data-fixed-host'));
+
+                if (isIndependentViewport) {
+                    pin.style.setProperty('z-index', '200050', 'important');
+                    pin.style.willChange = 'transform';
+                } else {
+                    var scrollAreaRect = scrollArea ? scrollArea.getBoundingClientRect() : { top: 0, left: 0 };
+                    var freeTop = (pinRect.top - scrollAreaRect.top) + scrollTop;
+                    var freeLeft = (pinRect.left - scrollAreaRect.left);
+
+                    pin.removeAttribute('data-scroll-fixed');
+                    pin.removeAttribute('data-fixed-host');
+                    pin.style.removeProperty('transform');
+                    pin.style.removeProperty('will-change');
+                    pin.style.setProperty('z-index', '200000', 'important');
+                    pin.style.top = Math.max(0, Math.round(freeTop)) + 'px';
+                    pin.style.left = Math.max(0, Math.round(freeLeft)) + 'px';
+                }
+            }
+        }
+    }
+
+    function _dispatchPinPositionUpdates(activeEl) {
+        if (!activeEl) return;
+        if (activeEl.classList.contains('text-marker') || activeEl.classList.contains('pin-marker')) {
+            var frameType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
+                ? window.ResponsiveFrameUtils.getFrameType(activeEl)
+                : (activeEl.getAttribute('data-frame') || (activeEl.closest && activeEl.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (activeEl.closest && activeEl.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : '')));
+            var idx = parseInt(activeEl.getAttribute('data-index'));
+            if (isNaN(idx)) {
+                idx = parseInt(activeEl.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
+            }
+            notifyParent({
+                type: 'LF_UPDATE_PIN_POS',
+                index: idx,
+                frame: frameType,
+                x: parseFloat(activeEl.style.left) || 0,
+                y: parseFloat(activeEl.style.top) || 0,
+                standardized: true
+            });
+        }
+        if (activeEl.classList.contains('lf-group')) {
+            var hostRect = document.body.getBoundingClientRect();
+            activeEl.querySelectorAll('.text-marker, .pin-marker').forEach(function(child) {
+                var childIdx = parseInt(child.id.replace('v4-pin-', ''));
+                if (!isNaN(childIdx)) {
+                    var childRect = child.getBoundingClientRect();
+                    var absX = childRect.left - hostRect.left;
+                    var absY = childRect.top - hostRect.top;
+                    notifyParent({
+                        type: 'LF_UPDATE_PIN_POS',
+                        index: childIdx,
+                        x: absX,
+                        y: absY,
+                        standardized: true
+                    });
+                }
+            });
+        }
+    }
+
     window.V4DragResizeEngine = {
         get isDragging() { return isDragging; },
         set isDragging(v) { isDragging = v; },
@@ -173,8 +363,19 @@ window.v4DragResizeScript = `
                                 innerBox.style.height = newH + 'px';
                             }
                         }
-                        const selectbox = child.el.querySelector('.v4-selectbox-header');
-                        if (selectbox) selectbox.style.width = '100%';
+                        const selectbox = child.el.querySelector('.v4-selectbox-container');
+                        if (selectbox) {
+                            selectbox.style.width = '100%';
+                            selectbox.style.height = '100%';
+                            const sbHeader = selectbox.querySelector('.v4-selectbox-header');
+                            const sbOptions = selectbox.querySelector('.v4-selectbox-options');
+                            const isDropActive = selectbox.getAttribute('data-dropdown-active') === 'true';
+                            if (sbHeader) {
+                                sbHeader.style.width = '100%';
+                                sbHeader.style.height = isDropActive ? '30px' : '100%';
+                            }
+                            if (sbOptions) sbOptions.style.width = '100%';
+                        }
                         const inputWrap = child.el.querySelector('.v4-textbox-container, .v4-textarea-container');
                         if (inputWrap) {
                             inputWrap.style.width = '100%';
@@ -184,6 +385,11 @@ window.v4DragResizeScript = `
                         if (btn) {
                             btn.style.width = '100%';
                             btn.style.height = '100%';
+                        }
+                        const webeditor = child.el.querySelector('.v4-webeditor-container');
+                        if (webeditor) {
+                            webeditor.style.width = '100%';
+                            webeditor.style.height = '100%';
                         }
                         
                         window.updateHandles(child.el);
@@ -198,14 +404,14 @@ window.v4DragResizeScript = `
         
         handleMouseUp: function() {
             if (isDragging && window.activeEl) {
-                const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
+                var isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
                 if (isResp) {
                     window.ResponsiveSmartGuide.onSelect(window.activeEl, 7000);
                 } else {
-                    const compW = window.activeEl.offsetWidth || 100;
-                    const compH = window.activeEl.offsetHeight || 40;
-                    const compL = parseFloat(window.activeEl.style.left) || 0;
-                    const compT = parseFloat(window.activeEl.style.top) || 0;
+                    var compW = window.activeEl.offsetWidth || 100;
+                    var compH = window.activeEl.offsetHeight || 40;
+                    var compL = parseFloat(window.activeEl.style.left) || 0;
+                    var compT = parseFloat(window.activeEl.style.top) || 0;
                     notifyParent({
                         type: 'LF_SNAP_END',
                         id: window.activeEl.id,
@@ -216,202 +422,15 @@ window.v4DragResizeScript = `
                     });
                 }
 
-                // Responsive Drop: Intelligent In-Frame Preservation & Cross-Frame Reparenting
-                const pcFrame = document.querySelector('.pc-browser-frame, .pc-frame');
-                const mobileFrame = document.querySelector('.mobile-frame, .mobile-browser-frame');
-                const pcInner = document.querySelector('.pc-content-inner');
-                const mobileInner = document.querySelector('.mobile-content-inner');
-
-                const isInsideGroup = !!(window.activeEl.parentElement && window.activeEl.parentElement.closest('.lf-group'));
-                if (isResp && pcFrame && mobileFrame && pcInner && mobileInner && !isInsideGroup) {
-                    const compRect = window.activeEl.getBoundingClientRect();
-                    const compCenterX = compRect.left + compRect.width / 2;
-                    const mobileRect = mobileFrame.getBoundingClientRect();
-                    const scale = (window.parent?.state?.transform?.scale) || 1;
-                    const compW = window.activeEl.offsetWidth || 100;
-
-                    const isCurrentlyInMobile = mobileInner.contains(window.activeEl);
-                    const isCurrentlyInPc = pcInner.contains(window.activeEl);
-                    const isDroppedOnMobile = compCenterX >= mobileRect.left;
-
-                    if (isDroppedOnMobile) {
-                        const mobileMaxW = Math.max(0, (mobileInner.offsetWidth || 360) - compW);
-                        if (!isCurrentlyInMobile) {
-                            // Cross-Frame: PC -> Mobile (Reparenting)
-                            const mobileInnerRect = mobileInner.getBoundingClientRect();
-                            const relTop = compRect.top - mobileInnerRect.top;
-                            const relLeft = compRect.left - mobileInnerRect.left;
-                            const clampedLeft = Math.max(0, Math.min(mobileMaxW, relLeft));
-                            const clampedTop = Math.max(0, relTop);
-
-                            window.activeEl.style.top = clampedTop + 'px';
-                            window.activeEl.style.left = clampedLeft + 'px';
-                            mobileInner.appendChild(window.activeEl);
-                        } else {
-                            // In-Frame: Mobile 내부 드래그는 No-Measure 원칙에 따라 드래그 중 계산된 논리 좌표 유지 + 경계 클램핑만 보정
-                            const curL = parseFloat(window.activeEl.style.left) || 0;
-                            const curT = parseFloat(window.activeEl.style.top) || 0;
-                            window.activeEl.style.left = Math.max(0, Math.min(mobileMaxW, curL)) + 'px';
-                            window.activeEl.style.top = Math.max(0, curT) + 'px';
-                        }
-                        window.lastActiveFrame = 'mobile';
-                        if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('mobile');
-                    } else {
-                        const pcFrameWidth = pcInner.offsetWidth || 1160;
-                        const pcMaxW = Math.max(0, pcFrameWidth - compW);
-                        if (!isCurrentlyInPc) {
-                            // Cross-Frame: Mobile -> PC (Reparenting)
-                            const pcInnerRect = pcInner.getBoundingClientRect();
-                            const relTop = compRect.top - pcInnerRect.top;
-                            const relLeft = compRect.left - pcInnerRect.left;
-                            const clampedLeft = Math.max(0, Math.min(pcMaxW, relLeft));
-                            const clampedTop = Math.max(0, relTop);
-
-                            window.activeEl.style.top = clampedTop + 'px';
-                            window.activeEl.style.left = clampedLeft + 'px';
-                            pcInner.appendChild(window.activeEl);
-                        } else {
-                            // In-Frame: PC 내부 드래그는 No-Measure 원칙에 따라 드래그 중 계산된 논리 좌표 유지 + 1160px 경계 클램핑만 보정
-                            const curL = parseFloat(window.activeEl.style.left) || 0;
-                            const curT = parseFloat(window.activeEl.style.top) || 0;
-                            window.activeEl.style.left = Math.max(0, Math.min(pcMaxW, curL)) + 'px';
-                            window.activeEl.style.top = Math.max(0, curT) + 'px';
-                        }
-                        window.lastActiveFrame = 'pc';
-                        if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('pc');
-                    }
-
-                    if (window.activeEl && window.activeEl.getAttribute) {
-                        const curFixed = window.activeEl.getAttribute('data-scroll-fixed');
-                        if (curFixed === 'custom' || curFixed === 'floating') {
-                            const newTop = parseFloat(window.activeEl.style.top) || 0;
-                            window.activeEl.setAttribute('data-scroll-target-y', String(Math.round(newTop)));
-                        }
-                    }
-                }
-                
-                if (window.activeEl.classList.contains('text-marker') || window.activeEl.classList.contains('pin-marker')) {
-                    const pin = window.activeEl;
-                    const parent = pin.parentElement;
-                    const scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
-                        ? window.ResponsiveFrameUtils.getScrollArea(pin)
-                        : (pin.closest ? pin.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content') : null);
-                    const scrollTop = scrollArea ? (scrollArea.scrollTop || 0) : 0;
-
-                    if (parent) {
-                        const pinnedHosts = Array.from(parent.children).filter(function(el) {
-                            return el !== pin && el.hasAttribute && el.hasAttribute('data-scroll-fixed') &&
-                                   !el.classList.contains('pin-marker') && !el.classList.contains('text-marker');
-                        });
-
-                        const pinRect = pin.getBoundingClientRect();
-                        const pCenterX = pinRect.left + pinRect.width / 2;
-                        const pCenterY = pinRect.top + pinRect.height / 2;
-
-                        let matchedHost = null;
-                        for (let i = 0; i < pinnedHosts.length; i++) {
-                            const hRect = pinnedHosts[i].getBoundingClientRect();
-                            if (pCenterX >= hRect.left && pCenterX <= hRect.right &&
-                                pCenterY >= hRect.top && pCenterY <= hRect.bottom) {
-                                matchedHost = pinnedHosts[i];
-                                break;
-                            }
-                        }
-
-                        if (matchedHost) {
-                            const hostMode = matchedHost.getAttribute('data-scroll-fixed');
-                            pin.setAttribute('data-scroll-fixed', hostMode);
-                            if (matchedHost.id) pin.setAttribute('data-fixed-host', matchedHost.id);
-                            pin.style.setProperty('z-index', '200050', 'important');
-                            pin.style.willChange = 'transform';
-
-                            // Relative position anchoring inside host (Universal for top & bottom)
-                            const hRect = matchedHost.getBoundingClientRect();
-                            const offsetInsideHostY = pinRect.top - hRect.top;
-                            const offsetInsideHostX = pinRect.left - hRect.left;
-                            const hostDomTop = parseFloat(matchedHost.style.top) || 0;
-                            const hostDomLeft = parseFloat(matchedHost.style.left) || 0;
-
-                            pin.style.top = Math.round(hostDomTop + offsetInsideHostY) + 'px';
-                            pin.style.left = Math.round(hostDomLeft + offsetInsideHostX) + 'px';
-
-                            if (matchedHost.style.transform) {
-                                pin.style.setProperty('transform', matchedHost.style.transform, 'important');
-                            }
-
-                            // Elevate pin to be after host in DOM to guarantee topmost rendering
-                            var trailingRef = Array.from(parent.children).find(function(c) {
-                                return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
-                            });
-                            if (trailingRef && trailingRef.parentNode === parent) {
-                                parent.insertBefore(pin, trailingRef);
-                            } else {
-                                parent.appendChild(pin);
-                            }
-                        } else if (pin.hasAttribute('data-scroll-fixed')) {
-                            const curFixedMode = pin.getAttribute('data-scroll-fixed');
-                            const isIndependentViewport = (curFixedMode === 'viewport' && !pin.hasAttribute('data-fixed-host'));
-
-                            if (isIndependentViewport) {
-                                pin.style.setProperty('z-index', '200050', 'important');
-                                pin.style.willChange = 'transform';
-                            } else {
-                                // Unpinning pin from fixed host to free content
-                                const scrollAreaRect = scrollArea ? scrollArea.getBoundingClientRect() : { top: 0, left: 0 };
-                                const freeTop = (pinRect.top - scrollAreaRect.top) + scrollTop;
-                                const freeLeft = (pinRect.left - scrollAreaRect.left);
-
-                                pin.removeAttribute('data-scroll-fixed');
-                                pin.removeAttribute('data-fixed-host');
-                                pin.style.removeProperty('transform');
-                                pin.style.removeProperty('will-change');
-                                pin.style.setProperty('z-index', '200000', 'important');
-                                pin.style.top = Math.max(0, Math.round(freeTop)) + 'px';
-                                pin.style.left = Math.max(0, Math.round(freeLeft)) + 'px';
-                            }
-                        }
-                    }
-
-                    const frameType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
-                        ? window.ResponsiveFrameUtils.getFrameType(window.activeEl)
-                        : (window.activeEl.getAttribute('data-frame') || (window.activeEl.closest && window.activeEl.closest('.pc-content-inner, .pc-content-area') ? 'pc' : (window.activeEl.closest && window.activeEl.closest('.mobile-content-inner, .mobile-content-area') ? 'mobile' : '')));
-                    let idx = parseInt(window.activeEl.getAttribute('data-index'));
-                    if (isNaN(idx)) {
-                        idx = parseInt(window.activeEl.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                    }
-                    notifyParent({
-                        type: 'LF_UPDATE_PIN_POS',
-                        index: idx,
-                        frame: frameType,
-                        x: parseFloat(window.activeEl.style.left) || 0,
-                        y: parseFloat(window.activeEl.style.top) || 0,
-                        standardized: true
-                    });
-                }
-                if (window.activeEl.classList.contains('lf-group')) {
-                    const hostRect = document.body.getBoundingClientRect();
-                    window.activeEl.querySelectorAll('.text-marker, .pin-marker').forEach(child => {
-                        const idx = parseInt(child.id.replace('v4-pin-', ''));
-                        if (!isNaN(idx)) {
-                            const childRect = child.getBoundingClientRect();
-                            const absX = childRect.left - hostRect.left;
-                            const absY = childRect.top - hostRect.top;
-                            notifyParent({
-                                type: 'LF_UPDATE_PIN_POS',
-                                index: idx,
-                                x: absX,
-                                y: absY,
-                                standardized: true
-                            });
-                        }
-                    });
-                }
+                _handleResponsiveCrossFrameDrop(window.activeEl, isResp);
+                _handlePinMarkerDropAnchoring(window.activeEl);
+                _dispatchPinPositionUpdates(window.activeEl);
             }
             if (isResizing && window.activeEl) {
                 window.activeEl.setAttribute('data-resized', 'true');
                 if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
             }
-            document.querySelectorAll('.lf-component').forEach(s => s.classList.remove('dragging-now'));
+            document.querySelectorAll('.lf-component').forEach(function(s) { s.classList.remove('dragging-now'); });
             isPendingDrag = false;
             isDragging = false;
             isResizing = false;

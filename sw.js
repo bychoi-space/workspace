@@ -1,4 +1,4 @@
-// sw.js - Ultra-lightweight passthrough service worker for PWA installation (v=V381_PWA_PNG_ICONS)
+// sw.js - Ultra-lightweight passthrough service worker for PWA installation (v=V402_TRANSPARENT_FAVICON)
 self.addEventListener('install', function(e) {
     self.skipWaiting();
 });

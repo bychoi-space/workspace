@@ -6,7 +6,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 # Workspace Editor UI Components
 
 - **Screen Layout Layer Architecture**: 일반 캔버스 스크린에서는 모든 오브젝트가 iframe 내부의 `document.body` (또는 `.page`) 최상단 캔버스에 직접 위치하며, 반응형 스크린(PC & Mobile Frame)에서는 프레임 내부의 컨텐츠 캔버스인 `.pc-content-inner` 또는 `.mobile-content-inner` 내부의 절대좌표 레이어에 배치된다. 특정 템플릿 제약 없이 해당 캔버스 내부 어디서든 자유로운 배치, 이동, 스냅, 그룹화가 100% 보장된다.
-- **Common Object Protocol (공통 오브젝트 8원칙)**: 모든 객체(텍스트, 도형, 선, 아톰 등)는 예외 없이 다음 동작을 보장해야 한다.
+- **Common Object Protocol (공통 오브젝트 10원칙)**: 모든 객체(텍스트, 도형, 선, 아톰 등)는 예외 없이 다음 동작을 보장해야 한다.
   1. 드래그(Marquee) 및 Shift+Click을 통한 **다중 선택, 그룹화(Ctrl+G), 해제** 보장
   2. 선택 상태에서 **화살표 키(`ArrowUp` 등)를 이용한 픽셀 단위 그룹 이동** 보장
   3. `Delete` 또는 `Backspace` 키보드 입력을 통한 **즉각 삭제** 보장
@@ -33,6 +33,16 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
      - **단축키 및 플로팅 툴바 바인딩**: 선택된 컴포넌트의 스타일 서식을 `Ctrl + Shift + C`로 복사하고, 대상 컴포넌트(단일 또는 N개 다중 선택)에 `Ctrl + Shift + V`로 즉시 일괄 적용한다. 플로팅 인스펙터 내 `#selection-style-action-row`의 `[서식 복사]` 및 `[서식 붙여넣기]` 버튼과 100% 양방향 연동된다 (단일 그룹 선택 시에는 자동 숨김).
      - **심층 서식 추출 및 복원 범위**: 도형 배경색(RGBA 투명도 포함), 테두리(색상, 1.6px 보더 두께, solid/dashed/dotted 스타일, 코너 반경 0~100px), 불투명도뿐만 아니라 하위 텍스트 셀(`.v4-editable-cell`, `.v4-shape-text-content`) 및 인라인 요소의 타이포그래피(글꼴, 크기, 글자색, 두께, 정렬), 테이블 헤더/본문 색상, 아이콘 채색 컬러를 심층 추출하여 오차 없이 이식한다.
      - **전역 SSOT & 실행 취소**: 스크린 간 격리를 극복하기 위해 `(window.top || window).__lf_global_style_clipboard__`를 단일 진실 공급원으로 사용하며, 서식 적용 직전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 즉시 롤백할 수 있다. 서식 복사 및 적용 상태는 토스트 알림(`LF_SHOW_TOAST`)으로 안내된다.
+  9. **동일 컴포넌트/쉐입 전환 시 인스펙터 프로퍼티 갱신 무결성 보장 (Identical Shape Property Sync Protocol)**:
+     - **문제 배경**: 캔버스에서 동일한 SHAPE(예: Rect A 100x100 ➔ Rect B 200x200)를 연속 선택할 때, 인스펙터의 `#shape-inspector-section`이 닫히지 않고 DOM 입력 필드가 그대로 유지되는 상황에서 부모 창 activeElement(`#prop-width` 등) 포커스 잔류나 상태 갱신 순서 불일치로 인해 새 객체의 크기 수치가 갱신되지 않는 버그가 발생하지 않도록 4중 안전망을 필수로 유지한다.
+     - **1. 선택 라우터 선행 백업**: `vctrl_core_router.js`에서 `state.editingIndex` 대입 전 `isNewSelection`을 판별하고 부모 활성 인풋을 즉시 `blur()` 처리한 뒤 `updateProperties(data, isNewSelection)`로 신규 선택을 명시 전달한다.
+     - **2. 인스펙터 3중 판정 및 직접 대입**: `vctrl_inspector.js`의 `updateProperties`에서 `isNewComp` 3중 판정식을 적용하여 `isTypingInInspector`를 리셋하고, `_syncCommonPropertyControls`에서 `DOM.propWidth.value = Math.round(compStyles.w)`, `DOM.propHeight.value = Math.round(compStyles.h)`로 값을 직접 대입하여 화면 표시를 100% 강제 동기화한다.
+     - **3. 강제 프로퍼티 덮어쓰기 (`force = true`)**: `vctrl_properties.js`의 `LF_COMP_SELECTED` 리스너에서 컴포넌트 ID가 변경된 경우 `updateAllInputs(data.w, data.h, true)`를 호출하여 포커스 가드를 확실히 우회하고 가로/세로 수치를 강제 덮어쓴다.
+     - **4. 캔버스 클릭 시 부모 잔류 포커스 즉시 정리**: `vctrl_iframe_script.js`에서 컴포넌트 `mousedown` 시 `window.parent?.document?.activeElement?.blur()`를 호출하여 부모 창 인풋에 남아있던 캐럿과 포커스를 즉각 정리한다.
+  10. **레이어 4단계 정밀 순서 제어 보장 (Layer Ordering 4-Step Suite & Shortcuts SSOT)**:
+     - **업계 표준 4대 단축키**: 맨 앞으로 가져오기(`Ctrl + Shift + ]`), 한 단계 앞으로(`Ctrl + ]`), 맨 뒤로 보내기(`Ctrl + Shift + [`), 한 단계 뒤로(`Ctrl + [`).
+     - **티어 무결성 & 캡핑**: 일반 컴포넌트는 `Tier 2` 상한선인 `69,900`을 절대 초과하지 않으며, 바닥선은 `1,000` 이하로 떨어지지 않도록 보호된다.
+     - **플로팅 툴바 및 Undo**: 플로팅 인스펙터(`#selection-actions-bar`) 버튼과 100% 양방향 동기화되며, `Ctrl + Z`로 1프레임 즉각 복원된다.
 
 - **Unified Marker Structure**: Text markers must include a `.lf-drag-handle` (drag handle), `.lf-delete-trigger` (delete), and `.v4-editable-cell` (content) inside their `.lf-component` wrapper. All markers are aligned to their **Top-Left** corner (0, 0) and use **px** units for consistent coordinate mapping with shapes and atoms.
 - **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.lf-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
@@ -47,11 +57,56 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - Use `stroke-width="1.2"` for SVG atoms (library icons and canvas-inserted SVG atoms) unless existing context requires otherwise.
 - Add `background-image: none !important;` when `.lf-icon` is applied to new SVG/custom atoms to avoid sprite interference.
 
+## 신규 도형·아톰·아이콘 공통 UI 준수 및 디자인 시스템 표준화 규격 (Common UI Conformance SSOT)
+- **독단적/비표준 UI 개발 전면 금지**: 신규 도형, 아톰, 아이콘 추가 시 워크스페이스 공통 UI 규격을 벗어난 임의의 컨트롤(독자 체크박스, 단위 텍스트 내장 인풋 래퍼, 비표준 여백/폰트 등)을 혼자만 다르게 작성하는 행위를 엄격히 금지한다.
+- **Y/N 세그먼트 토글 버튼 그룹 표준 (Segmented Toggle Buttons)**:
+  - 카운터 표시, 활성화/비활성화, 읽기 전용, 닫기 버튼 노출 등 모든 이진 옵션은 체크박스를 지양하고 반드시 공통 규격인 `[ Y ] [ N ]` 세그먼트 버튼 그룹을 적용한다:
+    ```html
+    <div class="prop-group v4-section-header mb-8 top-divider-sm">
+        <label class="v4-prop-label mb-0">옵션명 (Label)</label>
+        <div class="v4-flex-gap-4 w-84">
+            <button id="btn-atom-xxx-y" class="v4-inspector-btn v4-inspector-toggle-btn active">Y</button>
+            <button id="btn-atom-xxx-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
+        </div>
+    </div>
+    ```
+  - 활성 상태 제어는 `highlightActive(btn, isActive)`를 사용하고, 클릭 이벤트는 직접 바인딩과 위임(Delegation)을 이중으로 지원한다.
+- **수치 입력 및 동적 라벨 카운터 표준 (Standard Input & Dynamic Count Label)**:
+  - 수치 입력창은 순수 공통 인풋 클래스 `.v4-prop-input-base`를 사용한다. 인풋 내부에 '자', 'px' 단위를 억지로 욱여넣는 복합 래퍼를 지양한다.
+  - 라벨에는 `<label class="v4-prop-label">최대 글자수 (<span id="txt-atom-xxx-maxlength">100</span>자)</label>`와 같이 실시간 동적 연동 카운트 span을 포함하여 사용자가 숫자를 키인할 때 라벨 텍스트가 즉각 동기화되도록 한다.
+- **드롭다운 셀렉트박스 좌측 정렬 표준**:
+  - 모든 인스펙터 `<select>`는 `.v4-prop-select` 클래스를 적용하고 `text-align: left !important; text-align-last: left !important;`를 보장하여 드롭다운 텍스트가 우측으로 쏠리지 않고 단정하게 좌측 정렬되도록 한다.
+- **오프라인 폴백 빌드 동기화**:
+  - `assets/ui_library/inspector_panels.html` 수정 후 반드시 `powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1`을 실행하여 `assets/ui_library_fallback.js`를 재컴파일해야 한다.
+
+## 웹 에디터 아톰(Web Editor Atom) 비주얼 및 인스펙터 표준 규격
+- **구조 규격**: `.lf-component` ➔ `.v4-webeditor-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-webeditor-toolbar` (상단 서식 도구) + `.v4-webeditor-body` (본문 작성부) + `.v4-webeditor-statusbar` (글자수 표시).
+- **인스펙터 전용 패널 (`#webeditor-inspector-section`)**:
+  - 툴바 모드: `<select id="prop-webeditor-toolbar" class="v4-prop-select">` (`full` 전체, `minimal` 핵심, `none` 숨김).
+  - 에디터 모드: `<select id="prop-webeditor-mode" class="v4-prop-select">` (`editor` 편집 모드, `readonly` 읽기 전용).
+  - 글자수 카운터 표시: `[ Y ] [ N ]` 세그먼트 버튼 (`#btn-webeditor-counter-y`, `#btn-webeditor-counter-n`).
+  - 읽기 전용 토글: `[ Y ] [ N ]` 세그먼트 버튼 (`#btn-webeditor-readonly-y`, `#btn-webeditor-readonly-n`).
+  - 최대 글자수 설정: 순수 수치 인풋 `#prop-webeditor-maxlength` (`.v4-prop-input-base`) 및 동적 라벨 연동 span (`#txt-webeditor-maxlength`, 기본 2000자).
+- **데이터 격리 원칙 (Zero Contamination)**: 웹 에디터 아톰의 기본 글자수(2000자)가 텍스트박스/텍스트에어리어 기본 최대글자수(100자)를 덮어쓰거나 오염시키지 않도록 `vctrl_iframe_style_extractor.js`에서 조건부 분기(`isWebEditor ? webeditorMaxLength : maxLength`)를 엄격히 유지해야 한다.
+
 ## Animated WebP Motion Component Rules
 - **Format**: Motion components utilize Animated WebP format (`assets/illustrations/motion/*.webp`) for silky-smooth framerates, 60-80% smaller file sizes than GIF, and full 8-bit alpha transparency without fringe artifacts.
 - **Wrapping Standard**: Standard 3-layer architecture **`.lf-component` ➔ `.v4-motion-container` ➔ `<img src="..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**.
 - **Mouse & Canvas Event Guard**: Inner `<img>` must maintain `pointer-events: none; user-select: none;` to prevent native browser ghost dragging from colliding with canvas drag/resize handlers.
 - **Dedicated Inspector Panel**: Selecting an illustration or motion component triggers `isIllustration: true` or `isMotion: true`, opening the dedicated **ILLUSTRATION / MOTION EDITOR** (`#illustration-inspector-section`). Aspect ratio lock (`#chk-preserve-aspect-ratio-illustration`) is active by default to prevent distortion, the ratio snap/reset button (`#btn-snap-illustration-ratio`) restores natural dimensions, and icon color controls are excluded.
+
+## Cinematic Dual-Orbit Loader & Studio Docking Visual Standards
+- **Dual-Orbit Precision Loader (`.loading-overlay`)**:
+  - Background: Deep void background (`#0b0d14`).
+  - Outer Orbit Ring (`.orbit-ring-outer`): 76px circle, 1.8px border with `var(--accent, #6e56cf)` top and `#38bdf8` right, glowing cyan drop shadow (`box-shadow: 0 0 16px rgba(56, 189, 248, 0.25)`), 2s clockwise linear orbit rotation.
+  - Inner Orbit Ring (`.orbit-ring-inner`): 56px circle, 1.8px border with `var(--accent-light, #9e8cfc)` bottom and `#c084fc` left, 1.5s counter-clockwise linear orbit rotation.
+  - Core Pulse Emblem (`.orbit-core-emblem`): 40px glassmorphic circle with inset white highlight and 2s scale/glow pulse (`corePulse`). Contains official logo (`.loading-core-logo`).
+  - Ambient Glow (`.loading-ambient-glow`): 320px radial gradient (`rgba(110, 86, 207, 0.3)` to `#38bdf8`) with 45px blur, animating with a gentle 3.5s pulse.
+  - Precision Progress Bar (`.loading-bar-progress`): 4px bar with glowing head (`.loading-bar-glow-head`), smooth 1.4s cubic-bezier motion (`loadingMotion`).
+- **Studio Docking & Camera Settle Transitions (`body.res-wide.workspace-docked`)**:
+  - Toolbar Dock (`studioToolbarDock`): Drops from `translateY(-20px)` to 0 in 0.4s cubic-bezier(0.16, 1, 0.3, 1).
+  - Left & Right Sidebars Dock (`studioLeftDock`, `studioRightDock`): Slide in from -24px and +24px respectively in 0.4s (staggered by 0.05s).
+  - Artboard Camera Settle (`canvasCameraIn`): Settles in from `filter: blur(4px); opacity: 0.7` to `filter: blur(0); opacity: 1` over 0.45s, creating a crisp, immersive camera focus effect.
 
 ## V4 Border Rule
 - Keep all V4 component borders at `1.6px`.
@@ -230,6 +285,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - 배경: `#141720` 솔리드 다크 테마 (절대 `backdrop-filter: blur` 금지).
   - 보더: `1.6px solid rgba(255, 255, 255, 0.12)`.
   - 높이: `32px`, 패딩 `0 12px`, 둥글기 `8px`.
+  - **Z-Index**: **Tier 7 (`350,000 !important;`)** - 캔버스 내 일반 컨텐츠, 드롭다운, 스티키 HUD, 디스크립션 핀보다 위에 떠서 프레임 메타정보를 상시 표시하며 최상위 전역 모달(Tier 8)에 가려지지 않음.
   - 화면명 입력창(`.frame-title-input`): `font-size: 11px; font-weight: 600; color: #f8fafc; padding: 1px 5px; width: 170px;`.
   - 높이 제어창(`.frame-label-input`): `width: 50px; height: 20px; background: #0f131a; border: 1.2px solid rgba(0, 229, 255, 0.35); color: #38bdf8; font-weight: 600; font-size: 10.5px; font-family: 'Inter', monospace; text-align: center;`.
   - 폰트 안티앨리어싱: `-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;`.
@@ -260,6 +316,29 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **Pin Marker Dynamic Inspector Mode**:
   - 선택 대상이 디스크립션 핀(번호 마커 `.pin-marker`)인 경우, `#selection-scroll-pin-bar`는 핀 전용 2단 토글(`[ 본문 배치 (일반) ]` vs `[ 화면 핀 고정 📌 ]`)로 다형성 전환되어 뷰포트 고정 핀(`data-scroll-fixed="viewport"`)을 원터치 설정/해제 가능.
 
-
-
-
+## 📌 Description Pin Dedicated Overlay (.v4-pin-layer) & Marker Visual Standards
+- **Dedicated Pin Overlay Container (`.v4-pin-layer`)**:
+  - 반응형 스크린(`isResponsiveDocument`)의 `.pc-content-inner` 및 `.mobile-content-inner` 최상단에 자동으로 배치되는 전용 오버레이 컨테이너.
+  ```css
+  .v4-pin-layer {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none !important;
+      z-index: 250000 !important;
+      overflow: visible !important;
+  }
+  ```
+  - **Stacking Context 면역성**: 어드민 테이블, 카드, 모달 래퍼 등의 CSS 격리 컨텍스트(`isolation: isolate; contain: paint; transform: translateZ(0);`)와 상관없이 모든 핀이 항상 캔버스 최상위에 칼같이 선명하게 노출됩니다.
+- **Pin Marker Atoms (`.pin-marker`)**:
+  - 오버레이 내부 자식으로 존재하되, 사용자 클릭/드래그를 수신할 수 있도록 **`pointer-events: auto !important;`**를 필수로 가집니다.
+  - 일반 본문 추종 핀: `z-index: 200000`.
+  - 뷰포트 고정 및 호스트 추종 핀(`data-scroll-fixed="viewport"`, `data-fixed-host`): `z-index: 200050`.
+  - 마커 원형 배지(`pin-number-badge`): 22px 원형, `#0ea5e9` 블루 또는 `#f59e0b` 앰버 엠블럼, 흰색 볼드 넘버링, 미세 그림자(`box-shadow: 0 2px 6px rgba(0,0,0,0.3)`).
+- **DOM 생성 및 자가 치유 (Self-Healing)**:
+  - 핀 생성 함수(`vctrl_responsive_pins.js`의 `createResponsivePinMarker`) 실행 시 `ensurePinLayer(container)`가 자동 실행되어 오버레이 부재 시 즉시 생성합니다.
+  - 컨테이너 내부에 직접 주입되어 있던 기존 레거시 핀이 발견되면 즉시 `.v4-pin-layer`의 자식 노드로 자동 이전(`layer.appendChild(p)`)되어 레거시 화면에서도 핀 가려짐이 100% 자동 치유됩니다.
+- **클립보드 붙여넣기 침범 차단 (`trailingRef`)**:
+  - `vctrl_clipboard_objects.js`의 붙여넣기 파이프라인에서 신규 오브젝트가 `.v4-pin-layer` 뒤로 주입되어 핀 레이어가 덮이지 않도록 `trailingRef` 판별 시 `.v4-pin-layer`를 감지하여 반드시 핀 레이어 직전(Before) 형제 위치로 삽입합니다.

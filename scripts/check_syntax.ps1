@@ -13,6 +13,8 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_system_modals.js",
     "c:\Users\sisun\ai_work\assets\inspector\inspector_quill.js",
     "c:\Users\sisun\ai_work\assets\inspector\inspector_scroll_pin.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_inspector_actionbar.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_inspector_sync.js",
     "c:\Users\sisun\ai_work\assets\vctrl_inspector.js",
     "c:\Users\sisun\ai_work\assets\vctrl_annotation_pins.js",
     "c:\Users\sisun\ai_work\assets\vctrl_canvas_viewport.js",
@@ -20,6 +22,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_style_extractor.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_layering.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_inserter.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_adorner.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_script.js",
     "c:\Users\sisun\ai_work\assets\vctrl_text_measurer.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_styles.js",
@@ -61,6 +64,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_component_library.js",
     "c:\Users\sisun\ai_work\assets\vctrl_object_shape.js",
     "c:\Users\sisun\ai_work\assets\vctrl_object_connector.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_component_atoms_data.js",
     "c:\Users\sisun\ai_work\assets\vctrl_component_data.js",
     "c:\Users\sisun\ai_work\assets\vctrl_component_illustrations.js",
     "c:\Users\sisun\ai_work\assets\app.js",
@@ -110,7 +114,7 @@ const scriptsToLoad = [
     'vctrl_iframe_ports.js', 'vctrl_iframe_grid.js', 'vctrl_iframe_accordion.js',
     'vctrl_iframe_tab.js', 'vctrl_responsive_smartguide_math.js', 'vctrl_responsive_smartguide.js', 'vctrl_responsive_pins.js',
     'vctrl_iframe_style_extractor.js', 'vctrl_iframe_layering.js', 'vctrl_iframe_inserter.js',
-    'vctrl_iframe_script.js', 'vctrl_responsive_multiselect.js', 'vctrl_iframe_scroll_pin.js'
+    'vctrl_iframe_adorner.js', 'vctrl_iframe_script.js', 'vctrl_responsive_multiselect.js', 'vctrl_iframe_scroll_pin.js'
 ];
 
 scriptsToLoad.forEach(s => {
@@ -127,7 +131,7 @@ const vars = [
     'v4PortConnectorScript', 'v4GridScript', 'v4AccordionScript', 'v4TabScript',
     'v4ResponsiveSmartGuideMathScript', 'v4ResponsiveSmartGuideScript', 'v4ResponsivePinsScript',
     'v4IframeStyleExtractorScript', 'v4IframeLayeringScript', 'v4IframeInserterScript',
-    'v4Script', 'v4ResponsiveMultiselectScript', 'v4ScrollPinScript'
+    'v4SelectionAdornerScript', 'v4Script', 'v4ResponsiveMultiselectScript', 'v4ScrollPinScript'
 ];
 
 let assembled = '';

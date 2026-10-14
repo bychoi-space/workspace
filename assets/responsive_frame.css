@@ -54,6 +54,8 @@ body {
 }
 
 .frame-label-bar {
+    position: relative;
+    z-index: 350000;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -501,4 +503,69 @@ svg.canvas-guide-layer {
 .page > .lf-component {
     z-index: 500;
 }
+
+/* Tier 6: Dedicated Pin Layer */
+.v4-pin-layer {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: 250000 !important;
+}
+
+.v4-pin-layer > .pin-marker,
+.v4-pin-layer > .text-marker {
+    pointer-events: auto !important;
+}
+
+/* Universal Pin & Text Marker Layering (Tier 6: 200,000+) */
+.pin-marker,
+.lf-component.pin-marker,
+.text-marker,
+.lf-component.text-marker,
+.pc-content-inner > .lf-component.pin-marker,
+.mobile-content-inner > .lf-component.pin-marker,
+.page > .lf-component.pin-marker {
+    z-index: 200000 !important;
+    pointer-events: auto !important;
+}
+
+.pin-marker.selected,
+.lf-component.pin-marker.selected,
+.text-marker.selected,
+.lf-component.text-marker.selected {
+    z-index: 200005 !important;
+}
+
+.pin-marker:hover,
+.lf-component.pin-marker:hover,
+.text-marker:hover,
+.lf-component.text-marker:hover {
+    z-index: 200005 !important;
+}
+
+.pin-marker[data-scroll-fixed],
+.lf-component.pin-marker[data-scroll-fixed],
+.text-marker[data-scroll-fixed],
+.lf-component.text-marker[data-scroll-fixed] {
+    z-index: 200050 !important;
+}
+
+.pin-marker[data-scroll-fixed].selected,
+.lf-component.pin-marker[data-scroll-fixed].selected,
+.text-marker[data-scroll-fixed].selected,
+.lf-component.text-marker[data-scroll-fixed].selected {
+    z-index: 200055 !important;
+}
+
+.pin-marker[data-scroll-fixed]:hover,
+.lf-component.pin-marker[data-scroll-fixed]:hover,
+.text-marker[data-scroll-fixed]:hover,
+.lf-component.text-marker[data-scroll-fixed]:hover {
+    z-index: 200055 !important;
+}
+
+
 

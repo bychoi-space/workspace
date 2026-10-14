@@ -124,6 +124,15 @@ window.v4ResponsiveMultiselectScript = `
             }
             prevMarqueeSelectedIds = new Set(ids);
 
+            if (ids.length === 1) {
+                const singleEl = document.getElementById(ids[0]);
+                if (singleEl) {
+                    window.activeEl = singleEl;
+                }
+            } else if (ids.length === 0) {
+                window.activeEl = null;
+            }
+
             // PERFORMANCE GUARD:
             // Heavy adorner & style extraction run ONLY when drag finishes
             if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
@@ -147,352 +156,419 @@ window.v4ResponsiveMultiselectScript = `
 
     window.v4MessageHandlers['LF_ALIGN_SELECTED'] = function(d) {
         const ids = d.ids || [];
-                    const alignType = d.alignType || d.type;
-                    if (ids.length < 1) return;
-                    if (window.V4UndoManager) window.V4UndoManager.saveState();
-        
-                    const doc = document;
-                    const items = [];
-                    const allHandles = doc.querySelectorAll('.lf-drag-handle, .lf-resizer, .lf-delete-trigger');
-                    const handleStates = Array.from(allHandles).map(h => h.style.display);
-                    allHandles.forEach(h => h.style.display = 'none');
-        
-                    const validIds = ids.filter(id => {
-                        const el = doc.getElementById(id);
-                        if (!el) return false;
-                        
-                        let parent = el.parentElement;
-                        while (parent && parent !== doc.body) {
-                            if (parent.classList.contains('lf-group') && ids.includes(parent.id)) return false;
-                            parent = parent.parentElement;
-                        }
-                        return true;
-                    });
-        
-                    validIds.forEach(id => {
-                        const isMarker = id.startsWith('v4-pin-');
-                        const isConnector = id.startsWith('conn_');
-                        const el = doc.getElementById(id);
-                        if (el) {
-                            if (isConnector) {
-                                const conn = (window.parent && window.parent.state && window.parent.state.connectors) 
-                                    ? window.parent.state.connectors.find(c => c.id === id) 
-                                    : null;
-                                if (conn) {
-                                    const absL = Math.min(conn.start.x, conn.end.x);
-                                    const absT = Math.min(conn.start.y, conn.end.y);
-                                    const w = Math.abs(conn.end.x - conn.start.x);
-                                    const h = Math.abs(conn.end.y - conn.start.y);
-                                    items.push({ id, type: 'connector', el, x: absL, y: absT, w, h, conn });
-                                }
-                            } else {
-                                let absL = parseFloat(el.style.left) || 0;
-                                let absT = parseFloat(el.style.top) || 0;
-                                
-                                let parent = el.parentElement;
-                                while (parent && parent !== doc.body) {
-                                    if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
-                                        absL += parseFloat(parent.style.left) || 0;
-                                        absT += parseFloat(parent.style.top) || 0;
-                                    }
-                                    parent = parent.parentElement;
-                                }
-        
-                                const w = el.offsetWidth;
-                                const h = el.offsetHeight;
-                                items.push({ id, type: isMarker ? 'marker' : 'comp', el, x: absL, y: absT, w, h });
-                            }
-                        }
-                    });
-        
-                    allHandles.forEach((h, i) => h.style.display = handleStates[i]);
-                    if (items.length < 1) return;
-        
-                    // Single Object Alignment: Align to Screen Canvas (1600x900) or Responsive Frame (PC 1160px / Mobile 360px)
-                    if (items.length === 1) {
-                        const item = items[0];
-                        const el = item.el;
-                        const isResponsiveTemplate = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function')
-                            ? window.ResponsiveFrameUtils.isResponsive(doc)
-                            : !!(doc.querySelector('.pc-content-inner') || doc.querySelector('.mobile-content-inner') || doc.querySelector('.pc-browser-frame'));
-                        
-                        let boundL = 0;
-                        let boundT = 0;
-                        let boundW = 1600;
-                        let boundH = 900;
-        
-                        if (isResponsiveTemplate) {
-                            const targetContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function')
-                                ? window.ResponsiveFrameUtils.getContainer(el)
-                                : (doc.querySelector('.mobile-content-inner') || doc.querySelector('.pc-content-inner'));
-                            if (targetContainer) {
-                                boundW = targetContainer.offsetWidth || 360;
-                                boundH = targetContainer.offsetHeight || targetContainer.clientHeight || 810;
-                            } else {
-                                const frameType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
-                                    ? window.ResponsiveFrameUtils.getFrameType(el)
-                                    : 'pc';
-                                if (frameType === 'mobile' || frameType === 'left' || frameType === 'right') {
-                                    boundW = 360; boundH = 810;
-                                } else {
-                                    boundW = 1160; boundH = 810;
-                                }
-                            }
-                        } else {
-                            // Non-responsive canvas: check if element is inside or geometrically within a .mobile-frame
-                            let mobileFrame = el ? el.closest('.mobile-frame') : null;
-                            if (!mobileFrame && el) {
-                                const compRect = el.getBoundingClientRect();
-                                const compCenter = compRect.left + compRect.width / 2;
-                                const frames = doc.querySelectorAll('.mobile-frame');
-                                for (let i = 0; i < frames.length; i++) {
-                                    const f = frames[i];
-                                    const fRect = f.getBoundingClientRect();
-                                    if (compCenter >= fRect.left - 20 && compCenter <= fRect.right + 20) {
-                                        mobileFrame = f;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (mobileFrame) {
-                                const mContent = mobileFrame.querySelector('.mobile-content') || mobileFrame;
-                                const mRect = mContent.getBoundingClientRect();
-                                const pageEl = doc.querySelector('.page') || doc.body;
-                                const pRect = pageEl.getBoundingClientRect();
-                                boundL = Math.round(mRect.left - pRect.left);
-                                boundT = Math.round(mRect.top - pRect.top);
-                                boundW = mContent.offsetWidth || 360;
-                                boundH = mContent.offsetHeight || 810;
-                            } else {
-                                const pageEl = doc.querySelector('.page') || doc.body;
-                                boundW = pageEl ? (pageEl.offsetWidth || 1600) : 1600;
-                                boundH = pageEl ? (pageEl.offsetHeight || 900) : 900;
-                            }
-                        }
-        
-                        let targetL = item.x;
-                        let targetT = item.y;
-        
-                        switch(alignType) {
-                            case 'left':   targetL = boundL; break;
-                            case 'center': targetL = boundL + Math.round((boundW - item.w) / 2); break;
-                            case 'right':  targetL = boundL + (boundW - item.w); break;
-                            case 'top':    targetT = boundT; break;
-                            case 'middle': targetT = boundT + Math.round((boundH - item.h) / 2); break;
-                            case 'bottom': targetT = boundT + (boundH - item.h); break;
-                        }
-        
-                        const dx = targetL - item.x;
-                        const dy = targetT - item.y;
-        
-                        if (dx !== 0 || dy !== 0) {
-                            if (item.type === 'connector') {
-                                if (item.conn) {
-                                    item.conn.start.x += dx;
-                                    item.conn.start.y += dy;
-                                    item.conn.end.x += dx;
-                                    item.conn.end.y += dy;
-                                    item.conn.start.targetId = null; item.conn.start.side = null;
-                                    item.conn.end.targetId = null; item.conn.end.side = null;
-                                    if (window.parent && window.parent.ConnectorEngine) {
-                                        window.parent.ConnectorEngine.redrawAll();
-                                    }
-                                    notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent?.state?.connectors });
-                                }
-                            } else {
-                                let parentL = 0;
-                                let parentT = 0;
-                                let parent = item.el.parentElement;
-                                while (parent && parent !== doc.body && !parent.classList.contains('pc-content-inner') && !parent.classList.contains('mobile-content-inner')) {
-                                    if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
-                                        parentL += parseFloat(parent.style.left) || 0;
-                                        parentT += parseFloat(parent.style.top) || 0;
-                                    }
-                                    parent = parent.parentElement;
-                                }
-        
-                                item.el.style.left = (targetL - parentL) + 'px';
-                                item.el.style.top = (targetT - parentT) + 'px';
-        
-                                if (item.type === 'marker') {
-                                    const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                                    notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: targetL, y: targetT });
-                                }
-        
-                                if (window.parent && window.parent.ConnectorEngine && typeof window.parent.ConnectorEngine.syncAnchoredPositions === 'function') {
-                                    window.parent.ConnectorEngine.syncAnchoredPositions(item.id);
-                                }
-                            }
-                            markDirty();
-                        }
-                        return;
+        const alignType = d.alignType || d.type;
+        if (ids.length < 1) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        const doc = document;
+        const items = [];
+        const allHandles = doc.querySelectorAll('.lf-drag-handle, .lf-resizer, .lf-delete-trigger');
+        const handleStates = Array.from(allHandles).map(function(h) { return h.style.display; });
+        allHandles.forEach(function(h) { h.style.display = 'none'; });
+
+        const validIds = ids.filter(function(id) {
+            const el = doc.getElementById(id);
+            if (!el) return false;
+            
+            let parent = el.parentElement;
+            while (parent && parent !== doc.body) {
+                if (parent.classList.contains('lf-group') && ids.includes(parent.id)) return false;
+                parent = parent.parentElement;
+            }
+            return true;
+        });
+
+        validIds.forEach(function(id) {
+            const isMarker = id.startsWith('v4-pin-');
+            const isConnector = id.startsWith('conn_');
+            const el = doc.getElementById(id);
+            if (el) {
+                if (isConnector) {
+                    const conn = (window.parent && window.parent.state && window.parent.state.connectors) 
+                        ? window.parent.state.connectors.find(function(c) { return c.id === id; }) 
+                        : null;
+                    if (conn) {
+                        const absL = Math.min(conn.start.x, conn.end.x);
+                        const absT = Math.min(conn.start.y, conn.end.y);
+                        const w = Math.abs(conn.end.x - conn.start.x);
+                        const h = Math.abs(conn.end.y - conn.start.y);
+                        items.push({ id: id, type: 'connector', el: el, x: absL, y: absT, w: w, h: h, conn: conn });
                     }
-        
-                    let minX = Math.min(...items.map(i => i.x));
-                    let minY = Math.min(...items.map(i => i.y));
-                    let maxX = Math.max(...items.map(i => i.x + i.w));
-                    let maxY = Math.max(...items.map(i => i.y + i.h));
-        
-                    let hasConnectorChanges = false;
-        
-                    if (alignType === 'distribute_h') {
-                        if (items.length < 3) {
-                            allHandles.forEach((h, i) => h.style.display = handleStates[i]);
-                            return;
+                } else {
+                    let absL = parseFloat(el.style.left) || 0;
+                    let absT = parseFloat(el.style.top) || 0;
+                    
+                    let parent = el.parentElement;
+                    while (parent && parent !== doc.body) {
+                        if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                            absL += parseFloat(parent.style.left) || 0;
+                            absT += parseFloat(parent.style.top) || 0;
                         }
-                        items.sort((a, b) => a.x - b.x);
-                        const sumW = items.reduce((sum, item) => sum + item.w, 0);
-                        const spanX = maxX - minX;
-                        const gapSize = (spanX - sumW) / (items.length - 1);
-                        let currentX = minX;
-                        items.forEach(item => {
-                            const dx = currentX - item.x;
-                            currentX += item.w + gapSize;
-                            
-                            if (dx === 0) return;
-                            const newAbsX = item.x + dx;
-        
-                            if (item.type === 'connector') {
-                                if (item.conn) {
-                                    item.conn.start.x += dx;
-                                    item.conn.end.x += dx;
-                                    item.conn.start.targetId = null; item.conn.start.side = null;
-                                    item.conn.end.targetId = null; item.conn.end.side = null;
-                                    hasConnectorChanges = true;
-                                }
-                            } else {
-                                let parentL = 0;
-                                let parent = item.el.parentElement;
-                                while (parent && parent !== doc.body) {
-                                    if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
-                                        parentL += parseFloat(parent.style.left) || 0;
-                                    }
-                                    parent = parent.parentElement;
-                                }
-                                item.el.style.left = (newAbsX - parentL) + 'px';
-                                if (item.type === 'marker') {
-                                    const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                                    notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: newAbsX, y: item.y });
-                                }
-                            }
-                        });
-                        allHandles.forEach((h, i) => h.style.display = handleStates[i]);
-                        if (hasConnectorChanges) {
-                            if (window.parent && window.parent.ConnectorEngine) {
-                                window.parent.ConnectorEngine.redrawAll();
-                            }
-                            notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent?.state?.connectors });
-                        }
-                        markDirty();
-                        return;
+                        parent = parent.parentElement;
                     }
-        
-                    if (alignType === 'distribute_v') {
-                        if (items.length < 3) {
-                            allHandles.forEach((h, i) => h.style.display = handleStates[i]);
-                            return;
-                        }
-                        items.sort((a, b) => a.y - b.y);
-                        const sumH = items.reduce((sum, item) => sum + item.h, 0);
-                        const spanY = maxY - minY;
-                        const gapSize = (spanY - sumH) / (items.length - 1);
-                        let currentY = minY;
-                        items.forEach(item => {
-                            const dy = currentY - item.y;
-                            currentY += item.h + gapSize;
-                            
-                            if (dy === 0) return;
-                            const newAbsY = item.y + dy;
-        
-                            if (item.type === 'connector') {
-                                if (item.conn) {
-                                    item.conn.start.y += dy;
-                                    item.conn.end.y += dy;
-                                    item.conn.start.targetId = null; item.conn.start.side = null;
-                                    item.conn.end.targetId = null; item.conn.end.side = null;
-                                    hasConnectorChanges = true;
-                                }
-                            } else {
-                                let parentT = 0;
-                                let parent = item.el.parentElement;
-                                while (parent && parent !== doc.body) {
-                                    if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
-                                        parentT += parseFloat(parent.style.top) || 0;
-                                    }
-                                    parent = parent.parentElement;
-                                }
-                                item.el.style.top = (newAbsY - parentT) + 'px';
-                                if (item.type === 'marker') {
-                                    const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                                    notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: item.x, y: newAbsY });
-                                }
-                            }
-                        });
-                        allHandles.forEach((h, i) => h.style.display = handleStates[i]);
-                        if (hasConnectorChanges) {
-                            if (window.parent && window.parent.ConnectorEngine) {
-                                window.parent.ConnectorEngine.redrawAll();
-                            }
-                            notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent?.state?.connectors });
-                        }
-                        markDirty();
-                        return;
+
+                    const w = el.offsetWidth || parseFloat(el.style.width) || 100;
+                    const h = el.offsetHeight || parseFloat(el.style.height) || 40;
+                    items.push({ id: id, type: isMarker ? 'marker' : 'comp', el: el, x: absL, y: absT, w: w, h: h });
+                }
+            }
+        });
+
+        allHandles.forEach(function(h, i) { h.style.display = handleStates[i]; });
+        if (items.length < 1) return;
+
+        // --- Single Object Alignment: Align to Visible Viewport of Frame or Canvas ---
+        if (items.length === 1) {
+            const item = items[0];
+            const el = item.el;
+            const isResponsiveTemplate = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function')
+                ? window.ResponsiveFrameUtils.isResponsive(doc)
+                : !!(doc.querySelector('.pc-content-inner, .mobile-content-inner, .pc-browser-frame, .mobile-browser-frame, .pc-content-area, .mobile-content-area'));
+            
+            let boundL = 0;
+            let boundT = 0;
+            let boundW = 1600;
+            let boundH = 900;
+
+            if (isResponsiveTemplate) {
+                let targetContainer = null;
+                let frameType = 'canvas';
+                if (window.ResponsiveFrameUtils) {
+                    if (typeof window.ResponsiveFrameUtils.getContainer === 'function') {
+                        targetContainer = window.ResponsiveFrameUtils.getContainer(el);
                     }
-        
-                    items.forEach(item => {
-                        let dx = 0, dy = 0;
-                        switch(alignType) {
-                            case 'left':   dx = minX - item.x; break;
-                            case 'right':  dx = maxX - item.w - item.x; break;
-                            case 'center': dx = (minX + maxX)/2 - item.w/2 - item.x; break;
-                            case 'top':    dy = minY - item.y; break;
-                            case 'bottom': dy = maxY - item.h - item.y; break;
-                            case 'middle': dy = (minY + maxY)/2 - item.h/2 - item.y; break;
+                    if (typeof window.ResponsiveFrameUtils.getFrameType === 'function') {
+                        frameType = window.ResponsiveFrameUtils.getFrameType(el);
+                    }
+                }
+                if (!targetContainer && el && el.closest) {
+                    targetContainer = el.closest('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area, .mobile-content, .pc-content');
+                }
+
+                const isInsideFrame = !!targetContainer || (frameType && frameType !== 'canvas');
+
+                if (isInsideFrame) {
+                    const scrollContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
+                        ? window.ResponsiveFrameUtils.getScrollArea(el)
+                        : (el ? el.closest('.pc-content-area, .pc-content, .mobile-content-area, .mobile-content') : null);
+
+                    const sTop = scrollContainer ? (scrollContainer.scrollTop || 0) : 0;
+                    const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
+                    
+                    const isPc = (frameType === 'pc') || (targetContainer && targetContainer.classList.contains('pc-content-inner')) || !!(el && el.closest('.pc-browser-frame, .pc-column, .pc-content-inner, .pc-content-area'));
+                    
+                    boundW = targetContainer ? (targetContainer.offsetWidth || (isPc ? 1160 : 360)) : (isPc ? 1160 : 360);
+                    boundH = vHeight;
+                    boundL = 0;
+
+                    // Fixed HUD elements check (top or bottom fixed)
+                    const isFixedTop = el.getAttribute('data-scroll-fixed') === 'top';
+                    const isFixedBottom = el.getAttribute('data-scroll-fixed') === 'bottom';
+
+                    if (isFixedTop) {
+                        boundT = 0;
+                    } else if (isFixedBottom) {
+                        boundT = Math.max(0, sTop + vHeight - item.h);
+                    } else {
+                        boundT = sTop;
+                    }
+                } else {
+                    // Responsive canvas element outside frames
+                    const pageEl = doc.querySelector('.page, #canvas-page, #canvas') || doc.body;
+                    boundW = pageEl ? (pageEl.offsetWidth || 1600) : 1600;
+                    boundH = pageEl ? (pageEl.offsetHeight || 900) : 900;
+                    boundL = 0;
+                    boundT = 0;
+                }
+            } else {
+                // Non-responsive canvas: check if element is inside a mobile-frame
+                let mobileFrame = el ? el.closest('.mobile-frame') : null;
+                if (!mobileFrame && el) {
+                    const compRect = el.getBoundingClientRect();
+                    const compCenter = compRect.left + compRect.width / 2;
+                    const frames = doc.querySelectorAll('.mobile-frame');
+                    for (let i = 0; i < frames.length; i++) {
+                        const f = frames[i];
+                        const fRect = f.getBoundingClientRect();
+                        if (compCenter >= fRect.left - 20 && compCenter <= fRect.right + 20) {
+                            mobileFrame = f;
+                            break;
                         }
-        
-                        if (dx === 0 && dy === 0) return;
-        
-                        if (item.type === 'connector') {
-                            if (item.conn) {
-                                item.conn.start.x += dx;
-                                item.conn.start.y += dy;
-                                item.conn.end.x += dx;
-                                item.conn.end.y += dy;
-                                item.conn.start.targetId = null; item.conn.start.side = null;
-                                item.conn.end.targetId = null; item.conn.end.side = null;
-                                hasConnectorChanges = true;
-                            }
-                        } else {
-                            const newAbsX = item.x + dx;
-                            const newAbsY = item.y + dy;
-        
-                            let parentL = 0;
-                            let parentT = 0;
-                            let parent = item.el.parentElement;
-                            while (parent && parent !== doc.body) {
-                                if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
-                                    parentL += parseFloat(parent.style.left) || 0;
-                                    parentT += parseFloat(parent.style.top) || 0;
-                                }
-                                parent = parent.parentElement;
-                            }
-        
-                            item.el.style.left = (newAbsX - parentL) + 'px';
-                            item.el.style.top = (newAbsY - parentT) + 'px';
-                            
-                            if (item.type === 'marker') {
-                                const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                                notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: newAbsX, y: newAbsY });
-                            }
-                        }
-                    });
-                    if (hasConnectorChanges) {
+                    }
+                }
+                if (mobileFrame) {
+                    const mContent = mobileFrame.querySelector('.mobile-content') || mobileFrame;
+                    boundL = 0;
+                    boundT = 0;
+                    boundW = mContent.offsetWidth || 360;
+                    boundH = mContent.offsetHeight || 810;
+                } else {
+                    const pageEl = doc.querySelector('.page') || doc.body;
+                    boundW = pageEl ? (pageEl.offsetWidth || 1600) : 1600;
+                    boundH = pageEl ? (pageEl.offsetHeight || 900) : 900;
+                    boundL = 0;
+                    boundT = 0;
+                }
+            }
+
+            let targetL = item.x;
+            let targetT = item.y;
+
+            switch(alignType) {
+                case 'left':   targetL = boundL; break;
+                case 'center': targetL = boundL + Math.round((boundW - item.w) / 2); break;
+                case 'right':  targetL = boundL + (boundW - item.w); break;
+                case 'top':    targetT = boundT; break;
+                case 'middle': targetT = boundT + Math.round((boundH - item.h) / 2); break;
+                case 'bottom': targetT = boundT + (boundH - item.h); break;
+            }
+
+            const dx = targetL - item.x;
+            const dy = targetT - item.y;
+
+            if (dx !== 0 || dy !== 0) {
+                if (item.type === 'connector') {
+                    if (item.conn) {
+                        item.conn.start.x += dx;
+                        item.conn.start.y += dy;
+                        item.conn.end.x += dx;
+                        item.conn.end.y += dy;
+                        item.conn.start.targetId = null; item.conn.start.side = null;
+                        item.conn.end.targetId = null; item.conn.end.side = null;
                         if (window.parent && window.parent.ConnectorEngine) {
                             window.parent.ConnectorEngine.redrawAll();
                         }
-                        notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent?.state?.connectors });
+                        notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
                     }
-                    markDirty();
+                } else {
+                    let parentL = 0;
+                    let parentT = 0;
+                    let parent = item.el.parentElement;
+                    while (parent && parent !== doc.body && !parent.classList.contains('pc-content-inner') && !parent.classList.contains('mobile-content-inner')) {
+                        if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                            parentL += parseFloat(parent.style.left) || 0;
+                            parentT += parseFloat(parent.style.top) || 0;
+                        }
+                        parent = parent.parentElement;
+                    }
+
+                    item.el.style.left = (targetL - parentL) + 'px';
+                    item.el.style.top = (targetT - parentT) + 'px';
+
+                    if (typeof window.updateHandles === 'function') {
+                        window.updateHandles(item.el);
+                    }
+
+                    if (item.type === 'marker') {
+                        const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
+                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: targetL, y: targetT });
+                    }
+
+                    if (window.parent && window.parent.ConnectorEngine && typeof window.parent.ConnectorEngine.syncAnchoredPositions === 'function') {
+                        window.parent.ConnectorEngine.syncAnchoredPositions(item.id);
+                    }
+
+                    if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                        window.SelectionAdorner.update();
+                    }
+
+                    if (typeof window._getCompStyles === 'function') {
+                        const compStyles = window._getCompStyles(item.el);
+                        notifyParent(Object.assign({ type: 'LF_COMP_SELECTED', id: item.id }, compStyles));
+                    }
+                }
+                markDirty();
+            }
+            return;
+        }
+
+        // --- Multi Object Alignment: Relative Alignment to Bounding Box ---
+        let minX = Math.min.apply(Math, items.map(function(i) { return i.x; }));
+        let minY = Math.min.apply(Math, items.map(function(i) { return i.y; }));
+        let maxX = Math.max.apply(Math, items.map(function(i) { return i.x + i.w; }));
+        let maxY = Math.max.apply(Math, items.map(function(i) { return i.y + i.h; }));
+
+        let hasConnectorChanges = false;
+
+        if (alignType === 'distribute_h') {
+            if (items.length < 3) {
+                allHandles.forEach(function(h, i) { h.style.display = handleStates[i]; });
+                return;
+            }
+            items.sort(function(a, b) { return a.x - b.x; });
+            const sumW = items.reduce(function(sum, item) { return sum + item.w; }, 0);
+            const spanX = maxX - minX;
+            const gapSize = (spanX - sumW) / (items.length - 1);
+            let currentX = minX;
+            items.forEach(function(item) {
+                const dx = currentX - item.x;
+                currentX += item.w + gapSize;
+                
+                if (dx === 0) return;
+                const newAbsX = item.x + dx;
+
+                if (item.type === 'connector') {
+                    if (item.conn) {
+                        item.conn.start.x += dx;
+                        item.conn.end.x += dx;
+                        item.conn.start.targetId = null; item.conn.start.side = null;
+                        item.conn.end.targetId = null; item.conn.end.side = null;
+                        hasConnectorChanges = true;
+                    }
+                } else {
+                    let parentL = 0;
+                    let parent = item.el.parentElement;
+                    while (parent && parent !== doc.body) {
+                        if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                            parentL += parseFloat(parent.style.left) || 0;
+                        }
+                        parent = parent.parentElement;
+                    }
+                    item.el.style.left = (newAbsX - parentL) + 'px';
+                    if (typeof window.updateHandles === 'function') {
+                        window.updateHandles(item.el);
+                    }
+                    if (item.type === 'marker') {
+                        const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
+                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: newAbsX, y: item.y });
+                    }
+                }
+            });
+            allHandles.forEach(function(h, i) { h.style.display = handleStates[i]; });
+            if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                window.SelectionAdorner.update();
+            }
+            if (hasConnectorChanges) {
+                if (window.parent && window.parent.ConnectorEngine) {
+                    window.parent.ConnectorEngine.redrawAll();
+                }
+                notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
+            }
+            markDirty();
+            return;
+        }
+
+        if (alignType === 'distribute_v') {
+            if (items.length < 3) {
+                allHandles.forEach(function(h, i) { h.style.display = handleStates[i]; });
+                return;
+            }
+            items.sort(function(a, b) { return a.y - b.y; });
+            const sumH = items.reduce(function(sum, item) { return sum + item.h; }, 0);
+            const spanY = maxY - minY;
+            const gapSize = (spanY - sumH) / (items.length - 1);
+            let currentY = minY;
+            items.forEach(function(item) {
+                const dy = currentY - item.y;
+                currentY += item.h + gapSize;
+                
+                if (dy === 0) return;
+                const newAbsY = item.y + dy;
+
+                if (item.type === 'connector') {
+                    if (item.conn) {
+                        item.conn.start.y += dy;
+                        item.conn.end.y += dy;
+                        item.conn.start.targetId = null; item.conn.start.side = null;
+                        item.conn.end.targetId = null; item.conn.end.side = null;
+                        hasConnectorChanges = true;
+                    }
+                } else {
+                    let parentT = 0;
+                    let parent = item.el.parentElement;
+                    while (parent && parent !== doc.body) {
+                        if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                            parentT += parseFloat(parent.style.top) || 0;
+                        }
+                        parent = parent.parentElement;
+                    }
+                    item.el.style.top = (newAbsY - parentT) + 'px';
+                    if (typeof window.updateHandles === 'function') {
+                        window.updateHandles(item.el);
+                    }
+                    if (item.type === 'marker') {
+                        const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
+                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: item.x, y: newAbsY });
+                    }
+                }
+            });
+            allHandles.forEach(function(h, i) { h.style.display = handleStates[i]; });
+            if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                window.SelectionAdorner.update();
+            }
+            if (hasConnectorChanges) {
+                if (window.parent && window.parent.ConnectorEngine) {
+                    window.parent.ConnectorEngine.redrawAll();
+                }
+                notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
+            }
+            markDirty();
+            return;
+        }
+
+        items.forEach(function(item) {
+            let dx = 0, dy = 0;
+            switch(alignType) {
+                case 'left':   dx = minX - item.x; break;
+                case 'right':  dx = maxX - item.w - item.x; break;
+                case 'center': dx = Math.round((minX + maxX)/2 - item.w/2 - item.x); break;
+                case 'top':    dy = minY - item.y; break;
+                case 'bottom': dy = maxY - item.h - item.y; break;
+                case 'middle': dy = Math.round((minY + maxY)/2 - item.h/2 - item.y); break;
+            }
+
+            if (dx === 0 && dy === 0) return;
+
+            if (item.type === 'connector') {
+                if (item.conn) {
+                    item.conn.start.x += dx;
+                    item.conn.start.y += dy;
+                    item.conn.end.x += dx;
+                    item.conn.end.y += dy;
+                    item.conn.start.targetId = null; item.conn.start.side = null;
+                    item.conn.end.targetId = null; item.conn.end.side = null;
+                    hasConnectorChanges = true;
+                }
+            } else {
+                const newAbsX = item.x + dx;
+                const newAbsY = item.y + dy;
+
+                let parentL = 0;
+                let parentT = 0;
+                let parent = item.el.parentElement;
+                while (parent && parent !== doc.body) {
+                    if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                        parentL += parseFloat(parent.style.left) || 0;
+                        parentT += parseFloat(parent.style.top) || 0;
+                    }
+                    parent = parent.parentElement;
+                }
+
+                item.el.style.left = (newAbsX - parentL) + 'px';
+                item.el.style.top = (newAbsY - parentT) + 'px';
+
+                if (typeof window.updateHandles === 'function') {
+                    window.updateHandles(item.el);
+                }
+                
+                if (item.type === 'marker') {
+                    const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
+                    notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: newAbsX, y: newAbsY });
+                }
+            }
+        });
+
+        allHandles.forEach(function(h, i) { h.style.display = handleStates[i]; });
+        if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+            window.SelectionAdorner.update();
+        }
+        if (hasConnectorChanges) {
+            if (window.parent && window.parent.ConnectorEngine) {
+                window.parent.ConnectorEngine.redrawAll();
+            }
+            notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
+        }
+        markDirty();
     };
 
     window.v4MessageHandlers['LF_GROUP_SELECTED'] = function(d) {

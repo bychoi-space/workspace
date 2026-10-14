@@ -134,6 +134,16 @@ body, .page, .lf-component {
 .v4-grid-container th.v4-grid-cell { font-size: 12px !important; font-family: inherit !important; color: var(--v4-text-color, #0f172a) !important; font-weight: 400 !important; position: sticky !important; top: 0 !important; z-index: 10 !important; background: #f8fafc !important; }
 .v4-grid-action-btn { display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 2px 8px !important; border-radius: 12px !important; font-size: 11px !important; border: 1.2px solid rgb(203, 213, 225) !important; background: #ffffff !important; cursor: pointer !important; color: #334155 !important; font-family: inherit !important; line-height: 1.2 !important; box-sizing: border-box !important; }
 .v4-grid-action-btn:hover { background: #f1f5f9 !important; border-color: #94a3b8 !important; }
+.v4-grid-action-btn.danger { border-color: #fecaca !important; background: #fef2f2 !important; color: #ef4444 !important; }
+.v4-grid-action-btn.danger:hover { background: #fee2e2 !important; border-color: #f87171 !important; color: #dc2626 !important; }
+.v4-grid-delete-box-btn { width: 24px !important; height: 24px !important; min-width: 24px !important; padding: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; border-radius: 4px !important; font-size: 15px !important; font-weight: 700 !important; border: 1.2px solid #fecaca !important; background: #ffffff !important; color: #ef4444 !important; cursor: pointer !important; line-height: 1 !important; box-sizing: border-box !important; transition: all 0.15s ease !important; }
+.v4-grid-delete-box-btn:hover { background: #fee2e2 !important; border-color: #f87171 !important; color: #dc2626 !important; }
+.v4-grid-order-group { display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 3px !important; vertical-align: middle !important; }
+.v4-grid-order-btn { width: 22px !important; height: 22px !important; padding: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; border-radius: 4px !important; font-size: 9px !important; border: 1px solid #cbd5e1 !important; background: #ffffff !important; color: #475569 !important; cursor: pointer !important; line-height: 1 !important; box-sizing: border-box !important; transition: all 0.15s ease !important; user-select: none !important; }
+.v4-grid-order-btn:hover { background: #f1f5f9 !important; border-color: #94a3b8 !important; color: #0f172a !important; }
+.v4-grid-input { width: 100% !important; height: 26px !important; padding: 0 8px !important; border: 1.6px solid rgb(226, 232, 240) !important; border-radius: 4px !important; background: #ffffff !important; font-size: 12px !important; color: #0f172a !important; box-sizing: border-box !important; text-align: inherit !important; outline: none !important; font-family: inherit !important; user-select: text !important; pointer-events: auto !important; cursor: text !important; transition: border-color 0.15s ease, box-shadow 0.15s ease !important; }
+.v4-grid-input:focus { border-color: #6e56cf !important; box-shadow: 0 0 0 2px rgba(110, 86, 207, 0.15) !important; }
+.v4-grid-image-box { width: 32px !important; height: 32px !important; margin: 0 auto !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; vertical-align: middle !important; background: #f1f5f9 !important; border: 1px solid #e2e8f0 !important; border-radius: 6px !important; overflow: hidden !important; pointer-events: none !important; box-sizing: border-box !important; }
 .v4-grid-badge { display: inline-block !important; padding: 2px 6px !important; border-radius: 4px !important; font-size: 11px !important; font-weight: 600 !important; line-height: 1.2 !important; }
 .v4-col-badge { display: inline-block !important; font-size: 9px !important; font-weight: 700 !important; line-height: 1 !important; padding: 2px 5px !important; border-radius: 3px !important; margin-left: 4px !important; vertical-align: middle !important; letter-spacing: 0.5px !important; pointer-events: none !important; user-select: none !important; }
 .v4-grid-container table th.v4-grid-col-highlight { z-index: 11 !important; }
@@ -396,9 +406,14 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .v4-selectbox-header { height: 30px !important; min-height: 30px !important; max-height: 30px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; box-sizing: border-box !important; }
 .v4-selectbox-container[data-dropdown-active="true"] .v4-selectbox-header { border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; }
 .v4-selectbox-container[data-dropdown-active="true"] svg { transform: rotate(180deg); }
-.v4-selectbox-options { position: relative !important; top: 0 !important; left: 0 !important; right: 0 !important; background: #ffffff !important; box-sizing: border-box !important; width: 100% !important; flex: 1 !important; margin-top: 0 !important; z-index: 10 !important; border-top: none !important; }
-.v4-selectbox-option { height: 30px !important; min-height: 30px !important; max-height: 30px !important; flex-shrink: 0 !important; padding: 0 12px !important; display: flex !important; align-items: center !important; font-size: 12px !important; color: #374151 !important; box-sizing: border-box !important; }
-.v4-selectbox-option:hover { background-color: #f3f4f6 !important; cursor: pointer; }
+.v4-selectbox-container[data-dropdown-active="false"] .v4-selectbox-options { display: none !important; }
+.v4-selectbox-container[data-dropdown-active="true"] .v4-selectbox-options { display: block !important; }
+.v4-selectbox-options { position: relative !important; top: 0 !important; left: 0 !important; right: 0 !important; background-color: var(--v4-component-bg, #ffffff) !important; border: 1.6px solid var(--v4-border-color, #cccccc) !important; border-top: none !important; border-radius: 0 0 8px 8px !important; box-sizing: border-box !important; width: 100% !important; flex: 1 !important; margin-top: 0 !important; z-index: 10 !important; overflow: hidden !important; box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important; }
+.v4-selectbox-option { height: 30px !important; min-height: 30px !important; max-height: 30px !important; flex-shrink: 0 !important; padding: 0 12px !important; display: flex !important; align-items: center !important; font-size: 12px !important; color: var(--v4-text-color, #0f172a) !important; border-bottom: 1.6px solid var(--v4-disabled-bg, #f3f4f6) !important; box-sizing: border-box !important; user-select: none !important; cursor: pointer !important; transition: background-color 0.15s ease !important; }
+.v4-selectbox-option:hover { background-color: var(--v4-disabled-bg, #f3f4f6) !important; }
+.v4-selectbox-option.active { background-color: rgba(99, 102, 241, 0.08) !important; color: var(--v4-accent-color, #4f46e5) !important; font-weight: 600 !important; }
+.v4-selectbox-option.active:hover { background-color: rgba(99, 102, 241, 0.14) !important; }
+.v4-selectbox-option .v4-option-check { margin-left: auto !important; color: var(--v4-accent-color, #4f46e5) !important; font-size: 13px !important; font-weight: bold !important; line-height: 1 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
 .v4-selectbox-option:last-child { border-bottom: none !important; }
 .v4-fileupload-container[data-selected="true"] .v4-fileupload-delete { display: block !important; }
 .v4-fileupload-delete:hover { color: #ef4444 !important; }
@@ -422,8 +437,24 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 .text-marker:hover, .v4-text-box:hover, .v4-text-shape:hover { box-shadow: none; }
 .text-marker.selected, .v4-text-box.selected, .v4-text-shape.selected { outline: 2px solid var(--v4-primary) !important; box-shadow: none; z-index: 10001; }
 
+/* Tier 6: Dedicated Pin Layer */
+.v4-pin-layer {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: 250000 !important;
+}
+.v4-pin-layer > .pin-marker,
+.v4-pin-layer > .text-marker {
+    pointer-events: auto !important;
+}
+
 /* Premium Pin Marker Styling */
-.pin-marker {
+.pin-marker,
+.lf-component.pin-marker {
     position: absolute !important;
     width: 20px !important;
     height: 20px !important;
@@ -444,30 +475,42 @@ svg.lf-icon:not(.v4-logo-img) polygon,
     box-sizing: border-box !important;
     pointer-events: auto !important;
 }
-.pin-marker .pin-number-badge {
+.pin-marker .pin-number-badge,
+.lf-component.pin-marker .pin-number-badge {
     color: #ffffff !important;
     font-weight: 500 !important;
     font-size: 12px !important;
     font-family: inherit !important;
     line-height: 1 !important;
 }
-.pin-marker.selected {
+.pin-marker.selected,
+.lf-component.pin-marker.selected {
     outline: none !important;
     box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #ef4444, 0 4px 14px rgba(239, 68, 68, 0.6) !important;
     z-index: 200005 !important;
 }
-.pin-marker:hover {
+.pin-marker:hover,
+.lf-component.pin-marker:hover {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6) !important;
     background: linear-gradient(135deg, #f87171, #ef4444) !important;
     z-index: 200005 !important;
 }
-.pin-marker[data-scroll-fixed], .text-marker[data-scroll-fixed] {
+.pin-marker[data-scroll-fixed],
+.lf-component.pin-marker[data-scroll-fixed],
+.text-marker[data-scroll-fixed],
+.lf-component.text-marker[data-scroll-fixed] {
     z-index: 200050 !important;
 }
-.pin-marker[data-scroll-fixed].selected, .text-marker[data-scroll-fixed].selected {
+.pin-marker[data-scroll-fixed].selected,
+.lf-component.pin-marker[data-scroll-fixed].selected,
+.text-marker[data-scroll-fixed].selected,
+.lf-component.text-marker[data-scroll-fixed].selected {
     z-index: 200055 !important;
 }
-.pin-marker[data-scroll-fixed]:hover, .text-marker[data-scroll-fixed]:hover {
+.pin-marker[data-scroll-fixed]:hover,
+.lf-component.pin-marker[data-scroll-fixed]:hover,
+.text-marker[data-scroll-fixed]:hover,
+.lf-component.text-marker[data-scroll-fixed]:hover {
     z-index: 200055 !important;
 }
 .pin-marker .lf-drag-handle,

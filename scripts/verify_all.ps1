@@ -32,6 +32,7 @@ $jsFiles = @(
     "assets/vctrl_iframe_style_extractor.js",
     "assets/vctrl_iframe_layering.js",
     "assets/vctrl_iframe_inserter.js",
+    "assets/vctrl_iframe_adorner.js",
     "assets/vctrl_iframe_script.js",
     "assets/vctrl_iframe_grid.js",
     "assets/vctrl_iframe_accordion.js",
@@ -52,6 +53,8 @@ $jsFiles = @(
     "assets/vctrl_system_modals.js",
     "assets/inspector/inspector_quill.js",
     "assets/inspector/inspector_scroll_pin.js",
+    "assets/vctrl_inspector_actionbar.js",
+    "assets/vctrl_inspector_sync.js",
     "assets/vctrl_inspector.js",
     "assets/vctrl_screen_manager.js",
     "assets/vctrl_revision_history.js",
@@ -73,6 +76,7 @@ $jsFiles = @(
     "assets/inspector/inspector_popup.js",
     "assets/dashboard.js",
     "assets/vctrl_canvas_background.js",
+    "assets/vctrl_component_atoms_data.js",
     "assets/vctrl_component_data.js",
     "assets/vctrl_core_router.js",
     "assets/vctrl_parent_shortcuts.js",
@@ -100,6 +104,9 @@ $htmlContent = @"
         };
         // Mock DOM elements that might be accessed on load
         window.DOM = {};
+        document.addEventListener('DOMContentLoaded', function(e) {
+            window.init = function() {};
+        }, true);
     </script>
     $scriptsTags
 </head>

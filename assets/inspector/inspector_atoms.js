@@ -143,7 +143,7 @@
 
         const defaultControls = document.getElementById('selectbox-default-controls');
         const dropdownControls = document.getElementById('selectbox-dropdown-controls');
-        if (defaultControls) defaultControls.style.display = isDropdown ? 'none' : 'block';
+        if (defaultControls) defaultControls.style.display = 'block';
         if (dropdownControls) dropdownControls.style.display = isDropdown ? 'block' : 'none';
 
         const defaultTextInput = document.getElementById('prop-selectbox-default-text');
@@ -152,20 +152,29 @@
         }
 
         const options = comp.selectboxOptions || [];
+        const selectedIndices = (comp.selectboxSelectedIndices && Array.isArray(comp.selectboxSelectedIndices)) ? comp.selectboxSelectedIndices : [];
         const countInput = document.getElementById('prop-selectbox-option-count');
         if (countInput) countInput.value = options.length;
 
         const inputsContainer = document.getElementById('selectbox-options-inputs-container');
         if (inputsContainer) {
             const activeEl = document.activeElement;
-            const isTyping = activeEl && inputsContainer.contains(activeEl);
+            const isTyping = activeEl && inputsContainer.contains(activeEl) && activeEl.classList.contains('selectbox-option-input');
             if (!isTyping) {
                 inputsContainer.innerHTML = options.map((optText, idx) => {
-                    return '<div style="display: flex; align-items: center; gap: 8px;">' +
-                        '<span style="font-size: 10px; color: #94a3b8; width: 45px; flex-shrink: 0;">Item ' + (idx + 1) + '</span>' +
-                        '<input type="text" class="selectbox-option-input" data-index="' + idx + '" value="' + (optText || '') + '" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
+                    const isChecked = selectedIndices.indexOf(idx) !== -1;
+                    return '<div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">' +
+                        '<span style="font-size: 10px; color: #94a3b8; width: 40px; flex-shrink: 0;">Item ' + (idx + 1) + '</span>' +
+                        '<input type="text" class="selectbox-option-input" data-index="' + idx + '" value="' + (optText || '') + '" style="flex: 1; min-width: 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
+                        '<input type="checkbox" class="selectbox-option-check" data-index="' + idx + '" ' + (isChecked ? 'checked' : '') + ' title="선택된 항목으로 활성화" style="accent-color: var(--accent, #6e56cf); cursor: pointer; width: 15px; height: 15px; margin: 0; flex-shrink: 0;">' +
                     '</div>';
                 }).join('');
+            } else {
+                inputsContainer.querySelectorAll('.selectbox-option-check').forEach(cb => {
+                    const idx = parseInt(cb.dataset.index);
+                    const shouldBeChecked = selectedIndices.indexOf(idx) !== -1;
+                    if (cb.checked !== shouldBeChecked) cb.checked = shouldBeChecked;
+                });
             }
         }
         syncDisabled(comp);
@@ -184,7 +193,7 @@
                 highlightActive(dropN, false);
                 const dc = document.getElementById('selectbox-default-controls');
                 const dpc = document.getElementById('selectbox-dropdown-controls');
-                if (dc) dc.style.display = 'none';
+                if (dc) dc.style.display = 'block';
                 if (dpc) dpc.style.display = 'block';
                 notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', dropdownActive: true });
             };
@@ -209,22 +218,27 @@
             countInp.oninput = () => {
                 const count = Math.max(1, Math.min(10, parseInt(countInp.value) || 1));
                 const currentInputs = inputsContainer ? Array.from(inputsContainer.querySelectorAll('.selectbox-option-input')) : [];
+                const currentChecks = inputsContainer ? Array.from(inputsContainer.querySelectorAll('.selectbox-option-check')) : [];
                 const currentValues = currentInputs.map(inp => inp.value);
+                const currentCheckedIndices = currentChecks.filter(cb => cb.checked).map(cb => parseInt(cb.dataset.index));
                 while (currentValues.length < count) {
                     currentValues.push('Option ' + (currentValues.length + 1));
                 }
                 if (currentValues.length > count) {
                     currentValues.length = count;
                 }
+                const filteredCheckedIndices = currentCheckedIndices.filter(idx => idx < count);
                 if (inputsContainer) {
                     inputsContainer.innerHTML = currentValues.map((v, i) => {
-                        return '<div style="display: flex; align-items: center; gap: 8px;">' +
-                            '<span style="font-size: 10px; color: #94a3b8; width: 45px; flex-shrink: 0;">Item ' + (i + 1) + '</span>' +
-                            '<input type="text" class="selectbox-option-input" data-index="' + i + '" value="' + v + '" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
+                        const isChecked = filteredCheckedIndices.indexOf(i) !== -1;
+                        return '<div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">' +
+                            '<span style="font-size: 10px; color: #94a3b8; width: 40px; flex-shrink: 0;">Item ' + (i + 1) + '</span>' +
+                            '<input type="text" class="selectbox-option-input" data-index="' + i + '" value="' + v + '" style="flex: 1; min-width: 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
+                            '<input type="checkbox" class="selectbox-option-check" data-index="' + i + '" ' + (isChecked ? 'checked' : '') + ' title="선택된 항목으로 활성화" style="accent-color: var(--accent, #6e56cf); cursor: pointer; width: 15px; height: 15px; margin: 0; flex-shrink: 0;">' +
                         '</div>';
                     }).join('');
                 }
-                notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', options: currentValues });
+                notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', options: currentValues, selectedIndices: filteredCheckedIndices });
             };
         }
         if (inputsContainer) {
@@ -233,6 +247,13 @@
                     const allInps = Array.from(inputsContainer.querySelectorAll('.selectbox-option-input'));
                     const vals = allInps.map(inp => inp.value);
                     notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', options: vals });
+                }
+            };
+            inputsContainer.onchange = (e) => {
+                if (e.target && e.target.classList.contains('selectbox-option-check')) {
+                    const allChecks = Array.from(inputsContainer.querySelectorAll('.selectbox-option-check:checked'));
+                    const checkedIndices = allChecks.map(cb => parseInt(cb.dataset.index));
+                    notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', selectedIndices: checkedIndices });
                 }
             };
         }
@@ -591,6 +612,32 @@
             };
         }
     };
+
+    // Global delegation safeguard for Toggle controls
+    document.addEventListener('click', (e) => {
+        const btnOn = e.target.closest && e.target.closest('#btn-toggle-on');
+        if (btnOn) {
+            const btnOff = document.getElementById('btn-toggle-off');
+            highlightActive(btnOn, true);
+            if (btnOff) highlightActive(btnOff, false);
+            notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: true });
+            return;
+        }
+        const btnOff = e.target.closest && e.target.closest('#btn-toggle-off');
+        if (btnOff) {
+            const btnOn = document.getElementById('btn-toggle-on');
+            if (btnOn) highlightActive(btnOn, false);
+            highlightActive(btnOff, true);
+            notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: false });
+            return;
+        }
+    });
+
+    document.addEventListener('input', (e) => {
+        if (e.target && e.target.id === 'prop-toggle-color') {
+            notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', color: e.target.value });
+        }
+    });
 
     // Common Color Sync Helper
     const syncAtomColor = (id, wrapperId, color, isTransparent) => {
@@ -1233,6 +1280,195 @@
     };
     const initCursorEvents = bindCursorEvents;
 
+    // --- Web Editor Component ---
+    const syncWebEditor = (comp) => {
+        if (!comp) return;
+
+        // 1. Dimensions
+        const wInp = document.getElementById('prop-width-webeditor');
+        const hInp = document.getElementById('prop-height-webeditor');
+        if (wInp && comp.w !== undefined && document.activeElement !== wInp) wInp.value = Math.round(comp.w);
+        if (hInp && comp.h !== undefined && document.activeElement !== hInp) hInp.value = Math.round(comp.h);
+
+        // 2. Editor Mode (editor / html / text)
+        const modeSelect = document.getElementById('prop-webeditor-mode');
+        if (modeSelect && comp.editorMode) {
+            modeSelect.value = comp.editorMode;
+        }
+
+        // 3. Toolbar Mode (full / simple / none)
+        const toolbarSelect = document.getElementById('prop-webeditor-toolbar');
+        if (toolbarSelect && comp.toolbarMode) {
+            toolbarSelect.value = comp.toolbarMode;
+        }
+
+        // 4. Counter Toggle (Y / N)
+        const btnCounterY = document.getElementById('btn-webeditor-counter-y');
+        const btnCounterN = document.getElementById('btn-webeditor-counter-n');
+        if (btnCounterY && btnCounterN && comp.showCounter !== undefined) {
+            const isShow = (comp.showCounter === true || comp.showCounter === 'true');
+            highlightActive(btnCounterY, isShow);
+            highlightActive(btnCounterN, !isShow);
+        }
+
+        // 5. Max Length
+        const maxLenInp = document.getElementById('prop-webeditor-maxlength');
+        const maxLenTxt = document.getElementById('txt-webeditor-maxlength');
+        if (comp.maxLength !== undefined) {
+            const mVal = parseInt(comp.maxLength, 10) || 2000;
+            if (maxLenInp && document.activeElement !== maxLenInp) {
+                maxLenInp.value = mVal;
+            }
+            if (maxLenTxt) {
+                maxLenTxt.innerText = mVal;
+            }
+        }
+
+        // 6. Read-only (disabled) Toggle (Y / N)
+        const btnRoY = document.getElementById('btn-webeditor-readonly-y');
+        const btnRoN = document.getElementById('btn-webeditor-readonly-n');
+        if (btnRoY && btnRoN) {
+            const isRo = (comp.readonly === true || comp.readonly === 'true' || comp.disabled === true || comp.disabled === 'true');
+            highlightActive(btnRoY, isRo);
+            highlightActive(btnRoN, !isRo);
+        }
+    };
+
+    let _webeditorEventsBound = false;
+    const bindWebEditorEvents = () => {
+        // Direct event attachment on elements if present
+        const btnCounterY = document.getElementById('btn-webeditor-counter-y');
+        const btnCounterN = document.getElementById('btn-webeditor-counter-n');
+        if (btnCounterY) {
+            btnCounterY.onclick = () => {
+                highlightActive(btnCounterY, true);
+                if (btnCounterN) highlightActive(btnCounterN, false);
+                notifyIframe({
+                    type: 'LF_UPDATE_PROP',
+                    prop: 'showCounter',
+                    value: true
+                });
+            };
+        }
+        if (btnCounterN) {
+            btnCounterN.onclick = () => {
+                highlightActive(btnCounterN, true);
+                if (btnCounterY) highlightActive(btnCounterY, false);
+                notifyIframe({
+                    type: 'LF_UPDATE_PROP',
+                    prop: 'showCounter',
+                    value: false
+                });
+            };
+        }
+
+        const btnRoY = document.getElementById('btn-webeditor-readonly-y');
+        const btnRoN = document.getElementById('btn-webeditor-readonly-n');
+        if (btnRoY) {
+            btnRoY.onclick = () => {
+                highlightActive(btnRoY, true);
+                if (btnRoN) highlightActive(btnRoN, false);
+                notifyIframe({
+                    type: 'LF_UPDATE_PROP',
+                    prop: 'readonly',
+                    value: true
+                });
+            };
+        }
+        if (btnRoN) {
+            btnRoN.onclick = () => {
+                highlightActive(btnRoN, true);
+                if (btnRoY) highlightActive(btnRoY, false);
+                notifyIframe({
+                    type: 'LF_UPDATE_PROP',
+                    prop: 'readonly',
+                    value: false
+                });
+            };
+        }
+
+        const maxLenInp = document.getElementById('prop-webeditor-maxlength');
+        if (maxLenInp) {
+            maxLenInp.oninput = (e) => {
+                let val = parseInt(e.target.value, 10);
+                if (isNaN(val) || val < 0) val = 0;
+                const txt = document.getElementById('txt-webeditor-maxlength');
+                if (txt) txt.innerText = val;
+                notifyIframe({
+                    type: 'LF_UPDATE_PROP',
+                    prop: 'maxLength',
+                    value: val
+                });
+            };
+        }
+
+        if (_webeditorEventsBound) return;
+        _webeditorEventsBound = true;
+
+        // Delegated click support
+        document.addEventListener('click', (e) => {
+            const btn = e.target && e.target.closest ? e.target.closest('#btn-webeditor-counter-y, #btn-webeditor-counter-n, #btn-webeditor-readonly-y, #btn-webeditor-readonly-n') : null;
+            if (!btn) return;
+            if (btn.id === 'btn-webeditor-counter-y') {
+                highlightActive(btn, true);
+                const n = document.getElementById('btn-webeditor-counter-n');
+                if (n) highlightActive(n, false);
+                notifyIframe({ type: 'LF_UPDATE_PROP', prop: 'showCounter', value: true });
+            } else if (btn.id === 'btn-webeditor-counter-n') {
+                highlightActive(btn, true);
+                const y = document.getElementById('btn-webeditor-counter-y');
+                if (y) highlightActive(y, false);
+                notifyIframe({ type: 'LF_UPDATE_PROP', prop: 'showCounter', value: false });
+            } else if (btn.id === 'btn-webeditor-readonly-y') {
+                highlightActive(btn, true);
+                const n = document.getElementById('btn-webeditor-readonly-n');
+                if (n) highlightActive(n, false);
+                notifyIframe({ type: 'LF_UPDATE_PROP', prop: 'readonly', value: true });
+            } else if (btn.id === 'btn-webeditor-readonly-n') {
+                highlightActive(btn, true);
+                const y = document.getElementById('btn-webeditor-readonly-y');
+                if (y) highlightActive(y, false);
+                notifyIframe({ type: 'LF_UPDATE_PROP', prop: 'readonly', value: false });
+            }
+        });
+
+        // Mode, Toolbar change
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.id === 'prop-webeditor-mode') {
+                const newMode = e.target.value;
+                notifyIframe({
+                    type: 'LF_UPDATE_PROP',
+                    prop: 'editorMode',
+                    value: newMode
+                });
+            }
+            if (e.target && e.target.id === 'prop-webeditor-toolbar') {
+                const newToolbar = e.target.value;
+                notifyIframe({
+                    type: 'LF_UPDATE_PROP',
+                    prop: 'toolbarMode',
+                    value: newToolbar
+                });
+            }
+        });
+
+        // Delegated Max Length input
+        document.addEventListener('input', (e) => {
+            if (e.target && e.target.id === 'prop-webeditor-maxlength') {
+                let val = parseInt(e.target.value, 10);
+                if (isNaN(val) || val < 0) val = 0;
+                const txt = document.getElementById('txt-webeditor-maxlength');
+                if (txt) txt.innerText = val;
+                notifyIframe({
+                    type: 'LF_UPDATE_PROP',
+                    prop: 'maxLength',
+                    value: val
+                });
+            }
+        });
+    };
+    bindWebEditorEvents();
+
     window.InspectorAtoms = {
         syncStepper: syncStepper,
         syncSelectbox: syncSelectbox,
@@ -1246,6 +1482,7 @@
         syncSearchBar: syncSearchBar,
         syncDatePicker: syncDatePicker,
         syncCursor: syncCursor,
+        syncWebEditor: syncWebEditor,
         bindStepperEvents: bindStepperEvents,
         bindSelectboxEvents: bindSelectboxEvents,
         bindFileuploadEvents: bindFileuploadEvents,
@@ -1257,6 +1494,7 @@
         bindSearchBarEvents: initSearchBarEvents,
         bindDatePickerEvents: initDatePickerEvents,
         bindCursorEvents: bindCursorEvents,
+        bindWebEditorEvents: bindWebEditorEvents,
         bindDisabledEvents: bindDisabledEvents,
         bindAllEvents: function() {
             bindDisabledEvents();
@@ -1267,12 +1505,14 @@
             bindButtonEvents();
             bindToggleEvents();
             bindCursorEvents();
+            bindWebEditorEvents();
             if (typeof initCheckboxRadioEvents === 'function') initCheckboxRadioEvents();
             if (typeof initTextboxTextareaEvents === 'function') initTextboxTextareaEvents();
             if (typeof initSearchBarEvents === 'function') initSearchBarEvents();
             if (typeof initDatePickerEvents === 'function') initDatePickerEvents();
         }
     };
+    window._syncWebEditorProps = syncWebEditor;
     
     // Global alias exports for backwards-compatibility
     window.initCheckboxRadioEvents = initCheckboxRadioEvents;
@@ -1280,4 +1520,5 @@
     window.initSearchbarEvents = initSearchBarEvents;
     window.initDatePickerEvents = initDatePickerEvents;
     window.initCursorEvents = initCursorEvents;
+    window.initWebEditorEvents = bindWebEditorEvents;
 })();

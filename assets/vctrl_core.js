@@ -62,6 +62,7 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'IframeStyleExtractor', key: 'v4IframeStyleExtractorScript' },
     { name: 'IframeLayering', key: 'v4IframeLayeringScript' },
     { name: 'IframeInserter', key: 'v4IframeInserterScript' },
+    { name: 'SelectionAdorner', key: 'v4SelectionAdornerScript' },
     { name: 'CoreScript', key: 'v4Script' },
     { name: 'ResponsiveMultiselect', key: 'v4ResponsiveMultiselectScript' },
     { name: 'ScrollPin', key: 'v4ScrollPinScript' }

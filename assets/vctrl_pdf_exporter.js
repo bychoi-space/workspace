@@ -172,6 +172,9 @@ async function fetchScreenHtmlForPdf(projectName, screenFileName) {
  * Helper to detect whether a screen HTML represents a Responsive PC/Mobile or Full-Width Admin screen
  */
 function isResponsiveScreenHtml(rawHtml, screenFileName = '') {
+    if (typeof window.isResponsiveHtml === 'function') {
+        return window.isResponsiveHtml(rawHtml, screenFileName);
+    }
     const fn = (screenFileName || '').toLowerCase();
     if (fn.includes('responsive') || fn.includes('admin_pc_scroll') || fn.includes('mobile_compare')) return true;
     if (!rawHtml) return false;

@@ -200,6 +200,7 @@
                     );
 
                     const isNewSelection = Boolean(data.id && data.id !== state.editingIndex);
+                    state.previousEditingIndex = state.editingIndex;
                     if (isNewSelection && activeEl && typeof activeEl.blur === 'function') {
                         activeEl.blur();
                         isTyping = false;
@@ -278,9 +279,9 @@
 
                             if (!isTyping) {
                                 if (selectedIds.length === 1) {
-                                    if (typeof window.updateProperties === 'function') window.updateProperties(data);
+                                    if (typeof window.updateProperties === 'function') window.updateProperties(data, isNewSelection);
                                 } else {
-                                    if (typeof window.updateProperties === 'function') window.updateProperties();
+                                    if (typeof window.updateProperties === 'function') window.updateProperties(null, isNewSelection);
                                 }
                             }
                         } else {
@@ -293,7 +294,7 @@
                                     window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 7000);
                                 }
                             }
-                            if (!isTyping && typeof window.updateProperties === 'function') window.updateProperties(data);
+                            if (!isTyping && typeof window.updateProperties === 'function') window.updateProperties(data, isNewSelection);
                         }
                     }
                 },

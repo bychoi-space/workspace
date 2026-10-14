@@ -20,9 +20,14 @@ description: Use when performing static code verification, syntax checking (scri
 - **Headless Browser Comprehensive Check**: 필요시 `powershell -ExecutionPolicy Bypass -File scripts/verify_all.ps1`을 통해 실제 Chromium/Edge Headless 환경에서 40여 개 전체 엔진 스크립트의 런타임 구문 로드 및 인라인 함수 생성을 전수 검사합니다.
 - **Event Flow Non-Blocking Check**: `mouseup` / `mousemove` 리스너 내 조기 종료(`return;`) 남용으로 하위 상태 해제(`LF_MARQUEE_END`)가 차단되지 않는지 이벤트 루프를 검증합니다.
 - **Module Boundary & SSOT Consistency**: `metadata.json` 스펙 및 `MessageHub` / `EditorBus` 통신 규격이 일치하는지 정적 추적합니다.
+- **Unified Z-Index Architecture & Pin Layer Verification**: `window.V4_Z_TIERS` 8대 티어 규격 정합성을 검증하고 임의의 비표준 z-index(99999 등) 잔류 여부를 점검합니다. `.v4-pin-layer`의 `z-index: 250000 !important;` 및 `pointer-events: none;` 선언 정합성과, 핀 마커의 `pointer-events: auto;` 속성을 정적 확인합니다.
+- **Stacking Context Isolation Immunity Verification**: 어드민 테이블 등 `isolation: isolate; contain: paint;` 속성을 갖는 컴포넌트와 디스크립션 핀의 DOM 계층 분리를 정적 검증하고, 필요시 Headless Chromium Stacking Context Hit-Test를 통해 핀이 항상 최상단에 렌더링되는지 확인합니다.
 
 ## User Verification Guidance Targets
 - 엔진, UI, 롤백, 대규모 CSS, 디자인 시스템 수정 후 사용자가 브라우저에서 직접 테스트할 수 있도록 다음 주요 점검 항목을 보고서에 명확히 안내합니다:
+  - 레이어 4대 단축키(`Ctrl+Shift+]`, `Ctrl+]`, `Ctrl+Shift+[`, `Ctrl+[`)를 통한 오브젝트 앞/뒤 순서 이동 동작
+  - 긴 스크롤 화면에서 디스크립션 핀 신규 생성 시 시야 내 안착 및 어드민 테이블/카드 위에 항상 최상단 노출 여부
+  - 스크롤 고정(`[상단]`, `[하단]`, `[플로팅]`, `[스티키]`) 설정 및 해제 시 레이어 순서 복원 동작
   - 화면 추가 (`+`) 및 스크린 전환 동작
   - 전체 저장 (`Save All`) 및 스토리지 반영
   - 사이드바 / 인스펙터 토글 동작

@@ -12,9 +12,10 @@
    - 코드 한 줄이라도 수정하기 전에 관련 소스코드(`vctrl_*.js`, 스타일, 인스펙터 등)와 연관 스킬(`SKILL.md`) 및 시스템 룰(`AGENTS.md`)을 전수 분석한다.
    - 변경 목적, 영향 범위, 구현 절차를 사전에 명확히 수립(대규모 작업 또는 사용자 요청 시 사전 계획서 작성)한 뒤 안전하게 착수한다.
 
-3. **[사이드이펙트 원천 차단] (Zero Side-Effects)**:
+3. **[사이드이펙트 원천 차단 & 기존 데이터 무오염] (Zero Side-Effects & Zero Data Contamination)**:
    - 전역 이벤트 리스너(`mouseup`, `keydown` 등), 공통 통신 버스, 타 컴포넌트(도형, 아톰, 테이블 등) 렌더링에 간섭이 없도록 모듈 격리와 스코프 가드를 철저히 적용한다.
-   - 단일 기능 수정으로 인해 기존에 잘 동작하던 기능이 중단되는 회귀(Regression)를 원천 차단한다.
+   - 단일 기능 수정이나 신규 기능 추가로 인해 기존에 잘 동작하던 기능이 중단되거나 기존 데이터가 변질되는 회귀(Regression)를 100% 원천 차단한다.
+   - **신규 도형/아톰/아이콘 추가 시 기존 데이터 오염 절대 금지**: 신규 컴포넌트 추가 시 스타일 추출기(`vctrl_iframe_style_extractor.js`), 속성 동기화 모듈, 데이터 모델에서 객체 중복 키(Duplicate Object Keys) 선언이나 전역 속성 덮어쓰기를 전면 금지하며, 타 아톰(예: 텍스트박스/텍스트에어리어 기본 최대글자수 100자 등) 고유의 속성과 기본값을 파괴하는 회귀를 절대 용납하지 않는다.
 
 4. **[스크립트/런타임 에러 0건] (Zero Script/Runtime Errors)**:
    - 변수/함수 미정의(`ReferenceError`), `null`/`undefined` 속성 접근(`TypeError`), 이벤트 핸들러 누락 등으로 인한 브라우저 콘솔 에러를 100% 방지한다.
@@ -35,10 +36,32 @@
 ## 🤖 Gemini 3.8 Flash / Antigravity 에이전트 가이드라인
 - **자율 실행 및 로컬 자체 완결 (Autonomous Local Execution)**: 사용자의 수동 승인(Accept / Submit / Run Confirm) 절차를 완전히 배제하고 작업 속도를 극대화하기 위해, PowerShell 명령어 실행(`run_command`), 코드 수정, 파일 생성, 정적 검증, 디버깅 등의 모든 작업은 중간 질문이나 사용자 확인 대기 없이 에이전트가 자체 판단하여 무조건 자동으로 즉시 실행하고 로컬에서 끝까지 완결 후 결과만 명확히 보고합니다. (단, 상기 '7대 필수 게이트웨이' 사전/사후 검증 절차는 필수적으로 거칩니다.)
 - **PowerShell / 터미널 작업 무조건 자동 실행 (Unconditional Auto-Run)**: 터미널 명령어나 검증 스크립트 실행 시 사용자에게 확인을 요청하지 않고 자율적으로 즉시 구동하여 신속하게 문제 해결 및 검증을 완료합니다.
-- **온디맨드 자동 GitHub 배포 (Automated On-Demand Deployment)**: GitHub 원격 저장소(`main`)로의 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 즉시 자동으로 커밋 및 푸시하여 동기화를 완료합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지하며, 브라우저 UI 측의 자동 저장 커밋으로 인한 충돌을 방지하기 위해 푸시 전 항상 `git pull --rebase origin main`을 선행하여 안전하게 동기화합니다.)
+- **온디맨드 자동 듀얼 원격 배포 (Automated On-Demand Dual Deployment)**: 개인 GitHub 원격 저장소(`origin`) 및 사내 Git 저장소(`sisun`)로의 동시 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 `scripts/deploy_all.ps1` 또는 `git push`를 통해 즉시 자동으로 커밋 및 푸시하여 양쪽 저장소 모두 동기화를 완결합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지하며, 브라우저 UI 측의 자동 저장 커밋으로 인한 충돌을 방지하기 위해 푸시 전 항상 `git pull --rebase origin main`을 선행하여 안전하게 동기화합니다.)
 - **엄격한 규칙 이행**: 사용자가 지정한 아키텍처 규칙, SSOT(Single Source of Truth), 인코딩 및 마스킹 표준을 예외 없이 100% 준수해야 합니다.
 - **정밀 심층 분석**: 코드를 수정하기 전 관련 모듈(`vctrl_*.js`)과 템플릿, 스타일시트를 전수 분석하여 예기치 못한 사이드이펙트를 원천 차단합니다.
 - **오류 자가 검증**: 대량 수정 후에는 브래킷 매칭, SyntaxError, ReferenceError 발생 여부를 엄격히 확인합니다.
+
+## 🌐 듀얼 원격 저장소(GitHub + 사내 Git) 동시 배포 및 사내 서버 접근 정보 (Dual Remote & Corporate Git Registry)
+- **배포 운영 원칙**:
+  - 본 시스템은 개인 GitHub 원격 저장소(`origin`)와 회사 사내 Git 저장소(`sisun`) 양쪽에 100% 동일한 소스코드와 브랜치(`main`)로 동시 배포 및 이중화 백업 운영됩니다.
+  - 사용자가 "배포", "푸시", "동기화"를 요청하면 에이전트는 사전 구문 무결성 검증(`scripts/check_syntax.ps1`) 통과 후 양쪽 원격 저장소로 즉시 동시 푸시를 완료합니다.
+- **원격 저장소 구성 및 접근 정보 SSOT**:
+  1. **개인 GitHub 원격 저장소 (`origin`)**:
+     - 저장소 주소: `https://github.com/bychoi-space/workspace.git`
+     - 주 브랜치: `main`
+  2. **사내 Git 저장소 (`sisun`)**:
+     - 공식 도메인 주소: `https://git.sisun.com:3000/sisun/sisun.planning.git`
+     - 직접 통신 경로 (사내 DNS/사설망 방화벽 우회 공인 IP): `https://211.115.114.212:3000/sisun/sisun.planning.git`
+     - 계정 ID: `beomyeol.choi`
+     - 비밀번호: `sisun65@@` (URL 인코딩: `sisun65%40%40`)
+     - 인증 포함 원격 URL: `https://beomyeol.choi:sisun65%40%40@211.115.114.212:3000/sisun/sisun.planning.git`
+     - SSL 검증 옵션: IP 직접 접근 시 도메인 인증서 불일치 방지를 위해 `git config http.sslVerify false` 필수 적용
+     - 주 브랜치: `main` (필요시 사내 원격지의 `master`로도 미러링 지원)
+- **동시 배포 실행 명령어**:
+  - 통합 스크립트 실행: `powershell -ExecutionPolicy Bypass -File scripts/deploy_all.ps1 -CommitMessage "커밋 메시지"`
+  - 수동 Git 푸시:
+    - 듀얼 푸시 등록 시: `git push origin main` (GitHub + 사내 저장소 동시 푸시)
+    - 개별 푸시: `git push origin main` (GitHub) / `git push sisun main` (사내 서버)
 
 ## 🔍 시스템 전체 정밀 진단 6대 필수 기준 프로토콜 (System-wide Deep Inspection Protocol)
 > 사용자가 **"시스템 전체 정밀 진단"**을 요청했을 때는 모든 소스 파일(JS, CSS, HTML, 템플릿, 스크립트, 데이터 등)을 **전수 조사(Full-File Census)**하여 아래 6대 조치 필요 항목을 분석하고 정량적 결과 및 개선안을 도출해야 합니다.
@@ -58,11 +81,12 @@
 - **모듈러 아키텍처 (Modular Architecture)**: 엔진 안정성과 확장성을 위해 역할을 엄격히 분리합니다.
   - **`vctrl_core.js` (Core Orchestrator - Parent Side)**:
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, 스크린 로딩 파이프라인, 내비게이션 보호 및 중앙 생명주기 조율을 전담합니다.
-    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 27개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
+    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 29개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
   - **`vctrl_storage.js` (Storage Engine - Parent Side)**:
     - **역할**: 스크린 직렬화(`getIframeHTML`), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, GitHub API 원격 커밋 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
   - **`vctrl_core_router.js` (Core Message Router - Parent Side)**:
     - **역할**: 부모-Iframe 간 통신 조율자. 중앙 `MessageHub` 리스너 및 23개 부모 측 코어 핸들러 테이블(`v4ParentCoreHandlers`), 부모 포커스 시 이미지 붙여넣기(`paste`)를 전담 격리합니다 (`window.CoreRouter`).
+    - **오브젝트 선택 라우팅 & 포커스 해제**: `LF_COMP_SELECTED` 수신 시 이전 선택 ID(`state.previousEditingIndex`)를 보존하여 신규 컴포넌트 선택 여부(`isNewSelection`)를 판별하고, 부모 창의 활성 인풋 포커스 잔류를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 전달합니다.
   - **`vctrl_parent_shortcuts.js` (Parent Shortcuts Engine - Parent Side)**:
     - **역할**: 부모 창의 전역 키보드 핫키(최우선 순위 `Ctrl+S`, `F2` 모드 스왑, `Shift+G` 반응형 그리드 토글, `Escape` 모달 닫기) 가드 및 캔버스 단축키(`Arrow`, `Delete`, `Space`, `Ctrl+C/V/X/G`)의 활성 iframe 프록시 토스를 전담합니다 (`window.ParentShortcuts`).
   - **`vctrl_screen_manager.js` (Screen Manager - Parent Side)**:
@@ -71,8 +95,10 @@
     - **역할**: 프로젝트 재개정 이력 전용 도메인 모듈. 재개정 이력 팝업 모달(`#history-modal`), 버전/일자/작성자/개발자/변경내용 인라인 추가/수정/삭제 렌더링(`window.renderHistoryPopup`) 및 메타데이터 동기화를 전담합니다.
   - **`vctrl_clipboard.js` (Clipboard & URL Manager - Parent Side)**:
     - **역할**: 프로젝트 URL 및 스크린 공유 URL 복사, 헤더 드롭다운 메뉴 제어, 시스템 클립보드 비동기 복사 fallback(`copyTextToClipboard`), 프로젝트 간(Cross-Project) 및 탭 간(Cross-Tab) 오브젝트/서식 클립보드 하이브리드 영속화(`window.top` 메모리 + `localStorage` dual-layer SSOT)를 전담합니다.
+  - **`vctrl_component_atoms_data.js` (Atoms Definition SSOT - Parent Side)**:
+    - **역할**: V4 아톰 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY.atoms`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, 스테퍼, 셀렉트박스, 체크박스, 라디오, 토글, 파일업로드, 데이트피커, 서치바, 아코디언, 알림, 팝업, 커서, 웹 에디터 아톰 등의 템플릿 마크업을 전담 정의합니다.
   - **`vctrl_component_data.js` (Component Definition SSOT - Parent Side)**:
-    - **역할**: V4 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, SVG 아이콘, 아톰 템플릿 마크업 및 카테고리 메타데이터를 전담 정의합니다.
+    - **역할**: V4 분자/유기체/캔버스배경 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY`)의 단일 진실 공급원. `molecules`, `organisms`, `canvasBackgrounds` 템플릿 마크업 및 카테고리 메타데이터를 전담 정의합니다.
   - **`vctrl_component_illustrations.js` (Illustration Catalog SSOT - Parent Side)**:
     - **역할**: 3D Admin, 2D Admin, 고객 구매 여정, 아토믹 디자인 시스템 26종 일러스트레이션 및 6종 Apple 스타일 Animated WebP 모션 인터랙션 카탈로그 메타데이터 전담 (`window.V4_COMPONENT_LIBRARY.illustrations`).
   - **`vctrl_canvas_viewport.js` (Canvas Viewport Engine - Parent Side)**:
@@ -86,7 +112,7 @@
   - **`vctrl_iframe_ports.js` (Port Engine - Iframe Side)**:
     - **역할**: iframe 내부 요소의 edge/port 영역 감지 및 포트 드래그 커넥터 시작 연동 전담.
   - **`vctrl_iframe_script.js` (Rendering Engine Shell - Iframe Side)**:
-    - **역할**: 시스템의 '근육'. iframe 내부의 DOM 직접 조작, 기본 이벤트 리스너 바인딩, 커넥터 조작 핸들 이벤트 디스패칭(`LF_CONNECTOR_HANDLE_MOVE`) 등을 전담합니다.
+    - **역할**: 시스템의 '근육'. iframe 내부의 DOM 직접 조작, 기본 이벤트 리스너 바인딩, 커넥터 조작 핸들 이벤트 디스패칭(`LF_CONNECTOR_HANDLE_MOVE`), 컴포넌트 mousedown 시 부모 활성 인풋 포커스 즉시 정리(`pActive.blur()`) 등을 전담합니다.
     - **메시지 레지스트리 디스패처 (`window.v4MessageHandlers`)**: 거대한 `if-else` 분기문 대신 코어 핸들러 테이블 맵(`v4IframeCoreHandlers`)과 전역 `window.v4MessageHandlers` 레지스트리를 통한 초경량(10줄) 이벤트 디스패처 구조를 따릅니다. 신규 메시지 타입 추가 시 거대 if-else를 확장하지 않고 핸들러 테이블에 순수 함수로 등록해야 합니다. (백틱 충돌 0건 원칙 엄격 준수)
   - **`vctrl_iframe_drag.js` (Drag/Resize Engine - Iframe Side)**:
     - **역할**: iframe 내부 요소의 마우스 드래그 이동 및 리사이즈 조작 인터랙션을 전담합니다. 브라우저가 iframe 내부로 전달하는 마우스 이벤트(`e.clientX`, `e.clientY`)는 이미 언스케일드 논리 좌표계이므로, 드래그/리사이즈 이동량(`dx`, `dy`)에 절대 `/ scale`을 나누지 않는 순수 1:1 논리 픽셀 불변성을 유지해야 합니다.
@@ -102,10 +128,15 @@
     - **역할**: 다중 요소 관리자. 드래그 범위 선택(Marquee), 다중 선택 상태(`selectedIds`), 그룹 이동/삭제/그룹화 연산 로직 전담.
   - **`vctrl_inspector.js` 및 `assets/inspector/*` (UI Controller & Domain Inspectors)**:
     - **역할**: 시스템의 '얼굴'. `vctrl_inspector.js`는 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 및 플로팅 카드를 총괄하며, 각 컴포넌트별 상세 속성 제어는 분리된 도메인 인스펙터(`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_popup.js`, `inspector_admin_settings.js`, `inspector_text_formatter.js`, `inspector_scroll_pin.js`)가 전담합니다.
+    - **오브젝트 프로퍼티 3중 판정 및 강제 동기화**: `window.updateProperties(compStyles, isNewSelectionExplicit)` 확장 인터페이스를 통해 신규 컴포넌트 선택 여부를 3중 판정(`isNewSelectionExplicit === true || compStyles.id !== state.previousEditingIndex || compStyles.id !== state._lastInspectorCompId`)하고, 타이핑 중 판정(`isTypingInInspector`) 오작동을 리셋하여 동일 쉐입(Rect ➔ Rect 등) 전환 시에도 가로/세로 크기(`DOM.propWidth`, `DOM.propHeight`)를 100% 즉시 갱신합니다.
     - **`inspector_atoms.js` (`window.InspectorAtoms`)**: 체크박스/라디오, 텍스트박스/텍스트에어리어, 서치바, 데이트피커 등 아톰 속성 인스펙터 동기화 전담 SSOT 모듈.
     - **`inspector_popup.js` (`window.InspectorPopup`)**: 팝업 윈도우 컴포넌트(`v4-atom-popup`)의 크기, 테두리, 배경색, 타이틀, 버튼 텍스트/스타일 등 인스펙터 속성 동기화 및 캔버스 양방향 이벤트 제어 전담 SSOT 모듈.
     - **`inspector_scroll_pin.js` (`window.InspectorScrollPin`)**: 반응형 화면 및 캔버스 요소의 스크롤 핀(상단/하단/커스텀/스티키), 뷰포트 고정 모드 및 이펙트(`data-scroll-effect`) 인스펙터 바인딩과 UI 동기화 전담 SSOT 모듈.
+    - **`vctrl_inspector_actionbar.js` (`window.InspectorActionBar`)**: 다중 선택 액션 바(`#selection-actions-bar`), 그룹/그룹해제, 레이어 순서(앞/뒤), 정렬 및 균등 분배, 서식 복사/붙여넣기, 그룹 치수(W/H) 실시간 계산 동기화 및 인스펙터 바디 재배치(`relocate`), 숨김(`hide`) 전담 SSOT 모듈.
+    - **`vctrl_inspector_sync.js` (`window.InspectorPropertySync`)**: 컴포넌트 속성 동기화 디스패처 및 15개 컴포넌트 타입(Shape/Pin, Table, Line, Illustration, Icon, Atom, Popup, Accordion, Grid, Admin-Settings, Tab 등) 전용 프로퍼티 바인딩/추출 서브 동기화 전담 SSOT 모듈.
     - **`inspector_text_formatter.js` (`window.InspectorTextFormatter`)**: Quill 에디터와 캔버스 텍스트 셀 간 연속 공백 보존(`preserveConsecutiveSpaces`, 선행/다중 공백 NBSP 변환) 및 폰트 사이즈 인라인 정규화(`normalizeHtmlForQuill`)를 전담합니다.
+  - **`vctrl_iframe_adorner.js` (Selection Adorner Engine - Iframe Side, 29th Module)**:
+    - **역할**: iframe 내부 다중 선택 및 그룹 선택 바운딩 박스/아도너 오버레이(`window.SelectionAdorner`)의 렌더링, 갱신(`update`), 정리(`clear`) 전담 SSOT 모듈.
   - **`vctrl_common.js` (Common Bus, Sanitizer & Utilities)**:
     - **역할**: 
       1. 부모-Iframe 통신 인터페이스: `window.EditorBus`(`sendToIframe`, `sendToParent`)
@@ -159,12 +190,13 @@
     - **역할**: 서식 복사를 위해 도형, 텍스트, 아톰, 테이블의 인라인/컴퓨티드 스타일을 심층 추출 및 정규화 전담 (`v4IframeStyleExtractorScript`).
   - **`vctrl_properties.js` (Properties Controller - Parent Side)**:
     - **역할**: 부모 창 측 컴포넌트 속성 매핑 및 플로팅 인스펙터 패널 바인딩 헬퍼.
+    - **강제 프로퍼티 동기화 파이프라인**: `LF_COMP_SELECTED` 수신 시 활성 대상 ID 변경을 감지하여 부모 activeElement를 즉시 포커스 해제하고, `updateAllInputs(w, h, force = true)`를 호출하여 포커스 가드를 확실히 우회함으로써 동일 유형 쉐입 간 연속 선택 시에도 가로/세로 수치가 100% 강제 동기화되도록 보장합니다.
   - **`inspector/inspector_table.js` (Table Domain Inspector - Parent Side)**:
     - **역할**: 테이블 열/행 치수 제어, 행 추가/삭제, 셀 정렬 및 인스펙터 UI 동기화 전담.
   - **`inspector/inspector_quill.js` (Quill Rich Text Controller - Parent Side)**:
     - **역할**: Quill 리치 텍스트 에디터 초기화, 커스텀 폰트 크기/컬러 피커 툴바 바인딩 및 캔버스 텍스트 셀 양방향 동기화 전담.
   - **`vctrl_resolution_engine.js` (Resolution & Mobile Read-Only Engine - Parent Side)**:
-    - **역할**: 뷰포트 해상도 반응형 엔진(`res-narrow`, `res-compact`, `res-wide`), 스마트 프레임 포커스 스위처(`v4-frame-switcher`, `focusFrame`), 모바일 네이티브 브라우저 전체화면(`requestFullscreen`/`exitFullscreen`)과 젠 모드(`toggleZenMode`), 화면 회전 토스트(`showRotationToast`) 및 모바일 뷰어 인터랙션 제어 전담.
+    - **역할**: 뷰포트 해상도 반응형 엔진(`res-narrow`, `res-compact`, `res-wide`), 스마트 프레임 포커스 스위처(`v4-frame-switcher`, `focusFrame`), 모바일/태블릿 네이티브 브라우저 전체화면(`requestFullscreen`/`exitFullscreen`)과 젠 모드(`toggleZenMode`), 화면 회전 권장 토스트(`showRotationToast`) 및 모바일 뷰어 인터랙션 제어 전담.
   - **`app.js` & `dashboard.js` (Dashboard & Project Workspace Controller)**:
     - **역할**: `index.html` 기반의 대시보드 프로젝트 목록 그리드 렌더링, 신규 프로젝트 생성, 프로젝트 검색 필터링, 모바일 슬림 1줄 헤더 및 GitHub 원격 연동 전담.
 - **오프라인 템플릿 및 UI 라이브러리 빌드 파이프라인 (Offline Build Pipeline SSOT)**:
@@ -212,7 +244,7 @@
       - In-Place Undo 및 스크린 저장/살균(`ScreenSanitizer.cleanDOM`) 시 런타임 transform만 정제하고 DOM 데이터 속성(`data-scroll-fixed`, `data-scroll-effect`, `data-scroll-target-y`, `data-scroll-sticky-top`)은 100% 영구 보존.
 
 
-- **모바일 전용 읽기 모드 및 뷰포트 아키텍처 절대 불변 규칙 (Mobile Read-Only Architecture SSOT)**:
+- **모바일 및 태블릿 디바이스 읽기 전용 모드 및 뷰포트 아키텍처 절대 불변 규칙 (Mobile & Tablet Read-Only Architecture SSOT)**:
   - **1. 모바일 환경의 본질 (100% 읽기/조회/뷰어 전용 모드)**:
     - 스마트폰 터치 환경에서 캔버스 저작 및 생성은 불가합니다. 모바일 사용자의 목적은 100% **"기존 결과물 확인, 링크 공유 열람, 프레젠테이션 검토 및 데모"**입니다.
     - 대시보드(`index.html`)의 `[+ New Project]` 버튼은 모바일(세로 `max-width: 768px`, 가로 `max-height: 520px`)에서 무조건 `display: none !important;`로 숨깁니다.
@@ -232,10 +264,37 @@
   - **5. 대시보드(`index.html`) 모바일 가로/세로 최적화 규칙**:
     - 가로모드(`orientation: landscape` & `max-height: 520px`): 상단 툴바 숨김, 1줄 슬림 헤더(`[로고 + My Projects]` + `[검색창]`), 하단 프로젝트 카드 영역 85% 이상 시원하게 노출합니다.
     - 세로모드(`max-width: 768px`): `[+ New Project]` 숨김, 헤더 높이 최소화하여 첫 화면에서 스크롤 없이 카드 목록을 즉시 노출합니다.
-  - **6. 모바일 캔버스 인터랙션 불변성 (Non-interactive Canvas)**:
+  - **6. 태블릿 / 소형 뷰어 최적화 (`769px ~ 1050px`, `res-compact`)**:
+    - 태블릿 환경에서는 편집 도구 및 사이드바를 축소/숨김하여 캔버스 가독성을 극대화하고, 카드 그리드를 2~3열로 부드럽게 재배치합니다.
+    - 터치 제스처(핀치 줌) 및 모바일 네이티브 뷰포트 센터링을 데스크톱과 일관되게 지원합니다.
+  - **7. 화면 회전 토스트 (`showRotationToast`) 및 젠 모드(Zen Mode) 라이프사이클**:
+    - 모바일 세로 모드로 진입 시 "가로 모드로 회전하시면 더 편리하게 보실 수 있습니다" 안내 토스트를 지능적으로 띄웁니다.
+    - 젠 모드 진입 시 `requestFullscreen()` 호출 후 `fullscreen-mode`, `zen-mode` 클래스를 바디에 부여하고 우측 상단에 `[전체보기 취소]` 알약(`v4-zen-exit-pill`)을 배치하며, 200ms 뒤 `centerView(true)`를 호출하여 캔버스를 화면 정중앙에 꽉 채웁니다.
+    - 사용자가 안드로이드 시스템 뒤로가기 제스처로 전체화면을 이탈하더라도 브라우저 `fullscreenchange` 이벤트 리스너가 이를 감지하여 젠 모드 클래스를 깨끗이 동기화 해제합니다.
+  - **8. 모바일 캔버스 인터랙션 불변성 (Non-interactive Canvas)**:
     - 캔버스 내부 오브젝트나 iframe은 `pointer-events: none !important;` 및 `user-select: none !important;`로 설정되어, 터치 스크롤이나 핀치 줌 시 실수로 오브젝트가 선택되거나 텍스트가 긁히는 것을 방지하고 순수하게 캔버스 뷰포트 조작만 작동하도록 보장합니다.
 
+- **시네마틱 로딩 시스템 및 PC 스튜디오 도킹 진입 아키텍처 (Cinematic Dual-Orbit Precision Loader & Studio Docking Architecture SSOT)**:
+  - **1. 듀얼 오빗 정밀 로더 (`Dual-Orbit Precision Loader`)**:
+    - `viewer.html`, `viewer.css`, `dashboard.css` 공통 로딩 시스템.
+    - 외곽 시계방향 오빗 링(`.orbit-ring-outer`, 76px, Sky/Accent 그라디언트 테두리, 2s 선형 회전), 내곽 반시계방향 오빗 링(`.orbit-ring-inner`, 56px, Violet/Purple 테두리, 1.5s 역방향 회전), 중앙 코어 엠블럼 펄스(`.orbit-core-emblem`, 글래스모피즘 + 2s 펄스) 및 앰비언트 글로우(`.loading-ambient-glow`, 320px radial 펄스)로 구성되어 하이엔드 정밀 엔지니어링 감성을 부여합니다.
+    - 정밀 로딩 프로그레스 바(`.loading-bar-progress`)와 상단 글로우 헤드(`.loading-bar-glow-head`)의 부드러운 순환 모션(`loadingMotion`, 1.4s cubic-bezier) 및 상태 텍스트(`LOADING WORKSPACE`, 11.5px, 2s 펄스).
+  - **2. 로딩 오버레이 페이드아웃 및 스튜디오 도킹 트랜지션**:
+    - 스크린 초기 렌더링 완료 시 `.loading-overlay`에 `.fade-out` 클래스를 부여하여 스케일 업(`scale(1.03)`), 블러(`blur(8px)`), 투명도(`opacity: 0`) 3단 페이드아웃 모션(0.5s)으로 부드럽게 퇴장합니다.
+    - PC 데스크톱 와이드 해상도(`body.res-wide`)에서는 `workspace-docked` 클래스가 바디에 주입되어, 상단 툴바가 위에서 아래로 착지(`studioToolbarDock`, 0.4s), 좌측 사이드바가 왼쪽에서 착지(`studioLeftDock`), 우측 인스펙터가 오른쪽에서 착지(`studioRightDock`), 그리고 중앙 아트보드 캔버스가 부드러운 블러 해제와 함께 안착(`canvasCameraIn`, 0.45s)하는 시네마틱 스튜디오 도킹 연출을 완성합니다.
+
 ## 🎨 UI 및 컴포넌트 규칙
+- **신규 도형·아톰·아이콘 추가 필수 2대 철칙 (공통 UI 시스템 준수 & 기존 데이터 무오염 원칙)**:
+  - **1. [공통 UI 디자인 시스템 100% 준수 (Strict Common UI Design System Conformance)]**:
+    - **독단적/비표준 UI 개발 전면 금지**: 인스펙터(오브젝트 프로퍼티) 속성 패널 개발 시, 타 아톰들과 동떨어진 제각각의 컨트롤(예: 임의의 체크박스, 단위 텍스트가 내장된 이질적인 인풋 래퍼, 불일치 폰트/여백 등)을 혼자만 다르게 작성하는 행위를 엄격히 금지한다.
+    - **이진 토글 스위치 표준 (Y/N Segmented Toggle Buttons)**: 카운터 표시, 활성/비활성, 표시/숨김, 읽기 전용, 닫기 버튼 노출 등 모든 Yes/No 이진 옵션은 체크박스를 지양하고 반드시 공통 규격인 **`[ Y ] [ N ]` 세그먼트 버튼 그룹**(`.v4-flex-gap-4 .w-84`, `.v4-inspector-btn .v4-inspector-toggle-btn`)을 사용한다. 활성 상태는 `active` 클래스와 `highlightActive(btn, isActive)` 유틸리티로 일관되게 제어한다.
+    - **수치 입력창 및 동적 카운트 라벨 표준 (Standard Number Input & Dynamic Counter Label)**: 최대 글자수, 크기, 폰트 크기 등의 수치 입력창은 공통 단독 인풋 규격인 **`.v4-prop-input-base`**를 사용한다. 불필요하게 인풋 내부에 '자', 'px' 단위를 억지로 욱여넣는 복합 래퍼를 지양한다. 현재 설정값을 안내하는 라벨은 `최대 글자수 (<span id="txt-...-maxlength">100</span>자)`와 같이 라벨 내부에 실시간 동적 연동 span을 배치하여 입력과 동시에 시각적으로 즉각 피드백되도록 한다.
+    - **드롭다운 셀렉트박스 좌측 정렬 표준**: 속성 패널 내의 모든 `<select>`는 공통 클래스 `.v4-prop-select`를 적용하며, CSS `text-align: left !important;` 및 `text-align-last: left !important;`를 적용하여 텍스트가 항상 좌측 정렬되도록 일관성을 유지한다.
+    - **오프라인 폴백 빌드 파이프라인 필수 실행**: `assets/ui_library/inspector_panels.html` 등 인스펙터 템플릿 마크업을 추가/수정한 경우, 반드시 `powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1`을 실행하여 `assets/ui_library_fallback.js`를 즉시 컴파일·동기화해야 한다.
+  - **2. [기존 데이터 및 타 컴포넌트 프로퍼티 오염 원천 차단 (Zero Property & Data Contamination)]**:
+    - **객체 리터럴 중복 키 선언 절대 금지 (No Duplicate Object Keys)**: `assets/vctrl_iframe_style_extractor.js`의 스타일 추출 반환 객체 리터럴에서 동일한 프로퍼티 키(예: `maxLength`, `showCounter`, `disabled` 등)를 여러 위치에서 중복 선언하지 않는다. 자바스크립트 객체 특성상 하단에 선언된 키가 상단 키를 무조건 덮어쓰므로, 타 컴포넌트(텍스트박스, 텍스트에어리어 등)를 선택했을 때도 신규 아톰의 기본값(예: 2000)으로 오염되는 대형 회귀 참사가 발생한다.
+    - **철저한 컴포넌트 스코프 조건부 격리**: 신규 아톰의 속성은 `isWebEditor ? webeditorMaxLength : maxLength`와 같이 명확한 컴포넌트 판별 조건문으로 완벽히 스코프를 격리하거나, 고유한 네임스페이스 속성을 부여하여 기존 아톰의 기본값(텍스트박스 기본 100자 등)에 0.001%의 영향도 주지 않도록 설계해야 한다.
+    - **타 아톰 기본값 회귀 교차 검증 의무화**: 신규 아톰/도형 작업 완료 후, 반드시 기존 관련 아톰(텍스트박스, 텍스트에어리어, 버튼, 셀렉트박스 등)을 실제로 선택했을 때 원래 기본값과 인스펙터 상태가 정상 유지되는지 교차 정적/동적 검증을 거쳐야 한다.
 - **통합 스타일 및 크기 컨트롤러 (Unified Style & Dimension Controller)**:
   - 모든 오브젝트(도형, 텍스트박스, 선, 아코디언, 체크박스, 라디오버튼, 그리드 등)는 과거의 개별 명칭(배경색, 테두리색, BG, Border 등) 대신 하나의 **통합 스타일 컨트롤러(배경 컬러 / 보더 컬러)** 및 **통합 크기 컨트롤러(가로 크기 / 세로 크기)**로 통일하여 속성을 제어하고 화면에 출력해야 합니다.
   - 예외 없이 모든 아톰 컴포넌트(아코디언, 체크박스, 라디오버튼 등 포함)가 이 통합 컨트롤러를 통해 일관성 있게 조절되어야 합니다.
@@ -283,7 +342,14 @@
     - F2 키 입력 시 선택 모드(키보드 이동/삭제가 가능하며 텍스트 편집이 비활성화된 상태)와 텍스트 편집 모드(요소의 `contenteditable`이 true가 되고 캐럿이 깜빡이는 상태)가 상호 전환(Toggle)되어야 합니다.
     - **포커스 스왑 제어**: 텍스트 편집 모드로 진입 시, 브라우저 보안 및 포커스 격리를 극복하기 위해 `contenteditable` 영역을 포커스하기 전 반드시 iframe 자체(`window.top`에서 iframe 요소를 찾아서 `.contentWindow.focus()`) 또는 iframe 내부 `window.focus()`를 먼저 호출한 뒤 대상 요소를 포커스해야 캐럿(Caret)이 정상적으로 노출됩니다.
     - **입력 필드 예외 처리 (Keydown Hijacking 방지)**: 부모 창 또는 사이드바(Quill Editor 등)의 입력 폼에 포커스된 상태에서 키보드 이벤트가 가로채지는 문제를 막기 위해, 부모 keydown 리스너의 `isInput` 판단 분기문 시작 지점 등에서 `F2` 키 입력을 최우선적으로 가드하여 무조건 동작하도록 설계해야 합니다. 또한 IME 한글 입력 중 중복 이벤트를 방지하기 위해 `isComposing` 상태 체크 및 `e.key === 'F2'`와 `e.code === 'F2'` 검증을 동시에 거쳐야 합니다.
-  - 9. **레이어 순서 제어 (Layer Ordering Shortcuts)**: `Ctrl + ]` (맨 앞으로 가져오기 / `LF_BRING_FRONT`), `Ctrl + [` (맨 뒤로 보내기 / `LF_SEND_BACK`) 단축키를 완벽 지원합니다.
+  - 9. **레이어 4단계 정밀 순서 제어 및 글로벌 단축키 (Layer Ordering 4-Step Suite & Shortcuts SSOT)**:
+    - **업계 표준 4대 단축키 완벽 지원**:
+      - **맨 앞으로 가져오기 (`LF_BRING_FRONT`)**: `Ctrl + Shift + ]` (Mac: `Cmd + Shift + ]`). 현재 요소가 속한 티어의 최상위 값(`normal` 티어의 경우 최대 `69,900`, `fixed` 티어의 경우 `179,900`)으로 안전하게 캡핑 승격하며, 상위 계층(핀 레이어 등)을 침범하지 않습니다.
+      - **한 단계 앞으로 가져오기 (`LF_BRING_FORWARD`)**: `Ctrl + ]` (Mac: `Cmd + ]`). 동일 티어 내에서 자신보다 바로 위에 위치한 형제 요소 1개와 z-index를 단일 스텝 스왑(Swap)합니다.
+      - **맨 뒤로 보내기 (`LF_SEND_BACK`)**: `Ctrl + Shift + [` (Mac: `Cmd + Shift + [`). 현재 요소가 속한 티어의 바닥선(`1,000`)으로 내리며, 0 이하 음수 추락을 방지하기 위해 필요한 경우 전체 형제 요소의 z-index를 양수로 일괄 쉬프트 보정합니다.
+      - **한 단계 뒤로 보내기 (`LF_SEND_BACKWARD`)**: `Ctrl + [` (Mac: `Cmd + [`). 동일 티어 내에서 자신보다 바로 아래에 위치한 형제 요소 1개와 z-index를 단일 스텝 스왑(Swap)합니다.
+    - **플로팅 인스펙터 버튼 연동**: `#selection-actions-bar`의 `[앞으로]` (`#btn-bring-front`), `[뒤로]` (`#btn-send-back`) 및 확장 레이어 조작 버튼과 100% 양방향 동기화됩니다.
+    - **실행 취소(Undo) 보장**: 모든 레이어 변경 작업 전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 1프레임 즉시 복원할 수 있습니다.
   - 10. **그룹화 제어 (Grouping Shortcuts)**: `Ctrl + G` (그룹화), `Ctrl + Shift + G` (그룹 해제)를 지원합니다.
   - 11. **실행 취소 / 재실행 (Undo / Redo Shortcuts)**: `Ctrl + Z` (실행 취소), `Ctrl + Y` 및 `Ctrl + Shift + Z` (다시 실행)를 지원합니다.
   - 12. **캔버스 뷰포트 및 도구 단축키 (Parent Viewport Shortcuts)**:
@@ -300,6 +366,32 @@
     - **단축키 및 인터랙션**: 선택된 오브젝트의 스타일 서식을 **`Ctrl + Shift + C`**로 복사하고, 대상 컴포넌트(단일 또는 N개 다중 선택)에 **`Ctrl + Shift + V`**로 일괄 적용합니다. 플로팅 인스펙터(`#floating-inspector-card`) 내 `[서식 복사]` 및 `[서식 붙여넣기]` 버튼과 완벽히 동기화됩니다 (단일 그룹 선택 시에는 자동 미노출).
     - **서식 추출 범위**: 도형 스타일(배경색, 테두리 색상/두께/스타일/반경, 투명도)뿐만 아니라, 내부 하위 텍스트 셀(`.v4-editable-cell`, `.v4-shape-text-content`) 및 인라인 서식의 타이포그래피(글꼴 패밀리, 폰트 크기, 글자색, 두께, 정렬), 테이블 헤더/본문 색상, 아이콘 컬러까지 심층 추출하여 정밀 복원합니다.
     - **전역 SSOT 및 실행 취소**: 스크린 iframe 격리를 극복하기 위해 최상위 부모 창 `(window.top || window).__lf_global_style_clipboard__`를 단일 진실 공급원으로 활용하며, 서식 주입 전 `V4UndoManager.saveState()`를 자동 호출하여 **`Ctrl + Z` (Undo)로 즉시 롤백**할 수 있습니다. 서식 복사/적용 상태는 화면 상단에 토스트 알림(`LF_SHOW_TOAST`)으로 즉시 피드백됩니다.
+  - 14. **동일 컴포넌트/쉐입 전환 시 오브젝트 프로퍼티(인스펙터) 4중 안전망 동기화 파이프라인 (Object Property Inspector Sync Pipeline SSOT)**:
+    - **문제 정의 및 배경**: 캔버스 상에서 동일한 유형의 컴포넌트(예: 가로 100/세로 100인 Rect A ➔ 가로 200/세로 200인 Rect B)를 연속 선택할 때, 인스펙터 패널 섹션이 닫히지 않고 열려 있는 상태에서 부모 창 입력 필드의 잔류 포커스 또는 `state.editingIndex` 갱신 순서 불일치로 인해 새 객체의 크기(Width/Height)가 갱신되지 않고 이전 값(100x100)으로 고정 잔존하던 간헐적 버그를 원천 차단하기 위해 4중 안전망을 강제합니다.
+    - **1중 안전망 (CoreRouter 선행 상태 백업 및 신규 선택 명시)**: `vctrl_core_router.js`에서 `state.editingIndex`를 덮어쓰기 전 이전 선택 ID를 보존(`const isNewSelection = (state.previousEditingIndex !== data.id)`)하고, 신규 선택 시 부모 창의 활성 인풋 포커스를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 인계합니다.
+    - **2중 안전망 (인스펙터 3중 판정식 및 인풋 직접 대입)**: `vctrl_inspector.js`의 `updateProperties`에서 `const isNewComp = isNewSelectionExplicit === true || compStyles.id !== state.previousEditingIndex || compStyles.id !== state._lastInspectorCompId;` 3중 안전 판정을 거치며, `isNewComp`일 때 `isTypingInInspector = false`로 강제 리셋하여 조기 반환(`early return`)을 차단합니다. 또한 `_syncCommonPropertyControls` 내부에서 `DOM.propWidth`, `DOM.propHeight` 등의 공통 크기 인풋에 대해 `document.activeElement` 잔류와 무관하게 `Math.round(compStyles.w)`로 직접 값을 대입하여 화면 표시를 100% 보장합니다.
+    - **3중 안전망 (LF_COMP_SELECTED 수신 시 강제 동기화)**: `vctrl_properties.js`의 `updateAllInputs(w, h, force = true)` 파이프라인을 통해 컴포넌트 ID가 변경된 경우(`targetId !== activeCompId`) 활성 인풋 포커스 가드를 확실히 우회하여 가로/세로 수치를 강제 덮어씁니다.
+    - **4중 안전망 (Iframe 캔버스 클릭 시 부모 잔류 포커스 즉시 정리)**: `vctrl_iframe_script.js`에서 컴포넌트 `mousedown` 시 `window.parent?.document?.activeElement?.blur()`를 호출하여 부모 창 인풋에 남아있던 캐럿과 포커스를 즉각 정리합니다 (백틱 충돌 0건 원칙 준수).
+- **전사 Z-Index 8대 티어 아키텍처 (Unified 8-Tier Z-Index Architecture SSOT)**:
+  - **배경 및 원칙**: 캔버스 내 일반 컴포넌트, 드롭다운, 스크롤 고정 HUD, 디스크립션 번호 핀, 시스템 오버레이, 전역 모달 간의 z-index 충돌 및 뒤섞임 현상을 원천 방지하기 위해 전사 8대 티어 단일 진실 공급원(`V4_Z_TIERS`)을 강제합니다.
+  - **8대 티어 구간 정의**:
+    - **Tier 1 (Base/Background, `0 ~ 999`)**: 캔버스 베이스라인, `#canvas_bg_layer` (`0`), 그리드 가이드.
+    - **Tier 2 (Content Components, `1,000 ~ 69,999`)**: 일반 도형, 텍스트, 아톰, 테이블, 커넥터, 일러스트 등 캔버스 상의 모든 표준 컨텐츠 컴포넌트 (초기 기본값 `1,000` / 증분 `+10`). 티어 상한선은 `69,900`이며, `69,000` 도달 시 비례 압축(`compactZIndices`)을 통해 공간을 자동 정돈합니다.
+    - **Tier 3 (Active Selection & Marquee, `70,000 ~ 79,999`)**: 현재 선택 중인 객체의 핸들(`.lf-drag-handle`, `.lf-resizer`), 마키 드래그 박스(`.v4-marquee-box` = `70,000`).
+    - **Tier 4 (In-Canvas Dropdowns & Popups, `80,000 ~ 99,999`)**: 셀렉트박스 드롭다운 리스트, 캔버스 인라인 팝업(`.v4-atom-popup` = `80,000 ~ 85,000`).
+    - **Tier 5 (Virtual Sticky HUD / Scroll Pinned, `100,000 ~ 179,999`)**: 상단 헤더, 하단 독, 플로팅 툴바, 스티키 바 등 `data-scroll-fixed`가 부여된 스크롤 고정 요소 (`100,000 ~ 179,900`).
+    - **Tier 6 (Annotation Pin Layer, `200,000 ~ 299,999`)**: 디스크립션 핀 전용 오버레이 컨테이너(`.v4-pin-layer` = `250,000 !important`), 일반 본문 핀(`.pin-marker` = `200,000`), 스크롤 고정 호스트 핀(`data-scroll-fixed="viewport"` = `200,050`).
+    - **Tier 7 (System Overlays, `300,000 ~ 499,999`)**: 스마트 가이드 자석선(`.smart-guide-line` = `300,000`), 프레임 레이블 바(`.frame-label-bar` = `350,000`), 스마트 프레임 스위처(`v4-frame-switcher` = `350,000`).
+    - **Tier 8 (Global Modals & Context Menus, `500,000 ~ 999,999`)**: 최상위 다이얼로그, 전역 컨텍스트 메뉴, 프레젠테이션 펜 캔버스 (`500,000 ~ 999,999`).
+- **디스크립션 핀 전용 오버레이 컨테이너 (`.v4-pin-layer`) 격리 표준**:
+  - **Stacking Context 격리 극복**: 어드민 테이블 등 `isolation: isolate; contain: paint; transform: translateZ(0);` 속성을 가진 컴포넌트 내부에 핀이 갇히거나 뒤로 가려지는 문제를 원천 차단하기 위해, 디스크립션 핀(`.pin-marker`)은 절대 `.pc-content-inner`나 `.mobile-content-inner`에 일반 형제 요소로 직접 주입하지 않습니다.
+  - **전용 오버레이 컨테이너 강제**: 반응형 프레임 최상위에 전용 오버레이 컨테이너인 `.v4-pin-layer` (`position: absolute; inset: 0; pointer-events: none; z-index: 250000 !important; width: 100%; height: 100%; overflow: visible;`)를 생성하고, 모든 핀은 반드시 이 레이어의 자식으로 배치합니다 (`.pin-marker` 자체는 `pointer-events: auto`).
+  - **자가 치유(Self-Healing) 및 자동 마이그레이션**: 핀 생성 시 `ensurePinLayer(container)`가 오버레이 존재 여부를 판별하여 자동 생성하며, 컨테이너 내부에 일반 노드로 방치된 기존 레거시 핀이 발견되면 즉시 `.v4-pin-layer` 내부로 자동 이전(Self-Healing)합니다.
+  - **클립보드 붙여넣기 시 핀 레이어 오염 차단 (`trailingRef`)**: 오브젝트 복사/붙여넣기(`pasteCopiedObjectsFromData`) 시 새 요소가 캔버스 맨 끝에 추가되면서 `.v4-pin-layer` 뒤로 들어가 핀을 덮는 것을 방지하기 위해, `trailingRef` 판별 로직에서 `.v4-pin-layer`를 감지하여 반드시 핀 레이어 직전(Before) 형제 위치로 컴포넌트를 주입합니다.
+  - **스크롤 뷰포트 인지 핀 생성 좌표**: 스크롤된 긴 문서에서 신규 핀 생성 시 현재 뷰포트 스크롤(`scrollY`)을 동적으로 반영(`spawnPcX: 570, spawnPcY: 180 + scrollY`)하여 생성 즉시 화면 시야 내에 정확히 안착시킵니다.
+- **스크롤 핀 고정 및 해제 라이프사이클 (Scroll Pinning / Unpinning Lifecycle)**:
+  - **핀 고정 시**: 요소를 Tier 5 (`100,000 ~ 179,999`)로 승격하고 `data-scroll-fixed` 속성을 부여하여 `window.ScrollPinEngine`의 하드웨어 가속 트랜스폼 루프에 편입합니다.
+  - **핀 고정 해제 시**: `data-scroll-fixed` 및 하위 속성을 삭제하고, `transform`, `will-change`, `transition` 스타일을 완전히 초기화(removeProperty)합니다. 특히 z-index는 Tier 5의 고수치에 잔존하지 않도록 일반 컴포넌트 티어(Tier 2)의 현재 최댓값 기반(`Math.min(69900, maxNormalZ + 10)`)으로 안전하게 강등(Demotion)하여 타 일반 컴포넌트들과 정상적인 레이어 순서 제어가 가능하도록 복원합니다.
 - **통합 좌표 및 단위 표준 (Unified Coordinate Standards)**:
   - **No-Measure 전략**: 브라우저의 `getBoundingClientRect()` 대신 객체의 `style.left/top` 데이터가 Single Source of Truth(SSOT)가 되도록 합니다.
   - **Pure Data 연산**: 모든 이동/정렬 연산은 순수 픽셀(`px`) 산술로 수행하여 줌이나 레이아웃 방식에 영향을 받지 않는 절대적인 정확도를 보장합니다.
@@ -508,6 +600,25 @@
 - **코드 무결성 유지**: 부분 교체 시 앞뒤 문맥을 철저히 대조하여 `SyntaxError`를 원천 차단하세요.
 - **국문 문서화**: 모든 개발 계획서와 로그는 국문 작성을 원칙으로 합니다.
 
+## 📝 웹 에디터 아톰(Web Editor Atom) 표준 규칙
+- **웹 에디터 아톰 구조 및 표준 규격 (`v4-webeditor-container`)**:
+  - **컨테이너 아키텍처**: 표준 3계층 아키텍처 `.lf-component` ➔ `.v4-webeditor-container` (`display: flex; flex-direction: column; border: 1.6px solid var(--v4-border-color); border-radius: 6px; overflow: hidden; background: #ffffff;`) ➔ 상단 툴바(`.v4-webeditor-toolbar`) + 본문 작성 영역(`.v4-webeditor-body`) + 하단 상태바(`.v4-webeditor-statusbar`).
+  - **툴바 모드 (`data-toolbar-mode`)**:
+    - `full`: 굵게, 기울임, 밑줄, 취소선, 글자색, 배경색, 정렬(좌/중/우), 글머리/번호 목록, 링크, 표 삽입 등 풀세트 툴바 제공.
+    - `minimal`: 굵게, 기울임, 밑줄, 글자색, 정렬 등 핵심 서식 위주의 콤팩트 툴바 제공.
+    - `none`: 상단 툴바를 완전히 숨기고 순수 작성 텍스트 영역만 렌더링.
+  - **에디터 모드 (`data-editor-mode`) & 읽기 전용 (`data-readonly`)**:
+    - `editor`: 캔버스 상에서 직접 텍스트를 입력하고 서식을 지정할 수 있는 활성 편집 모드.
+    - `readonly`: `contenteditable="false"`로 전환되어 툴바 및 인풋이 비활성화되는 읽기 전용 프레젠테이션 모드.
+  - **최대 글자수 및 실시간 카운터 (`data-max-length`, `data-show-counter`)**:
+    - 기본 최대 글자수는 **`2000자`**이며, `data-max-length` 속성으로 관리된다.
+    - **타 아톰 기본값 보존 격리 원칙**: 웹 에디터 아톰의 기본값(2000자)이 타 아톰(예: 텍스트박스/텍스트에어리어 기본 최대 100자 등) 고유의 속성과 기본값을 덮어쓰거나 파괴하지 않도록 스타일 추출기(`vctrl_iframe_style_extractor.js`) 및 데이터 모델에서 조건부 격리(`isWebEditor ? webeditorMaxLength : maxLength`)를 엄격히 강제한다.
+    - 하단 상태바에 실시간 글자수(`0 / 2,000자`)가 표시되며, `data-show-counter="false"` 설정 시 상태바를 숨길 수 있다.
+  - **인스펙터 UI 규격 준수 (`#webeditor-inspector-section`)**:
+    - 모든 토글 컨트롤은 공통 UI 패턴인 `[ Y ] [ N ]` 세그먼트 버튼(`.v4-inspector-btn .v4-inspector-toggle-btn`)을 사용한다.
+    - 최대 글자수 입력창은 순수 공통 수치 인풋 `.v4-prop-input-base`와 실시간 동적 연동 라벨 카운터(`<span id="txt-webeditor-maxlength">2000</span>자`)를 결합한다.
+    - 모드 및 툴바 선택 드롭다운은 좌측 정렬 클래스 `.v4-prop-select`를 필수로 적용한다.
+
 ## 📋 Query Item(조회 항목) 및 전용 스마트 가이드 표준 규칙
 - **조회 항목(Query Item) 아톰 구조 및 표준 규격**:
   - **기본 치수 및 프레임 최적화**: 기본 너비는 **`1160px`**(반응형 PC 프레임 `.pc-content-inner` 너비와 100% 일치하여 오버플로우 방지), 기본 높이는 **`44px`**(1행 기준), 행 단위 세로 크기는 **`44px`**(엔터프라이즈 폼 표준 높이)입니다.
@@ -539,8 +650,13 @@
     - `Ctrl/Alt + 6`: 하단 정렬 (Bottom)
   - **단일 오브젝트 정렬 기준 분기**:
     - **일반 템플릿**: 전체 캔버스(`.page` / `document.body`, `1600 x 900px` 또는 해당 스크린 너비)를 기준으로 좌/우/중앙/상/하/중단 정렬.
-    - **[반응형] 템플릿**: 소속된 프레임(PC `.pc-content-inner` `1160px` / Mobile `.mobile-content-inner` `360px`) 영역 내에서 독립 정렬하여 프레임 간 좌표 간섭 0%를 보장.
-  - **다중 오브젝트 정렬 기준**: 선택된 오브젝트들의 전체 바운딩 박스(Bounding Box)를 기준으로 상호 상대 정렬 및 균등 분배 정렬을 수행.
+    - **[반응형] 템플릿 가시 뷰포트 정렬 수학 (Visible Viewport Math SSOT)**: 소속된 프레임(PC `.pc-content-inner` `1160px` / Mobile `.mobile-content-inner` `360px`) 영역 내에서 독립 정렬하되, 스크롤된 긴 문서(1500px+)에서 오브젝트가 시야 밖으로 추락하지 않도록 현재 스크롤 위치(`scrollContainer.scrollTop`)와 뷰포트 높이(`scrollContainer.clientHeight || 810px`)를 결합한 **실제 보이는 화면 기준 정렬 수학**을 100% 강제한다:
+      - 가로 기준: $\text{boundL} = 0$, $\text{boundW} = \text{targetContainer.offsetWidth}$ (PC `1160px` / Mobile `360px`).
+      - 세로 기준: $\text{boundT} = \text{scrollContainer.scrollTop}$, $\text{boundH} = \text{scrollContainer.clientHeight}$ (뷰포트 `810px`).
+      - 수직 중앙(`middle`): $\text{targetT} = \text{boundT} + \frac{\text{boundH} - \text{item.h}}{2}$.
+      - 하단(`bottom`): $\text{targetT} = \text{boundT} + \text{boundH} - \text{item.h} - 10$ (하단 여백 10px 안전 패딩).
+  - **다중 오브젝트 정렬 기준**: 선택된 오브젝트들의 전체 바운딩 박스(Bounding Box: `minX, minY ~ maxX, maxY`)를 기준으로 상호 상대 정렬 및 2대 균등 분배(가로/세로)를 수행.
+  - **정렬 후 조작 인터페이스 실시간 동기화**: 정렬 연산 완료 후 DOM의 `style.left/top` 갱신에 그치지 않고, 반드시 `window.updateHandles(el)` 및 `window.SelectionAdorner.update()`를 호출하여 드래그 핸들(`.lf-drag-handle`), 리사이저(`.lf-resizer`), 선택 박스, 부모 창 인스펙터(X/Y 좌표)를 1:1로 실시간 갱신해야 한다.
   - **입력 포커스 가드 (`isInputActive`)**: 텍스트 상자, 셀 에디터, 인풋 등에서 타이핑 중일 때는 숫자 1~6 입력이 정렬 단축키로 오작동하지 않도록 철저히 가드 처리.
 - **[반응형] 템플릿 실행 취소(Ctrl+Z / Undo) 스마트 인플레이스 스크롤 보존 아키텍처 (Smart In-Place Scroll Preservation Protocol)**:
   - **스크롤 컨테이너 DOM 비파괴 원칙**: 반응형 템플릿에서 Undo 실행 시 `document.body.innerHTML = ''`로 DOM 전체를 날려버리면 `.pc-content-area`와 `.mobile-content-area` 스크롤 컨테이너 DOM 자체가 소멸되어 브라우저가 스크롤을 무조건 `0px`로 리셋한다. 따라서 반드시 내부 캔버스인 `.pc-content-inner` 및 `.mobile-content-inner`의 `innerHTML`과 `minHeight`만 인플레이스(In-place)로 교체하여 스크롤 컨테이너를 100% 보존해야 한다.

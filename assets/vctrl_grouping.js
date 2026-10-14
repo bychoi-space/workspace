@@ -71,7 +71,7 @@ window.GroupingManager = (function() {
  
          const triggerCopyFormat = () => {
              if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
-                 window.EditorBus.sendToIframe('LF_TRIGGER_COPY_STYLE');
+                 window.EditorBus.sendToIframe({ type: 'LF_TRIGGER_COPY_STYLE' });
              } else {
                  const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
                  if (iframe && iframe.contentWindow) {
@@ -82,7 +82,7 @@ window.GroupingManager = (function() {
 
          const triggerPasteFormat = () => {
              if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
-                 window.EditorBus.sendToIframe('LF_TRIGGER_PASTE_STYLE');
+                 window.EditorBus.sendToIframe({ type: 'LF_TRIGGER_PASTE_STYLE' });
              } else {
                  const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
                  if (iframe && iframe.contentWindow) {
@@ -149,14 +149,26 @@ window.GroupingManager = (function() {
                 }
             }
 
-            // Layer Ordering Shortcuts (Ctrl+] / Ctrl+[)
+            // Layer Ordering Shortcuts
+            // Ctrl+Shift+] : 맨 앞으로 (Bring to Front)
+            // Ctrl+]       : 한 단계 앞으로 (Bring Forward)
+            // Ctrl+Shift+[ : 맨 뒤로 (Send to Back)
+            // Ctrl+[       : 한 단계 뒤로 (Send Backward)
             if ((e.ctrlKey || e.metaKey) && !inInput) {
                 if (e.key === ']' || e.code === 'BracketRight') {
                     e.preventDefault();
-                    bringFrontSelected();
+                    if (e.shiftKey) {
+                        bringFrontSelected();
+                    } else {
+                        bringForwardSelected();
+                    }
                 } else if (e.key === '[' || e.code === 'BracketLeft') {
                     e.preventDefault();
-                    sendBackSelected();
+                    if (e.shiftKey) {
+                        sendBackSelected();
+                    } else {
+                        sendBackwardSelected();
+                    }
                 }
             }
          });
@@ -454,9 +466,23 @@ window.GroupingManager = (function() {
             if (selectionNumber) selectionNumber.innerText = activeIds.length;
             if (selectionLabel) selectionLabel.innerText = activeIds.length > 1 ? 'OBJECTS' : 'OBJECT';
 
-            // Show Align Bar if 2+ selected (RESTORED)
+            // Show Align Bar if at least 1 object selected (unless single group component)
             if (alignBar) {
-                alignBar.style.display = activeIds.length > 1 ? 'block' : 'none';
+                const isSingleGroup = activeIds.length === 1 && !!selectedIdsIsGroupMap[activeIds[0]];
+                alignBar.style.display = (!isSingleGroup && activeIds.length >= 1) ? 'block' : 'none';
+                const btnDistH = document.getElementById('btn-align-distribute-h');
+                const btnDistV = document.getElementById('btn-align-distribute-v');
+                const canDistribute = activeIds.length >= 3;
+                if (btnDistH) {
+                    btnDistH.style.opacity = canDistribute ? '1' : '0.35';
+                    btnDistH.style.pointerEvents = canDistribute ? 'auto' : 'none';
+                    btnDistH.title = canDistribute ? 'Distribute Horizontally' : 'Distribute Horizontally (3개 이상 선택 시 사용 가능)';
+                }
+                if (btnDistV) {
+                    btnDistV.style.opacity = canDistribute ? '1' : '0.35';
+                    btnDistV.style.pointerEvents = canDistribute ? 'auto' : 'none';
+                    btnDistV.title = canDistribute ? 'Distribute Vertically' : 'Distribute Vertically (3개 이상 선택 시 사용 가능)';
+                }
             }
 
             // Line Editor Trigger
@@ -475,8 +501,11 @@ window.GroupingManager = (function() {
     };
 
     const alignSelected = (type) => {
-        const activeIds = getEffectiveSelectedIds();
-        if (activeIds.length < 1) return;
+        let activeIds = getEffectiveSelectedIds();
+        if ((!activeIds || activeIds.length === 0) && window.state && window.state.selectedComponent && window.state.selectedComponent.id) {
+            activeIds = [window.state.selectedComponent.id];
+        }
+        if (!activeIds || activeIds.length < 1) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
@@ -527,6 +556,32 @@ window.GroupingManager = (function() {
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
             window.MessageHub.send(iframe.contentWindow, 'LF_SEND_BACK', { ids: activeIds, id: activeIds[0] });
+        }
+    };
+
+    const bringForwardSelected = () => {
+        let activeIds = getEffectiveSelectedIds();
+        if ((!activeIds || activeIds.length === 0) && window.state && window.state.selectedComponent && window.state.selectedComponent.id) {
+            activeIds = [window.state.selectedComponent.id];
+        }
+        if (!activeIds || activeIds.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+        const iframe = document.getElementById('main-iframe');
+        if (iframe && iframe.contentWindow && window.MessageHub) {
+            window.MessageHub.send(iframe.contentWindow, 'LF_BRING_FORWARD', { ids: activeIds, id: activeIds[0] });
+        }
+    };
+
+    const sendBackwardSelected = () => {
+        let activeIds = getEffectiveSelectedIds();
+        if ((!activeIds || activeIds.length === 0) && window.state && window.state.selectedComponent && window.state.selectedComponent.id) {
+            activeIds = [window.state.selectedComponent.id];
+        }
+        if (!activeIds || activeIds.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+        const iframe = document.getElementById('main-iframe');
+        if (iframe && iframe.contentWindow && window.MessageHub) {
+            window.MessageHub.send(iframe.contentWindow, 'LF_SEND_BACKWARD', { ids: activeIds, id: activeIds[0] });
         }
     };
 
@@ -593,6 +648,8 @@ window.GroupingManager = (function() {
         alignSelected,
         bringFrontSelected,
         sendBackSelected,
+        bringForwardSelected,
+        sendBackwardSelected,
         addToMolecules,
         deleteMolecule,
         renameMolecule,
@@ -606,6 +663,8 @@ window.deleteMolecule = (id, e) => window.GroupingManager.deleteMolecule(id, e);
 window.renameComponent = (id, e) => window.GroupingManager.renameMolecule(id, e);
 window.bringFrontSelected = () => window.GroupingManager.bringFrontSelected();
 window.sendBackSelected = () => window.GroupingManager.sendBackSelected();
+window.bringForwardSelected = () => window.GroupingManager.bringForwardSelected();
+window.sendBackwardSelected = () => window.GroupingManager.sendBackwardSelected();
 
 // Auto-init when ready
 if (document.readyState === 'loading') {

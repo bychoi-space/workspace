@@ -78,50 +78,171 @@
      * Executes universal project and screen saving pipeline.
      * @param {string} explicitReason Optional revision note.
      */
+    function _createSaveOverlayController(overlay, btn, originalHTML) {
+        return {
+            show: function() {
+                if (!overlay) return;
+                overlay.style.display = 'flex';
+                requestAnimationFrame(function() {
+                    overlay.classList.add('active');
+                    overlay.style.opacity = '1';
+                    overlay.style.visibility = 'visible';
+                    overlay.style.pointerEvents = 'all';
+                });
+            },
+            hide: function() {
+                if (!overlay) return;
+                overlay.classList.remove('active');
+                overlay.style.opacity = '0';
+                overlay.style.visibility = 'hidden';
+                overlay.style.pointerEvents = 'none';
+                setTimeout(function() {
+                    if (!overlay.classList.contains('active')) {
+                        overlay.style.display = 'none';
+                    }
+                }, 250);
+            },
+            setLoading: function() {
+                if (!btn) return;
+                btn.disabled = true;
+                btn.style.position = 'relative';
+                btn.style.overflow = 'hidden';
+                btn.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">save</span> 저장 중..<span id="save-loading-bar" style="position:absolute; left:0; bottom:0; height:3px; width:0%; background:rgba(255,255,255,0.9); border-radius:0 0 8px 8px; transition:width 2.5s cubic-bezier(0.4,0,0.2,1);"></span>';
+                requestAnimationFrame(function() {
+                    var bar = document.getElementById('save-loading-bar');
+                    if (bar) bar.style.width = '90%';
+                });
+            },
+            setProgressComplete: function() {
+                var bar = document.getElementById('save-loading-bar');
+                if (bar) { bar.style.transition = 'width 0.3s ease'; bar.style.width = '100%'; }
+            },
+            setSuccess: function() {
+                if (!btn) return;
+                btn.style.setProperty('background', 'linear-gradient(135deg, #22c55e, #16a34a)', 'important');
+                btn.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">check_circle</span> 저장 완료';
+                setTimeout(function() {
+                    btn.innerHTML = originalHTML;
+                    btn.style.removeProperty('background');
+                    btn.style.position = '';
+                    btn.style.overflow = '';
+                    btn.disabled = false;
+                }, 1500);
+            },
+            setError: function() {
+                if (!btn) return;
+                btn.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">error</span> 저장 실패';
+                btn.style.setProperty('background', '#ef4444', 'important');
+                setTimeout(function() {
+                    btn.innerHTML = '<span class="material-icons-outlined" style="font-size:13px;">save</span> 전체 저장';
+                    btn.style.removeProperty('background');
+                    btn.style.position = '';
+                    btn.style.overflow = '';
+                    btn.disabled = false;
+                }, 1500);
+            }
+        };
+    }
+
+    async function _resolveProjectMetadataAndVersion(state, explicitReason) {
+        var changeMsg = typeof explicitReason === 'string' ? explicitReason.trim() : "";
+        var updatedTimeStr = typeof window.getFormattedKST === 'function' 
+            ? window.getFormattedKST() 
+            : new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        var projectMeta = {
+            title: document.getElementById('viewer-meta-title')?.value || '',
+            assignee: document.getElementById('viewer-meta-assignee')?.value || '',
+            developer: document.getElementById('viewer-meta-developer')?.value || '',
+            period: document.getElementById('viewer-meta-period')?.value || '',
+            figmaUrl: state.projectMetadata?.figmaUrl || '',
+            notionUrl: state.projectMetadata?.notionUrl || '',
+            updated: updatedTimeStr
+        };
+
+        var historyList = [];
+        if (typeof window.fetchProjectHistory === 'function' && state.currentProject) {
+            try {
+                historyList = await window.fetchProjectHistory(state.currentProject);
+            } catch (err) {
+                console.warn("[Save] Failed to fetch project history for version calculation:", err);
+            }
+        }
+
+        var currentLatestVer = 0.1;
+        if (state.projectMetadata && state.projectMetadata.version !== undefined) {
+            currentLatestVer = parseFloat(state.projectMetadata.version) || 0.1;
+        }
+        if (Array.isArray(historyList) && historyList.length > 0 && historyList[0].version !== undefined) {
+            var parsedHistoryVer = parseFloat(String(historyList[0].version).replace(/[^0-9.]/g, ''));
+            if (!isNaN(parsedHistoryVer) && parsedHistoryVer > 0) {
+                currentLatestVer = Math.max(currentLatestVer, parsedHistoryVer);
+            }
+        }
+
+        var nextVer = currentLatestVer;
+        if (changeMsg) {
+            nextVer = parseFloat((currentLatestVer + 0.1).toFixed(1));
+        }
+        projectMeta.version = nextVer;
+
+        return { projectMeta, changeMsg, nextVer, historyList, updatedTimeStr };
+    }
+
+    function _syncCoverHtmlMetadata(htmlContent, projectMeta, nextVer, activeFileName, state) {
+        if (!htmlContent) return htmlContent;
+        var isCoverScreenSave = activeFileName && ((state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]?.type === 'cover') || (htmlContent && (htmlContent.includes('cover-version') || htmlContent.includes('cover-jira-id'))));
+
+        if (isCoverScreenSave) {
+            if (typeof window.syncCoverMetadata === 'function') {
+                return window.syncCoverMetadata(htmlContent, Object.assign({}, state.projectMetadata, projectMeta, { version: nextVer }), false, activeFileName);
+            }
+        } else if (htmlContent.includes('cover-jira-id')) {
+            var jiraValue = projectMeta.jira || '-';
+            return htmlContent.replace(/(<div[^>]*id="cover-jira-id"[^>]*>)[^<]*(<\/div>)/i, '$1' + jiraValue + '$2');
+        }
+        return htmlContent;
+    }
+
+    async function _persistRevisionHistory(state, activeFileName, nextVer, projectMeta, changeMsg, historyList, updatedTimeStr) {
+        try {
+            if (changeMsg) {
+                var historyEntry = {
+                    date: updatedTimeStr,
+                    file: activeFileName || 'n/a',
+                    version: nextVer,
+                    assignee: projectMeta.assignee,
+                    developer: projectMeta.developer,
+                    message: changeMsg
+                };
+
+                if (typeof window.saveProjectHistory === 'function') {
+                    historyList.unshift(historyEntry);
+                    await window.saveProjectHistory(state.currentProject, historyList, null);
+                }
+            } else {
+                console.log("[Save] Save completed without writing history (reason is empty).");
+            }
+        } catch (err) {
+            console.error("Failed to append project revision history:", err);
+        }
+    }
+
     async function handleGlobalSave(explicitReason = "") {
         const btn = document.getElementById('btn-global-save');
         if (!btn || btn.disabled) return;
 
         const state = window.state || {};
         const DOM = window.DOM || {};
-
         if (state.isReadOnly) return window.showAuthModal?.();
-
-        // 1. Revision message handling (Default "" for silent fast save; history is managed via dedicated modal)
-        let changeMsg = typeof explicitReason === 'string' ? explicitReason.trim() : "";
 
         const overlay = document.getElementById('save-overlay');
         const originalHTML = btn.innerHTML;
+        const overlayCtrl = _createSaveOverlayController(overlay, btn, originalHTML);
 
-        // Save Overlay Lifecycle Controllers
-        const showSaveOverlay = () => {
-            if (!overlay) return;
-            overlay.style.display = 'flex';
-            requestAnimationFrame(() => {
-                overlay.classList.add('active');
-                overlay.style.opacity = '1';
-                overlay.style.visibility = 'visible';
-                overlay.style.pointerEvents = 'all';
-            });
-        };
-
-        const hideSaveOverlay = () => {
-            if (!overlay) return;
-            overlay.classList.remove('active');
-            overlay.style.opacity = '0';
-            overlay.style.visibility = 'hidden';
-            overlay.style.pointerEvents = 'none';
-            setTimeout(() => {
-                if (!overlay.classList.contains('active')) {
-                    overlay.style.display = 'none';
-                }
-            }, 250);
-        };
-
-        // 15-second safety failsafe timer to prevent infinite lock
         let saveTimeoutId = setTimeout(() => {
             console.warn("[Save] Operation exceeded 15s timeout limit. Forcing save overlay dismissal.");
-            hideSaveOverlay();
+            overlayCtrl.hide();
             if (btn) {
                 btn.innerHTML = originalHTML;
                 btn.style.removeProperty('background');
@@ -139,76 +260,14 @@
                 window.closeActiveEditor(true);
             }
 
-            // Show premium glassmorphic lock overlay (Centered)
-            showSaveOverlay();
+            overlayCtrl.show();
+            overlayCtrl.setLoading();
 
-            btn.disabled = true;
-            btn.style.position = 'relative';
-            btn.style.overflow = 'hidden';
-            btn.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">save</span> 저장 중..<span id="save-loading-bar" style="position:absolute; left:0; bottom:0; height:3px; width:0%; background:rgba(255,255,255,0.9); border-radius:0 0 8px 8px; transition:width 2.5s cubic-bezier(0.4,0,0.2,1);"></span>';
-
-            requestAnimationFrame(() => {
-                const bar = document.getElementById('save-loading-bar');
-                if (bar) bar.style.width = '90%';
-            });
-
-            // 2. Format DateTime KST (Unified with window.getFormattedKST SSOT)
-            const updatedTimeStr = typeof window.getFormattedKST === 'function' 
-                ? window.getFormattedKST() 
-                : new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-            const projectMeta = {
-                title: document.getElementById('viewer-meta-title')?.value || '',
-                assignee: document.getElementById('viewer-meta-assignee')?.value || '',
-                developer: document.getElementById('viewer-meta-developer')?.value || '',
-                period: document.getElementById('viewer-meta-period')?.value || '',
-                figmaUrl: state.projectMetadata?.figmaUrl || '',
-                notionUrl: state.projectMetadata?.notionUrl || '',
-                updated: updatedTimeStr
-            };
-
+            const { projectMeta, changeMsg, nextVer, historyList, updatedTimeStr } = await _resolveProjectMetadataAndVersion(state, explicitReason);
             let htmlContent = await getIframeHTML();
-
-            // 3. Determine Project Version & Revision auto-increment
-            let historyList = [];
-            if (typeof window.fetchProjectHistory === 'function' && state.currentProject) {
-                try {
-                    historyList = await window.fetchProjectHistory(state.currentProject);
-                } catch (err) {
-                    console.warn("[Save] Failed to fetch project history for version calculation:", err);
-                }
-            }
-
-            let currentLatestVer = 0.1;
-            if (state.projectMetadata && state.projectMetadata.version !== undefined) {
-                currentLatestVer = parseFloat(state.projectMetadata.version) || 0.1;
-            }
-            if (Array.isArray(historyList) && historyList.length > 0 && historyList[0].version !== undefined) {
-                const parsedHistoryVer = parseFloat(String(historyList[0].version).replace(/[^0-9.]/g, ''));
-                if (!isNaN(parsedHistoryVer) && parsedHistoryVer > 0) {
-                    currentLatestVer = Math.max(currentLatestVer, parsedHistoryVer);
-                }
-            }
-
-            let nextVer = currentLatestVer;
-            if (changeMsg) {
-                // 새 재개정 사유가 입력된 경우에만 프로젝트 버전 +0.1 증가
-                nextVer = parseFloat((currentLatestVer + 0.1).toFixed(1));
-            }
-            projectMeta.version = nextVer;
-
             const activeFileName = state.activeFile ? state.activeFile.name : null;
-            const isCoverScreenSave = activeFileName && ((state.projectMetadata && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]?.type === 'cover') || (htmlContent && (htmlContent.includes('cover-version') || htmlContent.includes('cover-jira-id'))));
 
-            if (htmlContent && isCoverScreenSave) {
-                // Sync all cover metadata with unified nextVer
-                if (typeof window.syncCoverMetadata === 'function') {
-                    htmlContent = window.syncCoverMetadata(htmlContent, Object.assign({}, state.projectMetadata, projectMeta, { version: nextVer }), false, activeFileName);
-                }
-            } else if (htmlContent && htmlContent.includes('cover-jira-id')) {
-                const jiraValue = projectMeta.jira || '-';
-                htmlContent = htmlContent.replace(/(<div[^>]*id="cover-jira-id"[^>]*>)[^<]*(<\/div>)/i, '$1' + jiraValue + '$2');
-            }
+            htmlContent = _syncCoverHtmlMetadata(htmlContent, projectMeta, nextVer, activeFileName, state);
 
             const updateFn = window.updateScreenMetadata;
             if (typeof updateFn !== 'function') {
@@ -223,13 +282,9 @@
                 existingMetadata: state.projectMetadata
             }, () => { });
 
-            const bar = document.getElementById('save-loading-bar');
-            if (bar) { bar.style.transition = 'width 0.3s ease'; bar.style.width = '100%'; }
-
+            overlayCtrl.setProgressComplete();
             await new Promise(r => setTimeout(r, 300));
-
-            // Hide overlay smoothly on completion
-            hideSaveOverlay();
+            overlayCtrl.hide();
 
             if (success) {
                 if (typeof window.markAsClean === 'function') window.markAsClean();
@@ -241,7 +296,6 @@
                 const fileNameEl = (DOM && DOM.fileName) || document.getElementById('file-name');
                 if (projectMeta.title && fileNameEl) fileNameEl.innerText = projectMeta.title;
 
-                // 실시간 좌측 하단 UI 업데이트
                 const updatedTxt = document.getElementById('meta-updated-txt');
                 if (updatedTxt) {
                     updatedTxt.innerText = '최종 업데이트: ' + updatedTimeStr;
@@ -251,62 +305,22 @@
                     window.showToast("저장이 성공적으로 완료되었습니다.", "success");
                 }
 
-                // history.json 이력 저장 처리
-                try {
-                    if (changeMsg) {
-                        const historyEntry = {
-                            date: updatedTimeStr,
-                            file: activeFileName || 'n/a',
-                            version: nextVer,
-                            assignee: projectMeta.assignee,
-                            developer: projectMeta.developer,
-                            message: changeMsg
-                        };
-
-                        if (typeof window.saveProjectHistory === 'function') {
-                            historyList.unshift(historyEntry); // 최신이 가장 위로
-                            await window.saveProjectHistory(state.currentProject, historyList, null);
-                        }
-                    } else {
-                        console.log("[Save] Save completed without writing history (reason is empty).");
-                    }
-                } catch (err) {
-                    console.error("Failed to append project revision history:", err);
-                }
-
-                btn.style.setProperty('background', 'linear-gradient(135deg, #22c55e, #16a34a)', 'important');
-                btn.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">check_circle</span> 저장 완료';
-                setTimeout(() => {
-                    btn.innerHTML = originalHTML;
-                    btn.style.removeProperty('background');
-                    btn.style.position = '';
-                    btn.style.overflow = '';
-                    btn.disabled = false;
-                }, 1500);
+                await _persistRevisionHistory(state, activeFileName, nextVer, projectMeta, changeMsg, historyList, updatedTimeStr);
+                overlayCtrl.setSuccess();
             } else {
                 throw new Error("GitHub API 반영에 실패했습니다.");
             }
         } catch (err) {
             console.error("[Save Error]", err);
-            hideSaveOverlay();
-            if (btn) {
-                btn.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">error</span> 저장 실패';
-                btn.style.setProperty('background', '#ef4444', 'important');
-                setTimeout(() => {
-                    btn.innerHTML = '<span class="material-icons-outlined" style="font-size:13px;">save</span> 전체 저장';
-                    btn.style.removeProperty('background');
-                    btn.style.position = '';
-                    btn.style.overflow = '';
-                    btn.disabled = false;
-                }, 1500);
-            }
+            overlayCtrl.hide();
+            overlayCtrl.setError();
             if (typeof window.showToast === 'function') {
                 window.showToast(err.message || "저장 중 오류가 발생했습니다.", "error");
             }
             if (window.Notification) window.Notification.alert('저장 중 오류가 발생했습니다: ' + err.message, '오류', 'error');
         } finally {
             clearTimeout(saveTimeoutId);
-            hideSaveOverlay();
+            overlayCtrl.hide();
         }
     }
 

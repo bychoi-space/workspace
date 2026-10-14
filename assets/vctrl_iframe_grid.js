@@ -27,6 +27,18 @@ window.v4GridScript = `
         if (type === "number") {
             return /^\\d+$/.test(t);
         }
+        if (type === "order") {
+            return t.indexOf("v4-grid-order-group") >= 0 || t.indexOf("btn-order-up") >= 0 || t === "";
+        }
+        if (type === "image") {
+            return t.indexOf("v4-grid-image-box") >= 0 || t.indexOf("img") >= 0 || t === "";
+        }
+        if (type === "input") {
+            return t.indexOf("v4-grid-input") >= 0 || /^\\d+$/.test(t) || t === "";
+        }
+        if (type === "delete") {
+            return t === "\uC0AD\uC81C" || t === "Delete" || t.indexOf("v4-grid-action-btn danger") >= 0 || t.indexOf("v4-grid-delete-box-btn") >= 0 || t === "\u00D7" || t === "\u2715" || t === "X" || t === "x";
+        }
         if (type === "status") {
             return t.indexOf("\uBC29\uC1A1\uC811") >= 0 || t.indexOf("\uBC29\uC1A1\uC608\uC815") >= 0 || t.indexOf("\uBC29\uC1A1\uC885\uB8CC") >= 0 || t.indexOf("\uC0C1\uD0DC") >= 0 || t.indexOf("\uC815\uC0C1") >= 0 || t.indexOf("\uB300\uAE30") >= 0;
         }
@@ -68,6 +80,19 @@ window.v4GridScript = `
         if (type === "action") {
             return '<button type="button" class="v4-grid-action-btn">\uC0C1\uC138</button>';
         }
+        if (type === "delete") {
+            return '<button type="button" class="v4-grid-action-btn danger v4-grid-delete-box-btn" title="\uC0AD\uC81C" style="width:24px; height:24px; min-width:24px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; font-size:15px; font-weight:700; border:1.2px solid #fecaca; background:#ffffff; color:#ef4444; cursor:pointer; line-height:1; box-sizing:border-box;">&times;</button>';
+        }
+        if (type === "order") {
+            return '<div class="v4-grid-order-group" style="display:inline-flex; align-items:center; justify-content:center; gap:3px; vertical-align:middle;"><button type="button" class="v4-grid-order-btn btn-order-up" title="\uC704\uB85C \uC774\uB3D9" style="width:22px; height:22px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; font-size:9px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; cursor:pointer; line-height:1; box-sizing:border-box; user-select:none;">\u25B2</button><button type="button" class="v4-grid-order-btn btn-order-down" title="\uC544\uB798\uB85C \uC774\uB3D9" style="width:22px; height:22px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; font-size:9px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; cursor:pointer; line-height:1; box-sizing:border-box; user-select:none;">\u25BC</button></div>';
+        }
+        if (type === "image") {
+            return '<div class="v4-grid-image-box" style="width:32px; height:32px; margin:0 auto; display:inline-flex; align-items:center; justify-content:center; vertical-align:middle; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; pointer-events:none; box-sizing:border-box;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>';
+        }
+        if (type === "input") {
+            var sampleVal = String(rIdx + 1);
+            return '<input type="text" class="v4-grid-input" value="' + sampleVal + '" placeholder="\uC785\uB825" style="width:100%; height:26px; padding:0 8px; border:1.6px solid rgb(226,232,240); border-radius:4px; background:#ffffff; font-size:12px; color:#0f172a; box-sizing:border-box; text-align:inherit; outline:none; user-select:text; cursor:text;">';
+        }
         if (!fillMock) {
             return "";
         }
@@ -77,6 +102,12 @@ window.v4GridScript = `
         }
         if (type === "currency") {
             return (data.price || "89,000\uC680");
+        }
+        if (type === "author") {
+            return data.author;
+        }
+        if (type === "datetime") {
+            return data.date;
         }
         if (type === "status") {
             return '<span class="v4-grid-badge" style="background:' + data.statusBg + '; color:' + data.statusColor + ';">' + data.status + '</span>';
@@ -91,20 +122,17 @@ window.v4GridScript = `
             var bColor = badgeColors[rIdx % badgeColors.length];
             return '<span class="v4-grid-badge" style="background:' + bColor.bg + '; color:' + bColor.c + ';">' + (data.badge || "BEST") + '</span>';
         }
-        if (type === "author") {
-            return data.author;
+        if (type === "text") {
+            return "";
         }
-        if (type === "datetime") {
-            return data.date;
-        }
-        return data.name;
+        return "";
     };
 
     var getResolvedAlign = function(col) {
         if (col.align && (col.align === "left" || col.align === "center" || col.align === "right")) {
             return col.align;
         }
-        if (col.type === "checkbox" || col.type === "status" || col.type === "badge" || col.type === "action") {
+        if (col.type === "checkbox" || col.type === "order" || col.type === "image" || col.type === "input" || col.type === "action" || col.type === "delete" || col.type === "status" || col.type === "badge") {
             return "center";
         }
         if (col.type === "number" || col.type === "currency") {
@@ -542,16 +570,35 @@ window.v4GridScript = `
         };
 
         cell.addEventListener("mousedown", function(e) {
-            if (e.target.tagName !== "INPUT" && e.target.tagName !== "BUTTON") {
+            var isInput = (e.target && e.target.classList && e.target.classList.contains("v4-grid-input")) || (e.target && e.target.tagName === "INPUT" && e.target.type !== "checkbox");
+            var isBtn = (e.target && (e.target.tagName === "BUTTON" || !!e.target.closest("button")));
+            if (isInput) {
                 e.stopPropagation();
+                var comp = cell.closest(".lf-component");
+                if (comp && !comp.classList.contains("selected")) {
+                    document.querySelectorAll(".lf-component").forEach(function(x) { x.classList.remove("selected"); });
+                    comp.classList.add("selected");
+                    if (window.updateHandles) window.updateHandles(comp);
+                }
+                return;
             }
+            if (isBtn) {
+                e.stopPropagation();
+                selectParentComponent(e);
+                return;
+            }
+            e.stopPropagation();
             selectParentComponent(e);
         });
 
         cell.addEventListener("click", function(e) {
-            if (e.target.tagName !== "INPUT" && e.target.tagName !== "BUTTON") {
+            var isInput = (e.target && e.target.classList && e.target.classList.contains("v4-grid-input")) || (e.target && e.target.tagName === "INPUT" && e.target.type !== "checkbox");
+            var isBtn = (e.target && (e.target.tagName === "BUTTON" || !!e.target.closest("button")));
+            if (isInput || isBtn) {
                 e.stopPropagation();
+                return;
             }
+            e.stopPropagation();
             selectParentComponent(e);
         });
 
@@ -578,6 +625,10 @@ window.v4GridScript = `
         });
 
         cell.addEventListener("keydown", function(e) {
+            if (e.target && e.target.classList && e.target.classList.contains("v4-grid-input")) {
+                e.stopPropagation();
+                return;
+            }
             if (e.key === "Escape" || e.code === "Escape") {
                 e.stopPropagation();
                 cell.blur();
@@ -594,6 +645,10 @@ window.v4GridScript = `
         });
 
         cell.addEventListener("keyup", function(e) {
+            if (e.target && e.target.classList && e.target.classList.contains("v4-grid-input")) {
+                e.stopPropagation();
+                return;
+            }
             e.stopPropagation();
         });
 
@@ -670,6 +725,83 @@ window.v4GridScript = `
         });
     };
 
+    var bindGridInteractiveControls = function(table) {
+        if (!table || table.dataset.interactiveControlsBound) return;
+        table.dataset.interactiveControlsBound = "true";
+
+        table.addEventListener("input", function(e) {
+            if (e.target && e.target.classList && e.target.classList.contains("v4-grid-input")) {
+                e.target.setAttribute("value", e.target.value);
+                var td = e.target.closest("td");
+                if (td) td.setAttribute("data-user-modified", "true");
+                if (typeof markDirty === "function") markDirty();
+            }
+        });
+
+        table.addEventListener("change", function(e) {
+            if (e.target && e.target.classList && e.target.classList.contains("v4-grid-input")) {
+                e.target.setAttribute("value", e.target.value);
+                var td = e.target.closest("td");
+                if (td) td.setAttribute("data-user-modified", "true");
+                if (typeof markDirty === "function") markDirty();
+            }
+        });
+
+        table.addEventListener("click", function(e) {
+            var btnUp = e.target.closest(".btn-order-up");
+            var btnDown = e.target.closest(".btn-order-down");
+            var btnDel = e.target.closest(".v4-grid-delete-box-btn");
+
+            if (btnUp) {
+                e.preventDefault();
+                e.stopPropagation();
+                var tr = btnUp.closest("tr");
+                if (tr && tr.previousElementSibling) {
+                    var prev = tr.previousElementSibling;
+                    tr.parentNode.insertBefore(tr, prev);
+                    if (typeof markDirty === "function") markDirty();
+                }
+                return;
+            }
+
+            if (btnDown) {
+                e.preventDefault();
+                e.stopPropagation();
+                var tr = btnDown.closest("tr");
+                if (tr && tr.nextElementSibling) {
+                    var next = tr.nextElementSibling;
+                    tr.parentNode.insertBefore(next, tr);
+                    if (typeof markDirty === "function") markDirty();
+                }
+                return;
+            }
+
+            if (btnDel) {
+                e.preventDefault();
+                e.stopPropagation();
+                var tr = btnDel.closest("tr");
+                if (tr && tr.parentNode) {
+                    var tbody = tr.parentNode;
+                    var allRows = tbody.querySelectorAll("tr");
+                    if (allRows.length > 1) {
+                        tr.remove();
+                        var newCount = tbody.querySelectorAll("tr").length;
+                        var container = table.closest(".v4-grid-container");
+                        if (container) {
+                            container.setAttribute("data-row-count", String(newCount));
+                            syncGridComponentHeight(container, container.getAttribute("data-row-height") || "40px", newCount, container.getAttribute("data-pagination") !== "false");
+                        }
+                        if (typeof markDirty === "function") markDirty();
+                        if (typeof notifyParent === "function") {
+                            notifyParent({ type: "LF_UPDATE_GRID_PROPERTIES", rowCount: newCount });
+                        }
+                    }
+                }
+                return;
+            }
+        });
+    };
+
     var updateGridColgroup = function(table, columns) {
         var colgroup = table.querySelector("colgroup");
         if (!colgroup) return;
@@ -685,7 +817,7 @@ window.v4GridScript = `
         columns.forEach(function(col, idx) {
             var w = col.width;
             if (!w) {
-                w = (col.type === "checkbox" ? "50px" : (col.type === "number" || col.type === "action" ? "80px" : "120px"));
+                w = (col.type === "checkbox" ? "50px" : (col.type === "order" ? "70px" : (col.type === "image" ? "70px" : (col.type === "delete" ? "60px" : (col.type === "input" ? "90px" : (col.type === "number" || col.type === "action" ? "80px" : (col.type === "text" ? "200px" : "120px")))))));
             } else {
                 w = w.trim();
                 if (/^\\d+$/.test(w) || /^\\d*\\.\\d+$/.test(w)) {
@@ -730,7 +862,7 @@ window.v4GridScript = `
             var align = getResolvedAlign(col);
             var w = col.width;
             if (!w) {
-                w = (col.type === "checkbox" ? "50px" : (col.type === "number" || col.type === "action" ? "80px" : "120px"));
+                w = (col.type === "checkbox" ? "50px" : (col.type === "order" ? "70px" : (col.type === "image" ? "70px" : (col.type === "delete" ? "60px" : (col.type === "input" ? "90px" : (col.type === "number" || col.type === "action" ? "80px" : (col.type === "text" ? "200px" : "120px")))))));
             } else {
                 w = w.trim();
                 if (/^\\d+$/.test(w) || /^\\d*\\.\\d+$/.test(w)) {
@@ -852,7 +984,8 @@ window.v4GridScript = `
                 td.style.setProperty("min-height", rowHeightVal, "important");
                 td.style.setProperty("vertical-align", "middle", "important");
                 td.style.setProperty("box-sizing", "border-box", "important");
-                td.style.setProperty("padding", col.type === "checkbox" ? "0" : "0 8px", "important");
+                var isZeroPad = (col.type === "checkbox" || col.type === "order" || col.type === "image" || col.type === "delete");
+                td.style.setProperty("padding", isZeroPad ? "0" : "0 8px", "important");
                 td.style.setProperty("text-align", align, "important");
                 td.setAttribute("data-align", align);
 
@@ -873,7 +1006,7 @@ window.v4GridScript = `
                     td.style.removeProperty("background-color");
                 }
 
-                var isClickable = !!col.clickable && col.type !== "checkbox" && col.type !== "action";
+                var isClickable = !!col.clickable && col.type !== "checkbox" && col.type !== "action" && col.type !== "delete" && col.type !== "image" && col.type !== "input" && col.type !== "order";
                 td.setAttribute("data-clickable", isClickable ? "true" : "false");
                 if (isClickable) {
                     td.classList.add("v4-grid-clickable-cell");
@@ -903,7 +1036,7 @@ window.v4GridScript = `
                     shouldOverwrite = true;
                 } else if (fillMock && (!isUserModified && (isMockValue(currentText, prevType) || td.innerHTML === ""))) {
                     shouldOverwrite = true;
-                } else if (td.innerHTML === "" && (col.type === "checkbox" || col.type === "action")) {
+                } else if (td.innerHTML === "" && (col.type === "checkbox" || col.type === "action" || col.type === "delete" || col.type === "order" || col.type === "image" || col.type === "input")) {
                     shouldOverwrite = true;
                 }
 
@@ -924,13 +1057,31 @@ window.v4GridScript = `
                         td.className = "v4-grid-cell" + hlClass;
                         td.contentEditable = "false";
                         td.innerHTML = '<button type="button" class="v4-grid-action-btn">\uC0C1\uC138</button>';
+                    } else if (col.type === "delete") {
+                        td.className = "v4-grid-cell" + hlClass;
+                        td.contentEditable = "false";
+                        td.innerHTML = getCellContentForType("delete", rIdx, col, false, true);
+                    } else if (col.type === "order") {
+                        td.className = "v4-grid-cell" + hlClass;
+                        td.contentEditable = "false";
+                        td.innerHTML = getCellContentForType("order", rIdx, col, false, true);
+                    } else if (col.type === "image") {
+                        td.className = "v4-grid-cell" + hlClass;
+                        td.contentEditable = "false";
+                        td.innerHTML = getCellContentForType("image", rIdx, col, false, true);
+                    } else if (col.type === "input") {
+                        td.className = "v4-grid-cell" + hlClass;
+                        td.contentEditable = "false";
+                        var existingInp = td.querySelector("input.v4-grid-input");
+                        var currentVal = (existingInp && isUserModified) ? existingInp.value : String(rIdx + 1);
+                        td.innerHTML = '<input type="text" class="v4-grid-input" value="' + currentVal + '" placeholder="\uC785\uB825" style="width:100%; height:26px; padding:0 8px; border:1.6px solid rgb(226,232,240); border-radius:4px; background:#ffffff; font-size:12px; color:#0f172a; box-sizing:border-box; text-align:inherit; outline:none; user-select:text; cursor:text;">';
                     } else {
                         td.className = "v4-grid-cell v4-editable-cell" + (isClickable ? " v4-grid-clickable-cell" : "") + hlClass;
                         td.contentEditable = "true";
                         td.style.color = "";
                         td.style.fontWeight = "";
                         td.style.fontSize = "";
-                        td.innerHTML = getCellContentForType(col.type, rIdx, col, isClickable, fillMock);
+                        td.innerHTML = getCellContentForType(col.type, rIdx, col, isClickable, fillMock || (prevType !== col.type));
                     }
 
                     if (!hl || !hl.enabled) {
@@ -944,6 +1095,7 @@ window.v4GridScript = `
                 }
             });
         });
+        bindGridInteractiveControls(table);
     };
 
     var buildFreshGridHtml = function(columns, rowCount, showPagination, rowHeightVal, isZebra, totalColWidth) {
@@ -951,7 +1103,7 @@ window.v4GridScript = `
         columns.forEach(function(col) {
             var w = col.width;
             if (!w) {
-                w = (col.type === "checkbox" ? "50px" : (col.type === "number" || col.type === "action" ? "80px" : "120px"));
+                w = (col.type === "checkbox" ? "50px" : (col.type === "order" ? "70px" : (col.type === "image" ? "70px" : (col.type === "delete" ? "60px" : (col.type === "input" ? "90px" : (col.type === "number" || col.type === "action" ? "80px" : (col.type === "text" ? "200px" : "120px")))))));
             } else {
                 w = w.trim();
                 if (/^\\d+$/.test(w) || /^\\d*\\.\\d+$/.test(w)) {
@@ -994,11 +1146,11 @@ window.v4GridScript = `
                 var borderRight = " border-right:1.6px solid rgb(226,232,240);";
                 var align = getResolvedAlign(col);
                 var heightStyle = " height:" + rowHeightVal + " !important; min-height:" + rowHeightVal + " !important; vertical-align:middle !important; box-sizing:border-box !important;";
-                var isClickable = !!col.clickable && col.type !== "checkbox" && col.type !== "action";
+                var isClickable = !!col.clickable && col.type !== "checkbox" && col.type !== "action" && col.type !== "delete" && col.type !== "image" && col.type !== "input" && col.type !== "order";
                 var clickableAttr = ' data-clickable="' + (isClickable ? "true" : "false") + '"';
                 var clickableClass = isClickable ? " v4-grid-clickable-cell" : "";
                 var clickableStyle = isClickable ? " color:#2563eb !important; cursor:pointer !important;" : "";
-                var cellContent = getCellContentForType(col.type, i, col, isClickable);
+                var cellContent = getCellContentForType(col.type, i, col, isClickable, true);
 
                 var hl = getResolvedHighlight(col);
                 var hlClass = (hl && hl.enabled) ? " v4-grid-col-highlight" : "";
@@ -1014,8 +1166,10 @@ window.v4GridScript = `
                 
                 if (col.type === "checkbox") {
                     bodyHtml += '<td class="v4-grid-cell' + hlClass + '" data-type="checkbox" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + hlBgStyle + hlShadowStyle + ' padding:0;"><input type="checkbox"></td>';
-                } else if (col.type === "action") {
-                    bodyHtml += '<td class="v4-grid-cell' + hlClass + '" data-type="action" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + hlBgStyle + hlShadowStyle + ' padding:0 8px;">' + cellContent + '</td>';
+                } else if (col.type === "order" || col.type === "image" || col.type === "delete") {
+                    bodyHtml += '<td class="v4-grid-cell' + hlClass + '" data-type="' + col.type + '" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + hlBgStyle + hlShadowStyle + ' padding:0;">' + cellContent + '</td>';
+                } else if (col.type === "action" || col.type === "input") {
+                    bodyHtml += '<td class="v4-grid-cell' + hlClass + '" data-type="' + col.type + '" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + hlBgStyle + hlShadowStyle + ' padding:0 8px;">' + cellContent + '</td>';
                 } else {
                     bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:' + align + ";" + heightStyle + " padding:0 8px;" + borderRight + hlBgStyle + hlShadowStyle + " font-size:12px; " + (isClickable ? clickableStyle : "color:#0f172a; font-weight:500;") + '">' + cellContent + '</td>';
                 }
@@ -1078,10 +1232,11 @@ window.v4GridScript = `
         var totalColWidth = 0;
         columns.forEach(function(col) {
             var w = col.width;
+            var fallbackW = (col.type === "checkbox" ? 50 : (col.type === "order" ? 70 : (col.type === "image" ? 70 : (col.type === "delete" ? 60 : (col.type === "input" ? 90 : (col.type === "number" || col.type === "action" ? 80 : (col.type === "text" ? 200 : 120)))))));
             if (!w) {
-                w = (col.type === "checkbox" ? 50 : (col.type === "number" || col.type === "action" ? 80 : 120));
+                w = fallbackW;
             } else {
-                w = parseInt(w) || (col.type === "checkbox" ? 50 : (col.type === "number" || col.type === "action" ? 80 : 120));
+                w = parseInt(w) || fallbackW;
             }
             totalColWidth += w;
         });
@@ -1107,6 +1262,7 @@ window.v4GridScript = `
             }
             
             bindTableCheckboxInteractions(table);
+            bindGridInteractiveControls(table);
             syncGridComponentHeight(container, rowHeightVal, rowCount, showPagination);
             return;
         }
@@ -1117,6 +1273,7 @@ window.v4GridScript = `
         var renderedTable = container.querySelector("table");
         if (renderedTable) {
             bindTableCheckboxInteractions(renderedTable);
+            bindGridInteractiveControls(renderedTable);
             var allThs = Array.from(renderedTable.querySelectorAll("thead th"));
             allThs.forEach(function(th, idx) {
                 bindGridCellEvents(th, true, idx);
@@ -1170,6 +1327,7 @@ window.v4GridScript = `
             var table = container.querySelector("table");
             if (table) {
                 bindTableCheckboxInteractions(table);
+                bindGridInteractiveControls(table);
                 var allThs = Array.from(table.querySelectorAll("thead th"));
                 allThs.forEach(function(th, idx) {
                     bindGridCellEvents(th, true, idx);

@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-engine
-description: Use when editing Workspace Editor engine files, vctrl_core.js, vctrl_inspector.js, vctrl_grouping.js, vctrl_canvas_viewport.js, vctrl_screen_manager.js, vctrl_annotation_pins.js, assets/inspector/*, MessageHub, EditorBus, SmartGuide, iframe scripts, DOM registries, init functions, listener wiring, selection, grouping, canvas, zoom, pan, annotations, or module boundaries.
+description: Use when editing Workspace Editor engine files, vctrl_core.js, vctrl_inspector.js, vctrl_inspector_sync.js, vctrl_grouping.js, vctrl_canvas_viewport.js, vctrl_screen_manager.js, vctrl_annotation_pins.js, assets/inspector/*, MessageHub, EditorBus, SmartGuide, iframe scripts, DOM registries, init functions, listener wiring, selection, grouping, canvas, zoom, pan, annotations, or module boundaries.
 ---
 
 # Workspace Editor Engine
@@ -8,17 +8,22 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 ## Core Boundaries & Architecture
 - Keep the engine modular. Add a dedicated JS file for a large new feature instead of swelling an existing file.
 - `vctrl_core.js` owns global `state`, `MessageHub`, GitHub API load/save, dynamic script compilation via `ENGINE_SCRIPT_REGISTRY` pipeline for iframe `srcdoc`, screen save/export synchronization via `window.ScreenSanitizer.cleanDOM`, and SmartGuide calculation flow.
+- `vctrl_core_router.js` owns parent-side message routing (`v4ParentCoreHandlers`), central `MessageHub` dispatching, component selection routing with `state.previousEditingIndex` tracking, explicit new selection flagging (`isNewSelection`), and parent active input blur handling.
+- `vctrl_properties.js` owns property mapping helpers, floating inspector binding, and forced input synchronization (`updateAllInputs(w, h, force = true)`) bypassing focus guards on selection transition.
 - `vctrl_screen_manager.js` owns screen reordering (`screenOrder`), screen creation (`+`), cloning, deletion, active screen routing, and `metadata.json` persistence synchronization.
 - `vctrl_revision_history.js` owns Project Revision History modal (`#history-modal`), entry CRUD (`window.renderHistoryPopup`), and metadata persistence synchronization.
 - `vctrl_clipboard.js` owns URL copy dropdown handling, project & screen URL copying, and asynchronous system clipboard fallback (`copyTextToClipboard`).
 - `vctrl_component_data.js` owns V4 component library (`window.V4_COMPONENT_LIBRARY`) templates and metadata definitions SSOT.
 - `vctrl_canvas_viewport.js` owns Canvas Interaction (`adjustZoom`, `centerView`, `updateTransform`), 100% crisp snap (`toggleCrispView`), Fullscreen, and Global Space-key Panning logic (integrated with `vctrl_core.js` iframe event propagation).
-- `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, and metadata description synchronization. Pin reordering logic is fully consolidated into `window.reorderAllPins` and `LF_REORDER_PINS` SSOT inside `vctrl_responsive_pins.js`.
-- `vctrl_iframe_scroll_pin.js` owns the Responsive Scroll Pinning & Smart HUD Fixed Engine (`window.ScrollPinEngine`). It manages the 4 object pinning modes (`top`, `bottom`, `custom`/`floating`, `sticky`), viewport description pins (`data-scroll-fixed="viewport"`), host-pinned markers (`data-fixed-host`), and scroll-direction reactive reveal/hide effects (`data-scroll-effect`: `always`, `hide-down`, `hide-up`) with hardware-accelerated `translate3d` GPU transforms and `WeakMap` container state isolation.
+- `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, metadata description synchronization, dedicated overlay container (`.v4-pin-layer`) lifecycle (`ensurePinLayer`, loose pin self-healing), and viewport-scroll-aware safe spawn coordinates (`spawnPcX: 570, spawnPcY: 180 + scrollY`). Pin reordering logic is fully consolidated into `window.reorderAllPins` and `LF_REORDER_PINS` SSOT inside `vctrl_responsive_pins.js`.
+- `vctrl_iframe_layering.js` owns the Unified 8-Tier Z-Index Architecture (`window.V4_Z_TIERS`), 4-operation layer suite (`handleBringToFront`, `handleBringForward`, `handleSendToBack`, `handleSendBackward`), and compaction threshold (`compactZIndices`).
+- `vctrl_clipboard_objects.js` owns object copy/paste lifecycle, pasting tier rebase (`V4_Z_TIERS.NORMAL.MAX = 69900`, `V4_Z_TIERS.VIRTUAL_HUD.MAX = 179900`), and `trailingRef` guard ensuring pasted elements are placed before `.v4-pin-layer`.
+- `vctrl_iframe_scroll_pin.js` owns the Responsive Scroll Pinning & Smart HUD Fixed Engine (`window.ScrollPinEngine`). It manages the 4 object pinning modes (`top`, `bottom`, `custom`/`floating`, `sticky`), viewport description pins (`data-scroll-fixed="viewport"`), host-pinned markers (`data-fixed-host`), scroll-direction reactive reveal/hide effects (`data-scroll-effect`: `always`, `hide-down`, `hide-up`) with hardware-accelerated `translate3d` GPU transforms and `WeakMap` container state isolation, and unpinning lifecycle safe demotion back to Tier 2 (`Math.min(69900, maxNormalZ + 10)`).
 - `vctrl_connectors.js` owns connector spawning (`spawnLine`), 30px magnetic port snapping (`collectSnapTargets`), port highlighting, real-time anchoring (`syncAnchoredPositions`), and connector inspector routing.
 - `vctrl_iframe_ports.js` owns iframe-side port detection and port-drag connector initiation.
 - `vctrl_grouping.js` owns marquee selection, `selectedIds`, group move/delete/grouping behavior, and selected class sync.
-- `vctrl_inspector.js` and `assets/inspector/*` own sidebar tabs, metadata UI, screen list rendering, Quill initialization, floating card routing, and domain-specific inspector controls (`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_popup.js`, `inspector_admin_settings.js`, `inspector_text_formatter.js`, `inspector_scroll_pin.js`).
+- `vctrl_inspector.js`, `vctrl_inspector_sync.js`, `vctrl_inspector_actionbar.js`, and `assets/inspector/*` own sidebar tabs, metadata UI, screen list rendering, Quill initialization, floating card routing, 3-tier component transition detection (`isNewComp`), and domain-specific inspector controls (`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_popup.js`, `inspector_admin_settings.js`, `inspector_text_formatter.js`, `inspector_scroll_pin.js`, `vctrl_inspector_actionbar.js`).
+  - `vctrl_inspector_sync.js` (`window.InspectorPropertySync`): Component property synchronization dispatcher and sub-synchronizers (shape/pin, table, line, illustration, icon, atom, popup, accordion, grid, admin-settings, tab, stepper, cursor, toggle, datepicker, etc.) SSOT.
   - `inspector_atoms.js` (`window.InspectorAtoms`): Atom property synchronization SSOT.
   - `inspector_popup.js` (`window.InspectorPopup`): Popup window atom (`v4-atom-popup`) header, styling, and dimension synchronization SSOT.
   - `inspector_scroll_pin.js` (`window.InspectorScrollPin`): Responsive screen & canvas element scroll pin (top/bottom/custom/sticky), viewport pinning mode, and direction reactive effects (`data-scroll-effect`) inspector binding & UI synchronization SSOT.
@@ -27,8 +32,12 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - `vctrl_component_library.js` & `vctrl_component_inserter.js` own component library categories, shape/atomic/icon rendering (`renderV4Shapes`, `renderAtomicLibrary`), Illustration Library 2-column rendering (`renderIllustrationLibrary`), Canvas Background Setting modal & presets (`openCanvasBackgroundModal`, `applyCanvasBackground`, `removeCanvasBackground`), dual-language search filtering, canvas drop coordinates, and dynamic object insertion. `vctrl_component_library.js` is loaded before `vctrl_inspector.js` in `viewer.html` to establish proper binding order.
 - `vctrl_pdf_exporter.js` owns multi-screen batch PDF export based on `metadata.json` `screenOrder`, long-canvas captures, and progress modal management.
 - `vctrl_presentation_pen.js` owns real-time presentation drawing canvas (laser pointer & highlighter pen) activated when holding `Shift` in desktop fullscreen (`F`) mode. It is strictly suppressed on mobile/touch viewports (`isMobileOrTouchDevice()`), where both the canvas and the shortcut tooltip (`#presentation-pen-tooltip`) are completely hidden.
-- `vctrl_resolution_engine.js` owns resolution and viewport classification (`res-narrow`, `res-compact`, `res-wide`), smart frame focus switcher (`v4-frame-switcher`, `focusFrame`), native browser fullscreen (`requestFullscreen`/`exitFullscreen`) and zen mode (`toggleZenMode`), device rotation guidance, and mobile-friendly touch viewer behavior.
+- `vctrl_resolution_engine.js` owns resolution and viewport classification (`res-narrow`, `res-compact`, `res-wide`), tablet/mobile read-only viewports, smart frame focus switcher (`v4-frame-switcher`, `focusFrame`), native browser fullscreen (`requestFullscreen`/`exitFullscreen`) and zen mode (`toggleZenMode`), device rotation guidance toast (`showRotationToast`), and mobile-friendly touch viewer behavior.
 - **Critical Fullscreen Principle**: In `vctrl_resolution_engine.js` and `vctrl_canvas_viewport.js`, native `requestFullscreen()` MUST be executed on mobile devices so the browser's address bar and system status bar are eliminated, allowing the 1600x900 canvas to fit the physical smartphone display. Never skip `requestFullscreen()` on mobile viewports.
+- **Cinematic Dual-Orbit Loader & Studio Docking Architecture**:
+  - `viewer.css`, `dashboard.css`, and `viewer.html` implement a high-precision dual-orbit loading animation system (`.orbit-ring-outer`, `.orbit-ring-inner`, `.orbit-core-emblem`, `.loading-ambient-glow`).
+  - Upon screen readiness, the loader smoothly transitions out via `.loading-overlay.fade-out` (`scale(1.03)`, `blur(8px)`, `opacity: 0`, 0.5s duration).
+  - On desktop (`body.res-wide`), the `workspace-docked` class orchestrates synchronized studio docking transitions: toolbar descent (`studioToolbarDock`, 0.4s), left/right sidebars slide-in (`studioLeftDock`, `studioRightDock`, 0.4s), and artboard canvas blur-settle camera entrance (`canvasCameraIn`, 0.45s).
 - **Offline Build Pipeline**:
   - Whenever modifying `assets/templates/*.html`, developers must run `powershell -ExecutionPolicy Bypass -File scripts/build_templates.ps1` to recompile `assets/templates.js`.
   - Whenever modifying `assets/ui_library/*.html` (cards, panels, modals), run `powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1` to update `assets/ui_library_fallback.js`.
@@ -42,7 +51,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **Nested Backtick Precaution**: `vctrl_core.js`의 `v4Script` 또는 인라인 주입 스크립트와 같이 백틱(`)으로 감싸진 템플릿 리터럴 내부에서 다시 백틱이나 변수 보간(`${}`)을 사용하면 구문 에러(SyntaxError)가 발생한다. 내부에서는 반드시 일반 따옴표(`"` 또는 `'`)와 덧셈 연산자(`+`)를 사용하거나 이스케이프(`\``) 처리를 해야 한다.
 - **Iframe State Initialization**: iframe 컨텍스트에서는 부모 창의 전역 변수(예: `window.state`)가 자동으로 공유되지 않는다. iframe 내부에 주입되는 스크립트(예: `vctrl_undo.js`)에서 상태를 참조하거나 저장할 때는 반드시 참조 전 초기화 여부(예: `if (!window.state) window.state = {};`)를 확인하여 `TypeError`를 방지하라.
 - **iframe 하위 스크립트 모듈화 및 정형화 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**:
-  - iframe의 `srcdoc`에 주입되는 스크립트는 28개 도메인 모듈 파일(`vctrl_typography.js`, `vctrl_undo.js`, `vctrl_table.js`, `vctrl_text_measurer.js`, `vctrl_ui_atoms.js`, `vctrl_ui_atoms_inputs.js`, `vctrl_ui_atoms_cursor.js`, `vctrl_design_system.js`, `vctrl_clipboard_objects.js`, `vctrl_format_painter.js`, `vctrl_shortcuts.js`, `vctrl_common.js`, `vctrl_object_shape.js`, `vctrl_object_connector.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_ports.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_tab.js`, `vctrl_responsive_smartguide_math.js`, `vctrl_responsive_smartguide.js`, `vctrl_responsive_pins.js`, `vctrl_iframe_style_extractor.js`, `vctrl_iframe_layering.js`, `vctrl_iframe_inserter.js`, `vctrl_iframe_script.js`, `vctrl_responsive_multiselect.js`, `vctrl_iframe_scroll_pin.js`)로 완전 분리 관리된다.
+  - iframe의 `srcdoc`에 주입되는 스크립트는 29개 도메인 모듈 파일(`vctrl_typography.js`, `vctrl_undo.js`, `vctrl_table.js`, `vctrl_text_measurer.js`, `vctrl_ui_atoms.js`, `vctrl_ui_atoms_inputs.js`, `vctrl_ui_atoms_cursor.js`, `vctrl_design_system.js`, `vctrl_clipboard_objects.js`, `vctrl_format_painter.js`, `vctrl_shortcuts.js`, `vctrl_common.js`, `vctrl_object_shape.js`, `vctrl_object_connector.js`, `vctrl_iframe_drag.js`, `vctrl_iframe_ports.js`, `vctrl_iframe_grid.js`, `vctrl_iframe_accordion.js`, `vctrl_iframe_tab.js`, `vctrl_responsive_smartguide_math.js`, `vctrl_responsive_smartguide.js`, `vctrl_responsive_pins.js`, `vctrl_iframe_style_extractor.js`, `vctrl_iframe_layering.js`, `vctrl_iframe_inserter.js`, `vctrl_iframe_adorner.js`, `vctrl_iframe_script.js`, `vctrl_responsive_multiselect.js`, `vctrl_iframe_scroll_pin.js`)로 완전 분리 관리된다.
   - `vctrl_core.js`의 `getInlinedEngineScript()`는 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 순회하며 각 모듈의 로드 여부를 자동 검증(누락 시 콘솔 경고 발생)하고 동적으로 결합/컴파일하여 iframe `srcdoc`에 주입한다.
   - 결합 결과는 안전하게 캐싱되며, 스크립트 블록 최상단에 `Date.now()` 타임스탬프 난수가 담긴 버스터 주석(`// Cache Buster Timestamp: ...`)을 인라인 주입하여 자동 캐시 무효화를 수행한다.
 - **Iframe 메시지 레지스트리 디스패처 (`window.v4MessageHandlers`)**:
@@ -68,6 +77,10 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - 아카이브 생성 즉시 내부 프로젝트 메타데이터 및 스크린 파일 개수를 전수 검증하며, 30일 경과 백업본을 자동 정리하되 최소 5개는 강제 보존합니다.
   - `scripts/setup_daily_schedule.ps1`을 통해 매일 18:00 정각 윈도우 작업 스케줄러(`AiWork_Daily_Project_Backup`)로 무인 실행되며, PC 부팅 시 누락 작업 캐치업(`-StartWhenAvailable`)을 지원합니다.
 - **MutationObserver 무한 재귀 루프 방지 (Preventing Infinite Mutation Loops)**: `enforceDesignSystem()` 등 MutationObserver가 활성화된 루프 내에서 카운터 textContent, placeholder display, 또는 폰트 크기 등의 DOM 쓰기 연산을 수행할 경우 다시 MutationObserver가 발동하여 브라우저가 정지하는 무한 재귀 상태에 빠지기 쉽다. 이를 예방하기 위해, 모든 DOM 쓰기 작업은 반드시 **현재 DOM 값과 대입하려는 신규 값을 엄격히 비교(Value Comparison Guard)**하여, 값이 변경된 경우에만 실행되도록 보호해야 한다.
+- **신규 아톰·도형 프로퍼티 추출 격리 및 중복 키 오염 방지 프로토콜 (Zero Property Contamination Protocol)**:
+  - **스타일 추출기 객체 리터럴 중복 키 선언 절대 금지**: `assets/vctrl_iframe_style_extractor.js`에서 반환 객체 리터럴 구성 시 동일한 프로퍼티 이름(`maxLength`, `showCounter`, `disabled` 등)을 파일 상단과 하단에서 중복 선언하는 실수를 원천 차단한다. 자바스크립트는 객체 리터럴 내에 중복 키가 존재할 경우 나중에 선언된 키로 앞선 키를 무조건 덮어쓰므로, 텍스트박스나 텍스트에어리어 등 기존 아톰을 선택했을 때도 하단에 선언된 신규 아톰의 기본값(예: 2000)이 강제 주입되는 치명적인 데이터 오염이 발생한다.
+  - **철저한 컴포넌트 스코프 조건부 격리**: 신규 아톰의 속성은 `isWebEditor ? webeditorMaxLength : maxLength`와 같이 대상 컴포넌트가 활성화되었을 때만 조건부로 할당하거나 고유 네임스페이스 속성을 사용하여, 비활성 컴포넌트나 타 아톰의 기본값(텍스트박스 기본 100자 등)에 절대 간섭하지 않도록 스코프를 완벽히 격리해야 한다.
+  - **교차 회귀 검증 의무화**: 신규 아톰 추가/수정 후에는 신규 아톰뿐만 아니라 기존 유사 아톰(텍스트박스, 텍스트에어리어 등)을 캔버스에서 직접 클릭하여 기존 고유 속성과 기본값이 온전히 보존되는지 반드시 확인해야 한다.
 
 
 ## Interaction Integrity
@@ -87,6 +100,19 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **통합 키보드 이벤트 파이프라인 (Unified Keyboard Event Pipeline)**: 기존에 분산되어 있던 부모 창과 iframe 내부의 키보드 이벤트 리스너를 단일화된 파이프라인으로 통합했다. 컴포넌트나 커넥터가 포커싱되었을 때 이벤트가 유실되거나 중복 처리되지 않도록, `vctrl_iframe_script.js` 내부의 통합 키보드 핸들러가 이벤트를 포착하고, 부모 창의 단일 리스너와 `MessageHub`를 통해 연동되어야 한다. 화살표 키 이동(Nudge), Delete/Backspace 삭제, Undo/Redo 등의 모든 인터랙션이 단일 이벤트 흐름으로 제어됨을 보장해야 한다.
 - **커넥터(Lines) 실시간 좌표 동기화 (Real-Time Connector Reconciliation)**: 사용자가 컴포넌트를 드래그하거나 화살표 키로 이동시킬 때, 컴포넌트에 연결된 모든 커넥터 라인(Lines)은 `syncAnchoredPositions()` 및 MessageHub 신호(`LF_SNAP_REQUEST`, `LF_COMP_RESIZED`)를 통해 실시간으로 시작/끝 좌표를 재계산하고 부드럽게 추종하도록 연동해야 한다. 드래그가 완료되면 이동된 최종 좌표 상태가 `V4UndoManager` 및 `metadata.json`에 영구히 저장되어야 한다.
 - **이벤트 핸들러 연쇄 차단 방지 (Non-Blocking Event Listener Flow)**: `mouseup` 또는 `mousemove`와 같은 전역 통합 이벤트 리스너를 수정할 때, 개별 조건문(예: `isConnectorDragging`) 처리 후 `return;`으로 조기 종료를 남용하지 말라. 조기 종료 시 하위의 `isMarquee` 상태 해제(`LF_MARQUEE_END`) 및 선택 박스(`.v4-marquee-box`) 제거 로직이 차단되어 클릭 시 캔버스에 파란색 점 잔상이 생성되거나 다중선택 드래그가 마비되는 사이드 이펙트가 발생하므로, 모든 상태 해제 연산은 독립 순차 구문으로 전개해야 한다.
+- **오브젝트 프로퍼티(인스펙터) 4중 안전망 동기화 파이프라인 (Inspector Property Synchronization SSOT)**:
+  - **버그 배경**: 동일 쉐입(Rect 100x100 ➔ Rect 200x200 등) 연속 선택 시, 인스펙터 패널 섹션이 닫히지 않고 열려 있는 상태에서 부모 입력 필드의 포커스 잔류나 `state.editingIndex` 선행 갱신 레이스 컨디션으로 인해 새 객체의 크기(Width/Height)가 갱신되지 않고 이전 값으로 고정되던 문제를 원천 차단하기 위해 4중 안전망을 구축한다.
+  - **1. CoreRouter 선행 백업 & 포커스 해제**: `vctrl_core_router.js`에서 `state.editingIndex`를 대입하기 전 이전 선택 ID를 백업(`const isNewSelection = (state.previousEditingIndex !== data.id)`), 신규 선택 시 부모 창의 활성 인풋 포커스를 즉시 해제(`document.activeElement.blur()`), `window.updateProperties(data, isNewSelection)`로 명시적 신규 선택 플래그 전달, 이후 `state.previousEditingIndex = data.id`를 안전하게 갱신한다.
+  - **2. 인스펙터 3중 판정식 & 크기 인풋 직접 대입**: `vctrl_inspector.js`의 `updateProperties(compStyles, isNewSelectionExplicit)`에서 `const isNewComp = isNewSelectionExplicit === true || compStyles.id !== state.previousEditingIndex || compStyles.id !== state._lastInspectorCompId;` 3중 판정 적용. `isNewComp`일 때 `isTypingInInspector = false`로 강제 리셋하여 조기 return 방지. `_syncCommonPropertyControls`에서 `DOM.propWidth`, `DOM.propHeight` 등의 공통 크기 인풋에 대해 포커스 상태와 무관하게 `DOM.propWidth.value = Math.round(compStyles.w)`로 직접 값을 대입하여 화면 표시를 100% 강제 동기화한다.
+  - **3. LF_COMP_SELECTED 강제 프로퍼티 갱신**: `vctrl_properties.js`에서 대상 컴포넌트 ID가 변경된 경우(`targetId !== activeCompId`), 부모 activeElement를 즉시 blur 처리하고 `updateAllInputs(w, h, force = true)`를 호출하여 포커스 가드를 확실히 우회함으로써 이전 크기 수치가 화면에 잔존하지 않도록 강제 동기화한다.
+  - **4. Iframe 캔버스 클릭 시 부모 잔류 포커스 즉시 정리**: `vctrl_iframe_script.js`에서 컴포넌트 `mousedown` 시 `window.parent?.document?.activeElement?.blur()`를 호출하여 부모 창 인풋에 남아있던 캐럿과 포커스를 즉각 정리한다 (백틱 충돌 0건 원칙 준수).
+- **오브젝트 프로퍼티 정렬(ALIGNMENT) 엔진 및 가시 뷰포트 통합 아키텍처 (Visible Viewport Alignment SSOT)**:
+  - **단일 및 다중 오브젝트 정렬 일원화**: 단일 선택(`items.length === 1`) 시 ALIGNMENT 패널을 강제 은닉하던 `selIds.length > 1` 제한을 철폐하고, 단일 객체에서도 캔버스 또는 소속 프레임 기준 6대 정렬(`Left, Center, Right, Top, Middle, Bottom`)을 상시 지원한다 (단, 분배 정렬은 3개 이상 선택 시만 활성화).
+  - **반응형 가시 뷰포트 정렬 수학 (Visible Viewport Math)**: PC 프레임 긴 문서(`1500px+`)에서 `offsetHeight` 전체를 기준으로 정렬하여 오브젝트가 화면 밖으로 추락하던 버그를 원천 차단하기 위해, 현재 스크롤 위치(`scrollTop`)와 뷰포트 높이(`clientHeight || 810px`)를 결합한 가시 뷰포트 수학을 강제한다:
+    - 수직 중앙(`middle`): $\text{targetT} = \text{boundT} + \frac{\text{boundH} - \text{item.h}}{2}$ (여기서 $\text{boundT} = \text{scrollContainer.scrollTop}$, $\text{boundH} = \text{scrollContainer.clientHeight}$).
+    - 하단(`bottom`): $\text{targetT} = \text{boundT} + \text{boundH} - \text{item.h} - 10$ (하단 10px 안전 여백).
+  - **정렬 후 조작 인터페이스 실시간 동기화**: 정렬 연산 완료 후 DOM `style.left/top` 갱신에 그치지 않고, 반드시 `window.updateHandles(el)` 및 `window.SelectionAdorner.update()`를 호출하여 드래그 핸들(`.lf-drag-handle`), 리사이저(`.lf-resizer`), 선택 박스, 부모 창 인스펙터(X/Y 좌표)를 1:1로 실시간 갱신한다.
+  - **부모 창 `alignSelected` 안전 가드**: `activeIds`가 비어있을 때 `window.state.selectedComponent.id`로 fallback하는 안전 가드를 적용하여 단일 선택 상태에서도 인스펙터 정렬 버튼 클릭이 100% 정상 작동하도록 보장한다.
 
 ## Connector and Cross-Window Interaction Principles
 - **Iframe Occlusion Protection**: 부모 창에서 드래그 인터랙션(커넥터 핸들 등)이 발생할 때, 마우스가 iframe 위로 올라가면 이벤트가 끊길 수 있다. `mousedown` 시 iframe에 `pointer-events: none`을 설정하고 `mouseup` 시 `auto`로 복구하여 끊김 없는 드래그를 보장하라.
@@ -166,5 +192,54 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - Transforms are applied via single `requestAnimationFrame` loop, avoiding layout reflows and preserving smooth 60fps scrolling.
   - In-Place Undo cleanly resets and restores element transforms without dropping pinning attributes.
 
+## 🥞 Unified 8-Tier Z-Index Architecture & Layer Ordering Pipeline (vctrl_iframe_layering.js & Pin Overlay)
 
+### 1. 전사 Z-Index 8대 티어 단일 진실 공급원 (`window.V4_Z_TIERS`)
+- **도입 배경**: 캔버스 내 일반 컨텐츠, 드롭다운, 스크롤 고정 HUD, 디스크립션 번호 핀, 시스템 오버레이, 전역 모달이 임의의 큰 숫자(예: 9999, 100000 등)를 중구난방으로 사용하여 객체 간 위/아래 순서가 꼬이고 어드민 테이블 등 격리 컨텍스트에 핀이 가려지던 문제를 원천 해결하기 위해 8개 배타적 수치 대역을 정의하고 전사 표준으로 강제합니다.
 
+| 티어 (Tier) | 명칭 (Name) | Z-Index 수치 대역 | 주요 소속 요소 및 정책 |
+| :--- | :--- | :--- | :--- |
+| **Tier 1** | Base / Background | `0 ~ 999` | 캔버스 베이스라인, `#canvas_bg_layer` (`0`), 그리드 가이드선 (`10`) |
+| **Tier 2** | Content Components | `1,000 ~ 69,999` | 일반 도형, 텍스트, 아톰, 테이블, 커넥터, 일러스트 등 캔버스 상의 모든 표준 컨텐츠 컴포넌트 (초기 기본값 `1,000`, 생성 시 `+10` 증분). 티어 상한선 `69,900`. `69,000` 도달 시 비례 압축(`compactZIndices`)을 통해 공간 자동 정돈 |
+| **Tier 3** | Active Selection & Marquee | `70,000 ~ 79,999` | 선택 바운딩 아웃라인, 리사이즈 핸들(`.lf-drag-handle`, `.lf-resizer`), 마키 드래그 박스(`.v4-marquee-box` = `70,000`) |
+| **Tier 4** | In-Canvas Dropdowns & Popups | `80,000 ~ 99,999` | 셀렉트박스 드롭다운 리스트, 캔버스 인라인 팝업(`.v4-atom-popup` = `80,000 ~ 85,000`) |
+| **Tier 5** | Virtual Sticky HUD (Scroll Pinned) | `100,000 ~ 179,999` | 상단 헤더, 하단 독, 플로팅 툴바, 스티키 바 등 `data-scroll-fixed`가 부여된 스크롤 고정 요소 (`100,000 ~ 179,900`) |
+| **Tier 6** | Annotation Pin Dedicated Layer | `200,000 ~ 299,999` | 디스크립션 핀 전용 오버레이 컨테이너(`.v4-pin-layer` = `250,000 !important`), 일반 본문 핀(`.pin-marker` = `200,000`), 스크롤 고정 호스트 핀(`data-scroll-fixed="viewport"` = `200,050`) |
+| **Tier 7** | System Overlays | `300,000 ~ 499,999` | 스마트 가이드 자석선(`.smart-guide-line` = `300,000`), 프레임 레이블 바(`.frame-label-bar` = `350,000`), 스마트 프레임 스위처(`v4-frame-switcher` = `350,000`) |
+| **Tier 8** | Global Modals & Context Menus | `500,000 ~ 999,999` | 최상위 다이얼로그, 전역 컨텍스트 메뉴, 프레젠테이션 펜 캔버스 (`500,000 ~ 999,999`) |
+
+### 2. 4단계 정밀 레이어 순서 제어 엔진 (4-Operation Layer Suite)
+- **모듈 소유**: `assets/vctrl_iframe_layering.js` (`window.handleBringToFront`, `window.handleBringForward`, `window.handleSendToBack`, `window.handleSendBackward`).
+- **단축키 및 동작 사양**:
+
+| 동작 (Action) | 키보드 단축키 (Win / Mac) | 메시지 액션 | 동작 메커니즘 및 무결성 보장 |
+| :--- | :--- | :--- | :--- |
+| **맨 앞으로 가져오기** | `Ctrl + Shift + ]` / `Cmd + Shift + ]` | `LF_BRING_FRONT` | 현재 요소가 속한 티어의 최상위 값(`normal` 티어의 경우 최대 `69,900`, `fixed` 티어의 경우 `179,900`)으로 안전하게 캡핑 승격. 상위 계층(핀 레이어 등) 침범 차단 |
+| **한 단계 앞으로** | `Ctrl + ]` / `Cmd + ]` | `LF_BRING_FORWARD` | 동일 티어 내에서 자신보다 바로 위에 위치한 형제 요소 1개와 z-index 단일 스텝 스왑(Swap). 상위 형제가 없으면 무동작 유지 |
+| **맨 뒤로 보내기** | `Ctrl + Shift + [` / `Cmd + Shift + [`` | `LF_SEND_BACK` | 현재 요소가 속한 티어의 바닥선(`1,000`)으로 안전하게 이동. 0 이하 음수 추락을 막기 위해 필요한 경우 전체 형제 요소의 z-index를 양수로 일괄 쉬프트 보정 |
+| **한 단계 뒤로** | `Ctrl + [` / `Cmd + [` | `LF_SEND_BACKWARD` | 동일 티어 내에서 자신보다 바로 아래에 위치한 형제 요소 1개와 z-index 단일 스텝 스왑(Swap). 하위 형제가 없으면 무동작 유지 |
+
+- **실행 취소(Undo) 보장**: 모든 레이어 변경 작업 전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 1프레임 즉시 복원할 수 있습니다.
+- **자동 비례 압축 (`compactZIndices`)**: 컴포넌트 추가 및 승격이 반복되어 티어 상한선인 `69,000`에 도달하면, 기존 상대적 z-order 순서를 100% 보존하면서 `1,000`부터 `+10` 간격으로 비례 재배치하여 공간을 자동 정돈합니다.
+
+### 3. 디스크립션 핀 Stacking Context 격리 극복 및 전용 오버레이 (`.v4-pin-layer`)
+- **문제 정의**: 어드민 테이블(`v4-comp-1791427509333`)과 같이 `isolation: isolate; contain: paint; transform: translateZ(0);` 속성을 갖는 복합 컴포넌트가 존재할 때, 일반 DOM 형제 노드로 배치된 핀은 z-index가 아무리 높아도 해당 컴포넌트의 독립 Stacking Context 아래로 묻혀 텍스트나 표 뒤로 가려지는 브라우저 렌더링 한계가 존재했습니다.
+- **전용 오버레이 컨테이너 강제 (`ensurePinLayer`)**:
+  - 반응형 프레임 컨테이너(`.pc-content-inner`, `.mobile-content-inner`) 내부에 디스크립션 핀(`.pin-marker`)을 일반 형제 노드로 직접 방치하는 것을 원천 금지합니다.
+  - 최상위에 전용 오버레이 컨테이너인 `.v4-pin-layer` (`position: absolute; inset: 0; pointer-events: none; z-index: 250000 !important; width: 100%; height: 100%; overflow: visible;`)를 생성하고, 모든 핀은 반드시 이 레이어의 자식으로 배치합니다.
+  - `.pin-marker` 자체는 `pointer-events: auto`를 부여하여 캔버스 상의 핀 클릭 및 드래그 인터랙션을 100% 유지합니다.
+- **자가 치유 (Self-Healing Migration)**: 핀 생성 또는 스크린 로드 시, 컨테이너 내부에 일반 노드로 방치된 기존 레거시 핀이 감지되면 `ensurePinLayer`가 즉시 `.v4-pin-layer` 내부로 자식 노드를 자동 이전하여 시각적 격리를 즉각 해제합니다.
+- **뷰포트 스크롤 동적 안착**: 스크롤이 내려간 긴 문서에서 핀을 생성할 때, 고정된 상단 좌표가 아닌 현재 스크롤 뷰포트를 실시간 반영(`spawnPcX: 570, spawnPcY: 180 + scrollY`)하여 생성 즉시 화면 시야 내에 안전하게 안착시킵니다.
+
+### 4. 클립보드 복사/붙여넣기 레이어 라우팅 및 `trailingRef` 보호
+- **`trailingRef` 핀 레이어 오염 차단**: 오브젝트 복사/붙여넣기(`vctrl_clipboard_objects.js`의 `pasteCopiedObjectsFromData`) 시 새 요소가 캔버스 맨 끝에 단순 `appendChild` 되면 `.v4-pin-layer` 뒤로 배치되어 핀 레이어가 오염될 수 있습니다. 이를 방지하기 위해 `trailingRef` 판별 로직에서 `.v4-pin-layer`를 감지하여 반드시 핀 레이어 직전(Before) 형제 위치로 컴포넌트를 주입합니다.
+- **티어별 안전 상한선 자동 리베이스**: 붙여넣을 때 원본의 z-index가 비정상적으로 높더라도 일반 컴포넌트는 `V4_Z_TIERS.NORMAL.MAX` (`69,900`), 스크롤 고정 요소는 `V4_Z_TIERS.VIRTUAL_HUD.MAX` (`179,900`)로 안전하게 클램핑하며, 다중 선택 객체 간의 내부 상대 z-order 오프셋은 1:1로 온전히 보존합니다.
+
+### 5. 스크롤 핀 고정 및 해제 라이프사이클 (Scroll Pinning / Unpinning Lifecycle)
+- **핀 고정 시 (Promotion to Tier 5)**:
+  - 요소를 Tier 5 (`100,000 ~ 179,999`)로 승격하고 `data-scroll-fixed` 속성을 부여하여 `window.ScrollPinEngine`의 하드웨어 가속 트랜스폼 루프에 편입합니다.
+  - 호스트 컴포넌트에 종속된 디스크립션 핀은 `data-fixed-host="[id]"` 및 `data-scroll-fixed="viewport"` 속성을 부여받아 호스트 이동을 실시간 추종하며, 핀 레이어 내부에서 `z-index: 200050`으로 정렬됩니다.
+- **핀 고정 해제 시 (Safe Demotion to Tier 2)**:
+  - `data-scroll-fixed` 및 관련 데이터 속성을 완전 삭제합니다.
+  - GPU 하드웨어 가속 트랜스폼(`transform`, `will-change`, `transition`) 인라인 스타일을 `removeProperty`로 완벽히 소거합니다.
+  - z-index를 Tier 5의 고수치 대역에 방치하지 않고, 일반 컴포넌트 티어의 현재 최댓값 기반(`Math.min(69900, maxNormalZ + 10)`)으로 안전하게 강등(Demotion)하여 타 일반 컴포넌트들과 정상적인 레이어 순서 제어가 가능하도록 복원합니다.

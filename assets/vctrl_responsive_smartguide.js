@@ -125,7 +125,9 @@ window.v4ResponsiveSmartGuideScript = `
             }
 
             // 3. Static multi-screen mobile frames (non-responsive templates e.g. 1~3 mobile screen template)
-            const isResponsiveTemplate = !!document.querySelector('.responsive-compare-container, .frame-column, .dual-mobile-container, .pc-mobile-grid');
+            const isResponsiveTemplate = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function')
+                ? window.ResponsiveFrameUtils.isResponsive(document)
+                : !!document.querySelector('.responsive-compare-container, .frame-column, .dual-mobile-container, .pc-mobile-grid');
             if (!isResponsiveTemplate) {
                 const mobileFrames = document.querySelectorAll('.mobile-frame');
                 if (mobileFrames && mobileFrames.length > 0) {

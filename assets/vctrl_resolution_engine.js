@@ -263,6 +263,9 @@
                 this.closeBottomSheet();
             }
 
+            // Sync frame switcher visibility with resolution tier
+            this.checkAndInitFrameSwitcher();
+
             // Mobile read-only mode: disable iframe pointer events to prevent object selection & enable canvas gestures
             var iframe = (window.DOM && window.DOM.iframe) || document.getElementById('main-iframe');
             if (iframe) {
@@ -1030,7 +1033,12 @@
             var frames = this.getFrameElements();
             var hasAny = frames.hasMobile || frames.hasPc;
 
-            if (!hasAny) {
+            // Smart Frame Switcher is strictly designed for Mobile / Touch Read-Only viewports (Tier 3: narrow)
+            var isMobileMode = (this.currentTier === 'narrow') || 
+                               document.body.classList.contains('res-narrow') || 
+                               (this.isTouchDevice && !document.body.classList.contains('res-wide'));
+
+            if (!hasAny || !isMobileMode) {
                 switcher.classList.remove('is-available');
                 switcher.style.setProperty('display', 'none', 'important');
                 this.currentFocus = 'full';

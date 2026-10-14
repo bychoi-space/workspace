@@ -75,6 +75,8 @@ if (!window.v4IframeStyleExtractorScript) {
         const selectboxDropdownActive = selectboxContainer ? selectboxContainer.getAttribute('data-dropdown-active') === 'true' : false;
         const selectboxOptionsRaw = selectboxContainer ? (selectboxContainer.getAttribute('data-options') || "Option 1,Option 2,Option 3") : "Option 1,Option 2,Option 3";
         const selectboxOptions = selectboxOptionsRaw.split(',').map(s => s.trim()).filter(Boolean);
+        const selectboxSelectedRaw = selectboxContainer ? (selectboxContainer.getAttribute('data-selected-indices') || "") : "";
+        const selectboxSelectedIndices = selectboxSelectedRaw ? selectboxSelectedRaw.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n)) : [];
 
         // File Upload Atom Detection
         const isFileUpload = isGroup ? false : (!!c.querySelector('.v4-fileupload-container') || c.classList.contains('v4-fileupload-container'));
@@ -138,6 +140,20 @@ if (!window.v4IframeStyleExtractorScript) {
         const isAccordion = isGroup ? false : (!!c.querySelector('.v4-accordion-container') || c.classList.contains('v4-accordion-container'));
         const accordionContainer = isGroup ? null : (c.querySelector('.v4-accordion-container') || (isAccordion ? c : null));
         const accordionHeaderText = accordionContainer ? (accordionContainer.querySelector('.v4-accordion-title-text')?.innerText || "Accordion Header") : "Accordion Header";
+
+        // Web Editor Atom Detection
+        const isWebEditor = isGroup ? false : (
+            !!c.querySelector('.v4-webeditor-container') ||
+            c.classList.contains('v4-webeditor-container') ||
+            c.id === 'v4-atom-webeditor' ||
+            (c.id && c.id.indexOf('v4-atom-webeditor') === 0)
+        );
+        const webeditorContainer = isGroup ? null : (c.querySelector('.v4-webeditor-container') || (isWebEditor ? c : null));
+        const webeditorToolbarMode = webeditorContainer ? (webeditorContainer.getAttribute('data-toolbar-mode') || 'full') : 'full';
+        const webeditorEditorMode = webeditorContainer ? (webeditorContainer.getAttribute('data-editor-mode') || 'editor') : 'editor';
+        const webeditorShowCounter = webeditorContainer ? (webeditorContainer.getAttribute('data-show-counter') !== 'false') : true;
+        const webeditorMaxLength = webeditorContainer ? (parseInt(webeditorContainer.getAttribute('data-max-length'), 10) || 2000) : 2000;
+        const webeditorReadonly = webeditorContainer ? (webeditorContainer.getAttribute('data-readonly') === 'true') : false;
         const accordionSubCount = accordionContainer ? (parseInt(accordionContainer.getAttribute('data-sub-count')) || 0) : 0;
         const accordionSubTexts = accordionContainer ? Array.from(accordionContainer.querySelectorAll('.v4-accordion-item')).map(item => item.innerText) : [];
         const accordionExpanded = accordionContainer ? accordionContainer.getAttribute('data-expanded') === 'true' : false;
@@ -199,7 +215,7 @@ if (!window.v4IframeStyleExtractorScript) {
                 gridColumns.forEach(col => {
                     if (!col.align) {
                         col.align = (col.type === 'number' || col.type === 'currency') ? 'right' : 
-                                    (col.type === 'checkbox' || col.type === 'status' || col.type === 'action') ? 'center' : 'left';
+                                    (col.type === 'checkbox' || col.type === 'order' || col.type === 'image' || col.type === 'input' || col.type === 'action' || col.type === 'delete' || col.type === 'status' || col.type === 'badge') ? 'center' : 'left';
                     }
                 });
             } else {
@@ -216,6 +232,14 @@ if (!window.v4IframeStyleExtractorScript) {
                                 type = 'checkbox';
                             } else if (name === '\uBC88\uD638') {
                                 type = 'number';
+                            } else if (name.indexOf('\uC21C\uC11C') >= 0 || name.toLowerCase().indexOf('order') >= 0) {
+                                type = 'order';
+                            } else if (name.indexOf('\uC774\uBBF8\uC9C0') >= 0 || name.indexOf('\uC0AC\uC9C4') >= 0 || name.toLowerCase().indexOf('image') >= 0 || name.toLowerCase().indexOf('img') >= 0) {
+                                type = 'image';
+                            } else if (name.indexOf('\uC785\uB825') >= 0 || name.indexOf('\uC218\uB7C9') >= 0 || name.toLowerCase().indexOf('input') >= 0) {
+                                type = 'input';
+                            } else if (name.indexOf('\uC0AD\uC81C') >= 0 || name.toLowerCase().indexOf('delete') >= 0) {
+                                type = 'delete';
                             } else if (name === '\uBC29\uC1A1\uC0C1\uD0DC' || name === '\uC804\uC2DC\uC0C1\uD0DC' || name === '\uC0C1\uD0DC') {
                                 type = 'status';
                             } else if (name === '\uB4F1\uB85D/\uC218\uC815\uC790' || name === '\uB4F1\uB85D\uC790' || name === '\uC218\uC815\uC790') {
@@ -228,7 +252,7 @@ if (!window.v4IframeStyleExtractorScript) {
                                 type = 'action';
                             }
                         }
-                        var align = cell.getAttribute('data-align') || cell.style.textAlign || ((type === 'number' || type === 'currency') ? 'right' : ((type === 'checkbox' || type === 'status' || type === 'action') ? 'center' : 'left'));
+                        var align = cell.getAttribute('data-align') || cell.style.textAlign || ((type === 'number' || type === 'currency') ? 'right' : ((type === 'checkbox' || type === 'order' || type === 'image' || type === 'input' || type === 'action' || type === 'delete' || type === 'status') ? 'center' : 'left'));
                         return { name: name, type: type, width: width, align: align };
                     });
                 } else {
@@ -242,6 +266,14 @@ if (!window.v4IframeStyleExtractorScript) {
                             type = 'checkbox';
                         } else if (name === '\uBC88\uD638') {
                             type = 'number';
+                        } else if (name.indexOf('\uC21C\uC11C') >= 0 || name.toLowerCase().indexOf('order') >= 0) {
+                            type = 'order';
+                        } else if (name.indexOf('\uC774\uBBF8\uC9C0') >= 0 || name.indexOf('\uC0AC\uC9C4') >= 0 || name.toLowerCase().indexOf('image') >= 0) {
+                            type = 'image';
+                        } else if (name.indexOf('\uC785\uB825') >= 0 || name.indexOf('\uC218\uB7C9') >= 0 || name.toLowerCase().indexOf('input') >= 0) {
+                            type = 'input';
+                        } else if (name.indexOf('\uC0AD\uC81C') >= 0 || name.toLowerCase().indexOf('delete') >= 0) {
+                            type = 'delete';
                         } else if (name === '\uBC29\uC1A1\uC0C1\uD0DC') {
                             type = 'status';
                         } else if (name === '\uB4F1\uB85D/\uC218\uC815\uC790' || name === '\uB4F1\uB85D\uC790' || name === '\uC218\uC815\uC790') {
@@ -249,7 +281,7 @@ if (!window.v4IframeStyleExtractorScript) {
                         } else if (name.indexOf('\uC77C\uC2DC') >= 0 || name.indexOf('\uC77C\uC790') >= 0) {
                             type = 'datetime';
                         }
-                        return { name: name, type: type, width: width, align: (type === 'checkbox' || type === 'status') ? 'center' : (type === 'number' ? 'right' : 'left') };
+                        return { name: name, type: type, width: width, align: (type === 'checkbox' || type === 'order' || type === 'image' || type === 'input' || type === 'action' || type === 'delete' || type === 'status') ? 'center' : (type === 'number' ? 'right' : 'left') };
                     });
                 }
             }
@@ -328,6 +360,7 @@ if (!window.v4IframeStyleExtractorScript) {
             if (fileuploadContainer) return _getVal(fileuploadContainer.querySelector('.v4-fileupload-textbox-wrapper'), "backgroundColor");
             if (accordionContainer) return _getVal(accordionContainer, "backgroundColor");
             if (gridContainer) return _getVal(gridContainer, "backgroundColor");
+            if (webeditorContainer) return _getVal(webeditorContainer, "backgroundColor");
             if (alertContainer) {
                 const dialog = alertContainer.querySelector('.v4-alert-dialog');
                 return dialog ? _getVal(dialog, "backgroundColor") : _getVal(alertContainer, "backgroundColor");
@@ -351,6 +384,7 @@ if (!window.v4IframeStyleExtractorScript) {
             if (fileuploadContainer) return _getVal(fileuploadContainer.querySelector('.v4-fileupload-textbox-wrapper'), "borderColor");
             if (accordionContainer) return _getVal(accordionContainer, "borderColor");
             if (gridContainer) return _getVal(gridContainer, "borderColor");
+            if (webeditorContainer) return _getVal(webeditorContainer, "borderColor");
             if (alertContainer) {
                 const dialog = alertContainer.querySelector('.v4-alert-dialog');
                 return dialog ? _getVal(dialog, "borderColor") : _getVal(alertContainer, "borderColor");
@@ -459,8 +493,8 @@ if (!window.v4IframeStyleExtractorScript) {
             isTextbox: isTextbox,
             isTextarea: isTextarea,
             placeholderText: placeholderText,
-            maxLength: maxLength,
-            showCounter: showCounter,
+            maxLength: isWebEditor ? webeditorMaxLength : maxLength,
+            showCounter: isWebEditor ? webeditorShowCounter : showCounter,
             isSearchBar: isSearchBar,
             searchbarPlaceholder: searchbarPlaceholder,
             isStepper: isStepper,
@@ -481,6 +515,7 @@ if (!window.v4IframeStyleExtractorScript) {
                 (toggleContainer && toggleContainer.getAttribute('data-disabled') === 'true') ||
                 (accordionContainer && accordionContainer.getAttribute('data-disabled') === 'true') ||
                 (btnContainer && btnContainer.getAttribute('data-disabled') === 'true') ||
+                (webeditorContainer && (webeditorContainer.getAttribute('data-disabled') === 'true' || webeditorContainer.getAttribute('data-readonly') === 'true')) ||
                 !!c.querySelector('[data-disabled="true"]')
             ),
             isPopup: isPopup,
@@ -495,6 +530,7 @@ if (!window.v4IframeStyleExtractorScript) {
             selectboxDefaultText: selectboxDefaultText,
             selectboxDropdownActive: selectboxDropdownActive,
             selectboxOptions: selectboxOptions,
+            selectboxSelectedIndices: selectboxSelectedIndices,
             isFileUpload: isFileUpload,
             fileSelected: fileSelected,
             fileName: fileName,
@@ -562,6 +598,10 @@ if (!window.v4IframeStyleExtractorScript) {
             cursorText: cursorText,
             showText: showCursorText,
             badgeStyle: cursorBadgeStyle,
+            isWebEditor: isWebEditor,
+            toolbarMode: webeditorToolbarMode,
+            editorMode: webeditorEditorMode,
+            readonly: webeditorReadonly,
             html: textCell ? textCell.innerHTML : (shape ? (shape.querySelector('.v4-shape-text-content')?.innerHTML ?? shape.querySelector('.v4-shape-text-overlay')?.innerHTML ?? shape.innerHTML) : (table ? table.innerHTML : "")),
             isGroup: c.classList.contains('lf-group'),
             scrollFixed: c.getAttribute('data-scroll-fixed') || 'none',

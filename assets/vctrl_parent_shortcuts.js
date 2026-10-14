@@ -24,7 +24,7 @@
             !!(target.closest && target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
     }
 
-    function handleGlobalSave(e, isInput) {
+    function handleSaveShortcut(e, isInput) {
         const keyChar = (e.key || '').toLowerCase();
         const isS = keyChar === 's' || e.code === 'KeyS';
         if ((e.ctrlKey || e.metaKey) && isS) {
@@ -217,7 +217,7 @@
             const isInput = isInputElement(e.target);
 
             // 1. Global Save Shortcut (Ctrl+S / Cmd+S)
-            if (handleGlobalSave(e, isInput)) return;
+            if (handleSaveShortcut(e, isInput)) return;
 
             // 2. F2 Mode Switch
             if (handleF2ModeSwitch(e, isInput)) return;

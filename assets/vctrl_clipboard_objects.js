@@ -245,7 +245,9 @@ window.v4ClipboardObjectsScript = `
             const pcInner = document.querySelector('.pc-content-inner');
             const mobileInners = document.querySelectorAll('.mobile-content-inner');
             const isDualMobile = !!(mobileLeftCol || mobileRightCol || mobileCols.length > 1);
-            const isResponsiveTemplate = !!(pcInner || mobileInners.length > 0);
+            const isResponsiveTemplate = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function')
+                ? window.ResponsiveFrameUtils.isResponsive(document)
+                : !!(pcInner || mobileInners.length > 0);
 
             const newSelectedIds = [];
             const selectedIdsIsGroupMap = {};
@@ -395,26 +397,35 @@ window.v4ClipboardObjectsScript = `
             }
 
             // Calculate base top z-index for pasted items
-            const getHostTopZ = (container) => {
+            const getHostTopZ = (container, isFixed) => {
                 if (typeof window.getNextTopZIndex === 'function') {
-                    return window.getNextTopZIndex(container);
+                    return window.getNextTopZIndex(container, isFixed);
                 }
-                let maxZ = 1000;
-                const comps = document.querySelectorAll ? document.querySelectorAll('.lf-component') : ((container || document.body).querySelectorAll ? (container || document.body).querySelectorAll('.lf-component') : []);
+                const tiers = window.V4_Z_TIERS || { CONTENT_MIN: 1000, CONTENT_MAX: 69999, FIXED_HUD_MIN: 100000, FIXED_HUD_MAX: 179999 };
+                let maxZ = isFixed ? tiers.FIXED_HUD_MIN : tiers.CONTENT_MIN;
+                const comps = (container && container.querySelectorAll) ? container.querySelectorAll('.lf-component') : (document.querySelectorAll ? document.querySelectorAll('.lf-component') : []);
                 comps.forEach(c => {
-                    if (c.classList.contains('pin-marker')) return;
+                    if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
                     let z = parseInt(c.style.zIndex, 10);
                     if (isNaN(z)) {
                         const compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
-                        z = isNaN(compZ) ? 1000 : compZ;
+                        z = isNaN(compZ) ? tiers.CONTENT_MIN : compZ;
                     }
-                    if (z < 190000 && z > maxZ) maxZ = z;
+                    if (isFixed) {
+                        if (z >= tiers.FIXED_HUD_MIN && z < 200000 && z > maxZ) maxZ = z;
+                    } else {
+                        if (c.hasAttribute('data-scroll-fixed')) return;
+                        if (z < tiers.FIXED_HUD_MIN && z > maxZ) maxZ = z;
+                    }
                 });
+                if (!isFixed && maxZ >= 69000) {
+                    if (typeof window.normalizeZIndices === 'function') window.normalizeZIndices(container, true);
+                    return 1050;
+                }
                 return maxZ + 10;
             };
 
             const pasteHost = isResponsiveTemplate ? targetHost : (document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body);
-            const baseTopZ = getHostTopZ(pasteHost);
 
             // Extract original z-indexes to preserve relative layering inside copied group
             const copiedZs = componentItems.map(item => {
@@ -423,7 +434,7 @@ window.v4ClipboardObjectsScript = `
             });
             const minCopiedZ = copiedZs.length > 0 ? Math.min(...copiedZs) : 1000;
 
-            const trailingRef = Array.from(pasteHost.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script' || c.classList.contains('v4-responsive-guide-layer')));
+            const trailingRef = Array.from(pasteHost.children).find(c => (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script' || c.classList.contains('v4-responsive-guide-layer'))));
 
             componentItems.forEach((item, idx) => {
                 // [CRITICAL DEFENSE] Ignore any pin marker items from clipboard
@@ -438,10 +449,13 @@ window.v4ClipboardObjectsScript = `
                 v.className = item.className + ' selected';
                 v.style.cssText = item.styleCssText;
 
-                // Rebase z-index to ensure it sits on top of all existing components while keeping relative order
+                // Rebase z-index to ensure it sits on top of all existing components within its tier while keeping relative order
+                const itemIsFixed = (item.attributes && item.attributes['data-scroll-fixed']) || (item.styleCssText && item.styleCssText.includes('data-scroll-fixed'));
+                const baseTopZ = getHostTopZ(pasteHost, !!itemIsFixed);
                 const originalZ = copiedZs[idx] !== undefined ? copiedZs[idx] : 1000;
                 const relOffsetZ = Math.max(0, originalZ - minCopiedZ);
-                const assignedZ = baseTopZ + relOffsetZ;
+                const maxCap = itemIsFixed ? 179900 : 69900;
+                const assignedZ = Math.min(maxCap, baseTopZ + relOffsetZ);
                 v.style.zIndex = String(assignedZ);
 
                 const relX = (typeof item.left === 'number' ? item.left : (parseFloat(item.left) || 0)) - minLeft;
@@ -573,6 +587,12 @@ window.v4ClipboardObjectsScript = `
 
             if (newSelectedIds.length > 0) {
                 const firstNewEl = document.getElementById(newSelectedIds[0]);
+                if (firstNewEl) {
+                    window.activeEl = firstNewEl;
+                    if (typeof window.updateHandles === 'function') {
+                        try { window.updateHandles(firstNewEl); } catch(uhErr) {}
+                    }
+                }
                 const firstStyles = (firstNewEl && typeof window._getCompStyles === 'function') ? window._getCompStyles(firstNewEl) : {};
                 if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
                     try {

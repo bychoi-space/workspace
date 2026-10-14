@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>bychoi workspace - Dashboard</title>
-    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg?v=V402_TRANSPARENT_FAVICON">
     <!-- 폰트 및 아이콘 시스템 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
         if (window.location.protocol.startsWith('http')) {
             var manifestLink = document.createElement('link');
             manifestLink.rel = 'manifest';
-            manifestLink.href = 'manifest.json?v=V381_PWA_PNG_ICONS';
+            manifestLink.href = 'manifest.json?v=V402_TRANSPARENT_FAVICON';
             document.head.appendChild(manifestLink);
         }
     </script>
@@ -28,9 +28,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Workspace">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="assets/icon-192.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
+    <link rel="apple-touch-icon" href="assets/icon-192.png?v=V402_TRANSPARENT_FAVICON">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=V402_TRANSPARENT_FAVICON">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
     <meta name="theme-color" content="#0e0f17">
     <script>
         // Global PWA Install Capture (Early execution in <head> for Chrome & Samsung Internet)
@@ -45,7 +45,7 @@
         // Register Service Worker for PWA Installation (Strictly guarded for HTTP/HTTPS environments)
         if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js?v=V381_PWA_PNG_ICONS').catch(function() {});
+                navigator.serviceWorker.register('sw.js?v=V402_TRANSPARENT_FAVICON').catch(function() {});
             });
         }
     </script>

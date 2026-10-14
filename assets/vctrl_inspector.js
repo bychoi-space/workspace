@@ -37,6 +37,7 @@ window.rebindInspectorDOM = function() {
     DOM.adminSettingsPropSection = get('admin-settings-inspector-section');
     DOM.tabPropSection = get('tab-inspector-section');
     DOM.cursorPropSection = get('cursor-inspector-section');
+    DOM.webeditorPropSection = get('webeditor-inspector-section');
 
     DOM.textColorPicker = get('text-color-picker');
     DOM.selectionBar = get('selection-actions-bar');
@@ -81,16 +82,18 @@ window.restorePropertiesSections = function(force) {
         DOM.textboxTextareaPropSection, DOM.searchbarPropSection, DOM.stepperPropSection, DOM.selectboxPropSection,
         DOM.fileuploadPropSection, DOM.alertPropSection, (DOM.popupPropSection || document.getElementById('popup-inspector-section')), DOM.buttonPropSection,
         DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
-        DOM.adminSettingsPropSection, DOM.tabPropSection, DOM.cursorPropSection
+        DOM.adminSettingsPropSection, DOM.tabPropSection, DOM.cursorPropSection,
+        ((DOM.webeditorPropSection instanceof Node) ? DOM.webeditorPropSection : document.getElementById('webeditor-inspector-section'))
     ];
 
     sections.forEach(sec => {
-        if (sec && sec instanceof Node) {
-            if (!force && activeEl && sec.contains(activeEl)) {
+        const actualSec = (sec instanceof Node) ? sec : (sec && sec.id ? document.getElementById(sec.id) : null);
+        if (actualSec && actualSec instanceof Node) {
+            if (!force && activeEl && actualSec.contains(activeEl)) {
                 return;
             }
-            sec.style.display = 'none';
-            storage.appendChild(sec);
+            actualSec.style.display = 'none';
+            storage.appendChild(actualSec);
         }
     });
 };
@@ -187,6 +190,7 @@ window.DOM = {
     adminSettingsPropSection: get('admin-settings-inspector-section'),
     tabPropSection: get('tab-inspector-section'),
     cursorPropSection: get('cursor-inspector-section'),
+    webeditorPropSection: get('webeditor-inspector-section'),
     textColorPicker: get('text-color-picker'),
     colorPresets: document.querySelectorAll('.color-preset'),
 
@@ -471,454 +475,26 @@ function _hideAllPropertySections(isTypingInAdminProps) {
     if (DOM.datePickerPropSection) DOM.datePickerPropSection.style.display = 'none';
     if (DOM.togglePropSection) DOM.togglePropSection.style.display = 'none';
     if (DOM.cursorPropSection) DOM.cursorPropSection.style.display = 'none';
+    const webeditorSecHide = (DOM.webeditorPropSection instanceof Node) ? DOM.webeditorPropSection : document.getElementById('webeditor-inspector-section');
+    if (webeditorSecHide) webeditorSecHide.style.display = 'none';
     if (DOM.adminSettingsPropSection && !isTypingInAdminProps) DOM.adminSettingsPropSection.style.display = 'none';
 }
 
-// 3.5 Detect Component Editing Type
-function _detectComponentType(compStyles) {
-    const hasValidPinIndex = compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex);
-    state.editingIndex = hasValidPinIndex ? compStyles.pinIndex : compStyles.id;
-    if (compStyles.isGroup) return 'group';
-    if (compStyles.isPin && hasValidPinIndex) return 'pin';
-    if (compStyles.isGrid) return 'grid';
-    if (compStyles.isTable) return 'table';
-    if (compStyles.shapeType === 'line' || compStyles.id === 'v4-shape-line') return 'line';
-    if (compStyles.isPopup || compStyles.id === 'v4-atom-popup' || compStyles.compId === 'v4-atom-popup') return 'popup';
-    if (compStyles.isShape || compStyles.isPin) return 'shape';
-    if (compStyles.isConnector) return 'line';
-    if (compStyles.isTextbox) return 'textbox';
-    if (compStyles.isTextarea) return 'textarea';
-    if (compStyles.isSearchBar) return 'searchbar';
-    if (compStyles.isStepper) return 'stepper';
-    if (compStyles.isSelectbox) return 'selectbox';
-    if (compStyles.isFileUpload) return 'fileupload';
-    if (compStyles.isAlert) return 'alert';
-    if (compStyles.isButton) return 'button';
-    if (compStyles.isDatePicker) return 'datepicker';
-    if (compStyles.isToggle) return 'toggle';
-    if (compStyles.isAccordion) return 'accordion';
-    if (compStyles.isAdminSettings) return 'admin-settings';
-    if (compStyles.isTab) return 'tab';
-    if (compStyles.isCursor) return 'cursor';
-    if (compStyles.isIllustration || compStyles.isMotion || compStyles.isMedia) return 'illustration';
-    if (compStyles.isIcon) return 'icon';
-    return 'comp';
-}
+// 3.5 Detect Component Editing Type & Properties Synchronization (Delegated to assets/vctrl_inspector_sync.js SSOT)
+const _detectComponentType = (compStyles) => (window.InspectorPropertySync?.detectComponentType ? window.InspectorPropertySync.detectComponentType(compStyles) : (window._detectComponentType?.(compStyles) || 'comp'));
 
-// 3.6 Synchronize Specific Component Type Panel
-const ATOM_PROP_SYNC_MAP = {
-    textbox: { sec: 'textboxTextareaPropSection', method: 'syncTextboxTextarea', legacy: '_syncTextboxTextareaProps' },
-    textarea: { sec: 'textboxTextareaPropSection', method: 'syncTextboxTextarea', legacy: '_syncTextboxTextareaProps' },
-    searchbar: { sec: 'searchbarPropSection', method: 'syncSearchBar', legacy: '_syncSearchBarProps' },
-    stepper: { sec: 'stepperPropSection', method: 'syncStepper', legacy: '_syncStepperProps' },
-    selectbox: { sec: 'selectboxPropSection', method: 'syncSelectbox', legacy: '_syncSelectboxProps' },
-    fileupload: { sec: 'fileuploadPropSection', method: 'syncFileupload', legacy: '_syncFileuploadProps' },
-    alert: { sec: 'alertPropSection', method: 'syncAlert', legacy: '_syncAlertProps' },
-    button: { sec: 'buttonPropSection', method: 'syncButton', legacy: '_syncButtonProps' },
-    datepicker: { sec: 'datePickerPropSection', method: 'syncDatePicker', legacy: '_syncDatePickerProps' },
-    toggle: { sec: 'togglePropSection', method: 'syncToggle', legacy: '_syncToggleProps' },
-    cursor: { sec: 'cursorPropSection', secId: 'cursor-inspector-section', method: 'syncCursor', legacy: '_syncCursorProps' }
-};
+const _syncComponentTypeProperties = (compStyles, editingType) => (window.InspectorPropertySync?.syncComponentTypeProperties ? window.InspectorPropertySync.syncComponentTypeProperties(compStyles, editingType) : window._syncComponentTypeProperties?.(compStyles, editingType));
 
-function _syncShapeOrPinTypeProps(compStyles) {
-    if (DOM.shapePropSection) DOM.shapePropSection.style.display = 'block';
-    if (window.InspectorShapes && typeof window.InspectorShapes.sync === 'function') {
-        window.InspectorShapes.sync(compStyles);
-    }
-    if (DOM.textPropSection && !compStyles.isImage && !compStyles.isMultiSameType) {
-        DOM.textPropSection.style.display = 'block';
-    }
+// 3.7 Synchronize Common Controls (Delegated to assets/vctrl_inspector_sync.js SSOT)
+const _syncCommonPropertyControls = (compStyles, editingType, isNewComp) => (window.InspectorPropertySync?.syncCommonControls ? window.InspectorPropertySync.syncCommonControls(compStyles, editingType, isNewComp) : window._syncCommonPropertyControls?.(compStyles, editingType, isNewComp));
 
-    const patternGroup = document.getElementById('shape-pattern-type-group');
-    const bgColorGroup = document.getElementById('shape-bg-color-group');
-    const bgOpacityGroup = document.getElementById('shape-bg-opacity-group');
-    const isPattern = (compStyles.shapeType === 'pattern');
-    
-    if (patternGroup) {
-        patternGroup.style.display = isPattern ? 'block' : 'none';
-        if (isPattern && compStyles.patternType && typeof window._syncPatternVisualBtns === 'function') {
-            window._syncPatternVisualBtns(compStyles.patternType);
-        }
-    }
-    if (bgColorGroup) bgColorGroup.style.display = isPattern ? 'none' : 'grid';
-    if (bgOpacityGroup) bgOpacityGroup.style.display = isPattern ? 'none' : 'block';
 
-    const cornerGroup = document.getElementById('shape-corner-style-group');
-    const arrowGroup = document.getElementById('shape-arrow-direction-group');
-    const waveGroup = document.getElementById('shape-wave-direction-group');
-    const isRect = (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage');
-    const isArrowOrTriangle = (compStyles.shapeType === 'arrow' || compStyles.id === 'v4-shape-arrow' || compStyles.shapeType === 'triangle' || compStyles.id === 'v4-shape-triangle');
-    const isWave = (compStyles.shapeType === 'wave' || compStyles.id === 'v4-shape-wave' || (compStyles.classList && compStyles.classList.includes('v4-shape-wave')));
-
-    if (cornerGroup) cornerGroup.style.display = isRect ? 'block' : 'none';
-    if (arrowGroup) {
-        arrowGroup.style.display = isArrowOrTriangle ? 'block' : 'none';
-        if (isArrowOrTriangle && typeof window._syncArrowDirBtns === 'function') {
-            window._syncArrowDirBtns(compStyles.direction || compStyles.arrowDir || 'right');
-        }
-    }
-    if (waveGroup) {
-        waveGroup.style.display = isWave ? 'block' : 'none';
-        if (isWave && typeof window._syncWaveDirBtns === 'function') {
-            window._syncWaveDirBtns(compStyles.waveDir || 'horizontal');
-        }
-    }
-
-    const isTextShape = !!compStyles.isTextShape || (compStyles.id && compStyles.id.startsWith('v4-text-')) || (compStyles.classList && (compStyles.classList.includes('v4-text-shape') || compStyles.classList.includes('v4-text-box'))) || (!compStyles.isShape && compStyles.isPin);
-    const isImage = !!compStyles.isImage;
-    const isPinMarker = (compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex)) || !!compStyles.isDescriptionPin;
-    const supportsTextPadding = compStyles.isShape && !isImage && !isTextShape && !isPinMarker;
-
-    const paddingGroup = document.getElementById('shape-padding-group');
-    if (paddingGroup) {
-        paddingGroup.style.display = supportsTextPadding ? 'block' : 'none';
-    }
-}
-
-function _syncTableTypeProps() {
-    if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'block';
-}
-
-function _syncLineTypeProps(compStyles) {
-    if (DOM.linePropSection) DOM.linePropSection.style.display = 'block';
-    if (typeof window._syncLineEditorProps === 'function') {
-        window._syncLineEditorProps(compStyles);
-    }
-}
-
-function _syncIllustrationTypeProps(compStyles) {
-    if (DOM.illustrationPropSection) DOM.illustrationPropSection.style.display = 'block';
-    if (typeof window._syncIllustrationProps === 'function') {
-        window._syncIllustrationProps(compStyles);
-    }
-}
-
-function _syncIconTypeProps(compStyles) {
-    if (DOM.iconPropSection) DOM.iconPropSection.style.display = 'block';
-    if (compStyles.isCheckbox || compStyles.isRadio) {
-        if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
-        if (typeof _syncCheckboxRadioProps === 'function') {
-            _syncCheckboxRadioProps(compStyles);
-        }
-    }
-}
-
-function _syncAtomTypeProps(compStyles, editingType) {
-    const item = ATOM_PROP_SYNC_MAP[editingType];
-    if (!item) return;
-    const sec = DOM[item.sec] || (item.secId ? document.getElementById(item.secId) : null);
-    if (sec) sec.style.display = 'block';
-    if (typeof window[item.legacy] === 'function') {
-        window[item.legacy](compStyles);
-    } else if (window.InspectorAtoms && typeof window.InspectorAtoms[item.method] === 'function') {
-        window.InspectorAtoms[item.method](compStyles);
-    }
-}
-
-function _syncPopupTypeProps(compStyles) {
-    const popupSec = DOM.popupPropSection || document.getElementById('popup-inspector-section');
-    if (popupSec) popupSec.style.display = 'block';
-    if (window.InspectorPopup && typeof window.InspectorPopup.sync === 'function') {
-        window.InspectorPopup.sync(compStyles);
-    }
-    if (window.InspectorPopup && typeof window.InspectorPopup.init === 'function') {
-        window.InspectorPopup.init();
-    }
-}
-
-function _syncAccordionTypeProps(compStyles) {
-    if (DOM.accordionPropSection) DOM.accordionPropSection.style.display = 'block';
-    if (typeof _syncAccordionProps === 'function') {
-        _syncAccordionProps(compStyles);
-    }
-}
-
-function _syncGridTypeProps(compStyles) {
-    if (DOM.gridPropSection) DOM.gridPropSection.style.display = 'block';
-    const activeEl = document.activeElement;
-    const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-    const isTypingInGrid = !isBtn && activeEl && (
-        activeEl.classList.contains('grid-col-width-input') || 
-        activeEl.classList.contains('grid-col-name-input') || 
-        activeEl.classList.contains('grid-col-options-input') || 
-        (activeEl.tagName === 'INPUT' && activeEl.closest('#grid-inspector-section')) || 
-        (activeEl.tagName === 'TEXTAREA' && activeEl.closest('#grid-inspector-section'))
-    );
-    if (!isTypingInGrid) {
-        if (typeof _syncGridProps === 'function') {
-            _syncGridProps(compStyles);
-        }
-    }
-    if (typeof window.initGridEvents === 'function') {
-        window.initGridEvents();
-    }
-}
-
-function _syncAdminSettingsTypeProps(compStyles) {
-    if (DOM.adminSettingsPropSection) DOM.adminSettingsPropSection.style.display = 'block';
-    const activeEl = document.activeElement;
-    const isBtn = activeEl && activeEl.tagName === 'BUTTON';
-    const isTypingInAdminProps = !isBtn && activeEl && (
-        activeEl.classList.contains('admin-col-label-input') || 
-        activeEl.classList.contains('admin-row-height-input') || 
-        activeEl.id === 'prop-admin-group-header-title' || 
-        activeEl.id === 'prop-admin-label-width-slider' || 
-        activeEl.id === 'prop-admin-label-width-number'
-    );
-    if (!isTypingInAdminProps) {
-        if (typeof window._syncAdminSettingsProps === 'function') {
-            window._syncAdminSettingsProps(compStyles);
-        }
-    }
-}
-
-function _syncCheckboxRadioTypeProps(compStyles) {
-    const activeEl = document.activeElement;
-    const isTypingCheckboxLabel = activeEl && activeEl.id === 'prop-atom-text-content';
-    if (!isTypingCheckboxLabel) {
-        if (DOM.checkboxRadioPropSection) DOM.checkboxRadioPropSection.style.display = 'block';
-        if (typeof _syncCheckboxRadioProps === 'function') {
-            _syncCheckboxRadioProps(compStyles);
-        }
-    }
-}
-
-function _syncTabTypeProps(compStyles) {
-    if (DOM.tabPropSection) DOM.tabPropSection.style.display = 'block';
-    if (window.InspectorTab && typeof window.InspectorTab.sync === 'function') {
-        window.InspectorTab.sync(compStyles);
-    }
-    if (window.InspectorTab && typeof window.InspectorTab.bindEvents === 'function') {
-        window.InspectorTab.bindEvents();
-    }
-}
-
-// Strategy Dispatcher Map for Component Property Synchronization
-const TYPE_SYNC_STRATEGIES = {
-    'table': _syncTableTypeProps,
-    'line': _syncLineTypeProps,
-    'illustration': _syncIllustrationTypeProps,
-    'icon': _syncIconTypeProps,
-    'popup': _syncPopupTypeProps,
-    'accordion': _syncAccordionTypeProps,
-    'grid': _syncGridTypeProps,
-    'admin-settings': _syncAdminSettingsTypeProps,
-    'tab': _syncTabTypeProps
-};
-
-function _syncComponentTypeProperties(compStyles, editingType) {
-    if (editingType === 'pin' || editingType === 'shape') {
-        return _syncShapeOrPinTypeProps(compStyles);
-    }
-    if (ATOM_PROP_SYNC_MAP[editingType]) {
-        return _syncAtomTypeProps(compStyles, editingType);
-    }
-    const strategy = TYPE_SYNC_STRATEGIES[editingType];
-    if (typeof strategy === 'function') {
-        return strategy(compStyles);
-    }
-    if (compStyles && (compStyles.isCheckbox || compStyles.isRadio)) {
-        return _syncCheckboxRadioTypeProps(compStyles);
-    }
-}
-
-// 3.7 Synchronize Common Controls (Color, Typography, Border, Padding)
-function _syncCommonPropertyControls(compStyles, editingType) {
-    const s = (compStyles && compStyles.currentStyles) || {};
-    if (DOM.textColorPicker) DOM.textColorPicker.value = s.text || "#000000";
-    if (compStyles.isIcon || s.iconColor) {
-        const iconColorInput = document.getElementById('icon-color');
-        if (iconColorInput && s.iconColor) {
-            iconColorInput.value = s.iconColor;
-        }
-    }
-
-    if (compStyles.isShape || editingType === 'shape') {
-        const shapeBgInput = document.getElementById('shape-bg-color');
-        const shapeBorderInput = document.getElementById('shape-border-color');
-        if (shapeBgInput) {
-            const validBg = (s.bg && s.bg !== 'transparent') ? s.bg : '#ffffff';
-            shapeBgInput.value = validBg;
-            const wrapper = document.getElementById('shape-bg-wrapper');
-            if (wrapper) {
-                if (s.bg === 'transparent' || !s.bg || s.bgOpacity === 0 || s.isBgTransparent) wrapper.classList.add('transparent-active');
-                else wrapper.classList.remove('transparent-active');
-            }
-        }
-        if (shapeBorderInput) {
-            const validBorder = (s.border && s.border !== 'transparent') ? s.border : '#c8c8c8';
-            shapeBorderInput.value = validBorder;
-            const wrapper = document.getElementById('shape-border-wrapper');
-            if (wrapper) {
-                if (s.border === 'transparent' || !s.border || s.isBorderTransparent) wrapper.classList.add('transparent-active');
-                else wrapper.classList.remove('transparent-active');
-            }
-        }
-        const opacityVal = (s.bgOpacity !== undefined) ? s.bgOpacity : 100;
-        const slider = document.getElementById('shape-bg-opacity');
-        const txt = document.getElementById('txt-shape-bg-opacity');
-        if (slider) slider.value = opacityVal;
-        if (txt) txt.innerText = opacityVal;
-        const wrapper = document.getElementById('shape-bg-wrapper');
-        if (wrapper) {
-            if (s.bg === 'transparent' || !s.bg || opacityVal === 0 || s.isBgTransparent) wrapper.classList.add('transparent-active');
-            else wrapper.classList.remove('transparent-active');
-        }
-    }
-
-    const fontSizeInput = document.getElementById(compStyles.isTable ? 'table-font-size' : 'shape-font-size');
-    if (fontSizeInput && s.fontSize !== undefined) {
-        fontSizeInput.value = s.fontSize;
-        const txt = document.getElementById('txt-' + fontSizeInput.id);
-        if (txt) txt.innerText = s.fontSize;
-    }
-
-    const isRectShape = (compStyles.isShape || editingType === 'shape') && (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage' || !compStyles.shapeType);
-    if (isRectShape && s.borderRadius !== undefined) {
-        const radiusVal = s.borderRadius;
-        const slider = document.getElementById('shape-border-radius');
-        const txt = document.getElementById('txt-shape-border-radius');
-        if (slider) slider.value = radiusVal;
-        if (txt) txt.innerText = radiusVal;
-        if (typeof window._syncCornerBtns === 'function') {
-            window._syncCornerBtns(radiusVal);
-        }
-    }
-
-    if (s.textAlign !== undefined && typeof window._syncAlignBtns === 'function') {
-        window._syncAlignBtns(s.textAlign);
-    }
-    if (s.justifyContent !== undefined && typeof window._syncVAlignBtns === 'function') {
-        window._syncVAlignBtns(s.justifyContent);
-    }
-
-    if (typeof window._syncShapePaddingInputs === 'function') {
-        window._syncShapePaddingInputs({
-            padTop: s.padTop !== undefined ? s.padTop : 5,
-            padBottom: s.padBottom !== undefined ? s.padBottom : 5,
-            padLeft: s.padLeft !== undefined ? s.padLeft : 10,
-            padRight: s.padRight !== undefined ? s.padRight : 10
-        });
-    } else {
-        const inPadTop = document.getElementById('shape-pad-top');
-        const inPadBottom = document.getElementById('shape-pad-bottom');
-        const inPadLeft = document.getElementById('shape-pad-left');
-        const inPadRight = document.getElementById('shape-pad-right');
-        if (inPadTop && s.padTop !== undefined && document.activeElement !== inPadTop) inPadTop.value = s.padTop;
-        if (inPadBottom && s.padBottom !== undefined && document.activeElement !== inPadBottom) inPadBottom.value = s.padBottom;
-        if (inPadLeft && s.padLeft !== undefined && document.activeElement !== inPadLeft) inPadLeft.value = s.padLeft;
-        if (inPadRight && s.padRight !== undefined && document.activeElement !== inPadRight) inPadRight.value = s.padRight;
-    }
-
-    if (compStyles.isTextbox || compStyles.isTextarea) {
-        const phInput = document.getElementById('prop-input-placeholder');
-        if (phInput && compStyles.placeholderText !== undefined) {
-            phInput.value = compStyles.placeholderText;
-        }
-    }
-
-    if (compStyles.isSearchBar) {
-        const phInput = document.getElementById('prop-searchbar-placeholder');
-        if (phInput && compStyles.searchbarPlaceholder !== undefined) {
-            phInput.value = compStyles.searchbarPlaceholder;
-        }
-        const mlInput = document.getElementById('prop-input-maxlength');
-        const mlTxt = document.getElementById('txt-input-maxlength');
-        if (mlInput && compStyles.maxLength !== undefined) {
-            mlInput.value = compStyles.maxLength;
-            if (mlTxt) mlTxt.innerText = compStyles.maxLength;
-        }
-        const activeY = document.getElementById('btn-input-counter-y');
-        const activeN = document.getElementById('btn-input-counter-n');
-        if (activeY && activeN && compStyles.showCounter !== undefined && typeof window.highlightActive === 'function') {
-            window.highlightActive(activeY, compStyles.showCounter === true);
-            window.highlightActive(activeN, compStyles.showCounter === false);
-        }
-    }
-
-    if (compStyles.isAlert) {
-        if (typeof _syncAlertProps === 'function') {
-            _syncAlertProps(compStyles);
-        } else if (window.InspectorAtoms && typeof window.InspectorAtoms.syncAlert === 'function') {
-            window.InspectorAtoms.syncAlert(compStyles);
-        }
-    }
-
-    if (compStyles.isButton) {
-        const txtInput = document.getElementById('prop-button-text');
-        if (txtInput && document.activeElement !== txtInput && compStyles.buttonText !== undefined) {
-            txtInput.value = compStyles.buttonText;
-        }
-        const fontInput = document.getElementById('prop-button-font-size');
-        if (fontInput && document.activeElement !== fontInput && compStyles.buttonFontSize !== undefined) {
-            fontInput.value = compStyles.buttonFontSize;
-        }
-        const selStyle = document.getElementById('prop-button-style');
-        if (selStyle && compStyles.buttonStyle !== undefined) {
-            selStyle.value = compStyles.buttonStyle;
-            const customColorsDiv = document.getElementById('prop-button-custom-colors');
-            if (customColorsDiv) {
-                customColorsDiv.style.display = (compStyles.buttonStyle === 'custom') ? 'block' : 'none';
-            }
-        }
-        const radiusSlider = document.getElementById('prop-button-border-radius');
-        const radiusTxt = document.getElementById('txt-button-border-radius');
-        if (radiusSlider && document.activeElement !== radiusSlider && compStyles.buttonRadius !== undefined) {
-            const r = parseInt(compStyles.buttonRadius) || 0;
-            radiusSlider.value = r;
-            if (radiusTxt) radiusTxt.innerText = r;
-            if (typeof window._syncButtonCornerBtns === 'function') {
-                window._syncButtonCornerBtns(r);
-            }
-        }
-    }
-}
-
-// 3.8 Synchronize Selection Action Bar & Group Dimension
+// 3.8 Synchronize Selection Action Bar & Group Dimension (Delegated to assets/vctrl_inspector_actionbar.js)
 function _syncSelectionActionBar(compStyles) {
-    const btnGroup = document.getElementById('btn-group-action');
-    const btnUngroup = document.getElementById('btn-ungroup-action');
-    const btnAddToMolecules = document.getElementById('btn-add-molecules-action');
-    const alignBar = document.getElementById('selection-align-bar');
-    const groupDimBar = document.getElementById('group-dimension-bar');
-    const groupDimWidth = document.getElementById('group-dim-width');
-    const groupDimHeight = document.getElementById('group-dim-height');
-    
-    const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-    const isSingleGroup = selIds.length === 1 && compStyles && compStyles.isGroup;
-
-    if (btnGroup) btnGroup.style.setProperty('display', (selIds.length > 1) ? 'flex' : 'none', 'important');
-    if (btnUngroup) btnUngroup.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
-    if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
-    if (alignBar) alignBar.style.setProperty('display', (selIds.length > 1) ? 'block' : 'none', 'important');
-    const styleActionRow = document.getElementById('selection-style-action-row');
-    if (styleActionRow) styleActionRow.style.setProperty('display', isSingleGroup ? 'none' : 'flex', 'important');
-
-    if (groupDimBar) {
-        if (isSingleGroup) {
-            groupDimBar.style.setProperty('display', 'flex', 'important');
-            let wVal = 0;
-            let hVal = 0;
-            if (compStyles && typeof compStyles.w === 'number') {
-                wVal = Math.round(compStyles.w);
-                hVal = Math.round(compStyles.h);
-            } else if (selIds.length === 1) {
-                try {
-                    const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-                    const groupEl = iframeDoc?.getElementById(selIds[0]);
-                    if (groupEl) {
-                        wVal = Math.round(parseFloat(groupEl.style.width) || groupEl.offsetWidth || 0);
-                        hVal = Math.round(parseFloat(groupEl.style.height) || groupEl.offsetHeight || 0);
-                    }
-                } catch(e) {}
-            }
-            if (groupDimWidth) groupDimWidth.innerText = wVal + 'px';
-            if (groupDimHeight) groupDimHeight.innerText = hVal + 'px';
-        }
+    if (window.InspectorActionBar && typeof window.InspectorActionBar.sync === 'function') {
+        window.InspectorActionBar.sync(compStyles);
+        return;
     }
-
-    // 3.8.1 Synchronize Scroll Pin Navigation Controls
-    _syncScrollPinUI(compStyles);
 }
 
 // 3.8.1 Scroll Pin (Delegated to assets/inspector/inspector_scroll_pin.js SSOT)
@@ -1032,12 +608,16 @@ function _relocatePropertyPanels(isDocked) {
         : document.getElementById('floating-inspector-body');
 
     if (targetBody) {
-        const selectionBar = document.getElementById('selection-actions-bar');
-        if (selectionBar) {
-            if (selectionBar.parentElement !== targetBody) {
-                targetBody.insertBefore(selectionBar, targetBody.firstChild);
+        if (window.InspectorActionBar && typeof window.InspectorActionBar.relocate === 'function') {
+            window.InspectorActionBar.relocate(targetBody);
+        } else {
+            const selectionBar = document.getElementById('selection-actions-bar');
+            if (selectionBar) {
+                if (selectionBar.parentElement !== targetBody) {
+                    targetBody.insertBefore(selectionBar, targetBody.firstChild);
+                }
+                selectionBar.style.setProperty('display', 'flex', 'important');
             }
-            selectionBar.style.setProperty('display', 'flex', 'important');
         }
         const sections = [
             DOM.shapePropSection, DOM.textPropSection, DOM.tablePropSection,
@@ -1046,15 +626,13 @@ function _relocatePropertyPanels(isDocked) {
             DOM.fileuploadPropSection, DOM.alertPropSection, (DOM.popupPropSection || document.getElementById('popup-inspector-section')), DOM.buttonPropSection,
             DOM.datePickerPropSection, DOM.togglePropSection, DOM.accordionPropSection, DOM.gridPropSection,
             DOM.adminSettingsPropSection, DOM.tabPropSection,
-            DOM.cursorPropSection || document.getElementById('cursor-inspector-section')
+            DOM.cursorPropSection || document.getElementById('cursor-inspector-section'),
+            DOM.webeditorPropSection || document.getElementById('webeditor-inspector-section')
         ];
         sections.forEach(sec => {
-            if (sec && sec.style.display === 'block') {
-                if (sec instanceof Node) {
-                    targetBody.appendChild(sec);
-                } else {
-                    console.warn("[VCTRL INSPECTOR] Skipped appendChild: sec is not a valid DOM Node", sec);
-                }
+            const actualSec = (sec instanceof Node) ? sec : (sec && sec.id ? document.getElementById(sec.id) : null);
+            if (actualSec && actualSec instanceof Node && (actualSec.style.display === 'block' || actualSec.style.display === 'flex')) {
+                targetBody.appendChild(actualSec);
             }
         });
         if (typeof _syncAtomDisabledProps === 'function' && state.selectedComponent) {
@@ -1079,18 +657,28 @@ function _handleNoSelection() {
     }
     state.isEditing = false;
     state.editingIndex = -1;
-    if (DOM.selectionBar) DOM.selectionBar.style.display = 'none';
-    const groupDimBar = document.getElementById('group-dimension-bar');
-    if (groupDimBar) groupDimBar.style.setProperty('display', 'none', 'important');
-    const scrollPinBar = document.getElementById('selection-scroll-pin-bar');
-    if (scrollPinBar) scrollPinBar.style.setProperty('display', 'none', 'important');
+    if (window.InspectorActionBar && typeof window.InspectorActionBar.hide === 'function') {
+        window.InspectorActionBar.hide();
+    } else {
+        if (DOM.selectionBar) DOM.selectionBar.style.display = 'none';
+        const groupDimBar = document.getElementById('group-dimension-bar');
+        if (groupDimBar) groupDimBar.style.setProperty('display', 'none', 'important');
+        const scrollPinBar = document.getElementById('selection-scroll-pin-bar');
+        if (scrollPinBar) scrollPinBar.style.setProperty('display', 'none', 'important');
+    }
 }
 
 // --- Master Property Coordinator & Dispatcher ---
-window.updateProperties = function(compStyles) {
+window.updateProperties = function(compStyles, isNewSelectionExplicit) {
     const activeEl = document.activeElement;
     const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-    const isNewComp = Boolean(compStyles && compStyles.id && compStyles.id !== state.editingIndex);
+    const isNewComp = (typeof isNewSelectionExplicit === 'boolean')
+        ? isNewSelectionExplicit
+        : Boolean(compStyles && compStyles.id && (
+            (state.previousEditingIndex !== undefined && compStyles.id !== state.previousEditingIndex) ||
+            (state._lastInspectorCompId !== undefined && compStyles.id !== state._lastInspectorCompId) ||
+            compStyles.id !== state.editingIndex
+        ));
 
     // If selecting a different component, clear residual parent focus to ensure immediate synchronization
     if (isNewComp && activeEl && typeof activeEl.blur === 'function') {
@@ -1145,7 +733,7 @@ window.updateProperties = function(compStyles) {
 
             // Show relevant section and sync controls
             _syncComponentTypeProperties(compStyles, state.editingType);
-            _syncCommonPropertyControls(compStyles, state.editingType);
+            _syncCommonPropertyControls(compStyles, state.editingType, isNewComp);
         } else {
             // Case: Multi-selection without compStyles
             state.isEditing = true;
@@ -1163,114 +751,11 @@ window.updateProperties = function(compStyles) {
     } else {
         _handleNoSelection();
     }
+    state._lastInspectorCompId = compStyles ? compStyles.id : null;
 };
 
-function _syncStepperProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncStepper === 'function') {
-        window.InspectorAtoms.syncStepper(comp);
-    }
-}
+// Component property synchronizers decoupled to assets/vctrl_inspector_sync.js (window.InspectorPropertySync)
 
-function _syncCursorProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncCursor === 'function') {
-        window.InspectorAtoms.syncCursor(comp);
-    }
-}
-
-function _syncAtomDisabledProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncDisabled === 'function') {
-        window.InspectorAtoms.syncDisabled(comp);
-    }
-}
-
-function _syncSelectboxProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSelectbox === 'function') {
-        window.InspectorAtoms.syncSelectbox(comp);
-    }
-}
-
-function _syncFileuploadProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncFileupload === 'function') {
-        window.InspectorAtoms.syncFileupload(comp);
-    }
-}
-
-function _syncAlertProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncAlert === 'function') {
-        window.InspectorAtoms.syncAlert(comp);
-    }
-}
-
-function _syncButtonProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncButton === 'function') {
-        window.InspectorAtoms.syncButton(comp);
-    }
-}
-
-function _syncSearchBarProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncSearchBar === 'function') {
-        window.InspectorAtoms.syncSearchBar(comp);
-    }
-}
-
-function _syncTextboxTextareaProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncTextboxTextarea === 'function') {
-        window.InspectorAtoms.syncTextboxTextarea(comp);
-    }
-}
-
-function _syncToggleProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncToggle === 'function') {
-        window.InspectorAtoms.syncToggle(comp);
-    }
-}
-
-function _syncAccordionProps(comp) {
-    if (window.InspectorAccordion && typeof window.InspectorAccordion.sync === 'function') {
-        window.InspectorAccordion.sync(comp);
-        _syncAtomDisabledProps(comp);
-        return;
-    }
-}
-
-function _syncGridProps(comp) {
-    if (window.InspectorGrid && typeof window.InspectorGrid.sync === 'function') {
-        window.InspectorGrid.sync(comp);
-        return;
-    }
-    const rowCountInp = document.getElementById('prop-grid-row-count');
-    if (rowCountInp && comp.gridRowCount !== undefined) rowCountInp.value = comp.gridRowCount;
-    const rowHeightInp = document.getElementById('prop-grid-row-height');
-    if (rowHeightInp && comp.gridRowHeight !== undefined) rowHeightInp.value = comp.gridRowHeight;
-}
-
-function _syncCheckboxRadioProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncCheckboxRadio === 'function') {
-        window.InspectorAtoms.syncCheckboxRadio(comp);
-    }
-}
-
-function _syncDatePickerProps(comp) {
-    if (window.InspectorAtoms && typeof window.InspectorAtoms.syncDatePicker === 'function') {
-        window.InspectorAtoms.syncDatePicker(comp);
-    }
-}
-
-// Global exposure for seamless cross-module interoperability
-window._syncStepperProps = _syncStepperProps;
-window._syncCursorProps = _syncCursorProps;
-window._syncAtomDisabledProps = _syncAtomDisabledProps;
-window._syncSelectboxProps = _syncSelectboxProps;
-window._syncFileuploadProps = _syncFileuploadProps;
-window._syncAlertProps = _syncAlertProps;
-window._syncButtonProps = _syncButtonProps;
-window._syncSearchBarProps = _syncSearchBarProps;
-window._syncTextboxTextareaProps = _syncTextboxTextareaProps;
-window._syncToggleProps = _syncToggleProps;
-window._syncAccordionProps = _syncAccordionProps;
-window._syncGridProps = _syncGridProps;
-window._syncCheckboxRadioProps = _syncCheckboxRadioProps;
-window._syncDatePickerProps = _syncDatePickerProps;
 
 // Category metadata is unified in assets/vctrl_common.js SSOT (window.getCategoryData)
 
@@ -1538,7 +1023,8 @@ document.addEventListener('input', function(e) {
         'cell-bg-color': 'cell-bg-wrapper',
         'icon-border-color': 'icon-border-wrapper',
         'prop-button-bg-color': 'button-bg-wrapper',
-        'prop-button-border-color': 'button-border-wrapper'
+        'prop-button-border-color': 'button-border-wrapper',
+        'prop-toggle-color': 'toggle-color-wrapper'
     };
     const wrapperId = colorIds[e.target.id];
     if (wrapperId) {
@@ -1564,7 +1050,8 @@ window.initAllInspectorEvents = function() {
     safeRun(() => window.InspectorAtoms?.bindAlertEvents?.(), 'InspectorAtoms.bindAlertEvents');
     safeRun(() => window.InspectorAtoms?.bindButtonEvents?.(), 'InspectorAtoms.bindButtonEvents');
     safeRun(() => window.InspectorAtoms?.bindDatePickerEvents?.(), 'InspectorAtoms.bindDatePickerEvents');
-    safeRun(() => window.InspectorAccordion?.bindAccordionEvents?.(), 'InspectorAccordion.bindAccordionEvents');
+    safeRun(() => (window.InspectorAtoms?.bindToggleEvents || window.initToggleEvents)?.(), 'InspectorAtoms.bindToggleEvents');
+    safeRun(() => (window.InspectorAccordion?.bindAccordionEvents || window.InspectorAccordion?.bindEvents || window.initAccordionEvents)?.(), 'InspectorAccordion.bindAccordionEvents');
     safeRun(() => window.InspectorGrid?.bindEvents?.(), 'InspectorGrid.bindEvents');
     safeRun(() => window.InspectorTable?.bindEvents?.(), 'InspectorTable.bindEvents');
     safeRun(() => window.InspectorShapes?.bindEvents?.(), 'InspectorShapes.bindEvents');

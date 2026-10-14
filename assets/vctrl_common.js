@@ -19,7 +19,12 @@ window.EditorBus = {
     sendToIframe(payload) {
         const iframeWin = this.getIframeWindow();
         if (iframeWin) {
-            const data = (typeof payload === 'object' && payload !== null) ? { ...payload } : payload;
+            let data = payload;
+            if (typeof payload === 'string') {
+                data = { type: payload };
+            } else if (typeof payload === 'object' && payload !== null) {
+                data = { ...payload };
+            }
             if (data && typeof data === 'object' && !data.id && window.activeCompId) {
                 data.id = window.activeCompId;
             }
@@ -486,6 +491,35 @@ window.calculatePathData = function(c, s, e) {
         }
     }
     return path;
+};
+
+// Universal Responsive Screen Discriminator (Parent Side SSOT)
+window.isResponsiveDocument = function(targetDoc) {
+    const doc = targetDoc || document;
+    return !!(doc && doc.querySelector && (
+        doc.querySelector('.pc-content-inner') || 
+        doc.querySelector('.mobile-content-inner') || 
+        doc.querySelector('.pc-browser-frame') ||
+        doc.querySelector('.pc-content-area') ||
+        doc.querySelector('.mobile-compare-page') ||
+        doc.querySelector('.frame-column') ||
+        doc.querySelector('.mobile-content-area')
+    ));
+};
+window.isResponsiveScreen = window.isResponsiveDocument;
+
+window.isResponsiveHtml = function(rawHtml, screenFileName = '') {
+    const fn = (screenFileName || '').toLowerCase();
+    if (fn.includes('responsive') || fn.includes('admin_pc_scroll') || fn.includes('mobile_compare')) return true;
+    if (!rawHtml) return false;
+    return rawHtml.includes('pc-browser-frame') ||
+           rawHtml.includes('pc-content-area') ||
+           rawHtml.includes('frame-column') ||
+           rawHtml.includes('full-pc-page') ||
+           rawHtml.includes('mobile-compare-page') ||
+           rawHtml.includes('mobile-content-area') ||
+           rawHtml.includes('template_responsive') ||
+           rawHtml.includes('template_admin_pc_scroll');
 };
 
 window.v4CommonScript = `

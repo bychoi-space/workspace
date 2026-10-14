@@ -79,87 +79,7 @@ window.v4Script = `
 
     // Note: window._getCompStyles is provided by assets/vctrl_iframe_style_extractor.js (SSOT)
 
-    window.SelectionAdorner = {
-        getContainer: function(comp) {
-            if (!comp) return document.body;
-            return (comp.closest && comp.closest('.pc-content-inner, .pc-content-area, .mobile-content-inner, .mobile-content-area, .mobile-content')) || document.body;
-        },
-        ensureLayer: function(container) {
-            if (!container) return null;
-            var layer = container.querySelector(':scope > .v4-selection-adorner-layer');
-            if (!layer) {
-                layer = document.createElement('div');
-                layer.className = 'v4-selection-adorner-layer';
-                layer.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 310000; overflow: visible;';
-                var compStyle = window.getComputedStyle(container);
-                if (compStyle.position === 'static' && container !== document.body) {
-                    container.style.position = 'relative';
-                }
-                var trailingScript = Array.from(container.children).find(function(c) {
-                    return c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script';
-                });
-                if (trailingScript) {
-                    container.insertBefore(layer, trailingScript);
-                } else {
-                    container.appendChild(layer);
-                }
-            }
-            return layer;
-        },
-        update: function(target) {
-            this.clear();
-            var selectedComps = target ? [target] : Array.from(document.querySelectorAll('.lf-component.selected'));
-            if (selectedComps.length === 0) return;
-
-            var self = this;
-            selectedComps.forEach(function(comp) {
-                if (!comp || comp.classList.contains('connector-line')) return;
-                var container = self.getContainer(comp);
-                if (!container) return;
-                var layer = self.ensureLayer(container);
-                if (!layer) return;
-
-                var compRect = comp.getBoundingClientRect();
-                var contRect = container.getBoundingClientRect();
-                var scrollL = (container === document.body) ? (window.pageXOffset || document.documentElement.scrollLeft || 0) : container.scrollLeft;
-                var scrollT = (container === document.body) ? (window.pageYOffset || document.documentElement.scrollTop || 0) : container.scrollTop;
-
-                var l = Math.round((compRect.left - contRect.left) + scrollL);
-                var t = Math.round((compRect.top - contRect.top) + scrollT);
-                var w = Math.round(compRect.width);
-                var h = Math.round(compRect.height);
-
-                if (w <= 0 || h <= 0) return;
-
-                var isGroup = comp.classList.contains('lf-group');
-                var box = document.createElement('div');
-                box.className = 'v4-selection-adorner' + (isGroup ? ' is-group' : '');
-                box.style.position = 'absolute';
-                box.style.left = l + 'px';
-                box.style.top = t + 'px';
-                box.style.width = w + 'px';
-                box.style.height = h + 'px';
-                box.style.pointerEvents = 'none';
-                box.style.boxSizing = 'border-box';
-                box.style.zIndex = '310000';
-
-                var borderColor = isGroup ? '#10b981' : '#6366f1';
-                box.style.outline = '2px solid ' + borderColor;
-                box.style.outlineOffset = '0px';
-                box.style.background = 'transparent';
-                var compRad = comp.style.borderRadius || window.getComputedStyle(comp).borderRadius;
-                if (compRad && compRad !== '0px') {
-                    box.style.borderRadius = compRad;
-                }
-                layer.appendChild(box);
-            });
-        },
-        clear: function() {
-            document.querySelectorAll('.v4-selection-adorner-layer').forEach(function(l) {
-                l.innerHTML = '';
-            });
-        }
-    };
+    // Note: window.SelectionAdorner is provided by assets/vctrl_iframe_adorner.js (Engine Module 29 SSOT)
 
     window.updateHandles = (c) => {
         if (!c) return;
@@ -326,6 +246,16 @@ window.v4Script = `
             return; 
         }
         if (c) {
+            // Clear residual focus from parent window inputs upon clicking iframe canvas element
+            try {
+                if (window.parent && window.parent.document && window.parent.document.activeElement) {
+                    var pActive = window.parent.document.activeElement;
+                    if (pActive && pActive !== window.parent.document.body && typeof pActive.blur === 'function') {
+                        pActive.blur();
+                    }
+                }
+            } catch (blurErr) {}
+
             if (!c.id) {
                 const isPin = c.classList.contains('pin-marker') || c.classList.contains('text-marker');
                 c.id = (isPin ? 'v4-pin-' : 'v4-comp-') + Date.now() + '-' + Math.floor(Math.random() * 10000);
@@ -828,6 +758,8 @@ window.v4Script = `
         if (fileuploadContainer && !d.selector) t = fileuploadContainer;
         var popupContainer = s.querySelector('.v4-popup-container');
         if (popupContainer && !d.selector) t = popupContainer;
+        var webeditorContainer = s.querySelector('.v4-webeditor-container');
+        if (webeditorContainer && !d.selector) t = webeditorContainer;
 
         var adminSettings = s.querySelector('.v4-admin-settings-container') || (s.classList.contains('v4-admin-settings-container') ? s : null);
         if (adminSettings && !d.selector) {
@@ -862,6 +794,7 @@ window.v4Script = `
                     if (buttonContainer) buttonContainer.style.width = '100%';
                     if (stepperContainer) stepperContainer.style.width = '100%';
                     if (popupContainer) popupContainer.style.width = '100%';
+                    if (webeditorContainer) webeditorContainer.style.width = '100%';
                     if (selectboxContainer) {
                         s.setAttribute('data-resized', 'true');
                         selectboxContainer.style.setProperty('width', '100%', 'important');
@@ -889,10 +822,12 @@ window.v4Script = `
                         if (sAct) sAct.style.height = '100%';
                     }
                     if (popupContainer) popupContainer.style.height = '100%';
+                    if (webeditorContainer) webeditorContainer.style.height = '100%';
                     if (selectboxContainer) {
                         selectboxContainer.style.height = '100%';
+                        var isDrop = selectboxContainer.getAttribute('data-dropdown-active') === 'true';
                         var headerH = selectboxContainer.querySelector('.v4-selectbox-header');
-                        if (headerH) headerH.style.height = '100%';
+                        if (headerH) headerH.style.height = isDrop ? '30px' : '100%';
                     }
                 }
             }
@@ -1202,7 +1137,9 @@ window.v4Script = `
         'LF_DESELECT': handleDeselectAll,
 
         'LF_SET_RESPONSIVE_GRID': function(d) {
-            const isResponsiveTemplate = !!(document.querySelector('.pc-content-inner') || document.querySelector('.mobile-content-inner') || document.querySelector('.pc-browser-frame'));
+            const isResponsiveTemplate = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function')
+                ? window.ResponsiveFrameUtils.isResponsive(document)
+                : !!(document.querySelector('.pc-content-inner') || document.querySelector('.mobile-content-inner') || document.querySelector('.pc-browser-frame'));
             if (isResponsiveTemplate) {
                 if (d.visible === false) {
                     document.body.classList.add('hide-frame-grid');
@@ -1220,6 +1157,16 @@ window.v4Script = `
         'LF_SEND_BACK': function(d) {
             if (typeof window.handleSendBack === 'function') {
                 return window.handleSendBack(d);
+            }
+        },
+        'LF_BRING_FORWARD': function(d) {
+            if (typeof window.handleBringForward === 'function') {
+                return window.handleBringForward(d);
+            }
+        },
+        'LF_SEND_BACKWARD': function(d) {
+            if (typeof window.handleSendBackward === 'function') {
+                return window.handleSendBackward(d);
             }
         },
 

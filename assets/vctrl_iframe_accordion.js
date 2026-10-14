@@ -20,6 +20,14 @@ window.v4AccordionScript = `
         const currentItemHeight = parseInt(container.getAttribute('data-item-height')) || 36;
         const compId = container.closest('.lf-component')?.id || 'accordion';
         
+        // Preserve inherited/existing text color to prevent unexpected reset on item activation
+        const headerTitle = container.querySelector('.v4-accordion-title-text');
+        const existingSpan = body.querySelector('.v4-editable-cell') || body.querySelector('.v4-accordion-item');
+        const inheritedColor = (existingSpan && existingSpan.style.color) || 
+                               (headerTitle && headerTitle.style.color) || 
+                               container.style.color || 
+                               '';
+        
         if (depthType === '1depth') {
             // Render 1-depth (flat list with radio buttons)
             const targetCount = parseInt(container.getAttribute('data-sub-count')) || 0;
@@ -31,7 +39,7 @@ window.v4AccordionScript = `
                     const parsed = JSON.parse(hierarchyStr);
                     if (Array.isArray(parsed)) {
                         subTexts = parsed.map((item, idx) => {
-                            const t = typeof item === 'string' ? item : item.text;
+                            const t = typeof item === 'string' ? item : (item.text || item.title || '');
                             if (typeof item === 'object' && item.active) {
                                 activeIndex = idx;
                             }
@@ -57,10 +65,11 @@ window.v4AccordionScript = `
             subTexts = subTexts.slice(0, targetCount);
             
             body.innerHTML = '';
+            const finalColor = inheritedColor || '#cccccc';
             subTexts.forEach((text, i) => {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'v4-accordion-item';
-                itemEl.style.cssText = "padding:8px 12px; font-size:12px; color:#cccccc; font-family:'Inter',sans-serif; outline:none; display:flex; align-items:center; box-sizing:border-box; padding-top:0; padding-bottom:0;";
+                itemEl.style.cssText = "padding:8px 12px; font-size:12px; color:" + finalColor + "; font-family:'Inter',sans-serif; outline:none; display:flex; align-items:center; box-sizing:border-box; padding-top:0; padding-bottom:0;";
                 itemEl.style.setProperty('height', currentItemHeight + 'px', 'important');
                 itemEl.style.setProperty('line-height', currentItemHeight + 'px', 'important');
                 if (i < targetCount - 1) {
@@ -80,7 +89,7 @@ window.v4AccordionScript = `
                 const span = document.createElement('span');
                 span.className = 'v4-editable-cell';
                 span.contentEditable = 'true';
-                span.style.cssText = 'outline: none; flex: 1;';
+                span.style.cssText = 'outline: none; flex: 1; color: ' + finalColor + ';';
                 span.innerText = text;
                 if (i === activeIndex) {
                     span.style.textDecoration = 'underline';
@@ -92,8 +101,9 @@ window.v4AccordionScript = `
                         const r = itemNode.querySelector('.v4-accordion-radio');
                         const s = itemNode.querySelector('.v4-editable-cell');
                         items.push({
-                            text: s.innerText,
-                            active: r.checked
+                            text: s ? s.innerText : '',
+                            title: s ? s.innerText : '',
+                            active: r ? r.checked : false
                         });
                     });
                     container.setAttribute('data-hierarchy', JSON.stringify(items));
@@ -136,8 +146,13 @@ window.v4AccordionScript = `
             if (!Array.isArray(hierarchy) || hierarchy.length === 0) {
                 hierarchy = [
                     {
+                        title: "1Tier Category 1",
                         text: "1Tier Category 1",
                         children: [
+                            { text: "2Tier Subcategory 1.1", active: true },
+                            { text: "2Tier Subcategory 1.2", active: false }
+                        ],
+                        items: [
                             { text: "2Tier Subcategory 1.1", active: true },
                             { text: "2Tier Subcategory 1.2", active: false }
                         ]
@@ -147,6 +162,8 @@ window.v4AccordionScript = `
             }
             
             body.innerHTML = '';
+            const t1Color = inheritedColor || '#ffffff';
+            const t2Color = inheritedColor || '#e2e8f0';
             
             hierarchy.forEach((t1, t1Idx) => {
                 const t1Group = document.createElement('div');
@@ -156,16 +173,17 @@ window.v4AccordionScript = `
                 // 1st Tier Header
                 const t1Header = document.createElement('div');
                 t1Header.className = 'v4-accordion-tier1-header';
-                t1Header.style.cssText = 'padding: 8px 12px; font-size: 12px; font-weight: bold; color: #ffffff; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: rgba(255,255,255,0.02); height: ' + currentItemHeight + 'px; box-sizing: border-box;';
+                t1Header.style.cssText = 'padding: 8px 12px; font-size: 12px; font-weight: bold; color: ' + t1Color + '; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: rgba(255,255,255,0.02); height: ' + currentItemHeight + 'px; box-sizing: border-box;';
                 
                 const t1Span = document.createElement('span');
                 t1Span.className = 'v4-editable-cell';
                 t1Span.contentEditable = 'true';
-                t1Span.style.cssText = 'outline: none; flex: 1;';
-                t1Span.innerText = t1.text;
+                t1Span.style.cssText = 'outline: none; flex: 1; color: ' + t1Color + ';';
+                t1Span.innerText = t1.title || t1.text || ('1Tier Category ' + (t1Idx + 1));
                 t1Span.addEventListener('click', (e) => e.stopPropagation());
                 t1Span.addEventListener('input', () => {
                     t1.text = t1Span.innerText;
+                    t1.title = t1Span.innerText;
                     container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
                     markDirty();
                 });
@@ -175,7 +193,8 @@ window.v4AccordionScript = `
                 t1Arrow.style.cssText = 'width: 6px; height: 6px; border-right: 1.6px solid #94a3b8; border-bottom: 1.6px solid #94a3b8; transform: rotate(45deg); transition: transform 0.2s; margin-right: 8px; display: inline-block; flex-shrink: 0;';
                 
                 t1Header.appendChild(t1Span);
-                if (t1.children && t1.children.length > 0) {
+                const t1Children = t1.children || t1.items || [];
+                if (t1Children && t1Children.length > 0) {
                     t1Header.appendChild(t1Arrow);
                 }
                 t1Group.appendChild(t1Header);
@@ -192,8 +211,8 @@ window.v4AccordionScript = `
                     t1Arrow.style.transform = t1Expanded ? 'rotate(45deg)' : 'rotate(-45deg)';
                 });
                 
-                if (t1.children && t1.children.length > 0) {
-                    t1.children.forEach((t2, t2Idx) => {
+                if (t1Children && t1Children.length > 0) {
+                    t1Children.forEach((t2, t2Idx) => {
                         const t2Wrapper = document.createElement('div');
                         t2Wrapper.className = 'v4-accordion-tier2-wrapper';
                         t2Wrapper.style.cssText = 'display: flex; flex-direction: column; border-bottom: 1.6px solid rgba(255,255,255,0.02);';
@@ -201,7 +220,7 @@ window.v4AccordionScript = `
                         // 2nd Tier Header (Acts as lowest tier item, has radio button)
                         const t2Header = document.createElement('div');
                         t2Header.className = 'v4-accordion-tier2-header';
-                        t2Header.style.cssText = 'padding: 8px 12px 8px 24px; font-size: 11px; color: #e2e8f0; display: flex; align-items: center; cursor: pointer; height: ' + currentItemHeight + 'px; box-sizing: border-box;';
+                        t2Header.style.cssText = 'padding: 8px 12px 8px 24px; font-size: 11px; color: ' + t2Color + '; display: flex; align-items: center; cursor: pointer; height: ' + currentItemHeight + 'px; box-sizing: border-box;';
                         
                         const t2Radio = document.createElement('input');
                         t2Radio.type = 'radio';
@@ -216,14 +235,15 @@ window.v4AccordionScript = `
                         const t2Span = document.createElement('span');
                         t2Span.className = 'v4-editable-cell';
                         t2Span.contentEditable = 'true';
-                        t2Span.style.cssText = 'outline: none; flex: 1;';
-                        t2Span.innerText = t2.text;
+                        t2Span.style.cssText = 'outline: none; flex: 1; color: ' + t2Color + ';';
+                        t2Span.innerText = t2.text || t2.title || ('2Tier Item ' + (t2Idx + 1));
                         if (t2.active) {
                             t2Span.style.textDecoration = 'underline';
                         }
                         t2Span.addEventListener('click', (e) => e.stopPropagation());
                         t2Span.addEventListener('input', () => {
                             t2.text = t2Span.innerText;
+                            t2.title = t2Span.innerText;
                             container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
                             markDirty();
                         });
@@ -244,8 +264,9 @@ window.v4AccordionScript = `
                             
                             // Update active status in hierarchy JSON
                             hierarchy.forEach(category => {
-                                if (category.children) {
-                                    category.children.forEach(item => {
+                                const catItems = category.children || category.items;
+                                if (catItems) {
+                                    catItems.forEach(item => {
                                         item.active = (item === t2);
                                     });
                                 }
@@ -304,7 +325,26 @@ window.v4AccordionScript = `
             }
             
             if (d.expanded !== undefined) {
-                container.setAttribute('data-expanded', d.expanded ? 'true' : 'false');
+                var isExp = d.expanded ? true : false;
+                container.setAttribute('data-expanded', isExp ? 'true' : 'false');
+                var bodyEl = container.querySelector('.v4-accordion-body');
+                var chevronEl = container.querySelector('.v4-accordion-chevron');
+                if (bodyEl) {
+                    bodyEl.style.display = isExp ? 'flex' : 'none';
+                }
+                if (chevronEl) {
+                    chevronEl.style.transform = isExp ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+                var itemH = parseInt(container.getAttribute('data-item-height')) || 36;
+                var hdrEl = container.querySelector('.v4-accordion-header');
+                var hdrH = hdrEl ? (hdrEl.offsetHeight || itemH) : itemH;
+                if (isExp) {
+                    var bodyH = bodyEl ? (bodyEl.scrollHeight || bodyEl.offsetHeight || (3 * itemH)) : (3 * itemH);
+                    s.style.height = (hdrH + bodyH) + 'px';
+                } else {
+                    s.style.height = hdrH + 'px';
+                }
+                if (typeof window.updateHandles === 'function') window.updateHandles(s);
             }
             
             if (d.depthType !== undefined) {
@@ -320,6 +360,17 @@ window.v4AccordionScript = `
             // Call unified hierarchical renderer
             if (typeof window.renderAccordionBody === 'function') {
                 window.renderAccordionBody(container);
+            }
+            
+            // Sync height when expanded if contents changed
+            if (container.getAttribute('data-expanded') === 'true') {
+                var bodyElAfter = container.querySelector('.v4-accordion-body');
+                var hdrElAfter = container.querySelector('.v4-accordion-header');
+                var itemHAfter = parseInt(container.getAttribute('data-item-height')) || 36;
+                var hdrHAfter = hdrElAfter ? (hdrElAfter.offsetHeight || itemHAfter) : itemHAfter;
+                var bodyHAfter = bodyElAfter ? (bodyElAfter.scrollHeight || bodyElAfter.offsetHeight || (3 * itemHAfter)) : (3 * itemHAfter);
+                s.style.height = (hdrHAfter + bodyHAfter) + 'px';
+                if (typeof window.updateHandles === 'function') window.updateHandles(s);
             }
             
             if (d.bg !== undefined) {

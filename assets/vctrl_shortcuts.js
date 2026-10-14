@@ -237,11 +237,19 @@ window.v4ShortcutsScript = `
         if ((e.ctrlKey || e.metaKey) && !inInput) {
             if (e.key === ']' || e.code === 'BracketRight') {
                 e.preventDefault();
-                window.postMessage({ type: 'LF_BRING_FRONT' }, '*');
+                if (e.shiftKey) {
+                    window.postMessage({ type: 'LF_BRING_FRONT' }, '*');
+                } else {
+                    window.postMessage({ type: 'LF_BRING_FORWARD' }, '*');
+                }
                 return;
             } else if (e.key === '[' || e.code === 'BracketLeft') {
                 e.preventDefault();
-                window.postMessage({ type: 'LF_SEND_BACK' }, '*');
+                if (e.shiftKey) {
+                    window.postMessage({ type: 'LF_SEND_BACK' }, '*');
+                } else {
+                    window.postMessage({ type: 'LF_SEND_BACKWARD' }, '*');
+                }
                 return;
             }
         }

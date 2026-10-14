@@ -10,38 +10,28 @@
     if (typeof window.preserveConsecutiveSpaces !== 'function') {
         window.preserveConsecutiveSpaces = (html) => (window.InspectorTextFormatter?.preserveConsecutiveSpaces ? window.InspectorTextFormatter.preserveConsecutiveSpaces(html) : html);
     }
-window.initQuillEditor = function() {
-    if (typeof window.initV4GlobalColorPalette === 'function') {
-        window.initV4GlobalColorPalette();
-    }
-    if (window.quillEditor) return;
-    const container = document.getElementById('editor-container');
-    if (!container) return;
+    // 1. Register Custom Attributors (Font Size, Align, Line Height)
+    function _initQuillAttributors(Quill) {
+        const Size = Quill.import('attributors/style/size');
+        Size.whitelist = ['8px', '9px', '10px', '11px', '12px', '13px', '14px', '15px', '16px', '18px', '20px', '22px', '24px', '28px', '30px', '36px', '48px', '64px'];
+        Quill.register(Size, true);
 
-    const Size = Quill.import('attributors/style/size');
-    Size.whitelist = ['8px', '9px', '10px', '11px', '12px', '13px', '14px', '15px', '16px', '18px', '20px', '22px', '24px', '28px', '30px', '36px', '48px', '64px'];
-    Quill.register(Size, true);
-    const Align = Quill.import('attributors/style/align');
-    Quill.register(Align, true);
+        const Align = Quill.import('attributors/style/align');
+        Quill.register(Align, true);
 
-    const Parchment = Quill.import('parchment');
-    const LineHeightStyle = new Parchment.Attributor.Style('lineheight', 'line-height', {
-        scope: Parchment.Scope.BLOCK
-    });
-    Quill.register(LineHeightStyle, true);
-
-    // Sticky Format Cache: 텍스트 삭제 후에도 직전 타이포그래피 서식 기억
-    if (!window._currentStickyFormat) {
-        window._currentStickyFormat = {
-            size: '14px',
-            color: '#000000',
-            lineheight: '1.5'
-        };
+        const Parchment = Quill.import('parchment');
+        const LineHeightStyle = new Parchment.Attributor.Style('lineheight', 'line-height', {
+            scope: Parchment.Scope.BLOCK
+        });
+        Quill.register(LineHeightStyle, true);
+        return Size;
     }
 
-    // Register distinct intuitive icons for Text Color and Background Color
-    const icons = Quill.import('ui/icons');
-    if (icons) {
+    // 2. Register Intuitive Icons for Color, Background and Strikethrough
+    function _initQuillIcons(Quill) {
+        const icons = Quill.import('ui/icons');
+        if (!icons) return;
+
         icons['color'] = '<svg viewBox="0 0 18 18">' +
             '<path class="ql-stroke" d="M5,12.5 L9,3.5 L13,12.5"></path>' +
             '<path class="ql-stroke" d="M6.5,9 L11.5,9"></path>' +
@@ -61,30 +51,25 @@ window.initQuillEditor = function() {
         '</svg>';
     }
 
-    const colorPalette = window.V4_COMMON_COLOR_PALETTE || [];
-
-    window.quillEditor = new Quill('#editor-container', {
-        theme: 'snow',
-        placeholder: '내용을 입력하세요...',
-        modules: {
-            toolbar: [
-                [{ 'size': Size.whitelist }],
-                [{ 'lineheight': ['1.0', '1.2', '1.4', '1.5', '1.6', '1.8', '2.0'] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ 'color': colorPalette }, { 'background': colorPalette }],
-                ['clean']
-            ]
+    // 3. Sticky Format Cache
+    function _initStickyFormatCache() {
+        if (!window._currentStickyFormat) {
+            window._currentStickyFormat = {
+                size: '14px',
+                color: '#000000',
+                lineheight: '1.5'
+            };
         }
-    });
+    }
 
-    // setupCustomColorPicker delegated to vctrl_color_picker.js SSOT
+    // 4. Color Picker Delegation Helper
     function applyCustomColorPicker(pickerEl, formatType) {
         if (typeof window.setupCustomColorPicker === 'function') {
             window.setupCustomColorPicker(pickerEl, formatType);
         }
     }
 
-    // Universal Line Height Combobox (Keyboard Direct Typing + Click Dropdown + Wheel)
+    // 5. Line Height Combobox Setup
     function setupCustomLineHeightPicker(lhPicker) {
         if (!lhPicker || lhPicker._customLhInitialized) return;
         lhPicker._customLhInitialized = true;
@@ -93,7 +78,6 @@ window.initQuillEditor = function() {
         const optionsEl = lhPicker.querySelector('.ql-picker-options');
         if (!pickerLabel) return;
 
-        // Create or locate direct keyboard key-in input field
         let input = pickerLabel.querySelector('.ql-lineheight-input');
         if (!input) {
             input = document.createElement('input');
@@ -104,7 +88,6 @@ window.initQuillEditor = function() {
             const initVal = pickerLabel.getAttribute('data-value') || (window._currentStickyFormat && window._currentStickyFormat.lineheight) || '1.5';
             input.value = initVal;
 
-            // Insert input before SVG arrow icon
             const svg = pickerLabel.querySelector('svg');
             if (svg) {
                 pickerLabel.insertBefore(input, svg);
@@ -137,7 +120,6 @@ window.initQuillEditor = function() {
                 }
             }
 
-            // Real-time canvas sync to Shape / Pin
             const iframe = document.getElementById('main-iframe');
             if (iframe && iframe.contentWindow && window.state && window.MessageHub) {
                 const activeAlign = (window.state.selectedComponentStyles?.currentStyles?.textAlign) || '';
@@ -165,7 +147,6 @@ window.initQuillEditor = function() {
                 }
             }
 
-            // Highlight selected item in options list
             if (optionsEl) {
                 optionsEl.querySelectorAll('.ql-picker-item').forEach(item => {
                     if (item.getAttribute('data-value') === formatted) {
@@ -178,17 +159,9 @@ window.initQuillEditor = function() {
         }
         lhPicker._commitLineHeight = commitLineHeight;
 
-        // Prevent input click/mousedown from bubbling to Quill picker label toggle
-        input.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-        });
-        input.addEventListener('click', (e) => {
-            e.stopPropagation();
-            input.select();
-        });
-        input.addEventListener('focus', () => {
-            input.select();
-        });
+        input.addEventListener('mousedown', (e) => e.stopPropagation());
+        input.addEventListener('click', (e) => { e.stopPropagation(); input.select(); });
+        input.addEventListener('focus', () => input.select());
         input.addEventListener('keydown', (e) => {
             e.stopPropagation();
             if (e.key === 'Enter') {
@@ -227,11 +200,8 @@ window.initQuillEditor = function() {
             input.select();
         }, { passive: false });
 
-        // Dropdown option item selection and smooth options interactions
         if (optionsEl) {
-            optionsEl.addEventListener('mousedown', (e) => {
-                e.stopPropagation();
-            });
+            optionsEl.addEventListener('mousedown', (e) => e.stopPropagation());
             optionsEl.addEventListener('click', (e) => {
                 const item = e.target.closest('.ql-picker-item');
                 if (!item) return;
@@ -244,7 +214,6 @@ window.initQuillEditor = function() {
             });
         }
 
-        // Close dropdown when input gains focus
         input.addEventListener('focus', () => {
             lhPicker.classList.remove('ql-expanded');
             input.select();
@@ -252,155 +221,186 @@ window.initQuillEditor = function() {
     }
     window.setupCustomLineHeightPicker = setupCustomLineHeightPicker;
 
-    setTimeout(() => {
-        const toolbarEl = container.previousElementSibling || document.querySelector('.ql-toolbar');
-        if (toolbarEl) {
-            const btnSize = toolbarEl.querySelector('.ql-size .ql-picker-label');
-            if (btnSize) btnSize.setAttribute('title', '글자 크기 (Font Size)');
+    // 6. Setup Toolbar Tooltips and Handlers
+    function _setupQuillToolbarTooltips(toolbarEl) {
+        if (!toolbarEl) return;
+        const btnSize = toolbarEl.querySelector('.ql-size .ql-picker-label');
+        if (btnSize) btnSize.setAttribute('title', '글자 크기 (Font Size)');
 
-            const lhPicker = toolbarEl.querySelector('.ql-lineheight');
-            if (lhPicker) {
-                const btnLh = lhPicker.querySelector('.ql-picker-label');
-                if (btnLh) btnLh.setAttribute('title', '줄간격 (Line Spacing)');
-                setupCustomLineHeightPicker(lhPicker);
-            }
-
-            const colorPicker = toolbarEl.querySelector('.ql-color');
-            if (colorPicker) {
-                const btnColor = colorPicker.querySelector('.ql-picker-label');
-                if (btnColor) btnColor.setAttribute('title', '글자 색상 (Text Color)');
-                applyCustomColorPicker(colorPicker, 'color');
-            }
-
-            const bgPicker = toolbarEl.querySelector('.ql-background');
-            if (bgPicker) {
-                const btnBg = bgPicker.querySelector('.ql-picker-label');
-                if (btnBg) btnBg.setAttribute('title', '배경 색상 / 형광펜 (Background Color)');
-                applyCustomColorPicker(bgPicker, 'background');
-            }
-
-            const btnBold = toolbarEl.querySelector('.ql-bold');
-            if (btnBold) btnBold.setAttribute('title', '굵게 (Bold)');
-
-            const btnItalic = toolbarEl.querySelector('.ql-italic');
-            if (btnItalic) btnItalic.setAttribute('title', '기울임 (Italic)');
-
-            const btnUnderline = toolbarEl.querySelector('.ql-underline');
-            if (btnUnderline) btnUnderline.setAttribute('title', '밑줄 (Underline)');
-
-            const btnStrike = toolbarEl.querySelector('.ql-strike');
-            if (btnStrike) btnStrike.setAttribute('title', '취소선 (Strikethrough)');
-
-            const btnClean = toolbarEl.querySelector('.ql-clean');
-            if (btnClean) btnClean.setAttribute('title', '서식 지우기 (Clear Formatting)');
+        const lhPicker = toolbarEl.querySelector('.ql-lineheight');
+        if (lhPicker) {
+            const btnLh = lhPicker.querySelector('.ql-picker-label');
+            if (btnLh) btnLh.setAttribute('title', '줄간격 (Line Spacing)');
+            setupCustomLineHeightPicker(lhPicker);
         }
-    }, 0);
 
-    // Selection change: 빈 에디터 진입 시 Sticky Format 유지 및 커서 서식 갱신
-    window.quillEditor.on('selection-change', (range) => {
-        if (!range || state._isLoadingShapeContent) return;
-        const plainText = window.quillEditor.getText().replace(/\n/g, '').trim();
-        if (plainText.length === 0 && window._currentStickyFormat) {
-            Object.keys(window._currentStickyFormat).forEach(key => {
-                const val = window._currentStickyFormat[key];
-                if (val !== undefined && val !== false && val !== null) {
-                    window.quillEditor.format(key, val, 'silent');
-                }
-            });
-        } else if (plainText.length > 0) {
-            const curFormat = window.quillEditor.getFormat(range);
-            if (curFormat && Object.keys(curFormat).length > 0) {
-                window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
-            }
-            const lhPicker = document.querySelector('.ql-toolbar .ql-lineheight');
-            if (lhPicker) {
-                if (typeof setupCustomLineHeightPicker === 'function' && !lhPicker._customLhInitialized) {
-                    setupCustomLineHeightPicker(lhPicker);
-                }
-                const activeLh = (curFormat && curFormat.lineheight) || (window._currentStickyFormat && window._currentStickyFormat.lineheight) || '1.5';
-                const lhPickerLabel = lhPicker.querySelector('.ql-picker-label');
-                if (lhPickerLabel) lhPickerLabel.setAttribute('data-value', activeLh);
-                const lhInput = lhPicker.querySelector('.ql-lineheight-input');
-                if (lhInput && document.activeElement !== lhInput) lhInput.value = activeLh;
-            }
+        const colorPicker = toolbarEl.querySelector('.ql-color');
+        if (colorPicker) {
+            const btnColor = colorPicker.querySelector('.ql-picker-label');
+            if (btnColor) btnColor.setAttribute('title', '글자 색상 (Text Color)');
+            applyCustomColorPicker(colorPicker, 'color');
         }
-    });
 
-    window.quillEditor.on('text-change', () => {
-        if (!state.isEditing || state.editingIndex === -1 || state._isLoadingShapeContent) return;
-        
-        // Sticky Format 유지 관리
-        const plainText = window.quillEditor.getText().replace(/\n/g, '').trim();
-        if (plainText.length > 0) {
-            const curFormat = window.quillEditor.getFormat();
-            if (curFormat && Object.keys(curFormat).length > 0) {
-                window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
+        const bgPicker = toolbarEl.querySelector('.ql-background');
+        if (bgPicker) {
+            const btnBg = bgPicker.querySelector('.ql-picker-label');
+            if (btnBg) btnBg.setAttribute('title', '배경 색상 / 형광펜 (Background Color)');
+            applyCustomColorPicker(bgPicker, 'background');
+        }
+
+        const btnBold = toolbarEl.querySelector('.ql-bold');
+        if (btnBold) btnBold.setAttribute('title', '굵게 (Bold)');
+
+        const btnItalic = toolbarEl.querySelector('.ql-italic');
+        if (btnItalic) btnItalic.setAttribute('title', '기울임 (Italic)');
+
+        const btnUnderline = toolbarEl.querySelector('.ql-underline');
+        if (btnUnderline) btnUnderline.setAttribute('title', '밑줄 (Underline)');
+
+        const btnStrike = toolbarEl.querySelector('.ql-strike');
+        if (btnStrike) btnStrike.setAttribute('title', '취소선 (Strikethrough)');
+
+        const btnClean = toolbarEl.querySelector('.ql-clean');
+        if (btnClean) btnClean.setAttribute('title', '서식 지우기 (Clear Formatting)');
+    }
+
+    // 7. Bind Selection and Text Change Synchronizers
+    function _bindQuillSyncListeners(quillInstance) {
+        if (!quillInstance) return;
+
+        quillInstance.on('selection-change', (range) => {
+            if (!range || state._isLoadingShapeContent) return;
+            const plainText = quillInstance.getText().replace(/\n/g, '').trim();
+            if (plainText.length === 0 && window._currentStickyFormat) {
+                Object.keys(window._currentStickyFormat).forEach(key => {
+                    const val = window._currentStickyFormat[key];
+                    if (val !== undefined && val !== false && val !== null) {
+                        quillInstance.format(key, val, 'silent');
+                    }
+                });
+            } else if (plainText.length > 0) {
+                const curFormat = quillInstance.getFormat(range);
+                if (curFormat && Object.keys(curFormat).length > 0) {
+                    window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
+                }
+                const lhPicker = document.querySelector('.ql-toolbar .ql-lineheight');
+                if (lhPicker) {
+                    if (typeof setupCustomLineHeightPicker === 'function' && !lhPicker._customLhInitialized) {
+                        setupCustomLineHeightPicker(lhPicker);
+                    }
+                    const activeLh = (curFormat && curFormat.lineheight) || (window._currentStickyFormat && window._currentStickyFormat.lineheight) || '1.5';
+                    const lhPickerLabel = lhPicker.querySelector('.ql-picker-label');
+                    if (lhPickerLabel) lhPickerLabel.setAttribute('data-value', activeLh);
+                    const lhInput = lhPicker.querySelector('.ql-lineheight-input');
+                    if (lhInput && document.activeElement !== lhInput) lhInput.value = activeLh;
+                }
             }
-        } else {
-            // 텍스트를 모두 지운 경우: 마지막 서식이 소멸하지 않도록 에디터 커서에 지속 서식 재적용
-            if (window._currentStickyFormat) {
+        });
+
+        quillInstance.on('text-change', () => {
+            if (!state.isEditing || state.editingIndex === -1 || state._isLoadingShapeContent) return;
+            
+            const plainText = quillInstance.getText().replace(/\n/g, '').trim();
+            if (plainText.length > 0) {
+                const curFormat = quillInstance.getFormat();
+                if (curFormat && Object.keys(curFormat).length > 0) {
+                    window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
+                }
+            } else if (window._currentStickyFormat) {
                 requestAnimationFrame(() => {
-                    if (window.quillEditor && window.quillEditor.getText().replace(/\n/g, '').trim().length === 0) {
+                    if (quillInstance && quillInstance.getText().replace(/\n/g, '').trim().length === 0) {
                         Object.keys(window._currentStickyFormat).forEach(key => {
                             const val = window._currentStickyFormat[key];
                             if (val !== undefined && val !== false && val !== null) {
-                                window.quillEditor.format(key, val, 'silent');
+                                quillInstance.format(key, val, 'silent');
                             }
                         });
                     }
                 });
             }
-        }
 
-        const rawHtml = window.quillEditor.root.innerHTML;
-        const html = preserveConsecutiveSpaces(rawHtml);
-        const activeAlign = (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles && window.state.selectedComponentStyles.currentStyles.textAlign) || 
-                            (window.quillEditor && window.quillEditor.root && window.quillEditor.root.style.textAlign) || '';
-        const activeVAlign = (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles && (window.state.selectedComponentStyles.currentStyles.vAlign || window.state.selectedComponentStyles.currentStyles.justifyContent)) || '';
-        if (state.editingType === 'pin') {
-            // Update description array (legacy compat)
-            const list = state.activeFile?.meta?.description;
-            if (list && list[state.editingIndex]) {
-                list[state.editingIndex].html = html;
-                list[state.editingIndex].text = window.quillEditor.getText().trim();
-            }
-            // Also sync to iframe DOM directly
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow) {
-                const compId = state.editingIndex;
-                MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', { 
-                    id: compId,
-                    html: html,
-                    align: activeAlign,
-                    vAlign: activeVAlign
-                });
-            }
-            markAsDirty();
-        } else if (state.editingType === 'shape') {
-            // Shape 텍스트 업데이트: 선택된 shape 내부 innerHTML 교체
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow) {
-                MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', { 
-                    html: html,
-                    align: activeAlign,
-                    vAlign: activeVAlign
-                });
+            const rawHtml = quillInstance.root.innerHTML;
+            const html = preserveConsecutiveSpaces(rawHtml);
+            const activeAlign = (window.state?.selectedComponentStyles?.currentStyles?.textAlign) || 
+                                (quillInstance.root?.style?.textAlign) || '';
+            const activeVAlign = (window.state?.selectedComponentStyles?.currentStyles?.vAlign || window.state?.selectedComponentStyles?.currentStyles?.justifyContent) || '';
+
+            if (state.editingType === 'pin') {
+                const list = state.activeFile?.meta?.description;
+                if (list && list[state.editingIndex]) {
+                    list[state.editingIndex].html = html;
+                    list[state.editingIndex].text = quillInstance.getText().trim();
+                }
+                const iframe = document.getElementById('main-iframe');
+                if (iframe && iframe.contentWindow) {
+                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', { 
+                        id: state.editingIndex,
+                        html: html,
+                        align: activeAlign,
+                        vAlign: activeVAlign
+                    });
+                }
                 markAsDirty();
+            } else if (state.editingType === 'shape') {
+                const iframe = document.getElementById('main-iframe');
+                if (iframe && iframe.contentWindow) {
+                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', { 
+                        html: html,
+                        align: activeAlign,
+                        vAlign: activeVAlign
+                    });
+                    markAsDirty();
+                }
+            } else {
+                const iframe = document.getElementById('main-iframe');
+                if (iframe && iframe.contentWindow) {
+                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', { 
+                        id: state.editingIndex,
+                        html: html,
+                        align: activeAlign,
+                        vAlign: activeVAlign
+                    });
+                    markAsDirty();
+                }
             }
-        } else {
-            const iframe = document.getElementById('main-iframe');
-            if (iframe && iframe.contentWindow) {
-                MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', { 
-                    id: state.editingIndex,
-                    html: html,
-                    align: activeAlign,
-                    vAlign: activeVAlign
-                });
-                markAsDirty();
-            }
+        });
+    }
+
+    // 8. Main Orchestrator Function
+    window.initQuillEditor = function() {
+        if (typeof window.initV4GlobalColorPalette === 'function') {
+            window.initV4GlobalColorPalette();
         }
-    });
-};
+        if (window.quillEditor) return;
+        const container = document.getElementById('editor-container');
+        if (!container) return;
+
+        const Size = _initQuillAttributors(Quill);
+        _initQuillIcons(Quill);
+        _initStickyFormatCache();
+
+        const colorPalette = window.V4_COMMON_COLOR_PALETTE || [];
+        window.quillEditor = new Quill('#editor-container', {
+            theme: 'snow',
+            placeholder: '내용을 입력하세요...',
+            modules: {
+                toolbar: [
+                    [{ 'size': Size.whitelist }],
+                    [{ 'lineheight': ['1.0', '1.2', '1.4', '1.5', '1.6', '1.8', '2.0'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': colorPalette }, { 'background': colorPalette }],
+                    ['clean']
+                ]
+            }
+        });
+
+        setTimeout(() => {
+            const toolbarEl = container.previousElementSibling || document.querySelector('.ql-toolbar');
+            if (toolbarEl) _setupQuillToolbarTooltips(toolbarEl);
+        }, 0);
+
+        _bindQuillSyncListeners(window.quillEditor);
+    };
 
 // Subscribe to direct iframe text changes to sync Quill editor in real-time
 if (window.MessageHub) {

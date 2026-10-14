@@ -653,21 +653,20 @@ window.v4ResponsiveSmartGuideMathScript = `
             };
         },
 
-        collectSnapTargets: function() {
-            const targets = [];
-            const rects = [];
-            document.querySelectorAll('.lf-component:not(.selected)').forEach(c => {
-                const l = parseFloat(c.style.left) || 0;
-                const t = parseFloat(c.style.top) || 0;
-                const shapeLine = c.querySelector('.v4-shape-line') || (c.classList.contains('v4-shape-line') ? c : null);
-                const isLine = !!shapeLine;
-                const lineDir = isLine ? (shapeLine.getAttribute('data-line-dir') || (c.offsetWidth >= c.offsetHeight ? 'horizontal' : 'vertical')) : null;
-                const w = c.offsetWidth || (isLine ? 2 : 100);
-                const h = c.offsetHeight || (isLine ? 2 : 40);
+        // Subroutines for collectSnapTargets
+        _collectComponentSnapTargets: function(targets, rects) {
+            document.querySelectorAll('.lf-component:not(.selected)').forEach(function(c) {
+                var l = parseFloat(c.style.left) || 0;
+                var t = parseFloat(c.style.top) || 0;
+                var shapeLine = c.querySelector('.v4-shape-line') || (c.classList.contains('v4-shape-line') ? c : null);
+                var isLine = !!shapeLine;
+                var lineDir = isLine ? (shapeLine.getAttribute('data-line-dir') || (c.offsetWidth >= c.offsetHeight ? 'horizontal' : 'vertical')) : null;
+                var w = c.offsetWidth || (isLine ? 2 : 100);
+                var h = c.offsetHeight || (isLine ? 2 : 40);
                 if (isLine) {
                     if (w < 1 || h < 1 || (w < 4 && h < 4)) return;
                 }
-                const name = c.id.replace('v4-comp-', 'Comp ');
+                var name = c.id.replace('v4-comp-', 'Comp ');
                 targets.push({ x: l, label: name, part: 'Left', type: 'h' });
                 targets.push({ x: l + w / 2, label: name, part: 'Center', type: 'h' });
                 targets.push({ x: l + w, label: name, part: 'Right', type: 'h' });
@@ -675,7 +674,7 @@ window.v4ResponsiveSmartGuideMathScript = `
                 targets.push({ y: t + h / 2, label: name, part: 'Middle', type: 'v' });
                 targets.push({ y: t + h, label: name, part: 'Bottom', type: 'v' });
                 
-                const isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table') || c.classList.contains('v4-grid-container') || !!c.querySelector('.v4-grid-container');
+                var isTable = c.classList.contains('v4-admin-settings-container') || !!c.querySelector('.v4-admin-settings-table') || c.classList.contains('v4-grid-container') || !!c.querySelector('.v4-grid-container');
                 
                 rects.push({
                     id: c.id,
@@ -691,21 +690,23 @@ window.v4ResponsiveSmartGuideMathScript = `
                     lineDir: lineDir
                 });
             });
+        },
 
+        _collectTableAndGridRowTargets: function(rects) {
             // Virtual row containers for multi-row tables (Query Item & Grid UI)
-            document.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr').forEach((row, rIdx) => {
-                const parentComp = row.closest('.lf-component');
+            document.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr').forEach(function(row, rIdx) {
+                var parentComp = row.closest('.lf-component');
                 if (!parentComp) return;
-                const parentLeft = parseFloat(parentComp.style.left) || 0;
-                const parentTop = parseFloat(parentComp.style.top) || 0;
-                const cRect = parentComp.getBoundingClientRect();
-                const rRect = row.getBoundingClientRect();
-                const l = parentLeft + (rRect.left - cRect.left);
-                const t = parentTop + (rRect.top - cRect.top);
-                const w = rRect.width || row.offsetWidth;
-                const h = rRect.height || row.offsetHeight;
+                var parentLeft = parseFloat(parentComp.style.left) || 0;
+                var parentTop = parseFloat(parentComp.style.top) || 0;
+                var cRect = parentComp.getBoundingClientRect();
+                var rRect = row.getBoundingClientRect();
+                var l = parentLeft + (rRect.left - cRect.left);
+                var t = parentTop + (rRect.top - cRect.top);
+                var w = rRect.width || row.offsetWidth;
+                var h = rRect.height || row.offsetHeight;
                 if (w < 10 || h < 5) return;
-                const tableId = parentComp.id || ('table-' + rIdx);
+                var tableId = parentComp.id || ('table-' + rIdx);
 
                 rects.push({
                     id: row.id || ('v4-row-' + rIdx),
@@ -722,20 +723,20 @@ window.v4ResponsiveSmartGuideMathScript = `
             });
 
             // Grid UI Cells for column line distances
-            document.querySelectorAll('.v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell').forEach((cell, cIdx) => {
-                const parentComp = cell.closest('.lf-component');
+            document.querySelectorAll('.v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell').forEach(function(cell, cIdx) {
+                var parentComp = cell.closest('.lf-component');
                 if (!parentComp) return;
-                const parentLeft = parseFloat(parentComp.style.left) || 0;
-                const parentTop = parseFloat(parentComp.style.top) || 0;
-                const cRect = parentComp.getBoundingClientRect();
-                const cellRect = cell.getBoundingClientRect();
-                const l = parentLeft + (cellRect.left - cRect.left);
-                const t = parentTop + (cellRect.top - cRect.top);
-                const w = cellRect.width || cell.offsetWidth;
-                const h = cellRect.height || cell.offsetHeight;
+                var parentLeft = parseFloat(parentComp.style.left) || 0;
+                var parentTop = parseFloat(parentComp.style.top) || 0;
+                var cRect = parentComp.getBoundingClientRect();
+                var cellRect = cell.getBoundingClientRect();
+                var l = parentLeft + (cellRect.left - cRect.left);
+                var t = parentTop + (cellRect.top - cRect.top);
+                var w = cellRect.width || cell.offsetWidth;
+                var h = cellRect.height || cell.offsetHeight;
                 if (w < 10 || h < 10) return;
 
-                const isTh = cell.tagName.toLowerCase() === 'th';
+                var isTh = cell.tagName.toLowerCase() === 'th';
                 rects.push({
                     id: cell.id || ('grid-cell-' + cIdx),
                     label: (isTh ? 'Col ' : 'Cell ') + (cIdx + 1),
@@ -748,25 +749,27 @@ window.v4ResponsiveSmartGuideMathScript = `
                     isGridCell: true
                 });
             });
+        },
 
-            document.querySelectorAll('.mobile-frame').forEach((f, idx) => {
-                const content = f.querySelector('.mobile-content');
+        _collectFrameBoundaryTargets: function(targets, rects) {
+            document.querySelectorAll('.mobile-frame').forEach(function(f, idx) {
+                var content = f.querySelector('.mobile-content');
                 if (content) {
-                    const rect = content.getBoundingClientRect();
-                    const scrollX = window.scrollX || 0;
-                    const scrollY = window.scrollY || 0;
-                    const l = rect.left + scrollX;
-                    const t = rect.top + scrollY;
-                    const w = rect.width;
-                    const h = rect.height;
+                    var rect = content.getBoundingClientRect();
+                    var scrollX = window.scrollX || 0;
+                    var scrollY = window.scrollY || 0;
+                    var l = rect.left + scrollX;
+                    var t = rect.top + scrollY;
+                    var w = rect.width;
+                    var h = rect.height;
                     
-                    const sName = 'UI Area ' + (idx + 1);
-                    const bezel = 0;
+                    var sName = 'UI Area ' + (idx + 1);
+                    var bezel = 0;
                     
-                    const leftVal = l + bezel;
-                    const rightVal = l + w - bezel;
-                    const topVal = t + bezel;
-                    const bottomVal = t + h - bezel;
+                    var leftVal = l + bezel;
+                    var rightVal = l + w - bezel;
+                    var topVal = t + bezel;
+                    var bottomVal = t + h - bezel;
                     
                     targets.push({ x: leftVal, label: sName, part: 'Left', type: 'h' });
                     targets.push({ x: rightVal, label: sName, part: 'Right', type: 'h' });
@@ -775,7 +778,7 @@ window.v4ResponsiveSmartGuideMathScript = `
                     targets.push({ x: l + w / 2, label: sName, part: 'Center', type: 'h' });
                     targets.push({ y: t + h / 2, label: sName, part: 'Middle', type: 'v' });
 
-                    const frameIdStr = 'mobile-frame-' + idx;
+                    var frameIdStr = 'mobile-frame-' + idx;
                     rects.push({
                         id: frameIdStr + '-left',
                         label: sName + ' Left',
@@ -827,17 +830,17 @@ window.v4ResponsiveSmartGuideMathScript = `
                 }
             });
 
-            document.querySelectorAll('.pc-browser-frame, .chrome-browser').forEach((f, idx) => {
-                const content = f.querySelector('.pc-content-area, .chrome-content-area') || f;
+            document.querySelectorAll('.pc-browser-frame, .chrome-browser').forEach(function(f, idx) {
+                var content = f.querySelector('.pc-content-area, .chrome-content-area') || f;
                 if (content) {
-                    const rect = content.getBoundingClientRect();
-                    const scrollX = window.scrollX || 0;
-                    const scrollY = window.scrollY || 0;
-                    const l = rect.left + scrollX;
-                    const t = rect.top + scrollY;
-                    const w = rect.width;
-                    const h = rect.height;
-                    const sName = 'PC Web Area ' + (idx + 1);
+                    var rect = content.getBoundingClientRect();
+                    var scrollX = window.scrollX || 0;
+                    var scrollY = window.scrollY || 0;
+                    var l = rect.left + scrollX;
+                    var t = rect.top + scrollY;
+                    var w = rect.width;
+                    var h = rect.height;
+                    var sName = 'PC Web Area ' + (idx + 1);
                     
                     targets.push({ x: l, label: sName, part: 'Left', type: 'h' });
                     targets.push({ x: l + w, label: sName, part: 'Right', type: 'h' });
@@ -846,7 +849,7 @@ window.v4ResponsiveSmartGuideMathScript = `
                     targets.push({ x: l + w / 2, label: sName, part: 'Center', type: 'h' });
                     targets.push({ y: t + h / 2, label: sName, part: 'Middle', type: 'v' });
 
-                    const frameIdStr = 'pc-frame-' + idx;
+                    var frameIdStr = 'pc-frame-' + idx;
                     rects.push({
                         id: frameIdStr + '-left',
                         label: sName + ' Left',
@@ -897,36 +900,45 @@ window.v4ResponsiveSmartGuideMathScript = `
                     });
                 }
             });
+        },
 
+        _collectAdminSettingsTargets: function(targets) {
             // Add snapping targets for Query Item (Admin Settings) rows & inner cells
-            document.querySelectorAll('.v4-admin-settings-container').forEach(container => {
-                const comp = container.closest('.lf-component');
+            document.querySelectorAll('.v4-admin-settings-container').forEach(function(container) {
+                var comp = container.closest('.lf-component');
                 if (!comp || comp.classList.contains('selected')) return;
 
-                const compRect = comp.getBoundingClientRect();
-                const scrollX = window.scrollX || 0;
-                const scrollY = window.scrollY || 0;
+                var scrollX = window.scrollX || 0;
+                var scrollY = window.scrollY || 0;
 
-                container.querySelectorAll('.v4-admin-row').forEach((row, rIdx) => {
-                    const rowRect = row.getBoundingClientRect();
-                    const rowTop = rowRect.top + scrollY;
-                    const rowHeight = rowRect.height;
-                    const rowYCenter = rowTop + rowHeight / 2;
+                container.querySelectorAll('.v4-admin-row').forEach(function(row, rIdx) {
+                    var rowRect = row.getBoundingClientRect();
+                    var rowTop = rowRect.top + scrollY;
+                    var rowHeight = rowRect.height;
+                    var rowYCenter = rowTop + rowHeight / 2;
 
                     targets.push({ id: comp.id, y: rowYCenter, label: 'Row ' + (rIdx + 1), part: 'Middle', type: 'v' });
 
-                    const contentCells = row.querySelectorAll('.v4-admin-content-cell');
+                    var contentCells = row.querySelectorAll('.v4-admin-content-cell');
 
-                    contentCells.forEach((cell, cIdx) => {
-                        const cellRect = cell.getBoundingClientRect();
-                        const cellLeft = cellRect.left + scrollX;
-                        const snapX = cellLeft + 10;
+                    contentCells.forEach(function(cell, cIdx) {
+                        var cellRect = cell.getBoundingClientRect();
+                        var cellLeft = cellRect.left + scrollX;
+                        var snapX = cellLeft + 10;
 
                         targets.push({ id: comp.id, x: snapX, label: 'Row ' + (rIdx + 1) + ' Col ' + (cIdx + 1) + ' Start', part: 'Left', type: 'h' });
                     });
                 });
             });
+        },
 
+        collectSnapTargets: function() {
+            var targets = [];
+            var rects = [];
+            this._collectComponentSnapTargets(targets, rects);
+            this._collectTableAndGridRowTargets(rects);
+            this._collectFrameBoundaryTargets(targets, rects);
+            this._collectAdminSettingsTargets(targets);
             return { targets: targets, rects: rects };
         }
     };

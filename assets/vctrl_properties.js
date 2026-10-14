@@ -42,6 +42,9 @@
         MessageHub.subscribe('LF_COMP_SELECTED', (data) => {
             const targetId = data.id || window.activeCompId || (window.state && window.state.selectedComponent && window.state.selectedComponent.id) || null;
             const isTargetChanged = Boolean(targetId && targetId !== activeCompId);
+            if (isTargetChanged && document.activeElement && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
             if (targetId) {
                 activeCompId = targetId;
                 window.activeCompId = targetId;
@@ -55,7 +58,7 @@
                     }
                 }
             }
-            updateAllInputs(data.w, data.h, isTargetChanged);
+            updateAllInputs(data.w, data.h, true);
             syncAllColors(data.currentStyles || {});
 
             if (data.boxW !== undefined) {

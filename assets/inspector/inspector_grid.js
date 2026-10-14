@@ -19,6 +19,398 @@
         window.notifyIframe(payload);
     };
 
+    function _isUserTypingInGridContainer(container) {
+        const activeEl = document.activeElement;
+        const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+        return !isBtn && activeEl && (
+            activeEl.classList.contains('grid-col-name-input') || 
+            activeEl.classList.contains('grid-col-width-input') || 
+            activeEl.classList.contains('grid-col-options-input') ||
+            (activeEl.tagName === 'INPUT' && container.contains(activeEl)) ||
+            (activeEl.tagName === 'TEXTAREA' && container.contains(activeEl))
+        );
+    }
+
+    function _resolveGridColumnsList(columns, headers) {
+        if (Array.isArray(columns) && columns.length > 0) {
+            return columns;
+        } else if (Array.isArray(headers) && headers.length > 0) {
+            return headers.map((h, i) => {
+                let type = 'text';
+                const lower = (h || '').toLowerCase();
+                if (i === 0 && (h === '' || lower.includes('check') || h.includes('선택'))) type = 'checkbox';
+                else if (h === '번호') type = 'number';
+                else if (lower.includes('order') || h.includes('순서')) type = 'order';
+                else if (lower.includes('image') || lower.includes('img') || h.includes('이미지') || h.includes('사진')) type = 'image';
+                else if (lower.includes('input') || h.includes('입력') || h.includes('수량')) type = 'input';
+                else if (lower.includes('delete') || lower.includes('del') || h.includes('삭제')) type = 'delete';
+                else if (h.includes('등록') || h.includes('수정자')) type = 'author';
+                else if (h.includes('일시') || h.includes('일자')) type = 'datetime';
+                else if (h.includes('금액') || h.includes('가격')) type = 'currency';
+                else if (h === '관리') type = 'action';
+                return {
+                    name: h,
+                    type: type,
+                    width: type === 'checkbox' ? '50px' : (type === 'order' ? '70px' : (type === 'image' ? '70px' : (type === 'delete' ? '60px' : (type === 'input' ? '90px' : (type === 'number' || type === 'action' ? '80px' : (type === 'text' ? '200px' : '120px')))))),
+                    align: (type === 'number' || type === 'currency') ? 'right' : ((type === 'checkbox' || type === 'order' || type === 'image' || type === 'input' || type === 'action' || type === 'delete') ? 'center' : 'left')
+                };
+            });
+        }
+        return [
+            { name: "", type: "checkbox", width: "60px", align: "center" },
+            { name: "번호", type: "number", width: "80px", align: "center" },
+            { name: "항목명", type: "text", width: "460px", align: "center" }
+        ];
+    }
+
+    function _getCurrentGridColsFromInputs(container) {
+        const cards = Array.from(container.querySelectorAll('.grid-col-card'));
+        return cards.map((cCard) => {
+            const inp = cCard.querySelector('.grid-col-name-input');
+            const tSel = cCard.querySelector('.grid-col-type-select');
+            const wInp = cCard.querySelector('.grid-col-width-input');
+            const oInp = cCard.querySelector('.grid-col-options-input');
+            const t = tSel ? tSel.value : 'text';
+            const wVal = wInp ? (parseInt(wInp.value) || 100) : 100;
+            const oVal = oInp ? oInp.value : '';
+            const clickableVal = cCard.getAttribute('data-clickable') === 'true';
+            const colAlign = cCard.getAttribute('data-align') || 'center';
+            const pPreset = cCard.getAttribute('data-highlight-preset') || 'none';
+            let hlObj = null;
+            if (pPreset && pPreset !== 'none') {
+                const isDel = (pPreset === 'del' || pPreset === 'mod');
+                hlObj = {
+                    enabled: true,
+                    preset: isDel ? 'del' : pPreset,
+                    borderColor: pPreset === 'new' ? '#ef4444' : (isDel ? '#f97316' : '#2563eb'),
+                    bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (isDel ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
+                    badgeText: pPreset === 'new' ? 'NEW' : (isDel ? 'DEL' : '')
+                };
+            }
+            return {
+                name: t === 'checkbox' ? '' : (inp ? inp.value : ''),
+                type: t,
+                width: wVal + 'px',
+                options: oVal,
+                clickable: (t === 'checkbox' || t === 'action' || t === 'delete' || t === 'image' || t === 'input' || t === 'order') ? false : clickableVal,
+                align: colAlign,
+                highlight: hlObj
+            };
+        });
+    }
+
+    function _buildSingleGridColumnCard(col, index, colsList, container, inspector) {
+        const isCheckbox = (col.type === 'checkbox');
+        const isAction = (col.type === 'action');
+        const isDelete = (col.type === 'delete');
+        const isImage = (col.type === 'image');
+        const isInput = (col.type === 'input');
+        const isOrder = (col.type === 'order');
+        const isClickable = !isCheckbox && !isAction && !isDelete && !isImage && !isInput && !isOrder && (col.clickable === true);
+        const parsedW = parseInt(col.width);
+        let fallbackWidth = 100;
+        if (col.type === 'checkbox') fallbackWidth = 50;
+        else if (col.type === 'order') fallbackWidth = 70;
+        else if (col.type === 'image') fallbackWidth = 70;
+        else if (col.type === 'delete') fallbackWidth = 60;
+        else if (col.type === 'input') fallbackWidth = 90;
+        else if (col.type === 'number' || col.type === 'action') fallbackWidth = 80;
+        else if (col.type === 'text') fallbackWidth = 200;
+        const numericWidth = isNaN(parsedW) ? fallbackWidth : parsedW;
+        const align = col.align || ((col.type === 'number' || col.type === 'currency') ? 'right' : ((col.type === 'checkbox' || col.type === 'order' || col.type === 'image' || col.type === 'input' || col.type === 'action' || col.type === 'delete') ? 'center' : 'left'));
+
+        const hl = col.highlight || {};
+        const hlPreset = (hl.enabled !== false && hl.preset) ? hl.preset : (typeof hl === 'string' ? hl : 'none');
+
+        const div = document.createElement('div');
+        div.className = 'grid-col-card';
+        div.id = 'grid-col-card-' + index;
+        div.setAttribute('data-col-index', index);
+        div.setAttribute('data-clickable', isClickable ? 'true' : 'false');
+        div.setAttribute('data-align', align);
+        div.setAttribute('data-highlight-preset', hlPreset);
+        div.style.cssText = 'display:flex; flex-direction:column; gap:6px; margin-bottom: 10px; padding: 8px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; background: rgba(255,255,255,0.02);';
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label style="font-size: 10px; color: var(--accent-light, #9e8cfc); font-weight: bold;">COLUMN ${index + 1}</label>
+                <div style="display: flex; gap: 4px;">
+                    <button class="v4-btn-action-sm btn-move-col-up" data-index="${index}" title="위로 이동" ${index === 0 ? 'disabled' : ''}>▲</button>
+                    <button class="v4-btn-action-sm btn-move-col-down" data-index="${index}" title="아래로 이동" ${index === colsList.length - 1 ? 'disabled' : ''}>▼</button>
+                    <button class="v4-btn-action-sm danger btn-delete-col" data-index="${index}" title="삭제" ${colsList.length <= 1 ? 'disabled' : ''}>&times;</button>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1.15fr 1fr 1fr; gap:6px;">
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">항목 타입 (Type)</label>
+                    <select class="v4-prop-select grid-col-type-select" data-index="${index}" style="height: 24px; font-size: 10px; padding: 0 18px 0 6px;">
+                        <option value="checkbox" ${col.type === 'checkbox' ? 'selected' : ''}>체크박스</option>
+                        <option value="number" ${col.type === 'number' ? 'selected' : ''}>번호/순번</option>
+                        <option value="order" ${col.type === 'order' ? 'selected' : ''}>순서조절</option>
+                        <option value="image" ${col.type === 'image' ? 'selected' : ''}>이미지</option>
+                        <option value="text" ${col.type === 'text' ? 'selected' : ''}>일반 텍스트</option>
+                        <option value="input" ${col.type === 'input' ? 'selected' : ''}>인풋박스</option>
+                        <option value="currency" ${col.type === 'currency' ? 'selected' : ''}>금액/가격</option>
+                        <option value="action" ${col.type === 'action' ? 'selected' : ''}>작업 버튼</option>
+                        <option value="delete" ${col.type === 'delete' ? 'selected' : ''}>삭제 버튼</option>
+                        <option value="author" ${col.type === 'author' ? 'selected' : ''}>작성자/담당자</option>
+                        <option value="datetime" ${col.type === 'datetime' ? 'selected' : ''}>일시/날짜</option>
+                    </select>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">항목명 (Name)</label>
+                    <input type="text" class="v4-prop-input grid-col-name-input" data-index="${index}" value="${isCheckbox ? '' : (col.name || '')}" ${isCheckbox ? 'disabled' : ''} style="width:100%; height: 24px; box-sizing: border-box; background: ${isCheckbox ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.3)'}; border: 1.6px solid ${isCheckbox ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.12)'}; color: ${isCheckbox ? '#64748b' : '#fff'}; padding: 2px 6px; border-radius: 6px; font-size: 11px;">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">가로 크기 (Width)</label>
+                    <input type="number" min="10" max="1000" class="v4-prop-input grid-col-width-input" data-index="${index}" value="${numericWidth}" style="width:100%; height: 24px; box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1.6px solid rgba(255,255,255,0.12); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; text-align: right;">
+                </div>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+                <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">텍스트 정렬 (Alignment)</label>
+                <div style="display: flex; gap: 4px;">
+                    <button type="button" class="v4-inspector-btn btn-col-align btn-align-left" data-align="left" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'left' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">좌</button>
+                    <button type="button" class="v4-inspector-btn btn-col-align btn-align-center" data-align="center" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'center' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">중</button>
+                    <button type="button" class="v4-inspector-btn btn-col-align btn-align-right" data-align="right" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'right' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">우</button>
+                </div>
+            </div>
+
+            <div class="grid-clickable-wrapper" style="display:${isCheckbox || isAction || isDelete || isImage || isInput || isOrder ? 'none' : 'flex'}; align-items:center; justify-content:space-between; margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06);">
+                <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">클릭 링크 (Clickable)</label>
+                <div style="display: flex; gap: 4px; width: 68px;">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-y ${isClickable ? 'active cyan' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">Y</button>
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-n ${!isClickable ? 'active cyan' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">N</button>
+                </div>
+            </div>
+
+            <div class="grid-highlight-wrapper" style="display:flex; flex-direction:column; gap:4px; margin-top:2px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06); width:100%; box-sizing:border-box;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <label style="font-size: 8px; color: #94a3b8; font-weight:600;">컬럼 강조 (Highlight)</label>
+                    <span class="grid-hl-active-label" style="font-size: 8.5px; font-weight:bold; color: ${hlPreset === 'none' ? '#64748b' : (hlPreset === 'new' ? '#ef4444' : ((hlPreset === 'del' || hlPreset === 'mod') ? '#f97316' : '#38bdf8'))};">${hlPreset === 'none' ? '일반' : (hlPreset === 'new' ? '신규 (NEW)' : ((hlPreset === 'del' || hlPreset === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'))}</span>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px; width:100%; box-sizing:border-box;">
+                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-none" data-preset="none" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'none' ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;'}">없음</button>
+                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-new" data-preset="new" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'new' ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;'}">🔴 신규</button>
+                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-del btn-col-hl-mod" data-preset="del" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${(hlPreset === 'del' || hlPreset === 'mod') ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;'}">🟠 삭제</button>
+                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-focus" data-preset="focus" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'focus' ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;'}">🔵 포커스</button>
+                </div>
+            </div>
+        `;
+
+        const nameInp = div.querySelector('.grid-col-name-input');
+        const typeSel = div.querySelector('.grid-col-type-select');
+        const widthInp = div.querySelector('.grid-col-width-input');
+        const optionsInp = div.querySelector('.grid-col-options-input');
+        const btnUp = div.querySelector('.btn-move-col-up');
+        const btnDown = div.querySelector('.btn-move-col-down');
+        const btnDelete = div.querySelector('.btn-delete-col');
+        const clickableWrap = div.querySelector('.grid-clickable-wrapper');
+        const btnClickableY = div.querySelector('.btn-col-clickable-y');
+        const btnClickableN = div.querySelector('.btn-col-clickable-n');
+        const alignBtns = div.querySelectorAll('.btn-col-align');
+        const hlBtns = div.querySelectorAll('.btn-col-hl');
+        const hlLabel = div.querySelector('.grid-hl-active-label');
+
+        const triggerColUpdate = () => {
+            const currentCols = _getCurrentGridColsFromInputs(container);
+            notifyGrid({ columns: currentCols });
+        };
+
+        hlBtns.forEach(btn => {
+            btn.onclick = () => {
+                const pKey = btn.getAttribute('data-preset') || 'none';
+                div.setAttribute('data-highlight-preset', pKey);
+                
+                hlBtns.forEach(b => {
+                    const bKey = b.getAttribute('data-preset');
+                    const isSelected = (bKey === pKey);
+                    const baseStyle = 'height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ';
+                    if (bKey === 'none') {
+                        b.style.cssText = baseStyle + (isSelected ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;');
+                    } else if (bKey === 'new') {
+                        b.style.cssText = baseStyle + (isSelected ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;');
+                    } else if (bKey === 'del' || bKey === 'mod') {
+                        b.style.cssText = baseStyle + (isSelected ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;');
+                    } else if (bKey === 'focus') {
+                        b.style.cssText = baseStyle + (isSelected ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;');
+                    }
+                });
+                
+                if (hlLabel) {
+                    hlLabel.textContent = (pKey === 'none') ? '일반' : ((pKey === 'new') ? '신규 (NEW)' : ((pKey === 'del' || pKey === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'));
+                    hlLabel.style.color = (pKey === 'none') ? '#64748b' : ((pKey === 'new') ? '#ef4444' : ((pKey === 'del' || pKey === 'mod') ? '#f97316' : '#38bdf8'));
+                }
+                
+                triggerColUpdate();
+            };
+        });
+
+        alignBtns.forEach(btn => {
+            btn.onclick = () => {
+                const targetAlign = btn.getAttribute('data-align');
+                div.setAttribute('data-align', targetAlign);
+                alignBtns.forEach(b => {
+                    const isSelected = (b === btn);
+                    highlightActive(b, isSelected);
+                });
+                triggerColUpdate();
+            };
+        });
+
+        if (btnClickableY && btnClickableN) {
+            btnClickableY.onclick = () => {
+                div.setAttribute('data-clickable', 'true');
+                highlightActive(btnClickableY, true);
+                highlightActive(btnClickableN, false);
+                triggerColUpdate();
+            };
+            btnClickableN.onclick = () => {
+                div.setAttribute('data-clickable', 'false');
+                highlightActive(btnClickableN, true);
+                highlightActive(btnClickableY, false);
+                triggerColUpdate();
+            };
+        }
+
+        if (btnUp && index > 0) {
+            btnUp.onclick = () => {
+                const currentCols = _getCurrentGridColsFromInputs(container);
+                const fromIdx = index;
+                const toIdx = index - 1;
+                const temp = currentCols[fromIdx];
+                currentCols[fromIdx] = currentCols[toIdx];
+                currentCols[toIdx] = temp;
+                inspector.renderColumnCards(currentCols, null, true);
+                notifyGrid({ 
+                    columns: currentCols,
+                    moveColumn: { from: fromIdx, to: toIdx }
+                });
+            };
+        }
+
+        if (btnDown && index < colsList.length - 1) {
+            btnDown.onclick = () => {
+                const currentCols = _getCurrentGridColsFromInputs(container);
+                const fromIdx = index;
+                const toIdx = index + 1;
+                const temp = currentCols[fromIdx];
+                currentCols[fromIdx] = currentCols[toIdx];
+                currentCols[toIdx] = temp;
+                inspector.renderColumnCards(currentCols, null, true);
+                notifyGrid({ 
+                    columns: currentCols,
+                    moveColumn: { from: fromIdx, to: toIdx }
+                });
+            };
+        }
+
+        if (btnDelete) {
+            btnDelete.onclick = () => {
+                const currentCols = _getCurrentGridColsFromInputs(container);
+                if (currentCols.length <= 1) return;
+                currentCols.splice(index, 1);
+                inspector.renderColumnCards(currentCols, null, true);
+                notifyGrid({ 
+                    columns: currentCols,
+                    deleteColumn: index
+                });
+                const colCountInp = document.getElementById('prop-grid-col-count');
+                if (colCountInp) colCountInp.value = currentCols.length;
+            };
+        }
+
+        if (nameInp) nameInp.oninput = triggerColUpdate;
+        if (widthInp) widthInp.oninput = triggerColUpdate;
+        if (optionsInp) optionsInp.oninput = triggerColUpdate;
+
+        if (typeSel) {
+            typeSel.onchange = () => {
+                const t = typeSel.value;
+                let defaultW = 120;
+                let defaultAlign = 'center';
+                if (t === 'checkbox') { defaultW = 50; defaultAlign = 'center'; }
+                else if (t === 'number') { defaultW = 80; defaultAlign = 'center'; }
+                else if (t === 'order') { defaultW = 70; defaultAlign = 'center'; }
+                else if (t === 'image') { defaultW = 70; defaultAlign = 'center'; }
+                else if (t === 'input') { defaultW = 90; defaultAlign = 'center'; }
+                else if (t === 'delete') { defaultW = 60; defaultAlign = 'center'; }
+                else if (t === 'currency') { defaultW = 120; defaultAlign = 'right'; }
+                else if (t === 'text') { defaultW = 200; defaultAlign = 'center'; }
+                else if (t === 'action') { defaultW = 90; defaultAlign = 'center'; }
+                else if (t === 'author') { defaultW = 110; defaultAlign = 'left'; }
+                else if (t === 'datetime') { defaultW = 160; defaultAlign = 'center'; }
+
+                widthInp.value = defaultW;
+                div.setAttribute('data-align', defaultAlign);
+                
+                if (t === 'checkbox') {
+                    nameInp.value = '';
+                    nameInp.disabled = true;
+                    nameInp.style.background = 'rgba(0,0,0,0.15)';
+                    nameInp.style.borderColor = 'rgba(255,255,255,0.05)';
+                    nameInp.style.color = '#64748b';
+                    if (clickableWrap) clickableWrap.style.display = 'none';
+                    div.setAttribute('data-clickable', 'false');
+                } else if (t === 'order') {
+                    nameInp.disabled = false;
+                    nameInp.value = nameInp.value || '순서';
+                    nameInp.style.background = 'rgba(0,0,0,0.3)';
+                    nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
+                    nameInp.style.color = '#fff';
+                    if (clickableWrap) clickableWrap.style.display = 'none';
+                    div.setAttribute('data-clickable', 'false');
+                } else if (t === 'action') {
+                    nameInp.disabled = false;
+                    nameInp.value = nameInp.value || '관리';
+                    nameInp.style.background = 'rgba(0,0,0,0.3)';
+                    nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
+                    nameInp.style.color = '#fff';
+                    if (clickableWrap) clickableWrap.style.display = 'none';
+                    div.setAttribute('data-clickable', 'false');
+                } else if (t === 'delete') {
+                    nameInp.disabled = false;
+                    nameInp.value = nameInp.value || '삭제';
+                    nameInp.style.background = 'rgba(0,0,0,0.3)';
+                    nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
+                    nameInp.style.color = '#fff';
+                    if (clickableWrap) clickableWrap.style.display = 'none';
+                    div.setAttribute('data-clickable', 'false');
+                } else if (t === 'image') {
+                    nameInp.disabled = false;
+                    nameInp.value = nameInp.value || '이미지';
+                    nameInp.style.background = 'rgba(0,0,0,0.3)';
+                    nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
+                    nameInp.style.color = '#fff';
+                    if (clickableWrap) clickableWrap.style.display = 'none';
+                    div.setAttribute('data-clickable', 'false');
+                } else if (t === 'input') {
+                    nameInp.disabled = false;
+                    nameInp.value = nameInp.value || '입력';
+                    nameInp.style.background = 'rgba(0,0,0,0.3)';
+                    nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
+                    nameInp.style.color = '#fff';
+                    if (clickableWrap) clickableWrap.style.display = 'none';
+                    div.setAttribute('data-clickable', 'false');
+                } else {
+                    nameInp.disabled = false;
+                    nameInp.style.background = 'rgba(0,0,0,0.3)';
+                    nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
+                    nameInp.style.color = '#fff';
+                    if (clickableWrap) clickableWrap.style.display = 'flex';
+                }
+                
+                const updatedCols = _getCurrentGridColsFromInputs(container);
+                notifyGrid({ 
+                    columns: updatedCols,
+                    fillMock: true
+                });
+                inspector.renderColumnCards(updatedCols);
+            };
+        }
+
+        return div;
+    }
+
     window.InspectorGrid = {
         sync: function(comp) {
             if (!comp) return;
@@ -89,361 +481,18 @@
         renderColumnCards: function(columns, headers, force) {
             const container = document.getElementById('grid-columns-container');
             if (!container) return;
-            if (!force) {
-                const activeEl = document.activeElement;
-                const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-                const isTyping = !isBtn && activeEl && (
-                    activeEl.classList.contains('grid-col-name-input') || 
-                    activeEl.classList.contains('grid-col-width-input') || 
-                    activeEl.classList.contains('grid-col-options-input') ||
-                    (activeEl.tagName === 'INPUT' && container.contains(activeEl)) ||
-                    (activeEl.tagName === 'TEXTAREA' && container.contains(activeEl))
-                );
-                if (isTyping) return;
-            }
+            if (!force && _isUserTypingInGridContainer(container)) return;
             container.innerHTML = '';
             
-            let colsList = [];
-            if (Array.isArray(columns) && columns.length > 0) {
-                colsList = columns;
-            } else if (Array.isArray(headers) && headers.length > 0) {
-                colsList = headers.map((h, i) => {
-                    let type = 'text';
-                    const lower = (h || '').toLowerCase();
-                    if (i === 0 && (h === '' || lower.includes('check') || h.includes('선택'))) type = 'checkbox';
-                    else if (h === '번호') type = 'number';
-                    else if (h.includes('상태')) type = 'status';
-                    else if (h.includes('등록') || h.includes('수정자')) type = 'author';
-                    else if (h.includes('일시') || h.includes('일자')) type = 'datetime';
-                    else if (h.includes('금액') || h.includes('가격')) type = 'currency';
-                    else if (h === '관리') type = 'action';
-                    return {
-                        name: h,
-                        type: type,
-                        width: type === 'checkbox' ? '50px' : (type === 'number' || type === 'action' ? '80px' : (type === 'text' ? '200px' : '120px')),
-                        align: (type === 'number' || type === 'currency') ? 'right' : ((type === 'checkbox' || type === 'status' || type === 'action') ? 'center' : 'left')
-                    };
-                });
-            } else {
-                colsList = [
-                    { name: "", type: "checkbox", width: "60px", align: "center" },
-                    { name: "번호", type: "number", width: "80px", align: "center" },
-                    { name: "항목명", type: "text", width: "460px", align: "center" }
-                ];
-            }
-
+            const colsList = _resolveGridColumnsList(columns, headers);
             const colCountInp = document.getElementById('prop-grid-col-count');
             if (colCountInp) {
                 colCountInp.value = colsList.length;
             }
 
             colsList.forEach((col, index) => {
-                const isCheckbox = (col.type === 'checkbox');
-                const isAction = (col.type === 'action');
-                const isClickable = !isCheckbox && !isAction && (col.clickable === true);
-                const parsedW = parseInt(col.width);
-                const numericWidth = isNaN(parsedW) ? (isCheckbox ? 50 : (col.type === 'text' ? 200 : 100)) : parsedW;
-                const align = col.align || ((col.type === 'number' || col.type === 'currency') ? 'right' : ((col.type === 'checkbox' || col.type === 'status' || col.type === 'action') ? 'center' : 'left'));
-
-                const hl = col.highlight || {};
-                const hlPreset = (hl.enabled !== false && hl.preset) ? hl.preset : (typeof hl === 'string' ? hl : 'none');
-
-                const showStatusOptions = (col.type === 'status');
-                const statusOptionsHtml = showStatusOptions ? `
-                    <div style="display:flex; flex-direction:column; gap:2px; grid-column: span 3; margin-top: 4px;">
-                        <label style="font-size: 8px; color: #94a3b8;">상태 옵션 설정 (쉼표로 구분)</label>
-                        <input type="text" class="v4-prop-input grid-col-options-input" data-index="${index}" value="${col.options || '방송중, 방송예정, 방송종료'}" placeholder="예: 진행중, 완료, 대기" style="width:100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 11px;">
-                    </div>
-                ` : '';
-
-                const div = document.createElement('div');
-                div.className = 'grid-col-card';
-                div.id = 'grid-col-card-' + index;
-                div.setAttribute('data-col-index', index);
-                div.setAttribute('data-clickable', isClickable ? 'true' : 'false');
-                div.setAttribute('data-align', align);
-                div.setAttribute('data-highlight-preset', hlPreset);
-                div.style.cssText = 'display:flex; flex-direction:column; gap:6px; margin-bottom: 10px; padding: 8px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; background: rgba(255,255,255,0.02);';
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <label style="font-size: 10px; color: var(--accent-light, #9e8cfc); font-weight: bold;">COLUMN ${index + 1}</label>
-                        <div style="display: flex; gap: 4px;">
-                            <button class="v4-btn-action-sm btn-move-col-up" data-index="${index}" title="위로 이동" ${index === 0 ? 'disabled' : ''}>▲</button>
-                            <button class="v4-btn-action-sm btn-move-col-down" data-index="${index}" title="아래로 이동" ${index === colsList.length - 1 ? 'disabled' : ''}>▼</button>
-                            <button class="v4-btn-action-sm danger btn-delete-col" data-index="${index}" title="삭제" ${colsList.length <= 1 ? 'disabled' : ''}>&times;</button>
-                        </div>
-                    </div>
-                    <div style="display:grid; grid-template-columns: 1.15fr 1fr 1fr; gap:6px;">
-                        <div style="display:flex; flex-direction:column; gap:2px;">
-                            <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">항목 타입 (Type)</label>
-                            <select class="v4-prop-select grid-col-type-select" data-index="${index}" style="height: 24px; font-size: 10px; padding: 0 18px 0 6px;">
-                                <option value="checkbox" ${col.type === 'checkbox' ? 'selected' : ''}>체크박스</option>
-                                <option value="number" ${col.type === 'number' ? 'selected' : ''}>번호/순번</option>
-                                <option value="text" ${col.type === 'text' ? 'selected' : ''}>일반 텍스트</option>
-                                <option value="currency" ${col.type === 'currency' ? 'selected' : ''}>금액/가격</option>
-                                <option value="status" ${col.type === 'status' ? 'selected' : ''}>상태 뱃지</option>
-                                <option value="badge" ${col.type === 'badge' ? 'selected' : ''}>태그 뱃지</option>
-                                <option value="action" ${col.type === 'action' ? 'selected' : ''}>작업 버튼</option>
-                                <option value="author" ${col.type === 'author' ? 'selected' : ''}>작성자/담당자</option>
-                                <option value="datetime" ${col.type === 'datetime' ? 'selected' : ''}>일시/날짜</option>
-                            </select>
-                        </div>
-                        <div style="display:flex; flex-direction:column; gap:2px;">
-                            <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">항목명 (Name)</label>
-                            <input type="text" class="v4-prop-input grid-col-name-input" data-index="${index}" value="${isCheckbox ? '' : (col.name || '')}" ${isCheckbox ? 'disabled' : ''} style="width:100%; height: 24px; box-sizing: border-box; background: ${isCheckbox ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.3)'}; border: 1.6px solid ${isCheckbox ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.12)'}; color: ${isCheckbox ? '#64748b' : '#fff'}; padding: 2px 6px; border-radius: 6px; font-size: 11px;">
-                        </div>
-                        <div style="display:flex; flex-direction:column; gap:2px;">
-                            <label class="v4-prop-label" style="font-size: 8.5px; margin-bottom: 2px; min-height: 18px; display: flex; align-items: flex-end;">가로 크기 (Width)</label>
-                            <input type="number" min="10" max="1000" class="v4-prop-input grid-col-width-input" data-index="${index}" value="${numericWidth}" style="width:100%; height: 24px; box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1.6px solid rgba(255,255,255,0.12); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; text-align: right;">
-                        </div>
-                        ${statusOptionsHtml}
-                    </div>
-
-                    <!-- Alignment Control -->
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
-                        <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">텍스트 정렬 (Alignment)</label>
-                        <div style="display: flex; gap: 4px;">
-                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-left" data-align="left" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'left' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">좌</button>
-                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-center" data-align="center" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'center' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">중</button>
-                            <button type="button" class="v4-inspector-btn btn-col-align btn-align-right" data-align="right" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'right' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">우</button>
-                        </div>
-                    </div>
-
-                    <!-- Clickable Control -->
-                    <div class="grid-clickable-wrapper" style="display:${isCheckbox || isAction ? 'none' : 'flex'}; align-items:center; justify-content:space-between; margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06);">
-                        <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">클릭 링크 (Clickable)</label>
-                        <div style="display: flex; gap: 4px; width: 68px;">
-                            <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-y ${isClickable ? 'active cyan' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">Y</button>
-                            <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-n ${!isClickable ? 'active cyan' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">N</button>
-                        </div>
-                    </div>
-
-                    <!-- Highlight Control -->
-                    <div class="grid-highlight-wrapper" style="display:flex; flex-direction:column; gap:4px; margin-top:2px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06); width:100%; box-sizing:border-box;">
-                        <div style="display:flex; align-items:center; justify-content:space-between;">
-                            <label style="font-size: 8px; color: #94a3b8; font-weight:600;">컬럼 강조 (Highlight)</label>
-                            <span class="grid-hl-active-label" style="font-size: 8.5px; font-weight:bold; color: ${hlPreset === 'none' ? '#64748b' : (hlPreset === 'new' ? '#ef4444' : ((hlPreset === 'del' || hlPreset === 'mod') ? '#f97316' : '#38bdf8'))};">${hlPreset === 'none' ? '일반' : (hlPreset === 'new' ? '신규 (NEW)' : ((hlPreset === 'del' || hlPreset === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'))}</span>
-                        </div>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px; width:100%; box-sizing:border-box;">
-                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-none" data-preset="none" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'none' ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;'}">없음</button>
-                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-new" data-preset="new" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'new' ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;'}">🔴 신규</button>
-                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-del btn-col-hl-mod" data-preset="del" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${(hlPreset === 'del' || hlPreset === 'mod') ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;'}">🟠 삭제</button>
-                            <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-focus" data-preset="focus" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'focus' ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;'}">🔵 포커스</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-
-                const nameInp = div.querySelector('.grid-col-name-input');
-                const typeSel = div.querySelector('.grid-col-type-select');
-                const widthInp = div.querySelector('.grid-col-width-input');
-                const optionsInp = div.querySelector('.grid-col-options-input');
-                const btnUp = div.querySelector('.btn-move-col-up');
-                const btnDown = div.querySelector('.btn-move-col-down');
-                const btnDelete = div.querySelector('.btn-delete-col');
-                const clickableWrap = div.querySelector('.grid-clickable-wrapper');
-                const btnClickableY = div.querySelector('.btn-col-clickable-y');
-                const btnClickableN = div.querySelector('.btn-col-clickable-n');
-                const alignBtns = div.querySelectorAll('.btn-col-align');
-                const hlBtns = div.querySelectorAll('.btn-col-hl');
-                const hlLabel = div.querySelector('.grid-hl-active-label');
-
-                const getCurrentColsFromInputs = () => {
-                    const cards = Array.from(container.querySelectorAll('.grid-col-card'));
-                    return cards.map((cCard) => {
-                        const inp = cCard.querySelector('.grid-col-name-input');
-                        const tSel = cCard.querySelector('.grid-col-type-select');
-                        const wInp = cCard.querySelector('.grid-col-width-input');
-                        const oInp = cCard.querySelector('.grid-col-options-input');
-                        const t = tSel ? tSel.value : 'text';
-                        const wVal = wInp ? (parseInt(wInp.value) || 100) : 100;
-                        const oVal = oInp ? oInp.value : '';
-                        const clickableVal = cCard.getAttribute('data-clickable') === 'true';
-                        const colAlign = cCard.getAttribute('data-align') || 'center';
-                        const pPreset = cCard.getAttribute('data-highlight-preset') || 'none';
-                        let hlObj = null;
-                        if (pPreset && pPreset !== 'none') {
-                            const isDel = (pPreset === 'del' || pPreset === 'mod');
-                            hlObj = {
-                                enabled: true,
-                                preset: isDel ? 'del' : pPreset,
-                                borderColor: pPreset === 'new' ? '#ef4444' : (isDel ? '#f97316' : '#2563eb'),
-                                bgColor: pPreset === 'new' ? 'rgba(254, 242, 242, 0.55)' : (isDel ? 'rgba(255, 247, 237, 0.65)' : 'rgba(239, 246, 255, 0.65)'),
-                                badgeText: pPreset === 'new' ? 'NEW' : (isDel ? 'DEL' : '')
-                            };
-                        }
-                        return {
-                            name: t === 'checkbox' ? '' : (inp ? inp.value : ''),
-                            type: t,
-                            width: wVal + 'px',
-                            options: oVal,
-                            clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal,
-                            align: colAlign,
-                            highlight: hlObj
-                        };
-                    });
-                };
-
-                const triggerColUpdate = () => {
-                    const currentCols = getCurrentColsFromInputs();
-                    notifyGrid({ columns: currentCols });
-                };
-
-                // Highlight buttons
-                hlBtns.forEach(btn => {
-                    btn.onclick = () => {
-                        const pKey = btn.getAttribute('data-preset') || 'none';
-                        div.setAttribute('data-highlight-preset', pKey);
-                        
-                        hlBtns.forEach(b => {
-                            const bKey = b.getAttribute('data-preset');
-                            const isSelected = (bKey === pKey);
-                            const baseStyle = 'height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ';
-                            if (bKey === 'none') {
-                                b.style.cssText = baseStyle + (isSelected ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;');
-                            } else if (bKey === 'new') {
-                                b.style.cssText = baseStyle + (isSelected ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;');
-                            } else if (bKey === 'del' || bKey === 'mod') {
-                                b.style.cssText = baseStyle + (isSelected ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;');
-                            } else if (bKey === 'focus') {
-                                b.style.cssText = baseStyle + (isSelected ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;');
-                            }
-                        });
-                        
-                        if (hlLabel) {
-                            hlLabel.textContent = (pKey === 'none') ? '일반' : ((pKey === 'new') ? '신규 (NEW)' : ((pKey === 'del' || pKey === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'));
-                            hlLabel.style.color = (pKey === 'none') ? '#64748b' : ((pKey === 'new') ? '#ef4444' : ((pKey === 'del' || pKey === 'mod') ? '#f97316' : '#38bdf8'));
-                        }
-                        
-                        triggerColUpdate();
-                    };
-                });
-
-                // Align buttons
-                alignBtns.forEach(btn => {
-                    btn.onclick = () => {
-                        const targetAlign = btn.getAttribute('data-align');
-                        div.setAttribute('data-align', targetAlign);
-                        alignBtns.forEach(b => {
-                            const isSelected = (b === btn);
-                            highlightActive(b, isSelected);
-                        });
-                        triggerColUpdate();
-                    };
-                });
-
-                if (btnClickableY && btnClickableN) {
-                    btnClickableY.onclick = () => {
-                        div.setAttribute('data-clickable', 'true');
-                        highlightActive(btnClickableY, true);
-                        highlightActive(btnClickableN, false);
-                        triggerColUpdate();
-                    };
-                    btnClickableN.onclick = () => {
-                        div.setAttribute('data-clickable', 'false');
-                        highlightActive(btnClickableN, true);
-                        highlightActive(btnClickableY, false);
-                        triggerColUpdate();
-                    };
-                }
-
-                if (btnUp && index > 0) {
-                    btnUp.onclick = () => {
-                        const currentCols = getCurrentColsFromInputs();
-                        const fromIdx = index;
-                        const toIdx = index - 1;
-                        const temp = currentCols[fromIdx];
-                        currentCols[fromIdx] = currentCols[toIdx];
-                        currentCols[toIdx] = temp;
-                        this.renderColumnCards(currentCols, null, true);
-                        notifyGrid({ 
-                            columns: currentCols,
-                            moveColumn: { from: fromIdx, to: toIdx }
-                        });
-                    };
-                }
-
-                if (btnDown && index < colsList.length - 1) {
-                    btnDown.onclick = () => {
-                        const currentCols = getCurrentColsFromInputs();
-                        const fromIdx = index;
-                        const toIdx = index + 1;
-                        const temp = currentCols[fromIdx];
-                        currentCols[fromIdx] = currentCols[toIdx];
-                        currentCols[toIdx] = temp;
-                        this.renderColumnCards(currentCols, null, true);
-                        notifyGrid({ 
-                            columns: currentCols,
-                            moveColumn: { from: fromIdx, to: toIdx }
-                        });
-                    };
-                }
-
-                if (btnDelete) {
-                    btnDelete.onclick = () => {
-                        const currentCols = getCurrentColsFromInputs();
-                        if (currentCols.length <= 1) return;
-                        currentCols.splice(index, 1);
-                        this.renderColumnCards(currentCols, null, true);
-                        notifyGrid({ 
-                            columns: currentCols,
-                            deleteColumn: index
-                        });
-                        if (colCountInp) colCountInp.value = currentCols.length;
-                    };
-                }
-
-                if (nameInp) nameInp.oninput = triggerColUpdate;
-                if (widthInp) widthInp.oninput = triggerColUpdate;
-                if (optionsInp) optionsInp.oninput = triggerColUpdate;
-
-                if (typeSel) {
-                    typeSel.onchange = () => {
-                        const t = typeSel.value;
-                        let defaultW = 120;
-                        let defaultAlign = 'center';
-                        if (t === 'checkbox') { defaultW = 50; defaultAlign = 'center'; }
-                        else if (t === 'number') { defaultW = 80; defaultAlign = 'center'; }
-                        else if (t === 'currency') { defaultW = 120; defaultAlign = 'right'; }
-                        else if (t === 'text') { defaultW = 200; defaultAlign = 'center'; }
-                        else if (t === 'status') { defaultW = 110; defaultAlign = 'center'; }
-                        else if (t === 'badge') { defaultW = 100; defaultAlign = 'center'; }
-                        else if (t === 'action') { defaultW = 90; defaultAlign = 'center'; }
-                        else if (t === 'author') { defaultW = 110; defaultAlign = 'left'; }
-                        else if (t === 'datetime') { defaultW = 160; defaultAlign = 'center'; }
-
-                        widthInp.value = defaultW;
-                        div.setAttribute('data-align', defaultAlign);
-                        
-                        if (t === 'checkbox') {
-                            nameInp.value = '';
-                            nameInp.disabled = true;
-                            nameInp.style.background = 'rgba(0,0,0,0.15)';
-                            nameInp.style.borderColor = 'rgba(255,255,255,0.05)';
-                            nameInp.style.color = '#64748b';
-                            if (clickableWrap) clickableWrap.style.display = 'none';
-                            div.setAttribute('data-clickable', 'false');
-                        } else if (t === 'action') {
-                            nameInp.disabled = false;
-                            nameInp.value = nameInp.value || '관리';
-                            nameInp.style.background = 'rgba(0,0,0,0.3)';
-                            nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
-                            nameInp.style.color = '#fff';
-                            if (clickableWrap) clickableWrap.style.display = 'none';
-                            div.setAttribute('data-clickable', 'false');
-                        } else {
-                            nameInp.disabled = false;
-                            nameInp.style.background = 'rgba(0,0,0,0.3)';
-                            nameInp.style.borderColor = 'rgba(255,255,255,0.1)';
-                            nameInp.style.color = '#fff';
-                            if (clickableWrap) clickableWrap.style.display = 'flex';
-                        }
-                        
-                        const updatedCols = getCurrentColsFromInputs();
-                        notifyGrid({ columns: updatedCols });
-                        this.renderColumnCards(updatedCols);
-                    };
-                }
+                const cardEl = _buildSingleGridColumnCard(col, index, colsList, container, this);
+                container.appendChild(cardEl);
             });
         },
 
@@ -580,7 +629,7 @@
                             type: t,
                             width: wVal + 'px',
                             options: oVal,
-                            clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal,
+                            clickable: (t === 'checkbox' || t === 'action' || t === 'delete' || t === 'image' || t === 'input' || t === 'order') ? false : clickableVal,
                             align: colAlign,
                             highlight: hlObj
                         };
@@ -630,7 +679,7 @@
                             type: t,
                             width: wVal + 'px',
                             options: oVal,
-                            clickable: (t === 'checkbox' || t === 'action') ? false : clickableVal,
+                            clickable: (t === 'checkbox' || t === 'action' || t === 'delete' || t === 'image' || t === 'input' || t === 'order') ? false : clickableVal,
                             align: colAlign,
                             highlight: hlObj
                         };

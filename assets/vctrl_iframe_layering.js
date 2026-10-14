@@ -6,13 +6,20 @@ if (!window.v4IframeLayeringScript) {
         BASE_MIN: 0,
         BASE_MAX: 999,
         CONTENT_MIN: 1000,
-        CONTENT_MAX: 79999,
+        CONTENT_MAX: 69999,
+        ACTIVE_MIN: 70000,
+        ACTIVE_MAX: 79999,
+        POPUP_MIN: 80000,
+        POPUP_MAX: 99999,
         FIXED_HUD_MIN: 100000,
         FIXED_HUD_MAX: 179999,
+        FIXED_PIN_MIN: 180000,
+        FIXED_PIN_MAX: 199999,
         PIN_MIN: 200000,
         PIN_MAX: 249999,
+        PIN_LAYER: 250000,
         GIZMO_MIN: 300000,
-        GIZMO_MAX: 399999,
+        GIZMO_MAX: 499999,
         MODAL_MIN: 500000,
         MODAL_MAX: 999999
     };
@@ -26,6 +33,20 @@ if (!window.v4IframeLayeringScript) {
         if (host.querySelectorAll && (!host.classList || (!host.classList.contains('mobile-content-inner') && !host.classList.contains('pc-content-inner')))) {
             var inners = host.querySelectorAll('.mobile-content-inner, .pc-content-inner');
             if (inners.length > 0) {
+                // [Self-Healing Defense] Reparent any normal .lf-component mistakenly placed directly on .page/body into the inner frame
+                var leakedComps = Array.from(host.children || []).filter(function(c) {
+                    return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.classList.contains('frame-column');
+                });
+                if (leakedComps.length > 0) {
+                    var targetFrame = host.querySelector('.pc-content-inner') || host.querySelector('.mobile-content-inner');
+                    if (targetFrame) {
+                        leakedComps.forEach(function(lc) {
+                            targetFrame.appendChild(lc);
+                        });
+                        if (typeof markDirty === 'function') markDirty();
+                    }
+                }
+
                 inners.forEach(function(inn) {
                     normalizeZIndices(inn, force);
                 });
@@ -72,8 +93,8 @@ if (!window.v4IframeLayeringScript) {
             }
         });
 
-        // Trigger compaction if forced or if maxNormalVal >= 50000 (approaching limit)
-        var needsCompaction = force || (maxNormalVal >= 50000);
+        // Trigger compaction if forced or if maxNormalVal >= 69000 (approaching Tier 2 limit)
+        var needsCompaction = force || (maxNormalVal >= 69000);
         if (!needsCompaction) return;
 
         // Sort normal elements by existing z-index, preserving document order on ties
@@ -152,8 +173,8 @@ if (!window.v4IframeLayeringScript) {
             }
         });
 
-        // Trigger compaction if normal tier approaches 50,000 threshold (Zero recursion!)
-        if (!isFixed && maxZ >= 50000) {
+        // Trigger compaction if normal tier approaches 69,000 threshold (Zero recursion!)
+        if (!isFixed && maxZ >= 69000) {
             normalizeZIndices(targetParent, true);
             var topNormalComps = Array.from(targetParent.children || []).filter(function(c) {
                 return c.classList && c.classList.contains('lf-component') && !c.hasAttribute('data-scroll-fixed');
@@ -242,7 +263,7 @@ if (!window.v4IframeLayeringScript) {
                 });
 
                 var trailingRef = Array.from(parent.children).find(function(c) {
-                    return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+                    return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
                 });
 
                 var fixedHudInParent = Array.from(parent.children).find(function(c) {
@@ -268,7 +289,7 @@ if (!window.v4IframeLayeringScript) {
 
                     if (isFixed) {
                         var baseline = Math.max(V4_Z_TIERS.FIXED_HUD_MIN, maxAnyZ);
-                        maxFixedZ = Math.max(maxFixedZ, baseline) + 10;
+                        maxFixedZ = Math.min(V4_Z_TIERS.FIXED_HUD_MAX, Math.max(maxFixedZ, baseline) + 10);
                         targetZ = maxFixedZ;
                     } else {
                         var shouldPromoteToHUD = false;
@@ -292,7 +313,7 @@ if (!window.v4IframeLayeringScript) {
                         }
 
                         if (shouldPromoteToHUD) {
-                            maxFixedZ = Math.max(maxFixedZ, V4_Z_TIERS.FIXED_HUD_MIN, maxAnyZ) + 10;
+                            maxFixedZ = Math.min(V4_Z_TIERS.FIXED_HUD_MAX, Math.max(maxFixedZ, V4_Z_TIERS.FIXED_HUD_MIN, maxAnyZ) + 10);
                             targetZ = maxFixedZ;
                             if (fixedHudInParent && !el.hasAttribute('data-scroll-fixed')) {
                                 var fixedMode = fixedHudInParent.getAttribute('data-scroll-fixed') || 'top';
@@ -303,7 +324,7 @@ if (!window.v4IframeLayeringScript) {
                                 }
                             }
                         } else {
-                            maxNormalZ += 10;
+                            maxNormalZ = Math.min(V4_Z_TIERS.CONTENT_MAX, maxNormalZ + 10);
                             targetZ = maxNormalZ;
                             if (targetZ >= V4_Z_TIERS.CONTENT_MAX) {
                                 normalizeZIndices(parent, true);
@@ -476,15 +497,246 @@ if (!window.v4IframeLayeringScript) {
         }
     }
 
+    function handleBringForward(d) {
+        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        if (selected.length === 0) {
+            if (d && d.ids && Array.isArray(d.ids)) {
+                d.ids.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                        selected.push(el);
+                    }
+                });
+            } else if (d && d.id) {
+                var singleTarget = document.getElementById(d.id);
+                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                    selected.push(singleTarget);
+                }
+            }
+        }
+        var topLevelSelected = selected.filter(function(el) {
+            var parent = el.parentElement;
+            while (parent && parent !== document.body) {
+                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
+                parent = parent.parentElement;
+            }
+            return true;
+        });
+        if (topLevelSelected.length > 0) {
+            if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+            var realCanvasHost = document.querySelector('.canvas, .page, #canvas-page, #canvas');
+            var parentMap = new Map();
+            topLevelSelected.forEach(function(el) {
+                var p = el.parentElement;
+                if (!p) return;
+                if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
+                    realCanvasHost.appendChild(el);
+                    p = realCanvasHost;
+                }
+                if (!parentMap.has(p)) {
+                    parentMap.set(p, []);
+                }
+                parentMap.get(p).push(el);
+            });
+
+            parentMap.forEach(function(items, parent) {
+                items.sort(function(a, b) {
+                    var za = parseInt(a.style.zIndex, 10) || 1000;
+                    var zb = parseInt(b.style.zIndex, 10) || 1000;
+                    return zb - za;
+                });
+
+                var siblingComps = Array.from(parent.children).filter(function(c) {
+                    return c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker');
+                });
+
+                var trailingRef = Array.from(parent.children).find(function(c) {
+                    return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+                });
+
+                items.forEach(function(el) {
+                    if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
+
+                    var isFixed = el.hasAttribute('data-scroll-fixed');
+                    var curZ = parseInt(el.style.zIndex, 10) || (isFixed ? V4_Z_TIERS.FIXED_HUD_MIN : V4_Z_TIERS.CONTENT_MIN);
+
+                    var tierSiblings = siblingComps.filter(function(c) {
+                        if (c === el) return false;
+                        var cIsFixed = c.hasAttribute('data-scroll-fixed');
+                        return isFixed ? cIsFixed : !cIsFixed;
+                    });
+
+                    var nextHigher = null;
+                    var nextHigherZ = Infinity;
+
+                    tierSiblings.forEach(function(c) {
+                        var cz = parseInt(c.style.zIndex, 10) || (isFixed ? V4_Z_TIERS.FIXED_HUD_MIN : V4_Z_TIERS.CONTENT_MIN);
+                        if (cz > curZ && cz < nextHigherZ) {
+                            nextHigherZ = cz;
+                            nextHigher = c;
+                        }
+                    });
+
+                    if (nextHigher) {
+                        var newZ = nextHigherZ;
+                        nextHigher.style.zIndex = String(curZ);
+                        el.style.zIndex = String(newZ);
+
+                        if (nextHigher.nextSibling) {
+                            parent.insertBefore(el, nextHigher.nextSibling);
+                        } else if (trailingRef && trailingRef.parentNode === parent) {
+                            parent.insertBefore(el, trailingRef);
+                        } else {
+                            parent.appendChild(el);
+                        }
+                    } else {
+                        var maxCap = isFixed ? V4_Z_TIERS.FIXED_HUD_MAX : V4_Z_TIERS.CONTENT_MAX;
+                        var newZ = Math.min(maxCap, curZ + 10);
+                        el.style.zIndex = String(newZ);
+                        if (trailingRef && trailingRef.parentNode === parent) {
+                            parent.insertBefore(el, trailingRef);
+                        } else {
+                            parent.appendChild(el);
+                        }
+                    }
+                });
+            });
+
+            if (typeof markDirty === 'function') markDirty();
+        }
+    }
+
+    function handleSendBackward(d) {
+        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        if (selected.length === 0) {
+            if (d && d.ids && Array.isArray(d.ids)) {
+                d.ids.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                        selected.push(el);
+                    }
+                });
+            } else if (d && d.id) {
+                var singleTarget = document.getElementById(d.id);
+                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                    selected.push(singleTarget);
+                }
+            }
+        }
+        var topLevelSelected = selected.filter(function(el) {
+            var parent = el.parentElement;
+            while (parent && parent !== document.body) {
+                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
+                parent = parent.parentElement;
+            }
+            return true;
+        });
+        if (topLevelSelected.length > 0) {
+            if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+            var realCanvasHost = document.querySelector('.canvas, .page, #canvas-page, #canvas');
+            var parentMap = new Map();
+            topLevelSelected.forEach(function(el) {
+                var p = el.parentElement;
+                if (!p) return;
+                if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
+                    realCanvasHost.appendChild(el);
+                    p = realCanvasHost;
+                }
+                if (!parentMap.has(p)) {
+                    parentMap.set(p, []);
+                }
+                parentMap.get(p).push(el);
+            });
+
+            parentMap.forEach(function(items, parent) {
+                items.sort(function(a, b) {
+                    var za = parseInt(a.style.zIndex, 10) || 1000;
+                    var zb = parseInt(b.style.zIndex, 10) || 1000;
+                    return za - zb;
+                });
+
+                var siblingComps = Array.from(parent.children).filter(function(c) {
+                    return c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker');
+                });
+
+                items.forEach(function(el) {
+                    if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
+
+                    var isFixed = el.hasAttribute('data-scroll-fixed');
+                    var curZ = parseInt(el.style.zIndex, 10) || (isFixed ? V4_Z_TIERS.FIXED_HUD_MIN : V4_Z_TIERS.CONTENT_MIN);
+
+                    var tierSiblings = siblingComps.filter(function(c) {
+                        if (c === el) return false;
+                        var cIsFixed = c.hasAttribute('data-scroll-fixed');
+                        return isFixed ? cIsFixed : !cIsFixed;
+                    });
+
+                    var prevLower = null;
+                    var prevLowerZ = -Infinity;
+
+                    tierSiblings.forEach(function(c) {
+                        var cz = parseInt(c.style.zIndex, 10) || (isFixed ? V4_Z_TIERS.FIXED_HUD_MIN : V4_Z_TIERS.CONTENT_MIN);
+                        if (cz < curZ && cz > prevLowerZ) {
+                            prevLowerZ = cz;
+                            prevLower = c;
+                        }
+                    });
+
+                    if (prevLower) {
+                        var newZ = prevLowerZ;
+                        prevLower.style.zIndex = String(curZ);
+                        el.style.zIndex = String(newZ);
+
+                        parent.insertBefore(el, prevLower);
+                    } else {
+                        var minFloor = isFixed ? V4_Z_TIERS.FIXED_HUD_MIN : V4_Z_TIERS.CONTENT_MIN;
+                        var newZ = curZ - 10;
+                        if (newZ < minFloor) {
+                            tierSiblings.forEach(function(c) {
+                                var cz = parseInt(c.style.zIndex, 10) || minFloor;
+                                c.style.zIndex = String(cz + 10);
+                            });
+                            newZ = minFloor;
+                        }
+                        el.style.zIndex = String(newZ);
+
+                        var firstSibling = tierSiblings[0];
+                        if (firstSibling && firstSibling.parentNode === parent) {
+                            parent.insertBefore(el, firstSibling);
+                        }
+                    }
+                });
+            });
+
+            if (typeof markDirty === 'function') markDirty();
+        }
+    }
+
     if (!window.v4MessageHandlers) window.v4MessageHandlers = {};
     window.v4MessageHandlers['LF_NORMALIZE_Z_INDEX'] = function(d) {
         var targetEl = (d && d.containerId) ? document.getElementById(d.containerId) : null;
         normalizeZIndices(targetEl, true);
     };
+    window.v4MessageHandlers['LF_BRING_FRONT'] = function(d) {
+        handleBringFront(d || {});
+    };
+    window.v4MessageHandlers['LF_SEND_BACK'] = function(d) {
+        handleSendBack(d || {});
+    };
+    window.v4MessageHandlers['LF_BRING_FORWARD'] = function(d) {
+        handleBringForward(d || {});
+    };
+    window.v4MessageHandlers['LF_SEND_BACKWARD'] = function(d) {
+        handleSendBackward(d || {});
+    };
 
     window.normalizeZIndices = normalizeZIndices;
     window.handleBringFront = handleBringFront;
     window.handleSendBack = handleSendBack;
+    window.handleBringForward = handleBringForward;
+    window.handleSendBackward = handleSendBackward;
 
     // Auto-normalize upon module load if legacy inflated z-indices exist
     if (typeof document !== 'undefined') {

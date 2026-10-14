@@ -46,10 +46,7 @@ window.V4_COMMON_COLOR_PALETTE = [
         return null;
     }
 
-window.initV4GlobalColorPalette = function() {
-    if (window._v4ColorPaletteInitialized) return;
-    window._v4ColorPaletteInitialized = true;
-
+function _createColorPalettePopover() {
     let popover = document.getElementById('v4-global-color-palette-popover');
     if (!popover) {
         popover = document.createElement('div');
@@ -88,112 +85,100 @@ window.initV4GlobalColorPalette = function() {
         grid.innerHTML = window.V4_COMMON_COLOR_PALETTE.map(c => `
             <div class="v4-palette-item" data-color="${c}" style="background-color: ${c};" title="${c}"></div>
         `).join('');
+    }
 
-        const footer = popover.querySelector('.v4-palette-footer');
-        const customAction = popover.querySelector('.v4-palette-custom-action');
-        const resetBtn = popover.querySelector('.v4-palette-reset-btn');
+    return {
+        popover: popover,
+        grid: popover.querySelector('.v4-palette-grid'),
+        footer: popover.querySelector('.v4-palette-footer'),
+        customAction: popover.querySelector('.v4-palette-custom-action'),
+        resetBtn: popover.querySelector('.v4-palette-reset-btn'),
+        hexBar: popover.querySelector('.v4-palette-hex-bar'),
+        hexPreviewWrap: popover.querySelector('.v4-hex-preview-wrap'),
+        hexPreview: popover.querySelector('.v4-hex-preview'),
+        hexNativePicker: popover.querySelector('.v4-hex-native-picker'),
+        hexInput: popover.querySelector('.v4-hex-input'),
+        hexApplyBtn: popover.querySelector('.v4-hex-btn-apply'),
+        hexCancelBtn: popover.querySelector('.v4-hex-btn-cancel')
+    };
+}
 
-        const hexBar = popover.querySelector('.v4-palette-hex-bar');
-        const hexPreviewWrap = popover.querySelector('.v4-hex-preview-wrap');
-        const hexPreview = popover.querySelector('.v4-hex-preview');
-        const hexNativePicker = popover.querySelector('.v4-hex-native-picker');
-        const hexInput = popover.querySelector('.v4-hex-input');
-        const hexApplyBtn = popover.querySelector('.v4-hex-btn-apply');
-        const hexCancelBtn = popover.querySelector('.v4-hex-btn-cancel');
+function _bindHexBarControls(dom, state) {
+    const { hexBar, footer, hexInput, hexPreview, hexNativePicker, hexApplyBtn, hexCancelBtn } = dom;
 
-        let currentActiveWrapper = null;
-        let currentTargetInput = null;
+    function closeHexBar() {
+        if (hexBar) hexBar.classList.remove('active');
+        if (footer) footer.style.display = 'flex';
+        if (hexInput) hexInput.classList.remove('error');
+    }
 
-        function closeHexBar() {
-            if (hexBar) hexBar.classList.remove('active');
-            if (footer) footer.style.display = 'flex';
-            if (hexInput) hexInput.classList.remove('error');
+    function openHexBar() {
+        if (!hexBar || !footer) return;
+        footer.style.display = 'none';
+        hexBar.classList.add('active');
+
+        const curVal = (state.currentTargetInput && state.currentTargetInput.value ? state.currentTargetInput.value : '#ffffff').toLowerCase();
+        const norm = normalizeHex(curVal) || '#ffffff';
+        const cleanHex = norm.replace(/^#/, '').toUpperCase();
+        if (hexInput) {
+            hexInput.value = cleanHex;
+            hexInput.classList.remove('error');
+        }
+        if (hexPreview) {
+            hexPreview.style.backgroundColor = norm;
+        }
+        if (hexNativePicker) {
+            hexNativePicker.value = norm;
+        }
+        setTimeout(() => {
+            if (hexInput) {
+                hexInput.focus();
+                hexInput.select();
+            }
+        }, 10);
+    }
+
+    function applyHexColor() {
+        if (!hexInput) return;
+        const norm = normalizeHex(hexInput.value);
+        if (!norm) {
+            hexInput.classList.add('error');
+            setTimeout(() => {
+                if (hexInput) hexInput.classList.remove('error');
+            }, 500);
+            return;
         }
 
-        function openHexBar() {
-            if (!hexBar || !footer) return;
-            footer.style.display = 'none';
-            hexBar.classList.add('active');
+        if (state.currentTargetInput) {
+            state.currentTargetInput.value = norm;
+            state.currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
+            state.currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        if (state.currentActiveWrapper) {
+            state.currentActiveWrapper.classList.remove('transparent-active');
+        }
+        window.closeV4ColorPalette();
+    }
 
-            const curVal = (currentTargetInput && currentTargetInput.value ? currentTargetInput.value : '#ffffff').toLowerCase();
-            const norm = normalizeHex(curVal) || '#ffffff';
-            const cleanHex = norm.replace(/^#/, '').toUpperCase();
+    // Native Color Picker (Drag Spectrum) -> Real-time sync to Hex Input & Preview
+    if (hexNativePicker) {
+        const syncFromNativePicker = (e) => {
+            const pickedHex = (e.target.value || '').toLowerCase();
+            const cleanHex = pickedHex.replace(/^#/, '').toUpperCase();
             if (hexInput) {
                 hexInput.value = cleanHex;
                 hexInput.classList.remove('error');
             }
             if (hexPreview) {
-                hexPreview.style.backgroundColor = norm;
+                hexPreview.style.backgroundColor = pickedHex;
             }
-            if (hexNativePicker) {
-                hexNativePicker.value = norm;
-            }
-            setTimeout(() => {
-                if (hexInput) {
-                    hexInput.focus();
-                    hexInput.select();
-                }
-            }, 10);
-        }
+        };
+        hexNativePicker.addEventListener('input', syncFromNativePicker);
+        hexNativePicker.addEventListener('change', syncFromNativePicker);
+    }
 
-        function applyHexColor() {
-            if (!hexInput) return;
-            const norm = normalizeHex(hexInput.value);
-            if (!norm) {
-                hexInput.classList.add('error');
-                setTimeout(() => {
-                    if (hexInput) hexInput.classList.remove('error');
-                }, 500);
-                return;
-            }
-
-            if (currentTargetInput) {
-                currentTargetInput.value = norm;
-                currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-            }
-            if (currentActiveWrapper) {
-                currentActiveWrapper.classList.remove('transparent-active');
-            }
-            window.closeV4ColorPalette();
-        }
-
-        // Swatch click
-        grid.addEventListener('click', (e) => {
-            const item = e.target.closest('.v4-palette-item');
-            if (!item || !currentTargetInput) return;
-            const hex = item.dataset.color;
-            currentTargetInput.value = hex;
-            currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-            currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-            if (currentActiveWrapper) currentActiveWrapper.classList.remove('transparent-active');
-            window.closeV4ColorPalette();
-        });
-
-        // Custom action -> Open Hex Bar
-        customAction.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openHexBar();
-        });
-
-        // Native Color Picker (Drag Spectrum) -> Real-time sync to Hex Input & Preview
-        if (hexNativePicker) {
-            const syncFromNativePicker = (e) => {
-                const pickedHex = (e.target.value || '').toLowerCase();
-                const cleanHex = pickedHex.replace(/^#/, '').toUpperCase();
-                if (hexInput) {
-                    hexInput.value = cleanHex;
-                    hexInput.classList.remove('error');
-                }
-                if (hexPreview) {
-                    hexPreview.style.backgroundColor = pickedHex;
-                }
-            };
-            hexNativePicker.addEventListener('input', syncFromNativePicker);
-            hexNativePicker.addEventListener('change', syncFromNativePicker);
-        }
-
-        // Hex Input real-time preview, reverse sync to native picker, & keyboard event isolation
+    // Hex Input real-time preview, reverse sync to native picker, & keyboard event isolation
+    if (hexInput) {
         hexInput.addEventListener('input', (e) => {
             const val = e.target.value;
             const norm = normalizeHex(val);
@@ -216,116 +201,169 @@ window.initV4GlobalColorPalette = function() {
         });
         hexInput.addEventListener('keyup', (e) => e.stopPropagation());
         hexInput.addEventListener('keypress', (e) => e.stopPropagation());
+    }
 
+    if (hexApplyBtn) {
         hexApplyBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             applyHexColor();
         });
+    }
 
+    if (hexCancelBtn) {
         hexCancelBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             closeHexBar();
         });
+    }
 
-        // Reset / Transparent
+    return { closeHexBar, openHexBar, applyHexColor };
+}
+
+function _bindColorPaletteEvents(dom, state, hexControls) {
+    const { popover, grid, customAction, resetBtn, hexBar } = dom;
+
+    // Swatch click
+    if (grid) {
+        grid.addEventListener('click', (e) => {
+            const item = e.target.closest('.v4-palette-item');
+            if (!item || !state.currentTargetInput) return;
+            const hex = item.dataset.color;
+            state.currentTargetInput.value = hex;
+            state.currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
+            state.currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
+            if (state.currentActiveWrapper) state.currentActiveWrapper.classList.remove('transparent-active');
+            window.closeV4ColorPalette();
+        });
+    }
+
+    // Custom action -> Open Hex Bar
+    if (customAction) {
+        customAction.addEventListener('click', (e) => {
+            e.stopPropagation();
+            hexControls.openHexBar();
+        });
+    }
+
+    // Reset / Transparent
+    if (resetBtn) {
         resetBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (!currentActiveWrapper) return;
-            const propGroup = currentActiveWrapper.closest('.prop-group');
+            if (!state.currentActiveWrapper) return;
+            const propGroup = state.currentActiveWrapper.closest('.prop-group');
             const noneBtn = propGroup ? propGroup.querySelector('.v4-color-none-btn') : null;
             if (noneBtn) {
                 noneBtn.click();
-            } else if (currentTargetInput) {
-                currentTargetInput.value = 'transparent';
-                currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-                currentActiveWrapper.classList.add('transparent-active');
+            } else if (state.currentTargetInput) {
+                state.currentTargetInput.value = 'transparent';
+                state.currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                state.currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
+                state.currentActiveWrapper.classList.add('transparent-active');
             }
             window.closeV4ColorPalette();
-        });
-
-        window.openV4ColorPalette = function(wrapperEl) {
-            if (!wrapperEl) return;
-            currentActiveWrapper = wrapperEl;
-            currentTargetInput = wrapperEl.querySelector('input[type="color"], .v4-color-input');
-            if (!currentTargetInput) return;
-
-            closeHexBar();
-
-            const curVal = (currentTargetInput.value || '#ffffff').toLowerCase();
-            popover.querySelectorAll('.v4-palette-item').forEach(it => {
-                if (it.dataset.color.toLowerCase() === curVal) {
-                    it.classList.add('selected');
-                } else {
-                    it.classList.remove('selected');
-                }
-            });
-
-            // Position calculation
-            popover.classList.add('active');
-            const rect = wrapperEl.getBoundingClientRect();
-            const popRect = popover.getBoundingClientRect();
-            
-            let top = rect.bottom + 4;
-            let left = rect.left;
-
-            // Flip top if bottom overflows viewport
-            if (top + popRect.height > window.innerHeight - 10) {
-                top = Math.max(10, rect.top - popRect.height - 4);
-            }
-            // Clamp left
-            if (left + popRect.width > window.innerWidth - 10) {
-                left = Math.max(10, window.innerWidth - popRect.width - 10);
-            }
-
-            popover.style.top = `${top}px`;
-            popover.style.left = `${left}px`;
-        };
-
-        window.closeV4ColorPalette = function() {
-            closeHexBar();
-            popover.classList.remove('active');
-            currentActiveWrapper = null;
-            currentTargetInput = null;
-        };
-
-        // Auto-close on object deselection via MessageHub
-        if (window.MessageHub) {
-            window.MessageHub.subscribe('LF_DESELECT', () => {
-                window.closeV4ColorPalette();
-            });
-            window.MessageHub.subscribe('LF_COMP_DESELECTED', () => {
-                window.closeV4ColorPalette();
-            });
-        }
-
-        // Auto-close when clicking inside an iframe (parent window blurs and activeElement becomes IFRAME)
-        window.addEventListener('blur', () => {
-            if (popover && popover.classList.contains('active')) {
-                if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
-                    window.closeV4ColorPalette();
-                }
-            }
-        });
-
-        // Close on outside click
-        document.addEventListener('mousedown', (e) => {
-            if (!popover.classList.contains('active')) return;
-            if (popover.contains(e.target) || e.target.closest('.v4-color-wrapper')) return;
-            window.closeV4ColorPalette();
-        });
-
-        // Close on escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && popover.classList.contains('active')) {
-                if (hexBar && hexBar.classList.contains('active')) {
-                    closeHexBar();
-                } else {
-                    window.closeV4ColorPalette();
-                }
-            }
         });
     }
+
+    // Auto-close on object deselection via MessageHub
+    if (window.MessageHub) {
+        window.MessageHub.subscribe('LF_DESELECT', () => {
+            window.closeV4ColorPalette();
+        });
+        window.MessageHub.subscribe('LF_COMP_DESELECTED', () => {
+            window.closeV4ColorPalette();
+        });
+    }
+
+    // Auto-close when clicking inside an iframe (parent window blurs and activeElement becomes IFRAME)
+    window.addEventListener('blur', () => {
+        if (popover && popover.classList.contains('active')) {
+            if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+                window.closeV4ColorPalette();
+            }
+        }
+    });
+
+    // Close on outside click
+    document.addEventListener('mousedown', (e) => {
+        if (!popover.classList.contains('active')) return;
+        if (popover.contains(e.target) || e.target.closest('.v4-color-wrapper')) return;
+        window.closeV4ColorPalette();
+    });
+
+    // Close on escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && popover.classList.contains('active')) {
+            if (hexBar && hexBar.classList.contains('active')) {
+                hexControls.closeHexBar();
+            } else {
+                window.closeV4ColorPalette();
+            }
+        }
+    });
+}
+
+function _setupColorPalettePositioning(dom, state, hexControls) {
+    const { popover } = dom;
+
+    window.openV4ColorPalette = function(wrapperEl) {
+        if (!wrapperEl) return;
+        state.currentActiveWrapper = wrapperEl;
+        state.currentTargetInput = wrapperEl.querySelector('input[type="color"], .v4-color-input');
+        if (!state.currentTargetInput) return;
+
+        hexControls.closeHexBar();
+
+        const curVal = (state.currentTargetInput.value || '#ffffff').toLowerCase();
+        popover.querySelectorAll('.v4-palette-item').forEach(it => {
+            if (it.dataset.color.toLowerCase() === curVal) {
+                it.classList.add('selected');
+            } else {
+                it.classList.remove('selected');
+            }
+        });
+
+        // Position calculation
+        popover.classList.add('active');
+        const rect = wrapperEl.getBoundingClientRect();
+        const popRect = popover.getBoundingClientRect();
+        
+        let top = rect.bottom + 4;
+        let left = rect.left;
+
+        // Flip top if bottom overflows viewport
+        if (top + popRect.height > window.innerHeight - 10) {
+            top = Math.max(10, rect.top - popRect.height - 4);
+        }
+        // Clamp left
+        if (left + popRect.width > window.innerWidth - 10) {
+            left = Math.max(10, window.innerWidth - popRect.width - 10);
+        }
+
+        popover.style.top = `${top}px`;
+        popover.style.left = `${left}px`;
+    };
+
+    window.closeV4ColorPalette = function() {
+        hexControls.closeHexBar();
+        popover.classList.remove('active');
+        state.currentActiveWrapper = null;
+        state.currentTargetInput = null;
+    };
+}
+
+window.initV4GlobalColorPalette = function() {
+    if (window._v4ColorPaletteInitialized) return;
+    window._v4ColorPaletteInitialized = true;
+
+    const dom = _createColorPalettePopover();
+    const state = {
+        currentActiveWrapper: null,
+        currentTargetInput: null
+    };
+
+    const hexControls = _bindHexBarControls(dom, state);
+    _bindColorPaletteEvents(dom, state, hexControls);
+    _setupColorPalettePositioning(dom, state, hexControls);
 
     // Global event delegation for .v4-color-wrapper clicks
     document.addEventListener('click', (e) => {

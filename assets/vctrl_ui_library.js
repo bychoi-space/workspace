@@ -55,6 +55,8 @@
             if (typeof window.initAdminSettingsEvents === 'function') window.initAdminSettingsEvents();
             if (typeof window.initToggleEvents === 'function') window.initToggleEvents();
             if (typeof window.initCursorEvents === 'function') window.initCursorEvents();
+            if (typeof window.initWebEditorEvents === 'function') window.initWebEditorEvents();
+            else if (window.InspectorAtoms && typeof window.InspectorAtoms.bindWebEditorEvents === 'function') window.InspectorAtoms.bindWebEditorEvents();
             if (window.InspectorPopup && typeof window.InspectorPopup.init === 'function') window.InspectorPopup.init();
             if (typeof window.initV4AddonEventListeners === 'function') window.initV4AddonEventListeners();
         }

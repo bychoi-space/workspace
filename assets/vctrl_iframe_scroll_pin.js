@@ -497,7 +497,7 @@ window.v4ScrollPinScript = `
                     var parent = el.parentElement;
                     if (parent) {
                         var trailingRef = Array.from(parent.children).find(function(c) {
-                            return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+                            return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
                         });
                         if (trailingRef && trailingRef.parentNode === parent) {
                             parent.insertBefore(el, trailingRef);
@@ -528,7 +528,7 @@ window.v4ScrollPinScript = `
                                     p.style.setProperty('transform', el.style.transform, 'important');
                                 }
                                 var tr = Array.from(parent.children).find(function(c) {
-                                    return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+                                    return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
                                 });
                                 if (tr && tr.parentNode === parent) {
                                     parent.insertBefore(p, tr);
@@ -563,7 +563,7 @@ window.v4ScrollPinScript = `
                     el.style.removeProperty('transform');
                     el.style.removeProperty('will-change');
                     el.style.removeProperty('transition');
-                    maxNormalZ = Math.min(80000, maxNormalZ + 10);
+                    maxNormalZ = Math.min(69900, maxNormalZ + 10);
                     el.style.zIndex = String(Math.max(1010, maxNormalZ));
                     if (el.dataset && el.dataset.autoBg === 'true') {
                         el.style.backgroundColor = '';

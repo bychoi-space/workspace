@@ -126,6 +126,7 @@
             if (t1Input) {
                 t1Input.addEventListener('input', () => {
                     t1.title = t1Input.value;
+                    t1.text = t1Input.value;
                     commitHierarchy();
                 });
             }
@@ -348,10 +349,6 @@
 
                 let currentHierarchy = [];
                 if (depth === '2depth') {
-                    const container = document.getElementById('accordion-hierarchy-container');
-                    if (container && container.children.length > 0) {
-                        return;
-                    }
                     try {
                         const iframe = document.getElementById('main-iframe');
                         if (iframe && iframe.contentWindow && iframe.contentWindow.document) {
@@ -365,20 +362,32 @@
                             }
                         }
                     } catch(e) {}
-                    if (currentHierarchy.length === 0) {
+                    if (!Array.isArray(currentHierarchy) || currentHierarchy.length === 0) {
                         const subInputs = Array.from(document.querySelectorAll('.accordion-sub-input'));
                         const subTexts = subInputs.length > 0 ? subInputs.map(i => i.value) : ['Sub Item 1', 'Sub Item 2'];
                         currentHierarchy = [
                             {
                                 title: '대분류 1',
-                                items: subTexts.map((txt, idx) => ({ text: txt, active: idx === 0 }))
+                                text: '대분류 1',
+                                items: subTexts.map((txt, idx) => ({ text: txt, active: idx === 0 })),
+                                children: subTexts.map((txt, idx) => ({ text: txt, active: idx === 0 }))
                             }
                         ];
+                    } else {
+                        currentHierarchy.forEach(t1 => {
+                            if (!t1.title && t1.text) t1.title = t1.text;
+                            if (!t1.text && t1.title) t1.text = t1.title;
+                            const items = t1.items || t1.children || [];
+                            t1.items = items;
+                            t1.children = items;
+                        });
                     }
                     syncHierarchyInputs(currentHierarchy);
                 }
                 notifyAccordion({ depthType: depth, hierarchy: currentHierarchy });
             };
+
+            window.InspectorAccordion.setDepth = setDepth;
 
             if (depth1Btn) depth1Btn.onclick = () => setDepth('1depth');
             if (depth2Btn) depth2Btn.onclick = () => setDepth('2depth');
@@ -399,7 +408,12 @@
                                     text: inp.value,
                                     active: t2Radios[idx] ? t2Radios[idx].checked : false
                                 }));
-                                currentHierarchy.push({ title: t1Title, items: items });
+                                currentHierarchy.push({
+                                    title: t1Title || '대분류',
+                                    text: t1Title || '대분류',
+                                    items: items,
+                                    children: items
+                                });
                             });
                         }
                         if (currentHierarchy.length === 0) {
@@ -418,7 +432,9 @@
                     } catch(e) {}
                     currentHierarchy.push({
                         title: '대분류 ' + (currentHierarchy.length + 1),
-                        items: [{ text: 'Sub Item 1', active: false }]
+                        text: '대분류 ' + (currentHierarchy.length + 1),
+                        items: [{ text: 'Sub Item 1', active: false }],
+                        children: [{ text: 'Sub Item 1', active: false }]
                     });
                     syncHierarchyInputs(currentHierarchy);
                     notifyAccordion({ hierarchy: currentHierarchy });
@@ -460,6 +476,43 @@
         syncHierarchyInputs: syncHierarchyInputs
     };
 
+    window.InspectorAccordion.bindAccordionEvents = window.InspectorAccordion.bindEvents;
+
+    // Document-level event delegation safeguards for Accordion
+    document.addEventListener('click', (e) => {
+        const expandY = e.target.closest && e.target.closest('#btn-accordion-expand-y');
+        if (expandY) {
+            const expandN = document.getElementById('btn-accordion-expand-n');
+            highlightActive(expandY, true);
+            if (expandN) highlightActive(expandN, false);
+            notifyAccordion({ expanded: true });
+            return;
+        }
+        const expandN = e.target.closest && e.target.closest('#btn-accordion-expand-n');
+        if (expandN) {
+            const expandY = document.getElementById('btn-accordion-expand-y');
+            if (expandY) highlightActive(expandY, false);
+            highlightActive(expandN, true);
+            notifyAccordion({ expanded: false });
+            return;
+        }
+        const depth1Btn = e.target.closest && e.target.closest('#btn-accordion-depth-1');
+        if (depth1Btn) {
+            if (window.InspectorAccordion && typeof window.InspectorAccordion.setDepth === 'function') {
+                window.InspectorAccordion.setDepth('1depth');
+            }
+            return;
+        }
+        const depth2Btn = e.target.closest && e.target.closest('#btn-accordion-depth-2');
+        if (depth2Btn) {
+            if (window.InspectorAccordion && typeof window.InspectorAccordion.setDepth === 'function') {
+                window.InspectorAccordion.setDepth('2depth');
+            }
+            return;
+        }
+    });
+
     window.syncAccordionSubItemInputs = syncSubItemInputs;
     window.syncAccordionHierarchyInputs = syncHierarchyInputs;
+    window.initAccordionEvents = () => window.InspectorAccordion?.bindEvents?.();
 })();

@@ -7,7 +7,9 @@ if (!window.v4IframeInserterScript) {
         const pcInner = document.querySelector('.pc-content-inner');
         const mobileScrollArea = document.querySelector('.mobile-content-area, .mobile-content');
         const mobileInner = document.querySelector('.mobile-content-inner');
-        const isResponsiveTemplate = !!(pcInner || mobileInner);
+        const isResponsiveTemplate = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function')
+            ? window.ResponsiveFrameUtils.isResponsive(document)
+            : !!(pcInner || mobileInner);
 
         const isPinMarker = d.className && d.className.includes('pin-marker');
         const compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);

@@ -1332,6 +1332,8 @@
     color: #c4b5fd !important;
     font-size: 11px !important;
     font-weight: 500 !important;
+    text-align: left !important;
+    text-align-last: left !important;
     padding: 0 24px 0 8px !important;
     box-sizing: border-box !important;
     outline: none !important;
@@ -1362,7 +1364,14 @@
 .v4-prop-select option {
     background-color: #161826 !important;
     color: #ffffff !important;
+    text-align: left !important;
     padding: 6px 8px !important;
+}
+
+select.v4-prop-input-styled,
+.v4-prop-select.v4-prop-input-styled {
+    text-align: left !important;
+    text-align-last: left !important;
 }
 
 .v4-text-center-w30 {

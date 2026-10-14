@@ -35,7 +35,9 @@
 #dock-btn-next,
 #dock-page-indicator,
 .btn-toolbar-mobile-more,
-#btn-toolbar-mobile-more {
+#btn-toolbar-mobile-more,
+#v4-frame-switcher,
+.v4-frame-switcher {
     display: none !important;
 }
 
@@ -964,9 +966,17 @@ body.touch-capable .stage {
     pointer-events: auto !important;
 }
 
-/* Smart Frame Switcher is shown whenever responsive frame columns exist */
-.v4-frame-switcher.is-available {
+/* Smart Frame Switcher is shown ONLY in mobile/touch read-only mode */
+body.res-narrow .v4-frame-switcher.is-available,
+body.touch-capable:not(.res-wide) .v4-frame-switcher.is-available {
     display: flex !important;
+}
+
+/* Explicitly suppress on Desktop PC editing mode */
+body.res-wide .v4-frame-switcher,
+body.res-compact:not(.touch-capable) .v4-frame-switcher,
+body:not(.res-narrow):not(.touch-capable) .v4-frame-switcher {
+    display: none !important;
 }
 
 body.res-narrow .v4-frame-switcher {

@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>bychoi workspace - Editor</title>
-    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg?v=V402_TRANSPARENT_FAVICON">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
@@ -29,7 +29,7 @@
         if (window.location.protocol.startsWith('http')) {
             var manifestLink = document.createElement('link');
             manifestLink.rel = 'manifest';
-            manifestLink.href = 'manifest.json?v=V381_PWA_PNG_ICONS';
+            manifestLink.href = 'manifest.json?v=V402_TRANSPARENT_FAVICON';
             document.head.appendChild(manifestLink);
         }
     </script>
@@ -37,12 +37,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Workspace">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="assets/icon-192.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
+    <link rel="apple-touch-icon" href="assets/icon-192.png?v=V402_TRANSPARENT_FAVICON">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=V402_TRANSPARENT_FAVICON">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
     <meta name="theme-color" content="#12151c">
 
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V393_TABLET_VIEWER_AND_FULLSCREEN_FIX">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V403_HIDE_DESKTOP_FRAME_SWITCHER">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -420,24 +420,24 @@
                                     <span class="selection-align-title">ALIGNMENT</span>
                                 </div>
                                 <div class="selection-align-grid-3">
-                                    <button id="btn-align-left" class="v4-inspector-btn btn-secondary selection-align-btn" title="Left">
+                                    <button id="btn-align-left" class="v4-inspector-btn btn-secondary selection-align-btn" title="Left (Ctrl+1)">
                                         <svg class="lf-icon" viewBox="0 0 24 24"><path d="M4 2v20M8 6h12v4H8zM8 14h8v4H8z"/></svg>
                                     </button>
-                                    <button id="btn-align-center" class="v4-inspector-btn btn-secondary selection-align-btn" title="Center">
+                                    <button id="btn-align-center" class="v4-inspector-btn btn-secondary selection-align-btn" title="Center (Ctrl+2)">
                                         <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 2v2M12 20v2M8 4h8v6H8zM6 14h12v6H6z"/></svg>
                                     </button>
-                                    <button id="btn-align-right" class="v4-inspector-btn btn-secondary selection-align-btn" title="Right">
+                                    <button id="btn-align-right" class="v4-inspector-btn btn-secondary selection-align-btn" title="Right (Ctrl+3)">
                                         <svg class="lf-icon" viewBox="0 0 24 24"><path d="M20 2v20M4 6h12v4H4zM8 14h12v4H8z"/></svg>
                                     </button>
                                 </div>
                                 <div class="selection-align-grid-3">
-                                    <button id="btn-align-top" class="v4-inspector-btn btn-secondary selection-align-btn" title="Top">
+                                    <button id="btn-align-top" class="v4-inspector-btn btn-secondary selection-align-btn" title="Top (Ctrl+4)">
                                         <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 4h20M6 8v12h4V8zM14 8v8h4V8z"/></svg>
                                     </button>
-                                    <button id="btn-align-middle" class="v4-inspector-btn btn-secondary selection-align-btn" title="Middle">
+                                    <button id="btn-align-middle" class="v4-inspector-btn btn-secondary selection-align-btn" title="Middle (Ctrl+5)">
                                         <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 12h2M20 12h2M4 8h6v8H4zM14 6h6v12h-6z"/></svg>
                                     </button>
-                                    <button id="btn-align-bottom" class="v4-inspector-btn btn-secondary selection-align-btn" title="Bottom">
+                                    <button id="btn-align-bottom" class="v4-inspector-btn btn-secondary selection-align-btn" title="Bottom (Ctrl+6)">
                                         <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 20h20M6 4v12h4V4zM14 8v8h4V8z"/></svg>
                                     </button>
                                 </div>
@@ -817,36 +817,38 @@
     <script src="assets/vctrl_ui_atoms_inputs.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_ui_atoms_cursor.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_design_system.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_clipboard_objects.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_format_painter.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_shortcuts.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_common.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_clipboard_objects.js?v=V403_CLONED_FORMAT_PAINTER_FIX"></script>
+    <script src="assets/vctrl_format_painter.js?v=V403_CLONED_FORMAT_PAINTER_FIX"></script>
+    <script src="assets/vctrl_shortcuts.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_common.js?v=V403_CLONED_FORMAT_PAINTER_FIX"></script>
     <script src="assets/vctrl_object_shape.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_object_connector.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/responsive_frame.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/vctrl_iframe_styles.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/vctrl_iframe_style_extractor.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/vctrl_iframe_layering.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/vctrl_iframe_inserter.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/vctrl_iframe_script.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/vctrl_iframe_grid.js?v=V361_GRID_HIGHLIGHT"></script>
+    <script src="assets/responsive_frame.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_iframe_styles.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_iframe_style_extractor.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_iframe_layering.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_iframe_inserter.js?v=V396_PIN_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_adorner.js?v=V403_SELECTION_ADORNER"></script>
+    <script src="assets/vctrl_iframe_script.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_iframe_grid.js?v=V396_PIN_ZINDEX_LAYER_FIX"></script>
     <script src="assets/vctrl_iframe_accordion.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_iframe_tab.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_iframe_drag.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_iframe_drag.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V391_MOBILE_RESTORE_FULLSCREEN_CLEAN"></script>
-    <script src="assets/vctrl_core.js?v=V379_PWA_DASHBOARD"></script>
+    <script src="assets/vctrl_core.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
     <script src="assets/vctrl_storage.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_core_router.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_core_router.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
     <script src="assets/vctrl_parent_shortcuts.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_smartguide.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_responsive_smartguide_math.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_responsive_smartguide.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_responsive_multiselect.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_iframe_scroll_pin.js?v=V363_SCROLL_PIN_FIX"></script>
-    <script src="assets/vctrl_responsive_pins.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_grouping.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_responsive_multiselect.js?v=V403_CLONED_FORMAT_PAINTER_FIX"></script>
+    <script src="assets/vctrl_iframe_scroll_pin.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_responsive_pins.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_grouping.js?v=V403_CLONED_FORMAT_PAINTER_FIX"></script>
     <script src="assets/vctrl_color_picker.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_component_atoms_data.js?v=V402_ATOM_CATALOG_DECOUPLED"></script>
     <script src="assets/vctrl_component_data.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_component_illustrations.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_component_library.js?v=V360_RECURSION_HOTFIX"></script>
@@ -854,12 +856,14 @@
     <script src="assets/vctrl_system_modals.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/inspector/inspector_quill.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/inspector/inspector_scroll_pin.js?v=V364_SCROLL_PIN_SSOT"></script>
-    <script src="assets/vctrl_inspector.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_inspector_actionbar.js?v=V403_INSPECTOR_ACTIONBAR"></script>
+    <script src="assets/vctrl_inspector_sync.js?v=V404_INSPECTOR_SYNC"></script>
+    <script src="assets/vctrl_inspector.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
     <script src="assets/vctrl_screen_manager.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_revision_history.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_annotation_pins.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_annotation_pins.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
     <script src="assets/vctrl_canvas_viewport.js?v=V391_MOBILE_RESTORE_FULLSCREEN_CLEAN"></script>
-    <script src="assets/vctrl_properties.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_properties.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
     <script src="assets/vctrl_connectors.js?v=V360_RECURSION_HOTFIX"></script>
     
     <!-- V4 Premium Addons -->
@@ -874,6 +878,6 @@
     <script src="assets/inspector/inspector_admin_settings.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_table.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_popup.js?v=V361_POPUP_INSPECTOR"></script>
-    <script src="assets/vctrl_resolution_engine.js?v=V393_TABLET_VIEWER_AND_FULLSCREEN_FIX"></script>
+    <script src="assets/vctrl_resolution_engine.js?v=V403_HIDE_DESKTOP_FRAME_SWITCHER"></script>
 </body>
 </html>

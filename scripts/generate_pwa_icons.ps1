@@ -19,13 +19,11 @@ function Render-Icon([int]$size, [string]$outputPath) {
     $g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
     $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
 
-    # Deep Dark Background
-    $bgBrush = New-Object System.Drawing.SolidBrush([System.Drawing.ColorTranslator]::FromHtml("#0f1117"))
-    $g.FillRectangle($bgBrush, 0, 0, $size, $size)
-    $bgBrush.Dispose()
+    # 100% Transparent Background (No dark box for pristine bookmark & tab integration)
+    $g.Clear([System.Drawing.Color]::Transparent)
 
-    # Scale logo dimensions (center slightly inside maskable safe zone)
-    $safeScale = 0.85
+    # Scale logo dimensions (center comfortably inside canvas)
+    $safeScale = 0.90
     $scale = ($size / 100.0) * $safeScale
     $offsetX = ($size * (1.0 - $safeScale)) / 2.0
     $offsetY = ($size * (1.0 - $safeScale)) / 2.0

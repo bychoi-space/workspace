@@ -105,6 +105,32 @@ window.v4ResponsivePinsScript = `
         };
     }
 
+    function ensurePinLayer(container) {
+        if (!container) return null;
+        var layer = container.querySelector(':scope > .v4-pin-layer');
+        if (!layer) {
+            layer = document.createElement('div');
+            layer.className = 'v4-pin-layer';
+            layer.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:250000!important;';
+            var trailing = Array.from(container.children).find(function(c) {
+                return c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script';
+            });
+            if (trailing) {
+                container.insertBefore(layer, trailing);
+            } else {
+                container.appendChild(layer);
+            }
+        }
+        var loosePins = Array.from(container.children).filter(function(c) {
+            return c !== layer && c.classList && (c.classList.contains('pin-marker') || c.classList.contains('text-marker'));
+        });
+        loosePins.forEach(function(lp) {
+            layer.appendChild(lp);
+        });
+        return layer;
+    }
+    window.ensurePinLayer = ensurePinLayer;
+
     function createSinglePinElement(frame, index, number, customX, customY) {
         var pinId = 'v4-pin-' + frame + '-' + index;
         var pin = document.getElementById(pinId);
@@ -119,7 +145,7 @@ window.v4ResponsivePinsScript = `
         pin.style.position = 'absolute';
         pin.style.width = '20px';
         pin.style.height = '20px';
-        pin.style.zIndex = '200000';
+        pin.style.setProperty('z-index', '200000', 'important');
 
         var defaultLeft = 50;
         var defaultTop = 150;
@@ -127,7 +153,9 @@ window.v4ResponsivePinsScript = `
         if (frame === 'pc') {
             var pcArea = document.querySelector('.pc-content-area, .pc-content');
             var scrollY = pcArea ? pcArea.scrollTop : 0;
-            defaultLeft = Math.round((1000 - 20) / 2);
+            var pcInner = document.querySelector('.pc-content-inner');
+            var pcW = pcInner ? (pcInner.offsetWidth || 1160) : 1000;
+            defaultLeft = Math.round((pcW - 20) / 2);
             defaultTop = Math.round(250 + scrollY);
         } else if (frame === 'left') {
             var leftCol = document.querySelector('.mobile-column-left');
@@ -183,7 +211,9 @@ window.v4ResponsivePinsScript = `
             var p1X = pos1 ? pos1.x : null;
             var p1Y = pos1 ? pos1.y : null;
             pin1 = createSinglePinElement(ctx.frame1Type, index, number, p1X, p1Y);
-            ctx.frame1.appendChild(pin1);
+            var pinLayer1 = ensurePinLayer(ctx.frame1);
+            if (pinLayer1) pinLayer1.appendChild(pin1);
+            else ctx.frame1.appendChild(pin1);
 
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
@@ -201,7 +231,9 @@ window.v4ResponsivePinsScript = `
             var p2X = pos2 ? pos2.x : null;
             var p2Y = pos2 ? pos2.y : null;
             pin2 = createSinglePinElement(ctx.frame2Type, index, number, p2X, p2Y);
-            ctx.frame2.appendChild(pin2);
+            var pinLayer2 = ensurePinLayer(ctx.frame2);
+            if (pinLayer2) pinLayer2.appendChild(pin2);
+            else ctx.frame2.appendChild(pin2);
 
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
@@ -248,7 +280,9 @@ window.v4ResponsivePinsScript = `
         }
 
         var pin = createSinglePinElement('canvas', index, number, posX, posY);
-        ground.appendChild(pin);
+        var groundLayer = ensurePinLayer(ground);
+        if (groundLayer) groundLayer.appendChild(pin);
+        else ground.appendChild(pin);
 
         if (typeof window.notifyParent === 'function') {
             window.notifyParent({
@@ -537,12 +571,17 @@ window.v4ResponsivePinsScript = `
                 var canPos = (item.pins && item.pins.canvas) ? item.pins.canvas : { x: item.x || 790, y: item.y || 450 };
                 var groundTarget = ctx.ground || document.body;
                 var existingCan = document.getElementById('v4-pin-canvas-' + idx);
+                var groundLayer = ensurePinLayer(groundTarget);
                 if (!existingCan) {
                     var canPin = createSinglePinElement('canvas', idx, num, canPos.x, canPos.y);
-                    groundTarget.appendChild(canPin);
+                    if (groundLayer) groundLayer.appendChild(canPin);
+                    else groundTarget.appendChild(canPin);
                 } else {
                     existingCan.style.left = canPos.x + 'px';
                     existingCan.style.top = canPos.y + 'px';
+                    if (groundLayer && existingCan.parentElement !== groundLayer) {
+                        groundLayer.appendChild(existingCan);
+                    }
                 }
                 return;
             }
@@ -551,11 +590,11 @@ window.v4ResponsivePinsScript = `
             var p2Pos = null;
 
             if (ctx.isMobileCompare) {
-                p1Pos = (item.pins && item.pins.left) ? item.pins.left : ((item.pins && item.pins.pc) ? item.pins.pc : { x: (item.x !== undefined ? item.x : 0), y: (item.y !== undefined ? item.y : 545) });
-                p2Pos = (item.pins && item.pins.right) ? item.pins.right : ((item.pins && item.pins.mobile) ? item.pins.mobile : { x: (item.x !== undefined ? item.x : 0), y: (item.y !== undefined ? item.y : 545) });
+                p1Pos = (item.pins && item.pins.left) ? item.pins.left : ((item.pins && item.pins.pc) ? item.pins.pc : { x: (item.x !== undefined ? item.x : 0), y: (item.y !== undefined ? item.y : 250) });
+                p2Pos = (item.pins && item.pins.right) ? item.pins.right : ((item.pins && item.pins.mobile) ? item.pins.mobile : { x: (item.x !== undefined ? item.x : 0), y: (item.y !== undefined ? item.y : 250) });
             } else {
-                p1Pos = (item.pins && item.pins.pc) ? item.pins.pc : { x: item.x || 500, y: item.y || 300 };
-                p2Pos = (item.pins && item.pins.mobile) ? item.pins.mobile : { x: 180, y: 300 };
+                p1Pos = (item.pins && item.pins.pc) ? item.pins.pc : { x: item.x || 570, y: item.y || 180 };
+                p2Pos = (item.pins && item.pins.mobile) ? item.pins.mobile : { x: 170, y: 180 };
             }
 
             var isPinFixed = (item.scrollFixed === 'viewport' || item.scrollFixed === 'fixed' || item.scrollFixed === 'top');
@@ -563,12 +602,17 @@ window.v4ResponsivePinsScript = `
             if (ctx.frame1) {
                 var existing1 = document.getElementById('v4-pin-' + ctx.frame1Type + '-' + idx);
                 var pin1 = existing1;
+                var pinLayer1 = ensurePinLayer(ctx.frame1);
                 if (!existing1) {
                     pin1 = createSinglePinElement(ctx.frame1Type, idx, num, p1Pos.x, p1Pos.y);
-                    ctx.frame1.appendChild(pin1);
+                    if (pinLayer1) pinLayer1.appendChild(pin1);
+                    else ctx.frame1.appendChild(pin1);
                 } else {
                     existing1.style.left = p1Pos.x + 'px';
                     existing1.style.top = p1Pos.y + 'px';
+                    if (pinLayer1 && existing1.parentElement !== pinLayer1) {
+                        pinLayer1.appendChild(existing1);
+                    }
                 }
                 if (isPinFixed && pin1) {
                     pin1.setAttribute('data-scroll-fixed', 'viewport');
@@ -586,12 +630,17 @@ window.v4ResponsivePinsScript = `
             if (ctx.frame2) {
                 var existing2 = document.getElementById('v4-pin-' + ctx.frame2Type + '-' + idx);
                 var pin2 = existing2;
+                var pinLayer2 = ensurePinLayer(ctx.frame2);
                 if (!existing2) {
                     pin2 = createSinglePinElement(ctx.frame2Type, idx, num, p2Pos.x, p2Pos.y);
-                    ctx.frame2.appendChild(pin2);
+                    if (pinLayer2) pinLayer2.appendChild(pin2);
+                    else ctx.frame2.appendChild(pin2);
                 } else {
                     existing2.style.left = p2Pos.x + 'px';
                     existing2.style.top = p2Pos.y + 'px';
+                    if (pinLayer2 && existing2.parentElement !== pinLayer2) {
+                        pinLayer2.appendChild(existing2);
+                    }
                 }
                 if (isPinFixed && pin2) {
                     pin2.setAttribute('data-scroll-fixed', 'viewport');
@@ -655,7 +704,7 @@ window.v4ResponsivePinsScript = `
                 div.style.width = 'fit-content';
                 div.style.height = 'auto';
             }
-            div.style.zIndex = '200000';
+            div.style.setProperty('z-index', '200000', 'important');
 
             let xVal = parseFloat(pin.x) || 0;
             let yVal = parseFloat(pin.y) || 0;
@@ -701,7 +750,7 @@ window.v4ResponsivePinsScript = `
                 div.style.width = 'fit-content';
                 div.style.height = 'auto';
             }
-            div.style.zIndex = '200000';
+            div.style.setProperty('z-index', '200000', 'important');
 
             let xVal = parseFloat(pin.x) || 0;
             let yVal = parseFloat(pin.y) || 0;

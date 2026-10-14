@@ -96,6 +96,12 @@ window.VCTRL_UI_FALLBACK_ATOMIC = `
             <span class="material-icons-outlined v4-card-atom-icon">near_me</span>
             <span class="v4-card-atom-label">Mouse Cursor</span>
         </div>
+
+        <!-- Row 7: Rich Text Editor -->
+        <div class="component-item v4-card v4-card-atom" onclick="insertV4ComponentById('v4-atom-webeditor')" data-ko="웹에디터 스마트에디터 리치텍스트 에디터 wysiwyg webeditor editor texteditor 게시판 글쓰기 본문">
+            <span class="material-icons-outlined v4-card-atom-icon">edit_note</span>
+            <span class="v4-card-atom-label">Web Editor</span>
+        </div>
 `;
 
 window.VCTRL_UI_FALLBACK_ICON = `
@@ -1250,6 +1256,71 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
         </div>
 
+        <!-- webeditor-inspector-section -->
+        <div class="v4-card-section mt-12" id="webeditor-inspector-section" style="display: none;">
+            <div class="v4-section-header">
+                <span class="v4-section-header-title">WEB EDITOR PROPERTIES</span>
+            </div>
+            <!-- Unified Dimensions (Top) -->
+            <div class="v4-dimensions-group prop-group v4-prop-group-divider">
+                <div class="v4-prop-grid-2">
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="width">가로 크기 (W)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-width-webeditor" class="v4-prop-input v4-prop-input-styled" data-prop="width" value="700" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                    <div class="prop-subgroup">
+                        <label class="v4-unified-label v4-prop-label bold" data-prop="height">세로 크기 (H)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-height-webeditor" class="v4-prop-input v4-prop-input-styled" data-prop="height" value="340" min="1" placeholder="Auto">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Editor Mode Selector -->
+            <div class="prop-group v4-prop-group-divider">
+                <label class="v4-prop-label bold">에디터 표시 모드</label>
+                <select id="prop-webeditor-mode" class="v4-prop-select" style="width: 100%;">
+                    <option value="editor" selected>Editor (기본 위지윅)</option>
+                    <option value="html">HTML (소스 코드)</option>
+                    <option value="text">TEXT (순수 텍스트)</option>
+                </select>
+            </div>
+            <!-- Toolbar Mode Preset -->
+            <div class="prop-group v4-prop-group-divider">
+                <label class="v4-prop-label bold">툴바 스타일 프리셋</label>
+                <select id="prop-webeditor-toolbar" class="v4-prop-select" style="width: 100%;">
+                    <option value="full" selected>Full (전체 툴바)</option>
+                    <option value="simple">Simple (간소화 서식)</option>
+                    <option value="none">None (툴바 숨김)</option>
+                </select>
+            </div>
+            <!-- Show Counter Toggle -->
+            <div class="prop-group v4-section-header mb-8 top-divider-sm">
+                <label class="v4-prop-label mb-0">글자수 제한 표시 (Counter)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-webeditor-counter-y" class="v4-inspector-btn v4-inspector-toggle-btn active">Y</button>
+                    <button id="btn-webeditor-counter-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
+                </div>
+            </div>
+            <!-- Max Length -->
+            <div class="prop-group mb-12">
+                <label class="v4-prop-label">최대 글자수 (<span id="txt-webeditor-maxlength">2000</span>자)</label>
+                <input class="v4-prop-input-base" type="number" id="prop-webeditor-maxlength" value="2000" min="0" max="10000">
+            </div>
+            <!-- Read-only / Disabled Toggle -->
+            <div class="prop-group v4-section-header top-divider-sm mb-8">
+                <label class="v4-prop-label">읽기 전용 (Read-only)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-webeditor-readonly-y" class="v4-inspector-btn v4-inspector-toggle-btn">Y</button>
+                    <button id="btn-webeditor-readonly-n" class="v4-inspector-btn v4-inspector-toggle-btn active">N</button>
+                </div>
+            </div>
+        </div>
+
         <!-- searchbar-inspector-section -->
         <div class="v4-card-section mt-12" id="searchbar-inspector-section" style="display: none;">
             <div class="v4-section-header">
@@ -1747,7 +1818,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
             <!-- Custom Button Colors -->
             <div class="top-divider mt-12 mb-12" id="prop-button-custom-colors" style="display: none;">
-                <div class="v4-prop-grid-3 gap-8">
+                <div class="v4-prop-grid-2 gap-8 mb-8">
                     <div class="prop-group">
                         <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
                         <div class="v4-prop-flex-gap-4">
@@ -1766,6 +1837,8 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                             <button id="btn-button-border-none" class="v4-color-none-btn v4-btn-action-del" data-prop="borderColor" title="No Border"><span class="material-icons-outlined font-14">block</span></button>
                         </div>
                     </div>
+                </div>
+                <div class="v4-prop-grid-2 gap-8">
                     <div class="prop-group">
                         <label class="v4-color-label v4-prop-label" data-prop="color">글자색 (Text)</label>
                         <div class="v4-color-wrapper v4-checkerboard-bg" id="button-text-wrapper">
@@ -1909,20 +1982,21 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
             </div>
             
             <!-- Default Value (On/Off) -->
-            <div class="prop-group mb-12">
-                <label class="v4-prop-label mb-8">기본 상태 (Default State)</label>
-                <div class="v4-prop-grid-2">
-                    <button id="btn-toggle-on" class="v4-inspector-btn v4-inspector-toggle-btn">On</button>
-                    <button id="btn-toggle-off" class="v4-inspector-btn v4-inspector-toggle-btn">Off</button>
+            <div class="prop-group v4-section-header mb-8 top-divider-sm">
+                <label class="v4-prop-label mb-0">기본 상태 (Default State)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-toggle-on" class="v4-inspector-btn v4-inspector-toggle-btn">ON</button>
+                    <button id="btn-toggle-off" class="v4-inspector-btn v4-inspector-toggle-btn">OFF</button>
                 </div>
             </div>
 
             <!-- Toggle Color -->
             <div class="prop-group mb-12 top-divider">
-                <label class="v4-prop-label mb-8">토글 색상 (Toggle Color)</label>
-                <div class="v4-color-wrapper v4-prop-select-wrap">
-                    <span class="font-11 text-white">배경 색상</span>
-                    <input type="color" id="prop-toggle-color" value="#3b82f6" class="v4-color-input v4-color-picker-input" data-prop="toggle-color">
+                <label class="v4-color-label v4-prop-label" data-prop="toggleColor">토글 색상 (Toggle Color)</label>
+                <div class="v4-prop-flex-gap-4">
+                    <div class="v4-color-wrapper v4-checkerboard-bg" id="toggle-color-wrapper">
+                        <input type="color" id="prop-toggle-color" class="v4-color-input" data-prop="toggleColor" value="#3b82f6">
+                    </div>
                 </div>
             </div>
 

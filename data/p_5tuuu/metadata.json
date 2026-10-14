@@ -57,7 +57,7 @@
     "09_Admin_PC_Scroll_59.html": {
       "title": "09_Admin_PC_Scroll_59",
       "type": "admin",
-      "updatedAt": "2026-10-14T05:00:54.767Z",
+      "updatedAt": "2026-10-14T05:11:05.683Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -89,7 +89,9 @@
         }
       ],
       "connectors": [],
-      "version": 0.1
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": "[object Object]"
     }
   },
   "assignee": "최범열",

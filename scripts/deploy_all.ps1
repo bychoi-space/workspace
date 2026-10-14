@@ -49,11 +49,14 @@ Write-Host "`n[Step 4/4] Pushing to Dual Remotes (GitHub + Sisun Git)..." -Foreg
 # Ensure SSL verification is bypassed for IP-based direct Sisun access
 git config http.sslVerify false
 
+$origPref = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+
 Write-Host "Executing: git push origin main" -ForegroundColor Cyan
-$pushOutput = git push origin main 2>&1
+git push origin main
 $pushExitCode = $LASTEXITCODE
 
-Write-Host $pushOutput
+$ErrorActionPreference = $origPref
 
 if ($pushExitCode -eq 0) {
     Write-Host "`n🎉 [SUCCESS] Successfully deployed to both GitHub and Sisun Git!" -ForegroundColor Green

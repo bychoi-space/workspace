@@ -92,6 +92,12 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": "[object Object]"
+    },
+    "01_Project_Summary_685.html": {
+      "title": "01_Project_Summary_685",
+      "type": "plan",
+      "updatedAt": "2026-10-14T05:13:40.234Z",
+      "template": "template_project_summary.html"
     }
   },
   "assignee": "최범열",
@@ -103,7 +109,8 @@
   "screenOrder": [
     "00_Cover_733.html",
     "08_Responsive_PC_Mobile_500.html",
-    "09_Admin_PC_Scroll_59.html"
+    "09_Admin_PC_Scroll_59.html",
+    "01_Project_Summary_685.html"
   ],
   "updated": "2026-10-14 14:00:54",
   "version": 0.1

@@ -4,15 +4,15 @@
     "08_Responsive_PC_Mobile_487.html": {
       "title": "상품 상세 261014",
       "type": "ui",
-      "updatedAt": "2026-10-14T08:39:14.175Z",
+      "updatedAt": "2026-10-14T08:51:23.052Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "text": "[더보기] 버튼\n\n\n- Mobile viewport 상품정보에만 [더보기] 버튼 존재\n\n\n- PC viewport 상품정보에서도 상품정보 일부만 표현하고 [더보기] 버튼 추가 필요\n\n\n※ 진행 목적 : PC 에서 상품정보 하단 컨텐츠를 보기 어려움 (스크롤을 많이 내려야 하는 불편함)",
+          "html": "[더보기] 버튼<div><br></div><div>- Mobile viewport 상품정보에만 [더보기] 버튼 존재</div><div><br></div><div>- PC viewport 상품정보에서도 상품정보 일부만 표현하고 [더보기] 버튼 추가 필요</div><div><br></div><div>※ 진행 목적 : PC 에서 상품정보 하단 컨텐츠를 보기 어려움 (스크롤을 많이 내려야 하는 불편함)</div>",
           "x": 30,
           "y": 1467,
           "pins": {
@@ -65,6 +65,6 @@
     "00_Cover_44.html",
     "08_Responsive_PC_Mobile_487.html"
   ],
-  "updated": "2026-10-14 17:39:13",
+  "updated": "2026-10-14 17:51:23",
   "version": 0.1
 }

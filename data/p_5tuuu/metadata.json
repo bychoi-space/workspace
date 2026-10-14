@@ -13,7 +13,7 @@
     "08_Responsive_PC_Mobile_500.html": {
       "title": "상품 그룹 UI 변경",
       "type": "ui",
-      "updatedAt": "2026-10-14T04:48:43.326Z",
+      "updatedAt": "2026-10-13T01:29:56.253Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -57,9 +57,37 @@
     "09_Admin_PC_Scroll_59.html": {
       "title": "09_Admin_PC_Scroll_59",
       "type": "admin",
-      "updatedAt": "2026-10-14T03:10:07.006Z",
+      "updatedAt": "2026-10-14T04:53:33.289Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "기획전 연관상품 설정 영역\n\n\n- 신규 기능 '노출 순서' 추가\n\n\n- 기능 형태 Selectbox\n   > 기본값 : 설정 순서\n   > 랭킹순 정렬 선택 시, Front 상품 sorting 기준 '랭킹순' 으로 변경\n   > 신상품순 정렬 선택 시, Front 상품 sorting 기준 '신상품순' 으로 변경",
+          "html": "기획전 연관상품 설정 영역<div><br></div><div>- 신규 기능 '노출 순서' 추가</div><div><br></div><div>- 기능 형태 Selectbox</div><div><span style=\"background-color: transparent;\">   &gt; 기본값 : 설정 순서</span></div><div><span style=\"background-color: transparent;\">   &gt; 랭킹순 정렬 선택 시, Front 상품 sorting 기준 '랭킹순' 으로 변경\n   &gt; 신상품순 정렬 선택 시, Front 상품 sorting 기준 '신상품순' 으로 변경</span></div>",
+          "x": 852,
+          "y": 1494,
+          "pins": {
+            "pc": {
+              "x": 852,
+              "y": 1494,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 852,
+              "y": 1494,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1
     }
@@ -75,6 +103,6 @@
     "08_Responsive_PC_Mobile_500.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-14 13:48:43",
+  "updated": "2026-10-14 13:53:33",
   "version": 0.1
 }

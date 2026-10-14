@@ -1,10 +1,88 @@
 {
   "title": "[상품] 상세화면 PC 더보기 적용",
-  "screens": {},
+  "screens": {
+    "08_Responsive_PC_Mobile_487.html": {
+      "title": "상품 상세 261014",
+      "type": "ui",
+      "updatedAt": "2026-10-14T07:54:41.585Z",
+      "template": "template_responsive_pc_mobile.html",
+      "version": 0.1,
+      "description": [
+        {
+          "text": "기존 UI 에서는 클릭하기 전까지 다른 컬러 확인 불가\n\n변경 방안\n- PC : 마우스 호버 시, 딤드 레이어 컬러칩 표시\n- MO : 직관적으로 하단 텍스트 표현",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 669.219,
+          "y": 467.062,
+          "standardized": true,
+          "pins": {
+            "pc": {
+              "x": 669.219,
+              "y": 467.062,
+              "active": true
+            },
+            "mobile": {
+              "x": 0,
+              "y": 894.5,
+              "active": true
+            }
+          },
+          "type": "pin",
+          "scrollFixed": "none"
+        },
+        {
+          "text": "혜택 정보 (적립 마일리지, 무료 배송) 안내 위치 이동",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 594,
+          "y": 326,
+          "pins": {
+            "pc": {
+              "x": 594,
+              "y": 326,
+              "active": true
+            },
+            "mobile": {
+              "x": 3,
+              "y": 718,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "type": "pin",
+          "scrollFixed": "none"
+        },
+        {
+          "text": "무료배송, 마일리지, 카드혜택,  3column 영역 개선\n- 무료배송, 마일리지가 상단으로 이동 배치 (② 내용)\n- 해당 위치에는 [카드혜택] [고시정보] 2가지 정보 안내로 변경\n- [카드혜택] 클릭 시, 기존 기능과 동일한 '무이자 할부안내 팝업' 호출\n- [고시정보] 클릭 시, PDP 페이지 최하단 [상품정보제공고시] 영역으로 스크롤 이동 후, 아코디언 활성화 처리",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 1074,
+          "y": 771,
+          "pins": {
+            "pc": {
+              "x": 1074,
+              "y": 771,
+              "active": true
+            },
+            "mobile": {
+              "x": 187,
+              "y": 1003,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.10.14(수) ~ 2026.11.26(목)",
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3f7f6986169c8030a031ddfd9f67cee3?source=copy_link",
-  "themeIndex": 1
+  "themeIndex": 1,
+  "screenOrder": [
+    "08_Responsive_PC_Mobile_487.html"
+  ]
 }

@@ -80,7 +80,9 @@
       "type": "cover",
       "updatedAt": "2026-10-14T08:27:38.880Z",
       "template": "template_cover.html",
-      "version": 0.1
+      "version": 0.1,
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",
@@ -90,7 +92,7 @@
   "notionUrl": "https://app.notion.com/p/3f7f6986169c8030a031ddfd9f67cee3?source=copy_link",
   "themeIndex": 1,
   "screenOrder": [
-    "08_Responsive_PC_Mobile_487.html",
-    "00_Cover_44.html"
+    "00_Cover_44.html",
+    "08_Responsive_PC_Mobile_487.html"
   ]
 }

@@ -55,9 +55,9 @@
       "screenDesc": "[object Object]"
     },
     "09_Admin_PC_Scroll_59.html": {
-      "title": "[admin] 기획전 상세 - 상품 그룹 정렬 기능",
+      "title": "기획전 상세 - 상품 그룹 정렬 기능",
       "type": "admin",
-      "updatedAt": "2026-10-14T05:11:43.479Z",
+      "updatedAt": "2026-10-14T05:12:00.628Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {

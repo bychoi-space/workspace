@@ -57,7 +57,7 @@
     "09_Admin_PC_Scroll_640.html": {
       "title": "상품공지관리",
       "type": "admin",
-      "updatedAt": "2026-10-15T05:05:44.529Z",
+      "updatedAt": "2026-10-15T06:27:37.172Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -84,7 +84,7 @@
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object]",
-      "version": 0.6
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -98,6 +98,6 @@
     "08_Responsive_PC_Mobile_487.html",
     "09_Admin_PC_Scroll_640.html"
   ],
-  "updated": "2026-10-15 09:26:51",
+  "updated": "2026-10-15 15:27:36",
   "version": 0.1
 }

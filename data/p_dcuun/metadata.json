@@ -53,6 +53,38 @@
       "version": 0.1,
       "description": [],
       "connectors": []
+    },
+    "09_Admin_PC_Scroll_640.html": {
+      "title": "상품공지관리",
+      "type": "admin",
+      "updatedAt": "2026-10-15T05:05:44.529Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [
+        {
+          "text": "기획전 관리 페이지\n- 기능과 구조 모두 현상 유지",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "x": 273,
+          "y": 330,
+          "pins": {
+            "pc": {
+              "x": 273,
+              "y": 330,
+              "active": true
+            },
+            "mobile": {
+              "x": 180,
+              "y": 300,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "defaultTab": "description",
+      "screenDesc": "[object Object]",
+      "version": 0.6
     }
   },
   "assignee": "최범열",
@@ -63,7 +95,8 @@
   "themeIndex": 1,
   "screenOrder": [
     "00_Cover_44.html",
-    "08_Responsive_PC_Mobile_487.html"
+    "08_Responsive_PC_Mobile_487.html",
+    "09_Admin_PC_Scroll_640.html"
   ],
   "updated": "2026-10-15 09:26:51",
   "version": 0.1

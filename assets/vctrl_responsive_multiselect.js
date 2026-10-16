@@ -651,7 +651,11 @@ window.v4ResponsiveMultiselectScript = `
                     }
                     
                     const topmostComp = comps[comps.length - 1] || (items.length > 0 ? items[items.length - 1].el : null);
-                    const groupParent = (topmostComp && topmostComp.parentNode) ? topmostComp.parentNode : host;
+                    let groupParent = (topmostComp && topmostComp.parentNode) ? topmostComp.parentNode : host;
+                    if (groupParent && groupParent.querySelector && (!groupParent.classList || (!groupParent.classList.contains('pc-content-inner') && !groupParent.classList.contains('mobile-content-inner')))) {
+                        const childInner = groupParent.querySelector('.pc-content-inner, .mobile-content-inner');
+                        if (childInner) groupParent = childInner;
+                    }
         
                     const targetGroupZ = (typeof window.getNextTopZIndex === 'function')
                         ? window.getNextTopZIndex(groupParent)
@@ -675,8 +679,8 @@ window.v4ResponsiveMultiselectScript = `
                         group.appendChild(item.el);
                     });
         
-                    // Insert group into parent DOM right before script tag, ensuring both topmost z-index and DOM order
-                    const trailingRef = Array.from(groupParent.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+                    // Insert group into parent DOM right before pin layer or script tag, ensuring both topmost z-index and DOM order
+                    const trailingRef = Array.from(groupParent.children).find(c => (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
                     if (trailingRef && trailingRef.parentNode === groupParent) {
                         groupParent.insertBefore(group, trailingRef);
                     } else {

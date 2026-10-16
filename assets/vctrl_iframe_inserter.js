@@ -248,7 +248,7 @@ if (!window.v4IframeInserterScript) {
             }
         }
         
-        const trailingRef = Array.from(host.children).find(c => !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+        const trailingRef = Array.from(host.children).find(c => (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
         if (trailingRef && trailingRef.parentNode === host) {
             host.insertBefore(v, trailingRef);
         } else {

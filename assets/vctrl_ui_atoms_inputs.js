@@ -530,71 +530,14 @@ window.v4UIAtomsInputsScript = `
             container._eventsBound = true;
             container.removeAttribute('data-events-bound');
 
+            // [Selectbox SSOT Rule] Do NOT toggle dropdown or option selection on canvas click.
+            // Dropdown visibility ('드롭다운 표시' Y/N) and option states are controlled exclusively via the right sidebar inspector.
             const header = container.querySelector('.v4-selectbox-header');
             if (header) {
-                header.onclick = function(e) {
-                    e.stopPropagation();
-                    if (container.getAttribute('data-disabled') === 'true') return;
-                    if (window.V4UndoManager) window.V4UndoManager.saveState();
-
-                    const isDrop = container.getAttribute('data-dropdown-active') === 'true';
-                    const nextDrop = !isDrop;
-                    container.setAttribute('data-dropdown-active', nextDrop ? 'true' : 'false');
-                    if (optionsList) optionsList.style.display = nextDrop ? 'block' : 'none';
-
-                    const comp = container.closest('.lf-component');
-                    if (comp) {
-                        const optCount = Math.max(1, optArr.length);
-                        const targetH = nextDrop ? (30 + (optCount * 30)) + 'px' : '30px';
-                        comp.style.height = targetH;
-                        container.style.height = '100%';
-                        if (header) header.style.height = '30px';
-                    }
-
-                    markDirty();
-                    if (typeof window._getCompStyles === 'function' && comp) {
-                        notifyParent(Object.assign({
-                            type: 'LF_COMP_SELECTED'
-                        }, window._getCompStyles(comp)));
-                    }
-                };
+                header.onclick = null;
             }
-
             if (optionsList) {
-                optionsList.onclick = function(e) {
-                    const optEl = e.target.closest('.v4-selectbox-option');
-                    if (!optEl || !optionsList.contains(optEl)) return;
-                    e.stopPropagation();
-                    if (container.getAttribute('data-disabled') === 'true') return;
-                    if (window.V4UndoManager) window.V4UndoManager.saveState();
-
-                    const idx = parseInt(optEl.getAttribute('data-index'));
-                    if (isNaN(idx)) return;
-
-                    const curSelRaw = container.getAttribute('data-selected-indices') || '';
-                    let curIndices = curSelRaw ? curSelRaw.split(',').map(function(n) { return parseInt(n.trim()); }).filter(function(n) { return !isNaN(n); }) : [];
-
-                    const existPos = curIndices.indexOf(idx);
-                    if (existPos !== -1) {
-                        curIndices.splice(existPos, 1);
-                    } else {
-                        curIndices.push(idx);
-                        curIndices.sort(function(a, b) { return a - b; });
-                    }
-
-                    container.setAttribute('data-selected-indices', curIndices.join(','));
-
-                    container._eventsBound = true;
-                    bindSelectboxEvents();
-                    markDirty();
-
-                    const comp = container.closest('.lf-component');
-                    if (typeof window._getCompStyles === 'function' && comp) {
-                        notifyParent(Object.assign({
-                            type: 'LF_COMP_SELECTED'
-                        }, window._getCompStyles(comp)));
-                    }
-                };
+                optionsList.onclick = null;
             }
         });
     };

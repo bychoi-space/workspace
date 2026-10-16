@@ -25,6 +25,50 @@ if (!window.v4IframeLayeringScript) {
     };
     window.V4_Z_TIERS = V4_Z_TIERS;
 
+    function insertBeforeTrailingRef(hostEl, el) {
+        if (!hostEl || !el) return;
+        var trailingRef = Array.from(hostEl.children || []).find(function(c) {
+            return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+        });
+        if (trailingRef && trailingRef.parentNode === hostEl) {
+            hostEl.insertBefore(el, trailingRef);
+        } else {
+            hostEl.appendChild(el);
+        }
+    }
+
+    function healLeakedComponentsForInner(inn) {
+        if (!inn || !inn.classList) return false;
+        if (!inn.classList.contains('pc-content-inner') && !inn.classList.contains('mobile-content-inner')) return false;
+        var healed = false;
+        var anc = inn.parentElement;
+        while (anc && anc !== document.body) {
+            var isWrapper = anc.classList && (
+                anc.classList.contains('pc-content-area') ||
+                anc.classList.contains('mobile-content-area') ||
+                anc.classList.contains('pc-content') ||
+                anc.classList.contains('mobile-content') ||
+                anc.classList.contains('pc-browser-frame') ||
+                anc.classList.contains('mobile-frame') ||
+                anc.classList.contains('mobile-browser-frame') ||
+                anc.classList.contains('frame-column')
+            );
+            if (!isWrapper) break;
+            var leakedInAnc = Array.from(anc.children || []).filter(function(c) {
+                return c !== inn && c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.classList.contains('frame-column');
+            });
+            if (leakedInAnc.length > 0) {
+                leakedInAnc.forEach(function(lc) {
+                    insertBeforeTrailingRef(inn, lc);
+                });
+                healed = true;
+            }
+            if (anc.classList.contains('frame-column')) break;
+            anc = anc.parentElement;
+        }
+        return healed;
+    }
+
     function normalizeZIndices(container, force) {
         var host = container || document.body;
         if (!host) return;
@@ -37,20 +81,31 @@ if (!window.v4IframeLayeringScript) {
                 var leakedComps = Array.from(host.children || []).filter(function(c) {
                     return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.classList.contains('frame-column');
                 });
+                var healedRoot = false;
                 if (leakedComps.length > 0) {
                     var targetFrame = host.querySelector('.pc-content-inner') || host.querySelector('.mobile-content-inner');
                     if (targetFrame) {
                         leakedComps.forEach(function(lc) {
-                            targetFrame.appendChild(lc);
+                            insertBeforeTrailingRef(targetFrame, lc);
                         });
+                        healedRoot = true;
                         if (typeof markDirty === 'function') markDirty();
                     }
                 }
 
                 inners.forEach(function(inn) {
-                    normalizeZIndices(inn, force);
+                    var healedInner = healLeakedComponentsForInner(inn);
+                    if (healedInner && typeof markDirty === 'function') markDirty();
+                    normalizeZIndices(inn, force || healedRoot || healedInner);
                 });
                 return;
+            }
+        }
+
+        if (host.classList && (host.classList.contains('pc-content-inner') || host.classList.contains('mobile-content-inner'))) {
+            if (healLeakedComponentsForInner(host)) {
+                force = true;
+                if (typeof markDirty === 'function') markDirty();
             }
         }
 
@@ -145,6 +200,10 @@ if (!window.v4IframeLayeringScript) {
             if (activeInner) targetParent = activeInner;
         }
 
+        if (targetParent && targetParent.classList && (targetParent.classList.contains('pc-content-inner') || targetParent.classList.contains('mobile-content-inner'))) {
+            healLeakedComponentsForInner(targetParent);
+        }
+
         var maxZ = isFixed ? V4_Z_TIERS.FIXED_HUD_MIN : V4_Z_TIERS.CONTENT_MIN;
         var comps = (targetParent && targetParent.querySelectorAll) 
             ? targetParent.querySelectorAll('.lf-component') 
@@ -185,6 +244,26 @@ if (!window.v4IframeLayeringScript) {
         return maxZ + 10;
     };
 
+    function resolveAndHealParent(el, realCanvasHost) {
+        var p = el.parentElement;
+        if (!p) return null;
+        if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
+            realCanvasHost.appendChild(el);
+            p = realCanvasHost;
+        }
+        if (p.querySelector && (!p.classList || (!p.classList.contains('pc-content-inner') && !p.classList.contains('mobile-content-inner')))) {
+            var childInner = p.querySelector('.pc-content-inner, .mobile-content-inner');
+            if (childInner && !el.classList.contains('frame-column')) {
+                healLeakedComponentsForInner(childInner);
+                if (el.parentElement !== childInner) {
+                    insertBeforeTrailingRef(childInner, el);
+                }
+                p = childInner;
+            }
+        }
+        return p;
+    }
+
     function handleBringFront(d) {
         var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
         if (selected.length === 0) {
@@ -216,13 +295,8 @@ if (!window.v4IframeLayeringScript) {
             var realCanvasHost = document.querySelector('.canvas, .page, #canvas-page, #canvas');
             var parentMap = new Map();
             topLevelSelected.forEach(function(el) {
-                var p = el.parentElement;
+                var p = resolveAndHealParent(el, realCanvasHost);
                 if (!p) return;
-                // Self-healing: If an element was mistakenly appended directly to document.body while a canvas container exists, reparent it
-                if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
-                    realCanvasHost.appendChild(el);
-                    p = realCanvasHost;
-                }
                 if (!parentMap.has(p)) {
                     parentMap.set(p, []);
                 }
@@ -381,13 +455,8 @@ if (!window.v4IframeLayeringScript) {
             var realCanvasHost = document.querySelector('.canvas, .page, #canvas-page, #canvas');
             var parentMap = new Map();
             topLevelSelected.forEach(function(el) {
-                var p = el.parentElement;
+                var p = resolveAndHealParent(el, realCanvasHost);
                 if (!p) return;
-                // Self-healing: If an element was mistakenly appended directly to document.body while a canvas container exists, reparent it
-                if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
-                    realCanvasHost.appendChild(el);
-                    p = realCanvasHost;
-                }
                 if (!parentMap.has(p)) {
                     parentMap.set(p, []);
                 }
@@ -528,12 +597,8 @@ if (!window.v4IframeLayeringScript) {
             var realCanvasHost = document.querySelector('.canvas, .page, #canvas-page, #canvas');
             var parentMap = new Map();
             topLevelSelected.forEach(function(el) {
-                var p = el.parentElement;
+                var p = resolveAndHealParent(el, realCanvasHost);
                 if (!p) return;
-                if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
-                    realCanvasHost.appendChild(el);
-                    p = realCanvasHost;
-                }
                 if (!parentMap.has(p)) {
                     parentMap.set(p, []);
                 }
@@ -638,12 +703,8 @@ if (!window.v4IframeLayeringScript) {
             var realCanvasHost = document.querySelector('.canvas, .page, #canvas-page, #canvas');
             var parentMap = new Map();
             topLevelSelected.forEach(function(el) {
-                var p = el.parentElement;
+                var p = resolveAndHealParent(el, realCanvasHost);
                 if (!p) return;
-                if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
-                    realCanvasHost.appendChild(el);
-                    p = realCanvasHost;
-                }
                 if (!parentMap.has(p)) {
                     parentMap.set(p, []);
                 }

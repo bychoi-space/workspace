@@ -68,9 +68,64 @@
     "09_Admin_PC_Scroll_641.html": {
       "title": "상품공지관리_등록",
       "type": "admin",
-      "updatedAt": "2026-10-19T05:48:19.069Z",
+      "updatedAt": "2026-10-19T05:50:09.785Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[표현위치] 항목 추가\n- Default : 선택하세요",
+          "html": "[표현위치] 항목 추가<div>- Default : 선택하세요</div>",
+          "x": 300,
+          "y": 271,
+          "pins": {
+            "pc": {
+              "x": 300,
+              "y": 271,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 300,
+              "y": 271,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[타이틀/서브타이틀] 항목 수정\n- 기존 : [국문] [영문] [중문] Tab 존재\n- 개선 : Tab 삭제",
+          "html": "[타이틀/서브타이틀] 항목 수정<div>- 기존 : [국문] [영문] [중문] Tab 존재</div><div>- 개선 : Tab 삭제</div>",
+          "x": 451,
+          "y": 591,
+          "pins": {
+            "pc": {
+              "x": 451,
+              "y": 591,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 451,
+              "y": 591,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object]",
@@ -146,6 +201,6 @@
     "09_Admin_PC_Scroll_642.html",
     "08_Responsive_PC_Mobile_488.html"
   ],
-  "updated": "2026-10-19 14:48:19",
+  "updated": "2026-10-19 14:50:09",
   "version": 0.1
 }

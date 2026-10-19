@@ -36,7 +36,7 @@ window.showScreenFlyout = function(item, screenData) {
 
     const itemIndex = screenData.index + 1;
     const cat = getCategoryData(screenData.type);
-    if (indexEl) indexEl.innerText = `${itemIndex}. ${cat.code}`;
+    if (indexEl) indexEl.innerText = `#${String(itemIndex).padStart(2, '0')}`;
 
     if (badgeEl) {
         badgeEl.className = `flyout-badge ${cat.class}`;
@@ -151,12 +151,14 @@ window.renderScreenList = function(screens, activeName) {
         const badgeHtml = getCategoryBadge(scMeta.type);
         const displayTitle = scMeta.title || s.name;
         const itemIndex = index + 1;
+        const paddedIndex = String(itemIndex).padStart(2, '0');
         item.title = `${itemIndex}. [${cat.code}] ${displayTitle} (${s.name})`;
 
         item.innerHTML = `
             <div style="display:flex; align-items:center; flex:1; overflow:hidden;">
-                <!-- Collapsed Mode Single Crisp Chip: e.g. [1. CO], [2. UI] -->
+                <!-- Collapsed Mode Single Crisp Chip: e.g. [01], [02] -->
                 <span class="screen-collapsed-chip ${cat.class}">
+                    <span class="chip-pad-num">${paddedIndex}</span>
                     <span class="chip-num">${itemIndex}.</span>
                     <span class="chip-code">${cat.code}</span>
                 </span>

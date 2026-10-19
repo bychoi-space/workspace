@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css?v=V347_WHIMSICAL_UNIFIED">
     <link rel="stylesheet" href="assets/theme.css?v=V347_WHIMSICAL_UNIFIED">
-    <link rel="stylesheet" href="assets/dashboard.css?v=V394_TABLET_LANDSCAPE_3COL_FIX">
+    <link rel="stylesheet" href="assets/dashboard.css?v=V415_SINGLE_LINE_META_CHIPS">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
         if (window.location.protocol.startsWith('http')) {
@@ -97,7 +97,7 @@
             <!-- Search Bar (Centered & Highlighted) -->
             <div class="search-container">
                 <span class="material-icons-outlined search-icon">search</span>
-                <input type="text" id="project-search-input" placeholder="프로젝트명 또는 제목으로 검색..." autocomplete="off">
+                <input type="text" id="project-search-input" placeholder="프로젝트명, 분류 또는 제목으로 검색..." autocomplete="off">
                 <!-- Auto-complete dropdown -->
                 <div id="search-dropdown" class="search-dropdown"></div>
             </div>
@@ -107,6 +107,12 @@
                 <span>New Project</span>
             </button>
         </div>
+
+        <!-- Category Filter Bar (Option B Merge) -->
+        <div class="category-filter-wrap">
+            <div class="category-filter-bar" id="category-filter-bar" role="tablist" aria-label="프로젝트 분류 필터"></div>
+        </div>
+
         <div class="card-grid-scroll-wrap">
             <div class="card-grid" id="file-list"></div>
         </div>
@@ -115,7 +121,7 @@
 
     <!-- Metadata Edit Modal -->
     <div id="metadata-modal" class="modal-overlay">
-        <div class="modal-card">
+        <div class="modal-card modal-card-project-meta">
             <div class="modal-header">
                 <h3 class="modal-title" id="modal-main-title">파일 정보 수정</h3>
                 <p id="modal-filename" class="modal-filename"></p>
@@ -132,26 +138,31 @@
                     <label class="form-label">프로젝트명 / 제목 <span class="required-star">*</span></label>
                     <input type="text" id="meta-title" class="form-input" placeholder="예: 메인 페이지 개편안">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">기간</label>
-                    <input type="text" id="meta-period" class="form-input" placeholder="예: 2024.04.10 ~ 2024.04.20">
+                <div class="form-row-2col">
+                    <div class="form-group">
+                        <label class="form-label">담당자</label>
+                        <input type="text" id="meta-assignee" class="form-input" placeholder="예: 홍길동">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">기간</label>
+                        <input type="text" id="meta-period" class="form-input" placeholder="예: 2026.04.10 ~ 2026.04.20">
+                    </div>
+                </div>
+                <div class="form-row-2col">
+                    <div class="form-group">
+                        <label class="form-label">Figma Link</label>
+                        <input type="text" id="meta-figma" class="form-input" placeholder="https://www.figma.com/file/...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notion Link</label>
+                        <input type="text" id="meta-notion" class="form-input" placeholder="https://www.notion.so/...">
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">담당자</label>
-                    <input type="text" id="meta-assignee" class="form-input" placeholder="예: 홍길동">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Figma Link</label>
-                    <input type="text" id="meta-figma" class="form-input" placeholder="예: https://www.figma.com/file/... ">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Notion Link</label>
-                    <input type="text" id="meta-notion" class="form-input" placeholder="예: https://www.notion.so/... ">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">프로젝트 테마 디자인</label>
-                    <div id="theme-presets" class="theme-presets"></div>
+                    <label class="form-label">프로젝트 분류 (과제 성격 및 테마)</label>
+                    <div id="theme-presets" class="theme-presets category-presets-grid"></div>
                     <input type="hidden" id="meta-theme-index" value="-1">
+                    <input type="hidden" id="meta-category-id" value="auto">
                 </div>
             </div>
             <div class="modal-footer">
@@ -351,7 +362,7 @@
 
     <script src="assets/templates.js?v=V347_WHIMSICAL_UNIFIED"></script>
     <script src="assets/vctrl_clipboard.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/app.js?v=V347_WHIMSICAL_UNIFIED"></script>
-    <script src="assets/dashboard.js?v=V381_PWA_PNG_ICONS"></script>
+    <script src="assets/app.js?v=V416_VIEWER_VISUAL_RENEWAL"></script>
+    <script src="assets/dashboard.js?v=V416_VIEWER_VISUAL_RENEWAL"></script>
 </body>
 </html>

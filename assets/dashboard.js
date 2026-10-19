@@ -5,11 +5,13 @@
 
 const state = {
     projects: [],
+    activeCategory: 'all',
     deletedProjects: new Set() // Blacklist for zombie projects
 };
 
 const DOM = {
     list: document.getElementById('file-list'),
+    categoryFilterBar: document.getElementById('category-filter-bar'),
     ghStatus: document.getElementById('gh-status'),
     btnShowAuth: document.getElementById('btn-show-auth'),
     authBtnText: document.getElementById('auth-btn-text'),
@@ -52,122 +54,233 @@ const context = {
     isCreateMode: false
 };
 
-// Premium Card Themes Config (Renewed Modern Palette & Professional Icons)
-const PREMIUM_THEMES = [
-    {
-        name: "Cyber Indigo (Core & Platform)",
-        gradient: "linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #818cf8 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(99, 102, 241, 0.5)",
-        icon: "hub"
-    },
-    {
-        name: "Electric Cyan (Web & UI Devices)",
-        gradient: "linear-gradient(135deg, #0369a1 0%, #06b6d4 50%, #38bdf8 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(6, 182, 212, 0.5)",
-        icon: "devices"
-    },
-    {
-        name: "Emerald Aurora (Logic & Flowchart)",
-        gradient: "linear-gradient(135deg, #047857 0%, #10b981 50%, #34d399 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(16, 185, 129, 0.5)",
-        icon: "account_tree"
-    },
-    {
-        name: "Sunset Tangerine (Launch & Feature)",
-        gradient: "linear-gradient(135deg, #c2410c 0%, #f97316 50%, #fb923c 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(249, 115, 22, 0.5)",
-        icon: "rocket_launch"
-    },
-    {
-        name: "Cosmic Violet (Design System & Layers)",
-        gradient: "linear-gradient(135deg, #6d28d9 0%, #8b5cf6 50%, #c4b5fd 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(139, 92, 246, 0.5)",
-        icon: "layers"
-    },
-    {
-        name: "Neon Magenta (Creative & Sparkle)",
-        gradient: "linear-gradient(135deg, #be185d 0%, #ec4899 50%, #f472b6 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(236, 72, 153, 0.5)",
-        icon: "auto_awesome"
-    },
-    {
-        name: "Golden Amber (Milestone & Strategy)",
-        gradient: "linear-gradient(135deg, #b45309 0%, #f59e0b 50%, #fde047 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(245, 158, 11, 0.5)",
-        icon: "flag"
-    },
-    {
-        name: "Rose Crimson (Analytics & Insights)",
-        gradient: "linear-gradient(135deg, #be123c 0%, #f43f5e 50%, #fda4af 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(244, 63, 94, 0.5)",
-        icon: "insights"
-    },
-    {
-        name: "Midnight Sapphire (Enterprise & Security)",
-        gradient: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #60a5fa 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(37, 99, 235, 0.5)",
-        icon: "verified"
-    },
-    {
-        name: "Obsidian Slate (Spec & Document)",
-        gradient: "linear-gradient(135deg, #1e293b 0%, #475569 50%, #94a3b8 100%)",
-        iconColor: "#ffffff",
-        glowColor: "rgba(148, 163, 184, 0.4)",
-        icon: "description"
-    }
-];
+// 8 Semantic Project Categories (Delegated to Shared SSOT in assets/app.js)
+const PROJECT_CATEGORIES = window.PROJECT_CATEGORIES || [];
+const PREMIUM_THEMES = PROJECT_CATEGORIES;
 
-// Deterministic seed-based theme picker
-function getDeterministicTheme(projectName) {
-    let hash = 0;
-    for (let i = 0; i < projectName.length; i++) {
-        hash = projectName.charCodeAt(i) + ((hash << 5) - hash);
+function inferCategoryFromProject(projectName, meta) {
+    if (typeof window.inferCategoryFromProject === 'function') {
+        return window.inferCategoryFromProject(projectName, meta);
     }
-    const index = Math.abs(hash) % PREMIUM_THEMES.length;
-    return PREMIUM_THEMES[index];
+    return PROJECT_CATEGORIES[7] || {};
 }
 
-// Render dynamic theme presets inside project edit modal
-function renderThemePresets(selectedThemeIndex) {
+function resolveProjectCategory(projectName, meta) {
+    if (typeof window.resolveProjectCategory === 'function') {
+        return window.resolveProjectCategory(projectName, meta);
+    }
+    return inferCategoryFromProject(projectName, meta);
+}
+
+// Legacy compatibility wrapper
+function getDeterministicTheme(projectName, meta) {
+    return resolveProjectCategory(projectName, meta);
+}
+
+// Humanize raw template screen names for clean preview on project cards
+function humanizeScreenTitle(rawTitle, filename) {
+    const t = (rawTitle || filename || '').replace(/\.html?$/i, '').trim();
+    if (!t) return '';
+    if (/^00_cover/i.test(t) || t === '과제 커버' || t === '커버') return '표지';
+    if (/^01_arch/i.test(t)) return '아키텍처';
+    if (/^0[23]_plan/i.test(t)) return '기획안';
+    if (/^04_case_study/i.test(t)) return '사례 조사';
+    if (/^05_front_ui/i.test(t)) return 'Front UI';
+    if (/^0[67]_mobile/i.test(t)) return '모바일 UI';
+    if (/^08_responsive/i.test(t)) return 'PC/MO 반응형';
+    if (/^09_admin/i.test(t)) return 'Admin 화면';
+    if (/^10_blank/i.test(t)) return '자유 캔버스';
+    // Strip leading numeric prefix like "01_비즈니스 프로세스 맵" -> "비즈니스 프로세스 맵"
+    return t.replace(/^\d{2}_/, '').trim();
+}
+
+// Build a 1-line summary of the screens inside a project
+function getScreenCompositionSummary(meta) {
+    const screensObj = (meta && (meta.screens || meta.files)) || {};
+    const keys = (meta && Array.isArray(meta.screenOrder) && meta.screenOrder.length > 0)
+        ? meta.screenOrder.filter(k => screensObj[k])
+        : Object.keys(screensObj);
+
+    if (keys.length === 0) {
+        return { shortText: '등록된 화면이 없습니다', fullText: '등록된 화면이 없습니다' };
+    }
+
+    const rawTitles = keys.map(k => {
+        const sc = screensObj[k] || {};
+        return humanizeScreenTitle(sc.title, k);
+    }).filter(Boolean);
+
+    // Group consecutive or duplicate generic labels while preserving order
+    const counts = {};
+    const uniqueOrder = [];
+    rawTitles.forEach(label => {
+        if (!counts[label]) {
+            counts[label] = 1;
+            uniqueOrder.push(label);
+        } else {
+            counts[label]++;
+        }
+    });
+
+    const formattedItems = uniqueOrder.map(label => counts[label] > 1 ? `${label}(${counts[label]})` : label);
+    const fullText = formattedItems.join(' · ');
+
+    // Skip generic '표지' at the very front if there are more descriptive screens after it
+    const meaningful = formattedItems.length > 1 && formattedItems[0] === '표지'
+        ? formattedItems.slice(1)
+        : formattedItems;
+
+    const previewSlice = meaningful.slice(0, 3);
+    const remainCount = meaningful.length - previewSlice.length;
+    const shortText = remainCount > 0
+        ? `${previewSlice.join(' · ')} 외 ${remainCount}건`
+        : previewSlice.join(' · ');
+
+    return { shortText, fullText };
+}
+
+// Render dynamic category presets inside project create/edit modal
+function renderThemePresets(selectedCategoryOrIndex) {
     const container = document.getElementById('theme-presets');
     if (!container) return;
     container.innerHTML = '';
-    
-    // Auto-select option (Holographic deep-space background)
-    const autoDiv = document.createElement('div');
-    autoDiv.className = `theme-preset-item ${selectedThemeIndex === -1 ? 'active' : ''}`;
-    autoDiv.dataset.index = "-1";
-    autoDiv.style.background = "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)";
-    autoDiv.title = "자동 지정 (Deterministic Auto-Theme)";
-    autoDiv.innerHTML = `<span class="material-icons-outlined" style="font-size: 17px; color: #a5b4fc;">auto_awesome</span>`;
-    container.appendChild(autoDiv);
 
-    PREMIUM_THEMES.forEach((t, idx) => {
-        const item = document.createElement('div');
-        item.className = `theme-preset-item ${selectedThemeIndex === idx ? 'active' : ''}`;
-        item.dataset.index = idx.toString();
-        item.style.background = t.gradient;
-        item.title = t.name;
-        item.innerHTML = `<span class="material-icons-outlined" style="font-size: 16px; color: ${t.iconColor}; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${t.icon}</span>`;
-        container.appendChild(item);
+    // Determine active category ID ('auto' or one of the 7 category IDs)
+    let activeCatId = 'auto';
+    if (typeof selectedCategoryOrIndex === 'string' && selectedCategoryOrIndex.trim() !== '') {
+        if (selectedCategoryOrIndex === '-1' || selectedCategoryOrIndex === 'auto') {
+            activeCatId = 'auto';
+        } else if (PROJECT_CATEGORIES.some(c => c.id === selectedCategoryOrIndex)) {
+            activeCatId = selectedCategoryOrIndex;
+        }
+    } else if (typeof selectedCategoryOrIndex === 'number' && selectedCategoryOrIndex >= 0 && selectedCategoryOrIndex < PROJECT_CATEGORIES.length) {
+        activeCatId = PROJECT_CATEGORIES[selectedCategoryOrIndex].id;
+    }
+
+    const syncHiddenInputs = (catId, idx) => {
+        const indexInput = document.getElementById('meta-theme-index');
+        const catInput = document.getElementById('meta-category-id');
+        if (indexInput) indexInput.value = String(idx);
+        if (catInput) catInput.value = catId;
+    };
+
+    // 1. Auto-Classification Option (Full-width top pill or first item)
+    const autoCard = document.createElement('button');
+    autoCard.type = 'button';
+    autoCard.className = `category-preset-card category-preset-auto ${activeCatId === 'auto' ? 'active' : ''}`;
+    autoCard.dataset.categoryId = 'auto';
+    autoCard.dataset.index = '-1';
+    autoCard.innerHTML = `
+        <div class="category-preset-icon" style="background: linear-gradient(135deg, #312e81 0%, #4f46e5 100%); color: #c7d2fe;">
+            <span class="material-icons-outlined">auto_awesome</span>
+        </div>
+        <div class="category-preset-info">
+            <span class="category-preset-name">자동 분류 (제목 및 화면 기반 스마트 매칭)</span>
+            <span class="category-preset-desc">과제 제목과 포함된 화면 성격을 분석하여 최적 분류 자동 지정</span>
+        </div>
+    `;
+    container.appendChild(autoCard);
+
+    // 2. 7 Semantic Category Cards
+    PROJECT_CATEGORIES.forEach((cat, idx) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = `category-preset-card ${activeCatId === cat.id ? 'active' : ''}`;
+        card.dataset.categoryId = cat.id;
+        card.dataset.index = String(idx);
+        card.style.setProperty('--cat-accent', cat.accentColor);
+        card.style.setProperty('--cat-border', cat.badgeBorder);
+        card.style.setProperty('--cat-bg', cat.badgeBg);
+        card.innerHTML = `
+            <div class="category-preset-icon" style="background: ${cat.solidGradient}; color: #ffffff;">
+                ${cat.svgIcon || `<span class="material-icons-outlined">${cat.icon}</span>`}
+            </div>
+            <div class="category-preset-info">
+                <span class="category-preset-name">${cat.name}</span>
+                <span class="category-preset-desc">${cat.desc}</span>
+            </div>
+        `;
+        container.appendChild(card);
     });
 
-    // Preset click handler
-    container.querySelectorAll('.theme-preset-item').forEach(item => {
-        item.onclick = () => {
-            container.querySelectorAll('.theme-preset-item').forEach(el => el.classList.remove('active'));
-            item.classList.add('active');
-            const indexInput = document.getElementById('meta-theme-index');
-            if (indexInput) indexInput.value = item.dataset.index;
+    // Sync initial hidden input values
+    const matchedCat = PROJECT_CATEGORIES.find(c => c.id === activeCatId);
+    syncHiddenInputs(activeCatId, matchedCat ? matchedCat.index : -1);
+
+    // Click handler
+    container.querySelectorAll('.category-preset-card').forEach(card => {
+        card.onclick = () => {
+            container.querySelectorAll('.category-preset-card').forEach(el => el.classList.remove('active'));
+            card.classList.add('active');
+            syncHiddenInputs(card.dataset.categoryId, parseInt(card.dataset.index, 10));
+        };
+    });
+}
+
+// Compute filtered projects based on active category tab + search input
+function getFilteredProjects() {
+    const searchInputEl = document.getElementById('project-search-input');
+    const query = searchInputEl ? searchInputEl.value.toLowerCase().trim() : '';
+
+    return state.projects.filter(p => {
+        const cat = resolveProjectCategory(p.name, p.meta);
+        if (state.activeCategory !== 'all' && cat.id !== state.activeCategory) {
+            return false;
+        }
+        if (!query) return true;
+        const idMatch = p.name.toLowerCase().includes(query);
+        const titleMatch = ((p.meta && p.meta.title) || '').toLowerCase().includes(query);
+        const catMatch = cat.name.toLowerCase().includes(query) || cat.badge.toLowerCase().includes(query);
+        const assigneeMatch = ((p.meta && p.meta.assignee) || '').toLowerCase().includes(query);
+        return idMatch || titleMatch || catMatch || assigneeMatch;
+    });
+}
+
+// Render top Category Filter Bar (Option B Merge)
+function renderCategoryFilterBar() {
+    const bar = document.getElementById('category-filter-bar');
+    if (!bar) return;
+
+    // Count projects per category
+    const counts = { all: state.projects.length };
+    PROJECT_CATEGORIES.forEach(c => { counts[c.id] = 0; });
+    state.projects.forEach(p => {
+        const cat = resolveProjectCategory(p.name, p.meta);
+        if (cat && counts[cat.id] !== undefined) {
+            counts[cat.id]++;
+        }
+    });
+
+    let html = `
+        <button type="button" class="category-tab-btn ${state.activeCategory === 'all' ? 'active' : ''}" data-category="all">
+            <span class="material-icons-outlined category-tab-icon">grid_view</span>
+            <span class="category-tab-label">전체 과제</span>
+            <span class="category-tab-count">${counts.all}</span>
+        </button>
+    `;
+
+    PROJECT_CATEGORIES.forEach(cat => {
+        const count = counts[cat.id] || 0;
+        const isActive = state.activeCategory === cat.id;
+        const isEmpty = count === 0;
+        html += `
+            <button type="button" class="category-tab-btn ${isActive ? 'active' : ''} ${isEmpty ? 'is-empty' : ''}" data-category="${cat.id}" style="--tab-accent: ${cat.accentColor}; --tab-bg: ${cat.badgeBg}; --tab-border: ${cat.badgeBorder};">
+                <span class="category-tab-svg-wrap" style="color: ${isActive ? '#ffffff' : cat.accentColor};">${cat.svgIcon}</span>
+                <span class="category-tab-label">${cat.shortName}</span>
+                <span class="category-tab-count">${count}</span>
+            </button>
+        `;
+    });
+
+    bar.innerHTML = html;
+
+    bar.querySelectorAll('.category-tab-btn').forEach(btn => {
+        btn.onclick = () => {
+            const targetCat = btn.dataset.category || 'all';
+            if (state.activeCategory === targetCat) return;
+            state.activeCategory = targetCat;
+            renderCategoryFilterBar();
+            renderList(getFilteredProjects());
         };
     });
 }
@@ -256,7 +369,7 @@ async function refreshFileList() {
 
 
 
-// Render modern Shimmer Glass Skeleton Cards while fetching
+// Render modern Shimmer Glass Skeleton Cards while fetching (Compact Header A-Style)
 function renderSkeletons(count = 6) {
     if (!DOM.list) return;
     const isMobile = window.innerWidth <= 768;
@@ -265,7 +378,7 @@ function renderSkeletons(count = 6) {
     for (let i = 0; i < actualCount; i++) {
         html += `
             <div class="file-card file-card-skeleton" style="--card-index: ${i}">
-                <div class="skeleton-thumb"></div>
+                <div class="skeleton-banner"></div>
                 <div class="skeleton-body">
                     <div class="skeleton-line skeleton-title"></div>
                     <div class="skeleton-line skeleton-meta"></div>
@@ -279,7 +392,8 @@ function renderSkeletons(count = 6) {
     DOM.list.innerHTML = html;
 }
 
-        renderSkeletons(6);
+        renderCategoryFilterBar();
+        renderSkeletons(8);
 
         if (DOM.globalLoader) {
             DOM.globalLoader.classList.add('active');
@@ -321,7 +435,8 @@ function renderSkeletons(count = 6) {
         }));
 
         state.projects = projectData.filter(p => !state.deletedProjects.has(p.name));
-        renderList();
+        renderCategoryFilterBar();
+        renderList(getFilteredProjects());
         
         setTimeout(() => {
             if (DOM.globalLoader) DOM.globalLoader.classList.remove('active', 'mobile-nano-only');
@@ -458,14 +573,21 @@ function ensureDayOfWeek(dateStr) {
 }
 
 
-async function renderList(projectsToRender = state.projects) {
+async function renderList(projectsToRender = getFilteredProjects()) {
     if (projectsToRender.length === 0) {
         const isSearch = document.getElementById('project-search-input') && document.getElementById('project-search-input').value.trim() !== '';
-        const msg = isSearch ? "검색된 프로젝트가 없습니다." : "생성된 프로젝트가 없습니다. 우측 상단의 New Project 버튼을 눌러 새 프로젝트를 생성해주세요.";
+        const isCategoryFilter = state.activeCategory !== 'all';
+        const activeCatObj = PROJECT_CATEGORIES.find(c => c.id === state.activeCategory);
+        let msg = "생성된 프로젝트가 없습니다. 우측 상단의 New Project 버튼을 눌러 새 프로젝트를 생성해주세요.";
+        if (isSearch) {
+            msg = "검색 조건에 일치하는 프로젝트가 없습니다.";
+        } else if (isCategoryFilter && activeCatObj) {
+            msg = `'${activeCatObj.name}' 분류에 등록된 프로젝트가 없습니다. 프로젝트 정보 수정에서 분류를 지정할 수 있습니다.`;
+        }
         DOM.list.innerHTML = `
             <div class="empty-text" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
-                <span class="material-icons-outlined" style="font-size: 48px; color: var(--accent); opacity: 0.6; margin-bottom: 16px; display: block;">create_new_folder</span>
-                <div style="font-size: 15px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">프로젝트가 비어 있습니다</div>
+                <span class="material-icons-outlined" style="font-size: 44px; color: var(--accent-light, #9e8cfc); opacity: 0.7; margin-bottom: 14px; display: block;">folder_open</span>
+                <div style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">표시할 프로젝트가 없습니다</div>
                 <div style="font-size: 13px; color: var(--text-secondary);">${msg}</div>
             </div>`;
         return;
@@ -478,19 +600,18 @@ async function renderList(projectsToRender = state.projects) {
         card.style.setProperty('--card-index', i);
         card.href = `viewer.html?project=${encodeURIComponent(p.name)}`;
         
-        const m = p.meta;
+        const m = p.meta || {};
         const mainTitle = m.title || p.name;
-        const subInfo = `${p.screens} screens • ${p.name}`;
 
-        // Get Theme config (use user custom index, otherwise deterministically pick from seed)
-        const themeIndex = (m && m.themeIndex !== undefined) ? parseInt(m.themeIndex) : -1;
-        const theme = (themeIndex >= 0 && themeIndex < PREMIUM_THEMES.length) 
-            ? PREMIUM_THEMES[themeIndex] 
-            : getDeterministicTheme(p.name);
+        // Resolve semantic project category
+        const category = resolveProjectCategory(p.name, m);
+        card.dataset.category = category.id;
+        card.style.setProperty('--card-accent', category.lightAccent || category.accentColor);
+        card.style.setProperty('--card-glow', category.glowColor);
+        card.style.setProperty('--card-border-tint', category.accentColor);
 
-        // Abbreviate project name (e.g. "[과제] 온오프 재고" -> "온오")
-        const cleanTitle = mainTitle.replace(/\[[^\]]+\]/g, '').trim();
-        const abbrText = cleanTitle.slice(0, 2).toUpperCase() || p.name.slice(0, 2).toUpperCase();
+        // Extract screen composition summary
+        const screenSummary = getScreenCompositionSummary(m);
 
         const hasMeta = (m.assignee && m.assignee.trim()) || 
                         (m.period && m.period.trim()) || 
@@ -564,25 +685,31 @@ async function renderList(projectsToRender = state.projects) {
             <div class="delete-btn-card" data-project="${p.name}" title="프로젝트 삭제">
                 <span class="material-icons-outlined">delete_outline</span>
             </div>
-            <div class="thumbnail-wrapper" style="background: ${theme.gradient}; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 16/10; border-radius: 8px; transition: all 0.4s ease; border: 1px solid rgba(255,255,255,0.08);">
-                
-                <!-- Glowing Ambient Orbs -->
-                <div class="thumbnail-glow-orb" style="position: absolute; width: 130px; height: 130px; background: ${theme.glowColor}; border-radius: 50%; filter: blur(28px); bottom: -30px; right: -30px; opacity: 0.85; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); pointer-events: none;"></div>
-                <div class="thumbnail-glow-orb-top" style="position: absolute; width: 90px; height: 90px; background: rgba(255,255,255,0.18); border-radius: 50%; filter: blur(18px); top: -20px; left: -20px; opacity: 0.6; pointer-events: none;"></div>
-                
-                <!-- Frosted Glass Icon Plate -->
-                <div class="frosted-glass-pane" style="position: relative; width: 64px; height: 64px; background: rgba(255, 255, 255, 0.16); border: 1.6px solid rgba(255, 255, 255, 0.28); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.2); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 2; pointer-events: none;">
-                    <span class="material-icons-outlined" style="font-size: 32px; color: ${theme.iconColor}; text-shadow: 0 2px 8px rgba(0,0,0,0.15);">${theme.icon}</span>
+
+            <!-- Compact Semantic Category Header Banner (Option A - Light Card Edition) -->
+            <div class="card-category-banner" style="background: ${category.headerBg}; border-bottom: 1px solid ${category.headerBorder};">
+                <div class="card-category-left">
+                    <div class="card-category-icon-box" style="background: ${category.solidGradient};">
+                        ${category.svgIcon || `<span class="material-icons-outlined">${category.icon}</span>`}
+                    </div>
+                    <span class="card-category-badge" style="color: ${category.headerTextColor};">${category.name}</span>
                 </div>
-                
-                <!-- Floating Category/Abbr Badge -->
-                <div class="abbr-badge" style="position: absolute; bottom: 12px; left: 12px; padding: 2px 7px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.16); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 4px; color: rgba(255,255,255,0.92); font-size: 10px; font-weight: 600; letter-spacing: 0.5px; z-index: 2; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
-                    ${abbrText}
+                <div class="card-category-right">
+                    <span class="card-screen-count-pill" title="총 ${p.screens}개 화면">
+                        <span class="material-icons-outlined">filter_none</span>
+                        <span>${p.screens}</span>
+                    </span>
                 </div>
             </div>
+
+            <!-- Card Body: Full Title + Screen Composition Summary + Footer Chips -->
             <div class="card-info">
                 <div class="card-name" title="${mainTitle}">${mainTitle}</div>
-                <div class="card-meta" style="margin-bottom: 8px;">${subInfo}</div>
+                <div class="card-screen-summary" title="화면 구성: ${screenSummary.fullText}">
+                    <span class="material-icons-outlined card-summary-icon">auto_awesome_motion</span>
+                    <span class="card-summary-text">${screenSummary.shortText}</span>
+                </div>
+                <div class="card-footer-divider"></div>
                 ${chipsHtml}
             </div>
         `;
@@ -667,7 +794,8 @@ document.addEventListener('click', async (e) => {
                 // UI 즉시 반영 + 블랙리스트 등록 (UI에서 완전히 제거)
                 state.deletedProjects.add(projectName);
                 state.projects = state.projects.filter(p => p.name !== projectName);
-                renderList();
+                renderCategoryFilterBar();
+                renderList(getFilteredProjects());
                 
                 if (DOM.progressBar) DOM.progressBar.style.width = '100%';
                 updateStatusUI(`'${projectName}' 삭제 완료`, '#4ade80');
@@ -728,10 +856,9 @@ if (DOM.btnCreateProject) {
         if (DOM.metaNotion) DOM.metaNotion.value = "";
         initDatePicker();
         
-        // Initialize theme presets to Auto (-1)
-        const indexInput = document.getElementById('meta-theme-index');
-        if (indexInput) indexInput.value = "-1";
-        renderThemePresets(-1);
+        // Initialize category preset to Auto ('auto') or active filter category if selected
+        const initialCat = state.activeCategory !== 'all' ? state.activeCategory : 'auto';
+        renderThemePresets(initialCat);
 
         if (DOM.modal) DOM.modal.classList.add('active');
         if (DOM.metaTitle) {
@@ -767,11 +894,9 @@ async function openEditProjectModal(projectName) {
     if (DOM.metaNotion) DOM.metaNotion.value = (m && m.notionUrl) || '';
     initDatePicker(m ? m.period : '');
     
-    // Load existing theme index, fallback to -1
-    const themeIndex = (m && m.themeIndex !== undefined) ? parseInt(m.themeIndex) : -1;
-    const indexInput = document.getElementById('meta-theme-index');
-    if (indexInput) indexInput.value = themeIndex.toString();
-    renderThemePresets(themeIndex);
+    // Pre-select saved category or smart-inferred category so user immediately sees current classification
+    const currentCat = (m && m.category) ? m.category : resolveProjectCategory(projectName, m).id;
+    renderThemePresets(currentCat);
 
     if (DOM.modal) DOM.modal.classList.add('active');
 }
@@ -799,9 +924,17 @@ if (DOM.btnModalSave) {
     DOM.btnModalSave.disabled = true;
     DOM.btnModalSave.style.opacity = '0.7';
     
-    // Extract selected theme index
+    // Extract selected category & theme index
     const indexInput = document.getElementById('meta-theme-index');
-    const themeVal = indexInput ? parseInt(indexInput.value) : -1;
+    const catInput = document.getElementById('meta-category-id');
+    const selectedCatId = catInput ? catInput.value : 'auto';
+    let themeVal = indexInput ? parseInt(indexInput.value, 10) : -1;
+    let resolvedCatId = selectedCatId;
+    if (selectedCatId === 'auto' || !selectedCatId) {
+        const inferred = inferCategoryFromProject(projectName, { title: DOM.metaTitle.value.trim() });
+        resolvedCatId = 'auto';
+        themeVal = inferred ? inferred.index : -1;
+    }
 
     const data = {
         projectMeta: {
@@ -810,7 +943,8 @@ if (DOM.btnModalSave) {
             assignee: DOM.metaAssignee.value.trim(),
             figmaUrl: DOM.metaFigma.value.trim(),
             notionUrl: DOM.metaNotion.value.trim(),
-            themeIndex: themeVal
+            themeIndex: themeVal,
+            category: resolvedCatId
         }
     };
 
@@ -932,41 +1066,36 @@ window.addEventListener('drop', async (e) => {
     intro.addEventListener('click', dismiss);
 })();
 
-// Search and Auto-complete Logic
+// Search and Auto-complete Logic (Integrated with Category Filter Bar)
 const searchInput = document.getElementById('project-search-input');
 const searchDropdown = document.getElementById('search-dropdown');
 
 if (searchInput && searchDropdown) {
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
+        const filtered = getFilteredProjects();
         
         if (!query) {
             searchDropdown.classList.remove('active');
-            renderList(state.projects); // Reset to full list
+            renderList(filtered);
             return;
         }
-
-        // Filter projects by ID or title
-        const filtered = state.projects.filter(p => {
-            const idMatch = p.name.toLowerCase().includes(query);
-            const titleMatch = (p.meta.title || '').toLowerCase().includes(query);
-            return idMatch || titleMatch;
-        });
 
         // Re-render grid with filtered items
         renderList(filtered);
 
-        // Populate auto-complete dropdown (max 5 items)
+        // Populate auto-complete dropdown (max 6 items)
         if (filtered.length > 0) {
-            searchDropdown.innerHTML = filtered.slice(0, 5).map(p => {
+            searchDropdown.innerHTML = filtered.slice(0, 6).map(p => {
                 const mainTitle = p.meta.title || p.name;
+                const cat = resolveProjectCategory(p.name, p.meta);
                 const url = `viewer.html?project=${encodeURIComponent(p.name)}`;
                 return `
                     <a href="${url}" class="search-item" style="text-decoration:none;">
-                        <span class="material-icons-outlined search-item-icon">folder</span>
-                        <div style="display:flex; flex-direction:column;">
+                        <span class="search-item-icon" style="color:${cat.accentColor}; display:inline-flex; align-items:center; justify-content:center;">${cat.svgIcon || `<span class="material-icons-outlined">${cat.icon}</span>`}</span>
+                        <div style="display:flex; flex-direction:column; min-width:0; flex:1;">
                             <span class="search-item-title">${mainTitle}</span>
-                            <span class="search-item-sub">ID: ${p.name}</span>
+                            <span class="search-item-sub">${cat.name} • ID: ${p.name}</span>
                         </div>
                     </a>
                 `;

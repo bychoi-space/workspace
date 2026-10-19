@@ -700,5 +700,14 @@
   - 특정 컬럼(열)의 데이터나 상태를 부각하기 위해 `colIndex` 기준 전용 하이라이트 클래스(`.highlight-col`) 및 인라인 배경/보더 스타일 주입을 지원합니다.
   - 부분 갱신(Partial update)이나 리렌더링 시에도 하이라이트 상태가 유실되지 않도록 `table` DOM의 `data-highlight-col` 속성에 SSOT로 저장되어 새로고침 후에도 100% 복구되어야 합니다.
 
-
-
+## 🏷️ 프로젝트 8대 실무 분류 체계 SSOT 및 대시보드/뷰어 시각 디자인 표준 (8-Category Semantic Classification & UI Renewal Protocol)
+- **8대 실무 분류 체계 단일 진실 공급원 (`window.PROJECT_CATEGORIES` in `assets/app.js`)**:
+  - 모든 프로젝트의 산출물 성격 분류(`front_ui`: Front-end UI/UX, `admin`: Back-office / Admin, `front_admin`: 통합 서비스 (Front+Admin), `project`: 대형 구축 프로젝트, `roadmap`: 연간 사업계획 / 로드맵, `executive`: 경영진 보고 / 전략, `policy`: 운영 정책 / 프로세스, `etc`: 기타 / 일반 문서)와 전용 듀얼톤 커스텀 SVG 아이콘(`svgIcon`), 테마 액센트 컬러(`color`, `bgLight`, `borderColor`), 자동 추론 로직(`window.inferCategoryFromProject`, `window.resolveProjectCategory`)은 반드시 **`assets/app.js`** 한 곳에서만 정의하고 `index.html`(`dashboard.js`)과 `viewer.html`(`vctrl_core.js`) 양쪽에서 공통 참조해야 합니다. (여러 JS 파일에 분류 테이블을 중복 선언하는 것을 엄격히 금지합니다.)
+- **대시보드(`index.html`) 화이트 카드 서피스 및 그리드 행 정렬 불변 규칙 (`assets/dashboard.css`, `assets/dashboard.js`)**:
+  - **하이브리드 화이트 카드 대비(Contrast)**: 대시보드 배경(`#0a0c10` 다크 슬레이트) 위에서 프로젝트 블록의 시인성을 극대화하기 위해, 카드 본체(`.project-card-clean`)는 순백색(`#ffffff`) 배경과 파스텔 틴트 카테고리 헤더 배너(`.card-category-header`), 딥 슬레이트 타이틀(`#0f172a`) 구조를 유지합니다.
+  - **그리드 동일 행(Row) 상단 정렬 고정 가드 (Top-Alignment Guard)**: `.card-info-clean` 내부에서 `justify-content: space-between`이나 `.card-meta-clean`의 `margin-top: auto`를 절대 사용하지 않고 반드시 **`justify-content: flex-start`**를 유지해야 합니다. 이웃한 카드의 제목 줄 수나 요소 높이 차이로 인해 카드 높이가 늘어나더라도, 같은 행에 위치한 모든 카드의 제목, 1줄 화면 구성 요약(`.card-screen-summary`), 하단 메타 칩(`.card-meta-clean`)의 시작 $Y$축 라인이 위쪽 기준으로 칼같이 일직선 정렬되어야 합니다.
+  - **4대 메타 칩 1줄 수납 보장 (Single-Line 4 Meta Chips)**: 카드 내 `[담당자]`, `[기간]`, `[Figma]`, `[Notion]` 4개 칩이 줄바꿈 없이 무조건 1줄에 나란히 수납되도록 `.card-meta-clean`에 `flex-wrap: nowrap; gap: 4px;`를 강제하고, 기간 포맷터(`formatCompactPeriod`)는 시작일과 종료일이 같은 해일 때 종료 연도를 생략(`YYYY.MM.DD ~ MM.DD`)하여 컴팩트하게 표시합니다.
+  - **불필요한 중복 메타 배제**: 카드 우측 상단 배지(`.category-screen-count`, `N PAGES`)에 화면 개수가 이미 표시되므로, 본문 중앙에 `프로젝트 ID + 00개 화면` 텍스트를 중복 렌더링하지 않고 실제 포함된 화면 목차 요약(`.card-screen-summary`) 1줄만 깔끔하게 노출합니다.
+- **뷰어(`viewer.html`) 에디터 셸 시각 계층 및 모듈형 롤백 격리 규칙 (`assets/viewer.css`, `assets/vctrl_screen_manager.js`)**:
+  - **모듈형 주석 격리 (`[VIEWER-RENEWAL-1] ~ [VIEWER-RENEWAL-4]`)**: `assets/viewer.css` 하단의 시각 개편 스타일은 ① 상단 헤더 바(`#viewer-project-category-badge`, `#file-name-display` 보더리스 타이포그래피, 캡슐형 메타 칩), ② 좌측 접힘 사이드바(`.screen-collapsed-chip`), ③ 우측 라이브러리 패널 섹션 헤더/타일 입체감, ④ 우측 상단 액션 버튼 계층 분리(`URL 복사`/`PDF 다운로드` 다크 슬레이트 보조 버튼 vs `변경사항 저장` 로얄 바이올렛 메인 CTA)의 4개 독립 블록으로 격리되어 있으며, 향후 특정 영역만 미세 조정하거나 롤백할 때 타 영역 간섭 없이 해당 블록만 수정합니다.
+  - **좌측 접힘 사이드바 숫자 칩 표준**: `#sidebar-left.collapsed` 상태에서는 의미 없이 잘리는 `1.CO`, `2.L` 앞글자 노출을 배제하고, 2자리 패딩 숫자(`.chip-pad-num`: `01`, `02`, `03`...)와 좌측 3px 카테고리 컬러 인디케이터 바(`::before`)만 선명하게 렌더링하며 마우스 호버 시 플라이아웃(`#screen-hover-flyout`)으로 `#01 화면명` 전체를 즉시 노출합니다. (하위 호환성을 위해 `.chip-num`, `.chip-code` DOM 노드는 삭제하지 않고 CSS `display: none`으로만 제어합니다.)

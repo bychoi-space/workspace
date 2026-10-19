@@ -342,3 +342,13 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - 컨테이너 내부에 직접 주입되어 있던 기존 레거시 핀이 발견되면 즉시 `.v4-pin-layer`의 자식 노드로 자동 이전(`layer.appendChild(p)`)되어 레거시 화면에서도 핀 가려짐이 100% 자동 치유됩니다.
 - **클립보드 붙여넣기 침범 차단 (`trailingRef`)**:
   - `vctrl_clipboard_objects.js`의 붙여넣기 파이프라인에서 신규 오브젝트가 `.v4-pin-layer` 뒤로 주입되어 핀 레이어가 덮이지 않도록 `trailingRef` 판별 시 `.v4-pin-layer`를 감지하여 반드시 핀 레이어 직전(Before) 형제 위치로 삽입합니다.
+
+## 🏷️ Dashboard (`index.html`) & Viewer Shell (`viewer.html`) Visual Hierarchy Standards
+- **8-Category Semantic Classification SSOT (`window.PROJECT_CATEGORIES` in `assets/app.js`)**:
+  - 프로젝트 분류(`front_ui`, `admin`, `front_admin`, `project`, `roadmap`, `executive`, `policy`, `etc`)와 듀얼톤 SVG 아이콘(`svgIcon`), 액센트 컬러(`color`, `bgLight`, `borderColor`), 자동 추론 함수(`inferCategoryFromProject`, `resolveProjectCategory`)는 `assets/app.js`에서 단일 진실 공급원(SSOT)으로 관리한다.
+- **Dashboard White Card & Row Top-Alignment Rules (`assets/dashboard.css`, `assets/dashboard.js`)**:
+  - 카드 본체(`.project-card-clean`)는 `#ffffff` 화이트 서피스 + 상단 파스텔 카테고리 헤더 배너(`.card-category-header`) + `#0f172a` 딥 슬레이트 타이틀로 구성하여 다크 캔버스(`#0a0c10`) 위에서 선명한 시각적 계층을 형성한다.
+  - **Top-Alignment Guard**: `.card-info-clean`은 반드시 `justify-content: flex-start`를 사용하고 `.card-meta-clean`의 `margin-top: auto`를 배제하여, 동일 행(Row) 내 이웃 카드의 높이 차이와 무관하게 모든 카드의 제목·화면 구성 요약·하단 메타 칩이 상단 기준으로 일직선 정렬되도록 유지한다.
+  - **Single-Line 4 Meta Chips**: `.card-meta-clean`은 `flex-wrap: nowrap; gap: 4px;`를 유지하고 동일 연도 기간은 `YYYY.MM.DD ~ MM.DD`(`formatCompactPeriod`)로 축약하여 `[담당자]`, `[기간]`, `[Figma]`, `[Notion]` 4개 칩이 항상 1줄에 수납되도록 보장한다.
+- **Viewer Shell Modular Renewal Blocks (`assets/viewer.css`, `assets/vctrl_screen_manager.js`)**:
+  - `assets/viewer.css` 하단의 `[VIEWER-RENEWAL-1]`(헤더 카테고리 배지 및 캡슐 칩), `[VIEWER-RENEWAL-2]`(좌측 접힘 사이드바 `.chip-pad-num` `01`~`99` 2자리 숫자 칩 + 3px 액센트 바), `[VIEWER-RENEWAL-3]`(우측 라이브러리 섹션 타이틀 및 컴포넌트 타일 입체화), `[VIEWER-RENEWAL-4]`(우측 상단 보조 버튼 vs `변경사항 저장` 메인 CTA 분리) 블록은 상호 독립된 모듈 구조를 유지하여 개별 튜닝 및 롤백이 즉시 가능하도록 관리한다.

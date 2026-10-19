@@ -278,6 +278,31 @@ function _mountScreenIframe(iframe, finalContent, isResponsive, DOM) {
     };
 }
 
+function _updateViewerProjectHeader(DOM) {
+    const fileNameEl = (DOM && DOM.fileName) || document.getElementById('file-name-display');
+    const projTitle = (state.projectMetadata && state.projectMetadata.title) || state.currentProject || '';
+    if (fileNameEl) {
+        fileNameEl.innerText = projTitle;
+        fileNameEl.title = projTitle;
+    }
+
+    const catBadgeEl = document.getElementById('viewer-project-category-badge');
+    if (catBadgeEl && typeof window.resolveProjectCategory === 'function') {
+        const cat = window.resolveProjectCategory(state.currentProject, state.projectMetadata);
+        if (cat) {
+            catBadgeEl.style.setProperty('--cat-accent', cat.accentColor || '#818cf8');
+            catBadgeEl.style.setProperty('--cat-bg', cat.badgeBg || 'rgba(129, 140, 248, 0.14)');
+            catBadgeEl.style.setProperty('--cat-border', cat.badgeBorder || 'rgba(129, 140, 248, 0.34)');
+            catBadgeEl.innerHTML = `
+                <span class="viewer-cat-icon">${cat.svgIcon || ''}</span>
+                <span class="viewer-cat-text">${cat.badge || cat.shortName || ''}</span>
+            `;
+            catBadgeEl.title = `과제 분류: ${cat.name || cat.badge}`;
+            catBadgeEl.style.display = 'inline-flex';
+        }
+    }
+}
+
 function _syncScreenStateAndMetadata(fileName, content, DOM) {
     let scMeta = (state.projectMetadata.screens || {})[fileName] || {};
     if (!scMeta.description || !Array.isArray(scMeta.description)) {
@@ -294,8 +319,7 @@ function _syncScreenStateAndMetadata(fileName, content, DOM) {
     };
     state.connectors = scMeta.connectors;
 
-    const fileNameEl = (DOM && DOM.fileName) || document.getElementById('file-name-display');
-    if (fileNameEl) fileNameEl.innerText = state.projectMetadata.title || state.currentProject;
+    _updateViewerProjectHeader(DOM);
 
     if (typeof window.updateProperties === 'function') window.updateProperties();
 
@@ -476,6 +500,7 @@ async function _initProjectMetadataAndScreens(project, fileNameParam) {
     ]);
     state.projectMetadata = metadata || {};
     state.globalComponents = globalComps || [];
+    _updateViewerProjectHeader(window.DOM);
 
     // Synthesize screen list from metadata.json to ensure instant loading without waiting for directory API (CORS/Proxy safe)
     const order = state.projectMetadata.screenOrder || [];

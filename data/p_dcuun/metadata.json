@@ -68,7 +68,7 @@
     "09_Admin_PC_Scroll_641.html": {
       "title": "상품공지관리_등록",
       "type": "admin",
-      "updatedAt": "2026-10-19T05:50:09.785Z",
+      "updatedAt": "2026-10-19T05:11:21.006Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -178,9 +178,37 @@
     "09_Admin_PC_Scroll_642.html": {
       "title": "상품공지관리_상세",
       "type": "admin",
-      "updatedAt": "2026-10-19T05:40:09.447Z",
+      "updatedAt": "2026-10-19T05:52:06.513Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[표현위치] 항목\n- Dropdown : 상품정보 상단 / 관련 콘텐츠\n- 기존에 등록되어 있던 모든 공지 DB '관련 콘텐츠' 처리\n\n\n※ 신규 항목 [표현위치 = 상품정보 상단] 선택하여 공지 등록 시, 상품정보 상단 영역에 배너 표현 (다음 페이지 참고)",
+          "html": "[표현위치] 항목<div>- Dropdown : 상품정보 상단 / 관련 콘텐츠</div><div>- <span style=\"color: rgb(251, 191, 36);\">기존에 등록되어 있던 모든 공지 DB '관련 콘텐츠' 처리</span></div><div><br></div><div>※ 신규 항목 [표현위치 = 상품정보 상단] 선택하여 공지 등록 시, 상품정보 상단 영역에 배너 표현 (다음 페이지 참고)</div>",
+          "x": 431,
+          "y": 273,
+          "pins": {
+            "pc": {
+              "x": 431,
+              "y": 273,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 431,
+              "y": 273,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object]",
@@ -201,6 +229,6 @@
     "09_Admin_PC_Scroll_642.html",
     "08_Responsive_PC_Mobile_488.html"
   ],
-  "updated": "2026-10-19 14:50:09",
+  "updated": "2026-10-19 14:52:06",
   "version": 0.1
 }

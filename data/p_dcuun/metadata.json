@@ -130,9 +130,9 @@
   "screenOrder": [
     "00_Cover_44.html",
     "08_Responsive_PC_Mobile_487.html",
-    "08_Responsive_PC_Mobile_488.html",
     "09_Admin_PC_Scroll_640.html",
-    "09_Admin_PC_Scroll_641.html"
+    "09_Admin_PC_Scroll_641.html",
+    "08_Responsive_PC_Mobile_488.html"
   ],
   "updated": "2026-10-19 14:34:45",
   "version": 0.1

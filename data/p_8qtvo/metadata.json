@@ -87,6 +87,13 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
+    },
+    "00_Cover_234.html": {
+      "title": "00_Cover_234",
+      "type": "cover",
+      "updatedAt": "2026-10-19T06:52:42.086Z",
+      "template": "template_cover.html",
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -97,7 +104,8 @@
   "themeIndex": 1,
   "screenOrder": [
     "renewal_cart.html",
-    "renewal_order.html"
+    "renewal_order.html",
+    "00_Cover_234.html"
   ],
   "updated": "2026-09-28 16:01:04",
   "version": 0.1

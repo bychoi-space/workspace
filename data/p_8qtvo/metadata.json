@@ -96,8 +96,8 @@
   "notionUrl": "",
   "themeIndex": 1,
   "screenOrder": [
-    "renewal_order.html",
-    "renewal_cart.html"
+    "renewal_cart.html",
+    "renewal_order.html"
   ],
   "updated": "2026-09-28 16:01:04",
   "version": 0.1

@@ -2,9 +2,9 @@
   "title": "[상품] 상세화면 PC 더보기 & 상세 공지",
   "screens": {
     "08_Responsive_PC_Mobile_487.html": {
-      "title": "상품 상세 261014",
+      "title": "상품 상세 - PC 더보기",
       "type": "ui",
-      "updatedAt": "2026-10-15T00:26:51.750Z",
+      "updatedAt": "2026-10-19T05:36:06.922Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [

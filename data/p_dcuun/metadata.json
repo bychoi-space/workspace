@@ -79,36 +79,36 @@
     "08_Responsive_PC_Mobile_488.html": {
       "title": "상품 상세 - 상품정보 공지",
       "type": "ui",
-      "updatedAt": "2026-10-19T05:35:46.637Z",
+      "updatedAt": "2026-10-19T05:39:44.777Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "[더보기] 버튼\n\n\n- Mobile viewport 상품정보에만 [더보기] 버튼 존재\n\n\n- PC viewport 상품정보에서도 상품정보 일부만 표현하고 [더보기] 버튼 추가 필요\n\n\n※ 진행 목적 : PC 에서 상품정보 하단 컨텐츠를 보기 어려움 (스크롤을 많이 내려야 하는 불편함)\n\n\n<타사 사례>\n- LF : 1100px\n- Wconcept : 3200px\n- 29cm : 3100px\n- SSF, SIvillage : 더보기 없음\n\n\n시선닷컴 규정 제안 : 3000px",
-          "html": "[더보기] 버튼<div><br></div><div>- Mobile viewport 상품정보에만 [더보기] 버튼 존재</div><div><br></div><div>- PC viewport 상품정보에서도 상품정보 일부만 표현하고 [더보기] 버튼 추가 필요</div><div><span style=\"background-color: transparent;\"><br></span></div><div><span style=\"background-color: transparent;\">※ 진행 목적 : PC 에서 상품정보 하단 컨텐츠를 보기 어려움 (스크롤을 많이 내려야 하는 불편함)</span></div><div><span style=\"background-color: transparent;\"><br></span></div><div>&lt;타사 사례&gt;</div><div>- LF : 1100px</div><div>- Wconcept : 3200px</div><div>- 29cm : 3100px</div><div>- SSF, SIvillage : 더보기 없음</div><div><br></div><div>시선닷컴 규정 제안 : 3000px</div>",
+          "text": "상품정보 공지 배너 (영역 신설)\n- Admin 에서 등록된 배너 이미지 표현\n- 클릭 시 설정된 랜딩 URL 로 이동",
+          "html": "상품정보 공지 배너 (영역 신설)<div>- Admin 에서 등록된 배너 이미지 표현</div><div>- 클릭 시 설정된 랜딩 URL 로 이동</div>",
           "x": 30,
-          "y": 1467,
+          "y": 897,
           "pins": {
             "pc": {
               "x": 30,
-              "y": 1467,
+              "y": 897,
               "active": true
             },
             "mobile": {
               "x": 10,
-              "y": 1472,
+              "y": 1162,
               "active": true
             },
             "left": {
               "x": 30,
-              "y": 1467,
+              "y": 897,
               "active": true
             },
             "right": {
               "x": 10,
-              "y": 1472,
+              "y": 1162,
               "active": true
             }
           },
@@ -134,6 +134,6 @@
     "09_Admin_PC_Scroll_641.html",
     "08_Responsive_PC_Mobile_488.html"
   ],
-  "updated": "2026-10-19 14:34:45",
+  "updated": "2026-10-19 14:39:44",
   "version": 0.1
 }

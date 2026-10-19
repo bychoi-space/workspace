@@ -103,9 +103,9 @@
   "notionUrl": "",
   "themeIndex": 1,
   "screenOrder": [
+    "00_Cover_234.html",
     "renewal_cart.html",
-    "renewal_order.html",
-    "00_Cover_234.html"
+    "renewal_order.html"
   ],
   "updated": "2026-09-28 16:01:04",
   "version": 0.1

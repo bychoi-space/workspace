@@ -79,7 +79,7 @@
     "08_Responsive_PC_Mobile_488.html": {
       "title": "상품 상세 - 상품정보 공지",
       "type": "ui",
-      "updatedAt": "2026-10-19T05:39:44.777Z",
+      "updatedAt": "2026-10-19T05:35:46.637Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
@@ -119,6 +119,17 @@
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
+    },
+    "09_Admin_PC_Scroll_642.html": {
+      "title": "상품공지관리_상세",
+      "type": "admin",
+      "updatedAt": "2026-10-19T05:40:09.447Z",
+      "template": "template_admin_pc_scroll.html",
+      "description": [],
+      "connectors": [],
+      "defaultTab": "description",
+      "screenDesc": "[object Object]",
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -132,6 +143,7 @@
     "08_Responsive_PC_Mobile_487.html",
     "09_Admin_PC_Scroll_640.html",
     "09_Admin_PC_Scroll_641.html",
+    "09_Admin_PC_Scroll_642.html",
     "08_Responsive_PC_Mobile_488.html"
   ],
   "updated": "2026-10-19 14:39:44",

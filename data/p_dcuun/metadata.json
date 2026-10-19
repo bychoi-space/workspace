@@ -68,7 +68,7 @@
     "09_Admin_PC_Scroll_641.html": {
       "title": "상품공지관리_등록",
       "type": "admin",
-      "updatedAt": "2026-10-19T05:25:09.179Z",
+      "updatedAt": "2026-10-19T05:30:11.540Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -89,6 +89,6 @@
     "09_Admin_PC_Scroll_640.html",
     "09_Admin_PC_Scroll_641.html"
   ],
-  "updated": "2026-10-19 14:25:09",
+  "updated": "2026-10-19 14:30:11",
   "version": 0.1
 }

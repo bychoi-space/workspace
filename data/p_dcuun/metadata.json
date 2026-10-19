@@ -68,7 +68,7 @@
     "09_Admin_PC_Scroll_641.html": {
       "title": "상품공지관리_등록",
       "type": "admin",
-      "updatedAt": "2026-10-19T05:11:21.006Z",
+      "updatedAt": "2026-10-19T05:48:19.069Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -123,7 +123,7 @@
     "09_Admin_PC_Scroll_642.html": {
       "title": "상품공지관리_상세",
       "type": "admin",
-      "updatedAt": "2026-10-19T05:47:49.309Z",
+      "updatedAt": "2026-10-19T05:40:09.447Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -146,6 +146,6 @@
     "09_Admin_PC_Scroll_642.html",
     "08_Responsive_PC_Mobile_488.html"
   ],
-  "updated": "2026-10-19 14:47:48",
+  "updated": "2026-10-19 14:48:19",
   "version": 0.1
 }

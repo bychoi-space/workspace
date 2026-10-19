@@ -57,36 +57,9 @@
     "09_Admin_PC_Scroll_640.html": {
       "title": "상품공지관리",
       "type": "admin",
-      "updatedAt": "2026-10-19T03:12:17.408Z",
+      "updatedAt": "2026-10-19T03:15:30.323Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [
-        {
-          "text": "기획전 관리 페이지\n- 기능과 구조 모두 현상 유지",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 273,
-          "y": 377,
-          "pins": {
-            "pc": {
-              "x": 273,
-              "y": 377,
-              "active": true
-            },
-            "mobile": {
-              "x": 180,
-              "y": 300,
-              "active": true
-            },
-            "left": {
-              "x": 273,
-              "y": 377,
-              "active": true
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none",
-          "target": "frame"
-        }
-      ],
+      "description": [],
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object]",
@@ -104,6 +77,6 @@
     "08_Responsive_PC_Mobile_487.html",
     "09_Admin_PC_Scroll_640.html"
   ],
-  "updated": "2026-10-19 12:12:17",
+  "updated": "2026-10-19 12:15:30",
   "version": 0.1
 }

@@ -241,11 +241,19 @@
   }
 
   /* Toolbar Controls */
+  .ia-toolbar-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-right: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
   .ia-ctrl-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 30px;
+    height: 32px;
     padding: 0 12px;
     border-radius: 6px;
     border: 1px solid #cbd5e1;
@@ -256,6 +264,8 @@
     cursor: pointer;
     transition: all 0.15s ease;
     user-select: none;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .ia-ctrl-btn:hover {
     background: #f1f5f9;
@@ -270,17 +280,19 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 30px;
-    padding: 0 10px;
+    height: 32px;
+    padding: 0 11px;
     border-radius: 6px;
     border: 1px solid #e2e8f0;
-    background: #f8fafc;
+    background: #ffffff;
     color: #475569;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
     user-select: none;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .ia-domain-btn:hover {
     background: #eff6ff;
@@ -318,18 +330,18 @@
   </div>
 
   <!-- 2. 계층 아코디언 제어 & 도메인 필터 바 (10단위 규격: top:90, left:20, width:1560, height:50) -->
-  <div id="comp-ia-toolbar" class="lf-component" style="top: 90px; left: 20px; width: 1560px; height: 50px; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10;">
+  <div id="comp-ia-toolbar" class="lf-component" style="top: 90px; left: 20px; width: 1560px; height: 50px; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; white-space: nowrap;">
     <!-- 좌측: 아코디언 Depth 일괄 접기/펼치기 제어 -->
-    <div style="display: flex; align-items: center; gap: 8px;" onmousedown="event.stopPropagation();">
-      <span style="font-size: 13px; font-weight: 800; color: #0f172a; margin-right: 4px;">계층(Depth) 폴딩 :</span>
-      <button type="button" class="ia-ctrl-btn active" data-mode="all" onclick="window.setIaViewMode('all', this, event)">▼ 전체 펼치기 (1~5Depth)</button>
-      <button type="button" class="ia-ctrl-btn" data-mode="d2" onclick="window.setIaViewMode('d2', this, event)">▸ 2Depth 기준 보기 (하위 접기)</button>
-      <button type="button" class="ia-ctrl-btn" data-mode="d1" onclick="window.setIaViewMode('d1', this, event)">▶ 1Depth 요약 (전체 접기)</button>
+    <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap;" onmousedown="event.stopPropagation();">
+      <span class="ia-toolbar-label">계층 폴딩 :</span>
+      <button type="button" class="ia-ctrl-btn active" data-mode="all" onclick="window.setIaViewMode('all', this, event)">▼ 전체 펼치기</button>
+      <button type="button" class="ia-ctrl-btn" data-mode="d2" onclick="window.setIaViewMode('d2', this, event)">▸ 2Depth 기준 보기</button>
+      <button type="button" class="ia-ctrl-btn" data-mode="d1" onclick="window.setIaViewMode('d1', this, event)">▶ 1Depth 요약 보기</button>
     </div>
 
     <!-- 우측: 도메인 퀵 필터 -->
-    <div style="display: flex; align-items: center; gap: 6px;" onmousedown="event.stopPropagation();">
-      <span style="font-size: 13px; font-weight: 800; color: #475569; margin-right: 4px;">도메인 필터 :</span>
+    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap;" onmousedown="event.stopPropagation();">
+      <span class="ia-toolbar-label" style="color: #475569;">도메인 필터 :</span>
       <button type="button" class="ia-domain-btn active" data-domain="all" onclick="window.filterIaDomain('all', this, event)">전체</button>
       <button type="button" class="ia-domain-btn" data-domain="hom" onclick="window.filterIaDomain('hom', this, event)">메인/공통</button>
       <button type="button" class="ia-domain-btn" data-domain="brd" onclick="window.filterIaDomain('brd', this, event)">브랜드관</button>
@@ -351,11 +363,11 @@
         <table class="v4-ia-tree-table" id="sisun-ia-table">
           <colgroup>
             <col style="width: 100px;"/>
+            <col style="width: 160px;"/>
             <col style="width: 170px;"/>
-            <col style="width: 180px;"/>
             <col style="width: 190px;"/>
-            <col style="width: 180px;"/>
-            <col style="width: 150px;"/>
+            <col style="width: 220px;"/>
+            <col style="width: 130px;"/>
             <col style="width: 260px;"/>
             <col style="width: 180px;"/>
             <col style="width: 150px;"/>

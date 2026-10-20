@@ -482,15 +482,33 @@ window.v4TableScript = `
                 }
                 return;
             }
-            // Get representative cell (first selected)
-            const repCell = selected[0];
-            const bg = repCell.style.backgroundColor || repCell.style.background || '';
-            const color = repCell.style.color || '';
-            const align = repCell.style.textAlign || window.getComputedStyle(repCell).textAlign || 'center';
+            // Get representative cell (prefer last clicked cell if still in selection)
+            const repCell = (window._iaLastClickedCell && window._iaLastClickedCell.classList && window._iaLastClickedCell.classList.contains('selected-cell')) ? window._iaLastClickedCell : selected[0];
+            const isIaTable = !!repCell.closest('table.v4-ia-tree-table');
+            const innerSpan = repCell.querySelector('.v4-editable-cell');
+
+            let bg = '';
+            if (isIaTable) {
+                if (repCell.getAttribute('data-bg-transparent') === 'true') {
+                    bg = 'transparent';
+                } else if (repCell.style.backgroundColor && repCell.style.backgroundColor !== 'initial' && repCell.style.backgroundColor !== 'inherit') {
+                    bg = repCell.style.backgroundColor;
+                } else if (repCell.tagName === 'TH') {
+                    bg = (repCell.parentElement && repCell.parentElement.rowIndex === 0) ? '#27272a' : '#3f3f46';
+                } else {
+                    bg = '#ffffff';
+                }
+            } else {
+                bg = repCell.style.backgroundColor || repCell.style.background || '';
+            }
+
+            const color = (innerSpan && innerSpan.style.color) || repCell.style.color || (isIaTable ? (window.getComputedStyle(innerSpan || repCell).color || '#1e293b') : '');
+            const rawAlign = repCell.style.textAlign || window.getComputedStyle(repCell).textAlign || 'center';
+            const align = (rawAlign === 'start' || rawAlign === 'left' || rawAlign === '-webkit-left') ? 'left' : ((rawAlign === 'end' || rawAlign === 'right' || rawAlign === '-webkit-right') ? 'right' : 'center');
             
             // Measure actual dimensions
-            const width = repCell.style.width ? parseInt(repCell.style.width) : repCell.offsetWidth;
-            const height = repCell.parentElement.style.height ? parseInt(repCell.parentElement.style.height) : repCell.offsetHeight;
+            const width = repCell.style.width ? parseInt(repCell.style.width) : (Math.round(repCell.getBoundingClientRect().width) || repCell.offsetWidth);
+            const height = (repCell.parentElement && repCell.parentElement.style.height) ? parseInt(repCell.parentElement.style.height) : (Math.round(repCell.getBoundingClientRect().height) || repCell.offsetHeight);
 
             if (window.notifyParent) {
                 window.notifyParent({
@@ -557,6 +575,40 @@ window.v4TableScript = `
             if (window.V4UndoManager) window.V4UndoManager.saveState();
 
             selected.forEach(cell => {
+                const isIaCell = !!cell.closest('table.v4-ia-tree-table');
+                if (isIaCell) {
+                    const spans = cell.querySelectorAll('.v4-editable-cell, span:not(.ia-count-pill)');
+                    if (style.backgroundColor !== undefined) {
+                        if (style.backgroundColor === 'none' || style.backgroundColor === 'transparent' || style.backgroundColor === '') {
+                            cell.setAttribute('data-bg-transparent', 'true');
+                            cell.style.removeProperty('background-color');
+                            cell.style.removeProperty('background');
+                        } else {
+                            cell.removeAttribute('data-bg-transparent');
+                            cell.style.setProperty('background-color', style.backgroundColor, 'important');
+                            cell.style.setProperty('background', style.backgroundColor, 'important');
+                        }
+                        spans.forEach(sp => {
+                            sp.style.removeProperty('background-color');
+                            sp.style.removeProperty('background');
+                        });
+                    }
+                    if (style.color !== undefined) {
+                        cell.style.setProperty('color', style.color, 'important');
+                        spans.forEach(sp => {
+                            sp.style.setProperty('color', style.color, 'important');
+                        });
+                    }
+                    if (style.textAlign !== undefined) {
+                        cell.style.setProperty('text-align', style.textAlign, 'important');
+                        const flexJustify = style.textAlign === 'left' ? 'flex-start' : (style.textAlign === 'right' ? 'flex-end' : 'center');
+                        cell.querySelectorAll('.ia-d1-wrap, .ia-d2-wrap').forEach(wrap => {
+                            wrap.style.setProperty('justify-content', flexJustify, 'important');
+                        });
+                    }
+                    return;
+                }
+
                 const nestedEditable = cell.querySelector('.v4-editable-cell, [contenteditable="true"]');
                 const targets = nestedEditable ? [cell, nestedEditable] : [cell];
 

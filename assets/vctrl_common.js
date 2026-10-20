@@ -197,6 +197,9 @@ window.ResponsiveFrameUtils = {
             root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
                 el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');
             });
+            root.querySelectorAll('.selected-cell').forEach(function(el) {
+                el.classList.remove('selected-cell');
+            });
 
             // 2.1 Reset runtime scroll pin transform and will-change before saving
             root.querySelectorAll('[data-scroll-fixed], .pin-marker').forEach(function(el) {

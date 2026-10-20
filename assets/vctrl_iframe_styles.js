@@ -167,7 +167,7 @@ body, .page, .lf-component {
 .v4-editable-cell:focus { outline: 2px solid #6366f1; }
 th.v4-editable-cell:focus, td.v4-editable-cell:focus { outline-offset: -2px !important; }
 :not(th):not(td).v4-editable-cell:focus { background: rgba(99, 102, 241, 0.05) !important; }
-.selected-cell {
+.selected-cell:not(.v4-ia-tree-table td):not(.v4-ia-tree-table th) {
     outline: 1.6px dashed #6366f1 !important;
     outline-offset: -1.6px !important;
     background-color: rgba(99, 102, 241, 0.08) !important;
@@ -855,7 +855,7 @@ table.v4-ia-tree-table tbody td { height: 36px; padding: 6px 10px; border-right:
 table.v4-ia-tree-table tbody tr:hover td { background: #f8fafc; }
 table.v4-ia-tree-table tbody tr.ia-g1-start td { border-top: 1.5px solid #cbd5e1; }
 table.v4-ia-tree-table tbody tr.ia-g1-start:first-child td { border-top: none; }
-table.v4-ia-tree-table td.selected-cell, table.v4-ia-tree-table th.selected-cell { outline: 2px solid #2563eb !important; outline-offset: -2px !important; position: relative; z-index: 4; }
+table.v4-ia-tree-table td.selected-cell, table.v4-ia-tree-table th.selected-cell { outline: 2px solid #2563eb !important; outline-offset: -2px !important; box-shadow: inset 0 0 0 9999px rgba(37, 99, 235, 0.05) !important; position: relative; z-index: 4; }
 table.v4-ia-tree-table tbody td.col-site { text-align: center; color: #64748b; font-weight: 500; background: #fcfcfd; }
 table.v4-ia-tree-table tbody td.col-d1, table.v4-ia-tree-table tbody td.col-d2, table.v4-ia-tree-table tbody td.col-d3, table.v4-ia-tree-table tbody td.col-d4 { text-align: center; }
 table.v4-ia-tree-table tbody td.col-area { text-align: center; color: #334155; }

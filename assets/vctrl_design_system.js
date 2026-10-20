@@ -1225,15 +1225,25 @@ window.v4DesignSystemScript = `
                             if (typeof window.notifyParent === 'function') window.notifyParent({ type: 'LF_CELL_SELECTED', cellData: null });
                             return;
                         }
-                        var repCell = selected[0];
+                        var repCell = (window._iaLastClickedCell && window._iaLastClickedCell.classList && window._iaLastClickedCell.classList.contains('selected-cell')) ? window._iaLastClickedCell : selected[0];
                         var innerSpan = repCell.querySelector('.v4-editable-cell');
-                        var bg = repCell.style.backgroundColor || window.getComputedStyle(repCell).backgroundColor || '#ffffff';
+                        var bg = '#ffffff';
+                        if (repCell.getAttribute('data-bg-transparent') === 'true') {
+                            bg = 'transparent';
+                        } else if (repCell.style.backgroundColor && repCell.style.backgroundColor !== 'initial' && repCell.style.backgroundColor !== 'inherit') {
+                            bg = repCell.style.backgroundColor;
+                        } else if (repCell.tagName === 'TH') {
+                            bg = (repCell.parentElement && repCell.parentElement.rowIndex === 0) ? '#27272a' : '#3f3f46';
+                        }
                         var color = (innerSpan && innerSpan.style.color) || repCell.style.color || window.getComputedStyle(innerSpan || repCell).color || '#1e293b';
-                        var align = repCell.style.textAlign || window.getComputedStyle(repCell).textAlign || 'center';
+                        var rawAlign = repCell.style.textAlign || window.getComputedStyle(repCell).textAlign || 'center';
+                        var align = (rawAlign === 'start' || rawAlign === 'left' || rawAlign === '-webkit-left') ? 'left' : ((rawAlign === 'end' || rawAlign === 'right' || rawAlign === '-webkit-right') ? 'right' : 'center');
+                        var w = Math.round(repCell.getBoundingClientRect().width) || repCell.offsetWidth || 120;
+                        var h = Math.round(repCell.getBoundingClientRect().height) || repCell.offsetHeight || 36;
                         if (typeof window.notifyParent === 'function') {
                             window.notifyParent({
                                 type: 'LF_CELL_SELECTED',
-                                cellData: { count: selected.length, backgroundColor: bg, color: color, textAlign: align, width: repCell.offsetWidth || 120, height: repCell.offsetHeight || 36 }
+                                cellData: { count: selected.length, backgroundColor: bg, color: color, textAlign: align, width: w, height: h }
                             });
                         }
                     };
@@ -1245,6 +1255,7 @@ window.v4DesignSystemScript = `
                     if (e.button !== 0 || e.target.closest('.ia-toggle-btn')) return;
                     var cell = e.target.closest('td, th');
                     if (!cell) return;
+                    window._iaLastClickedCell = cell;
                     var isAlreadyEditingThisCell = (document.activeElement && document.activeElement.isContentEditable && cell.contains(document.activeElement));
                     var tr = cell.parentElement;
                     var allRows = Array.from(table.rows);

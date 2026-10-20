@@ -370,7 +370,11 @@ if (!window.v4IframeStyleExtractorScript) {
 
         const getCompBorder = () => {
             if (shape) return getShapeColor("borderColor");
-            if (table) return _getVal(table, "borderColor");
+            if (table) {
+                const iaCard = c.querySelector('.ia-table-card');
+                if (iaCard) return iaCard.style.borderColor || _getVal(iaCard, "borderColor") || "#cbd5e1";
+                return table.style.borderColor || _getVal(table, "borderColor");
+            }
             if (isPin) {
                 const border = c.style.borderColor || (textCell && textCell.style.borderColor) || _getVal(c, "borderColor");
                 return (border && border !== 'transparent' && border !== 'rgba(0, 0, 0, 0)') ? border : "";
@@ -631,6 +635,16 @@ if (!window.v4IframeStyleExtractorScript) {
                     return "";
                 })(),
                 fontSize: (function() {
+                    if (table) {
+                        const selCell = table.querySelector('.selected-cell') || table.querySelector('tbody td') || table.querySelector('td, th');
+                        if (selCell) {
+                            const editSpan = selCell.querySelector('.v4-editable-cell');
+                            const fs = parseInt(_getVal(editSpan || selCell, "fontSize"));
+                            if (!isNaN(fs) && fs > 0) return fs;
+                        }
+                        const tFs = parseInt(_getVal(table, "fontSize"));
+                        if (!isNaN(tFs) && tFs > 0) return tFs;
+                    }
                     const cell = textCell || (shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : null);
                     if (cell) {
                         const fsSpan = cell.querySelector('[style*="font-size"], [style*="fontSize"]');

@@ -115,9 +115,19 @@
         }
     }
 
-    function _syncTableTypeProps() {
+    function _syncTableTypeProps(compStyles) {
         const DOM = window.DOM || {};
         if (DOM.tablePropSection) DOM.tablePropSection.style.display = 'block';
+        const s = (compStyles && compStyles.currentStyles) || {};
+        const tableBorderInput = document.getElementById('table-border-color');
+        const tableBorderWrapper = document.getElementById('table-border-wrapper');
+        if (tableBorderInput && s.border) {
+            const validBorder = (s.border && s.border !== 'transparent') ? s.border : '#cbd5e1';
+            tableBorderInput.value = validBorder;
+            if (tableBorderWrapper) {
+                tableBorderWrapper.classList.toggle('transparent-active', !!(s.border === 'transparent' || s.isBorderTransparent));
+            }
+        }
     }
 
     function _syncLineTypeProps(compStyles) {

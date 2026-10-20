@@ -44,7 +44,7 @@
     "02_Front_IA_Specification.html": {
       "title": "시선닷컴 Front IA (계층구조 정의서)",
       "type": "ui",
-      "updatedAt": "2026-10-20T11:32:00.000Z",
+      "updatedAt": "2026-10-20T02:54:17.468Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -66,6 +66,6 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-10-20 09:30:00",
+  "updated": "2026-10-20 11:54:16",
   "version": 0.1
 }

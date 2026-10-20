@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-screen-authoring
-description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, pixel-perfect template preservation, proactive illustration library usage & instant on-demand image generation, atomic element separation, minimum 13px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
+description: Use when the user asks AI to create, draw, generate, design, or compose a screen (HTML), process slide, benchmark report, or policy diagram in Workspace Editor, or when updating screen layout, content, and data. Enforces fact-based data, library-only standard objects, pixel-perfect template preservation, proactive illustration library usage & instant on-demand image generation (min 200x200px), 10px-unit sizing/spacing grid, zero-error horizontal/vertical alignment, atomic element separation, minimum 13px font size, concise layout, restrained color palette, and mandatory automated GitHub deployment upon screen creation or update.
 ---
 
 # Workspace Editor Screen Authoring Standards (AI 직접 스크린 제작 대원칙)
@@ -18,7 +18,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 
 ---
 
-## 🏛️ 스크린 제작 9대 절대 규칙 (Strict Core Rules)
+## 🏛️ 스크린 제작 10대 절대 규칙 (Strict Core Rules)
 
 ### 1. 무조건 사실 기반 데이터 전용 (Fact-Based Data Only)
 - **가짜 데이터 및 상상 수치 원천 배제**: 사용자가 제공한 기획서, 회의록, 벤치마크 팩트, 실제 서비스 정책/수치 데이터만을 근거로 화면을 구성합니다.
@@ -89,7 +89,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   * **표준 마크업**: 반드시 **`class="lf-component"` + 투명 `v4-shape v4-shape-rect` + `v4-shape-text-content`** 3계층 구조를 사용하십시오:
     ```html
     <!-- [표준 멀티라인 텍스트 구조 - 줄바꿈 100% 보장] -->
-    <div id="card_line_1" class="lf-component" style="position: absolute; top: ...px; left: ...px; width: 385px; height: 60px; z-index: 20;" data-resized="true">
+    <div id="card_line_1" class="lf-component" style="position: absolute; top: ...px; left: ...px; width: 380px; height: 60px; z-index: 20;" data-resized="true">
         <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
             <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
                 <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
@@ -101,7 +101,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
         </div>
     </div>
     ```
-  * **너비(Width) 제약 엄수**: 텍스트 컴포넌트의 `width`는 반드시 **부모 카드의 가로 폭에서 좌우 패딩을 제외한 실제 유효 너비(예: 카드 폭 420px이면 텍스트 폭 385px 이하)**로 정확히 지정하여, 인접 카드 침범을 원천 차단합니다.
+  * **너비(Width) 제약 엄수**: 텍스트 컴포넌트의 `width`는 반드시 **부모 카드의 가로 폭에서 좌우 패딩을 제외한 실제 유효 너비(10px 단위)**로 정확히 지정하여, 인접 카드 침범을 원천 차단합니다.
   * **스크린 `<style>` 방어 CSS 필수 포함**: 스크린 `<head>` 내부 `<style>` 태그에 다음 규칙을 필수로 선언합니다:
     ```css
     .v4-shape-text-content p,
@@ -114,83 +114,71 @@ description: Use when the user asks AI to create, draw, generate, design, or com
     }
     ```
 
-### 5. 이미지 및 일러스트 적극 활용 및 부재 시 즉시 제작 활용 원칙 (Proactive Illustration Usage & Instant Generation)
+### 5. 이미지 및 일러스트 적극 활용, 최소 크기(200x200 이상) 보장 및 부재 시 즉시 제작 원칙 (Proactive Illustration Usage, Min 200x200px & Instant Generation)
 - **시각적 완성도 및 몰입감 극대화 (Elevate Visual Quality)**:
   - 텍스트와 단순 사각형(Box) 위주의 밋밋하고 건조한 스크린 구성을 단호히 지양합니다.
   - 기획 맥락(도메인, 사용자 여정, 시스템 아키텍처, 벤치마크, 정책 등)에 부합하는 **일러스트(3D/2D), 인포그래픽 그래픽, 다이어그램 이미지를 카드 헤더, 프로세스 노드, 대시보드 요약 영역에 적극적으로 배치하여 시각적 직관성과 프레젠테이션 완성도를 극대화**해야 합니다.
-- **기존 일러스트 라이브러리 최우선 탐색 및 활용**:
-  - `assets/illustrations/` 및 에디터 우측 사이드바 `LIBRARY > Illustrations`에 구비된 45종 이상의 도메인 표준 에셋들을 최우선으로 검토하여 적극 삽입합니다:
-    - **어드민/시스템 도메인 3D 일러스트**: `admin_3d_claim.png`, `admin_3d_cms.png`, `admin_3d_logistics.png`, `admin_3d_membership.png`, `admin_3d_order.png`, `admin_3d_pim.png`, `admin_3d_promotion.png` 등
-    - **이커머스 사용자 여정 단계별 일러스트**: `step1_enter_ecommerce.png` ~ `step8_return_clothing.png` (방문, 탐색, 선택, 가입, 할인, 결제, 배송, 반품 8단계)
-    - **아토믹 디자인 시스템 일러스트**: `atomic_atoms.png`, `atomic_molecules.png`, `atomic_organisms.png`, `atomic_layout.png`, `atomic_pages.png` 등
-    - **무간섭 캔버스 배경 레이어**: `admin_backend_bg.jpg`, `ecommerce_ui_bg.jpg` 등
-  - **표준 마크업 규격**:
+- **이미지 최소 크기(가로 200px, 세로 200px 이상) 배치 원칙 (Minimum 200x200px Visibility Standard)**:
+  - **이미지를 활용할 때는 가급적 이미지의 디테일과 오브제가 명확하게 잘 보여지도록 최소 크기(가로 `200px`, 세로 `200px`) 이상으로 배치하는 것을 지향**합니다. (너무 작게 축소하여 이미지가 답답하거나 식별하기 어렵게 배치하는 행위를 지양합니다.)
+- **기존 일러스트 라이브러리 최우선 탐색 및 무분별한 재탕 금지**:
+  - `assets/illustrations/` 및 에디터 우측 사이드바 `LIBRARY > Illustrations`에 구비된 에셋들을 검토하되, **현재 화면의 도메인/주제와 맞지 않는 기존 일러스트를 억지로 재탕하지 마십시오.**
+  - **표준 마크업 규격 (최소 200x200 이상 지향)**:
     ```html
-    <!-- [표준 일러스트 컴포넌트 마크업] -->
-    <div id="comp_illustration_1" class="lf-component" style="position: absolute; top: 120px; left: 40px; width: 80px; height: 80px; z-index: 10;" data-resized="true">
+    <!-- [표준 일러스트 컴포넌트 마크업 - 최소 200x200 이상] -->
+    <div id="comp_illustration_1" class="lf-component" style="position: absolute; top: 110px; left: 40px; width: 200px; height: 200px; z-index: 10;" data-resized="true">
         <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-            <img src="assets/illustrations/admin_3d_order.png" alt="주문 도메인" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            <img src="assets/illustrations/order_policy_cart_30days.png" alt="장바구니 정책" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
         </div>
     </div>
     ```
 - **상황에 맞는 이미지가 없을 때 즉시 제작 및 반영 (Instant On-Demand Generation)**:
-  - 기획 내용이나 특정 업무 도메인(예: 결제 게이트웨이, 신규 물류 정산, 보안 토큰, AI 추천 모델, 클라우드 인프라 등)에 **정확히 부합하는 기존 일러스트가 없는 경우, 망설이거나 텍스트로만 대체하지 말고 에이전트의 이미지 생성 도구(`generate_image`)를 가동하여 상황에 최적화된 이미지를 즉시 직접 제작하여 활용**해야 합니다.
+  - 기획 내용이나 특정 업무 도메인에 **정확히 부합하는 기존 일러스트가 없는 경우, 기존 일러스트를 재탕하거나 텍스트로만 대체하지 말고 에이전트의 이미지 생성 서브에이전트(`image-generator`)를 가동하여 상황에 최적화된 이미지를 즉시 새로 제작하여 활용**해야 합니다.
   - **제작 가이드라인**:
-    - **스타일 일관성**: 기존 라이브러리의 톤앤매너(투명 배경의 세련된 3D 클레이/아이소메트릭 또는 미니멀한 2D 플랫 일러스트)를 엄격히 계승.
-    - **저장 위치**: 제작된 이미지는 반드시 `assets/illustrations/` 디렉토리에 명확한 네이밍(예: `admin_3d_settlement.png`, `ill_security_token.png` 등)으로 저장.
-    - **즉시 마크업 바인딩**: 생성 즉시 스크린 HTML 내 `.v4-illustration-container` 표준 구조로 삽입하여 캔버스에 즉각 렌더링되도록 반영.
+    - **스타일 일관성**: 기존 라이브러리의 톤앤매너(세련된 3D 아이소메트릭 또는 미니멀한 2D 일러스트)를 엄격히 계승.
+    - **저장 및 카탈로그 등록**: 제작된 이미지는 반드시 `assets/illustrations/` 디렉토리에 명확한 네이밍으로 저장하고 `assets/vctrl_component_illustrations.js` 카탈로그에 함께 등록합니다.
+    - **즉시 마크업 바인딩**: 생성 즉시 스크린 HTML 내 `.v4-illustration-container` 표준 구조(가급적 `200px × 200px` 이상)로 삽입하여 캔버스에 즉각 렌더링되도록 반영합니다.
 - **동적 모션 인터랙션 적극 활용 (Animated WebP Motion Standard - Apple Style)**:
   - 마우스 클릭 유도, 마우스 스크롤 유도, 방사형 로딩 스피너, 프로그레스 바, 스켈레톤 패턴, 토스트 메시지 등 **동적 상태를 시각화할 때는 `assets/illustrations/motion/*.webp` 6종 프리셋을 적극 배치**하여 화면의 생동감과 시각적 완성도를 극대화합니다.
-  - **모션 컴포넌트 표준 마크업**:
-    ```html
-    <!-- [표준 모션 컴포넌트 마크업 - Animated WebP] -->
-    <div id="comp_motion_1" class="lf-component" style="position: absolute; top: 120px; left: 80px; width: 140px; height: 140px; z-index: 10;" data-resized="true">
-        <div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
-            <img src="assets/illustrations/motion/motion_apple_spinner.webp" alt="로딩 스피너" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
-        </div>
-    </div>
-    ```
-  - **원자적 분리 및 전용 에디터 지원**: 모션 오브젝트는 텍스트나 뱃지와 통합하지 않고 반드시 독립적인 `.lf-component`로 분리합니다. 선택 시 전용 **ILLUSTRATION / MOTION EDITOR** 패널이 활성화되어 기본 종횡비 잠금(Lock Ratio) 및 비율 리셋이 완벽히 지원됩니다.
 
-### 6. 간결하고 정돈된 레이아웃 (Clutter-Free & No Redundancy)
-- **군더더기 배제**: 장황하고 불필요한 미사여구나 서술형 장문을 지양하고, **핵심 키워드, 명확한 불릿 포인트, 구조화된 인포그래픽** 위주로 컴팩트하게 정돈합니다.
-- **중복 내용 제거**: 섹션 간 내용 중복이나 유사 문구 반복을 철저히 배제합니다.
-- **1600x900 캔버스 스크롤-프리 (Scroll-Free)**:
-  - 캔버스는 기본 **`width: 1600px; height: 900px;`** 규격을 준수합니다.
-  - 상단 헤더(Top: 20px, H: 50~60px) ➔ 본문 섹션(3~4개 논리적 블록)으로 위계를 세워, **브라우저 스크롤 없이 한 화면에 핵심 가치가 한눈에 완벽히 전달**되도록 여백(Breathing Room)을 유지합니다.
-- **상·하 교차 웨이브 인포그래픽 패턴 (Alternating Wave Timeline/Infographic)**:
-  - 마일스톤, 연간 로드맵, 다단계 여정 프로세스를 구성할 때는 항목들을 한 줄에 빽빽하게 나열하지 않고, **중앙 축을 기준으로 상단(홀수/짝수)과 하단으로 교차 배치**하는 웨이브 패턴을 권장합니다.
-  - 상단 블록과 하단 블록 간의 리듬감 있는 수직 여백과 곡선/직선 커넥터를 통해 1600x900 공간 활용도를 극대화하고 가독성을 확보합니다 ([04_Front_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/04_Front_System_Milestone_Timeline_900.html) 참조).
+### 6. 10단위 크기/여백 그리드 규격화 및 오차 없는 정밀 정렬 (10px-Unit Grid & Zero-Error Alignment) — **[핵심 필수 기준]**
+1. **모든 오브젝트의 [가로크기(Width)] · [세로크기(Height)] 10단위 구성**:
+   - 모든 오브젝트의 `width`와 `height`는 가급적이면 `1px` 단위(예: `143px`, `28px`, `487px`)가 아닌 **`10px` 단위(예: `140px`, `30px`, `200px`, `480px`)**로 깔끔하게 떨어지도록 구성합니다.
+2. **동일 구조 오브젝트의 무오차 가로/세로 정렬 (Zero-Error Alignment)**:
+   - 동일한 위계나 구조를 가진 오브젝트(예: 다중 열 카드, 행별 라벨, 뱃지, 타이틀, 스펙 행 등)는 **가로 정렬(`left`)과 세로 정렬(`top`)이 단 `1px`의 오차도 없이 정확하게 일치**해야 합니다.
+3. **오브젝트 간 간격(Gap) 및 여백(Margin/Padding) 10단위 균형 배치**:
+   - 오브젝트와 오브젝트 사이의 간격 및 컨테이너 내부 여백은 가급적이면 `1px` 단위가 아닌 **`20px`, `30px`, `40px`, `50px` 등 `10px` 단위**로 균형감 있게 배치되어야 합니다.
+4. **이미지 오브젝트 최소 크기(`200px × 200px` 이상) 확보**:
+   - 일러스트 및 이미지를 배치할 때는 이미지가 시원하고 선명하게 잘 보여지도록 **최소 가로 `200px`, 세로 `200px` 이상**의 크기로 배치하는 것을 지향합니다.
 
-### 7. 절제된 컬러 및 포인트 강조 (Restrained Color Palette)
+### 7. 문서 성격에 맞는 간결하고 정돈된 레이아웃 (Purpose-Fit & Clutter-Free Layout)
+- **문서 목적(보고서 vs 정책 정의서 vs 프로세스 맵)에 부합하는 레이아웃 설계**:
+  - 기대효과/피칭 보고서(`Impact Report`)와 실무 정책 정의서(`Policy Specification`)의 레이아웃을 획일적으로 똑같이 찍어내지 마십시오.
+  - **정책 정의서(Policy Document)**는 단계별 시각 요약과 함께 **[정책 구분 / 적용 항목 / 상세 기준값 / 예외 및 운영 규칙]**이 한눈에 대조·식별되는 **정돈된 스펙 시트(Specification Matrix) 구조**로 설계해야 합니다.
+- **군더더기 배제 및 스크롤-프리 (1600x900)**:
+  - 장황한 서술형 문장을 지양하고 핵심 기준과 수치 위주로 컴팩트하게 정돈하며, `1600px × 900px` 단일 화면 내에서 스크롤 없이 완결되도록 여백(Breathing Room)을 유지합니다.
+
+### 8. 절제된 컬러 및 포인트 강조 (Restrained Color Palette)
 - **무지개색 남발 금지**: 색상을 너무 난잡하게 여러 가지 섞어 쓰지 않습니다.
 - **기본 뉴트럴 톤 (베이스)**:
-  - 캔버스 배경: `#f8fafc` (부드러운 오프화이트/슬레이트 50)
+  - 캔버스 배경: `#f8fafc` (슬레이트 50)
   - 카드/컨테이너 배경: `#ffffff` (순백색) 또는 `#f1f5f9` (슬레이트 100)
-  - 테두리 보더: `1.6px solid #e2e8f0` 또는 `#cbd5e1` (슬레이트 200/300)
+  - 테두리 보더: `1.6px solid #e2e8f0` 또는 `#cbd5e1`
   - 본문 글자색: `#0f172a` (슬레이트 900) 또는 `#334155` (슬레이트 700)
 - **헤더 다크 엑센트 (상단 통일)**:
   - 글로벌 헤더 배경: `#0f172a` (다크 네이비), 테두리 `#1e293b`, 텍스트 화이트 `#ffffff`
-- **전략적 포인트 컬러 (매우 중요한 강조 영역에만 한정 사용)**:
-  - **신뢰/1위/주요 가치 (Primary)**: `#2563eb` (로열 블루) 또는 `#1d4ed8`
-  - **스마트/안내/헤더 뱃지 (Sky/Teal)**: `#38bdf8` (스카이) / `#0d9488` (틸)
-  - **성공/자동적용/승인 (Success)**: `#15803d` (그린), 연한 배경 `#dcfce7`
-  - **주의/경고/핵심 수치 (Alert/Accent)**: `#e11d48` (로즈 레드), 연한 배경 `#fee2e2`
-- 전체 스크린에서 주도적인 포인트 색상은 1~2개로 제한하여 시각적 피로도를 없애고 정보의 우선순위를 즉각 파악할 수 있게 합니다.
+- **전략적 포인트 컬러**:
+  - **신뢰/주요 기준 (Primary)**: `#2563eb` (로열 블루) / `#1d4ed8`
+  - **스마트/헤더 뱃지 (Sky/Teal)**: `#38bdf8` (스카이) / `#0d9488` (틸)
+  - **성공/확정/보호 (Success)**: `#059669` ~ `#15803d` (에메랄드/그린)
+  - **주의/경고/제한 (Alert)**: `#e11d48` (로즈 레드) / `#d97706` (앰버)
 
-### 8. 스크린 생성 및 수정 완료 시 무조건 GitHub 원격 배포 (Mandatory Automated GitHub Deployment)
-- **로컬 완결 후 즉시 자동 배포 완결**: AI가 스크린(HTML)을 신규 생성하거나 기존 스크린을 수정했을 때는, 로컬 파일 수정 및 정적 검증에 그치지 않고 **반드시 GitHub 원격 저장소(`main`)로의 커밋 및 푸시까지 에이전트가 자체 판단하여 무조건 자동으로 완결**해야 합니다.
-- **추가 질문 대기 배제**: 스크린 작업 완료 후 "배포할까요?" 등의 불필요한 중간 질문을 하지 않으며, 브라우저 UI 자동 저장 커밋 충돌 방지를 위해 항상 `git pull --rebase origin main`을 선행한 후 즉시 `git push origin main`을 실행하여 배포를 완료하고 결과만 보고합니다.
+### 9. 스크린 생성 및 수정 완료 시 무조건 GitHub 원격 배포 (Mandatory Automated GitHub Deployment)
+- **로컬 완결 후 즉시 자동 배포 완결**: AI가 스크린(HTML)을 신규 생성하거나 기존 스크린을 수정했을 때는, 로컬 파일 수정 및 정적 검증에 그치지 않고 **반드시 GitHub 원격 저장소(`main`) 및 사내 Git 저장소(`sisun`)로의 커밋 및 푸시까지 에이전트가 자체 판단하여 무조건 자동으로 완결**해야 합니다.
+- **추가 질문 대기 배제**: 스크린 작업 완료 후 "배포할까요?" 등의 불필요한 중간 질문을 하지 않으며, `scripts/deploy_all.ps1`을 통해 즉시 동기화하고 결과만 보고합니다.
 
-### 9. 표준 템플릿 기반 제작 시 픽셀 단위 레이아웃 100% 보존 불변 원칙 (Strict Pixel-Perfect Template Preservation)
+### 10. 표준 템플릿 기반 제작 시 픽셀 단위 레이아웃 100% 보존 불변 원칙 (Strict Pixel-Perfect Template Preservation)
 - **사용자 정돈 템플릿의 기하학적 구조(Geometry) 절대 보존**:
-  - 사용자가 에디터에서 정돈해 둔 표준 템플릿(`assets/templates/template_*.html` 또는 프로젝트 내 복제 템플릿)은 도형, 텍스트 박스, 아이콘, 여백, 정렬선이 **픽셀(PIXEL) 단위로 정교하게 계산되어 조화롭게 배치된 표준 규격**입니다.
-  - 템플릿을 기반으로 신규 스크린을 제작할 때는 **도형의 크기(`width`, `height`), 위치 좌표(`top`, `left`), 내부 여백(`padding`), 정렬(`text-align`, `align-items`), 계층(`z-index`)을 단 1픽셀도 임의로 수정하거나 왜곡해서는 안 됩니다.**
-- **임의 변형 절대 금지 및 1:1 콘텐츠 정밀 치환**:
-  - 내용이 많거나 적다고 해서 컨테이너 크기를 마음대로 줄이거나 늘리고, 박스를 병합하거나 여백을 변경하면 **전체 문서 시스템의 레이아웃 통일성이 완전히 파괴**됩니다.
-  - 모든 템플릿 엘리먼트(`lf-component`)의 인라인 스타일과 ID 구조를 1:1 그대로 보존하고, **오직 내부의 텍스트(타이틀, 소제목, 불릿 설명, 라벨, 수치)와 맥락에 맞는 일러스트/아이콘 경로만 정밀하게 치환**해야 합니다.
-- **작업 후 템플릿 정합성 무결성 검증 필수**:
-  - 템플릿 기반 스크린 생성을 마친 후에는 원본 템플릿과 비교하여 컴포넌트 총 개수 및 인라인 기하 스타일(`top, left, width, height, z-index`)의 불일치(Mismatch)가 0건인지 반드시 정적 검증해야 합니다.
+  - 사용자가 명시적으로 지정한 표준 템플릿(`assets/templates/template_*.html` 등)을 기반으로 복제/치환할 때는 도형의 크기, 위치 좌표, 여백, 정렬을 임의로 왜곡하지 않고 보존합니다.
 
 ---
 
@@ -260,20 +248,19 @@ description: Use when the user asks AI to create, draw, generate, design, or com
             </div>
         </div>
 
-        <div id="hdr_icon" class="lf-component" style="position: absolute; top: 32px; left: 38px; width: 26px; height: 26px; z-index: 105;">
+        <div id="hdr_icon" class="lf-component" style="position: absolute; top: 30px; left: 40px; width: 30px; height: 30px; z-index: 105;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;">
                 <polygon points="12 2 2 7 12 12 22 7 12 2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
             </svg>
         </div>
 
-        <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 34px; left: 76px; width: 700px; height: 26px; z-index: 105; white-space: nowrap !important;">
+        <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 30px; left: 80px; width: 700px; height: 30px; z-index: 105; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 17px; white-space: nowrap !important;">[기획/분석] 핵심 타이틀 제목</strong></p>
             </div>
         </div>
 
-        <!-- [1] 섹션 1 메인 컨테이너 (Top: 84px, Left: 20px, Width: 1560px) -->
-        <!-- 세부 카드 및 항목들은 반드시 독립된 lf-component 원자들로 개별 배치 -->
+        <!-- [1] 본문 섹션 (10px 단위 크기/좌표/간격 및 최소 200x200 일러스트 준수) -->
 
     </div>
 </body>
@@ -289,7 +276,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 3. **[금기 3] AI 지어내기 수치 삽입**: 근거 없는 퍼센트(%), 가상 금액, 거짓 벤치마크 내용 주입 금지 (기획서 팩트 기반 작성).
 4. **[금기 4] 복잡한 원색 난립**: 빨강, 노랑, 파랑, 보라 등 무지개색을 무분별하게 혼용하는 디자인 금지 (뉴트럴 + 단일/이중 포인트 컬러 준수).
 5. **[금기 5] 1600x900 초과 세로 스크롤 레이아웃**: 프레젠테이션/보고서 스크린은 1600x900 단일 화면 내에서 스크롤 없이 완결되는 컴팩트한 레이아웃을 지향해야 함.
-6. **[금기 6] 텍스트 1개 도형 몰아넣기 (No Single Text Dump)**: 불릿 리스트 여러 줄, 코드 박스, 효과 설명을 단 1개의 텍스트 도형에 몰아넣는 행위 금지. 사용자의 개별 편집 편의성을 위해 최소 2~3개의 독립된 `.lf-component.v4-text-shape`로 파편화할 것.
-7. **[금기 7] 줄바꿈 미처리 및 카드 경계 침범 (No Text Overflow & Overlap)**: 본문 설명문에 `white-space: nowrap`을 오적용하거나 폭(width) 계산을 누락하여 텍스트가 카드를 뚫고 인접 영역을 침범·중첩하는 레이아웃 파괴 행위 절대 금지. (`white-space: normal !important; word-break: break-word;` 및 유효 너비 엄수)
-8. **[금기 8] 일러스트 없는 밋밋한 텍스트 상자 나열 (No Text-Only Dry Screens)**: 시각적 직관성과 프레젠테이션 몰입감을 돕는 일러스트/아이콘 요소를 일절 배제하고 삭막한 텍스트 카드만 늘어놓는 디자인 행위 금지. 상황에 부합하는 이미지를 라이브러리(`assets/illustrations/`)에서 찾거나, 부재 시 `generate_image`로 즉시 제작하여 화면의 시각적 완성도와 생동감을 극대화할 것.
-9. **[금기 9] 지정된 템플릿의 픽셀 좌표/크기/여백/얼라인 임의 변형 (No Arbitrary Template Layout Alteration)**: 사용자가 픽셀 단위로 정밀하게 정돈해 둔 템플릿의 도형 크기, 여백, 좌표, 정렬을 AI가 임의로 변경하여 문서 전체의 레이아웃 통일성을 깨뜨리는 행위 절대 금지. 템플릿의 기하학적 구조(Geometry)는 100% 보존하고 내용(텍스트/이미지)만 정밀 치환할 것.
+6. **[금기 6] 텍스트 1개 도형 몰아넣기 (No Single Text Dump)**: 불릿 리스트 여러 줄, 코드 박스, 효과 설명을 단 1개의 텍스트 도형에 몰아넣는 행위 금지. 사용자의 개별 편집 편의성을 위해 최소 2~3개의 독립된 `.lf-component`로 파편화할 것.
+7. **[금기 7] 줄바꿈 미처리 및 카드 경계 침범 (No Text Overflow & Overlap)**: 본문 설명문에 `white-space: nowrap`을 오적용하거나 폭(width) 계산을 누락하여 텍스트가 카드를 뚫고 인접 영역을 침범·중첩하는 레이아웃 파괴 행위 절대 금지.
+8. **[금기 8] 일러스트 없는 밋밋한 상자 나열 또는 200x200 미만 소형 일러스트 배치**: 일러스트를 배제하거나, 이미지를 가로/세로 200px 미만으로 너무 작게 축소하여 잘 보이지 않게 배치하는 행위 지양 (최소 `200px × 200px` 이상 지향).
+9. **[금기 9] 1px 단위 불규칙 크기/간격 및 정렬 오차 (No Irregular 1px Sizing or Misalignment)**: 오브젝트의 가로/세로 크기나 여백을 `1px` 단위로 중구난방 설정하거나 동일 구조 오브젝트의 가로/세로 정렬이 어긋나는 행위 금지 (`width`/`height` 10단위 구성, 간격 `20/30/40/50px` 등 10단위 균형 배치, 동일 구조 오브젝트 0px 오차 정렬 엄수).

@@ -56,9 +56,13 @@
             s = state.transform.scale;
         } else if (!isMobile && isFullscreen) {
             // [데스크톱 전체보기(Fullscreen) 전용 안전 핏]:
-            // FHD 125% 배율(1536x864) 등 1600x900보다 작은 해상도에서 1.0 강제 스냅으로 인해
-            // 좌/우/상/하 영역이 잘리는 현상을 원천 차단하고, 최대 1.0 배율 이내에서 화면에 정확히 맞춤
-            s = Math.min(1.0, Math.round(fitScale * 1000) / 1000);
+            // 가용 캔버스가 1600x900 이상이면 1.0(100%) 선명도를 유지하고,
+            // FHD 125% 배율(1536x864) 등 1600x900보다 작은 경우에는 4% 안전 여백(fitScale)으로 축소하여 좌/우 잘림을 원천 차단
+            if (cw >= iw && ch >= ih) {
+                s = 1.0;
+            } else {
+                s = Math.min(1.0, Math.round(fitScale * 1000) / 1000);
+            }
         } else if (state.viewMode === 'crisp') {
             // [100% 선명 뷰 모드 강제]: 모니터 해상도와 무관하게 1:1 물리 디스플레이 픽셀 선명도 100% 보장
             s = 1.0;

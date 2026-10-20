@@ -896,13 +896,13 @@ body.touch-capable:not(.res-wide) #btn-global-save,
     display: none !important;
 }
 
-/* Zen Mode & Fullscreen Mode: Strict total elimination of sidebars */
-body.zen-mode .sidebar-left,
-body.zen-mode #sidebar-left,
+/* Zen Mode & Fullscreen Mode: Hide right sidebar everywhere; hide left sidebar ONLY on mobile/narrow viewports (Keep left screen list visible on Desktop PC Fullscreen) */
+body.res-narrow.zen-mode .sidebar-left,
+body.res-narrow.zen-mode #sidebar-left,
+body.res-narrow.fullscreen-mode .sidebar-left,
+body.res-narrow.fullscreen-mode #sidebar-left,
 body.zen-mode .sidebar-right,
 body.zen-mode #sidebar-right,
-body.fullscreen-mode .sidebar-left,
-body.fullscreen-mode #sidebar-left,
 body.fullscreen-mode .sidebar-right,
 body.fullscreen-mode #sidebar-right {
     display: none !important;
@@ -1180,9 +1180,26 @@ body.res-compact.zen-mode #workspace-view {
     padding: 0 !important;
 }
 
+body.res-narrow.zen-mode .center-content,
+body.res-narrow.fullscreen-mode .center-content {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
 body.zen-mode .center-content,
+body.fullscreen-mode .center-content {
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
 body.zen-mode .canvas,
-body.fullscreen-mode .center-content,
 body.fullscreen-mode .canvas {
     width: 100% !important;
     height: 100% !important;

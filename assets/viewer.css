@@ -311,8 +311,6 @@ body.res-wide.workspace-docked #artboard-wrapper {
 /* ===== Fullscreen Mode ===== */
 body.fullscreen-mode .toolbar,
 body.fullscreen-mode .header-metadata,
-body.fullscreen-mode .sidebar-left,
-body.fullscreen-mode #sidebar-left,
 body.fullscreen-mode .sidebar-right,
 body.fullscreen-mode #sidebar-right {
     display: none !important;

@@ -867,4 +867,4 @@ table.v4-ia-tree-table tbody td.col-type { text-align: center; color: #334155; f
 .ia-count-pill { display: inline-flex; align-items: center; justify-content: center; height: 15px; min-width: 18px; padding: 0 5px; margin-left: 2px; border-radius: 999px; background: #e2e8f0; color: #475569; font-size: 10px !important; font-weight: 700; line-height: 1; flex-shrink: 0; }
 tr.is-folded-root td { background: #fafbfc; }
 tr.ia-hidden-g1, tr.ia-hidden-g2 { display: none !important; }
-;
+`;

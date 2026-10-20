@@ -33,9 +33,8 @@
 
         // 브라우저 캔버스 영역에 맞춘 반응형 가변 배율(Fit Scale) 계산
         // - 모바일 세로 모드: 가로폭(Fit to Width) 기준 적용 (스크린 좌우 꽉 참)
-        // - 모바일 가로 모드: 뷰포트 100% 핏
+        // - 모바일 가로 모드 및 데스크톱 일반 편집 모드: 기존 배율(cw / iw, ch / ih) 그대로 유지
         // - 데스크톱 전체보기(Fullscreen): 상하좌우 4% 안전 여백(0.96)으로 좌우/상하 잘림 원천 차단
-        // - 데스크톱 일반 편집 모드: 상하좌우 2% 안전 여백(0.98) 적용
         var fitScale;
         if (isMobilePortrait) {
             fitScale = cw / iw;
@@ -44,7 +43,7 @@
         } else if (isFullscreen) {
             fitScale = Math.min((cw * 0.96) / iw, (ch * 0.96) / ih);
         } else {
-            fitScale = Math.min((cw * 0.98) / iw, (ch * 0.98) / ih);
+            fitScale = Math.min(cw / iw, ch / ih);
         }
 
         if (isMobile && forceReset) {
@@ -68,13 +67,13 @@
             if (isMobile) {
                 // 모바일/태블릿: 5% 단위 그리드 스냅(floor)으로 인한 인위적 축소 방지 -> 화면에 100% 핏
                 s = fitScale;
-            } else if (fitScale >= 0.95 && cw >= iw && ch >= ih) {
-                // 1. 데스크톱 스마트 스냅 밴드 (Smart Snap Band): 실제 캔버스가 1600x900 이상이면서 0.95 이상일 때만 1.0(100%) 스냅
+            } else if (fitScale >= 0.95) {
+                // 1. 데스크톱 스마트 스냅 밴드 (Smart Snap Band): 0.95 이상일 때는 1.0(100%) 강제 스냅!
                 s = 1.0;
-            } else if (cw >= 1700 && ch >= 900) {
+            } else if (cw >= 1700 && ch >= 880) {
                 s = 1.0;
             } else {
-                // 2. 소형 노트북/저해상도 PC(fitScale < 0.95 또는 뷰포트 < 1600x900): 5% 단위 그리드 스냅 (0.90, 0.85, 0.80...)
+                // 2. 소형 노트북/저해상도 PC(fitScale < 0.95): 5% 단위 그리드 스냅 (0.90, 0.85, 0.80...)
                 s = Math.max(0.2, Math.floor(fitScale * 20) / 20);
             }
         }

@@ -18,12 +18,13 @@
             
             const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
             const isSingleGroup = selIds.length === 1 && compStyles && compStyles.isGroup;
+            const canAddMolecule = isSingleGroup || (selIds.length <= 1 && compStyles && compStyles.isTable);
 
             const hasSelection = selIds.length > 0 || !!(compStyles && compStyles.id);
 
             if (btnGroup) btnGroup.style.setProperty('display', (selIds.length > 1) ? 'flex' : 'none', 'important');
             if (btnUngroup) btnUngroup.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
-            if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
+            if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', canAddMolecule ? 'flex' : 'none', 'important');
             if (alignBar) {
                 alignBar.style.setProperty('display', (hasSelection && !isSingleGroup) ? 'block' : 'none', 'important');
                 const btnDistH = document.getElementById('btn-align-distribute-h');

@@ -586,8 +586,14 @@ window.GroupingManager = (function() {
     };
 
     const addToMolecules = async () => {
-        const activeIds = getEffectiveSelectedIds();
-        if (activeIds.length !== 1) return;
+        let activeIds = getEffectiveSelectedIds();
+        if ((!activeIds || activeIds.length === 0) && window.state && window.state.selectedComponent && window.state.selectedComponent.id) {
+            activeIds = [window.state.selectedComponent.id];
+        }
+        if ((!activeIds || activeIds.length === 0) && window.activeCompId) {
+            activeIds = [window.activeCompId];
+        }
+        if (!activeIds || activeIds.length !== 1) return;
         const name = prompt("새로운 Molecule 명칭을 입력하세요:", "Custom Molecule");
         if (!name) return;
         

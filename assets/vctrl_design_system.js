@@ -61,6 +61,7 @@ window.v4DesignSystemScript = `
         try { if (window.bindCursorEvents) window.bindCursorEvents(); } catch(e) { console.error("Error in bindCursorEvents:", e); }
         try { if (window.bindWebEditorEvents) window.bindWebEditorEvents(); } catch(e) { console.error("Error in bindWebEditorEvents:", e); }
         try { if (window.bindSelectboxEvents) window.bindSelectboxEvents(); } catch(e) { console.error("Error in bindSelectboxEvents:", e); }
+        try { if (window.bindIaTreeTables) window.bindIaTreeTables(); } catch(e) { console.error("Error in bindIaTreeTables:", e); }
 
         try {
             // Restore pattern styles for pattern shapes with strict Value Comparison Guard
@@ -1143,6 +1144,176 @@ window.v4DesignSystemScript = `
             console.log("[DesignSystem] Resumed MutationObserver.");
         }
     };
+
+
+    if (typeof window.toggleIaG1 !== 'function') {
+        window.toggleIaG1 = function(g1Key, btnEl, ev) {
+            if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+            var table = (btnEl && btnEl.closest ? btnEl.closest('table.v4-ia-tree-table') : null) || document.querySelector('table.v4-ia-tree-table');
+            if (!table) return;
+            var rows = table.querySelectorAll('tbody tr[data-g1="' + g1Key + '"]');
+            if (!rows.length) return;
+            var rootRow = rows[0];
+            var nextFoldState = !rootRow.classList.contains('is-folded-root');
+            if (nextFoldState) {
+                rootRow.classList.add('is-folded-root');
+                if (btnEl) btnEl.textContent = '\u25B6';
+            } else {
+                rootRow.classList.remove('is-folded-root');
+                if (btnEl) btnEl.textContent = '\u25BC';
+            }
+            for (var i = 1; i < rows.length; i++) {
+                if (nextFoldState) rows[i].classList.add('ia-hidden-g1');
+                else rows[i].classList.remove('ia-hidden-g1');
+            }
+            if (typeof window.markDirty === 'function') window.markDirty();
+        };
+    }
+
+    if (typeof window.toggleIaG2 !== 'function') {
+        window.toggleIaG2 = function(g2Key, btnEl, ev) {
+            if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+            var table = (btnEl && btnEl.closest ? btnEl.closest('table.v4-ia-tree-table') : null) || document.querySelector('table.v4-ia-tree-table');
+            if (!table) return;
+            var rootRow = table.querySelector('tbody tr[data-g2="' + g2Key + '"]');
+            var childRows = table.querySelectorAll('tbody tr[data-g2-parent="' + g2Key + '"]');
+            if (!rootRow || !childRows.length) return;
+            var isFolded = (btnEl && btnEl.textContent.trim() === '\u25B6') || childRows[0].classList.contains('ia-hidden-g2');
+            var nextFold = !isFolded;
+            if (nextFold) {
+                rootRow.classList.add('is-folded-root');
+                if (btnEl) btnEl.textContent = '\u25B6';
+            } else {
+                rootRow.classList.remove('is-folded-root');
+                if (btnEl) btnEl.textContent = '\u25BC';
+            }
+            for (var i = 0; i < childRows.length; i++) {
+                if (nextFold) childRows[i].classList.add('ia-hidden-g2');
+                else childRows[i].classList.remove('ia-hidden-g2');
+            }
+            if (typeof window.markDirty === 'function') window.markDirty();
+        };
+    }
+
+    if (typeof window.bindIaTreeTables !== 'function') {
+        window.bindIaTreeTables = function() {
+            var tables = document.querySelectorAll('table.v4-ia-tree-table');
+            tables.forEach(function(table) {
+                var comp = table.closest('.lf-component');
+                if (!table || !comp || table._iaPropsBound) return;
+                table._iaPropsBound = true;
+                table._tableSelectionBound = true;
+                table.querySelectorAll('.selected-cell').forEach(function(c) { c.classList.remove('selected-cell'); });
+
+                var isDragSelecting = false;
+                var dragStartRow = -1;
+                var dragStartCol = -1;
+
+                var syncToParentInspector = function() {
+                    document.querySelectorAll('.lf-component').forEach(function(x) { x.classList.remove('selected'); });
+                    comp.classList.add('selected');
+                    window.activeEl = comp;
+                    if (typeof window.updateHandles === 'function') window.updateHandles(comp);
+                    if (typeof window.notifyParent === 'function') {
+                        var compStyles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id, isTable: true };
+                        compStyles.isTable = true;
+                        window.notifyParent(Object.assign({ type: 'LF_COMP_SELECTED', shiftKey: false, isResponsive: false }, compStyles));
+                    }
+                    var notifyCells = function() {
+                        var selected = table.querySelectorAll('.selected-cell');
+                        if (!selected.length) {
+                            if (typeof window.notifyParent === 'function') window.notifyParent({ type: 'LF_CELL_SELECTED', cellData: null });
+                            return;
+                        }
+                        var repCell = selected[0];
+                        var innerSpan = repCell.querySelector('.v4-editable-cell');
+                        var bg = repCell.style.backgroundColor || window.getComputedStyle(repCell).backgroundColor || '#ffffff';
+                        var color = (innerSpan && innerSpan.style.color) || repCell.style.color || window.getComputedStyle(innerSpan || repCell).color || '#1e293b';
+                        var align = repCell.style.textAlign || window.getComputedStyle(repCell).textAlign || 'center';
+                        if (typeof window.notifyParent === 'function') {
+                            window.notifyParent({
+                                type: 'LF_CELL_SELECTED',
+                                cellData: { count: selected.length, backgroundColor: bg, color: color, textAlign: align, width: repCell.offsetWidth || 120, height: repCell.offsetHeight || 36 }
+                            });
+                        }
+                    };
+                    notifyCells();
+                    setTimeout(notifyCells, 20);
+                };
+
+                table.addEventListener('mousedown', function(e) {
+                    if (e.button !== 0 || e.target.closest('.ia-toggle-btn')) return;
+                    var cell = e.target.closest('td, th');
+                    if (!cell) return;
+                    var isAlreadyEditingThisCell = (document.activeElement && document.activeElement.isContentEditable && cell.contains(document.activeElement));
+                    var tr = cell.parentElement;
+                    var allRows = Array.from(table.rows);
+                    dragStartRow = allRows.indexOf(tr);
+                    dragStartCol = Array.from(tr.cells).indexOf(cell);
+                    isDragSelecting = !isAlreadyEditingThisCell;
+                    var isFullRowSelect = cell.classList.contains('col-site') || e.altKey;
+                    if (!e.shiftKey) {
+                        table.querySelectorAll('.selected-cell').forEach(function(c) { c.classList.remove('selected-cell'); });
+                        if (isFullRowSelect && tr) Array.from(tr.cells).forEach(function(rc) { rc.classList.add('selected-cell'); });
+                        else cell.classList.add('selected-cell');
+                    } else {
+                        if (isFullRowSelect && tr) {
+                            var addFlag = !cell.classList.contains('selected-cell');
+                            Array.from(tr.cells).forEach(function(rc) { rc.classList.toggle('selected-cell', addFlag); });
+                        } else cell.classList.toggle('selected-cell');
+                    }
+                    window._iaSuppressGlobalClear = true;
+                    syncToParentInspector();
+                    setTimeout(function() {
+                        window._iaSuppressGlobalClear = false;
+                        if (window.V4DragResizeEngine) {
+                            window.V4DragResizeEngine.isPendingDrag = false;
+                            window.V4DragResizeEngine.isDragging = false;
+                        }
+                        syncToParentInspector();
+                    }, 0);
+                });
+
+                table.addEventListener('mouseover', function(e) {
+                    if (!isDragSelecting) return;
+                    if (window.V4DragResizeEngine) {
+                        window.V4DragResizeEngine.isPendingDrag = false;
+                        window.V4DragResizeEngine.isDragging = false;
+                    }
+                    var cell = e.target.closest('td, th');
+                    if (!cell) return;
+                    var tr = cell.parentElement;
+                    var allRows = Array.from(table.rows);
+                    var curRow = allRows.indexOf(tr);
+                    var curCol = Array.from(tr.cells).indexOf(cell);
+                    if (curRow < 0 || curCol < 0) return;
+                    var minR = Math.min(dragStartRow, curRow), maxR = Math.max(dragStartRow, curRow);
+                    var minC = Math.min(dragStartCol, curCol), maxC = Math.max(dragStartCol, curCol);
+                    table.querySelectorAll('.selected-cell').forEach(function(c) { c.classList.remove('selected-cell'); });
+                    for (var r = minR; r <= maxR; r++) {
+                        var rowEl = allRows[r];
+                        if (!rowEl || rowEl.classList.contains('ia-hidden-g1') || rowEl.classList.contains('ia-hidden-g2')) continue;
+                        for (var c = minC; c <= maxC; c++) {
+                            if (rowEl.cells[c]) rowEl.cells[c].classList.add('selected-cell');
+                        }
+                    }
+                });
+
+                document.addEventListener('mouseup', function() {
+                    if (isDragSelecting) {
+                        isDragSelecting = false;
+                        syncToParentInspector();
+                    }
+                });
+
+                document.addEventListener('mousedown', function(e) {
+                    if (!e.target.closest('table.v4-ia-tree-table')) {
+                        table.querySelectorAll('.selected-cell').forEach(function(c) { c.classList.remove('selected-cell'); });
+                    }
+                });
+            });
+        };
+    }
 
     if (typeof window.enforceDesignSystem === 'function') {
         dsObserver = new MutationObserver((mutations) => runEnforceSafe(mutations));

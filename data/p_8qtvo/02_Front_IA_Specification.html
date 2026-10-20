@@ -226,75 +226,9 @@
     background: #fafbfc;
   }
 
-  /* Toolbar Controls */
-  .ia-toolbar-label {
-    font-size: 13px;
-    font-weight: 800;
-    color: #0f172a;
-    margin-right: 4px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .ia-ctrl-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 32px;
-    padding: 0 12px;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
-    background: #ffffff;
-    color: #1e293b;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .ia-ctrl-btn:hover {
-    background: #f1f5f9;
-    border-color: #94a3b8;
-  }
-  .ia-ctrl-btn.active {
-    background: #0f172a;
-    color: #ffffff;
-    border-color: #0f172a;
-  }
-  .ia-domain-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 32px;
-    padding: 0 11px;
-    border-radius: 6px;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
-    color: #475569;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .ia-domain-btn:hover {
-    background: #eff6ff;
-    color: #1d4ed8;
-    border-color: #bfdbfe;
-  }
-  .ia-domain-btn.active {
-    background: #2563eb;
-    color: #ffffff;
-    border-color: #2563eb;
-  }
-
-  /* Hidden Rows when Folded or Filtered */
+  /* Hidden Rows when Folded */
   tr.ia-hidden-g1,
-  tr.ia-hidden-g2,
-  tr.ia-hidden-filter {
+  tr.ia-hidden-g2 {
     display: none !important;
   }
 </style>
@@ -317,35 +251,8 @@
     </div>
   </div>
 
-  <!-- 2. 계층 아코디언 제어 & 도메인 필터 바 (10단위 규격: top:90, left:20, width:1560, height:50) -->
-  <div id="comp-ia-toolbar" class="lf-component" style="top: 90px; left: 20px; width: 1560px; height: 50px; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; white-space: nowrap;">
-    <!-- 좌측: 아코디언 Depth 일괄 접기/펼치기 제어 -->
-    <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap;" onmousedown="event.stopPropagation();">
-      <span class="ia-toolbar-label">계층 폴딩 :</span>
-      <button type="button" class="ia-ctrl-btn" data-mode="all" onmousedown="event.stopPropagation();" onclick="window.setIaViewMode('all', this, event)">▼ 전체 펼치기</button>
-      <button type="button" class="ia-ctrl-btn" data-mode="d2" onmousedown="event.stopPropagation();" onclick="window.setIaViewMode('d2', this, event)">▶ 2Depth 기준 보기</button>
-      <button type="button" class="ia-ctrl-btn" data-mode="d1" onmousedown="event.stopPropagation();" onclick="window.setIaViewMode('d1', this, event)">▶ 1Depth 요약 보기</button>
-    </div>
-
-    <!-- 우측: 도메인 퀵 필터 -->
-    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap;" onmousedown="event.stopPropagation();">
-      <span class="ia-toolbar-label" style="color: #475569;">도메인 필터 :</span>
-      <button type="button" class="ia-domain-btn active" data-domain="all" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('all', this, event)">전체</button>
-      <button type="button" class="ia-domain-btn" data-domain="hom" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('hom', this, event)">메인/공통</button>
-      <button type="button" class="ia-domain-btn" data-domain="brd" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('brd', this, event)">브랜드관</button>
-      <button type="button" class="ia-domain-btn" data-domain="prd" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('prd', this, event)">상품 리스트</button>
-      <button type="button" class="ia-domain-btn" data-domain="pdp" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('pdp', this, event)">상품 상세</button>
-      <button type="button" class="ia-domain-btn" data-domain="evt" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('evt', this, event)">기획전/LIVE</button>
-      <button type="button" class="ia-domain-btn" data-domain="log" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('log', this, event)">로그인</button>
-      <button type="button" class="ia-domain-btn" data-domain="mem" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('mem', this, event)">회원가입</button>
-      <button type="button" class="ia-domain-btn" data-domain="ord" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('ord', this, event)">장바구니/주문</button>
-      <button type="button" class="ia-domain-btn" data-domain="myp" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('myp', this, event)">마이페이지</button>
-      <button type="button" class="ia-domain-btn" data-domain="csc" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('csc', this, event)">고객센터</button>
-    </div>
-  </div>
-
-  <!-- 3. 시선닷컴 Front IA 계층형 아코디언 테이블 (10단위 규격: top:160, left:20, width:1560, height:720) -->
-  <div id="comp-ia-table-wrap" class="lf-component" style="top: 160px; left: 20px; width: 1560px; height: 720px; z-index: 10;">
+  <!-- 2. 시선닷컴 Front IA 계층형 아코디언 테이블 (10단위 규격: top:90, left:20, width:1560, height:790) -->
+  <div id="comp-ia-table-wrap" class="lf-component" style="top: 90px; left: 20px; width: 1560px; height: 790px; z-index: 10;">
     <div class="ia-table-card">
       <div class="ia-scroll-viewport">
         <table class="v4-ia-tree-table" id="sisun-ia-table">
@@ -1775,7 +1682,7 @@
       ev.stopPropagation();
       ev.preventDefault();
     }
-    var table = document.getElementById('sisun-ia-table');
+    var table = (btnEl && btnEl.closest ? btnEl.closest('table.v4-ia-tree-table') : null) || document.querySelector('table.v4-ia-tree-table');
     if (!table) return;
     var rows = table.querySelectorAll('tbody tr[data-g1="' + g1Key + '"]');
     if (!rows.length) return;
@@ -1808,7 +1715,7 @@
       ev.stopPropagation();
       ev.preventDefault();
     }
-    var table = document.getElementById('sisun-ia-table');
+    var table = (btnEl && btnEl.closest ? btnEl.closest('table.v4-ia-tree-table') : null) || document.querySelector('table.v4-ia-tree-table');
     if (!table) return;
     var rootRow = table.querySelector('tbody tr[data-g2="' + g2Key + '"]');
     var childRows = table.querySelectorAll('tbody tr[data-g2-parent="' + g2Key + '"]');
@@ -1835,356 +1742,259 @@
     if (typeof window.markDirty === 'function') window.markDirty();
   };
 
-  // 상단 일괄 폴딩 뷰 모드 (all: 1~5Depth 전체 펼치기, d2: 2Depth 기준 보기, d1: 1Depth 요약 보기)
-  window.setIaViewMode = function(mode, btnEl, ev) {
-    if (ev) {
-      ev.stopPropagation();
-      ev.preventDefault();
-    }
-    var toolbar = document.getElementById('comp-ia-toolbar');
-    if (toolbar) {
-      var modeBtns = toolbar.querySelectorAll('.ia-ctrl-btn');
-      for (var b = 0; b < modeBtns.length; b++) {
-        modeBtns[b].classList.remove('active');
-      }
-    }
-    if (btnEl) btnEl.classList.add('active');
-
-    var table = document.getElementById('sisun-ia-table');
-    if (!table) return;
-    var allRows = table.querySelectorAll('tbody tr');
-
-    for (var i = 0; i < allRows.length; i++) {
-      var r = allRows[i];
-      var isG1Root = r.getAttribute('data-role') === 'g1-root';
-      var isG2Root = r.getAttribute('data-g2-role') === 'g2-root';
-      var hasG2Parent = r.hasAttribute('data-g2-parent');
-      var g1Btn = r.querySelector('.col-d1 .ia-toggle-btn');
-      var g2Btn = r.querySelector('.col-d2 .ia-toggle-btn');
-
-      if (mode === 'all') {
-        r.classList.remove('ia-hidden-g1', 'ia-hidden-g2', 'is-folded-root');
-        if (g1Btn) g1Btn.textContent = '▼';
-        if (g2Btn) g2Btn.textContent = '▼';
-      } else if (mode === 'd2') {
-        r.classList.remove('ia-hidden-g1');
-        if (g1Btn) g1Btn.textContent = '▼';
-        if (hasG2Parent) {
-          r.classList.add('ia-hidden-g2');
-        } else {
-          r.classList.remove('ia-hidden-g2');
-        }
-        if (isG2Root && g2Btn) {
-          r.classList.add('is-folded-root');
-          g2Btn.textContent = '▶';
-        } else {
-          r.classList.remove('is-folded-root');
-        }
-      } else if (mode === 'd1') {
-        r.classList.remove('ia-hidden-g2');
-        if (g2Btn) g2Btn.textContent = '▼';
-        if (isG1Root) {
-          r.classList.remove('ia-hidden-g1');
-          r.classList.add('is-folded-root');
-          if (g1Btn) g1Btn.textContent = '▶';
-        } else {
-          r.classList.add('ia-hidden-g1');
-          r.classList.remove('is-folded-root');
-        }
-      }
-    }
-    if (typeof window.markDirty === 'function') window.markDirty();
-  };
-
-  // 우측 도메인 필터 (특정 도메인 클릭 시 접혀 있던 해당 도메인 하위 Depth도 즉시 펼쳐서 표시)
-  window.filterIaDomain = function(domainKey, btnEl, ev) {
-    if (ev) {
-      ev.stopPropagation();
-      ev.preventDefault();
-    }
-    var toolbar = document.getElementById('comp-ia-toolbar');
-    if (toolbar) {
-      var domBtns = toolbar.querySelectorAll('.ia-domain-btn');
-      for (var b = 0; b < domBtns.length; b++) {
-        domBtns[b].classList.remove('active');
-      }
-    }
-    if (btnEl) btnEl.classList.add('active');
-
-    var table = document.getElementById('sisun-ia-table');
-    if (!table) return;
-    var allRows = table.querySelectorAll('tbody tr');
-    for (var i = 0; i < allRows.length; i++) {
-      var r = allRows[i];
-      var g1 = r.getAttribute('data-g1');
-      if (domainKey === 'all') {
-        r.classList.remove('ia-hidden-filter');
-      } else if (g1 === domainKey) {
-        r.classList.remove('ia-hidden-filter', 'ia-hidden-g1', 'ia-hidden-g2', 'is-folded-root');
-        var g1Btn = r.querySelector('.col-d1 .ia-toggle-btn');
-        var g2Btn = r.querySelector('.col-d2 .ia-toggle-btn');
-        if (g1Btn) g1Btn.textContent = '▼';
-        if (g2Btn) g2Btn.textContent = '▼';
-      } else {
-        r.classList.add('ia-hidden-filter');
-      }
-    }
-  };
-
   // =========================================================================
   // Object Properties 연동 셀/행 선택 & 배경/텍스트 하이라이트 엔진
   // =========================================================================
   (function initIaTableSelectionAndProperties() {
     var bindIaTable = function() {
-      var table = document.getElementById('sisun-ia-table');
-      var comp = document.getElementById('comp-ia-table-wrap');
-      if (!table || !comp || table._iaPropsBound) return;
-      table._iaPropsBound = true;
-      table._tableSelectionBound = true;
-      table.querySelectorAll('.selected-cell').forEach(function(c) {
-        c.classList.remove('selected-cell');
-      });
-
-      var installClearSelectionGuard = function() {
-        if (window.TableSelection && typeof window.TableSelection.clearSelection === 'function' && !window.TableSelection._iaClearGuarded) {
-          var origClear = window.TableSelection.clearSelection;
-          window.TableSelection.clearSelection = function(tbl, silent) {
-            if (!tbl && window._iaSuppressGlobalClear) return;
-            return origClear.apply(this, arguments);
-          };
-          window.TableSelection._iaClearGuarded = true;
-        }
-        if (typeof window.syncTableComponentSize === 'function' && !window.syncTableComponentSize._iaSizeGuarded) {
-          var origSyncSize = window.syncTableComponentSize;
-          window.syncTableComponentSize = function() {
-            var s = document.querySelector('.lf-component.selected');
-            if (s && (s.id === 'comp-ia-table-wrap' || s.querySelector('.v4-ia-tree-table'))) return;
-            return origSyncSize.apply(this, arguments);
-          };
-          window.syncTableComponentSize._iaSizeGuarded = true;
-        }
-      };
-      installClearSelectionGuard();
-      setTimeout(installClearSelectionGuard, 150);
-      setTimeout(installClearSelectionGuard, 500);
-
-      var isDragSelecting = false;
-      var dragStartRow = -1;
-      var dragStartCol = -1;
-
-      var syncToParentInspector = function() {
-        // 1. Select component & open Object Properties panel (Table/Cell Inspector)
-        document.querySelectorAll('.lf-component').forEach(function(x) {
-          x.classList.remove('selected');
-        });
-        comp.classList.add('selected');
-        window.activeEl = comp;
-        if (typeof window.updateHandles === 'function') {
-          window.updateHandles(comp);
-        }
-
-        if (typeof window.notifyParent === 'function') {
-          var compStyles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id, isTable: true };
-          compStyles.isTable = true;
-          window.notifyParent(Object.assign({
-            type: 'LF_COMP_SELECTED',
-            shiftKey: false,
-            isResponsive: false
-          }, compStyles));
-        }
-
-        // 2. Sync selected cell(s) background color, text color, dimensions & alignment to InspectorTable
-        var notifyCells = function() {
-          var selected = table.querySelectorAll('.selected-cell');
-          if (!selected.length) {
-            if (typeof window.notifyParent === 'function') {
-              window.notifyParent({ type: 'LF_CELL_SELECTED', cellData: null });
-            }
-            return;
-          }
-          var repCell = selected[0];
-          var innerSpan = repCell.querySelector('.v4-editable-cell');
-          var bg = repCell.style.backgroundColor || window.getComputedStyle(repCell).backgroundColor || '#ffffff';
-          var color = (innerSpan && innerSpan.style.color) || repCell.style.color || window.getComputedStyle(innerSpan || repCell).color || '#1e293b';
-          var align = repCell.style.textAlign || window.getComputedStyle(repCell).textAlign || 'center';
-          var width = repCell.offsetWidth || 120;
-          var height = repCell.offsetHeight || 36;
-
-          if (typeof window.notifyParent === 'function') {
-            window.notifyParent({
-              type: 'LF_CELL_SELECTED',
-              cellData: {
-                count: selected.length,
-                backgroundColor: bg,
-                color: color,
-                textAlign: align,
-                width: width,
-                height: height
-              }
-            });
-          }
-        };
-
-        notifyCells();
-        setTimeout(notifyCells, 20);
-      };
-
-      table.addEventListener('mousedown', function(e) {
-        if (e.button !== 0) return;
-        if (e.target.closest('.ia-toggle-btn')) return;
-        var cell = e.target.closest('td, th');
-        if (!cell) return;
-
-        // If already focused inside contenteditable and clicking same cell, allow text cursor placement
-        var isAlreadyEditingThisCell = (document.activeElement && document.activeElement.isContentEditable && cell.contains(document.activeElement));
-
-        var tr = cell.parentElement;
-        var allRows = Array.from(table.rows);
-        dragStartRow = allRows.indexOf(tr);
-        dragStartCol = Array.from(tr.cells).indexOf(cell);
-        isDragSelecting = !isAlreadyEditingThisCell;
-
-        // Clicking '시선닷컴' (.col-site) or Alt+Click selects the entire row at once!
-        var isFullRowSelect = cell.classList.contains('col-site') || e.altKey;
-
-        if (!e.shiftKey) {
-          table.querySelectorAll('.selected-cell').forEach(function(c) {
-            c.classList.remove('selected-cell');
-          });
-          if (isFullRowSelect && tr) {
-            Array.from(tr.cells).forEach(function(rc) {
-              rc.classList.add('selected-cell');
-            });
-          } else {
-            cell.classList.add('selected-cell');
-          }
-        } else {
-          if (isFullRowSelect && tr) {
-            var addFlag = !cell.classList.contains('selected-cell');
-            Array.from(tr.cells).forEach(function(rc) {
-              rc.classList.toggle('selected-cell', addFlag);
-            });
-          } else {
-            cell.classList.toggle('selected-cell');
-          }
-        }
-
-        installClearSelectionGuard();
-        window._iaSuppressGlobalClear = true;
-        syncToParentInspector();
-        setTimeout(function() {
-          window._iaSuppressGlobalClear = false;
-          if (window.V4DragResizeEngine) {
-            window.V4DragResizeEngine.isPendingDrag = false;
-            window.V4DragResizeEngine.isDragging = false;
-          }
-          syncToParentInspector();
-        }, 0);
-      });
-
-      table.addEventListener('mouseover', function(e) {
-        if (!isDragSelecting) return;
-        if (window.V4DragResizeEngine) {
-          window.V4DragResizeEngine.isPendingDrag = false;
-          window.V4DragResizeEngine.isDragging = false;
-        }
-        var cell = e.target.closest('td, th');
-        if (!cell) return;
-        var tr = cell.parentElement;
-        var allRows = Array.from(table.rows);
-        var curRow = allRows.indexOf(tr);
-        var curCol = Array.from(tr.cells).indexOf(cell);
-        if (curRow < 0 || curCol < 0) return;
-
-        var minR = Math.min(dragStartRow, curRow);
-        var maxR = Math.max(dragStartRow, curRow);
-        var minC = Math.min(dragStartCol, curCol);
-        var maxC = Math.max(dragStartCol, curCol);
-
+      var tables = document.querySelectorAll('table.v4-ia-tree-table');
+      tables.forEach(function(table) {
+        var comp = table.closest('.lf-component');
+        if (!table || !comp || table._iaPropsBound) return;
+        table._iaPropsBound = true;
+        table._tableSelectionBound = true;
         table.querySelectorAll('.selected-cell').forEach(function(c) {
           c.classList.remove('selected-cell');
         });
 
-        for (var r = minR; r <= maxR; r++) {
-          var rowEl = allRows[r];
-          if (!rowEl || rowEl.classList.contains('ia-hidden-g1') || rowEl.classList.contains('ia-hidden-g2') || rowEl.classList.contains('ia-hidden-filter')) continue;
-          for (var c = minC; c <= maxC; c++) {
-            if (rowEl.cells[c]) {
-              rowEl.cells[c].classList.add('selected-cell');
+        var installClearSelectionGuard = function() {
+          if (window.TableSelection && typeof window.TableSelection.clearSelection === 'function' && !window.TableSelection._iaClearGuarded) {
+            var origClear = window.TableSelection.clearSelection;
+            window.TableSelection.clearSelection = function(tbl, silent) {
+              if (!tbl && window._iaSuppressGlobalClear) return;
+              return origClear.apply(this, arguments);
+            };
+            window.TableSelection._iaClearGuarded = true;
+          }
+          if (typeof window.syncTableComponentSize === 'function' && !window.syncTableComponentSize._iaSizeGuarded) {
+            var origSyncSize = window.syncTableComponentSize;
+            window.syncTableComponentSize = function() {
+              var s = document.querySelector('.lf-component.selected');
+              if (s && s.querySelector('.v4-ia-tree-table')) return;
+              return origSyncSize.apply(this, arguments);
+            };
+            window.syncTableComponentSize._iaSizeGuarded = true;
+          }
+        };
+        installClearSelectionGuard();
+        setTimeout(installClearSelectionGuard, 150);
+        setTimeout(installClearSelectionGuard, 500);
+
+        var isDragSelecting = false;
+        var dragStartRow = -1;
+        var dragStartCol = -1;
+
+        var syncToParentInspector = function() {
+          document.querySelectorAll('.lf-component').forEach(function(x) {
+            x.classList.remove('selected');
+          });
+          comp.classList.add('selected');
+          window.activeEl = comp;
+          if (typeof window.updateHandles === 'function') {
+            window.updateHandles(comp);
+          }
+
+          if (typeof window.notifyParent === 'function') {
+            var compStyles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id, isTable: true };
+            compStyles.isTable = true;
+            window.notifyParent(Object.assign({
+              type: 'LF_COMP_SELECTED',
+              shiftKey: false,
+              isResponsive: false
+            }, compStyles));
+          }
+
+          var notifyCells = function() {
+            var selected = table.querySelectorAll('.selected-cell');
+            if (!selected.length) {
+              if (typeof window.notifyParent === 'function') {
+                window.notifyParent({ type: 'LF_CELL_SELECTED', cellData: null });
+              }
+              return;
+            }
+            var repCell = selected[0];
+            var innerSpan = repCell.querySelector('.v4-editable-cell');
+            var bg = repCell.style.backgroundColor || window.getComputedStyle(repCell).backgroundColor || '#ffffff';
+            var color = (innerSpan && innerSpan.style.color) || repCell.style.color || window.getComputedStyle(innerSpan || repCell).color || '#1e293b';
+            var align = repCell.style.textAlign || window.getComputedStyle(repCell).textAlign || 'center';
+            var width = repCell.offsetWidth || 120;
+            var height = repCell.offsetHeight || 36;
+
+            if (typeof window.notifyParent === 'function') {
+              window.notifyParent({
+                type: 'LF_CELL_SELECTED',
+                cellData: {
+                  count: selected.length,
+                  backgroundColor: bg,
+                  color: color,
+                  textAlign: align,
+                  width: width,
+                  height: height
+                }
+              });
+            }
+          };
+
+          notifyCells();
+          setTimeout(notifyCells, 20);
+        };
+
+        table.addEventListener('mousedown', function(e) {
+          if (e.button !== 0) return;
+          if (e.target.closest('.ia-toggle-btn')) return;
+          var cell = e.target.closest('td, th');
+          if (!cell) return;
+
+          var isAlreadyEditingThisCell = (document.activeElement && document.activeElement.isContentEditable && cell.contains(document.activeElement));
+
+          var tr = cell.parentElement;
+          var allRows = Array.from(table.rows);
+          dragStartRow = allRows.indexOf(tr);
+          dragStartCol = Array.from(tr.cells).indexOf(cell);
+          isDragSelecting = !isAlreadyEditingThisCell;
+
+          var isFullRowSelect = cell.classList.contains('col-site') || e.altKey;
+
+          if (!e.shiftKey) {
+            table.querySelectorAll('.selected-cell').forEach(function(c) {
+              c.classList.remove('selected-cell');
+            });
+            if (isFullRowSelect && tr) {
+              Array.from(tr.cells).forEach(function(rc) {
+                rc.classList.add('selected-cell');
+              });
+            } else {
+              cell.classList.add('selected-cell');
+            }
+          } else {
+            if (isFullRowSelect && tr) {
+              var addFlag = !cell.classList.contains('selected-cell');
+              Array.from(tr.cells).forEach(function(rc) {
+                rc.classList.toggle('selected-cell', addFlag);
+              });
+            } else {
+              cell.classList.toggle('selected-cell');
             }
           }
-        }
-      });
 
-      document.addEventListener('mouseup', function() {
-        if (isDragSelecting) {
-          isDragSelecting = false;
+          installClearSelectionGuard();
+          window._iaSuppressGlobalClear = true;
           syncToParentInspector();
-        }
-      });
+          setTimeout(function() {
+            window._iaSuppressGlobalClear = false;
+            if (window.V4DragResizeEngine) {
+              window.V4DragResizeEngine.isPendingDrag = false;
+              window.V4DragResizeEngine.isDragging = false;
+            }
+            syncToParentInspector();
+          }, 0);
+        });
 
-      // Clear cell selection when clicking outside the table
-      document.addEventListener('mousedown', function(e) {
-        if (!e.target.closest('#sisun-ia-table')) {
+        table.addEventListener('mouseover', function(e) {
+          if (!isDragSelecting) return;
+          if (window.V4DragResizeEngine) {
+            window.V4DragResizeEngine.isPendingDrag = false;
+            window.V4DragResizeEngine.isDragging = false;
+          }
+          var cell = e.target.closest('td, th');
+          if (!cell) return;
+          var tr = cell.parentElement;
+          var allRows = Array.from(table.rows);
+          var curRow = allRows.indexOf(tr);
+          var curCol = Array.from(tr.cells).indexOf(cell);
+          if (curRow < 0 || curCol < 0) return;
+
+          var minR = Math.min(dragStartRow, curRow);
+          var maxR = Math.max(dragStartRow, curRow);
+          var minC = Math.min(dragStartCol, curCol);
+          var maxC = Math.max(dragStartCol, curCol);
+
           table.querySelectorAll('.selected-cell').forEach(function(c) {
             c.classList.remove('selected-cell');
           });
-        }
-      });
 
-      // Enhance LF_UPDATE_CELL_STYLE so background color fills the <td> cleanly & text color updates inner spans
-      var installStyleHook = function() {
-        window.v4MessageHandlers = window.v4MessageHandlers || {};
-        var origCellStyleHandler = window.v4MessageHandlers['LF_UPDATE_CELL_STYLE'];
-        window.v4MessageHandlers['LF_UPDATE_CELL_STYLE'] = function(d) {
-          var iaSelected = table.querySelectorAll('.selected-cell');
-          if (iaSelected.length > 0 && d && d.style) {
-            var undoMgr = window['V4Undo' + 'Manager'];
-            if (undoMgr && typeof undoMgr.saveState === 'function') undoMgr.saveState();
-            iaSelected.forEach(function(td) {
-              var spans = td.querySelectorAll('.v4-editable-cell, span');
-              if (d.style.backgroundColor !== undefined) {
-                if (d.style.backgroundColor === 'none' || d.style.backgroundColor === 'transparent' || d.style.backgroundColor === '') {
-                  td.style.removeProperty('background-color');
-                  td.style.removeProperty('background');
-                } else {
-                  td.style.setProperty('background-color', d.style.backgroundColor, 'important');
-                  td.style.setProperty('background', d.style.backgroundColor, 'important');
-                }
-                spans.forEach(function(sp) {
-                  if (!sp.classList.contains('ia-count-pill')) {
-                    sp.style.removeProperty('background-color');
-                    sp.style.removeProperty('background');
-                  }
-                });
+          for (var r = minR; r <= maxR; r++) {
+            var rowEl = allRows[r];
+            if (!rowEl || rowEl.classList.contains('ia-hidden-g1') || rowEl.classList.contains('ia-hidden-g2')) continue;
+            for (var c = minC; c <= maxC; c++) {
+              if (rowEl.cells[c]) {
+                rowEl.cells[c].classList.add('selected-cell');
               }
-              if (d.style.color !== undefined) {
-                td.style.setProperty('color', d.style.color, 'important');
-                spans.forEach(function(sp) {
-                  if (!sp.classList.contains('ia-count-pill')) {
-                    sp.style.setProperty('color', d.style.color, 'important');
-                  }
-                });
-              }
-              if (d.style.textAlign !== undefined) {
-                td.style.setProperty('text-align', d.style.textAlign, 'important');
-              }
-            });
-            if (typeof window.markDirty === 'function') window.markDirty();
+            }
+          }
+        });
+
+        document.addEventListener('mouseup', function() {
+          if (isDragSelecting) {
+            isDragSelecting = false;
             syncToParentInspector();
-            return;
           }
-          if (typeof origCellStyleHandler === 'function') {
-            origCellStyleHandler(d);
-          }
-        };
-      };
+        });
 
-      installStyleHook();
-      setTimeout(installStyleHook, 150);
-      setTimeout(installStyleHook, 500);
+        document.addEventListener('mousedown', function(e) {
+          if (!e.target.closest('table.v4-ia-tree-table')) {
+            table.querySelectorAll('.selected-cell').forEach(function(c) {
+              c.classList.remove('selected-cell');
+            });
+          }
+        });
+
+        var installStyleHook = function() {
+          window.v4MessageHandlers = window.v4MessageHandlers || {};
+          if (window.v4MessageHandlers._iaCellStyleHooked) return;
+          var origCellStyleHandler = window.v4MessageHandlers['LF_UPDATE_CELL_STYLE'];
+          window.v4MessageHandlers['LF_UPDATE_CELL_STYLE'] = function(d) {
+            var iaSelected = document.querySelectorAll('table.v4-ia-tree-table .selected-cell');
+            if (iaSelected.length > 0 && d && d.style) {
+              var undoMgr = window['V4Undo' + 'Manager'];
+              if (undoMgr && typeof undoMgr.saveState === 'function') undoMgr.saveState();
+              iaSelected.forEach(function(td) {
+                var spans = td.querySelectorAll('.v4-editable-cell, span');
+                if (d.style.backgroundColor !== undefined) {
+                  if (d.style.backgroundColor === 'none' || d.style.backgroundColor === 'transparent' || d.style.backgroundColor === '') {
+                    td.style.removeProperty('background-color');
+                    td.style.removeProperty('background');
+                  } else {
+                    td.style.setProperty('background-color', d.style.backgroundColor, 'important');
+                    td.style.setProperty('background', d.style.backgroundColor, 'important');
+                  }
+                  spans.forEach(function(sp) {
+                    if (!sp.classList.contains('ia-count-pill')) {
+                      sp.style.removeProperty('background-color');
+                      sp.style.removeProperty('background');
+                    }
+                  });
+                }
+                if (d.style.color !== undefined) {
+                  td.style.setProperty('color', d.style.color, 'important');
+                  spans.forEach(function(sp) {
+                    if (!sp.classList.contains('ia-count-pill')) {
+                      sp.style.setProperty('color', d.style.color, 'important');
+                    }
+                  });
+                }
+                if (d.style.textAlign !== undefined) {
+                  td.style.setProperty('text-align', d.style.textAlign, 'important');
+                }
+              });
+              if (typeof window.markDirty === 'function') window.markDirty();
+              syncToParentInspector();
+              return;
+            }
+            if (typeof origCellStyleHandler === 'function') {
+              origCellStyleHandler(d);
+            }
+          };
+          window.v4MessageHandlers._iaCellStyleHooked = true;
+        };
+
+        installStyleHook();
+        setTimeout(installStyleHook, 150);
+        setTimeout(installStyleHook, 500);
+      });
     };
 
+    window.bindIaTreeTables = bindIaTable;
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', bindIaTable);
     } else {

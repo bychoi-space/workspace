@@ -838,5 +838,33 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 .v4-cursor-container[data-badge-style="light"] .v4-cursor-text {
     color: #0f172a !important;
 }
-`;
 
+/* --- Universal V4 IA Tree Table Component Styles (Cross-Project Reusable Molecule) --- */
+.ia-table-card { width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04); box-sizing: border-box; }
+.ia-scroll-viewport { width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; background: #ffffff; }
+.ia-scroll-viewport::-webkit-scrollbar { width: 8px; }
+.ia-scroll-viewport::-webkit-scrollbar-track { background: #f8fafc; }
+.ia-scroll-viewport::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.ia-scroll-viewport::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+table.v4-ia-tree-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; line-height: 1.45; color: #1e293b; }
+table.v4-ia-tree-table thead { position: sticky; top: 0; z-index: 20; }
+table.v4-ia-tree-table thead th { background: #333333; color: #ffffff; font-weight: 700; font-size: 13px; text-align: center; vertical-align: middle; border-right: 1px solid #52525b; border-bottom: 1px solid #52525b; padding: 8px 8px; user-select: none; position: relative; }
+table.v4-ia-tree-table thead tr:first-child th { height: 34px; background: #27272a; }
+table.v4-ia-tree-table thead tr:nth-child(2) th { height: 32px; background: #3f3f46; border-bottom: 1.5px solid #cbd5e1; }
+table.v4-ia-tree-table tbody td { height: 36px; padding: 6px 10px; border-right: 1px solid #eef2f6; border-bottom: 1px solid #eef2f6; vertical-align: middle; background: #ffffff; color: #1e293b; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: keep-all; cursor: pointer; }
+table.v4-ia-tree-table tbody tr:hover td { background: #f8fafc; }
+table.v4-ia-tree-table tbody tr.ia-g1-start td { border-top: 1.5px solid #cbd5e1; }
+table.v4-ia-tree-table tbody tr.ia-g1-start:first-child td { border-top: none; }
+table.v4-ia-tree-table td.selected-cell, table.v4-ia-tree-table th.selected-cell { outline: 2px solid #2563eb !important; outline-offset: -2px !important; position: relative; z-index: 4; }
+table.v4-ia-tree-table tbody td.col-site { text-align: center; color: #64748b; font-weight: 500; background: #fcfcfd; }
+table.v4-ia-tree-table tbody td.col-d1, table.v4-ia-tree-table tbody td.col-d2, table.v4-ia-tree-table tbody td.col-d3, table.v4-ia-tree-table tbody td.col-d4 { text-align: center; }
+table.v4-ia-tree-table tbody td.col-area { text-align: center; color: #334155; }
+table.v4-ia-tree-table tbody td.col-url { text-align: left; padding-left: 12px; font-weight: 500; color: #475569; font-family: 'Pretendard', monospace, sans-serif; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+table.v4-ia-tree-table tbody td.col-type { text-align: center; color: #334155; font-weight: 500; }
+.ia-d1-wrap, .ia-d2-wrap { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; white-space: nowrap; }
+.ia-toggle-btn { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; padding: 0; border-radius: 3px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #334155; font-size: 8px !important; font-weight: 800; cursor: pointer; flex-shrink: 0; transition: all 0.15s ease; user-select: none; line-height: 1; }
+.ia-toggle-btn:hover { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+.ia-count-pill { display: inline-flex; align-items: center; justify-content: center; height: 15px; min-width: 18px; padding: 0 5px; margin-left: 2px; border-radius: 999px; background: #e2e8f0; color: #475569; font-size: 10px !important; font-weight: 700; line-height: 1; flex-shrink: 0; }
+tr.is-folded-root td { background: #fafbfc; }
+tr.ia-hidden-g1, tr.ia-hidden-g2 { display: none !important; }
+;

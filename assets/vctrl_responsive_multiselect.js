@@ -769,25 +769,27 @@ window.v4ResponsiveMultiselectScript = `
 
     window.v4MessageHandlers['LF_EXTRACT_MOLECULE'] = function(d) {
         const group = document.getElementById(d.id);
-                    if (!group || !group.classList.contains('lf-group')) return;
-        
-                    const clone = group.cloneNode(true);
-                    clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(el => el.remove());
-                    clone.removeAttribute('id');
-                    clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
-        
-                    const moleculeData = {
-                        id: 'mol-' + Date.now(),
-                        name: d.name,
-                        category: 'Custom',
-                        width: group.style.width,
-                        height: group.style.height,
-                        isGroup: true,
-                        previewHtml: '<div style="font-size: 10px; font-weight: 700; color: #6366f1;">' + d.name + '</div>',
-                        html: clone.innerHTML
-                    };
-        
-                    notifyParent({ type: 'LF_MOLECULE_EXTRACTED', moleculeData });
+        if (!group || (!group.classList.contains('lf-group') && !group.classList.contains('lf-component'))) return;
+        const isGroupEl = group.classList.contains('lf-group');
+
+        const clone = group.cloneNode(true);
+        clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(el => el.remove());
+        clone.querySelectorAll('.selected-cell').forEach(el => el.classList.remove('selected-cell'));
+        clone.removeAttribute('id');
+        clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+
+        const moleculeData = {
+            id: 'mol-' + Date.now(),
+            name: d.name,
+            category: 'Custom',
+            width: group.style.width || (group.offsetWidth ? group.offsetWidth + 'px' : '200px'),
+            height: group.style.height || (group.offsetHeight ? group.offsetHeight + 'px' : '100px'),
+            isGroup: isGroupEl,
+            previewHtml: '<div style="font-size: 10px; font-weight: 700; color: #6366f1;">' + d.name + '</div>',
+            html: clone.innerHTML
+        };
+
+        notifyParent({ type: 'LF_MOLECULE_EXTRACTED', moleculeData });
     };
 
 })();

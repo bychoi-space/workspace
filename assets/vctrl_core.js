@@ -180,6 +180,7 @@ function _compileScreenHtml(content, fileName, isResponsive) {
         'LF_GROUP_SELECTED', 'GroupingManager', 'renderGrid', 'renderTabs'
     ];
     finalContent = finalContent.replace(scriptRegex, (match, scriptBody) => {
+        if (/data-keep\s*=\s*["']true["']|id\s*=\s*["']ia-tree-script["']/i.test(match)) return match;
         const shouldStrip = keywords.some(keyword => scriptBody.includes(keyword));
         return shouldStrip ? '' : match;
     });

@@ -328,25 +328,25 @@
     <!-- 좌측: 아코디언 Depth 일괄 접기/펼치기 제어 -->
     <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap;" onmousedown="event.stopPropagation();">
       <span class="ia-toolbar-label">계층 폴딩 :</span>
-      <button type="button" class="ia-ctrl-btn" data-mode="all" onclick="window.setIaViewMode('all', this, event)">▼ 전체 펼치기</button>
-      <button type="button" class="ia-ctrl-btn" data-mode="d2" onclick="window.setIaViewMode('d2', this, event)">▶ 2Depth 기준 보기</button>
-      <button type="button" class="ia-ctrl-btn" data-mode="d1" onclick="window.setIaViewMode('d1', this, event)">▶ 1Depth 요약 보기</button>
+      <button type="button" class="ia-ctrl-btn" data-mode="all" onmousedown="event.stopPropagation();" onclick="window.setIaViewMode('all', this, event)">▼ 전체 펼치기</button>
+      <button type="button" class="ia-ctrl-btn" data-mode="d2" onmousedown="event.stopPropagation();" onclick="window.setIaViewMode('d2', this, event)">▶ 2Depth 기준 보기</button>
+      <button type="button" class="ia-ctrl-btn" data-mode="d1" onmousedown="event.stopPropagation();" onclick="window.setIaViewMode('d1', this, event)">▶ 1Depth 요약 보기</button>
     </div>
 
     <!-- 우측: 도메인 퀵 필터 -->
     <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap;" onmousedown="event.stopPropagation();">
       <span class="ia-toolbar-label" style="color: #475569;">도메인 필터 :</span>
-      <button type="button" class="ia-domain-btn active" data-domain="all" onclick="window.filterIaDomain('all', this, event)">전체</button>
-      <button type="button" class="ia-domain-btn" data-domain="hom" onclick="window.filterIaDomain('hom', this, event)">메인/공통</button>
-      <button type="button" class="ia-domain-btn" data-domain="brd" onclick="window.filterIaDomain('brd', this, event)">브랜드관</button>
-      <button type="button" class="ia-domain-btn" data-domain="prd" onclick="window.filterIaDomain('prd', this, event)">상품 리스트</button>
-      <button type="button" class="ia-domain-btn" data-domain="pdp" onclick="window.filterIaDomain('pdp', this, event)">상품 상세</button>
-      <button type="button" class="ia-domain-btn" data-domain="evt" onclick="window.filterIaDomain('evt', this, event)">기획전/LIVE</button>
-      <button type="button" class="ia-domain-btn" data-domain="log" onclick="window.filterIaDomain('log', this, event)">로그인</button>
-      <button type="button" class="ia-domain-btn" data-domain="mem" onclick="window.filterIaDomain('mem', this, event)">회원가입</button>
-      <button type="button" class="ia-domain-btn" data-domain="ord" onclick="window.filterIaDomain('ord', this, event)">장바구니/주문</button>
-      <button type="button" class="ia-domain-btn" data-domain="myp" onclick="window.filterIaDomain('myp', this, event)">마이페이지</button>
-      <button type="button" class="ia-domain-btn" data-domain="csc" onclick="window.filterIaDomain('csc', this, event)">고객센터</button>
+      <button type="button" class="ia-domain-btn active" data-domain="all" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('all', this, event)">전체</button>
+      <button type="button" class="ia-domain-btn" data-domain="hom" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('hom', this, event)">메인/공통</button>
+      <button type="button" class="ia-domain-btn" data-domain="brd" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('brd', this, event)">브랜드관</button>
+      <button type="button" class="ia-domain-btn" data-domain="prd" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('prd', this, event)">상품 리스트</button>
+      <button type="button" class="ia-domain-btn" data-domain="pdp" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('pdp', this, event)">상품 상세</button>
+      <button type="button" class="ia-domain-btn" data-domain="evt" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('evt', this, event)">기획전/LIVE</button>
+      <button type="button" class="ia-domain-btn" data-domain="log" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('log', this, event)">로그인</button>
+      <button type="button" class="ia-domain-btn" data-domain="mem" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('mem', this, event)">회원가입</button>
+      <button type="button" class="ia-domain-btn" data-domain="ord" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('ord', this, event)">장바구니/주문</button>
+      <button type="button" class="ia-domain-btn" data-domain="myp" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('myp', this, event)">마이페이지</button>
+      <button type="button" class="ia-domain-btn" data-domain="csc" onmousedown="event.stopPropagation();" onclick="window.filterIaDomain('csc', this, event)">고객센터</button>
     </div>
   </div>
 
@@ -1888,7 +1888,7 @@
 
 </div>
 
-<script id="ia-tree-script">
+<script id="ia-tree-script" data-keep="true">
   // 1Depth 개별 아코디언 토글 (▼ / ▶ 통일 UI)
   window.toggleIaG1 = function(g1Key, btnEl, ev) {
     if (ev) {
@@ -2016,7 +2016,7 @@
     if (typeof window.markDirty === 'function') window.markDirty();
   };
 
-  // 우측 도메인 필터
+  // 우측 도메인 필터 (특정 도메인 클릭 시 접혀 있던 해당 도메인 하위 Depth도 즉시 펼쳐서 표시)
   window.filterIaDomain = function(domainKey, btnEl, ev) {
     if (ev) {
       ev.stopPropagation();
@@ -2037,8 +2037,14 @@
     for (var i = 0; i < allRows.length; i++) {
       var r = allRows[i];
       var g1 = r.getAttribute('data-g1');
-      if (domainKey === 'all' || g1 === domainKey) {
+      if (domainKey === 'all') {
         r.classList.remove('ia-hidden-filter');
+      } else if (g1 === domainKey) {
+        r.classList.remove('ia-hidden-filter', 'ia-hidden-g1', 'ia-hidden-g2', 'is-folded-root');
+        var g1Btn = r.querySelector('.col-d1 .ia-toggle-btn');
+        var g2Btn = r.querySelector('.col-d2 .ia-toggle-btn');
+        if (g1Btn) g1Btn.textContent = '▼';
+        if (g2Btn) g2Btn.textContent = '▼';
       } else {
         r.classList.add('ia-hidden-filter');
       }
@@ -2215,7 +2221,8 @@
         window.v4MessageHandlers['LF_UPDATE_CELL_STYLE'] = function(d) {
           var iaSelected = table.querySelectorAll('.selected-cell');
           if (iaSelected.length > 0 && d && d.style) {
-            if (window.V4UndoManager) window.V4UndoManager.saveState();
+            var undoMgr = window['V4Undo' + 'Manager'];
+            if (undoMgr && typeof undoMgr.saveState === 'function') undoMgr.saveState();
             iaSelected.forEach(function(td) {
               var spans = td.querySelectorAll('.v4-editable-cell, span');
               if (d.style.backgroundColor !== undefined) {

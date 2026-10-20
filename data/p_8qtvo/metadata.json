@@ -29,6 +29,17 @@
       "updatedAt": "2026-10-19T06:52:42.086Z",
       "template": "template_cover.html",
       "version": 0.1
+    },
+    "01_Order_Policy_Overview.html": {
+      "title": "주문 정책 정의 (Overview)",
+      "type": "ui",
+      "updatedAt": "2026-10-20T09:12:00.000Z",
+      "template": "template_process.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": "시선닷컴(SISUN.COM) Front 주문 도메인(장바구니 · 주문서 · 주문완료) 핵심 정책 통합 정의서"
     }
   },
   "assignee": "최범열",
@@ -39,9 +50,10 @@
   "themeIndex": 1,
   "screenOrder": [
     "00_Cover_234.html",
+    "01_Order_Policy_Overview.html",
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-10-20 09:22:48",
+  "updated": "2026-10-20 09:30:00",
   "version": 0.1
 }

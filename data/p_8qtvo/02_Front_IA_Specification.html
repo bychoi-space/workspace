@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>시선닷컴 Front IA (계층구조 정의서)</title>
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style id="ia-tree-styles">
   * {
     box-sizing: border-box;
@@ -312,6 +311,8 @@
     display: none !important;
   }
 </style>
+<link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+
 </head>
 <body>
 <div id="canvas-root">
@@ -362,15 +363,15 @@
       <div class="ia-scroll-viewport" onmousedown="event.stopPropagation();">
         <table class="v4-ia-tree-table" id="sisun-ia-table">
           <colgroup>
-            <col style="width: 100px;"/>
-            <col style="width: 160px;"/>
-            <col style="width: 170px;"/>
-            <col style="width: 190px;"/>
-            <col style="width: 220px;"/>
-            <col style="width: 130px;"/>
-            <col style="width: 260px;"/>
-            <col style="width: 180px;"/>
-            <col style="width: 150px;"/>
+            <col style="width: 100px;">
+            <col style="width: 160px;">
+            <col style="width: 170px;">
+            <col style="width: 190px;">
+            <col style="width: 220px;">
+            <col style="width: 130px;">
+            <col style="width: 260px;">
+            <col style="width: 180px;">
+            <col style="width: 150px;">
           </colgroup>
           <thead>
             <tr>
@@ -392,11 +393,11 @@
             <!-- ========================================================================= -->
             <!-- 01. 메인 / 공통 (HOM) -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="hom" data-role="g1-root" data-g2="hom-main" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="hom" data-role="g1-root" data-g2="hom-main" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('hom', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('hom', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">메인</span>
                   <span class="ia-count-pill">10</span>
                 </div>
@@ -415,7 +416,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="hom" data-g2-parent="hom-main">
+            <tr data-g1="hom" data-g2-parent="hom-main" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -426,7 +427,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
             </tr>
-            <tr data-g1="hom" data-g2="hom-gnb" data-g2-role="g2-root">
+            <tr data-g1="hom" data-g2="hom-gnb" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -443,7 +444,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
             </tr>
-            <tr data-g1="hom" data-g2-parent="hom-gnb">
+            <tr data-g1="hom" data-g2-parent="hom-gnb" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -454,7 +455,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="hom" data-g2="hom-sch" data-g2-role="g2-root">
+            <tr data-g1="hom" data-g2="hom-sch" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -471,7 +472,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
             </tr>
-            <tr data-g1="hom" data-g2-parent="hom-sch">
+            <tr data-g1="hom" data-g2-parent="hom-sch" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -482,7 +483,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="hom" data-g2="hom-ftr" data-g2-role="g2-root">
+            <tr data-g1="hom" data-g2="hom-ftr" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -499,7 +500,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_06</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
             </tr>
-            <tr data-g1="hom" data-g2-parent="hom-ftr">
+            <tr data-g1="hom" data-g2-parent="hom-ftr" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -510,7 +511,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_07</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="hom" data-g2-parent="hom-ftr">
+            <tr data-g1="hom" data-g2-parent="hom-ftr" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -521,7 +522,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_08</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="hom" data-g2-parent="hom-ftr">
+            <tr data-g1="hom" data-g2-parent="hom-ftr" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -536,11 +537,11 @@
             <!-- ========================================================================= -->
             <!-- 02. 브랜드관 (BRD) : MICHAA / IT MICHAA / E.B.M -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="brd" data-role="g1-root" data-g2="brd-mc" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="brd" data-role="g1-root" data-g2="brd-mc" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('brd', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('brd', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">브랜드관</span>
                   <span class="ia-count-pill">10</span>
                 </div>
@@ -559,7 +560,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2-parent="brd-mc">
+            <tr data-g1="brd" data-g2-parent="brd-mc" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -570,7 +571,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2-parent="brd-mc">
+            <tr data-g1="brd" data-g2-parent="brd-mc" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -581,7 +582,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2="brd-it" data-g2-role="g2-root">
+            <tr data-g1="brd" data-g2="brd-it" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -598,7 +599,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2-parent="brd-it">
+            <tr data-g1="brd" data-g2-parent="brd-it" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -609,7 +610,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2-parent="brd-it">
+            <tr data-g1="brd" data-g2-parent="brd-it" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -620,7 +621,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_06</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2="brd-ebm" data-g2-role="g2-root">
+            <tr data-g1="brd" data-g2="brd-ebm" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -637,7 +638,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_07</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2-parent="brd-ebm">
+            <tr data-g1="brd" data-g2-parent="brd-ebm" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -648,7 +649,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_08</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2-parent="brd-ebm">
+            <tr data-g1="brd" data-g2-parent="brd-ebm" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -659,7 +660,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_09</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="brd" data-g2-parent="brd-ebm">
+            <tr data-g1="brd" data-g2-parent="brd-ebm" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -674,11 +675,11 @@
             <!-- ========================================================================= -->
             <!-- 03. 상품 리스트 (PRD) : 시선닷컴 9801~9807 실제 카테고리 코드 체계 -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="prd" data-role="g1-root" data-g2="prd-com" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="prd" data-role="g1-root" data-g2="prd-com" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('prd', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('prd', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">상품 리스트</span>
                   <span class="ia-count-pill">12</span>
                 </div>
@@ -697,7 +698,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-com">
+            <tr data-g1="prd" data-g2-parent="prd-com" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -708,7 +709,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-com">
+            <tr data-g1="prd" data-g2-parent="prd-com" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -719,7 +720,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
             </tr>
-            <tr data-g1="prd" data-g2="prd-cate" data-g2-role="g2-root">
+            <tr data-g1="prd" data-g2="prd-cate" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -736,7 +737,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-cate">
+            <tr data-g1="prd" data-g2-parent="prd-cate" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -747,7 +748,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-cate">
+            <tr data-g1="prd" data-g2-parent="prd-cate" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -758,7 +759,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-cate">
+            <tr data-g1="prd" data-g2-parent="prd-cate" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -769,7 +770,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_06</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-cate">
+            <tr data-g1="prd" data-g2-parent="prd-cate" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -780,7 +781,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_07</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-cate">
+            <tr data-g1="prd" data-g2-parent="prd-cate" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -791,7 +792,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_08</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-cate">
+            <tr data-g1="prd" data-g2-parent="prd-cate" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -802,7 +803,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_09</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2="prd-spc" data-g2-role="g2-root">
+            <tr data-g1="prd" data-g2="prd-spc" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -819,7 +820,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_10</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="prd" data-g2-parent="prd-spc">
+            <tr data-g1="prd" data-g2-parent="prd-spc" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -834,11 +835,11 @@
             <!-- ========================================================================= -->
             <!-- 04. 상품 상세 (PDP) -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="pdp" data-role="g1-root" data-g2="pdp-top" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="pdp" data-role="g1-root" data-g2="pdp-top" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('pdp', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('pdp', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">상품 상세</span>
                   <span class="ia-count-pill">8</span>
                 </div>
@@ -857,7 +858,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="pdp" data-g2-parent="pdp-top">
+            <tr data-g1="pdp" data-g2-parent="pdp-top" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -868,7 +869,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="pdp" data-g2-parent="pdp-top">
+            <tr data-g1="pdp" data-g2-parent="pdp-top" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -879,7 +880,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="pdp" data-g2="pdp-tab" data-g2-role="g2-root">
+            <tr data-g1="pdp" data-g2="pdp-tab" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -896,7 +897,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="pdp" data-g2-parent="pdp-tab">
+            <tr data-g1="pdp" data-g2-parent="pdp-tab" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -907,7 +908,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="pdp" data-g2-parent="pdp-tab">
+            <tr data-g1="pdp" data-g2-parent="pdp-tab" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -918,7 +919,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_06</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="pdp" data-g2-parent="pdp-tab">
+            <tr data-g1="pdp" data-g2-parent="pdp-tab" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -929,7 +930,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_07</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="pdp" data-g2-parent="pdp-tab">
+            <tr data-g1="pdp" data-g2-parent="pdp-tab" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -944,11 +945,11 @@
             <!-- ========================================================================= -->
             <!-- 05. 프로모션 / 콘텐츠 (EVT) -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="evt" data-role="g1-root" data-g2="evt-prm" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="evt" data-role="g1-root" data-g2="evt-prm" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('evt', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('evt', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">기획전 / 콘텐츠</span>
                   <span class="ia-count-pill">6</span>
                 </div>
@@ -967,7 +968,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="evt" data-g2-parent="evt-prm">
+            <tr data-g1="evt" data-g2-parent="evt-prm" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -978,7 +979,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="evt" data-g2-parent="evt-prm">
+            <tr data-g1="evt" data-g2-parent="evt-prm" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -989,7 +990,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="evt" data-g2="evt-cnt" data-g2-role="g2-root">
+            <tr data-g1="evt" data-g2="evt-cnt" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1006,7 +1007,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="evt" data-g2-parent="evt-cnt">
+            <tr data-g1="evt" data-g2-parent="evt-cnt" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1017,7 +1018,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="evt" data-g2-parent="evt-cnt">
+            <tr data-g1="evt" data-g2-parent="evt-cnt" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1032,11 +1033,11 @@
             <!-- ========================================================================= -->
             <!-- 06. 로그인 (LOG) : 참고 이미지와 100% 동일한 정밀 Depth 구조 -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="log" data-role="g1-root" data-g2="log-mem" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="log" data-role="g1-root" data-g2="log-mem" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('log', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('log', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">로그인</span>
                   <span class="ia-count-pill">16</span>
                 </div>
@@ -1055,7 +1056,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-mem">
+            <tr data-g1="log" data-g2-parent="log-mem" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1066,7 +1067,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-mem">
+            <tr data-g1="log" data-g2-parent="log-mem" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1077,7 +1078,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-mem">
+            <tr data-g1="log" data-g2-parent="log-mem" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1088,7 +1089,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-mem">
+            <tr data-g1="log" data-g2-parent="log-mem" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1099,7 +1100,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-mem">
+            <tr data-g1="log" data-g2-parent="log-mem" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1110,7 +1111,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_14</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-mem">
+            <tr data-g1="log" data-g2-parent="log-mem" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1121,7 +1122,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_06</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-mem">
+            <tr data-g1="log" data-g2-parent="log-mem" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1132,7 +1133,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_07</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="log" data-g2="log-guest" data-g2-role="g2-root">
+            <tr data-g1="log" data-g2="log-guest" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1147,7 +1148,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_08</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="log" data-g2="log-id" data-g2-role="g2-root">
+            <tr data-g1="log" data-g2="log-id" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1164,7 +1165,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_09</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-id">
+            <tr data-g1="log" data-g2-parent="log-id" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1175,7 +1176,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-id">
+            <tr data-g1="log" data-g2-parent="log-id" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1186,7 +1187,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_10</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="log" data-g2="log-pw" data-g2-role="g2-root">
+            <tr data-g1="log" data-g2="log-pw" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1203,7 +1204,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_11</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-pw">
+            <tr data-g1="log" data-g2-parent="log-pw" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1214,7 +1215,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-pw">
+            <tr data-g1="log" data-g2-parent="log-pw" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1225,7 +1226,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_12</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="log" data-g2-parent="log-pw">
+            <tr data-g1="log" data-g2-parent="log-pw" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1240,11 +1241,11 @@
             <!-- ========================================================================= -->
             <!-- 07. 회원가입 (MEM) : 참고 이미지와 100% 동일한 정밀 Depth 구조 -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="mem" data-role="g1-root" data-g2="mem-gen" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="mem" data-role="g1-root" data-g2="mem-gen" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('mem', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('mem', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">회원가입</span>
                   <span class="ia-count-pill">10</span>
                 </div>
@@ -1261,7 +1262,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="mem" data-g2="mem-sns" data-g2-role="g2-root">
+            <tr data-g1="mem" data-g2="mem-sns" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1278,7 +1279,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="mem" data-g2-parent="mem-sns">
+            <tr data-g1="mem" data-g2-parent="mem-sns" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1289,7 +1290,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="mem" data-g2-parent="mem-sns">
+            <tr data-g1="mem" data-g2-parent="mem-sns" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1300,7 +1301,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="mem" data-g2="mem-auth" data-g2-role="g2-root">
+            <tr data-g1="mem" data-g2="mem-auth" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1317,7 +1318,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="mem" data-g2-parent="mem-auth">
+            <tr data-g1="mem" data-g2-parent="mem-auth" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1328,7 +1329,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
             </tr>
-            <tr data-g1="mem" data-g2="mem-inp" data-g2-role="g2-root">
+            <tr data-g1="mem" data-g2="mem-inp" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1345,7 +1346,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="mem" data-g2-parent="mem-inp">
+            <tr data-g1="mem" data-g2-parent="mem-inp" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1356,7 +1357,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
             </tr>
-            <tr data-g1="mem" data-g2-parent="mem-inp">
+            <tr data-g1="mem" data-g2-parent="mem-inp" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1367,7 +1368,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
             </tr>
-            <tr data-g1="mem" data-g2="mem-done" data-g2-role="g2-root">
+            <tr data-g1="mem" data-g2="mem-done" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1546,11 +1547,11 @@
             <!-- ========================================================================= -->
             <!-- 09. 마이페이지 (MYP) -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="myp" data-role="g1-root" data-g2="myp-main" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="myp" data-role="g1-root" data-g2="myp-main" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('myp', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('myp', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">마이페이지</span>
                   <span class="ia-count-pill">19</span>
                 </div>
@@ -1567,7 +1568,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2="myp-ord" data-g2-role="g2-root">
+            <tr data-g1="myp" data-g2="myp-ord" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1584,7 +1585,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-ord">
+            <tr data-g1="myp" data-g2-parent="myp-ord" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1595,7 +1596,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-ord">
+            <tr data-g1="myp" data-g2-parent="myp-ord" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1606,7 +1607,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-ord">
+            <tr data-g1="myp" data-g2-parent="myp-ord" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1617,7 +1618,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-ord">
+            <tr data-g1="myp" data-g2-parent="myp-ord" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1628,7 +1629,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_06</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-ord">
+            <tr data-g1="myp" data-g2-parent="myp-ord" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1639,7 +1640,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_07</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="myp" data-g2="myp-bnf" data-g2-role="g2-root">
+            <tr data-g1="myp" data-g2="myp-bnf" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1656,7 +1657,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_08</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-bnf">
+            <tr data-g1="myp" data-g2-parent="myp-bnf" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1667,7 +1668,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_09</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2="myp-act" data-g2-role="g2-root">
+            <tr data-g1="myp" data-g2="myp-act" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1684,7 +1685,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_10</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-act">
+            <tr data-g1="myp" data-g2-parent="myp-act" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1695,7 +1696,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_11</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-act">
+            <tr data-g1="myp" data-g2-parent="myp-act" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1706,7 +1707,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_12</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-act">
+            <tr data-g1="myp" data-g2-parent="myp-act" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1717,7 +1718,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_13</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-act">
+            <tr data-g1="myp" data-g2-parent="myp-act" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1728,7 +1729,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_14</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-act">
+            <tr data-g1="myp" data-g2-parent="myp-act" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1739,7 +1740,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_15</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2="myp-inf" data-g2-role="g2-root">
+            <tr data-g1="myp" data-g2="myp-inf" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1756,7 +1757,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_16</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-inf">
+            <tr data-g1="myp" data-g2-parent="myp-inf" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1767,7 +1768,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_17</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-inf">
+            <tr data-g1="myp" data-g2-parent="myp-inf" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1778,7 +1779,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_18</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="myp" data-g2-parent="myp-inf">
+            <tr data-g1="myp" data-g2-parent="myp-inf" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1793,11 +1794,11 @@
             <!-- ========================================================================= -->
             <!-- 10. 고객센터 / 멤버십 (CSC) -->
             <!-- ========================================================================= -->
-            <tr class="ia-g1-start" data-g1="csc" data-role="g1-root" data-g2="csc-main" data-g2-role="g2-root">
+            <tr class="ia-g1-start is-folded-root" data-g1="csc" data-role="g1-root" data-g2="csc-main" data-g2-role="g2-root">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1">
                 <div class="ia-d1-wrap">
-                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('csc', this, event)">▼</button>
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('csc', this, event)">▶</button>
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">고객센터</span>
                   <span class="ia-count-pill">9</span>
                 </div>
@@ -1816,7 +1817,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_01</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="csc" data-g2-parent="csc-main">
+            <tr data-g1="csc" data-g2-parent="csc-main" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1827,7 +1828,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_02</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
             </tr>
-            <tr data-g1="csc" data-g2="csc-faq" data-g2-role="g2-root">
+            <tr data-g1="csc" data-g2="csc-faq" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1844,7 +1845,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_03</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
             </tr>
-            <tr data-g1="csc" data-g2-parent="csc-faq">
+            <tr data-g1="csc" data-g2-parent="csc-faq" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1855,7 +1856,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_04</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="csc" data-g2-parent="csc-faq">
+            <tr data-g1="csc" data-g2-parent="csc-faq" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1866,7 +1867,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_05</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="csc" data-g2="csc-gde" data-g2-role="g2-root">
+            <tr data-g1="csc" data-g2="csc-gde" data-g2-role="g2-root" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2">
@@ -1883,7 +1884,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_06</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="csc" data-g2-parent="csc-gde">
+            <tr data-g1="csc" data-g2-parent="csc-gde" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1894,7 +1895,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_07</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="csc" data-g2-parent="csc-gde">
+            <tr data-g1="csc" data-g2-parent="csc-gde" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -1905,7 +1906,7 @@
               <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_08</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
-            <tr data-g1="csc" data-g2-parent="csc-gde">
+            <tr data-g1="csc" data-g2-parent="csc-gde" class="ia-hidden-g1">
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
@@ -2078,5 +2079,7 @@
     }
   };
 </script>
-</body>
-</html>
+
+
+
+</body></html>

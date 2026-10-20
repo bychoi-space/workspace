@@ -600,6 +600,47 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/motion/motion_effect_delivery_promise.webp',
             previewHtml: `<img src="assets/illustrations/motion/motion_effect_delivery_promise.webp" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-motion-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/motion/motion_effect_delivery_promise.webp" alt="도착예정일 확약 모션" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-order-cart-30days',
+            name: '[3D] 장바구니 보관',
+            title: '3D 장바구니 30일 보관 & 큐레이션 (Cart Policy)',
+            koName: '3d 장바구니 30일 보관 쇼핑백 카트 추천 큐레이션 cart policy 30days',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/order_policy_cart_30days.png',
+            previewHtml: `<img src="assets/illustrations/order_policy_cart_30days.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_policy_cart_30days.png" alt="3D 장바구니 30일 보관 정책" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-order-checkout-sheet',
+            name: '[3D] 주문서·혜택',
+            title: '3D 주문서 배송지·쿠폰·결제수단 (Order Sheet)',
+            koName: '3d 주문서 배송지 쿠폰 할인 카드 결제 order sheet checkout coupon delivery',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/order_policy_checkout_sheet.png',
+            previewHtml: `<img src="assets/illustrations/order_policy_checkout_sheet.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_policy_checkout_sheet.png" alt="3D 주문서 및 혜택 정책" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-order-complete-guard',
+            name: '[3D] 주문완료·가드',
+            title: '3D 주문완료 영수증 & 악성고객 차단 보안가드 (Order Guard)',
+            koName: '3d 주문완료 영수증 보안 방패 악성고객 차단 가드 order complete guard shield',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/order_policy_complete_guard.png',
+            previewHtml: `<img src="assets/illustrations/order_policy_complete_guard.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_policy_complete_guard.png" alt="3D 주문완료 및 주문차단 가드" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
 ];
-

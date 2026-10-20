@@ -111,6 +111,9 @@
     background: #ffffff;
     color: #1e293b;
     font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     word-break: keep-all;
     cursor: pointer;
   }
@@ -145,8 +148,7 @@
   table.v4-ia-tree-table tbody td.col-d1,
   table.v4-ia-tree-table tbody td.col-d2,
   table.v4-ia-tree-table tbody td.col-d3,
-  table.v4-ia-tree-table tbody td.col-d4,
-  table.v4-ia-tree-table tbody td.col-d5 {
+  table.v4-ia-tree-table tbody td.col-d4 {
     text-align: center;
   }
   table.v4-ia-tree-table tbody td.col-area {
@@ -349,17 +351,16 @@
             <col style="width: 100px;"/>
             <col style="width: 160px;"/>
             <col style="width: 170px;"/>
-            <col style="width: 190px;"/>
-            <col style="width: 220px;"/>
-            <col style="width: 120px;"/>
-            <col style="width: 240px;"/>
+            <col style="width: 210px;"/>
+            <col style="width: 280px;"/>
+            <col style="width: 280px;"/>
             <col style="width: 220px;"/>
             <col style="width: 140px;"/>
           </colgroup>
           <thead>
             <tr>
               <th rowspan="2">사이트</th>
-              <th colspan="5">화면</th>
+              <th colspan="4">화면</th>
               <th rowspan="2">영역</th>
               <th rowspan="2">URL</th>
               <th rowspan="2">화면 타입</th>
@@ -369,7 +370,6 @@
               <th>2depth</th>
               <th>3depth</th>
               <th>4depth</th>
-              <th>5depth</th>
             </tr>
           </thead>
           <tbody>
@@ -393,7 +393,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">메인 홈</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">메인 배너 / 브랜드 큐레이션</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -404,7 +403,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">메인 팝업 / 띠배너</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">오늘 하루 보지 않기</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">프로모션 공지 모달</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
@@ -419,10 +417,9 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 스위처</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">MICHAA / IT MICHAA / E.B.M</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">MICHAA · IT MICHAA · E.B.M</td>
               <td class="col-area v4-editable-cell" contenteditable="true">글로벌 상단 네비게이션</td>
-              <td class="col-url v4-editable-cell" contenteditable="true">/w/common/fragments/sisun/defaultGnb</td>
+              <td class="col-url v4-editable-cell" contenteditable="true">/common/defaultGnb</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
             </tr>
             <tr data-g1="hom" data-g2-parent="hom-gnb" class="ia-hidden-g1">
@@ -431,7 +428,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">다국어 / 앱 다운로드</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">KR / EN / CN 언어 전환</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">유틸리티 바 / QR 앱 안내</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -447,7 +443,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">검색어 입력 레이어</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">최근 / 인기 / 추천검색어</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">자동완성 및 해시태그 추천</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/searchInitData</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
@@ -458,7 +453,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">검색 결과 리스트</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">상품 / 기획전 결과 탭</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">통합 검색 결과 조회</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/searchList</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -474,7 +468,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">최근 본 상품</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">플로팅 히스토리 조회</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">우측 퀵메뉴 히스토리</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/recentlyGoodsListPc</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
@@ -485,7 +478,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">회사소개</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">시선인터내셔날 기업 소개</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">기업 정보 안내</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/about/company</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -496,7 +488,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">이용약관</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">서비스 이용약관 전문</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">약관 조회</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/about/terms?searchValue=0001</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -507,7 +498,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">개인정보처리방침</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">개인정보 보호 정책 전문</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">정책 조회</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/about/terms?searchValue=0002</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -528,12 +518,11 @@
               <td class="col-d2">
                 <div class="ia-d2-wrap">
                   <button type="button" class="ia-toggle-btn" title="2Depth 접기/펼치기" onmousedown="event.stopPropagation();" onclick="window.toggleIaG2('brd-mc', this, event)">▼</button>
-                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">MICHAA (미샤)</span>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">MICHAA</span>
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 메인</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">시즌 키비주얼 / 룩북 / 신상품</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">미샤 전용 브랜드 홈</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/MICHAA/</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -544,7 +533,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">NEW / BEST / 전체상품</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">신상품 · 주간베스트 · 전체</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">미샤 브랜드 상품 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/MICHAA/shop/list</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -554,8 +542,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 스토리 / 캠페인</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">IDENTITY / SEASON COLLECTION</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">브랜드 아이덴티티 · 시즌 컬렉션</td>
               <td class="col-area v4-editable-cell" contenteditable="true">브랜드 아카이브</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/MICHAA/story</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -566,12 +553,11 @@
               <td class="col-d2">
                 <div class="ia-d2-wrap">
                   <button type="button" class="ia-toggle-btn" title="2Depth 접기/펼치기" onmousedown="event.stopPropagation();" onclick="window.toggleIaG2('brd-it', this, event)">▼</button>
-                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">IT MICHAA (잇미샤)</span>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">IT MICHAA</span>
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 메인</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">시즌 캠페인 / 에디토리얼</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">잇미샤 전용 브랜드 홈</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/ITMICHAA/</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -582,7 +568,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">NEW / BEST / 전체상품</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">신상품 · 베스트 · 온라인 단독</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">잇미샤 브랜드 상품 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/ITMICHAA/shop/list</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -593,7 +578,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 기획전 / 세일</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">잇미샤 단독 프로모션</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">브랜드 이벤트</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/ITMICHAA/event/sale</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -604,12 +588,11 @@
               <td class="col-d2">
                 <div class="ia-d2-wrap">
                   <button type="button" class="ia-toggle-btn" title="2Depth 접기/펼치기" onmousedown="event.stopPropagation();" onclick="window.toggleIaG2('brd-ebm', this, event)">▼</button>
-                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">E.B.M (이비엠)</span>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">E.B.M</span>
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 메인</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">에디션바이미샤 영 컨템포러리</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">E.B.M 전용 브랜드 홈</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/EBM/</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -620,7 +603,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">NEW / BEST / UNI</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">신상품 · 베스트 · 유니섹스 라인</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">E.B.M 브랜드 상품 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/EBM/shop/list</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -631,7 +613,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">EBM LIVE</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">라이브 방송 목록 및 다시보기</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">라이브 커머스 방송관</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/EBM/liveContents/broadcast</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -642,7 +623,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">프로모션 / 이벤트</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">E.B.M 브랜드 이벤트</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">브랜드 이벤트</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/EBM/event</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -668,7 +648,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">카테고리 리스트 공통</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">2단 / 4단 뷰 전환 · 페이징</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">카테고리 선택</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -678,8 +657,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">정렬 (Sorting)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">신상품순 / 판매순 / 높은·낮은가격</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">신상품 · 판매량 · 가격순</td>
               <td class="col-area v4-editable-cell" contenteditable="true">소팅</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
@@ -689,8 +667,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상세 필터 (Filter)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">브랜드 / 컬러칩 / 사이즈 / 가격대</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">브랜드 · 컬러 · 사이즈 · 가격</td>
               <td class="col-area v4-editable-cell" contenteditable="true">스마트 필터 검색</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
@@ -701,12 +678,11 @@
               <td class="col-d2">
                 <div class="ia-d2-wrap">
                   <button type="button" class="ia-toggle-btn" title="2Depth 접기/펼치기" onmousedown="event.stopPropagation();" onclick="window.toggleIaG2('prd-cate', this, event)">▼</button>
-                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">대카테고리 (9801~9807)</span>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">대카테고리</span>
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">아우터 (9801)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">코트(01)·무스탕(02)·패딩(03)·자켓(04)·베스트(05)</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">코트 · 무스탕 · 패딩 · 자켓 · 베스트</td>
               <td class="col-area v4-editable-cell" contenteditable="true">아우터 카테고리 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?upperCateCode=9801</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -716,8 +692,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">원피스 (9802)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">미니원피스(02) · 미디원피스(03) · 롱원피스(04)</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">미니 · 미디 · 롱 원피스</td>
               <td class="col-area v4-editable-cell" contenteditable="true">원피스 카테고리 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?upperCateCode=9802</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -727,8 +702,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상의 (9803)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">블라우스/셔츠(980301) · 티셔츠(980302)</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">블라우스 · 셔츠 · 티셔츠</td>
               <td class="col-area v4-editable-cell" contenteditable="true">상의 카테고리 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?upperCateCode=9803</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -738,8 +712,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">하의 (9804)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">팬츠(980401) · 스커트(980402)</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">팬츠 · 스커트</td>
               <td class="col-area v4-editable-cell" contenteditable="true">하의 카테고리 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?upperCateCode=9804</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -749,8 +722,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">니트 (9805)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">풀오버·가디건·베스트·원피스·스커트·팬츠</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">풀오버 · 가디건 · 베스트 · 니트</td>
               <td class="col-area v4-editable-cell" contenteditable="true">니트 카테고리 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?upperCateCode=9805</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -760,8 +732,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">데님 (9806)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">자켓(01) · 원피스(02) · 셔츠(03) · 팬츠/스커트(04)</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">데님 자켓 · 원피스 · 셔츠 · 팬츠</td>
               <td class="col-area v4-editable-cell" contenteditable="true">데님 카테고리 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?upperCateCode=9806</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -771,8 +742,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">ACC (9807)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">스카프·가방·슈즈·모자·장갑·반려용품·기타</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">가방 · 슈즈 · 스카프 · 모자 · 잡화</td>
               <td class="col-area v4-editable-cell" contenteditable="true">잡화/액세서리 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?upperCateCode=9807</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -788,7 +758,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">아울렛 (#SEASON OFF)</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">이월/시즌오프 특가관</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">시즌오프 전용관</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?menu=Outlet</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -797,9 +766,8 @@
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d3 v4-editable-cell" contenteditable="true">온라인 단독 / 프리오픈 / 셋업</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">#ONLINE-ONLY · #PRE-OPEN · SET-UP</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">온라인 단독 · 프리오픈</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">온라인단독 · 프리오픈 · 셋업</td>
               <td class="col-area v4-editable-cell" contenteditable="true">테마 큐레이션 리스트</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/list?menu=OnlineOnly</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -824,9 +792,8 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상품 상세 메인</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">갤러리 · 가격 · 컬러/사이즈 옵션 선택</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-area v4-editable-cell" contenteditable="true">상품 구매 패널 (쇼핑백/바로구매)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">이미지 · 가격 · 컬러/사이즈 옵션</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">상품 구매 패널 · 쇼핑백/바로구매</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/view</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
@@ -835,8 +802,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">쿠폰 다운로드</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">적용 가능 상품/프로모션 쿠폰 발급</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">상품 · 프로모션 쿠폰 다운로드</td>
               <td class="col-area v4-editable-cell" contenteditable="true">최대 혜택가 쿠폰 받기</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/couponDownloadAjax</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -847,7 +813,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">재입고 알림 신청</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">품절 사이즈 입고 알림톡 신청</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">품절 옵션 선택 시 노출</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/restockAlarmPopup</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -863,7 +828,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상품 상세설명</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">착장 컷 · 소재 · 혼용률 · 취급주의</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">상품 정보 고시 영역</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/view#detail</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -874,7 +838,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">실측 사이즈 가이드</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">사이즈별 실측표 및 핏 가이드</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">사이즈 조견표</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/sizeGuidePopup</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -884,8 +847,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상품 리뷰 (Review)</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">포토리뷰 · 일반리뷰 · 별점 통계</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">리뷰 상세 모달</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">포토 · 일반리뷰 · 별점 및 상세</td>
               <td class="col-area v4-editable-cell" contenteditable="true">구매자 실착 리뷰 조회</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/view#review</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -895,8 +857,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상품 Q&amp;A</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">상품 문의 목록 및 문의 등록</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">비밀글 설정</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">상품 문의 목록 · 비밀글 등록</td>
               <td class="col-area v4-editable-cell" contenteditable="true">상품 문의 작성 모달</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/view#qna</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -907,7 +868,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">배송 / 교환 / 반품 안내</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">배송비 · 반품주소 · AS 정책</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">클레임 기준 안내 탭</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/shop/view#delivery</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -932,8 +892,7 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">통합 기획전 리스트</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">진행중 이벤트 · 브랜드별 탭</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">진행중 기획전 · 브랜드별 탭</td>
               <td class="col-area v4-editable-cell" contenteditable="true">통합 기획전/프로모션 전시</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/event/intgr/promotion</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -943,8 +902,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">기획전 상세</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">프로모션 배너 · 앵커 탭별 상품군</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">쿠폰팩 다운로드</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">기획전 배너 · 탭별 상품 · 쿠폰팩</td>
               <td class="col-area v4-editable-cell" contenteditable="true">기획전 상세 및 댓글 응모</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/event/intgr/promotion/view</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -955,7 +913,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">당첨자 발표</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">이벤트 당첨 결과 조회</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">이벤트 당첨 안내</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/about/notice</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -970,9 +927,8 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">시즌 컬렉션 / 룩북</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">화보 리스트 · 화보 상세</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">착장 상품 매칭</td>
-              <td class="col-area v4-editable-cell" contenteditable="true">#WINTER / #SPRING COLLECTION</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">시즌 화보 · 착장 상품 매칭</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">시즌 컬렉션 화보 아카이브</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/MICHAA/collection</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
@@ -982,7 +938,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">라이브 방송 편성표</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">생방송 예고 · 지난 방송 VOD</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">라이브 커머스 목록</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/EBM/liveContents/broadcast</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -991,9 +946,8 @@
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d3 v4-editable-cell" contenteditable="true">라이브 스트리밍 플레이어</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">실시간 채팅 · 라이브 특가 상품 구매</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">라이브 방송 플레이어</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">실시간 채팅 · 라이브 특가 구매</td>
               <td class="col-area v4-editable-cell" contenteditable="true">라이브 시청 팝업/레이어</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/EBM/liveContents/player</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1019,7 +973,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">아이디 로그인</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">통합회원 아이디/비밀번호 인증</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/login</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1030,7 +983,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">간편 로그인</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">카카오 계정</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">카카오 싱크 OAuth 인증</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/sns/kakaoLogin</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1041,7 +993,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">네이버 계정</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">네이버 아이디 로그인 연동</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/sns/naverLogin</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1052,7 +1003,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">애플 / 구글 계정</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">소셜 계정 OAuth 연동</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/sns/appleLogin</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1063,7 +1013,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">기존 아이디 찾기</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">통합멤버십 전환/계정 확인</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/findOldId</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1074,7 +1023,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">기존 아이디 찾기 완료</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">기존 계정 안내 완료</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/findOldIdComplete</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1085,7 +1033,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">비밀번호 변경 안내</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">90일 주기 변경 캠페인</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">보안 비밀번호 변경 권고</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/pwChangeNotice</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1096,7 +1043,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">휴면 계정 해제</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">본인인증 후 휴면 복구</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">장기 미접속 회원 활성화</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/dormantRelease</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1109,9 +1055,8 @@
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">비회원 주문조회</span>
                 </div>
               </td>
-              <td class="col-d3 v4-editable-cell" contenteditable="true">주문자명 / 주문번호 / 비밀번호</td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">비회원 주문인증 입력</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">비회원 주문/배송 내역 조회</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/login#nonMember</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1127,7 +1072,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">휴대폰 / 본인인증 선택</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">이름 · 휴대폰 번호 · 본인인증</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/findIdPw</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1138,7 +1082,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">인증번호 입력</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">SMS 인증번호 검증</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">인증번호 유효성 확인</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
@@ -1149,7 +1092,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">아이디 찾기 완료</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">가입 아이디 및 가입일 안내</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">로그인 / 비밀번호 찾기 이동</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/findIdComplete</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1165,7 +1107,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">아이디 입력</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">비밀번호 재설정 대상 확인</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/findIdPw#pw</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1176,7 +1117,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">인증번호 입력</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">휴대폰 / 본인인증 확인</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">본인 확인 검증</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
@@ -1187,7 +1127,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">신규 비밀번호 설정</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">새 비밀번호 입력 / 확인</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">영문/숫자/특수문자 조합 검증</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/resetPw</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1196,9 +1135,8 @@
               <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d3 v4-editable-cell" contenteditable="true">신규 비밀번호 설정 완료</td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">비밀번호 재설정 완료</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">비밀번호 재설정 완료 안내</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/resetPwComplete</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1221,9 +1159,8 @@
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">일반 회원가입</span>
                 </div>
               </td>
-              <td class="col-d3 v4-editable-cell" contenteditable="true">시선멤버십 통합 가입 인트로</td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">통합 가입 인트로</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">가입유형(일반/SNS) 선택</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/join</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1239,7 +1176,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">카카오 계정</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">카카오 싱크 1초 가입</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">SNS 간편가입 연동</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/sns/kakaoJoin</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1250,7 +1186,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">네이버 계정</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">네이버 프로필 연동 가입</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">SNS 간편가입 연동</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/sns/naverJoin</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1261,7 +1196,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">애플 / 구글 계정</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">글로벌 소셜 계정 연동</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">SNS 간편가입 연동</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/sns/appleJoin</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1277,7 +1211,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">휴대폰 인증</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">PASS / SMS 본인확인</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">본인명의 휴대폰 인증 모듈</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/certPopup</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1288,7 +1221,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">이메일 인증</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">이메일 중복확인 및 인증</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">이메일 유효성 검증</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
@@ -1304,7 +1236,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">기본정보</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">아이디 · 비밀번호 · 이름 · 연락처</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">필수 회원 기본정보 입력</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/joinForm</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1314,8 +1245,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">부가정보</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">생년월일 · 선호 브랜드 · 신체사이즈</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">생년월일 · 선호브랜드 · 사이즈</td>
               <td class="col-area v4-editable-cell" contenteditable="true">맞춤 큐레이션 부가정보</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
@@ -1325,8 +1255,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">약관동의</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">필수 약관 · 마케팅 수신(SMS/이메일)</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">필수 약관 · 마케팅 수신 동의</td>
               <td class="col-area v4-editable-cell" contenteditable="true">전체동의 및 약관 상세보기</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
@@ -1339,9 +1268,8 @@
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">회원가입 완료</span>
                 </div>
               </td>
-              <td class="col-d3 v4-editable-cell" contenteditable="true">신규 가입 축하 및 웰컴 혜택 안내</td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">가입 완료 · 웰컴 혜택</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">시선멤버십 웰컴 쿠폰 발급 안내</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/member/joinComplete</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1366,8 +1294,7 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8; font-weight: 700;">일반 장바구니</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">최대 100개 · 30일 보관 · 비회원 연동</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff;"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">최대 100개 · 30일 보관 · 회원연동</td>
               <td class="col-area v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">쇼핑백 상품 목록 및 금액 산출</td>
               <td class="col-url v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8;">/cart/list</td>
               <td class="col-type v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8;">Page (Tab)</td>
@@ -1378,7 +1305,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">포인트몰 장바구니</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">포인트 전용 상품 분리 결제 탭</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">사은품/포인트몰 장바구니</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/cart/list?cartType=point</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1388,8 +1314,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">옵션 / 수량 변경</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">컬러 · 사이즈 · 주문가능 재고 수량 변경</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">컬러 · 사이즈 · 주문수량 변경</td>
               <td class="col-area v4-editable-cell" contenteditable="true">장바구니 인라인 옵션 모달</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/cart/optionChangeLayer</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
@@ -1404,8 +1329,7 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8; font-weight: 700;">주문상품 확인</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">상품/옵션/수량/판매가/프로모션할인 확인</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff;"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">주문상품 · 옵션 · 할인금액 확인</td>
               <td class="col-area v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">주문서 메인 페이지</td>
               <td class="col-url v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8;">/order/orderForm</td>
               <td class="col-type v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8;">Page</td>
@@ -1415,8 +1339,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">할인 / 혜택 적용</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">상품쿠폰 · 스페셜쿠폰 · 장바구니쿠폰 · 무료배송쿠폰</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">최대할인 자동적용</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">상품 · 장바구니 · 무료배송 쿠폰</td>
               <td class="col-area v4-editable-cell" contenteditable="true">쿠폰 조회 및 변경 팝업</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/order/couponPopup</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1427,7 +1350,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">포인트 / 마일리지 사용</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">보유 포인트 전액/일부 사용 입력</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">복합 할인 정산 영역</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
@@ -1437,8 +1359,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">주문자 / 배송지 정보</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">기본배송지 · 최근배송지 · 신규입력 · 배송메시지</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">비회원 정보수집 동의</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">배송지 선택 · 신규입력 · 메시지</td>
               <td class="col-area v4-editable-cell" contenteditable="true">배송지 목록 선택 팝업</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/order/deliveryAddrPopup</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1448,8 +1369,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">우편번호 검색</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">도로명 / 지번 주소 검색</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">도서산간 배송비 판별</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">도로명 · 지번 주소 · 도서산간 판별</td>
               <td class="col-area v4-editable-cell" contenteditable="true">주소 검색 레이어/팝업</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/common/zipCodePopup</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1464,8 +1384,7 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">결제수단 선택</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">신용카드 · 실시간 계좌이체 · 가상계좌(무통장)</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">에스크로 구매안전</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">신용카드 · 계좌이체 · 가상계좌</td>
               <td class="col-area v4-editable-cell" contenteditable="true">결제 수단 및 카드사 혜택 안내</td>
               <td class="col-url v4-editable-cell" contenteditable="true">-</td>
               <td class="col-type v4-editable-cell" contenteditable="true">-</td>
@@ -1475,8 +1394,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">PG 전자결제 모듈</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">KG이니시스 결제창 인증 및 승인</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">현금영수증 신청</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">PG 결제 인증 · 현금영수증 신청</td>
               <td class="col-area v4-editable-cell" contenteditable="true">외부 PG 연동 모듈</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/order/iniPayRequest</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1486,8 +1404,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff;"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff;"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8; font-weight: 700;">주문 완료</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">주문번호 · 결제완료/입금대기(가상계좌) 내역</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff;"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">주문번호 · 결제/입금대기 내역</td>
               <td class="col-area v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1e40af;">주문 결과 및 배송지 요약</td>
               <td class="col-url v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8;">/order/orderComplete</td>
               <td class="col-type v4-editable-cell" contenteditable="true" style="background-color: #eff6ff; color: #1d4ed8;">Page</td>
@@ -1497,8 +1414,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">주문 실패 / 재결제 안내</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">재고 부족 · 한도 초과 · 승인 실패 사유 안내</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">승인 실패 사유 안내 · 재결제</td>
               <td class="col-area v4-editable-cell" contenteditable="true">결제 오류 안내 및 장바구니 복귀</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/order/orderFail</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1521,9 +1437,8 @@
                   <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">마이페이지 메인</span>
                 </div>
               </td>
-              <td class="col-d3 v4-editable-cell" contenteditable="true">회원등급 / 혜택 / 주문현황 요약</td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">등급 · 혜택 · 주문 요약</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">마이페이지 통합 대시보드</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/main</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1538,8 +1453,7 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">주문 / 배송 조회</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">기간별(1/3/6개월) · 상태별 주문내역</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">기간별 · 상태별 주문내역 조회</td>
               <td class="col-area v4-editable-cell" contenteditable="true">주문/배송 내역 리스트</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/mypageOrderList</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1549,8 +1463,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">주문 상세 내역</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">결제정보 · 배송지 변경(입금/결제완료 시)</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">영수증/전표 출력</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">결제 상세 · 배송지 변경 · 영수증</td>
               <td class="col-area v4-editable-cell" contenteditable="true">주문건별 상세 및 배송추적 팝업</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/mypageOrderDetail</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1560,8 +1473,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">주문 취소 신청</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">전체취소 / 부분취소 · 환불계좌 입력</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">환불예정금액 산출</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">전체/부분취소 · 환불예정금 산출</td>
               <td class="col-area v4-editable-cell" contenteditable="true">입금대기 · 결제완료 단계 즉시취소</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/claim/cancelForm</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1571,8 +1483,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">교환 신청</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">교환 옵션 선택 · 사유 선택 · 수거지 입력</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">왕복배송비 결제</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">교환 옵션/사유 · 수거지 · 배송비</td>
               <td class="col-area v4-editable-cell" contenteditable="true">배송완료 후 7일 이내 신청</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/claim/exchangeForm</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1582,8 +1493,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">반품 신청</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">반품 사유 선택 · 수거지 · 환불예정금 차감</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">반품 사유 · 수거지 · 환불금 차감</td>
               <td class="col-area v4-editable-cell" contenteditable="true">배송완료 후 7일 이내 신청</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/claim/returnForm</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1593,8 +1503,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">취소 / 교환 / 반품 조회</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">클레임 진행 상태 및 환불 완료 내역</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">클레임 진행 상태 · 환불 내역</td>
               <td class="col-area v4-editable-cell" contenteditable="true">클레임 내역 전용 탭</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/claim/claimList</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1609,9 +1518,8 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">보유 쿠폰함</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">사용가능 쿠폰 · 시리얼 쿠폰번호 등록</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">적용대상 상품보기</td>
-              <td class="col-area v4-editable-cell" contenteditable="true">상품/장바구니/스페셜/무료배송 쿠폰</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">보유 쿠폰 조회 · 쿠폰번호 등록</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">상품 · 장바구니 · 무료배송 쿠폰함</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/benefit/couponList</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
             </tr>
@@ -1620,8 +1528,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">포인트 / 마일리지 내역</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">적립 · 사용 · 당월 소멸예정 포인트 조회</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">적립 · 사용 · 소멸예정 포인트</td>
               <td class="col-area v4-editable-cell" contenteditable="true">통합 포인트 원장 내역</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/benefit/pointList</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1637,7 +1544,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">위시리스트 (관심상품)</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">찜한 상품 · 브랜드 관리</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">장바구니 담기</td>
               <td class="col-area v4-editable-cell" contenteditable="true">관심 상품 및 브랜드 보관함</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/active/mypageWishlist</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1647,8 +1553,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">최근 본 상품</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">일자별 열람 상품 목록 및 일괄삭제</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">일자별 열람 상품 · 일괄삭제</td>
               <td class="col-area v4-editable-cell" contenteditable="true">열람 히스토리 관리</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/active/recentGoods</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1658,8 +1563,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상품 리뷰 관리</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">작성 가능 리뷰 · 작성한 리뷰 탭</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">리뷰 작성 팝업</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">작성 가능 리뷰 · 내 리뷰 관리</td>
               <td class="col-area v4-editable-cell" contenteditable="true">구매확정 후 포토/텍스트 리뷰 적립</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/active/reviewList</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1670,7 +1574,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">1:1 문의 내역</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">문의 리스트 및 답변 상태 확인</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">1:1 고객 문의 내역 조회</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/active/cs</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1680,8 +1583,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">1:1 문의 등록</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">문의유형 · 주문상품 선택 · 첨부파일 등록</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">문의유형 · 주문상품 · 파일 첨부</td>
               <td class="col-area v4-editable-cell" contenteditable="true">1:1 고객 문의 작성</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/active/cs/form</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1691,8 +1593,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상품 Q&amp;A 내역</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">내가 작성한 상품 문의 및 답변 조회</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">작성한 상품 문의 · 답변 조회</td>
               <td class="col-area v4-editable-cell" contenteditable="true">상품 Q&amp;A 모아보기</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/active/goodsQnaList</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1708,7 +1609,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">비밀번호 재확인</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">개인정보 보호용 비밀번호 인증</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">회원정보 접근 보안 게이트</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/member/pwCheck</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1718,8 +1618,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">회원정보 수정</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">연락처 · 이메일 · 비밀번호 · 마케팅수신 변경</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">SNS 연동 관리</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">연락처 · 비밀번호 · SNS연동 관리</td>
               <td class="col-area v4-editable-cell" contenteditable="true">개인정보 및 간편로그인 연동 설정</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/member/modifyForm</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1729,8 +1628,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">배송지 관리</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">기본 배송지 설정 · 신규 배송지 등록/수정</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">기본 배송지 설정 · 주소록 관리</td>
               <td class="col-area v4-editable-cell" contenteditable="true">배송지 주소록 관리 및 등록 팝업</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/member/deliveryAddr</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1740,8 +1638,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">회원 탈퇴</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">잔여 포인트/쿠폰 소멸 안내 및 탈퇴 사유</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">진행중 주문 체크</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">혜택 소멸 안내 · 탈퇴 사유 입력</td>
               <td class="col-area v4-editable-cell" contenteditable="true">시선멤버십 탈퇴 처리</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/mypage/member/withdraw</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1767,7 +1664,6 @@
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">고객센터 홈</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">빠른 메뉴 · FAQ 검색 · 공지 요약</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">고객지원 통합 대시보드</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/cs/customerCenter</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1778,7 +1674,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">실시간 채팅상담</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">Twc.Chat 상담톡 연결</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">고객센터 실시간 챗봇/상담원</td>
               <td class="col-url v4-editable-cell" contenteditable="true">#Twc.Chat</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
@@ -1793,8 +1688,7 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">자주 묻는 질문</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">주문·결제 / 배송 / 취소·반품 / 회원·혜택</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">아코디언 답변</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">주문 · 배송 · 클레임 · 회원 FAQ</td>
               <td class="col-area v4-editable-cell" contenteditable="true">카테고리 탭 및 키워드 FAQ 검색</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/cs/faq</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
@@ -1805,7 +1699,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">공지사항 목록</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">중요 공지 · 일반 공지 · 당첨자 발표</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">공지사항 리스트 및 검색</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/about/notice</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1816,7 +1709,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">공지사항 상세</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">공지 본문 및 이전/다음글 이동</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">공지 상세 조회</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/about/notice/view</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1831,8 +1723,7 @@
                 </div>
               </td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">주문&amp;배송 / 수선 안내</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">배송 단계 안내 · A/S 수선 접수 기준</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">배송 단계 · A/S 수선 접수 기준</td>
               <td class="col-area v4-editable-cell" contenteditable="true">쇼핑 및 A/S 수선 정책 안내</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/cs/shipping</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1843,7 +1734,6 @@
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">상품 Q&amp;A 게시판</td>
               <td class="col-d4 v4-editable-cell" contenteditable="true">통합 상품 문의 목록</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
               <td class="col-area v4-editable-cell" contenteditable="true">고객센터 상품 Q&amp;A 조회</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/cs/qna</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1853,8 +1743,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">시선멤버십 안내</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">등급별 산정기준 · 적립률 · 생일/정기 쿠폰 혜택</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">등급 산정기준 · 적립률 · 쿠폰 혜택</td>
               <td class="col-area v4-editable-cell" contenteditable="true">온·오프라인 통합 멤버십 정책</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/about/gradeText</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
@@ -1864,8 +1753,7 @@
               <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
               <td class="col-d3 v4-editable-cell" contenteditable="true">오프라인 매장 찾기</td>
-              <td class="col-d4 v4-editable-cell" contenteditable="true">브랜드별 · 지역별 · 백화점/아울렛 매장 검색</td>
-              <td class="col-d5 v4-editable-cell" contenteditable="true">지도 보기</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">브랜드 · 지역별 매장 · 지도 검색</td>
               <td class="col-area v4-editable-cell" contenteditable="true">전국 매장 위치 및 연락처 안내</td>
               <td class="col-url v4-editable-cell" contenteditable="true">/about/stores.do</td>
               <td class="col-type v4-editable-cell" contenteditable="true">Page</td>

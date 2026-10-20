@@ -381,10 +381,10 @@
   },
   "assignee": "최범열",
   "developer": "",
-  "period": "2026.09.29(화) ~ 2026.10.15(목)",
+  "period": "2026.09.29 ~ 2026.10.15",
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3e3f6986169c80539799c1faf8349f7c",
-  "themeIndex": 0,
+  "themeIndex": 2,
   "updated": "2026-10-02 14:37:18",
   "version": 0.1,
   "screenOrder": [
@@ -396,5 +396,6 @@
     "09_Admin_PC_Scroll_247.html",
     "cart_block.html",
     "order_block.html"
-  ]
+  ],
+  "category": "front_admin"
 }

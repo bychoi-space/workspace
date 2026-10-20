@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>시선닷컴 Front IA (계층구조 정의서)</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style id="ia-tree-styles">
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #ffffff;
+    color: #0f172a;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  #canvas-root {
+    position: relative;
+    width: 1600px;
+    height: 900px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+  .lf-component {
+    position: absolute;
+    box-sizing: border-box;
+  }
+
+  /* IA Tree Table Container & Scroll Body */
+  .ia-table-card {
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border: 1.6px solid #0f172a;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+  }
+  .ia-scroll-viewport {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #ffffff;
+  }
+  .ia-scroll-viewport::-webkit-scrollbar {
+    width: 8px;
+  }
+  .ia-scroll-viewport::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  .ia-scroll-viewport::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 4px;
+  }
+  .ia-scroll-viewport::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
+
+  /* Reference-Matched Spreadsheet IA Table */
+  table.v4-ia-tree-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #1e293b;
+  }
+  table.v4-ia-tree-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  table.v4-ia-tree-table thead th {
+    background: #333333;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    text-align: center;
+    vertical-align: middle;
+    border-right: 1px solid #52525b;
+    border-bottom: 1px solid #52525b;
+    padding: 8px 8px;
+    user-select: none;
+    position: relative;
+  }
+  table.v4-ia-tree-table thead tr:first-child th {
+    height: 34px;
+    background: #27272a;
+  }
+  table.v4-ia-tree-table thead tr:nth-child(2) th {
+    height: 32px;
+    background: #3f3f46;
+    border-bottom: 2px solid #0f172a;
+  }
+  .ia-th-filter-chip {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 15px;
+    height: 15px;
+    background: #e4e4e7;
+    color: #27272a;
+    border-radius: 2px;
+    font-size: 9px;
+    line-height: 15px;
+    text-align: center;
+    font-weight: 800;
+    pointer-events: none;
+  }
+
+  /* Body Cells */
+  table.v4-ia-tree-table tbody td {
+    height: 34px;
+    padding: 6px 10px;
+    border-right: 1px solid #cbd5e1;
+    border-bottom: 1px solid #cbd5e1;
+    vertical-align: middle;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 13px;
+    word-break: keep-all;
+  }
+  table.v4-ia-tree-table tbody tr:hover td {
+    background: #f8fafc;
+  }
+
+  /* Major 1Depth Group Top Border (Matches Reference Image Thick Black Divider) */
+  table.v4-ia-tree-table tbody tr.ia-g1-start td {
+    border-top: 2px solid #0f172a;
+  }
+  table.v4-ia-tree-table tbody tr.ia-g1-start:first-child td {
+    border-top: none;
+  }
+
+  /* Alignment Rules matching Reference Image */
+  table.v4-ia-tree-table tbody td.col-site {
+    text-align: center;
+    color: #475569;
+    font-weight: 500;
+    background: #fafafa;
+  }
+  table.v4-ia-tree-table tbody td.col-d1,
+  table.v4-ia-tree-table tbody td.col-d2,
+  table.v4-ia-tree-table tbody td.col-d3,
+  table.v4-ia-tree-table tbody td.col-d4,
+  table.v4-ia-tree-table tbody td.col-d5 {
+    text-align: center;
+  }
+  table.v4-ia-tree-table tbody td.col-area {
+    text-align: center;
+    color: #334155;
+  }
+  table.v4-ia-tree-table tbody td.col-code {
+    text-align: center;
+    font-weight: 600;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+  }
+  table.v4-ia-tree-table tbody td.col-type {
+    text-align: center;
+    color: #334155;
+    font-weight: 500;
+  }
+
+  /* Interactive Accordion Toggle Buttons inside 1depth & 2depth */
+  .ia-d1-wrap,
+  .ia-d2-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+  }
+  .ia-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    background: #f1f5f9;
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .ia-toggle-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+  .ia-toggle-btn.ia-toggle-d2 {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+  }
+  .ia-toggle-btn.ia-toggle-d2:hover {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+  }
+  .ia-count-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .ia-fold-badge {
+    display: none;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    background: #dbeafe;
+    color: #1e40af;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  tr.is-folded-root td {
+    background: #f8fafc !important;
+  }
+  tr.is-folded-root .ia-fold-badge {
+    display: inline-block;
+  }
+
+  /* Toolbar Controls */
+  .ia-ctrl-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .ia-ctrl-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+  .ia-ctrl-btn.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+  .ia-domain-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .ia-domain-btn:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+  }
+  .ia-domain-btn.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+  }
+
+  /* Hidden Rows when Folded or Filtered */
+  tr.ia-hidden-g1,
+  tr.ia-hidden-g2,
+  tr.ia-hidden-filter {
+    display: none !important;
+  }
+</style>
+</head>
+<body>
+<div id="canvas-root">
+
+  <!-- 1. 상단 글로벌 헤더 (10단위 규격: top:20, left:20, width:1560, height:50) -->
+  <div id="comp-ia-header" class="lf-component" style="top: 20px; left: 20px; width: 1560px; height: 50px; background: #0f172a; border: 1.6px solid #0f172a; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span class="v4-editable-cell" contenteditable="true" style="background: #2563eb; color: #ffffff; font-size: 13px; font-weight: 800; padding: 4px 10px; border-radius: 4px; letter-spacing: 0.04em;">FRONT IA SPECIFICATION</span>
+      <span class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: -0.02em;">시선닷컴 (SISUN.COM) Front IA 계층구조 정의서</span>
+      <span class="v4-editable-cell" contenteditable="true" style="color: #94a3b8; font-size: 13px; font-weight: 500; margin-left: 6px;">|&nbsp;&nbsp;기준 도메인: https://sisun.com/ (통합몰 · MICHAA · IT MICHAA · E.B.M)</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span class="v4-editable-cell" contenteditable="true" style="color: #cbd5e1; font-size: 13px; font-weight: 600;">화면 코드 체계 : IA_SS_FO_[도메인]_[일련번호]</span>
+      <span class="v4-editable-cell" contenteditable="true" style="background: #1e293b; color: #93c5fd; border: 1px solid #334155; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 4px;">전체 10개 1Depth · 96개 상세 계층</span>
+    </div>
+  </div>
+
+  <!-- 2. 계층 아코디언 제어 & 도메인 필터 바 (10단위 규격: top:90, left:20, width:1560, height:50) -->
+  <div id="comp-ia-toolbar" class="lf-component" style="top: 90px; left: 20px; width: 1560px; height: 50px; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10;">
+    <!-- 좌측: 아코디언 Depth 일괄 접기/펼치기 제어 -->
+    <div style="display: flex; align-items: center; gap: 8px;" onmousedown="event.stopPropagation();">
+      <span style="font-size: 13px; font-weight: 800; color: #0f172a; margin-right: 4px;">계층(Depth) 폴딩 :</span>
+      <button type="button" class="ia-ctrl-btn active" data-mode="all" onclick="window.setIaViewMode('all', this, event)">▼ 전체 펼치기 (1~5Depth)</button>
+      <button type="button" class="ia-ctrl-btn" data-mode="d2" onclick="window.setIaViewMode('d2', this, event)">▸ 2Depth 기준 보기 (하위 접기)</button>
+      <button type="button" class="ia-ctrl-btn" data-mode="d1" onclick="window.setIaViewMode('d1', this, event)">▶ 1Depth 요약 (전체 접기)</button>
+    </div>
+
+    <!-- 우측: 도메인 퀵 필터 -->
+    <div style="display: flex; align-items: center; gap: 6px;" onmousedown="event.stopPropagation();">
+      <span style="font-size: 13px; font-weight: 800; color: #475569; margin-right: 4px;">도메인 필터 :</span>
+      <button type="button" class="ia-domain-btn active" data-domain="all" onclick="window.filterIaDomain('all', this, event)">전체</button>
+      <button type="button" class="ia-domain-btn" data-domain="hom" onclick="window.filterIaDomain('hom', this, event)">메인/공통</button>
+      <button type="button" class="ia-domain-btn" data-domain="brd" onclick="window.filterIaDomain('brd', this, event)">브랜드관</button>
+      <button type="button" class="ia-domain-btn" data-domain="prd" onclick="window.filterIaDomain('prd', this, event)">상품 리스트</button>
+      <button type="button" class="ia-domain-btn" data-domain="pdp" onclick="window.filterIaDomain('pdp', this, event)">상품 상세</button>
+      <button type="button" class="ia-domain-btn" data-domain="evt" onclick="window.filterIaDomain('evt', this, event)">기획전/LIVE</button>
+      <button type="button" class="ia-domain-btn" data-domain="log" onclick="window.filterIaDomain('log', this, event)">로그인</button>
+      <button type="button" class="ia-domain-btn" data-domain="mem" onclick="window.filterIaDomain('mem', this, event)">회원가입</button>
+      <button type="button" class="ia-domain-btn" data-domain="ord" onclick="window.filterIaDomain('ord', this, event)">장바구니/주문</button>
+      <button type="button" class="ia-domain-btn" data-domain="myp" onclick="window.filterIaDomain('myp', this, event)">마이페이지</button>
+      <button type="button" class="ia-domain-btn" data-domain="csc" onclick="window.filterIaDomain('csc', this, event)">고객센터</button>
+    </div>
+  </div>
+
+  <!-- 3. 시선닷컴 Front IA 계층형 아코디언 테이블 (10단위 규격: top:160, left:20, width:1560, height:720) -->
+  <div id="comp-ia-table-wrap" class="lf-component" style="top: 160px; left: 20px; width: 1560px; height: 720px; z-index: 10;">
+    <div class="ia-table-card">
+      <div class="ia-scroll-viewport" onmousedown="event.stopPropagation();">
+        <table class="v4-ia-tree-table" id="sisun-ia-table">
+          <colgroup>
+            <col style="width: 100px;"/>
+            <col style="width: 170px;"/>
+            <col style="width: 180px;"/>
+            <col style="width: 190px;"/>
+            <col style="width: 180px;"/>
+            <col style="width: 150px;"/>
+            <col style="width: 260px;"/>
+            <col style="width: 180px;"/>
+            <col style="width: 150px;"/>
+          </colgroup>
+          <thead>
+            <tr>
+              <th rowspan="2">사이트<span class="ia-th-filter-chip">▼</span></th>
+              <th colspan="5">화면</th>
+              <th rowspan="2">영역<span class="ia-th-filter-chip">▼</span></th>
+              <th rowspan="2">화면 코드<span class="ia-th-filter-chip">▼</span></th>
+              <th rowspan="2">화면 타입<span class="ia-th-filter-chip">▼</span></th>
+            </tr>
+            <tr>
+              <th>1depth<span class="ia-th-filter-chip">▼</span></th>
+              <th>2depth<span class="ia-th-filter-chip">▼</span></th>
+              <th>3depth<span class="ia-th-filter-chip">▼</span></th>
+              <th>4depth<span class="ia-th-filter-chip">▼</span></th>
+              <th>5depth<span class="ia-th-filter-chip">▼</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ========================================================================= -->
+            <!-- 01. 메인 / 공통 (HOM) -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="hom" data-role="g1-root" data-g2="hom-main" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('hom', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">메인</span>
+                  <span class="ia-count-pill">10</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('hom-main', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">통합 메인</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">메인 홈 (/)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">메인 배너 / 브랜드 큐레이션</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="hom" data-g2-parent="hom-main">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">메인 팝업 / 띠배너</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">오늘 하루 보지 않기</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">프로모션 공지 모달</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
+            </tr>
+            <tr data-g1="hom" data-g2="hom-gnb" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('hom-gnb', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">헤더 / GNB</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 스위처</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">MICHAA / IT MICHAA / E.B.M</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">글로벌 상단 네비게이션</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="hom" data-g2-parent="hom-gnb">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">다국어 / 앱 다운로드</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">KR / EN / CN 언어 전환</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">유틸리티 바 / QR 앱 안내</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="hom" data-g2="hom-sch" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('hom-sch', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">통합 검색</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">검색어 입력 레이어</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">최근 / 인기 / 추천검색어</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">자동완성 및 해시태그 추천</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
+            </tr>
+            <tr data-g1="hom" data-g2-parent="hom-sch">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">검색 결과 리스트</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">상품 / 기획전 결과 탭</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">통합 검색 결과 (/searchList)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="hom" data-g2="hom-ftr" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('hom-ftr', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">푸터 / 퀵메뉴</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">최근 본 상품</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">플로팅 히스토리 조회</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">우측 퀵메뉴 (/recentlyGoodsListPc)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
+            </tr>
+            <tr data-g1="hom" data-g2-parent="hom-ftr">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">회사소개</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">시선인터내셔날 기업 소개</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">기업 정보 (/about/company)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_07</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="hom" data-g2-parent="hom-ftr">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">이용약관</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">서비스 이용약관 전문</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">약관 조회 (/about/terms?0001)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_08</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="hom" data-g2-parent="hom-ftr">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">개인정보처리방침</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">개인정보 보호 정책 전문</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">정책 조회 (/about/terms?0002)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_HOM_09</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 02. 브랜드관 (BRD) : MICHAA / IT MICHAA / E.B.M -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="brd" data-role="g1-root" data-g2="brd-mc" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('brd', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">브랜드관</span>
+                  <span class="ia-count-pill">10</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('brd-mc', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">MICHAA (미샤)</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 메인 (/MICHAA/)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">시즌 키비주얼 / 룩북 / 신상품</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">미샤 전용 브랜드 홈</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2-parent="brd-mc">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">NEW / BEST / 전체상품</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">신상품 · 주간베스트 · 전체</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">브랜드 상품 전시 (/MICHAA/shop/list)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2-parent="brd-mc">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 스토리 / 캠페인</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">IDENTITY / SEASON COLLECTION</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">브랜드 아카이브 (/MICHAA/story)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2="brd-it" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('brd-it', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">IT MICHAA (잇미샤)</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 메인 (/ITMICHAA/)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">시즌 캠페인 / 에디토리얼</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">잇미샤 전용 브랜드 홈</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2-parent="brd-it">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">NEW / BEST / 전체상품</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">신상품 · 베스트 · 온라인 단독</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">브랜드 상품 전시 (/ITMICHAA/shop/list)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2-parent="brd-it">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 기획전 / 세일</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">잇미샤 단독 프로모션</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">브랜드 이벤트 (/ITMICHAA/event)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2="brd-ebm" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('brd-ebm', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">E.B.M (이비엠)</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">브랜드 메인 (/EBM/)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">에디션바이미샤 영 컨템포러리</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">E.B.M 전용 브랜드 홈</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_07</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2-parent="brd-ebm">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">NEW / BEST / UNI</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">신상품 · 베스트 · 유니섹스 라인</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">브랜드 상품 전시 (/EBM/shop/list)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_08</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2-parent="brd-ebm">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">EBM LIVE</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">라이브 방송 목록 및 다시보기</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">라이브 커머스 (/EBM/liveContents)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_09</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="brd" data-g2-parent="brd-ebm">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">프로모션 / 이벤트</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">E.B.M 브랜드 이벤트</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">브랜드 이벤트 (/EBM/event)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_BRD_10</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 03. 상품 리스트 (PRD) : 시선닷컴 9801~9807 실제 카테고리 코드 체계 -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="prd" data-role="g1-root" data-g2="prd-com" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('prd', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">상품 리스트</span>
+                  <span class="ia-count-pill">12</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('prd-com', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">공통 전시 / 필터</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">카테고리 리스트 공통</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">2단 / 4단 뷰 전환 · 페이징</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">카테고리 선택</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-com">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">정렬 (Sorting)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">신상품순 / 판매순 / 높은·낮은가격</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">소팅</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-com">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상세 필터 (Filter)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">브랜드 / 컬러칩 / 사이즈 / 가격대</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">스마트 필터 검색</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
+            </tr>
+            <tr data-g1="prd" data-g2="prd-cate" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('prd-cate', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">대카테고리 (9801~9807)</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">아우터 (9801)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">코트(01)·무스탕(02)·패딩(03)·자켓(04)·베스트(05)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">upperCateCode=9801</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-cate">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">원피스 (9802)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">미니원피스(02) · 미디원피스(03) · 롱원피스(04)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">upperCateCode=9802</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-cate">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상의 (9803)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">블라우스/셔츠(980301) · 티셔츠(980302)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">upperCateCode=9803</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-cate">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">하의 (9804)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">팬츠(980401) · 스커트(980402)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">upperCateCode=9804</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-cate">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">니트 (9805)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">풀오버·가디건·베스트·원피스·스커트·팬츠</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">upperCateCode=9805</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_07</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-cate">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">데님 (9806)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">자켓(01) · 원피스(02) · 셔츠(03) · 팬츠/스커트(04)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">upperCateCode=9806</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_08</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-cate">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">ACC (9807)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">스카프·가방·슈즈·모자·장갑·반려용품·기타</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">upperCateCode=9807</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_09</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2="prd-spc" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('prd-spc', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">스페셜 / 아울렛</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">아울렛 (#SEASON OFF)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">이월/시즌오프 특가관</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">시즌오프 전용관</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_10</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="prd" data-g2-parent="prd-spc">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">온라인 단독 / 프리오픈 / 셋업</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">#ONLINE-ONLY · #PRE-OPEN · SET-UP</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">테마 큐레이션 리스트</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PRD_11</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 04. 상품 상세 (PDP) -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="pdp" data-role="g1-root" data-g2="pdp-top" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('pdp', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">상품 상세</span>
+                  <span class="ia-count-pill">8</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('pdp-top', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">상품 기본정보</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상품 상세 메인</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">갤러리 · 가격 · 컬러/사이즈 옵션 선택</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">상품 구매 패널 (쇼핑백/바로구매)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="pdp" data-g2-parent="pdp-top">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">쿠폰 다운로드</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">적용 가능 상품/프로모션 쿠폰 발급</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">최대 혜택가 쿠폰 받기</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="pdp" data-g2-parent="pdp-top">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">재입고 알림 신청</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">품절 사이즈 입고 알림톡 신청</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">품절 옵션 선택 시 노출</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="pdp" data-g2="pdp-tab" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('pdp-tab', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">상세 정보 탭</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상품 상세설명</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">착장 컷 · 소재 · 혼용률 · 취급주의</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">상품 정보 고시 영역</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="pdp" data-g2-parent="pdp-tab">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">실측 사이즈 가이드</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">사이즈별 실측표 및 핏 가이드</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">사이즈 조견표</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="pdp" data-g2-parent="pdp-tab">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상품 리뷰 (Review)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">포토리뷰 · 일반리뷰 · 별점 통계</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">리뷰 상세 모달</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">구매자 실착 리뷰 조회</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="pdp" data-g2-parent="pdp-tab">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상품 Q&amp;A</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">상품 문의 목록 및 문의 등록</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">비밀글 설정</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">상품 문의 작성 모달</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_07</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="pdp" data-g2-parent="pdp-tab">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">배송 / 교환 / 반품 안내</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">배송비 · 반품주소 · AS 정책</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">클레임 기준 안내 탭</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_PDP_08</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 05. 프로모션 / 콘텐츠 (EVT) -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="evt" data-role="g1-root" data-g2="evt-prm" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('evt', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">기획전 / 콘텐츠</span>
+                  <span class="ia-count-pill">6</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('evt-prm', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">기획전 / 이벤트</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">통합 기획전 리스트</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">진행중 이벤트 · 브랜드별 탭</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/event/intgr/promotion</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="evt" data-g2-parent="evt-prm">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">기획전 상세</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">프로모션 배너 · 앵커 탭별 상품군</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">쿠폰팩 다운로드</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">기획전 상세 및 댓글 응모</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="evt" data-g2-parent="evt-prm">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">당첨자 발표</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">이벤트 당첨 결과 조회</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">이벤트 당첨 안내</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="evt" data-g2="evt-cnt" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('evt-cnt', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">룩북 / LIVE</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">시즌 컬렉션 / 룩북</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">화보 리스트 · 화보 상세</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">착장 상품 매칭</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">#WINTER / #SPRING COLLECTION</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="evt" data-g2-parent="evt-cnt">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">라이브 방송 편성표</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">생방송 예고 · 지난 방송 VOD</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/EBM/liveContents/broadcast</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="evt" data-g2-parent="evt-cnt">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">라이브 스트리밍 플레이어</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">실시간 채팅 · 라이브 특가 상품 구매</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">라이브 시청 팝업/레이어</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_EVT_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 06. 로그인 (LOG) : 참고 이미지와 100% 동일한 정밀 Depth 구조 -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="log" data-role="g1-root" data-g2="log-mem" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('log', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">로그인</span>
+                  <span class="ia-count-pill">16</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('log-mem', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">회원 로그인</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">아이디 로그인</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/member/login (통합회원 인증)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-mem">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">간편 로그인</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">카카오 계정</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">카카오 싱크 OAuth 인증</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-mem">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">네이버 계정</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">네이버 아이디 로그인 연동</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-mem">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">애플 / 구글 계정</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">소셜 계정 OAuth 연동</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-mem">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">기존 아이디 찾기</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">통합멤버십 전환/계정 확인</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-mem">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">기존 아이디 찾기 완료</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">기존 계정 안내 완료</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_14</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-mem">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">비밀번호 변경 안내</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">90일 주기 변경 캠페인</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">보안 비밀번호 변경 권고</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-mem">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">휴면 계정 해제</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">본인인증 후 휴면 복구</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">장기 미접속 회원 활성화</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_07</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="log" data-g2="log-guest" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">비회원 주문조회</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문자명 / 주문번호 / 비밀번호</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">비회원 주문/배송 내역 조회</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_08</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="log" data-g2="log-id" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('log-id', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">아이디 찾기</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">휴대폰 / 본인인증 선택</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">이름 · 휴대폰 번호 · 본인인증</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_09</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-id">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">인증번호 입력</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">SMS 인증번호 검증</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">인증번호 유효성 확인</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-id">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">아이디 찾기 완료</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">가입 아이디 및 가입일 안내</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">로그인 / 비밀번호 찾기 이동</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_10</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="log" data-g2="log-pw" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('log-pw', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">비밀번호 찾기</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">아이디 입력</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">비밀번호 재설정 대상 확인</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_11</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-pw">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">인증번호 입력</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">휴대폰 / 본인인증 확인</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">본인 확인 검증</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-pw">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">신규 비밀번호 설정</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">새 비밀번호 입력 / 확인</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">영문/숫자/특수문자 조합 검증</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_12</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="log" data-g2-parent="log-pw">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">신규 비밀번호 설정 완료</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">비밀번호 재설정 완료 안내</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_LOG_13</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 07. 회원가입 (MEM) : 참고 이미지와 100% 동일한 정밀 Depth 구조 -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="mem" data-role="g1-root" data-g2="mem-gen" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('mem', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">회원가입</span>
+                  <span class="ia-count-pill">10</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">일반 회원가입</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">시선멤버십 통합 가입 인트로</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/member/join (가입유형 선택)</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="mem" data-g2="mem-sns" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('mem-sns', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">간편 회원가입</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">카카오 계정</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">카카오 싱크 1초 가입</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">SNS 간편가입 연동</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="mem" data-g2-parent="mem-sns">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">네이버 계정</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">네이버 프로필 연동 가입</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">SNS 간편가입 연동</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="mem" data-g2-parent="mem-sns">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">애플 / 구글 계정</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">글로벌 소셜 계정 연동</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">SNS 간편가입 연동</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="mem" data-g2="mem-auth" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('mem-auth', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">인증하기</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">휴대폰 인증</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">PASS / SMS 본인확인</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">본인명의 휴대폰 인증 모듈</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="mem" data-g2-parent="mem-auth">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">이메일 인증</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">이메일 중복확인 및 인증</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">이메일 유효성 검증</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="mem" data-g2="mem-inp" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('mem-inp', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">정보입력</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">기본정보</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">아이디 · 비밀번호 · 이름 · 연락처</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">필수 회원 기본정보 입력</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="mem" data-g2-parent="mem-inp">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">부가정보</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">생년월일 · 선호 브랜드 · 신체사이즈</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">맞춤 큐레이션 부가정보</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="mem" data-g2-parent="mem-inp">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">약관동의</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">필수 약관 · 마케팅 수신(SMS/이메일)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">전체동의 및 약관 상세보기</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="mem" data-g2="mem-done" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">회원가입 완료</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">신규 가입 축하 및 웰컴 혜택 안내</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">시선멤버십 웰컴 쿠폰 발급 안내</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MEM_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 08. 장바구니 / 주문 · 결제 (ORD) : 01_Order_Policy_Overview 정책 100% 연동 -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="ord" data-role="g1-root" data-g2="ord-crt" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('ord', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">장바구니 / 주문</span>
+                  <span class="ia-count-pill">12</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('ord-crt', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">장바구니 (/cart/list)</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">일반 장바구니</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">최대 100개 · 30일 보관 · 비회원 연동</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">쇼핑백 상품 목록 및 금액 산출</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CRT_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-crt">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">포인트몰 장바구니</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">포인트 전용 상품 분리 결제 탭</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">사은품/포인트몰 장바구니</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CRT_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-crt">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">옵션 / 수량 변경</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">컬러 · 사이즈 · 주문가능 재고 수량 변경</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">장바구니 인라인 옵션 모달</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CRT_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Layer</td>
+            </tr>
+            <tr data-g1="ord" data-g2="ord-sht" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('ord-sht', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">주문서 작성</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문상품 확인</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">상품/옵션/수량/판매가/프로모션할인 확인</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">주문서 메인 페이지</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_ORD_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-sht">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">할인 / 혜택 적용</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">상품쿠폰 · 스페셜쿠폰 · 장바구니쿠폰 · 무료배송쿠폰</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">최대할인 자동적용</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">쿠폰 조회 및 변경 팝업</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_ORD_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-sht">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">포인트 / 마일리지 사용</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">보유 포인트 전액/일부 사용 입력</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">복합 할인 정산 영역</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-sht">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문자 / 배송지 정보</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">기본배송지 · 최근배송지 · 신규입력 · 배송메시지</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">비회원 정보수집 동의</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">배송지 목록 선택 팝업</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_ORD_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-sht">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">우편번호 검색</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">도로명 / 지번 주소 검색</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">도서산간 배송비 판별</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">주소 검색 레이어/팝업</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_ORD_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="ord" data-g2="ord-pay" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('ord-pay', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">결제 및 주문완료</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">결제수단 선택</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">신용카드 · 실시간 계좌이체 · 가상계좌(무통장)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">에스크로 구매안전</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">결제 수단 및 카드사 혜택 안내</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">-</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">-</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-pay">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">PG 전자결제 모듈</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">KG이니시스 결제창 인증 및 승인</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">현금영수증 신청</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">외부 PG 연동 모듈</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_ORD_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-pay">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문 완료</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">주문번호 · 결제완료/입금대기(가상계좌) 내역</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">주문 결과 및 배송지 요약</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_ORD_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="ord" data-g2-parent="ord-pay">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문 실패 / 재결제 안내</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">재고 부족 · 한도 초과 · 승인 실패 사유 안내</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">결제 오류 안내 및 장바구니 복귀</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_ORD_07</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 09. 마이페이지 (MYP) -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="myp" data-role="g1-root" data-g2="myp-main" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('myp', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">마이페이지</span>
+                  <span class="ia-count-pill">19</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">마이페이지 메인</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">회원등급 / 혜택 / 주문현황 요약</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/mypage/main 대시보드</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2="myp-ord" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('myp-ord', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">쇼핑 내역</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문 / 배송 조회</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">기간별(1/3/6개월) · 상태별 주문내역</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/mypage/mypageOrderList</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-ord">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문 상세 내역</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">결제정보 · 배송지 변경(입금/결제완료 시)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">영수증/전표 출력</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">주문건별 상세 및 배송추적 팝업</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-ord">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문 취소 신청</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">전체취소 / 부분취소 · 환불계좌 입력</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">환불예정금액 산출</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">입금대기 · 결제완료 단계 즉시취소</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-ord">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">교환 신청</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">교환 옵션 선택 · 사유 선택 · 수거지 입력</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">왕복배송비 결제</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">배송완료 후 7일 이내 신청</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-ord">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">반품 신청</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">반품 사유 선택 · 수거지 · 환불예정금 차감</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">배송완료 후 7일 이내 신청</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-ord">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">취소 / 교환 / 반품 조회</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">클레임 진행 상태 및 환불 완료 내역</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">클레임 내역 전용 탭</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_07</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="myp" data-g2="myp-bnf" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('myp-bnf', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">혜택 관리</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">보유 쿠폰함</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">사용가능 쿠폰 · 시리얼 쿠폰번호 등록</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">적용대상 상품보기</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">상품/장바구니/스페셜/무료배송 쿠폰</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_08</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-bnf">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">포인트 / 마일리지 내역</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">적립 · 사용 · 당월 소멸예정 포인트 조회</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">통합 포인트 원장 내역</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_09</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2="myp-act" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('myp-act', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">관심 / 활동 내역</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">위시리스트 (관심상품)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">찜한 상품 · 브랜드 관리</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">장바구니 담기</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/mypage/active/mypageWishlist</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_10</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-act">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">최근 본 상품</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">일자별 열람 상품 목록 및 일괄삭제</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">히스토리 관리</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_11</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-act">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상품 리뷰 관리</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">작성 가능 리뷰 · 작성한 리뷰 탭</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">리뷰 작성 팝업</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">구매확정 후 포토/텍스트 리뷰 적립</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_12</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-act">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">1:1 문의 내역</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">문의 리스트 및 답변 상태 확인</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/mypage/active/cs</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_13</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-act">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">1:1 문의 등록</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">문의유형 · 주문상품 선택 · 첨부파일 등록</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">/mypage/active/cs/form</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_14</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-act">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상품 Q&amp;A 내역</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">내가 작성한 상품 문의 및 답변 조회</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">상품 Q&amp;A 모아보기</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_15</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2="myp-inf" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('myp-inf', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">회원정보 관리</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">비밀번호 재확인</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">개인정보 보호용 비밀번호 인증</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">회원정보 접근 보안 게이트</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_16</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-inf">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">회원정보 수정</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">연락처 · 이메일 · 비밀번호 · 마케팅수신 변경</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">SNS 연동 관리</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">개인정보 및 간편로그인 연동 설정</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_17</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-inf">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">배송지 관리</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">기본 배송지 설정 · 신규 배송지 등록/수정</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">배송지 주소록 관리 및 등록 팝업</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_18</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="myp" data-g2-parent="myp-inf">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">회원 탈퇴</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">잔여 포인트/쿠폰 소멸 안내 및 탈퇴 사유</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">진행중 주문 체크</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">시선멤버십 탈퇴 처리</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_MYP_19</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+
+            <!-- ========================================================================= -->
+            <!-- 10. 고객센터 / 멤버십 (CSC) -->
+            <!-- ========================================================================= -->
+            <tr class="ia-g1-start" data-g1="csc" data-role="g1-root" data-g2="csc-main" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1">
+                <div class="ia-d1-wrap">
+                  <button type="button" class="ia-toggle-btn" title="1Depth 접기/펼치기" onclick="window.toggleIaG1('csc', this, event)">▼</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 800; color: #0f172a;">고객센터</span>
+                  <span class="ia-count-pill">9</span>
+                </div>
+              </td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('csc-main', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">고객센터 메인</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">고객센터 홈 (/cs/customerCenter)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">빠른 메뉴 · FAQ 검색 · 공지 요약</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">고객지원 통합 대시보드</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_01</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="csc" data-g2-parent="csc-main">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">실시간 채팅상담</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">Twc.Chat 상담톡 연결</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">고객센터 실시간 챗봇/상담원</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_02</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Popup</td>
+            </tr>
+            <tr data-g1="csc" data-g2="csc-faq" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('csc-faq', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">FAQ / 공지사항</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">자주 묻는 질문 (/cs/faq)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">주문·결제 / 배송 / 취소·반품 / 회원·혜택</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">아코디언 답변</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">카테고리 탭 및 키워드 FAQ 검색</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_03</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page (Tab)</td>
+            </tr>
+            <tr data-g1="csc" data-g2-parent="csc-faq">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">공지사항 목록 (/about/notice)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">중요 공지 · 일반 공지 · 당첨자 발표</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">공지사항 리스트 및 검색</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_04</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="csc" data-g2-parent="csc-faq">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">공지사항 상세 (/about/notice/view)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">공지 본문 및 이전/다음글 이동</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">공지 상세 조회</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_05</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="csc" data-g2="csc-gde" data-g2-role="g2-root">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2">
+                <div class="ia-d2-wrap">
+                  <button type="button" class="ia-toggle-btn ia-toggle-d2" title="2Depth 접기/펼치기" onclick="window.toggleIaG2('csc-gde', this, event)">▾</button>
+                  <span class="v4-editable-cell" contenteditable="true" style="font-weight: 700;">이용안내 / 멤버십</span>
+                  <span class="ia-fold-badge">하위 접힘</span>
+                </div>
+              </td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">주문&amp;배송 / 수선 안내</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">배송 단계 안내(/cs/shipping) · 수선(/etc/customerService)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">쇼핑 및 A/S 수선 접수 정책 안내</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_06</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="csc" data-g2-parent="csc-gde">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">상품 Q&amp;A 게시판</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">통합 상품 문의 목록 (/cs/qna)</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">고객센터 상품 Q&amp;A 조회</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_07</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="csc" data-g2-parent="csc-gde">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">시선멤버십 안내 (/about/gradeText)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">등급별 산정기준 · 적립률 · 생일/정기 쿠폰 혜택</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-area v4-editable-cell" contenteditable="true">온·오프라인 통합 멤버십 정책</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_08</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+            <tr data-g1="csc" data-g2-parent="csc-gde">
+              <td class="col-site v4-editable-cell" contenteditable="true">시선닷컴</td>
+              <td class="col-d1 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d2 v4-editable-cell" contenteditable="true"></td>
+              <td class="col-d3 v4-editable-cell" contenteditable="true">오프라인 매장 찾기 (/about/stores.do)</td>
+              <td class="col-d4 v4-editable-cell" contenteditable="true">브랜드별 · 지역별 · 백화점/아울렛 매장 검색</td>
+              <td class="col-d5 v4-editable-cell" contenteditable="true">지도 보기</td>
+              <td class="col-area v4-editable-cell" contenteditable="true">전국 매장 위치 및 연락처 안내</td>
+              <td class="col-code v4-editable-cell" contenteditable="true">IA_SS_FO_CSC_09</td>
+              <td class="col-type v4-editable-cell" contenteditable="true">Page</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script id="ia-tree-script">
+  // 1Depth 개별 아코디언 토글
+  window.toggleIaG1 = function(g1Key, btnEl, ev) {
+    if (ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+    }
+    var table = document.getElementById('sisun-ia-table');
+    if (!table) return;
+    var rows = table.querySelectorAll('tbody tr[data-g1="' + g1Key + '"]');
+    if (!rows.length) return;
+
+    var rootRow = rows[0];
+    var isCurrentlyFolded = rootRow.classList.contains('is-folded-root');
+    var nextFoldState = !isCurrentlyFolded;
+
+    if (nextFoldState) {
+      rootRow.classList.add('is-folded-root');
+      if (btnEl) btnEl.textContent = '▶';
+    } else {
+      rootRow.classList.remove('is-folded-root');
+      if (btnEl) btnEl.textContent = '▼';
+    }
+
+    for (var i = 1; i < rows.length; i++) {
+      if (nextFoldState) {
+        rows[i].classList.add('ia-hidden-g1');
+      } else {
+        rows[i].classList.remove('ia-hidden-g1');
+      }
+    }
+  };
+
+  // 2Depth 개별 아코디언 토글
+  window.toggleIaG2 = function(g2Key, btnEl, ev) {
+    if (ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+    }
+    var table = document.getElementById('sisun-ia-table');
+    if (!table) return;
+    var rootRow = table.querySelector('tbody tr[data-g2="' + g2Key + '"]');
+    var childRows = table.querySelectorAll('tbody tr[data-g2-parent="' + g2Key + '"]');
+    if (!rootRow || !childRows.length) return;
+
+    var isFolded = rootRow.classList.contains('is-folded-root');
+    var nextFold = !isFolded;
+
+    if (nextFold) {
+      rootRow.classList.add('is-folded-root');
+      if (btnEl) btnEl.textContent = '▸';
+    } else {
+      rootRow.classList.remove('is-folded-root');
+      if (btnEl) btnEl.textContent = '▾';
+    }
+
+    for (var i = 0; i < childRows.length; i++) {
+      if (nextFold) {
+        childRows[i].classList.add('ia-hidden-g2');
+      } else {
+        childRows[i].classList.remove('ia-hidden-g2');
+      }
+    }
+  };
+
+  // 상단 일괄 폴딩 뷰 모드 (all: 1~5Depth 전체 펼치기, d2: 2Depth 기준 보기, d1: 1Depth 요약)
+  window.setIaViewMode = function(mode, btnEl, ev) {
+    if (ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+    }
+    var toolbar = document.getElementById('comp-ia-toolbar');
+    if (toolbar) {
+      var modeBtns = toolbar.querySelectorAll('.ia-ctrl-btn');
+      for (var b = 0; b < modeBtns.length; b++) {
+        modeBtns[b].classList.remove('active');
+      }
+    }
+    if (btnEl) btnEl.classList.add('active');
+
+    var table = document.getElementById('sisun-ia-table');
+    if (!table) return;
+    var allRows = table.querySelectorAll('tbody tr');
+
+    for (var i = 0; i < allRows.length; i++) {
+      var r = allRows[i];
+      var isG1Root = r.getAttribute('data-role') === 'g1-root';
+      var isG2Root = r.getAttribute('data-g2-role') === 'g2-root';
+      var hasG2Parent = r.hasAttribute('data-g2-parent');
+      var g1Btn = r.querySelector('.col-d1 .ia-toggle-btn');
+      var g2Btn = r.querySelector('.col-d2 .ia-toggle-btn');
+
+      if (mode === 'all') {
+        r.classList.remove('ia-hidden-g1', 'ia-hidden-g2', 'is-folded-root');
+        if (g1Btn) g1Btn.textContent = '▼';
+        if (g2Btn) g2Btn.textContent = '▾';
+      } else if (mode === 'd2') {
+        r.classList.remove('ia-hidden-g1');
+        if (g1Btn) g1Btn.textContent = '▼';
+        if (hasG2Parent) {
+          r.classList.add('ia-hidden-g2');
+        } else {
+          r.classList.remove('ia-hidden-g2');
+        }
+        if (isG2Root && g2Btn) {
+          r.classList.add('is-folded-root');
+          g2Btn.textContent = '▸';
+        } else {
+          r.classList.remove('is-folded-root');
+        }
+      } else if (mode === 'd1') {
+        r.classList.remove('ia-hidden-g2');
+        if (g2Btn) g2Btn.textContent = '▾';
+        if (isG1Root) {
+          r.classList.remove('ia-hidden-g1');
+          r.classList.add('is-folded-root');
+          if (g1Btn) g1Btn.textContent = '▶';
+        } else {
+          r.classList.add('ia-hidden-g1');
+          r.classList.remove('is-folded-root');
+        }
+      }
+    }
+  };
+
+  // 우측 도메인 필터
+  window.filterIaDomain = function(domainKey, btnEl, ev) {
+    if (ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+    }
+    var toolbar = document.getElementById('comp-ia-toolbar');
+    if (toolbar) {
+      var domBtns = toolbar.querySelectorAll('.ia-domain-btn');
+      for (var b = 0; b < domBtns.length; b++) {
+        domBtns[b].classList.remove('active');
+      }
+    }
+    if (btnEl) btnEl.classList.add('active');
+
+    var table = document.getElementById('sisun-ia-table');
+    if (!table) return;
+    var allRows = table.querySelectorAll('tbody tr');
+    for (var i = 0; i < allRows.length; i++) {
+      var r = allRows[i];
+      var g1 = r.getAttribute('data-g1');
+      if (domainKey === 'all' || g1 === domainKey) {
+        r.classList.remove('ia-hidden-filter');
+      } else {
+        r.classList.add('ia-hidden-filter');
+      }
+    }
+  };
+</script>
+</body>
+</html>

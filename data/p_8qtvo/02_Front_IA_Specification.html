@@ -191,7 +191,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
     white-space: nowrap;
   }
@@ -199,13 +199,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
+    width: 15px;
+    height: 15px;
+    padding: 0;
+    border-radius: 3px;
     border: 1px solid #cbd5e1;
     background: #f1f5f9;
-    color: #0f172a;
-    font-size: 13px;
+    color: #334155;
+    font-size: 8px !important;
     font-weight: 800;
     cursor: pointer;
     flex-shrink: 0;
@@ -222,12 +223,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 1px 6px;
+    height: 15px;
+    min-width: 18px;
+    padding: 0 5px;
+    margin-left: 2px;
     border-radius: 999px;
     background: #e2e8f0;
-    color: #334155;
-    font-size: 13px;
+    color: #475569;
+    font-size: 10px !important;
     font-weight: 700;
+    line-height: 1;
     flex-shrink: 0;
   }
   tr.is-folded-root td {
@@ -353,8 +358,8 @@
   <!-- 3. 시선닷컴 Front IA 계층형 아코디언 테이블 (10단위 규격: top:160, left:20, width:1560, height:720) -->
   <div id="comp-ia-table-wrap" class="lf-component" style="top: 160px; left: 20px; width: 1560px; height: 720px; z-index: 10;">
     <div class="ia-table-card">
-      <div class="ia-scroll-viewport" onmousedown="event.stopPropagation();">
-        <table class="v4-ia-tree-table" id="sisun-ia-table">
+      <div class="ia-scroll-viewport">
+        <table class="v4-ia-tree-table v4-table" id="sisun-ia-table">
           <colgroup>
             <col style="width: 100px;"/>
             <col style="width: 160px;"/>
@@ -2060,6 +2065,7 @@
       var comp = document.getElementById('comp-ia-table-wrap');
       if (!table || !comp || table._iaPropsBound) return;
       table._iaPropsBound = true;
+      table._tableSelectionBound = true;
       table.querySelectorAll('.selected-cell').forEach(function(c) {
         c.classList.remove('selected-cell');
       });
@@ -2166,10 +2172,21 @@
         }
 
         syncToParentInspector();
+        setTimeout(function() {
+          if (window.V4DragResizeEngine) {
+            window.V4DragResizeEngine.isPendingDrag = false;
+            window.V4DragResizeEngine.isDragging = false;
+          }
+          syncToParentInspector();
+        }, 0);
       });
 
       table.addEventListener('mouseover', function(e) {
         if (!isDragSelecting) return;
+        if (window.V4DragResizeEngine) {
+          window.V4DragResizeEngine.isPendingDrag = false;
+          window.V4DragResizeEngine.isDragging = false;
+        }
         var cell = e.target.closest('td, th');
         if (!cell) return;
         var tr = cell.parentElement;

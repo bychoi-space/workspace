@@ -58,15 +58,15 @@ const context = {
 const PROJECT_CATEGORIES = window.PROJECT_CATEGORIES || [];
 const PREMIUM_THEMES = PROJECT_CATEGORIES;
 
-function inferCategoryFromProject(projectName, meta) {
-    if (typeof window.inferCategoryFromProject === 'function') {
+const inferCategoryFromProject = function(projectName, meta) {
+    if (typeof window.inferCategoryFromProject === 'function' && window.inferCategoryFromProject !== inferCategoryFromProject) {
         return window.inferCategoryFromProject(projectName, meta);
     }
     return PROJECT_CATEGORIES[7] || {};
 }
 
-function resolveProjectCategory(projectName, meta) {
-    if (typeof window.resolveProjectCategory === 'function') {
+const resolveProjectCategory = function(projectName, meta) {
+    if (typeof window.resolveProjectCategory === 'function' && window.resolveProjectCategory !== resolveProjectCategory) {
         return window.resolveProjectCategory(projectName, meta);
     }
     return inferCategoryFromProject(projectName, meta);
@@ -447,7 +447,7 @@ function renderSkeletons(count = 6) {
         }, 400);
         updateStatusUI('', '');
     } catch (err) {
-        console.error("refreshFileList error:", err);
+        console.error("refreshFileList error:", err); if (DOM.globalLoader) DOM.globalLoader.classList.remove('active', 'mobile-nano-only');
         updateStatusUI('연결 확인 필요 ⚠️', '#fb923c');
         DOM.list.innerHTML = `
             <div class="empty-text" style="grid-column: 1 / -1; padding: 40px; text-align: center;">

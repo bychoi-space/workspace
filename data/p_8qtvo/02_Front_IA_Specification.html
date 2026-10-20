@@ -100,21 +100,6 @@
     background: #3f3f46;
     border-bottom: 1.5px solid #cbd5e1;
   }
-  .ia-th-filter-chip {
-    position: absolute;
-    right: 4px;
-    bottom: 4px;
-    width: 15px;
-    height: 15px;
-    background: #e4e4e7;
-    color: #27272a;
-    border-radius: 2px;
-    font-size: 9px;
-    line-height: 15px;
-    text-align: center;
-    font-weight: 800;
-    pointer-events: none;
-  }
 
   /* Softened Internal Table Grid Lines */
   table.v4-ia-tree-table tbody td {
@@ -359,7 +344,7 @@
   <div id="comp-ia-table-wrap" class="lf-component" style="top: 160px; left: 20px; width: 1560px; height: 720px; z-index: 10;">
     <div class="ia-table-card">
       <div class="ia-scroll-viewport">
-        <table class="v4-ia-tree-table v4-table" id="sisun-ia-table">
+        <table class="v4-ia-tree-table" id="sisun-ia-table">
           <colgroup>
             <col style="width: 100px;"/>
             <col style="width: 160px;"/>
@@ -373,18 +358,18 @@
           </colgroup>
           <thead>
             <tr>
-              <th rowspan="2">사이트<span class="ia-th-filter-chip">▼</span></th>
+              <th rowspan="2">사이트</th>
               <th colspan="5">화면</th>
-              <th rowspan="2">영역<span class="ia-th-filter-chip">▼</span></th>
-              <th rowspan="2">URL<span class="ia-th-filter-chip">▼</span></th>
-              <th rowspan="2">화면 타입<span class="ia-th-filter-chip">▼</span></th>
+              <th rowspan="2">영역</th>
+              <th rowspan="2">URL</th>
+              <th rowspan="2">화면 타입</th>
             </tr>
             <tr>
-              <th>1depth<span class="ia-th-filter-chip">▼</span></th>
-              <th>2depth<span class="ia-th-filter-chip">▼</span></th>
-              <th>3depth<span class="ia-th-filter-chip">▼</span></th>
-              <th>4depth<span class="ia-th-filter-chip">▼</span></th>
-              <th>5depth<span class="ia-th-filter-chip">▼</span></th>
+              <th>1depth</th>
+              <th>2depth</th>
+              <th>3depth</th>
+              <th>4depth</th>
+              <th>5depth</th>
             </tr>
           </thead>
           <tbody>
@@ -2070,6 +2055,29 @@
         c.classList.remove('selected-cell');
       });
 
+      var installClearSelectionGuard = function() {
+        if (window.TableSelection && typeof window.TableSelection.clearSelection === 'function' && !window.TableSelection._iaClearGuarded) {
+          var origClear = window.TableSelection.clearSelection;
+          window.TableSelection.clearSelection = function(tbl, silent) {
+            if (!tbl && window._iaSuppressGlobalClear) return;
+            return origClear.apply(this, arguments);
+          };
+          window.TableSelection._iaClearGuarded = true;
+        }
+        if (typeof window.syncTableComponentSize === 'function' && !window.syncTableComponentSize._iaSizeGuarded) {
+          var origSyncSize = window.syncTableComponentSize;
+          window.syncTableComponentSize = function() {
+            var s = document.querySelector('.lf-component.selected');
+            if (s && (s.id === 'comp-ia-table-wrap' || s.querySelector('.v4-ia-tree-table'))) return;
+            return origSyncSize.apply(this, arguments);
+          };
+          window.syncTableComponentSize._iaSizeGuarded = true;
+        }
+      };
+      installClearSelectionGuard();
+      setTimeout(installClearSelectionGuard, 150);
+      setTimeout(installClearSelectionGuard, 500);
+
       var isDragSelecting = false;
       var dragStartRow = -1;
       var dragStartCol = -1;
@@ -2171,8 +2179,11 @@
           }
         }
 
+        installClearSelectionGuard();
+        window._iaSuppressGlobalClear = true;
         syncToParentInspector();
         setTimeout(function() {
+          window._iaSuppressGlobalClear = false;
           if (window.V4DragResizeEngine) {
             window.V4DragResizeEngine.isPendingDrag = false;
             window.V4DragResizeEngine.isDragging = false;

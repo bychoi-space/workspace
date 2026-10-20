@@ -29,7 +29,7 @@ window.v4Script = `
         const table = s.querySelector('table');
         if (!table) return;
         
-        const isGrid = s.classList.contains('v4-grid-container') || !!s.querySelector('.v4-grid-container');
+        const isGrid = s.classList.contains('v4-grid-container') || !!s.querySelector('.v4-grid-container') || !!s.querySelector('.v4-ia-tree-table, .ia-scroll-viewport');
         if (isGrid) {
             // [Grid UI SSOT] Grid UI maintains its user-defined frame size (width & height) with internal scrolling!
             return;

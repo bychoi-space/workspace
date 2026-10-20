@@ -962,7 +962,7 @@ window.v4DesignSystemScript = `
             }
             if (s.style.borderWidth !== '1.6px') s.style.setProperty('border-width', '1.6px', 'important');
         });
-        document.querySelectorAll('table.v4-premium-table, table.v4-table, .v4-grid-container table').forEach(t => {
+        document.querySelectorAll('table.v4-premium-table, table.v4-table, .v4-grid-container table').forEach(t => { if (t.classList.contains('v4-ia-tree-table')) return;
             if (t.style.borderWidth !== '1.6px') t.style.setProperty('border-width', '1.6px', 'important');
             if (t.style.height !== 'auto') t.style.setProperty('height', 'auto', 'important');
             

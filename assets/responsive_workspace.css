@@ -866,11 +866,7 @@ body.res-narrow .pins-layer,
 body.touch-capable.res-narrow #main-iframe,
 body.touch-capable.res-narrow .canvas iframe,
 body.touch-capable.res-narrow .artboard-wrapper,
-body.touch-capable.res-narrow .pins-layer,
-body.touch-capable.zen-mode #main-iframe,
-body.touch-capable.zen-mode .canvas iframe,
-body.touch-capable.zen-mode .artboard-wrapper,
-body.touch-capable.zen-mode .pins-layer {
+body.touch-capable.res-narrow .pins-layer {
     pointer-events: none !important;
     user-select: none !important;
     -webkit-user-select: none !important;
@@ -889,13 +885,13 @@ body.res-narrow #presentation-pen-canvas,
 body.res-narrow #presentation-pen-tooltip,
 body.touch-capable #presentation-pen-canvas,
 body.touch-capable #presentation-pen-tooltip,
-body.touch-capable .sidebar-left,
-body.touch-capable #sidebar-left,
-body.touch-capable .sidebar-right,
-body.touch-capable #sidebar-right,
-body.touch-capable #floating-inspector-card,
-body.touch-capable .btn-global-save,
-body.touch-capable #btn-global-save,
+body.touch-capable:not(.res-wide) .sidebar-left,
+body.touch-capable:not(.res-wide) #sidebar-left,
+body.touch-capable:not(.res-wide) .sidebar-right,
+body.touch-capable:not(.res-wide) #sidebar-right,
+body.touch-capable:not(.res-wide) #floating-inspector-card,
+body.touch-capable:not(.res-wide) .btn-global-save,
+body.touch-capable:not(.res-wide) #btn-global-save,
 .v4-zen-toast {
     display: none !important;
 }
@@ -1079,9 +1075,7 @@ body.res-narrow.fullscreen-mode .toolbar {
     transform: translateY(-150%) !important;
 }
 
-/* Screen Navigation Arrows remain accessible as sleek overlay in Zen/Fullscreen Mode */
-body.zen-mode #dock-btn-prev,
-body.fullscreen-mode #dock-btn-prev,
+/* Screen Navigation Arrows remain accessible as sleek overlay in Mobile Zen/Fullscreen Mode (Strictly suppressed on Desktop PC) */
 body.res-narrow.zen-mode #dock-btn-prev,
 body.res-narrow.fullscreen-mode #dock-btn-prev {
     display: flex !important;
@@ -1091,8 +1085,6 @@ body.res-narrow.fullscreen-mode #dock-btn-prev {
     transform: translateY(-50%) !important;
 }
 
-body.zen-mode #dock-btn-next,
-body.fullscreen-mode #dock-btn-next,
 body.res-narrow.zen-mode #dock-btn-next,
 body.res-narrow.fullscreen-mode #dock-btn-next {
     display: flex !important;

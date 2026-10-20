@@ -352,7 +352,6 @@
                 }, { passive: true });
             }
             if (btnFullscreen) btnFullscreen.addEventListener('click', function() { self.toggleFullscreen(); });
-            if (btnZenExit) btnZenExit.addEventListener('click', function() { self.toggleZenMode(false); });
             if (btnFit) btnFit.addEventListener('click', function() {
                 if (window.state) window.state.viewMode = 'fit';
                 if (window.centerView) window.centerView(true);
@@ -430,13 +429,16 @@
                     var icon = btnFullscreen.querySelector('span');
                     if (icon) icon.innerText = isFull ? 'fullscreen_exit' : 'fullscreen';
                 }
-                setTimeout(function() {
+                var reCenterOnFs = function() {
                     if (self.currentFocus && self.currentFocus !== 'full') {
                         self.focusFrame(self.currentFocus);
                     } else if (window.centerView) {
                         window.centerView(true);
                     }
-                }, 200);
+                };
+                setTimeout(reCenterOnFs, 60);
+                setTimeout(reCenterOnFs, 200);
+                setTimeout(reCenterOnFs, 360);
             };
             document.addEventListener('fullscreenchange', onFsChange);
             document.addEventListener('webkitfullscreenchange', onFsChange);
@@ -627,8 +629,8 @@
                         }
                     }
 
-                    // 1-Finger Pan in progress (Canvas stage panning when in full view or hand mode)
-                    if (self.currentTier === 'narrow' || self.isTouchDevice || state.tool === 'hand' || state.isHandMode) {
+                    // 1-Finger Pan in progress (Canvas stage panning when in mobile read-only view or hand mode)
+                    if (self.currentTier === 'narrow' || state.tool === 'hand' || state.isHandMode) {
                         if (e.cancelable) e.preventDefault();
                         state.transform.y = Math.round(t.clientY - touchState.startY);
                         state.transform.x = Math.round(t.clientX - touchState.startX);
@@ -707,12 +709,12 @@
                 }
             });
 
-            // Fallback click listener for simulated mouse click in device preview
+            // Fallback click listener for simulated mouse click in mobile device preview only
             canvas.addEventListener('click', function(e) {
                 if (e.target.closest('#dock-btn-prev, #dock-btn-next, #dock-page-indicator, #v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card, .toolbar')) {
                     return;
                 }
-                if (self.currentTier === 'narrow' || self.isTouchDevice || document.body.classList.contains('zen-mode')) {
+                if (self.currentTier === 'narrow') {
                     if (Date.now() - (touchState.tapStartTime || 0) > 350) {
                         self.handleSingleTap();
                     }
@@ -1303,8 +1305,9 @@
         },
 
         handleSingleTap: function() {
-            // Single tap toggles Zen Mode on mobile/touch screens, or exits Zen Mode if active
-            if (this.currentTier === 'narrow' || this.isTouchDevice || document.body.classList.contains('zen-mode')) {
+            // Single tap toggles Zen Mode strictly in mobile/tablet read-only viewer mode ('narrow'),
+            // never on Desktop PC ('wide' / 'compact') where clicks interact with canvas/iframe elements.
+            if (this.currentTier === 'narrow') {
                 this.toggleZenMode();
             }
         },
@@ -1317,15 +1320,17 @@
                 var doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
                 if (!doc) return;
 
-                // Double-Layer Mobile Read-Only Guard: Prevent any element inside iframe from receiving pointer/touch events
-                if (this.currentTier === 'narrow' || this.isTouchDevice) {
-                    var styleEl = doc.getElementById('mobile-readonly-guard-style');
+                // Double-Layer Mobile Read-Only Guard: Prevent any element inside iframe from receiving pointer/touch events ONLY in narrow read-only mode
+                var styleEl = doc.getElementById('mobile-readonly-guard-style');
+                if (this.currentTier === 'narrow') {
                     if (!styleEl && (doc.head || doc.body || doc.documentElement)) {
                         styleEl = doc.createElement('style');
                         styleEl.id = 'mobile-readonly-guard-style';
                         styleEl.textContent = '* { pointer-events: none !important; user-select: none !important; -webkit-user-select: none !important; }';
                         (doc.head || doc.body || doc.documentElement).appendChild(styleEl);
                     }
+                } else if (styleEl && styleEl.parentNode) {
+                    styleEl.parentNode.removeChild(styleEl);
                 }
 
                 if (doc._zenTapWired) return;
@@ -1384,7 +1389,7 @@
                 }, { passive: true });
 
                 doc.addEventListener('click', function(e) {
-                    if (self.currentTier === 'narrow' || self.isTouchDevice || document.body.classList.contains('zen-mode')) {
+                    if (self.currentTier === 'narrow') {
                         if (Date.now() - ifTouch.time > 350) {
                             self.handleSingleTap();
                         }

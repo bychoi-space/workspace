@@ -29,12 +29,23 @@
 
         var isMobilePortrait = (cw <= 600 || (cw < 900 && ch > cw * 1.2));
         var isMobile = (cw <= 960 || (ch <= 600 && cw <= 1050) || document.body.classList.contains('res-narrow'));
+        var isFullscreen = document.body.classList.contains('fullscreen-mode');
 
         // 브라우저 캔버스 영역에 맞춘 반응형 가변 배율(Fit Scale) 계산
-        // 모바일 세로 모드에서는 가로폭(Fit to Width) 기준 적용 (스크린 좌우 꽉 참)
-        var fitScale = isMobilePortrait 
-            ? (cw / iw)
-            : Math.min(cw / iw, ch / ih);
+        // - 모바일 세로 모드: 가로폭(Fit to Width) 기준 적용 (스크린 좌우 꽉 참)
+        // - 모바일 가로 모드: 뷰포트 100% 핏
+        // - 데스크톱 전체보기(Fullscreen): 상하좌우 4% 안전 여백(0.96)으로 좌우/상하 잘림 원천 차단
+        // - 데스크톱 일반 편집 모드: 상하좌우 2% 안전 여백(0.98) 적용
+        var fitScale;
+        if (isMobilePortrait) {
+            fitScale = cw / iw;
+        } else if (isMobile) {
+            fitScale = Math.min(cw / iw, ch / ih);
+        } else if (isFullscreen) {
+            fitScale = Math.min((cw * 0.96) / iw, (ch * 0.96) / ih);
+        } else {
+            fitScale = Math.min((cw * 0.98) / iw, (ch * 0.98) / ih);
+        }
 
         if (isMobile && forceReset) {
             state.viewMode = 'fit';
@@ -44,6 +55,11 @@
         if (state.viewMode === 'custom' && !forceReset && state.transform && state.transform.scale) {
             // [사용자 커스텀 줌 모드 보존]: 사용자가 직접 조절한 확대/축소 배율을 유지
             s = state.transform.scale;
+        } else if (!isMobile && isFullscreen) {
+            // [데스크톱 전체보기(Fullscreen) 전용 안전 핏]:
+            // FHD 125% 배율(1536x864) 등 1600x900보다 작은 해상도에서 1.0 강제 스냅으로 인해
+            // 좌/우/상/하 영역이 잘리는 현상을 원천 차단하고, 최대 1.0 배율 이내에서 화면에 정확히 맞춤
+            s = Math.min(1.0, Math.round(fitScale * 1000) / 1000);
         } else if (state.viewMode === 'crisp') {
             // [100% 선명 뷰 모드 강제]: 모니터 해상도와 무관하게 1:1 물리 디스플레이 픽셀 선명도 100% 보장
             s = 1.0;
@@ -52,13 +68,13 @@
             if (isMobile) {
                 // 모바일/태블릿: 5% 단위 그리드 스냅(floor)으로 인한 인위적 축소 방지 -> 화면에 100% 핏
                 s = fitScale;
-            } else if (fitScale >= 0.95) {
-                // 1. 데스크톱 스마트 스냅 밴드 (Smart Snap Band): 0.95 이상일 때는 1.0(100%) 강제 스냅!
+            } else if (fitScale >= 0.95 && cw >= iw && ch >= ih) {
+                // 1. 데스크톱 스마트 스냅 밴드 (Smart Snap Band): 실제 캔버스가 1600x900 이상이면서 0.95 이상일 때만 1.0(100%) 스냅
                 s = 1.0;
-            } else if (cw >= 1700 && ch >= 880) {
+            } else if (cw >= 1700 && ch >= 900) {
                 s = 1.0;
             } else {
-                // 2. 소형 노트북/저해상도 PC(fitScale < 0.95): 5% 단위 그리드 스냅 (0.90, 0.85, 0.80...)
+                // 2. 소형 노트북/저해상도 PC(fitScale < 0.95 또는 뷰포트 < 1600x900): 5% 단위 그리드 스냅 (0.90, 0.85, 0.80...)
                 s = Math.max(0.2, Math.floor(fitScale * 20) / 20);
             }
         }
@@ -179,13 +195,16 @@
         if (typeof window.clearPresentationPen === 'function') {
             window.clearPresentationPen();
         }
-        setTimeout(function() {
+        var reCenterAfterFs = function() {
             if (window.ResolutionEngine && window.ResolutionEngine.currentFocus && window.ResolutionEngine.currentFocus !== 'full') {
                 window.ResolutionEngine.focusFrame(window.ResolutionEngine.currentFocus);
             } else if (window.centerView) {
                 window.centerView(true);
             }
-        }, 200);
+        };
+        setTimeout(reCenterAfterFs, 60);
+        setTimeout(reCenterAfterFs, 200);
+        setTimeout(reCenterAfterFs, 360);
     };
 
     window.setTool = function(t) {

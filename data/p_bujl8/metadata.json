@@ -115,7 +115,7 @@
   "period": "2026.09.14 ~ 2026.09.15",
   "figmaUrl": "",
   "notionUrl": "",
-  "themeIndex": 6,
+  "themeIndex": 0,
   "updated": "2026-09-15 11:31:49",
   "version": 0.1,
   "screenOrder": [
@@ -124,5 +124,6 @@
     "01_Benchmark_Report_382.html",
     "08_Responsive_PC_Mobile_889.html",
     "08_Responsive_PC_Mobile_889_copy.html"
-  ]
+  ],
+  "category": "front_ui"
 }

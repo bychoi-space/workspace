@@ -55,10 +55,10 @@
   },
   "assignee": "최범열",
   "developer": "",
-  "period": "2026.10.01(목) ~ 2026.12.31(목)",
+  "period": "2026.10.01 ~ 2026.12.31",
   "figmaUrl": "",
   "notionUrl": "",
-  "themeIndex": 1,
+  "themeIndex": 3,
   "screenOrder": [
     "00_Cover_234.html",
     "01_Order_Policy_Overview.html",
@@ -67,5 +67,6 @@
     "renewal_order.html"
   ],
   "updated": "2026-10-20 11:54:16",
-  "version": 0.1
+  "version": 0.1,
+  "category": "project"
 }

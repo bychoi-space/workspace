@@ -77,9 +77,13 @@
     position: sticky;
     top: 0;
     z-index: 20;
+    background-color: #27272a;
+  }
+  table.v4-ia-tree-table thead tr {
+    background-color: #27272a;
   }
   table.v4-ia-tree-table thead th {
-    background: #333333;
+    background-color: #27272a;
     color: #ffffff;
     font-weight: 700;
     font-size: 13px;
@@ -90,15 +94,24 @@
     padding: 8px 8px;
     user-select: none;
     position: relative;
+    background-clip: padding-box;
   }
   table.v4-ia-tree-table thead tr:first-child th {
     height: 34px;
-    background: #27272a;
+    background-color: #27272a;
+    border-bottom: 1px solid #52525b;
+    box-shadow: inset 0 -1px 0 #52525b, inset -1px 0 0 #52525b;
   }
   table.v4-ia-tree-table thead tr:nth-child(2) th {
     height: 32px;
-    background: #3f3f46;
-    border-bottom: 1.5px solid #cbd5e1;
+    background-color: #3f3f46;
+    border-top: 1px solid #52525b;
+    border-bottom: 1.5px solid #52525b;
+    box-shadow: inset 0 1px 0 #52525b, inset 0 -1.5px 0 #52525b, inset -1px 0 0 #52525b;
+  }
+  table.v4-ia-tree-table thead th[rowspan="2"] {
+    border-bottom: 1.5px solid #52525b;
+    box-shadow: inset 0 -1.5px 0 #52525b, inset -1px 0 0 #52525b;
   }
 
   /* Softened Internal Table Grid Lines */

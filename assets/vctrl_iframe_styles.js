@@ -847,10 +847,12 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
 .ia-scroll-viewport::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 .ia-scroll-viewport::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 table.v4-ia-tree-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; line-height: 1.45; color: #1e293b; }
-table.v4-ia-tree-table thead { position: sticky; top: 0; z-index: 20; }
-table.v4-ia-tree-table thead th { background: #333333; color: #ffffff; font-weight: 700; font-size: 13px; text-align: center; vertical-align: middle; border-right: 1px solid #52525b; border-bottom: 1px solid #52525b; padding: 8px 8px; user-select: none; position: relative; }
-table.v4-ia-tree-table thead tr:first-child th { height: 34px; background: #27272a; }
-table.v4-ia-tree-table thead tr:nth-child(2) th { height: 32px; background: #3f3f46; border-bottom: 1.5px solid #cbd5e1; }
+table.v4-ia-tree-table thead { position: sticky; top: 0; z-index: 20; background-color: #27272a; }
+table.v4-ia-tree-table thead tr { background-color: #27272a; }
+table.v4-ia-tree-table thead th { background-color: #27272a; color: #ffffff; font-weight: 700; font-size: 13px; text-align: center; vertical-align: middle; border-right: 1px solid #52525b; border-bottom: 1px solid #52525b; padding: 8px 8px; user-select: none; position: relative; background-clip: padding-box; }
+table.v4-ia-tree-table thead tr:first-child th { height: 34px; background-color: #27272a; border-bottom: 1px solid #52525b; box-shadow: inset 0 -1px 0 #52525b, inset -1px 0 0 #52525b; }
+table.v4-ia-tree-table thead tr:nth-child(2) th { height: 32px; background-color: #3f3f46; border-top: 1px solid #52525b; border-bottom: 1.5px solid #52525b; box-shadow: inset 0 1px 0 #52525b, inset 0 -1.5px 0 #52525b, inset -1px 0 0 #52525b; }
+table.v4-ia-tree-table thead th[rowspan="2"] { border-bottom: 1.5px solid #52525b; box-shadow: inset 0 -1.5px 0 #52525b, inset -1px 0 0 #52525b; }
 table.v4-ia-tree-table tbody td { height: 36px; padding: 6px 10px; border-right: 1px solid #eef2f6; border-bottom: 1px solid #eef2f6; vertical-align: middle; background: #ffffff; color: #1e293b; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: keep-all; cursor: pointer; }
 table.v4-ia-tree-table tbody tr:hover td { background: #f8fafc; }
 table.v4-ia-tree-table tbody tr.ia-g1-start td { border-top: 1.5px solid #cbd5e1; }

@@ -75,11 +75,25 @@
   table.v4-ia-tree-table thead {
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 30;
     background-color: #27272a;
+  }
+  /* Thead Full Solid Backplate - Prevents any subpixel scroll gap transparency */
+  table.v4-ia-tree-table thead::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #27272a;
+    z-index: -1;
+    pointer-events: none;
   }
   table.v4-ia-tree-table thead tr {
     background-color: #27272a;
+    position: relative;
+    z-index: 1;
   }
   table.v4-ia-tree-table thead th {
     background-color: #27272a;
@@ -93,24 +107,50 @@
     padding: 8px 8px;
     user-select: none;
     position: relative;
-    background-clip: padding-box;
+    background-clip: border-box !important;
   }
   table.v4-ia-tree-table thead tr:first-child th {
     height: 34px;
     background-color: #27272a;
     border-bottom: 1px solid #52525b;
-    box-shadow: inset 0 -1px 0 #52525b, inset -1px 0 0 #52525b;
   }
+  /* [화면] (colspan="4") 하단 경계선 완전 차폐 가상 요소 */
+  table.v4-ia-tree-table thead tr:first-child th[colspan="4"] {
+    border-bottom: 1.5px solid #52525b;
+    position: relative;
+  }
+  table.v4-ia-tree-table thead tr:first-child th[colspan="4"]::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1.5px;
+    height: 3px;
+    background-color: #52525b;
+    z-index: 10;
+    pointer-events: none;
+  }
+  /* [1depth, 2depth, 3depth, 4depth] 상단 경계선 완전 차폐 가상 요소 */
   table.v4-ia-tree-table thead tr:nth-child(2) th {
     height: 32px;
     background-color: #3f3f46;
-    border-top: 1px solid #52525b;
+    border-top: 1.5px solid #52525b;
     border-bottom: 1.5px solid #52525b;
-    box-shadow: inset 0 1px 0 #52525b, inset 0 -1.5px 0 #52525b, inset -1px 0 0 #52525b;
+    position: relative;
+  }
+  table.v4-ia-tree-table thead tr:nth-child(2) th::before {
+    content: '';
+    position: absolute;
+    top: -1.5px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #52525b;
+    z-index: 10;
+    pointer-events: none;
   }
   table.v4-ia-tree-table thead th[rowspan="2"] {
     border-bottom: 1.5px solid #52525b;
-    box-shadow: inset 0 -1.5px 0 #52525b, inset -1px 0 0 #52525b;
   }
 
   /* Softened Internal Table Grid Lines */

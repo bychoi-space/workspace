@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 12px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --v4-placeholder-color: #94a3b8;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>시선닷컴 Front IA (계층구조 정의서)</title>
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style id="ia-tree-styles">
   * {
     box-sizing: border-box;
@@ -246,6 +245,8 @@
     display: none !important;
   }
 </style>
+<link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+
 </head>
 <body>
 <div id="canvas-root">
@@ -254,11 +255,11 @@
   <div id="comp-ia-header" class="lf-component" style="top: 20px; left: 20px; width: 1560px; height: 50px; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; white-space: nowrap;">
     <div style="display: flex; align-items: center; gap: 12px; white-space: nowrap; flex-shrink: 0;">
       <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px; flex-shrink: 0; display: block;">
-        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+        <polygon points="12 2 2 7 12 12 22 7 12 2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
         <polyline points="2 17 12 22 22 17"></polyline>
         <polyline points="2 12 12 17 22 12"></polyline>
       </svg>
-      <span class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 17px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap;">[Front IA 정의서] 시선닷컴 (SISUN.COM) Front 화면 계층구조 명세</span>
+      <span class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 17px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap;">시선닷컴 Front IA (Information Architecture)</span>
     </div>
     <div style="display: flex; align-items: center; gap: 10px; white-space: nowrap; flex-shrink: 0;">
       <span class="v4-editable-cell" contenteditable="true" style="background: #1e293b; color: #38bdf8; border: 1.6px solid #334155; font-size: 13px; font-weight: 800; padding: 6px 16px; border-radius: 6px; line-height: 1; white-space: nowrap;">FRONT IA SPEC · v1.0</span>
@@ -271,14 +272,14 @@
       <div class="ia-scroll-viewport">
         <table class="v4-ia-tree-table" id="sisun-ia-table">
           <colgroup>
-            <col style="width: 100px;"/>
-            <col style="width: 160px;"/>
-            <col style="width: 170px;"/>
-            <col style="width: 210px;"/>
-            <col style="width: 280px;"/>
-            <col style="width: 280px;"/>
-            <col style="width: 220px;"/>
-            <col style="width: 140px;"/>
+            <col style="width: 100px;">
+            <col style="width: 160px;">
+            <col style="width: 170px;">
+            <col style="width: 210px;">
+            <col style="width: 280px;">
+            <col style="width: 280px;">
+            <col style="width: 220px;">
+            <col style="width: 140px;">
           </colgroup>
           <thead>
             <tr>
@@ -2032,5 +2033,6 @@
     setTimeout(bindIaTable, 100);
   })();
 </script>
-</body>
-</html>
+
+
+</body></html>

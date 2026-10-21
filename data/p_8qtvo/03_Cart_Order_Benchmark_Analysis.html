@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko" style="--v4-text-color: #0f172a; --v4-font-size: 13px; --v4-font-weight: 400; --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;">
+<head>
+    <meta charset="UTF-8">
+    <title>시선닷컴 장바구니 · 주문서 현황 진단 및 타사 벤치마크 개선 전략</title>
+    <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            --v4-primary: #2563eb;
+            --v4-accent: #38bdf8;
+            --v4-bg: #0f172a;
+            --v4-surface: #f8fafc;
+            --v4-border: #cbd5e1;
+            --v4-text: #0f172a;
+            --v4-text-muted: #64748b;
+            --v4-font-size: 13px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Pretendard Variable', Pretendard, 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; background: var(--v4-bg);
+            overflow: hidden; color: var(--v4-text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        .canvas {
+            width: 1600px; height: 900px;
+            position: relative;
+            background: #f8fafc;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .lf-component {
+            position: absolute !important;
+            box-sizing: border-box !important;
+            user-select: none;
+        }
+        .v4-shape {
+            box-sizing: border-box;
+            transition: border-color 0.15s ease;
+        }
+        .v4-editable-cell {
+            outline: none;
+            word-break: keep-all;
+            font-family: inherit;
+        }
+        .lf-icon {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .v4-shape-text-content p,
+        .v4-shape-text-content span,
+        .v4-shape-text-content strong,
+        .v4-shape-text-content * {
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas" id="canvas">
+
+        <!-- ========================================================================= -->
+        <!-- [0] 상단 글로벌 헤더 (Top: 20px, Left: 20px, Width: 1560px, Height: 50px) -->
+        <!-- ========================================================================= -->
+        <div id="hdr_bg" class="lf-component" style="position: absolute; top: 20px; left: 20px; width: 1560px; height: 50px; z-index: 100;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="hdr_icon" class="lf-component" style="position: absolute; top: 32px; left: 38px; width: 26px; height: 26px; z-index: 105;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%;">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+        </div>
+
+        <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 33px; left: 74px; width: 880px; height: 26px; z-index: 105; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 16px; white-space: nowrap !important;">[벤치마크 분석] 시선닷컴 장바구니 · 주문서 실물 진단 및 국내 선진 이커머스 비교 개선 전략</strong></p>
+            </div>
+        </div>
+
+        <div id="hdr_badge" class="lf-component" style="position: absolute; top: 31px; left: 1400px; width: 160px; height: 28px; z-index: 105;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><strong style="color: #38bdf8; font-size: 13px;">UX/UI BENCHMARK</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- [1] 상단 4단 실물 캡처 진단 카드 (Top: 80px, Width: 1560px, Height: 330px) -->
+        <!-- ========================================================================= -->
+        <div id="sec1_container" class="lf-component" style="position: absolute; top: 80px; left: 20px; width: 1560px; height: 330px; z-index: 90;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 10px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="sec1_title" class="lf-component v4-text-shape" style="position: absolute; top: 92px; left: 40px; width: 600px; height: 24px; z-index: 95; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 15px; white-space: nowrap !important;">1. 시선닷컴 PC / Mobile 실물 화면 정밀 분석 (4대 도메인 캡처)</strong></p>
+            </div>
+        </div>
+
+        <!-- 1-1. 카드 1: PC 장바구니 (Left: 40px, Width: 360px, Height: 260px) -->
+        <div id="c1_bg" class="lf-component" style="position: absolute; top: 125px; left: 40px; width: 360px; height: 270px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <div id="c1_img" class="lf-component" style="position: absolute; top: 135px; left: 50px; width: 150px; height: 200px; z-index: 95;">
+            <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+                <img src="images/sisun_cart_pc.png" alt="PC 장바구니 캡처" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+        <div id="c1_title" class="lf-component v4-text-shape" style="position: absolute; top: 135px; left: 215px; width: 175px; height: 22px; z-index: 96; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 14.5px; font-weight: 800; line-height: 1.2; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #1e3a8a;">[PC] 장바구니</strong></p>
+            </div>
+        </div>
+        <div id="c1_badge" class="lf-component" style="position: absolute; top: 162px; left: 215px; width: 140px; height: 24px; z-index: 96;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef3c7; border: 1.6px solid #fde68a; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><strong style="color: #b45309; font-size: 13px;">정형화된 6단 테이블</strong></p>
+                </div>
+            </div>
+        </div>
+        <div id="c1_desc" class="lf-component" style="position: absolute; top: 195px; left: 215px; width: 175px; height: 190px; z-index: 96;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 500; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0 0 6px 0;">• 브랜드별 소계/배송비 분리 없는 단일 플랫 리스트 구조</p>
+                        <p style="margin: 0 0 6px 0;">• 쿠폰 사전 적용 불가 (주문서 진입 후에야 최종가 확인)</p>
+                        <p style="margin: 0;">• 수량 인라인 수정 불가 (옵션변경 팝업 별도 진입 필요)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1-2. 카드 2: Mobile 장바구니 (Left: 420px, Width: 360px, Height: 260px) -->
+        <div id="c2_bg" class="lf-component" style="position: absolute; top: 125px; left: 420px; width: 360px; height: 270px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <div id="c2_img" class="lf-component" style="position: absolute; top: 135px; left: 430px; width: 150px; height: 200px; z-index: 95;">
+            <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+                <img src="images/sisun_cart_mo.png" alt="Mobile 장바구니 캡처" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+        <div id="c2_title" class="lf-component v4-text-shape" style="position: absolute; top: 135px; left: 595px; width: 175px; height: 22px; z-index: 96; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 14.5px; font-weight: 800; line-height: 1.2; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #1e3a8a;">[MO] 장바구니</strong></p>
+            </div>
+        </div>
+        <div id="c2_badge" class="lf-component" style="position: absolute; top: 162px; left: 595px; width: 150px; height: 24px; z-index: 96;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fee2e2; border: 1.6px solid #fca5a5; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><strong style="color: #b91c1c; font-size: 13px;">하단 플로팅 바 부재</strong></p>
+                </div>
+            </div>
+        </div>
+        <div id="c2_desc" class="lf-component" style="position: absolute; top: 195px; left: 595px; width: 175px; height: 190px; z-index: 96;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 500; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0 0 6px 0;">• Sticky 주문 바가 없어 상품 5개 이상 시 최하단까지 장문 스크롤 필요</p>
+                        <p style="margin: 0 0 6px 0;">• 실시간 합산 금액 및 구매 CTA 접근성 저하로 장바구니 이탈 발생</p>
+                        <p style="margin: 0;">• 품절 임박/재고 긴급성(FOMO) 알림 뱃지 결여</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1-3. 카드 3: PC 주문서 (Left: 800px, Width: 360px, Height: 260px) -->
+        <div id="c3_bg" class="lf-component" style="position: absolute; top: 125px; left: 800px; width: 360px; height: 270px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <div id="c3_img" class="lf-component" style="position: absolute; top: 135px; left: 810px; width: 150px; height: 200px; z-index: 95;">
+            <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+                <img src="images/sisun_order_pc.png" alt="PC 주문서 캡처" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+        <div id="c3_title" class="lf-component v4-text-shape" style="position: absolute; top: 135px; left: 975px; width: 175px; height: 22px; z-index: 96; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 14.5px; font-weight: 800; line-height: 1.2; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #1e3a8a;">[PC] 주문서</strong></p>
+            </div>
+        </div>
+        <div id="c3_badge" class="lf-component" style="position: absolute; top: 162px; left: 975px; width: 140px; height: 24px; z-index: 96;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef3c7; border: 1.6px solid #fde68a; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><strong style="color: #b45309; font-size: 13px;">할인 입력 단계 분절</strong></p>
+                </div>
+            </div>
+        </div>
+        <div id="c3_desc" class="lf-component" style="position: absolute; top: 195px; left: 975px; width: 175px; height: 190px; z-index: 96;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 500; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0 0 6px 0;">• 쿠폰선택 + 마일리지입력 + 선할인 라디오 등 4단계 수동 분리</p>
+                        <p style="margin: 0 0 6px 0;">• '최대 할인 자동 적용' 기능 부재로 고객의 최적가 탐색 피로 발생</p>
+                        <p style="margin: 0;">• 결제 약관 별도 체크박스 체크 요구로 클릭 뎁스 증가</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1-4. 카드 4: Mobile 주문서 (Left: 1180px, Width: 360px, Height: 260px) -->
+        <div id="c4_bg" class="lf-component" style="position: absolute; top: 125px; left: 1180px; width: 360px; height: 270px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <div id="c4_img" class="lf-component" style="position: absolute; top: 135px; left: 1190px; width: 150px; height: 200px; z-index: 95;">
+            <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+                <img src="images/sisun_order_mo.png" alt="Mobile 주문서 캡처" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+        <div id="c4_title" class="lf-component v4-text-shape" style="position: absolute; top: 135px; left: 1355px; width: 175px; height: 22px; z-index: 96; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #1e3a8a; font-size: 14.5px; font-weight: 800; line-height: 1.2; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #1e3a8a;">[MO] 주문서</strong></p>
+            </div>
+        </div>
+        <div id="c4_badge" class="lf-component" style="position: absolute; top: 162px; left: 1355px; width: 150px; height: 24px; z-index: 96;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fee2e2; border: 1.6px solid #fca5a5; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
+                    <p><strong style="color: #b91c1c; font-size: 13px;">상단 유의사항 과노출</strong></p>
+                </div>
+            </div>
+        </div>
+        <div id="c4_desc" class="lf-component" style="position: absolute; top: 195px; left: 1355px; width: 175px; height: 190px; z-index: 96;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 500; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0 0 6px 0;">• 최상단 장문 유의사항(6줄)이 기본 펼쳐져 뷰포트 절반 잠식</p>
+                        <p style="margin: 0 0 6px 0;">• 간편결제(네이버/카카오/토스)가 일반 라디오 리스트로 평이하게 나열</p>
+                        <p style="margin: 0;">• 배송지 변경 시 화면 이탈 없는 바텀시트 퀵 변경 UX 미흡</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- [2] 중단 타사(무신사·29CM·SSF샵 등) 비교 매트릭스 (Top: 420px, Height: 250px) -->
+        <!-- ========================================================================= -->
+        <div id="sec2_container" class="lf-component" style="position: absolute; top: 420px; left: 20px; width: 1560px; height: 250px; z-index: 90;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 10px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="sec2_title" class="lf-component v4-text-shape" style="position: absolute; top: 432px; left: 40px; width: 600px; height: 24px; z-index: 95; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 15px; white-space: nowrap !important;">2. 국내 선진 이커머스 (무신사 · 29CM · SSF샵 등) 대비 핵심 격차 비교 매트릭스</strong></p>
+            </div>
+        </div>
+
+        <!-- 테이블 헤더 (Top: 462px, Left: 40px, Height: 34px) -->
+        <div id="th_col1" class="lf-component" style="position: absolute; top: 462px; left: 40px; width: 220px; height: 34px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1px solid #334155; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;"><p><strong style="color: #ffffff; font-size: 13px;">비교 영역 (도메인)</strong></p></div>
+            </div>
+        </div>
+        <div id="th_col2" class="lf-component" style="position: absolute; top: 462px; left: 260px; width: 340px; height: 34px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1px solid #334155; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;"><p><strong style="color: #ffffff; font-size: 13px;">시선닷컴 현황 (AS-IS)</strong></p></div>
+            </div>
+        </div>
+        <div id="th_col3" class="lf-component" style="position: absolute; top: 462px; left: 600px; width: 440px; height: 34px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1px solid #334155; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;"><p><strong style="color: #38bdf8; font-size: 13px;">국내 선두 플랫폼 벤치마크 (TO-BE)</strong></p></div>
+            </div>
+        </div>
+        <div id="th_col4" class="lf-component" style="position: absolute; top: 462px; left: 1040px; width: 330px; height: 34px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1px solid #334155; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;"><p><strong style="color: #ffffff; font-size: 13px;">핵심 개선 과제</strong></p></div>
+            </div>
+        </div>
+        <div id="th_col5" class="lf-component" style="position: absolute; top: 462px; left: 1370px; width: 190px; height: 34px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1px solid #334155; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="width: 100%; text-align: center;"><p><strong style="color: #ffffff; font-size: 13px;">기대 효과 (Impact)</strong></p></div>
+            </div>
+        </div>
+
+        <!-- 행 1: 장바구니 모바일 CTA (Top: 496px, Height: 40px) -->
+        <div id="r1_c1" class="lf-component" style="position: absolute; top: 496px; left: 40px; width: 220px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p><strong style="color: #1e40af; font-size: 13px;">장바구니 모바일 CTA</strong></p></div>
+            </div>
+        </div>
+        <div id="r1_c2" class="lf-component" style="position: absolute; top: 496px; left: 260px; width: 340px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #475569; font-size: 13px;">주문 버튼이 본문 최하단에만 고정 위치</p></div>
+            </div>
+        </div>
+        <div id="r1_c3" class="lf-component" style="position: absolute; top: 496px; left: 600px; width: 440px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #0f172a; font-size: 13px;"><strong>하단 Sticky Floating Bar</strong> 상시 노출 (무신사/29CM)</p></div>
+            </div>
+        </div>
+        <div id="r1_c4" class="lf-component" style="position: absolute; top: 496px; left: 1040px; width: 330px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #0369a1; font-size: 13px;">플로팅 [총 N개 00원 주문하기] 바 도입</p></div>
+            </div>
+        </div>
+        <div id="r1_c5" class="lf-component" style="position: absolute; top: 496px; left: 1370px; width: 190px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1px solid #a7f3d0; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="text-align: center;"><p><strong style="color: #059669; font-size: 13px;">모바일 주문전환 +18%</strong></p></div>
+            </div>
+        </div>
+
+        <!-- 행 2: 브랜드 묶음 배송 (Top: 536px, Height: 40px) -->
+        <div id="r2_c1" class="lf-component" style="position: absolute; top: 536px; left: 40px; width: 220px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p><strong style="color: #1e40af; font-size: 13px;">브랜드 묶음 배송</strong></p></div>
+            </div>
+        </div>
+        <div id="r2_c2" class="lf-component" style="position: absolute; top: 536px; left: 260px; width: 340px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #475569; font-size: 13px;">미샤/잇미샤/EBM이 단일 리스트로 혼재</p></div>
+            </div>
+        </div>
+        <div id="r2_c3" class="lf-component" style="position: absolute; top: 536px; left: 600px; width: 440px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #0f172a; font-size: 13px;"><strong>브랜드별 섹션 헤더 &amp; 무료배송 충족 게이지</strong> (SSF/EQL)</p></div>
+            </div>
+        </div>
+        <div id="r2_c4" class="lf-component" style="position: absolute; top: 536px; left: 1040px; width: 330px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #0369a1; font-size: 13px;">브랜드 그룹핑 + 무료배송 달성 프로그레스</p></div>
+            </div>
+        </div>
+        <div id="r2_c5" class="lf-component" style="position: absolute; top: 536px; left: 1370px; width: 190px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1px solid #a7f3d0; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="text-align: center;"><p><strong style="color: #059669; font-size: 13px;">객단가(AOV) 동반 상승</strong></p></div>
+            </div>
+        </div>
+
+        <!-- 행 3: 쿠폰/마일리지 적용 (Top: 576px, Height: 40px) -->
+        <div id="r3_c1" class="lf-component" style="position: absolute; top: 576px; left: 40px; width: 220px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p><strong style="color: #1e40af; font-size: 13px;">쿠폰 · 마일리지 적용</strong></p></div>
+            </div>
+        </div>
+        <div id="r3_c2" class="lf-component" style="position: absolute; top: 576px; left: 260px; width: 340px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #475569; font-size: 13px;">쿠폰적용 + 마일리지입력 + 라디오 4단계 분절</p></div>
+            </div>
+        </div>
+        <div id="r3_c3" class="lf-component" style="position: absolute; top: 576px; left: 600px; width: 440px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #0f172a; font-size: 13px;"><strong>원클릭 '최대 할인 자동 적용' 마법사</strong> (무신사/SSF)</p></div>
+            </div>
+        </div>
+        <div id="r3_c4" class="lf-component" style="position: absolute; top: 576px; left: 1040px; width: 330px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #0369a1; font-size: 13px;">보유 쿠폰/적립금 최적 조합 1초 자동 세팅</p></div>
+            </div>
+        </div>
+        <div id="r3_c5" class="lf-component" style="position: absolute; top: 576px; left: 1370px; width: 190px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1px solid #a7f3d0; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="text-align: center;"><p><strong style="color: #059669; font-size: 13px;">할인 미적용 이탈 차단</strong></p></div>
+            </div>
+        </div>
+
+        <!-- 행 4: 간편결제 & 동의 절차 (Top: 616px, Height: 40px) -->
+        <div id="r4_c1" class="lf-component" style="position: absolute; top: 616px; left: 40px; width: 220px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p><strong style="color: #1e40af; font-size: 13px;">간편결제 및 동의</strong></p></div>
+            </div>
+        </div>
+        <div id="r4_c2" class="lf-component" style="position: absolute; top: 616px; left: 260px; width: 340px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #475569; font-size: 13px;">일반 라디오 리스트 나열 + 약관 별도 체크</p></div>
+            </div>
+        </div>
+        <div id="r4_c3" class="lf-component" style="position: absolute; top: 616px; left: 600px; width: 440px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #0f172a; font-size: 13px;"><strong>간편결제 브랜드 로고 타일 UI &amp; 결제동의 통합</strong> (29CM/토스)</p></div>
+            </div>
+        </div>
+        <div id="r4_c4" class="lf-component" style="position: absolute; top: 616px; left: 1040px; width: 330px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; padding-left: 14px;">
+                <div class="v4-shape-text-content"><p style="color: #0369a1; font-size: 13px;">네이버/카카오/토스페이 퀵 타일 + 단일 버튼</p></div>
+            </div>
+        </div>
+        <div id="r4_c5" class="lf-component" style="position: absolute; top: 616px; left: 1370px; width: 190px; height: 40px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1px solid #a7f3d0; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="text-align: center;"><p><strong style="color: #059669; font-size: 13px;">결제 완료 시간 15초 단축</strong></p></div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- [3] 하단 3단계 개선 로드맵 (Top: 680px, Width: 1560px, Height: 200px) -->
+        <!-- ========================================================================= -->
+        <div id="sec3_container" class="lf-component" style="position: absolute; top: 680px; left: 20px; width: 1560px; height: 200px; z-index: 90;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #e2e8f0; border-radius: 10px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+
+        <div id="sec3_title" class="lf-component v4-text-shape" style="position: absolute; top: 692px; left: 40px; width: 600px; height: 24px; z-index: 95; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 15px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a; font-size: 15px; white-space: nowrap !important;">3. 단계별 UX/UI 고도화 실행 로드맵 (Quick Win ➔ Core Conversion ➔ Brand Synergy)</strong></p>
+            </div>
+        </div>
+
+        <!-- 3-1. Phase 1 카드 (Left: 40px, Width: 480px, Height: 135px) -->
+        <div id="p1_bg" class="lf-component" style="position: absolute; top: 725px; left: 40px; width: 480px; height: 140px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #93c5fd; border-radius: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <div id="p1_badge" class="lf-component" style="position: absolute; top: 735px; left: 55px; width: 110px; height: 24px; z-index: 95;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #dbeafe; border: 1.6px solid #93c5fd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="text-align: center;"><p><strong style="color: #1e40af; font-size: 13px;">PHASE 1 (1~2주)</strong></p></div>
+            </div>
+        </div>
+        <div id="p1_title" class="lf-component v4-text-shape" style="position: absolute; top: 737px; left: 175px; width: 330px; height: 22px; z-index: 95; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a;">Quick Wins (즉시 이탈 방어)</strong></p>
+            </div>
+        </div>
+        <div id="p1_desc" class="lf-component" style="position: absolute; top: 768px; left: 55px; width: 450px; height: 85px; z-index: 95;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13px; font-weight: 500; line-height: 1.5; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0 0 4px 0;">• <strong>모바일 장바구니 하단 Sticky 주문 바</strong> 신설 (구매 버튼 상시 노출)</p>
+                        <p style="margin: 0 0 4px 0;">• <strong>모바일 주문서 상단 장문 유의사항 기본 축소</strong> (첫 뷰포트 확보)</p>
+                        <p style="margin: 0;">• <strong>[동의하고 결제하기] 단일 통합 버튼</strong> (불필요한 체크 클릭 제거)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3-2. Phase 2 카드 (Left: 560px, Width: 480px, Height: 135px) -->
+        <div id="p2_bg" class="lf-component" style="position: absolute; top: 725px; left: 560px; width: 480px; height: 140px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #86efac; border-radius: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <div id="p2_badge" class="lf-component" style="position: absolute; top: 735px; left: 575px; width: 110px; height: 24px; z-index: 95;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #dcfce7; border: 1.6px solid #86efac; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="text-align: center;"><p><strong style="color: #15803d; font-size: 13px;">PHASE 2 (3~4주)</strong></p></div>
+            </div>
+        </div>
+        <div id="p2_title" class="lf-component v4-text-shape" style="position: absolute; top: 737px; left: 695px; width: 330px; height: 22px; z-index: 95; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a;">Core Conversion (결제 전환율 극대화)</strong></p>
+            </div>
+        </div>
+        <div id="p2_desc" class="lf-component" style="position: absolute; top: 768px; left: 575px; width: 450px; height: 85px; z-index: 95;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13px; font-weight: 500; line-height: 1.5; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0 0 4px 0;">• <strong>원클릭 [최대 할인 자동 적용] 엔진</strong> (쿠폰+마일리지 최적가 세팅)</p>
+                        <p style="margin: 0 0 4px 0;">• <strong>간편결제(네이버/카카오/토스) 상단 퀵 타일 그리드</strong> 전진 배치</p>
+                        <p style="margin: 0;">• <strong>장바구니 단계 최대 혜택가 사전 시뮬레이션</strong> 및 즉시 체감가 노출</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3-3. Phase 3 카드 (Left: 1080px, Width: 480px, Height: 135px) -->
+        <div id="p3_bg" class="lf-component" style="position: absolute; top: 725px; left: 1080px; width: 480px; height: 140px; z-index: 92;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #fde047; border-radius: 8px;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
+            </div>
+        </div>
+        <div id="p3_badge" class="lf-component" style="position: absolute; top: 735px; left: 1095px; width: 110px; height: 24px; z-index: 95;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef9c3; border: 1.6px solid #fde047; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                <div class="v4-shape-text-content" style="text-align: center;"><p><strong style="color: #a16207; font-size: 13px;">PHASE 3 (5~6주)</strong></p></div>
+            </div>
+        </div>
+        <div id="p3_title" class="lf-component v4-text-shape" style="position: absolute; top: 737px; left: 1215px; width: 330px; height: 22px; z-index: 95; white-space: nowrap !important;">
+            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #0f172a; font-size: 14px; font-weight: 800; white-space: nowrap !important;">
+                <p style="white-space: nowrap !important;"><strong style="color: #0f172a;">Brand Synergy (브랜드 자사몰 고도화)</strong></p>
+            </div>
+        </div>
+        <div id="p3_desc" class="lf-component" style="position: absolute; top: 768px; left: 1095px; width: 450px; height: 85px; z-index: 95;">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
+                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important;">
+                    <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #334155; font-size: 13px; font-weight: 500; line-height: 1.5; white-space: normal !important; word-break: break-word !important;">
+                        <p style="margin: 0 0 4px 0;">• <strong>브랜드별 묶음 배송 &amp; 무료배송 충족 게이지</strong> ("00원 더 담으면 무료")</p>
+                        <p style="margin: 0 0 4px 0;">• <strong>인라인 수량 조절 Stepper UI</strong> 및 품절 임박 뱃지(FOMO 넛지) 도입</p>
+                        <p style="margin: 0;">• <strong>바텀시트(Bottom Sheet) 배송지 퀵 변경</strong> 및 원페이지 체크아웃 완성</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -35,12 +35,12 @@
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
       "type": "ui",
-      "updatedAt": "2026-10-22T08:20:53.143Z",
+      "updatedAt": "2026-10-22T08:21:03.075Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
       "version": 0.1,
-      "defaultTab": "description",
+      "defaultTab": "editor",
       "screenDesc": "시선닷컴(SISUN.COM) Front 주문 도메인(장바구니 · 주문서 · 주문완료) 핵심 정책 통합 정의서"
     },
     "02_Front_IA_Specification.html": {

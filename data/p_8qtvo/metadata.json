@@ -28,12 +28,14 @@
       "type": "cover",
       "updatedAt": "2026-10-19T06:52:42.086Z",
       "template": "template_cover.html",
-      "version": 0.1
+      "version": 0.1,
+      "description": [],
+      "connectors": []
     },
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
       "type": "ui",
-      "updatedAt": "2026-10-20T09:12:00.000Z",
+      "updatedAt": "2026-10-22T08:19:06.333Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -78,7 +80,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-10-21 13:52:00",
+  "updated": "2026-10-22 17:19:05",
   "version": 0.1,
   "category": "project"
 }

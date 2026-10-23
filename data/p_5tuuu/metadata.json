@@ -96,7 +96,7 @@
     "08_Responsive_PC_Mobile_501.html": {
       "title": "상품 그룹 UI 변경 2",
       "type": "ui",
-      "updatedAt": "2026-10-23T08:47:58.542Z",
+      "updatedAt": "2026-10-23T08:48:15.528Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -104,26 +104,26 @@
           "target": "frame",
           "text": "상품 그룹 영역\n\n\n- UI 변경 : 기존 [SELECTBOX] => \n                  변경 [TAB (ROUND SHAPE)]\n\n\n- 동작 방식 : PC 나열형 / Mobile 스와이프\n\n\n- 상단 스티키 처리 (기존과 동일)",
           "html": "<span style=\"font-weight: bold;\">상품 그룹 영역</span><div><br></div><div>- UI 변경 : 기존 [SELECTBOX] =&gt; </div><div>                  변경 [<span style=\"color: rgb(251, 191, 36);\">TAB</span> (ROUND SHAPE)]</div><div><br></div><div>- 동작 방식 : PC 나열형 / <span style=\"color: rgb(251, 191, 36);\">Mobile 스와이프</span></div><div><br></div><div>- 상단 스티키 처리 (기존과 동일)</div>",
-          "x": 20,
-          "y": 645,
+          "x": 145,
+          "y": 655,
           "pins": {
             "pc": {
-              "x": 20,
-              "y": 645,
+              "x": 145,
+              "y": 655,
               "active": true
             },
             "mobile": {
-              "x": 7,
+              "x": 120,
               "y": 553,
               "active": true
             },
             "left": {
-              "x": 20,
-              "y": 645,
+              "x": 145,
+              "y": 655,
               "active": true
             },
             "right": {
-              "x": 7,
+              "x": 120,
               "y": 553,
               "active": true
             }
@@ -150,6 +150,6 @@
     "08_Responsive_PC_Mobile_501.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-23 17:47:58",
+  "updated": "2026-10-23 17:48:15",
   "version": 0.1
 }

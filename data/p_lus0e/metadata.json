@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-10-23T01:58:25.764Z",
+      "updatedAt": "2026-10-23T02:17:07.852Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -61,8 +61,8 @@
           "scrollFixed": "none"
         },
         {
-          "text": "어드민에서 등록된 유의사항 표현\n- Text 로만 구성\n- 어드민 입력 방법 Textarea\n- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "text": "어드민에서 등록된 유의사항 표현\n- Text 로만 구성\n- 어드민 입력 방법 Textarea\n- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리\n\n\n[26.10.23 디스크립션]\n- 유의사항 접힘/펼침 기능 추가\n- 기본값 '접힘' 상태\n- 요청자 : 박지은 과장님",
+          "html": "어드민에서 등록된 유의사항 표현<br>- Text 로만 구성<br>- 어드민 입력 방법 Textarea<br>- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리<div><br></div><div><span style=\"color: rgb(251, 191, 36);\">[26.10.23 디스크립션]</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 유의사항 접힘/펼침 기능 추가</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 기본값 '접힘' 상태</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 요청자 : 박지은 과장님</span></div>",
           "x": 402,
           "y": 869,
           "pins": {
@@ -582,7 +582,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-23 10:58:25",
+  "updated": "2026-10-23 11:17:07",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-10-23T02:35:10.335Z",
+      "updatedAt": "2026-09-17T04:57:56.967Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -204,7 +204,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -245,7 +246,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-09-22T03:25:10.076Z",
+      "updatedAt": "2026-10-23T02:36:55.644Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -266,7 +267,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "2. 상단 비주얼 관리\n- 영역 구분을 위한 타이틀 존재\n- 이미지 PC, MO 등록 항목만 존재",
@@ -286,7 +288,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "3. 쿠폰 영역 관리\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 쿠폰 설정 기능\n- 최초 등록 시에는 모든 데이터 null\n- [쿠폰등록] 버튼 클릭 시, 어드민 공통 팝업 호출\n   : [전시] > [기획전/이벤트] > [기획전 관리] 화면에서 '룰렛이벤트등록' > '쿠폰/마일리지 셋팅' 팝업",
@@ -306,7 +309,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "4. 상품 그룹 관리\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 상품 그룹 설정 기능\n- 최초 등록 시에는 모든 데이터 null",
@@ -326,7 +330,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "5. 연관 기획전\n- 영역 구분을 위한 타이틀 존재\n- 기획전에 표현할 연관 기획전 설정 기능\n- 최초 등록 시에는 모든 데이터 null",
@@ -346,7 +351,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "type": "pin",
@@ -372,7 +378,8 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -614,7 +621,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-23 11:35:10",
+  "updated": "2026-10-23 11:36:55",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

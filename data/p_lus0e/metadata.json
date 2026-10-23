@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-09-17T04:57:56.967Z",
+      "updatedAt": "2026-10-23T03:05:56.226Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -82,8 +82,8 @@
           "scrollFixed": "none"
         },
         {
-          "text": "어드민에서 설정된 상품 영역 표현\n- [표현 방법] = 랭킹 목록형 설정된 케이스\n- 타이틀 우측 (07.15 업데이트) 표시는 시스템의 '랭킹' 배치 적용 일자로 자동 표현",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "text": "어드민에서 설정된 상품 영역 표현\n- [표현 방법] = 랭킹 목록형 설정된 케이스\n- 타이틀 우측 (07.15 업데이트) 표시는 시스템의 '랭킹' 배치 적용 일자로 자동 표현\n\n\n[26.10.23 작성]\n- '랭킹 목록형' 의 경우, 상품 메타 정보를 '썸네일 상단' 에 맞추어 정렬\n- 요청자 : 박지은 과장님",
+          "html": "어드민에서 설정된 상품 영역 표현<br>- [표현 방법] = 랭킹 목록형 설정된 케이스<br>- 타이틀 우측 (07.15 업데이트) 표시는 시스템의 '랭킹' 배치 적용 일자로 자동 표현<div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">[26.10.23 작성]</span></div><div><span style=\"color: rgb(251, 191, 36);\">- '랭킹 목록형' 의 경우, 상품 메타 정보를 '썸네일 상단' 에 맞추어 정렬</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 요청자 : 박지은 과장님</span> </div>",
           "x": 10,
           "y": 992,
           "pins": {
@@ -104,7 +104,7 @@
         },
         {
           "text": "어드민 상품 영역의 [그룹] 설정된 데이터 표현\n- 기존 기획전 기능과 동일",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
+          "html": "어드민 상품 영역의 [그룹] 설정된 데이터 표현<br>- 기존 기획전 기능과 동일",
           "x": 7,
           "y": 1046,
           "pins": {
@@ -417,7 +417,7 @@
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
       "type": "admin",
-      "updatedAt": "2026-10-23T03:04:14.517Z",
+      "updatedAt": "2026-09-29T01:52:55.661Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -611,7 +611,8 @@
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 300,
           "y": 121,
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         },
         {
           "type": "pin",
@@ -619,7 +620,8 @@
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 1171,
           "y": 172,
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         },
         {
           "type": "pin",
@@ -627,7 +629,8 @@
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 1136,
           "y": 388,
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         },
         {
           "type": "pin",
@@ -635,7 +638,8 @@
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 1231,
           "y": 172,
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         },
         {
           "type": "pin",
@@ -643,7 +647,8 @@
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 1230,
           "y": 388,
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -682,7 +687,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-23 12:04:14",
+  "updated": "2026-10-23 12:05:56",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

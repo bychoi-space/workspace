@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-10-23T02:20:05.626Z",
+      "updatedAt": "2026-10-23T02:22:46.591Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -61,8 +61,8 @@
           "scrollFixed": "none"
         },
         {
-          "text": "어드민에서 등록된 유의사항 표현\n- Text 로만 구성\n- 어드민 입력 방법 Textarea\n- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리\n\n\n[26.10.23 디스크립션]\n- 유의사항 접힘/펼침 기능 추가\n- 기본값 '접힘' 상태\n- 요청자 : 박지은 과장님",
-          "html": "어드민에서 등록된 유의사항 표현<br>- Text 로만 구성<br>- 어드민 입력 방법 Textarea<br>- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리<div><br></div><div><span style=\"color: rgb(251, 191, 36);\">[26.10.23 디스크립션]</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 유의사항 접힘/펼침 기능 추가</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 기본값 '접힘' 상태</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 요청자 : 박지은 과장님</span></div>",
+          "text": "어드민에서 등록된 유의사항 표현\n- Text 로만 구성\n- 어드민 입력 방법 Textarea\n- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리\n\n\n[26.10.23 작성]\n- 유의사항 접힘/펼침 기능 추가\n- 기본값 '접힘' 상태\n- 요청자 : 박지은 과장님",
+          "html": "어드민에서 등록된 유의사항 표현<br>- Text 로만 구성<br>- 어드민 입력 방법 Textarea<br>- 어드민 유의사항 Textarea 에 아무런 데이터가 입력되지 않고 null 값일 경우, '유의사항' 제목과 영역 전체 미노출 처리<div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">[26.10.23 작성]</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 유의사항 접힘/펼침 기능 추가</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 기본값 '접힘' 상태</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 요청자 : 박지은 과장님</span></div>",
           "x": 402,
           "y": 869,
           "pins": {
@@ -146,8 +146,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "text": "[26.10.23 작성]\n- PC : 720 * 450 이미지 표현\n   > 어드민에 '관련 기획전 썸네일' 등록 된 기획전 기준으로 표현 (신규 기능)\n- MO : 240 * 216 이미지 표현\n   > 어드민에 '메일목록썸네일' 등록된 데이터로 표현 (기존 기능)",
+          "html": "<span style=\"color: rgb(251, 191, 36); font-weight: bold;\">[26.10.23 작성]</span><div><span style=\"color: rgb(251, 191, 36);\">- PC : 720 * 450 이미지 표현</span></div><div><span style=\"color: rgb(251, 191, 36);\">   &gt; 어드민에 '관련 기획전 썸네일' 등록 된 기획전 기준으로 표현 (신규 기능)</span></div><div><span style=\"color: rgb(251, 191, 36);\">- MO : 240 * 216 이미지 표현\n   &gt; 어드민에 '메일목록썸네일' 등록된 데이터로 표현 (기존 기능)</span></div>",
           "x": 40,
           "y": 2328,
           "pins": {
@@ -614,7 +614,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-23 11:20:05",
+  "updated": "2026-10-23 11:22:46",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

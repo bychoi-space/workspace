@@ -68,7 +68,7 @@
     "04_Case_Study_991.html": {
       "title": "04_Case_Study_991",
       "type": "case-study",
-      "updatedAt": "2026-10-23T06:05:41.611Z",
+      "updatedAt": "2026-10-23T00:45:05.605Z",
       "template": "template_case_study.html",
       "description": [],
       "connectors": [],
@@ -77,7 +77,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-10-23T05:43:04.906Z",
+      "updatedAt": "2026-10-23T06:07:57.897Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -102,7 +102,7 @@
     "renewal_order_2.html",
     "04_Case_Study_991.html"
   ],
-  "updated": "2026-10-23 15:05:41",
+  "updated": "2026-10-23 15:07:57",
   "version": 0.1,
   "category": "project"
 }

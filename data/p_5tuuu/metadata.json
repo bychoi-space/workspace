@@ -96,7 +96,7 @@
     "08_Responsive_PC_Mobile_501.html": {
       "title": "상품 그룹 UI 변경 2",
       "type": "ui",
-      "updatedAt": "2026-10-23T08:45:13.672Z",
+      "updatedAt": "2026-10-23T08:47:58.542Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -150,6 +150,6 @@
     "08_Responsive_PC_Mobile_501.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-23 17:45:13",
+  "updated": "2026-10-23 17:47:58",
   "version": 0.1
 }

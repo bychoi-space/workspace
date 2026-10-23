@@ -96,7 +96,7 @@
     "08_Responsive_PC_Mobile_501.html": {
       "title": "상품 그룹 UI 변경 2",
       "type": "ui",
-      "updatedAt": "2026-10-23T08:52:38.366Z",
+      "updatedAt": "2026-10-23T09:00:35.003Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -134,8 +134,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "text": "상품 그룹 정렬 기능 (신규)\n- 기본값 : 어드민에서 설정된 정렬순\n- Selectbox 클릭하여 정렬순 변경 가능",
+          "html": "상품 그룹 정렬 기능 (신규)<div>- 기본값 : 어드민에서 설정된 정렬순</div><div>- Selectbox 클릭하여 정렬순 변경 가능</div>",
           "x": 960,
           "y": 770,
           "pins": {
@@ -182,6 +182,6 @@
     "08_Responsive_PC_Mobile_501.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-23 17:52:38",
+  "updated": "2026-10-23 18:00:34",
   "version": 0.1
 }

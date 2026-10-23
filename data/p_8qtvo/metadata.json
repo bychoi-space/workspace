@@ -68,8 +68,11 @@
     "04_Case_Study_991.html": {
       "title": "04_Case_Study_991",
       "type": "case-study",
-      "updatedAt": "2026-10-23T00:45:05.605Z",
-      "template": "template_case_study.html"
+      "updatedAt": "2026-10-23T00:47:41.193Z",
+      "template": "template_case_study.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -87,7 +90,7 @@
     "renewal_order.html",
     "04_Case_Study_991.html"
   ],
-  "updated": "2026-10-22 17:46:47",
+  "updated": "2026-10-23 09:47:40",
   "version": 0.1,
   "category": "project"
 }

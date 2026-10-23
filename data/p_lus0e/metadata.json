@@ -246,7 +246,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-10-23T02:36:55.644Z",
+      "updatedAt": "2026-10-23T02:44:11.657Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -375,6 +375,33 @@
             "left": {
               "x": 745,
               "y": 2067,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[2026.10.23 추가]\n- '노출순서' 항목 위치 조절\n- '관련 기획전 썸네일' 항목 신규 생성\n   > 해당 기능에 설정된 이미지 기준으로, FRONT 템플릿 기획전 '관련 기획전' PC 에 이미지 출력\n- 요청자 : 박지은 과장님",
+          "html": "<span style=\"color: rgb(251, 191, 36); font-weight: bold;\">[2026.10.23 추가]</span><div><span style=\"color: rgb(251, 191, 36);\">- '노출순서' 항목 위치 조절</span></div><div><span style=\"color: rgb(251, 191, 36);\">- '관련 기획전 썸네일' 항목 신규 생성</span></div><div><span style=\"color: rgb(251, 191, 36);\">   &gt; 해당 기능에 설정된 이미지 기준으로, FRONT 템플릿 기획전 '관련 기획전' PC 에 이미지 출력</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 요청자 : 박지은 과장님</span></div>",
+          "x": 903,
+          "y": 789,
+          "pins": {
+            "pc": {
+              "x": 903,
+              "y": 789,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 903,
+              "y": 789,
               "active": true
             }
           },
@@ -621,7 +648,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-23 11:36:55",
+  "updated": "2026-10-23 11:44:11",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

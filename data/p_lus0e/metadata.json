@@ -246,7 +246,7 @@
     "09_Admin_PC_Scroll_639_copy3.html": {
       "title": "기획전 등록 (기본값)",
       "type": "admin",
-      "updatedAt": "2026-10-23T02:44:11.657Z",
+      "updatedAt": "2026-09-22T03:25:10.076Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -417,7 +417,7 @@
     "09_Admin_PC_Scroll_639_copy4.html": {
       "title": "기획전 상세 (설정케이스)",
       "type": "admin",
-      "updatedAt": "2026-09-29T01:52:55.661Z",
+      "updatedAt": "2026-10-23T03:01:48.608Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -438,7 +438,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "2. 상단 비주얼 관리 영역\n- [이미지 등록 (PC)], [이미지 등록 (MO] 2가지 File Uploader 기능으로 구성\n- 이미지 파일 용량 제한 30MB\n- 이미지 파일 유형 제한 (jpg, jpeg, png, bmp, gif 등)",
@@ -458,7 +459,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "3. 쿠폰 관리 영역\n- [쿠폰 사용 여부] = Y 일 경우 [쿠폰 설정] [쿠폰 유의사항] 항목 노출\n- [쿠폰등록] 버튼 클릭 시, 어드민 공통 팝업 호출\n   : [전시] > [기획전/이벤트] > [기획전 관리] 화면에서 '룰렛이벤트등록' > '쿠폰/마일리지 셋팅' 팝업\n- [선택삭제] 버튼 클릭 시, 그리드 선택항목 체크 (얼럿)\n- 쿠폰 설정 Min 1 ~ Max 5",
@@ -478,7 +480,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "4. 상품 그룹 관리 영역\n- 기본 구조는 기존 '기획전 등록/상세' 기능과 동일하나, 상위 개념으로 '영역' 을 추가\n- [상품 표현 영역] 에서 STEPPER 설정 시, 하단의 '상품 영역 1~5' 가 가변적으로 동작\n- STEPPER : Min 1 ~ Max 5",
@@ -498,7 +501,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "[표현 방법] = 랭킹 목록형 선택 할 경우, [영역 타이틀], [영역 설명문구] 미노출",
@@ -518,7 +522,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "5. 연관 기획전 영역\n- [연관 기획전 사용 여부] = Y 일 경우 [기획전 설정] 항목 노출\n- [기획전등록] 버튼 클릭 시, 공통 '기획전등록' 팝업호출",
@@ -538,7 +543,8 @@
             }
           },
           "standardized": true,
-          "type": "pin"
+          "type": "pin",
+          "scrollFixed": "none"
         },
         {
           "text": "상품 그룹 Min 1 ~ Max 10\n- 상품 그룹이 너무 많아질 것을 우려한 제약사항\n- 10개 그룹 이상 생성 시 얼럿\n- 나머지 버튼 (그룹 저장, 그룹 삭제) 은 기존 기능과 동일",
@@ -557,7 +563,35 @@
               "active": true
             }
           },
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[2026.10.23 추가]\n- '노출순서' 항목 위치 조절\n- '관련 기획전 썸네일' 항목 신규 생성\n   > 해당 기능에 설정된 이미지 기준으로, FRONT 템플릿 기획전 '관련 기획전' PC 에 이미지 출력\n- 요청자 : 박지은 과장님",
+          "html": "<span style=\"color: rgb(251, 191, 36); font-weight: bold;\">[2026.10.23 추가]</span><div><span style=\"color: rgb(251, 191, 36);\">- '노출순서' 항목 위치 조절</span></div><div><span style=\"color: rgb(251, 191, 36);\">- '관련 기획전 썸네일' 항목 신규 생성</span></div><div><span style=\"color: rgb(251, 191, 36);\">   &gt; 해당 기능에 설정된 이미지 기준으로, FRONT 템플릿 기획전 '관련 기획전' PC 에 이미지 출력</span></div><div><span style=\"color: rgb(251, 191, 36);\">- 요청자 : 박지은 과장님</span></div>",
+          "x": 900,
+          "y": 783,
+          "pins": {
+            "pc": {
+              "x": 900,
+              "y": 783,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 900,
+              "y": 783,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -648,7 +682,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-23 11:44:11",
+  "updated": "2026-10-23 12:01:48",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

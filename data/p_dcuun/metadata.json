@@ -57,9 +57,64 @@
     "09_Admin_PC_Scroll_640.html": {
       "title": "상품공지관리",
       "type": "admin",
-      "updatedAt": "2026-10-23T08:04:10.436Z",
+      "updatedAt": "2026-10-23T08:06:42.352Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "조회조건 영역\n- [표현위치] 항목 추가\n- Default Value : non-check (전체)",
+          "html": "조회조건 영역<div>- [표현위치] 항목 추가</div><div>- Default Value : non-check (전체)</div>",
+          "x": 281,
+          "y": 349,
+          "pins": {
+            "pc": {
+              "x": 281,
+              "y": 349,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 281,
+              "y": 349,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "조회결과 영역 (Grid)\n- [표현위치] 컬럼 추가\n- 설정된 데이터 표현",
+          "html": "조회결과 영역 (Grid)<div>- [표현위치] 컬럼 추가</div><div>- 설정된 데이터 표현</div>",
+          "x": 786,
+          "y": 569,
+          "pins": {
+            "pc": {
+              "x": 786,
+              "y": 569,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 786,
+              "y": 569,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object]",
@@ -229,6 +284,6 @@
     "09_Admin_PC_Scroll_642.html",
     "08_Responsive_PC_Mobile_488.html"
   ],
-  "updated": "2026-10-23 17:04:10",
+  "updated": "2026-10-23 17:06:42",
   "version": 0.1
 }

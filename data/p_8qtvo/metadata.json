@@ -2,9 +2,9 @@
   "title": "[Front Renewal] 주문",
   "screens": {
     "renewal_order.html": {
-      "title": "renewal_order",
+      "title": "주문서 (As-Is)",
       "type": "ui",
-      "updatedAt": "2026-09-28T06:59:53.326Z",
+      "updatedAt": "2026-10-23T00:53:55.922Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -68,7 +68,7 @@
     "04_Case_Study_991.html": {
       "title": "04_Case_Study_991",
       "type": "case-study",
-      "updatedAt": "2026-10-23T00:48:20.053Z",
+      "updatedAt": "2026-10-23T00:45:05.605Z",
       "template": "template_case_study.html",
       "description": [],
       "connectors": [],

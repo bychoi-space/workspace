@@ -15,7 +15,7 @@
     "08_Responsive_PC_Mobile_730.html": {
       "title": "템플릿 기획전",
       "type": "ui",
-      "updatedAt": "2026-10-23T02:19:33.763Z",
+      "updatedAt": "2026-10-23T02:20:05.626Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -137,6 +137,38 @@
             "mobile": {
               "x": 11,
               "y": 2479,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 40,
+          "y": 2328,
+          "pins": {
+            "pc": {
+              "x": 40,
+              "y": 2328,
+              "active": true
+            },
+            "mobile": {
+              "x": 20,
+              "y": 2229,
+              "active": true
+            },
+            "left": {
+              "x": 40,
+              "y": 2328,
+              "active": true
+            },
+            "right": {
+              "x": 20,
+              "y": 2229,
               "active": true
             }
           },
@@ -582,7 +614,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-23 11:19:33",
+  "updated": "2026-10-23 11:20:05",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

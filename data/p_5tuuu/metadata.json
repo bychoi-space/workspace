@@ -96,14 +96,14 @@
     "08_Responsive_PC_Mobile_501.html": {
       "title": "상품 그룹 UI 변경 2",
       "type": "ui",
-      "updatedAt": "2026-10-23T08:52:04.375Z",
+      "updatedAt": "2026-10-23T08:52:38.366Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "상품 그룹 영역\n- [전체] 가 아닌 특정 그룹을 선택한 경우, 그룹 타이틀 우측에 'Sorting' 기능 표현",
-          "html": "<span style=\"font-weight: bold;\">상품 그룹 영역</span><div><span style=\"background-color: transparent;\">- [전체] 가 아닌 특정 그룹을 선택한 경우, 그룹 타이틀 우측에 'Sorting' 기능 표현</span></div>",
+          "text": "상품 그룹 영역\n- [전체] 가 아닌 특정 그룹을 선택한 경우, 어드민 설정에 따라 그룹 타이틀 우측에 'Sorting' 기능 표현",
+          "html": "<span style=\"font-weight: bold;\">상품 그룹 영역</span><div><span style=\"background-color: transparent;\">- [전체] 가 아닌 특정 그룹을 선택한 경우, 어드민 설정에 따라 그룹 타이틀 우측에 'Sorting' 기능 표현</span></div>",
           "x": 145,
           "y": 655,
           "pins": {
@@ -130,6 +130,38 @@
           },
           "standardized": true,
           "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 960,
+          "y": 770,
+          "pins": {
+            "pc": {
+              "x": 960,
+              "y": 770,
+              "active": true
+            },
+            "mobile": {
+              "x": 175,
+              "y": 623,
+              "active": true
+            },
+            "left": {
+              "x": 960,
+              "y": 770,
+              "active": true
+            },
+            "right": {
+              "x": 175,
+              "y": 623,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -150,6 +182,6 @@
     "08_Responsive_PC_Mobile_501.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-23 17:52:04",
+  "updated": "2026-10-23 17:52:38",
   "version": 0.1
 }

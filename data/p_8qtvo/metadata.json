@@ -73,6 +73,17 @@
       "description": [],
       "connectors": [],
       "version": 0.1
+    },
+    "renewal_order_2.html": {
+      "title": "주문서 (Te-Be)",
+      "type": "ui",
+      "updatedAt": "2026-10-23T00:54:13.812Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",
@@ -88,6 +99,7 @@
     "03_Cart_Order_Benchmark_Analysis.html",
     "renewal_cart.html",
     "renewal_order.html",
+    "renewal_order_2.html",
     "04_Case_Study_991.html"
   ],
   "updated": "2026-10-23 09:48:20",

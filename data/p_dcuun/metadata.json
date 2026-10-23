@@ -57,7 +57,7 @@
     "09_Admin_PC_Scroll_640.html": {
       "title": "상품공지관리",
       "type": "admin",
-      "updatedAt": "2026-10-23T07:59:28.100Z",
+      "updatedAt": "2026-10-23T08:02:07.005Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -229,6 +229,6 @@
     "09_Admin_PC_Scroll_642.html",
     "08_Responsive_PC_Mobile_488.html"
   ],
-  "updated": "2026-10-23 16:59:28",
+  "updated": "2026-10-23 17:02:06",
   "version": 0.1
 }

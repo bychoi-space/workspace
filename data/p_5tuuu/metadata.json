@@ -57,7 +57,7 @@
     "09_Admin_PC_Scroll_59.html": {
       "title": "기획전 상세 - 상품 그룹 정렬 기능",
       "type": "admin",
-      "updatedAt": "2026-10-23T09:01:27.981Z",
+      "updatedAt": "2026-10-23T09:07:50.337Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -81,6 +81,33 @@
             "left": {
               "x": 860,
               "y": 1534,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "그룹 단위 [노출 순서 표현] 항목 추가\n- Default Value : 미노출\n- 노출 선택 시, Front 에 '상품 정렬' 을 유저가 직접 제어하는 Selectbox 표현",
+          "html": "그룹 단위 [노출 순서 표현] 항목 추가<div>- Default Value : 미노출</div><div>- 노출 선택 시, Front 에 '상품 정렬' 을 유저가 직접 제어하는 Selectbox 표현</div>",
+          "x": 900,
+          "y": 1401,
+          "pins": {
+            "pc": {
+              "x": 900,
+              "y": 1401,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 900,
+              "y": 1401,
               "active": true
             }
           },
@@ -182,6 +209,6 @@
     "08_Responsive_PC_Mobile_501.html",
     "09_Admin_PC_Scroll_59.html"
   ],
-  "updated": "2026-10-23 18:01:27",
+  "updated": "2026-10-23 18:07:49",
   "version": 0.1
 }

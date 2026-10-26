@@ -77,12 +77,12 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-10-26T05:41:16.833Z",
+      "updatedAt": "2026-10-26T05:43:55.119Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
       "version": 0.1,
-      "defaultTab": "description",
+      "defaultTab": "editor",
       "screenDesc": ""
     }
   },

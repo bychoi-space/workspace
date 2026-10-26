@@ -4,8 +4,11 @@
     "99_Blank_163.html": {
       "title": "99_Blank_163",
       "type": "blank",
-      "updatedAt": "2026-10-26T08:56:24.851Z",
-      "template": "template_blank.html"
+      "updatedAt": "2026-10-26T09:18:09.113Z",
+      "template": "template_blank.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -14,5 +17,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 7,
-  "category": "etc"
+  "category": "etc",
+  "updated": "2026-10-26 18:18:08",
+  "version": 0.1
 }

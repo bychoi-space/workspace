@@ -202,6 +202,11 @@
                     const isNewSelection = Boolean(data.id && data.id !== state.editingIndex);
                     state.previousEditingIndex = state.editingIndex;
                     if (isNewSelection && activeEl && typeof activeEl.blur === 'function') {
+                        if (activeEl.classList && activeEl.classList.contains('v4-prop-input')) {
+                            if (!activeEl.dataset.editingCompId && state.previousEditingIndex) {
+                                activeEl.dataset.editingCompId = state.previousEditingIndex;
+                            }
+                        }
                         activeEl.blur();
                         isTyping = false;
                     }

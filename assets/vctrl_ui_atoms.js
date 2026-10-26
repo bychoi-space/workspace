@@ -429,6 +429,7 @@ window.v4UIAtomsScript = `
             }, compStyles), '*');
             window.parent.postMessage({
                 type: 'LF_COMP_RESIZED',
+                id: s.id || (compStyles && compStyles.id) || null,
                 w: fitW,
                 h: compStyles.h || parseFloat(s.style.height) || s.offsetHeight
             }, '*');

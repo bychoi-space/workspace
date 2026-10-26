@@ -364,10 +364,11 @@ window.v4Script = `
             }
             
             const targets = [];
-            document.querySelectorAll('.lf-component:not(.connector-line)').forEach(c => {
+            document.querySelectorAll('.lf-component:not(.connector-line):not(.pin-marker):not(.text-marker):not(.v4-pin-marker)').forEach(c => {
+                if (c.id && c.id.startsWith('v4-pin-')) return;
+                if (c.closest && c.closest('.v4-pin-layer')) return;
                 if (!c.id) {
-                    const isPin = c.classList.contains('pin-marker') || c.classList.contains('text-marker');
-                    c.id = (isPin ? 'v4-pin-' : 'v4-comp-') + Date.now() + '-' + Math.floor(Math.random() * 10000);
+                    c.id = 'v4-comp-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
                 }
                 let absL = parseFloat(c.style.left) || 0;
                 let absT = parseFloat(c.style.top) || 0;

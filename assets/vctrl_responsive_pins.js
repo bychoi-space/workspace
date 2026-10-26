@@ -127,6 +127,24 @@ window.v4ResponsivePinsScript = `
         loosePins.forEach(function(lp) {
             layer.appendChild(lp);
         });
+
+        // [Self-Healing] Ensure no regular components are trapped inside pin layer
+        var trapped = Array.from(layer.children).filter(function(c) {
+            return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && (!c.id || !c.id.startsWith('v4-pin-'));
+        });
+        if (trapped.length > 0) {
+            trapped.forEach(function(tc) {
+                var trailing = Array.from(container.children).find(function(c) {
+                    return c === layer || c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script';
+                });
+                if (trailing && trailing.parentNode === container) {
+                    container.insertBefore(tc, trailing);
+                } else {
+                    container.appendChild(tc);
+                }
+            });
+        }
+
         return layer;
     }
     window.ensurePinLayer = ensurePinLayer;

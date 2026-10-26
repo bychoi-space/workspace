@@ -43,6 +43,11 @@
             const targetId = data.id || window.activeCompId || (window.state && window.state.selectedComponent && window.state.selectedComponent.id) || null;
             const isTargetChanged = Boolean(targetId && targetId !== activeCompId);
             if (isTargetChanged && document.activeElement && typeof document.activeElement.blur === 'function') {
+                if (document.activeElement.classList && document.activeElement.classList.contains('v4-prop-input')) {
+                    if (!document.activeElement.dataset.editingCompId && activeCompId) {
+                        document.activeElement.dataset.editingCompId = activeCompId;
+                    }
+                }
                 document.activeElement.blur();
             }
             if (targetId) {
@@ -99,6 +104,11 @@
         });
 
         MessageHub.subscribe('LF_COMP_RESIZED', (data) => {
+            const currentActiveId = activeCompId || (window.state && (window.state.editingIndex || (window.state.selectedComponent && window.state.selectedComponent.id))) || null;
+            if (data && data.id && currentActiveId && String(data.id) !== String(currentActiveId)) {
+                // Reject stale resized notification from previously modified component to prevent overwriting newly selected component inputs
+                return;
+            }
             updateAllInputs(data.w, data.h);
             if (data.boxW !== undefined) {
                 const wIconInp = document.getElementById('prop-width-icon');
@@ -257,6 +267,10 @@
             const prop = input.dataset.prop;
             if (prop === 'width') input.value = Math.round(w);
             if (prop === 'height') input.value = Math.round(h);
+            if (force) {
+                delete input.dataset.editingCompId;
+                if (activeCompId) input.dataset.boundCompId = activeCompId;
+            }
         });
     }
 
@@ -297,10 +311,13 @@
         });
     }
 
-    // 2. Event Delegation for Input Fields
-    document.addEventListener('input', (e) => {
-        if (e.target.classList.contains('v4-prop-input') && e.target.dataset.prop) {
-            applyDimension(e.target.dataset.prop, e.target.value);
+    // Track active target component when an input receives focus
+    document.addEventListener('focusin', (e) => {
+        if (e.target && e.target.classList && e.target.classList.contains('v4-prop-input')) {
+            const currentId = activeCompId || (window.state && (window.state.editingIndex || (window.state.selectedComponent && window.state.selectedComponent.id))) || null;
+            if (currentId) {
+                e.target.dataset.editingCompId = currentId;
+            }
         }
     });
 
@@ -315,17 +332,21 @@
 
     document.addEventListener('keydown', (e) => {
         if (e.target.classList.contains('v4-prop-input') && e.target.dataset.prop) {
+            if (e.key === 'Enter') {
+                e.target.blur();
+                return;
+            }
             if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
                 e.preventDefault();
                 const step = e.shiftKey ? 10 : 1;
                 const delta = e.key === 'ArrowUp' ? step : -step;
                 e.target.value = Math.max(1, parseInt(e.target.value || 0) + delta);
-                applyDimension(e.target.dataset.prop, e.target.value);
+                applyDimension(e.target.dataset.prop, e.target.value, e.target);
             }
         }
     });
 
-    function applyDimension(type, value) {
+    function applyDimension(type, value, sourceInput) {
         const val = parseInt(value) || 0;
         if (val < 1) return;
 
@@ -335,11 +356,18 @@
 
         if (!iframeEl || !iframeEl.contentWindow) return;
 
-        const targetIds = getActiveTargetIds();
-        if (targetIds.length === 0) return;
+        const editingTargetId = sourceInput && sourceInput.dataset && sourceInput.dataset.editingCompId;
+        const currentActiveIds = getActiveTargetIds();
+        const targetIds = editingTargetId ? [editingTargetId] : currentActiveIds;
+        if (!targetIds || targetIds.length === 0) return;
 
-        activeCompId = targetIds[0];
-        window.activeCompId = targetIds[0];
+        const currentActiveId = activeCompId || (currentActiveIds && currentActiveIds[0]) || null;
+        const isCurrentActive = Boolean(currentActiveId && String(targetIds[0]) === String(currentActiveId));
+
+        if (isCurrentActive) {
+            activeCompId = targetIds[0];
+            window.activeCompId = targetIds[0];
+        }
 
         const chk = document.getElementById('chk-preserve-aspect-ratio');
         const chkIll = document.getElementById('chk-preserve-aspect-ratio-illustration');
@@ -359,17 +387,19 @@
             if (type === 'width') {
                 const computedH = Math.max(1, Math.round(val / lockRatio));
                 style['height'] = computedH + 'px';
-                // Sync height inputs
-                document.querySelectorAll('.v4-prop-input[data-prop="height"]').forEach(el => {
-                    el.value = computedH;
-                });
+                if (isCurrentActive) {
+                    document.querySelectorAll('.v4-prop-input[data-prop="height"]').forEach(el => {
+                        el.value = computedH;
+                    });
+                }
             } else if (type === 'height') {
                 const computedW = Math.max(1, Math.round(val * lockRatio));
                 style['width'] = computedW + 'px';
-                // Sync width inputs
-                document.querySelectorAll('.v4-prop-input[data-prop="width"]').forEach(el => {
-                    el.value = computedW;
-                });
+                if (isCurrentActive) {
+                    document.querySelectorAll('.v4-prop-input[data-prop="width"]').forEach(el => {
+                        el.value = computedW;
+                    });
+                }
             }
         }
 
@@ -379,11 +409,17 @@
             style: style
         });
 
-        // Sync other inputs of the same property (exclude active element)
-        const inputs = document.querySelectorAll(`.v4-prop-input[data-prop="${type}"]`);
-        inputs.forEach(input => {
-            if (input !== document.activeElement) input.value = val;
-        });
+        // Sync other inputs of the same property only if modifying the currently active component
+        if (isCurrentActive) {
+            const inputs = document.querySelectorAll('.v4-prop-input[data-prop="' + type + '"]');
+            inputs.forEach(input => {
+                if (input !== document.activeElement) input.value = val;
+            });
+        }
+
+        if (sourceInput && !isCurrentActive) {
+            delete sourceInput.dataset.editingCompId;
+        }
 
         if (window.markAsDirty) window.markAsDirty();
     }
@@ -431,7 +467,7 @@
             const prop = e.target.dataset.prop;
             const value = e.target.value;
             if (prop && value !== '') {
-                applyDimension(prop, value);
+                applyDimension(prop, value, e.target);
             }
             return;
         }
@@ -451,7 +487,7 @@
             const prop = e.target.dataset.prop;
             const value = e.target.value;
             if (prop && value !== '') {
-                applyDimension(prop, value);
+                applyDimension(prop, value, e.target);
             }
         }
     });

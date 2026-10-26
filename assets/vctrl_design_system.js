@@ -398,22 +398,11 @@ window.v4DesignSystemScript = `
                 const optionsArr = optionsRaw.split(',').map(s => s.trim()).filter(Boolean);
                 const optCount = Math.max(1, optionsArr.length);
                 
-                if (!c.getAttribute('data-resized')) {
+                if (c.getAttribute('data-resized') !== 'true') {
                     const targetW = '150px';
                     if (c.style.width !== targetW) c.style.width = targetW;
-                }
-                const targetH = dropdownActive ? (30 + (optCount * 30)) + 'px' : '30px';
-                if (dropdownActive) {
-                    const curH = parseFloat(c.style.height) || c.offsetHeight || 0;
-                    const minNeededH = 30 + (optCount * 30);
-                    if (curH < minNeededH || !c.getAttribute('data-resized')) {
-                        if (c.style.height !== targetH) c.style.height = targetH;
-                    }
-                } else {
-                    const curH = parseFloat(c.style.height) || c.offsetHeight || 0;
-                    if (curH > 35 || !c.getAttribute('data-resized')) {
-                        if (c.style.height !== '30px') c.style.height = '30px';
-                    }
+                    const targetH = dropdownActive ? (30 + (optCount * 30)) + 'px' : '30px';
+                    if (c.style.height !== targetH) c.style.height = targetH;
                 }
                 
                 if (selectbox.style.width !== '100%') selectbox.style.width = '100%';
@@ -424,7 +413,7 @@ window.v4DesignSystemScript = `
                     if (dropdownActive) {
                         if (header.style.height !== '30px') header.style.height = '30px';
                     } else {
-                        if (header.style.height !== '30px' && header.style.height !== '100%') header.style.height = '30px';
+                        if (header.style.height !== '100%') header.style.height = '100%';
                     }
                     if (header.style.flexShrink !== '0') header.style.flexShrink = '0';
                     if (header.style.width !== '100%') header.style.width = '100%';

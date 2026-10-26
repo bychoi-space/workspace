@@ -82,24 +82,25 @@
             }
         }
 
+        var dpr = window.devicePixelRatio || 1;
         var x, y;
         if (state.viewMode === 'custom' && !forceReset && state.transform && typeof state.transform.x === 'number' && typeof state.transform.y === 'number') {
             // [사용자 커스텀 뷰포트 위치 보존]: 스페이스+드래그 팬 이동 및 줌 위치를 정중앙으로 리셋하지 않고 보존
             x = state.transform.x;
             y = state.transform.y;
         } else {
-            x = Math.round((cw - (iw * s)) / 2);
+            x = Math.round(((cw - (iw * s)) / 2) * dpr) / dpr;
             // 모바일 세로모드: 상/하단 플로팅 컨트롤이 레이어로 떠도 간섭 없는 세로 정중앙 배치
             if (isMobilePortrait) {
-                y = Math.max(10, Math.round((ch - (ih * s)) / 2));
+                y = Math.max(10, Math.round(((ch - (ih * s)) / 2) * dpr) / dpr);
             } else if (isMobile) {
                 // 모바일 가로모드: 화면에 꽉 찬 세로 정중앙 배치
-                y = Math.round((ch - (ih * s)) / 2);
+                y = Math.round(((ch - (ih * s)) / 2) * dpr) / dpr;
             } else if (ih * s > ch) {
                 // 세로 높이가 뷰포트를 초과하는 경우 상단 10px 안전 여백으로 배치
                 y = 10;
             } else {
-                y = Math.round((ch - (ih * s)) / 2);
+                y = Math.round(((ch - (ih * s)) / 2) * dpr) / dpr;
             }
         }
 
@@ -111,17 +112,27 @@
     window.updateTransform = function() {
         var DOM = window.DOM, state = window.state;
         if (!DOM || !state) return;
-        var x = Math.round(state.transform.x);
-        var y = Math.round(state.transform.y);
-        if (DOM.stage) DOM.stage.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + state.transform.scale + ')';
+        var dpr = window.devicePixelRatio || 1;
+        var x = Math.round(state.transform.x * dpr) / dpr;
+        var y = Math.round(state.transform.y * dpr) / dpr;
+        var is100 = Math.abs(state.transform.scale - 1.0) < 0.001;
+
+        if (DOM.stage) {
+            if (is100) {
+                state.transform.scale = 1.0;
+                DOM.stage.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+            } else {
+                DOM.stage.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + state.transform.scale + ')';
+            }
+        }
         if (DOM.zoomTxt) DOM.zoomTxt.innerText = Math.round(state.transform.scale * 100) + '%';
 
         // 듀얼 뷰포트 토글 버튼 상태 동기화 (100% 선명 뷰 vs 화면 맞춤)
         var toggleBtn = document.getElementById('btn-crisp-toggle');
         var toggleIcon = document.getElementById('icon-crisp-toggle');
         if (toggleBtn && toggleIcon) {
-            var is100 = Math.abs(state.transform.scale - 1.0) < 0.02;
-            if (is100) {
+            var isCrispActive = Math.abs(state.transform.scale - 1.0) < 0.02;
+            if (isCrispActive) {
                 toggleIcon.innerText = 'fit_screen';
                 toggleBtn.title = '화면 맞춤으로 전환 (단축키: `)';
                 toggleBtn.style.color = 'var(--v4-accent, #00e5ff)';

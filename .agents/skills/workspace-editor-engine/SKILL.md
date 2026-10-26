@@ -91,8 +91,8 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **데이터 기반 정밀 연산 (Pure Data / No-Measure Strategy)**: 다중 선택 그룹화, 이동, 정렬 시 브라우저의 `getBoundingClientRect()`는 줌이나 테두리에 의해 오차가 발생할 수 있으므로 가급적 지양한다. 대신 객체의 **`style.left/top` 데이터**를 직접 읽어와 산술 연산하는 방식을 우선한다.
 - **캔버스 1:1 픽셀 매핑 및 텍스트 100% 선명도 보장 원칙 (Crisp Typography & Subpixel Integrity)**:
   - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_canvas_viewport.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 한다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단한다.
-  - **정수 픽셀 정렬 (`Math.round`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `Math.round()`를 거쳐 소수점 픽셀(`translate(12.35px)`)을 완전 제거하고 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 한다.
-  - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 유지하여 13px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장한다.
+  - **물리 픽셀 정렬 및 DPR 스냅 (`Math.round(val * dpr) / dpr`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `window.devicePixelRatio`를 고려하여 `Math.round(val * dpr) / dpr`을 거쳐 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 한다. 125%, 150% 등 윈도우 배율 환경에서의 서브픽셀 보간 블러를 원천 차단하며, 100% 해상도에서는 불필요한 `scale(1)` 없이 순수 2D 이동만 적용한다.
+  - **글로벌 폰트 안티앨리어싱 및 서브픽셀 무결성 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 DirectWrite ClearType RGB 서브픽셀 렌더링을 위해 `-webkit-font-smoothing: subpixel-antialiased !important;`, `text-rendering: geometricPrecision !important;`, `font-synthesis: none;`을 필수로 적용하여 13px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장한다.
 - **Group-Aware State Sync**: 요소가 그룹화되어 계층 구조가 변경되더라도 `metadata.json`에 저장되는 데이터는 항상 **전체 스크린(body) 기준의 절대 좌표(px)**를 유지해야 한다. 그룹 내 자식 요소의 뷰포트 좌표를 실시간 역산하여 전역 데이터로 동기화(`LF_UPDATE_PIN_POS` 등)해야 한다.
 
 - **MessageHub Nudge/Align/Undo**: Use MessageHub (`LF_NUDGE`, `LF_ALIGN_COMPONENTS`, `LF_SAVE_UNDO`) to synchronize keyboard movements and alignments from the parent window to the iframe components seamlessly.

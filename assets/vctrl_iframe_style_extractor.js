@@ -610,6 +610,7 @@ if (!window.v4IframeStyleExtractorScript) {
             isGroup: c.classList.contains('lf-group'),
             scrollFixed: c.getAttribute('data-scroll-fixed') || 'none',
             scrollEffect: c.getAttribute('data-scroll-effect') || 'always',
+            scrollDivider: c.hasAttribute('data-scroll-divider') && c.getAttribute('data-scroll-divider') !== 'false' && c.getAttribute('data-scroll-divider') !== 'none',
             isScrollPinnable: !!(c.closest && (c.closest('.mobile-content, .pc-content-area, .mobile-content-inner, .pc-content-inner, .mobile-frame, .pc-browser-frame') || document.querySelector('.mobile-content, .pc-content-area, .mobile-content-inner, .pc-content-inner'))),
             w: parseFloat(c.style.width) || c.offsetWidth || 200,
             h: parseFloat(c.style.height) || c.offsetHeight || 100,

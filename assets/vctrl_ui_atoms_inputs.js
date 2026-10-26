@@ -616,6 +616,7 @@ window.v4UIAtomsInputsScript = `
             if (d.height !== undefined) {
                 const hVal = typeof d.height === 'number' ? d.height + 'px' : d.height;
                 s.style.height = hVal;
+                s.setAttribute('data-resized', 'true');
                 container.style.height = '100%';
                 const header = container.querySelector('.v4-selectbox-header');
                 const isDrop = container.getAttribute('data-dropdown-active') === 'true';
@@ -634,7 +635,7 @@ window.v4UIAtomsInputsScript = `
                 
                 const header = container.querySelector('.v4-selectbox-header');
                 if (header) {
-                    header.style.height = '30px';
+                    header.style.height = isDrop ? '30px' : '100%';
                     header.style.width = '100%';
                 }
 
@@ -696,10 +697,15 @@ window.v4UIAtomsInputsScript = `
             if (container.getAttribute('data-dropdown-active') === 'true') {
                 const optCount = Math.max(1, optArr.length);
                 const targetH = (30 + (optCount * 30)) + 'px';
-                s.style.height = targetH;
+                if (d.height === undefined && (!s.getAttribute('data-resized') || d.dropdownActive !== undefined || d.options !== undefined)) {
+                    s.style.height = targetH;
+                }
                 container.style.height = '100%';
                 const header = container.querySelector('.v4-selectbox-header');
                 if (header) header.style.height = '30px';
+            } else {
+                const header = container.querySelector('.v4-selectbox-header');
+                if (header) header.style.height = '100%';
             }
 
             container._eventsBound = false;

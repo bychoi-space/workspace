@@ -306,8 +306,8 @@
 - **타이포그래피 가이드 및 텍스트 100% 선명도 유지 원칙 (Crisp Typography & Subpixel Integrity Protocol)**:
   - **폰트 크기 표준**: 대분류 타이틀: `18px` ~ `20px` / 중분류 헤더: `15px` ~ `16px` / 본문: `14px` ~ `15px` / 부가 설명: `13px` ~ `13.5px` / 최소 단위: `13px`
   - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_canvas_viewport.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 합니다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단합니다.
-  - **정수 픽셀 정렬 (`Math.round`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `Math.round()`를 거쳐 소수점 픽셀(`translate(12.35px)`)을 완전 제거하고 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 합니다.
-  - **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 유지하여 13px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장합니다.
+  - **물리 픽셀 정렬 및 DPR 스냅 (`Math.round(val * dpr) / dpr`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `window.devicePixelRatio`를 고려하여 `Math.round(val * dpr) / dpr`을 거쳐 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 합니다. 125%, 150% 등 윈도우 배율 환경에서의 서브픽셀 보간 블러를 원천 차단하며, 100% 해상도에서는 불필요한 `scale(1)` 없이 순수 2D 이동만 적용합니다.
+  - **글로벌 폰트 안티앨리어싱 및 서브픽셀 무결성 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 DirectWrite ClearType RGB 서브픽셀 렌더링을 위해 `-webkit-font-smoothing: subpixel-antialiased !important;`, `text-rendering: geometricPrecision !important;`, `font-synthesis: none;`을 필수로 적용하여 13px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장합니다.
   - **블러 필터 지양**: `backdrop-filter: blur(...)`와 같이 캔버스 줌/스케일 환경에서 텍스트 래스터화를 뭉개는 필터 속성은 텍스트 영역에 사용을 금지합니다.
 - **도형 배경색 반투명 조절 (Opacity 0% ~ 100%)**: 도형 자체에 `opacity`를 입힐 경우 내부 텍스트의 가독성이 무너지므로, 반드시 배경색의 알파값(`rgba`)만을 조합 및 추출하여 배경 투명도를 표현해야 합니다. 투명도 슬라이더와 컬러 피커는 상호 상태를 유지하며 갱신되어야 하고, 투명(None) 버튼 클릭 시 투명도는 0%로 강제 동기화되어야 합니다.
 - **도형 코너 스타일 설정**: Rect 도형 선택 시 코너 라운드 반경(Radius 0px ~ 100px 슬라이더) 제어 및 직각/라운드(0px / 8px 적용) 변환 원터치 컨트롤을 제공해야 합니다.

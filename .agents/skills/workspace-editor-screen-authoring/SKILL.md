@@ -206,9 +206,9 @@ description: Use when the user asks AI to create, draw, generate, design, or com
             background: #0f172a;
             font-family: 'Pretendard Variable', 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
             color: var(--v4-text);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: subpixel-antialiased;
+            text-rendering: geometricPrecision;
+            font-synthesis: none;
         }
         .canvas {
             width: 1600px;

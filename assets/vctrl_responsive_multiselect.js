@@ -28,10 +28,12 @@ window.v4ResponsiveMultiselectScript = `
 
     function recalculateTargetsForResponsive() {
         const correctedTargets = [];
-        const components = document.querySelectorAll('.lf-component:not(.connector-line)');
+        const components = document.querySelectorAll('.lf-component:not(.connector-line):not(.pin-marker):not(.text-marker):not(.v4-pin-marker)');
         
         components.forEach(function(c) {
             if (!c || !c.getBoundingClientRect) return;
+            if (c.id && c.id.startsWith('v4-pin-')) return;
+            if (c.closest && c.closest('.v4-pin-layer')) return;
             const rect = c.getBoundingClientRect();
             let isChild = false;
             let parent = c.parentElement;
@@ -261,14 +263,25 @@ window.v4ResponsiveMultiselectScript = `
                     boundH = vHeight;
                     boundL = 0;
 
-                    // Fixed HUD elements check (top or bottom fixed)
-                    const isFixedTop = el.getAttribute('data-scroll-fixed') === 'top';
-                    const isFixedBottom = el.getAttribute('data-scroll-fixed') === 'bottom';
+                    // Fixed HUD elements check (top, bottom, custom/floating, sticky)
+                    const fixedMode = el.getAttribute('data-scroll-fixed');
+                    const isFixedTop = fixedMode === 'top';
+                    const isFixedBottom = fixedMode === 'bottom';
+                    const isFixedCustom = fixedMode === 'custom' || fixedMode === 'floating';
+                    const isFixedSticky = fixedMode === 'sticky';
+                    const isFixedStickyBottom = fixedMode === 'sticky-bottom';
 
                     if (isFixedTop) {
                         boundT = 0;
                     } else if (isFixedBottom) {
                         boundT = Math.max(0, sTop + vHeight - item.h);
+                    } else if (isFixedCustom) {
+                        const targetY = parseFloat(el.getAttribute('data-scroll-target-y')) || item.initTop;
+                        boundT = targetY;
+                    } else if (isFixedSticky) {
+                        boundT = 0;
+                    } else if (isFixedStickyBottom) {
+                        boundT = 0;
                     } else {
                         boundT = sTop;
                     }
@@ -578,8 +591,14 @@ window.v4ResponsiveMultiselectScript = `
                     
                     const doc = document;
                     const host = doc.body;
-        
-                    const comps = ids.map(id => doc.getElementById(id)).filter(el => el && !el.classList.contains('connector-line'));
+                    const comps = ids.map(id => doc.getElementById(id)).filter(el => {
+                        if (!el) return false;
+                        if (el.classList.contains('connector-line')) return false;
+                        if (el.classList.contains('pin-marker') || el.classList.contains('text-marker') || el.classList.contains('v4-pin-marker')) return false;
+                        if (el.id && el.id.startsWith('v4-pin-')) return false;
+                        if (el.closest && el.closest('.v4-pin-layer')) return false;
+                        return true;
+                    });
                     const groupedConnectorIds = ids.filter(id => id.startsWith('conn_'));
                     if (comps.length < 2 && (comps.length + groupedConnectorIds.length) < 2) return;
         
@@ -652,6 +671,9 @@ window.v4ResponsiveMultiselectScript = `
                     
                     const topmostComp = comps[comps.length - 1] || (items.length > 0 ? items[items.length - 1].el : null);
                     let groupParent = (topmostComp && topmostComp.parentNode) ? topmostComp.parentNode : host;
+                    if (groupParent && (groupParent.classList.contains('v4-pin-layer') || (groupParent.closest && groupParent.closest('.v4-pin-layer')))) {
+                        groupParent = (groupParent.closest && groupParent.closest('.pc-content-inner, .mobile-content-inner, .canvas, .page, #canvas-page, #canvas')) || host;
+                    }
                     if (groupParent && groupParent.querySelector && (!groupParent.classList || (!groupParent.classList.contains('pc-content-inner') && !groupParent.classList.contains('mobile-content-inner')))) {
                         const childInner = groupParent.querySelector('.pc-content-inner, .mobile-content-inner');
                         if (childInner) groupParent = childInner;
@@ -726,6 +748,25 @@ window.v4ResponsiveMultiselectScript = `
                     const minChildZ = childZs.length > 0 ? Math.min(...childZs) : 1000;
                     const newIds = [];
         
+                    let targetParent = group.parentNode;
+                    if (targetParent && (targetParent.classList.contains('v4-pin-layer') || (targetParent.closest && targetParent.closest('.v4-pin-layer')))) {
+                        targetParent = (targetParent.closest && targetParent.closest('.pc-content-inner, .mobile-content-inner, .canvas, .page, #canvas-page, #canvas')) || host;
+                    }
+
+                    // Check if group was pinned in Tier 2 (100,000+)
+                    const isGroupFixed = group.hasAttribute('data-scroll-fixed') || groupZ >= 100000;
+                    let baseUngroupZ = groupZ;
+                    if (isGroupFixed) {
+                        const preFixedZ = parseInt(group.getAttribute('data-pre-fixed-z'), 10);
+                        if (!isNaN(preFixedZ) && preFixedZ > 0 && preFixedZ < 100000) {
+                            baseUngroupZ = preFixedZ;
+                        } else {
+                            baseUngroupZ = (typeof window.getNextTopZIndex === 'function')
+                                ? window.getNextTopZIndex(targetParent, false)
+                                : 1050;
+                        }
+                    }
+
                     children.forEach((c, idx) => {
                         if (!c.id) c.id = 'v4-comp-ug-' + Date.now() + '-' + idx;
         
@@ -742,20 +783,52 @@ window.v4ResponsiveMultiselectScript = `
                         c.style.width = w + 'px';
                         c.style.height = h + 'px';
         
-                        // Rebase children z-index to match group's topmost layer depth
+                        // Rebase children z-index to match group's topmost layer depth (or Tier 1 if group was fixed)
                         const origZ = childZs[idx] || 1000;
                         const relOffset = Math.max(0, origZ - minChildZ);
-                        c.style.zIndex = String(groupZ + relOffset);
-        
-                        const isMarker = c.classList.contains('text-marker');
-                        if (isMarker && c.id.startsWith('v4-pin-')) {
-                            const pinIdx = parseInt(c.getAttribute('data-index')) || parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                            notifyParent({ type: 'LF_UPDATE_PIN_POS', index: pinIdx, x: absL, y: absT });
+                        c.style.zIndex = String(baseUngroupZ + relOffset);
+
+                        // If group was fixed and is now ungrouped, clean up any scroll fixed attributes on children
+                        if (isGroupFixed) {
+                            c.removeAttribute('data-scroll-fixed');
+                            c.removeAttribute('data-scroll-effect');
+                            c.removeAttribute('data-scroll-target-y');
+                            c.removeAttribute('data-scroll-sticky-top');
+                            c.removeAttribute('data-scroll-sticky-bottom');
+                            c.removeAttribute('data-scroll-divider');
+                            c.removeAttribute('data-scroll-divider-active');
+                            c.removeAttribute('data-pre-fixed-z');
+                            c.style.removeProperty('transform');
+                            c.style.removeProperty('will-change');
+                            c.style.removeProperty('transition');
                         }
-                        c.classList.add('selected');
-                        newIds.push(c.id);
-                        // Insert child back into the DOM exactly where the group container was
-                        group.parentNode.insertBefore(c, group);
+        
+                        const isMarker = c.classList.contains('text-marker') || c.classList.contains('pin-marker') || (c.id && c.id.startsWith('v4-pin-'));
+                        if (isMarker) {
+                            const pinIdx = parseInt(c.getAttribute('data-index')) || parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
+                            if (!isNaN(pinIdx)) {
+                                notifyParent({ type: 'LF_UPDATE_PIN_POS', index: pinIdx, x: absL, y: absT });
+                            }
+                            const pinLayer = (targetParent && targetParent.querySelector) ? targetParent.querySelector(':scope > .v4-pin-layer, .v4-pin-layer') : null;
+                            if (pinLayer) {
+                                pinLayer.appendChild(c);
+                            } else if (targetParent) {
+                                targetParent.appendChild(c);
+                            }
+                        } else {
+                            c.classList.add('selected');
+                            newIds.push(c.id);
+                            if (group.parentNode === targetParent) {
+                                targetParent.insertBefore(c, group);
+                            } else {
+                                const trailingRef = Array.from(targetParent.children).find(item => (item.classList && item.classList.contains('v4-pin-layer')) || (!item.classList.contains('lf-component') && (item.tagName === 'SCRIPT' || item.id === 'v4-inlined-script')));
+                                if (trailingRef && trailingRef.parentNode === targetParent) {
+                                    targetParent.insertBefore(c, trailingRef);
+                                } else {
+                                    targetParent.appendChild(c);
+                                }
+                            }
+                        }
                     });
         
                     groupedConnectorIds.forEach(connId => {

@@ -66,6 +66,35 @@ if (!window.v4IframeLayeringScript) {
             if (anc.classList.contains('frame-column')) break;
             anc = anc.parentElement;
         }
+
+        // [Self-Healing Defense] Check for components trapped inside .v4-pin-layer
+        var pinLayers = inn.querySelectorAll ? inn.querySelectorAll('.v4-pin-layer') : [];
+        pinLayers.forEach(function(pinLayer) {
+            var trappedComps = Array.from(pinLayer.children || []).filter(function(c) {
+                return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && (!c.id || !c.id.startsWith('v4-pin-'));
+            });
+            if (trappedComps.length > 0) {
+                trappedComps.forEach(function(tc) {
+                    var nestedPins = Array.from(tc.querySelectorAll('.pin-marker, .text-marker, [id^="v4-pin-"]'));
+                    nestedPins.forEach(function(np) {
+                        var grpL = parseFloat(tc.style.left) || 0;
+                        var grpT = parseFloat(tc.style.top) || 0;
+                        var pinRelL = parseFloat(np.style.left) || 0;
+                        var pinRelT = parseFloat(np.style.top) || 0;
+                        np.style.left = (grpL + pinRelL) + 'px';
+                        np.style.top = (grpT + pinRelT) + 'px';
+                        pinLayer.appendChild(np);
+                    });
+                    var curZ = parseInt(tc.style.zIndex, 10);
+                    if (isNaN(curZ) || curZ <= V4_Z_TIERS.CONTENT_MIN + 20) {
+                        tc.style.zIndex = String(typeof window.getNextTopZIndex === 'function' ? window.getNextTopZIndex(inn) : (V4_Z_TIERS.CONTENT_MIN + 100));
+                    }
+                    insertBeforeTrailingRef(inn, tc);
+                });
+                healed = true;
+            }
+        });
+
         return healed;
     }
 
@@ -247,19 +276,16 @@ if (!window.v4IframeLayeringScript) {
     function resolveAndHealParent(el, realCanvasHost) {
         var p = el.parentElement;
         if (!p) return null;
+        if (p.classList && p.classList.contains('v4-pin-layer')) {
+            var corrected = p.closest ? p.closest('.pc-content-inner, .mobile-content-inner, .canvas, .page, #canvas-page, #canvas') : null;
+            if (!el.classList.contains('pin-marker') && !el.classList.contains('text-marker') && (!el.id || !el.id.startsWith('v4-pin-'))) {
+                p = corrected || realCanvasHost || document.body;
+                insertBeforeTrailingRef(p, el);
+            }
+        }
         if (p === document.body && realCanvasHost && realCanvasHost !== document.body) {
             realCanvasHost.appendChild(el);
             p = realCanvasHost;
-        }
-        if (p.querySelector && (!p.classList || (!p.classList.contains('pc-content-inner') && !p.classList.contains('mobile-content-inner')))) {
-            var childInner = p.querySelector('.pc-content-inner, .mobile-content-inner');
-            if (childInner && !el.classList.contains('frame-column')) {
-                healLeakedComponentsForInner(childInner);
-                if (el.parentElement !== childInner) {
-                    insertBeforeTrailingRef(childInner, el);
-                }
-                p = childInner;
-            }
         }
         return p;
     }
@@ -340,10 +366,6 @@ if (!window.v4IframeLayeringScript) {
                     return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
                 });
 
-                var fixedHudInParent = Array.from(parent.children).find(function(c) {
-                    return c.hasAttribute && c.hasAttribute('data-scroll-fixed');
-                });
-
                 items.forEach(function(el) {
                     var isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
                     if (isPin) {
@@ -359,50 +381,16 @@ if (!window.v4IframeLayeringScript) {
 
                     var isFixed = el.hasAttribute('data-scroll-fixed');
                     var targetZ;
-                    var elCurZ = parseInt(el.style.zIndex, 10) || V4_Z_TIERS.CONTENT_MIN;
 
                     if (isFixed) {
                         var baseline = Math.max(V4_Z_TIERS.FIXED_HUD_MIN, maxAnyZ);
                         maxFixedZ = Math.min(V4_Z_TIERS.FIXED_HUD_MAX, Math.max(maxFixedZ, baseline) + 10);
                         targetZ = maxFixedZ;
                     } else {
-                        var shouldPromoteToHUD = false;
-                        if (fixedHudInParent) {
-                            var elTop = parseFloat(el.style.top) || 0;
-                            var elLeft = parseFloat(el.style.left) || 0;
-                            var elW = el.offsetWidth || parseFloat(el.style.width) || 100;
-                            var elH = el.offsetHeight || parseFloat(el.style.height) || 100;
-
-                            var hudTop = parseFloat(fixedHudInParent.style.top) || 0;
-                            var hudLeft = parseFloat(fixedHudInParent.style.left) || 0;
-                            var hudW = fixedHudInParent.offsetWidth || parseFloat(fixedHudInParent.style.width) || 360;
-                            var hudH = fixedHudInParent.offsetHeight || parseFloat(fixedHudInParent.style.height) || 60;
-
-                            var isOverlapping = (elLeft < (hudLeft + hudW) && (elLeft + elW) > hudLeft &&
-                                                 elTop < (hudTop + hudH) && (elTop + elH) > hudTop);
-
-                            if (isOverlapping || elCurZ >= maxNormalZ) {
-                                shouldPromoteToHUD = true;
-                            }
-                        }
-
-                        if (shouldPromoteToHUD) {
-                            maxFixedZ = Math.min(V4_Z_TIERS.FIXED_HUD_MAX, Math.max(maxFixedZ, V4_Z_TIERS.FIXED_HUD_MIN, maxAnyZ) + 10);
-                            targetZ = maxFixedZ;
-                            if (fixedHudInParent && !el.hasAttribute('data-scroll-fixed')) {
-                                var fixedMode = fixedHudInParent.getAttribute('data-scroll-fixed') || 'top';
-                                el.setAttribute('data-scroll-fixed', fixedMode);
-                                el.style.willChange = 'transform';
-                                if (window.ScrollPinEngine && typeof window.ScrollPinEngine.scheduleUpdate === 'function') {
-                                    window.ScrollPinEngine.scheduleUpdate();
-                                }
-                            }
-                        } else {
-                            maxNormalZ = Math.min(V4_Z_TIERS.CONTENT_MAX, maxNormalZ + 10);
-                            targetZ = maxNormalZ;
-                            if (targetZ >= V4_Z_TIERS.CONTENT_MAX) {
-                                normalizeZIndices(parent, true);
-                            }
+                        maxNormalZ = Math.min(V4_Z_TIERS.CONTENT_MAX, maxNormalZ + 10);
+                        targetZ = maxNormalZ;
+                        if (targetZ >= V4_Z_TIERS.CONTENT_MAX) {
+                            normalizeZIndices(parent, true);
                         }
                     }
                     el.style.zIndex = String(targetZ);

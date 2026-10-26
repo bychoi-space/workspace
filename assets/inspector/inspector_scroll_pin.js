@@ -30,6 +30,9 @@
             } else if (mode === 'sticky') {
                 const stickyTop = (extraOptions && extraOptions.stickyTop !== undefined) ? extraOptions.stickyTop : 0;
                 payload.stickyTop = stickyTop;
+            } else if (mode === 'sticky-bottom') {
+                const stickyBottom = (extraOptions && extraOptions.stickyBottom !== undefined) ? extraOptions.stickyBottom : 0;
+                payload.stickyBottom = stickyBottom;
             }
 
             if (extraOptions && extraOptions.effect !== undefined) {
@@ -40,22 +43,33 @@
                 const curEffect = el.getAttribute('data-scroll-effect') || 'always';
                 payload.effect = curEffect;
             }
+
+            if (extraOptions && extraOptions.divider !== undefined) {
+                payload.divider = !!extraOptions.divider;
+            } else if (mode === 'none') {
+                payload.divider = false;
+            } else {
+                const curDivider = el.hasAttribute('data-scroll-divider') && el.getAttribute('data-scroll-divider') !== 'false' && el.getAttribute('data-scroll-divider') !== 'none';
+                payload.divider = curDivider;
+            }
         }
 
-        if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_SET_SCROLL_FIXED', payload);
-        }
+        const messagePayload = Object.assign({ type: 'LF_SET_SCROLL_FIXED' }, payload);
         if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
-            window.EditorBus.sendToIframe('LF_SET_SCROLL_FIXED', payload);
+            window.EditorBus.sendToIframe(messagePayload);
+        } else if (iframe && iframe.contentWindow && window.MessageHub) {
+            window.MessageHub.send(iframe.contentWindow, 'LF_SET_SCROLL_FIXED', payload);
         }
 
         if (window.state && window.state.selectedComponent) {
             window.state.selectedComponent.scrollFixed = mode;
             if (payload.effect) window.state.selectedComponent.scrollEffect = payload.effect;
+            if (payload.divider !== undefined) window.state.selectedComponent.scrollDivider = payload.divider;
         }
         if (window.state && window.state.selectedComponentStyles) {
             window.state.selectedComponentStyles.scrollFixed = mode;
             if (payload.effect) window.state.selectedComponentStyles.scrollEffect = payload.effect;
+            if (payload.divider !== undefined) window.state.selectedComponentStyles.scrollDivider = payload.divider;
         }
 
         if (isPin && el) {
@@ -106,6 +120,7 @@
         const btnBottom = document.getElementById('btn-scroll-pin-bottom');
         const btnCustom = document.getElementById('btn-scroll-pin-custom');
         const btnSticky = document.getElementById('btn-scroll-pin-sticky');
+        const btnStickyBottom = document.getElementById('btn-scroll-pin-sticky-bottom');
 
         const btnPinContent = document.getElementById('btn-pin-pos-content');
         const btnPinFixed = document.getElementById('btn-pin-pos-fixed');
@@ -119,6 +134,9 @@
         const offsetInput = document.getElementById('scroll-pin-offset-input');
         const effectBar = document.getElementById('scroll-pin-effect-bar');
         const effectSelect = document.getElementById('scroll-pin-effect-select');
+        const dividerBar = document.getElementById('scroll-pin-divider-bar');
+        const dividerLabel = document.getElementById('scroll-pin-divider-label');
+        const dividerToggle = document.getElementById('scroll-pin-divider-toggle');
 
         if (isPin) {
             if (titleText) titleText.innerText = 'PIN ANCHOR';
@@ -126,6 +144,7 @@
             if (markerGroup) markerGroup.style.display = 'flex';
             if (offsetBar) offsetBar.style.display = 'none';
             if (effectBar) effectBar.style.display = 'none';
+            if (dividerBar) dividerBar.style.display = 'none';
 
             const isFixedPin = (mode === 'viewport' || mode === 'fixed' || mode === 'top');
             if (btnPinContent) btnPinContent.classList.toggle('active', !isFixedPin);
@@ -145,13 +164,14 @@
             if (objGroup) objGroup.style.display = 'flex';
             if (markerGroup) markerGroup.style.display = 'none';
 
-            const pinMode = (mode === 'top' || mode === 'bottom' || mode === 'custom' || mode === 'floating' || mode === 'sticky') ? mode : 'none';
+            const pinMode = (mode === 'top' || mode === 'bottom' || mode === 'custom' || mode === 'floating' || mode === 'sticky' || mode === 'sticky-bottom') ? mode : 'none';
 
             if (btnNone) btnNone.classList.toggle('active', pinMode === 'none');
             if (btnTop) btnTop.classList.toggle('active', pinMode === 'top');
             if (btnBottom) btnBottom.classList.toggle('active', pinMode === 'bottom');
             if (btnCustom) btnCustom.classList.toggle('active', pinMode === 'custom' || pinMode === 'floating');
             if (btnSticky) btnSticky.classList.toggle('active', pinMode === 'sticky');
+            if (btnStickyBottom) btnStickyBottom.classList.toggle('active', pinMode === 'sticky-bottom');
 
             if (effectBar) {
                 if (pinMode === 'top' || pinMode === 'bottom' || pinMode === 'custom') {
@@ -162,6 +182,29 @@
                     }
                 } else {
                     effectBar.style.display = 'none';
+                }
+            }
+
+            if (dividerBar) {
+                if (pinMode !== 'none') {
+                    dividerBar.style.display = 'flex';
+                    if (dividerLabel) {
+                        if (pinMode === 'top' || pinMode === 'sticky') {
+                            dividerLabel.innerText = '하단 구분선 (Border Bottom)';
+                        } else if (pinMode === 'bottom' || pinMode === 'sticky-bottom') {
+                            dividerLabel.innerText = '상단 구분선 (Border Top)';
+                        } else {
+                            dividerLabel.innerText = '경계 구분선 (Divider Line)';
+                        }
+                    }
+                    if (dividerToggle) {
+                        dividerToggle.checked = !!(payload && payload.divider);
+                    }
+                } else {
+                    dividerBar.style.display = 'none';
+                    if (dividerToggle) {
+                        dividerToggle.checked = false;
+                    }
                 }
             }
 
@@ -177,6 +220,12 @@
                     offsetLabel.innerText = 'STICKY TOP';
                     if (payload && payload.stickyTop !== undefined) {
                         offsetInput.value = Math.round(payload.stickyTop);
+                    }
+                } else if (pinMode === 'sticky-bottom') {
+                    offsetBar.style.display = 'flex';
+                    offsetLabel.innerText = 'STICKY BOTTOM';
+                    if (payload && payload.stickyBottom !== undefined) {
+                        offsetInput.value = Math.round(payload.stickyBottom);
                     }
                 } else {
                     offsetBar.style.display = 'none';
@@ -200,6 +249,9 @@
                 } else if (pinMode === 'sticky') {
                     badge.innerText = 'STICKY';
                     badge.classList.add('badge-sticky');
+                } else if (pinMode === 'sticky-bottom') {
+                    badge.innerText = 'STICKY (하단)';
+                    badge.classList.add('badge-sticky-bottom');
                 } else {
                     badge.innerText = 'SCROLL';
                 }
@@ -223,6 +275,8 @@
         let currentEffect = (compStyles && compStyles.scrollEffect) || 'always';
         let targetY = undefined;
         let stickyTop = undefined;
+        let stickyBottom = undefined;
+        let hasDivider = false;
 
         try {
             const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
@@ -251,6 +305,14 @@
                     } else {
                         stickyTop = 0;
                     }
+                    if (el.hasAttribute('data-scroll-sticky-bottom')) {
+                        stickyBottom = parseFloat(el.getAttribute('data-scroll-sticky-bottom'));
+                    } else {
+                        stickyBottom = 0;
+                    }
+                    hasDivider = (compStyles && compStyles.scrollDivider !== undefined)
+                        ? !!compStyles.scrollDivider
+                        : (el.hasAttribute('data-scroll-divider') && el.getAttribute('data-scroll-divider') !== 'false' && el.getAttribute('data-scroll-divider') !== 'none');
                 }
             }
         } catch(e) {}
@@ -259,7 +321,13 @@
 
         if (shouldShow) {
             scrollPinBar.style.setProperty('display', 'flex', 'important');
-            updateButtonsUI(currentFixed, isPin, { targetY: targetY, stickyTop: stickyTop, effect: currentEffect });
+            updateButtonsUI(currentFixed, isPin, {
+                targetY: targetY,
+                stickyTop: stickyTop,
+                stickyBottom: stickyBottom,
+                effect: currentEffect,
+                divider: hasDivider
+            });
         } else {
             scrollPinBar.style.setProperty('display', 'none', 'important');
         }
@@ -271,6 +339,7 @@
         const btnBottom = document.getElementById('btn-scroll-pin-bottom');
         const btnCustom = document.getElementById('btn-scroll-pin-custom');
         const btnSticky = document.getElementById('btn-scroll-pin-sticky');
+        const btnStickyBottom = document.getElementById('btn-scroll-pin-sticky-bottom');
 
         const btnPinContent = document.getElementById('btn-pin-pos-content');
         const btnPinFixed = document.getElementById('btn-pin-pos-fixed');
@@ -307,6 +376,12 @@
                 setScrollPin('sticky');
             };
         }
+        if (btnStickyBottom) {
+            btnStickyBottom.onclick = (e) => {
+                e.stopPropagation();
+                setScrollPin('sticky-bottom');
+            };
+        }
 
         if (effectSelect) {
             effectSelect.onchange = (e) => {
@@ -319,6 +394,22 @@
                 const curMode = el.getAttribute('data-scroll-fixed') || 'none';
                 if (curMode !== 'none') {
                     setScrollPin(curMode, { effect: effectSelect.value });
+                }
+            };
+        }
+
+        const dividerToggle = document.getElementById('scroll-pin-divider-toggle');
+        if (dividerToggle) {
+            dividerToggle.onchange = (e) => {
+                e.stopPropagation();
+                const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
+                if (!selIds || selIds.length === 0) return;
+                const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
+                const el = iframeDoc?.getElementById(selIds[0]);
+                if (!el) return;
+                const curMode = el.getAttribute('data-scroll-fixed') || 'none';
+                if (curMode !== 'none') {
+                    setScrollPin(curMode, { divider: dividerToggle.checked });
                 }
             };
         }
@@ -350,6 +441,8 @@
                     setScrollPin('custom', { targetY: val });
                 } else if (curMode === 'sticky') {
                     setScrollPin('sticky', { stickyTop: val });
+                } else if (curMode === 'sticky-bottom') {
+                    setScrollPin('sticky-bottom', { stickyBottom: val });
                 }
             };
             offsetInput.onchange = handleOffsetChange;

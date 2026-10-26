@@ -17,9 +17,8 @@ window.v4Styles = `
 body, .page, .lf-component { 
     -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
     font-family: var(--v4-font-family) !important; 
-    -webkit-font-smoothing: antialiased !important; 
-    -moz-osx-font-smoothing: grayscale !important;
-    text-rendering: optimizeLegibility !important; 
+    -webkit-font-smoothing: subpixel-antialiased !important; 
+    text-rendering: geometricPrecision !important; 
     font-synthesis: none;
 }
 .lf-component img {
@@ -33,9 +32,8 @@ body, .page, .lf-component {
 .v4-editable-cell, [contenteditable="true"] { 
     -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; 
     font-family: inherit !important; 
-    -webkit-font-smoothing: antialiased !important; 
-    -moz-osx-font-smoothing: grayscale !important;
-    text-rendering: optimizeLegibility !important; 
+    -webkit-font-smoothing: subpixel-antialiased !important; 
+    text-rendering: geometricPrecision !important; 
     font-synthesis: none;
 }
 .lf-component { 
@@ -50,11 +48,13 @@ body, .page, .lf-component {
 .lf-component[data-scroll-fixed="custom"],
 .lf-component[data-scroll-fixed="floating"],
 .lf-component[data-scroll-fixed="sticky"],
+.lf-component[data-scroll-fixed="sticky-bottom"],
 .lf-group[data-scroll-fixed="top"],
 .lf-group[data-scroll-fixed="bottom"],
 .lf-group[data-scroll-fixed="custom"],
 .lf-group[data-scroll-fixed="floating"],
-.lf-group[data-scroll-fixed="sticky"] {
+.lf-group[data-scroll-fixed="sticky"],
+.lf-group[data-scroll-fixed="sticky-bottom"] {
     z-index: 100000;
     will-change: transform;
 }
@@ -96,6 +96,20 @@ body, .page, .lf-component {
 .lf-group[data-scroll-fixed="sticky"].selected::after {
     content: 'STICKY';
     top: -18px;
+}
+.lf-component[data-scroll-fixed="sticky-bottom"].selected::after,
+.lf-group[data-scroll-fixed="sticky-bottom"].selected::after {
+    content: 'STICKY BOTTOM';
+    bottom: -18px;
+}
+/* --- Scroll Pin Divider Separation Lines (Zero-Reflow Box-Shadow, Active When Pinned) --- */
+.lf-component[data-scroll-divider="bottom"][data-scroll-divider-active="true"],
+.lf-group[data-scroll-divider="bottom"][data-scroll-divider-active="true"] {
+    box-shadow: 0 1px 0 0 #e2e8f0 !important;
+}
+.lf-component[data-scroll-divider="top"][data-scroll-divider-active="true"],
+.lf-group[data-scroll-divider="top"][data-scroll-divider-active="true"] {
+    box-shadow: 0 -1px 0 0 #e2e8f0 !important;
 }
 /* --- Legacy Handle Safety Nullification --- */
 .lf-drag-handle,
@@ -403,8 +417,9 @@ svg.lf-icon:not(.v4-logo-img) polygon,
     cursor: not-allowed !important;
 }
 .v4-selectbox-container { display: flex !important; flex-direction: column !important; box-sizing: border-box !important; position: relative !important; width: 100% !important; height: 100% !important; }
-.v4-selectbox-header { height: 30px !important; min-height: 30px !important; max-height: 30px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; box-sizing: border-box !important; }
-.v4-selectbox-container[data-dropdown-active="true"] .v4-selectbox-header { border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+.v4-selectbox-header { width: 100% !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; box-sizing: border-box !important; }
+.v4-selectbox-container[data-dropdown-active="false"] .v4-selectbox-header { height: 100% !important; }
+.v4-selectbox-container[data-dropdown-active="true"] .v4-selectbox-header { height: 30px !important; min-height: 30px !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; }
 .v4-selectbox-container[data-dropdown-active="true"] svg { transform: rotate(180deg); }
 .v4-selectbox-container[data-dropdown-active="false"] .v4-selectbox-options { display: none !important; }
 .v4-selectbox-container[data-dropdown-active="true"] .v4-selectbox-options { display: block !important; }

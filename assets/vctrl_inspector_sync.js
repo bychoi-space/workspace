@@ -304,6 +304,8 @@
                 document.querySelectorAll('.v4-prop-input[data-prop="width"]').forEach(inp => {
                     if (inp.id === 'prop-width-icon') return;
                     if (isNewComp || inp !== document.activeElement) inp.value = wVal;
+                    if (compStyles && compStyles.id) inp.dataset.boundCompId = compStyles.id;
+                    if (isNewComp) delete inp.dataset.editingCompId;
                 });
             }
             if (rawH !== undefined && !isNaN(parseFloat(rawH))) {
@@ -311,6 +313,8 @@
                 document.querySelectorAll('.v4-prop-input[data-prop="height"]').forEach(inp => {
                     if (inp.id === 'prop-height-icon') return;
                     if (isNewComp || inp !== document.activeElement) inp.value = hVal;
+                    if (compStyles && compStyles.id) inp.dataset.boundCompId = compStyles.id;
+                    if (isNewComp) delete inp.dataset.editingCompId;
                 });
             }
         }

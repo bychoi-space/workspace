@@ -294,8 +294,8 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 
 ## 🔤 Typography & Subpixel Sharpness Standards (텍스트 100% 선명도 유지 대원칙)
 - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: 뷰포트 센터링 및 리사이즈 시 화면 스케일 `s`가 0.96 이상일 때는 소수점 축소로 인한 폰트 다운샘플링 왜곡(Blurring)을 원천 차단하기 위해 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**한다.
-- **정수 픽셀 렌더링 (`Math.round`)**: 캔버스 `stage`의 `translate(x, y)` 연산 시 소수점 픽셀(`12.35px` 등)을 완전 제거하고 `Math.round`로 물리 디스플레이 픽셀 그리드에 1:1로 안착시킨다.
-- **글로벌 폰트 안티앨리어싱 보장**: 모든 텍스트 컴포넌트, 테이블 셀, 입력 폼, iframe 내부 스타일에는 `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `text-rendering: optimizeLegibility`를 필수로 적용 및 유지한다.
+- **물리 픽셀 렌더링 및 DPR 스냅 (`Math.round(val * dpr) / dpr`)**: 캔버스 `stage`의 `translate(x, y)` 연산 시 `window.devicePixelRatio`를 고려하여 `Math.round(val * dpr) / dpr`로 물리 디스플레이 픽셀 그리드에 1:1로 안착시키며, 100% 해상도에서는 불필요한 `scale(1)` 없이 순수 2D 이동만 적용한다.
+- **글로벌 폰트 안티앨리어싱 및 서브픽셀 무결성 보장**: 모든 텍스트 컴포넌트, 테이블 셀, 입력 폼, iframe 내부 스타일에는 DirectWrite ClearType RGB 서브픽셀 렌더링을 위해 `-webkit-font-smoothing: subpixel-antialiased !important;`, `text-rendering: geometricPrecision !important;`, `font-synthesis: none;`을 필수로 적용 및 유지한다.
 - **블러 필터 지양**: `backdrop-filter: blur(...)`처럼 캔버스 줌/스케일 환경에서 폰트 서브픽셀 래스터화를 뭉개는 속성은 텍스트 영역에 사용을 금지한다.
 
 ## 📌 Scroll Pin Inspector UI & Dynamic Effect Controls (#selection-scroll-pin-bar)

@@ -2488,6 +2488,12 @@ body.fullscreen-mode .stage {
     border-color: rgba(16, 185, 129, 0.4);
     box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
 }
+.scroll-pin-badge.badge-sticky-bottom {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.2);
+}
 .scroll-pin-badge.badge-viewport {
     background: rgba(236, 72, 153, 0.2);
     color: #f472b6;
@@ -2522,11 +2528,11 @@ body.fullscreen-mode .stage {
 .scroll-pin-btn {
     flex: 1 1 0 !important;
     min-width: 0 !important;
-    height: 27px !important;
-    min-height: 27px !important;
-    max-height: 27px !important;
-    padding: 0 4px !important;
-    font-size: 11px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    padding: 3px 2px !important;
+    font-size: 10px !important;
     font-weight: 600 !important;
     border-radius: 4px !important;
     background: transparent !important;
@@ -2534,9 +2540,10 @@ body.fullscreen-mode .stage {
     color: #94a3b8 !important;
     cursor: pointer;
     display: inline-flex !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 4px !important;
+    gap: 3px !important;
     box-shadow: none !important;
     transition: all 0.15s ease !important;
     white-space: nowrap !important;
@@ -2546,11 +2553,15 @@ body.fullscreen-mode .stage {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    line-height: 1 !important;
+    line-height: 1.1 !important;
+    font-size: 10px !important;
+    letter-spacing: -0.4px !important;
+    max-width: 100% !important;
+    text-align: center !important;
 }
 .scroll-pin-btn .lf-icon {
-    width: 12px !important;
-    height: 12px !important;
+    width: 14px !important;
+    height: 14px !important;
     stroke-width: 1.8 !important;
     flex-shrink: 0 !important;
 }
@@ -2592,6 +2603,13 @@ body.fullscreen-mode .stage {
     color: #34d399 !important;
     font-weight: 700 !important;
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.3) !important;
+}
+.scroll-pin-btn.active[data-pin="sticky-bottom"] {
+    background: rgba(99, 102, 241, 0.22) !important;
+    border-color: #6366f1 !important;
+    color: #818cf8 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3) !important;
 }
 .scroll-pin-btn.active[data-pin="viewport"] {
     background: rgba(236, 72, 153, 0.22) !important;
@@ -2711,6 +2729,69 @@ body.fullscreen-mode .stage {
     font-size: 10px;
     color: #64748b;
     font-weight: 600;
+}
+/* --- Scroll Pin Divider Bar & Toggle Switch --- */
+.scroll-pin-divider-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 2px;
+}
+.scroll-pin-divider-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.v4-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.v4-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+.v4-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.v4-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 10px;
+    width: 10px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #94a3b8;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 50%;
+}
+.v4-toggle-switch input:checked + .v4-toggle-slider {
+    background-color: #6366f1;
+    border-color: #818cf8;
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+}
+.v4-toggle-switch input:checked + .v4-toggle-slider:before {
+    transform: translateX(14px);
+    background-color: #ffffff;
 }
 .desc-pin-fixed-badge {
     font-size: 9px;

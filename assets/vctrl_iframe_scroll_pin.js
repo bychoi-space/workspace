@@ -118,7 +118,7 @@ window.v4ScrollPinScript = `
 
         bindAllContainers: function() {
             var self = this;
-            var containers = document.querySelectorAll('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
+            var containers = document.querySelectorAll('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content, .chrome-content-area');
             containers.forEach(function(container) {
                 if (!self.boundContainers.has(container)) {
                     self.boundContainers.add(container);
@@ -203,6 +203,7 @@ window.v4ScrollPinScript = `
                 var scrollTop = scrollArea.scrollTop || 0;
                 var dy = 0;
                 var isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
+                var isActivelyFixed = false;
 
                 // Check host-pinned cascade first for pins sitting on a pinned component
                 if (isPin && el.hasAttribute('data-fixed-host')) {
@@ -251,6 +252,7 @@ window.v4ScrollPinScript = `
                     } else {
                         dy = scrollTop - domTop;
                     }
+                    isActivelyFixed = (scrollTop > Math.max(0, domTop)) && !isHidden;
                 } else if (mode === 'bottom') {
                     // Pinned to Bottom of Viewport with Optional Scroll Effect (hide-down / hide-up)
                     var viewportH = scrollArea.clientHeight || 810;
@@ -262,6 +264,8 @@ window.v4ScrollPinScript = `
                     } else {
                         dy = scrollTop + (targetViewportTop - domTop);
                     }
+                    var isAtNaturalRest = (scrollTop <= 0 && Math.abs(domTop - targetViewportTop) <= 2);
+                    isActivelyFixed = !isAtNaturalRest && !isHidden;
                 } else if (mode === 'custom' || mode === 'floating') {
                     // Custom Floating HUD: Maintain specified or captured viewport Y offset
                     var domTop = parseFloat(el.style.top) || 0;
@@ -274,6 +278,7 @@ window.v4ScrollPinScript = `
                     } else {
                         dy = scrollTop + (targetViewportY - domTop);
                     }
+                    isActivelyFixed = (scrollTop > 0 || Math.abs(dy) > 2) && !isHidden;
                 } else if (mode === 'sticky') {
                     // Threshold Sticky HUD: Scroll with content until reaching target threshold from viewport top
                     var domTop = parseFloat(el.style.top) || 0;
@@ -285,6 +290,40 @@ window.v4ScrollPinScript = `
                         dy = scrollTop - scrollDistanceToStick;
                     } else {
                         dy = 0;
+                    }
+                    isActivelyFixed = (scrollTop > scrollDistanceToStick);
+                } else if (mode === 'sticky-bottom') {
+                    // Reverse Sticky Dock: Fixed at viewport bottom until scrolled to element's natural DOM position
+                    var viewportH = scrollArea.clientHeight || 810;
+                    var domTop = parseFloat(el.style.top) || 0;
+                    var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
+                    var rawStickyBottom = el.getAttribute('data-scroll-sticky-bottom');
+                    var stickyBottomOffset = (rawStickyBottom !== null && rawStickyBottom !== '') ? parseFloat(rawStickyBottom) : 0;
+                    if (isNaN(stickyBottomOffset)) stickyBottomOffset = 0;
+
+                    var fixedTargetY = (scrollTop + viewportH - stickyBottomOffset) - elH;
+                    if (fixedTargetY < domTop) {
+                        dy = fixedTargetY - domTop;
+                    } else {
+                        dy = 0;
+                    }
+                    isActivelyFixed = (fixedTargetY < domTop);
+                }
+
+                // Dynamically toggle divider line visibility based on active fixed state
+                if (!isPin) {
+                    if (el.hasAttribute('data-scroll-divider')) {
+                        if (isActivelyFixed) {
+                            if (!el.hasAttribute('data-scroll-divider-active')) {
+                                el.setAttribute('data-scroll-divider-active', 'true');
+                            }
+                        } else {
+                            if (el.hasAttribute('data-scroll-divider-active')) {
+                                el.removeAttribute('data-scroll-divider-active');
+                            }
+                        }
+                    } else if (el.hasAttribute('data-scroll-divider-active')) {
+                        el.removeAttribute('data-scroll-divider-active');
                     }
                 }
 
@@ -342,6 +381,12 @@ window.v4ScrollPinScript = `
                 } catch(e) {}
             });
 
+            // Follow selected pinned element in real-time
+            if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                if (document.querySelector('.lf-component.selected[data-scroll-fixed]')) {
+                    window.SelectionAdorner.update();
+                }
+            }
         },
 
         setupMutationObserver: function() {
@@ -400,7 +445,18 @@ window.v4ScrollPinScript = `
     // Register Message Handler for Dynamic Toggle
     if (!window.v4MessageHandlers) window.v4MessageHandlers = {};
     window.v4MessageHandlers['LF_SET_SCROLL_FIXED'] = function(d) {
-        if (!d) return;
+        if (!d || typeof d !== 'object') return;
+        if (!d.mode || typeof d.mode !== 'string') {
+            console.warn('[ScrollPinEngine] Ignored LF_SET_SCROLL_FIXED with invalid or missing mode:', d);
+            return;
+        }
+
+        // Self-heal: ensure containers are bound even if initial DOM was empty or loaded late
+        if (!ScrollPinEngine.boundContainers || ScrollPinEngine.boundContainers.size === 0) {
+            ScrollPinEngine.bindAllContainers();
+            ScrollPinEngine.setupMutationObserver();
+        }
+
         var ids = d.ids || (d.id ? [d.id] : []);
         if (ids.length === 0) return;
 
@@ -434,7 +490,7 @@ window.v4ScrollPinScript = `
 
             var isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
             var isPinFixed = isPin && (d.mode === 'viewport' || d.mode === 'fixed' || d.mode === 'top');
-            var isObjFixed = !isPin && (d.mode === 'top' || d.mode === 'bottom' || d.mode === 'custom' || d.mode === 'floating' || d.mode === 'sticky' || d.mode === 'smart');
+            var isObjFixed = !isPin && (d.mode === 'top' || d.mode === 'bottom' || d.mode === 'custom' || d.mode === 'floating' || d.mode === 'sticky' || d.mode === 'sticky-bottom' || d.mode === 'smart');
 
             if (isPinFixed) {
                 var pinIdx = el.getAttribute('data-index');
@@ -447,6 +503,18 @@ window.v4ScrollPinScript = `
                 });
             } else if (isObjFixed) {
                 var effectiveMode = (d.mode === 'floating') ? 'custom' : d.mode;
+
+                // Backup current normal Z-index before elevating to Tier 2 (100,000+)
+                var currentNormalZ = parseInt(el.style.zIndex, 10);
+                if (!isNaN(currentNormalZ) && currentNormalZ < 100000) {
+                    el.setAttribute('data-pre-fixed-z', String(currentNormalZ));
+                } else if (!el.hasAttribute('data-pre-fixed-z')) {
+                    var computedZ = parseInt(window.getComputedStyle(el).zIndex, 10);
+                    if (!isNaN(computedZ) && computedZ < 100000) {
+                        el.setAttribute('data-pre-fixed-z', String(computedZ));
+                    }
+                }
+
                 var baseline = Math.max(100000, maxAnyZ);
                 maxFixedZ = Math.max(maxFixedZ, baseline) + 10;
                 var targetZ = maxFixedZ;
@@ -458,19 +526,38 @@ window.v4ScrollPinScript = `
                     var targetY = (d.targetY !== undefined && d.targetY !== null) ? d.targetY : (parseFloat(el.style.top) || el.offsetTop || 0);
                     el.setAttribute('data-scroll-target-y', String(Math.round(targetY)));
                     el.removeAttribute('data-scroll-sticky-top');
+                    el.removeAttribute('data-scroll-sticky-bottom');
                 } else if (effectiveMode === 'sticky') {
                     var stickyTop = (d.stickyTop !== undefined && d.stickyTop !== null) ? d.stickyTop : 0;
                     el.setAttribute('data-scroll-sticky-top', String(Math.round(stickyTop)));
                     el.removeAttribute('data-scroll-target-y');
+                    el.removeAttribute('data-scroll-sticky-bottom');
+                } else if (effectiveMode === 'sticky-bottom') {
+                    var stickyBottom = (d.stickyBottom !== undefined && d.stickyBottom !== null) ? d.stickyBottom : 0;
+                    el.setAttribute('data-scroll-sticky-bottom', String(Math.round(stickyBottom)));
+                    el.removeAttribute('data-scroll-target-y');
+                    el.removeAttribute('data-scroll-sticky-top');
                 } else {
                     el.removeAttribute('data-scroll-target-y');
                     el.removeAttribute('data-scroll-sticky-top');
+                    el.removeAttribute('data-scroll-sticky-bottom');
                 }
 
                 if (d.effect && (d.effect === 'hide-down' || d.effect === 'hide-up')) {
                     el.setAttribute('data-scroll-effect', d.effect);
                 } else if (d.effect === 'always' || d.effect === 'none' || d.effect === '') {
                     el.removeAttribute('data-scroll-effect');
+                }
+
+                if (d.divider === true) {
+                    var divPos = (effectiveMode === 'bottom' || effectiveMode === 'sticky-bottom') ? 'top' : 'bottom';
+                    el.setAttribute('data-scroll-divider', divPos);
+                } else if (d.divider === false) {
+                    el.removeAttribute('data-scroll-divider');
+                    el.removeAttribute('data-scroll-divider-active');
+                } else if (el.hasAttribute('data-scroll-divider')) {
+                    var updatedDivPos = (effectiveMode === 'bottom' || effectiveMode === 'sticky-bottom') ? 'top' : 'bottom';
+                    el.setAttribute('data-scroll-divider', updatedDivPos);
                 }
 
                     // Self-healing: eliminate any auto-injected background to preserve custom shape transparency and border-radius
@@ -560,11 +647,23 @@ window.v4ScrollPinScript = `
                     el.removeAttribute('data-scroll-effect');
                     el.removeAttribute('data-scroll-target-y');
                     el.removeAttribute('data-scroll-sticky-top');
+                    el.removeAttribute('data-scroll-sticky-bottom');
+                    el.removeAttribute('data-scroll-divider');
+                    el.removeAttribute('data-scroll-divider-active');
                     el.style.removeProperty('transform');
                     el.style.removeProperty('will-change');
                     el.style.removeProperty('transition');
-                    maxNormalZ = Math.min(69900, maxNormalZ + 10);
-                    el.style.zIndex = String(Math.max(1010, maxNormalZ));
+
+                    // Restore pre-fixed Z-index if preserved, avoiding artificial inflation
+                    var preFixedZ = parseInt(el.getAttribute('data-pre-fixed-z'), 10);
+                    if (!isNaN(preFixedZ) && preFixedZ > 0 && preFixedZ < 100000) {
+                        el.style.zIndex = String(preFixedZ);
+                    } else {
+                        maxNormalZ = Math.min(69900, maxNormalZ + 10);
+                        el.style.zIndex = String(Math.max(1010, maxNormalZ));
+                    }
+                    el.removeAttribute('data-pre-fixed-z');
+
                     if (el.dataset && el.dataset.autoBg === 'true') {
                         el.style.backgroundColor = '';
                         el.style.removeProperty('background-color');

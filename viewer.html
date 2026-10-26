@@ -341,9 +341,13 @@
                                             <svg class="lf-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                                             <span>플로팅</span>
                                         </button>
-                                        <button id="btn-scroll-pin-sticky" class="v4-inspector-btn scroll-pin-btn" data-pin="sticky" title="임계치 스티키 (스크롤 중 지정 높이에 도달하면 고정)">
+                                        <button id="btn-scroll-pin-sticky" class="v4-inspector-btn scroll-pin-btn" data-pin="sticky" title="상단 스티키 (스크롤 중 지정 높이에 도달하면 고정)">
                                             <svg class="lf-icon" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><line x1="3" y1="18" x2="21" y2="18" stroke-dasharray="2 2"/><polygon points="8 14 12 10 16 14"/></svg>
-                                            <span>스티키</span>
+                                            <span>스티키(상)</span>
+                                        </button>
+                                        <button id="btn-scroll-pin-sticky-bottom" class="v4-inspector-btn scroll-pin-btn" data-pin="sticky-bottom" title="하단 스티키 안착 (스크롤 시 하단 고정, 본문 위치 도달 시 안착)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24"><line x1="3" y1="18" x2="21" y2="18" stroke-width="2"/><line x1="3" y1="6" x2="21" y2="6" stroke-dasharray="2 2"/><polygon points="8 10 12 14 16 10"/></svg>
+                                            <span>스티키(하)</span>
                                         </button>
                                     </div>
                                 </div>
@@ -376,6 +380,14 @@
                                         <input type="number" id="scroll-pin-offset-input" class="scroll-pin-offset-input" placeholder="0">
                                         <span class="scroll-pin-offset-unit">px</span>
                                     </div>
+                                </div>
+                                <!-- Border Divider Bar -->
+                                <div id="scroll-pin-divider-bar" class="scroll-pin-divider-bar" style="display: none;">
+                                    <span class="scroll-pin-divider-label" id="scroll-pin-divider-label">경계 구분선</span>
+                                    <label class="v4-toggle-switch" title="스크롤 고정 경계선 설정 (고정 상태일 때만 1px 라인 표시)">
+                                        <input type="checkbox" id="scroll-pin-divider-toggle">
+                                        <span class="v4-toggle-slider"></span>
+                                    </label>
                                 </div>
                             </div>
                             <div class="selection-btn-stack">

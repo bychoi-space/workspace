@@ -58,6 +58,7 @@ window.rebindInspectorDOM = function() {
     DOM.btnScrollPinBottom = get('btn-scroll-pin-bottom');
     DOM.btnScrollPinCustom = get('btn-scroll-pin-custom');
     DOM.btnScrollPinSticky = get('btn-scroll-pin-sticky');
+    DOM.btnScrollPinStickyBottom = get('btn-scroll-pin-sticky-bottom');
     DOM.btnPinPosContent = get('btn-pin-pos-content');
     DOM.btnPinPosFixed = get('btn-pin-pos-fixed');
     DOM.scrollPinOffsetInput = get('scroll-pin-offset-input');
@@ -213,6 +214,7 @@ window.DOM = {
     btnScrollPinBottom: get('btn-scroll-pin-bottom'),
     btnScrollPinCustom: get('btn-scroll-pin-custom'),
     btnScrollPinSticky: get('btn-scroll-pin-sticky'),
+    btnScrollPinStickyBottom: get('btn-scroll-pin-sticky-bottom'),
     btnPinPosContent: get('btn-pin-pos-content'),
     btnPinPosFixed: get('btn-pin-pos-fixed'),
     scrollPinOffsetInput: get('scroll-pin-offset-input'),

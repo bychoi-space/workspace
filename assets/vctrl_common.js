@@ -16,12 +16,14 @@ window.EditorBus = {
                        document.getElementById('screen-iframe');
         return (iframe && iframe.contentWindow) ? iframe.contentWindow : null;
     },
-    sendToIframe(payload) {
+    sendToIframe(payload, extraData) {
         const iframeWin = this.getIframeWindow();
         if (iframeWin) {
             let data = payload;
             if (typeof payload === 'string') {
-                data = { type: payload };
+                data = (extraData && typeof extraData === 'object')
+                    ? Object.assign({ type: payload }, extraData)
+                    : { type: payload };
             } else if (typeof payload === 'object' && payload !== null) {
                 data = { ...payload };
             }
@@ -34,7 +36,7 @@ window.EditorBus = {
                 iframeWin.postMessage(data, '*');
             }
         } else {
-            console.warn("[EditorBus] Active iframe contentWindow not found for payload:", payload ? payload.type : null);
+            console.warn("[EditorBus] Active iframe contentWindow not found for payload:", payload ? (payload.type || payload) : null);
         }
     },
     sendToParent(payload) {
@@ -119,7 +121,7 @@ window.ResponsiveFrameUtils = {
     },
     getScrollArea: function(el) {
         if (!el || !el.closest) return null;
-        return el.closest('.pc-content-area, .pc-content, .mobile-content-area, .mobile-content');
+        return el.closest('.pc-content-area, .pc-content, .mobile-content-area, .mobile-content, .chrome-content-area');
     },
     getRelativeOffset: function(el, container) {
         var c = container || this.getContainer(el);

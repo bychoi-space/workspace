@@ -398,7 +398,7 @@ window.v4DragResizeScript = `
                 
                 window.updateHandles(window.activeEl);
                 markDirty();
-                notifyParent({ type: 'LF_COMP_RESIZED', w: nw, h: nh });
+                notifyParent({ type: 'LF_COMP_RESIZED', id: (window.activeEl && window.activeEl.id) || null, w: nw, h: nh });
             }
         },
         

@@ -1,8 +1,15 @@
 {
-  "title": "Default_Project",
+  "title": "[임시] 온라인마케팅 배너 구좌 검토",
   "screens": {
     "icon_preview.html": {
       "updatedAt": "2026-10-26T08:54:17.367Z"
     }
-  }
+  },
+  "assignee": "최범열",
+  "developer": "",
+  "period": "2026.10.26(월) ~ 2026.10.30(금)",
+  "figmaUrl": "",
+  "notionUrl": "",
+  "themeIndex": 7,
+  "category": "etc"
 }

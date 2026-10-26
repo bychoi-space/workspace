@@ -12,8 +12,21 @@ if (!window.v4IframeInserterScript) {
             : !!(pcInner || mobileInner);
 
         const isPinMarker = d.className && d.className.includes('pin-marker');
-        const compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);
-        const compH = isPinMarker ? 28 : ((d.style && d.style.height) ? parseInt(d.style.height) || 100 : 100);
+        const isImageComp = !!((d.dataset && d.dataset.aspectRatio) || (d.html && d.html.indexOf('v4-shape-image') !== -1));
+        let compW = isPinMarker ? 28 : ((d.style && d.style.width) ? parseInt(d.style.width) || 200 : 200);
+        let compH = isPinMarker ? 28 : ((d.style && d.style.height) ? parseInt(d.style.height) || 100 : 100);
+
+        function clampImageToMobileHost(hostW) {
+            if (isImageComp && hostW && hostW <= 420 && compW > (hostW - 24)) {
+                const imgRatio = parseFloat(d.dataset && d.dataset.aspectRatio) || (compW / compH) || 1;
+                compW = Math.max(40, hostW - 24);
+                compH = Math.max(20, Math.round(compW / imgRatio));
+                if (d.style) {
+                    d.style.width = compW + 'px';
+                    d.style.height = compH + 'px';
+                }
+            }
+        }
 
         let host = document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body;
         let centerTop = Math.round((window.innerHeight - compH) / 2);
@@ -47,6 +60,7 @@ if (!window.v4IframeInserterScript) {
                         const sTop = scrollContainer.scrollTop || 0;
                         const vHeight = scrollContainer.clientHeight || 810;
                         const hostW = host.offsetWidth || (targetCol.classList.contains('mobile-column') ? 360 : 1160);
+                        clampImageToMobileHost(hostW);
                         if (fixedType === 'top') {
                             centerLeft = 0;
                             centerTop = 0;
@@ -86,6 +100,7 @@ if (!window.v4IframeInserterScript) {
                         const sTop = scrollContainer ? scrollContainer.scrollTop : 0;
                         const vHeight = scrollContainer ? (scrollContainer.clientHeight || 810) : 810;
                         const hostW = host ? (host.offsetWidth || 360) : 360;
+                        clampImageToMobileHost(hostW);
                         if (fixedType === 'top') {
                             centerLeft = 0;
                             centerTop = 0;
@@ -215,25 +230,27 @@ if (!window.v4IframeInserterScript) {
             }
         }
         
-        if (window.parent.state && window.parent.state.transform) {
-            const s = window.parent.state.transform.scale || 1;
-            if (s < 1) {
-                const bw = parseInt(v.style.width) || 200;
-                const bh = parseInt(v.style.height) || 100;
-                if (s < 0.8 && !d.isGroup) {
-                    const isImg = v.querySelector('.v4-shape-image') || v.getAttribute('data-aspect-ratio');
-                    if (isImg) {
-                        const natRatio = parseFloat(v.getAttribute('data-aspect-ratio')) || (bw / bh);
-                        const newW = Math.round(bw / s);
-                        v.style.width = newW + 'px';
-                        v.style.height = Math.round(newW / natRatio) + 'px';
-                    } else {
-                        v.style.width = Math.round(bw / s) + 'px';
-                        v.style.height = Math.round(bh / s) + 'px';
+        try {
+            if (!isResponsiveTemplate && window.parent && window.parent.state && window.parent.state.transform) {
+                const s = window.parent.state.transform.scale || 1;
+                if (s < 1) {
+                    const bw = parseInt(v.style.width) || 200;
+                    const bh = parseInt(v.style.height) || 100;
+                    if (s < 0.8 && !d.isGroup) {
+                        const isImg = v.querySelector('.v4-shape-image') || v.getAttribute('data-aspect-ratio');
+                        if (isImg) {
+                            const natRatio = parseFloat(v.getAttribute('data-aspect-ratio')) || (bw / bh);
+                            const newW = Math.round(bw / s);
+                            v.style.width = newW + 'px';
+                            v.style.height = Math.round(newW / natRatio) + 'px';
+                        } else {
+                            v.style.width = Math.round(bw / s) + 'px';
+                            v.style.height = Math.round(bh / s) + 'px';
+                        }
                     }
                 }
             }
-        }
+        } catch(scaleErr) {}
         
         const children = Array.from(v.children).filter(c => c.classList.contains('lf-component') || c.classList.contains('lf-group'));
         if (children.length === 1) {
@@ -256,6 +273,10 @@ if (!window.v4IframeInserterScript) {
         }
         document.querySelectorAll('.lf-component').forEach(c => c.classList.remove('selected'));
         v.classList.add('selected');
+        window.activeEl = v;
+        if (typeof window.updateHandles === 'function') {
+            try { window.updateHandles(v); } catch(uhErr) {}
+        }
         if (v.classList.contains('v4-text-shape') && typeof window.resizeToFitText === 'function') {
             window.resizeToFitText(v);
         }

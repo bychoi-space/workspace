@@ -452,8 +452,28 @@
                     }
                 },
                 'LF_INSERT_IMAGE_COMP': function (data) {
-                    const base64 = data.base64;
+                    const state = window.state || {};
+                    if (state.isReadOnly) return;
+                    if (!state.activeFile) return;
+                    const base64 = data && data.base64;
                     if (!base64) return;
+
+                    if (data.fromPaste) {
+                        const sig = computeImageSignature(base64);
+                        let rootWin = window;
+                        try { rootWin = window.top || window; } catch (e) { rootWin = window; }
+                        if (rootWin.__lf_clipboard_source__ === 'internal' &&
+                            rootWin.__lf_suppressed_img_sig__ &&
+                            sig === rootWin.__lf_suppressed_img_sig__) {
+                            console.log("[CoreRouter] Suppressed stale OS clipboard image in favor of internal copied object.");
+                            triggerIframeObjectPaste();
+                            return;
+                        }
+                        rootWin.__lf_clipboard_source__ = 'external';
+                        rootWin.__lf_last_external_img_sig__ = sig;
+                        rootWin.__lf_suppressed_img_sig__ = null;
+                    }
+
                     const img = new Image();
                     img.onload = function () {
                         const origW = img.naturalWidth || 200;
@@ -476,6 +496,11 @@
                         if (typeof window.insertImageComponent === 'function') {
                             window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
                         }
+                        const DOM = window.DOM || {};
+                        const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+                        if (activeIframe && activeIframe.contentWindow) {
+                            try { activeIframe.contentWindow.focus(); } catch (err) { }
+                        }
                     };
                     img.src = base64;
                 }
@@ -484,52 +509,95 @@
     // Expose parent core handlers table map for extensible hook wiring
     window.v4ParentCoreHandlers = v4ParentCoreHandlers;
 
+    function computeImageSignature(base64) {
+        if (!base64 || typeof base64 !== 'string') return '';
+        const len = base64.length;
+        const head = base64.slice(0, 80);
+        const mid = base64.slice(Math.floor(len / 2), Math.floor(len / 2) + 80);
+        const tail = base64.slice(-80);
+        return len + ':' + head + ':' + mid + ':' + tail;
+    }
+
+    function triggerIframeObjectPaste() {
+        const DOM = window.DOM || {};
+        const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+        if (activeIframe && activeIframe.contentWindow) {
+            try { activeIframe.contentWindow.focus(); } catch (err) { }
+            activeIframe.contentWindow.postMessage({
+                type: 'LF_SHORTCUT_KEY_PROXY',
+                code: 'KeyV',
+                key: 'v',
+                shiftKey: false,
+                ctrlKey: true,
+                metaKey: false
+            }, '*');
+        }
+    }
+
     // Parent-side paste event listener for handling pasted image files when parent has focus
     function setupParentPasteProxy() {
         window.addEventListener('paste', function (e) {
+            window.__lf_last_parent_paste_time__ = Date.now();
+            const state = window.state || {};
+            if (state.isReadOnly) return;
+
             const activeEl = document.activeElement;
-            const isInput = activeEl && (activeEl.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) || activeEl.closest('.ql-editor'));
+            const isInput = activeEl && (
+                activeEl.isContentEditable ||
+                ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) ||
+                !!(activeEl.closest && activeEl.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'))
+            );
             if (isInput) return;
 
-            const items = (e.clipboardData || window.clipboardData)?.items;
-            if (!items) return;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf('image') !== -1) {
-                    const file = items[i].getAsFile();
-                    if (!file) continue;
-                    const reader = new FileReader();
-                    reader.onload = function (evt) {
-                        const base64 = evt.target.result;
-                        const img = new Image();
-                        img.onload = function () {
-                            const origW = img.naturalWidth || 200;
-                            const origH = img.naturalHeight || 200;
-                            const naturalRatio = origW / origH;
-                            let w = origW;
-                            let h = origH;
-                            if (naturalRatio < 0.65) {
-                                w = 320;
-                                h = Math.round(w / naturalRatio);
-                                if (h > 750) {
-                                    h = 750;
-                                    w = Math.round(h * naturalRatio);
-                                }
-                            } else if (w > 560 || h > 450) {
-                                const scale = Math.min(560 / w, 450 / h);
-                                w = Math.round(w * scale);
-                                h = Math.round(h * scale);
-                            }
+            const hasOpenModal = !!(
+                document.querySelector('#add-screen-modal.active, #copy-screen-modal.active, #edit-screen-modal.active, #auth-modal.active') ||
+                (document.getElementById('history-modal') && document.getElementById('history-modal').style.display === 'flex')
+            );
+            if (hasOpenModal) return;
 
-                            if (typeof window.insertImageComponent === 'function') {
-                                window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
+            const clipData = e.clipboardData || window.clipboardData;
+            let imageFile = null;
+            if (clipData) {
+                const items = clipData.items;
+                if (items && items.length > 0) {
+                    for (let i = 0; i < items.length; i++) {
+                        const item = items[i];
+                        if (item && item.type && item.type.indexOf('image') !== -1 && typeof item.getAsFile === 'function') {
+                            const f = item.getAsFile();
+                            if (f) {
+                                imageFile = f;
+                                break;
                             }
-                        };
-                        img.src = base64;
-                    };
-                    reader.readAsDataURL(file);
-                    e.preventDefault();
-                    break;
+                        }
+                    }
                 }
+                if (!imageFile && clipData.files && clipData.files.length > 0) {
+                    for (let j = 0; j < clipData.files.length; j++) {
+                        const f = clipData.files[j];
+                        if (f && f.type && f.type.indexOf('image') !== -1) {
+                            imageFile = f;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (imageFile) {
+                e.preventDefault();
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    const base64 = evt && evt.target && evt.target.result;
+                    if (base64 && typeof v4ParentCoreHandlers['LF_INSERT_IMAGE_COMP'] === 'function') {
+                        v4ParentCoreHandlers['LF_INSERT_IMAGE_COMP']({
+                            base64: base64,
+                            fromPaste: true
+                        });
+                    }
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                e.preventDefault();
+                triggerIframeObjectPaste();
             }
         });
     }

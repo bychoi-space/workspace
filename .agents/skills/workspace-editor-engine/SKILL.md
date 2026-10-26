@@ -60,10 +60,14 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **전역 화면 살균 SSOT (`window.ScreenSanitizer`)**:
   - 스크린 저장, 뷰포트 스냅샷, HTML 내보내기 시 임의의 수동 DOM 조작(임시 태그 제거, 스타일 파싱 등)을 절대 금지한다.
   - 반드시 `vctrl_common.js`의 `window.ScreenSanitizer.cleanDOM(targetDoc)` 단일 진실 공급원을 호출하여 선택선/마키박스/핸들/가이드라인/빈스타일을 완벽히 정제해야 한다.
-- **크로스 스크린 복사/붙여넣기 (Cross-Screen Clipboard Sync)**:
+- **크로스 스크린 복사/붙여넣기 (Cross-Screen Clipboard Sync) 및 외부 이미지 붙여넣기(`Ctrl+V`) 하이브리드 파이프라인**:
   - 각 스크린 iframe은 고유한 `srcdoc` 컨텍스트(또는 `file://` sandboxed context)에서 로드되므로 격리되어 있어 `localStorage`나 iframe 간의 단순 전역 변수 공유가 불가능하다.
   - 이를 극복하고 서로 다른 스크린을 넘나들며 오브젝트 복사/붙여넣기(`Ctrl+C` / `Ctrl+V`)를 지원하기 위해 최상위 윈도우(`window.top`)의 전역 프로퍼티인 `window.top.__lf_global_clipboard__`를 클립보드 데이터의 SSOT로 정의하여 통신한다.
   - 복사 시 선택한 오브젝트 데이터(스타일, 속성, 내부 텍스트, HTML 등)를 JSON 형태로 직렬화하여 `window.top.__lf_global_clipboard__`에 저장하며, 붙여넣기 시 이를 역직렬화하여 겹침 방지 오프셋(+15px)을 더한 뒤 캔버스에 붙여넣는다.
+  - **외부 OS 클립보드 이미지 붙여넣기(`Ctrl+V`) 및 우선순위 화해 프로토콜**:
+    - 크롬 우클릭 "이미지 복사" 또는 윈도우 화면 캡처 도구(`Win+Shift+S`)로 복사된 이미지를 `Ctrl+V`로 즉시 캔버스에 붙여넣기 위해, `vctrl_shortcuts.js` 및 `vctrl_parent_shortcuts.js`의 일반 `Ctrl+V` (`!e.shiftKey`) `keydown` 핸들러에서는 **`e.preventDefault()`를 절대 호출하지 않고** 브라우저 네이티브 `paste` 이벤트가 발화하도록 위임한다 (80ms fallback 타이머 포함).
+    - `paste` 이벤트(`vctrl_shortcuts.js` 및 `vctrl_core_router.js`의 `setupParentPasteProxy`)는 `e.clipboardData.items` 및 `files`에서 `image/*` Blob을 감지하여 `LF_INSERT_IMAGE_COMP`로 전달하고, 반응형 모바일 프레임(360px) 내부 삽입 시에는 프레임 너비(`hostW - 24`)에 맞춰 원본 비율을 유지한 채 자동 스케일링한다.
+    - 내부 도형 복사(`Ctrl+C`/`Ctrl+X`) 시에는 포커스 이동 없는 `copy` 이벤트 가로채기(`clearSystemImageClipboard`)로 OS 클립보드의 이전 이미지를 초기화하고 `__lf_clipboard_source__ = 'internal'` 및 `__lf_suppressed_img_sig__` 시그니처 가드를 기록하여, 외부 이미지 붙여넣기 직후 내부 도형을 복사했을 때 이전 캡처 이미지가 잘못 붙여넣어지는 충돌을 100% 차단한다.
   - **그룹 내부 자식 컴포넌트 단독 복사 정규화**: 그룹(`lf-group`) 내부의 자식 컴포넌트를 단독 선택하여 복사할 때는 상위 부모 그룹 체인의 `left`, `top` 오프셋을 누적 합산하여 호스트(캔버스/반응형 프레임) 기준의 절대 좌표로 정규화한 뒤 저장함으로써, 붙여넣기 시 스크린 최상단(0,0)에 배치되지 않고 원본 시각 위치 우측하단(+15px)에 정확히 독립 오브젝트로 복제되도록 보장한다.
 - **도형 서식 클립보드 파이프라인 (Format Painter Pipeline & Style Clipboard SSOT)**:
   - `vctrl_shortcuts.js` (`copySelectedObjectStyle`, `pasteCopiedObjectStyle`)와 `vctrl_format_painter.js` (`LF_SAVE_STYLE_CLIPBOARD`, `LF_REQUEST_STYLE_CLIPBOARD`, `LF_RESPONSE_STYLE_CLIPBOARD`, `LF_SHOW_TOAST`)로 구성됩니다.

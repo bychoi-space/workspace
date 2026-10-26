@@ -220,10 +220,16 @@
 
         if (data.type === 'LF_SAVE_CLIPBOARD') {
             console.log('[ClipboardManager] Parent saving clipboard to Memory & LocalStorage:', data.clipboard);
+            let rootWin = window;
             try {
-                (window.top || window).__lf_global_clipboard__ = data.clipboard;
+                rootWin = window.top || window;
+                rootWin.__lf_global_clipboard__ = data.clipboard;
             } catch (err) {
                 window.__lf_global_clipboard__ = data.clipboard;
+            }
+            if (data.isExplicitCopy) {
+                rootWin.__lf_clipboard_source__ = 'internal';
+                rootWin.__lf_suppressed_img_sig__ = rootWin.__lf_last_external_img_sig__ || null;
             }
             safeSetStorage('__lf_global_clipboard__', data.clipboard);
 

@@ -123,7 +123,7 @@
   - **`vctrl_design_system.js` (Design Observer - Iframe Side)**:
     - **역할**: 1.6px 보더 두께 유지, % 좌표의 px 자동 마이그레이션, img-to-div 전환 및 아톰 크기 자동 보정(Design System)을 전담합니다.
   - **`vctrl_shortcuts.js` (Interaction Layer - Iframe Side)**:
-    - **역할**: 키보드 핫키 단축키 바인딩, 크로스 스크린 복사/붙여넣기(`window.top.__lf_global_clipboard__`), 및 도형 서식 복사/붙여넣기(`Ctrl+Shift+C` / `Ctrl+Shift+V`, `window.top.__lf_global_style_clipboard__`) 연동을 전담합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
+    - **역할**: 키보드 핫키 단축키 바인딩, 크로스 스크린 복사/붙여넣기(`window.top.__lf_global_clipboard__`), 외부 OS 클립보드 이미지(`paste` 이벤트 `image/*`) 감지 및 캔버스 삽입 연동, 도형 서식 복사/붙여넣기(`Ctrl+Shift+C` / `Ctrl+Shift+V`, `window.top.__lf_global_style_clipboard__`) 연동을 전담합니다. 일반 `Ctrl+V` 입력 시 네이티브 `paste` 이벤트 발화를 보장하기 위해 `keydown`에서 `e.preventDefault()`를 생략합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
   - **`vctrl_grouping.js` (Interaction Layer)**:
     - **역할**: 다중 요소 관리자. 드래그 범위 선택(Marquee), 다중 선택 상태(`selectedIds`), 그룹 이동/삭제/그룹화 연산 로직 전담.
   - **`vctrl_inspector.js` 및 `assets/inspector/*` (UI Controller & Domain Inspectors)**:

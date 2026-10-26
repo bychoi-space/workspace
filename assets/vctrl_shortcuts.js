@@ -15,6 +15,7 @@ window.v4ShortcutsScript = `
     let v4StyleClipboard = null;
     let isArrowMoving = false;
     let isPastingLocked = false;
+    let lastIframePasteTime = 0;
 
     // Pin reordering is owned and managed by vctrl_responsive_pins.js (Universal Pin Reorder Engine SSOT)
     if (!window.reorderAllPins) {
@@ -210,11 +211,18 @@ window.v4ShortcutsScript = `
             return;
         }
         if ((e.ctrlKey || e.metaKey) && isV && !inInput) {
-            e.preventDefault();
             if (e.shiftKey) {
+                e.preventDefault();
                 window.pasteCopiedObjectStyle();
             } else {
-                window.pasteCopiedObjects();
+                // Allow native 'paste' event to fire so OS clipboard images (Chrome copy / Windows Snipping Tool) can be inspected.
+                // Fallback timer triggers object paste if native paste event does not fire within 80ms.
+                const keydownStamp = Date.now();
+                setTimeout(function() {
+                    if (lastIframePasteTime < keydownStamp) {
+                        window.pasteCopiedObjects();
+                    }
+                }, 80);
             }
             return;
         }
@@ -431,29 +439,52 @@ window.v4ShortcutsScript = `
     });
 
     document.addEventListener('paste', e => {
-        const isInput = e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
+        lastIframePasteTime = Date.now();
+        const isInput = isInputActive(e.target) || isInputActive(document.activeElement);
         if (isInput) return; // Allow default text paste in inputs
 
-        const items = (e.clipboardData || window.clipboardData).items;
-        let hasImage = false;
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf('image') !== -1) {
-                console.log("[Clipboard Debug] Image detected in paste event.");
-                hasImage = true;
-                const file = items[i].getAsFile();
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    notifyParent({
-                        type: 'LF_INSERT_IMAGE_COMP',
-                        base64: evt.target.result
-                    });
-                };
-                reader.readAsDataURL(file);
-                e.preventDefault();
-                break;
+        const clipData = e.clipboardData || window.clipboardData;
+        let imageFile = null;
+        if (clipData) {
+            const items = clipData.items;
+            if (items && items.length > 0) {
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    if (item && item.type && item.type.indexOf('image') !== -1 && typeof item.getAsFile === 'function') {
+                        const f = item.getAsFile();
+                        if (f) {
+                            imageFile = f;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!imageFile && clipData.files && clipData.files.length > 0) {
+                for (let j = 0; j < clipData.files.length; j++) {
+                    const f = clipData.files[j];
+                    if (f && f.type && f.type.indexOf('image') !== -1) {
+                        imageFile = f;
+                        break;
+                    }
+                }
             }
         }
-        if (!hasImage) {
+
+        if (imageFile) {
+            console.log("[Clipboard Debug] Image detected in iframe paste event.");
+            e.preventDefault();
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                if (evt && evt.target && evt.target.result) {
+                    notifyParent({
+                        type: 'LF_INSERT_IMAGE_COMP',
+                        base64: evt.target.result,
+                        fromPaste: true
+                    });
+                }
+            };
+            reader.readAsDataURL(imageFile);
+        } else {
             console.log("[Clipboard Debug] No image in paste event, requesting copied components from parent.");
             e.preventDefault();
             window.pasteCopiedObjects();

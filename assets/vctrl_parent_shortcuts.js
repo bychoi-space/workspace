@@ -168,7 +168,47 @@
         const isG = keyCharProxy === 'g' || e.code === 'KeyG';
         const isCtrlShortcut = (e.ctrlKey || e.metaKey) && (isC || isX || isV || isG);
 
+        // For plain Ctrl+V / Cmd+V (without Shift), allow the native 'paste' event to fire on parent window
+        // so setupParentPasteProxy can inspect OS clipboard images (Chrome copy / Windows Snipping Tool).
+        if ((e.ctrlKey || e.metaKey) && isV && !e.shiftKey) {
+            const keydownStamp = Date.now();
+            setTimeout(function () {
+                if ((window.__lf_last_parent_paste_time__ || 0) < keydownStamp) {
+                    const activeIframe = getActiveIframe();
+                    if (activeIframe && activeIframe.contentWindow) {
+                        try { activeIframe.contentWindow.focus(); } catch (err) { }
+                        activeIframe.contentWindow.postMessage({
+                            type: 'LF_SHORTCUT_KEY_PROXY',
+                            code: e.code || 'KeyV',
+                            key: e.key || 'v',
+                            shiftKey: false,
+                            ctrlKey: true,
+                            metaKey: false
+                        }, '*');
+                    }
+                }
+            }, 80);
+            return true;
+        }
+
         if (proxiedCodes.includes(e.code) || isCtrlShortcut) {
+            if ((e.ctrlKey || e.metaKey) && (isC || isX) && !e.shiftKey) {
+                const st = window.state || {};
+                const hasSelection = !!(st.selectedComponent || (st.selectedIds && st.selectedIds.length > 0) || (window.ConnectorEngine && typeof window.ConnectorEngine.getSelectedIds === 'function' && window.ConnectorEngine.getSelectedIds().length > 0));
+                if (hasSelection) {
+                    try {
+                        const onCopy = function (ce) {
+                            if (ce && ce.clipboardData) {
+                                ce.clipboardData.setData('text/plain', '__LF_INTERNAL_CLIPBOARD__');
+                                ce.preventDefault();
+                            }
+                        };
+                        document.addEventListener('copy', onCopy, true);
+                        document.execCommand('copy');
+                        document.removeEventListener('copy', onCopy, true);
+                    } catch (err) { }
+                }
+            }
             const activeIframe = getActiveIframe();
             if (activeIframe && activeIframe.contentWindow) {
                 try { activeIframe.contentWindow.focus(); } catch (err) { }

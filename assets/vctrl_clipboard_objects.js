@@ -26,6 +26,28 @@ window.v4ClipboardObjectsScript = `
     }
     const notifyParent = dispatchToParent;
 
+    function clearSystemImageClipboard() {
+        let cleared = false;
+        try {
+            const onCopy = function(e) {
+                if (e && e.clipboardData) {
+                    e.clipboardData.setData('text/plain', '__LF_INTERNAL_CLIPBOARD__');
+                    e.preventDefault();
+                    cleared = true;
+                }
+            };
+            document.addEventListener('copy', onCopy, true);
+            document.execCommand('copy');
+            document.removeEventListener('copy', onCopy, true);
+        } catch (err) {}
+        if (!cleared && navigator.clipboard && typeof navigator.clipboard.writeText === 'function' && window.isSecureContext) {
+            try {
+                navigator.clipboard.writeText('__LF_INTERNAL_CLIPBOARD__').catch(function() {});
+            } catch (err) {}
+        }
+        return cleared;
+    }
+
     window.copySelectedObjects = () => {
         const selected = document.querySelectorAll('.lf-component.selected');
         const selectedConnIds = (window.parent && window.parent.ConnectorEngine && typeof window.parent.ConnectorEngine.getSelectedIds === 'function')
@@ -148,10 +170,13 @@ window.v4ClipboardObjectsScript = `
             });
         }
 
+        const clearedSysClip = clearSystemImageClipboard();
         v4Clipboard = clipboardData;
         notifyParent({
             type: 'LF_SAVE_CLIPBOARD',
-            clipboard: clipboardData
+            clipboard: clipboardData,
+            isExplicitCopy: true,
+            clearedSystemClipboard: clearedSysClip
         });
         console.log("[Clipboard Debug] Copied " + clipboardData.length + " item(s). Notifying parent with LF_SAVE_CLIPBOARD.");
     };

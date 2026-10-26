@@ -1,6 +1,13 @@
 {
   "title": "[임시] 온라인마케팅 배너 검토",
-  "screens": {},
+  "screens": {
+    "99_Blank_163.html": {
+      "title": "99_Blank_163",
+      "type": "blank",
+      "updatedAt": "2026-10-26T08:56:24.851Z",
+      "template": "template_blank.html"
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.10.26(월) ~ 2026.10.30(금)",

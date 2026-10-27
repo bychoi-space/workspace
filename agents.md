@@ -121,7 +121,7 @@
   - **`vctrl_undo.js` (Undo Layer - Iframe Side)**:
     - **역할**: iframe 내부의 V4UndoManager 및 Undo/Redo 로컬 상태 관리를 전담합니다.
   - **`vctrl_design_system.js` (Design Observer - Iframe Side)**:
-    - **역할**: 1.6px 보더 두께 유지, % 좌표의 px 자동 마이그레이션, img-to-div 전환 및 아톰 크기 자동 보정(Design System)을 전담합니다.
+    - **역할**: 1.6px 보더 두께 유지, % 좌표의 px 자동 마이그레이션, img-to-div 전환, 아톰 크기 자동 보정(Design System), 이미지 도형(`.v4-shape.v4-shape-image`) 리사이즈 시 150ms 디바운스 기반 선명도 재샘플링(`data-crisp-size`, `window.top.createCrispImageDataUrl`)을 전담합니다.
   - **`vctrl_shortcuts.js` (Interaction Layer - Iframe Side)**:
     - **역할**: 키보드 핫키 단축키 바인딩, 크로스 스크린 복사/붙여넣기(`window.top.__lf_global_clipboard__`), 외부 OS 클립보드 이미지(`paste` 이벤트 `image/*`) 감지 및 캔버스 삽입 연동, 도형 서식 복사/붙여넣기(`Ctrl+Shift+C` / `Ctrl+Shift+V`, `window.top.__lf_global_style_clipboard__`) 연동을 전담합니다. 일반 `Ctrl+V` 입력 시 네이티브 `paste` 이벤트 발화를 보장하기 위해 `keydown`에서 `e.preventDefault()`를 생략합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
   - **`vctrl_grouping.js` (Interaction Layer)**:
@@ -144,7 +144,7 @@
       3. 전역 화면 살균 SSOT: `window.ScreenSanitizer` (`splitStyleRules`, `cleanEmptyStyleRules`, `cleanDOM`)
       4. 반응형 문서 판별 SSOT: `isResponsiveDocument(doc)`
   - **`vctrl_component_library.js` & `vctrl_component_inserter.js` (Library & Insertion Engine)**:
-    - **역할**: 사이드바 라이브러리 목록 렌더링(`renderV4Shapes`, `renderAtomicLibrary`, `renderIllustrationLibrary`), 2열 대칭 일러스트 라이브러리, 사이드바 라이브러리 3대 아코디언(`V4SidebarAccordion`: ICON LIBRARY, ILLUSTRATION, COMPONENTS 3개 섹션 기본 접힘(`is-collapsed`) 시작 및 검색 자동 펼침/복원, `localStorage` 영속화), 국영문 하이브리드 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성을 전담합니다. `viewer.html`에서 `vctrl_inspector.js`보다 먼저 로드되어 라이브러리 UI 바인딩의 SSOT를 책임집니다.
+    - **역할**: 사이드바 라이브러리 목록 렌더링(`renderV4Shapes`, `renderAtomicLibrary`, `renderIllustrationLibrary`), 2열 대칭 일러스트 라이브러리, 사이드바 라이브러리 3대 아코디언(`V4SidebarAccordion`: ICON LIBRARY, ILLUSTRATION, COMPONENTS 3개 섹션 기본 접힘(`is-collapsed`) 시작 및 검색 자동 펼침/복원, `localStorage` 영속화), 국영문 하이브리드 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성, 이미지 업로드/붙여넣기 시 다단계 밉맵(`0.55x`) + 언샵 마스크(Unsharp Mask) + 텍스트 획 대비 보존 기반 고선명 리샘플링(`window.createCrispImageDataUrl`, `window.processAndInsertRawImage`, `window.top.__lf_orig_image_cache__`)을 전담합니다. `viewer.html`에서 `vctrl_inspector.js`보다 먼저 로드되어 라이브러리 UI 바인딩의 SSOT를 책임집니다.
   - **`vctrl_canvas_background.js` (Canvas Background Engine - Parent Side)**:
     - **역할**: 캔버스 배경 이미지 업로드, 클라이언트 브라우저 실시간 스마트 압축(JPEG 85% / 1920px max), 실시간 투명도(Opacity) 슬라이더 조절, 저채도 프리셋 렌더링 및 활성 iframe(`LF_SET_CANVAS_BACKGROUND`) 동기화를 독립 전담합니다.
   - **`vctrl_pdf_exporter.js` (PDF Export Engine)**:

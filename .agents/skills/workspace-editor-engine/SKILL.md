@@ -67,6 +67,10 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - **외부 OS 클립보드 이미지 붙여넣기(`Ctrl+V`) 및 우선순위 화해 프로토콜**:
     - 크롬 우클릭 "이미지 복사" 또는 윈도우 화면 캡처 도구(`Win+Shift+S`)로 복사된 이미지를 `Ctrl+V`로 즉시 캔버스에 붙여넣기 위해, `vctrl_shortcuts.js` 및 `vctrl_parent_shortcuts.js`의 일반 `Ctrl+V` (`!e.shiftKey`) `keydown` 핸들러에서는 **`e.preventDefault()`를 절대 호출하지 않고** 브라우저 네이티브 `paste` 이벤트가 발화하도록 위임한다 (80ms fallback 타이머 포함).
     - `paste` 이벤트(`vctrl_shortcuts.js` 및 `vctrl_core_router.js`의 `setupParentPasteProxy`)는 `e.clipboardData.items` 및 `files`에서 `image/*` Blob을 감지하여 `LF_INSERT_IMAGE_COMP`로 전달하고, 반응형 모바일 프레임(360px) 내부 삽입 시에는 프레임 너비(`hostW - 24`)에 맞춰 원본 비율을 유지한 채 자동 스케일링한다.
+    - **고해상도 캡처 이미지 다단계 밉맵(Mipmap) & 언샵 마스크 선명도 보정 SSOT (`window.createCrispImageDataUrl`, `window.processAndInsertRawImage`)**:
+      - `1920x911` 등 대용량 화면 캡처 이미지를 `500x237px` ~ `780x540px` 박스로 축소 배치할 때 크롬 `background-image`의 단일 패스 2x2 Bilinear 샘플링으로 인해 1px 테이블 선과 한글 획이 소실되는 현상을 차단하기 위해, `vctrl_component_inserter.js`의 `window.createCrispImageDataUrl`이 `0.55x` 단계별 Progressive Step-Down Mipmap + 4-이웃 Unsharp Mask + Dark Stroke Contrast Preservation 리샘플링을 수행한다.
+      - 원본 무손실 이미지는 메모리 캐시(`window.top.__lf_orig_image_cache__`, 최근 20개 제한)에만 보관하여 HTML 파일 비대화를 방지하고, 사용자가 리사이즈 핸들이나 인스펙터로 이미지 크기를 변경하면 `vctrl_design_system.js`가 150ms 디바운스 후 변경된 박스 크기의 `1.15배` 해상도(`data-crisp-size`)로 즉시 재샘플링한다.
+      - 또한 `#artboard-wrapper`(`viewer.css`)의 진입 애니메이션 종료 상태를 `filter: none;`으로 유지하고 `will-change: filter`를 배제하여 오프스크린 비트맵 래스터화 열화를 원천 차단한다.
     - 내부 도형 복사(`Ctrl+C`/`Ctrl+X`) 시에는 포커스 이동 없는 `copy` 이벤트 가로채기(`clearSystemImageClipboard`)로 OS 클립보드의 이전 이미지를 초기화하고 `__lf_clipboard_source__ = 'internal'` 및 `__lf_suppressed_img_sig__` 시그니처 가드를 기록하여, 외부 이미지 붙여넣기 직후 내부 도형을 복사했을 때 이전 캡처 이미지가 잘못 붙여넣어지는 충돌을 100% 차단한다.
   - **그룹 내부 자식 컴포넌트 단독 복사 정규화**: 그룹(`lf-group`) 내부의 자식 컴포넌트를 단독 선택하여 복사할 때는 상위 부모 그룹 체인의 `left`, `top` 오프셋을 누적 합산하여 호스트(캔버스/반응형 프레임) 기준의 절대 좌표로 정규화한 뒤 저장함으로써, 붙여넣기 시 스크린 최상단(0,0)에 배치되지 않고 원본 시각 위치 우측하단(+15px)에 정확히 독립 오브젝트로 복제되도록 보장한다.
 - **도형 서식 클립보드 파이프라인 (Format Painter Pipeline & Style Clipboard SSOT)**:

@@ -12,7 +12,7 @@
 window.v4DesignSystemScript = `
 (function() {
 
-    window.enforceDesignSystem = () => {
+    const _enforceEarlyTextAutoSizing = () => {
         if (typeof window.initHandles === 'function') {
             try { window.initHandles(); } catch(e) { console.error("Error in initHandles:", e); }
         }
@@ -52,7 +52,9 @@ window.v4DesignSystemScript = `
         } catch(e) {
             console.error("[DesignSystem] Error in early resizeToFitText:", e);
         }
+    };
 
+    const _bindAllAtomInteractiveEvents = () => {
         try { if (window.bindStepperEvents) window.bindStepperEvents(); } catch(e) { console.error("Error in bindStepperEvents:", e); }
         try { if (window.bindFileuploadEvents) window.bindFileuploadEvents(); } catch(e) { console.error("Error in bindFileuploadEvents:", e); }
         try { if (window.bindAccordionEvents) window.bindAccordionEvents(); } catch(e) { console.error("Error in bindAccordionEvents:", e); }
@@ -62,6 +64,9 @@ window.v4DesignSystemScript = `
         try { if (window.bindWebEditorEvents) window.bindWebEditorEvents(); } catch(e) { console.error("Error in bindWebEditorEvents:", e); }
         try { if (window.bindSelectboxEvents) window.bindSelectboxEvents(); } catch(e) { console.error("Error in bindSelectboxEvents:", e); }
         try { if (window.bindIaTreeTables) window.bindIaTreeTables(); } catch(e) { console.error("Error in bindIaTreeTables:", e); }
+    };
+
+    const _enforcePatternAndIconStyles = () => {
 
         try {
             // Restore pattern styles for pattern shapes with strict Value Comparison Guard
@@ -143,7 +148,105 @@ window.v4DesignSystemScript = `
         } catch(e) {
             console.error("Error in SISUN logo viewBox enforcement:", e);
         }
+    };
 
+    const _enforceCrispImageResampling = () => {
+        try {
+            var extractDataUrlFromBg = function(bgStr) {
+                if (!bgStr || typeof bgStr !== 'string') return '';
+                var idx = bgStr.indexOf('data:image/');
+                if (idx === -1) return '';
+                var endIdx = bgStr.lastIndexOf(String.fromCharCode(41));
+                if (endIdx <= idx) endIdx = bgStr.length;
+                var raw = bgStr.substring(idx, endIdx).trim();
+                while (raw.length > 0 && (raw.charAt(raw.length - 1) === '"' || raw.charAt(raw.length - 1) === "'")) {
+                    raw = raw.substring(0, raw.length - 1).trim();
+                }
+                return raw;
+            };
+
+            document.querySelectorAll('.lf-component .v4-shape.v4-shape-image').forEach(function(shape) {
+                var comp = shape.closest('.lf-component');
+                if (!comp || comp.classList.contains('dragging-now')) return;
+                var compW = parseInt(comp.style.width) || comp.offsetWidth || 0;
+                var compH = parseInt(comp.style.height) || comp.offsetHeight || 0;
+                if (compW < 24 || compH < 24) return;
+
+                var natW = parseInt(shape.getAttribute('data-natural-width')) || parseInt(comp.getAttribute('data-natural-width')) || 0;
+                var natH = parseInt(shape.getAttribute('data-natural-height')) || parseInt(comp.getAttribute('data-natural-height')) || 0;
+                var targetW = Math.round(compW * 1.15);
+                var targetH = Math.round(compH * 1.15);
+                if (natW > 0 && targetW > natW) targetW = natW;
+                if (natH > 0 && targetH > natH) targetH = natH;
+
+                var targetKey = targetW + 'x' + targetH;
+                var curCrispAttr = shape.getAttribute('data-crisp-size') || '';
+                if (curCrispAttr === targetKey && shape._v4ScheduledKey === targetKey) return;
+                if (curCrispAttr === targetKey && !shape._v4OrigDataUrl) {
+                    shape._v4ScheduledKey = targetKey;
+                    return;
+                }
+
+                var curDataUrl = extractDataUrlFromBg(shape.style.backgroundImage || '');
+                if (!curDataUrl) return;
+
+                if (!shape._v4OrigDataUrl || (shape._v4LastAppliedUrl && curDataUrl !== shape._v4LastAppliedUrl)) {
+                    shape._v4OrigDataUrl = curDataUrl;
+                    shape._v4InitialWasCrisp = !!curCrispAttr;
+                }
+
+                if (shape._v4ScheduledKey === targetKey) return;
+                shape._v4ScheduledKey = targetKey;
+
+                if (shape._v4CrispTimer) clearTimeout(shape._v4CrispTimer);
+                shape._v4CrispTimer = setTimeout(function() {
+                    shape._v4CrispTimer = null;
+                    var latestW = parseInt(comp.style.width) || comp.offsetWidth || 0;
+                    var latestH = parseInt(comp.style.height) || comp.offsetHeight || 0;
+                    if (latestW < 24 || latestH < 24) return;
+                    var finW = Math.round(latestW * 1.15);
+                    var finH = Math.round(latestH * 1.15);
+                    if (natW > 0 && finW > natW) finW = natW;
+                    if (natH > 0 && finH > natH) finH = natH;
+                    var finKey = finW + 'x' + finH;
+                    if (shape.getAttribute('data-crisp-size') === finKey) return;
+
+                    var cachedOrig = null;
+                    var crispFn = null;
+                    try {
+                        var rootWin = window.top || window.parent || window;
+                        if (rootWin.__lf_orig_image_cache__ && comp.id && rootWin.__lf_orig_image_cache__[comp.id]) {
+                            cachedOrig = rootWin.__lf_orig_image_cache__[comp.id];
+                        }
+                        if (typeof rootWin.createCrispImageDataUrl === 'function') {
+                            crispFn = rootWin.createCrispImageDataUrl;
+                        }
+                    } catch (err) {}
+                    if (!crispFn) return;
+
+                    var srcUrl = cachedOrig || shape._v4OrigDataUrl || curDataUrl;
+                    var sharpenAmt = (cachedOrig || !shape._v4InitialWasCrisp) ? 0.75 : 0.4;
+
+                    var img = new Image();
+                    img.onload = function() {
+                        var crispUrl = crispFn(img, finW, finH, sharpenAmt);
+                        if (crispUrl) {
+                            shape._v4LastAppliedUrl = crispUrl;
+                            shape.setAttribute('data-crisp-size', finKey);
+                            shape.style.backgroundImage = 'url("' + crispUrl + '")';
+                        } else {
+                            shape.setAttribute('data-crisp-size', finKey);
+                        }
+                    };
+                    img.src = srcUrl;
+                }, 150);
+            });
+        } catch(e) {
+            console.error("Error in crisp image resampling enforcement:", e);
+        }
+    };
+
+    const _enforceAdminSettingsLayout = () => {
         try {
             document.querySelectorAll('.v4-admin-group-header').forEach(header => {
                 const container = header.closest('.v4-admin-settings-container');
@@ -255,7 +358,9 @@ window.v4DesignSystemScript = `
                 }
             });
         } catch(e) { console.error("Error in admin settings enforceDesignSystem:", e); }
-        
+    };
+
+    const _normalizeComponentIdsAndAtomBoxes = () => {
         const seenIds = new Set();
         document.querySelectorAll('.lf-component').forEach((c, idx) => {
             if (!c.id) {
@@ -316,8 +421,9 @@ window.v4DesignSystemScript = `
             if (h > 0 && !c.style.height) c.style.height = h + 'px';
         });
         // ====================================
+    };
 
-
+    const _enforceAccordionStepperSelectboxFileupload = () => {
         document.querySelectorAll('.lf-component').forEach(c => {
             if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
             const accordion = c.querySelector('.v4-accordion-container');
@@ -449,7 +555,9 @@ window.v4DesignSystemScript = `
                 if (typeof window.updateHandles === 'function') window.updateHandles(c);
             }
         });
+    };
 
+    const _enforceAlertToggleButtonLayouts = () => {
         document.querySelectorAll('.lf-component').forEach(c => {
             if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
             const alert = c.querySelector('.v4-alert-container');
@@ -568,7 +676,9 @@ window.v4DesignSystemScript = `
                 if (typeof window.updateHandles === 'function') window.updateHandles(c);
             }
         });
+    };
 
+    const _enforceDatepickerLayout = () => {
         document.querySelectorAll('.lf-component').forEach(c => {
             if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
             const dp = c.querySelector('.v4-datepicker-container');
@@ -686,7 +796,9 @@ window.v4DesignSystemScript = `
 
             if (typeof window.updateHandles === 'function') window.updateHandles(c);
         });
+    };
 
+    const _enforceTextInputContainers = () => {
         document.querySelectorAll('.v4-textbox-container, .v4-textarea-container').forEach(container => {
             if (container.closest && container.closest('.lf-group')) return;
             const isTextarea = container.classList.contains('v4-textarea-container');
@@ -790,7 +902,9 @@ window.v4DesignSystemScript = `
             
             updateUI();
         });
-        
+    };
+
+    const _migrateLegacyCoordsAndIcons = () => {
         const targetPageEl = document.querySelector('.page') || document.querySelector('.artboard') || document.body;
         const curCanvasW = targetPageEl ? (targetPageEl.offsetWidth || 1600) : 1600;
         const curCanvasH = targetPageEl ? (targetPageEl.offsetHeight || 900) : 900;
@@ -879,9 +993,9 @@ window.v4DesignSystemScript = `
                 console.log("[V4 Migration] Migrated image icon/logo to div element:", origSrc);
             }
         });
+    };
 
-
-
+    const _enforceShapesAndArrows = () => {
         window.buildArrowPath = function(width, height, dir) {
             const w = Math.max(20, parseFloat(width) || 100);
             const h = Math.max(20, parseFloat(height) || 100);
@@ -952,6 +1066,9 @@ window.v4DesignSystemScript = `
             }
             if (s.style.borderWidth !== '1.6px') s.style.setProperty('border-width', '1.6px', 'important');
         });
+    };
+
+    const _enforceTablesGridsAndSvgStrokes = () => {
         document.querySelectorAll('table.v4-premium-table, table.v4-table, .v4-grid-container table').forEach(t => { if (t.classList.contains('v4-ia-tree-table')) return;
             if (t.style.borderWidth !== '1.6px') t.style.setProperty('border-width', '1.6px', 'important');
             if (t.style.height !== 'auto') t.style.setProperty('height', 'auto', 'important');
@@ -1063,6 +1180,22 @@ window.v4DesignSystemScript = `
                 // Ignore security errors for external stylesheets
             }
         }
+    };
+
+    window.enforceDesignSystem = () => {
+        _enforceEarlyTextAutoSizing();
+        _bindAllAtomInteractiveEvents();
+        _enforcePatternAndIconStyles();
+        _enforceCrispImageResampling();
+        _enforceAdminSettingsLayout();
+        _normalizeComponentIdsAndAtomBoxes();
+        _enforceAccordionStepperSelectboxFileupload();
+        _enforceAlertToggleButtonLayouts();
+        _enforceDatepickerLayout();
+        _enforceTextInputContainers();
+        _migrateLegacyCoordsAndIcons();
+        _enforceShapesAndArrows();
+        _enforceTablesGridsAndSvgStrokes();
     };
 
     let dsObserver = null;

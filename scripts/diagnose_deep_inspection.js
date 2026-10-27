@@ -154,8 +154,20 @@ if (unreferencedCss.length > 0) {
 const allAssetMedia = getAllFiles(assetsDir, ['.png', '.jpg', '.jpeg', '.svg', '.webp']);
 const unreferencedMedia = [];
 let allSourceText = viewerContent + '\n' + indexContent;
-for (const f of allAssetJs.concat(allAssetCss)) {
+for (const f of allAssetJs.concat(allAssetCss).concat(allAssetHtml)) {
     allSourceText += '\n' + fs.readFileSync(f, 'utf8');
+}
+const dataDir = path.join(rootDir, 'data');
+if (fs.existsSync(dataDir)) {
+    for (const pDir of fs.readdirSync(dataDir, { withFileTypes: true })) {
+        if (!pDir.isDirectory()) continue;
+        const projPath = path.join(dataDir, pDir.name);
+        for (const sf of fs.readdirSync(projPath)) {
+            if (sf.endsWith('.html') || sf.endsWith('.json')) {
+                allSourceText += '\n' + fs.readFileSync(path.join(projPath, sf), 'utf8');
+            }
+        }
+    }
 }
 for (const m of allAssetMedia) {
     const basename = path.basename(m);
@@ -217,10 +229,10 @@ function findFunctionsAccurately(filePath) {
 
     const patterns = [
         /function\s+([a-zA-Z0-9_$]+)\s*\(/,
-        /(?:const|let|var)\s+([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?function\b/,
-        /([a-zA-Z0-9_$]+)\s*:\s*(?:async\s*)?function\b/,
-        /([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?function\b/,
-        /window\.([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?function\b/,
+        /(?:const|let|var)\s+([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?(?:function\b|\([^)]*\)\s*=>)/,
+        /([a-zA-Z0-9_$]+)\s*:\s*(?:async\s*)?(?:function\b|\([^)]*\)\s*=>)/,
+        /([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?(?:function\b|\([^)]*\)\s*=>)/,
+        /window\.([a-zA-Z0-9_$]+)\s*=\s*(?:async\s*)?(?:function\b|\([^)]*\)\s*=>)/,
         /(?:async\s+)?([a-zA-Z0-9_$]+)\s*\([^)]*\)\s*\{/
     ];
 
@@ -233,7 +245,7 @@ function findFunctionsAccurately(filePath) {
             const m = line.match(p);
             if (m) {
                 const name = m[1];
-                if (!['if', 'for', 'while', 'switch', 'catch'].includes(name)) {
+                if (!['if', 'for', 'while', 'switch', 'catch', 'function'].includes(name)) {
                     detected = name;
                     break;
                 }

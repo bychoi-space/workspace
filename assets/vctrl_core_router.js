@@ -474,35 +474,15 @@
                         rootWin.__lf_suppressed_img_sig__ = null;
                     }
 
-                    const img = new Image();
-                    img.onload = function () {
-                        const origW = img.naturalWidth || 200;
-                        const origH = img.naturalHeight || 200;
-                        const naturalRatio = origW / origH;
-                        let w = origW;
-                        let h = origH;
-                        if (naturalRatio < 0.65) {
-                            w = 320;
-                            h = Math.round(w / naturalRatio);
-                            if (h > 750) {
-                                h = 750;
-                                w = Math.round(h * naturalRatio);
+                    if (typeof window.processAndInsertRawImage === 'function') {
+                        window.processAndInsertRawImage(base64, function () {
+                            const DOM = window.DOM || {};
+                            const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+                            if (activeIframe && activeIframe.contentWindow) {
+                                try { activeIframe.contentWindow.focus(); } catch (err) { }
                             }
-                        } else if (w > 560 || h > 450) {
-                            const scale = Math.min(560 / w, 450 / h);
-                            w = Math.round(w * scale);
-                            h = Math.round(h * scale);
-                        }
-                        if (typeof window.insertImageComponent === 'function') {
-                            window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
-                        }
-                        const DOM = window.DOM || {};
-                        const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-                        if (activeIframe && activeIframe.contentWindow) {
-                            try { activeIframe.contentWindow.focus(); } catch (err) { }
-                        }
-                    };
-                    img.src = base64;
+                        });
+                    }
                 }
     };
 

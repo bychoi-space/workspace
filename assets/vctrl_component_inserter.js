@@ -73,6 +73,113 @@
         return window.insertV4ComponentById('v4-tool-text', customIdx);
     };
 
+    function createCrispImageDataUrl(imgEl, targetW, targetH, sharpenStrength) {
+        try {
+            const origW = imgEl.naturalWidth || imgEl.width || targetW;
+            const origH = imgEl.naturalHeight || imgEl.height || targetH;
+            if (!origW || !origH || !targetW || !targetH) return null;
+            if (origW <= targetW * 1.1 && origH <= targetH * 1.1) return null;
+
+            const amount = typeof sharpenStrength === 'number' ? sharpenStrength : 0.75;
+            let curW = origW;
+            let curH = origH;
+            let curSource = imgEl;
+
+            // Step 1: Progressive Step-Down Mipmap (prevents 2x2 bilinear pixel dropping on 1px borders/text)
+            while (curW * 0.55 > targetW && curH * 0.55 > targetH) {
+                const nextW = Math.max(targetW, Math.round(curW * 0.55));
+                const nextH = Math.max(targetH, Math.round(curH * 0.55));
+                const stepCanvas = document.createElement('canvas');
+                stepCanvas.width = nextW;
+                stepCanvas.height = nextH;
+                const sCtx = stepCanvas.getContext('2d');
+                sCtx.imageSmoothingEnabled = true;
+                sCtx.imageSmoothingQuality = 'high';
+                sCtx.drawImage(curSource, 0, 0, nextW, nextH);
+                curSource = stepCanvas;
+                curW = nextW;
+                curH = nextH;
+            }
+
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = targetW;
+            finalCanvas.height = targetH;
+            const ctx = finalCanvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(curSource, 0, 0, targetW, targetH);
+
+            // Step 2: Unsharp Mask + Dark Text Stroke Contrast Preservation
+            const imgData = ctx.getImageData(0, 0, targetW, targetH);
+            const src = imgData.data;
+            const dst = new Uint8ClampedArray(src);
+            const stride = targetW * 4;
+
+            for (let y = 1; y < targetH - 1; y++) {
+                const rowOffset = y * stride;
+                for (let x = 1; x < targetW - 1; x++) {
+                    const idx = rowOffset + (x << 2);
+                    for (let c = 0; c < 3; c++) {
+                        const center = src[idx + c];
+                        const neighbors = (
+                            src[idx - stride + c] +
+                            src[idx + stride + c] +
+                            src[idx - 4 + c] +
+                            src[idx + 4 + c]
+                        ) >> 2;
+                        const diff = center - neighbors;
+                        let val = center + diff * amount;
+                        if (diff < -6 && neighbors > 200) {
+                            val -= (-diff) * 0.35;
+                        }
+                        dst[idx + c] = val < 0 ? 0 : (val > 255 ? 255 : Math.round(val));
+                    }
+                }
+            }
+            imgData.data.set(dst);
+            ctx.putImageData(imgData, 0, 0);
+            return finalCanvas.toDataURL('image/png');
+        } catch (err) {
+            console.warn('[ComponentInserter] Crisp image resampling fallback to original:', err);
+            return null;
+        }
+    }
+
+    window.createCrispImageDataUrl = createCrispImageDataUrl;
+
+    window.processAndInsertRawImage = function(base64, onComplete) {
+        if (!base64) return;
+        const img = new Image();
+        img.onload = function() {
+            const origW = img.naturalWidth || 200;
+            const origH = img.naturalHeight || 200;
+            const naturalRatio = origW / origH;
+            let w = origW;
+            let h = origH;
+
+            if (naturalRatio < 0.65) {
+                w = Math.min(origW, 360);
+                h = Math.round(w / naturalRatio);
+                if (h > 760) {
+                    h = 760;
+                    w = Math.round(h * naturalRatio);
+                }
+            } else if (w > 780 || h > 540) {
+                const scale = Math.min(780 / w, 540 / h);
+                w = Math.round(w * scale);
+                h = Math.round(h * scale);
+            }
+            const texW = Math.min(origW, Math.round(w * 1.15));
+            const texH = Math.min(origH, Math.round(h * 1.15));
+            const crispDataUrl = createCrispImageDataUrl(img, texW, texH, 0.75);
+            const crispBase64 = crispDataUrl || base64;
+            const crispKey = crispDataUrl ? (texW + 'x' + texH) : '';
+            window.insertImageComponent(crispBase64, w + 'px', h + 'px', origW, origH, base64, crispKey);
+            if (typeof onComplete === 'function') onComplete();
+        };
+        img.src = base64;
+    };
+
     function triggerImageFileUpload() {
         let input = document.getElementById('v4-image-file-input');
         if (!input) {
@@ -87,32 +194,7 @@
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = function(evt) {
-                    const base64 = evt.target.result;
-                    const img = new Image();
-                    img.onload = function() {
-                        const origW = img.naturalWidth || 200;
-                        const origH = img.naturalHeight || 200;
-                        const naturalRatio = origW / origH;
-                        let w = origW;
-                        let h = origH;
-
-                        // Calculate proportional initial placement size for 1600x900 canvas
-                        if (naturalRatio < 0.65) {
-                            // Tall mobile screenshots: target width 320px, height proportional
-                            w = 320;
-                            h = Math.round(w / naturalRatio);
-                            if (h > 750) {
-                                h = 750;
-                                w = Math.round(h * naturalRatio);
-                            }
-                        } else if (w > 560 || h > 450) {
-                            const scale = Math.min(560 / w, 450 / h);
-                            w = Math.round(w * scale);
-                            h = Math.round(h * scale);
-                        }
-                        window.insertImageComponent(base64, w + 'px', h + 'px', origW, origH);
-                    };
-                    img.src = base64;
+                    window.processAndInsertRawImage(evt.target.result);
                 };
                 reader.readAsDataURL(file);
                 input.value = '';
@@ -121,12 +203,28 @@
         input.click();
     }
 
-    window.insertImageComponent = function(base64, width, height, naturalWidth, naturalHeight) {
+    window.insertImageComponent = function(base64, width, height, naturalWidth, naturalHeight, origBase64, crispSizeKey) {
         const targetId = 'v4-img-' + Date.now();
         const natW = naturalWidth || parseInt(width) || 200;
         const natH = naturalHeight || parseInt(height) || 200;
         const ratio = (natW && natH) ? (natW / natH).toFixed(4) : '1';
-        const html = '<div class="v4-shape v4-shape-image" data-natural-width="' + natW + '" data-natural-height="' + natH + '" data-aspect-ratio="' + ratio + '" style="width: 100%; height: 100%; background-image: url(\'' + base64 + '\'); background-size: cover; background-position: center; background-repeat: no-repeat; box-sizing: border-box; border: 1.6px solid transparent; background-color: transparent !important;"></div>';
+        const crispAttr = crispSizeKey ? ' data-crisp-size="' + crispSizeKey + '"' : '';
+        try {
+            const rootWin = window.top || window;
+            if (!rootWin.__lf_orig_image_cache__) {
+                rootWin.__lf_orig_image_cache__ = {};
+                rootWin.__lf_orig_image_keys__ = [];
+            }
+            if (origBase64) {
+                rootWin.__lf_orig_image_cache__[targetId] = origBase64;
+                rootWin.__lf_orig_image_keys__.push(targetId);
+                while (rootWin.__lf_orig_image_keys__.length > 20) {
+                    const oldKey = rootWin.__lf_orig_image_keys__.shift();
+                    if (oldKey) delete rootWin.__lf_orig_image_cache__[oldKey];
+                }
+            }
+        } catch (err) {}
+        const html = '<div class="v4-shape v4-shape-image" data-natural-width="' + natW + '" data-natural-height="' + natH + '" data-aspect-ratio="' + ratio + '"' + crispAttr + ' style="width: 100%; height: 100%; background-image: url(\'' + base64 + '\'); background-size: cover; background-position: center; background-repeat: no-repeat; box-sizing: border-box; border: 1.6px solid transparent; background-color: transparent !important;"></div>';
         const finalW = width || '200px';
         const finalH = height || '200px';
         const style = {

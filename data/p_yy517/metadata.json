@@ -13,10 +13,43 @@
     "08_Responsive_PC_Mobile_489.html": {
       "title": "상품 상세 - 배너 슬롯",
       "type": "ui",
-      "updatedAt": "2026-10-27T08:19:55.620Z",
+      "updatedAt": "2026-10-27T08:26:56.441Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역\n- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동",
+          "html": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역<div>- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동</div>",
+          "x": 735,
+          "y": 1209,
+          "pins": {
+            "pc": {
+              "x": 735,
+              "y": 1209,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 735,
+              "y": 1209,
+              "active": true
+            },
+            "right": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
@@ -69,6 +102,6 @@
     "renewal_cart_2.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-27 17:19:55",
+  "updated": "2026-10-27 17:26:56",
   "version": 0.1
 }

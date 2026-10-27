@@ -57,7 +57,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니",
       "type": "ui",
-      "updatedAt": "2026-10-27T09:44:37.020Z",
+      "updatedAt": "2026-10-27T09:46:26.256Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -102,6 +102,6 @@
     "renewal_cart_2.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-27 18:44:36",
+  "updated": "2026-10-27 18:46:26",
   "version": 0.1
 }

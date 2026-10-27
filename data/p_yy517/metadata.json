@@ -11,7 +11,7 @@
     "08_Responsive_PC_Mobile_489.html": {
       "title": "상품 상세 - 배너 슬롯",
       "type": "ui",
-      "updatedAt": "2026-10-27T05:48:22.516Z",
+      "updatedAt": "2026-10-27T05:48:29.735Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [],
@@ -31,6 +31,6 @@
     "00_Cover_417.html",
     "08_Responsive_PC_Mobile_489.html"
   ],
-  "updated": "2026-10-27 14:48:21",
+  "updated": "2026-10-27 14:48:29",
   "version": 0.1
 }

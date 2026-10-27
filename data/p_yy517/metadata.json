@@ -13,15 +13,15 @@
     "08_Responsive_PC_Mobile_489.html": {
       "title": "상품 상세 - 배너 슬롯",
       "type": "ui",
-      "updatedAt": "2026-10-27T06:28:34.335Z",
+      "updatedAt": "2026-10-27T09:47:51.842Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역\n- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동",
-          "html": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역<div>- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동</div>",
+          "text": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역\n- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동\n- 등록된 배너가 2개 이상일 경우 Indicator 표현",
+          "html": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역<div>- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동</div><div>- 등록된 배너가 2개 이상일 경우 Indicator 표현</div>",
           "x": 735,
           "y": 1209,
           "pins": {
@@ -57,7 +57,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니",
       "type": "ui",
-      "updatedAt": "2026-10-27T09:47:10.377Z",
+      "updatedAt": "2026-10-27T05:55:16.601Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -135,6 +135,6 @@
     "renewal_cart_2.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-27 18:47:10",
+  "updated": "2026-10-27 18:47:51",
   "version": 0.1
 }

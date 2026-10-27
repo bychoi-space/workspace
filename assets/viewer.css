@@ -2438,10 +2438,11 @@ body.fullscreen-mode .stage {
     align-items: center;
     gap: 5px;
 }
+.selection-scroll-pin-bar .scroll-pin-title-icon,
 .scroll-pin-title-icon {
     width: 12px !important;
     height: 12px !important;
-    color: #818cf8;
+    color: #818cf8 !important;
     stroke-width: 2 !important;
 }
 .scroll-pin-title {
@@ -2524,15 +2525,17 @@ body.fullscreen-mode .stage {
     width: 100%;
     align-items: center;
 }
+.selection-scroll-pin-bar .scroll-pin-btn,
 .scroll-pin-btn {
     flex: 1 1 0 !important;
     min-width: 0 !important;
-    height: 38px !important;
-    min-height: 38px !important;
-    max-height: 38px !important;
-    padding: 3px 2px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    padding: 4px 2px !important;
     font-size: 10px !important;
     font-weight: 600 !important;
+    line-height: 1.2 !important;
     border-radius: 4px !important;
     background: transparent !important;
     border: 1px solid transparent !important;
@@ -2548,16 +2551,20 @@ body.fullscreen-mode .stage {
     white-space: nowrap !important;
     overflow: hidden !important;
 }
+.selection-scroll-pin-bar .scroll-pin-btn span,
 .scroll-pin-btn span {
+    display: block !important;
+    flex-shrink: 0 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    line-height: 1.1 !important;
+    line-height: 1.25 !important;
     font-size: 10px !important;
     letter-spacing: -0.4px !important;
     max-width: 100% !important;
     text-align: center !important;
 }
+.selection-scroll-pin-bar .scroll-pin-btn .lf-icon,
 .scroll-pin-btn .lf-icon {
     width: 14px !important;
     height: 14px !important;
@@ -2624,9 +2631,14 @@ body.fullscreen-mode .stage {
     font-weight: 700 !important;
     box-shadow: 0 0 10px rgba(99, 102, 241, 0.3) !important;
 }
+.selection-scroll-pin-bar .scroll-pin-marker-group .scroll-pin-btn,
 .scroll-pin-marker-group .scroll-pin-btn {
     height: 28px !important;
     min-height: 28px !important;
+    max-height: 28px !important;
+    flex-direction: row !important;
+    gap: 5px !important;
+    padding: 0 8px !important;
     font-size: 11px !important;
 }
 .scroll-pin-offset-bar {
@@ -2817,7 +2829,7 @@ body.fullscreen-mode .stage {
     gap: 6px;
     width: 100%;
 }
-.selection-actions-bar .v4-inspector-btn {
+.selection-actions-bar .v4-inspector-btn:not(.scroll-pin-btn) {
     height: 28px !important;
     min-height: 28px !important;
     max-height: 28px !important;

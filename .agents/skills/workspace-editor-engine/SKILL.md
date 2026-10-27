@@ -76,7 +76,17 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **도형 서식 클립보드 파이프라인 (Format Painter Pipeline & Style Clipboard SSOT)**:
   - `vctrl_shortcuts.js` (`copySelectedObjectStyle`, `pasteCopiedObjectStyle`)와 `vctrl_format_painter.js` (`LF_SAVE_STYLE_CLIPBOARD`, `LF_REQUEST_STYLE_CLIPBOARD`, `LF_RESPONSE_STYLE_CLIPBOARD`, `LF_SHOW_TOAST`)로 구성됩니다.
   - `Ctrl + Shift + C` 복사 시 컴포넌트의 시각 스타일 및 텍스트 타이포그래피(폰트, 크기, 색상, 두께, 정렬)를 깊이 추출하여 부모 창의 `(window.top || window).__lf_global_style_clipboard__`에 저장합니다.
+    - **DOM 실시간 알파 추출 폴백**: 인스펙터 상태에 투명도 수치가 누락되었거나 100으로 기본 설정되어 있더라도, 실시간 DOM `style.backgroundColor` 및 `window._getAlphaPercent`를 통해 실제 렌더링된 알파 퍼센트를 추출하여 `bgOpacity`로 보존합니다. 추출된 알파가 0인 경우 `isBgTransparent = true`로 자동 동기화합니다.
   - `Ctrl + Shift + V` 붙여넣기 시 부모에 클립보드 데이터를 요청하여 단일 또는 다중 선택된 N개 요소에 일괄 주입하며, 주입 전 `V4UndoManager.saveState()`를 호출하여 실행 취소를 보장합니다.
+    - **통합 채우기 색상 해석기 (`_resolveFillColor`)**:
+      - `isBgTransparent`가 `true`이거나 배경색이 `'transparent'`/`'none'`이거나 `bgOpacity <= 0`인 경우 무조건 `'transparent'` 반환.
+      - `bgOpacity < 100`인 경우 `_hexToRgba(hex, alpha)`를 적용하여 표준 `rgba(r, g, b, alpha)` 색상으로 변환.
+      - `bgOpacity >= 100`이거나 미지정인 경우 순수 배경색 반환.
+    - **전 오브젝트 적용 범위**:
+      - 사각형/원형/패턴그리드/웹페이지: `shape.style.backgroundColor` 및 `background`에 `targetFill` 주입, 패턴그리드는 `border-radius`도 동일 동기화.
+      - SVG 벡터 도형(삼각형, 다이아몬드, 웨이브, 화살표): 외부 컨테이너는 투명 배경을 유지하고 내부 SVG 요소에 `fill` 주입 및 불필요한 `fill-opacity` 인라인을 제거.
+      - 버튼 및 텍스트박스 아톰: `.v4-atom-btn` 및 `.v4-shape-text-box`에 동일하게 `_resolveFillColor` 결과 색상을 주입하여 일관된 시각 서식 적용.
+    - **템플릿 리터럴 인라인 안전 원칙**: 인라인 모듈 스크립트 내부에서 정규식 백슬래시 탈출 버그(`\)` 파괴로 인한 `Unmatched ')'` 등)를 방지하기 위해 순수 문자열 조작 함수(`indexOf`, `lastIndexOf`, `split`, `substring`)로 색상 변환을 처리합니다.
 - **스크린 배경 설정 엔진 (Canvas Background Setting Pipeline)**:
   - 부모 창의 `ComponentInserter.applyCanvasBackground()`에서 iframe으로 `LF_SET_CANVAS_BACKGROUND` 메시지를 디스패치합니다.
   - Iframe 측(`vctrl_iframe_script.js`)에서는 캔버스 루트 최상단 자식으로 `#canvas_bg_layer` (`pointer-events: none !important; user-select: none; overflow: hidden;`)를 생성/갱신하고 `#canvas_bg_img`의 `src` 및 `opacity`를 적용한 뒤 부모 창으로 `LF_CANVAS_BACKGROUND_UPDATED` 신호를 회신합니다.

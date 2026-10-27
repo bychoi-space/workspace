@@ -118,7 +118,7 @@
                     type: 'LF_UPDATE_STYLE',
                     id: targetIds[0],
                     ids: targetIds,
-                    selector: '.v4-shape-rect, .v4-shape-webpage',
+                    selector: '.v4-shape-rect, .v4-shape-webpage, .v4-shape-pattern-grid',
                     style: { borderRadius: val + 'px' }
                 });
                 if (typeof window.markAsDirty === 'function') window.markAsDirty();

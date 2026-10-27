@@ -24,6 +24,48 @@ window.v4FormatPainterScript = `
     }
     const notifyParent = dispatchFormatToParent;
 
+    function _hexToRgba(hex, opacity) {
+        if (!hex || hex === 'transparent' || hex === 'none') return 'transparent';
+        if (opacity === 0) return 'transparent';
+        if (typeof hex === 'string' && hex.startsWith('rgba')) {
+            var lastComma = hex.lastIndexOf(',');
+            if (lastComma !== -1) {
+                return hex.substring(0, lastComma) + ', ' + opacity + ')';
+            }
+        }
+        if (typeof hex === 'string' && hex.startsWith('rgb')) {
+            var closeParen = hex.indexOf(')');
+            var baseRgb = closeParen !== -1 ? hex.substring(0, closeParen) : hex;
+            if (baseRgb.startsWith('rgb(')) {
+                return 'rgba(' + baseRgb.substring(4) + ', ' + opacity + ')';
+            }
+        }
+        var c = String(hex).replace('#', '');
+        if (c.length === 3) c = c.split('').map(function(x) { return x + x; }).join('');
+        var num = parseInt(c, 16);
+        if (isNaN(num)) return 'rgba(255, 255, 255, ' + opacity + ')';
+        var r = (num >> 16) & 255;
+        var g = (num >> 8) & 255;
+        var b = num & 255;
+        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
+    }
+    if (typeof window.hexToRgba !== 'function') {
+        window.hexToRgba = _hexToRgba;
+    }
+
+    function _resolveFillColor(styleData) {
+        if (!styleData || !styleData.fill) return '';
+        var f = styleData.fill;
+        if (f.isBgTransparent || !f.bg || f.bg === 'transparent' || f.bg === 'none' || (f.bgOpacity !== undefined && f.bgOpacity <= 0)) {
+            return 'transparent';
+        }
+        if (f.bgOpacity !== undefined && f.bgOpacity < 100) {
+            var alpha = f.bgOpacity > 1 ? (f.bgOpacity / 100) : f.bgOpacity;
+            return (typeof window.hexToRgba === 'function') ? window.hexToRgba(f.bg, alpha) : _hexToRgba(f.bg, alpha);
+        }
+        return f.bg;
+    }
+
     function _extractComponentBorderStyle(targetComp, shape, cur) {
         var detectedBorderStyle = 'solid';
         if (shape) {
@@ -243,6 +285,36 @@ window.v4FormatPainterScript = `
         var borderData = _extractComponentBorderStyle(targetComp, shape, cur);
         var textData = _extractComponentTypographyStyle(targetComp, cur, shape);
 
+        var extractedBg = cur.bg || '';
+        var extractedBgOpacity = (cur.bgOpacity !== undefined) ? cur.bgOpacity : 100;
+        var extractedIsBgTransparent = !!cur.isBgTransparent;
+
+        if (targetComp) {
+            var rawBg = '';
+            if (shape) {
+                var svgEl = shape.querySelector('polygon, path, rect, circle');
+                if (svgEl && (shape.classList.contains('v4-shape-diamond') || shape.classList.contains('v4-shape-triangle') || shape.classList.contains('v4-shape-wave') || shape.classList.contains('v4-shape-arrow'))) {
+                    rawBg = svgEl.style.fill || svgEl.getAttribute('fill') || '';
+                } else {
+                    rawBg = shape.style.backgroundColor || shape.style.background || '';
+                }
+            } else {
+                rawBg = targetComp.style.backgroundColor || targetComp.style.background || '';
+            }
+            if (rawBg && (rawBg.startsWith('rgba') || rawBg.startsWith('rgb') || rawBg.includes('/'))) {
+                var alphaPct = (typeof window._getAlphaPercent === 'function') ? window._getAlphaPercent(rawBg) : null;
+                if (alphaPct !== null && alphaPct !== undefined) {
+                    extractedBgOpacity = alphaPct;
+                }
+                if (!extractedBg && typeof window.rgbToHex === 'function') {
+                    extractedBg = window.rgbToHex(rawBg) || '';
+                }
+            }
+        }
+        if (extractedBgOpacity <= 0) {
+            extractedIsBgTransparent = true;
+        }
+
         var styleData = {
             type: 'LF_STYLE_CLIPBOARD',
             version: 2,
@@ -250,9 +322,9 @@ window.v4FormatPainterScript = `
             isShape: isShape,
             shapeType: compStyles ? (compStyles.shapeType || '') : '',
             fill: {
-                bg: cur.bg || '',
-                bgOpacity: cur.bgOpacity !== undefined ? cur.bgOpacity : 100,
-                isBgTransparent: !!cur.isBgTransparent,
+                bg: extractedBg,
+                bgOpacity: extractedBgOpacity,
+                isBgTransparent: extractedIsBgTransparent,
                 patternType: compStyles ? (compStyles.patternType || '') : ''
             },
             border: borderData,
@@ -486,17 +558,7 @@ window.v4FormatPainterScript = `
 
     function _applyShapeFillAndBorder(shape, svgShape, isSvgContainer, styleData) {
         // Background Fill
-        let targetFill = '';
-        if (styleData.fill) {
-            if (styleData.fill.isBgTransparent || !styleData.fill.bg || styleData.fill.bg === 'transparent' || styleData.fill.bg === 'none') {
-                targetFill = 'transparent';
-            } else if (styleData.fill.bgOpacity !== undefined && styleData.fill.bgOpacity < 100) {
-                const alpha = styleData.fill.bgOpacity > 1 ? (styleData.fill.bgOpacity / 100) : styleData.fill.bgOpacity;
-                targetFill = (typeof window.hexToRgba === 'function') ? window.hexToRgba(styleData.fill.bg, alpha) : styleData.fill.bg;
-            } else {
-                targetFill = styleData.fill.bg;
-            }
-        }
+        var targetFill = _resolveFillColor(styleData);
 
         if (isSvgContainer) {
             shape.style.background = 'transparent';
@@ -504,6 +566,8 @@ window.v4FormatPainterScript = `
             if (svgShape && targetFill) {
                 svgShape.style.fill = (targetFill === 'transparent') ? 'none' : targetFill;
                 svgShape.setAttribute('fill', (targetFill === 'transparent') ? 'none' : targetFill);
+                svgShape.removeAttribute('fill-opacity');
+                if (svgShape.style) svgShape.style.removeProperty('fill-opacity');
             }
         } else {
             if (targetFill) {
@@ -548,7 +612,7 @@ window.v4FormatPainterScript = `
                 shape.style.borderStyle = bStyle;
             }
 
-            if (shape.classList.contains('v4-shape-rect') || shape.classList.contains('v4-shape-webpage')) {
+            if (shape.classList.contains('v4-shape-rect') || shape.classList.contains('v4-shape-webpage') || shape.classList.contains('v4-shape-pattern-grid')) {
                 const rad = (styleData.border.radius !== undefined) ? parseInt(styleData.border.radius) : 0;
                 shape.style.setProperty('border-radius', rad + 'px', 'important');
             }
@@ -643,9 +707,10 @@ window.v4FormatPainterScript = `
     }
 
     function _applyButtonFormat(comp, customBtn, styleData) {
-        if (styleData.fill && styleData.fill.bg) {
-            customBtn.style.backgroundColor = styleData.fill.bg;
-            customBtn.style.background = styleData.fill.bg;
+        var btnFill = _resolveFillColor(styleData);
+        if (btnFill) {
+            customBtn.style.backgroundColor = btnFill;
+            customBtn.style.background = btnFill;
         }
         if (styleData.border && styleData.border.color) {
             customBtn.style.borderColor = styleData.border.color;
@@ -664,13 +729,10 @@ window.v4FormatPainterScript = `
         if (cell && styleData.text) {
             applyTypographyDeep(cell, styleData.text);
         }
-        if (styleData.fill) {
-            if (styleData.fill.isBgTransparent || !styleData.fill.bg || styleData.fill.bg === 'transparent') {
-                comp.style.backgroundColor = 'transparent';
-                comp.style.background = 'transparent';
-            } else {
-                comp.style.backgroundColor = styleData.fill.bg;
-            }
+        var boxFill = _resolveFillColor(styleData);
+        if (boxFill) {
+            comp.style.backgroundColor = boxFill;
+            comp.style.background = boxFill;
         }
         if (styleData.border) {
             if (styleData.border.isBorderTransparent || !styleData.border.color || styleData.border.color === 'transparent') {

@@ -86,7 +86,7 @@
         const cornerGroup = document.getElementById('shape-corner-style-group');
         const arrowGroup = document.getElementById('shape-arrow-direction-group');
         const waveGroup = document.getElementById('shape-wave-direction-group');
-        const isRect = (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage');
+        const isRect = (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.shapeType === 'pattern' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage' || compStyles.id === 'v4-shape-pattern-grid');
         const isArrowOrTriangle = (compStyles.shapeType === 'arrow' || compStyles.id === 'v4-shape-arrow' || compStyles.shapeType === 'triangle' || compStyles.id === 'v4-shape-triangle');
         const isWave = (compStyles.shapeType === 'wave' || compStyles.id === 'v4-shape-wave' || (compStyles.classList && compStyles.classList.includes('v4-shape-wave')));
 
@@ -367,7 +367,7 @@
             if (txt) txt.innerText = s.fontSize;
         }
 
-        const isRectShape = (compStyles.isShape || editingType === 'shape') && (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage' || !compStyles.shapeType);
+        const isRectShape = (compStyles.isShape || editingType === 'shape') && (compStyles.shapeType === 'rect' || compStyles.shapeType === 'webpage' || compStyles.shapeType === 'pattern' || compStyles.id === 'v4-shape-rect' || compStyles.id === 'v4-shape-webpage' || compStyles.id === 'v4-shape-pattern-grid' || !compStyles.shapeType);
         if (isRectShape && s.borderRadius !== undefined) {
             const radiusVal = s.borderRadius;
             const slider = document.getElementById('shape-border-radius');

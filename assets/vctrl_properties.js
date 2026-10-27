@@ -434,7 +434,7 @@
         'shape-font-size': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { fontSize: val + 'px' } }),
         'shape-text-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { color: val } }),
         'shape-border-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: val } }),
-        'shape-border-radius': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape-rect, .v4-shape-webpage', style: { borderRadius: val + 'px' } }),
+        'shape-border-radius': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape-rect, .v4-shape-webpage, .v4-shape-pattern-grid', style: { borderRadius: val + 'px' } }),
         'text-color-picker': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-editable-cell', style: { color: val } }),
         'icon-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: 'img, .lf-icon', style: { color: val } })
         // Note: shape-bg-color and shape-bg-opacity are handled by SSOT input handlers in assets/inspector/inspector_shapes.js
@@ -459,6 +459,7 @@
             if (txtEl) {
                 txtEl.innerText = e.target.value;
             }
+            if (id === 'shape-border-radius' && typeof window._syncCornerBtns === 'function') window._syncCornerBtns(e.target.value);
             if (window.markAsDirty) window.markAsDirty();
             return;
         }

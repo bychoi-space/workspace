@@ -140,7 +140,7 @@
   - **`vctrl_common.js` (Common Bus, Sanitizer & Utilities)**:
     - **역할**: 
       1. 부모-Iframe 통신 인터페이스: `window.EditorBus`(`sendToIframe`, `sendToParent`)
-      2. 공통 색상 유틸리티: `rgbToHex`, `hexToRgb`, `hexToRgba`
+      2. 공통 색상 유틸리티 SSOT: `rgbToHex`, `hexToRgb`, `hexToRgba` (부모 창 및 iframe 내부 `window.v4CommonScript` 공통 주입 SSOT)
       3. 전역 화면 살균 SSOT: `window.ScreenSanitizer` (`splitStyleRules`, `cleanEmptyStyleRules`, `cleanDOM`)
       4. 반응형 문서 판별 SSOT: `isResponsiveDocument(doc)`
   - **`vctrl_component_library.js` & `vctrl_component_inserter.js` (Library & Insertion Engine)**:
@@ -161,7 +161,8 @@
   - **`vctrl_clipboard_objects.js` (Canvas Object Clipboard Engine - Iframe Side)**:
     - **역할**: 캔버스 오브젝트 복사/붙여넣기/잘라내기(`Ctrl+C`, `Ctrl+V`, `Ctrl+X`)의 JSON 직렬화 및 크로스 스크린 클립보드(`window.top.__lf_global_clipboard__`) 동기화 전담 (`v4ClipboardObjectsScript`). 동일 프레임(우측하단 +15px) 및 다중 프레임 간 이동(뷰포트 정중앙) 스마트 안착, 그룹 내부 컴포넌트 단독 복사 시 부모 그룹 오프셋 누적 절대 좌표 정규화, 잘라내기 시 고아 그룹 자동 정리를 전담합니다.
   - **`vctrl_format_painter.js` (Format Painter Engine - Iframe Side)**:
-    - **역할**: 서식 복사/붙여넣기(`Ctrl+Shift+C`, `Ctrl+Shift+V`), 스타일 클립보드(`window.top.__lf_global_style_clipboard__`) 관리 및 Undo 연동 전담 (`v4FormatPainterScript`).
+    - **역할**: 서식 복사/붙여넣기(`Ctrl+Shift+C`, `Ctrl+Shift+V`), 스타일 클립보드(`window.top.__lf_global_style_clipboard__`) 관리, 배경 투명도(`bgOpacity`)와 보더/타이포그래피 심층 주입 및 Undo 연동 전담 (`v4FormatPainterScript`).
+    - **배경 투명도 및 채우기 색상 해석 SSOT (`_resolveFillColor`, `_hexToRgba`)**: 자체 포함된 순수 문자열 유틸리티로 템플릿 리터럴 인라인 내 백슬래시 탈출 위험을 원천 차단하며, `isBgTransparent` 여부 및 0~100% 투명도 수치를 계산하여 도형(Rect, Circle, Pattern Grid, SVG 쉐입), 버튼, 텍스트박스 전반에 정확한 RGBA 색상을 일관되게 적용합니다.
   - **`vctrl_smartguide.js` (Smart Guide Engine - Parent & Iframe Side)**:
     - **역할**: 일반 1600x900 캔버스 내 컴포넌트 이동/리사이즈 시 5px 자석 스냅선 및 중앙/경계선 가이드 렌더링 전담.
   - **`vctrl_responsive_smartguide_math.js` (Responsive Smart Guide Math Engine - Iframe Side)**:
@@ -188,6 +189,7 @@
     - **역할**: 맨 앞으로 가져오기(`Ctrl+]`), 맨 뒤로 보내기(`Ctrl+[`), Z-Index 자동 재계산 및 캔버스 컨테이너 셀프 힐링 전담 (`v4IframeLayeringScript`).
   - **`vctrl_iframe_style_extractor.js` (Deep Style Extractor - Iframe Side)**:
     - **역할**: 서식 복사를 위해 도형, 텍스트, 아톰, 테이블의 인라인/컴퓨티드 스타일을 심층 추출 및 정규화 전담 (`v4IframeStyleExtractorScript`).
+    - **알파(투명도) 추출 SSOT (`window._getAlphaPercent`)**: `rgba(...)`, CSS Color 4 슬래시 구문(`rgb(r g b / a)`), 퍼센트(`%`) 표기까지 견고하게 파싱하며, 알파 값이 0인 경우 `isBgTransparent: true` 및 `isBorderTransparent: true`로 명시적 투명 플래그를 정규화합니다.
   - **`vctrl_properties.js` (Properties Controller - Parent Side)**:
     - **역할**: 부모 창 측 컴포넌트 속성 매핑 및 플로팅 인스펙터 패널 바인딩 헬퍼.
     - **강제 프로퍼티 동기화 파이프라인**: `LF_COMP_SELECTED` 수신 시 활성 대상 ID 변경을 감지하여 부모 activeElement를 즉시 포커스 해제하고, `updateAllInputs(w, h, force = true)`를 호출하여 포커스 가드를 확실히 우회함으로써 동일 유형 쉐입 간 연속 선택 시에도 가로/세로 수치가 100% 강제 동기화되도록 보장합니다.
@@ -243,6 +245,23 @@
       - Z-Index 4대 티어(Tier 2: 100,000~179,999, Tier 3: 200,050) 준수.
       - In-Place Undo 및 스크린 저장/살균(`ScreenSanitizer.cleanDOM`) 시 런타임 transform만 정제하고 DOM 데이터 속성(`data-scroll-fixed`, `data-scroll-effect`, `data-scroll-target-y`, `data-scroll-sticky-top`)은 100% 영구 보존.
 
+- **도형/오브젝트 서식 복사·붙여넣기 및 배경 투명도 파이프라인 (Format Painter & Fill Opacity SSOT)**:
+  - **1. 클립보드 데이터 구조와 단일 진실 공급원 (`window.top.__lf_global_style_clipboard__`)**:
+    - `Ctrl + Shift + C` 복사 시 컴포넌트의 시각 스타일(배경색, 배경 투명도 `bgOpacity`, 투명 여부 `isBgTransparent`, 테두리 색상/두께/스타일/반경, 패턴)과 텍스트 타이포그래피(폰트, 크기, 색상, 두께, 자간, 행간, 정렬)를 심층 추출하여 부모 창의 `(window.top || window).__lf_global_style_clipboard__`에 저장합니다.
+    - 추출 시 인스펙터 상태뿐만 아니라 실시간 DOM 스타일(`targetComp.style.backgroundColor`, `window._getAlphaPercent`)을 폴백으로 교차 검증하여 `bgOpacity`가 100%로 잘못 덮어씌워지지 않도록 실체 데이터를 보존합니다.
+  - **2. 채우기 색상 해석 및 투명도 결합 아키텍처 (`_resolveFillColor`)**:
+    - 붙여넣기 시 `_resolveFillColor(styleData)`를 통해 투명도 결합 색상을 단일 경로로 계산합니다:
+      - `isBgTransparent`가 `true`이거나 배경색이 없거나 `'transparent'` / `'none'`인 경우: `'transparent'` 반환.
+      - `bgOpacity`가 0 이하인 경우: `'transparent'` 반환.
+      - `bgOpacity`가 유효하고 100 미만인 경우: `_hexToRgba(bg, alpha)`를 호출하여 브라우저 표준 `rgba(r, g, b, alpha)` 색상 문자열로 변환 (기존 색상이 이미 rgba인 경우 알파 채널만 안전하게 대체).
+      - `bgOpacity`가 100 이상이거나 생략된 경우: 순수 원본 `bg` 색상 반환.
+  - **3. 전 영역 쉐입 및 아톰 적용 일관성 (Shapes, Buttons, TextBoxes)**:
+    - **일반 도형 (Rect, Circle, Pattern Grid, Webpage)**: `shape.style.backgroundColor` 및 `background`에 `targetFill`을 주입하고, 패턴 그리드의 경우 `border-radius`도 동일하게 동기화.
+    - **SVG 벡터 도형 (Triangle, Diamond, Wave, Arrow)**: 컨테이너 배경은 `transparent`로 유지하고 내부 SVG path/polygon 요소의 `fill` 속성 및 인라인 스타일에 `targetFill`(`none` 또는 RGBA)을 직접 주입하며 불필요한 `fill-opacity` 인라인을 제거하여 색상 충돌을 차단.
+    - **버튼 및 텍스트박스 아톰**: `.v4-atom-btn` 및 `.v4-shape-text-box`의 배경색과 보더, 타이포그래피에 동일한 `_resolveFillColor` 결과를 주입하여 컴포넌트 종류에 관계없이 일관된 서식 복사/붙여넣기 경험을 보장.
+  - **4. 템플릿 리터럴 인라인 스크립트의 정규식 탈출(Escape) 방지 원칙**:
+    - `vctrl_core.js`의 `ENGINE_SCRIPT_REGISTRY`에 등록되어 외부 템플릿 리터럴(`` ` ``)로 감싸진 인라인 모듈(`vctrl_format_painter.js`, `vctrl_common.js` 등) 내부에서는 복잡한 정규식 리터럴(예: `replace(/[\d\.]+\)$/g, ...)`, `/\/.../`)을 절대 사용하지 않는다.
+    - 문자열 보간 평가 과정에서 역슬래시(`\`)가 소실되어 브래킷 불일치(`Unmatched ')'`) 또는 주석 처리(`//`) 구문 에러가 발생하므로, 반드시 `indexOf`, `lastIndexOf`, `split`, `substring` 등 순수 문자열 연산자만을 사용하여 색상 문자열 및 스타일을 파싱한다.
 
 - **모바일 및 태블릿 디바이스 읽기 전용 모드 및 뷰포트 아키텍처 절대 불변 규칙 (Mobile & Tablet Read-Only Architecture SSOT)**:
   - **1. 모바일 환경의 본질 (100% 읽기/조회/뷰어 전용 모드)**:

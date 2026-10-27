@@ -9,14 +9,31 @@ if (!window.v4IframeStyleExtractorScript) {
 
     const _getAlphaPercent = (rgb) => {
         if (!rgb || rgb === "transparent" || rgb === "none" || rgb.includes("rgba(0, 0, 0, 0)")) return 0;
-        if (rgb.startsWith("rgba")) {
-            const parts = rgb.match(/rgba?\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*([\\d.]+)\\s*\\)/);
-            if (parts && parts[1] !== undefined) {
-                return Math.round(parseFloat(parts[1]) * 100);
+        if (typeof rgb === "string") {
+            if (rgb.indexOf("/") !== -1) {
+                const slashParts = rgb.split("/");
+                if (slashParts.length > 1) {
+                    const aStr = slashParts[1].replace(")", "").trim();
+                    const val = parseFloat(aStr);
+                    if (!isNaN(val)) {
+                        return aStr.indexOf("%") !== -1 ? Math.round(val) : Math.round(val * 100);
+                    }
+                }
+            }
+            if (rgb.startsWith("rgba")) {
+                const commaParts = rgb.split(",");
+                if (commaParts.length >= 4) {
+                    const aStr = commaParts[3].replace(")", "").trim();
+                    const val = parseFloat(aStr);
+                    if (!isNaN(val)) {
+                        return aStr.indexOf("%") !== -1 ? Math.round(val) : Math.round(val * 100);
+                    }
+                }
             }
         }
         return 100;
     };
+    window._getAlphaPercent = _getAlphaPercent;
 
     const _extractInputAtomDescriptors = (c, isGroup) => {
         // Checkbox / Radio Atom Detection
@@ -509,11 +526,11 @@ if (!window.v4IframeStyleExtractorScript) {
             bgOpacity: _getAlphaPercent(getCompBg()),
             isBgTransparent: (() => {
                 const colorVal = getCompBg();
-                return !colorVal || colorVal === "transparent" || colorVal === "none" || colorVal.includes("rgba(0, 0, 0, 0)");
+                return !colorVal || colorVal === "transparent" || colorVal === "none" || colorVal.includes("rgba(0, 0, 0, 0)") || _getAlphaPercent(colorVal) === 0;
             })(),
             isBorderTransparent: (() => {
                 const colorVal = getCompBorder();
-                return !colorVal || colorVal === "transparent" || colorVal === "none" || colorVal.includes("rgba(0, 0, 0, 0)");
+                return !colorVal || colorVal === "transparent" || colorVal === "none" || colorVal.includes("rgba(0, 0, 0, 0)") || _getAlphaPercent(colorVal) === 0;
             })(),
             textAlign: (() => {
                 const cell = shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : c.querySelector('.v4-editable-cell');

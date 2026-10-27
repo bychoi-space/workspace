@@ -57,9 +57,42 @@
     "renewal_cart_2.html": {
       "title": "장바구니",
       "type": "ui",
-      "updatedAt": "2026-10-27T09:46:26.256Z",
+      "updatedAt": "2026-10-27T09:47:10.377Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 840,
+          "y": 432,
+          "pins": {
+            "pc": {
+              "x": 840,
+              "y": 432,
+              "active": true
+            },
+            "mobile": {
+              "x": 20,
+              "y": 994,
+              "active": true
+            },
+            "left": {
+              "x": 840,
+              "y": 432,
+              "active": true
+            },
+            "right": {
+              "x": 20,
+              "y": 994,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -102,6 +135,6 @@
     "renewal_cart_2.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-27 18:46:26",
+  "updated": "2026-10-27 18:47:10",
   "version": 0.1
 }

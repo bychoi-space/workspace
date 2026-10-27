@@ -7,6 +7,50 @@
       "updatedAt": "2026-10-27T05:39:19.440Z",
       "template": "template_cover.html",
       "version": 0.1
+    },
+    "08_Responsive_PC_Mobile_489.html": {
+      "title": "상품 상세 - 배너 슬롯",
+      "type": "ui",
+      "updatedAt": "2026-10-27T05:47:43.560Z",
+      "template": "template_responsive_pc_mobile.html",
+      "version": 0.1,
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "상품정보 공지 배너 (영역 신설)\n- Admin 에서 등록된 배너 이미지 표현\n- 클릭 시 설정된 랜딩 URL 로 이동",
+          "html": "상품정보 공지 배너 (영역 신설)<div>- Admin 에서 등록된 배너 이미지 표현</div><div>- 클릭 시 설정된 랜딩 URL 로 이동</div>",
+          "x": 30,
+          "y": 897,
+          "pins": {
+            "pc": {
+              "x": 30,
+              "y": 897,
+              "active": true
+            },
+            "mobile": {
+              "x": 10,
+              "y": 1162,
+              "active": true
+            },
+            "left": {
+              "x": 30,
+              "y": 897,
+              "active": true
+            },
+            "right": {
+              "x": 10,
+              "y": 1162,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     }
   },
   "assignee": "최범열",
@@ -15,5 +59,9 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/1-406f6986169c807f9a31ff196aeb409f?source=copy_link",
   "themeIndex": 2,
-  "category": "front_admin"
+  "category": "front_admin",
+  "screenOrder": [
+    "00_Cover_417.html",
+    "08_Responsive_PC_Mobile_489.html"
+  ]
 }

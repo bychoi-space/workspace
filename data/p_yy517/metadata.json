@@ -101,9 +101,42 @@
     "renewal_order_3.html": {
       "title": "주문서 (As-Is) 2",
       "type": "ui",
-      "updatedAt": "2026-10-29T05:59:12.724Z",
+      "updatedAt": "2026-10-29T06:41:22.335Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 840,
+          "y": 587,
+          "pins": {
+            "pc": {
+              "x": 840,
+              "y": 587,
+              "active": true
+            },
+            "mobile": {
+              "x": 20,
+              "y": 1167,
+              "active": true
+            },
+            "left": {
+              "x": 840,
+              "y": 587,
+              "active": true
+            },
+            "right": {
+              "x": 20,
+              "y": 1167,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -180,6 +213,6 @@
     "renewal_cart_2.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-29 15:40:50",
+  "updated": "2026-10-29 15:41:22",
   "version": 0.1
 }

@@ -101,7 +101,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (As-Is) 2",
       "type": "ui",
-      "updatedAt": "2026-10-29T03:09:25.099Z",
+      "updatedAt": "2026-10-27T05:57:26.810Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -152,6 +152,50 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "mypageWishlist.html": {
+      "title": "위시리스트",
+      "type": "ui",
+      "updatedAt": "2026-10-29T03:10:20.787Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역\n- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동\n- 등록된 배너가 2개 이상일 경우 Indicator 표현",
+          "html": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역<div>- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동</div><div>- 등록된 배너가 2개 이상일 경우 Indicator 표현</div>",
+          "x": 840,
+          "y": 432,
+          "pins": {
+            "pc": {
+              "x": 840,
+              "y": 432,
+              "active": true
+            },
+            "mobile": {
+              "x": 20,
+              "y": 994,
+              "active": true
+            },
+            "left": {
+              "x": 840,
+              "y": 432,
+              "active": true
+            },
+            "right": {
+              "x": 20,
+              "y": 994,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     }
   },
   "assignee": "최범열",
@@ -166,6 +210,7 @@
     "99_Blank_164.html",
     "08_Responsive_PC_Mobile_489.html",
     "renewal_cart_2.html",
+    "mypageWishlist.html",
     "renewal_order_3.html"
   ],
   "updated": "2026-10-29 12:09:25",

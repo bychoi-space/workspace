@@ -101,7 +101,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (As-Is) 2",
       "type": "ui",
-      "updatedAt": "2026-10-29T05:59:12.724Z",
+      "updatedAt": "2026-10-29T06:39:58.049Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -123,7 +123,7 @@
     "mypageWishlist.html": {
       "title": "위시리스트",
       "type": "ui",
-      "updatedAt": "2026-10-29T06:28:28.415Z",
+      "updatedAt": "2026-10-29T03:10:20.787Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -180,6 +180,6 @@
     "mypageWishlist.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-29 15:28:28",
+  "updated": "2026-10-29 15:39:57",
   "version": 0.1
 }

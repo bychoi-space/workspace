@@ -156,9 +156,42 @@
     "mypageWishlist.html": {
       "title": "위시리스트 - 배너 슬롯",
       "type": "ui",
-      "updatedAt": "2026-10-29T07:36:25.827Z",
+      "updatedAt": "2026-10-29T07:36:46.615Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 299,
+          "y": 190,
+          "pins": {
+            "pc": {
+              "x": 299,
+              "y": 190,
+              "active": true
+            },
+            "mobile": {
+              "x": 20,
+              "y": 70,
+              "active": true
+            },
+            "left": {
+              "x": 299,
+              "y": 190,
+              "active": true
+            },
+            "right": {
+              "x": 20,
+              "y": 70,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -180,6 +213,6 @@
     "renewal_cart_2.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-29 16:36:25",
+  "updated": "2026-10-29 16:36:46",
   "version": 0.1
 }

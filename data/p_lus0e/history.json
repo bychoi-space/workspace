@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.7",
+    "date": "2026-10-29 09:54:48",
+    "message": "ADMIN [기획전 관리] 화면 조회조건 & 조회결과 '기획전 유형' 추가",
+    "assignee": "최범열",
+    "developer": "원미란",
+    "file": "09_Admin_PC_Scroll_639.html"
+  },
+  {
     "version": "0.6",
     "date": "2026-09-22 09:31:11",
     "message": "랭킹 산정 알고리즘 - 신상품 부스팅 규칙 제거",

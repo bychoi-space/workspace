@@ -154,9 +154,9 @@
       "screenDesc": ""
     },
     "mypageWishlist.html": {
-      "title": "위시리스트",
+      "title": "위시리스트 - 배너 슬롯",
       "type": "ui",
-      "updatedAt": "2026-10-29T03:10:20.787Z",
+      "updatedAt": "2026-10-29T07:02:41.658Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],

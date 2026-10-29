@@ -184,23 +184,56 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
       "type": "admin",
-      "updatedAt": "2026-09-29T07:59:02.633Z",
+      "updatedAt": "2026-10-29T00:53:58.930Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
-          "text": "기획전 관리 페이지\n- 기능과 구조 모두 현상 유지",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
-          "x": 273,
-          "y": 330,
+          "text": "26.10.29 업데이트\n\n\n기획전 관리 조회 조건\n - [기획전 유형] 항목 추가\n - 기본값 '전체'",
+          "html": "26.10.29 업데이트<div><br></div><div>기획전 관리 <span style=\"background-color: transparent;\">조회 조건</span></div><div><span style=\"background-color: transparent;\"> - [기획전 유형] 항목 추가</span></div><div><span style=\"background-color: transparent;\"> - 기본값 '전체'</span></div>",
+          "x": 271,
+          "y": 276,
           "pins": {
             "pc": {
-              "x": 273,
-              "y": 330,
+              "x": 271,
+              "y": 276,
               "active": true
             },
             "mobile": {
               "x": 180,
               "y": 300,
+              "active": true
+            },
+            "left": {
+              "x": 271,
+              "y": 276,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none",
+          "target": "frame"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "26.10.29 업데이트\n\n\n기획전 관리 조회 결과 (목록)\n - [기획전 유형] 컬럼 추가\n - 각 기획전 별 설정된 데이터 표현",
+          "html": "26.10.29 업데이트<div><br></div><div>기획전 관리 조회 결과 (목록)</div><div> - [기획전 유형] 컬럼 추가</div><div> - 각 기획전 별 설정된 데이터 표현</div>",
+          "x": 666,
+          "y": 478,
+          "pins": {
+            "pc": {
+              "x": 666,
+              "y": 478,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 666,
+              "y": 478,
               "active": true
             }
           },
@@ -687,7 +720,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-23 12:05:56",
+  "updated": "2026-10-29 09:53:58",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

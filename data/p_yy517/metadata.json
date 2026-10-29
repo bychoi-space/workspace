@@ -101,7 +101,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (As-Is) 2",
       "type": "ui",
-      "updatedAt": "2026-10-29T06:40:18.867Z",
+      "updatedAt": "2026-10-29T06:40:50.204Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -180,6 +180,6 @@
     "mypageWishlist.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-29 15:40:18",
+  "updated": "2026-10-29 15:40:50",
   "version": 0.1
 }

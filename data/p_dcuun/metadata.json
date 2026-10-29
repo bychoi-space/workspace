@@ -189,15 +189,15 @@
     "08_Responsive_PC_Mobile_488.html": {
       "title": "상품 상세 - 상품정보 공지",
       "type": "ui",
-      "updatedAt": "2026-10-19T05:35:46.637Z",
+      "updatedAt": "2026-10-29T01:12:55.503Z",
       "template": "template_responsive_pc_mobile.html",
       "version": 0.1,
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "상품정보 공지 배너 (영역 신설)\n- Admin 에서 등록된 배너 이미지 표현\n- 클릭 시 설정된 랜딩 URL 로 이동",
-          "html": "상품정보 공지 배너 (영역 신설)<div>- Admin 에서 등록된 배너 이미지 표현</div><div>- 클릭 시 설정된 랜딩 URL 로 이동</div>",
+          "text": "상품정보 공지 배너 (영역 신설)\n- Admin 에서 등록된 배너 이미지 표현\n- 클릭 시 설정된 랜딩 URL 로 이동\n\n\n[2026.10.29 업데이트]\n- 상품정보 공지 배너는 1개만 표현 (추후 온라인MD 의견에 따라 슬롯 확장 될 수 있음)\n- Admin 에 다중 배너가 설정된 경우, 노출시작일 최신순 배너만 표현",
+          "html": "상품정보 공지 배너 (영역 신설)<div>- Admin 에서 등록된 배너 이미지 표현</div><div>- 클릭 시 설정된 랜딩 URL 로 이동</div><div><br></div><div>[2026.10.29 업데이트]</div><div>- <span style=\"font-weight: bold; color: rgb(251, 191, 36);\">상품정보 공지 배너는 1개만 표현</span> (추후 온라인MD 의견에 따라 슬롯 확장 될 수 있음)</div><div>- <span style=\"font-weight: bold; color: rgb(251, 191, 36);\">Admin 에 다중 배너가 설정된 경우, 노출시작일 최신순 배너만 표현</span></div>",
           "x": 30,
           "y": 897,
           "pins": {
@@ -284,6 +284,6 @@
     "09_Admin_PC_Scroll_642.html",
     "08_Responsive_PC_Mobile_488.html"
   ],
-  "updated": "2026-10-23 17:06:42",
+  "updated": "2026-10-29 10:12:54",
   "version": 0.1
 }

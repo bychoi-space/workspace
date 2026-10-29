@@ -184,7 +184,7 @@
     "09_Admin_PC_Scroll_639.html": {
       "title": "기획전 목록",
       "type": "admin",
-      "updatedAt": "2026-10-29T00:53:58.930Z",
+      "updatedAt": "2026-10-29T00:54:38.056Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -701,7 +701,8 @@
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 377.222,
           "y": 203.889,
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         },
         {
           "type": "pin",
@@ -709,7 +710,8 @@
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left;\">Edit Text</div>",
           "x": 1200.55,
           "y": 207.333,
-          "standardized": true
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -720,7 +722,7 @@
   "developer": "원미란",
   "period": "2026.09.03 ~ 2026.10.30",
   "themeIndex": 2,
-  "updated": "2026-10-29 09:53:58",
+  "updated": "2026-10-29 09:54:38",
   "screenOrder": [
     "00_Cover_802.html",
     "01_Project_Summary_898.html",

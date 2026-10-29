@@ -123,7 +123,7 @@
     "mypageWishlist.html": {
       "title": "위시리스트",
       "type": "ui",
-      "updatedAt": "2026-10-29T06:27:25.213Z",
+      "updatedAt": "2026-10-29T06:27:54.250Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -180,6 +180,6 @@
     "mypageWishlist.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-29 15:27:25",
+  "updated": "2026-10-29 15:27:54",
   "version": 0.1
 }

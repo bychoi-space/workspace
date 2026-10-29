@@ -854,6 +854,13 @@ body.drawing-line-active .lf-component.near-connector > .lf-connector-port {
     color: #0f172a !important;
 }
 
+/* Accordion Top-Bottom Border Mode */
+.v4-accordion-container[data-border-type="top-bottom"] {
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0px !important;
+}
+
 /* --- Universal V4 IA Tree Table Component Styles (Cross-Project Reusable Molecule) --- */
 .ia-table-card { width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04); box-sizing: border-box; }
 .ia-scroll-viewport { width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; background: #ffffff; }

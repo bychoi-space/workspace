@@ -358,7 +358,9 @@
 
         const editingTargetId = sourceInput && sourceInput.dataset && sourceInput.dataset.editingCompId;
         const currentActiveIds = getActiveTargetIds();
-        const targetIds = editingTargetId ? [editingTargetId] : currentActiveIds;
+        const targetIds = (currentActiveIds.length > 1 && (!editingTargetId || currentActiveIds.includes(editingTargetId)))
+            ? currentActiveIds
+            : (editingTargetId ? [editingTargetId] : currentActiveIds);
         if (!targetIds || targetIds.length === 0) return;
 
         const currentActiveId = activeCompId || (currentActiveIds && currentActiveIds[0]) || null;
@@ -473,6 +475,7 @@
             return;
         }
         if (e.target.classList.contains('v4-color-input')) {
+            if (e.target.id === 'shape-bg-color' || e.target.id === 'shape-bg-opacity') return;
             const prop = e.target.dataset.prop;
             const value = e.target.value;
             const wrapper = e.target.closest('.v4-color-wrapper');

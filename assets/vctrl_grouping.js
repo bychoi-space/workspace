@@ -43,6 +43,9 @@ window.GroupingManager = (function() {
                 selectedIds = data.ids || [];
                 selectedIdsIsGroupMap = {};
                 syncWithCore();
+                if (selectedIds.length > 1 && typeof window.updateProperties === 'function') {
+                    window.updateProperties(null, true);
+                }
             });
              MessageHub.subscribe('LF_DESELECT', () => {
                  selectedIds = [];
@@ -358,14 +361,23 @@ window.GroupingManager = (function() {
          }
 
          if (selectedIds.length > 0) {
-             const iframe = document.getElementById('main-iframe');
+             const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
              if (selectedIds.length === 1 && iframe && iframe.contentWindow) {
                  window.MessageHub.send(iframe.contentWindow, 'LF_SELECT_ID', { id: selectedIds[0] });
-             } else if (selectedIds.length > 1 && iframe && iframe.contentWindow) {
-                 window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { 
-                     ids: selectedIds, 
-                     isDragging: false 
-                 });
+             } else if (selectedIds.length > 1) {
+                 if (iframe && iframe.contentWindow) {
+                     window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { 
+                         ids: selectedIds, 
+                         isDragging: false 
+                     });
+                 }
+                 if (window.state) {
+                     window.state.selectedIds = [...selectedIds];
+                 }
+                 updateSelectionUI();
+                 if (typeof window.updateProperties === 'function') {
+                     window.updateProperties(null, true);
+                 }
              }
          }
          document.querySelectorAll('.v4-marquee-box').forEach(el => el.remove());
@@ -660,7 +672,6 @@ window.GroupingManager = (function() {
         deleteMolecule,
         renameMolecule,
         setSelectedIdsIsGroupMap: (map) => { selectedIdsIsGroupMap = map; },
-        setSelectedIds: (ids) => { selectedIds = ids; },
         updateSelectionUI
     };
 })();

@@ -7,7 +7,30 @@
     console.log("[Inspector Atoms] Domain module loaded.");
 
     const highlightActive = window.highlightActive;
-    const notifyIframe = (data) => window.notifyIframe(data);
+
+    const getActiveTargetIds = () => {
+        if (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function') {
+            const selIds = window.GroupingManager.getSelectedIds();
+            if (Array.isArray(selIds) && selIds.length > 0) return selIds;
+        }
+        if (window.state && window.state.selectedIds && Array.isArray(window.state.selectedIds) && window.state.selectedIds.length > 0) {
+            return window.state.selectedIds;
+        }
+        const stateSelectedId = (window.state && window.state.selectedComponent && window.state.selectedComponent.id) || null;
+        if (stateSelectedId) return [stateSelectedId];
+        return window.activeCompId ? [window.activeCompId] : [];
+    };
+
+    const notifyIframe = (data) => {
+        if (data && typeof data === 'object') {
+            const targetIds = getActiveTargetIds();
+            if (targetIds.length > 0) {
+                if (!data.id) data.id = targetIds[0];
+                if (!data.ids) data.ids = targetIds;
+            }
+        }
+        window.notifyIframe(data);
+    };
 
     // --- Disabled State Common Sync ---
     const syncDisabled = (comp) => {

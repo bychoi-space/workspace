@@ -43,6 +43,10 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
      - **업계 표준 4대 단축키**: 맨 앞으로 가져오기(`Ctrl + Shift + ]`), 한 단계 앞으로(`Ctrl + ]`), 맨 뒤로 보내기(`Ctrl + Shift + [`), 한 단계 뒤로(`Ctrl + [`).
      - **티어 무결성 & 캡핑**: 일반 컴포넌트는 `Tier 2` 상한선인 `69,900`을 절대 초과하지 않으며, 바닥선은 `1,000` 이하로 떨어지지 않도록 보호된다.
      - **플로팅 툴바 및 Undo**: 플로팅 인스펙터(`#selection-actions-bar`) 버튼과 100% 양방향 동기화되며, `Ctrl + Z`로 1프레임 즉각 복원된다.
+   11. **동일 컴포넌트 다중 선택 시 프로퍼티 일괄 수정 보장 (Multi-Selection Batch Property Update)**:
+      - 드래그(Marquee) 또는 Shift+Click으로 동일한 아톰(버튼, 텍스트박스, 셀렉트박스 등)이나 도형을 다중 선택한 상태에서 프로퍼티 패널의 속성(크기, 활성/비활성, 텍스트, 색상 등)을 수정하면 선택된 모든 객체에 일괄 동기화되어야 한다.
+      - `vctrl_properties.js`에서 다중 선택 시 타겟 ID 배열이 단일 요소로 축소되지 않도록 보존하고, `inspector_atoms.js`에서 IPC 메시지 전송 시 `id`와 `ids`를 동시에 전달하며, `vctrl_ui_atoms.js` 및 `vctrl_ui_atoms_inputs.js`에서 `_getTargetComponents(d)`를 통해 모든 대상을 순회 갱신한다.
+      - 실행 취소(`Ctrl+Z`)는 단일 트랜잭션으로 원자적 롤백을 보장해야 한다.
 
 - **Unified Marker Structure**: Text markers must include a `.lf-drag-handle` (drag handle), `.lf-delete-trigger` (delete), and `.v4-editable-cell` (content) inside their `.lf-component` wrapper. All markers are aligned to their **Top-Left** corner (0, 0) and use **px** units for consistent coordinate mapping with shapes and atoms.
 - **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.lf-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
@@ -78,6 +82,12 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - 모든 인스펙터 `<select>`는 `.v4-prop-select` 클래스를 적용하고 `text-align: left !important; text-align-last: left !important;`를 보장하여 드롭다운 텍스트가 우측으로 쏠리지 않고 단정하게 좌측 정렬되도록 한다.
 - **오프라인 폴백 빌드 동기화**:
   - `assets/ui_library/inspector_panels.html` 수정 후 반드시 `powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1`을 실행하여 `assets/ui_library_fallback.js`를 재컴파일해야 한다.
+
+## 아코디언 아톰(Accordion Atom) 비주얼 및 인스펙터 표준 규격
+- **계층 구조 규격**: `.lf-component` ➔ `.v4-accordion-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-accordion-item`. `1 Depth`(플랫 리스트) 및 `2 Depth`(1티어 대분류 + 2티어 중분류)를 지원하며 `data-hierarchy` 속성에 구조와 상태가 JSON으로 영속화된다.
+- **선택 인디케이터 표준**: 최하위 항목 좌측에 라디오 버튼(`.v4-accordion-radio`)이 제공되며, 선택 시 텍스트 밑줄(`text-decoration: underline`)이 실시간 적용된다.
+- **인스펙터 전용 패널 (`#accordion-inspector-section`)**: `inspector_accordion.js`를 통해 항목 추가/삭제, 1/2 Depth 전환, 펼침/접힘 토글, 배경색, 테두리, 헤더/본문 폰트 스타일, 라디오 인디케이터를 단일 파이프라인으로 동기화한다.
+- **동적 높이 자동 피팅**: 항목 변경 시 아이템 개수와 행 높이에 맞춰 컨테이너 높이(`height`)가 자동 재계산되어 여백 틀어짐을 방지하며, `V4UndoManager.saveState()`를 통해 `Ctrl+Z` Undo가 100% 보장된다.
 
 ## 웹 에디터 아톰(Web Editor Atom) 비주얼 및 인스펙터 표준 규격
 - **구조 규격**: `.lf-component` ➔ `.v4-webeditor-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-webeditor-toolbar` (상단 서식 도구) + `.v4-webeditor-body` (본문 작성부) + `.v4-webeditor-statusbar` (글자수 표시).

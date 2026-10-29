@@ -22,6 +22,13 @@
 
             const hasSelection = selIds.length > 0 || !!(compStyles && compStyles.id);
 
+            // Update selection count & label SSOT
+            const selectionNumber = document.getElementById('selection-number');
+            const selectionLabel = document.getElementById('selection-label');
+            const effectiveCount = selIds.length > 0 ? selIds.length : (compStyles && compStyles.id ? 1 : 0);
+            if (selectionNumber) selectionNumber.innerText = effectiveCount;
+            if (selectionLabel) selectionLabel.innerText = effectiveCount > 1 ? 'OBJECTS' : 'OBJECT';
+
             if (btnGroup) btnGroup.style.setProperty('display', (selIds.length > 1) ? 'flex' : 'none', 'important');
             if (btnUngroup) btnUngroup.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
             if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', canAddMolecule ? 'flex' : 'none', 'important');

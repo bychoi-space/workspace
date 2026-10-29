@@ -449,6 +449,42 @@ window.v4DesignSystemScript = `
                     });
                 }
                 
+                const headerFontSize = parseInt(accordion.getAttribute('data-header-font-size'));
+                if (headerFontSize) {
+                    const headerTitle = accordion.querySelector('.v4-accordion-title-text');
+                    if (headerTitle) headerTitle.style.fontSize = headerFontSize + 'px';
+                }
+                const subFontSize = parseInt(accordion.getAttribute('data-sub-font-size'));
+                if (subFontSize) {
+                    accordion.querySelectorAll('.v4-accordion-item, .v4-accordion-tier1-header, .v4-accordion-tier2-header, .v4-accordion-body .v4-editable-cell').forEach(el => {
+                        el.style.fontSize = subFontSize + 'px';
+                    });
+                }
+                
+                const borderType = accordion.getAttribute('data-border-type');
+                if (borderType === 'top-bottom') {
+                    accordion.style.borderLeft = 'none';
+                    accordion.style.borderRight = 'none';
+                    accordion.style.borderRadius = '0px';
+                    if (!expanded && header) {
+                        header.style.borderBottom = 'none';
+                    }
+                }
+                const chevronType = accordion.getAttribute('data-chevron-type');
+                if (chevron) {
+                    if (chevronType === 'chevron' && !chevron.querySelector('svg')) {
+                        chevron.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px; height:13px; display:inline-block; vertical-align:middle; pointer-events:none;"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+                        chevron.style.fontSize = '0px';
+                        chevron.style.display = 'inline-flex';
+                        chevron.style.alignItems = 'center';
+                        chevron.style.justifyContent = 'center';
+                    } else if (chevronType === 'triangle' && chevron.querySelector('svg')) {
+                        chevron.innerHTML = '▼';
+                        chevron.style.fontSize = '10px';
+                        chevron.style.display = 'inline-block';
+                    }
+                }
+
                 if (body) {
                     body.style.display = expanded ? 'flex' : 'none';
                 }

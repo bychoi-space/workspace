@@ -271,12 +271,35 @@ if (!window.v4IframeStyleExtractorScript) {
         const isAccordion = isGroup ? false : (!!c.querySelector('.v4-accordion-container') || c.classList.contains('v4-accordion-container'));
         const accordionContainer = isGroup ? null : (c.querySelector('.v4-accordion-container') || (isAccordion ? c : null));
         const accordionHeaderText = accordionContainer ? (accordionContainer.querySelector('.v4-accordion-title-text')?.innerText || "Accordion Header") : "Accordion Header";
+        const accordionHeaderFontSize = accordionContainer ? (
+            parseInt(accordionContainer.getAttribute('data-header-font-size')) ||
+            (accordionContainer.querySelector('.v4-accordion-title-text') ? parseInt(_getVal(accordionContainer.querySelector('.v4-accordion-title-text'), 'fontSize')) : 12) ||
+            12
+        ) : 12;
+        const accordionSubFontSize = accordionContainer ? (
+            parseInt(accordionContainer.getAttribute('data-sub-font-size')) ||
+            (accordionContainer.querySelector('.v4-accordion-item, .v4-accordion-tier1-header span, .v4-accordion-tier2-header span') ? parseInt(_getVal(accordionContainer.querySelector('.v4-accordion-item, .v4-accordion-tier1-header span, .v4-accordion-tier2-header span'), 'fontSize')) : 12) ||
+            12
+        ) : 12;
+        const accordionChevronType = accordionContainer ? (accordionContainer.getAttribute('data-chevron-type') || 'triangle') : 'triangle';
+        const accordionBorderType = accordionContainer ? (accordionContainer.getAttribute('data-border-type') || 'all') : 'all';
         const accordionSubCount = accordionContainer ? (parseInt(accordionContainer.getAttribute('data-sub-count')) || 0) : 0;
         const accordionSubTexts = accordionContainer ? Array.from(accordionContainer.querySelectorAll('.v4-accordion-item')).map(item => item.innerText) : [];
         const accordionExpanded = accordionContainer ? accordionContainer.getAttribute('data-expanded') === 'true' : false;
         const accordionItemHeight = accordionContainer ? parseInt(accordionContainer.getAttribute('data-item-height')) || (accordionContainer.querySelector('.v4-accordion-header') ? parseInt(accordionContainer.querySelector('.v4-accordion-header').style.height) || 36 : 36) : 36;
         const accordionDepthType = accordionContainer ? (accordionContainer.getAttribute('data-depth-type') || '1depth') : '1depth';
         const accordionHierarchy = accordionContainer ? (accordionContainer.getAttribute('data-hierarchy') || '') : '';
+        const accordionTextColor = accordionContainer ? (
+            accordionContainer.getAttribute('data-text-color') ||
+            (accordionContainer.querySelector('.v4-accordion-title-text') ? window.rgbToHex(_getVal(accordionContainer.querySelector('.v4-accordion-title-text'), 'color')) : '') ||
+            '#ffffff'
+        ) : '#ffffff';
+        const accordionBodyEl = accordionContainer ? accordionContainer.querySelector('.v4-accordion-body') : null;
+        const accordionBodyBg = accordionContainer ? (
+            accordionContainer.getAttribute('data-body-bg') ||
+            (accordionBodyEl && accordionBodyEl.style.backgroundColor ? window.rgbToHex(accordionBodyEl.style.backgroundColor) : '') ||
+            ''
+        ) : '';
 
         // Tab UI Atom Detection
         const isTab = isGroup ? false : (!!c.querySelector('.v4-tab-container') || c.classList.contains('v4-tab-container'));
@@ -344,7 +367,7 @@ if (!window.v4IframeStyleExtractorScript) {
             props: {
                 isPopup, popupTitle, popupShowClose, popupHeaderBg, popupHeaderColor, popupBodyBg, popupBorderColor, popupRadius,
                 isAlert, alertMessage, alertBtnCount, alertBtnText1, alertBtnText2, alertBtnText3, alertBtnStyle1, alertBtnStyle2, alertBtnStyle3, alertShowDesc, alertDesc,
-                isAccordion, accordionHeaderText, accordionSubCount, accordionSubTexts, accordionExpanded, accordionItemHeight, accordionDepthType, accordionHierarchy,
+                isAccordion, accordionHeaderText, accordionHeaderFontSize, accordionSubFontSize, accordionChevronType, accordionBorderType, accordionSubCount, accordionSubTexts, accordionExpanded, accordionItemHeight, accordionDepthType, accordionHierarchy, accordionTextColor, accordionBodyBg,
                 isTab, tabCount, tabActiveIndex, tabAccentColor, tabs: tabItemsList,
                 isGrid, gridHeaders, gridColumns, gridRowCount, gridShowPagination, gridRowHeight, gridZebra,
                 isAdminSettings, adminRowCount, adminShowGroupHeader, adminGroupHeaderTitle, adminGroupHeaderBg, adminGroupHeaderColor, adminLabelWidth,

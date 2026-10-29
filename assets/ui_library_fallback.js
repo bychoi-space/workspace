@@ -1005,6 +1005,26 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 <label class="v4-prop-label">헤더 텍스트 (Header Text)</label>
                 <input type="text" id="prop-accordion-header-text" class="v4-prop-input v4-prop-input-base pad-6-8">
             </div>
+            <!-- Font Size Controls (Header & Sub-Tier) -->
+            <div class="prop-group mb-12">
+                <label class="v4-prop-label">글자 크기 (Font Size)</label>
+                <div class="v4-prop-grid-2">
+                    <div class="prop-subgroup">
+                        <label class="v4-prop-label" style="font-size: 10px; color: #94a3b8;">헤더 크기 (Header)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-accordion-header-font-size" class="v4-prop-input v4-prop-input-styled" value="12" min="8" max="72" placeholder="12">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                    <div class="prop-subgroup">
+                        <label class="v4-prop-label" style="font-size: 10px; color: #94a3b8;">하위 티어 크기 (Sub)</label>
+                        <div class="v4-prop-input-wrap">
+                            <input type="number" id="prop-accordion-sub-font-size" class="v4-prop-input v4-prop-input-styled" value="12" min="8" max="72" placeholder="12">
+                            <span class="v4-prop-unit">px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Expanded Toggle -->
             <div class="prop-group v4-section-header mb-8">
                 <label class="v4-prop-label mb-0">펼침 상태 (Expanded)</label>
@@ -1013,25 +1033,70 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                     <button id="btn-accordion-expand-n" class="v4-inspector-btn v4-inspector-toggle-btn">N</button>
                 </div>
             </div>
-            <div class="v4-prop-grid-2 gap-12 mb-12">
-                <!-- Background Color -->
-                <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="background">배경색 (Background)</label>
-                    <div class="v4-prop-flex-gap-4">
-                        <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-bg-wrapper">
-                            <input type="color" id="accordion-bg-color" class="v4-color-input" data-prop="background" value="#1e293b">
+            <!-- Icon Style (Chevron vs Triangle) -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">아이콘 모양 (Icon)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-accordion-icon-triangle" class="v4-inspector-btn v4-inspector-toggle-btn" title="삼각형 (▲▼)">▲▼</button>
+                    <button id="btn-accordion-icon-chevron" class="v4-inspector-btn v4-inspector-toggle-btn" title="꺾쇠 (∧∨)">∧∨</button>
+                </div>
+            </div>
+            <!-- Theme Preset -->
+            <div class="prop-group mb-8">
+                <label class="v4-prop-label">테마 프리셋 (Theme Preset)</label>
+                <div class="v4-flex-gap-4">
+                    <button id="btn-accordion-theme-light" class="v4-inspector-btn" style="flex: 1; font-size: 11px; padding: 4px 6px;">☀️ 라이트</button>
+                    <button id="btn-accordion-theme-dark" class="v4-inspector-btn" style="flex: 1; font-size: 11px; padding: 4px 6px;">🌙 다크</button>
+                </div>
+            </div>
+            <!-- Border Mode (All vs Top & Bottom) -->
+            <div class="prop-group v4-section-header mb-8">
+                <label class="v4-prop-label mb-0">테두리 형태 (Border)</label>
+                <div class="v4-flex-gap-4 w-84">
+                    <button id="btn-accordion-border-all" class="v4-inspector-btn v4-inspector-toggle-btn" title="전체 테두리">전체</button>
+                    <button id="btn-accordion-border-topbottom" class="v4-inspector-btn v4-inspector-toggle-btn" title="상하(위/아래) 라인">상하</button>
+                </div>
+            </div>
+            <!-- Colors: Header Bg, Text Color, Body Bg, Border -->
+            <div class="prop-group mb-12">
+                <label class="v4-prop-label">색상 설정 (Colors)</label>
+                <div class="v4-prop-grid-2 gap-8 mb-6">
+                    <div class="prop-group">
+                        <label class="v4-color-label v4-prop-label" data-prop="background">헤더 배경색 (Header BG)</label>
+                        <div class="v4-prop-flex-gap-4">
+                            <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-bg-wrapper">
+                                <input type="color" id="accordion-bg-color" class="v4-color-input" data-prop="background" value="#1e293b">
+                            </div>
+                            <button id="btn-accordion-bg-none" class="v4-color-none-btn v4-btn-action-del" data-prop="background" title="Transparent BG"><span class="material-icons-outlined font-14">block</span></button>
                         </div>
-                        <button id="btn-accordion-bg-none" class="v4-color-none-btn v4-btn-action-del" data-prop="background" title="Transparent BG"><span class="material-icons-outlined font-14">block</span></button>
+                    </div>
+                    <div class="prop-group">
+                        <label class="v4-color-label v4-prop-label" data-prop="textColor">글자색 (Text Color)</label>
+                        <div class="v4-prop-flex-gap-4">
+                            <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-text-wrapper">
+                                <input type="color" id="accordion-text-color" class="v4-color-input" data-prop="textColor" value="#ffffff">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- Border Color -->
-                <div class="prop-group">
-                    <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
-                    <div class="v4-prop-flex-gap-4">
-                        <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-border-wrapper">
-                            <input type="color" id="accordion-border-color" class="v4-color-input" data-prop="borderColor" value="#ffffff">
+                <div class="v4-prop-grid-2 gap-8">
+                    <div class="prop-group">
+                        <label class="v4-color-label v4-prop-label" data-prop="bodyBg">본문 배경색 (Body BG)</label>
+                        <div class="v4-prop-flex-gap-4">
+                            <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-body-bg-wrapper">
+                                <input type="color" id="accordion-body-bg-color" class="v4-color-input" data-prop="bodyBg" value="#0f172a">
+                            </div>
+                            <button id="btn-accordion-body-bg-none" class="v4-color-none-btn v4-btn-action-del" data-prop="bodyBg" title="Transparent Body"><span class="material-icons-outlined font-14">block</span></button>
                         </div>
-                        <button id="btn-accordion-border-none" class="v4-color-none-btn v4-btn-action-del" data-prop="borderColor" title="Transparent Border"><span class="material-icons-outlined font-14">block</span></button>
+                    </div>
+                    <div class="prop-group">
+                        <label class="v4-color-label v4-prop-label" data-prop="borderColor">테두리색 (Border)</label>
+                        <div class="v4-prop-flex-gap-4">
+                            <div class="v4-color-wrapper v4-checkerboard-bg" id="accordion-border-wrapper">
+                                <input type="color" id="accordion-border-color" class="v4-color-input" data-prop="borderColor" value="#ffffff">
+                            </div>
+                            <button id="btn-accordion-border-none" class="v4-color-none-btn v4-btn-action-del" data-prop="borderColor" title="Transparent Border"><span class="material-icons-outlined font-14">block</span></button>
+                        </div>
                     </div>
                 </div>
             </div>

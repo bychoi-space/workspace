@@ -26,6 +26,32 @@
         }
     };
 
+    const applyTheme = (themeName) => {
+        const isLight = themeName === 'light';
+        const data = isLight ? {
+            bg: '#ffffff',
+            textColor: '#0f172a',
+            bodyBg: '#f8fafc',
+            border: '#e2e8f0'
+        } : {
+            bg: '#1e293b',
+            textColor: '#ffffff',
+            bodyBg: '#0f172a',
+            border: '#334155'
+        };
+        const syncColor = (id, wrapperId, color, isTransparent) => {
+            const picker = document.getElementById(id);
+            const wrapper = document.getElementById(wrapperId);
+            if (picker && color) picker.value = color.indexOf('#') === 0 ? color : (window.rgbToHex ? window.rgbToHex(color) : color);
+            if (wrapper) wrapper.classList.toggle('transparent-active', !!isTransparent);
+        };
+        syncColor('accordion-bg-color', 'accordion-bg-wrapper', data.bg, false);
+        syncColor('accordion-text-color', 'accordion-text-wrapper', data.textColor, false);
+        syncColor('accordion-body-bg-color', 'accordion-body-bg-wrapper', data.bodyBg, false);
+        syncColor('accordion-border-color', 'accordion-border-wrapper', data.border, false);
+        notifyAccordion(data);
+    };
+
     const syncSubItemInputs = (texts) => {
         const container = document.getElementById('accordion-sub-items-container');
         if (!container) return;
@@ -211,6 +237,16 @@
             if (headerTextInp && document.activeElement !== headerTextInp && comp.accordionHeaderText !== undefined) {
                 headerTextInp.value = comp.accordionHeaderText;
             }
+
+            const headerFontSizeInp = document.getElementById('prop-accordion-header-font-size');
+            if (headerFontSizeInp && document.activeElement !== headerFontSizeInp && comp.accordionHeaderFontSize !== undefined) {
+                headerFontSizeInp.value = comp.accordionHeaderFontSize;
+            }
+
+            const subFontSizeInp = document.getElementById('prop-accordion-sub-font-size');
+            if (subFontSizeInp && document.activeElement !== subFontSizeInp && comp.accordionSubFontSize !== undefined) {
+                subFontSizeInp.value = comp.accordionSubFontSize;
+            }
             
             if (subCountInp && document.activeElement !== subCountInp && comp.accordionSubCount !== undefined) {
                 subCountInp.value = comp.accordionSubCount;
@@ -229,6 +265,22 @@
             if (expandY && expandN) {
                 highlightActive(expandY, comp.accordionExpanded === true);
                 highlightActive(expandN, comp.accordionExpanded === false);
+            }
+
+            const chevronType = comp.accordionChevronType || 'triangle';
+            const iconTriangleBtn = document.getElementById('btn-accordion-icon-triangle');
+            const iconChevronBtn = document.getElementById('btn-accordion-icon-chevron');
+            if (iconTriangleBtn && iconChevronBtn) {
+                highlightActive(iconTriangleBtn, chevronType === 'triangle');
+                highlightActive(iconChevronBtn, chevronType === 'chevron');
+            }
+
+            const borderType = comp.accordionBorderType || 'all';
+            const borderAllBtn = document.getElementById('btn-accordion-border-all');
+            const borderTopBottomBtn = document.getElementById('btn-accordion-border-topbottom');
+            if (borderAllBtn && borderTopBottomBtn) {
+                highlightActive(borderAllBtn, borderType === 'all');
+                highlightActive(borderTopBottomBtn, borderType === 'top-bottom');
             }
 
             const depthType = comp.accordionDepthType || '1depth';
@@ -262,20 +314,47 @@
             const syncColor = (id, wrapperId, color, isTransparent) => {
                 const picker = document.getElementById(id);
                 const wrapper = document.getElementById(wrapperId);
-                if (picker && color) picker.value = color;
-                if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
+                if (picker && color) picker.value = color.indexOf('#') === 0 ? color : (window.rgbToHex ? window.rgbToHex(color) : color);
+                if (wrapper) wrapper.classList.toggle('transparent-active', !!isTransparent);
             };
             syncColor('accordion-bg-color', 'accordion-bg-wrapper', s.bg, s.isBgTransparent);
             syncColor('accordion-border-color', 'accordion-border-wrapper', s.border, s.isBorderTransparent);
+
+            const textColor = comp.accordionTextColor || '#ffffff';
+            syncColor('accordion-text-color', 'accordion-text-wrapper', textColor, false);
+
+            const bodyBg = comp.accordionBodyBg || '';
+            const isBodyBgTransparent = !bodyBg || bodyBg === 'transparent' || bodyBg === 'none';
+            syncColor('accordion-body-bg-color', 'accordion-body-bg-wrapper', isBodyBgTransparent ? '#0f172a' : bodyBg, isBodyBgTransparent);
         },
 
         bindEvents: function() {
             const headerTextInp = document.getElementById('prop-accordion-header-text');
+            const headerFontSizeInp = document.getElementById('prop-accordion-header-font-size');
+            const subFontSizeInp = document.getElementById('prop-accordion-sub-font-size');
             const subCountInp = document.getElementById('prop-accordion-sub-count');
             const bgColorInp = document.getElementById('accordion-bg-color');
             const bgNoneBtn = document.getElementById('btn-accordion-bg-none');
             const borderColorInp = document.getElementById('accordion-border-color');
             const borderNoneBtn = document.getElementById('btn-accordion-border-none');
+
+            if (headerFontSizeInp) {
+                headerFontSizeInp.oninput = () => {
+                    const val = parseInt(headerFontSizeInp.value);
+                    if (!isNaN(val) && val > 0) {
+                        notifyAccordion({ headerFontSize: val });
+                    }
+                };
+            }
+
+            if (subFontSizeInp) {
+                subFontSizeInp.oninput = () => {
+                    const val = parseInt(subFontSizeInp.value);
+                    if (!isNaN(val) && val > 0) {
+                        notifyAccordion({ subFontSize: val });
+                    }
+                };
+            }
 
             const expandY = document.getElementById('btn-accordion-expand-y');
             const expandN = document.getElementById('btn-accordion-expand-n');
@@ -289,6 +368,36 @@
                     highlightActive(expandY, false);
                     highlightActive(expandN, true);
                     notifyAccordion({ expanded: false });
+                };
+            }
+
+            const iconTriangleBtn = document.getElementById('btn-accordion-icon-triangle');
+            const iconChevronBtn = document.getElementById('btn-accordion-icon-chevron');
+            if (iconTriangleBtn && iconChevronBtn) {
+                iconTriangleBtn.onclick = () => {
+                    highlightActive(iconTriangleBtn, true);
+                    highlightActive(iconChevronBtn, false);
+                    notifyAccordion({ chevronType: 'triangle' });
+                };
+                iconChevronBtn.onclick = () => {
+                    highlightActive(iconTriangleBtn, false);
+                    highlightActive(iconChevronBtn, true);
+                    notifyAccordion({ chevronType: 'chevron' });
+                };
+            }
+
+            const borderAllBtn = document.getElementById('btn-accordion-border-all');
+            const borderTopBottomBtn = document.getElementById('btn-accordion-border-topbottom');
+            if (borderAllBtn && borderTopBottomBtn) {
+                borderAllBtn.onclick = () => {
+                    highlightActive(borderAllBtn, true);
+                    highlightActive(borderTopBottomBtn, false);
+                    notifyAccordion({ borderType: 'all' });
+                };
+                borderTopBottomBtn.onclick = () => {
+                    highlightActive(borderAllBtn, false);
+                    highlightActive(borderTopBottomBtn, true);
+                    notifyAccordion({ borderType: 'top-bottom' });
                 };
             }
 
@@ -441,6 +550,39 @@
                 };
             }
 
+            const themeLightBtn = document.getElementById('btn-accordion-theme-light');
+            const themeDarkBtn = document.getElementById('btn-accordion-theme-dark');
+            if (themeLightBtn) {
+                themeLightBtn.onclick = () => applyTheme('light');
+            }
+            if (themeDarkBtn) {
+                themeDarkBtn.onclick = () => applyTheme('dark');
+            }
+
+            const textColorInp = document.getElementById('accordion-text-color');
+            if (textColorInp) {
+                textColorInp.oninput = () => {
+                    notifyAccordion({ textColor: textColorInp.value });
+                };
+            }
+
+            const bodyBgInp = document.getElementById('accordion-body-bg-color');
+            const bodyBgNoneBtn = document.getElementById('btn-accordion-body-bg-none');
+            if (bodyBgInp) {
+                bodyBgInp.oninput = () => {
+                    const wrapper = document.getElementById('accordion-body-bg-wrapper');
+                    if (wrapper) wrapper.classList.remove('transparent-active');
+                    notifyAccordion({ bodyBg: bodyBgInp.value });
+                };
+            }
+            if (bodyBgNoneBtn) {
+                bodyBgNoneBtn.onclick = () => {
+                    const wrapper = document.getElementById('accordion-body-bg-wrapper');
+                    if (wrapper) wrapper.classList.add('transparent-active');
+                    notifyAccordion({ bodyBg: 'transparent' });
+                };
+            }
+
             if (bgColorInp) {
                 bgColorInp.oninput = () => {
                     const wrapper = document.getElementById('accordion-bg-wrapper');
@@ -472,6 +614,7 @@
             }
         },
 
+        applyTheme: applyTheme,
         syncSubItemInputs: syncSubItemInputs,
         syncHierarchyInputs: syncHierarchyInputs
     };
@@ -480,6 +623,48 @@
 
     // Document-level event delegation safeguards for Accordion
     document.addEventListener('click', (e) => {
+        const themeLight = e.target.closest && e.target.closest('#btn-accordion-theme-light');
+        if (themeLight) {
+            applyTheme('light');
+            return;
+        }
+        const themeDark = e.target.closest && e.target.closest('#btn-accordion-theme-dark');
+        if (themeDark) {
+            applyTheme('dark');
+            return;
+        }
+        const iconTriangle = e.target.closest && e.target.closest('#btn-accordion-icon-triangle');
+        if (iconTriangle) {
+            const iconChevron = document.getElementById('btn-accordion-icon-chevron');
+            highlightActive(iconTriangle, true);
+            if (iconChevron) highlightActive(iconChevron, false);
+            notifyAccordion({ chevronType: 'triangle' });
+            return;
+        }
+        const iconChevron = e.target.closest && e.target.closest('#btn-accordion-icon-chevron');
+        if (iconChevron) {
+            const iconTriangle = document.getElementById('btn-accordion-icon-triangle');
+            if (iconTriangle) highlightActive(iconTriangle, false);
+            highlightActive(iconChevron, true);
+            notifyAccordion({ chevronType: 'chevron' });
+            return;
+        }
+        const borderAll = e.target.closest && e.target.closest('#btn-accordion-border-all');
+        if (borderAll) {
+            const borderTopBottom = document.getElementById('btn-accordion-border-topbottom');
+            highlightActive(borderAll, true);
+            if (borderTopBottom) highlightActive(borderTopBottom, false);
+            notifyAccordion({ borderType: 'all' });
+            return;
+        }
+        const borderTopBottom = e.target.closest && e.target.closest('#btn-accordion-border-topbottom');
+        if (borderTopBottom) {
+            const borderAll = document.getElementById('btn-accordion-border-all');
+            if (borderAll) highlightActive(borderAll, false);
+            highlightActive(borderTopBottom, true);
+            notifyAccordion({ borderType: 'top-bottom' });
+            return;
+        }
         const expandY = e.target.closest && e.target.closest('#btn-accordion-expand-y');
         if (expandY) {
             const expandN = document.getElementById('btn-accordion-expand-n');

@@ -552,57 +552,77 @@ window.v4UIAtomsInputsScript = `
     // --- Registered Modular Message Handlers for Inputs & Controls ---
     window.v4MessageHandlers = window.v4MessageHandlers || {};
 
+    function _getTargetComponents(d) {
+        if (d && d.ids && Array.isArray(d.ids) && d.ids.length > 0) {
+            const list = d.ids.map(id => document.getElementById(id)).filter(Boolean);
+            if (list.length > 0) return list;
+        }
+        if (d && d.id) {
+            const single = document.getElementById(d.id);
+            if (single) return [single];
+        }
+        const selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        if (selected.length > 0) return selected;
+        return [];
+    }
+
     window.v4MessageHandlers['LF_UPDATE_STEPPER_PROPERTIES'] = function(d) {
-        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return;
-                    const container = s.querySelector('.v4-stepper-container') || (s.classList.contains('v4-stepper-container') ? s : null);
-                    if (container) {
-                        if (window.V4UndoManager) window.V4UndoManager.saveState();
-                        
-                        if (d.minVal !== undefined) container.setAttribute('data-min', d.minVal);
-                        if (d.maxVal !== undefined) container.setAttribute('data-max', d.maxVal);
-                        if (d.stepVal !== undefined) container.setAttribute('data-step', d.stepVal);
-                        if (d.disabled !== undefined) container.setAttribute('data-disabled', d.disabled ? 'true' : 'false');
-                        
-                        if (d.btnEnabled !== undefined) {
-                            container.setAttribute('data-btn-enabled', d.btnEnabled ? 'true' : 'false');
-                            const actBtn = container.querySelector('.v4-stepper-action');
-                            if (actBtn) actBtn.style.display = d.btnEnabled ? 'inline-flex' : 'none';
-                            s.style.width = d.btnEnabled ? '134px' : '80px';
-                        }
-                        if (d.btnText !== undefined) {
-                            container.setAttribute('data-btn-text', d.btnText);
-                            const actBtn = container.querySelector('.v4-stepper-action');
-                            if (actBtn) actBtn.innerText = d.btnText;
-                        }
-                        
-                        const min = parseInt(container.getAttribute('data-min')) || 1;
-                        const max = parseInt(container.getAttribute('data-max')) || 99;
-                        let curVal = parseInt(container.getAttribute('data-val')) || min;
-                        
-                        if (d.minVal !== undefined) curVal = min;
-                        curVal = Math.max(min, Math.min(max, curVal));
-                        container.setAttribute('data-val', curVal);
-                        
-                        const valEl = container.querySelector('.v4-stepper-value');
-                        if (valEl) valEl.innerText = curVal;
-                        
-                        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
-                        markDirty();
-                        
-                        if (typeof window._getCompStyles === 'function') {
-                            window.parent.postMessage({
-                                type: 'LF_COMP_SELECTED',
-                                ...window._getCompStyles(s)
-                            }, '*');
-                        }
-                    }
+        const targets = _getTargetComponents(d);
+        if (targets.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        targets.forEach(s => {
+            const container = s.querySelector('.v4-stepper-container') || (s.classList.contains('v4-stepper-container') ? s : null);
+            if (container) {
+                if (d.minVal !== undefined) container.setAttribute('data-min', d.minVal);
+                if (d.maxVal !== undefined) container.setAttribute('data-max', d.maxVal);
+                if (d.stepVal !== undefined) container.setAttribute('data-step', d.stepVal);
+                if (d.disabled !== undefined) container.setAttribute('data-disabled', d.disabled ? 'true' : 'false');
+
+                if (d.btnEnabled !== undefined) {
+                    container.setAttribute('data-btn-enabled', d.btnEnabled ? 'true' : 'false');
+                    const actBtn = container.querySelector('.v4-stepper-action');
+                    if (actBtn) actBtn.style.display = d.btnEnabled ? 'inline-flex' : 'none';
+                    s.style.width = d.btnEnabled ? '134px' : '80px';
+                }
+                if (d.btnText !== undefined) {
+                    container.setAttribute('data-btn-text', d.btnText);
+                    const actBtn = container.querySelector('.v4-stepper-action');
+                    if (actBtn) actBtn.innerText = d.btnText;
+                }
+
+                const min = parseInt(container.getAttribute('data-min')) || 1;
+                const max = parseInt(container.getAttribute('data-max')) || 99;
+                let curVal = parseInt(container.getAttribute('data-val')) || min;
+
+                if (d.minVal !== undefined) curVal = min;
+                curVal = Math.max(min, Math.min(max, curVal));
+                container.setAttribute('data-val', curVal);
+
+                const valEl = container.querySelector('.v4-stepper-value');
+                if (valEl) valEl.innerText = curVal;
+            }
+        });
+
+        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+        markDirty();
+
+        if (typeof window._getCompStyles === 'function') {
+            window.parent.postMessage({
+                type: 'LF_COMP_SELECTED',
+                ...window._getCompStyles(targets[0])
+            }, '*');
+        }
     };
 
     window.v4MessageHandlers['LF_UPDATE_SELECTBOX_PROPERTIES'] = function(d) {
-        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return;
-        const container = s.querySelector('.v4-selectbox-container') || (s.classList.contains('v4-selectbox-container') ? s : null);
-        if (container) {
-            if (window.V4UndoManager) window.V4UndoManager.saveState();
+        const targets = _getTargetComponents(d);
+        if (targets.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        targets.forEach(s => {
+            const container = s.querySelector('.v4-selectbox-container') || (s.classList.contains('v4-selectbox-container') ? s : null);
+            if (container) {
             
             if (d.width !== undefined) {
                 const wVal = typeof d.width === 'number' ? d.width + 'px' : d.width;
@@ -711,23 +731,28 @@ window.v4UIAtomsInputsScript = `
             container._eventsBound = false;
             if (typeof bindSelectboxEvents === 'function') bindSelectboxEvents();
             
-            if (typeof window.updateHandles === 'function') window.updateHandles(s);
-            if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
-            markDirty();
-            
-            if (typeof window._getCompStyles === 'function') {
-                window.parent.postMessage(Object.assign({
-                    type: 'LF_COMP_SELECTED'
-                }, window._getCompStyles(s)), '*');
+                if (typeof window.updateHandles === 'function') window.updateHandles(s);
             }
+        });
+
+        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+        markDirty();
+
+        if (typeof window._getCompStyles === 'function') {
+            window.parent.postMessage(Object.assign({
+                type: 'LF_COMP_SELECTED'
+            }, window._getCompStyles(targets[0])), '*');
         }
     };
 
     window.v4MessageHandlers['LF_UPDATE_FILEUPLOAD_PROPERTIES'] = function(d) {
-        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); if (!s) return;
-                    const container = s.querySelector('.v4-fileupload-container') || (s.classList.contains('v4-fileupload-container') ? s : null);
-                    if (container) {
-                        if (window.V4UndoManager) window.V4UndoManager.saveState();
+        const targets = _getTargetComponents(d);
+        if (targets.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        targets.forEach(s => {
+            const container = s.querySelector('.v4-fileupload-container') || (s.classList.contains('v4-fileupload-container') ? s : null);
+            if (container) {
                         
                         if (d.fileSelected !== undefined) container.setAttribute('data-selected', d.fileSelected ? 'true' : 'false');
                         if (d.fileName !== undefined) container.setAttribute('data-file-name', d.fileName);
@@ -747,43 +772,48 @@ window.v4UIAtomsInputsScript = `
                             txt.style.color = isSel ? '#374151' : '#9ca3af';
                         }
                         
-                        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
-                        markDirty();
-                        
-                        if (typeof window._getCompStyles === 'function') {
-                            window.parent.postMessage({
-                                type: 'LF_COMP_SELECTED',
-                                ...window._getCompStyles(s)
-                            }, '*');
-                        }
-                    }
+            }
+        });
+
+        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+        markDirty();
+
+        if (typeof window._getCompStyles === 'function') {
+            window.parent.postMessage({
+                type: 'LF_COMP_SELECTED',
+                ...window._getCompStyles(targets[0])
+            }, '*');
+        }
     };
 
 
     window.v4MessageHandlers['LF_UPDATE_DATEPICKER'] = function(d) {
-        const s = document.querySelector('.lf-component.selected'); if (!s) return;
-                    const container = s.querySelector('.v4-datepicker-container') || (s.classList.contains('v4-datepicker-container') ? s : null);
-                    if (container) {
-                        if (window.V4UndoManager) window.V4UndoManager.saveState();
-        
-                        const _fmt = (dt) => {
-                            const y = dt.getFullYear();
-                            const m = String(dt.getMonth() + 1).padStart(2, '0');
-                            const dd = String(dt.getDate()).padStart(2, '0');
-                            return y + '/' + m + '/' + dd;
-                        };
-        
-                        const _applyPreset = (preset) => {
-                            const today = new Date();
-                            let startDt = null;
-                            let endDt = today;
-                            if (preset === '1D') { startDt = new Date(today); startDt.setDate(today.getDate() - 1); }
-                            else if (preset === '1W') { startDt = new Date(today); startDt.setDate(today.getDate() - 7); }
-                            else if (preset === '1M') { startDt = new Date(today); startDt.setMonth(today.getMonth() - 1); }
-                            else if (preset === '6M') { startDt = new Date(today); startDt.setMonth(today.getMonth() - 6); }
-                            else if (preset === 'all') { startDt = null; endDt = null; }
-                            return { start: startDt ? _fmt(startDt) : '', end: endDt ? _fmt(endDt) : '' };
-                        };
+        const targets = _getTargetComponents(d);
+        if (targets.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        const _fmt = (dt) => {
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth() + 1).padStart(2, '0');
+            const dd = String(dt.getDate()).padStart(2, '0');
+            return y + '/' + m + '/' + dd;
+        };
+
+        const _applyPreset = (preset) => {
+            const today = new Date();
+            let startDt = null;
+            let endDt = today;
+            if (preset === '1D') { startDt = new Date(today); startDt.setDate(today.getDate() - 1); }
+            else if (preset === '1W') { startDt = new Date(today); startDt.setDate(today.getDate() - 7); }
+            else if (preset === '1M') { startDt = new Date(today); startDt.setMonth(today.getMonth() - 1); }
+            else if (preset === '6M') { startDt = new Date(today); startDt.setMonth(today.getMonth() - 6); }
+            else if (preset === 'all') { startDt = null; endDt = null; }
+            return { start: startDt ? _fmt(startDt) : '', end: endDt ? _fmt(endDt) : '' };
+        };
+
+        targets.forEach(s => {
+            const container = s.querySelector('.v4-datepicker-container') || (s.classList.contains('v4-datepicker-container') ? s : null);
+            if (container) {
         
                         if (d.showPresets !== undefined) {
                             container.setAttribute('data-show-presets', d.showPresets ? 'true' : 'false');
@@ -909,133 +939,145 @@ window.v4UIAtomsInputsScript = `
                             const endEl = container.querySelector('.v4-dp-end');
                             if (endEl && endEl.innerText !== val) endEl.innerText = val;
                         }
-        
-                        markDirty();
-        
-                        if (typeof window._getCompStyles === 'function') {
-                            window.parent.postMessage({
-                                type: 'LF_COMP_SELECTED',
-                                ...window._getCompStyles(s)
-                            }, '*');
-                        }
-                    }
+            }
+        });
+
+        markDirty();
+
+        if (typeof window._getCompStyles === 'function') {
+            window.parent.postMessage({
+                type: 'LF_COMP_SELECTED',
+                ...window._getCompStyles(targets[0])
+            }, '*');
+        }
     };
 
 
     window.v4MessageHandlers['LF_UPDATE_TEXTBOX_PROPERTIES'] = function(d) {
-        const s = document.querySelector('.lf-component.selected'); if (!s) return;
-                    const container = s.querySelector('.v4-textbox-container, .v4-textarea-container') || (s.classList.contains('v4-textbox-container') || s.classList.contains('v4-textarea-container') ? s : null);
-                    if (container) {
-                        if (window.V4UndoManager) window.V4UndoManager.saveState();
-                        
-                        if (d.placeholderText !== undefined) {
-                            const ph = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
-                            if (ph) ph.textContent = d.placeholderText;
-                            container.setAttribute('data-placeholder', d.placeholderText);
-                        }
-                        if (d.maxLength !== undefined) container.setAttribute('data-maxlength', d.maxLength);
-                        if (d.showCounter !== undefined) container.setAttribute('data-show-counter', d.showCounter ? 'true' : 'false');
-                        if (d.fontSize !== undefined) {
-                            const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
-                            const placeholder = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
-                            if (input) input.style.fontSize = d.fontSize + 'px';
-                            if (placeholder) placeholder.style.fontSize = d.fontSize + 'px';
-                            container.setAttribute('data-fontsize', d.fontSize);
-                        }
-                        if (d.fontFamily !== undefined) {
-                            const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
-                            const placeholder = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
-                            const counter = container.querySelector('.v4-textbox-counter, .v4-textarea-counter');
-                            if (input) input.style.fontFamily = d.fontFamily;
-                            if (placeholder) placeholder.style.fontFamily = d.fontFamily;
-                            if (counter) counter.style.fontFamily = d.fontFamily;
-                            container.setAttribute('data-fontfamily', d.fontFamily);
-                        }
-                        
-                        const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
-                        if (input) input.dataset.eventsBound = "false";
-                        
-                        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
-                        markDirty();
-        
-                        if (typeof window._getCompStyles === 'function') {
-                            window.parent.postMessage({
-                                type: 'LF_COMP_SELECTED',
-                                ...window._getCompStyles(s)
-                            }, '*');
-                        }
-                    }
+        const targets = _getTargetComponents(d);
+        if (targets.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        targets.forEach(s => {
+            const container = s.querySelector('.v4-textbox-container, .v4-textarea-container') || (s.classList.contains('v4-textbox-container') || s.classList.contains('v4-textarea-container') ? s : null);
+            if (container) {
+                if (d.placeholderText !== undefined) {
+                    const ph = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
+                    if (ph) ph.textContent = d.placeholderText;
+                    container.setAttribute('data-placeholder', d.placeholderText);
+                }
+                if (d.maxLength !== undefined) container.setAttribute('data-maxlength', d.maxLength);
+                if (d.showCounter !== undefined) container.setAttribute('data-show-counter', d.showCounter ? 'true' : 'false');
+                if (d.fontSize !== undefined) {
+                    const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
+                    const placeholder = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
+                    if (input) input.style.fontSize = d.fontSize + 'px';
+                    if (placeholder) placeholder.style.fontSize = d.fontSize + 'px';
+                    container.setAttribute('data-fontsize', d.fontSize);
+                }
+                if (d.fontFamily !== undefined) {
+                    const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
+                    const placeholder = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
+                    const counter = container.querySelector('.v4-textbox-counter, .v4-textarea-counter');
+                    if (input) input.style.fontFamily = d.fontFamily;
+                    if (placeholder) placeholder.style.fontFamily = d.fontFamily;
+                    if (counter) counter.style.fontFamily = d.fontFamily;
+                    container.setAttribute('data-fontfamily', d.fontFamily);
+                }
+
+                const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
+                if (input) input.dataset.eventsBound = "false";
+            }
+        });
+
+        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+        markDirty();
+
+        if (typeof window._getCompStyles === 'function') {
+            window.parent.postMessage({
+                type: 'LF_COMP_SELECTED',
+                ...window._getCompStyles(targets[0])
+            }, '*');
+        }
     };
 
     window.v4MessageHandlers['LF_UPDATE_TOGGLE_PROPERTIES'] = function(d) {
-        const s = document.querySelector('.lf-component.selected'); if (!s) return;
-        const container = s.querySelector('.v4-toggle-container') || (s.classList.contains('v4-toggle-container') ? s : null);
-        if (container) {
-            if (window.V4UndoManager) window.V4UndoManager.saveState();
+        const targets = _getTargetComponents(d);
+        if (targets.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
 
-            if (d.checked !== undefined) {
-                container.setAttribute('data-checked', d.checked ? 'true' : 'false');
-            }
-            if (d.color !== undefined) {
-                container.setAttribute('data-color', d.color);
-            }
+        targets.forEach(s => {
+            const container = s.querySelector('.v4-toggle-container') || (s.classList.contains('v4-toggle-container') ? s : null);
+            if (container) {
+                if (d.checked !== undefined) {
+                    container.setAttribute('data-checked', d.checked ? 'true' : 'false');
+                }
+                if (d.color !== undefined) {
+                    container.setAttribute('data-color', d.color);
+                }
 
-            const handle = container.querySelector('.v4-toggle-handle');
-            const isChecked = container.getAttribute('data-checked') === 'true';
-            const toggleColor = container.getAttribute('data-color') || '#3b82f6';
-            if (handle) {
-                if (isChecked) {
-                    container.style.setProperty('background-color', toggleColor, 'important');
-                    container.style.setProperty('border-color', toggleColor, 'important');
-                    const trackW = container.offsetWidth || 40;
-                    const trackH = container.offsetHeight || 20;
-                    const trans = trackW - trackH;
-                    handle.style.transform = 'translateX(' + trans + 'px)';
-                } else {
-                    container.style.setProperty('background-color', 'rgb(203, 213, 225)', 'important');
-                    container.style.setProperty('border-color', 'rgb(200, 200, 200)', 'important');
-                    handle.style.transform = 'translateX(0)';
+                const handle = container.querySelector('.v4-toggle-handle');
+                const isChecked = container.getAttribute('data-checked') === 'true';
+                const toggleColor = container.getAttribute('data-color') || '#3b82f6';
+                if (handle) {
+                    if (isChecked) {
+                        container.style.setProperty('background-color', toggleColor, 'important');
+                        container.style.setProperty('border-color', toggleColor, 'important');
+                        const trackW = container.offsetWidth || 40;
+                        const trackH = container.offsetHeight || 20;
+                        const trans = trackW - trackH;
+                        handle.style.transform = 'translateX(' + trans + 'px)';
+                    } else {
+                        container.style.setProperty('background-color', 'rgb(203, 213, 225)', 'important');
+                        container.style.setProperty('border-color', 'rgb(200, 200, 200)', 'important');
+                        handle.style.transform = 'translateX(0)';
+                    }
                 }
             }
+        });
 
-            if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
-            markDirty();
+        if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
+        markDirty();
 
-            if (typeof window._getCompStyles === 'function') {
-                window.parent.postMessage({
-                    type: 'LF_COMP_SELECTED',
-                    ...window._getCompStyles(s)
-                }, '*');
-            }
+        if (typeof window._getCompStyles === 'function') {
+            window.parent.postMessage({
+                type: 'LF_COMP_SELECTED',
+                ...window._getCompStyles(targets[0])
+            }, '*');
         }
     };
 
     window.v4MessageHandlers['LF_UPDATE_SEARCHBAR_PROPERTIES'] = function(d) {
-        const s = document.querySelector('.lf-component.selected'); if (!s) return;
-                    const container = s.querySelector('.v4-searchbar-container');
-                    if (container) {
-                        if (window.V4UndoManager) window.V4UndoManager.saveState();
-                        if (d.placeholderText !== undefined) {
-                            const textEl = container.querySelector('.v4-searchbar-text');
-                            if (textEl) {
-                                textEl.setAttribute('data-placeholder', d.placeholderText);
-                            }
-                        }
-                        if (d.fontSize !== undefined) {
-                            const textEl = container.querySelector('.v4-searchbar-text');
-                            if (textEl) {
-                                textEl.style.fontSize = d.fontSize + 'px';
-                            }
-                            container.setAttribute('data-fontsize', d.fontSize);
-                        }
-                        markDirty();
-                        if (typeof window._getCompStyles === 'function') {
-                            window.parent.postMessage({
-                                type: 'LF_COMP_SELECTED',
-                                ...window._getCompStyles(s)
-                            }, '*');
-                        }
+        const targets = _getTargetComponents(d);
+        if (targets.length === 0) return;
+        if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+        targets.forEach(s => {
+            const container = s.querySelector('.v4-searchbar-container');
+            if (container) {
+                if (d.placeholderText !== undefined) {
+                    const textEl = container.querySelector('.v4-searchbar-text');
+                    if (textEl) {
+                        textEl.setAttribute('data-placeholder', d.placeholderText);
                     }
+                }
+                if (d.fontSize !== undefined) {
+                    const textEl = container.querySelector('.v4-searchbar-text');
+                    if (textEl) {
+                        textEl.style.fontSize = d.fontSize + 'px';
+                    }
+                    container.setAttribute('data-fontsize', d.fontSize);
+                }
+            }
+        });
+
+        markDirty();
+        if (typeof window._getCompStyles === 'function') {
+            window.parent.postMessage({
+                type: 'LF_COMP_SELECTED',
+                ...window._getCompStyles(targets[0])
+            }, '*');
+        }
     };
 
     window.v4MessageHandlers['LF_UPDATE_PROP'] = function(d) {

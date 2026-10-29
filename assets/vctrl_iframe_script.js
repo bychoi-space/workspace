@@ -406,7 +406,9 @@ window.v4Script = `
                 shiftKey: e.shiftKey,
                 targets: targets
             });
-            notifyParent({ type: 'LF_DESELECT' });
+            if (!e.shiftKey) {
+                notifyParent({ type: 'LF_DESELECT' });
+            }
         }
         const isCurrentlyEditingCell = document.activeElement && 
             (document.activeElement.isContentEditable || (document.activeElement.classList && document.activeElement.classList.contains('v4-editable-cell'))) && 
@@ -685,9 +687,9 @@ window.v4Script = `
             return 'other';
         });
 
-        // Group shapes together if they belong to general vector family (rect, circle, triangle, diamond, text, webpage)
+        // Group shapes together if they belong to general vector family (rect, circle, triangle, diamond, text, webpage, pattern)
         var normalizedTypes = types.map(function(t) {
-            if (t === 'shape-rect' || t === 'shape-circle' || t === 'shape-triangle' || t === 'shape-diamond' || t === 'shape-arrow' || t === 'shape-text' || t === 'shape-webpage') {
+            if (t === 'shape-rect' || t === 'shape-circle' || t === 'shape-triangle' || t === 'shape-diamond' || t === 'shape-arrow' || t === 'shape-text' || t === 'shape-webpage' || t === 'shape-pattern') {
                 return 'shape';
             }
             return t;

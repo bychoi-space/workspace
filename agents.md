@@ -321,6 +321,8 @@
   - 아코디언 컴포넌트는 `1 Depth`(플랫 리스트)와 `2 Depth`(1티어 대분류 및 2티어 중분류) 구조를 제공합니다 (3티어는 제외).
   - 최하위 티어 항목(1 Depth의 개별 항목 또는 2 Depth의 2티어 항목)의 왼쪽에는 라디오 버튼(`.v4-accordion-radio`)이 표시되며, 활성화(선택)된 항목은 텍스트 밑에 밑줄(`text-decoration: underline`)이 실시간 표시됩니다.
   - 계층 데이터 및 선택 상태는 단일 진실 공급원(SSOT)인 `data-hierarchy` 속성에 JSON 배열 형태로 저장 및 복구되어야 합니다.
+  - 아코디언 항목 추가/삭제, 1/2 Depth 전환, 펼침/접힘 토글 시 전체 컨테이너 높이(`height`)는 아이템 개수와 행 높이에 맞춰 자동으로 재계산되어 레이아웃 왜곡을 차단합니다.
+  - 아코디언 전용 인스펙터(`inspector_accordion.js`)를 통해 배경색, 테두리, 헤더/본문 폰트 스타일, 라디오 인디케이터가 단일 파이프라인으로 동기화되며, 서식 복사/붙여넣기 및 `Ctrl+Z` Undo가 100% 보장됩니다.
 - **캔버스 크기**: 에디터 화면(`lf-canvas` 또는 `page`)의 크기는 레이아웃 틀어짐을 방지하기 위해 'Cover' 화면 크기(예: 1600x900)와 완벽하게 일치해야 합니다. (기존 1440x900 레거시 스크린은 로드 시 자동 감지되어 1440px 뷰포트로 안전하게 렌더링됨)
 - **타이포그래피 가이드 및 텍스트 100% 선명도 유지 원칙 (Crisp Typography & Subpixel Integrity Protocol)**:
   - **폰트 크기 표준**: 대분류 타이틀: `18px` ~ `20px` / 중분류 헤더: `15px` ~ `16px` / 본문: `14px` ~ `15px` / 부가 설명: `13px` ~ `13.5px` / 최소 단위: `13px`
@@ -391,6 +393,13 @@
     - **2중 안전망 (인스펙터 3중 판정식 및 인풋 직접 대입)**: `vctrl_inspector.js`의 `updateProperties`에서 `const isNewComp = isNewSelectionExplicit === true || compStyles.id !== state.previousEditingIndex || compStyles.id !== state._lastInspectorCompId;` 3중 안전 판정을 거치며, `isNewComp`일 때 `isTypingInInspector = false`로 강제 리셋하여 조기 반환(`early return`)을 차단합니다. 또한 `_syncCommonPropertyControls` 내부에서 `DOM.propWidth`, `DOM.propHeight` 등의 공통 크기 인풋에 대해 `document.activeElement` 잔류와 무관하게 `Math.round(compStyles.w)`로 직접 값을 대입하여 화면 표시를 100% 보장합니다.
     - **3중 안전망 (LF_COMP_SELECTED 수신 시 강제 동기화)**: `vctrl_properties.js`의 `updateAllInputs(w, h, force = true)` 파이프라인을 통해 컴포넌트 ID가 변경된 경우(`targetId !== activeCompId`) 활성 인풋 포커스 가드를 확실히 우회하여 가로/세로 수치를 강제 덮어씁니다.
     - **4중 안전망 (Iframe 캔버스 클릭 시 부모 잔류 포커스 즉시 정리)**: `vctrl_iframe_script.js`에서 컴포넌트 `mousedown` 시 `window.parent?.document?.activeElement?.blur()`를 호출하여 부모 창 인풋에 남아있던 캐럿과 포커스를 즉각 정리합니다 (백틱 충돌 0건 원칙 준수).
+  - 15. **동일 오브젝트 다중 선택 시 프로퍼티 일괄 반영 파이프라인 (Multi-Selection Batch Property Update Protocol SSOT)**:
+    - **원칙 및 배경**: 캔버스 상에서 동일한 유형의 오브젝트들(버튼 다수, 텍스트박스 다수, 셀렉트박스 다수, 도형 다수 등)을 드래그(Marquee) 또는 Shift+Click으로 다중 선택했을 때, 프로퍼티 패널에서 수치(W/H), 상태(Disabled, Readonly), 텍스트/플레이스홀더, 색상, 서식을 수정하면 선택된 모든 객체에 실시간으로 일괄 동기화되어야 합니다.
+    - **타겟 ID 보존 파이프라인 (`vctrl_properties.js`)**: `applyDimension` 및 공통 속성 제어기에서 다중 선택(`currentActiveIds.length > 1`) 상태일 때 첫 번째 ID만 추출하여 타겟을 단일 요소(`[editingTargetId]`)로 축소하는 안티패턴을 배제하고, 활성 배열 `currentActiveIds` 전체를 `targetIds`로 보존하여 IPC 메시지(`LF_UPDATE_DIMENSIONS`, `LF_UPDATE_ATOM_*`)를 발행합니다.
+    - **동종 오브젝트 지능형 식별 (`vctrl_iframe_script.js`)**: `window.getHomogeneousSelectionInfo`에서 기본 도형뿐만 아니라 패턴 그리드(`t === 'shape-pattern'`) 등을 정규화된 `shape` 군으로 일원화하여, 다중 선택 시에도 프로퍼티 패널이 올바른 동종 에디터 섹션을 활성화하도록 보장합니다.
+    - **아톰 인스펙터 IPC 다중 브로드캐스트 (`inspector_atoms.js`)**: 아톰 속성 변경 시 최상위 래퍼 `notifyIframe`을 통해 `id: targetIds[0]`(대표 ID)와 `ids: targetIds`(전체 다중 선택 ID 목록)를 동시에 페이로드에 적재하여 iframe으로 전송합니다.
+    - **Iframe 수신 처리 및 일괄 순회 (`_getTargetComponents`)**: `vctrl_ui_atoms.js` 및 `vctrl_ui_atoms_inputs.js`의 모든 메시지 핸들러(`LF_UPDATE_BUTTON_PROPERTIES`, `LF_UPDATE_ATOM_*`, `LF_UPDATE_TEXTBOX_PROPERTIES`, `LF_UPDATE_SELECTBOX_PROPERTIES`, `LF_UPDATE_DATEPICKER`, `LF_UPDATE_TOGGLE_PROPERTIES`, `LF_UPDATE_SEARCHBAR_PROPERTIES` 등)는 `_getTargetComponents(d)`를 통해 `d.ids` 또는 `d.id`로부터 대상 요소 배열을 확보하고, `targets.forEach` 루프를 통해 선택된 모든 객체의 DOM 속성, 인라인 스타일, 내부 라벨/플레이스홀더, 카운터, 이벤트를 일괄 갱신합니다.
+    - **실행 취소(Undo) 단일 트랜잭션 보장**: 다중 객체 갱신 루프 진입 직전 `V4UndoManager.saveState()`를 단 1회 호출하여, `Ctrl+Z` 실행 시 다중 선택된 모든 객체의 변경 전 상태가 단일 트랜잭션으로 원자적(Atomic) 롤백되도록 보장합니다.
 - **전사 Z-Index 8대 티어 아키텍처 (Unified 8-Tier Z-Index Architecture SSOT)**:
   - **배경 및 원칙**: 캔버스 내 일반 컴포넌트, 드롭다운, 스크롤 고정 HUD, 디스크립션 번호 핀, 시스템 오버레이, 전역 모달 간의 z-index 충돌 및 뒤섞임 현상을 원천 방지하기 위해 전사 8대 티어 단일 진실 공급원(`V4_Z_TIERS`)을 강제합니다.
   - **8대 티어 구간 정의**:

@@ -99,6 +99,11 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - **스타일 추출기 객체 리터럴 중복 키 선언 절대 금지**: `assets/vctrl_iframe_style_extractor.js`에서 반환 객체 리터럴 구성 시 동일한 프로퍼티 이름(`maxLength`, `showCounter`, `disabled` 등)을 파일 상단과 하단에서 중복 선언하는 실수를 원천 차단한다. 자바스크립트는 객체 리터럴 내에 중복 키가 존재할 경우 나중에 선언된 키로 앞선 키를 무조건 덮어쓰므로, 텍스트박스나 텍스트에어리어 등 기존 아톰을 선택했을 때도 하단에 선언된 신규 아톰의 기본값(예: 2000)이 강제 주입되는 치명적인 데이터 오염이 발생한다.
   - **철저한 컴포넌트 스코프 조건부 격리**: 신규 아톰의 속성은 `isWebEditor ? webeditorMaxLength : maxLength`와 같이 대상 컴포넌트가 활성화되었을 때만 조건부로 할당하거나 고유 네임스페이스 속성을 사용하여, 비활성 컴포넌트나 타 아톰의 기본값(텍스트박스 기본 100자 등)에 절대 간섭하지 않도록 스코프를 완벽히 격리해야 한다.
   - **교차 회귀 검증 의무화**: 신규 아톰 추가/수정 후에는 신규 아톰뿐만 아니라 기존 유사 아톰(텍스트박스, 텍스트에어리어 등)을 캔버스에서 직접 클릭하여 기존 고유 속성과 기본값이 온전히 보존되는지 반드시 확인해야 한다.
+- **동일 컴포넌트 다중 선택 프로퍼티 일괄 업데이트 엔진 아키텍처 (Multi-Selection Batch Property Update Protocol)**:
+  - **다중 타겟 ID 보존 (`vctrl_properties.js`)**: 프로퍼티 패널에서 수치(`w`, `h`)나 상태를 변경할 때, `currentActiveIds.length > 1`인 다중 선택 환경에서는 타겟 ID가 `[editingTargetId]` 1개로 축소되지 않도록 가드하고 전체 `currentActiveIds`를 보존하여 IPC 메시지(`LF_UPDATE_DIMENSIONS`, `LF_UPDATE_ATOM_*`)를 발행한다.
+  - **아톰 인스펙터 IPC 다중 브로드캐스트 (`inspector_atoms.js`)**: 아톰 속성 변경 시 `getActiveTargetIds()`를 통해 수집된 다중 ID 배열을 `notifyIframe` 래퍼에 전달하여 페이로드에 `id: targetIds[0]`, `ids: targetIds`를 동시에 실어 전송한다.
+  - **Iframe 수신 처리 및 다중 대상 순회 (`_getTargetComponents`)**: `vctrl_ui_atoms.js` 및 `vctrl_ui_atoms_inputs.js`의 모든 컴포넌트 갱신 핸들러는 `_getTargetComponents(d)` 헬퍼를 통해 단일 ID(`d.id`)와 다중 ID(`d.ids`) 모두를 안전하게 배열로 확보하고, `targets.forEach` 루프로 선택된 모든 요소에 일괄 적용한다.
+  - **원자적 Undo 트랜잭션**: 루프 시작 직전 `V4UndoManager.saveState()`를 1회만 호출하여 `Ctrl+Z` 실행 시 모든 선택 요소의 변경이 단일 트랜잭션으로 원자적 복원되도록 보장한다.
 
 
 ## Interaction Integrity

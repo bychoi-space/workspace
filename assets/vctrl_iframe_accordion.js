@@ -12,6 +12,62 @@
 window.v4AccordionScript = `
 (function() {
     console.log("[V4 Accordion] Module loaded.");
+    const CHEVRON_SVG_HTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px; height:13px; display:inline-block; vertical-align:middle; pointer-events:none;"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+    function renderAccordionChevron(container) {
+        const chevronEl = container.querySelector('.v4-accordion-chevron');
+        if (!chevronEl) return;
+        const cType = container.getAttribute('data-chevron-type') || 'triangle';
+        if (cType === 'chevron') {
+            chevronEl.innerHTML = CHEVRON_SVG_HTML;
+            chevronEl.style.fontSize = '0px';
+            chevronEl.style.display = 'inline-flex';
+            chevronEl.style.alignItems = 'center';
+            chevronEl.style.justifyContent = 'center';
+        } else {
+            chevronEl.innerHTML = '▼';
+            chevronEl.style.fontSize = '10px';
+            chevronEl.style.display = 'inline-block';
+        }
+    }
+
+    function applyAccordionBorder(container, borderType, borderColor) {
+        const bType = borderType || container.getAttribute('data-border-type') || 'all';
+        container.setAttribute('data-border-type', bType);
+        
+        const color = borderColor !== undefined ? borderColor : (container.getAttribute('data-border-color') || container.style.borderColor || '#ffffff');
+        if (borderColor !== undefined) {
+            container.setAttribute('data-border-color', borderColor);
+        }
+        
+        if (bType === 'top-bottom') {
+            container.style.borderLeft = 'none';
+            container.style.borderRight = 'none';
+            container.style.borderRadius = '0px';
+            if (!color || color === 'transparent') {
+                container.style.borderTop = 'none';
+                container.style.borderBottom = 'none';
+            } else {
+                container.style.borderTop = '1.6px solid ' + color;
+                container.style.borderBottom = '1.6px solid ' + color;
+            }
+        } else {
+            container.style.borderRadius = '8px';
+            if (!color || color === 'transparent') {
+                container.style.border = 'none';
+            } else {
+                container.style.border = '1.6px solid ' + color;
+                container.style.borderLeft = '1.6px solid ' + color;
+                container.style.borderRight = '1.6px solid ' + color;
+                container.style.borderTop = '1.6px solid ' + color;
+                container.style.borderBottom = '1.6px solid ' + color;
+            }
+        }
+    }
+
+    window.renderAccordionChevron = renderAccordionChevron;
+    window.applyAccordionBorder = applyAccordionBorder;
+
     window.renderAccordionBody = function(container) {
         const body = container.querySelector('.v4-accordion-body');
         if (!body) return;
@@ -27,6 +83,65 @@ window.v4AccordionScript = `
                                (headerTitle && headerTitle.style.color) || 
                                container.style.color || 
                                '';
+        
+        function isDarkColor(colorStr) {
+            if (!colorStr || colorStr === 'transparent' || colorStr === 'none') return false;
+            var r = 30, g = 41, b = 59;
+            if (colorStr.indexOf('#') === 0) {
+                var hex = colorStr.replace('#', '');
+                if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+                r = parseInt(hex.substring(0, 2), 16) || 0;
+                g = parseInt(hex.substring(2, 4), 16) || 0;
+                b = parseInt(hex.substring(4, 6), 16) || 0;
+            } else if (colorStr.indexOf('rgb') === 0) {
+                var m = colorStr.match(/\d+/g);
+                if (m && m.length >= 3) {
+                    r = parseInt(m[0]); g = parseInt(m[1]); b = parseInt(m[2]);
+                }
+            }
+            var lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return lum < 0.6;
+        }
+
+        const customTextColor = container.getAttribute('data-text-color') || '';
+        const customBodyBg = container.getAttribute('data-body-bg');
+        const isContainerDark = isDarkColor(container.style.backgroundColor || 'rgb(30, 41, 59)');
+        
+        if (customBodyBg !== null && customBodyBg !== undefined) {
+            body.style.backgroundColor = customBodyBg;
+            body.style.background = customBodyBg;
+        }
+        
+        const defaultTextColor = isContainerDark ? '#ffffff' : '#0f172a';
+        const finalColor = customTextColor || inheritedColor || defaultTextColor;
+        const t1Color = customTextColor || inheritedColor || defaultTextColor;
+        const t2Color = customTextColor || inheritedColor || (isContainerDark ? '#e2e8f0' : '#334155');
+        const dividerColor = isContainerDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)';
+        const radioAccent = isContainerDark ? '#00e5ff' : '#2563eb';
+        const arrowColor = customTextColor || (isContainerDark ? '#94a3b8' : '#64748b');
+        
+        const headerFontSize = parseInt(container.getAttribute('data-header-font-size')) || 12;
+        const subFontSize = parseInt(container.getAttribute('data-sub-font-size')) || 12;
+
+        if (headerTitle) {
+            headerTitle.style.fontSize = headerFontSize + 'px';
+            if (customTextColor) {
+                headerTitle.style.color = customTextColor;
+            }
+        }
+        renderAccordionChevron(container);
+        applyAccordionBorder(container);
+
+        const isExp = container.getAttribute('data-expanded') === 'true';
+        const bType = container.getAttribute('data-border-type') || 'all';
+        const headerEl = container.querySelector('.v4-accordion-header');
+        if (headerEl) {
+            if (bType === 'top-bottom' && !isExp) {
+                headerEl.style.borderBottom = 'none';
+            } else {
+                headerEl.style.borderBottom = '1.6px solid ' + dividerColor;
+            }
+        }
         
         if (depthType === '1depth') {
             // Render 1-depth (flat list with radio buttons)
@@ -65,22 +180,21 @@ window.v4AccordionScript = `
             subTexts = subTexts.slice(0, targetCount);
             
             body.innerHTML = '';
-            const finalColor = inheritedColor || '#cccccc';
             subTexts.forEach((text, i) => {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'v4-accordion-item';
-                itemEl.style.cssText = "padding:8px 12px; font-size:12px; color:" + finalColor + "; font-family:'Inter',sans-serif; outline:none; display:flex; align-items:center; box-sizing:border-box; padding-top:0; padding-bottom:0;";
+                itemEl.style.cssText = "padding:8px 12px; font-size:" + subFontSize + "px; color:" + finalColor + "; font-family:'Inter',sans-serif; outline:none; display:flex; align-items:center; box-sizing:border-box; padding-top:0; padding-bottom:0;";
                 itemEl.style.setProperty('height', currentItemHeight + 'px', 'important');
                 itemEl.style.setProperty('line-height', currentItemHeight + 'px', 'important');
                 if (i < targetCount - 1) {
-                    itemEl.style.borderBottom = '1.6px solid rgba(255,255,255,0.05)';
+                    itemEl.style.borderBottom = '1.6px solid ' + dividerColor;
                 }
                 
                 const radio = document.createElement('input');
                 radio.type = 'radio';
                 radio.name = 'accordion-select-' + compId;
                 radio.className = 'v4-accordion-radio';
-                radio.style.cssText = 'margin-right: 8px; accent-color: #00e5ff; cursor: pointer;';
+                radio.style.cssText = 'margin-right: 8px; accent-color: ' + radioAccent + '; cursor: pointer;';
                 if (i === activeIndex) {
                     radio.setAttribute('checked', 'true');
                     radio.checked = true;
@@ -89,7 +203,7 @@ window.v4AccordionScript = `
                 const span = document.createElement('span');
                 span.className = 'v4-editable-cell';
                 span.contentEditable = 'true';
-                span.style.cssText = 'outline: none; flex: 1; color: ' + finalColor + ';';
+                span.style.cssText = 'outline: none; flex: 1; color: ' + finalColor + '; font-size: ' + subFontSize + 'px;';
                 span.innerText = text;
                 if (i === activeIndex) {
                     span.style.textDecoration = 'underline';
@@ -162,23 +276,21 @@ window.v4AccordionScript = `
             }
             
             body.innerHTML = '';
-            const t1Color = inheritedColor || '#ffffff';
-            const t2Color = inheritedColor || '#e2e8f0';
             
             hierarchy.forEach((t1, t1Idx) => {
                 const t1Group = document.createElement('div');
                 t1Group.className = 'v4-accordion-tier1-group';
-                t1Group.style.cssText = 'border-bottom: 1.6px solid rgba(255,255,255,0.05); display: flex; flex-direction: column;';
+                t1Group.style.cssText = 'border-bottom: 1.6px solid ' + dividerColor + '; display: flex; flex-direction: column;';
                 
                 // 1st Tier Header
                 const t1Header = document.createElement('div');
                 t1Header.className = 'v4-accordion-tier1-header';
-                t1Header.style.cssText = 'padding: 8px 12px; font-size: 12px; font-weight: bold; color: ' + t1Color + '; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: rgba(255,255,255,0.02); height: ' + currentItemHeight + 'px; box-sizing: border-box;';
+                t1Header.style.cssText = 'padding: 8px 12px; font-size: ' + subFontSize + 'px; font-weight: bold; color: ' + t1Color + '; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: ' + (isContainerDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)') + '; height: ' + currentItemHeight + 'px; box-sizing: border-box;';
                 
                 const t1Span = document.createElement('span');
                 t1Span.className = 'v4-editable-cell';
                 t1Span.contentEditable = 'true';
-                t1Span.style.cssText = 'outline: none; flex: 1; color: ' + t1Color + ';';
+                t1Span.style.cssText = 'outline: none; flex: 1; color: ' + t1Color + '; font-size: ' + subFontSize + 'px;';
                 t1Span.innerText = t1.title || t1.text || ('1Tier Category ' + (t1Idx + 1));
                 t1Span.addEventListener('click', (e) => e.stopPropagation());
                 t1Span.addEventListener('input', () => {
@@ -190,7 +302,7 @@ window.v4AccordionScript = `
                 
                 const t1Arrow = document.createElement('span');
                 t1Arrow.className = 'tier-arrow';
-                t1Arrow.style.cssText = 'width: 6px; height: 6px; border-right: 1.6px solid #94a3b8; border-bottom: 1.6px solid #94a3b8; transform: rotate(45deg); transition: transform 0.2s; margin-right: 8px; display: inline-block; flex-shrink: 0;';
+                t1Arrow.style.cssText = 'width: 6px; height: 6px; border-right: 1.6px solid ' + arrowColor + '; border-bottom: 1.6px solid ' + arrowColor + '; transform: rotate(45deg); transition: transform 0.2s; margin-right: 8px; display: inline-block; flex-shrink: 0;';
                 
                 t1Header.appendChild(t1Span);
                 const t1Children = t1.children || t1.items || [];
@@ -215,18 +327,18 @@ window.v4AccordionScript = `
                     t1Children.forEach((t2, t2Idx) => {
                         const t2Wrapper = document.createElement('div');
                         t2Wrapper.className = 'v4-accordion-tier2-wrapper';
-                        t2Wrapper.style.cssText = 'display: flex; flex-direction: column; border-bottom: 1.6px solid rgba(255,255,255,0.02);';
+                        t2Wrapper.style.cssText = 'display: flex; flex-direction: column; border-bottom: 1.6px solid ' + (isContainerDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.04)') + ';';
                         
                         // 2nd Tier Header (Acts as lowest tier item, has radio button)
                         const t2Header = document.createElement('div');
                         t2Header.className = 'v4-accordion-tier2-header';
-                        t2Header.style.cssText = 'padding: 8px 12px 8px 24px; font-size: 11px; color: ' + t2Color + '; display: flex; align-items: center; cursor: pointer; height: ' + currentItemHeight + 'px; box-sizing: border-box;';
+                        t2Header.style.cssText = 'padding: 8px 12px 8px 24px; font-size: ' + subFontSize + 'px; color: ' + t2Color + '; display: flex; align-items: center; cursor: pointer; height: ' + currentItemHeight + 'px; box-sizing: border-box;';
                         
                         const t2Radio = document.createElement('input');
                         t2Radio.type = 'radio';
                         t2Radio.name = 'accordion-select-' + compId;
                         t2Radio.className = 'v4-accordion-radio';
-                        t2Radio.style.cssText = 'margin-right: 8px; accent-color: #00e5ff; cursor: pointer;';
+                        t2Radio.style.cssText = 'margin-right: 8px; accent-color: ' + radioAccent + '; cursor: pointer;';
                         if (t2.active) {
                             t2Radio.setAttribute('checked', 'true');
                             t2Radio.checked = true;
@@ -235,7 +347,7 @@ window.v4AccordionScript = `
                         const t2Span = document.createElement('span');
                         t2Span.className = 'v4-editable-cell';
                         t2Span.contentEditable = 'true';
-                        t2Span.style.cssText = 'outline: none; flex: 1; color: ' + t2Color + ';';
+                        t2Span.style.cssText = 'outline: none; flex: 1; color: ' + t2Color + '; font-size: ' + subFontSize + 'px;';
                         t2Span.innerText = t2.text || t2.title || ('2Tier Item ' + (t2Idx + 1));
                         if (t2.active) {
                             t2Span.style.textDecoration = 'underline';
@@ -323,7 +435,42 @@ window.v4AccordionScript = `
                     titleText.innerText = d.headerText;
                 }
             }
+
+            if (d.headerFontSize !== undefined) {
+                var hSize = parseInt(d.headerFontSize) || 12;
+                container.setAttribute('data-header-font-size', hSize);
+                var titleText = container.querySelector('.v4-accordion-title-text');
+                if (titleText) {
+                    titleText.style.fontSize = hSize + 'px';
+                }
+            }
+
+            if (d.subFontSize !== undefined) {
+                var sSize = parseInt(d.subFontSize) || 12;
+                container.setAttribute('data-sub-font-size', sSize);
+                container.querySelectorAll('.v4-accordion-item').forEach(function(item) {
+                    item.style.fontSize = sSize + 'px';
+                });
+                container.querySelectorAll('.v4-accordion-tier1-header').forEach(function(h) {
+                    h.style.fontSize = sSize + 'px';
+                });
+                container.querySelectorAll('.v4-accordion-tier2-header').forEach(function(h) {
+                    h.style.fontSize = sSize + 'px';
+                });
+                container.querySelectorAll('.v4-accordion-body .v4-editable-cell').forEach(function(cell) {
+                    cell.style.fontSize = sSize + 'px';
+                });
+            }
             
+            if (d.chevronType !== undefined) {
+                container.setAttribute('data-chevron-type', d.chevronType);
+                renderAccordionChevron(container);
+            }
+
+            if (d.borderType !== undefined) {
+                applyAccordionBorder(container, d.borderType);
+            }
+
             if (d.expanded !== undefined) {
                 var isExp = d.expanded ? true : false;
                 container.setAttribute('data-expanded', isExp ? 'true' : 'false');
@@ -338,6 +485,16 @@ window.v4AccordionScript = `
                 var itemH = parseInt(container.getAttribute('data-item-height')) || 36;
                 var hdrEl = container.querySelector('.v4-accordion-header');
                 var hdrH = hdrEl ? (hdrEl.offsetHeight || itemH) : itemH;
+                var hdrBorderType = container.getAttribute('data-border-type') || 'all';
+                if (hdrEl) {
+                    if (hdrBorderType === 'top-bottom' && !isExp) {
+                        hdrEl.style.borderBottom = 'none';
+                    } else {
+                        var isDarkCont = isDarkColor(container.style.backgroundColor || 'rgb(30, 41, 59)');
+                        var divCol = isDarkCont ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)';
+                        hdrEl.style.borderBottom = '1.6px solid ' + divCol;
+                    }
+                }
                 if (isExp) {
                     var bodyH = bodyEl ? (bodyEl.scrollHeight || bodyEl.offsetHeight || (3 * itemH)) : (3 * itemH);
                     s.style.height = (hdrH + bodyH) + 'px';
@@ -357,6 +514,32 @@ window.v4AccordionScript = `
                 container.setAttribute('data-sub-count', d.subCount);
             }
             
+            if (d.bg !== undefined) {
+                container.style.backgroundColor = d.bg;
+            }
+            if (d.border !== undefined) {
+                applyAccordionBorder(container, undefined, d.border);
+            }
+            if (d.bodyBg !== undefined) {
+                container.setAttribute('data-body-bg', d.bodyBg);
+                var bEl = container.querySelector('.v4-accordion-body');
+                if (bEl) {
+                    bEl.style.backgroundColor = d.bodyBg;
+                    bEl.style.background = d.bodyBg;
+                }
+            }
+            if (d.textColor !== undefined) {
+                container.setAttribute('data-text-color', d.textColor);
+                var titleTextEl = container.querySelector('.v4-accordion-title-text');
+                if (titleTextEl) {
+                    titleTextEl.style.color = d.textColor;
+                }
+                var chevronEl2 = container.querySelector('.v4-accordion-chevron');
+                if (chevronEl2) {
+                    chevronEl2.style.color = d.textColor;
+                }
+            }
+            
             // Call unified hierarchical renderer
             if (typeof window.renderAccordionBody === 'function') {
                 window.renderAccordionBody(container);
@@ -371,13 +554,6 @@ window.v4AccordionScript = `
                 var bodyHAfter = bodyElAfter ? (bodyElAfter.scrollHeight || bodyElAfter.offsetHeight || (3 * itemHAfter)) : (3 * itemHAfter);
                 s.style.height = (hdrHAfter + bodyHAfter) + 'px';
                 if (typeof window.updateHandles === 'function') window.updateHandles(s);
-            }
-            
-            if (d.bg !== undefined) {
-                container.style.backgroundColor = d.bg;
-            }
-            if (d.border !== undefined) {
-                container.style.borderColor = d.border;
             }
             
             if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();

@@ -716,6 +716,9 @@ window.updateProperties = function(compStyles, isNewSelectionExplicit) {
         if (compStyles) {
             state.selectedComponent = { id: compStyles.id, ...compStyles };
             state.selectedComponentStyles = compStyles;
+        } else {
+            state.selectedComponent = null;
+            state.selectedComponentStyles = null;
         }
 
         // Apply docked vs floating layout

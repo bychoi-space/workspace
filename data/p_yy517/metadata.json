@@ -101,7 +101,7 @@
     "renewal_order_3.html": {
       "title": "주문서 - 배너 슬롯",
       "type": "ui",
-      "updatedAt": "2026-10-29T07:02:54.840Z",
+      "updatedAt": "2026-10-29T07:43:32.750Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -109,12 +109,12 @@
           "target": "frame",
           "text": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역\n- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동\n- 등록된 배너가 2개 이상일 경우 Indicator 표현",
           "html": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역<div>- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동</div><div>- 등록된 배너가 2개 이상일 경우 Indicator 표현</div>",
-          "x": 840,
-          "y": 587,
+          "x": 835,
+          "y": 582,
           "pins": {
             "pc": {
-              "x": 840,
-              "y": 587,
+              "x": 835,
+              "y": 582,
               "active": true
             },
             "mobile": {
@@ -123,8 +123,8 @@
               "active": true
             },
             "left": {
-              "x": 840,
-              "y": 587,
+              "x": 835,
+              "y": 582,
               "active": true
             },
             "right": {
@@ -213,6 +213,6 @@
     "renewal_cart_2.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-29 16:42:42",
+  "updated": "2026-10-29 16:43:32",
   "version": 0.1
 }

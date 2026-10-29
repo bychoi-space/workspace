@@ -101,7 +101,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (As-Is) 2",
       "type": "ui",
-      "updatedAt": "2026-10-29T06:26:12.223Z",
+      "updatedAt": "2026-10-29T05:59:12.724Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -123,7 +123,7 @@
     "mypageWishlist.html": {
       "title": "위시리스트",
       "type": "ui",
-      "updatedAt": "2026-10-29T03:10:20.787Z",
+      "updatedAt": "2026-10-29T06:27:25.213Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -131,12 +131,12 @@
           "target": "frame",
           "text": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역\n- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동\n- 등록된 배너가 2개 이상일 경우 Indicator 표현",
           "html": "어드민에서 등록하는 [제휴 프로모션 배너] 표현 영역<div>- 등록된 랜딩 URL 이 있을 경우, 클릭 시 페이지 이동</div><div>- 등록된 배너가 2개 이상일 경우 Indicator 표현</div>",
-          "x": 840,
-          "y": 432,
+          "x": 1070,
+          "y": 433,
           "pins": {
             "pc": {
-              "x": 840,
-              "y": 432,
+              "x": 1070,
+              "y": 433,
               "active": true
             },
             "mobile": {
@@ -145,8 +145,8 @@
               "active": true
             },
             "left": {
-              "x": 840,
-              "y": 432,
+              "x": 1070,
+              "y": 433,
               "active": true
             },
             "right": {
@@ -180,6 +180,6 @@
     "mypageWishlist.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-10-29 15:26:12",
+  "updated": "2026-10-29 15:27:25",
   "version": 0.1
 }

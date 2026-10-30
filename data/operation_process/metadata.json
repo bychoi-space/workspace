@@ -67,9 +67,9 @@
       "version": 0.2
     },
     "06_Admin_System_Core_Value_Impact_900.html": {
-      "title": "Admin 리팩토링 기대효과",
+      "title": "Admin 리뉴얼 기대효과",
       "type": "architecture",
-      "updatedAt": "2026-10-30T03:06:21.590Z",
+      "updatedAt": "2026-10-30T03:06:33.197Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],

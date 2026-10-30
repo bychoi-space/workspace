@@ -61,7 +61,7 @@
       "type": "architecture",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-10-30T03:06:03.853Z",
+      "updatedAt": "2026-10-30T03:05:47.421Z",
       "description": [],
       "connectors": [],
       "version": 0.2
@@ -69,7 +69,7 @@
     "06_Admin_System_Core_Value_Impact_900.html": {
       "title": "Admin 리팩토링 기대효과",
       "type": "architecture",
-      "updatedAt": "2026-10-12T02:12:50.873Z",
+      "updatedAt": "2026-10-30T03:06:21.590Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -102,7 +102,7 @@
   "figmaUrl": "",
   "notionUrl": "",
   "themeIndex": 8,
-  "updated": "2026-10-30 12:06:03",
+  "updated": "2026-10-30 12:06:21",
   "version": 0.2,
   "period": ""
 }

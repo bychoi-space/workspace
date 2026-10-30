@@ -84,10 +84,10 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - `assets/ui_library/inspector_panels.html` 수정 후 반드시 `powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1`을 실행하여 `assets/ui_library_fallback.js`를 재컴파일해야 한다.
 
 ## 아코디언 아톰(Accordion Atom) 비주얼 및 인스펙터 표준 규격
-- **계층 구조 규격**: `.lf-component` ➔ `.v4-accordion-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-accordion-item`. `1 Depth`(플랫 리스트) 및 `2 Depth`(1티어 대분류 + 2티어 중분류)를 지원하며 `data-hierarchy` 속성에 구조와 상태가 JSON으로 영속화된다.
-- **선택 인디케이터 표준**: 최하위 항목 좌측에 라디오 버튼(`.v4-accordion-radio`)이 제공되며, 선택 시 텍스트 밑줄(`text-decoration: underline`)이 실시간 적용된다.
-- **인스펙터 전용 패널 (`#accordion-inspector-section`)**: `inspector_accordion.js`를 통해 항목 추가/삭제, 1/2 Depth 전환, 펼침/접힘 토글, 배경색, 테두리, 헤더/본문 폰트 스타일, 라디오 인디케이터를 단일 파이프라인으로 동기화한다.
-- **동적 높이 자동 피팅**: 항목 변경 시 아이템 개수와 행 높이에 맞춰 컨테이너 높이(`height`)가 자동 재계산되어 여백 틀어짐을 방지하며, `V4UndoManager.saveState()`를 통해 `Ctrl+Z` Undo가 100% 보장된다.
+- **계층 구조 규격**: `.lf-component` ➔ `.v4-accordion-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-accordion-item`. `1 Depth`(플랫 리스트), `2 Depth`(1티어 대분류 + 2티어 중분류), 및 `3 Depth`(1티어 대분류 + 2티어 중분류 + 3티어 소분류) 3대 계층 모드를 완벽 지원하며, `data-depth-type` 및 `data-hierarchy` 속성에 트리 구조와 선택 상태가 JSON으로 안전하게 영속화된다.
+- **선택 인디케이터 표준**: 최하위 항목 좌측에 라디오 버튼(`.v4-accordion-radio`)이 제공되며, 선택 시 텍스트 밑줄(`text-decoration: underline`)이 실시간 적용된다. 전체 아코디언 트리 내에서 단 하나의 최하위 항목만 배타적으로 선택(`active = true`) 상태를 유지한다.
+- **인스펙터 전용 패널 (`#accordion-inspector-section`)**: `inspector_accordion.js`를 통해 항목 추가/삭제, 1/2/3 Depth 간 무손실 스마트 마이그레이션(`setDepth`), 펼침/접힘 토글, 배경색, 테두리, 헤더/본문 폰트 스타일, 라디오 인디케이터를 단일 파이프라인으로 동기화한다.
+- **동적 높이 자동 피팅 및 무손실 동기화**: 항목 추가/삭제 및 트리 전환 시 아이템 개수와 행 높이에 맞춰 컨테이너 높이(`height`)가 자동 재계산되어 여백 틀어짐을 방지하며, 캔버스 인라인 텍스트 수정 시에도 부모 인스펙터로 즉시 반영된다. `V4UndoManager.saveState()`를 통해 `Ctrl+Z` Undo가 100% 보장된다.
 
 ## 웹 에디터 아톰(Web Editor Atom) 비주얼 및 인스펙터 표준 규격
 - **구조 규격**: `.lf-component` ➔ `.v4-webeditor-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-webeditor-toolbar` (상단 서식 도구) + `.v4-webeditor-body` (본문 작성부) + `.v4-webeditor-statusbar` (글자수 표시).

@@ -247,6 +247,245 @@ window.v4AccordionScript = `
                 itemEl.appendChild(span);
                 body.appendChild(itemEl);
             });
+        } else if (depthType === '3depth') {
+            // Render 3-depth (hierarchical tree: 1Tier Category -> 2Tier Subcategory -> 3Tier Radio Items)
+            let hierarchy = [];
+            try {
+                const hierarchyStr = container.getAttribute('data-hierarchy');
+                if (hierarchyStr) {
+                    hierarchy = JSON.parse(hierarchyStr);
+                }
+            } catch (e) {}
+
+            if (!Array.isArray(hierarchy) || hierarchy.length === 0) {
+                hierarchy = [
+                    {
+                        title: "1Tier Category 1",
+                        text: "1Tier Category 1",
+                        children: [
+                            {
+                                title: "2Tier Group 1.1",
+                                text: "2Tier Group 1.1",
+                                children: [
+                                    { text: "3Tier Item 1.1.1", active: true },
+                                    { text: "3Tier Item 1.1.2", active: false }
+                                ],
+                                items: [
+                                    { text: "3Tier Item 1.1.1", active: true },
+                                    { text: "3Tier Item 1.1.2", active: false }
+                                ]
+                            }
+                        ],
+                        items: [
+                            {
+                                title: "2Tier Group 1.1",
+                                text: "2Tier Group 1.1",
+                                children: [
+                                    { text: "3Tier Item 1.1.1", active: true },
+                                    { text: "3Tier Item 1.1.2", active: false }
+                                ],
+                                items: [
+                                    { text: "3Tier Item 1.1.1", active: true },
+                                    { text: "3Tier Item 1.1.2", active: false }
+                                ]
+                            }
+                        ]
+                    }
+                ];
+                container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
+            }
+
+            body.innerHTML = '';
+
+            function notifyParentSelection() {
+                var compEl = container.closest('.lf-component');
+                if (compEl && typeof window._getCompStyles === 'function' && window.parent) {
+                    window.parent.postMessage(Object.assign({
+                        type: 'LF_COMP_SELECTED'
+                    }, window._getCompStyles(compEl)), '*');
+                }
+            }
+
+            hierarchy.forEach((t1, t1Idx) => {
+                const t1Group = document.createElement('div');
+                t1Group.className = 'v4-accordion-tier1-group';
+                t1Group.style.cssText = 'border-bottom: 1.6px solid ' + dividerColor + '; display: flex; flex-direction: column;';
+
+                // 1st Tier Header
+                const t1Header = document.createElement('div');
+                t1Header.className = 'v4-accordion-tier1-header';
+                t1Header.style.cssText = 'padding: 8px 12px; font-size: ' + subFontSize + 'px; font-weight: bold; color: ' + t1Color + '; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: ' + (isContainerDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)') + '; height: ' + currentItemHeight + 'px; box-sizing: border-box;';
+
+                const t1Span = document.createElement('span');
+                t1Span.className = 'v4-editable-cell';
+                t1Span.contentEditable = 'true';
+                t1Span.style.cssText = 'outline: none; flex: 1; color: ' + t1Color + '; font-size: ' + subFontSize + 'px;';
+                t1Span.innerText = t1.title || t1.text || ('1Tier Category ' + (t1Idx + 1));
+                t1Span.addEventListener('click', (e) => e.stopPropagation());
+                t1Span.addEventListener('input', () => {
+                    t1.text = t1Span.innerText;
+                    t1.title = t1Span.innerText;
+                    container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
+                    markDirty();
+                });
+                t1Span.addEventListener('blur', () => {
+                    notifyParentSelection();
+                });
+
+                const t1Arrow = document.createElement('span');
+                t1Arrow.className = 'tier-arrow';
+                t1Arrow.style.cssText = 'width: 6px; height: 6px; border-right: 1.6px solid ' + arrowColor + '; border-bottom: 1.6px solid ' + arrowColor + '; transform: rotate(45deg); transition: transform 0.2s; margin-right: 8px; display: inline-block; flex-shrink: 0;';
+
+                t1Header.appendChild(t1Span);
+                const t1Children = t1.children || t1.items || [];
+                if (t1Children && t1Children.length > 0) {
+                    t1Header.appendChild(t1Arrow);
+                }
+                t1Group.appendChild(t1Header);
+
+                // 1st Tier Body (contains 2nd Tier Groups)
+                const t1Body = document.createElement('div');
+                t1Body.className = 'v4-accordion-tier1-body';
+                t1Body.style.cssText = 'display: flex; flex-direction: column; transition: all 0.2s ease; overflow: hidden;';
+
+                let t1Expanded = true;
+                t1Header.addEventListener('click', () => {
+                    t1Expanded = !t1Expanded;
+                    t1Body.style.display = t1Expanded ? 'flex' : 'none';
+                    t1Arrow.style.transform = t1Expanded ? 'rotate(45deg)' : 'rotate(-45deg)';
+                });
+
+                if (t1Children && t1Children.length > 0) {
+                    t1Children.forEach((t2, t2Idx) => {
+                        const t2Group = document.createElement('div');
+                        t2Group.className = 'v4-accordion-tier2-group';
+                        t2Group.style.cssText = 'display: flex; flex-direction: column; border-bottom: 1.6px solid ' + (isContainerDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.04)') + ';';
+
+                        // 2nd Tier Header (Subcategory header with arrow)
+                        const t2Header = document.createElement('div');
+                        t2Header.className = 'v4-accordion-tier2-header';
+                        t2Header.style.cssText = 'padding: 6px 12px 6px 20px; font-size: ' + Math.max(10, subFontSize - 1) + 'px; font-weight: 600; color: ' + t2Color + '; display: flex; align-items: center; justify-content: space-between; cursor: pointer; height: ' + currentItemHeight + 'px; box-sizing: border-box; background: ' + (isContainerDark ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)') + ';';
+
+                        const t2Span = document.createElement('span');
+                        t2Span.className = 'v4-editable-cell';
+                        t2Span.contentEditable = 'true';
+                        t2Span.style.cssText = 'outline: none; flex: 1; color: ' + t2Color + '; font-size: ' + Math.max(10, subFontSize - 1) + 'px;';
+                        t2Span.innerText = t2.title || t2.text || ('2Tier Group ' + (t2Idx + 1));
+                        t2Span.addEventListener('click', (e) => e.stopPropagation());
+                        t2Span.addEventListener('input', () => {
+                            t2.text = t2Span.innerText;
+                            t2.title = t2Span.innerText;
+                            container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
+                            markDirty();
+                        });
+                        t2Span.addEventListener('blur', () => {
+                            notifyParentSelection();
+                        });
+
+                        const t2Arrow = document.createElement('span');
+                        t2Arrow.className = 'tier-arrow tier2-arrow';
+                        t2Arrow.style.cssText = 'width: 5px; height: 5px; border-right: 1.4px solid ' + arrowColor + '; border-bottom: 1.4px solid ' + arrowColor + '; transform: rotate(45deg); transition: transform 0.2s; margin-right: 8px; display: inline-block; flex-shrink: 0;';
+
+                        t2Header.appendChild(t2Span);
+                        const t2Children = t2.children || t2.items || [];
+                        if (t2Children && t2Children.length > 0) {
+                            t2Header.appendChild(t2Arrow);
+                        }
+                        t2Group.appendChild(t2Header);
+
+                        // 2nd Tier Body (contains 3rd Tier Items)
+                        const t2Body = document.createElement('div');
+                        t2Body.className = 'v4-accordion-tier2-body';
+                        t2Body.style.cssText = 'display: flex; flex-direction: column; transition: all 0.2s ease; overflow: hidden;';
+
+                        let t2Expanded = true;
+                        t2Header.addEventListener('click', () => {
+                            t2Expanded = !t2Expanded;
+                            t2Body.style.display = t2Expanded ? 'flex' : 'none';
+                            t2Arrow.style.transform = t2Expanded ? 'rotate(45deg)' : 'rotate(-45deg)';
+                        });
+
+                        if (t2Children && t2Children.length > 0) {
+                            t2Children.forEach((t3, t3Idx) => {
+                                const t3Wrapper = document.createElement('div');
+                                t3Wrapper.className = 'v4-accordion-tier3-wrapper';
+                                t3Wrapper.style.cssText = 'display: flex; flex-direction: column; border-bottom: 1px solid ' + (isContainerDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.03)') + ';';
+
+                                const t3Header = document.createElement('div');
+                                t3Header.className = 'v4-accordion-tier3-header';
+                                t3Header.style.cssText = 'padding: 6px 12px 6px 32px; font-size: ' + Math.max(10, subFontSize - 1) + 'px; color: ' + t2Color + '; display: flex; align-items: center; cursor: pointer; height: ' + currentItemHeight + 'px; box-sizing: border-box;';
+
+                                const t3Radio = document.createElement('input');
+                                t3Radio.type = 'radio';
+                                t3Radio.name = 'accordion-select-' + compId;
+                                t3Radio.className = 'v4-accordion-radio';
+                                t3Radio.style.cssText = 'margin-right: 8px; accent-color: ' + radioAccent + '; cursor: pointer;';
+                                if (t3.active) {
+                                    t3Radio.setAttribute('checked', 'true');
+                                    t3Radio.checked = true;
+                                }
+
+                                const t3Span = document.createElement('span');
+                                t3Span.className = 'v4-editable-cell';
+                                t3Span.contentEditable = 'true';
+                                t3Span.style.cssText = 'outline: none; flex: 1; color: ' + t2Color + '; font-size: ' + Math.max(10, subFontSize - 1) + 'px;';
+                                t3Span.innerText = t3.text || t3.title || ('3Tier Item ' + (t3Idx + 1));
+                                if (t3.active) {
+                                    t3Span.style.textDecoration = 'underline';
+                                }
+                                t3Span.addEventListener('click', (e) => e.stopPropagation());
+                                t3Span.addEventListener('input', () => {
+                                    t3.text = t3Span.innerText;
+                                    t3.title = t3Span.innerText;
+                                    container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
+                                    markDirty();
+                                });
+                                t3Span.addEventListener('blur', () => {
+                                    notifyParentSelection();
+                                });
+
+                                t3Radio.addEventListener('change', () => {
+                                    container.querySelectorAll('.v4-accordion-radio').forEach(r => {
+                                        if (r !== t3Radio) {
+                                            r.removeAttribute('checked');
+                                            r.checked = false;
+                                            const sEl = r.nextElementSibling;
+                                            if (sEl) sEl.style.textDecoration = 'none';
+                                        }
+                                    });
+                                    t3Radio.setAttribute('checked', 'true');
+                                    t3Radio.checked = true;
+                                    t3Span.style.textDecoration = 'underline';
+
+                                    hierarchy.forEach(cat1 => {
+                                        const c1Items = cat1.children || cat1.items || [];
+                                        c1Items.forEach(cat2 => {
+                                            const c2Items = cat2.children || cat2.items || [];
+                                            c2Items.forEach(item3 => {
+                                                item3.active = (item3 === t3);
+                                            });
+                                        });
+                                    });
+                                    container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
+                                    markDirty();
+                                    notifyParentSelection();
+                                });
+
+                                t3Header.appendChild(t3Radio);
+                                t3Header.appendChild(t3Span);
+                                t3Wrapper.appendChild(t3Header);
+                                t2Body.appendChild(t3Wrapper);
+                            });
+                        }
+
+                        t2Group.appendChild(t2Body);
+                        t1Body.appendChild(t2Group);
+                    });
+                }
+
+                t1Group.appendChild(t1Body);
+                body.appendChild(t1Group);
+            });
         } else {
             // Render 2-depth (hierarchical tree with 2nd tier radio buttons)
             let hierarchy = [];
@@ -276,6 +515,15 @@ window.v4AccordionScript = `
             }
             
             body.innerHTML = '';
+
+            function notifyParentSelection2() {
+                var compEl = container.closest('.lf-component');
+                if (compEl && typeof window._getCompStyles === 'function' && window.parent) {
+                    window.parent.postMessage(Object.assign({
+                        type: 'LF_COMP_SELECTED'
+                    }, window._getCompStyles(compEl)), '*');
+                }
+            }
             
             hierarchy.forEach((t1, t1Idx) => {
                 const t1Group = document.createElement('div');
@@ -298,6 +546,9 @@ window.v4AccordionScript = `
                     t1.title = t1Span.innerText;
                     container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
                     markDirty();
+                });
+                t1Span.addEventListener('blur', () => {
+                    notifyParentSelection2();
                 });
                 
                 const t1Arrow = document.createElement('span');
@@ -359,6 +610,9 @@ window.v4AccordionScript = `
                             container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
                             markDirty();
                         });
+                        t2Span.addEventListener('blur', () => {
+                            notifyParentSelection2();
+                        });
                         
                         t2Radio.addEventListener('change', () => {
                             // Uncheck all other radios in the entire accordion
@@ -385,6 +639,7 @@ window.v4AccordionScript = `
                             });
                             container.setAttribute('data-hierarchy', JSON.stringify(hierarchy));
                             markDirty();
+                            notifyParentSelection2();
                         });
                         
                         t2Header.appendChild(t2Radio);
@@ -454,8 +709,8 @@ window.v4AccordionScript = `
                 container.querySelectorAll('.v4-accordion-tier1-header').forEach(function(h) {
                     h.style.fontSize = sSize + 'px';
                 });
-                container.querySelectorAll('.v4-accordion-tier2-header').forEach(function(h) {
-                    h.style.fontSize = sSize + 'px';
+                container.querySelectorAll('.v4-accordion-tier2-header, .v4-accordion-tier3-header').forEach(function(h) {
+                    h.style.fontSize = Math.max(10, sSize - 1) + 'px';
                 });
                 container.querySelectorAll('.v4-accordion-body .v4-editable-cell').forEach(function(cell) {
                     cell.style.fontSize = sSize + 'px';

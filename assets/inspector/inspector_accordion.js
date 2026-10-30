@@ -123,32 +123,259 @@
         });
     };
 
-    const syncHierarchyInputs = (hierarchy) => {
+    const _getActiveAccordionEl = () => {
+        try {
+            const iframe = document.getElementById('main-iframe');
+            if (iframe && iframe.contentWindow && iframe.contentWindow.document) {
+                const activeEl = iframe.contentWindow.document.querySelector('.lf-component.selected');
+                if (activeEl) {
+                    return activeEl.querySelector('.v4-accordion-container') || activeEl;
+                }
+            }
+        } catch(e) {}
+        return null;
+    };
+
+    const _getExistingAccordionData = () => {
+        const cont = _getActiveAccordionEl();
+        let depthType = '1depth';
+        let hierarchy = [];
+        let subTexts = [];
+        if (cont) {
+            depthType = cont.getAttribute('data-depth-type') || '1depth';
+            const hStr = cont.getAttribute('data-hierarchy');
+            if (hStr) {
+                try { hierarchy = JSON.parse(hStr); } catch(e) {}
+            }
+            const subItems = cont.querySelectorAll('.v4-accordion-item');
+            if (subItems && subItems.length > 0) {
+                subTexts = Array.from(subItems).map(item => {
+                    const span = item.querySelector('.v4-editable-cell') || item;
+                    return span ? span.innerText.trim() : '';
+                });
+            }
+        }
+        return { depthType, hierarchy, subTexts };
+    };
+
+    const _extractAllTexts = (hierarchy, outList) => {
+        if (!Array.isArray(hierarchy)) return;
+        hierarchy.forEach(item => {
+            const children = item.children || item.items;
+            if (Array.isArray(children) && children.length > 0) {
+                _extractAllTexts(children, outList);
+            } else {
+                const txt = typeof item === 'string' ? item : (item.text || item.title || '');
+                if (txt) outList.push(txt);
+            }
+        });
+    };
+
+    const _migrateHierarchy = (oldHierarchy, fromDepth, toDepth, fallbackSubTexts) => {
+        if (toDepth === '1depth') {
+            const flatTexts = [];
+            _extractAllTexts(oldHierarchy, flatTexts);
+            if (flatTexts.length === 0 && Array.isArray(fallbackSubTexts) && fallbackSubTexts.length > 0) {
+                fallbackSubTexts.forEach(t => flatTexts.push(t));
+            }
+            if (flatTexts.length === 0) {
+                flatTexts.push('Sub Item 1', 'Sub Item 2', 'Sub Item 3');
+            }
+            return flatTexts.map((txt, idx) => ({ text: txt, title: txt, active: idx === 0 }));
+        }
+
+        if (toDepth === '2depth') {
+            if (fromDepth === '1depth' || !Array.isArray(oldHierarchy) || oldHierarchy.length === 0 || !oldHierarchy[0].children) {
+                const flatItems = (Array.isArray(oldHierarchy) && oldHierarchy.length > 0)
+                    ? oldHierarchy.map(it => ({ text: typeof it === 'string' ? it : (it.text || it.title || '항목'), active: !!it.active }))
+                    : (fallbackSubTexts && fallbackSubTexts.length > 0)
+                        ? fallbackSubTexts.map((t, idx) => ({ text: t, active: idx === 0 }))
+                        : [{ text: 'Sub Item 1', active: true }, { text: 'Sub Item 2', active: false }];
+                return [{
+                    title: '대분류 1',
+                    text: '대분류 1',
+                    children: flatItems,
+                    items: flatItems
+                }];
+            }
+            if (fromDepth === '3depth') {
+                return oldHierarchy.map((t1, idx) => {
+                    const t2Items = [];
+                    (t1.children || t1.items || []).forEach(t2 => {
+                        const t3List = t2.children || t2.items || [];
+                        if (t3List.length > 0) {
+                            t3List.forEach(t3 => {
+                                const prefix = (t2.title || t2.text) ? (t2.title || t2.text) + ' - ' : '';
+                                t2Items.push({ text: prefix + (t3.text || t3.title || '소분류'), active: !!t3.active });
+                            });
+                        } else {
+                            t2Items.push({ text: t2.text || t2.title || '항목', active: !!t2.active });
+                        }
+                    });
+                    if (t2Items.length === 0) t2Items.push({ text: 'Sub Item 1', active: false });
+                    return {
+                        title: t1.title || t1.text || ('대분류 ' + (idx + 1)),
+                        text: t1.title || t1.text || ('대분류 ' + (idx + 1)),
+                        children: t2Items,
+                        items: t2Items
+                    };
+                });
+            }
+            return oldHierarchy.map((t1, idx) => {
+                const items = (t1.children || t1.items || []).map(t2 => ({
+                    text: t2.text || t2.title || 'Sub Item',
+                    active: !!t2.active
+                }));
+                if (items.length === 0) items.push({ text: 'Sub Item 1', active: false });
+                return {
+                    title: t1.title || t1.text || ('대분류 ' + (idx + 1)),
+                    text: t1.title || t1.text || ('대분류 ' + (idx + 1)),
+                    children: items,
+                    items: items
+                };
+            });
+        }
+
+        if (toDepth === '3depth') {
+            if (fromDepth === '1depth' || !Array.isArray(oldHierarchy) || oldHierarchy.length === 0 || !oldHierarchy[0].children) {
+                const flatItems = (Array.isArray(oldHierarchy) && oldHierarchy.length > 0)
+                    ? oldHierarchy.map(it => ({ text: typeof it === 'string' ? it : (it.text || it.title || '소분류'), active: !!it.active }))
+                    : [{ text: '소분류 1', active: true }, { text: '소분류 2', active: false }];
+                return [{
+                    title: '대분류 1',
+                    text: '대분류 1',
+                    children: [{
+                        title: '중분류 1.1',
+                        text: '중분류 1.1',
+                        children: flatItems,
+                        items: flatItems
+                    }],
+                    items: [{
+                        title: '중분류 1.1',
+                        text: '중분류 1.1',
+                        children: flatItems,
+                        items: flatItems
+                    }]
+                }];
+            }
+            if (fromDepth === '2depth') {
+                return oldHierarchy.map((t1, idx) => {
+                    const existing2Tier = (t1.children || t1.items || []).map(item => ({
+                        text: item.text || item.title || '소분류',
+                        active: !!item.active
+                    }));
+                    const t3Items = existing2Tier.length > 0 ? existing2Tier : [{ text: '소분류 1', active: false }];
+                    const t2Group = {
+                        title: '중분류 ' + (idx + 1) + '.1',
+                        text: '중분류 ' + (idx + 1) + '.1',
+                        children: t3Items,
+                        items: t3Items
+                    };
+                    return {
+                        title: t1.title || t1.text || ('대분류 ' + (idx + 1)),
+                        text: t1.title || t1.text || ('대분류 ' + (idx + 1)),
+                        children: [t2Group],
+                        items: [t2Group]
+                    };
+                });
+            }
+            return oldHierarchy.map((t1, i1) => {
+                const t2Groups = (t1.children || t1.items || []).map((t2, i2) => {
+                    const t3Items = (t2.children || t2.items || []).map(t3 => ({
+                        text: t3.text || t3.title || '소분류',
+                        active: !!t3.active
+                    }));
+                    if (t3Items.length === 0) t3Items.push({ text: '소분류 1', active: false });
+                    return {
+                        title: t2.title || t2.text || ('중분류 ' + (i1 + 1) + '.' + (i2 + 1)),
+                        text: t2.title || t2.text || ('중분류 ' + (i1 + 1) + '.' + (i2 + 1)),
+                        children: t3Items,
+                        items: t3Items
+                    };
+                });
+                if (t2Groups.length === 0) {
+                    t2Groups.push({
+                        title: '중분류 ' + (i1 + 1) + '.1',
+                        text: '중분류 ' + (i1 + 1) + '.1',
+                        children: [{ text: '소분류 1', active: false }],
+                        items: [{ text: '소분류 1', active: false }]
+                    });
+                }
+                return {
+                    title: t1.title || t1.text || ('대분류 ' + (i1 + 1)),
+                    text: t1.title || t1.text || ('대분류 ' + (i1 + 1)),
+                    children: t2Groups,
+                    items: t2Groups
+                };
+            });
+        }
+
+        return oldHierarchy;
+    };
+
+    const syncHierarchyInputs = (hierarchy, depthType) => {
         const container = document.getElementById('accordion-hierarchy-container');
         if (!container) return;
+
+        const effectiveDepth = depthType || (document.getElementById('btn-accordion-depth-3')?.classList.contains('active') ? '3depth' : '2depth');
 
         const activeEl = document.activeElement;
         const isTyping = activeEl && (container.contains(activeEl) || activeEl.classList.contains('accordion-h-input'));
         if (isTyping) return;
 
         const commitHierarchy = () => {
-            notifyAccordion({ hierarchy: hierarchy });
+            if (Array.isArray(hierarchy)) {
+                hierarchy.forEach(t1 => {
+                    t1.items = t1.children || t1.items || [];
+                    t1.children = t1.items;
+                    if (Array.isArray(t1.children)) {
+                        t1.children.forEach(t2 => {
+                            if (t2.children || t2.items) {
+                                t2.items = t2.children || t2.items || [];
+                                t2.children = t2.items;
+                            }
+                        });
+                    }
+                });
+            }
+            notifyAccordion({ hierarchy: hierarchy, depthType: effectiveDepth });
+        };
+
+        const deactivateAllExcept = (targetItem) => {
+            if (!Array.isArray(hierarchy)) return;
+            hierarchy.forEach(t1 => {
+                (t1.children || t1.items || []).forEach(t2 => {
+                    if (t2.children || t2.items) {
+                        (t2.children || t2.items || []).forEach(t3 => {
+                            t3.active = (t3 === targetItem);
+                        });
+                    } else {
+                        t2.active = (t2 === targetItem);
+                    }
+                });
+            });
         };
 
         container.innerHTML = '';
+        if (!Array.isArray(hierarchy) || hierarchy.length === 0) {
+            container.innerHTML = '<div style="color: #64748b; font-size: 11px; padding: 8px; text-align: center;">항목이 없습니다. 상단 "+ 1티어 추가" 버튼을 눌러주세요.</div>';
+            return;
+        }
+
         hierarchy.forEach((t1, i1) => {
             const t1Div = document.createElement('div');
             t1Div.className = 'v4-accordion-tier1-group';
             t1Div.style.cssText = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px; margin-bottom: 8px;';
             
             const t1Header = document.createElement('div');
+            t1Header.className = 'v4-accordion-t1-header-row';
             t1Header.style.cssText = 'display: flex; align-items: center; gap: 6px; margin-bottom: 6px;';
             t1Header.innerHTML = 
                 '<span style="font-size: 11px; font-weight: bold; color: var(--accent-light, #9e8cfc); width: 45px; flex-shrink: 0;">1T-' + (i1 + 1) + '</span>' +
-                '<input type="text" class="v4-prop-input accordion-h-input" value="' + (t1.title || '') + '" style="flex:1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 11px; outline: none; box-sizing: border-box;">' +
-                '<button class="v4-btn-action-sm danger btn-del-tier1" title="삭제">&times;</button>';
+                '<input type="text" class="v4-prop-input accordion-h-input accordion-t1-input" value="' + (t1.title || t1.text || '') + '" style="flex:1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 11px; outline: none; box-sizing: border-box;">' +
+                '<button class="v4-btn-action-sm danger btn-del-tier1" title="1티어 삭제">&times;</button>';
             
-            const t1Input = t1Header.querySelector('input');
+            const t1Input = t1Header.querySelector('.accordion-t1-input');
             if (t1Input) {
                 t1Input.addEventListener('input', () => {
                     t1.title = t1Input.value;
@@ -161,65 +388,178 @@
                 delT1Btn.addEventListener('click', () => {
                     hierarchy.splice(i1, 1);
                     commitHierarchy();
-                    syncHierarchyInputs(hierarchy);
+                    syncHierarchyInputs(hierarchy, effectiveDepth);
                 });
             }
             t1Div.appendChild(t1Header);
 
             const t2Container = document.createElement('div');
-            t2Container.style.cssText = 'padding-left: 12px; display: flex; flex-direction: column; gap: 4px; border-left: 2px solid rgba(110, 86, 207, 0.25); margin-left: 8px; margin-bottom: 6px;';
-            
-            (t1.items || []).forEach((t2, i2) => {
-                const t2Div = document.createElement('div');
-                t2Div.style.cssText = 'display: flex; align-items: center; gap: 6px;';
-                t2Div.innerHTML = 
-                    '<input type="radio" name="sidebar-accordion-active" class="sidebar-accordion-radio" ' + (t2.active ? 'checked' : '') + ' style="accent-color: var(--accent, #6e56cf); cursor: pointer; flex-shrink: 0;">' +
-                    '<span style="font-size: 10px; color: #94a3b8; width: 35px; flex-shrink: 0;">2T-' + (i2 + 1) + '</span>' +
-                    '<input type="text" class="v4-prop-input accordion-h-input" value="' + (t2.text || '') + '" style="flex:1; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 3px 5px; border-radius: 3px; font-size: 10px; outline: none; box-sizing: border-box;">' +
-                    '<button class="v4-btn-action-sm danger btn-del-tier2" title="삭제">&times;</button>';
-                
-                const t2Radio = t2Div.querySelector('.sidebar-accordion-radio');
-                if (t2Radio) {
-                    t2Radio.addEventListener('change', () => {
-                        const allRadios = document.querySelectorAll('.sidebar-accordion-radio');
-                        allRadios.forEach(r => { if (r !== t2Radio) r.checked = false; });
-                        hierarchy.forEach(g => {
-                            (g.items || []).forEach(item => { item.active = false; });
-                        });
-                        t2.active = true;
-                        commitHierarchy();
-                    });
-                }
-                const t2Input = t2Div.querySelector('input[type="text"]');
-                if (t2Input) {
-                    t2Input.addEventListener('input', () => {
-                        t2.text = t2Input.value;
-                        commitHierarchy();
-                    });
-                }
-                const delT2Btn = t2Div.querySelector('.btn-del-tier2');
-                if (delT2Btn) {
-                    delT2Btn.addEventListener('click', () => {
-                        t1.items.splice(i2, 1);
-                        commitHierarchy();
-                        syncHierarchyInputs(hierarchy);
-                    });
-                }
-                t2Container.appendChild(t2Div);
-            });
-            t1Div.appendChild(t2Container);
+            t2Container.className = 'v4-accordion-t2-container';
+            t2Container.style.cssText = 'padding-left: 10px; display: flex; flex-direction: column; gap: 6px; border-left: 2px solid rgba(110, 86, 207, 0.25); margin-left: 6px; margin-bottom: 6px;';
 
-            const addT2Btn = document.createElement('button');
-            addT2Btn.className = 'btn-secondary';
-            addT2Btn.style.cssText = 'font-size: 10px; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #cbd5e1; cursor: pointer; margin-left: 12px; margin-top: 2px;';
-            addT2Btn.textContent = '+ 2-Tier Item';
-            addT2Btn.addEventListener('click', () => {
-                if (!t1.items) t1.items = [];
-                t1.items.push({ text: 'Sub Item ' + (t1.items.length + 1), active: false });
-                commitHierarchy();
-                syncHierarchyInputs(hierarchy);
-            });
-            t1Div.appendChild(addT2Btn);
+            if (effectiveDepth === '3depth') {
+                // 3 Depth Mode: 1Tier -> 2Tier Groups -> 3Tier Items
+                (t1.children || t1.items || []).forEach((t2, i2) => {
+                    const t2Box = document.createElement('div');
+                    t2Box.className = 'v4-accordion-tier2-group-box';
+                    t2Box.style.cssText = 'background: rgba(255,255,255,0.015); border: 1px dashed rgba(255,255,255,0.1); border-radius: 4px; padding: 6px; margin-bottom: 4px;';
+
+                    const t2Header = document.createElement('div');
+                    t2Header.className = 'v4-accordion-t2-header-row';
+                    t2Header.style.cssText = 'display: flex; align-items: center; gap: 6px; margin-bottom: 6px;';
+                    t2Header.innerHTML = 
+                        '<span style="font-size: 10px; font-weight: 600; color: #38bdf8; width: 40px; flex-shrink: 0;">2T-' + (i2 + 1) + '</span>' +
+                        '<input type="text" class="v4-prop-input accordion-h-input accordion-t2-input" value="' + (t2.title || t2.text || '') + '" style="flex:1; background: rgba(0,0,0,0.3); border: 1px solid rgba(56, 189, 248, 0.25); color: #e0f2fe; padding: 3px 5px; border-radius: 3px; font-size: 10px; outline: none; box-sizing: border-box;">' +
+                        '<button class="v4-btn-action-sm danger btn-del-tier2" title="2티어 삭제">&times;</button>';
+
+                    const t2Input = t2Header.querySelector('.accordion-t2-input');
+                    if (t2Input) {
+                        t2Input.addEventListener('input', () => {
+                            t2.title = t2Input.value;
+                            t2.text = t2Input.value;
+                            commitHierarchy();
+                        });
+                    }
+                    const delT2Btn = t2Header.querySelector('.btn-del-tier2');
+                    if (delT2Btn) {
+                        delT2Btn.addEventListener('click', () => {
+                            (t1.children || t1.items).splice(i2, 1);
+                            commitHierarchy();
+                            syncHierarchyInputs(hierarchy, effectiveDepth);
+                        });
+                    }
+                    t2Box.appendChild(t2Header);
+
+                    const t3Container = document.createElement('div');
+                    t3Container.className = 'v4-accordion-t3-container';
+                    t3Container.style.cssText = 'padding-left: 8px; display: flex; flex-direction: column; gap: 4px; border-left: 2px solid rgba(56, 189, 248, 0.25); margin-left: 6px; margin-bottom: 4px;';
+
+                    (t2.children || t2.items || []).forEach((t3, i3) => {
+                        const t3Div = document.createElement('div');
+                        t3Div.className = 'v4-accordion-t3-item-row';
+                        t3Div.style.cssText = 'display: flex; align-items: center; gap: 6px;';
+                        t3Div.innerHTML = 
+                            '<input type="radio" name="sidebar-accordion-active" class="sidebar-accordion-radio" ' + (t3.active ? 'checked' : '') + ' style="accent-color: var(--accent, #6e56cf); cursor: pointer; flex-shrink: 0;">' +
+                            '<span style="font-size: 9px; color: #94a3b8; width: 35px; flex-shrink: 0;">3T-' + (i3 + 1) + '</span>' +
+                            '<input type="text" class="v4-prop-input accordion-h-input accordion-t3-input" value="' + (t3.text || '') + '" style="flex:1; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 2px 4px; border-radius: 3px; font-size: 10px; outline: none; box-sizing: border-box;">' +
+                            '<button class="v4-btn-action-sm danger btn-del-tier3" title="3티어 삭제">&times;</button>';
+
+                        const t3Radio = t3Div.querySelector('.sidebar-accordion-radio');
+                        if (t3Radio) {
+                            t3Radio.addEventListener('change', () => {
+                                const allRadios = document.querySelectorAll('.sidebar-accordion-radio');
+                                allRadios.forEach(r => { if (r !== t3Radio) r.checked = false; });
+                                deactivateAllExcept(t3);
+                                commitHierarchy();
+                            });
+                        }
+                        const t3Input = t3Div.querySelector('.accordion-t3-input');
+                        if (t3Input) {
+                            t3Input.addEventListener('input', () => {
+                                t3.text = t3Input.value;
+                                commitHierarchy();
+                            });
+                        }
+                        const delT3Btn = t3Div.querySelector('.btn-del-tier3');
+                        if (delT3Btn) {
+                            delT3Btn.addEventListener('click', () => {
+                                (t2.children || t2.items).splice(i3, 1);
+                                commitHierarchy();
+                                syncHierarchyInputs(hierarchy, effectiveDepth);
+                            });
+                        }
+                        t3Container.appendChild(t3Div);
+                    });
+                    t2Box.appendChild(t3Container);
+
+                    const addT3Btn = document.createElement('button');
+                    addT3Btn.className = 'btn-secondary';
+                    addT3Btn.style.cssText = 'font-size: 9px; padding: 2px 6px; border-radius: 3px; border: 1px solid rgba(56, 189, 248, 0.25); background: rgba(56, 189, 248, 0.05); color: #38bdf8; cursor: pointer; margin-left: 8px; margin-top: 2px;';
+                    addT3Btn.textContent = '+ 3-Tier Item';
+                    addT3Btn.addEventListener('click', () => {
+                        if (!t2.children) t2.children = [];
+                        t2.children.push({ text: '소분류 ' + (t2.children.length + 1), active: false });
+                        t2.items = t2.children;
+                        commitHierarchy();
+                        syncHierarchyInputs(hierarchy, effectiveDepth);
+                    });
+                    t2Box.appendChild(addT3Btn);
+
+                    t2Container.appendChild(t2Box);
+                });
+
+                const addT2GroupBtn = document.createElement('button');
+                addT2GroupBtn.className = 'btn-secondary';
+                addT2GroupBtn.style.cssText = 'font-size: 10px; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(110, 86, 207, 0.3); background: rgba(110, 86, 207, 0.1); color: #c4b5fd; cursor: pointer; margin-left: 8px; margin-top: 4px; font-weight: 600;';
+                addT2GroupBtn.textContent = '+ 2-Tier Group (중분류)';
+                addT2GroupBtn.addEventListener('click', () => {
+                    if (!t1.children) t1.children = [];
+                    const newT2 = {
+                        title: '중분류 ' + (t1.children.length + 1),
+                        text: '중분류 ' + (t1.children.length + 1),
+                        children: [{ text: '소분류 1', active: false }],
+                        items: [{ text: '소분류 1', active: false }]
+                    };
+                    t1.children.push(newT2);
+                    t1.items = t1.children;
+                    commitHierarchy();
+                    syncHierarchyInputs(hierarchy, effectiveDepth);
+                });
+                t1Div.appendChild(t2Container);
+                t1Div.appendChild(addT2GroupBtn);
+            } else {
+                // 2 Depth Mode: 1Tier -> 2Tier Items
+                (t1.children || t1.items || []).forEach((t2, i2) => {
+                    const t2Div = document.createElement('div');
+                    t2Div.className = 'v4-accordion-t2-item-row';
+                    t2Div.style.cssText = 'display: flex; align-items: center; gap: 6px;';
+                    t2Div.innerHTML = 
+                        '<input type="radio" name="sidebar-accordion-active" class="sidebar-accordion-radio" ' + (t2.active ? 'checked' : '') + ' style="accent-color: var(--accent, #6e56cf); cursor: pointer; flex-shrink: 0;">' +
+                        '<span style="font-size: 10px; color: #94a3b8; width: 35px; flex-shrink: 0;">2T-' + (i2 + 1) + '</span>' +
+                        '<input type="text" class="v4-prop-input accordion-h-input accordion-t2-input" value="' + (t2.text || '') + '" style="flex:1; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 3px 5px; border-radius: 3px; font-size: 10px; outline: none; box-sizing: border-box;">' +
+                        '<button class="v4-btn-action-sm danger btn-del-tier2" title="2티어 삭제">&times;</button>';
+                    
+                    const t2Radio = t2Div.querySelector('.sidebar-accordion-radio');
+                    if (t2Radio) {
+                        t2Radio.addEventListener('change', () => {
+                            const allRadios = document.querySelectorAll('.sidebar-accordion-radio');
+                            allRadios.forEach(r => { if (r !== t2Radio) r.checked = false; });
+                            deactivateAllExcept(t2);
+                            commitHierarchy();
+                        });
+                    }
+                    const t2Input = t2Div.querySelector('.accordion-t2-input');
+                    if (t2Input) {
+                        t2Input.addEventListener('input', () => {
+                            t2.text = t2Input.value;
+                            commitHierarchy();
+                        });
+                    }
+                    const delT2Btn = t2Div.querySelector('.btn-del-tier2');
+                    if (delT2Btn) {
+                        delT2Btn.addEventListener('click', () => {
+                            (t1.children || t1.items).splice(i2, 1);
+                            commitHierarchy();
+                            syncHierarchyInputs(hierarchy, effectiveDepth);
+                        });
+                    }
+                    t2Container.appendChild(t2Div);
+                });
+                t1Div.appendChild(t2Container);
+
+                const addT2Btn = document.createElement('button');
+                addT2Btn.className = 'btn-secondary';
+                addT2Btn.style.cssText = 'font-size: 10px; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #cbd5e1; cursor: pointer; margin-left: 12px; margin-top: 2px;';
+                addT2Btn.textContent = '+ 2-Tier Item';
+                addT2Btn.addEventListener('click', () => {
+                    if (!t1.children) t1.children = [];
+                    t1.children.push({ text: 'Sub Item ' + (t1.children.length + 1), active: false });
+                    t1.items = t1.children;
+                    commitHierarchy();
+                    syncHierarchyInputs(hierarchy, effectiveDepth);
+                });
+                t1Div.appendChild(addT2Btn);
+            }
 
             container.appendChild(t1Div);
         });
@@ -286,15 +626,18 @@
             const depthType = comp.accordionDepthType || '1depth';
             const depth1Btn = document.getElementById('btn-accordion-depth-1');
             const depth2Btn = document.getElementById('btn-accordion-depth-2');
+            const depth3Btn = document.getElementById('btn-accordion-depth-3');
             const settings1D = document.getElementById('accordion-1depth-settings');
             const settings2D = document.getElementById('accordion-2depth-settings');
+            const lblTitle = document.getElementById('lbl-accordion-hierarchy-title');
 
-            if (depth1Btn && depth2Btn) {
-                highlightActive(depth1Btn, depthType === '1depth');
-                highlightActive(depth2Btn, depthType === '2depth');
-            }
+            if (depth1Btn) highlightActive(depth1Btn, depthType === '1depth');
+            if (depth2Btn) highlightActive(depth2Btn, depthType === '2depth');
+            if (depth3Btn) highlightActive(depth3Btn, depthType === '3depth');
+
             if (settings1D) settings1D.style.display = depthType === '1depth' ? 'block' : 'none';
-            if (settings2D) settings2D.style.display = depthType === '2depth' ? 'block' : 'none';
+            if (settings2D) settings2D.style.display = (depthType === '2depth' || depthType === '3depth') ? 'block' : 'none';
+            if (lblTitle) lblTitle.textContent = depthType === '3depth' ? '3 Depth 계층구조 설정 (Hierarchy)' : '2 Depth 계층구조 설정 (Hierarchy)';
             
             if (depthType === '1depth') {
                 syncSubItemInputs(comp.accordionSubTexts || []);
@@ -307,7 +650,7 @@
                 } catch (e) {
                     console.error("[InspectorAccordion] Failed to parse accordionHierarchy:", e);
                 }
-                syncHierarchyInputs(hierarchy);
+                syncHierarchyInputs(hierarchy, depthType);
             }
             
             const s = comp.currentStyles || {};
@@ -440,113 +783,93 @@
                         currentTexts.length = val;
                     }
                     syncSubItemInputs(currentTexts);
-                    notifyAccordion({ subCount: val, subTexts: currentTexts, hierarchy: currentTexts.map(t => ({ text: t })) });
+                    notifyAccordion({ subCount: val, subTexts: currentTexts, hierarchy: currentTexts.map((t, idx) => ({ text: t, active: idx === 0 })) });
                 };
             }
 
             const depth1Btn = document.getElementById('btn-accordion-depth-1');
             const depth2Btn = document.getElementById('btn-accordion-depth-2');
+            const depth3Btn = document.getElementById('btn-accordion-depth-3');
             const settings1D = document.getElementById('accordion-1depth-settings');
             const settings2D = document.getElementById('accordion-2depth-settings');
             const addTier1Btn = document.getElementById('btn-accordion-add-tier1');
+            const lblTitle = document.getElementById('lbl-accordion-hierarchy-title');
 
             const setDepth = (depth) => {
-                highlightActive(depth1Btn, depth === '1depth');
-                highlightActive(depth2Btn, depth === '2depth');
+                if (depth1Btn) highlightActive(depth1Btn, depth === '1depth');
+                if (depth2Btn) highlightActive(depth2Btn, depth === '2depth');
+                if (depth3Btn) highlightActive(depth3Btn, depth === '3depth');
                 if (settings1D) settings1D.style.display = depth === '1depth' ? 'block' : 'none';
-                if (settings2D) settings2D.style.display = depth === '2depth' ? 'block' : 'none';
+                if (settings2D) settings2D.style.display = (depth === '2depth' || depth === '3depth') ? 'block' : 'none';
+                if (lblTitle) lblTitle.textContent = depth === '3depth' ? '3 Depth 계층구조 설정 (Hierarchy)' : '2 Depth 계층구조 설정 (Hierarchy)';
 
-                let currentHierarchy = [];
-                if (depth === '2depth') {
-                    try {
-                        const iframe = document.getElementById('main-iframe');
-                        if (iframe && iframe.contentWindow && iframe.contentWindow.document) {
-                            const activeEl = iframe.contentWindow.document.querySelector('.lf-component.selected');
-                            if (activeEl) {
-                                const accordionContainer = activeEl.querySelector('.v4-accordion-container') || activeEl;
-                                if (accordionContainer) {
-                                    const hStr = accordionContainer.getAttribute('data-hierarchy');
-                                    if (hStr) currentHierarchy = JSON.parse(hStr);
-                                }
-                            }
-                        }
-                    } catch(e) {}
-                    if (!Array.isArray(currentHierarchy) || currentHierarchy.length === 0) {
-                        const subInputs = Array.from(document.querySelectorAll('.accordion-sub-input'));
-                        const subTexts = subInputs.length > 0 ? subInputs.map(i => i.value) : ['Sub Item 1', 'Sub Item 2'];
-                        currentHierarchy = [
-                            {
-                                title: '대분류 1',
-                                text: '대분류 1',
-                                items: subTexts.map((txt, idx) => ({ text: txt, active: idx === 0 })),
-                                children: subTexts.map((txt, idx) => ({ text: txt, active: idx === 0 }))
-                            }
-                        ];
-                    } else {
-                        currentHierarchy.forEach(t1 => {
-                            if (!t1.title && t1.text) t1.title = t1.text;
-                            if (!t1.text && t1.title) t1.text = t1.title;
-                            const items = t1.items || t1.children || [];
-                            t1.items = items;
-                            t1.children = items;
-                        });
-                    }
-                    syncHierarchyInputs(currentHierarchy);
+                const existingData = _getExistingAccordionData();
+                const migratedHierarchy = _migrateHierarchy(existingData.hierarchy, existingData.depthType, depth, existingData.subTexts);
+
+                if (depth === '1depth') {
+                    const flatTexts = [];
+                    _extractAllTexts(migratedHierarchy, flatTexts);
+                    if (flatTexts.length === 0) flatTexts.push('Sub Item 1', 'Sub Item 2', 'Sub Item 3');
+                    syncSubItemInputs(flatTexts);
+                    const scInp = document.getElementById('prop-accordion-sub-count');
+                    if (scInp) scInp.value = flatTexts.length;
+                    notifyAccordion({
+                        depthType: '1depth',
+                        subCount: flatTexts.length,
+                        subTexts: flatTexts,
+                        hierarchy: flatTexts.map((t, idx) => ({ text: t, active: idx === 0 }))
+                    });
+                } else {
+                    syncHierarchyInputs(migratedHierarchy, depth);
+                    notifyAccordion({ depthType: depth, hierarchy: migratedHierarchy });
                 }
-                notifyAccordion({ depthType: depth, hierarchy: currentHierarchy });
             };
 
             window.InspectorAccordion.setDepth = setDepth;
 
             if (depth1Btn) depth1Btn.onclick = () => setDepth('1depth');
             if (depth2Btn) depth2Btn.onclick = () => setDepth('2depth');
+            if (depth3Btn) depth3Btn.onclick = () => setDepth('3depth');
 
             if (addTier1Btn) {
                 addTier1Btn.onclick = () => {
-                    let currentHierarchy = [];
-                    try {
-                        const container = document.getElementById('accordion-hierarchy-container');
-                        if (container) {
-                            const tier1Groups = container.querySelectorAll('.v4-accordion-tier1-group');
-                            tier1Groups.forEach((g) => {
-                                const t1Inp = g.querySelector('.accordion-h-input');
-                                const t1Title = t1Inp ? t1Inp.value : '';
-                                const t2Inps = Array.from(g.querySelectorAll('div > input.accordion-h-input'));
-                                const t2Radios = Array.from(g.querySelectorAll('.sidebar-accordion-radio'));
-                                const items = t2Inps.map((inp, idx) => ({
-                                    text: inp.value,
-                                    active: t2Radios[idx] ? t2Radios[idx].checked : false
-                                }));
-                                currentHierarchy.push({
-                                    title: t1Title || '대분류',
-                                    text: t1Title || '대분류',
-                                    items: items,
-                                    children: items
-                                });
-                            });
-                        }
-                        if (currentHierarchy.length === 0) {
-                            const iframe = document.getElementById('main-iframe');
-                            if (iframe && iframe.contentWindow && iframe.contentWindow.document) {
-                                const activeEl = iframe.contentWindow.document.querySelector('.lf-component.selected');
-                                if (activeEl) {
-                                    const accordionContainer = activeEl.querySelector('.v4-accordion-container') || activeEl;
-                                    if (accordionContainer) {
-                                        const hStr = accordionContainer.getAttribute('data-hierarchy');
-                                        if (hStr) currentHierarchy = JSON.parse(hStr);
-                                    }
-                                }
-                            }
-                        }
-                    } catch(e) {}
-                    currentHierarchy.push({
-                        title: '대분류 ' + (currentHierarchy.length + 1),
-                        text: '대분류 ' + (currentHierarchy.length + 1),
-                        items: [{ text: 'Sub Item 1', active: false }],
-                        children: [{ text: 'Sub Item 1', active: false }]
-                    });
-                    syncHierarchyInputs(currentHierarchy);
-                    notifyAccordion({ hierarchy: currentHierarchy });
+                    const d3Btn = document.getElementById('btn-accordion-depth-3');
+                    const is3D = d3Btn && (d3Btn.classList.contains('active') || (d3Btn.style.borderColor && d3Btn.style.borderColor.indexOf('6e56cf') !== -1));
+                    const currentDepth = is3D ? '3depth' : '2depth';
+
+                    const existingData = _getExistingAccordionData();
+                    let currentHierarchy = existingData.hierarchy;
+                    if (!Array.isArray(currentHierarchy) || currentHierarchy.length === 0) {
+                        currentHierarchy = _migrateHierarchy([], '1depth', currentDepth, []);
+                    }
+
+                    if (currentDepth === '3depth') {
+                        currentHierarchy.push({
+                            title: '대분류 ' + (currentHierarchy.length + 1),
+                            text: '대분류 ' + (currentHierarchy.length + 1),
+                            children: [{
+                                title: '중분류 1',
+                                text: '중분류 1',
+                                children: [{ text: '소분류 1', active: false }],
+                                items: [{ text: '소분류 1', active: false }]
+                            }],
+                            items: [{
+                                title: '중분류 1',
+                                text: '중분류 1',
+                                children: [{ text: '소분류 1', active: false }],
+                                items: [{ text: '소분류 1', active: false }]
+                            }]
+                        });
+                    } else {
+                        currentHierarchy.push({
+                            title: '대분류 ' + (currentHierarchy.length + 1),
+                            text: '대분류 ' + (currentHierarchy.length + 1),
+                            children: [{ text: 'Sub Item 1', active: false }],
+                            items: [{ text: 'Sub Item 1', active: false }]
+                        });
+                    }
+                    syncHierarchyInputs(currentHierarchy, currentDepth);
+                    notifyAccordion({ hierarchy: currentHierarchy, depthType: currentDepth });
                 };
             }
 
@@ -692,6 +1015,13 @@
         if (depth2Btn) {
             if (window.InspectorAccordion && typeof window.InspectorAccordion.setDepth === 'function') {
                 window.InspectorAccordion.setDepth('2depth');
+            }
+            return;
+        }
+        const depth3Btn = e.target.closest && e.target.closest('#btn-accordion-depth-3');
+        if (depth3Btn) {
+            if (window.InspectorAccordion && typeof window.InspectorAccordion.setDepth === 'function') {
+                window.InspectorAccordion.setDepth('3depth');
             }
             return;
         }

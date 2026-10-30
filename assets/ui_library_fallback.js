@@ -1115,6 +1115,7 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 <div class="v4-flex-gap-4">
                     <button id="btn-accordion-depth-1" class="v4-inspector-btn v4-inspector-toggle-btn">1 Depth</button>
                     <button id="btn-accordion-depth-2" class="v4-inspector-btn v4-inspector-toggle-btn">2 Depth</button>
+                    <button id="btn-accordion-depth-3" class="v4-inspector-btn v4-inspector-toggle-btn">3 Depth</button>
                 </div>
             </div>
 
@@ -1129,10 +1130,10 @@ window.VCTRL_UI_FALLBACK_INSPECTOR = `
                 </div>
             </div>
 
-            <!-- 2 Depth Settings -->
+            <!-- 2 Depth / 3 Depth Settings (Hierarchical Tree) -->
             <div class="top-divider" id="accordion-2depth-settings" style="display: none;">
                 <div class="v4-section-header mb-8">
-                    <label class="v4-prop-label">계층구조 설정 (Hierarchy)</label>
+                    <label class="v4-prop-label" id="lbl-accordion-hierarchy-title">계층구조 설정 (Hierarchy)</label>
                     <button id="btn-accordion-add-tier1" class="v4-inspector-btn primary v4-btn-pill-xs">+ 1티어 추가</button>
                 </div>
                 <div class="v4-flex-col-gap-10 pr-4" id="accordion-hierarchy-container">

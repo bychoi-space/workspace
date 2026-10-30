@@ -288,7 +288,70 @@ if (!window.v4IframeStyleExtractorScript) {
         const accordionExpanded = accordionContainer ? accordionContainer.getAttribute('data-expanded') === 'true' : false;
         const accordionItemHeight = accordionContainer ? parseInt(accordionContainer.getAttribute('data-item-height')) || (accordionContainer.querySelector('.v4-accordion-header') ? parseInt(accordionContainer.querySelector('.v4-accordion-header').style.height) || 36 : 36) : 36;
         const accordionDepthType = accordionContainer ? (accordionContainer.getAttribute('data-depth-type') || '1depth') : '1depth';
-        const accordionHierarchy = accordionContainer ? (accordionContainer.getAttribute('data-hierarchy') || '') : '';
+        let accordionHierarchy = accordionContainer ? (accordionContainer.getAttribute('data-hierarchy') || '') : '';
+        if (accordionContainer && (!accordionHierarchy || accordionHierarchy === '[]' || accordionHierarchy === '""')) {
+            try {
+                const t1Groups = accordionContainer.querySelectorAll('.v4-accordion-tier1-group');
+                if (t1Groups && t1Groups.length > 0) {
+                    const extracted = [];
+                    const is3D = accordionDepthType === '3depth' || !!accordionContainer.querySelector('.v4-accordion-tier3-header');
+                    t1Groups.forEach((g, gIdx) => {
+                        const t1H = g.querySelector('.v4-accordion-tier1-header .v4-editable-cell') || g.querySelector('.v4-accordion-tier1-header');
+                        const t1Title = t1H ? t1H.innerText.trim() : ('1Tier Category ' + (gIdx + 1));
+                        if (is3D) {
+                            const t2Groups = g.querySelectorAll('.v4-accordion-tier2-group');
+                            const t2List = [];
+                            t2Groups.forEach((g2, g2Idx) => {
+                                const t2H = g2.querySelector('.v4-accordion-tier2-header .v4-editable-cell') || g2.querySelector('.v4-accordion-tier2-header');
+                                const t2Title = t2H ? t2H.innerText.trim() : ('2Tier Group ' + (g2Idx + 1));
+                                const t3Wrappers = g2.querySelectorAll('.v4-accordion-tier3-wrapper');
+                                const t3List = [];
+                                t3Wrappers.forEach((w3) => {
+                                    const r = w3.querySelector('.v4-accordion-radio');
+                                    const s = w3.querySelector('.v4-editable-cell');
+                                    t3List.push({
+                                        text: s ? s.innerText.trim() : '소분류',
+                                        active: r ? (r.checked || r.hasAttribute('checked')) : false
+                                    });
+                                });
+                                t2List.push({
+                                    title: t2Title,
+                                    text: t2Title,
+                                    children: t3List,
+                                    items: t3List
+                                });
+                            });
+                            extracted.push({
+                                title: t1Title,
+                                text: t1Title,
+                                children: t2List,
+                                items: t2List
+                            });
+                        } else {
+                            const t2Wrappers = g.querySelectorAll('.v4-accordion-tier2-wrapper');
+                            const t2List = [];
+                            t2Wrappers.forEach((w2) => {
+                                const r = w2.querySelector('.v4-accordion-radio');
+                                const s = w2.querySelector('.v4-editable-cell');
+                                t2List.push({
+                                    text: s ? s.innerText.trim() : 'Sub Item',
+                                    active: r ? (r.checked || r.hasAttribute('checked')) : false
+                                });
+                            });
+                            extracted.push({
+                                title: t1Title,
+                                text: t1Title,
+                                children: t2List,
+                                items: t2List
+                            });
+                        }
+                    });
+                    if (extracted.length > 0) {
+                        accordionHierarchy = JSON.stringify(extracted);
+                    }
+                }
+            } catch(e) {}
+        }
         const accordionTextColor = accordionContainer ? (
             accordionContainer.getAttribute('data-text-color') ||
             (accordionContainer.querySelector('.v4-accordion-title-text') ? window.rgbToHex(_getVal(accordionContainer.querySelector('.v4-accordion-title-text'), 'color')) : '') ||

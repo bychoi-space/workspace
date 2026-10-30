@@ -456,7 +456,7 @@ window.v4DesignSystemScript = `
                 }
                 const subFontSize = parseInt(accordion.getAttribute('data-sub-font-size'));
                 if (subFontSize) {
-                    accordion.querySelectorAll('.v4-accordion-item, .v4-accordion-tier1-header, .v4-accordion-tier2-header, .v4-accordion-body .v4-editable-cell').forEach(el => {
+                    accordion.querySelectorAll('.v4-accordion-item, .v4-accordion-tier1-header, .v4-accordion-tier2-header, .v4-accordion-tier3-header, .v4-accordion-body .v4-editable-cell').forEach(el => {
                         el.style.fontSize = subFontSize + 'px';
                     });
                 }

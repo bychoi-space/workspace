@@ -12,6 +12,7 @@ window.v4DragResizeScript = `
     let startX = 0, startY = 0, startW = 0, startH = 0, startTop = 0, startLeft = 0;
     let startRect = null;
     let groupChildrenStart = null;
+    let attachedPinsStart = null;
     
 
     function _handleResponsiveCrossFrameDrop(activeEl, isResp) {
@@ -87,52 +88,70 @@ window.v4DragResizeScript = `
     function _handlePinMarkerDropAnchoring(pin) {
         if (!pin || (!pin.classList.contains('text-marker') && !pin.classList.contains('pin-marker'))) return;
         var parent = pin.parentElement;
-        var hostContainer = (parent && parent.classList && parent.classList.contains('v4-pin-layer')) ? parent.parentElement : parent;
         var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
             ? window.ResponsiveFrameUtils.getScrollArea(pin)
             : (pin.closest ? pin.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content') : null);
         var scrollTop = scrollArea ? (scrollArea.scrollTop || 0) : 0;
 
-        if (hostContainer) {
-            var pinnedHosts = Array.from(hostContainer.children).filter(function(el) {
-                return el !== pin && el !== parent && el.hasAttribute && el.hasAttribute('data-scroll-fixed') &&
-                       !el.classList.contains('pin-marker') && !el.classList.contains('text-marker');
-            });
+        var pinFrame = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
+            ? window.ResponsiveFrameUtils.getFrameType(pin)
+            : (pin.getAttribute('data-frame') || '');
 
-            var pinRect = pin.getBoundingClientRect();
-            var pCenterX = pinRect.left + pinRect.width / 2;
-            var pCenterY = pinRect.top + pinRect.height / 2;
+        var allPinnedHosts = Array.from(document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])')).filter(function(el) {
+            return el !== pin && el !== parent && !el.classList.contains('pin-marker') && !el.classList.contains('text-marker');
+        });
 
-            var matchedHost = null;
-            for (var i = 0; i < pinnedHosts.length; i++) {
-                var hRect = pinnedHosts[i].getBoundingClientRect();
-                if (pCenterX >= hRect.left && pCenterX <= hRect.right &&
-                    pCenterY >= hRect.top && pCenterY <= hRect.bottom) {
-                    matchedHost = pinnedHosts[i];
-                    break;
-                }
+        var pinnedHosts = allPinnedHosts.filter(function(host) {
+            if (pinFrame) {
+                var hostFrame = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
+                    ? window.ResponsiveFrameUtils.getFrameType(host)
+                    : (host.getAttribute('data-frame') || '');
+                if (hostFrame && hostFrame !== pinFrame) return false;
+            }
+            if (scrollArea && host.closest) {
+                var hostScrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
+                    ? window.ResponsiveFrameUtils.getScrollArea(host)
+                    : host.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
+                if (hostScrollArea && hostScrollArea !== scrollArea) return false;
+            }
+            return true;
+        });
+
+        var pinRect = pin.getBoundingClientRect();
+        var pCenterX = pinRect.left + pinRect.width / 2;
+        var pCenterY = pinRect.top + pinRect.height / 2;
+
+        var matchedHost = null;
+        for (var i = 0; i < pinnedHosts.length; i++) {
+            var hRect = pinnedHosts[i].getBoundingClientRect();
+            if (pCenterX >= hRect.left && pCenterX <= hRect.right &&
+                pCenterY >= hRect.top && pCenterY <= hRect.bottom) {
+                matchedHost = pinnedHosts[i];
+                break;
+            }
+        }
+
+        if (matchedHost) {
+            var hostMode = matchedHost.getAttribute('data-scroll-fixed');
+            pin.setAttribute('data-scroll-fixed', hostMode);
+            if (matchedHost.id) pin.setAttribute('data-fixed-host', matchedHost.id);
+            pin.style.setProperty('z-index', '200050', 'important');
+            pin.style.willChange = 'transform';
+
+            var hRect = matchedHost.getBoundingClientRect();
+            var offsetInsideHostY = pinRect.top - hRect.top;
+            var offsetInsideHostX = pinRect.left - hRect.left;
+            var hostDomTop = parseFloat(matchedHost.style.top) || 0;
+            var hostDomLeft = parseFloat(matchedHost.style.left) || 0;
+
+            pin.style.top = Math.round(hostDomTop + offsetInsideHostY) + 'px';
+            pin.style.left = Math.round(hostDomLeft + offsetInsideHostX) + 'px';
+
+            if (matchedHost.style.transform) {
+                pin.style.setProperty('transform', matchedHost.style.transform, 'important');
             }
 
-            if (matchedHost) {
-                var hostMode = matchedHost.getAttribute('data-scroll-fixed');
-                pin.setAttribute('data-scroll-fixed', hostMode);
-                if (matchedHost.id) pin.setAttribute('data-fixed-host', matchedHost.id);
-                pin.style.setProperty('z-index', '200050', 'important');
-                pin.style.willChange = 'transform';
-
-                var hRect = matchedHost.getBoundingClientRect();
-                var offsetInsideHostY = pinRect.top - hRect.top;
-                var offsetInsideHostX = pinRect.left - hRect.left;
-                var hostDomTop = parseFloat(matchedHost.style.top) || 0;
-                var hostDomLeft = parseFloat(matchedHost.style.left) || 0;
-
-                pin.style.top = Math.round(hostDomTop + offsetInsideHostY) + 'px';
-                pin.style.left = Math.round(hostDomLeft + offsetInsideHostX) + 'px';
-
-                if (matchedHost.style.transform) {
-                    pin.style.setProperty('transform', matchedHost.style.transform, 'important');
-                }
-
+            if (parent) {
                 var trailingRef = Array.from(parent.children).find(function(c) {
                     return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
                 });
@@ -141,26 +160,26 @@ window.v4DragResizeScript = `
                 } else {
                     parent.appendChild(pin);
                 }
-            } else if (pin.hasAttribute('data-scroll-fixed')) {
-                var curFixedMode = pin.getAttribute('data-scroll-fixed');
-                var isIndependentViewport = (curFixedMode === 'viewport' && !pin.hasAttribute('data-fixed-host'));
+            }
+        } else if (pin.hasAttribute('data-scroll-fixed')) {
+            var curFixedMode = pin.getAttribute('data-scroll-fixed');
+            var isIndependentViewport = (curFixedMode === 'viewport' && !pin.hasAttribute('data-fixed-host'));
 
-                if (isIndependentViewport) {
-                    pin.style.setProperty('z-index', '200050', 'important');
-                    pin.style.willChange = 'transform';
-                } else {
-                    var scrollAreaRect = scrollArea ? scrollArea.getBoundingClientRect() : { top: 0, left: 0 };
-                    var freeTop = (pinRect.top - scrollAreaRect.top) + scrollTop;
-                    var freeLeft = (pinRect.left - scrollAreaRect.left);
+            if (isIndependentViewport) {
+                pin.style.setProperty('z-index', '200050', 'important');
+                pin.style.willChange = 'transform';
+            } else {
+                var scrollAreaRect = scrollArea ? scrollArea.getBoundingClientRect() : { top: 0, left: 0 };
+                var freeTop = (pinRect.top - scrollAreaRect.top) + scrollTop;
+                var freeLeft = (pinRect.left - scrollAreaRect.left);
 
-                    pin.removeAttribute('data-scroll-fixed');
-                    pin.removeAttribute('data-fixed-host');
-                    pin.style.removeProperty('transform');
-                    pin.style.removeProperty('will-change');
-                    pin.style.setProperty('z-index', '200000', 'important');
-                    pin.style.top = Math.max(0, Math.round(freeTop)) + 'px';
-                    pin.style.left = Math.max(0, Math.round(freeLeft)) + 'px';
-                }
+                pin.removeAttribute('data-scroll-fixed');
+                pin.removeAttribute('data-fixed-host');
+                pin.style.removeProperty('transform');
+                pin.style.removeProperty('will-change');
+                pin.style.setProperty('z-index', '200000', 'important');
+                pin.style.top = Math.max(0, Math.round(freeTop)) + 'px';
+                pin.style.left = Math.max(0, Math.round(freeLeft)) + 'px';
             }
         }
     }
@@ -175,13 +194,17 @@ window.v4DragResizeScript = `
             if (isNaN(idx)) {
                 idx = parseInt(activeEl.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
             }
+            var fixedHostAttr = activeEl.getAttribute('data-fixed-host') || null;
+            var scrollFixedAttr = activeEl.getAttribute('data-scroll-fixed') || 'none';
             notifyParent({
                 type: 'LF_UPDATE_PIN_POS',
                 index: idx,
                 frame: frameType,
                 x: parseFloat(activeEl.style.left) || 0,
                 y: parseFloat(activeEl.style.top) || 0,
-                standardized: true
+                standardized: true,
+                fixedHost: fixedHostAttr,
+                scrollFixed: scrollFixedAttr
             });
         }
         if (activeEl.classList.contains('lf-group')) {
@@ -192,17 +215,22 @@ window.v4DragResizeScript = `
                     var childRect = child.getBoundingClientRect();
                     var absX = childRect.left - hostRect.left;
                     var absY = childRect.top - hostRect.top;
+                    var childFixedHost = child.getAttribute('data-fixed-host') || null;
+                    var childScrollFixed = child.getAttribute('data-scroll-fixed') || 'none';
                     notifyParent({
                         type: 'LF_UPDATE_PIN_POS',
                         index: childIdx,
                         x: absX,
                         y: absY,
-                        standardized: true
+                        standardized: true,
+                        fixedHost: childFixedHost,
+                        scrollFixed: childScrollFixed
                     });
                 }
             });
         }
     }
+
 
     window.V4DragResizeEngine = {
         get isDragging() { return isDragging; },
@@ -227,6 +255,24 @@ window.v4DragResizeScript = `
             startLeft = l;
             startTop = t;
             startRect = window.activeEl.getBoundingClientRect();
+
+            if (window.activeEl && window.activeEl.id) {
+                var hostId = window.activeEl.id;
+                var attachedPins = Array.from(document.querySelectorAll('.pin-marker[data-fixed-host="' + hostId + '"], .text-marker[data-fixed-host="' + hostId + '"]'));
+                if (attachedPins.length > 0) {
+                    attachedPinsStart = attachedPins.map(function(pinEl) {
+                        return {
+                            el: pinEl,
+                            startLeft: parseFloat(pinEl.style.left) || pinEl.offsetLeft || 0,
+                            startTop: parseFloat(pinEl.style.top) || pinEl.offsetTop || 0
+                        };
+                    });
+                } else {
+                    attachedPinsStart = null;
+                }
+            } else {
+                attachedPinsStart = null;
+            }
 
             if (h || e.target.tagName === 'IMG' || e.target.closest('img') || e.target.closest('.v4-editable-cell') || e.target.tagName === 'BUTTON' || e.target.closest('button')) {
                 e.preventDefault();
@@ -297,8 +343,20 @@ window.v4DragResizeScript = `
                 } else {
                     notifyParent({ type: 'LF_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight, activeId: window.activeEl.id });
                 }
+
+                // Update attached pins if any (Co-drag Anchor)
+                if (attachedPinsStart && attachedPinsStart.length > 0) {
+                    var actualDx = (parseFloat(window.activeEl.style.left) || logicalX) - startLeft;
+                    var actualDy = (parseFloat(window.activeEl.style.top) || logicalY) - startTop;
+                    attachedPinsStart.forEach(function(item) {
+                        item.el.style.left = Math.round(item.startLeft + actualDx) + 'px';
+                        item.el.style.top = Math.round(item.startTop + actualDy) + 'px';
+                    });
+                }
+
                 markDirty();
             }
+
             else if (isResizing && window.activeEl) {
                 const shapeLine = window.activeEl.querySelector('.v4-shape-line');
                 const shapeImage = window.activeEl.querySelector('.v4-shape-image');
@@ -425,6 +483,13 @@ window.v4DragResizeScript = `
                 _handleResponsiveCrossFrameDrop(window.activeEl, isResp);
                 _handlePinMarkerDropAnchoring(window.activeEl);
                 _dispatchPinPositionUpdates(window.activeEl);
+
+                if (attachedPinsStart && attachedPinsStart.length > 0) {
+                    attachedPinsStart.forEach(function(item) {
+                        _dispatchPinPositionUpdates(item.el);
+                    });
+                    attachedPinsStart = null;
+                }
             }
             if (isResizing && window.activeEl) {
                 window.activeEl.setAttribute('data-resized', 'true');
@@ -441,6 +506,7 @@ window.v4DragResizeScript = `
                 window.activeEl = null;
             }
             groupChildrenStart = null;
+            attachedPinsStart = null;
         },
         
         startResize: function(e, r) {

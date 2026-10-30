@@ -213,6 +213,24 @@ window.v4ResponsivePinsScript = `
         return pin;
     }
 
+    function _findPinnedHostUnderPin(pin) {
+        if (!pin) return null;
+        var pinRect = pin.getBoundingClientRect();
+        var pCenterX = pinRect.left + pinRect.width / 2;
+        var pCenterY = pinRect.top + pinRect.height / 2;
+        var pinnedHosts = Array.from(document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])')).filter(function(el) {
+            return el !== pin && !el.classList.contains('pin-marker') && !el.classList.contains('text-marker');
+        });
+        for (var i = 0; i < pinnedHosts.length; i++) {
+            var hRect = pinnedHosts[i].getBoundingClientRect();
+            if (pCenterX >= hRect.left && pCenterX <= hRect.right &&
+                pCenterY >= hRect.top && pCenterY <= hRect.bottom) {
+                return pinnedHosts[i];
+            }
+        }
+        return null;
+    }
+
     window.spawnResponsiveDualPins = function(index, number, pos1, pos2) {
         if (!isResponsiveScreen()) return;
         var ctx = getResponsiveContext();
@@ -233,6 +251,16 @@ window.v4ResponsivePinsScript = `
             if (pinLayer1) pinLayer1.appendChild(pin1);
             else ctx.frame1.appendChild(pin1);
 
+            var host1 = _findPinnedHostUnderPin(pin1);
+            if (host1) {
+                var hMode1 = host1.getAttribute('data-scroll-fixed');
+                pin1.setAttribute('data-scroll-fixed', hMode1);
+                if (host1.id) pin1.setAttribute('data-fixed-host', host1.id);
+                pin1.style.setProperty('z-index', '200050', 'important');
+                pin1.style.willChange = 'transform';
+                if (host1.style.transform) pin1.style.setProperty('transform', host1.style.transform, 'important');
+            }
+
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
                     type: 'LF_UPDATE_PIN_POS',
@@ -240,6 +268,8 @@ window.v4ResponsivePinsScript = `
                     frame: ctx.frame1Type,
                     x: parseFloat(pin1.style.left) || 0,
                     y: parseFloat(pin1.style.top) || 0,
+                    fixedHost: (host1 && host1.id) ? host1.id : null,
+                    scrollFixed: (host1 && host1.getAttribute('data-scroll-fixed')) ? host1.getAttribute('data-scroll-fixed') : 'none',
                     standardized: true
                 });
             }
@@ -253,6 +283,16 @@ window.v4ResponsivePinsScript = `
             if (pinLayer2) pinLayer2.appendChild(pin2);
             else ctx.frame2.appendChild(pin2);
 
+            var host2 = _findPinnedHostUnderPin(pin2);
+            if (host2) {
+                var hMode2 = host2.getAttribute('data-scroll-fixed');
+                pin2.setAttribute('data-scroll-fixed', hMode2);
+                if (host2.id) pin2.setAttribute('data-fixed-host', host2.id);
+                pin2.style.setProperty('z-index', '200050', 'important');
+                pin2.style.willChange = 'transform';
+                if (host2.style.transform) pin2.style.setProperty('transform', host2.style.transform, 'important');
+            }
+
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
                     type: 'LF_UPDATE_PIN_POS',
@@ -260,6 +300,8 @@ window.v4ResponsivePinsScript = `
                     frame: ctx.frame2Type,
                     x: parseFloat(pin2.style.left) || 0,
                     y: parseFloat(pin2.style.top) || 0,
+                    fixedHost: (host2 && host2.id) ? host2.id : null,
+                    scrollFixed: (host2 && host2.getAttribute('data-scroll-fixed')) ? host2.getAttribute('data-scroll-fixed') : 'none',
                     standardized: true
                 });
             }
@@ -632,8 +674,32 @@ window.v4ResponsivePinsScript = `
                         pinLayer1.appendChild(existing1);
                     }
                 }
-                if (isPinFixed && pin1) {
+
+                var hostId1 = (item.pins && item.pins[ctx.frame1Type] && item.pins[ctx.frame1Type].fixedHost) ? item.pins[ctx.frame1Type].fixedHost : item.fixedHost;
+                var hostEl1 = hostId1 ? document.getElementById(hostId1) : null;
+                var hasValidHost1 = hostEl1 && hostEl1.isConnected && hostEl1.hasAttribute('data-scroll-fixed') && hostEl1.getAttribute('data-scroll-fixed') !== 'none';
+
+                if (!hasValidHost1 && !isPinFixed && pin1) {
+                    var detectedHost1 = _findPinnedHostUnderPin(pin1);
+                    if (detectedHost1 && detectedHost1.id) {
+                        hasValidHost1 = true;
+                        hostId1 = detectedHost1.id;
+                        hostEl1 = detectedHost1;
+                    }
+                }
+
+                if (hasValidHost1 && pin1) {
+                    var hostMode1 = hostEl1.getAttribute('data-scroll-fixed') || 'custom';
+                    pin1.setAttribute('data-scroll-fixed', hostMode1);
+                    pin1.setAttribute('data-fixed-host', hostId1);
+                    pin1.style.setProperty('z-index', '200050', 'important');
+                    pin1.style.willChange = 'transform';
+                    if (hostEl1.style.transform) {
+                        pin1.style.setProperty('transform', hostEl1.style.transform, 'important');
+                    }
+                } else if (isPinFixed && pin1) {
                     pin1.setAttribute('data-scroll-fixed', 'viewport');
+                    pin1.removeAttribute('data-fixed-host');
                     pin1.style.setProperty('z-index', '200050', 'important');
                     pin1.style.willChange = 'transform';
                 } else if (pin1) {
@@ -660,8 +726,32 @@ window.v4ResponsivePinsScript = `
                         pinLayer2.appendChild(existing2);
                     }
                 }
-                if (isPinFixed && pin2) {
+
+                var hostId2 = (item.pins && item.pins[ctx.frame2Type] && item.pins[ctx.frame2Type].fixedHost) ? item.pins[ctx.frame2Type].fixedHost : item.fixedHost;
+                var hostEl2 = hostId2 ? document.getElementById(hostId2) : null;
+                var hasValidHost2 = hostEl2 && hostEl2.isConnected && hostEl2.hasAttribute('data-scroll-fixed') && hostEl2.getAttribute('data-scroll-fixed') !== 'none';
+
+                if (!hasValidHost2 && !isPinFixed && pin2) {
+                    var detectedHost2 = _findPinnedHostUnderPin(pin2);
+                    if (detectedHost2 && detectedHost2.id) {
+                        hasValidHost2 = true;
+                        hostId2 = detectedHost2.id;
+                        hostEl2 = detectedHost2;
+                    }
+                }
+
+                if (hasValidHost2 && pin2) {
+                    var hostMode2 = hostEl2.getAttribute('data-scroll-fixed') || 'custom';
+                    pin2.setAttribute('data-scroll-fixed', hostMode2);
+                    pin2.setAttribute('data-fixed-host', hostId2);
+                    pin2.style.setProperty('z-index', '200050', 'important');
+                    pin2.style.willChange = 'transform';
+                    if (hostEl2.style.transform) {
+                        pin2.style.setProperty('transform', hostEl2.style.transform, 'important');
+                    }
+                } else if (isPinFixed && pin2) {
                     pin2.setAttribute('data-scroll-fixed', 'viewport');
+                    pin2.removeAttribute('data-fixed-host');
                     pin2.style.setProperty('z-index', '200050', 'important');
                     pin2.style.willChange = 'transform';
                 } else if (pin2) {

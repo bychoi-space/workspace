@@ -216,14 +216,18 @@
 
     function _resolvePinScrollFixedState(item, index) {
         var DOM = window.DOM;
-        var isFixedPin = (item.scrollFixed === 'viewport' || item.scrollFixed === 'fixed' || item.scrollFixed === 'top');
+        var hasFixedHost = !!(item.fixedHost || (item.pins && ((item.pins.pc && item.pins.pc.fixedHost) || (item.pins.mobile && item.pins.mobile.fixedHost))));
+        var isFixedPin = (item.scrollFixed && item.scrollFixed !== 'none') || hasFixedHost;
         if (item.scrollFixed === undefined || item.scrollFixed === null) {
             if (DOM && DOM.iframe && DOM.iframe.contentDocument) {
                 try {
-                    var pEl = DOM.iframe.contentDocument.querySelector('.pin-marker[data-index="' + index + '"][data-scroll-fixed="viewport"]');
-                    if (pEl) {
+                    var pEl = DOM.iframe.contentDocument.querySelector('.pin-marker[data-index="' + index + '"][data-scroll-fixed], .text-marker[data-index="' + index + '"][data-scroll-fixed], .pin-marker[data-index="' + index + '"][data-fixed-host], .text-marker[data-index="' + index + '"][data-fixed-host]');
+                    if (pEl && pEl.getAttribute('data-scroll-fixed') !== 'none') {
                         isFixedPin = true;
-                        item.scrollFixed = 'viewport';
+                        item.scrollFixed = pEl.getAttribute('data-scroll-fixed') || 'viewport';
+                        if (pEl.hasAttribute('data-fixed-host')) {
+                            item.fixedHost = pEl.getAttribute('data-fixed-host');
+                        }
                     } else {
                         item.scrollFixed = 'none';
                     }
@@ -241,11 +245,18 @@
 
         var initialHtml = _resolveInitialPinHtml(item);
         var isFixedPin = _resolvePinScrollFixedState(item, index);
+        var hasHost = !!(item.fixedHost || (item.pins && ((item.pins.pc && item.pins.pc.fixedHost) || (item.pins.mobile && item.pins.mobile.fixedHost))));
+        var anchorTitle = isFixedPin 
+            ? (hasHost ? '오브젝트 고정 해제 (본문 스크롤 모드로 전환)' : '화면 고정 해제 (본문 스크롤 모드로 전환)')
+            : '화면 고정 (스크롤 시 화면에 항상 고정)';
+        var anchorText = isFixedPin
+            ? (hasHost ? '오브젝트 고정' : '화면 고정')
+            : '본문 배치';
 
         var anchorBtnHtml = `
-            <button type="button" class="desc-pin-anchor-btn ${isFixedPin ? 'is-fixed' : ''}" data-index="${index}" title="${isFixedPin ? '화면 고정 해제 (본문 스크롤 모드로 전환)' : '화면 고정 (스크롤 시 화면에 항상 고정)'}">
+            <button type="button" class="desc-pin-anchor-btn ${isFixedPin ? 'is-fixed' : ''}" data-index="${index}" title="${anchorTitle}">
                 <span class="material-icons-outlined anchor-icon">push_pin</span>
-                <span class="anchor-txt">${isFixedPin ? '화면 고정' : '본문 배치'}</span>
+                <span class="anchor-txt">${anchorText}</span>
             </button>
         `;
 
@@ -319,9 +330,20 @@
                 var state = window.state;
                 if (state && state.isReadOnly) return window.showAuthModal ? window.showAuthModal() : null;
 
-                var currentlyFixed = (item.scrollFixed === 'viewport' || item.scrollFixed === 'fixed' || item.scrollFixed === 'top');
+                var currentlyFixed = _resolvePinScrollFixedState(item, index);
                 var newMode = currentlyFixed ? 'none' : 'viewport';
                 item.scrollFixed = newMode;
+                if (newMode === 'none') {
+                    item.fixedHost = null;
+                    if (item.pins) {
+                        Object.keys(item.pins).forEach(function(f) {
+                            if (item.pins[f]) {
+                                item.pins[f].fixedHost = null;
+                                item.pins[f].scrollFixed = 'none';
+                            }
+                        });
+                    }
+                }
 
                 // Sync with iframe DOM and ScrollPinEngine
                 var currentDOM = window.DOM;

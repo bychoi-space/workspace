@@ -107,6 +107,28 @@
                                 pin.y = data.y;
                             }
                             if (data.standardized) pin.standardized = true;
+
+                            // Synchronize scroll-pinned host attachment to metadata SSOT
+                            if (data.fixedHost !== undefined) {
+                                if (data.fixedHost) {
+                                    pin.fixedHost = data.fixedHost;
+                                    if (data.frame && pin.pins[data.frame]) {
+                                        pin.pins[data.frame].fixedHost = data.fixedHost;
+                                    }
+                                } else {
+                                    delete pin.fixedHost;
+                                    if (data.frame && pin.pins[data.frame]) {
+                                        delete pin.pins[data.frame].fixedHost;
+                                    }
+                                }
+                            }
+                            if (data.scrollFixed !== undefined) {
+                                pin.scrollFixed = data.scrollFixed;
+                                if (data.frame && pin.pins[data.frame]) {
+                                    pin.pins[data.frame].scrollFixed = data.scrollFixed;
+                                }
+                            }
+
                             if (typeof window.markAsDirty === 'function') window.markAsDirty();
                         }
                     }

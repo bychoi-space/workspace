@@ -150,43 +150,26 @@ window.v4ScrollPinScript = `
 
         updatePins: function() {
             var self = this;
-            var pinnedEls = document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])');
+            var pinnedEls = Array.from(document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])'));
             if (!pinnedEls || pinnedEls.length === 0) return;
 
-            // Map host dy for bottom-pinned elements so pins on them share exact same dy
-            var bottomHostDyMap = new Map();
-
+            // Separate elements into hosts (shapes/atoms/groups) and description pins
+            var hosts = [];
+            var pins = [];
             pinnedEls.forEach(function(el) {
                 if (!el || !el.isConnected) return;
                 var isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
-                if (isPin) return; // Calculate non-pin hosts first
-
-                var mode = el.getAttribute('data-scroll-fixed');
-                if (mode !== 'bottom') return;
-
-                var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
-                    ? window.ResponsiveFrameUtils.getScrollArea(el)
-                    : el.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
-                if (!scrollArea) {
-                    scrollArea = document.scrollingElement || document.documentElement || document.body || window;
+                if (isPin) {
+                    pins.push(el);
+                } else {
+                    hosts.push(el);
                 }
-
-                var scrollTop = scrollArea.scrollTop || 0;
-                var viewportH = scrollArea.clientHeight || 810;
-                var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
-                var domTop = parseFloat(el.style.top) || 0;
-                var targetViewportTop = Math.max(0, viewportH - elH);
-                var effect = el.getAttribute('data-scroll-effect') || 'always';
-                var areaState = ScrollPinEngine.getScrollAreaState(scrollArea);
-                var isHidden = (effect === 'hide-down' && areaState.hideDownActive) || (effect === 'hide-up' && areaState.hideUpActive);
-                var dy = isHidden ? (scrollTop + (viewportH - domTop)) : (scrollTop + (targetViewportTop - domTop));
-                bottomHostDyMap.set(el.parentElement, dy);
             });
 
-            pinnedEls.forEach(function(el) {
-                if (!el || !el.isConnected) return;
+            // Pass 1: Calculate and apply transforms for all non-pin host components, caching exact GPU transforms
+            var hostTransformMap = new Map();
 
-                // Skip position override while user is actively dragging the element
+            hosts.forEach(function(el) {
                 if (el.classList.contains('dragging-now')) return;
 
                 var mode = el.getAttribute('data-scroll-fixed');
@@ -202,49 +185,12 @@ window.v4ScrollPinScript = `
 
                 var scrollTop = scrollArea.scrollTop || 0;
                 var dy = 0;
-                var isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
                 var isActivelyFixed = false;
-
-                // Check host-pinned cascade first for pins sitting on a pinned component
-                if (isPin && el.hasAttribute('data-fixed-host')) {
-                    var hostId = el.getAttribute('data-fixed-host');
-                    var hostEl = hostId ? document.getElementById(hostId) : null;
-                    // Self-healing: if host element does not exist, is disconnected, or is no longer fixed, release pin
-                    if (!hostEl || !hostEl.isConnected || !hostEl.hasAttribute('data-scroll-fixed') || hostEl.getAttribute('data-scroll-fixed') === 'none') {
-                        el.removeAttribute('data-scroll-fixed');
-                        el.removeAttribute('data-fixed-host');
-                        el.style.removeProperty('transform');
-                        el.style.removeProperty('will-change');
-                        el.style.setProperty('z-index', '200000', 'important');
-                        return;
-                    }
-                    if (hostEl.style.transform) {
-                        el.style.setProperty('transform', hostEl.style.transform, 'important');
-                        el.style.setProperty('z-index', '200050', 'important');
-                        if (hostEl.style.transition) {
-                            el.style.transition = hostEl.style.transition;
-                        } else {
-                            el.style.removeProperty('transition');
-                        }
-                        return;
-                    }
-                }
-
                 var effect = el.getAttribute('data-scroll-effect') || 'always';
                 var areaState = ScrollPinEngine.getScrollAreaState(scrollArea);
                 var isHidden = (effect === 'hide-down' && areaState.hideDownActive) || (effect === 'hide-up' && areaState.hideUpActive);
 
-                if (isPin) {
-                    // Description Pin: Viewport Fixed Mode vs Content Mode
-                    if (mode === 'viewport' || mode === 'fixed' || mode === 'top') {
-                        dy = scrollTop;
-                    } else if (bottomHostDyMap.has(el.parentElement)) {
-                        dy = bottomHostDyMap.get(el.parentElement);
-                    } else {
-                        dy = 0;
-                    }
-                } else if (mode === 'top') {
-                    // Pinned to Top of Viewport with Optional Scroll Effect (hide-down / hide-up)
+                if (mode === 'top') {
                     var domTop = parseFloat(el.style.top) || 0;
                     var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
                     if (isHidden) {
@@ -254,7 +200,6 @@ window.v4ScrollPinScript = `
                     }
                     isActivelyFixed = (scrollTop > Math.max(0, domTop)) && !isHidden;
                 } else if (mode === 'bottom') {
-                    // Pinned to Bottom of Viewport with Optional Scroll Effect (hide-down / hide-up)
                     var viewportH = scrollArea.clientHeight || 810;
                     var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
                     var domTop = parseFloat(el.style.top) || 0;
@@ -267,7 +212,6 @@ window.v4ScrollPinScript = `
                     var isAtNaturalRest = (scrollTop <= 0 && Math.abs(domTop - targetViewportTop) <= 2);
                     isActivelyFixed = !isAtNaturalRest && !isHidden;
                 } else if (mode === 'custom' || mode === 'floating') {
-                    // Custom Floating HUD: Maintain specified or captured viewport Y offset
                     var domTop = parseFloat(el.style.top) || 0;
                     var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
                     var rawTargetY = el.getAttribute('data-scroll-target-y');
@@ -280,7 +224,6 @@ window.v4ScrollPinScript = `
                     }
                     isActivelyFixed = (scrollTop > 0 || Math.abs(dy) > 2) && !isHidden;
                 } else if (mode === 'sticky') {
-                    // Threshold Sticky HUD: Scroll with content until reaching target threshold from viewport top
                     var domTop = parseFloat(el.style.top) || 0;
                     var rawStickyTop = el.getAttribute('data-scroll-sticky-top');
                     var stickyThresholdY = (rawStickyTop !== null && rawStickyTop !== '') ? parseFloat(rawStickyTop) : 0;
@@ -293,7 +236,6 @@ window.v4ScrollPinScript = `
                     }
                     isActivelyFixed = (scrollTop > scrollDistanceToStick);
                 } else if (mode === 'sticky-bottom') {
-                    // Reverse Sticky Dock: Fixed at viewport bottom until scrolled to element's natural DOM position
                     var viewportH = scrollArea.clientHeight || 810;
                     var domTop = parseFloat(el.style.top) || 0;
                     var elH = el.offsetHeight || parseFloat(el.style.height) || 60;
@@ -311,20 +253,18 @@ window.v4ScrollPinScript = `
                 }
 
                 // Dynamically toggle divider line visibility based on active fixed state
-                if (!isPin) {
-                    if (el.hasAttribute('data-scroll-divider')) {
-                        if (isActivelyFixed) {
-                            if (!el.hasAttribute('data-scroll-divider-active')) {
-                                el.setAttribute('data-scroll-divider-active', 'true');
-                            }
-                        } else {
-                            if (el.hasAttribute('data-scroll-divider-active')) {
-                                el.removeAttribute('data-scroll-divider-active');
-                            }
+                if (el.hasAttribute('data-scroll-divider')) {
+                    if (isActivelyFixed) {
+                        if (!el.hasAttribute('data-scroll-divider-active')) {
+                            el.setAttribute('data-scroll-divider-active', 'true');
                         }
-                    } else if (el.hasAttribute('data-scroll-divider-active')) {
-                        el.removeAttribute('data-scroll-divider-active');
+                    } else {
+                        if (el.hasAttribute('data-scroll-divider-active')) {
+                            el.removeAttribute('data-scroll-divider-active');
+                        }
                     }
+                } else if (el.hasAttribute('data-scroll-divider-active')) {
+                    el.removeAttribute('data-scroll-divider-active');
                 }
 
                 // Apply GPU-accelerated transform
@@ -341,44 +281,96 @@ window.v4ScrollPinScript = `
                     if (el.style.transition !== smartTrans) {
                         el.style.setProperty('transition', smartTrans);
                     }
-                } else if (!isPin) {
-                    if (el.style.transition && el.style.transition.indexOf('transform') !== -1) {
-                        el.style.removeProperty('transition');
-                    }
+                } else if (el.style.transition && el.style.transition.indexOf('transform') !== -1) {
+                    el.style.removeProperty('transition');
                 }
 
                 // Enforce appropriate tier z-index
-                if (isPin) {
-                    el.style.setProperty('z-index', '200050', 'important');
-                } else {
-                    var curZ = parseInt(el.style.zIndex, 10);
-                    if (isNaN(curZ) || curZ < 100000) {
-                        el.style.zIndex = '100000';
-                    }
+                var curZ = parseInt(el.style.zIndex, 10);
+                if (isNaN(curZ) || curZ < 100000) {
+                    el.style.zIndex = '100000';
                 }
                 if (!el.style.willChange) {
                     el.style.willChange = 'transform';
                 }
 
-                // Self-healing: eliminate any auto-injected background to preserve shape transparency and border-radius
-                try {
-                    if (el.dataset && el.dataset.autoBg === 'true') {
-                        el.style.backgroundColor = '';
-                        el.style.removeProperty('background-color');
-                        delete el.dataset.autoBg;
-                        el.removeAttribute('data-auto-bg');
-                    }
-                    if (!isPin && el.querySelector && el.querySelector('.v4-shape, .v4-shape-circle, .v4-shape-rect, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-wave, .lf-icon, svg')) {
-                        if (el.style.backgroundColor && el.style.backgroundColor !== 'transparent') {
-                            el.style.backgroundColor = '';
-                            el.style.removeProperty('background-color');
+                // Cache exact transform & transition by host element ID
+                if (el.id) {
+                    hostTransformMap.set(el.id, {
+                        transform: transformStr,
+                        transition: el.style.transition || '',
+                        dy: dy,
+                        isActivelyFixed: isActivelyFixed
+                    });
+                }
+            });
+
+            // Pass 2: Synchronize all description pins with their fixed hosts or viewport mode
+            pins.forEach(function(p) {
+                if (p.classList.contains('dragging-now')) return;
+
+                if (p.hasAttribute('data-fixed-host')) {
+                    var hostId = p.getAttribute('data-fixed-host');
+                    var hostInfo = hostTransformMap.get(hostId);
+
+                    if (!hostInfo) {
+                        var hostEl = hostId ? document.getElementById(hostId) : null;
+                        if (!hostEl || !hostEl.isConnected || !hostEl.hasAttribute('data-scroll-fixed') || hostEl.getAttribute('data-scroll-fixed') === 'none') {
+                            // Self-healing: if host does not exist or is no longer scroll-pinned, release pin
+                            p.removeAttribute('data-scroll-fixed');
+                            p.removeAttribute('data-fixed-host');
+                            p.style.removeProperty('transform');
+                            p.style.removeProperty('will-change');
+                            p.style.removeProperty('transition');
+                            p.style.setProperty('z-index', '200000', 'important');
+                            if (typeof window.notifyParent === 'function') {
+                                var pIdx = parseInt(p.getAttribute('data-index'), 10);
+                                if (isNaN(pIdx)) {
+                                    pIdx = parseInt((p.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''), 10);
+                                }
+                                var fType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function') ? window.ResponsiveFrameUtils.getFrameType(p) : (p.getAttribute('data-frame') || '');
+                                window.notifyParent({ type: 'LF_UPDATE_PIN_POS', index: pIdx, frame: fType, x: parseFloat(p.style.left) || 0, y: parseFloat(p.style.top) || 0, fixedHost: null, scrollFixed: 'none', standardized: true });
+                            }
+                            return;
                         }
-                        if (el.dataset && el.dataset.autoBg) {
-                            delete el.dataset.autoBg;
-                            el.removeAttribute('data-auto-bg');
-                        }
+                        hostInfo = {
+                            transform: hostEl.style.transform || 'translate3d(0px, 0px, 0px)',
+                            transition: hostEl.style.transition || ''
+                        };
                     }
-                } catch(e) {}
+
+                    if (p.style.transform !== hostInfo.transform) {
+                        p.style.setProperty('transform', hostInfo.transform, 'important');
+                    }
+                    p.style.setProperty('z-index', '200050', 'important');
+                    if (!p.style.willChange) p.style.willChange = 'transform';
+                    if (hostInfo.transition) {
+                        if (p.style.transition !== hostInfo.transition) p.style.setProperty('transition', hostInfo.transition);
+                    } else if (p.style.transition) {
+                        p.style.removeProperty('transition');
+                    }
+                    return;
+                }
+
+                // Independent Viewport Fixed Pin
+                var mode = p.getAttribute('data-scroll-fixed');
+                if (mode === 'viewport' || mode === 'fixed' || mode === 'top') {
+                    var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
+                        ? window.ResponsiveFrameUtils.getScrollArea(p)
+                        : p.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content');
+                    if (!scrollArea) scrollArea = document.scrollingElement || document.documentElement || document.body || window;
+                    var scrollTop = scrollArea.scrollTop || 0;
+                    var transformStr = 'translate3d(0px, ' + Math.round(scrollTop) + 'px, 0px)';
+                    if (p.style.transform !== transformStr) {
+                        p.style.setProperty('transform', transformStr, 'important');
+                    }
+                    p.style.setProperty('z-index', '200050', 'important');
+                    if (!p.style.willChange) p.style.willChange = 'transform';
+                } else {
+                    p.style.removeProperty('transform');
+                    p.style.removeProperty('will-change');
+                    p.style.setProperty('z-index', '200000', 'important');
+                }
             });
 
             // Follow selected pinned element in real-time
@@ -592,21 +584,20 @@ window.v4ScrollPinScript = `
                             parent.appendChild(el);
                         }
 
-                        // Auto-sync any description pins sitting on this newly pinned host using DOM canvas coordinates
-                        var hLeft = parseFloat(el.style.left) || el.offsetLeft || 0;
-                        var hTop = parseFloat(el.style.top) || el.offsetTop || 0;
-                        var hWidth = el.offsetWidth || parseFloat(el.style.width) || 360;
-                        var hHeight = el.offsetHeight || parseFloat(el.style.height) || 60;
+                        // Auto-sync any description pins sitting on this newly pinned host using bounding rect coordinates
+                        var hRect = el.getBoundingClientRect();
+                        var frameContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function')
+                            ? window.ResponsiveFrameUtils.getContainer(el)
+                            : (el.closest('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area') || parent);
+                        var allPinsInFrame = frameContainer ? frameContainer.querySelectorAll('.lf-component.pin-marker, .lf-component.text-marker') : document.querySelectorAll('.lf-component.pin-marker, .lf-component.text-marker');
 
-                        var pins = parent.querySelectorAll('.lf-component.pin-marker, .lf-component.text-marker');
-                        pins.forEach(function(p) {
+                        allPinsInFrame.forEach(function(p) {
                             if (!p || p === el) return;
-                            var pLeft = parseFloat(p.style.left) || p.offsetLeft || 0;
-                            var pTop = parseFloat(p.style.top) || p.offsetTop || 0;
-                            var pCenterX = pLeft + 10;
-                            var pCenterY = pTop + 10;
-                            if (pCenterX >= hLeft && pCenterX <= (hLeft + hWidth) &&
-                                pCenterY >= hTop && pCenterY <= (hTop + hHeight)) {
+                            var pRect = p.getBoundingClientRect();
+                            var pCenterX = pRect.left + pRect.width / 2;
+                            var pCenterY = pRect.top + pRect.height / 2;
+                            if (pCenterX >= hRect.left && pCenterX <= hRect.right &&
+                                pCenterY >= hRect.top && pCenterY <= hRect.bottom) {
                                 p.setAttribute('data-scroll-fixed', effectiveMode);
                                 if (el.id) p.setAttribute('data-fixed-host', el.id);
                                 p.style.setProperty('z-index', '200050', 'important');
@@ -614,13 +605,24 @@ window.v4ScrollPinScript = `
                                 if (el.style.transform) {
                                     p.style.setProperty('transform', el.style.transform, 'important');
                                 }
-                                var tr = Array.from(parent.children).find(function(c) {
-                                    return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
-                                });
-                                if (tr && tr.parentNode === parent) {
-                                    parent.insertBefore(p, tr);
-                                } else {
-                                    parent.appendChild(p);
+                                if (typeof window.notifyParent === 'function') {
+                                    var pIdx = parseInt(p.getAttribute('data-index'), 10);
+                                    if (isNaN(pIdx)) {
+                                        pIdx = parseInt((p.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''), 10);
+                                    }
+                                    var fType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
+                                        ? window.ResponsiveFrameUtils.getFrameType(p)
+                                        : (p.getAttribute('data-frame') || '');
+                                    window.notifyParent({
+                                        type: 'LF_UPDATE_PIN_POS',
+                                        index: pIdx,
+                                        frame: fType,
+                                        x: parseFloat(p.style.left) || 0,
+                                        y: parseFloat(p.style.top) || 0,
+                                        fixedHost: el.id || null,
+                                        scrollFixed: effectiveMode,
+                                        standardized: true
+                                    });
                                 }
                             }
                         });
@@ -678,27 +680,46 @@ window.v4ScrollPinScript = `
                     }
 
                     // Cascade unpin to any pins that were pinned on this host
-                    var parent = el.parentElement;
-                    if (parent) {
-                        var pins = parent.querySelectorAll('.lf-component.pin-marker[data-scroll-fixed], .lf-component.text-marker[data-scroll-fixed]');
-                        pins.forEach(function(p) {
-                            if (!p || p === el) return;
-                            var isPinnedToHost = (p.getAttribute('data-fixed-host') === el.id);
-                            if (!isPinnedToHost) {
-                                var pLeft = parseFloat(p.style.left) || p.offsetLeft || 0;
-                                var pTop = parseFloat(p.style.top) || p.offsetTop || 0;
-                                isPinnedToHost = (pLeft >= (hLeft - 10) && pLeft <= (hLeft + hWidth + 10) &&
-                                                  pTop >= (hTop - 10) && pTop <= (hTop + hHeight + 10));
+                    var allHostPins = document.querySelectorAll('.pin-marker[data-scroll-fixed], .text-marker[data-scroll-fixed]');
+                    allHostPins.forEach(function(p) {
+                        if (!p || p === el) return;
+                        var isPinnedToHost = (p.getAttribute('data-fixed-host') === el.id);
+                        if (!isPinnedToHost && el.id) {
+                            var pRect = p.getBoundingClientRect();
+                            var hRect = el.getBoundingClientRect();
+                            var pCenterX = pRect.left + pRect.width / 2;
+                            var pCenterY = pRect.top + pRect.height / 2;
+                            isPinnedToHost = (pCenterX >= hRect.left && pCenterX <= hRect.right &&
+                                              pCenterY >= hRect.top && pCenterY <= hRect.bottom);
+                        }
+                        if (isPinnedToHost) {
+                            p.removeAttribute('data-scroll-fixed');
+                            p.removeAttribute('data-fixed-host');
+                            p.style.removeProperty('transform');
+                            p.style.removeProperty('will-change');
+                            p.style.removeProperty('transition');
+                            p.style.setProperty('z-index', '200000', 'important');
+                            if (typeof window.notifyParent === 'function') {
+                                var pIdx = parseInt(p.getAttribute('data-index'), 10);
+                                if (isNaN(pIdx)) {
+                                    pIdx = parseInt((p.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''), 10);
+                                }
+                                var fType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
+                                    ? window.ResponsiveFrameUtils.getFrameType(p)
+                                    : (p.getAttribute('data-frame') || '');
+                                window.notifyParent({
+                                    type: 'LF_UPDATE_PIN_POS',
+                                    index: pIdx,
+                                    frame: fType,
+                                    x: parseFloat(p.style.left) || 0,
+                                    y: parseFloat(p.style.top) || 0,
+                                    fixedHost: null,
+                                    scrollFixed: 'none',
+                                    standardized: true
+                                });
                             }
-                            if (isPinnedToHost) {
-                                p.removeAttribute('data-scroll-fixed');
-                                p.removeAttribute('data-fixed-host');
-                                p.style.removeProperty('transform');
-                                p.style.removeProperty('will-change');
-                                p.style.setProperty('z-index', '200000', 'important');
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         });

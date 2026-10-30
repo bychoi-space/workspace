@@ -26,7 +26,7 @@
     "03_Admin_System_Development_Roadmap_900.html": {
       "title": "Admin 리뉴얼 방향",
       "type": "architecture",
-      "updatedAt": "2026-10-30T03:05:32.043Z",
+      "updatedAt": "2026-10-30T03:05:08.963Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -57,11 +57,11 @@
       "version": 0.2
     },
     "05_Admin_System_Milestone_Timeline_900.html": {
-      "title": "Admin 리팩토링 마일스톤",
+      "title": "Admin 리뉴얼 마일스톤",
       "type": "architecture",
       "defaultTab": "editor",
       "screenDesc": "",
-      "updatedAt": "2026-10-08T09:27:58.112Z",
+      "updatedAt": "2026-10-30T03:05:47.421Z",
       "description": [],
       "connectors": [],
       "version": 0.2

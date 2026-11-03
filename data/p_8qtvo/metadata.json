@@ -77,9 +77,27 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-03T04:43:31.031Z",
+      "updatedAt": "2026-11-03T04:49:12.528Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "canvas",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 1570,
+          "y": 790,
+          "pins": {
+            "canvas": {
+              "x": 1570,
+              "y": 790,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "editor",
@@ -102,7 +120,7 @@
     "renewal_order_2.html",
     "04_Case_Study_991.html"
   ],
-  "updated": "2026-11-03 13:43:30",
+  "updated": "2026-11-03 13:49:12",
   "version": 0.1,
   "category": "project"
 }

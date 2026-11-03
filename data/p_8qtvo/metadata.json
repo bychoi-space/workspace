@@ -13,9 +13,9 @@
       "screenDesc": ""
     },
     "renewal_cart.html": {
-      "title": "장바구니",
+      "title": "장바구니 (As-Is)",
       "type": "ui",
-      "updatedAt": "2026-10-20T00:22:49.253Z",
+      "updatedAt": "2026-11-03T08:13:33.336Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -35,7 +35,7 @@
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
       "type": "ui",
-      "updatedAt": "2026-11-03T06:13:23.788Z",
+      "updatedAt": "2026-10-22T08:46:47.742Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],

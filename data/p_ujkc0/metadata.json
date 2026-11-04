@@ -1,6 +1,13 @@
 {
   "title": "[전시] 기획전 상품그룹 '컬러별 노출' 기능",
-  "screens": {},
+  "screens": {
+    "09_Admin_PC_Scroll_631.html": {
+      "title": "09_Admin_PC_Scroll_631",
+      "type": "admin",
+      "updatedAt": "2026-11-04T06:35:00.360Z",
+      "template": "template_admin_pc_scroll.html"
+    }
+  },
   "assignee": "최범열",
   "developer": "",
   "period": "2026.11.04(수) ~ 2026.11.05(목)",

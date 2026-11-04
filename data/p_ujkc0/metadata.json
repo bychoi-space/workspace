@@ -4,7 +4,7 @@
     "09_Admin_PC_Scroll_631.html": {
       "title": "09_Admin_PC_Scroll_631",
       "type": "admin",
-      "updatedAt": "2026-11-04T08:58:17.024Z",
+      "updatedAt": "2026-11-04T09:02:34.245Z",
       "template": "template_admin_pc_scroll.html",
       "description": [],
       "connectors": [],
@@ -18,6 +18,6 @@
   "notionUrl": "https://app.notion.com/p/EBM-40ef6986169c80289e6ae6f09379fb68?source=copy_link",
   "themeIndex": 2,
   "category": "front_admin",
-  "updated": "2026-11-04 17:58:17",
+  "updated": "2026-11-04 18:02:34",
   "version": 0.1
 }

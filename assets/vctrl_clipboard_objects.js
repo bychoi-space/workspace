@@ -430,34 +430,44 @@ window.v4ClipboardObjectsScript = `
                 let maxZ = isFixed ? tiers.FIXED_HUD_MIN : tiers.CONTENT_MIN;
                 const comps = (container && container.querySelectorAll) ? container.querySelectorAll('.lf-component') : (document.querySelectorAll ? document.querySelectorAll('.lf-component') : []);
                 comps.forEach(c => {
+                    if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('lf-group')) return;
+                    if (c.classList && c.classList.contains('lf-in-group')) return;
                     if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
                     let z = parseInt(c.style.zIndex, 10);
                     if (isNaN(z)) {
                         const compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                         z = isNaN(compZ) ? tiers.CONTENT_MIN : compZ;
                     }
+                    const cIsFixed = c.hasAttribute('data-scroll-fixed');
                     if (isFixed) {
-                        if (z >= tiers.FIXED_HUD_MIN && z < 200000 && z > maxZ) maxZ = z;
+                        if (cIsFixed && z > maxZ) maxZ = z;
                     } else {
-                        if (c.hasAttribute('data-scroll-fixed')) return;
-                        if (z < tiers.FIXED_HUD_MIN && z > maxZ) maxZ = z;
+                        if (cIsFixed) return;
+                        if (z > maxZ) maxZ = z;
                     }
                 });
                 if (!isFixed && maxZ >= 69000) {
                     if (typeof window.normalizeZIndices === 'function') window.normalizeZIndices(container, true);
-                    return 1050;
+                    const topNormalComps = Array.from(container.children || []).filter(c => c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.hasAttribute('data-scroll-fixed'));
+                    return tiers.CONTENT_MIN + (topNormalComps.length * 10);
                 }
                 return maxZ + 10;
             };
 
             const pasteHost = isResponsiveTemplate ? targetHost : (document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body);
 
-            // Extract original z-indexes to preserve relative layering inside copied group
+            // Extract original z-indexes to preserve relative layering inside copied group using compact rank steps
             const copiedZs = componentItems.map(item => {
                 const match = (item.styleCssText || '').match(/z-index\s*:\s*(\d+)/i);
                 return match ? parseInt(match[1], 10) : 1000;
             });
-            const minCopiedZ = copiedZs.length > 0 ? Math.min(...copiedZs) : 1000;
+            const sortedRankOrder = copiedZs.map((z, i) => ({ z, i })).sort((a, b) => (a.z !== b.z ? a.z - b.z : a.i - b.i));
+            const rankOffsetMap = {};
+            sortedRankOrder.forEach((entry, rankIdx) => {
+                rankOffsetMap[entry.i] = rankIdx * 10;
+            });
+            const baseTopNormalZ = getHostTopZ(pasteHost, false);
+            const baseTopFixedZ = getHostTopZ(pasteHost, true);
 
             const trailingRef = Array.from(pasteHost.children).find(c => (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script' || c.classList.contains('v4-responsive-guide-layer'))));
 
@@ -475,10 +485,9 @@ window.v4ClipboardObjectsScript = `
                 v.style.cssText = item.styleCssText;
 
                 // Rebase z-index to ensure it sits on top of all existing components within its tier while keeping relative order
-                const itemIsFixed = (item.attributes && item.attributes['data-scroll-fixed']) || (item.styleCssText && item.styleCssText.includes('data-scroll-fixed'));
-                const baseTopZ = getHostTopZ(pasteHost, !!itemIsFixed);
-                const originalZ = copiedZs[idx] !== undefined ? copiedZs[idx] : 1000;
-                const relOffsetZ = Math.max(0, originalZ - minCopiedZ);
+                const itemIsFixed = !!(item.attributes && item.attributes['data-scroll-fixed']);
+                const baseTopZ = itemIsFixed ? baseTopFixedZ : baseTopNormalZ;
+                const relOffsetZ = rankOffsetMap[idx] || 0;
                 const maxCap = itemIsFixed ? 179900 : 69900;
                 const assignedZ = Math.min(maxCap, baseTopZ + relOffsetZ);
                 v.style.zIndex = String(assignedZ);

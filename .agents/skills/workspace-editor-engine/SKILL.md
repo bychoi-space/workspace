@@ -243,7 +243,10 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 | **한 단계 뒤로** | `Ctrl + [` / `Cmd + [` | `LF_SEND_BACKWARD` | 동일 티어 내에서 자신보다 바로 아래에 위치한 형제 요소 1개와 z-index 단일 스텝 스왑(Swap). 하위 형제가 없으면 무동작 유지 |
 
 - **실행 취소(Undo) 보장**: 모든 레이어 변경 작업 전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 1프레임 즉시 복원할 수 있습니다.
-- **자동 비례 압축 (`compactZIndices`)**: 컴포넌트 추가 및 승격이 반복되어 티어 상한선인 `69,000`에 도달하면, 기존 상대적 z-order 순서를 100% 보존하면서 `1,000`부터 `+10` 간격으로 비례 재배치하여 공간을 자동 정돈합니다.
+- **자동 비례 압축 (`normalizeZIndices`) 및 티어 판별 무결성**:
+  - **속성 기반 엄격 티어 판별**: Scroll Pin(Tier 5) 여부는 `rawZ >= 100000` 수치 추정이 아닌 **오직 `c.hasAttribute('data-scroll-fixed')` 속성 유무**로만 판별합니다.
+  - **자동 정규화 및 그룹 자식 정돈**: 일반 오브젝트(`!isFixed`) 중 `z-index >= 69,000`인 요소가 존재하거나, 고정 요소(`isFixed`)가 `100,000 ~ 179,999` 범위를 벗어난 경우, 또는 `.lf-group` 내부 자식들의 `z-index`가 `50,000` 이상이거나 비정상 격차를 가질 경우, 기존 상대적 z-order 순서를 100% 보존하면서 `1,000`(`fixed`는 `100,000`)부터 `+10` 간격으로 즉시 재배치합니다.
+  - **그룹 해제(`Ungroup`) 및 다중 붙여넣기(`Paste`) 시 Rank 기반 `+10` 스텝 오프셋**: 그룹 해제(`vctrl_responsive_multiselect.js`)나 다중 붙여넣기(`vctrl_clipboard_objects.js`) 시 원시 `origZ - minZ` 차이를 그대로 합산하지 않고, 정렬 순위(Rank)에 따른 `rankIdx * 10` 오프셋을 적용하여 중첩 그룹 해제 반복 시 `z-index`가 기하급수적으로 부풀어 오르는 현상을 원천 방지합니다.
 
 ### 3. 디스크립션 핀 Stacking Context 격리 극복 및 전용 오버레이 (`.v4-pin-layer`)
 - **문제 정의**: 어드민 테이블(`v4-comp-1791427509333`)과 같이 `isolation: isolate; contain: paint; transform: translateZ(0);` 속성을 갖는 복합 컴포넌트가 존재할 때, 일반 DOM 형제 노드로 배치된 핀은 z-index가 아무리 높아도 해당 컴포넌트의 독립 Stacking Context 아래로 묻혀 텍스트나 표 뒤로 가려지는 브라우저 렌더링 한계가 존재했습니다.

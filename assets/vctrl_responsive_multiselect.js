@@ -745,7 +745,11 @@ window.v4ResponsiveMultiselectScript = `
         
                     const children = Array.from(group.children).filter(c => c.classList.contains('lf-component'));
                     const childZs = children.map(c => parseInt(c.style.zIndex, 10) || 1000);
-                    const minChildZ = childZs.length > 0 ? Math.min(...childZs) : 1000;
+                    const sortedChildRanks = childZs.map((z, i) => ({ z, i })).sort((a, b) => (a.z !== b.z ? a.z - b.z : a.i - b.i));
+                    const childRankOffsetMap = {};
+                    sortedChildRanks.forEach((entry, rankIdx) => {
+                        childRankOffsetMap[entry.i] = rankIdx * 10;
+                    });
                     const newIds = [];
         
                     let targetParent = group.parentNode;
@@ -753,12 +757,12 @@ window.v4ResponsiveMultiselectScript = `
                         targetParent = (targetParent.closest && targetParent.closest('.pc-content-inner, .mobile-content-inner, .canvas, .page, #canvas-page, #canvas')) || host;
                     }
 
-                    // Check if group was pinned in Tier 2 (100,000+)
-                    const isGroupFixed = group.hasAttribute('data-scroll-fixed') || groupZ >= 100000;
+                    // Check if group was pinned in Tier 5 (100,000+)
+                    const isGroupFixed = group.hasAttribute('data-scroll-fixed') || groupZ >= 69000;
                     let baseUngroupZ = groupZ;
                     if (isGroupFixed) {
                         const preFixedZ = parseInt(group.getAttribute('data-pre-fixed-z'), 10);
-                        if (!isNaN(preFixedZ) && preFixedZ > 0 && preFixedZ < 100000) {
+                        if (!isNaN(preFixedZ) && preFixedZ > 0 && preFixedZ < 69000) {
                             baseUngroupZ = preFixedZ;
                         } else {
                             baseUngroupZ = (typeof window.getNextTopZIndex === 'function')
@@ -783,10 +787,9 @@ window.v4ResponsiveMultiselectScript = `
                         c.style.width = w + 'px';
                         c.style.height = h + 'px';
         
-                        // Rebase children z-index to match group's topmost layer depth (or Tier 1 if group was fixed)
-                        const origZ = childZs[idx] || 1000;
-                        const relOffset = Math.max(0, origZ - minChildZ);
-                        c.style.zIndex = String(baseUngroupZ + relOffset);
+                        // Rebase children z-index using compact 10-step rank offset to prevent exponential z-index inflation
+                        const relOffset = childRankOffsetMap[idx] || 0;
+                        c.style.zIndex = String(Math.min(69900, baseUngroupZ + relOffset));
 
                         // If group was fixed and is now ungrouped, clean up any scroll fixed attributes on children
                         if (isGroupFixed) {

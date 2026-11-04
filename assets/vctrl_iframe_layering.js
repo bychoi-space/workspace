@@ -138,14 +138,40 @@ if (!window.v4IframeLayeringScript) {
             }
         }
 
-        // Clean up any nested elements inside groups with legacy inflated z-indices
+        // Clean up any nested elements inside groups with legacy inflated z-indices while preserving relative order
+        var healedNestedGroups = false;
         if (host.querySelectorAll) {
-            var nested = host.querySelectorAll('.lf-group > .lf-component, .lf-in-group');
-            nested.forEach(function(nc) {
-                if (nc.hasAttribute && nc.hasAttribute('data-scroll-fixed')) return;
-                var pz = parseInt(nc.style.zIndex, 10);
-                if (pz >= 50000 && pz < V4_Z_TIERS.FIXED_HUD_MIN) {
-                    nc.style.zIndex = '1';
+            var groups = host.querySelectorAll('.lf-group');
+            groups.forEach(function(grp) {
+                var childComps = Array.from(grp.children || []).filter(function(nc) {
+                    return nc.classList && nc.classList.contains('lf-component') && !nc.classList.contains('pin-marker') && !nc.classList.contains('text-marker');
+                });
+                if (childComps.length === 0) return;
+                var maxChildZ = V4_Z_TIERS.CONTENT_MIN;
+                var minChildZ = Infinity;
+                var childItems = childComps.map(function(nc) {
+                    var pz = parseInt(nc.style.zIndex, 10);
+                    if (isNaN(pz)) pz = V4_Z_TIERS.CONTENT_MIN;
+                    if (pz > maxChildZ) maxChildZ = pz;
+                    if (pz < minChildZ) minChildZ = pz;
+                    return { el: nc, z: pz };
+                });
+                if (force || maxChildZ >= 50000 || (maxChildZ - minChildZ) > childComps.length * 100) {
+                    childItems.sort(function(a, b) {
+                        if (a.z !== b.z) return a.z - b.z;
+                        if (a.el.compareDocumentPosition && typeof a.el.compareDocumentPosition === 'function') {
+                            var pos = a.el.compareDocumentPosition(b.el);
+                            var followingFlag = (typeof Node !== 'undefined' && Node.DOCUMENT_POSITION_FOLLOWING) || 4;
+                            return (pos & followingFlag) ? -1 : 1;
+                        }
+                        return 0;
+                    });
+                    var cZ = V4_Z_TIERS.CONTENT_MIN;
+                    childItems.forEach(function(item) {
+                        item.el.style.zIndex = String(cZ);
+                        cZ += 10;
+                    });
+                    healedNestedGroups = true;
                 }
             });
         }
@@ -158,27 +184,30 @@ if (!window.v4IframeLayeringScript) {
         var normalComps = [];
         var fixedComps = [];
         var maxNormalVal = V4_Z_TIERS.CONTENT_MIN;
+        var fixedOutOfBounds = false;
 
         comps.forEach(function(c) {
-            if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
+            if (c.classList.contains('pin-marker') || c.classList.contains('text-marker') || (c.id && c.id.indexOf('v4-pin-') === 0)) return;
             var isFixed = c.hasAttribute('data-scroll-fixed');
             var rawZ = parseInt(c.style.zIndex, 10);
             if (isNaN(rawZ)) {
                 var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                 rawZ = isNaN(compZ) ? V4_Z_TIERS.CONTENT_MIN : compZ;
             }
-            if (rawZ >= V4_Z_TIERS.PIN_MIN) return;
 
-            if (isFixed || rawZ >= V4_Z_TIERS.FIXED_HUD_MIN) {
+            if (isFixed) {
                 fixedComps.push({ el: c, z: rawZ });
+                if (rawZ < V4_Z_TIERS.FIXED_HUD_MIN || rawZ > V4_Z_TIERS.FIXED_HUD_MAX) {
+                    fixedOutOfBounds = true;
+                }
             } else {
                 normalComps.push({ el: c, z: rawZ });
                 if (rawZ > maxNormalVal) maxNormalVal = rawZ;
             }
         });
 
-        // Trigger compaction if forced or if maxNormalVal >= 69000 (approaching Tier 2 limit)
-        var needsCompaction = force || (maxNormalVal >= 69000);
+        // Trigger compaction if forced or if maxNormalVal >= 69000 (approaching Tier 2 limit) or fixed HUD out of bounds
+        var needsCompaction = force || (maxNormalVal >= 69000) || fixedOutOfBounds || healedNestedGroups;
         if (!needsCompaction) return;
 
         // Sort normal elements by existing z-index, preserving document order on ties
@@ -243,29 +272,39 @@ if (!window.v4IframeLayeringScript) {
             if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('lf-group')) return;
             if (c.classList && c.classList.contains('lf-in-group')) return;
             if (c.classList && (c.classList.contains('pin-marker') || c.classList.contains('text-marker'))) return;
+            if (c.id && c.id.indexOf('v4-pin-') === 0) return;
 
             var rawZ = parseInt(c.style.zIndex, 10);
             if (isNaN(rawZ)) {
                 var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                 rawZ = isNaN(compZ) ? V4_Z_TIERS.CONTENT_MIN : compZ;
             }
+            var cIsFixed = !!(c.hasAttribute && c.hasAttribute('data-scroll-fixed'));
             if (isFixed) {
-                if (rawZ >= V4_Z_TIERS.FIXED_HUD_MIN && rawZ < V4_Z_TIERS.PIN_MIN && rawZ > maxZ) {
+                if (cIsFixed && rawZ > maxZ) {
                     maxZ = rawZ;
                 }
             } else {
-                if (c.hasAttribute && c.hasAttribute('data-scroll-fixed')) return;
-                if (rawZ < V4_Z_TIERS.FIXED_HUD_MIN && rawZ > maxZ) {
+                if (cIsFixed) return;
+                if (rawZ > maxZ) {
                     maxZ = rawZ;
                 }
             }
         });
 
+        if (isFixed && maxZ >= V4_Z_TIERS.FIXED_HUD_MAX - 100) {
+            normalizeZIndices(targetParent, true);
+            var topFixedComps = Array.from(targetParent.children || []).filter(function(c) {
+                return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && c.hasAttribute('data-scroll-fixed');
+            });
+            return V4_Z_TIERS.FIXED_HUD_MIN + (topFixedComps.length * 10);
+        }
+
         // Trigger compaction if normal tier approaches 69,000 threshold (Zero recursion!)
         if (!isFixed && maxZ >= 69000) {
             normalizeZIndices(targetParent, true);
             var topNormalComps = Array.from(targetParent.children || []).filter(function(c) {
-                return c.classList && c.classList.contains('lf-component') && !c.hasAttribute('data-scroll-fixed');
+                return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.hasAttribute('data-scroll-fixed');
             });
             return V4_Z_TIERS.CONTENT_MIN + (topNormalComps.length * 10);
         }
@@ -339,26 +378,26 @@ if (!window.v4IframeLayeringScript) {
                     return 0;
                 });
 
+                normalizeZIndices(parent, false);
+
                 var maxNormalZ = V4_Z_TIERS.CONTENT_MIN;
                 var maxFixedZ = V4_Z_TIERS.FIXED_HUD_MIN;
-                var maxAnyZ = V4_Z_TIERS.CONTENT_MIN;
-                var allComps = (parent && parent.querySelectorAll) 
-                    ? parent.querySelectorAll('.lf-component') 
-                    : (document.querySelectorAll ? document.querySelectorAll('.lf-component') : []);
+                var allComps = Array.from(parent.children || []).filter(function(c) {
+                    return c.classList && c.classList.contains('lf-component');
+                });
 
                 allComps.forEach(function(c) {
                     if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
+                    if (c.id && c.id.indexOf('v4-pin-') === 0) return;
                     var z = parseInt(c.style.zIndex, 10);
                     if (isNaN(z)) {
                         var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                         z = isNaN(compZ) ? V4_Z_TIERS.CONTENT_MIN : compZ;
                     }
-                    if (z >= V4_Z_TIERS.PIN_MIN) return; // Ignore pin-marker and above tiers
-                    if (z > maxAnyZ) maxAnyZ = z;
-                    if (c.hasAttribute('data-scroll-fixed') || z >= V4_Z_TIERS.FIXED_HUD_MIN) {
-                        if (z > maxFixedZ) maxFixedZ = z;
+                    if (c.hasAttribute('data-scroll-fixed')) {
+                        if (z > maxFixedZ && z <= V4_Z_TIERS.FIXED_HUD_MAX) maxFixedZ = z;
                     } else {
-                        if (z > maxNormalZ) maxNormalZ = z;
+                        if (z > maxNormalZ && z <= V4_Z_TIERS.CONTENT_MAX) maxNormalZ = z;
                     }
                 });
 
@@ -383,8 +422,7 @@ if (!window.v4IframeLayeringScript) {
                     var targetZ;
 
                     if (isFixed) {
-                        var baseline = Math.max(V4_Z_TIERS.FIXED_HUD_MIN, maxAnyZ);
-                        maxFixedZ = Math.min(V4_Z_TIERS.FIXED_HUD_MAX, Math.max(maxFixedZ, baseline) + 10);
+                        maxFixedZ = Math.min(V4_Z_TIERS.FIXED_HUD_MAX, maxFixedZ + 10);
                         targetZ = maxFixedZ;
                     } else {
                         maxNormalZ = Math.min(V4_Z_TIERS.CONTENT_MAX, maxNormalZ + 10);
@@ -461,6 +499,8 @@ if (!window.v4IframeLayeringScript) {
                     return 0;
                 });
 
+                normalizeZIndices(parent, false);
+
                 var siblingComps = Array.from(parent.children).filter(function(c) {
                     return c.classList.contains('lf-component');
                 });
@@ -472,13 +512,13 @@ if (!window.v4IframeLayeringScript) {
 
                 siblingComps.forEach(function(c) {
                     if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
+                    if (c.id && c.id.indexOf('v4-pin-') === 0) return;
                     var z = parseInt(c.style.zIndex, 10);
                     if (isNaN(z)) {
                         var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                         z = isNaN(compZ) ? V4_Z_TIERS.CONTENT_MIN : compZ;
                     }
-                    if (z >= V4_Z_TIERS.PIN_MIN) return;
-                    if (c.hasAttribute('data-scroll-fixed') || z >= V4_Z_TIERS.FIXED_HUD_MIN) {
+                    if (c.hasAttribute('data-scroll-fixed')) {
                         if (!hasFixedZ || z < minFixedZ) {
                             minFixedZ = z;
                             hasFixedZ = true;
@@ -513,9 +553,7 @@ if (!window.v4IframeLayeringScript) {
                                 if (c.hasAttribute('data-scroll-fixed')) return;
                                 var curZ = parseInt(c.style.zIndex, 10);
                                 if (isNaN(curZ)) curZ = V4_Z_TIERS.CONTENT_MIN;
-                                if (curZ < V4_Z_TIERS.FIXED_HUD_MIN) {
-                                    c.style.zIndex = String(curZ + shift);
-                                }
+                                c.style.zIndex = String(curZ + shift);
                             });
                             targetZ = V4_Z_TIERS.CONTENT_MIN;
                         }
@@ -594,6 +632,7 @@ if (!window.v4IframeLayeringScript) {
             });
 
             parentMap.forEach(function(items, parent) {
+                normalizeZIndices(parent, false);
                 items.sort(function(a, b) {
                     var za = parseInt(a.style.zIndex, 10) || 1000;
                     var zb = parseInt(b.style.zIndex, 10) || 1000;
@@ -700,6 +739,7 @@ if (!window.v4IframeLayeringScript) {
             });
 
             parentMap.forEach(function(items, parent) {
+                normalizeZIndices(parent, false);
                 items.sort(function(a, b) {
                     var za = parseInt(a.style.zIndex, 10) || 1000;
                     var zb = parseInt(b.style.zIndex, 10) || 1000;

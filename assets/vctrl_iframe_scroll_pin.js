@@ -456,23 +456,23 @@ window.v4ScrollPinScript = `
             window.V4UndoManager.saveState();
         }
 
-        var maxAnyZ = 1000;
         var maxNormalZ = 1000;
         var maxFixedZ = 100000;
         var allComps = document.querySelectorAll ? document.querySelectorAll('.lf-component') : [];
         allComps.forEach(function(c) {
-            if (c.classList.contains('pin-marker')) return;
+            if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('lf-group')) return;
+            if (c.classList && c.classList.contains('lf-in-group')) return;
+            if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
             var z = parseInt(c.style.zIndex, 10);
             if (isNaN(z)) {
                 var compZ = parseInt(window.getComputedStyle(c).zIndex, 10);
                 z = isNaN(compZ) ? 1000 : compZ;
             }
             if (z >= 190000) return;
-            if (z > maxAnyZ) maxAnyZ = z;
             if (c.hasAttribute('data-scroll-fixed')) {
-                if (z > maxFixedZ) maxFixedZ = z;
+                if (z >= 100000 && z <= 179900 && z > maxFixedZ) maxFixedZ = z;
             } else {
-                if (z > maxNormalZ) maxNormalZ = z;
+                if (z < 69900 && z > maxNormalZ) maxNormalZ = z;
             }
         });
 
@@ -507,8 +507,7 @@ window.v4ScrollPinScript = `
                     }
                 }
 
-                var baseline = Math.max(100000, maxAnyZ);
-                maxFixedZ = Math.max(maxFixedZ, baseline) + 10;
+                maxFixedZ = Math.min(179900, maxFixedZ + 10);
                 var targetZ = maxFixedZ;
                 el.setAttribute('data-scroll-fixed', effectiveMode);
                 el.style.zIndex = String(targetZ);

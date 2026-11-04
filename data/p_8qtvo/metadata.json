@@ -88,7 +88,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-04T01:43:13.534Z",
+      "updatedAt": "2026-11-04T02:20:40.743Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -114,7 +114,7 @@
     "renewal_order_2.html",
     "04_Case_Study_991.html"
   ],
-  "updated": "2026-11-04 10:43:13",
+  "updated": "2026-11-04 11:20:40",
   "version": 0.1,
   "category": "project"
 }

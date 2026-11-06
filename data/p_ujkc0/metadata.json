@@ -4,9 +4,37 @@
     "09_Admin_PC_Scroll_631.html": {
       "title": "09_Admin_PC_Scroll_631",
       "type": "admin",
-      "updatedAt": "2026-11-06T04:48:02.476Z",
+      "updatedAt": "2026-11-06T04:49:15.160Z",
       "template": "template_admin_pc_scroll.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "상품썸네일 관리\n- '컬러별 노출' 을 설정한 상품의 경우, 기존에는 PLP 에서만 컬러별 노출 처리를 했다면, '기획전 상품 그룹' 에서도 컬러별 노출 처리가 되도록 개선 개발 진행",
+          "html": "상품썸네일 관리<div>- '컬러별 노출' 을 설정한 상품의 경우, 기존에는 PLP 에서만 컬러별 노출 처리를 했다면, '기획전 상품 그룹' 에서도 컬러별 노출 처리가 되도록 개선 개발 진행</div>",
+          "x": 1039,
+          "y": 395,
+          "pins": {
+            "pc": {
+              "x": 1039,
+              "y": 395,
+              "active": true
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 1039,
+              "y": 395,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1
     }
@@ -18,6 +46,6 @@
   "notionUrl": "https://app.notion.com/p/EBM-40ef6986169c80289e6ae6f09379fb68?source=copy_link",
   "themeIndex": 2,
   "category": "front_admin",
-  "updated": "2026-11-06 13:48:02",
+  "updated": "2026-11-06 13:49:15",
   "version": 0.1
 }

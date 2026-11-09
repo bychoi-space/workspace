@@ -202,6 +202,12 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": ""
+    },
+    "99_Blank_54.html": {
+      "title": "99_Blank_54",
+      "type": "blank",
+      "updatedAt": "2026-11-09T02:07:41.420Z",
+      "template": "template_blank.html"
     }
   },
   "assignee": "최범열",
@@ -217,6 +223,7 @@
     "08_Responsive_PC_Mobile_498.html",
     "08_Responsive_PC_Mobile_498_copy.html",
     "10_Mobile_Compare_18.html",
-    "04_Case_Study_633.html"
+    "04_Case_Study_633.html",
+    "99_Blank_54.html"
   ]
 }

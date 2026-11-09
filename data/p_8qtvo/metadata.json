@@ -35,7 +35,7 @@
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
       "type": "ui",
-      "updatedAt": "2026-10-22T08:46:47.742Z",
+      "updatedAt": "2026-11-09T00:17:59.102Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -114,7 +114,7 @@
     "renewal_order_2.html",
     "04_Case_Study_991.html"
   ],
-  "updated": "2026-11-04 15:02:49",
+  "updated": "2026-11-09 09:17:58",
   "version": 0.1,
   "category": "project"
 }

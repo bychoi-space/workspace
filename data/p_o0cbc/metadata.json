@@ -20,6 +20,12 @@
       "description": [],
       "updatedAt": "2026-11-10T05:12:03.930Z",
       "version": 0.1
+    },
+    "08_Responsive_PC_Mobile_4.html": {
+      "title": "08_Responsive_PC_Mobile_4",
+      "type": "responsive-ui",
+      "updatedAt": "2026-11-10T05:16:56.457Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "developer": "",
@@ -35,6 +41,7 @@
     "00_Cover_428.html",
     "04_Case_Study_349.html",
     "04_Case_Study_350.html",
-    "04_Case_Study_351.html"
+    "04_Case_Study_351.html",
+    "08_Responsive_PC_Mobile_4.html"
   ]
 }

@@ -88,7 +88,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-10T06:11:00.423Z",
+      "updatedAt": "2026-11-09T10:25:51.487Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -99,7 +99,7 @@
     "renewal_payEnd.html": {
       "title": "주문완료",
       "type": "ui",
-      "updatedAt": "2026-11-10T01:17:02.184Z",
+      "updatedAt": "2026-11-10T06:15:39.146Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -126,7 +126,7 @@
     "renewal_payEnd.html",
     "04_Case_Study_991.html"
   ],
-  "updated": "2026-11-10 15:11:00",
+  "updated": "2026-11-10 15:15:39",
   "version": 0.1,
   "category": "project"
 }

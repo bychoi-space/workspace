@@ -6,9 +6,7 @@
       "type": "cover",
       "updatedAt": "2026-09-14T08:41:10.352Z",
       "template": "template_cover.html",
-      "version": 0.1,
-      "description": [],
-      "connectors": []
+      "version": 0.1
     },
     "04_Case_Study_976.html": {
       "title": "04_Case_Study_976",
@@ -110,15 +108,6 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": ""
-    },
-    "00_Cover_292.html": {
-      "title": "00_Cover_292",
-      "type": "cover",
-      "updatedAt": "2026-11-10T01:42:26.355Z",
-      "template": "template_cover.html",
-      "version": 0.1,
-      "description": [],
-      "connectors": []
     }
   },
   "assignee": "최범열",
@@ -131,7 +120,6 @@
   "version": 0.1,
   "screenOrder": [
     "00_Cover_291.html",
-    "00_Cover_292.html",
     "04_Case_Study_976.html",
     "01_Benchmark_Report_382.html",
     "08_Responsive_PC_Mobile_889.html",

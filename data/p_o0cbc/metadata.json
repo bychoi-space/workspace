@@ -15,6 +15,13 @@
       "updatedAt": "2026-11-10T03:00:14.448Z",
       "version": 0.1,
       "connectors": []
+    },
+    "00_Cover_428.html": {
+      "title": "00_Cover_428",
+      "type": "cover",
+      "updatedAt": "2026-11-10T04:50:56.582Z",
+      "template": "template_cover.html",
+      "version": 0.1
     }
   },
   "developer": "",

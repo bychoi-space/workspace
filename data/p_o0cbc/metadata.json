@@ -63,6 +63,11 @@
       "updatedAt": "2026-11-10T07:09:57.425Z",
       "version": 0.1,
       "connectors": []
+    },
+    "08_Responsive_PC_Mobile_5.html": {
+      "description": [],
+      "updatedAt": "2026-11-10T09:00:47.405Z",
+      "version": 0.1
     }
   },
   "developer": "",
@@ -71,7 +76,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-10 16:09:57",
+  "updated": "2026-11-10 18:00:47",
   "version": 0.1,
   "period": "",
   "screenOrder": [

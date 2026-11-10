@@ -1,15 +1,6 @@
 {
   "title": "[공통] 푸터 내 제휴 문의 메뉴 추가",
   "screens": {
-    "00_Cover_862.html": {
-      "title": "00_Cover_862",
-      "type": "cover",
-      "updatedAt": "2026-11-10T01:42:53.958Z",
-      "template": "template_cover.html",
-      "version": 0.1,
-      "description": [],
-      "connectors": []
-    },
     "04_Case_Study_349.html": {
       "title": "04_Case_Study_349",
       "type": "case-study",
@@ -21,7 +12,7 @@
     },
     "04_Case_Study_350.html": {
       "description": [],
-      "updatedAt": "2026-11-10T04:37:06.063Z",
+      "updatedAt": "2026-11-10T03:00:14.448Z",
       "version": 0.1,
       "connectors": []
     }

@@ -15,10 +15,6 @@
       "updatedAt": "2026-11-10T03:00:14.448Z",
       "version": 0.1,
       "connectors": []
-    },
-    "04_Case_Study_352.html": {
-      "title": "04_Case_Study_352",
-      "updatedAt": "2026-11-10T04:50:09.733Z"
     }
   },
   "developer": "",
@@ -29,10 +25,5 @@
   "assignee": "고범곤",
   "updated": "2026-11-10 13:37:06",
   "version": 0.1,
-  "period": "",
-  "screenOrder": [
-    "04_Case_Study_349.html",
-    "04_Case_Study_350.html",
-    "04_Case_Study_352.html"
-  ]
+  "period": ""
 }

@@ -22,10 +22,9 @@
       "version": 0.1,
       "connectors": []
     },
-    "08_Responsive_PC_Mobile_4.html": {
-      "description": [],
-      "updatedAt": "2026-11-10T06:43:59.070Z",
-      "version": 0.1
+    "08_Responsive_PC_Mobile_5.html": {
+      "title": "08_Responsive_PC_Mobile_5",
+      "updatedAt": "2026-11-10T06:44:09.342Z"
     }
   },
   "developer": "",
@@ -41,6 +40,7 @@
     "00_Cover_428.html",
     "04_Case_Study_349.html",
     "04_Case_Study_350.html",
-    "04_Case_Study_351.html"
+    "04_Case_Study_351.html",
+    "08_Responsive_PC_Mobile_5.html"
   ]
 }

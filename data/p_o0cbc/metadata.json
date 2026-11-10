@@ -13,15 +13,10 @@
     "04_Case_Study_349.html": {
       "title": "04_Case_Study_349",
       "type": "case-study",
-      "updatedAt": "2026-11-10T02:18:28.570Z",
+      "updatedAt": "2026-11-10T03:00:01.119Z",
       "template": "template_case_study.html",
       "description": [],
       "connectors": [],
-      "version": 0.1
-    },
-    "04_Case_Study_350.html": {
-      "description": [],
-      "updatedAt": "2026-11-10T02:59:17.065Z",
       "version": 0.1
     }
   },
@@ -31,7 +26,7 @@
   "themeIndex": 0,
   "category": "front_ui",
   "assignee": "고범곤",
-  "updated": "2026-11-10 11:59:17",
+  "updated": "2026-11-10 12:00:01",
   "version": 0.1,
   "period": ""
 }

@@ -1,6 +1,14 @@
 {
   "title": "[공통] 푸터 내 제휴 문의 메뉴 추가",
-  "screens": {},
+  "screens": {
+    "00_Cover_862.html": {
+      "title": "00_Cover_862",
+      "type": "cover",
+      "updatedAt": "2026-11-10T01:42:53.958Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "developer": "",
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3bbf6986169c80f2b2e4f079de613e19?source=copy_link",

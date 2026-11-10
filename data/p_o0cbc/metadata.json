@@ -12,14 +12,9 @@
     },
     "04_Case_Study_350.html": {
       "description": [],
-      "updatedAt": "2026-11-10T03:00:14.448Z",
+      "updatedAt": "2026-11-10T05:05:37.332Z",
       "version": 0.1,
       "connectors": []
-    },
-    "04_Case_Study_351.html": {
-      "description": [],
-      "updatedAt": "2026-11-10T05:05:09.345Z",
-      "version": 0.1
     }
   },
   "developer": "",
@@ -28,7 +23,7 @@
   "themeIndex": 0,
   "category": "front_ui",
   "assignee": "고범곤",
-  "updated": "2026-11-10 14:05:09",
+  "updated": "2026-11-10 14:05:37",
   "version": 0.1,
   "period": "",
   "screenOrder": [

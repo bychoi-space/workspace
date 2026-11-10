@@ -22,10 +22,9 @@
       "version": 0.1
     },
     "08_Responsive_PC_Mobile_4.html": {
-      "title": "08_Responsive_PC_Mobile_4",
-      "type": "responsive-ui",
-      "updatedAt": "2026-11-10T05:16:56.457Z",
-      "template": "template_responsive_pc_mobile.html"
+      "description": [],
+      "updatedAt": "2026-11-10T05:35:01.764Z",
+      "version": 0.1
     }
   },
   "developer": "",
@@ -34,14 +33,13 @@
   "themeIndex": 0,
   "category": "front_ui",
   "assignee": "고범곤",
-  "updated": "2026-11-10 14:12:03",
+  "updated": "2026-11-10 14:35:01",
   "version": 0.1,
   "period": "",
   "screenOrder": [
     "00_Cover_428.html",
     "04_Case_Study_349.html",
     "04_Case_Study_350.html",
-    "04_Case_Study_351.html",
-    "08_Responsive_PC_Mobile_4.html"
+    "04_Case_Study_351.html"
   ]
 }

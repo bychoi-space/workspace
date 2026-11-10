@@ -99,7 +99,7 @@
     "renewal_payEnd.html": {
       "title": "주문완료",
       "type": "ui",
-      "updatedAt": "2026-11-10T08:14:37.475Z",
+      "updatedAt": "2026-11-10T08:16:38.780Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -126,7 +126,7 @@
     "renewal_payEnd.html",
     "04_Case_Study_991.html"
   ],
-  "updated": "2026-11-10 17:14:37",
+  "updated": "2026-11-10 17:16:38",
   "version": 0.1,
   "category": "project"
 }

@@ -13,7 +13,7 @@
     "04_Case_Study_349.html": {
       "title": "04_Case_Study_349",
       "type": "case-study",
-      "updatedAt": "2026-11-10T03:22:58.358Z",
+      "updatedAt": "2026-11-10T02:18:28.570Z",
       "template": "template_case_study.html",
       "description": [],
       "connectors": [],
@@ -21,8 +21,9 @@
     },
     "04_Case_Study_350.html": {
       "description": [],
-      "updatedAt": "2026-11-10T03:00:14.448Z",
-      "version": 0.1
+      "updatedAt": "2026-11-10T03:23:25.237Z",
+      "version": 0.1,
+      "connectors": []
     }
   },
   "developer": "",
@@ -31,7 +32,7 @@
   "themeIndex": 0,
   "category": "front_ui",
   "assignee": "고범곤",
-  "updated": "2026-11-10 12:22:58",
+  "updated": "2026-11-10 12:23:25",
   "version": 0.1,
   "period": ""
 }

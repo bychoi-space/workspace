@@ -9,24 +9,6 @@
       "version": 0.1,
       "description": [],
       "connectors": []
-    },
-    "04_Case_Study_349.html": {
-      "title": "04_Case_Study_349",
-      "type": "case-study",
-      "updatedAt": "2026-11-10T01:43:24.226Z",
-      "template": "template_case_study.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1
-    },
-    "04_Case_Study_350.html": {
-      "title": "04_Case_Study_350",
-      "type": "case-study",
-      "updatedAt": "2026-11-10T02:31:44.398Z",
-      "template": "template_case_study.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1
     }
   },
   "developer": "",
@@ -35,12 +17,6 @@
   "themeIndex": 0,
   "category": "front_ui",
   "assignee": "고범곤",
-  "period": "",
-  "updated": "2026-11-10 11:30:25",
-  "version": 0.1,
-  "screenOrder": [
-    "00_Cover_862.html",
-    "04_Case_Study_349.html",
-    "04_Case_Study_350.html"
-  ]
+  "updated": "2026-11-10 11:18:28",
+  "version": 0.1
 }

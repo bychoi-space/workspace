@@ -77,7 +77,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-11T02:43:03.041Z",
+      "updatedAt": "2026-10-27T02:51:55.323Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -106,6 +106,17 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "renewal_order_3.html": {
+      "title": "주문서 (Te-Be) 배송지 정보 없음",
+      "type": "ui",
+      "updatedAt": "2026-11-11T02:45:15.899Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",
@@ -123,6 +134,7 @@
     "renewal_order.html",
     "renewal_cart_2.html",
     "renewal_order_2.html",
+    "renewal_order_3.html",
     "renewal_payEnd.html",
     "04_Case_Study_991.html"
   ],

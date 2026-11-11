@@ -88,27 +88,9 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-11T05:01:16.369Z",
+      "updatedAt": "2026-11-11T05:11:04.798Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [
-        {
-          "type": "pin",
-          "target": "canvas",
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-          "x": 1589,
-          "y": 693,
-          "pins": {
-            "canvas": {
-              "x": 1589,
-              "y": 693,
-              "active": true
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        }
-      ],
+      "description": [],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -156,7 +138,7 @@
     "04_Case_Study_991.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-11-11 14:01:16",
+  "updated": "2026-11-11 14:11:04",
   "version": 0.1,
   "category": "project"
 }

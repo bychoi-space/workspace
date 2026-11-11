@@ -121,7 +121,7 @@
     "99_Blank_924.html": {
       "title": "시선닷컴 문제점 분석 (장바구니)",
       "type": "plan",
-      "updatedAt": "2026-11-11T07:54:55.465Z",
+      "updatedAt": "2026-11-11T07:55:08.410Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -150,7 +150,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-11-11 16:54:26",
+  "updated": "2026-11-11 16:55:07",
   "version": 0.1,
   "category": "project"
 }

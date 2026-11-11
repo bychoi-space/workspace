@@ -119,12 +119,14 @@
       "screenDesc": ""
     },
     "99_Blank_924.html": {
-      "title": "99_Blank_924",
-      "type": "blank",
-      "updatedAt": "2026-11-11T07:40:31.250Z",
+      "title": "시선닷컴 문제점 분석",
+      "type": "plan",
+      "updatedAt": "2026-11-11T07:41:09.563Z",
       "template": "template_blank.html",
       "description": [],
-      "connectors": []
+      "connectors": [],
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

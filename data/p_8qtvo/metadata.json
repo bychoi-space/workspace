@@ -121,12 +121,13 @@
     "99_Blank_924.html": {
       "title": "시선닷컴 문제점 분석",
       "type": "plan",
-      "updatedAt": "2026-11-11T07:41:09.563Z",
+      "updatedAt": "2026-11-11T07:42:03.444Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
       "defaultTab": "editor",
-      "screenDesc": ""
+      "screenDesc": "",
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -149,7 +150,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-11-11 16:29:18",
+  "updated": "2026-11-11 16:42:02",
   "version": 0.1,
   "category": "project"
 }

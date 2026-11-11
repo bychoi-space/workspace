@@ -66,17 +66,17 @@
     },
     "08_Responsive_PC_Mobile_5.html": {
       "description": [],
-      "updatedAt": "2026-11-10T09:00:47.405Z",
+      "updatedAt": "2026-11-11T06:53:06.222Z",
       "version": 0.1
     }
   },
   "developer": "",
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/3bbf6986169c80f2b2e4f079de613e19?source=copy_link",
-  "themeIndex": 2,
-  "category": "front_admin",
+  "themeIndex": 0,
+  "category": "front_ui",
   "assignee": "고범곤",
-  "updated": "2026-11-10 18:00:47",
+  "updated": "2026-11-11 15:53:05",
   "version": 0.1,
   "period": "",
   "screenOrder": [

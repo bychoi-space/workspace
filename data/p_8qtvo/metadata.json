@@ -122,7 +122,9 @@
       "title": "99_Blank_924",
       "type": "blank",
       "updatedAt": "2026-11-11T07:40:31.250Z",
-      "template": "template_blank.html"
+      "template": "template_blank.html",
+      "description": [],
+      "connectors": []
     }
   },
   "assignee": "최범열",
@@ -136,14 +138,14 @@
     "01_Order_Policy_Overview.html",
     "02_Front_IA_Specification.html",
     "03_Cart_Order_Benchmark_Analysis.html",
+    "99_Blank_924.html",
     "renewal_cart_2.html",
     "renewal_order_2.html",
     "renewal_payEnd.html",
     "04_Case_Study_991.html",
     "renewal_order_3.html",
     "renewal_cart.html",
-    "renewal_order.html",
-    "99_Blank_924.html"
+    "renewal_order.html"
   ],
   "updated": "2026-11-11 16:29:18",
   "version": 0.1,

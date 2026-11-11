@@ -117,6 +117,12 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "99_Blank_924.html": {
+      "title": "99_Blank_924",
+      "type": "blank",
+      "updatedAt": "2026-11-11T07:40:31.250Z",
+      "template": "template_blank.html"
     }
   },
   "assignee": "최범열",
@@ -136,7 +142,8 @@
     "04_Case_Study_991.html",
     "renewal_order_3.html",
     "renewal_cart.html",
-    "renewal_order.html"
+    "renewal_order.html",
+    "99_Blank_924.html"
   ],
   "updated": "2026-11-11 16:29:18",
   "version": 0.1,

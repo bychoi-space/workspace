@@ -77,7 +77,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-10-27T02:51:55.323Z",
+      "updatedAt": "2026-11-11T07:14:58.438Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -88,7 +88,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-11T06:01:04.690Z",
+      "updatedAt": "2026-11-09T10:25:51.487Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -138,7 +138,7 @@
     "04_Case_Study_991.html",
     "renewal_order_3.html"
   ],
-  "updated": "2026-11-11 15:01:04",
+  "updated": "2026-11-11 16:14:58",
   "version": 0.1,
   "category": "project"
 }

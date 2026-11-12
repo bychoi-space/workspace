@@ -283,7 +283,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-12T02:37:25.853Z",
+      "updatedAt": "2026-11-12T02:57:35.109Z",
       "version": 0.1,
       "connectors": []
     },
@@ -517,7 +517,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-12 11:37:32",
+  "updated": "2026-11-12 11:57:34",
   "version": 0.1,
   "period": "",
   "screenOrder": [
@@ -526,6 +526,7 @@
     "04_Case_Study_350.html",
     "04_Case_Study_351.html",
     "08_Responsive_PC_Mobile_4.html",
+    "08_Responsive_PC_Mobile_5.html",
     "08_Responsive_PC_Mobile_6.html",
     "08_Responsive_PC_Mobile_7.html"
   ]

@@ -65,47 +65,9 @@
       "connectors": []
     },
     "08_Responsive_PC_Mobile_6.html": {
-      "description": [
-        {
-          "type": "pin",
-          "target": "frame",
-          "text": "제휴문의 버튼 추가 \n-  AS-IS \n   - MO 푸터 메뉴는 '매장찾기'부터  '회사소개'까지 노출\n- TO-BE\n   - PC와 동일하게 '회사소개' 바로 우측에 '제휴문의' 메뉴 추가\n   - MO 푸터 메뉴를 한줄로 노출하기 위해  메뉴간 구분선 제거 및 텍스트 크기 축소 16px > 14px\n- 제휴문의 텍스트 버튼 클릭 시 팝업창 호출",
-          "html": "제휴문의 버튼 추가 \n-  AS-IS \n   - MO 푸터 메뉴는 '매장찾기'부터  '회사소개'까지 노출\n- TO-BE\n   - PC와 동일하게 '회사소개' 바로 우측에 '제휴문의' 메뉴 추가\n   - MO 푸터 메뉴를 한줄로 노출하기 위해  메뉴간 구분선 제거 및 텍스트 크기 축소 16px &gt; 14px\n- 제휴문의 텍스트 버튼 클릭 시 팝업창 호출 ",
-          "x": 299,
-          "y": 315,
-          "pins": {
-            "pc": {
-              "x": 299,
-              "y": 315,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "mobile": {
-              "x": 285,
-              "y": 18,
-              "active": true
-            },
-            "left": {
-              "x": 299,
-              "y": 315,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "right": {
-              "x": 285,
-              "y": 18,
-              "active": true,
-              "scrollFixed": "none"
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        }
-      ],
-      "updatedAt": "2026-11-12T02:09:03.292Z",
-      "version": 0.1,
-      "connectors": [],
-      "title": "제휴문의 A안 - 팝업형"
+      "description": [],
+      "updatedAt": "2026-11-12T02:19:56.693Z",
+      "version": 0.1
     }
   },
   "developer": "",
@@ -114,14 +76,13 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-11 16:39:43",
+  "updated": "2026-11-12 11:19:56",
   "version": 0.1,
   "period": "",
   "screenOrder": [
     "00_Cover_428.html",
     "04_Case_Study_349.html",
     "04_Case_Study_350.html",
-    "04_Case_Study_351.html",
-    "08_Responsive_PC_Mobile_6.html"
+    "04_Case_Study_351.html"
   ]
 }

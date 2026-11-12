@@ -64,9 +64,15 @@
       "version": 0.1,
       "connectors": []
     },
+    "08_Responsive_PC_Mobile_6.html": {
+      "description": [],
+      "updatedAt": "2026-11-12T02:21:08.230Z",
+      "version": 0.1
+    },
     "08_Responsive_PC_Mobile_7.html": {
-      "title": "제휴문의 B안 - 페이지형",
-      "updatedAt": "2026-11-12T02:25:00.786Z"
+      "description": [],
+      "updatedAt": "2026-11-12T02:30:09.368Z",
+      "version": 0.1
     }
   },
   "developer": "",
@@ -75,14 +81,13 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-12 11:24:27",
+  "updated": "2026-11-12 11:30:09",
   "version": 0.1,
   "period": "",
   "screenOrder": [
     "00_Cover_428.html",
     "04_Case_Study_349.html",
     "04_Case_Study_350.html",
-    "04_Case_Study_351.html",
-    "08_Responsive_PC_Mobile_7.html"
+    "04_Case_Study_351.html"
   ]
 }

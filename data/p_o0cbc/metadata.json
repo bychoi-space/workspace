@@ -284,7 +284,8 @@
         }
       ],
       "updatedAt": "2026-11-12T02:37:25.853Z",
-      "version": 0.1
+      "version": 0.1,
+      "connectors": []
     },
     "08_Responsive_PC_Mobile_7.html": {
       "description": [
@@ -525,7 +526,6 @@
     "04_Case_Study_350.html",
     "04_Case_Study_351.html",
     "08_Responsive_PC_Mobile_4.html",
-    "08_Responsive_PC_Mobile_5.html",
     "08_Responsive_PC_Mobile_6.html",
     "08_Responsive_PC_Mobile_7.html"
   ]

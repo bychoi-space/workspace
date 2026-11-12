@@ -63,6 +63,12 @@
       "updatedAt": "2026-11-11T07:39:43.183Z",
       "version": 0.1,
       "connectors": []
+    },
+    "02_Plan_820.html": {
+      "title": "02_Plan_820",
+      "type": "plan",
+      "updatedAt": "2026-11-12T01:49:59.025Z",
+      "template": "template_plan.html"
     }
   },
   "developer": "",
@@ -78,6 +84,7 @@
     "00_Cover_428.html",
     "04_Case_Study_349.html",
     "04_Case_Study_350.html",
-    "04_Case_Study_351.html"
+    "04_Case_Study_351.html",
+    "02_Plan_820.html"
   ]
 }

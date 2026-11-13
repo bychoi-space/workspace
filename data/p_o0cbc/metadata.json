@@ -832,7 +832,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T00:43:47.092Z",
+      "updatedAt": "2026-11-13T00:28:55.727Z",
       "version": 0.1,
       "connectors": []
     },
@@ -1441,7 +1441,9 @@
       "title": "09_Admin_PC_Scroll_727",
       "type": "admin",
       "updatedAt": "2026-11-13T00:40:10.496Z",
-      "template": "template_admin_pc_scroll.html"
+      "template": "template_admin_pc_scroll.html",
+      "description": [],
+      "connectors": []
     }
   },
   "developer": "",
@@ -1457,6 +1459,7 @@
     "00_Cover_428.html",
     "04_Case_Study_349.html",
     "04_Case_Study_350.html",
+    "09_Admin_PC_Scroll_727.html",
     "04_Case_Study_351.html",
     "08_Responsive_PC_Mobile_4.html",
     "08_Responsive_PC_Mobile_6.html",
@@ -1465,7 +1468,6 @@
     "09_Admin_PC_Scroll_209.html",
     "09_Admin_PC_Scroll_4.html",
     "09_Admin_PC_Scroll_524.html",
-    "09_Admin_PC_Scroll_507.html",
-    "09_Admin_PC_Scroll_727.html"
+    "09_Admin_PC_Scroll_507.html"
   ]
 }

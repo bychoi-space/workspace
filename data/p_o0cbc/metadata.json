@@ -1088,7 +1088,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T07:08:47.248Z",
+      "updatedAt": "2026-11-13T07:52:28.442Z",
       "version": 0.1,
       "connectors": []
     },
@@ -1235,7 +1235,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T07:48:14.995Z",
+      "updatedAt": "2026-11-13T07:12:17.306Z",
       "version": 0.1,
       "connectors": []
     }
@@ -1246,7 +1246,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 16:48:14",
+  "updated": "2026-11-13 16:52:28",
   "version": 0.1,
   "period": "",
   "screenOrder": [

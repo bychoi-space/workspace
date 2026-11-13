@@ -79,7 +79,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-13T04:56:46.438Z",
+      "updatedAt": "2026-11-09T10:25:51.487Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -178,6 +178,54 @@
       "defaultTab": "editor",
       "screenDesc": "",
       "version": 0.1
+    },
+    "renewal_cart_3.html": {
+      "title": "장바구니 (To-Be) 상품없는경우",
+      "type": "ui",
+      "updatedAt": "2026-11-13T05:01:03.569Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[쿠폰 혜택 / 최대 할인 적용] 영역\n - 신규 개설 영역\n - Default '최대 할인 적용' = On",
+          "html": "[쿠폰 혜택 / 최대 할인 적용] 영역<div> - 신규 개설 영역</div><div> - Default '최대 할인 적용' = On</div>",
+          "x": 20,
+          "y": 170,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 170,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 50,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 170,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 50,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     }
   },
   "assignee": "최범열",
@@ -195,6 +243,7 @@
     "99_Blank_926.html",
     "03_Cart_Order_Benchmark_Analysis.html",
     "renewal_cart_2.html",
+    "renewal_cart_3.html",
     "renewal_order_2.html",
     "renewal_payEnd.html",
     "renewal_order_3.html",

@@ -616,7 +616,7 @@
     "09_Admin_PC_Scroll_4.html": {
       "title": "09_Admin_PC_Scroll_4",
       "type": "admin",
-      "updatedAt": "2026-11-13T06:53:17.187Z",
+      "updatedAt": "2026-11-13T05:29:02.362Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -824,8 +824,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[메일 발송 팝업 - 공통 / business@sisun.com 연동]\n· 제휴문의 상세 팝업(10p) [메일 발송] 클릭 시 새 창 팝업 (900 x 820, 내부 세로 스크롤)\n· 문의자에게 보내는 회신 메일 전용 (내부 전달 기능 없음)\n· 발신 계정: 자사몰 제휴문의 대표 계정 business@sisun.com (사내 웹메일 email.sisun.com 계정)\n· 연동 방식(권장): BO 서버가 사내 메일 서버(SMTP)를 통해 business@sisun.com 명의로 발송\n  - 보내는 사람: 시선인터내셔널 제휴문의 <business@sisun.com> / 답장 받을 주소(Reply-To): business@sisun.com\n  - 문의자가 [답장]하면 business@sisun.com 웹메일 받은편지함으로 수신 → 이후 협의는 웹메일에서 이어서 진행\n  - BO에서 보낸 메일은 웹메일 보낸편지함에 자동 저장되지 않음 → 발송 시 business@sisun.com을 시스템 숨은참조로 함께 보내 웹메일에서도 발송본 확인 (또는 메일 서버 보낸편지함 저장 설정, 인프라 협의)\n  - 계정 비밀번호를 BO 소스·설정 파일에 직접 저장하지 않음 → 메일 서버에서 BO 서버 발송 허용(IP 기반 릴레이) 또는 발송 전용 인증 방식으로 협의\n  - 스팸 분류 방지: sisun.com 발신 도메인 인증(SPF·DKIM·DMARC) 설정 확인\n· 문의자가 웹메일로 보낸 답장은 BO에 자동 연동되지 않음 (1차 범위 제외)\n· 발송 1건 = 메일 발송 이력 1건 / 상세 팝업 메일 발송 이력의 실패 건 클릭 시 이전 발송 내용 그대로 세팅",
-          "html": "[메일 발송 팝업 - 공통 / business@sisun.com 연동]<div>· 제휴문의 상세 팝업(10p) [메일 발송] 클릭 시 새 창 팝업 (900 x 820, 내부 세로 스크롤)</div><div>· 문의자에게 보내는 회신 메일 전용 (내부 전달 기능 없음)</div><div>· 발신 계정: 자사몰 제휴문의 대표 계정 business@sisun.com (사내 웹메일 email.sisun.com 계정)</div><div>· 연동 방식(권장): BO 서버가 사내 메일 서버(SMTP)를 통해 business@sisun.com 명의로 발송</div><div>  - 보내는 사람: 시선인터내셔널 제휴문의 &lt;business@sisun.com&gt; / 답장 받을 주소(Reply-To): business@sisun.com</div><div>  - 문의자가 [답장]하면 business@sisun.com 웹메일 받은편지함으로 수신 → 이후 협의는 웹메일에서 이어서 진행</div><div>  - BO에서 보낸 메일은 웹메일 보낸편지함에 자동 저장되지 않음 → 발송 시 business@sisun.com을 시스템 숨은참조로 함께 보내 웹메일에서도 발송본 확인 (또는 메일 서버 보낸편지함 저장 설정, 인프라 협의)</div><div>  - 계정 비밀번호를 BO 소스·설정 파일에 직접 저장하지 않음 → 메일 서버에서 BO 서버 발송 허용(IP 기반 릴레이) 또는 발송 전용 인증 방식으로 협의</div><div>  - 스팸 분류 방지: sisun.com 발신 도메인 인증(SPF·DKIM·DMARC) 설정 확인</div><div>· 문의자가 웹메일로 보낸 답장은 BO에 자동 연동되지 않음 (1차 범위 제외)</div><div>· 발송 1건 = 메일 발송 이력 1건 / 상세 팝업 메일 발송 이력의 실패 건 클릭 시 이전 발송 내용 그대로 세팅</div>",
+          "text": "[메일 발송 팝업 - 공통 / business@sisun.com 연동]\n· 제휴문의 상세 팝업(10p) [메일 발송] 클릭 시 새 창 팝업\n· 문의자에게 보내는 회신 메일 전용\n· 발신 계정: 자사몰 제휴문의 대표 계정 business@sisun.com (사내 웹메일 email.sisun.com 계정)\n· 연동 방식(권장): BO 서버가 사내 메일 서버(SMTP)를 통해 business@sisun.com 명의로 발송\n  - 보내는 사람: 시선인터내셔널 제휴문의 <business@sisun.com> / 답장 받을 주소(Reply-To): business@sisun.com\n  - 문의자가 [답장]하면 business@sisun.com 웹메일 받은편지함으로 수신 → 이후 협의는 웹메일에서 이어서 진행\n  - BO에서 보낸 메일은 웹메일 보낸편지함에 자동 저장되지 않음 → 발송 시 business@sisun.com을 시스템 숨은참조로 함께 보내 웹메일에서도 발송본 확인 (또는 메일 서버 보낸편지함 저장 설정, 인프라 협의)\n  - 계정 비밀번호를 BO 소스·설정 파일에 직접 저장하지 않음 → 메일 서버에서 BO 서버 발송 허용(IP 기반 릴레이) 또는 발송 전용 인증 방식으로 협의\n  - 스팸 분류 방지: sisun.com 발신 도메인 인증(SPF·DKIM·DMARC) 설정 확인\n· 문의자가 웹메일로 보낸 답장은 BO에 자동 연동되지 않음 (1차 범위 제외)\n· 발송 1건 = 메일 발송 이력 1건 / 상세 팝업 메일 발송 이력의 실패 건 클릭 시 이전 발송 내용 그대로 세팅",
+          "html": "[메일 발송 팝업 - 공통 / business@sisun.com 연동]<div>· 제휴문의 상세 팝업(10p) [메일 발송] 클릭 시 새 창 팝업</div><div>· 문의자에게 보내는 회신 메일 전용</div><div>· 발신 계정: 자사몰 제휴문의 대표 계정 business@sisun.com (사내 웹메일 email.sisun.com 계정)</div><div>· 연동 방식(권장): BO 서버가 사내 메일 서버(SMTP)를 통해 business@sisun.com 명의로 발송</div><div>  - 보내는 사람: 시선인터내셔널 제휴문의 &lt;business@sisun.com&gt; / 답장 받을 주소(Reply-To): business@sisun.com</div><div>  - 문의자가 [답장]하면 business@sisun.com 웹메일 받은편지함으로 수신 → 이후 협의는 웹메일에서 이어서 진행</div><div>  - BO에서 보낸 메일은 웹메일 보낸편지함에 자동 저장되지 않음 → 발송 시 business@sisun.com을 시스템 숨은참조로 함께 보내 웹메일에서도 발송본 확인 (또는 메일 서버 보낸편지함 저장 설정, 인프라 협의)</div><div>  - 계정 비밀번호를 BO 소스·설정 파일에 직접 저장하지 않음 → 메일 서버에서 BO 서버 발송 허용(IP 기반 릴레이) 또는 발송 전용 인증 방식으로 협의</div><div>  - 스팸 분류 방지: sisun.com 발신 도메인 인증(SPF·DKIM·DMARC) 설정 확인</div><div>· 문의자가 웹메일로 보낸 답장은 BO에 자동 연동되지 않음 (1차 범위 제외)</div><div>· 발송 1건 = 메일 발송 이력 1건 / 상세 팝업 메일 발송 이력의 실패 건 클릭 시 이전 발송 내용 그대로 세팅</div>",
           "x": 310,
           "y": 52,
           "pins": {
@@ -1025,7 +1025,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T04:54:17.742Z",
+      "updatedAt": "2026-11-13T06:53:54.663Z",
       "version": 0.1,
       "connectors": []
     },
@@ -1274,7 +1274,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 15:53:17",
+  "updated": "2026-11-13 15:53:54",
   "version": 0.1,
   "period": "",
   "screenOrder": [

@@ -616,7 +616,7 @@
     "09_Admin_PC_Scroll_4.html": {
       "title": "09_Admin_PC_Scroll_4",
       "type": "admin",
-      "updatedAt": "2026-11-13T06:45:01.289Z",
+      "updatedAt": "2026-11-13T06:50:05.470Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -1339,7 +1339,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 15:45:01",
+  "updated": "2026-11-13 15:50:05",
   "version": 0.1,
   "period": "",
   "screenOrder": [

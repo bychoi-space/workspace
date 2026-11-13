@@ -836,10 +836,6 @@
       "version": 0.1
     },
     "09_Admin_PC_Scroll_4.html": {
-      "title": "09_Admin_PC_Scroll_4",
-      "type": "admin",
-      "updatedAt": "2026-11-13T00:29:52.437Z",
-      "template": "template_admin_pc_scroll.html",
       "description": [
         {
           "type": "pin",
@@ -1044,9 +1040,15 @@
           "standardized": true,
           "scrollFixed": "none"
         }
-      ]
+      ],
+      "updatedAt": "2026-11-13T00:34:09.989Z",
+      "version": 0.1
     },
     "09_Admin_PC_Scroll_524.html": {
+      "title": "09_Admin_PC_Scroll_524",
+      "type": "admin",
+      "updatedAt": "2026-11-13T00:34:41.150Z",
+      "template": "template_admin_pc_scroll.html",
       "description": [
         {
           "type": "pin",
@@ -1251,15 +1253,187 @@
           "standardized": true,
           "scrollFixed": "none"
         }
-      ],
-      "updatedAt": "2026-11-13T00:37:14.612Z",
-      "version": 0.1
+      ]
     },
     "09_Admin_PC_Scroll_507.html": {
-      "title": "09_Admin_PC_Scroll_507",
-      "type": "admin",
-      "updatedAt": "2026-11-13T00:37:42.345Z",
-      "template": "template_admin_pc_scroll.html"
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[A. 알림 수신자 설정 팝업 - 공통]\n· 제휴문의관리 목록(9p) [알림 수신자 설정] 클릭 시 새 창 팝업 (820 x 760)\n· 권한: 조회는 제휴문의관리 메뉴 권한자, 저장은 설정 권한 계정(마스터/준 마스터)만 가능 - 권한 없으면 [추가]·[선택 삭제]·[저장] 미노출\n· 알림 메일 발송: 사용 / 미사용 (기본 사용)\n  - 미사용 시 접수 알림 메일만 발송되지 않고, 제휴문의 DB 저장·목록 노출은 정상 동작",
+          "html": "[A. 알림 수신자 설정 팝업 - 공통]<div>· 제휴문의관리 목록(9p) [알림 수신자 설정] 클릭 시 새 창 팝업 (820 x 760)</div><div>· 권한: 조회는 제휴문의관리 메뉴 권한자, 저장은 설정 권한 계정(마스터/준 마스터)만 가능 - 권한 없으면 [추가]·[선택 삭제]·[저장] 미노출</div><div>· 알림 메일 발송: 사용 / 미사용 (기본 사용)</div><div>  - 미사용 시 접수 알림 메일만 발송되지 않고, 제휴문의 DB 저장·목록 노출은 정상 동작</div>",
+          "x": 22,
+          "y": 66,
+          "pins": {
+            "pc": {
+              "x": 22,
+              "y": 66,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 22,
+              "y": 66,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[수신자 추가]\n· 이름/부서(필수): 최대 20자\n· 이메일(필수): 사내 도메인(@sisun.com)만 허용, 형식 오류 \"올바른 이메일 형식이 아닙니다.\" / 중복 \"이미 등록된 이메일입니다.\"\n· 수신 문의유형(필수): 복수 선택, '전체' 선택 시 개별 유형 해제 (문의유형 공통코드 연동)\n· [추가]: 하단 수신자 목록에 임시 추가 → [저장] 시 최종 반영\n· 수신자는 최대 10명까지 등록",
+          "html": "[수신자 추가]<div>· 이름/부서(필수): 최대 20자</div><div>· 이메일(필수): 사내 도메인(@sisun.com)만 허용, 형식 오류 \"올바른 이메일 형식이 아닙니다.\" / 중복 \"이미 등록된 이메일입니다.\"</div><div>· 수신 문의유형(필수): 복수 선택, '전체' 선택 시 개별 유형 해제 (문의유형 공통코드 연동)</div><div>· [추가]: 하단 수신자 목록에 임시 추가 → [저장] 시 최종 반영</div><div>· 수신자는 최대 10명까지 등록</div>",
+          "x": 22,
+          "y": 262,
+          "pins": {
+            "pc": {
+              "x": 22,
+              "y": 262,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 22,
+              "y": 262,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[수신자 목록]\n· 체크박스 / 이름·부서 / 이메일 / 수신 문의유형 / 사용(Y·N 선택) / 등록자 / 등록일\n· 사용 N: 삭제하지 않고 알림만 일시 중지 (휴가·담당 변경 대응)\n· [선택 삭제]: \"선택한 N명의 수신자를 삭제하시겠습니까?\" 확인 후 목록에서 제거 ([저장] 시 반영)\n· 알림 메일 '사용'인데 사용 Y 수신자가 없으면 저장 불가: \"알림 수신자를 1명 이상 등록해주세요.\"\n· 이 목록은 메일 발송 팝업(11p) [주소록]에서도 사용",
+          "html": "[수신자 목록]<div>· 체크박스 / 이름·부서 / 이메일 / 수신 문의유형 / 사용(Y·N 선택) / 등록자 / 등록일</div><div>· 사용 N: 삭제하지 않고 알림만 일시 중지 (휴가·담당 변경 대응)</div><div>· [선택 삭제]: \"선택한 N명의 수신자를 삭제하시겠습니까?\" 확인 후 목록에서 제거 ([저장] 시 반영)</div><div>· 알림 메일 '사용'인데 사용 Y 수신자가 없으면 저장 불가: \"알림 수신자를 1명 이상 등록해주세요.\"</div><div>· 이 목록은 메일 발송 팝업(11p) [주소록]에서도 사용</div>",
+          "x": 22,
+          "y": 480,
+          "pins": {
+            "pc": {
+              "x": 22,
+              "y": 480,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 22,
+              "y": 480,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[저장 / 닫기]\n· [저장]: \"저장하시겠습니까?\" → \"저장되었습니다.\" / 변경 이력(추가·삭제·사용여부 변경, 처리자, 일시) 저장\n· [닫기]: 저장하지 않은 변경이 있으면 \"저장하지 않은 변경사항이 있습니다. 닫으시겠습니까?\" 확인",
+          "html": "[저장 / 닫기]<div>· [저장]: \"저장하시겠습니까?\" → \"저장되었습니다.\" / 변경 이력(추가·삭제·사용여부 변경, 처리자, 일시) 저장</div><div>· [닫기]: 저장하지 않은 변경이 있으면 \"저장하지 않은 변경사항이 있습니다. 닫으시겠습니까?\" 확인</div>",
+          "x": 310,
+          "y": 690,
+          "pins": {
+            "pc": {
+              "x": 310,
+              "y": 690,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 310,
+              "y": 690,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[B. 접수 알림 메일 - 발송 조건]\n· 발송 시점: FO 제휴문의 [문의하기] → DB 저장 완료 직후 비동기 발송\n  - 메일 발송이 실패해도 FO 접수는 정상 완료 처리 (고객에게 오류 노출 X)\n· 수신자: 알림 수신자 중 사용=Y 이고 수신 문의유형이 일치하는 수신자 (같은 이메일은 1회만 발송)\n· 보내는 사람: 시선인터내셔널 BO <noreply@sisun.com> (발신 전용)\n· 제목: [제휴문의 접수] {문의유형} - {접수번호}\n· 발송 결과는 상세 팝업(10p) 처리 이력에 '시스템'으로 기록, 실패 시 1회 자동 재시도",
+          "html": "[B. 접수 알림 메일 - 발송 조건]<div>· 발송 시점: FO 제휴문의 [문의하기] → DB 저장 완료 직후 비동기 발송</div><div>  - 메일 발송이 실패해도 FO 접수는 정상 완료 처리 (고객에게 오류 노출 X)</div><div>· 수신자: 알림 수신자 중 사용=Y 이고 수신 문의유형이 일치하는 수신자 (같은 이메일은 1회만 발송)</div><div>· 보내는 사람: 시선인터내셔널 BO &lt;noreply@sisun.com&gt; (발신 전용)</div><div>· 제목: [제휴문의 접수] {문의유형} - {접수번호}</div><div>· 발송 결과는 상세 팝업(10p) 처리 이력에 '시스템'으로 기록, 실패 시 1회 자동 재시도</div>",
+          "x": 880,
+          "y": 66,
+          "pins": {
+            "pc": {
+              "x": 880,
+              "y": 66,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 880,
+              "y": 66,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[B. 접수 알림 메일 - 본문 구성]\n· 포함: 접수번호 / 접수일시 / 문의유형 / 담당자명(마스킹) / 첨부 유무 / 문의내용 앞 100자 + 말줄임\n· 미포함: 연락처·이메일·첨부파일 원본 → 개인정보 최소화 (메일 전달·외부 유출 리스크 차단)\n· [BO에서 확인하기]: BO 로그인 화면으로 이동 → 로그인 후 해당 접수번호의 제휴문의 상세로 바로 이동\n· SISUN 메일 공통 템플릿(블랙 헤더, 회색 푸터) 적용",
+          "html": "[B. 접수 알림 메일 - 본문 구성]<div>· 포함: 접수번호 / 접수일시 / 문의유형 / 담당자명(마스킹) / 첨부 유무 / 문의내용 앞 100자 + 말줄임</div><div>· 미포함: 연락처·이메일·첨부파일 원본 → 개인정보 최소화 (메일 전달·외부 유출 리스크 차단)</div><div>· [BO에서 확인하기]: BO 로그인 화면으로 이동 → 로그인 후 해당 접수번호의 제휴문의 상세로 바로 이동</div><div>· SISUN 메일 공통 템플릿(블랙 헤더, 회색 푸터) 적용</div>",
+          "x": 880,
+          "y": 330,
+          "pins": {
+            "pc": {
+              "x": 880,
+              "y": 330,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 880,
+              "y": 330,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "updatedAt": "2026-11-13T00:39:36.010Z",
+      "version": 0.1
     }
   },
   "developer": "",
@@ -1268,7 +1442,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 09:37:14",
+  "updated": "2026-11-13 09:39:35",
   "version": 0.1,
   "period": "",
   "screenOrder": [

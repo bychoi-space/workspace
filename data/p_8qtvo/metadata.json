@@ -124,17 +124,6 @@
       "defaultTab": "editor",
       "screenDesc": ""
     },
-    "renewal_order_3.html": {
-      "title": "주문서 (Te-Be) 배송지 정보 없음",
-      "type": "ui",
-      "updatedAt": "2026-11-11T02:45:15.899Z",
-      "template": "template_responsive_pc_mobile.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1,
-      "defaultTab": "editor",
-      "screenDesc": ""
-    },
     "99_Blank_924.html": {
       "title": "시선닷컴 문제점 분석 (장바구니)",
       "type": "plan",
@@ -279,7 +268,6 @@
     "renewal_order_2.html",
     "renewal_order_4.html",
     "renewal_payEnd.html",
-    "renewal_order_3.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
   "updated": "2026-11-13 15:39:04",

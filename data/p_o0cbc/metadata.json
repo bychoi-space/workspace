@@ -1088,7 +1088,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T07:52:28.442Z",
+      "updatedAt": "2026-11-13T07:08:47.248Z",
       "version": 0.1,
       "connectors": []
     },
@@ -1254,13 +1254,13 @@
     "04_Case_Study_349.html",
     "04_Case_Study_350.html",
     "04_Case_Study_351.html",
-    "09_Admin_PC_Scroll_727.html",
     "08_Responsive_PC_Mobile_4.html",
     "08_Responsive_PC_Mobile_7.html",
     "08_Responsive_PC_Mobile_8.html",
     "09_Admin_PC_Scroll_209.html",
     "09_Admin_PC_Scroll_4.html",
     "09_Admin_PC_Scroll_524.html",
-    "09_Admin_PC_Scroll_410.html"
+    "09_Admin_PC_Scroll_410.html",
+    "09_Admin_PC_Scroll_727.html"
   ]
 }

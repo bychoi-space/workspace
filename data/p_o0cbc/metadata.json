@@ -575,14 +575,14 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T05:15:07.737Z",
+      "updatedAt": "2026-11-13T04:50:19.497Z",
       "version": 0.1,
       "connectors": []
     },
     "09_Admin_PC_Scroll_4.html": {
       "title": "09_Admin_PC_Scroll_4",
       "type": "admin",
-      "updatedAt": "2026-11-13T04:52:38.644Z",
+      "updatedAt": "2026-11-13T05:20:09.475Z",
       "template": "template_admin_pc_scroll.html",
       "description": [
         {
@@ -1305,7 +1305,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 14:15:07",
+  "updated": "2026-11-13 14:20:09",
   "version": 0.1,
   "period": "",
   "screenOrder": [

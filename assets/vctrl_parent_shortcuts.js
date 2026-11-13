@@ -17,11 +17,19 @@
         return DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
     }
 
+    function _checkNodeIsInput(node) {
+        if (!node) return false;
+        return node.isContentEditable ||
+            ['INPUT', 'TEXTAREA', 'SELECT'].includes(node.tagName) ||
+            !!(node.closest && node.closest('.ql-editor, #editor-container, .v4-editable-cell, [contenteditable="true"]'));
+    }
+
     function isInputElement(target) {
-        if (!target) return false;
-        return target.isContentEditable ||
-            ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
-            !!(target.closest && target.closest('.ql-editor, .v4-editable-cell, [contenteditable="true"]'));
+        if (_checkNodeIsInput(target)) return true;
+        if (!target || target === document.body || target === document.documentElement) {
+            return _checkNodeIsInput(document.activeElement);
+        }
+        return false;
     }
 
     function handleSaveShortcut(e, isInput) {
@@ -32,6 +40,9 @@
             console.log("[VCTRL CORE] Global Ctrl+S caught in parent window. isInput:", isInput);
             if (isInput && document.activeElement && typeof document.activeElement.blur === 'function') {
                 try { document.activeElement.blur(); } catch (err) { }
+            }
+            if (typeof window.cleanupActiveEmptyTextShapeIfNeeded === 'function') {
+                window.cleanupActiveEmptyTextShapeIfNeeded();
             }
             if (typeof window.handleGlobalSave === 'function') {
                 window.handleGlobalSave();
@@ -148,7 +159,11 @@
         // If user is currently typing in parent window, blur it
         const activeEl = document.activeElement;
         if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable || activeEl.classList.contains('ql-editor'))) {
+            const wasQuill = !!(activeEl.classList && activeEl.classList.contains('ql-editor'));
             activeEl.blur();
+            if (wasQuill && typeof window.cleanupActiveEmptyTextShapeIfNeeded === 'function') {
+                window.cleanupActiveEmptyTextShapeIfNeeded();
+            }
             return true;
         }
 

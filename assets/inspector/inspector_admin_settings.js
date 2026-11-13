@@ -309,7 +309,7 @@
             activeEl.classList.contains('admin-col-label-input') || 
             activeEl.classList.contains('admin-row-height-input') || 
             activeEl.id === 'prop-admin-group-header-title' || 
-            activeEl.id === 'prop-admin-label-width-number'
+            activeEl.id === 'prop-admin-label-width-number' || activeEl.id === 'prop-width-admin' || activeEl.id === 'prop-height-admin'
         );
         if (isTypingInAdminContainer) return;
         container.innerHTML = '';

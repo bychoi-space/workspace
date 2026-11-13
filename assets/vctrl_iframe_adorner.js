@@ -76,6 +76,12 @@ window.v4SelectionAdornerScript = `
                 box.style.outlineOffset = '0px';
                 box.style.background = 'transparent';
                 var compRad = comp.style.borderRadius || window.getComputedStyle(comp).borderRadius;
+                if (!compRad || compRad === '0px') {
+                    var innerShape = comp.querySelector('.v4-shape-rect, .v4-shape-circle, .v4-shape-webpage, .v4-shape-pattern-grid');
+                    if (innerShape) {
+                        compRad = innerShape.style.borderRadius || window.getComputedStyle(innerShape).borderRadius;
+                    }
+                }
                 if (compRad && compRad !== '0px') {
                     box.style.borderRadius = compRad;
                 }

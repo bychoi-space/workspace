@@ -260,6 +260,9 @@ window.v4Script = `
                 const isPin = c.classList.contains('pin-marker') || c.classList.contains('text-marker');
                 c.id = (isPin ? 'v4-pin-' : 'v4-comp-') + Date.now() + '-' + Math.floor(Math.random() * 10000);
             }
+            if (typeof window.cleanupEmptyTextShapes === 'function') {
+                window.cleanupEmptyTextShapes({ exceptId: c.id, forceBlur: true, deselectIfRemoved: false });
+            }
             isMarquee = false;
             const frameType = typeof detectFrameType === 'function' ? detectFrameType(c) : (c.getAttribute('data-frame') || 'pc');
             window.lastActiveFrame = frameType;
@@ -355,6 +358,9 @@ window.v4Script = `
         } else {
             isMarquee = true;
             window.isMarqueeActive = true;
+            if (typeof window.cleanupEmptyTextShapes === 'function') {
+                window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: false });
+            }
             document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
             if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
                 window.SelectionAdorner.clear();
@@ -769,7 +775,7 @@ window.v4Script = `
             if (s.style.background && s.style.background !== 'transparent') s.style.background = 'transparent';
             if (s.style.backgroundColor && s.style.backgroundColor !== 'transparent') s.style.backgroundColor = 'transparent';
             if (d.style) {
-                if (d.style.width !== undefined) s.style.setProperty('width', typeof d.style.width === 'number' ? d.style.width + 'px' : d.style.width, 'important');
+                if (d.style.width !== undefined) { s.setAttribute('data-resized', 'true'); s.style.setProperty('width', typeof d.style.width === 'number' ? d.style.width + 'px' : d.style.width, 'important'); if (adminSettings !== s) adminSettings.style.setProperty('width', '100%', 'important'); var adminTable = adminSettings.querySelector('.v4-admin-settings-table'); if (adminTable) adminTable.style.setProperty('width', '100%', 'important'); }
                 if (d.style.height !== undefined) s.style.height = typeof d.style.height === 'number' ? d.style.height + 'px' : d.style.height;
             }
             window.updateHandles(s);
@@ -840,9 +846,17 @@ window.v4Script = `
                 delete styleToAssign.width;
                 delete styleToAssign.height;
             }
+            var cornerDirToAssign = null;
+            if (styleToAssign.cornerDir !== undefined) {
+                cornerDirToAssign = styleToAssign.cornerDir || 'all';
+                delete styleToAssign.cornerDir;
+            }
             
             var targets = d.selector ? [t] : [t, s.querySelector('.v4-shape-text-content'), s.querySelector('.v4-shape-text-overlay')].filter(Boolean);
             targets.forEach(function(target) {
+                if (cornerDirToAssign !== null) {
+                    target.setAttribute('data-corner-dir', cornerDirToAssign);
+                }
                 Object.assign(target.style, styleToAssign);
                 for (var key in styleToAssign) {
                     if (styleToAssign.hasOwnProperty(key)) {
@@ -864,6 +878,9 @@ window.v4Script = `
                     }
                 }
             });
+            if (styleToAssign.borderRadius !== undefined && window.SelectionAdorner && document.querySelector('.v4-selection-adorner')) {
+                window.SelectionAdorner.update();
+            }
         }
         
         if (d.subSelector && d.subStyle) {
@@ -928,11 +945,14 @@ window.v4Script = `
     // --- Helper Handlers for Iframe Core Message Registry ---
 
     function handleDeselectAll(d) {
-        document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
-        window.activeEl = null;
         if (document.activeElement && (document.activeElement.classList?.contains('v4-editable-cell') || document.activeElement.isContentEditable)) {
             try { document.activeElement.blur(); } catch (_) {}
         }
+        if (typeof window.cleanupEmptyTextShapes === 'function') {
+            window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: false });
+        }
+        document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
+        window.activeEl = null;
         if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
             window.ResponsiveSmartGuide.clearGuides(true);
         }
@@ -1041,6 +1061,10 @@ window.v4Script = `
                     else opt.removeAttribute('selected');
                 });
             });
+
+            if (typeof window.cleanupEmptyTextShapes === 'function') {
+                window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
+            }
 
             const c = document.documentElement.cloneNode(true);
             if (window.ScreenSanitizer && typeof window.ScreenSanitizer.cleanDOM === 'function') {

@@ -642,5 +642,47 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/order_policy_complete_guard.png',
             previewHtml: `<img src="assets/illustrations/order_policy_complete_guard.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_policy_complete_guard.png" alt="3D 주문완료 및 주문차단 가드" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-order-strategy-cart',
+            name: '[3D] 장바구니 개선전략',
+            title: '3D 장바구니 최대할인 토글·쿠폰·품절임박 UI 전략 (Cart UX Strategy)',
+            koName: '3d 장바구니 개선전략 최대할인 쿠폰받기 품절임박 토글 cart strategy benefit urgency',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '210px',
+            height: '210px',
+            thumb: 'assets/illustrations/order_strategy_cart_benefit.png',
+            previewHtml: `<img src="assets/illustrations/order_strategy_cart_benefit.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_strategy_cart_benefit.png" alt="3D 장바구니 UI 개선 전략" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-order-strategy-checkout',
+            name: '[3D] 주문서 개선전략',
+            title: '3D 반응형 주문서 배송지·그리드결제·하단고정 UI 전략 (Checkout UX Strategy)',
+            koName: '3d 주문서 개선전략 반응형 pc mobile 배송지 그리드결제 하단고정 checkout strategy ux',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '210px',
+            height: '210px',
+            thumb: 'assets/illustrations/order_strategy_checkout_ux.png',
+            previewHtml: `<img src="assets/illustrations/order_strategy_checkout_ux.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_strategy_checkout_ux.png" alt="3D 주문서 UI 개선 전략" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-order-strategy-complete',
+            name: '[3D] 주문완료 개선전략',
+            title: '3D 주문완료 배송수정·혜택요약·추천상품 UI 전략 (Complete UX Strategy)',
+            koName: '3d 주문완료 개선전략 배송수정 혜택안내 추천상품 큐레이션 complete strategy curation',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '210px',
+            height: '210px',
+            thumb: 'assets/illustrations/order_strategy_complete_curation.png',
+            previewHtml: `<img src="assets/illustrations/order_strategy_complete_curation.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_strategy_complete_curation.png" alt="3D 주문완료 UI 개선 전략" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
 ];

@@ -194,6 +194,27 @@ window.ResponsiveFrameUtils = {
             root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(function(el) {
                 el.remove();
             });
+
+            // 1.1 Remove empty standalone Text SHAPE residue (.v4-text-shape / .v4-text-box)
+            var zwsChar = String.fromCharCode(8203);
+            root.querySelectorAll('.lf-component.v4-text-shape, .lf-component.v4-text-box').forEach(function(el) {
+                if (el.classList.contains('lf-group') || el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
+                if (el.id && el.id.indexOf('v4-pin-') === 0) return;
+                if (el.getAttribute('data-index') !== null || el.getAttribute('data-pin-num') !== null) return;
+                if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .lf-icon, .v4-illustration-container, .v4-motion-container')) return;
+                var cell = el.querySelector('.v4-editable-cell');
+                if (!cell) return;
+                var clone = cell.cloneNode(true);
+                clone.querySelectorAll('.ql-cursor').forEach(function(cur) { cur.remove(); });
+                var cleanedTxt = (clone.textContent || '').split(zwsChar).join('').trim();
+                if (cleanedTxt.length === 0) {
+                    var parentGrp = (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('lf-group')) ? el.parentElement : null;
+                    el.remove();
+                    if (parentGrp && parentGrp.querySelectorAll('.lf-component').length === 0) {
+                        parentGrp.remove();
+                    }
+                }
+            });
             
             // 2. Remove active state classes
             root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
@@ -716,6 +737,25 @@ window.v4CommonScript = `
             if (!root) return root;
             root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(function(el) {
                 el.remove();
+            });
+            var zwsChar = String.fromCharCode(8203);
+            root.querySelectorAll('.lf-component.v4-text-shape, .lf-component.v4-text-box').forEach(function(el) {
+                if (el.classList.contains('lf-group') || el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
+                if (el.id && el.id.indexOf('v4-pin-') === 0) return;
+                if (el.getAttribute('data-index') !== null || el.getAttribute('data-pin-num') !== null) return;
+                if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .lf-icon, .v4-illustration-container, .v4-motion-container')) return;
+                var cell = el.querySelector('.v4-editable-cell');
+                if (!cell) return;
+                var clone = cell.cloneNode(true);
+                clone.querySelectorAll('.ql-cursor').forEach(function(cur) { cur.remove(); });
+                var cleanedTxt = (clone.textContent || '').split(zwsChar).join('').trim();
+                if (cleanedTxt.length === 0) {
+                    var parentGrp = (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('lf-group')) ? el.parentElement : null;
+                    el.remove();
+                    if (parentGrp && parentGrp.querySelectorAll('.lf-component').length === 0) {
+                        parentGrp.remove();
+                    }
+                }
             });
             root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
                 el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');

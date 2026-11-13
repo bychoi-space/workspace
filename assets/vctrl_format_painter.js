@@ -78,6 +78,8 @@ window.v4FormatPainterScript = `
             width: '1.6px',
             style: detectedBorderStyle,
             radius: cur.borderRadius !== undefined ? cur.borderRadius : 0,
+            cornerDir: cur.borderCornerDir || 'all',
+            radiusCss: cur.borderRadiusCss || ((cur.borderRadius !== undefined ? cur.borderRadius : 0) + 'px'),
             isBorderTransparent: !!cur.isBorderTransparent
         };
     }
@@ -613,8 +615,19 @@ window.v4FormatPainterScript = `
             }
 
             if (shape.classList.contains('v4-shape-rect') || shape.classList.contains('v4-shape-webpage') || shape.classList.contains('v4-shape-pattern-grid')) {
-                const rad = (styleData.border.radius !== undefined) ? parseInt(styleData.border.radius) : 0;
-                shape.style.setProperty('border-radius', rad + 'px', 'important');
+                const rad = (styleData.border.radius !== undefined) ? (parseInt(styleData.border.radius, 10) || 0) : 0;
+                const radDir = styleData.border.cornerDir || 'all';
+                let radCss = styleData.border.radiusCss || '';
+                if (!radCss) {
+                    if (rad <= 0) radCss = '0px';
+                    else if (radDir === 'top') radCss = rad + 'px ' + rad + 'px 0px 0px';
+                    else if (radDir === 'bottom') radCss = '0px 0px ' + rad + 'px ' + rad + 'px';
+                    else if (radDir === 'left') radCss = rad + 'px 0px 0px ' + rad + 'px';
+                    else if (radDir === 'right') radCss = '0px ' + rad + 'px ' + rad + 'px 0px';
+                    else radCss = rad + 'px';
+                }
+                shape.setAttribute('data-corner-dir', radDir);
+                shape.style.setProperty('border-radius', radCss, 'important');
             }
         }
     }

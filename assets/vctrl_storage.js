@@ -20,6 +20,11 @@
         if (!isFileProtocol) {
             try {
                 if (activeIframe && activeIframe.contentDocument) {
+                    if (activeIframe.contentWindow && typeof activeIframe.contentWindow.cleanupEmptyTextShapes === 'function') {
+                        try {
+                            activeIframe.contentWindow.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
+                        } catch (_) {}
+                    }
                     const doc = activeIframe.contentDocument;
 
                     // [Form Value SSOT Sync] Commit all live form input values to attributes before clone

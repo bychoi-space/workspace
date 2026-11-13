@@ -436,14 +436,20 @@
         'shape-font-size': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { fontSize: val + 'px' } }),
         'shape-text-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { color: val } }),
         'shape-border-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: val } }),
-        'shape-border-radius': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape-rect, .v4-shape-webpage, .v4-shape-pattern-grid', style: { borderRadius: val + 'px' } }),
+        'shape-border-radius': (val) => ({
+            type: 'LF_UPDATE_STYLE',
+            selector: '.v4-shape-rect, .v4-shape-webpage, .v4-shape-pattern-grid',
+            style: (window.InspectorShapes && typeof window.InspectorShapes.buildCornerRadiusStyle === 'function')
+                ? window.InspectorShapes.buildCornerRadiusStyle(val)
+                : { borderRadius: val + 'px', cornerDir: 'all' }
+        }),
         'text-color-picker': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-editable-cell', style: { color: val } }),
         'icon-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: 'img, .lf-icon', style: { color: val } })
         // Note: shape-bg-color and shape-bg-opacity are handled by SSOT input handlers in assets/inspector/inspector_shapes.js
     };
 
     document.addEventListener('input', (e) => {
-        if (e.target.closest('#admin-settings-inspector-section')) return;
+        if (e.target.closest('#admin-settings-inspector-section') && !e.target.classList.contains('v4-prop-input')) return;
 
         const id = e.target.id;
         if (SPECIAL_STYLE_CONFIGS[id]) {
@@ -461,7 +467,18 @@
             if (txtEl) {
                 txtEl.innerText = e.target.value;
             }
-            if (id === 'shape-border-radius' && typeof window._syncCornerBtns === 'function') window._syncCornerBtns(e.target.value);
+            if (id === 'shape-border-radius') {
+                if (typeof window._syncCornerBtns === 'function') window._syncCornerBtns(e.target.value);
+                if (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles) {
+                    const curS = window.state.selectedComponentStyles.currentStyles;
+                    const numR = parseInt(e.target.value, 10) || 0;
+                    curS.borderRadius = numR;
+                    if (msg && msg.style) {
+                        curS.borderCornerDir = msg.style.cornerDir || 'all';
+                        curS.borderRadiusCss = msg.style.borderRadius || (numR + 'px');
+                    }
+                }
+            }
             if (window.markAsDirty) window.markAsDirty();
             return;
         }
@@ -485,7 +502,7 @@
     });
 
     document.addEventListener('change', (e) => {
-        if (e.target.closest('#admin-settings-inspector-section')) return;
+        if (e.target.closest('#admin-settings-inspector-section') && !e.target.classList.contains('v4-prop-input')) return;
 
         if (e.target.classList.contains('v4-prop-input')) {
             const prop = e.target.dataset.prop;
@@ -524,7 +541,7 @@
     };
 
     document.addEventListener('click', (e) => {
-        if (e.target.closest('#admin-settings-inspector-section')) return;
+        if (e.target.closest('#admin-settings-inspector-section') && !e.target.classList.contains('v4-prop-input')) return;
 
         const tBtn = e.target.closest('[id]');
         if (tBtn && TRANSPARENCY_BUTTONS[tBtn.id]) {

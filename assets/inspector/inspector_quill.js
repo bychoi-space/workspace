@@ -131,6 +131,7 @@
 
                 if (window.state.editingType === 'shape') {
                     MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', {
+                        id: window.state.editingIndex,
                         html: cleanHtml,
                         align: activeAlign,
                         vAlign: activeVAlign
@@ -264,24 +265,172 @@
         if (btnClean) btnClean.setAttribute('title', '서식 지우기 (Clear Formatting)');
     }
 
+    const BLOCK_STICKY_FORMAT_KEYS = new Set([
+        'align', 'lineheight', 'header', 'list', 'blockquote', 'indent', 'direction', 'code-block'
+    ]);
+
+    let _isImeComposing = false;
+    let _isApplyingStickyFormat = false;
+    let _pendingEmptyStickyMicrotask = false;
+    let _lastQuillUserInteractTs = 0;
+
+    function _stripInvisibleQuillChars(str) {
+        if (!str || typeof str !== 'string') return '';
+        return str.replace(/[\n\r\u200B\uFEFF]/g, '').trim();
+    }
+
+    function _getCleanPlainText(quillInstance) {
+        const q = quillInstance || window.quillEditor;
+        if (!q || typeof q.getText !== 'function') return '';
+        return _stripInvisibleQuillChars(q.getText());
+    }
+
+    function _hasUncommittedDomText(quillInstance) {
+        if (!quillInstance || !quillInstance.root) return false;
+        return _stripInvisibleQuillChars(quillInstance.root.textContent || '').length > 0;
+    }
+
+    function _focusQuillRootSafely(quillInstance) {
+        if (!quillInstance || !quillInstance.root) return;
+        if (document.activeElement !== quillInstance.root) {
+            try {
+                quillInstance.root.focus({ preventScroll: true });
+            } catch (_) {
+                try { quillInstance.root.focus(); } catch (__) {}
+            }
+        }
+    }
+
+    /**
+     * Safely restores sticky formatting on an empty Quill editor without detaching
+     * Quill's CursorBlot (.ql-cursor), breaking Korean IME composition, or dropping DOM focus.
+     * Block-scoped formats (align, lineheight) MUST be applied before inline formats so
+     * Quill 1.3.6 formatLine() + setSelection() never clobbers the inline CursorBlot caret.
+     */
+    function _restoreStickyFormatWhenEmpty(quillInstance, forceKeepFocus) {
+        if (!quillInstance || !window._currentStickyFormat || state._isLoadingShapeContent) return;
+        if (_isApplyingStickyFormat) return;
+        if (_isImeComposing || (quillInstance.selection && quillInstance.selection.composing)) return;
+        if (_getCleanPlainText(quillInstance).length > 0 || _hasUncommittedDomText(quillInstance)) return;
+
+        const isCurrentlyFocused = (document.activeElement === quillInstance.root) ||
+            (typeof quillInstance.hasFocus === 'function' && quillInstance.hasFocus());
+        const shouldKeepFocus = Boolean(forceKeepFocus) || isCurrentlyFocused;
+        if (!shouldKeepFocus) return;
+
+        _isApplyingStickyFormat = true;
+        try {
+            const sticky = window._currentStickyFormat;
+            const firstLine = quillInstance.root ? quillInstance.root.querySelector('p, div') : null;
+
+            // 1. Apply BLOCK-scoped formats first (only when DOM differs, normalizing 'left' -> false)
+            const stickyAlign = sticky.align || 'left';
+            if (quillInstance.root) {
+                quillInstance.root.style.textAlign = stickyAlign;
+            }
+            const targetQuillAlign = (stickyAlign === 'left' || !stickyAlign) ? false : stickyAlign;
+            const curDomAlign = (firstLine && firstLine.style.textAlign) ? firstLine.style.textAlign : false;
+            if (curDomAlign !== targetQuillAlign) {
+                quillInstance.formatLine(0, 1, 'align', targetQuillAlign, 'silent');
+            }
+
+            if (sticky.lineheight !== undefined && sticky.lineheight !== false && sticky.lineheight !== null) {
+                const targetLh = String(sticky.lineheight);
+                const curDomLh = (firstLine && firstLine.style.lineHeight) ? String(firstLine.style.lineHeight) : '';
+                if (curDomLh !== targetLh) {
+                    quillInstance.formatLine(0, 1, 'lineheight', targetLh, 'silent');
+                }
+            }
+
+            // 2. Guarantee live DOM focus & valid collapsed native selection at (0, 0) before inline formatting
+            _focusQuillRootSafely(quillInstance);
+            const natBefore = (quillInstance.selection && typeof quillInstance.selection.getNativeRange === 'function')
+                ? quillInstance.selection.getNativeRange()
+                : null;
+            if (!natBefore) {
+                quillInstance.setSelection(0, 0, 'silent');
+            }
+
+            // 3. Apply INLINE-scoped formats second so CursorBlot (.ql-cursor) stays intact with live caret
+            Object.keys(sticky).forEach((key) => {
+                if (BLOCK_STICKY_FORMAT_KEYS.has(key)) return;
+                const val = sticky[key];
+                if (val !== undefined && val !== false && val !== null) {
+                    quillInstance.format(key, val, 'silent');
+                }
+            });
+
+            // 4. Final focus & native range integrity check
+            _focusQuillRootSafely(quillInstance);
+            const natAfter = (quillInstance.selection && typeof quillInstance.selection.getNativeRange === 'function')
+                ? quillInstance.selection.getNativeRange()
+                : null;
+            if (!natAfter) {
+                quillInstance.setSelection(0, 0, 'silent');
+            }
+
+            // Sync Snow toolbar active state indicators if present
+            try {
+                const toolbarModule = quillInstance.theme && quillInstance.theme.modules && quillInstance.theme.modules.toolbar;
+                const activeRange = quillInstance.selection && typeof quillInstance.selection.getRange === 'function'
+                    ? quillInstance.selection.getRange()[0]
+                    : null;
+                if (toolbarModule && typeof toolbarModule.update === 'function' && activeRange) {
+                    toolbarModule.update(activeRange);
+                }
+            } catch (_) {}
+        } finally {
+            _isApplyingStickyFormat = false;
+        }
+    }
+
     // 7. Bind Selection and Text Change Synchronizers
     function _bindQuillSyncListeners(quillInstance) {
         if (!quillInstance) return;
 
-        quillInstance.on('selection-change', (range) => {
-            if (!range || state._isLoadingShapeContent) return;
-            const plainText = quillInstance.getText().replace(/\n/g, '').trim();
-            if (plainText.length === 0 && window._currentStickyFormat) {
-                Object.keys(window._currentStickyFormat).forEach(key => {
-                    const val = window._currentStickyFormat[key];
-                    if (val !== undefined && val !== false && val !== null) {
-                        quillInstance.format(key, val, 'silent');
+        if (quillInstance.root && !quillInstance.root._v4FocusGuardsBound) {
+            quillInstance.root._v4FocusGuardsBound = true;
+            const markInteract = () => { _lastQuillUserInteractTs = Date.now(); };
+            quillInstance.root.addEventListener('keydown', markInteract, true);
+            quillInstance.root.addEventListener('beforeinput', markInteract, true);
+            quillInstance.root.addEventListener('mousedown', markInteract, true);
+            quillInstance.root.addEventListener('compositionstart', () => {
+                _isImeComposing = true;
+                _lastQuillUserInteractTs = Date.now();
+            });
+            quillInstance.root.addEventListener('compositionend', () => {
+                _isImeComposing = false;
+                _lastQuillUserInteractTs = Date.now();
+                setTimeout(() => {
+                    if (_isImeComposing || state._isLoadingShapeContent) return;
+                    if (_getCleanPlainText(quillInstance).length === 0 && !_hasUncommittedDomText(quillInstance)) {
+                        const stillInQuill = (document.activeElement === quillInstance.root) ||
+                            ((Date.now() - _lastQuillUserInteractTs) < 250);
+                        if (stillInQuill) {
+                            _restoreStickyFormatWhenEmpty(quillInstance, true);
+                        }
                     }
-                });
+                }, 2);
+            });
+        }
+
+        quillInstance.on('selection-change', (range) => {
+            if (!range || state._isLoadingShapeContent || _isApplyingStickyFormat) return;
+            if (_isImeComposing || (quillInstance.selection && quillInstance.selection.composing)) return;
+
+            const plainText = _getCleanPlainText(quillInstance);
+            if (plainText.length === 0 && window._currentStickyFormat) {
+                const hasAttachedCursor = !!(quillInstance.selection && quillInstance.selection.cursor && quillInstance.selection.cursor.parent);
+                if (!hasAttachedCursor || document.activeElement !== quillInstance.root) {
+                    _restoreStickyFormatWhenEmpty(quillInstance, false);
+                }
             } else if (plainText.length > 0) {
                 const curFormat = quillInstance.getFormat(range);
                 if (curFormat && Object.keys(curFormat).length > 0) {
                     window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
+                    if (!curFormat.align && window._currentStickyFormat.align === undefined) {
+                        window._currentStickyFormat.align = 'left';
+                    }
                 }
                 const lhPicker = document.querySelector('.ql-toolbar .ql-lineheight');
                 if (lhPicker) {
@@ -297,29 +446,20 @@
             }
         });
 
-        quillInstance.on('text-change', () => {
-            if (!state.isEditing || state.editingIndex === -1 || state._isLoadingShapeContent) return;
+        quillInstance.on('text-change', (_delta, _oldDelta, source) => {
+            if (!state.isEditing || state.editingIndex === -1 || state._isLoadingShapeContent || _isApplyingStickyFormat) return;
             
-            const plainText = quillInstance.getText().replace(/\n/g, '').trim();
+            const plainText = _getCleanPlainText(quillInstance);
             if (plainText.length > 0) {
                 const curFormat = quillInstance.getFormat();
                 if (curFormat && Object.keys(curFormat).length > 0) {
                     window._currentStickyFormat = { ...window._currentStickyFormat, ...curFormat };
                 }
-            } else if (window._currentStickyFormat) {
-                requestAnimationFrame(() => {
-                    if (quillInstance && quillInstance.getText().replace(/\n/g, '').trim().length === 0) {
-                        Object.keys(window._currentStickyFormat).forEach(key => {
-                            const val = window._currentStickyFormat[key];
-                            if (val !== undefined && val !== false && val !== null) {
-                                quillInstance.format(key, val, 'silent');
-                            }
-                        });
-                    }
-                });
             }
 
-            const rawHtml = quillInstance.root.innerHTML;
+            const rawHtml = (quillInstance.root.innerHTML || '')
+                .replace(/<span class="ql-cursor">[\s\S]*?<\/span>/g, '')
+                .replace(/\uFEFF/g, '');
             const html = preserveConsecutiveSpaces(rawHtml);
             const activeAlign = (window.state?.selectedComponentStyles?.currentStyles?.textAlign) || 
                                 (quillInstance.root?.style?.textAlign) || '';
@@ -329,7 +469,7 @@
                 const list = state.activeFile?.meta?.description;
                 if (list && list[state.editingIndex]) {
                     list[state.editingIndex].html = html;
-                    list[state.editingIndex].text = quillInstance.getText().trim();
+                    list[state.editingIndex].text = _getCleanPlainText(quillInstance);
                 }
                 const iframe = document.getElementById('main-iframe');
                 if (iframe && iframe.contentWindow) {
@@ -345,6 +485,7 @@
                 const iframe = document.getElementById('main-iframe');
                 if (iframe && iframe.contentWindow) {
                     MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', { 
+                        id: state.editingIndex,
                         html: html,
                         align: activeAlign,
                         vAlign: activeVAlign
@@ -363,7 +504,104 @@
                     markAsDirty();
                 }
             }
+
+            // Restore sticky format & keep caret focus in a microtask right after Quill finishes synchronous deleteText/setSelection
+            if (plainText.length === 0 && window._currentStickyFormat) {
+                const wasUserEdit = (source === 'user') || ((Date.now() - _lastQuillUserInteractTs) < 250);
+                if (!_pendingEmptyStickyMicrotask) {
+                    _pendingEmptyStickyMicrotask = true;
+                    const scheduleMicro = (typeof queueMicrotask === 'function')
+                        ? queueMicrotask
+                        : (fn) => Promise.resolve().then(fn);
+                    scheduleMicro(() => {
+                        _pendingEmptyStickyMicrotask = false;
+                        _restoreStickyFormatWhenEmpty(quillInstance, wasUserEdit);
+                    });
+                }
+            }
         });
+    }
+
+    // 7.1 Empty Standalone Text SHAPE Auto-Cleanup Guard (Parent Side)
+    function _isEditingStandaloneTextShape() {
+        const s = window.state;
+        if (!s || !s.isEditing || s.editingIndex === -1) return false;
+        if (s.editingType !== 'shape') return false;
+        const comp = s.selectedComponentStyles || s.selectedComponent;
+        if (!comp) return false;
+        if (comp.isGroup || comp.isDescriptionPin || comp.isImage || comp.isTable || comp.isGrid) return false;
+        if (comp.pinIndex !== undefined && comp.pinIndex !== -1 && !isNaN(comp.pinIndex)) return false;
+        const isTextShape = !!comp.isTextShape ||
+            (!comp.isShape && !!comp.isPin) ||
+            (typeof comp.id === 'string' && comp.id.startsWith('v4-text-')) ||
+            (Array.isArray(comp.classList) && (comp.classList.includes('v4-text-shape') || comp.classList.includes('v4-text-box')));
+        return isTextShape;
+    }
+
+    function _isQuillTextEmpty(quillInstance) {
+        const q = quillInstance || window.quillEditor;
+        if (!q) return false;
+        if (_isImeComposing || (q.selection && q.selection.composing)) return false;
+        if (_hasUncommittedDomText(q)) return false;
+        return _getCleanPlainText(q).length === 0;
+    }
+
+    window.cleanupActiveEmptyTextShapeIfNeeded = function() {
+        if (!_isEditingStandaloneTextShape()) return false;
+        if (!_isQuillTextEmpty(window.quillEditor)) return false;
+
+        const targetId = window.state?.editingIndex;
+        if (!targetId || typeof targetId !== 'string') return false;
+
+        if (window.quillEditor && document.activeElement === window.quillEditor.root) {
+            try { window.quillEditor.blur(); } catch (_) {}
+        }
+
+        const iframe = document.getElementById('main-iframe') || (window.DOM && window.DOM.iframe);
+        if (iframe && iframe.contentWindow && window.MessageHub) {
+            window.MessageHub.send(iframe.contentWindow, 'LF_CLEANUP_EMPTY_TEXT_SHAPES', {
+                id: targetId,
+                forceBlur: true,
+                deselectIfRemoved: true
+            });
+            return true;
+        }
+        return false;
+    };
+
+    let _emptyTextShapeGuardBound = false;
+    function _bindEmptyTextShapeExitGuard() {
+        if (_emptyTextShapeGuardBound) return;
+        _emptyTextShapeGuardBound = true;
+
+        document.addEventListener('mousedown', (e) => {
+            if (!_isEditingStandaloneTextShape() || !_isQuillTextEmpty(window.quillEditor)) return;
+            const target = e.target;
+            if (!target || typeof target.closest !== 'function') return;
+
+            // Canvas iframe clicks are handled synchronously inside vctrl_iframe_script.js without cross-frame race conditions
+            if (target.tagName === 'IFRAME') return;
+
+            // Allow Undo trigger to restore previous text rather than deleting first
+            if (target.closest('#btn-undo, [data-action="undo"]')) return;
+
+            // Keep alive while interacting with active Text SHAPE's own inspector panel / controls / toolbar / color popover
+            const isInsideActiveInspectorControls = !!(
+                target.closest('#text-editor-section') ||
+                target.closest('#shape-inspector-section') ||
+                target.closest('#sidebar-inspector-body') ||
+                target.closest('#floating-inspector-card') ||
+                target.closest('#selection-actions-bar') ||
+                target.closest('#group-dimension-bar') ||
+                target.closest('.v4-color-popover') ||
+                target.closest('#v4-color-palette-popover') ||
+                target.closest('.ql-toolbar') ||
+                target.closest('.ql-picker-options')
+            );
+            if (isInsideActiveInspectorControls) return;
+
+            window.cleanupActiveEmptyTextShapeIfNeeded();
+        }, true);
     }
 
     // 8. Main Orchestrator Function
@@ -400,6 +638,7 @@
         }, 0);
 
         _bindQuillSyncListeners(window.quillEditor);
+        _bindEmptyTextShapeExitGuard();
     };
 
 // Subscribe to direct iframe text changes to sync Quill editor in real-time

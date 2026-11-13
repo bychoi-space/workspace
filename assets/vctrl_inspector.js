@@ -535,6 +535,10 @@ function _syncQuillContent(compStyles, editingType) {
 
         window._shapeQuillTimer = setTimeout(() => {
             window._shapeQuillTimer = null;
+            const isUserFocusedBeforeSync = wasQuillFocused ||
+                (document.activeElement === window.quillEditor.root) ||
+                (typeof window.quillEditor.hasFocus === 'function' && window.quillEditor.hasFocus());
+
             window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
 
             window._currentStickyFormat = {};
@@ -585,11 +589,15 @@ function _syncQuillContent(compStyles, editingType) {
                 if (lhInput && document.activeElement !== lhInput) lhInput.value = targetLh;
             }
 
-            if (wasQuillFocused) {
-                window.quillEditor.setSelection(0, 0);
+            if (isUserFocusedBeforeSync) {
+                const len = window.quillEditor.getLength();
+                window.quillEditor.setSelection(Math.max(0, len - 1), 0, 'silent');
             } else {
                 window.quillEditor.blur();
-                window.quillEditor.setSelection(null);
+                window.quillEditor.setSelection(null, 'silent');
+                if (window.quillEditor.root && document.activeElement === window.quillEditor.root) {
+                    window.quillEditor.root.blur();
+                }
                 const iframe = document.getElementById('main-iframe');
                 if (iframe && iframe.contentWindow) {
                     iframe.contentWindow.focus();
@@ -728,7 +736,7 @@ window.updateProperties = function(compStyles, isNewSelectionExplicit) {
         window.restorePropertiesSections(isNewComp);
         const curActiveEl = document.activeElement;
         const curIsBtn = curActiveEl && curActiveEl.tagName === 'BUTTON';
-        const isTypingInAdminProps = !curIsBtn && curActiveEl && (curActiveEl.classList.contains('admin-col-label-input') || curActiveEl.classList.contains('admin-row-height-input') || curActiveEl.id === 'prop-admin-group-header-title' || curActiveEl.id === 'prop-admin-label-width-slider' || curActiveEl.id === 'prop-admin-label-width-number');
+        const isTypingInAdminProps = !curIsBtn && curActiveEl && (curActiveEl.classList.contains('admin-col-label-input') || curActiveEl.classList.contains('admin-row-height-input') || curActiveEl.id === 'prop-admin-group-header-title' || curActiveEl.id === 'prop-admin-label-width-slider' || curActiveEl.id === 'prop-admin-label-width-number' || curActiveEl.id === 'prop-width-admin' || curActiveEl.id === 'prop-height-admin');
 
         _hideAllPropertySections(isTypingInAdminProps);
 

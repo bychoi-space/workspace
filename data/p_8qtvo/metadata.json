@@ -65,6 +65,17 @@
       "defaultTab": "description",
       "screenDesc": "PC/Mobile 실물 캡처 정밀 분석, 국내 선두 플랫폼(무신사·29CM·SSF) 대비 격차 비교 및 3단계 개선 로드맵"
     },
+    "03_Order_UI_Improvement_Strategy.html": {
+      "title": "시선닷컴 주문 화면 UI 개선 전략",
+      "type": "plan",
+      "updatedAt": "2026-11-13T07:00:00.000Z",
+      "template": "template_process.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "editor",
+      "screenDesc": "시선닷컴 AS-IS 문제점 및 국내 동종업계 벤치마크 분석(#04~#06) 기반 PC·Mobile TO-BE 화면 설계(#08~#12) 연결 개선 전략"
+    },
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
@@ -284,7 +295,7 @@
     "99_Blank_924.html",
     "99_Blank_925.html",
     "99_Blank_926.html",
-    "03_Cart_Order_Benchmark_Analysis.html",
+    "03_Order_UI_Improvement_Strategy.html",
     "renewal_cart_2.html",
     "renewal_cart_3.html",
     "renewal_order_2.html",
@@ -292,7 +303,8 @@
     "renewal_payEnd.html",
     "renewal_order_3.html",
     "renewal_cart.html",
-    "renewal_order.html"
+    "renewal_order.html",
+    "03_Cart_Order_Benchmark_Analysis.html"
   ],
   "updated": "2026-11-13 15:39:04",
   "version": 0.1,

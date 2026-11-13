@@ -235,6 +235,12 @@ window.v4ObjectShapeScript = `
                     // Assign styles with override for text alignment and background styling
                     for (const [key, val] of Object.entries(d.style)) {
                         if (key === 'width' || key === 'height' || key === 'html' || key === 'patternType' || key === 'padTop' || key === 'padBottom' || key === 'padLeft' || key === 'padRight' || key === 'paddingTop' || key === 'paddingBottom' || key === 'paddingLeft' || key === 'paddingRight' || key === 'padding') continue;
+                        if (key === 'cornerDir') {
+                            const normCornerDir = val || 'all';
+                            t.setAttribute('data-corner-dir', normCornerDir);
+                            if (shape) shape.setAttribute('data-corner-dir', normCornerDir);
+                            continue;
+                        }
                         
                         if (key === 'background' || key === 'backgroundColor') {
                             if (isSvgContainer) {
@@ -259,6 +265,9 @@ window.v4ObjectShapeScript = `
                                 if (shape) shape.setAttribute('data-align', val);
                             }
                             t.style.setProperty(cssKey, cssVal, 'important');
+                            if (key === 'borderRadius' && window.SelectionAdorner && document.querySelector('.v4-selection-adorner')) {
+                                window.SelectionAdorner.update();
+                            }
                             
                             if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'vAlign') {
                                 // Preserve existing custom padding if present; only fallback to 5px 10px if not set
@@ -371,7 +380,110 @@ window.v4ObjectShapeScript = `
         return true;
     };
 
+    function isStandaloneTextShapeComp(el) {
+        if (!el || !el.classList || !el.classList.contains('lf-component')) return false;
+        if (el.classList.contains('lf-group')) return false;
+        if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return false;
+        if (el.id && el.id.indexOf('v4-pin-') === 0) return false;
+        if (el.getAttribute('data-index') !== null || el.getAttribute('data-pin-num') !== null) return false;
+        var isTextCls = el.classList.contains('v4-text-shape') || el.classList.contains('v4-text-box');
+        if (!isTextCls) return false;
+        if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .lf-icon, .v4-illustration-container, .v4-motion-container')) return false;
+        return true;
+    }
+
+    function isStandaloneTextShapeEmpty(el) {
+        if (!isStandaloneTextShapeComp(el)) return false;
+        var cell = el.querySelector('.v4-editable-cell');
+        if (!cell) return false;
+        var clone = cell.cloneNode(true);
+        clone.querySelectorAll('.ql-cursor').forEach(function(cur) { cur.remove(); });
+        var rawText = clone.textContent || '';
+        var zws = String.fromCharCode(8203);
+        var cleaned = rawText.split(zws).join('').trim();
+        return cleaned.length === 0;
+    }
+
+    function cleanupEmptyTextShapes(opts) {
+        var options = opts || {};
+        var candidates = [];
+        if (options.id) {
+            var target = document.getElementById(options.id);
+            if (target) candidates.push(target);
+        } else {
+            candidates = Array.from(document.querySelectorAll('.lf-component.v4-text-shape, .lf-component.v4-text-box'));
+        }
+        if (candidates.length === 0) return 0;
+
+        var removedCount = 0;
+        var wasAnySelected = false;
+        var affectedGroups = new Set();
+
+        candidates.forEach(function(el) {
+            if (!el || !el.isConnected) return;
+            if (options.exceptId && el.id === options.exceptId) return;
+            if (!isStandaloneTextShapeEmpty(el)) return;
+
+            var cell = el.querySelector('.v4-editable-cell');
+            var isFocusedInline = !!(cell && document.activeElement && (document.activeElement === cell || cell.contains(document.activeElement)));
+            if (isFocusedInline && !options.forceBlur) return;
+            if (isFocusedInline && options.forceBlur) {
+                try { document.activeElement.blur(); } catch (blurErr) {}
+            }
+
+            if (el.classList.contains('selected') || window.activeEl === el) {
+                wasAnySelected = true;
+                if (window.activeEl === el) window.activeEl = null;
+            }
+            if (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('lf-group')) {
+                affectedGroups.add(el.parentElement);
+            }
+            el.remove();
+            removedCount++;
+        });
+
+        affectedGroups.forEach(function(g) {
+            if (g && g.isConnected && g.querySelectorAll('.lf-component').length === 0) {
+                if (g.classList.contains('selected') || window.activeEl === g) {
+                    wasAnySelected = true;
+                    if (window.activeEl === g) window.activeEl = null;
+                }
+                g.remove();
+            }
+        });
+
+        if (removedCount > 0) {
+            if (typeof window.markDirty === 'function') window.markDirty();
+            var remainingSelected = document.querySelectorAll('.lf-component.selected').length;
+            if (wasAnySelected && remainingSelected === 0) {
+                if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
+                    window.ResponsiveSmartGuide.clearGuides(true);
+                }
+                if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
+                    try { window.SelectionAdorner.clear(); } catch (adErr) {}
+                }
+                if (options.deselectIfRemoved && typeof window.notifyParent === 'function') {
+                    window.notifyParent({ type: 'LF_DESELECT' });
+                }
+            } else if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                try { window.SelectionAdorner.update(); } catch (adUpdErr) {}
+            }
+        }
+        return removedCount;
+    }
+
+    window.isStandaloneTextShapeComp = isStandaloneTextShapeComp;
+    window.isStandaloneTextShapeEmpty = isStandaloneTextShapeEmpty;
+    window.cleanupEmptyTextShapes = cleanupEmptyTextShapes;
+    window.v4ObjectShape.isStandaloneTextShapeComp = isStandaloneTextShapeComp;
+    window.v4ObjectShape.isStandaloneTextShapeEmpty = isStandaloneTextShapeEmpty;
+    window.v4ObjectShape.cleanupEmptyTextShapes = cleanupEmptyTextShapes;
+
     window.v4MessageHandlers = window.v4MessageHandlers || {};
+    window.v4MessageHandlers['LF_CLEANUP_EMPTY_TEXT_SHAPES'] = function(d) {
+        cleanupEmptyTextShapes(d || {});
+    };
+
     window.v4MessageHandlers['LF_UPDATE_SHAPE_TEXT'] = function(d) {
         const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); 
         if (!s) return;
@@ -379,7 +491,8 @@ window.v4ObjectShapeScript = `
         if (!shape) {
             const cell = s.querySelector('.v4-editable-cell');
             if (cell) {
-                if (window.V4UndoManager) window.V4UndoManager.saveState();
+                const wasAlreadyEmpty = isStandaloneTextShapeEmpty(s);
+                if (window.V4UndoManager && !wasAlreadyEmpty) window.V4UndoManager.saveState();
                 cell.innerHTML = d.html;
                 const curAlign = d.align || s.getAttribute('data-align') || cell.getAttribute('data-align') || cell.style.textAlign || 'left';
                 const hAlign = curAlign === 'left' ? 'flex-start' : (curAlign === 'right' ? 'flex-end' : 'center');

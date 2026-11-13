@@ -94,6 +94,9 @@ window.v4ShortcutsScript = `
             if (isEditing) {
                 console.log("[VCTRL SHORTCUTS] Exiting inline text editing mode via F2.");
                 if (activeElement && typeof activeElement.blur === 'function') activeElement.blur();
+                if (typeof window.cleanupEmptyTextShapes === 'function') {
+                    window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
+                }
             } else {
                 const selected = document.querySelectorAll('.lf-component.selected');
                 if (selected.length > 0) {
@@ -141,6 +144,9 @@ window.v4ShortcutsScript = `
                 if (activeElement && typeof activeElement.blur === 'function') {
                     activeElement.blur();
                 }
+                if (typeof window.cleanupEmptyTextShapes === 'function') {
+                    window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
+                }
                 return;
             }
 
@@ -149,7 +155,10 @@ window.v4ShortcutsScript = `
             if (selected.length > 0 || window.activeEl) {
                 e.preventDefault();
                 console.log("[VCTRL SHORTCUTS] Deselecting objects via Escape.");
-                selected.forEach(el => el.classList.remove('selected'));
+                if (typeof window.cleanupEmptyTextShapes === 'function') {
+                    window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: false });
+                }
+                selected.forEach(el => { if (el && el.isConnected) el.classList.remove('selected'); });
                 window.activeEl = null;
                 if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
                     window.ResponsiveSmartGuide.clearGuides(true);

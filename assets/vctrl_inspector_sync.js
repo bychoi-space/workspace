@@ -231,7 +231,7 @@
             activeEl.classList.contains('admin-row-height-input') || 
             activeEl.id === 'prop-admin-group-header-title' || 
             activeEl.id === 'prop-admin-label-width-slider' || 
-            activeEl.id === 'prop-admin-label-width-number'
+            activeEl.id === 'prop-admin-label-width-number' || activeEl.id === 'prop-width-admin' || activeEl.id === 'prop-height-admin'
         );
         if (!isTypingInAdminProps) {
             if (typeof window._syncAdminSettingsProps === 'function') {
@@ -376,6 +376,9 @@
             if (txt) txt.innerText = radiusVal;
             if (typeof window._syncCornerBtns === 'function') {
                 window._syncCornerBtns(radiusVal);
+            }
+            if (typeof window._syncCornerDirBtns === 'function') {
+                window._syncCornerDirBtns(s.borderCornerDir || 'all');
             }
         }
 

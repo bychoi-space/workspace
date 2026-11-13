@@ -38,13 +38,51 @@
         highlightActive(btn, isActive);
     };
 
+    // --- Corner Direction State & Helpers (SSOT) ---
+    const VALID_CORNER_DIRS = ['all', 'top', 'bottom', 'left', 'right'];
+    let _activeCornerDir = 'all';
+
+    const normalizeCornerDir = (dir) => {
+        const d = String(dir || 'all').toLowerCase();
+        return VALID_CORNER_DIRS.includes(d) ? d : 'all';
+    };
+
+    const buildCornerRadiusCss = (val, dir) => {
+        const r = Math.max(0, parseInt(val, 10) || 0);
+        const d = normalizeCornerDir(dir !== undefined ? dir : _activeCornerDir);
+        if (r === 0) return '0px';
+        if (d === 'top') return r + 'px ' + r + 'px 0px 0px';
+        if (d === 'bottom') return '0px 0px ' + r + 'px ' + r + 'px';
+        if (d === 'left') return r + 'px 0px 0px ' + r + 'px';
+        if (d === 'right') return '0px ' + r + 'px ' + r + 'px 0px';
+        return r + 'px';
+    };
+
+    const buildCornerRadiusStyle = (val, dir) => {
+        const r = Math.max(0, parseInt(val, 10) || 0);
+        const d = normalizeCornerDir(dir !== undefined ? dir : _activeCornerDir);
+        return {
+            borderRadius: buildCornerRadiusCss(r, d),
+            cornerDir: d
+        };
+    };
+
     // --- State Synchronization (Read) ---
     const syncCornerBtns = (radiusVal) => {
         const btnSharp = document.getElementById('btn-shape-corner-sharp');
         const btnRound = document.getElementById('btn-shape-corner-round');
-        const isSharp = parseInt(radiusVal) === 0;
+        const isSharp = parseInt(radiusVal, 10) === 0;
         setBtnActive(btnSharp, isSharp);
         setBtnActive(btnRound, !isSharp);
+    };
+
+    const syncCornerDirBtns = (dir) => {
+        const normDir = normalizeCornerDir(dir);
+        _activeCornerDir = normDir;
+        document.querySelectorAll('.v4-corner-dir-btn').forEach(btn => {
+            const bDir = btn.getAttribute('data-corner-dir') || 'all';
+            setBtnActive(btn, bDir === normDir);
+        });
     };
 
     const syncAlignBtns = (alignVal) => {
@@ -105,27 +143,48 @@
     window._syncWaveDirBtns = syncWaveDirBtns;
 
     // --- Action Handlers (Write) ---
-    const applyCornerRadius = (val) => {
+    const applyCornerRadius = (val, explicitDir) => {
+        const numVal = Math.max(0, parseInt(val, 10) || 0);
+        if (explicitDir !== undefined) {
+            syncCornerDirBtns(explicitDir);
+        }
         const slider = document.getElementById('shape-border-radius');
         const txt = document.getElementById('txt-shape-border-radius');
         if (slider) {
-            slider.value = val;
+            slider.value = numVal;
             slider.dispatchEvent(new Event('input', { bubbles: true }));
         } else {
             const targetIds = getActiveTargetIds();
             if (targetIds.length > 0) {
+                const stylePayload = buildCornerRadiusStyle(numVal, _activeCornerDir);
                 notifyIframe({
                     type: 'LF_UPDATE_STYLE',
                     id: targetIds[0],
                     ids: targetIds,
                     selector: '.v4-shape-rect, .v4-shape-webpage, .v4-shape-pattern-grid',
-                    style: { borderRadius: val + 'px' }
+                    style: stylePayload
                 });
+                if (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles) {
+                    window.state.selectedComponentStyles.currentStyles.borderRadius = numVal;
+                    window.state.selectedComponentStyles.currentStyles.borderCornerDir = stylePayload.cornerDir;
+                    window.state.selectedComponentStyles.currentStyles.borderRadiusCss = stylePayload.borderRadius;
+                }
                 if (typeof window.markAsDirty === 'function') window.markAsDirty();
             }
         }
-        if (txt) txt.innerText = val;
-        syncCornerBtns(val);
+        if (txt) txt.innerText = numVal;
+        syncCornerBtns(numVal);
+    };
+
+    const applyCornerDir = (dir) => {
+        const normDir = normalizeCornerDir(dir);
+        syncCornerDirBtns(normDir);
+        const slider = document.getElementById('shape-border-radius');
+        let curVal = slider ? (parseInt(slider.value, 10) || 0) : 8;
+        if (normDir !== 'all' && curVal === 0) {
+            curVal = 8;
+        }
+        applyCornerRadius(curVal, normDir);
     };
 
     const applyTextAlign = (align) => {
@@ -147,7 +206,16 @@
             window._currentStickyFormat.align = align;
         }
         if (window.quillEditor) {
-            window.quillEditor.format('align', align === 'left' ? false : align, 'silent');
+            const wasQuillFocused = document.activeElement === window.quillEditor.root;
+            const totalLen = Math.max(1, window.quillEditor.getLength());
+            window.quillEditor.formatLine(0, totalLen, 'align', align === 'left' ? false : align, 'silent');
+            if (!wasQuillFocused && document.activeElement === window.quillEditor.root) {
+                window.quillEditor.blur();
+                const iframe = document.getElementById('main-iframe');
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.focus();
+                }
+            }
         }
         
         notifyIframe({
@@ -233,14 +301,15 @@
             if (!compStyles) return;
             const s = compStyles.currentStyles || {};
             
-            // Corner radius
+            // Corner radius & direction
             if (s.borderRadius !== undefined) {
-                const rVal = parseInt(s.borderRadius) || 0;
+                const rVal = parseInt(s.borderRadius, 10) || 0;
                 const slider = document.getElementById('shape-border-radius');
                 const txt = document.getElementById('txt-shape-border-radius');
                 if (slider) slider.value = rVal;
                 if (txt) txt.innerText = rVal;
                 syncCornerBtns(rVal);
+                syncCornerDirBtns(s.borderCornerDir || 'all');
             }
 
             // Alignments
@@ -336,12 +405,17 @@
         },
 
         syncCornerBtns: syncCornerBtns,
+        syncCornerDirBtns: syncCornerDirBtns,
+        getCornerDir: () => _activeCornerDir,
+        buildCornerRadiusCss: buildCornerRadiusCss,
+        buildCornerRadiusStyle: buildCornerRadiusStyle,
         syncAlignBtns: syncAlignBtns,
         syncVAlignBtns: syncVAlignBtns,
         syncShapePaddingInputs: syncShapePaddingInputs,
         syncPatternVisualBtns: syncPatternVisualBtns,
         syncWaveDirBtns: syncWaveDirBtns,
         applyCornerRadius: applyCornerRadius,
+        applyCornerDir: applyCornerDir,
         applyTextAlign: applyTextAlign,
         applyVerticalAlign: applyVerticalAlign,
         applyShapePadding: applyShapePadding
@@ -417,6 +491,14 @@
                 });
                 if (typeof window.markAsDirty === 'function') window.markAsDirty();
             }
+            return;
+        }
+
+        // Rect corner direction button (all / top / bottom / left / right)
+        const cornerDirBtn = e.target.closest('.v4-corner-dir-btn');
+        if (cornerDirBtn) {
+            const dir = cornerDirBtn.getAttribute('data-corner-dir') || 'all';
+            applyCornerDir(dir);
             return;
         }
 
@@ -500,12 +582,14 @@
 
     // Backward-compatible global aliases
     window._syncCornerBtns = syncCornerBtns;
+    window._syncCornerDirBtns = syncCornerDirBtns;
     window._syncAlignBtns = syncAlignBtns;
     window._syncVAlignBtns = syncVAlignBtns;
     window._syncShapePaddingInputs = syncShapePaddingInputs;
     window._syncPatternVisualBtns = syncPatternVisualBtns;
     window._syncButtonCornerBtns = syncButtonCornerBtns;
     window._applyCornerRadius = applyCornerRadius;
+    window._applyCornerDir = applyCornerDir;
     window._applyTextAlign = applyTextAlign;
     window._applyVerticalAlign = applyVerticalAlign;
     window._applyShapePadding = applyShapePadding;

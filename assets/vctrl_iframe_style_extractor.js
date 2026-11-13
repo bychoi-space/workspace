@@ -546,6 +546,81 @@ if (!window.v4IframeStyleExtractorScript) {
             }
             return fallbackVal;
         };
+        const shapeCornerInfo = (function() {
+            if (!shape) {
+                const nonShapeRad = boxEl ? (parseInt(_getVal(boxEl, "borderRadius")) || 0) : (buttonEl ? (parseInt(_getVal(buttonEl, "borderRadius")) || 0) : 0);
+                return { radius: nonShapeRad, dir: "all", css: nonShapeRad + "px", tl: nonShapeRad, tr: nonShapeRad, br: nonShapeRad, bl: nonShapeRad };
+            }
+            const compStyle = window.getComputedStyle(shape);
+            const readCorner = function(camelProp, cssProp) {
+                if (shape.style && shape.style[camelProp]) {
+                    const inlineVal = parseInt(shape.style[camelProp], 10);
+                    if (!isNaN(inlineVal)) return inlineVal;
+                }
+                const cv = compStyle ? compStyle.getPropertyValue(cssProp) : "";
+                const parsed = parseInt(cv, 10);
+                return isNaN(parsed) ? null : parsed;
+            };
+            let tl = readCorner("borderTopLeftRadius", "border-top-left-radius");
+            let tr = readCorner("borderTopRightRadius", "border-top-right-radius");
+            let br = readCorner("borderBottomRightRadius", "border-bottom-right-radius");
+            let bl = readCorner("borderBottomLeftRadius", "border-bottom-left-radius");
+
+            if ((tl === null || tr === null || br === null || bl === null) && shape.style && shape.style.borderRadius) {
+                const rawTokens = String(shape.style.borderRadius).trim().split(" ").filter(Boolean).map(function(tok) { return parseInt(tok, 10) || 0; });
+                if (rawTokens.length === 1) {
+                    tl = tr = br = bl = rawTokens[0];
+                } else if (rawTokens.length === 2) {
+                    tl = br = rawTokens[0];
+                    tr = bl = rawTokens[1];
+                } else if (rawTokens.length === 3) {
+                    tl = rawTokens[0];
+                    tr = bl = rawTokens[1];
+                    br = rawTokens[2];
+                } else if (rawTokens.length >= 4) {
+                    tl = rawTokens[0];
+                    tr = rawTokens[1];
+                    br = rawTokens[2];
+                    bl = rawTokens[3];
+                }
+            }
+            if (tl === null) tl = parseInt(_getVal(shape, "borderRadius")) || 0;
+            if (tr === null) tr = tl;
+            if (br === null) br = tl;
+            if (bl === null) bl = tl;
+
+            const maxR = Math.max(tl, tr, br, bl);
+            const savedDir = shape.getAttribute("data-corner-dir") || "";
+            const isValidDir = function(d) {
+                return d === "all" || d === "top" || d === "bottom" || d === "left" || d === "right";
+            };
+
+            let dir = "all";
+            if (maxR === 0) {
+                dir = isValidDir(savedDir) ? savedDir : "all";
+            } else if (tl > 0 && tr > 0 && br === 0 && bl === 0) {
+                dir = "top";
+            } else if (tl === 0 && tr === 0 && br > 0 && bl > 0) {
+                dir = "bottom";
+            } else if (tl > 0 && bl > 0 && tr === 0 && br === 0) {
+                dir = "left";
+            } else if (tr > 0 && br > 0 && tl === 0 && bl === 0) {
+                dir = "right";
+            } else {
+                dir = "all";
+            }
+
+            let css = "0px";
+            if (maxR > 0) {
+                if (dir === "top") css = maxR + "px " + maxR + "px 0px 0px";
+                else if (dir === "bottom") css = "0px 0px " + maxR + "px " + maxR + "px";
+                else if (dir === "left") css = maxR + "px 0px 0px " + maxR + "px";
+                else if (dir === "right") css = "0px " + maxR + "px " + maxR + "px 0px";
+                else if (tl === tr && tr === br && br === bl) css = maxR + "px";
+                else css = tl + "px " + tr + "px " + br + "px " + bl + "px";
+            }
+            return { radius: maxR, dir: dir, css: css, tl: tl, tr: tr, br: br, bl: bl };
+        })();
         return {
             bg: window.rgbToHex(getCompBg()),
             border: window.rgbToHex(getCompBorder()),
@@ -608,7 +683,13 @@ if (!window.v4IframeStyleExtractorScript) {
             tableHeader: window.rgbToHex(table ? _getVal(table.querySelector("th"), "backgroundColor") : ""),
             tableHeaderText: window.rgbToHex(table ? _getVal(table.querySelector("th"), "color") : ""),
             iconColor: window.rgbToHex(detectedIconColor || "#000000"),
-            borderRadius: shape ? (parseInt(_getVal(shape, "borderRadius")) || 0) : (boxEl ? (parseInt(_getVal(boxEl, "borderRadius")) || 0) : (buttonEl ? (parseInt(_getVal(buttonEl, "borderRadius")) || 0) : 0)),
+            borderRadius: shapeCornerInfo.radius,
+            borderCornerDir: shapeCornerInfo.dir,
+            borderRadiusCss: shapeCornerInfo.css,
+            radiusTL: shapeCornerInfo.tl,
+            radiusTR: shapeCornerInfo.tr,
+            radiusBR: shapeCornerInfo.br,
+            radiusBL: shapeCornerInfo.bl,
             bgOpacity: _getAlphaPercent(getCompBg()),
             isBgTransparent: (() => {
                 const colorVal = getCompBg();

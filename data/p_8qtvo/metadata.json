@@ -262,7 +262,7 @@
     "renewal_order_4.html": {
       "title": "주문서 (Te-Be) 배송지없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-13T06:32:40.268Z",
+      "updatedAt": "2026-11-13T06:34:39.225Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -294,7 +294,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-11-13 15:32:40",
+  "updated": "2026-11-13 15:34:38",
   "version": 0.1,
   "category": "project"
 }

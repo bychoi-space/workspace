@@ -836,6 +836,10 @@
       "version": 0.1
     },
     "09_Admin_PC_Scroll_4.html": {
+      "title": "09_Admin_PC_Scroll_4",
+      "type": "admin",
+      "updatedAt": "2026-11-13T00:29:52.437Z",
+      "template": "template_admin_pc_scroll.html",
       "description": [
         {
           "type": "pin",
@@ -1040,15 +1044,9 @@
           "standardized": true,
           "scrollFixed": "none"
         }
-      ],
-      "updatedAt": "2026-11-13T00:34:09.989Z",
-      "version": 0.1
+      ]
     },
     "09_Admin_PC_Scroll_524.html": {
-      "title": "09_Admin_PC_Scroll_524",
-      "type": "admin",
-      "updatedAt": "2026-11-13T00:34:41.150Z",
-      "template": "template_admin_pc_scroll.html",
       "description": [
         {
           "type": "pin",
@@ -1253,9 +1251,15 @@
           "standardized": true,
           "scrollFixed": "none"
         }
-      ]
+      ],
+      "updatedAt": "2026-11-13T00:37:14.612Z",
+      "version": 0.1
     },
     "09_Admin_PC_Scroll_507.html": {
+      "title": "09_Admin_PC_Scroll_507",
+      "type": "admin",
+      "updatedAt": "2026-11-13T00:37:42.345Z",
+      "template": "template_admin_pc_scroll.html",
       "description": [
         {
           "type": "pin",
@@ -1431,15 +1435,129 @@
           "standardized": true,
           "scrollFixed": "none"
         }
-      ],
-      "updatedAt": "2026-11-13T00:39:36.010Z",
-      "version": 0.1
+      ]
     },
     "09_Admin_PC_Scroll_727.html": {
-      "title": "09_Admin_PC_Scroll_727",
-      "type": "admin",
-      "updatedAt": "2026-11-13T00:40:10.496Z",
-      "template": "template_admin_pc_scroll.html"
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[1. 처리 프로세스]\n· FO: 푸터 제휴문의(팝업 또는 페이지) 작성 → [문의하기] 시 필수값·형식·첨부파일·개인정보 동의 검증 → 접수 완료 안내\n· 시스템: DB 저장(접수번호 채번, 처리상태=접수, 연락처·이메일 암호화) → 첨부파일 비공개 저장 → 알림 수신자(12p)에게 접수 알림 메일 비동기 발송\n  - DB 저장 실패 시 FO \"일시적인 오류로 접수되지 않았습니다. 잠시 후 다시 시도해주세요.\" 노출 (입력값 유지)\n· BO: 목록(9p) → 상세(10p) → 처리정보 저장 → 메일 발송(11p) 회신/전달 → 처리완료\n· 보유기간 경과(접수일+1년) 건은 일 배치로 개인정보·첨부파일 파기, 파기 이력만 보관\n· 스팸 방지: 동일 IP·동일 이메일 단시간 다건 접수 제한 (예: 10분 내 3건 초과 시 차단) 또는 캡차 적용 검토",
+          "html": "[1. 처리 프로세스]<div>· FO: 푸터 제휴문의(팝업 또는 페이지) 작성 → [문의하기] 시 필수값·형식·첨부파일·개인정보 동의 검증 → 접수 완료 안내</div><div>· 시스템: DB 저장(접수번호 채번, 처리상태=접수, 연락처·이메일 암호화) → 첨부파일 비공개 저장 → 알림 수신자(12p)에게 접수 알림 메일 비동기 발송</div><div>  - DB 저장 실패 시 FO \"일시적인 오류로 접수되지 않았습니다. 잠시 후 다시 시도해주세요.\" 노출 (입력값 유지)</div><div>· BO: 목록(9p) → 상세(10p) → 처리정보 저장 → 메일 발송(11p) 회신/전달 → 처리완료</div><div>· 보유기간 경과(접수일+1년) 건은 일 배치로 개인정보·첨부파일 파기, 파기 이력만 보관</div><div>· 스팸 방지: 동일 IP·동일 이메일 단시간 다건 접수 제한 (예: 10분 내 3건 초과 시 차단) 또는 캡차 적용 검토</div>",
+          "x": 24,
+          "y": 112,
+          "pins": {
+            "pc": {
+              "x": 24,
+              "y": 112,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 24,
+              "y": 112,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[2. 처리상태 정의]\n· 접수 → 검토중 → (보류) → 처리완료 순서 권장, 단 역방향 변경도 허용 (모든 변경은 처리 이력 적재)\n· 접수: FO 접수 시 시스템 자동 / 그 외 상태: 관리자가 상세(10p) 또는 목록 일괄변경(9p)으로 변경\n· 열람·메일 발송만으로는 상태를 자동 변경하지 않음 (명시적 처리 원칙)\n· 상태값은 공통코드로 관리 (추후 '반려' 등 추가 대비)",
+          "html": "[2. 처리상태 정의]<div>· 접수 → 검토중 → (보류) → 처리완료 순서 권장, 단 역방향 변경도 허용 (모든 변경은 처리 이력 적재)</div><div>· 접수: FO 접수 시 시스템 자동 / 그 외 상태: 관리자가 상세(10p) 또는 목록 일괄변경(9p)으로 변경</div><div>· 열람·메일 발송만으로는 상태를 자동 변경하지 않음 (명시적 처리 원칙)</div><div>· 상태값은 공통코드로 관리 (추후 '반려' 등 추가 대비)</div>",
+          "x": 24,
+          "y": 532,
+          "pins": {
+            "pc": {
+              "x": 24,
+              "y": 532,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 24,
+              "y": 532,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[3. 연관 데이터]\n· 테이블명·컬럼명은 가칭이며 개발 표준에 맞춰 확정\n· 메일 발송 이력: 수신자별 결과(성공/실패) 저장, 본문은 발송 시점 스냅샷으로 보관\n· 처리 이력: 상태변경·메모·개인정보 열람·첨부 다운로드·엑셀 다운로드·메일 발송 등 모든 행위, 삭제 불가\n· 알림 수신자: 12p 설정값, 변경 이력 별도 보관\n· 파기 이력: 파기 대상 접수번호와 일시만 보관 (개인정보 미포함)",
+          "html": "[3. 연관 데이터]<div>· 테이블명·컬럼명은 가칭이며 개발 표준에 맞춰 확정</div><div>· 메일 발송 이력: 수신자별 결과(성공/실패) 저장, 본문은 발송 시점 스냅샷으로 보관</div><div>· 처리 이력: 상태변경·메모·개인정보 열람·첨부 다운로드·엑셀 다운로드·메일 발송 등 모든 행위, 삭제 불가</div><div>· 알림 수신자: 12p 설정값, 변경 이력 별도 보관</div><div>· 파기 이력: 파기 대상 접수번호와 일시만 보관 (개인정보 미포함)</div>",
+          "x": 784,
+          "y": 532,
+          "pins": {
+            "pc": {
+              "x": 784,
+              "y": 532,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 784,
+              "y": 532,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[4. 제휴문의 기본 항목 정의]\n· FO 입력 항목: 문의유형 / 담당자명 / 연락처 / 이메일 / 문의내용 / 첨부파일 / 개인정보 동의 (7p FO 화면과 1:1 매칭)\n· 연락처·이메일은 암호화 저장 + 검색용 해시 컬럼 → BO 검색은 전체 일치만 가능 (9p 조회조건과 연동)\n· 개인정보 동의 시 동의 문구 버전(PRIV_TERMS_VER)도 함께 저장하면 개인정보처리방침(8p) 개정 시 근거 확인 가능\n· 파기예정일(DESTROY_DUE_DT) = 접수일 + 1년 → 개인정보처리방침 '제휴 문의 - 문의 접수일로부터 1년'과 반드시 일치\n· 회사명/브랜드명은 현재 FO 입력 항목에 없음 → 추가 여부 협의 필요 (별도 안내)",
+          "html": "[4. 제휴문의 기본 항목 정의]<div>· FO 입력 항목: 문의유형 / 담당자명 / 연락처 / 이메일 / 문의내용 / 첨부파일 / 개인정보 동의 (7p FO 화면과 1:1 매칭)</div><div>· 연락처·이메일은 암호화 저장 + 검색용 해시 컬럼 → BO 검색은 전체 일치만 가능 (9p 조회조건과 연동)</div><div>· 개인정보 동의 시 동의 문구 버전(PRIV_TERMS_VER)도 함께 저장하면 개인정보처리방침(8p) 개정 시 근거 확인 가능</div><div>· 파기예정일(DESTROY_DUE_DT) = 접수일 + 1년 → 개인정보처리방침 '제휴 문의 - 문의 접수일로부터 1년'과 반드시 일치</div><div>· 회사명/브랜드명은 현재 FO 입력 항목에 없음 → 추가 여부 협의 필요 (별도 안내)</div>",
+          "x": 24,
+          "y": 832,
+          "pins": {
+            "pc": {
+              "x": 24,
+              "y": 832,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 24,
+              "y": 832,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "updatedAt": "2026-11-13T00:41:38.420Z",
+      "version": 0.1
     }
   },
   "developer": "",
@@ -1448,7 +1566,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 09:39:35",
+  "updated": "2026-11-13 09:41:38",
   "version": 0.1,
   "period": "",
   "screenOrder": [

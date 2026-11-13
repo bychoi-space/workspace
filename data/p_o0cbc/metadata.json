@@ -834,6 +834,12 @@
       ],
       "updatedAt": "2026-11-13T00:28:55.727Z",
       "version": 0.1
+    },
+    "09_Admin_PC_Scroll_4.html": {
+      "title": "09_Admin_PC_Scroll_4",
+      "type": "admin",
+      "updatedAt": "2026-11-13T00:29:52.437Z",
+      "template": "template_admin_pc_scroll.html"
     }
   },
   "developer": "",
@@ -854,6 +860,7 @@
     "08_Responsive_PC_Mobile_6.html",
     "08_Responsive_PC_Mobile_7.html",
     "08_Responsive_PC_Mobile_8.html",
-    "09_Admin_PC_Scroll_209.html"
+    "09_Admin_PC_Scroll_209.html",
+    "09_Admin_PC_Scroll_4.html"
   ]
 }

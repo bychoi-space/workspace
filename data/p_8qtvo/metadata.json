@@ -1,28 +1,6 @@
 {
   "title": "[Front Renewal] 주문",
   "screens": {
-    "renewal_order.html": {
-      "title": "주문서 (As-Is)",
-      "type": "ui",
-      "updatedAt": "2026-10-23T00:53:55.922Z",
-      "template": "template_responsive_pc_mobile.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1,
-      "defaultTab": "description",
-      "screenDesc": ""
-    },
-    "renewal_cart.html": {
-      "title": "장바구니 (As-Is)",
-      "type": "ui",
-      "updatedAt": "2026-11-03T08:13:33.336Z",
-      "template": "template_responsive_pc_mobile.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1,
-      "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
-    },
     "00_Cover_234.html": {
       "title": "00_Cover_234",
       "type": "cover",
@@ -273,7 +251,7 @@
     "renewal_order_4.html": {
       "title": "주문서 (Te-Be) 배송지없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-13T06:39:05.181Z",
+      "updatedAt": "2026-11-13T06:35:23.615Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -302,8 +280,6 @@
     "renewal_order_4.html",
     "renewal_payEnd.html",
     "renewal_order_3.html",
-    "renewal_cart.html",
-    "renewal_order.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
   "updated": "2026-11-13 15:39:04",

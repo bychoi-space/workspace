@@ -1434,6 +1434,12 @@
       ],
       "updatedAt": "2026-11-13T00:39:36.010Z",
       "version": 0.1
+    },
+    "09_Admin_PC_Scroll_727.html": {
+      "title": "09_Admin_PC_Scroll_727",
+      "type": "admin",
+      "updatedAt": "2026-11-13T00:40:10.496Z",
+      "template": "template_admin_pc_scroll.html"
     }
   },
   "developer": "",
@@ -1457,6 +1463,7 @@
     "09_Admin_PC_Scroll_209.html",
     "09_Admin_PC_Scroll_4.html",
     "09_Admin_PC_Scroll_524.html",
-    "09_Admin_PC_Scroll_507.html"
+    "09_Admin_PC_Scroll_507.html",
+    "09_Admin_PC_Scroll_727.html"
   ]
 }

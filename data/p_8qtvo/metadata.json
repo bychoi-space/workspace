@@ -35,7 +35,7 @@
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
       "type": "ui",
-      "updatedAt": "2026-11-13T03:00:30.519Z",
+      "updatedAt": "2026-10-22T08:46:47.742Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -79,7 +79,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-09T10:25:51.487Z",
+      "updatedAt": "2026-11-13T03:01:34.010Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -164,7 +164,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-11-13 12:00:29",
+  "updated": "2026-11-13 12:01:33",
   "version": 0.1,
   "category": "project"
 }

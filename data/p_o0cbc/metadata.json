@@ -609,7 +609,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T02:44:15.408Z",
+      "updatedAt": "2026-11-13T00:28:55.727Z",
       "version": 0.1,
       "connectors": []
     },
@@ -1324,8 +1324,7 @@
             "pc": {
               "x": 36,
               "y": 66,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -1353,8 +1352,7 @@
             "pc": {
               "x": 52,
               "y": 148,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -1382,8 +1380,7 @@
             "pc": {
               "x": 796,
               "y": 66,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -1411,8 +1408,7 @@
             "pc": {
               "x": 800,
               "y": 262,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -1440,8 +1436,7 @@
             "pc": {
               "x": 800,
               "y": 700,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -1457,39 +1452,11 @@
           },
           "standardized": true,
           "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "frame",
-          "text": "[답장 흐름]\n· 문의자가 [답장] 시 받는 사람이 business@sisun.com으로 자동 지정 (Reply-To 설정)\n· 답장은 business@sisun.com 웹메일(email.sisun.com) 받은편지함으로 수신 → 담당자가 웹메일에서 이어서 응대\n· 웹메일에서 주고받은 메일은 BO 메일 발송 이력·처리 이력에 자동 반영되지 않음 → 필요 시 상세 팝업 관리자 메모에 요약 기록 (운영 가이드)",
-          "html": "[답장 흐름]<div>· 문의자가 [답장] 시 받는 사람이 business@sisun.com으로 자동 지정 (Reply-To 설정)</div><div>· 답장은 business@sisun.com 웹메일(email.sisun.com) 받은편지함으로 수신 → 담당자가 웹메일에서 이어서 응대</div><div>· 웹메일에서 주고받은 메일은 BO 메일 발송 이력·처리 이력에 자동 반영되지 않음 → 필요 시 상세 팝업 관리자 메모에 요약 기록 (운영 가이드)</div>",
-          "x": 800,
-          "y": 978,
-          "pins": {
-            "pc": {
-              "x": 800,
-              "y": 978,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "mobile": {
-              "x": 170,
-              "y": 180,
-              "active": true
-            },
-            "left": {
-              "x": 800,
-              "y": 978,
-              "active": true,
-              "scrollFixed": "none"
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T01:27:10.677Z",
-      "version": 0.1
+      "updatedAt": "2026-11-13T04:29:46.975Z",
+      "version": 0.1,
+      "connectors": []
     }
   },
   "developer": "",
@@ -1498,7 +1465,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 11:44:15",
+  "updated": "2026-11-13 13:29:46",
   "version": 0.1,
   "period": "",
   "screenOrder": [

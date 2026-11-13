@@ -161,6 +161,17 @@
       "version": 0.2,
       "screenDesc": "시선닷컴 Front UI 개편 방향 (디자인 가이드 부재 해결 ➔ Atomic Pattern & Storybook 컴포넌트 가이드화 ➔ 우선순위별 점진적 UI 개편 로드맵)",
       "defaultTab": "editor"
+    },
+    "renewal_order_5.html": {
+      "title": "주문서 (As-Is) 2",
+      "type": "ui",
+      "updatedAt": "2026-11-13T07:02:05.385Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
     }
   },
   "developer": "",
@@ -171,6 +182,7 @@
     "09_Admin_PC_Scroll_639_copy5.html",
     "09_Admin_PC_Scroll_639_copy.html",
     "99_Blank_14_copy.html",
-    "02_Front_System_Atomic_Design_Roadmap_900_copy.html"
+    "02_Front_System_Atomic_Design_Roadmap_900_copy.html",
+    "renewal_order_5.html"
   ]
 }

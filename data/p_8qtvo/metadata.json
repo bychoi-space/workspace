@@ -65,15 +65,6 @@
       "defaultTab": "description",
       "screenDesc": "PC/Mobile 실물 캡처 정밀 분석, 국내 선두 플랫폼(무신사·29CM·SSF) 대비 격차 비교 및 3단계 개선 로드맵"
     },
-    "04_Case_Study_991.html": {
-      "title": "04_Case_Study_991",
-      "type": "case-study",
-      "updatedAt": "2026-10-23T00:45:05.605Z",
-      "template": "template_case_study.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1
-    },
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
@@ -143,7 +134,7 @@
     "99_Blank_926.html": {
       "title": "시선닷컴 문제점 분석 (주문완료)",
       "type": "plan",
-      "updatedAt": "2026-11-13T02:58:23.030Z",
+      "updatedAt": "2026-11-13T01:44:26.800Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -169,7 +160,6 @@
     "renewal_cart_2.html",
     "renewal_order_2.html",
     "renewal_payEnd.html",
-    "04_Case_Study_991.html",
     "renewal_order_3.html",
     "renewal_cart.html",
     "renewal_order.html"

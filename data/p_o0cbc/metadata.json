@@ -833,7 +833,8 @@
         }
       ],
       "updatedAt": "2026-11-13T00:28:55.727Z",
-      "version": 0.1
+      "version": 0.1,
+      "connectors": []
     },
     "09_Admin_PC_Scroll_4.html": {
       "title": "09_Admin_PC_Scroll_4",
@@ -1451,8 +1452,7 @@
             "pc": {
               "x": 24,
               "y": 112,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -1480,8 +1480,7 @@
             "pc": {
               "x": 24,
               "y": 532,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -1509,8 +1508,7 @@
             "pc": {
               "x": 784,
               "y": 532,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -1526,38 +1524,9 @@
           },
           "standardized": true,
           "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "frame",
-          "text": "[4. 제휴문의 기본 항목 정의]\n· FO 입력 항목: 문의유형 / 담당자명 / 연락처 / 이메일 / 문의내용 / 첨부파일 / 개인정보 동의 (7p FO 화면과 1:1 매칭)\n· 연락처·이메일은 암호화 저장 + 검색용 해시 컬럼 → BO 검색은 전체 일치만 가능 (9p 조회조건과 연동)\n· 개인정보 동의 시 동의 문구 버전(PRIV_TERMS_VER)도 함께 저장하면 개인정보처리방침(8p) 개정 시 근거 확인 가능\n· 파기예정일(DESTROY_DUE_DT) = 접수일 + 1년 → 개인정보처리방침 '제휴 문의 - 문의 접수일로부터 1년'과 반드시 일치\n· 회사명/브랜드명은 현재 FO 입력 항목에 없음 → 추가 여부 협의 필요 (별도 안내)",
-          "html": "[4. 제휴문의 기본 항목 정의]<div>· FO 입력 항목: 문의유형 / 담당자명 / 연락처 / 이메일 / 문의내용 / 첨부파일 / 개인정보 동의 (7p FO 화면과 1:1 매칭)</div><div>· 연락처·이메일은 암호화 저장 + 검색용 해시 컬럼 → BO 검색은 전체 일치만 가능 (9p 조회조건과 연동)</div><div>· 개인정보 동의 시 동의 문구 버전(PRIV_TERMS_VER)도 함께 저장하면 개인정보처리방침(8p) 개정 시 근거 확인 가능</div><div>· 파기예정일(DESTROY_DUE_DT) = 접수일 + 1년 → 개인정보처리방침 '제휴 문의 - 문의 접수일로부터 1년'과 반드시 일치</div><div>· 회사명/브랜드명은 현재 FO 입력 항목에 없음 → 추가 여부 협의 필요 (별도 안내)</div>",
-          "x": 24,
-          "y": 832,
-          "pins": {
-            "pc": {
-              "x": 24,
-              "y": 832,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "mobile": {
-              "x": 170,
-              "y": 180,
-              "active": true
-            },
-            "left": {
-              "x": 24,
-              "y": 832,
-              "active": true,
-              "scrollFixed": "none"
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T00:46:24.642Z",
+      "updatedAt": "2026-11-13T00:49:18.077Z",
       "version": 0.1,
       "connectors": []
     }
@@ -1568,7 +1537,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 09:46:24",
+  "updated": "2026-11-13 09:49:18",
   "version": 0.1,
   "period": "",
   "screenOrder": [

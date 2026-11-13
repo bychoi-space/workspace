@@ -1307,6 +1307,12 @@
       "updatedAt": "2026-11-13T00:41:38.420Z",
       "version": 0.1,
       "connectors": []
+    },
+    "09_Admin_PC_Scroll_410.html": {
+      "title": "09_Admin_PC_Scroll_410",
+      "type": "admin",
+      "updatedAt": "2026-11-13T01:25:17.560Z",
+      "template": "template_admin_pc_scroll.html"
     }
   },
   "developer": "",
@@ -1330,6 +1336,7 @@
     "09_Admin_PC_Scroll_209.html",
     "09_Admin_PC_Scroll_4.html",
     "09_Admin_PC_Scroll_524.html",
-    "09_Admin_PC_Scroll_507.html"
+    "09_Admin_PC_Scroll_507.html",
+    "09_Admin_PC_Scroll_410.html"
   ]
 }

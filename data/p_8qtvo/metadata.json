@@ -56,8 +56,8 @@
     },
     "03_Cart_Order_Benchmark_Analysis.html": {
       "title": "시선닷컴 장바구니 · 주문서 벤치마크 분석 및 개선 전략",
-      "type": "ui",
-      "updatedAt": "2026-11-11T07:29:18.450Z",
+      "type": "plan",
+      "updatedAt": "2026-11-13T02:59:21.285Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],

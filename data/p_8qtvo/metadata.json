@@ -182,7 +182,7 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-13T05:32:15.688Z",
+      "updatedAt": "2026-11-13T05:33:49.608Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -213,7 +213,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-11-13 14:32:15",
+  "updated": "2026-11-13 14:33:49",
   "version": 0.1,
   "category": "project"
 }

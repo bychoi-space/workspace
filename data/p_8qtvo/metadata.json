@@ -1,17 +1,6 @@
 {
   "title": "[Front Renewal] 주문",
   "screens": {
-    "renewal_cart.html": {
-      "title": "장바구니 (As-Is)",
-      "type": "ui",
-      "updatedAt": "2026-11-03T08:13:33.336Z",
-      "template": "template_responsive_pc_mobile.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1,
-      "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
-    },
     "00_Cover_234.html": {
       "title": "00_Cover_234",
       "type": "cover",
@@ -279,8 +268,7 @@
     "renewal_order_2.html",
     "renewal_order_4.html",
     "renewal_payEnd.html",
-    "renewal_order_3.html",
-    "renewal_cart.html"
+    "renewal_order_3.html"
   ],
   "updated": "2026-11-13 15:39:04",
   "version": 0.1,

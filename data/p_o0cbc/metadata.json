@@ -445,8 +445,7 @@
             "pc": {
               "x": 236,
               "y": 128,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -474,8 +473,7 @@
             "pc": {
               "x": 262,
               "y": 96,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -503,8 +501,7 @@
             "pc": {
               "x": 796,
               "y": 310,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -532,8 +529,7 @@
             "pc": {
               "x": 1452,
               "y": 362,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -561,8 +557,7 @@
             "pc": {
               "x": 256,
               "y": 384,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 170,
@@ -578,38 +573,9 @@
           },
           "standardized": true,
           "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "frame",
-          "text": "[Total Rows / Selected / 데이터 없음 / 파기]\n· 목록 좌측 하단: Total Rows: N (조회조건 기준 전체 건수) + Selected: N (체크한 건수) - 기존 BO 그리드와 동일\n· 페이지 이동·N개씩 보기 없음: 조회된 전체 건을 한 그리드에 노출하고 그리드 내부 세로 스크롤로 확인 (BO 공통)\n· 조회 결과 없음: 목록 영역에 \"조회된 제휴문의가 없습니다.\" 노출\n· 개인정보 보유기간: 접수일로부터 1년 경과 건은 일 배치로 자동 파기(개인정보 컬럼·첨부파일 삭제) → 목록 미노출\n· 파기 이력(번호·파기일시)만 별도 보관 (개인정보처리방침 8p 보유기간과 일치 필요)",
-          "html": "[Total Rows / Selected / 데이터 없음 / 파기]<div>· 목록 좌측 하단: Total Rows: N (조회조건 기준 전체 건수) + Selected: N (체크한 건수) - 기존 BO 그리드와 동일</div><div>· 페이지 이동·N개씩 보기 없음: 조회된 전체 건을 한 그리드에 노출하고 그리드 내부 세로 스크롤로 확인 (BO 공통)</div><div>· 조회 결과 없음: 목록 영역에 \"조회된 제휴문의가 없습니다.\" 노출</div><div>· 개인정보 보유기간: 접수일로부터 1년 경과 건은 일 배치로 자동 파기(개인정보 컬럼·첨부파일 삭제) → 목록 미노출</div><div>· 파기 이력(번호·파기일시)만 별도 보관 (개인정보처리방침 8p 보유기간과 일치 필요)</div>",
-          "x": 256,
-          "y": 788,
-          "pins": {
-            "pc": {
-              "x": 256,
-              "y": 788,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "mobile": {
-              "x": 170,
-              "y": 180,
-              "active": true
-            },
-            "left": {
-              "x": 256,
-              "y": 788,
-              "active": true,
-              "scrollFixed": "none"
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T04:50:19.497Z",
+      "updatedAt": "2026-11-13T05:15:07.737Z",
       "version": 0.1,
       "connectors": []
     },
@@ -1181,7 +1147,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T05:01:40.337Z",
+      "updatedAt": "2026-11-13T00:41:38.420Z",
       "version": 0.1,
       "connectors": []
     },
@@ -1339,7 +1305,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-13 14:01:40",
+  "updated": "2026-11-13 14:15:07",
   "version": 0.1,
   "period": "",
   "screenOrder": [

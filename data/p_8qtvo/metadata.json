@@ -132,7 +132,7 @@
     "99_Blank_925.html": {
       "title": "시선닷컴 문제점 분석 (주문서)",
       "type": "plan",
-      "updatedAt": "2026-11-13T02:49:53.648Z",
+      "updatedAt": "2026-11-11T08:05:28.698Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -143,7 +143,7 @@
     "99_Blank_926.html": {
       "title": "시선닷컴 문제점 분석 (주문완료)",
       "type": "plan",
-      "updatedAt": "2026-11-13T01:44:26.800Z",
+      "updatedAt": "2026-11-13T02:50:29.881Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -174,7 +174,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-11-13 11:49:53",
+  "updated": "2026-11-13 11:50:29",
   "version": 0.1,
   "category": "project"
 }

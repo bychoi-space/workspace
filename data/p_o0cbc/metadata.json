@@ -654,6 +654,12 @@
       "updatedAt": "2026-11-12T07:50:46.765Z",
       "version": 0.1,
       "connectors": []
+    },
+    "09_Admin_PC_Scroll_209.html": {
+      "title": "09_Admin_PC_Scroll_209",
+      "type": "admin",
+      "updatedAt": "2026-11-13T00:17:46.981Z",
+      "template": "template_admin_pc_scroll.html"
     }
   },
   "developer": "",
@@ -673,6 +679,7 @@
     "08_Responsive_PC_Mobile_4.html",
     "08_Responsive_PC_Mobile_6.html",
     "08_Responsive_PC_Mobile_7.html",
-    "08_Responsive_PC_Mobile_8.html"
+    "08_Responsive_PC_Mobile_8.html",
+    "09_Admin_PC_Scroll_209.html"
   ]
 }

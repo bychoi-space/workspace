@@ -79,9 +79,46 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-13T04:55:18.248Z",
+      "updatedAt": "2026-11-13T04:56:46.438Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[쿠폰 혜택 / 최대 할인 적용] 영역\n - 신규 개설 영역\n - Default '최대 할인 적용' = On",
+          "html": "[쿠폰 혜택 / 최대 할인 적용] 영역<div> - 신규 개설 영역</div><div> - Default '최대 할인 적용' = On</div>",
+          "x": 20,
+          "y": 170,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 170,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 50,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 170,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 50,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -164,7 +201,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-11-13 13:55:18",
+  "updated": "2026-11-13 13:56:46",
   "version": 0.1,
   "category": "project"
 }

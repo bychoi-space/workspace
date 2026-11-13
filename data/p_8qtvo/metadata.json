@@ -182,9 +182,78 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-13T06:08:49.516Z",
+      "updatedAt": "2026-11-13T06:10:06.099Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "로그아웃 상태에서 [장바구니] 페이지 진입 시 UI",
+          "html": "로그아웃 상태에서 [장바구니] 페이지 진입 시 UI",
+          "x": 20,
+          "y": 170,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 170,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 50,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 170,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 50,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "장바구니에 담긴 상품이 없을 경우 UI",
+          "html": "장바구니에 담긴 상품이 없을 경우 UI",
+          "x": 245,
+          "y": 327,
+          "pins": {
+            "pc": {
+              "x": 245,
+              "y": 327,
+              "active": true
+            },
+            "mobile": {
+              "x": 139,
+              "y": 198,
+              "active": true
+            },
+            "left": {
+              "x": 245,
+              "y": 327,
+              "active": true
+            },
+            "right": {
+              "x": 139,
+              "y": 198,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -213,7 +282,7 @@
     "renewal_cart.html",
     "renewal_order.html"
   ],
-  "updated": "2026-11-13 15:08:49",
+  "updated": "2026-11-13 15:10:06",
   "version": 0.1,
   "category": "project"
 }

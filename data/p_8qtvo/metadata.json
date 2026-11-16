@@ -296,7 +296,7 @@
     "renewal_cart_4.html": {
       "title": "장바구니 (To-Be) 옵션변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T01:45:05.700Z",
+      "updatedAt": "2026-11-16T01:12:03.003Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -438,6 +438,88 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
+    },
+    "renewal_cart_5.html": {
+      "title": "장바구니 (To-Be) 쿠폰받기",
+      "type": "ui",
+      "updatedAt": "2026-11-16T01:51:18.656Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[쿠폰 혜택 / 최대 할인 적용] 영역\n - 신규 개설 영역\n - Default '최대 할인 적용' = On",
+          "html": "[쿠폰 혜택 / 최대 할인 적용] 영역<div> - 신규 개설 영역</div><div> - Default '최대 할인 적용' = On</div>",
+          "x": 20,
+          "y": 170,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 170,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 50,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 170,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 50,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "전체선택 Check Box\n- Default 모든 상품 활성화",
+          "html": "전체선택 Check Box<div>- Default 모든 상품 활성화</div>",
+          "x": 20,
+          "y": 240,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 240,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 102,
+              "active": true
+            },
+            "left": {
+              "x": 20,
+              "y": 240,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 102,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     }
   },
   "assignee": "최범열",
@@ -455,6 +537,7 @@
     "99_Blank_926.html",
     "03_Order_UI_Improvement_Strategy.html",
     "renewal_cart_2.html",
+    "renewal_cart_5.html",
     "renewal_cart_4.html",
     "renewal_cart_3.html",
     "renewal_order_2.html",

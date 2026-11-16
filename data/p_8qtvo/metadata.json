@@ -296,7 +296,7 @@
     "renewal_cart_4.html": {
       "title": "장바구니 (To-Be) 옵션변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T01:42:51.018Z",
+      "updatedAt": "2026-11-16T01:45:05.700Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -370,8 +370,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "옵션변경 [적용] 버튼\n- 버튼 클릭 시, 수정된 내용 상단에 적용되며 영역 자동 닫힘 처리\n-",
-          "html": "옵션변경 [적용] 버튼<div>- 버튼 클릭 시, 수정된 내용 상단에 적용되며 영역 자동 닫힘 처리</div><div>- </div>",
+          "text": "옵션변경 [적용] 버튼\n- 버튼 클릭 시, 수정된 내용 상단에 적용되며 얼럿 노출 후 영역 자동 닫힘 처리\n- 수정된 내용이 없을 경우 영역 닫힘 처리",
+          "html": "옵션변경 [적용] 버튼<div>- 버튼 클릭 시, 수정된 내용 상단에 적용되며 얼럿 노출 후 영역 자동 닫힘 처리</div><div>- 수정된 내용이 없을 경우 영역 닫힘 처리</div>",
           "x": 590,
           "y": 507,
           "pins": {
@@ -394,6 +394,40 @@
               "x": 199,
               "y": 507,
               "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "옵션변경 [취소] 버튼\n- 버튼 클릭 시, 영역 닫힘 처리\n- 안내 얼럿 없음",
+          "html": "옵션변경 [취소] 버튼<div>- 버튼 클릭 시, 영역 닫힘 처리</div><div>- 안내 얼럿 없음</div>",
+          "x": 665,
+          "y": 507,
+          "pins": {
+            "pc": {
+              "x": 665,
+              "y": 507,
+              "active": true
+            },
+            "mobile": {
+              "x": 276,
+              "y": 507,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 665,
+              "y": 507,
+              "active": true
+            },
+            "right": {
+              "x": 276,
+              "y": 507,
+              "active": true,
+              "scrollFixed": "none"
             }
           },
           "standardized": true,
@@ -429,7 +463,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 10:42:50",
+  "updated": "2026-11-16 10:45:05",
   "version": 0.1,
   "category": "project"
 }

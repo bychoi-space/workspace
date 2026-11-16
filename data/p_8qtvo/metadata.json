@@ -262,7 +262,7 @@
     "99_Blank_924.html": {
       "title": "시선닷컴 문제점 분석 (장바구니)",
       "type": "plan",
-      "updatedAt": "2026-11-11T07:54:55.465Z",
+      "updatedAt": "2026-11-16T06:44:53.006Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -295,7 +295,7 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-16T06:26:21.858Z",
+      "updatedAt": "2026-11-13T05:41:01.120Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -799,7 +799,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 15:26:21",
+  "updated": "2026-11-16 15:44:52",
   "version": 0.1,
   "category": "project"
 }

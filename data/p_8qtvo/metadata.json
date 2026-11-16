@@ -495,17 +495,6 @@
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
     },
-    "renewal_cart_5.html": {
-      "title": "장바구니 (To-Be) 쿠폰받기",
-      "type": "ui",
-      "updatedAt": "2026-11-16T02:05:00.616Z",
-      "template": "template_responsive_pc_mobile.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1,
-      "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
-    },
     "renewal_order_6.html": {
       "title": "주문서 (Te-Be) 배송지변경",
       "type": "ui",
@@ -609,7 +598,7 @@
     "renewal_cart_6.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:32:56.448Z",
+      "updatedAt": "2026-11-16T04:29:38.709Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -634,7 +623,6 @@
     "03_Order_UI_Improvement_Strategy.html",
     "renewal_cart_2.html",
     "renewal_cart_6.html",
-    "renewal_cart_5.html",
     "renewal_cart_4.html",
     "renewal_cart_3.html",
     "renewal_order_2.html",

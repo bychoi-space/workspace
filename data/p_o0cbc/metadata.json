@@ -311,7 +311,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-13T05:25:11.125Z",
+      "updatedAt": "2026-11-16T01:05:08.404Z",
       "version": 0.1,
       "connectors": []
     },
@@ -1241,7 +1241,7 @@
     },
     "07_PC_Design_90.html": {
       "description": [],
-      "updatedAt": "2026-11-16T01:00:06.200Z",
+      "updatedAt": "2026-11-16T00:44:54.779Z",
       "version": 0.1,
       "connectors": []
     }
@@ -1252,7 +1252,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-16 10:00:06",
+  "updated": "2026-11-16 10:05:08",
   "version": 0.1,
   "period": "",
   "screenOrder": [

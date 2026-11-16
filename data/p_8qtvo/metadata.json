@@ -68,7 +68,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-16T00:28:09.531Z",
+      "updatedAt": "2026-11-16T00:29:03.666Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -110,8 +110,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "text": "전체선택 Check Box\n- Default 모든 상품 활성화",
+          "html": "전체선택 Check Box<div>- Default 모든 상품 활성화</div>",
           "x": 20,
           "y": 240,
           "pins": {
@@ -316,7 +316,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 09:28:09",
+  "updated": "2026-11-16 09:29:03",
   "version": 0.1,
   "category": "project"
 }

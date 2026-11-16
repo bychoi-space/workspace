@@ -57,7 +57,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:53:03.671Z",
+      "updatedAt": "2026-11-16T04:54:23.200Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -95,8 +95,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[주문 상품] 영역\n- 상품 단위 할인, 쿠폰, 마일리지 사용에 대한 상세 정보가 표현되도록 UI 개선\n-",
-          "html": "[주문 상품] 영역<div>- 상품 단위 할인, 쿠폰, 마일리지 사용에 대한 상세 정보가 표현되도록 UI 개선</div><div>-</div>",
+          "text": "[주문 상품] 영역\n- 상품 단위 할인, 쿠폰, 마일리지 사용에 대한 상세 정보가 표현되도록 UI 개선\n- 메타 정보 표현 방법 일부 수정\n   : 품번 표현 삭제\n   : 컬러칩 표현 쉐입 변경\n   : 혜택 (적립 예정 마일리지, 무료배송) 표현 방법 변경",
+          "html": "[주문 상품] 영역<div>- 상품 단위 할인, 쿠폰, 마일리지 사용에 대한 상세 정보가 표현되도록 UI 개선</div><div>- 메타 정보 표현 방법 일부 수정\n   : 품번 표현 삭제\n   : 컬러칩 표현 쉐입 변경\n   : 혜택 (적립 예정 마일리지, 무료배송) 표현 방법 변경</div>",
           "x": 20,
           "y": 474,
           "pins": {
@@ -768,7 +768,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 13:53:03",
+  "updated": "2026-11-16 13:54:23",
   "version": 0.1,
   "category": "project"
 }

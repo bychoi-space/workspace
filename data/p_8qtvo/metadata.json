@@ -296,7 +296,7 @@
     "renewal_cart_4.html": {
       "title": "장바구니 (To-Be) 옵션변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T01:39:10.830Z",
+      "updatedAt": "2026-11-16T01:42:51.018Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -366,6 +366,38 @@
           },
           "standardized": true,
           "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "옵션변경 [적용] 버튼\n- 버튼 클릭 시, 수정된 내용 상단에 적용되며 영역 자동 닫힘 처리\n-",
+          "html": "옵션변경 [적용] 버튼<div>- 버튼 클릭 시, 수정된 내용 상단에 적용되며 영역 자동 닫힘 처리</div><div>- </div>",
+          "x": 590,
+          "y": 507,
+          "pins": {
+            "pc": {
+              "x": 590,
+              "y": 507,
+              "active": true
+            },
+            "mobile": {
+              "x": 199,
+              "y": 507,
+              "active": true
+            },
+            "left": {
+              "x": 590,
+              "y": 507,
+              "active": true
+            },
+            "right": {
+              "x": 199,
+              "y": 507,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -397,7 +429,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 10:39:10",
+  "updated": "2026-11-16 10:42:50",
   "version": 0.1,
   "category": "project"
 }

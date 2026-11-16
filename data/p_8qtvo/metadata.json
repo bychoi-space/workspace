@@ -598,9 +598,108 @@
     "renewal_cart_6.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:34:51.266Z",
+      "updatedAt": "2026-11-16T04:42:09.679Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "바닥 화면 '쿠폰받기' 버튼 클릭 시 팝업 호출",
+          "html": "바닥 화면 '쿠폰받기' 버튼 클릭 시 팝업 호출",
+          "x": 311,
+          "y": 366,
+          "pins": {
+            "pc": {
+              "x": 311,
+              "y": 366,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 40,
+              "active": true
+            },
+            "left": {
+              "x": 311,
+              "y": 366,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 170,
+              "y": 40,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[쿠폰 받기] 팝업\n- 상품 상세 (PDP) 페이지 쿠폰 [쿠폰함] 팝업과 동일한 UI 로 설계했으나, 팝업 명칭 변경과 '전체선택' 기능 추가",
+          "html": "[쿠폰 받기] 팝업<div>- 상품 상세 (PDP) 페이지 쿠폰 [쿠폰함] 팝업과 동일한 UI 로 설계했으나, 팝업 명칭 변경과 '전체선택' 기능 추가</div>",
+          "x": 390,
+          "y": 95,
+          "pins": {
+            "pc": {
+              "x": 390,
+              "y": 95,
+              "active": true
+            },
+            "mobile": {
+              "x": 10,
+              "y": 95,
+              "active": true
+            },
+            "left": {
+              "x": 390,
+              "y": 95,
+              "active": true
+            },
+            "right": {
+              "x": 10,
+              "y": 95,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "'전체선택' Check Box 추가\n- 클릭 시, 하단 쿠폰 리스트 전체 활성화\n- 전체 활성화 상태에서 클릭하면 전체 비활성화\n- 쿠폰 리스트에서 1개라도 비활성화 시, '전체선택' 도 비활성화 처리",
+          "html": "'전체선택' Check Box 추가<div>- 클릭 시, 하단 쿠폰 리스트 전체 활성화</div><div>- 전체 활성화 상태에서 클릭하면 전체 비활성화</div><div>- 쿠폰 리스트에서 1개라도 비활성화 시, '전체선택' 도 비활성화 처리</div>",
+          "x": 380,
+          "y": 145,
+          "pins": {
+            "pc": {
+              "x": 380,
+              "y": 145,
+              "active": true
+            },
+            "mobile": {
+              "x": 0,
+              "y": 145,
+              "active": true
+            },
+            "left": {
+              "x": 380,
+              "y": 145,
+              "active": true
+            },
+            "right": {
+              "x": 0,
+              "y": 145,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -632,7 +731,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 13:34:51",
+  "updated": "2026-11-16 13:42:09",
   "version": 0.1,
   "category": "project"
 }

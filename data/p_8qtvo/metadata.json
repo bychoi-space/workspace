@@ -32,17 +32,6 @@
       "defaultTab": "description",
       "screenDesc": "시선닷컴(https://sisun.com/) 실제 스토어 분석 기반 1~5Depth 계층형 아코디언 Front IA 정의서"
     },
-    "03_Cart_Order_Benchmark_Analysis.html": {
-      "title": "시선닷컴 장바구니 · 주문서 벤치마크 분석 및 개선 전략",
-      "type": "plan",
-      "updatedAt": "2026-11-13T02:59:21.285Z",
-      "template": "template_process.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1,
-      "defaultTab": "description",
-      "screenDesc": "PC/Mobile 실물 캡처 정밀 분석, 국내 선두 플랫폼(무신사·29CM·SSF) 대비 격차 비교 및 3단계 개선 로드맵"
-    },
     "03_Order_UI_Improvement_Strategy.html": {
       "title": "시선닷컴 주문 화면 UI 개선 전략",
       "type": "plan",
@@ -772,6 +761,15 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
+    },
+    "99_Blank_119.html": {
+      "title": "99_Blank_119",
+      "type": "blank",
+      "updatedAt": "2026-11-16T07:46:52.292Z",
+      "template": "template_blank.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -797,7 +795,7 @@
     "renewal_order_6.html",
     "renewal_order_3.html",
     "renewal_payEnd.html",
-    "03_Cart_Order_Benchmark_Analysis.html"
+    "99_Blank_119.html"
   ],
   "updated": "2026-11-16 17:17:09",
   "version": 0.1,

@@ -57,9 +57,42 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-10-27T02:51:55.323Z",
+      "updatedAt": "2026-11-16T03:26:36.352Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[배송 정보] 영역\n- 최상단 배송 정보 영역으로 배치 수정\n- 로그인 된 회원의 기본배송지 호출\n- 배송지 정보가 없을 경우 다음 스크린 참고\n\n\n※ 비회원 (로그아웃) 상태 진입 불가\n※ 비회원 주문 불가 정책",
+          "html": "[배송 정보] 영역<div>- 최상단 배송 정보 영역으로 배치 수정</div><div>- 로그인 된 회원의 기본배송지 호출</div><div>- 배송지 정보가 없을 경우 다음 스크린 참고</div><div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">※ 비회원 (로그아웃) 상태 진입 불가</span></div><div><span style=\"font-weight: bold;\"><span style=\"color: rgb(251, 191, 36);\">※ 비회원 주문 불가 정책</span> </span></div>",
+          "x": 20,
+          "y": 175,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 175,
+              "active": true
+            },
+            "mobile": {
+              "x": 5,
+              "y": 60,
+              "active": true
+            },
+            "left": {
+              "x": 20,
+              "y": 175,
+              "active": true
+            },
+            "right": {
+              "x": 5,
+              "y": 60,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "editor",
@@ -453,7 +486,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (Te-Be) 결제약관보기",
       "type": "ui",
-      "updatedAt": "2026-11-16T03:24:19.710Z",
+      "updatedAt": "2026-11-16T03:10:38.953Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -565,7 +598,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 12:24:19",
+  "updated": "2026-11-16 12:26:36",
   "version": 0.1,
   "category": "project"
 }

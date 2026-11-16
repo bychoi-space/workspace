@@ -261,7 +261,7 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-13T05:41:01.120Z",
+      "updatedAt": "2026-11-16T04:43:54.033Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -275,14 +275,12 @@
             "pc": {
               "x": 20,
               "y": 170,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "mobile": {
               "x": 0,
               "y": 50,
-              "active": true,
-              "scrollFixed": "none"
+              "active": true
             },
             "left": {
               "x": 20,
@@ -331,6 +329,45 @@
           },
           "standardized": true,
           "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 861,
+          "y": 370,
+          "pins": {
+            "pc": {
+              "x": 861,
+              "y": 370,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 96,
+              "y": 37,
+              "active": true,
+              "fixedHost": "v4-comp-1790842739611",
+              "scrollFixed": "sticky-bottom"
+            },
+            "left": {
+              "x": 861,
+              "y": 370,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 96,
+              "y": 37,
+              "active": true,
+              "fixedHost": "v4-comp-1790842739611",
+              "scrollFixed": "sticky-bottom"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "sticky-bottom",
+          "fixedHost": "v4-comp-1790842739611"
         }
       ],
       "connectors": [],
@@ -598,7 +635,7 @@
     "renewal_cart_6.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:42:09.679Z",
+      "updatedAt": "2026-11-16T04:29:38.709Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -731,7 +768,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 13:42:09",
+  "updated": "2026-11-16 13:43:54",
   "version": 0.1,
   "category": "project"
 }

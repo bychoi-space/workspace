@@ -1240,18 +1240,8 @@
       "connectors": []
     },
     "07_PC_Design_90.html": {
-      "description": [
-        {
-          "type": "pin",
-          "text": "[페이지 목적] 제휴문의 접수 방식 검토\n· 2~4p 레퍼런스(29CM · W CONCEPT · IF mall)를 바탕으로 시선 FO 제휴문의를 팝업이 아닌 '페이지형'으로 설계한 근거 정리\n· ① 레퍼런스 비교: 2~4p에 정리된 진입 위치·접수 방식 기준 (각 사 실제 운영 화면은 변경될 수 있음)\n· ② 페이지형으로 설계한 이유: 입력 분량, PC·MO 동일 경험, 외부 링크 안내, 작성 내용 보호\n· 결론: PC·MO 모두 페이지형 + BO 저장·회신 구조 (6p 푸터 진입 → 7p 제휴문의 페이지 → 9~12p BO)",
-          "html": "[페이지 목적] 제휴문의 접수 방식 검토<div>· 2~4p 레퍼런스(29CM · W CONCEPT · IF mall)를 바탕으로 시선 FO 제휴문의를 팝업이 아닌 '페이지형'으로 설계한 근거 정리</div><div>· ① 레퍼런스 비교: 2~4p에 정리된 진입 위치·접수 방식 기준 (각 사 실제 운영 화면은 변경될 수 있음)</div><div>· ② 페이지형으로 설계한 이유: 입력 분량, PC·MO 동일 경험, 외부 링크 안내, 작성 내용 보호</div><div>· 결론: PC·MO 모두 페이지형 + BO 저장·회신 구조 (6p 푸터 진입 → 7p 제휴문의 페이지 → 9~12p BO)</div>",
-          "x": 24,
-          "y": 104,
-          "standardized": true,
-          "scrollFixed": "none"
-        }
-      ],
-      "updatedAt": "2026-11-16T00:16:46.202Z",
+      "description": [],
+      "updatedAt": "2026-11-16T00:20:34.757Z",
       "version": 0.1,
       "connectors": []
     }
@@ -1262,7 +1252,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-16 09:16:45",
+  "updated": "2026-11-16 09:20:34",
   "version": 0.1,
   "period": "",
   "screenOrder": [

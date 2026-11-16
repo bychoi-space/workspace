@@ -609,80 +609,9 @@
     "renewal_cart_6.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:29:38.709Z",
+      "updatedAt": "2026-11-16T04:31:30.317Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [
-        {
-          "type": "pin",
-          "target": "frame",
-          "text": "[쿠폰 혜택 / 최대 할인 적용] 영역\n - 신규 개설 영역\n - Default '최대 할인 적용' = On",
-          "html": "[쿠폰 혜택 / 최대 할인 적용] 영역<div> - 신규 개설 영역</div><div> - Default '최대 할인 적용' = On</div>",
-          "x": 20,
-          "y": 170,
-          "pins": {
-            "pc": {
-              "x": 20,
-              "y": 170,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "mobile": {
-              "x": 0,
-              "y": 50,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "left": {
-              "x": 20,
-              "y": 170,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "right": {
-              "x": 0,
-              "y": 50,
-              "active": true,
-              "scrollFixed": "none"
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "frame",
-          "text": "전체선택 Check Box\n- Default 모든 상품 활성화",
-          "html": "전체선택 Check Box<div>- Default 모든 상품 활성화</div>",
-          "x": 20,
-          "y": 240,
-          "pins": {
-            "pc": {
-              "x": 20,
-              "y": 240,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "mobile": {
-              "x": 0,
-              "y": 102,
-              "active": true
-            },
-            "left": {
-              "x": 20,
-              "y": 240,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "right": {
-              "x": 0,
-              "y": 102,
-              "active": true
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        }
-      ],
+      "description": [],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -715,7 +644,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 12:27:18",
+  "updated": "2026-11-16 13:31:29",
   "version": 0.1,
   "category": "project"
 }

@@ -187,6 +187,17 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
+    },
+    "04_Cart_Order_Benchmark_Analysis.html": {
+      "title": "시선닷컴 장바구니 · 주문서 벤치마크 분석 및 개선 전략 2",
+      "type": "plan",
+      "updatedAt": "2026-11-16T08:29:41.848Z",
+      "template": "template_process.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": "PC/Mobile 실물 캡처 정밀 분석, 국내 선두 플랫폼(무신사·29CM·SSF) 대비 격차 비교 및 3단계 개선 로드맵"
     }
   },
   "developer": "",
@@ -200,6 +211,7 @@
     "02_Front_System_Atomic_Design_Roadmap_900_copy.html",
     "renewal_order_5.html",
     "renewal_order_2.html",
-    "renewal_cart_4.html"
+    "renewal_cart_4.html",
+    "04_Cart_Order_Benchmark_Analysis.html"
   ]
 }

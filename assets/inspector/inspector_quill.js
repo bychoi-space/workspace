@@ -262,8 +262,143 @@
         if (btnStrike) btnStrike.setAttribute('title', '취소선 (Strikethrough)');
 
         const btnClean = toolbarEl.querySelector('.ql-clean');
-        if (btnClean) btnClean.setAttribute('title', '서식 지우기 (Clear Formatting)');
+        if (btnClean) {
+            btnClean.setAttribute('title', '서식 지우기 (Clear Formatting)');
+            btnClean.addEventListener('click', () => {
+                if (window._currentStickyFormat) {
+                    delete window._currentStickyFormat.color;
+                    delete window._currentStickyFormat.background;
+                }
+                const qlContainer = document.getElementById('editor-container');
+                if (qlContainer) qlContainer.style.removeProperty('--ql-inherited-text-color');
+                setTimeout(() => updateQuillAutoContrast(window.quillEditor), 0);
+            });
+        }
     }
+
+    // 6.5 Auto-Contrast Luminance Engine for Content Editor (.ql-container)
+    function _parseColorLuminance(colorStr) {
+        if (!colorStr || colorStr === 'transparent' || colorStr === 'none' || colorStr === 'inherit' || colorStr === 'initial') {
+            return null;
+        }
+        const s = String(colorStr).trim();
+        let r = -1, g = -1, b = -1, a = 1;
+        if (s.charAt(0) === '#') {
+            let hex = s.slice(1);
+            if (hex.length === 3) {
+                hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+            }
+            if (hex.length >= 6) {
+                r = parseInt(hex.slice(0, 2), 16);
+                g = parseInt(hex.slice(2, 4), 16);
+                b = parseInt(hex.slice(4, 6), 16);
+            }
+        } else if (s.indexOf('rgb') === 0) {
+            const open = s.indexOf('(');
+            const close = s.indexOf(')');
+            if (open !== -1 && close > open) {
+                const parts = s.slice(open + 1, close).split(',');
+                if (parts.length >= 3) {
+                    r = parseFloat(parts[0]);
+                    g = parseFloat(parts[1]);
+                    b = parseFloat(parts[2]);
+                    if (parts.length >= 4) {
+                        const parsedA = parseFloat(parts[3]);
+                        if (!isNaN(parsedA)) a = parsedA;
+                    }
+                }
+            }
+        }
+        if (isNaN(r) || isNaN(g) || isNaN(b) || r < 0 || g < 0 || b < 0) return null;
+        if (a <= 0.05) return null;
+        return ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255;
+    }
+
+    function updateQuillAutoContrast(quillInstance) {
+        const q = quillInstance || window.quillEditor;
+        if (!q || !q.root) return;
+        const container = q.container || document.getElementById('editor-container');
+        if (!container || !container.classList) return;
+
+        const root = q.root;
+        const inheritedVar = container.style.getPropertyValue('--ql-inherited-text-color').trim();
+        const fallbackLum = (_parseColorLuminance(inheritedVar) !== null)
+            ? _parseColorLuminance(inheritedVar)
+            : 0.09; // #0f172a default
+
+        let minLum = Infinity;
+        let maxLum = -Infinity;
+        let unhighlightedCount = 0;
+
+        try {
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            while ((node = walker.nextNode())) {
+                const parent = node.parentElement;
+                if (parent && parent.classList && parent.classList.contains('ql-cursor')) continue;
+                const visible = (node.nodeValue || '').replace(/[\s\u00A0\u200B\uFEFF]/g, '');
+                if (visible.length === 0) continue;
+
+                let explicitColor = '';
+                let hasOpaqueHighlightBg = false;
+                let cur = parent;
+                while (cur && cur !== root) {
+                    if (!explicitColor) {
+                        const inlineCol = (cur.style && cur.style.color) || cur.getAttribute('color') || '';
+                        if (inlineCol) explicitColor = inlineCol;
+                    }
+                    if (!hasOpaqueHighlightBg && cur.style && cur.style.backgroundColor) {
+                        const bgLum = _parseColorLuminance(cur.style.backgroundColor);
+                        if (bgLum !== null) hasOpaqueHighlightBg = true;
+                    }
+                    cur = cur.parentElement;
+                }
+
+                // Skip spans that carry their own opaque highlight background
+                if (hasOpaqueHighlightBg) continue;
+
+                const lum = explicitColor ? _parseColorLuminance(explicitColor) : fallbackLum;
+                const resolvedLum = (lum !== null) ? lum : fallbackLum;
+                if (resolvedLum < minLum) minLum = resolvedLum;
+                if (resolvedLum > maxLum) maxLum = resolvedLum;
+                unhighlightedCount += visible.length;
+            }
+        } catch (_) {}
+
+        let mode = 'light'; // 'light' | 'dark' | 'mid'
+        if (unhighlightedCount > 0) {
+            if (maxLum >= 0.62 && minLum < 0.35) {
+                mode = 'mid';
+            } else if (maxLum >= 0.62) {
+                mode = 'dark';
+            }
+        } else {
+            // Empty editor (or highlight-only): check active/sticky text color so typing white text starts on dark bg
+            let pendingColor = '';
+            try {
+                if (typeof q.hasFocus === 'function' && q.hasFocus()) {
+                    const fmt = q.getFormat();
+                    if (fmt && fmt.color) {
+                        pendingColor = Array.isArray(fmt.color) ? fmt.color[0] : fmt.color;
+                    }
+                }
+            } catch (_) {}
+            if (!pendingColor && window._currentStickyFormat && window._currentStickyFormat.color) {
+                pendingColor = window._currentStickyFormat.color;
+            }
+            if (!pendingColor && inheritedVar) {
+                pendingColor = inheritedVar;
+            }
+            const emptyLum = _parseColorLuminance(pendingColor);
+            if (emptyLum !== null && emptyLum >= 0.62) {
+                mode = 'dark';
+            }
+        }
+
+        container.classList.toggle('ql-auto-dark-bg', mode === 'dark');
+        container.classList.toggle('ql-auto-mid-bg', mode === 'mid');
+    }
+    window.updateQuillAutoContrast = updateQuillAutoContrast;
 
     const BLOCK_STICKY_FORMAT_KEYS = new Set([
         'align', 'lineheight', 'header', 'list', 'blockquote', 'indent', 'direction', 'code-block'
@@ -381,6 +516,7 @@
             } catch (_) {}
         } finally {
             _isApplyingStickyFormat = false;
+            updateQuillAutoContrast(quillInstance);
         }
     }
 
@@ -444,9 +580,11 @@
                     if (lhInput && document.activeElement !== lhInput) lhInput.value = activeLh;
                 }
             }
+            updateQuillAutoContrast(quillInstance);
         });
 
         quillInstance.on('text-change', (_delta, _oldDelta, source) => {
+            updateQuillAutoContrast(quillInstance);
             if (!state.isEditing || state.editingIndex === -1 || state._isLoadingShapeContent || _isApplyingStickyFormat) return;
             
             const plainText = _getCleanPlainText(quillInstance);
@@ -675,6 +813,7 @@ if (window.MessageHub) {
             const wasQuillFocused = document.activeElement === window.quillEditor.root;
             
             window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
+            updateQuillAutoContrast(window.quillEditor);
             
             // Sticky Format 갱신
             if (fallbackFs) {

@@ -541,6 +541,16 @@ function _syncQuillContent(compStyles, editingType) {
 
             window.quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml, 'silent');
 
+            const qlContainer = window.quillEditor.container || document.getElementById('editor-container');
+            const hasInlineColorInHtml = /(?:^|[;"'\s])color\s*:/i.test(cleanHtml);
+            if (qlContainer) {
+                if (!hasInlineColorInHtml && fallbackColor) {
+                    qlContainer.style.setProperty('--ql-inherited-text-color', fallbackColor);
+                } else {
+                    qlContainer.style.removeProperty('--ql-inherited-text-color');
+                }
+            }
+
             window._currentStickyFormat = {};
             if (fallbackFs) {
                 const fsPx = typeof fallbackFs === 'number' ? fallbackFs + 'px' : (fallbackFs.endsWith('px') ? fallbackFs : fallbackFs + 'px');
@@ -602,6 +612,10 @@ function _syncQuillContent(compStyles, editingType) {
                 if (iframe && iframe.contentWindow) {
                     iframe.contentWindow.focus();
                 }
+            }
+
+            if (typeof window.updateQuillAutoContrast === 'function') {
+                window.updateQuillAutoContrast(window.quillEditor);
             }
 
             requestAnimationFrame(() => {

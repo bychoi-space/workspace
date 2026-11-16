@@ -519,6 +519,9 @@
                 window.quillEditor.format(formatType, normHex);
                 if (!window._currentStickyFormat) window._currentStickyFormat = {};
                 window._currentStickyFormat[formatType] = normHex;
+                if (typeof window.updateQuillAutoContrast === 'function') {
+                    window.updateQuillAutoContrast(window.quillEditor);
+                }
             }
             const labelLine = pickerEl.querySelector('.ql-color-label, .ql-bg-label');
             if (labelLine) labelLine.style.stroke = normHex;
@@ -567,7 +570,13 @@
         optionsEl.addEventListener('click', function (e) {
             const qlItem = e.target.closest('.ql-picker-item');
             if (qlItem && qlItem.getAttribute('data-value')) {
-                _recordRecentColor(qlItem.getAttribute('data-value'));
+                const pickedVal = qlItem.getAttribute('data-value');
+                _recordRecentColor(pickedVal);
+                if (!window._currentStickyFormat) window._currentStickyFormat = {};
+                window._currentStickyFormat[formatType] = pickedVal;
+                if (typeof window.updateQuillAutoContrast === 'function') {
+                    setTimeout(function () { window.updateQuillAutoContrast(window.quillEditor); }, 0);
+                }
                 return;
             }
             const recItem = e.target.closest('.ql-recent-swatch');
@@ -587,6 +596,13 @@
             if (window.quillEditor) {
                 window.quillEditor.format(formatType, false);
                 if (window._currentStickyFormat) delete window._currentStickyFormat[formatType];
+                if (formatType === 'color') {
+                    const qlCont = window.quillEditor.container || document.getElementById('editor-container');
+                    if (qlCont) qlCont.style.removeProperty('--ql-inherited-text-color');
+                }
+                if (typeof window.updateQuillAutoContrast === 'function') {
+                    window.updateQuillAutoContrast(window.quillEditor);
+                }
             }
             const labelLine = pickerEl.querySelector('.ql-color-label, .ql-bg-label');
             if (labelLine) labelLine.style.stroke = '';

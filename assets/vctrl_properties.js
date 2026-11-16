@@ -520,6 +520,17 @@
             const msgCreator = SPECIAL_STYLE_CONFIGS[id];
             const msg = msgCreator(e.target.value);
             MessageHub.send(iframeWin, msg.type, { ...msg, id: targetIds[0], ids: targetIds });
+
+            if ((id === 'shape-text-color' || id === 'text-color-picker') && window.quillEditor) {
+                const qlCont = window.quillEditor.container || document.getElementById('editor-container');
+                if (qlCont && !/(?:^|[;"'\s])color\s*:/i.test(window.quillEditor.root ? window.quillEditor.root.innerHTML : '')) {
+                    qlCont.style.setProperty('--ql-inherited-text-color', e.target.value);
+                }
+                if (window._currentStickyFormat) window._currentStickyFormat.color = e.target.value;
+                if (typeof window.updateQuillAutoContrast === 'function') {
+                    window.updateQuillAutoContrast(window.quillEditor);
+                }
+            }
             
             const wrapper = e.target.closest('.v4-color-wrapper');
             if (wrapper) wrapper.classList.remove('transparent-active');

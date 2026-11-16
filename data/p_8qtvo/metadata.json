@@ -442,7 +442,7 @@
     "renewal_cart_5.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",
       "type": "ui",
-      "updatedAt": "2026-11-16T02:22:21.357Z",
+      "updatedAt": "2026-11-16T02:27:17.625Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -475,7 +475,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 11:22:21",
+  "updated": "2026-11-16 11:27:17",
   "version": 0.1,
   "category": "project"
 }

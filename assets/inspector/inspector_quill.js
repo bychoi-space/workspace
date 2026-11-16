@@ -595,6 +595,7 @@
                 target.closest('#group-dimension-bar') ||
                 target.closest('.v4-color-popover') ||
                 target.closest('#v4-color-palette-popover') ||
+                target.closest('#v4-global-color-palette-popover') ||
                 target.closest('.ql-toolbar') ||
                 target.closest('.ql-picker-options')
             );

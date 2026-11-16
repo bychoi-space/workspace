@@ -1,573 +1,613 @@
 /**
  * assets/vctrl_color_picker.js
- * Domain Module: Universal Color Palette, Swatch Popover, and Rich-Text Custom Color Pickers.
+ * Domain Module: Universal 9-Column Color Palette, Pinned Grayscale Row, Recent Colors (MRU), Live Hex Readout & Hybrid Color Pickers.
  */
-(function() {
-    console.log("[VCTRL COLOR PICKER] Module loaded.");
+(function () {
+    console.log("[VCTRL COLOR PICKER] 9-Column Palette & Recent Colors Module loaded.");
 
-window.V4_COMMON_COLOR_PALETTE = [
-    // 1. Grayscale - Neutral Gray (7)
-    '#111827', '#374151', '#6b7280', '#9ca3af', '#d1d5db', '#f3f4f6', '#ffffff',
-    // 2. Grayscale - Cool Slate (7)
-    '#0f172a', '#334155', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0', '#f8fafc',
-    // 3. Grayscale - Warm Stone (7)
-    '#1c1917', '#44403c', '#78716c', '#a8a29e', '#d6d3d1', '#e7e5e4', '#f5f5f4',
-    // 4. Blue - Deep Navy / Midnight (7)
-    '#0b192c', '#1e3a8a', '#1d4ed8', '#3b82f6', '#93c5fd', '#dbeafe', '#eff6ff',
-    // 5. Blue - Classic & Sky Blue (7)
-    '#0369a1', '#0284c7', '#0ea5e9', '#38bdf8', '#7dd3fc', '#bae6fd', '#e0f2fe',
-    // 6. Blue / Indigo - Indigo & Lavender Blue (7)
-    '#312e81', '#4338ca', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe', '#eef2ff',
-    // 7. Teal / Cyan - Teal & Ice Cyan (7)
-    '#134e4a', '#0f766e', '#14b8a6', '#2dd4bf', '#5eead4', '#99f6e4', '#f0fdfa',
-    // 8. Green - Emerald & Soft Sage (7)
-    '#064e3b', '#047857', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#ecfdf5',
-    // 9. Yellow / Amber - Butter & Soft Yellow (7)
-    '#713f12', '#ca8a04', '#eab308', '#facc15', '#fde047', '#fef08a', '#fef9c3',
-    // 10. Orange - Peach & Soft Coral (7)
-    '#7c2d12', '#ea580c', '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#fff7ed',
-    // 11. Red / Rose - Rose & Soft Red (7)
-    '#881337', '#be123c', '#f43f5e', '#fb7185', '#fda4af', '#fecdd3', '#fff1f2',
-    // 12. Purple - Lavender & Soft Violet (7)
-    '#581c87', '#7e22ce', '#a855f7', '#c084fc', '#d8b4fe', '#e9d5ff', '#faf5ff'
-];
+    const RECENT_COLORS_STORAGE_KEY = 'v4_recent_colors_v1';
+    const MAX_RECENT_COLORS = 9;
+    let _memoryRecentColors = [];
+
+    window.V4_COLOR_PALETTE_GROUPS = [
+        { id: 'grayscale', label: 'Pure Grayscale', pinned: true, colors: ['#000000', '#323232', '#646464', '#969696', '#c8c8c8', '#e6e6e6', '#f0f0f0', '#fafafa', '#ffffff'] },
+        { id: 'cool-slate', label: 'Cool Slate', colors: ['#0f172a', '#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0', '#f8fafc'] },
+        { id: 'warm-beige', label: 'Warm Beige', colors: ['#292524', '#44403c', '#78716c', '#8c7a6b', '#b08968', '#d6ccc2', '#e6ccb2', '#f5ebe0', '#faf7f2'] },
+        { id: 'commerce-red', label: 'Commerce Red', colors: ['#7f1d1d', '#991b1b', '#dc2626', '#e02020', '#ef4444', '#f87171', '#fca5a5', '#fecaca', '#fef2f2'] },
+        { id: 'amber-orange', label: 'Amber & Orange', colors: ['#7c2d12', '#b45309', '#ea580c', '#d97706', '#f59e0b', '#fbbf24', '#fcd34d', '#fde68a', '#fffbeb'] },
+        { id: 'emerald', label: 'Emerald', colors: ['#064e3b', '#065f46', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5', '#ecfdf5'] },
+        { id: 'royal-blue', label: 'Royal Blue', colors: ['#172554', '#1e3a8a', '#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#eff6ff'] },
+        { id: 'sky-cyan', label: 'Sky & Cyan', colors: ['#0c4a6e', '#0369a1', '#0284c7', '#0ea5e9', '#06b6d4', '#38bdf8', '#7dd3fc', '#bae6fd', '#f0f9ff'] },
+        { id: 'indigo-violet', label: 'Indigo & Violet', colors: ['#312e81', '#4338ca', '#6366f1', '#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#f5f3ff'] }
+    ];
+
+    window.V4_COMMON_COLOR_PALETTE = window.V4_COLOR_PALETTE_GROUPS.reduce(function (acc, grp) {
+        return acc.concat(grp.colors);
+    }, []);
+
+    const _colorGroupLookup = {};
+    window.V4_COLOR_PALETTE_GROUPS.forEach(function (grp) {
+        grp.colors.forEach(function (hex) { _colorGroupLookup[hex.toLowerCase()] = grp.label; });
+    });
 
     function normalizeHex(input) {
         if (!input || typeof input !== 'string') return null;
         let hex = input.trim().replace(/^#/, '');
-        // 3-digit shorthand (#abc -> #aabbcc)
         if (/^[0-9a-fA-F]{3}$/.test(hex)) {
-            hex = hex.split('').map(c => c + c).join('');
+            hex = hex.split('').map(function (c) { return c + c; }).join('');
         }
-        // 6-digit hex validation
-        if (/^[0-9a-fA-F]{6}$/.test(hex)) {
-            return '#' + hex.toLowerCase();
-        }
-        return null;
+        return /^[0-9a-fA-F]{6}$/.test(hex) ? ('#' + hex.toLowerCase()) : null;
     }
 
-function _createColorPalettePopover() {
-    let popover = document.getElementById('v4-global-color-palette-popover');
-    if (!popover) {
-        popover = document.createElement('div');
-        popover.id = 'v4-global-color-palette-popover';
-        popover.innerHTML = `
-            <div class="v4-palette-grid"></div>
-            <div class="v4-palette-footer">
-                <div class="v4-palette-custom-action" title="Hexcode 직접 설정" style="cursor: pointer;">
-                    <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">tag</span>
-                    <span style="pointer-events: none;">직접 설정</span>
-                </div>
-                <button type="button" class="v4-palette-reset-btn" title="투명 / 색상 제거">
-                    <span class="material-icons-outlined" style="font-size: 13px;">block</span>
-                </button>
-            </div>
-            <div class="v4-palette-hex-bar">
-                <div class="v4-hex-preview-wrap" title="컬러 피커 열기 (드래그하여 선택)">
-                    <div class="v4-hex-preview" style="background-color: #ffffff;">
-                        <span class="material-icons-outlined v4-hex-preview-icon">palette</span>
-                    </div>
-                    <input type="color" class="v4-hex-native-picker" tabindex="-1" aria-hidden="true">
-                </div>
-                <span class="v4-hex-prefix">#</span>
-                <input type="text" class="v4-hex-input" maxlength="7" placeholder="HEXCODE" spellcheck="false" autocomplete="off">
-                <button type="button" class="v4-hex-btn v4-hex-btn-apply" title="적용">
-                    <span class="material-icons-outlined" style="font-size: 14px;">check</span>
-                </button>
-                <button type="button" class="v4-hex-btn v4-hex-btn-cancel" title="취소">
-                    <span class="material-icons-outlined" style="font-size: 14px;">close</span>
-                </button>
-            </div>
-        `;
-        document.body.appendChild(popover);
-
-        const grid = popover.querySelector('.v4-palette-grid');
-        grid.innerHTML = window.V4_COMMON_COLOR_PALETTE.map(c => `
-            <div class="v4-palette-item" data-color="${c}" style="background-color: ${c};" title="${c}"></div>
-        `).join('');
-    }
-
-    return {
-        popover: popover,
-        grid: popover.querySelector('.v4-palette-grid'),
-        footer: popover.querySelector('.v4-palette-footer'),
-        customAction: popover.querySelector('.v4-palette-custom-action'),
-        resetBtn: popover.querySelector('.v4-palette-reset-btn'),
-        hexBar: popover.querySelector('.v4-palette-hex-bar'),
-        hexPreviewWrap: popover.querySelector('.v4-hex-preview-wrap'),
-        hexPreview: popover.querySelector('.v4-hex-preview'),
-        hexNativePicker: popover.querySelector('.v4-hex-native-picker'),
-        hexInput: popover.querySelector('.v4-hex-input'),
-        hexApplyBtn: popover.querySelector('.v4-hex-btn-apply'),
-        hexCancelBtn: popover.querySelector('.v4-hex-btn-cancel')
-    };
-}
-
-function _bindHexBarControls(dom, state) {
-    const { hexBar, footer, hexInput, hexPreview, hexNativePicker, hexApplyBtn, hexCancelBtn } = dom;
-
-    function closeHexBar() {
-        if (hexBar) hexBar.classList.remove('active');
-        if (footer) footer.style.display = 'flex';
-        if (hexInput) hexInput.classList.remove('error');
-    }
-
-    function openHexBar() {
-        if (!hexBar || !footer) return;
-        footer.style.display = 'none';
-        hexBar.classList.add('active');
-
-        const curVal = (state.currentTargetInput && state.currentTargetInput.value ? state.currentTargetInput.value : '#ffffff').toLowerCase();
-        const norm = normalizeHex(curVal) || '#ffffff';
-        const cleanHex = norm.replace(/^#/, '').toUpperCase();
-        if (hexInput) {
-            hexInput.value = cleanHex;
-            hexInput.classList.remove('error');
-        }
-        if (hexPreview) {
-            hexPreview.style.backgroundColor = norm;
-        }
-        if (hexNativePicker) {
-            hexNativePicker.value = norm;
-        }
-        setTimeout(() => {
-            if (hexInput) {
-                hexInput.focus();
-                hexInput.select();
+    function _loadRecentColors() {
+        try {
+            const raw = window.localStorage ? window.localStorage.getItem(RECENT_COLORS_STORAGE_KEY) : null;
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    _memoryRecentColors = parsed.map(normalizeHex).filter(Boolean).slice(0, MAX_RECENT_COLORS);
+                    return _memoryRecentColors.slice();
+                }
             }
-        }, 10);
+        } catch (e) { }
+        return _memoryRecentColors.slice();
     }
 
-    function applyHexColor() {
-        if (!hexInput) return;
-        const norm = normalizeHex(hexInput.value);
-        if (!norm) {
-            hexInput.classList.add('error');
-            setTimeout(() => {
-                if (hexInput) hexInput.classList.remove('error');
-            }, 500);
+    function _saveRecentColors(list) {
+        _memoryRecentColors = list.slice(0, MAX_RECENT_COLORS);
+        try {
+            if (window.localStorage) window.localStorage.setItem(RECENT_COLORS_STORAGE_KEY, JSON.stringify(_memoryRecentColors));
+        } catch (e) { }
+    }
+
+    function _recordRecentColor(hexVal) {
+        const norm = normalizeHex(hexVal);
+        if (!norm) return;
+        const next = _loadRecentColors().filter(function (c) { return c !== norm; });
+        next.unshift(norm);
+        _saveRecentColors(next.slice(0, MAX_RECENT_COLORS));
+    }
+
+    function _clearRecentColors() {
+        _saveRecentColors([]);
+    }
+
+    function _resolveColorLabel(hexVal) {
+        if (!hexVal || hexVal === 'transparent') return 'Transparent';
+        const norm = normalizeHex(hexVal);
+        return norm ? (_colorGroupLookup[norm] || 'Custom Color') : 'Custom';
+    }
+
+    function _createSwatchHtml(hex, label) {
+        const upper = hex.toUpperCase();
+        const titleTxt = label ? (label + ' (' + upper + ')') : upper;
+        return '<div class="v4-palette-item" data-color="' + hex + '" data-label="' + (label || 'Custom') + '" style="background-color: ' + hex + ';" title="' + titleTxt + '"></div>';
+    }
+
+    // Shared Bi-directional Hybrid Hex Bar Controller (used by Global Popover & Quill Toolbar Pickers)
+    function _wireHybridHexBar(cfg) {
+        const hexBar = cfg.hexBar;
+        const footer = cfg.footer;
+        const hexInput = cfg.hexInput;
+        const hexPreview = cfg.hexPreview;
+        const hexNativePicker = cfg.hexNativePicker;
+
+        function closeHexBar() {
+            if (hexBar) hexBar.classList.remove('active');
+            if (footer) footer.style.display = 'flex';
+            if (hexInput) hexInput.classList.remove('error');
+        }
+
+        function openHexBar() {
+            if (!hexBar || !footer) return;
+            footer.style.display = 'none';
+            hexBar.classList.add('active');
+            const raw = cfg.getCurrentColor() || '#ffffff';
+            const norm = normalizeHex(raw) || (raw.startsWith('#') ? raw : (typeof window.rgbToHex === 'function' ? window.rgbToHex(raw) : '#ffffff')) || '#ffffff';
+            if (hexInput) {
+                hexInput.value = norm.replace(/^#/, '').toUpperCase();
+                hexInput.classList.remove('error');
+            }
+            if (hexPreview) hexPreview.style.backgroundColor = norm;
+            if (hexNativePicker) hexNativePicker.value = norm;
+            setTimeout(function () {
+                if (hexInput) { hexInput.focus(); hexInput.select(); }
+            }, 10);
+        }
+
+        function applyHexColor() {
+            const norm = normalizeHex(hexInput ? hexInput.value : '');
+            if (!norm) {
+                if (hexInput) {
+                    hexInput.classList.add('error');
+                    setTimeout(function () { hexInput.classList.remove('error'); }, 500);
+                }
+                return;
+            }
+            cfg.onApply(norm);
+        }
+
+        if (hexNativePicker) {
+            const syncFromNative = function (e) {
+                const pickedHex = (e.target.value || '').toLowerCase();
+                if (hexInput) {
+                    hexInput.value = pickedHex.replace(/^#/, '').toUpperCase();
+                    hexInput.classList.remove('error');
+                }
+                if (hexPreview) hexPreview.style.backgroundColor = pickedHex;
+                if (cfg.onPreview) cfg.onPreview(pickedHex, 'Custom Spectrum');
+            };
+            hexNativePicker.addEventListener('input', syncFromNative);
+            hexNativePicker.addEventListener('change', syncFromNative);
+        }
+
+        if (hexInput) {
+            hexInput.addEventListener('input', function (e) {
+                const norm = normalizeHex(e.target.value);
+                if (norm) {
+                    if (hexPreview) hexPreview.style.backgroundColor = norm;
+                    if (hexNativePicker) hexNativePicker.value = norm;
+                    hexInput.classList.remove('error');
+                    if (cfg.onPreview) cfg.onPreview(norm, _resolveColorLabel(norm));
+                }
+            });
+            hexInput.addEventListener('keydown', function (e) {
+                e.stopPropagation();
+                if (e.key === 'Enter') { e.preventDefault(); applyHexColor(); }
+                else if (e.key === 'Escape') { e.preventDefault(); closeHexBar(); }
+            });
+            hexInput.addEventListener('keyup', function (e) { e.stopPropagation(); });
+            hexInput.addEventListener('keypress', function (e) { e.stopPropagation(); });
+        }
+
+        if (cfg.hexApplyBtn) cfg.hexApplyBtn.addEventListener('click', function (e) { e.stopPropagation(); applyHexColor(); });
+        if (cfg.hexCancelBtn) cfg.hexCancelBtn.addEventListener('click', function (e) { e.stopPropagation(); closeHexBar(); });
+
+        return { closeHexBar: closeHexBar, openHexBar: openHexBar, applyHexColor: applyHexColor };
+    }
+
+    function _createColorPalettePopover() {
+        let popover = document.getElementById('v4-global-color-palette-popover');
+        if (!popover) {
+            popover = document.createElement('div');
+            popover.id = 'v4-global-color-palette-popover';
+            popover.innerHTML =
+                '<div class="v4-palette-info-bar"><span class="v4-palette-group-label">Pure Grayscale</span><span class="v4-palette-hex-readout">#FFFFFF</span></div>' +
+                '<div class="v4-palette-pinned-row"></div>' +
+                '<div class="v4-palette-divider"></div>' +
+                '<div class="v4-palette-grid"></div>' +
+                '<div class="v4-palette-recent-wrap" style="display: none;">' +
+                '<div class="v4-palette-recent-header"><span class="v4-palette-recent-title">\uCD5C\uADFC \uC0AC\uC6A9 \uC0C9\uC0C1</span><button type="button" class="v4-palette-recent-clear" title="\uCD5C\uADFC \uC0AC\uC6A9 \uC0C9\uC0C1 \uBE44\uC6B0\uAE30">&times;</button></div>' +
+                '<div class="v4-palette-recent-grid"></div>' +
+                '</div>' +
+                '<div class="v4-palette-footer">' +
+                '<div class="v4-palette-custom-action" title="Hexcode \uC9C1\uC811 \uC124\uC815 \uBC0F \uC2A4\uD399\uD2B8\uB7FC \uD53C\uCEE4" style="cursor: pointer;"><span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">tag</span><span style="pointer-events: none;">\uC9C1\uC811 \uC124\uC815</span></div>' +
+                '<button type="button" class="v4-palette-reset-btn" title="\uD22C\uBA85 / \uC0C9\uC0C1 \uC81C\uAC70"><span class="material-icons-outlined" style="font-size: 13px;">block</span></button>' +
+                '</div>' +
+                '<div class="v4-palette-hex-bar">' +
+                '<div class="v4-hex-preview-wrap" title="\uCEEC\uB7EC \uD53C\uCEE4 \uC5F4\uAE30 (\uB4DC\uB798\uADF8\uD558\uC5EC \uC120\uD0DD)"><div class="v4-hex-preview" style="background-color: #ffffff;"><span class="material-icons-outlined v4-hex-preview-icon">palette</span></div><input type="color" class="v4-hex-native-picker" tabindex="-1" aria-hidden="true"></div>' +
+                '<span class="v4-hex-prefix">#</span><input type="text" class="v4-hex-input" maxlength="7" placeholder="HEXCODE" spellcheck="false" autocomplete="off">' +
+                '<button type="button" class="v4-hex-btn v4-hex-btn-apply" title="\uC801\uC6A9"><span class="material-icons-outlined" style="font-size: 14px;">check</span></button>' +
+                '<button type="button" class="v4-hex-btn v4-hex-btn-cancel" title="\uCDE8\uC18C"><span class="material-icons-outlined" style="font-size: 14px;">close</span></button>' +
+                '</div>';
+            document.body.appendChild(popover);
+
+            const pinnedGroup = window.V4_COLOR_PALETTE_GROUPS[0];
+            const bodyGroups = window.V4_COLOR_PALETTE_GROUPS.slice(1);
+            const pinnedRow = popover.querySelector('.v4-palette-pinned-row');
+            const mainGrid = popover.querySelector('.v4-palette-grid');
+
+            if (pinnedRow && pinnedGroup) {
+                pinnedRow.innerHTML = pinnedGroup.colors.map(function (c) { return _createSwatchHtml(c, pinnedGroup.label); }).join('');
+            }
+            if (mainGrid) {
+                mainGrid.innerHTML = bodyGroups.map(function (grp) {
+                    return grp.colors.map(function (c) { return _createSwatchHtml(c, grp.label); }).join('');
+                }).join('');
+            }
+        }
+
+        return {
+            popover: popover,
+            groupLabel: popover.querySelector('.v4-palette-group-label'),
+            hexReadout: popover.querySelector('.v4-palette-hex-readout'),
+            recentWrap: popover.querySelector('.v4-palette-recent-wrap'),
+            recentGrid: popover.querySelector('.v4-palette-recent-grid'),
+            recentClearBtn: popover.querySelector('.v4-palette-recent-clear'),
+            footer: popover.querySelector('.v4-palette-footer'),
+            customAction: popover.querySelector('.v4-palette-custom-action'),
+            resetBtn: popover.querySelector('.v4-palette-reset-btn'),
+            hexBar: popover.querySelector('.v4-palette-hex-bar'),
+            hexPreview: popover.querySelector('.v4-hex-preview'),
+            hexNativePicker: popover.querySelector('.v4-hex-native-picker'),
+            hexInput: popover.querySelector('.v4-hex-input'),
+            hexApplyBtn: popover.querySelector('.v4-hex-btn-apply'),
+            hexCancelBtn: popover.querySelector('.v4-hex-btn-cancel')
+        };
+    }
+
+    function _renderGlobalRecentSection(dom, activeHex) {
+        if (!dom || !dom.recentWrap || !dom.recentGrid) return;
+        const recents = _loadRecentColors();
+        if (recents.length === 0) {
+            dom.recentWrap.style.display = 'none';
+            dom.recentGrid.innerHTML = '';
             return;
         }
+        dom.recentWrap.style.display = 'block';
+        const normActive = normalizeHex(activeHex || '');
+        dom.recentGrid.innerHTML = recents.map(function (c) {
+            const isSel = normActive && c.toLowerCase() === normActive;
+            const upper = c.toUpperCase();
+            return '<div class="v4-palette-item' + (isSel ? ' selected' : '') + '" data-color="' + c + '" data-label="\uCD5C\uADFC \uC0AC\uC6A9" style="background-color: ' + c + ';" title="\uCD5C\uADFC \uC0AC\uC6A9 (' + upper + ')"></div>';
+        }).join('');
+    }
 
-        if (state.currentTargetInput) {
-            state.currentTargetInput.value = norm;
-            state.currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-            state.currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
+    function _updateInfoReadout(dom, hexVal, customLabel) {
+        if (!dom) return;
+        if (!hexVal || hexVal === 'transparent') {
+            if (dom.groupLabel) dom.groupLabel.textContent = 'Transparent';
+            if (dom.hexReadout) dom.hexReadout.textContent = 'NONE';
+            return;
         }
-        if (state.currentActiveWrapper) {
-            state.currentActiveWrapper.classList.remove('transparent-active');
-        }
-        window.closeV4ColorPalette();
+        const norm = normalizeHex(hexVal) || hexVal;
+        if (dom.groupLabel) dom.groupLabel.textContent = customLabel || _resolveColorLabel(norm);
+        if (dom.hexReadout) dom.hexReadout.textContent = String(norm).toUpperCase();
     }
 
-    // Native Color Picker (Drag Spectrum) -> Real-time sync to Hex Input & Preview
-    if (hexNativePicker) {
-        const syncFromNativePicker = (e) => {
-            const pickedHex = (e.target.value || '').toLowerCase();
-            const cleanHex = pickedHex.replace(/^#/, '').toUpperCase();
-            if (hexInput) {
-                hexInput.value = cleanHex;
-                hexInput.classList.remove('error');
-            }
-            if (hexPreview) {
-                hexPreview.style.backgroundColor = pickedHex;
-            }
-        };
-        hexNativePicker.addEventListener('input', syncFromNativePicker);
-        hexNativePicker.addEventListener('change', syncFromNativePicker);
+    function _applyColorToTargetInput(state, hex) {
+        if (!state.currentTargetInput) return;
+        _recordRecentColor(hex);
+        state.currentTargetInput.value = hex;
+        state.currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
+        state.currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
+        if (state.currentActiveWrapper) state.currentActiveWrapper.classList.remove('transparent-active');
     }
 
-    // Hex Input real-time preview, reverse sync to native picker, & keyboard event isolation
-    if (hexInput) {
-        hexInput.addEventListener('input', (e) => {
-            const val = e.target.value;
-            const norm = normalizeHex(val);
-            if (norm) {
-                if (hexPreview) hexPreview.style.backgroundColor = norm;
-                if (hexNativePicker) hexNativePicker.value = norm;
-                hexInput.classList.remove('error');
-            }
-        });
+    function _bindColorPaletteEvents(dom, state, hexControls) {
+        const popover = dom.popover;
 
-        hexInput.addEventListener('keydown', (e) => {
-            e.stopPropagation(); // Stop propagation to prevent global shortcuts (delete, fullscreen, nudge, etc.)
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                applyHexColor();
-            } else if (e.key === 'Escape') {
-                e.preventDefault();
-                closeHexBar();
-            }
-        });
-        hexInput.addEventListener('keyup', (e) => e.stopPropagation());
-        hexInput.addEventListener('keypress', (e) => e.stopPropagation());
-    }
-
-    if (hexApplyBtn) {
-        hexApplyBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            applyHexColor();
-        });
-    }
-
-    if (hexCancelBtn) {
-        hexCancelBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeHexBar();
-        });
-    }
-
-    return { closeHexBar, openHexBar, applyHexColor };
-}
-
-function _bindColorPaletteEvents(dom, state, hexControls) {
-    const { popover, grid, customAction, resetBtn, hexBar } = dom;
-
-    // Swatch click
-    if (grid) {
-        grid.addEventListener('click', (e) => {
+        popover.addEventListener('click', function (e) {
             const item = e.target.closest('.v4-palette-item');
             if (!item || !state.currentTargetInput) return;
-            const hex = item.dataset.color;
-            state.currentTargetInput.value = hex;
-            state.currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-            state.currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-            if (state.currentActiveWrapper) state.currentActiveWrapper.classList.remove('transparent-active');
+            _applyColorToTargetInput(state, item.dataset.color);
             window.closeV4ColorPalette();
         });
-    }
 
-    // Custom action -> Open Hex Bar
-    if (customAction) {
-        customAction.addEventListener('click', (e) => {
-            e.stopPropagation();
-            hexControls.openHexBar();
+        popover.addEventListener('mouseover', function (e) {
+            const item = e.target.closest('.v4-palette-item');
+            if (item) _updateInfoReadout(dom, item.dataset.color, item.dataset.label);
         });
-    }
 
-    // Reset / Transparent
-    if (resetBtn) {
-        resetBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!state.currentActiveWrapper) return;
-            const propGroup = state.currentActiveWrapper.closest('.prop-group');
-            const noneBtn = propGroup ? propGroup.querySelector('.v4-color-none-btn') : null;
-            if (noneBtn) {
-                noneBtn.click();
-            } else if (state.currentTargetInput) {
-                state.currentTargetInput.value = 'transparent';
-                state.currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                state.currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
-                state.currentActiveWrapper.classList.add('transparent-active');
-            }
-            window.closeV4ColorPalette();
+        popover.addEventListener('mouseleave', function () {
+            if (!state.currentTargetInput) return;
+            const isTrans = state.currentActiveWrapper && state.currentActiveWrapper.classList.contains('transparent-active');
+            _updateInfoReadout(dom, isTrans ? 'transparent' : (state.currentTargetInput.value || '#ffffff'));
         });
-    }
 
-    // Auto-close on object deselection via MessageHub
-    if (window.MessageHub) {
-        window.MessageHub.subscribe('LF_DESELECT', () => {
-            window.closeV4ColorPalette();
-        });
-        window.MessageHub.subscribe('LF_COMP_DESELECTED', () => {
-            window.closeV4ColorPalette();
-        });
-    }
+        if (dom.recentClearBtn) {
+            dom.recentClearBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                _clearRecentColors();
+                _renderGlobalRecentSection(dom, state.currentTargetInput ? state.currentTargetInput.value : '');
+            });
+        }
 
-    // Auto-close when clicking inside an iframe (parent window blurs and activeElement becomes IFRAME)
-    window.addEventListener('blur', () => {
-        if (popover && popover.classList.contains('active')) {
-            if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+        if (dom.customAction) {
+            dom.customAction.addEventListener('click', function (e) { e.stopPropagation(); hexControls.openHexBar(); });
+        }
+
+        if (dom.resetBtn) {
+            dom.resetBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (!state.currentActiveWrapper) return;
+                const propGroup = state.currentActiveWrapper.closest('.prop-group');
+                const noneBtn = propGroup ? propGroup.querySelector('.v4-color-none-btn') : null;
+                if (noneBtn) {
+                    noneBtn.click();
+                } else if (state.currentTargetInput) {
+                    state.currentTargetInput.value = 'transparent';
+                    state.currentTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    state.currentTargetInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    state.currentActiveWrapper.classList.add('transparent-active');
+                }
+                window.closeV4ColorPalette();
+            });
+        }
+
+        if (window.MessageHub) {
+            window.MessageHub.subscribe('LF_DESELECT', function () { window.closeV4ColorPalette(); });
+            window.MessageHub.subscribe('LF_COMP_DESELECTED', function () { window.closeV4ColorPalette(); });
+        }
+
+        window.addEventListener('blur', function () {
+            if (popover && popover.classList.contains('active') && document.activeElement && document.activeElement.tagName === 'IFRAME') {
                 window.closeV4ColorPalette();
             }
-        }
-    });
-
-    // Close on outside click
-    document.addEventListener('mousedown', (e) => {
-        if (!popover.classList.contains('active')) return;
-        if (popover.contains(e.target) || e.target.closest('.v4-color-wrapper')) return;
-        window.closeV4ColorPalette();
-    });
-
-    // Close on escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && popover.classList.contains('active')) {
-            if (hexBar && hexBar.classList.contains('active')) {
-                hexControls.closeHexBar();
-            } else {
-                window.closeV4ColorPalette();
-            }
-        }
-    });
-}
-
-function _setupColorPalettePositioning(dom, state, hexControls) {
-    const { popover } = dom;
-
-    window.openV4ColorPalette = function(wrapperEl) {
-        if (!wrapperEl) return;
-        state.currentActiveWrapper = wrapperEl;
-        state.currentTargetInput = wrapperEl.querySelector('input[type="color"], .v4-color-input');
-        if (!state.currentTargetInput) return;
-
-        hexControls.closeHexBar();
-
-        const curVal = (state.currentTargetInput.value || '#ffffff').toLowerCase();
-        popover.querySelectorAll('.v4-palette-item').forEach(it => {
-            if (it.dataset.color.toLowerCase() === curVal) {
-                it.classList.add('selected');
-            } else {
-                it.classList.remove('selected');
-            }
         });
 
-        // Position calculation
-        popover.classList.add('active');
-        const rect = wrapperEl.getBoundingClientRect();
-        const popRect = popover.getBoundingClientRect();
-        
-        let top = rect.bottom + 4;
-        let left = rect.left;
+        document.addEventListener('mousedown', function (e) {
+            if (!popover.classList.contains('active')) return;
+            if (popover.contains(e.target) || e.target.closest('.v4-color-wrapper')) return;
+            window.closeV4ColorPalette();
+        });
 
-        // Flip top if bottom overflows viewport
-        if (top + popRect.height > window.innerHeight - 10) {
-            top = Math.max(10, rect.top - popRect.height - 4);
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && popover.classList.contains('active')) {
+                if (dom.hexBar && dom.hexBar.classList.contains('active')) hexControls.closeHexBar();
+                else window.closeV4ColorPalette();
+            }
+        });
+    }
+
+    function _setupColorPalettePositioning(dom, state, hexControls) {
+        const popover = dom.popover;
+
+        window.openV4ColorPalette = function (wrapperEl) {
+            if (!wrapperEl) return;
+            state.currentActiveWrapper = wrapperEl;
+            state.currentTargetInput = wrapperEl.querySelector('input[type="color"], .v4-color-input');
+            if (!state.currentTargetInput) return;
+
+            hexControls.closeHexBar();
+
+            const isTrans = wrapperEl.classList.contains('transparent-active');
+            const curVal = isTrans ? 'transparent' : (normalizeHex(state.currentTargetInput.value) || '#ffffff');
+            _renderGlobalRecentSection(dom, curVal);
+            _updateInfoReadout(dom, curVal);
+
+            popover.querySelectorAll('.v4-palette-pinned-row .v4-palette-item, .v4-palette-grid .v4-palette-item').forEach(function (it) {
+                it.classList.toggle('selected', !isTrans && it.dataset.color.toLowerCase() === curVal);
+            });
+
+            popover.classList.add('active');
+            const rect = wrapperEl.getBoundingClientRect();
+            const popRect = popover.getBoundingClientRect();
+
+            let top = rect.bottom + 4;
+            let left = rect.left;
+            if (top + popRect.height > window.innerHeight - 10) top = Math.max(10, rect.top - popRect.height - 4);
+            if (left + popRect.width > window.innerWidth - 10) left = Math.max(10, window.innerWidth - popRect.width - 10);
+
+            popover.style.top = top + 'px';
+            popover.style.left = left + 'px';
+        };
+
+        window.closeV4ColorPalette = function () {
+            hexControls.closeHexBar();
+            popover.classList.remove('active');
+            state.currentActiveWrapper = null;
+            state.currentTargetInput = null;
+        };
+    }
+
+    window.initV4GlobalColorPalette = function () {
+        if (window._v4ColorPaletteInitialized) return;
+        window._v4ColorPaletteInitialized = true;
+
+        const dom = _createColorPalettePopover();
+        const state = { currentActiveWrapper: null, currentTargetInput: null };
+        const hexControls = _wireHybridHexBar({
+            hexBar: dom.hexBar,
+            footer: dom.footer,
+            hexInput: dom.hexInput,
+            hexPreview: dom.hexPreview,
+            hexNativePicker: dom.hexNativePicker,
+            hexApplyBtn: dom.hexApplyBtn,
+            hexCancelBtn: dom.hexCancelBtn,
+            getCurrentColor: function () { return state.currentTargetInput ? state.currentTargetInput.value : '#ffffff'; },
+            onPreview: function (hex, lbl) { _updateInfoReadout(dom, hex, lbl); },
+            onApply: function (norm) {
+                _applyColorToTargetInput(state, norm);
+                window.closeV4ColorPalette();
+            }
+        });
+        _bindColorPaletteEvents(dom, state, hexControls);
+        _setupColorPalettePositioning(dom, state, hexControls);
+
+        document.addEventListener('click', function (e) {
+            const wrapper = e.target.closest('.v4-color-wrapper');
+            if (!wrapper || wrapper.closest('#v4-global-color-palette-popover')) return;
+            e.preventDefault();
+            e.stopPropagation();
+            window.openV4ColorPalette(wrapper);
+        });
+    };
+
+    // --- Quill Rich Text Toolbar Color Picker Enhancement ---
+    function _clampQuillDropdownViewport(pickerEl, optionsEl) {
+        if (!pickerEl || !optionsEl) return;
+        optionsEl.style.left = '0px';
+        optionsEl.style.right = 'auto';
+        requestAnimationFrame(function () {
+            if (!pickerEl.classList.contains('ql-expanded')) return;
+            const rect = optionsEl.getBoundingClientRect();
+            if (rect.right > window.innerWidth - 8) {
+                optionsEl.style.left = (-Math.round(rect.right - (window.innerWidth - 8))) + 'px';
+            }
+        });
+    }
+
+    function _buildQuillColorExtensions(optionsEl, formatType) {
+        const infoBar = document.createElement('div');
+        infoBar.className = 'ql-palette-info-bar';
+        infoBar.innerHTML = '<span class="ql-palette-group-label">Pure Grayscale</span><span class="ql-palette-hex-readout">#000000</span>';
+        optionsEl.insertBefore(infoBar, optionsEl.firstChild);
+
+        const items = optionsEl.querySelectorAll('.ql-picker-item');
+        items.forEach(function (it) {
+            const v = normalizeHex(it.getAttribute('data-value') || '') || '';
+            if (v) it.setAttribute('title', _resolveColorLabel(v) + ' (' + v.toUpperCase() + ')');
+        });
+        if (items.length >= 9 && items[8].nextSibling) {
+            const divider = document.createElement('div');
+            divider.className = 'ql-palette-row1-divider';
+            optionsEl.insertBefore(divider, items[8].nextSibling);
         }
-        // Clamp left
-        if (left + popRect.width > window.innerWidth - 10) {
-            left = Math.max(10, window.innerWidth - popRect.width - 10);
-        }
 
-        popover.style.top = `${top}px`;
-        popover.style.left = `${left}px`;
-    };
+        const recentWrap = document.createElement('div');
+        recentWrap.className = 'ql-palette-recent-wrap';
+        recentWrap.style.display = 'none';
+        recentWrap.innerHTML =
+            '<div class="ql-palette-recent-header"><span class="ql-palette-recent-title">\uCD5C\uADFC \uC0AC\uC6A9 \uC0C9\uC0C1</span><button type="button" class="ql-palette-recent-clear" title="\uCD5C\uADFC \uC0AC\uC6A9 \uC0C9\uC0C1 \uBE44\uC6B0\uAE30">&times;</button></div>' +
+            '<div class="ql-palette-recent-grid"></div>';
 
-    window.closeV4ColorPalette = function() {
-        hexControls.closeHexBar();
-        popover.classList.remove('active');
-        state.currentActiveWrapper = null;
-        state.currentTargetInput = null;
-    };
-}
+        const footer = document.createElement('div');
+        footer.className = 'ql-custom-color-footer';
+        footer.innerHTML =
+            '<div class="ql-custom-color-action" title="Hexcode \uC9C1\uC811 \uC124\uC815" style="cursor: pointer;"><span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">tag</span><span style="pointer-events: none;">\uC9C1\uC811 \uC124\uC815</span></div>' +
+            '<button type="button" class="ql-custom-color-reset" title="\uC0C9\uC0C1 \uC81C\uAC70 / \uAE30\uBCF8\uAC12"><span class="material-icons-outlined" style="font-size: 13px;">format_color_reset</span></button>';
 
-window.initV4GlobalColorPalette = function() {
-    if (window._v4ColorPaletteInitialized) return;
-    window._v4ColorPaletteInitialized = true;
+        const defaultPreview = formatType === 'color' ? '#000000' : '#fef08a';
+        const hexBar = document.createElement('div');
+        hexBar.className = 'ql-custom-hex-bar';
+        hexBar.innerHTML =
+            '<div class="ql-hex-preview-wrap" title="\uCEEC\uB7EC \uD53C\uCEE4 \uC5F4\uAE30 (\uB4DC\uB798\uADF8\uD558\uC5EC \uC120\uD0DD)"><div class="ql-hex-preview" style="background-color: ' + defaultPreview + ';"><span class="material-icons-outlined ql-hex-preview-icon">palette</span></div><input type="color" class="ql-hex-native-picker" tabindex="-1" aria-hidden="true"></div>' +
+            '<span class="ql-hex-prefix">#</span><input type="text" class="ql-hex-input" maxlength="7" placeholder="HEXCODE" spellcheck="false" autocomplete="off">' +
+            '<button type="button" class="ql-hex-btn ql-hex-btn-apply" title="\uC801\uC6A9"><span class="material-icons-outlined" style="font-size: 14px;">check</span></button>' +
+            '<button type="button" class="ql-hex-btn ql-hex-btn-cancel" title="\uCDE8\uC18C"><span class="material-icons-outlined" style="font-size: 14px;">close</span></button>';
 
-    const dom = _createColorPalettePopover();
-    const state = {
-        currentActiveWrapper: null,
-        currentTargetInput: null
-    };
+        optionsEl.appendChild(recentWrap);
+        optionsEl.appendChild(footer);
+        optionsEl.appendChild(hexBar);
 
-    const hexControls = _bindHexBarControls(dom, state);
-    _bindColorPaletteEvents(dom, state, hexControls);
-    _setupColorPalettePositioning(dom, state, hexControls);
-
-    // Global event delegation for .v4-color-wrapper clicks
-    document.addEventListener('click', (e) => {
-        const wrapper = e.target.closest('.v4-color-wrapper');
-        if (!wrapper) return;
-        if (wrapper.closest('#v4-global-color-palette-popover')) return;
-        
-        e.preventDefault();
-        e.stopPropagation();
-        window.openV4ColorPalette(wrapper);
-    });
-};
-
+        return {
+            infoLabel: infoBar.querySelector('.ql-palette-group-label'),
+            infoHex: infoBar.querySelector('.ql-palette-hex-readout'),
+            recentWrap: recentWrap,
+            recentGrid: recentWrap.querySelector('.ql-palette-recent-grid'),
+            recentClear: recentWrap.querySelector('.ql-palette-recent-clear'),
+            footer: footer,
+            customAction: footer.querySelector('.ql-custom-color-action'),
+            resetBtn: footer.querySelector('.ql-custom-color-reset'),
+            hexBar: hexBar,
+            hexPreview: hexBar.querySelector('.ql-hex-preview'),
+            hexNativePicker: hexBar.querySelector('.ql-hex-native-picker'),
+            hexInput: hexBar.querySelector('.ql-hex-input'),
+            hexApplyBtn: hexBar.querySelector('.ql-hex-btn-apply'),
+            hexCancelBtn: hexBar.querySelector('.ql-hex-btn-cancel')
+        };
+    }
 
     function setupCustomColorPicker(pickerEl, formatType) {
         if (!pickerEl) return;
         const optionsEl = pickerEl.querySelector('.ql-picker-options');
         if (!optionsEl || optionsEl.querySelector('.ql-custom-color-footer')) return;
 
-        const footer = document.createElement('div');
-        footer.className = 'ql-custom-color-footer';
-        footer.innerHTML = `
-            <div class="ql-custom-color-action" title="Hexcode 직접 설정" style="cursor: pointer;">
-                <span class="material-icons-outlined" style="font-size: 13px; pointer-events: none;">tag</span>
-                <span style="pointer-events: none;">직접 설정</span>
-            </div>
-            <button type="button" class="ql-custom-color-reset" title="색상 제거 / 기본값">
-                <span class="material-icons-outlined" style="font-size: 13px;">format_color_reset</span>
-            </button>
-        `;
+        const ui = _buildQuillColorExtensions(optionsEl, formatType);
 
-        const hexBar = document.createElement('div');
-        hexBar.className = 'ql-custom-hex-bar';
-        hexBar.innerHTML = `
-            <div class="ql-hex-preview-wrap" title="컬러 피커 열기 (드래그하여 선택)">
-                <div class="ql-hex-preview" style="background-color: ${formatType === 'color' ? '#6366f1' : '#facc15'};">
-                    <span class="material-icons-outlined ql-hex-preview-icon">palette</span>
-                </div>
-                <input type="color" class="ql-hex-native-picker" tabindex="-1" aria-hidden="true">
-            </div>
-            <span class="ql-hex-prefix">#</span>
-            <input type="text" class="ql-hex-input" maxlength="7" placeholder="HEXCODE" spellcheck="false" autocomplete="off">
-            <button type="button" class="ql-hex-btn ql-hex-btn-apply" title="적용">
-                <span class="material-icons-outlined" style="font-size: 14px;">check</span>
-            </button>
-            <button type="button" class="ql-hex-btn ql-hex-btn-cancel" title="취소">
-                <span class="material-icons-outlined" style="font-size: 14px;">close</span>
-            </button>
-        `;
-
-        const customAction = footer.querySelector('.ql-custom-color-action');
-        const resetBtn = footer.querySelector('.ql-custom-color-reset');
-
-        const hexPreviewWrap = hexBar.querySelector('.ql-hex-preview-wrap');
-        const hexPreview = hexBar.querySelector('.ql-hex-preview');
-        const hexNativePicker = hexBar.querySelector('.ql-hex-native-picker');
-        const hexInput = hexBar.querySelector('.ql-hex-input');
-        const hexApplyBtn = hexBar.querySelector('.ql-hex-btn-apply');
-        const hexCancelBtn = hexBar.querySelector('.ql-hex-btn-cancel');
-
-        function closeHexBar() {
-            hexBar.classList.remove('active');
-            footer.style.display = 'flex';
-            if (hexInput) hexInput.classList.remove('error');
+        function setQuillReadout(hexVal, labelOverride) {
+            const norm = normalizeHex(hexVal) || hexVal || '#000000';
+            if (ui.infoLabel) ui.infoLabel.textContent = labelOverride || _resolveColorLabel(norm);
+            if (ui.infoHex) ui.infoHex.textContent = String(norm).toUpperCase();
         }
 
         function getCurrentQuillColor() {
             if (window.quillEditor) {
                 const format = window.quillEditor.getFormat();
-                if (format && format[formatType]) {
-                    return format[formatType];
-                }
+                if (format && format[formatType]) return format[formatType];
             }
             if (window._currentStickyFormat && window._currentStickyFormat[formatType]) {
                 return window._currentStickyFormat[formatType];
             }
-            return formatType === 'color' ? '#6366f1' : '#facc15';
+            return formatType === 'color' ? '#000000' : '#fef08a';
         }
 
-        function openHexBar() {
-            footer.style.display = 'none';
-            hexBar.classList.add('active');
-
-            const curVal = getCurrentQuillColor();
-            const norm = normalizeHex(curVal) || (curVal.startsWith('#') ? curVal : (typeof window.rgbToHex === 'function' ? window.rgbToHex(curVal) : '#6366f1'));
-            const cleanHex = norm.replace(/^#/, '').toUpperCase();
-            if (hexInput) {
-                hexInput.value = cleanHex;
-                hexInput.classList.remove('error');
+        function applyQuillFormat(normHex) {
+            _recordRecentColor(normHex);
+            if (window.quillEditor) {
+                window.quillEditor.format(formatType, normHex);
+                if (!window._currentStickyFormat) window._currentStickyFormat = {};
+                window._currentStickyFormat[formatType] = normHex;
             }
-            if (hexPreview) {
-                hexPreview.style.backgroundColor = norm;
-            }
-            if (hexNativePicker) {
-                hexNativePicker.value = norm;
-            }
-            setTimeout(() => {
-                if (hexInput) {
-                    hexInput.focus();
-                    hexInput.select();
-                }
-            }, 10);
+            const labelLine = pickerEl.querySelector('.ql-color-label, .ql-bg-label');
+            if (labelLine) labelLine.style.stroke = normHex;
         }
 
-        function applyHexColor() {
-            if (!hexInput) return;
-            const norm = normalizeHex(hexInput.value);
-            if (!norm) {
-                hexInput.classList.add('error');
-                setTimeout(() => {
-                    if (hexInput) hexInput.classList.remove('error');
-                }, 500);
+        function renderQuillRecents() {
+            const recents = _loadRecentColors();
+            if (recents.length === 0) {
+                ui.recentWrap.style.display = 'none';
+                ui.recentGrid.innerHTML = '';
                 return;
             }
-
-            if (window.quillEditor) {
-                window.quillEditor.format(formatType, norm);
-                if (!window._currentStickyFormat) window._currentStickyFormat = {};
-                window._currentStickyFormat[formatType] = norm;
-            }
-            closeHexBar();
-            pickerEl.classList.remove('ql-expanded');
+            ui.recentWrap.style.display = 'block';
+            ui.recentGrid.innerHTML = recents.map(function (c) {
+                return '<div class="ql-recent-swatch" data-color="' + c + '" style="background-color: ' + c + ';" title="\uCD5C\uADFC \uC0AC\uC6A9 (' + c.toUpperCase() + ')"></div>';
+            }).join('');
         }
 
-        customAction.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openHexBar();
-        });
-
-        // Native Color Picker (Drag Spectrum) -> Real-time sync to Hex Input & Preview
-        if (hexNativePicker) {
-            const syncFromNativePicker = (e) => {
-                const pickedHex = (e.target.value || '').toLowerCase();
-                const cleanHex = pickedHex.replace(/^#/, '').toUpperCase();
-                if (hexInput) {
-                    hexInput.value = cleanHex;
-                    hexInput.classList.remove('error');
-                }
-                if (hexPreview) {
-                    hexPreview.style.backgroundColor = pickedHex;
-                }
-            };
-            hexNativePicker.addEventListener('input', syncFromNativePicker);
-            hexNativePicker.addEventListener('change', syncFromNativePicker);
-        }
-
-        // Hex Input real-time preview, reverse sync to native picker, & keyboard event isolation
-        hexInput.addEventListener('input', (e) => {
-            const val = e.target.value;
-            const norm = normalizeHex(val);
-            if (norm) {
-                if (hexPreview) hexPreview.style.backgroundColor = norm;
-                if (hexNativePicker) hexNativePicker.value = norm;
-                hexInput.classList.remove('error');
+        const hexControls = _wireHybridHexBar({
+            hexBar: ui.hexBar,
+            footer: ui.footer,
+            hexInput: ui.hexInput,
+            hexPreview: ui.hexPreview,
+            hexNativePicker: ui.hexNativePicker,
+            hexApplyBtn: ui.hexApplyBtn,
+            hexCancelBtn: ui.hexCancelBtn,
+            getCurrentColor: getCurrentQuillColor,
+            onPreview: setQuillReadout,
+            onApply: function (norm) {
+                applyQuillFormat(norm);
+                hexControls.closeHexBar();
+                pickerEl.classList.remove('ql-expanded');
             }
         });
 
-        hexInput.addEventListener('keydown', (e) => {
-            e.stopPropagation();
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                applyHexColor();
-            } else if (e.key === 'Escape') {
-                e.preventDefault();
-                closeHexBar();
+        optionsEl.addEventListener('mouseover', function (e) {
+            const qlItem = e.target.closest('.ql-picker-item');
+            if (qlItem && qlItem.getAttribute('data-value')) {
+                setQuillReadout(qlItem.getAttribute('data-value'));
+                return;
+            }
+            const recItem = e.target.closest('.ql-recent-swatch');
+            if (recItem) setQuillReadout(recItem.dataset.color, '\uCD5C\uADFC \uC0AC\uC6A9');
+        });
+
+        optionsEl.addEventListener('click', function (e) {
+            const qlItem = e.target.closest('.ql-picker-item');
+            if (qlItem && qlItem.getAttribute('data-value')) {
+                _recordRecentColor(qlItem.getAttribute('data-value'));
+                return;
+            }
+            const recItem = e.target.closest('.ql-recent-swatch');
+            if (recItem) {
+                e.stopPropagation();
+                applyQuillFormat(recItem.dataset.color);
+                hexControls.closeHexBar();
+                pickerEl.classList.remove('ql-expanded');
             }
         });
-        hexInput.addEventListener('keyup', (e) => e.stopPropagation());
-        hexInput.addEventListener('keypress', (e) => e.stopPropagation());
 
-        hexApplyBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            applyHexColor();
-        });
+        ui.recentClear.addEventListener('click', function (e) { e.stopPropagation(); _clearRecentColors(); renderQuillRecents(); });
+        ui.customAction.addEventListener('click', function (e) { e.stopPropagation(); hexControls.openHexBar(); });
 
-        hexCancelBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeHexBar();
-        });
-
-        resetBtn.addEventListener('click', (e) => {
+        ui.resetBtn.addEventListener('click', function (e) {
             e.stopPropagation();
             if (window.quillEditor) {
                 window.quillEditor.format(formatType, false);
-                if (window._currentStickyFormat) {
-                    delete window._currentStickyFormat[formatType];
-                }
+                if (window._currentStickyFormat) delete window._currentStickyFormat[formatType];
             }
-            closeHexBar();
+            const labelLine = pickerEl.querySelector('.ql-color-label, .ql-bg-label');
+            if (labelLine) labelLine.style.stroke = '';
+            hexControls.closeHexBar();
             pickerEl.classList.remove('ql-expanded');
         });
 
-        // Close hex bar when picker collapses
         const pickerLabel = pickerEl.querySelector('.ql-picker-label');
         if (pickerLabel) {
-            pickerLabel.addEventListener('click', () => {
-                if (!pickerEl.classList.contains('ql-expanded')) {
-                    closeHexBar();
-                }
+            pickerLabel.addEventListener('click', function () {
+                setTimeout(function () {
+                    if (pickerEl.classList.contains('ql-expanded')) {
+                        renderQuillRecents();
+                        setQuillReadout(getCurrentQuillColor());
+                        _clampQuillDropdownViewport(pickerEl, optionsEl);
+                    } else {
+                        hexControls.closeHexBar();
+                    }
+                }, 0);
             });
         }
-
-        optionsEl.appendChild(footer);
-        optionsEl.appendChild(hexBar);
     }
 
     window.setupCustomColorPicker = setupCustomColorPicker;

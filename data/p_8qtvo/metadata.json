@@ -453,7 +453,7 @@
     "renewal_order_5.html": {
       "title": "주문서 (Te-Be) 결제약관보기",
       "type": "ui",
-      "updatedAt": "2026-11-16T02:37:12.724Z",
+      "updatedAt": "2026-11-16T02:43:09.824Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -487,7 +487,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 11:27:17",
+  "updated": "2026-11-16 11:43:09",
   "version": 0.1,
   "category": "project"
 }

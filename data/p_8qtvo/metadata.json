@@ -160,7 +160,7 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-16T00:08:36.185Z",
+      "updatedAt": "2026-11-13T05:41:01.120Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -251,7 +251,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (Te-Be) 배송지변경",
       "type": "ui",
-      "updatedAt": "2026-11-13T09:15:34.933Z",
+      "updatedAt": "2026-11-16T00:19:50.985Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -282,7 +282,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 09:08:35",
+  "updated": "2026-11-16 09:19:50",
   "version": 0.1,
   "category": "project"
 }

@@ -1241,7 +1241,7 @@
     },
     "07_PC_Design_90.html": {
       "description": [],
-      "updatedAt": "2026-11-16T00:51:36.025Z",
+      "updatedAt": "2026-11-16T00:57:20.397Z",
       "version": 0.1,
       "connectors": []
     }
@@ -1252,7 +1252,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-16 09:51:36",
+  "updated": "2026-11-16 09:57:20",
   "version": 0.1,
   "period": "",
   "screenOrder": [

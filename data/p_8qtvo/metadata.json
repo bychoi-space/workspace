@@ -57,7 +57,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-16T03:26:36.352Z",
+      "updatedAt": "2026-11-16T03:27:18.804Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -74,7 +74,7 @@
               "active": true
             },
             "mobile": {
-              "x": 5,
+              "x": 0,
               "y": 60,
               "active": true
             },
@@ -84,8 +84,42 @@
               "active": true
             },
             "right": {
-              "x": 5,
+              "x": 0,
               "y": 60,
+              "active": true
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 20,
+          "y": 474,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 474,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 315,
+              "active": true
+            },
+            "left": {
+              "x": 20,
+              "y": 474,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 315,
               "active": true
             }
           },
@@ -598,7 +632,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 12:26:36",
+  "updated": "2026-11-16 12:27:18",
   "version": 0.1,
   "category": "project"
 }

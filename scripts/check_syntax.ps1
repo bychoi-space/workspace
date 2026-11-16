@@ -8,6 +8,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_clipboard.js",
     "c:\Users\sisun\ai_work\assets\vctrl_core.js",
     "c:\Users\sisun\ai_work\assets\vctrl_storage.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_autosave.js",
     "c:\Users\sisun\ai_work\assets\vctrl_core_router.js",
     "c:\Users\sisun\ai_work\assets\vctrl_parent_shortcuts.js",
     "c:\Users\sisun\ai_work\assets\vctrl_system_modals.js",

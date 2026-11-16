@@ -83,7 +83,9 @@
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, 스크린 로딩 파이프라인, 내비게이션 보호 및 중앙 생명주기 조율을 전담합니다.
     - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 32개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
   - **`vctrl_storage.js` (Storage Engine - Parent Side)**:
-    - **역할**: 스크린 직렬화(`getIframeHTML`), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, GitHub API 원격 커밋 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
+    - **역할**: 스크린 직렬화(`getIframeHTML`, 백그라운드 무음 직렬화 `silent: true` 지원), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, 단일 비행(Single-Flight) 락 기반 무음 클라우드 저장(`performSilentSave`), 변경분(Zero-Diff) 중복 커밋 스킵 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
+  - **`vctrl_autosave.js` (2-Tier Hybrid Auto-Save Engine - Parent Side)**:
+    - **역할**: GitHub 커밋 과다 누적을 원천 차단하는 2계층 하이브리드 상시 자동 저장 엔진(`window.AutoSaveEngine`). Tier 1 브라우저 `IndexedDB`(`WorkspaceAutoSaveDB`) 1.5초 유휴 즉시 임시 보호(`baseSha`/`baseContentHash` 무결성 대조 기반 복구)와 Tier 2 25초 유휴 디바운스 + 최소 60초 간격 쿨다운 + Zero-Diff 중복 스킵 클라우드 자동 동기화, 화면 전환 시 네트워크 대기 없는 0ms 논블로킹 메모리 스냅샷 스테이징(`stageOutgoingScreenBeforeSwitch` + 백그라운드 큐 `_pendingSnapshots`), 헤더 상태 뱃지(`#autosave-status-badge`) 제어를 전담합니다.
   - **`vctrl_core_router.js` (Core Message Router - Parent Side)**:
     - **역할**: 부모-Iframe 간 통신 조율자. 중앙 `MessageHub` 리스너 및 24개 부모 측 코어 핸들러 테이블(`v4ParentCoreHandlers`), 부모 포커스 시 이미지 붙여넣기(`paste`)를 전담 격리합니다 (`window.CoreRouter`).
     - **오브젝트 선택 라우팅 & 포커스 해제**: `LF_COMP_SELECTED` 수신 시 이전 선택 ID(`state.previousEditingIndex`)를 보존하여 신규 컴포넌트 선택 여부(`isNewSelection`)를 판별하고, 부모 창의 활성 인풋 포커스 잔류를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 전달합니다.

@@ -429,20 +429,24 @@
     }
 
     function _buildQuillColorExtensions(optionsEl, formatType) {
+        // IMPORTANT: Keep .ql-picker-item elements at children[0..N-1] in exact 1:1 order with <select>.options[0..N-1]
+        // so Quill 1.3.6 Picker.selectItem() / Picker.update() never suffer child-index offset bugs!
+        // Visual ordering (infoBar -> Row 1 -> divider -> Rows 2..9 -> recent -> footer -> hexBar) is controlled via CSS flexbox order.
+        const items = optionsEl.querySelectorAll('.ql-picker-item');
+        items.forEach(function (it, idx) {
+            const v = normalizeHex(it.getAttribute('data-value') || '') || '';
+            if (v) it.setAttribute('title', _resolveColorLabel(v) + ' (' + v.toUpperCase() + ')');
+            if (idx < 9) it.classList.add('ql-pinned-row-item');
+        });
+
         const infoBar = document.createElement('div');
         infoBar.className = 'ql-palette-info-bar';
         infoBar.innerHTML = '<span class="ql-palette-group-label">Pure Grayscale</span><span class="ql-palette-hex-readout">#000000</span>';
-        optionsEl.insertBefore(infoBar, optionsEl.firstChild);
 
-        const items = optionsEl.querySelectorAll('.ql-picker-item');
-        items.forEach(function (it) {
-            const v = normalizeHex(it.getAttribute('data-value') || '') || '';
-            if (v) it.setAttribute('title', _resolveColorLabel(v) + ' (' + v.toUpperCase() + ')');
-        });
-        if (items.length >= 9 && items[8].nextSibling) {
-            const divider = document.createElement('div');
+        let divider = null;
+        if (items.length >= 9) {
+            divider = document.createElement('div');
             divider.className = 'ql-palette-row1-divider';
-            optionsEl.insertBefore(divider, items[8].nextSibling);
         }
 
         const recentWrap = document.createElement('div');
@@ -467,6 +471,8 @@
             '<button type="button" class="ql-hex-btn ql-hex-btn-apply" title="\uC801\uC6A9"><span class="material-icons-outlined" style="font-size: 14px;">check</span></button>' +
             '<button type="button" class="ql-hex-btn ql-hex-btn-cancel" title="\uCDE8\uC18C"><span class="material-icons-outlined" style="font-size: 14px;">close</span></button>';
 
+        optionsEl.appendChild(infoBar);
+        if (divider) optionsEl.appendChild(divider);
         optionsEl.appendChild(recentWrap);
         optionsEl.appendChild(footer);
         optionsEl.appendChild(hexBar);
@@ -513,16 +519,59 @@
             return formatType === 'color' ? '#000000' : '#fef08a';
         }
 
+        let _savedRangeBeforePicker = null;
+        let _wasQuillFocusedBeforePicker = false;
+
+        function _captureCurrentQuillRange() {
+            if (!window.quillEditor) return;
+            _wasQuillFocusedBeforePicker = (document.activeElement === window.quillEditor.root) ||
+                (typeof window.quillEditor.hasFocus === 'function' && window.quillEditor.hasFocus());
+            try {
+                const r = window.quillEditor.getSelection();
+                _savedRangeBeforePicker = r ? { index: r.index, length: r.length } : null;
+            } catch (_) {
+                _savedRangeBeforePicker = null;
+            }
+        }
+
         function applyQuillFormat(normHex) {
             _recordRecentColor(normHex);
             if (window.quillEditor) {
-                window.quillEditor.format(formatType, normHex);
+                const q = window.quillEditor;
+                let liveRange = null;
+                try { liveRange = q.getSelection(); } catch (_) {}
+                const effectiveRange = (liveRange && liveRange.length > 0)
+                    ? liveRange
+                    : (_savedRangeBeforePicker || liveRange);
+
+                const rawText = (typeof q.getText === 'function' ? q.getText() : '').replace(/[\n\r\u200B\uFEFF]/g, '').trim();
+                const totalLen = typeof q.getLength === 'function' ? q.getLength() : 0;
+
+                if (effectiveRange && effectiveRange.length > 0) {
+                    q.setSelection(effectiveRange.index, effectiveRange.length, 'silent');
+                    q.formatText(effectiveRange.index, effectiveRange.length, formatType, normHex, 'user');
+                } else if (!_wasQuillFocusedBeforePicker && !effectiveRange && rawText.length > 0 && totalLen > 1) {
+                    // Object selected on canvas without focusing inside Content Editor -> format whole object text
+                    q.formatText(0, totalLen - 1, formatType, normHex, 'user');
+                } else {
+                    if (effectiveRange) {
+                        q.setSelection(effectiveRange.index, 0, 'silent');
+                    }
+                    q.format(formatType, normHex, 'user');
+                }
+
                 if (!window._currentStickyFormat) window._currentStickyFormat = {};
                 window._currentStickyFormat[formatType] = normHex;
                 if (typeof window.updateQuillAutoContrast === 'function') {
-                    window.updateQuillAutoContrast(window.quillEditor);
+                    window.updateQuillAutoContrast(q);
                 }
             }
+            const pickerLabelEl = pickerEl.querySelector('.ql-picker-label');
+            if (pickerLabelEl) pickerLabelEl.setAttribute('data-value', normHex);
+            optionsEl.querySelectorAll('.ql-picker-item').forEach(function (it) {
+                const v = (it.getAttribute('data-value') || '').toLowerCase();
+                it.classList.toggle('ql-selected', v === normHex.toLowerCase());
+            });
             const labelLine = pickerEl.querySelector('.ql-color-label, .ql-bg-label');
             if (labelLine) labelLine.style.stroke = normHex;
         }
@@ -567,16 +616,17 @@
             if (recItem) setQuillReadout(recItem.dataset.color, '\uCD5C\uADFC \uC0AC\uC6A9');
         });
 
+        // Capture-phase click handler ensures exact data-value hex is applied with zero index mismatch
         optionsEl.addEventListener('click', function (e) {
             const qlItem = e.target.closest('.ql-picker-item');
-            if (qlItem && qlItem.getAttribute('data-value')) {
-                const pickedVal = qlItem.getAttribute('data-value');
-                _recordRecentColor(pickedVal);
-                if (!window._currentStickyFormat) window._currentStickyFormat = {};
-                window._currentStickyFormat[formatType] = pickedVal;
-                if (typeof window.updateQuillAutoContrast === 'function') {
-                    setTimeout(function () { window.updateQuillAutoContrast(window.quillEditor); }, 0);
-                }
+            if (qlItem) {
+                const rawVal = qlItem.getAttribute('data-value') || '#000000';
+                const pickedVal = normalizeHex(rawVal) || rawVal;
+                e.preventDefault();
+                e.stopPropagation();
+                applyQuillFormat(pickedVal);
+                hexControls.closeHexBar();
+                pickerEl.classList.remove('ql-expanded');
                 return;
             }
             const recItem = e.target.closest('.ql-recent-swatch');
@@ -586,7 +636,7 @@
                 hexControls.closeHexBar();
                 pickerEl.classList.remove('ql-expanded');
             }
-        });
+        }, true);
 
         ui.recentClear.addEventListener('click', function (e) { e.stopPropagation(); _clearRecentColors(); renderQuillRecents(); });
         ui.customAction.addEventListener('click', function (e) { e.stopPropagation(); hexControls.openHexBar(); });
@@ -612,6 +662,11 @@
 
         const pickerLabel = pickerEl.querySelector('.ql-picker-label');
         if (pickerLabel) {
+            pickerLabel.addEventListener('mousedown', function () {
+                if (!pickerEl.classList.contains('ql-expanded')) {
+                    _captureCurrentQuillRange();
+                }
+            }, true);
             pickerLabel.addEventListener('click', function () {
                 setTimeout(function () {
                     if (pickerEl.classList.contains('ql-expanded')) {

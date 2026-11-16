@@ -18,13 +18,13 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-    <link rel="stylesheet" href="assets/style.css?v=V425_QUILL_AUTO_CONTRAST">
+    <link rel="stylesheet" href="assets/style.css?v=V426_WHITE_COLOR_FIX">
     <link rel="stylesheet" href="assets/theme.css?v=V371_INSPECTOR_RESTORATION">
     <!-- Flatpickr (Date Picker) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <link rel="stylesheet" href="assets/viewer.css?v=V421_DIMMED_UI_FIX">
+    <link rel="stylesheet" href="assets/viewer.css?v=V427_HYBRID_AUTOSAVE">
     <link rel="stylesheet" href="assets/ui_library.css?v=V424_IMAGE_CROP">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
@@ -44,7 +44,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
     <meta name="theme-color" content="#12151c">
 
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V415_RESTORE_FULLSCREEN_LEFT_SIDEBAR">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V427_HYBRID_AUTOSAVE">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -211,6 +211,11 @@
                 <span class="material-icons-outlined btn-icon-sm">picture_as_pdf</span>
                 <span>PDF 다운로드</span>
             </button>
+            <div id="autosave-status-badge" class="autosave-status-badge" data-state="saved" aria-live="polite"
+                title="모든 변경사항이 안전하게 자동 저장됩니다.">
+                <span class="autosave-indicator"><span class="autosave-dot"></span></span>
+                <span class="autosave-text">자동 저장 활성</span>
+            </div>
             <button id="btn-global-save" class="btn-accent btn-global-save">전체 저장</button>
             <div class="toolbar-divider action-divider"></div>
             <button class="panel-toggle-btn header-sidebar-toggle" id="btn-toggle-right"
@@ -1060,7 +1065,7 @@
     <script src="assets/vctrl_ui_library.js?v=V424_IMAGE_CROP"></script>
     <script src="assets/templates.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_clipboard.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/app.js?v=V411_VIEWER_VISUAL_RENEWAL"></script>
+    <script src="assets/app.js?v=V427_HYBRID_AUTOSAVE"></script>
 
     <!-- Modularized Engine -->
     <script src="assets/vctrl_undo.js?v=V424_IMAGE_CROP"></script>
@@ -1085,16 +1090,17 @@
     <script src="assets/vctrl_iframe_inserter.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_iframe_adorner.js?v=V403_SELECTION_ADORNER"></script>
     <script src="assets/vctrl_iframe_image_crop.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_iframe_script.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_iframe_script.js?v=V427_HYBRID_AUTOSAVE"></script>
     <script src="assets/vctrl_iframe_grid.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_iframe_accordion.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_iframe_tab.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_iframe_drag.js?v=V423_PIN_ANCHOR_FIX"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V391_MOBILE_RESTORE_FULLSCREEN_CLEAN"></script>
-    <script src="assets/vctrl_core.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_storage.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_core_router.js?v=V423_PIN_ANCHOR_FIX"></script>
+    <script src="assets/vctrl_core.js?v=V428_INSTANT_SWITCH_AUTOSAVE"></script>
+    <script src="assets/vctrl_storage.js?v=V428_INSTANT_SWITCH_AUTOSAVE"></script>
+    <script src="assets/vctrl_autosave.js?v=V428_INSTANT_SWITCH_AUTOSAVE"></script>
+    <script src="assets/vctrl_core_router.js?v=V428_INSTANT_SWITCH_AUTOSAVE"></script>
     <script src="assets/vctrl_parent_shortcuts.js?v=V424_IMAGE_CROP"></script>
     <script src="assets/vctrl_smartguide.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_responsive_smartguide_math.js?v=V420_DIMMED_LAYER"></script>
@@ -1103,7 +1109,7 @@
     <script src="assets/vctrl_iframe_scroll_pin.js?v=V423_PIN_ANCHOR_FIX"></script>
     <script src="assets/vctrl_responsive_pins.js?v=V423_PIN_ANCHOR_FIX"></script>
     <script src="assets/vctrl_grouping.js?v=V416_IA_MOLECULE_SUPPORT"></script>
-    <script src="assets/vctrl_color_picker.js?v=V425_QUILL_AUTO_CONTRAST"></script>
+    <script src="assets/vctrl_color_picker.js?v=V426_WHITE_COLOR_FIX"></script>
     <script src="assets/vctrl_component_atoms_data.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_component_data.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_component_logos_templates.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>

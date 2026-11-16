@@ -1062,33 +1062,68 @@ window.v4Script = `
         },
 
         'LF_REQUEST_SAVE_CONTENT': function(d) {
-            if (window.V4ImageCropEngine && typeof window.V4ImageCropEngine.isActive === 'function' && window.V4ImageCropEngine.isActive()) {
-                window.V4ImageCropEngine.apply(false);
-            }
-            // [Form Value SSOT Sync] Commit all live form input values to attributes before clone
-            document.querySelectorAll('input').forEach(function(inp) {
-                if (inp.type === 'checkbox' || inp.type === 'radio') {
-                    if (inp.checked) inp.setAttribute('checked', '');
-                    else inp.removeAttribute('checked');
-                } else {
-                    inp.setAttribute('value', inp.value);
+            var isSilent = Boolean(d && d.silent);
+            if (!isSilent) {
+                if (window.V4ImageCropEngine && typeof window.V4ImageCropEngine.isActive === 'function' && window.V4ImageCropEngine.isActive()) {
+                    window.V4ImageCropEngine.apply(false);
                 }
-            });
-            document.querySelectorAll('textarea').forEach(function(ta) {
-                ta.textContent = ta.value;
-            });
-            document.querySelectorAll('select').forEach(function(sel) {
-                Array.from(sel.options).forEach(function(opt) {
-                    if (opt.selected) opt.setAttribute('selected', '');
-                    else opt.removeAttribute('selected');
+                // [Form Value SSOT Sync] Commit all live form input values to attributes before clone
+                document.querySelectorAll('input').forEach(function(inp) {
+                    if (inp.type === 'checkbox' || inp.type === 'radio') {
+                        if (inp.checked) inp.setAttribute('checked', '');
+                        else inp.removeAttribute('checked');
+                    } else {
+                        inp.setAttribute('value', inp.value);
+                    }
                 });
-            });
+                document.querySelectorAll('textarea').forEach(function(ta) {
+                    ta.textContent = ta.value;
+                });
+                document.querySelectorAll('select').forEach(function(sel) {
+                    Array.from(sel.options).forEach(function(opt) {
+                        if (opt.selected) opt.setAttribute('selected', '');
+                        else opt.removeAttribute('selected');
+                    });
+                });
 
-            if (typeof window.cleanupEmptyTextShapes === 'function') {
-                window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
+                if (typeof window.cleanupEmptyTextShapes === 'function') {
+                    window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
+                }
             }
 
             const c = document.documentElement.cloneNode(true);
+            if (isSilent) {
+                // Zero-mutation clone form value sync for silent background auto-save
+                var liveInputs = document.querySelectorAll('input');
+                var cloneInputs = c.querySelectorAll('input');
+                liveInputs.forEach(function(inp, idx) {
+                    var cInp = cloneInputs[idx];
+                    if (!cInp) return;
+                    if (inp.type === 'checkbox' || inp.type === 'radio') {
+                        if (inp.checked) cInp.setAttribute('checked', '');
+                        else cInp.removeAttribute('checked');
+                    } else {
+                        cInp.setAttribute('value', inp.value);
+                    }
+                });
+                var liveTas = document.querySelectorAll('textarea');
+                var cloneTas = c.querySelectorAll('textarea');
+                liveTas.forEach(function(ta, idx) {
+                    if (cloneTas[idx]) cloneTas[idx].textContent = ta.value;
+                });
+                var liveSels = document.querySelectorAll('select');
+                var cloneSels = c.querySelectorAll('select');
+                liveSels.forEach(function(sel, idx) {
+                    if (!cloneSels[idx]) return;
+                    var cOpts = cloneSels[idx].options;
+                    Array.from(sel.options).forEach(function(opt, oIdx) {
+                        if (!cOpts[oIdx]) return;
+                        if (opt.selected) cOpts[oIdx].setAttribute('selected', '');
+                        else cOpts[oIdx].removeAttribute('selected');
+                    });
+                });
+            }
+
             if (window.ScreenSanitizer && typeof window.ScreenSanitizer.cleanDOM === 'function') {
                 window.ScreenSanitizer.cleanDOM(c);
             }
@@ -1098,7 +1133,11 @@ window.v4Script = `
                 el.remove();
             });
 
-            notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML });
+            notifyParent({
+                type: 'LF_SAVE_CONTENT_RESPONSE',
+                requestId: (d && d.requestId) ? d.requestId : null,
+                html: "<!DOCTYPE html>\\n" + c.outerHTML
+            });
         },
 
         'LF_INSERT_COMPONENT': function(d) {

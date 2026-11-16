@@ -384,9 +384,9 @@ function getFormattedKST(dateObj) {
 }
 window.getFormattedKST = getFormattedKST;
 
-async function saveProjectMetadata(project, metadata, statusCallback) {
+async function saveProjectMetadata(project, metadata, statusCallback, customCommitMsg = null) {
     const content = JSON.stringify(metadata, null, 2);
-    return await uploadToProject(project, 'metadata.json', content, statusCallback);
+    return await uploadToProject(project, 'metadata.json', content, statusCallback, false, customCommitMsg);
 }
 window.saveProjectMetadata = saveProjectMetadata;
 
@@ -504,7 +504,7 @@ async function saveGlobalComponents(components, statusCallback) {
     }
 }
 
-async function uploadToProject(project, filename, content, statusCallback, isBinary = false) {
+async function uploadToProject(project, filename, content, statusCallback, isBinary = false, customCommitMsg = null) {
     if (ghConfig.isReadOnly) return false;
     try {
         const fullPath = `${ghConfig.dataDir}${project}/${filename}`;
@@ -554,7 +554,7 @@ async function uploadToProject(project, filename, content, statusCallback, isBin
             credentials: 'omit',
             signal: writeController.signal,
             body: JSON.stringify({
-                message: `Update ${filename}`,
+                message: customCommitMsg || `Update ${filename}`,
                 content: finalContent,
                 sha: sha
             })
@@ -587,7 +587,7 @@ async function uploadToProject(project, filename, content, statusCallback, isBin
                         credentials: 'omit',
                         signal: retryPutCtrl.signal,
                         body: JSON.stringify({
-                            message: `Update ${filename} (Retry)`,
+                            message: `${customCommitMsg || `Update ${filename}`} (Retry)`,
                             content: finalContent,
                             sha: sha
                         })
@@ -758,6 +758,9 @@ async function updateScreenMetadata(project, screenFilename, data, statusCallbac
         metadata.screens = metadata.screens || {};
         metadata.screens[screenFilename] = metadata.screens[screenFilename] || {};
         metadata.screens[screenFilename].description = data.description;
+        if (data.connectors !== undefined) {
+            metadata.screens[screenFilename].connectors = data.connectors;
+        }
         metadata.screens[screenFilename].updatedAt = new Date().toISOString();
         if (data.version !== undefined) {
             metadata.screens[screenFilename].version = data.version;
@@ -766,13 +769,18 @@ async function updateScreenMetadata(project, screenFilename, data, statusCallbac
     
     if (statusCallback) statusCallback('Saving...', '#facc15');
     
-    // Save 1: Project Metadata
-    const res1 = await saveProjectMetadata(project, metadata, null);
+    const commitPrefix = data.commitPrefix ? `${data.commitPrefix} ` : '';
+
+    // Save 1: Project Metadata (skipped when caller verified zero semantic metadata diff)
+    let res1 = true;
+    if (!data.skipMetadataCommit) {
+        res1 = await saveProjectMetadata(project, metadata, null, commitPrefix ? `${commitPrefix}Update metadata.json` : null);
+    }
     
-    // Save 2: Screen Design HTML
+    // Save 2: Screen Design HTML (skipped when caller verified zero HTML diff)
     let res2 = true;
-    if (data.htmlContent && screenFilename) {
-        res2 = await uploadToProject(project, screenFilename, data.htmlContent, null);
+    if (data.htmlContent && screenFilename && !data.skipHtmlCommit) {
+        res2 = await uploadToProject(project, screenFilename, data.htmlContent, null, false, commitPrefix ? `${commitPrefix}Update ${screenFilename}` : null);
     }
     
     const success = res1 && res2;

@@ -89,6 +89,7 @@ $jsFiles = @(
     "assets/vctrl_parent_shortcuts.js",
     "assets/vctrl_pdf_exporter.js",
     "assets/vctrl_storage.js",
+    "assets/vctrl_autosave.js",
     "assets/vctrl_resolution_engine.js"
 )
 

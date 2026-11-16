@@ -280,6 +280,7 @@
 }
 
 .ql-palette-info-bar {
+    order: -20 !important;
     width: 100% !important;
     display: flex !important;
     align-items: center !important;
@@ -291,6 +292,9 @@
     line-height: 1.2 !important;
     user-select: none !important;
 }
+.ql-snow .ql-picker-options .ql-picker-item.ql-pinned-row-item {
+    order: -10 !important;
+}
 .ql-palette-group-label {
     color: #94a3b8 !important;
     font-weight: 600 !important;
@@ -301,6 +305,7 @@
     font-weight: 700 !important;
 }
 .ql-palette-row1-divider {
+    order: -5 !important;
     width: 100% !important;
     height: 1px !important;
     background: rgba(255, 255, 255, 0.16) !important;
@@ -308,6 +313,7 @@
     flex-shrink: 0 !important;
 }
 .ql-palette-recent-wrap {
+    order: 10 !important;
     width: 100% !important;
     margin-top: 4px !important;
     padding-top: 5px !important;
@@ -412,6 +418,7 @@
 
 /* Custom Color Footer for Color Pickers */
 .ql-custom-color-footer {
+    order: 11 !important;
     width: 100% !important;
     display: flex !important;
     align-items: center !important;
@@ -467,6 +474,7 @@
 
 /* Custom Hex Bar for Quill Color Pickers */
 .ql-custom-hex-bar {
+    order: 12 !important;
     width: 100% !important;
     display: none !important;
     align-items: center !important;

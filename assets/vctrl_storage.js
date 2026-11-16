@@ -2,6 +2,7 @@
  * assets/vctrl_storage.js
  * Storage Engine (Parent Side)
  * Manages screen serialization, ScreenSanitizer DOM cleanup, revision history auto-increment,
+ * single-flight synchronization locks, background snapshot persistence, zero-diff silent cloud sync,
  * and remote GitHub API commits.
  */
 
@@ -9,10 +10,47 @@
     'use strict';
     console.log("%c [VCTRL STORAGE] Initializing Storage Engine... ", "background: #2563eb; color: #fff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
+    let _isManualSaving = false;
+    let _activeSilentSavePromise = null;
+
+    function _syncFormValuesOntoClone(liveRoot, cloneRoot) {
+        if (!liveRoot || !cloneRoot) return;
+        const liveInputs = liveRoot.querySelectorAll('input');
+        const cloneInputs = cloneRoot.querySelectorAll('input');
+        liveInputs.forEach((inp, idx) => {
+            const cInp = cloneInputs[idx];
+            if (!cInp) return;
+            if (inp.type === 'checkbox' || inp.type === 'radio') {
+                if (inp.checked) cInp.setAttribute('checked', '');
+                else cInp.removeAttribute('checked');
+            } else {
+                cInp.setAttribute('value', inp.value);
+            }
+        });
+        const liveTas = liveRoot.querySelectorAll('textarea');
+        const cloneTas = cloneRoot.querySelectorAll('textarea');
+        liveTas.forEach((ta, idx) => {
+            if (cloneTas[idx]) cloneTas[idx].textContent = ta.value;
+        });
+        const liveSels = liveRoot.querySelectorAll('select');
+        const cloneSels = cloneRoot.querySelectorAll('select');
+        liveSels.forEach((sel, idx) => {
+            if (!cloneSels[idx]) return;
+            const cOpts = cloneSels[idx].options;
+            Array.from(sel.options).forEach((opt, oIdx) => {
+                if (!cOpts[oIdx]) return;
+                if (opt.selected) cOpts[oIdx].setAttribute('selected', '');
+                else cOpts[oIdx].removeAttribute('selected');
+            });
+        });
+    }
+
     /**
      * Serializes the active iframe DOM into clean, production-ready HTML.
+     * @param {Object} [opts] Optional flags ({ silent: true } skips live DOM mutations/blurs).
      */
-    async function getIframeHTML() {
+    async function getIframeHTML(opts) {
+        const isSilent = Boolean(opts && opts.silent);
         const isFileProtocol = window.location.protocol === 'file:';
         const DOM = window.DOM || {};
         const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
@@ -20,33 +58,41 @@
         if (!isFileProtocol) {
             try {
                 if (activeIframe && activeIframe.contentDocument) {
-                    if (activeIframe.contentWindow && typeof activeIframe.contentWindow.cleanupEmptyTextShapes === 'function') {
-                        try {
-                            activeIframe.contentWindow.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
-                        } catch (_) {}
-                    }
+                    const cw = activeIframe.contentWindow;
                     const doc = activeIframe.contentDocument;
 
-                    // [Form Value SSOT Sync] Commit all live form input values to attributes before clone
-                    doc.querySelectorAll('input').forEach(inp => {
-                        if (inp.type === 'checkbox' || inp.type === 'radio') {
-                            if (inp.checked) inp.setAttribute('checked', '');
-                            else inp.removeAttribute('checked');
-                        } else {
-                            inp.setAttribute('value', inp.value);
+                    if (!isSilent) {
+                        if (cw && cw.V4ImageCropEngine && typeof cw.V4ImageCropEngine.isActive === 'function' && cw.V4ImageCropEngine.isActive()) {
+                            try { cw.V4ImageCropEngine.apply(false); } catch (_) {}
                         }
-                    });
-                    doc.querySelectorAll('textarea').forEach(ta => {
-                        ta.textContent = ta.value;
-                    });
-                    doc.querySelectorAll('select').forEach(sel => {
-                        Array.from(sel.options).forEach(opt => {
-                            if (opt.selected) opt.setAttribute('selected', '');
-                            else opt.removeAttribute('selected');
+                        if (cw && typeof cw.cleanupEmptyTextShapes === 'function') {
+                            try {
+                                cw.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
+                            } catch (_) {}
+                        }
+                        doc.querySelectorAll('input').forEach(inp => {
+                            if (inp.type === 'checkbox' || inp.type === 'radio') {
+                                if (inp.checked) inp.setAttribute('checked', '');
+                                else inp.removeAttribute('checked');
+                            } else {
+                                inp.setAttribute('value', inp.value);
+                            }
                         });
-                    });
+                        doc.querySelectorAll('textarea').forEach(ta => {
+                            ta.textContent = ta.value;
+                        });
+                        doc.querySelectorAll('select').forEach(sel => {
+                            Array.from(sel.options).forEach(opt => {
+                                if (opt.selected) opt.setAttribute('selected', '');
+                                else opt.removeAttribute('selected');
+                            });
+                        });
+                    }
 
                     const clone = doc.documentElement.cloneNode(true);
+                    if (isSilent) {
+                        _syncFormValuesOntoClone(doc, clone);
+                    }
                     if (window.ScreenSanitizer && typeof window.ScreenSanitizer.cleanDOM === 'function') {
                         window.ScreenSanitizer.cleanDOM(clone);
                     }
@@ -59,30 +105,38 @@
         }
 
         return new Promise((resolve) => {
+            const reqId = 'save_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+            let settled = false;
             const handler = (e) => {
                 if (e.data && e.data.type === 'LF_SAVE_CONTENT_RESPONSE') {
+                    if (e.data.requestId && e.data.requestId !== reqId) return;
+                    if (settled) return;
+                    settled = true;
                     window.removeEventListener('message', handler);
                     resolve(e.data.html);
                 }
             };
             window.addEventListener('message', handler);
             if (activeIframe && activeIframe.contentWindow) {
-                activeIframe.contentWindow.postMessage({ type: 'LF_REQUEST_SAVE_CONTENT' }, '*');
+                activeIframe.contentWindow.postMessage({
+                    type: 'LF_REQUEST_SAVE_CONTENT',
+                    silent: isSilent,
+                    requestId: reqId
+                }, '*');
             } else {
+                settled = true;
                 window.removeEventListener('message', handler);
                 resolve(null);
             }
             setTimeout(() => {
+                if (settled) return;
+                settled = true;
                 window.removeEventListener('message', handler);
                 resolve(null);
             }, 2500);
         });
     }
 
-    /**
-     * Executes universal project and screen saving pipeline.
-     * @param {string} explicitReason Optional revision note.
-     */
     function _createSaveOverlayController(overlay, btn, originalHTML) {
         return {
             show: function() {
@@ -149,14 +203,9 @@
         };
     }
 
-    async function _resolveProjectMetadataAndVersion(state, explicitReason) {
-        var changeMsg = typeof explicitReason === 'string' ? explicitReason.trim() : "";
-        var updatedTimeStr = typeof window.getFormattedKST === 'function' 
-            ? window.getFormattedKST() 
-            : new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-        var projectMeta = {
-            title: document.getElementById('viewer-meta-title')?.value || '',
+    function _buildCurrentProjectMeta(state, updatedTimeStr) {
+        return {
+            title: document.getElementById('viewer-meta-title')?.value || state.projectMetadata?.title || '',
             assignee: document.getElementById('viewer-meta-assignee')?.value || '',
             developer: document.getElementById('viewer-meta-developer')?.value || '',
             period: document.getElementById('viewer-meta-period')?.value || '',
@@ -164,6 +213,23 @@
             notionUrl: state.projectMetadata?.notionUrl || '',
             updated: updatedTimeStr
         };
+    }
+
+    function _resolveRemoteBaselineHtml(cacheKey) {
+        if (window.AutoSaveEngine && typeof window.AutoSaveEngine.getRemoteBaselineHtml === 'function') {
+            const base = window.AutoSaveEngine.getRemoteBaselineHtml(cacheKey);
+            if (base !== null && base !== undefined) return base;
+        }
+        return (cacheKey && window.fileContentCache && window.fileContentCache[cacheKey]) || null;
+    }
+
+    async function _resolveProjectMetadataAndVersion(state, explicitReason) {
+        var changeMsg = typeof explicitReason === 'string' ? explicitReason.trim() : "";
+        var updatedTimeStr = typeof window.getFormattedKST === 'function' 
+            ? window.getFormattedKST() 
+            : new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        var projectMeta = _buildCurrentProjectMeta(state, updatedTimeStr);
 
         var historyList = [];
         if (typeof window.fetchProjectHistory === 'function' && state.currentProject) {
@@ -233,6 +299,239 @@
         }
     }
 
+    /**
+     * Persists a pre-captured snapshot of a previously visited screen in the background
+     * without touching the currently open screen's iframe or selection.
+     */
+    async function _runSilentSnapshotSaveInternal(snap, options) {
+        const opts = options || {};
+        const state = window.state || {};
+        if (!snap || !snap.project || !snap.fileName || !snap.htmlContent) return { ok: false };
+        if (state.isReadOnly || (window.ghConfig && window.ghConfig.isReadOnly)) return { ok: false };
+
+        const targetProject = snap.project;
+        const targetFileName = snap.fileName;
+        const cacheKey = targetProject + '/' + targetFileName;
+
+        const updatedTimeStr = typeof window.getFormattedKST === 'function'
+            ? window.getFormattedKST()
+            : new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        const projectMeta = Object.assign({}, snap.projectMeta || {}, { updated: updatedTimeStr });
+        const currentVer = snap.version || 0.1;
+        projectMeta.version = currentVer;
+
+        const remoteHtml = _resolveRemoteBaselineHtml(cacheKey);
+        const htmlChanged = (remoteHtml === null) ? true : (snap.htmlContent !== remoteHtml);
+
+        const existingMeta = (state.currentProject === targetProject && state.projectMetadata)
+            ? state.projectMetadata
+            : (snap.existingMetadataSnapshot || null);
+
+        const currentMetaSig = (window.AutoSaveEngine && typeof window.AutoSaveEngine.computeMetadataSemanticSignature === 'function')
+            ? window.AutoSaveEngine.computeMetadataSemanticSignature(
+                { projectMetadata: existingMeta || {}, activeFile: null },
+                targetFileName,
+                projectMeta,
+                currentVer,
+                snap.description,
+                snap.connectors
+            )
+            : '';
+        const lastMetaSig = (window.AutoSaveEngine && typeof window.AutoSaveEngine.getLastSyncedMetaSig === 'function')
+            ? window.AutoSaveEngine.getLastSyncedMetaSig(targetProject, targetFileName)
+            : '';
+        const semanticMetaChanged = !lastMetaSig || (currentMetaSig !== lastMetaSig);
+
+        if (!htmlChanged && !semanticMetaChanged) {
+            return {
+                ok: true,
+                committedCount: 0,
+                metadataCommitted: false,
+                htmlCommitted: false,
+                syncedHtml: snap.htmlContent,
+                syncedMetaSig: currentMetaSig
+            };
+        }
+
+        const shouldTouchMetaTime = Boolean(opts.allowTimestampTouch) && htmlChanged &&
+            window.AutoSaveEngine && typeof window.AutoSaveEngine.shouldTouchMetadataTimestamp === 'function'
+            ? window.AutoSaveEngine.shouldTouchMetadataTimestamp()
+            : false;
+
+        const commitMeta = Boolean(semanticMetaChanged || shouldTouchMetaTime);
+        const commitHtml = Boolean(htmlChanged);
+
+        const updateFn = window.updateScreenMetadata;
+        if (typeof updateFn !== 'function') return { ok: false };
+
+        try {
+            const success = await updateFn(targetProject, targetFileName, {
+                projectMeta: projectMeta,
+                htmlContent: snap.htmlContent,
+                version: currentVer,
+                description: snap.description || [],
+                connectors: snap.connectors || [],
+                existingMetadata: existingMeta,
+                skipMetadataCommit: !commitMeta,
+                skipHtmlCommit: !commitHtml,
+                commitPrefix: opts.commitPrefix || '[auto-save]'
+            }, null);
+
+            if (!success) return { ok: false };
+
+            const updatedTxt = document.getElementById('meta-updated-txt');
+            if (updatedTxt && state.currentProject === targetProject) {
+                updatedTxt.innerText = '최종 업데이트: ' + updatedTimeStr;
+            }
+
+            return {
+                ok: true,
+                committedCount: (commitMeta ? 1 : 0) + (commitHtml ? 1 : 0),
+                metadataCommitted: commitMeta,
+                htmlCommitted: commitHtml,
+                syncedHtml: snap.htmlContent,
+                syncedMetaSig: currentMetaSig
+            };
+        } catch (err) {
+            console.warn('[AutoSave] Background snapshot save failed:', err);
+            return { ok: false };
+        }
+    }
+
+    /**
+     * Silent, non-blocking background cloud save for the currently active screen.
+     */
+    async function _runSilentSaveInternal(options) {
+        const opts = options || {};
+        const state = window.state || {};
+        const DOM = window.DOM || {};
+
+        if (_isManualSaving) return { ok: false, deferred: true };
+        if (state.isReadOnly || (window.ghConfig && window.ghConfig.isReadOnly)) return { ok: false };
+        if (!state.currentProject || !state.activeFile || !state.activeFile.name) return { ok: false };
+
+        const targetProject = state.currentProject;
+        const activeFileName = state.activeFile.name;
+        const updatedTimeStr = typeof window.getFormattedKST === 'function'
+            ? window.getFormattedKST()
+            : new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        const currentVer = (state.projectMetadata && state.projectMetadata.version !== undefined)
+            ? (parseFloat(state.projectMetadata.version) || 0.1)
+            : 0.1;
+
+        const projectMeta = _buildCurrentProjectMeta(state, updatedTimeStr);
+        projectMeta.version = currentVer;
+
+        let htmlContent = await getIframeHTML({ silent: true });
+        if (!htmlContent) return { ok: false };
+
+        if (state.currentProject !== targetProject || !state.activeFile || state.activeFile.name !== activeFileName) {
+            return { ok: false };
+        }
+        if (_isManualSaving) return { ok: false, deferred: true };
+
+        htmlContent = _syncCoverHtmlMetadata(htmlContent, projectMeta, currentVer, activeFileName, state);
+
+        const cacheKey = targetProject + '/' + activeFileName;
+        const remoteHtml = _resolveRemoteBaselineHtml(cacheKey);
+        const htmlChanged = (remoteHtml === null) ? true : (htmlContent !== remoteHtml);
+
+        const currentMetaSig = (window.AutoSaveEngine && typeof window.AutoSaveEngine.computeMetadataSemanticSignature === 'function')
+            ? window.AutoSaveEngine.computeMetadataSemanticSignature(state, activeFileName, projectMeta, currentVer)
+            : '';
+        const lastMetaSig = (window.AutoSaveEngine && typeof window.AutoSaveEngine.getLastSyncedMetaSig === 'function')
+            ? window.AutoSaveEngine.getLastSyncedMetaSig(targetProject, activeFileName)
+            : '';
+        const semanticMetaChanged = !lastMetaSig || (currentMetaSig !== lastMetaSig);
+
+        if (!htmlChanged && !semanticMetaChanged) {
+            return {
+                ok: true,
+                committedCount: 0,
+                metadataCommitted: false,
+                htmlCommitted: false,
+                syncedHtml: htmlContent,
+                syncedMetaSig: currentMetaSig
+            };
+        }
+
+        const shouldTouchMetaTime = htmlChanged && window.AutoSaveEngine && typeof window.AutoSaveEngine.shouldTouchMetadataTimestamp === 'function'
+            ? window.AutoSaveEngine.shouldTouchMetadataTimestamp()
+            : false;
+
+        const commitMeta = Boolean(semanticMetaChanged || shouldTouchMetaTime);
+        const commitHtml = Boolean(htmlChanged);
+
+        const updateFn = window.updateScreenMetadata;
+        if (typeof updateFn !== 'function') return { ok: false };
+
+        try {
+            const success = await updateFn(targetProject, activeFileName, {
+                projectMeta: projectMeta,
+                htmlContent: htmlContent,
+                version: currentVer,
+                description: state.activeFile ? state.activeFile.meta.description : [],
+                connectors: Array.isArray(state.connectors) ? state.connectors : (state.activeFile?.meta?.connectors || []),
+                existingMetadata: state.projectMetadata,
+                skipMetadataCommit: !commitMeta,
+                skipHtmlCommit: !commitHtml,
+                commitPrefix: opts.commitPrefix || '[auto-save]'
+            }, null);
+
+            if (!success) return { ok: false };
+
+            if (state.projectMetadata && state.currentProject === targetProject) {
+                if (commitMeta) {
+                    Object.assign(state.projectMetadata, projectMeta);
+                }
+                const fileNameEl = (DOM && DOM.fileName) || document.getElementById('file-name-display') || document.getElementById('file-name');
+                if (projectMeta.title && fileNameEl) fileNameEl.innerText = projectMeta.title;
+
+                const updatedTxt = document.getElementById('meta-updated-txt');
+                if (updatedTxt) {
+                    updatedTxt.innerText = '최종 업데이트: ' + updatedTimeStr;
+                }
+            }
+
+            return {
+                ok: true,
+                committedCount: (commitMeta ? 1 : 0) + (commitHtml ? 1 : 0),
+                metadataCommitted: commitMeta,
+                htmlCommitted: commitHtml,
+                syncedHtml: htmlContent,
+                syncedMetaSig: currentMetaSig
+            };
+        } catch (err) {
+            console.warn('[AutoSave] Silent cloud save failed:', err);
+            return { ok: false };
+        }
+    }
+
+    function _enqueueSilentTask(taskFn) {
+        const prev = _activeSilentSavePromise || Promise.resolve();
+        const next = prev.catch(() => {}).then(taskFn);
+        _activeSilentSavePromise = next.finally(() => {
+            if (_activeSilentSavePromise === next) {
+                _activeSilentSavePromise = null;
+            }
+        });
+        return next;
+    }
+
+    function performSilentSave(options) {
+        return _enqueueSilentTask(() => _runSilentSaveInternal(options));
+    }
+
+    function performSilentSnapshotSave(snap, options) {
+        return _enqueueSilentTask(() => _runSilentSnapshotSaveInternal(snap, options));
+    }
+
+    /**
+     * Executes universal manual project and screen saving pipeline ([전체 저장] / Ctrl+S).
+     * @param {string} explicitReason Optional revision note.
+     */
     async function handleGlobalSave(explicitReason = "") {
         const btn = document.getElementById('btn-global-save');
         if (!btn || btn.disabled) return;
@@ -240,6 +539,8 @@
         const state = window.state || {};
         const DOM = window.DOM || {};
         if (state.isReadOnly) return window.showAuthModal?.();
+
+        _isManualSaving = true;
 
         const overlay = document.getElementById('save-overlay');
         const originalHTML = btn.innerHTML;
@@ -268,24 +569,51 @@
             overlayCtrl.show();
             overlayCtrl.setLoading();
 
+            if (_activeSilentSavePromise) {
+                try { await _activeSilentSavePromise; } catch (_) {}
+            }
+
+            // Flush any background snapshots from previously visited screens first
+            if (window.AutoSaveEngine && typeof window.AutoSaveEngine.flushPendingSnapshotsForManualSave === 'function') {
+                await window.AutoSaveEngine.flushPendingSnapshotsForManualSave();
+            }
+
             const { projectMeta, changeMsg, nextVer, historyList, updatedTimeStr } = await _resolveProjectMetadataAndVersion(state, explicitReason);
-            let htmlContent = await getIframeHTML();
+            let htmlContent = await getIframeHTML({ silent: false });
             const activeFileName = state.activeFile ? state.activeFile.name : null;
 
             htmlContent = _syncCoverHtmlMetadata(htmlContent, projectMeta, nextVer, activeFileName, state);
 
-            const updateFn = window.updateScreenMetadata;
-            if (typeof updateFn !== 'function') {
-                throw new Error("updateScreenMetadata 함수를 찾을 수 없습니다.");
-            }
+            const cacheKey = (state.currentProject && activeFileName) ? (state.currentProject + '/' + activeFileName) : '';
+            const remoteHtml = cacheKey ? _resolveRemoteBaselineHtml(cacheKey) : null;
+            const htmlChanged = !activeFileName ? false : ((remoteHtml === null) ? true : (htmlContent !== remoteHtml));
 
-            const success = await updateFn(state.currentProject, activeFileName, {
-                projectMeta,
-                htmlContent,
-                version: nextVer,
-                description: state.activeFile ? state.activeFile.meta.description : [],
-                existingMetadata: state.projectMetadata
-            }, () => { });
+            const currentMetaSig = (window.AutoSaveEngine && typeof window.AutoSaveEngine.computeMetadataSemanticSignature === 'function')
+                ? window.AutoSaveEngine.computeMetadataSemanticSignature(state, activeFileName, projectMeta, nextVer)
+                : '';
+            const lastMetaSig = (window.AutoSaveEngine && typeof window.AutoSaveEngine.getLastSyncedMetaSig === 'function')
+                ? window.AutoSaveEngine.getLastSyncedMetaSig(state.currentProject, activeFileName)
+                : '';
+            const semanticMetaChanged = Boolean(changeMsg) || !lastMetaSig || (currentMetaSig !== lastMetaSig);
+
+            let success = true;
+            if (htmlChanged || semanticMetaChanged) {
+                const updateFn = window.updateScreenMetadata;
+                if (typeof updateFn !== 'function') {
+                    throw new Error("updateScreenMetadata 함수를 찾을 수 없습니다.");
+                }
+
+                success = await updateFn(state.currentProject, activeFileName, {
+                    projectMeta,
+                    htmlContent,
+                    version: nextVer,
+                    description: state.activeFile ? state.activeFile.meta.description : [],
+                    connectors: Array.isArray(state.connectors) ? state.connectors : (state.activeFile?.meta?.connectors || []),
+                    existingMetadata: state.projectMetadata,
+                    skipMetadataCommit: false,
+                    skipHtmlCommit: !htmlChanged
+                }, () => { });
+            }
 
             overlayCtrl.setProgressComplete();
             await new Promise(r => setTimeout(r, 300));
@@ -298,12 +626,16 @@
                 if (activeFileName && state.projectMetadata.screens && state.projectMetadata.screens[activeFileName]) {
                     state.projectMetadata.screens[activeFileName].version = nextVer;
                 }
-                const fileNameEl = (DOM && DOM.fileName) || document.getElementById('file-name');
+                const fileNameEl = (DOM && DOM.fileName) || document.getElementById('file-name-display') || document.getElementById('file-name');
                 if (projectMeta.title && fileNameEl) fileNameEl.innerText = projectMeta.title;
 
                 const updatedTxt = document.getElementById('meta-updated-txt');
                 if (updatedTxt) {
                     updatedTxt.innerText = '최종 업데이트: ' + updatedTimeStr;
+                }
+
+                if (window.AutoSaveEngine && typeof window.AutoSaveEngine.onManualSaveCompleted === 'function') {
+                    await window.AutoSaveEngine.onManualSaveCompleted(state.currentProject, activeFileName, htmlContent);
                 }
 
                 if (typeof window.showToast === 'function') {
@@ -324,18 +656,20 @@
             }
             if (window.Notification) window.Notification.alert('저장 중 오류가 발생했습니다: ' + err.message, '오류', 'error');
         } finally {
+            _isManualSaving = false;
             clearTimeout(saveTimeoutId);
             overlayCtrl.hide();
         }
     }
 
-    // Expose Storage Engine SSOT
     window.StorageEngine = {
         getIframeHTML: getIframeHTML,
-        handleGlobalSave: handleGlobalSave
+        handleGlobalSave: handleGlobalSave,
+        performSilentSave: performSilentSave,
+        performSilentSnapshotSave: performSilentSnapshotSave,
+        isManualSaving: function () { return _isManualSaving; }
     };
 
-    // Global Proxies for backward compatibility
     window.getIframeHTML = getIframeHTML;
     window.handleGlobalSave = handleGlobalSave;
 

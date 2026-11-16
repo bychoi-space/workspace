@@ -81,6 +81,7 @@
             if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
                 const pin = window.state.activeFile.meta.description[data.index];
                 if (pin) {
+                    const beforePinJson = JSON.stringify(pin);
                     if (!pin.pins) pin.pins = {};
                     const mergeFramePin = function (fKey) {
                         const prev = pin.pins[fKey] || {};
@@ -148,7 +149,9 @@
                         }
                     }
 
-                    if (typeof window.markAsDirty === 'function') window.markAsDirty();
+                    if (JSON.stringify(pin) !== beforePinJson && typeof window.markAsDirty === 'function') {
+                        window.markAsDirty();
+                    }
                 }
             }
         },

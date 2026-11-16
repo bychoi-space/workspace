@@ -356,12 +356,28 @@ window.loadScreen = async function (fileName) {
     const DOM = window.DOM || {};
     _prepareScreenViewport(DOM, fileName);
 
-    const content = await fetchProjectFileContent(state.currentProject, fileName);
+    let content = await fetchProjectFileContent(state.currentProject, fileName);
     if (!content) {
         if (typeof window.hideLoading === 'function') window.hideLoading();
         if (DOM.placeholder) DOM.placeholder.style.display = 'flex';
         if (DOM.placeholderTxt) DOM.placeholderTxt.innerText = "파일을 불러오지 못했습니다.";
         return;
+    }
+
+    if (window.AutoSaveEngine && typeof window.AutoSaveEngine.registerRemoteBaseline === 'function') {
+        window.AutoSaveEngine.registerRemoteBaseline(state.currentProject, fileName, content);
+    }
+
+    let recoveredDraft = null;
+    if (window.AutoSaveEngine && typeof window.AutoSaveEngine.recoverDraftIfValid === 'function') {
+        try {
+            recoveredDraft = await window.AutoSaveEngine.recoverDraftIfValid(state.currentProject, fileName, content);
+            if (recoveredDraft && recoveredDraft.htmlContent) {
+                content = recoveredDraft.htmlContent;
+            }
+        } catch (err) {
+            console.warn("[AutoSave] Draft recovery check skipped:", err);
+        }
     }
 
     const isResponsive = _detectScreenResponsive(fileName, content);
@@ -387,6 +403,10 @@ window.loadScreen = async function (fileName) {
     }
 
     _syncScreenStateAndMetadata(fileName, content, DOM);
+
+    if (window.AutoSaveEngine && typeof window.AutoSaveEngine.onScreenLoaded === 'function') {
+        window.AutoSaveEngine.onScreenLoaded(state.currentProject, fileName, content, recoveredDraft);
+    }
 };
 
 // Screen deletion is managed by vctrl_screen_manager.js (SSOT). Fallback guard maintained.
@@ -418,9 +438,9 @@ window.handleTextboxCreation = function () {
 
 
 // --- Storage & Saving Engine SSOT (Decoupled to assets/vctrl_storage.js) ---
-window.getIframeHTML = function () {
+window.getIframeHTML = function (opts) {
     if (window.StorageEngine && typeof window.StorageEngine.getIframeHTML === 'function') {
-        return window.StorageEngine.getIframeHTML();
+        return window.StorageEngine.getIframeHTML(opts);
     }
     return Promise.resolve(null);
 };
@@ -460,6 +480,11 @@ window.markAsDirty = function () {
         MessageHub.send(iframe.contentWindow, 'LF_SYNC_CONNECTORS', { connectors: window.state.connectors });
     }
 
+    // Continuously reset idle debounce timers on every edit (MUST run before hasUnsavedChanges early return)
+    if (window.AutoSaveEngine && typeof window.AutoSaveEngine.notifyModification === 'function') {
+        window.AutoSaveEngine.notifyModification();
+    }
+
     if (state.hasUnsavedChanges) return;
     state.hasUnsavedChanges = true;
     console.log("[Status] Unsaved changes detected.");
@@ -482,6 +507,10 @@ window.markAsClean = function () {
 
 window.checkUnsavedChanges = async function () {
     if (!state.hasUnsavedChanges) return true;
+    if (!state.isReadOnly && window.AutoSaveEngine && typeof window.AutoSaveEngine.stageOutgoingScreenBeforeSwitch === 'function') {
+        const staged = await window.AutoSaveEngine.stageOutgoingScreenBeforeSwitch();
+        if (staged) return true;
+    }
     const confirmed = await Notification.confirm("저장되지 않은 수정사항이 있습니다. 무시하고 이동하시겠습니까?", "알림", "warning");
     if (confirmed) {
         markAsClean();
@@ -492,7 +521,8 @@ window.checkUnsavedChanges = async function () {
 
 // 5. Navigation Protection
 window.addEventListener('beforeunload', (e) => {
-    if (state.hasUnsavedChanges) {
+    const hasPendingBgSync = Boolean(window.AutoSaveEngine && typeof window.AutoSaveEngine.hasPendingCloudSync === 'function' && window.AutoSaveEngine.hasPendingCloudSync());
+    if (state.hasUnsavedChanges || hasPendingBgSync) {
         e.preventDefault();
         e.returnValue = '';
     }

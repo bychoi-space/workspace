@@ -167,6 +167,15 @@
             return true;
         }
 
+        // Tier 1.5: If PPT Image Crop Mode is active, cancel crop mode instead of deselecting all objects
+        if (window.state && window.state.isImageCropping) {
+            const activeIframe = getActiveIframe();
+            if (activeIframe && activeIframe.contentWindow) {
+                activeIframe.contentWindow.postMessage({ type: 'LF_IMAGE_CROP_CANCEL' }, '*');
+            }
+            return true;
+        }
+
         // Tier 2: Deselect all objects and hide object properties
         if (typeof window.deselectAll === 'function') {
             window.deselectAll();
@@ -285,6 +294,22 @@
 
             // 4. Shift+G Responsive Grid Toggle
             if (handleResponsiveGridShortcut(e, state)) return;
+
+            // 4.5. PPT Image Crop Mode Enter / Delete Guard
+            if (state && state.isImageCropping) {
+                if (e.key === 'Enter' || e.code === 'Enter' || e.code === 'NumpadEnter') {
+                    e.preventDefault();
+                    const activeIframe = getActiveIframe();
+                    if (activeIframe && activeIframe.contentWindow) {
+                        activeIframe.contentWindow.postMessage({ type: 'LF_IMAGE_CROP_APPLY' }, '*');
+                    }
+                    return;
+                }
+                if (e.key === 'Delete' || e.key === 'Backspace') {
+                    e.preventDefault();
+                    return;
+                }
+            }
 
             // 5. Escape Key Handling
             if (handleEscapeKey(e)) return;

@@ -20,9 +20,11 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_canvas_viewport.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_drag.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_style_extractor.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_dimmed_layer.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_layering.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_inserter.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_adorner.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_iframe_image_crop.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_script.js",
     "c:\Users\sisun\ai_work\assets\vctrl_text_measurer.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_styles.js",
@@ -30,6 +32,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_common.js",
     "c:\Users\sisun\ai_work\assets\vctrl_component_inserter.js",
     "c:\Users\sisun\ai_work\assets\vctrl_canvas_background.js",
+    "c:\Users\sisun\ai_work\assets\inspector\inspector_dimmed_layer.js",
     "c:\Users\sisun\ai_work\assets\inspector\inspector_table.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_grid.js",
     "c:\Users\sisun\ai_work\assets\vctrl_iframe_accordion.js",
@@ -121,8 +124,8 @@ const scriptsToLoad = [
     'vctrl_object_shape.js', 'vctrl_object_connector.js', 'vctrl_iframe_drag.js',
     'vctrl_iframe_ports.js', 'vctrl_iframe_grid.js', 'vctrl_iframe_accordion.js',
     'vctrl_iframe_tab.js', 'vctrl_responsive_smartguide_math.js', 'vctrl_responsive_smartguide.js', 'vctrl_responsive_pins.js',
-    'vctrl_iframe_style_extractor.js', 'vctrl_iframe_layering.js', 'vctrl_iframe_inserter.js',
-    'vctrl_iframe_adorner.js', 'vctrl_iframe_script.js', 'vctrl_responsive_multiselect.js', 'vctrl_iframe_scroll_pin.js'
+    'vctrl_iframe_style_extractor.js', 'vctrl_iframe_dimmed_layer.js', 'vctrl_iframe_layering.js', 'vctrl_iframe_inserter.js',
+    'vctrl_iframe_adorner.js', 'vctrl_iframe_image_crop.js', 'vctrl_iframe_script.js', 'vctrl_responsive_multiselect.js', 'vctrl_iframe_scroll_pin.js'
 ];
 
 scriptsToLoad.forEach(s => {
@@ -140,8 +143,8 @@ const vars = [
     'v4ObjectShapeScript', 'v4ObjectConnectorScript', 'v4DragResizeScript',
     'v4PortConnectorScript', 'v4GridScript', 'v4AccordionScript', 'v4TabScript',
     'v4ResponsiveSmartGuideMathScript', 'v4ResponsiveSmartGuideScript', 'v4ResponsivePinsScript',
-    'v4IframeStyleExtractorScript', 'v4IframeLayeringScript', 'v4IframeInserterScript',
-    'v4SelectionAdornerScript', 'v4Script', 'v4ResponsiveMultiselectScript', 'v4ScrollPinScript'
+    'v4IframeStyleExtractorScript', 'v4IframeDimmedLayerScript', 'v4IframeLayeringScript', 'v4IframeInserterScript',
+    'v4SelectionAdornerScript', 'v4ImageCropScript', 'v4Script', 'v4ResponsiveMultiselectScript', 'v4ScrollPinScript'
 ];
 
 let assembled = '';

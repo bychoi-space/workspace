@@ -113,7 +113,7 @@ window.ConnectorEngine = (function() {
                     type: 'elbow',
                     start: { targetId: data.startId, side: data.startSide, x: 0, y: 0 },
                     end: { targetId: data.endId, side: data.endSide, x: 0, y: 0 },
-                    style: { stroke: '#475569', strokeWidth: 1.6 }
+                    style: { stroke: '#646464', strokeWidth: 1.6 }
                 };
                 if (!window.state.connectors) window.state.connectors = [];
                 window.state.connectors.push(newConnector);
@@ -364,7 +364,7 @@ window.ConnectorEngine = (function() {
             id, type,
             start: { x: cx - 50, y: cy, targetId: null, side: null },
             end: { x: cx + 50, y: cy, targetId: null, side: null },
-            style: { stroke: '#475569', strokeWidth: 1.6 }
+            style: { stroke: '#646464', strokeWidth: 1.6 }
         };
 
         if (!window.state.connectors) window.state.connectors = [];

@@ -266,17 +266,17 @@
         } else if (type === 'icon') {
             if (name === 'SISUN Logo' || name === 'Workspace Logo') {
                 contentHtml = '<svg viewBox="0 0 176 32" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, \'Montserrat\', \'Inter\', \'Arial Black\', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>';
-                defaultStyle = { width: '120px', height: '22px', color: '#000000' };
+                defaultStyle = { width: '120px', height: '22px', color: '#050505' };
             } else if (brandLogoMap[name]) {
                 const logoPath = brandLogoMap[name];
                 contentHtml = '<div class="lf-icon v4-logo-img" style="width:100%; height:100%; box-sizing:border-box; padding:2px !important; background-origin:content-box !important; background-clip:content-box !important; mask-origin:content-box !important; -webkit-mask-origin:content-box !important; mask-clip:content-box !important; -webkit-mask-clip:content-box !important; -webkit-mask-image:url(\'' + logoPath + '\'); mask-image:url(\'' + logoPath + '\'); -webkit-mask-size:contain; mask-size:contain; -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; -webkit-mask-position:center; mask-position:center; background-color:currentColor !important; pointer-events:none;"></div>';
-                defaultStyle = { width: '30px', height: '30px', color: '#000000' };
+                defaultStyle = { width: '30px', height: '30px', color: '#050505' };
             } else if (svgMap[name]) {
                 contentHtml = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;">' + svgMap[name] + '</svg>';
-                defaultStyle = { width: '30px', height: '30px', color: '#000000' };
+                defaultStyle = { width: '30px', height: '30px', color: '#050505' };
             } else {
                 contentHtml = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-                defaultStyle = { width: '30px', height: '30px', color: '#000000' };
+                defaultStyle = { width: '30px', height: '30px', color: '#050505' };
             }
         }
 

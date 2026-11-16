@@ -33,8 +33,8 @@ window.V4_COMPONENT_LIBRARY = {
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
             previewHtml: `<div style="width: 40px; height: 30px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 4px;"></div>`,
             html: `
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c8c8c8; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #050505; overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 13px; color: #050505; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
             </div>`
         },
         {
@@ -47,10 +47,10 @@ window.V4_COMPONENT_LIBRARY = {
             width: '100px',
             height: '100px',
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 30px; height: 30px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 50%;"></div>`,
+            previewHtml: `<div style="width: 30px; height: 30px; background: #ffffff; border: 1.6px solid #c8c8c8; border-radius: 50%;"></div>`,
             html: `
-            <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c8c8c8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #050505; overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 13px; color: #050505; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
             </div>`
         },
         {
@@ -65,11 +65,11 @@ window.V4_COMPONENT_LIBRARY = {
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
             previewHtml: `<div style="width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 30px solid rgb(255, 255, 255);"></div>`,
             html: `
-            <div class="v4-shape v4-shape-triangle" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: flex-end; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
+            <div class="v4-shape v4-shape-triangle" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: flex-end; justify-content: center; color: #050505; overflow: visible; box-sizing: border-box; position: relative;">
                 <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,1 1,99 99,99" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
+                    <polygon points="50,1 1,99 99,99" style="fill: #ffffff; stroke: #c8c8c8; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
                 </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 13px; color: #050505; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
             </div>`
         },
 
@@ -85,13 +85,13 @@ window.V4_COMPONENT_LIBRARY = {
             width: '100px',
             height: '100px',
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 30px; height: 30px; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>`,
+            previewHtml: `<div style="width: 30px; height: 30px; background: #ffffff; border: 1.6px solid #c8c8c8; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>`,
             html: `
-            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
+            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: #050505; overflow: visible; box-sizing: border-box; position: relative;">
                 <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,1 99,50 50,99 1,50" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
+                    <polygon points="50,1 99,50 50,99 1,50" style="fill: #ffffff; stroke: #c8c8c8; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
                 </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 60%; height: 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
+                <div contenteditable="true" class="v4-editable-cell" style="width: 60%; height: 60%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 13px; color: #050505; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
             </div>`
         },
         {
@@ -124,11 +124,11 @@ window.V4_COMPONENT_LIBRARY = {
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
             previewHtml: `<svg viewBox="0 0 100 100" style="width: 30px; height: 30px; overflow: visible;"><path d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
             html: `
-            <div class="v4-shape v4-shape-arrow" data-arrow-dir="right" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
+            <div class="v4-shape v4-shape-arrow" data-arrow-dir="right" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: #050505; overflow: visible; box-sizing: border-box; position: relative;">
                 <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <path class="v4-arrow-path" d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
+                    <path class="v4-arrow-path" d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: #ffffff; stroke: #c8c8c8; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
                 </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 50%; height: 40%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
+                <div contenteditable="true" class="v4-editable-cell" style="width: 50%; height: 40%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 13px; color: #050505; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative;"></div>
             </div>`
         },
 
@@ -143,7 +143,7 @@ window.V4_COMPONENT_LIBRARY = {
             icon: 'title',
             iconColor: '#00e5ff',
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5; white-space:nowrap;">Edit Text</div>'
+            html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:#050505; font-size:13px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5; white-space:nowrap;">Edit Text</div>'
         },
         {
             id: 'v4-data-table',
@@ -155,23 +155,23 @@ window.V4_COMPONENT_LIBRARY = {
             width: '200px',
             height: '100px',
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div style="width: 80px; height: 40px; border: 1.6px solid var(--v4-border-color, #475569); background: var(--v4-disabled-bg, #e2e8f0); border-radius: 4px;"></div>`,
+            previewHtml: `<div style="width: 80px; height: 40px; border: 1.6px solid #c8c8c8; background: #f0f0f0; border-radius: 4px;"></div>`,
             html: `
-            <table class="v4-premium-table" style="background: var(--v4-disabled-bg, #ffffff); border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box;">
+            <table class="v4-premium-table" style="background: #ffffff; border: 1.6px solid #c8c8c8; color: #050505; font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box;">
                 <colgroup>
                     <col style="width: 100px;">
                     <col style="width: 100px;">
                 </colgroup>
                 <thead>
                     <tr style="height: 50px;">
-                        <th contenteditable="true" class="v4-editable-cell" style="background: var(--v4-input-bg, #f8fafc); color: var(--v4-text-color, #0f172a); border: 1.6px solid var(--v4-border-color, #cbd5e1); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">구분</th>
-                        <th contenteditable="true" class="v4-editable-cell" style="background: var(--v4-input-bg, #f8fafc); color: var(--v4-text-color, #0f172a); border: 1.6px solid var(--v4-border-color, #cbd5e1); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">상세 내용</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f0f0f0; color: #050505; border: 1.6px solid #c8c8c8; font-size: 13px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">구분</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #f0f0f0; color: #050505; border: 1.6px solid #c8c8c8; font-size: 13px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">상세 내용</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr style="height: 50px;">
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">내용</td>
-                        <td contenteditable="true" class="v4-editable-cell" style="border: 1.6px solid var(--v4-border-color, #cbd5e1); color: var(--v4-text-color, #0f172a); font-size: 12px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">정보</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; border: 1.6px solid #c8c8c8; color: #050505; font-size: 13px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">내용</td>
+                        <td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; border: 1.6px solid #c8c8c8; color: #050505; font-size: 13px; font-weight: 400; font-family: inherit; padding: 0 8px; text-align: left; vertical-align: middle; box-sizing: border-box;">정보</td>
                     </tr>
                 </tbody>
             </table>`
@@ -203,17 +203,17 @@ window.V4_COMPONENT_LIBRARY = {
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
             previewHtml: `<div style="width: 38px; height: 28px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box;"><div style="width: 100%; height: 7px; background: rgba(0, 0, 0, 0.05); border-bottom: 1px solid var(--v4-border-color, rgb(200, 200, 200)); display: flex; align-items: center; padding: 0 4px; gap: 2px;"><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #ef4444;"></div><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #eab308;"></div><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #22c55e;"></div></div></div>`,
             html: `
-            <div class="v4-shape v4-shape-webpage" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 8px; overflow: hidden; box-sizing: border-box;">
-                <div class="v4-webpage-header" style="width: 100%; height: 26px; min-height: 26px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.03); border-bottom: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); box-sizing: border-box; flex-shrink: 0; pointer-events: none; user-select: none;">
+            <div class="v4-shape v4-shape-webpage" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; background: #ffffff; border: 1.6px solid #c8c8c8; border-radius: 8px; overflow: hidden; box-sizing: border-box;">
+                <div class="v4-webpage-header" style="width: 100%; height: 26px; min-height: 26px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; background: #f0f0f0; border-bottom: 1.6px solid #c8c8c8; box-sizing: border-box; flex-shrink: 0; pointer-events: none; user-select: none;">
                     <div style="display: flex; gap: 5px; align-items: center; width: 40px; flex-shrink: 0;">
                         <div style="width: 7px; height: 7px; border-radius: 50%; background: #ef4444; opacity: 0.85;"></div>
                         <div style="width: 7px; height: 7px; border-radius: 50%; background: #eab308; opacity: 0.85;"></div>
                         <div style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e; opacity: 0.85;"></div>
                     </div>
-                    <div class="v4-webpage-url-bar" style="flex: 1; max-width: 55%; height: 12px; border-radius: 6px; background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.04); margin: 0 auto;"></div>
+                    <div class="v4-webpage-url-bar" style="flex: 1; max-width: 55%; height: 12px; border-radius: 6px; background: #ffffff; border: 1px solid #c8c8c8; margin: 0 auto;"></div>
                     <div style="width: 40px; flex-shrink: 0;"></div>
                 </div>
-                <div contenteditable="true" class="v4-editable-cell" style="flex: 1 1 auto; width: 100%; height: calc(100% - 26px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; color: var(--v4-text-color, #0f172a);"></div>
+                <div contenteditable="true" class="v4-editable-cell" style="flex: 1 1 auto; width: 100%; height: calc(100% - 26px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 13px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; color: #050505;"></div>
             </div>`
         },
         {
@@ -224,10 +224,10 @@ window.V4_COMPONENT_LIBRARY = {
             icon: 'grid_4x4',
             iconColor: '#00e5ff',
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
-            previewHtml: `<div class="v4-shape-pattern-grid" style="width: 40px; height: 30px; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200);"></div>`,
+            previewHtml: `<div class="v4-shape-pattern-grid" style="width: 40px; height: 30px; background: #ffffff; border: 1.6px solid #c8c8c8;"></div>`,
             html: `
-            <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background: rgb(255, 255, 255); border: 1.6px solid rgb(200, 200, 200); display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: hidden; box-sizing: border-box;">
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
+            <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c8c8c8; display: flex; align-items: center; justify-content: center; color: #050505; overflow: hidden; box-sizing: border-box;">
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 13px; color: #050505; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;"></div>
             </div>`
         },
         {
@@ -240,13 +240,13 @@ window.V4_COMPONENT_LIBRARY = {
             cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
             width: '360px',
             height: '20px',
-            previewHtml: `<svg viewBox="0 0 100 20" preserveAspectRatio="none" style="width: 45px; height: 15px;"><polygon points="0,6 12.5,2 25,6 37.5,2 50,6 62.5,2 75,6 87.5,2 100,6 100,16 87.5,12 75,16 62.5,12 50,16 37.5,12 25,16 12.5,12 0,16" style="fill: #ffedd5; stroke: #00e5ff; stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
+            previewHtml: `<svg viewBox="0 0 100 20" preserveAspectRatio="none" style="width: 45px; height: 15px;"><polygon points="0,6 12.5,2 25,6 37.5,2 50,6 62.5,2 75,6 87.5,2 100,6 100,16 87.5,12 75,16 62.5,12 50,16 37.5,12 25,16 12.5,12 0,16" style="fill: #ffffff; stroke: #00e5ff; stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
             html: `
-            <div class="v4-shape v4-shape-wave" data-wave-dir="horizontal" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: var(--v4-text-color, #0f172a); overflow: visible; box-sizing: border-box; position: relative;">
+            <div class="v4-shape v4-shape-wave" data-wave-dir="horizontal" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: #050505; overflow: visible; box-sizing: border-box; position: relative;">
                 <svg viewBox="0 0 360 20" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16" style="fill: #ffedd5; stroke: #fb923c; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
+                    <polygon points="0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16" style="fill: #ffffff; stroke: #c8c8c8; stroke-width: 1.6; vector-effect: non-scaling-stroke;" />
                 </svg>
-                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 12px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative; color: var(--v4-text-color, #0f172a);"></div>
+                <div contenteditable="true" class="v4-editable-cell" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 10px; box-sizing: border-box; text-align: center; outline: none; font-weight: 400; font-size: 13px; font-family: inherit; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; z-index: 2; position: relative; color: #050505;"></div>
             </div>`
         }
     ],

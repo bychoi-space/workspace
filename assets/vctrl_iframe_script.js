@@ -189,6 +189,7 @@ window.v4Script = `
     document.addEventListener('mousedown', e => {
         if (e.target.closest('.sidebar') || e.target.closest('.modal') || e.target.closest('.header-metadata')) return;
 
+        const prevActiveFrame = window.lastActiveFrame;
         const mob = e.target.closest('.mobile-frame, .mobile-browser-frame, .mobile-content, .mobile-content-area, .mobile-content-inner, .mobile-column, .mobile-browser-header, .mobile-top-bar');
         const pc = e.target.closest('.pc-browser-frame, .pc-frame, .pc-content-area, .pc-content-inner, .pc-column, .pc-browser-header');
         if (mob) {
@@ -206,8 +207,15 @@ window.v4Script = `
                 if (typeof window.updateActiveFrameUI === 'function') window.updateActiveFrameUI('canvas');
             }
         }
+        if (window.lastActiveFrame !== prevActiveFrame && window.V4DimmedLayer && typeof window.V4DimmedLayer.onActiveFrameChanged === 'function') {
+            window.V4DimmedLayer.onActiveFrameChanged(window.lastActiveFrame);
+        }
 
         let d = e.target.closest('.lf-delete-trigger'), c = e.target.closest('.lf-component');
+        if (c && window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(c)) {
+            c = null;
+            d = null;
+        }
         
         const isDeepSelect = !!(e.ctrlKey || e.metaKey);
         const isMulti = !!e.shiftKey;
@@ -243,6 +251,9 @@ window.v4Script = `
 
             markDirty(); 
             notifyParent({ type: 'LF_DESELECT' });
+            if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
+                window.V4DimmedLayer.syncStateToParent();
+            }
             return; 
         }
         if (c) {
@@ -373,6 +384,7 @@ window.v4Script = `
             document.querySelectorAll('.lf-component:not(.connector-line):not(.pin-marker):not(.text-marker):not(.v4-pin-marker)').forEach(c => {
                 if (c.id && c.id.startsWith('v4-pin-')) return;
                 if (c.closest && c.closest('.v4-pin-layer')) return;
+                if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(c)) return;
                 if (!c.id) {
                     c.id = 'v4-comp-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
                 }
@@ -430,6 +442,10 @@ window.v4Script = `
 
     // Double click to enter text editing mode (PPT-style) or drill down into child component inside group
     document.addEventListener('dblclick', e => {
+        const dblCompCheck = e.target.closest('.lf-component');
+        if (dblCompCheck && window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(dblCompCheck)) {
+            return;
+        }
         const editable = e.target.closest('.v4-editable-cell, [contenteditable="true"], .v4-shape-text-content, .v4-shape-text-overlay');
         if (editable) {
             if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -945,6 +961,9 @@ window.v4Script = `
     // --- Helper Handlers for Iframe Core Message Registry ---
 
     function handleDeselectAll(d) {
+        if (window.V4ImageCropEngine && typeof window.V4ImageCropEngine.isActive === 'function' && window.V4ImageCropEngine.isActive()) {
+            window.V4ImageCropEngine.apply(true);
+        }
         if (document.activeElement && (document.activeElement.classList?.contains('v4-editable-cell') || document.activeElement.isContentEditable)) {
             try { document.activeElement.blur(); } catch (_) {}
         }
@@ -1043,6 +1062,9 @@ window.v4Script = `
         },
 
         'LF_REQUEST_SAVE_CONTENT': function(d) {
+            if (window.V4ImageCropEngine && typeof window.V4ImageCropEngine.isActive === 'function' && window.V4ImageCropEngine.isActive()) {
+                window.V4ImageCropEngine.apply(false);
+            }
             // [Form Value SSOT Sync] Commit all live form input values to attributes before clone
             document.querySelectorAll('input').forEach(function(inp) {
                 if (inp.type === 'checkbox' || inp.type === 'radio') {
@@ -1157,6 +1179,9 @@ window.v4Script = `
                 s.remove(); 
                 markDirty(); 
                 notifyParent({ type: 'LF_DESELECT' });
+                if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
+                    window.V4DimmedLayer.syncStateToParent();
+                }
             }
         },
 

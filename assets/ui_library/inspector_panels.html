@@ -181,6 +181,23 @@
                     </label>
                     <button class="v4-inspector-btn v4-btn-xs" type="button" id="btn-snap-image-ratio" title="Reset container to image natural ratio (여백 0px 맞춤)">비율 자동 맞춤</button>
                 </div>
+                <!-- 이미지 자르기 (PPT-Style Non-Destructive Crop) row: shown only when Image SHAPE selected -->
+                <div class="mt-8" id="shape-image-crop-row">
+                    <button class="v4-inspector-btn v4-image-crop-btn" type="button" id="btn-image-crop-toggle" title="이미지를 원하는 길이·넓이로 자르기 (Enter: 적용, Esc: 취소)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                            <path d="M6 2v14a2 2 0 0 0 2 2h14"></path>
+                            <path d="M18 22V8a2 2 0 0 0-2-2H2"></path>
+                        </svg>
+                        <span id="txt-image-crop-toggle">자르기</span>
+                    </button>
+                    <button class="v4-inspector-btn v4-image-crop-reset-btn" type="button" id="btn-image-crop-reset" title="잘라낸 영역을 원본 전체 이미지로 복원" disabled>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                            <path d="M3 3v5h5"></path>
+                        </svg>
+                        <span>자르기 초기화</span>
+                    </button>
+                </div>
             </div>
             <div id="shape-pattern-type-group" class="prop-group mb-12 mt-4" style="display: none;">
                 <label class="v4-prop-label mb-8">패턴 타입 (Pattern)</label>

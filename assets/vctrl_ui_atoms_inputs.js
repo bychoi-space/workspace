@@ -18,6 +18,10 @@ window.v4UIAtomsInputsScript = `
 
     const bindStepperEvents = () => {
         document.querySelectorAll('.v4-stepper-container').forEach(container => {
+            const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
+            const disBg = isStdV2 ? '#f0f0f0' : '#f3f4f6';
+            const disCol = isStdV2 ? '#969696' : '#9ca3af';
+            const actCol = isStdV2 ? '#050505' : '#374151';
             const min = parseInt(container.getAttribute('data-min')) || 1;
             const max = parseInt(container.getAttribute('data-max')) || 99;
             const cur = parseInt(container.getAttribute('data-val')) || min;
@@ -41,13 +45,13 @@ window.v4UIAtomsInputsScript = `
                     }
                 } else {
                     if (decBtn) {
-                        decBtn.style.backgroundColor = cur === min ? '#f3f4f6' : '#ffffff';
-                        decBtn.style.color = cur === min ? '#9ca3af' : '#374151';
+                        decBtn.style.backgroundColor = cur === min ? disBg : '#ffffff';
+                        decBtn.style.color = cur === min ? disCol : actCol;
                         decBtn.style.cursor = cur === min ? 'not-allowed' : 'pointer';
                     }
                     if (incBtn) {
-                        incBtn.style.backgroundColor = cur === max ? '#f3f4f6' : '#ffffff';
-                        incBtn.style.color = cur === max ? '#9ca3af' : '#374151';
+                        incBtn.style.backgroundColor = cur === max ? disBg : '#ffffff';
+                        incBtn.style.color = cur === max ? disCol : actCol;
                         incBtn.style.cursor = cur === max ? 'not-allowed' : 'pointer';
                     }
                 }
@@ -77,13 +81,13 @@ window.v4UIAtomsInputsScript = `
                     }
                 } else {
                     if (decBtn) {
-                        decBtn.style.backgroundColor = val === currentMin ? '#f3f4f6' : '#ffffff';
-                        decBtn.style.color = val === currentMin ? '#9ca3af' : '#374151';
+                        decBtn.style.backgroundColor = val === currentMin ? disBg : '#ffffff';
+                        decBtn.style.color = val === currentMin ? disCol : actCol;
                         decBtn.style.cursor = val === currentMin ? 'not-allowed' : 'pointer';
                     }
                     if (incBtn) {
-                        incBtn.style.backgroundColor = val === currentMax ? '#f3f4f6' : '#ffffff';
-                        incBtn.style.color = val === currentMax ? '#9ca3af' : '#374151';
+                        incBtn.style.backgroundColor = val === currentMax ? disBg : '#ffffff';
+                        incBtn.style.color = val === currentMax ? disCol : actCol;
                         incBtn.style.cursor = val === currentMax ? 'not-allowed' : 'pointer';
                     }
                 }
@@ -119,6 +123,11 @@ window.v4UIAtomsInputsScript = `
 
     const bindFileuploadEvents = () => {
         document.querySelectorAll('.v4-fileupload-container').forEach(container => {
+            const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
+            const selRgb = isStdV2 ? 'rgb(5, 5, 5)' : 'rgb(55, 65, 81)';
+            const phRgb = isStdV2 ? 'rgb(150, 150, 150)' : 'rgb(156, 163, 175)';
+            const selHex = isStdV2 ? '#050505' : '#374151';
+            const phHex = isStdV2 ? '#969696' : '#9ca3af';
             const delBtn = container.querySelector('.v4-fileupload-delete');
             const txt = container.querySelector('.v4-fileupload-textbox');
             const isSel = container.getAttribute('data-selected') === 'true';
@@ -130,8 +139,8 @@ window.v4UIAtomsInputsScript = `
                 if (txt.innerText !== targetText) {
                     txt.innerText = targetText;
                 }
-                const targetColor = isSel ? 'rgb(55, 65, 81)' : 'rgb(156, 163, 175)';
-                const hexColor = isSel ? '#374151' : '#9ca3af';
+                const targetColor = isSel ? selRgb : phRgb;
+                const hexColor = isSel ? selHex : phHex;
                 if (txt.style.color !== hexColor && txt.style.color !== targetColor) {
                     txt.style.color = hexColor;
                 }
@@ -149,7 +158,7 @@ window.v4UIAtomsInputsScript = `
                     container.setAttribute('data-selected', 'false');
                     if (txt) {
                         txt.innerText = container.getAttribute('data-placeholder') || '선택된 파일 없음';
-                        txt.style.color = '#9ca3af';
+                        txt.style.color = phHex;
                     }
                     
                     markDirty();
@@ -168,6 +177,8 @@ window.v4UIAtomsInputsScript = `
 
     const bindToggleEvents = () => {
         document.querySelectorAll('.v4-toggle-container').forEach(container => {
+            const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
+            const offBg = container.getAttribute('data-off-bg') || (isStdV2 ? '#e6e6e6' : 'rgb(203, 213, 225)');
             const handle = container.querySelector('.v4-toggle-handle');
             if (container._eventsBound) {
                 const isChecked = container.getAttribute('data-checked') === 'true';
@@ -181,7 +192,7 @@ window.v4UIAtomsInputsScript = `
                         const trans = trackW - trackH;
                         handle.style.transform = 'translateX(' + trans + 'px)';
                     } else {
-                        container.style.setProperty('background-color', 'rgb(203, 213, 225)', 'important');
+                        container.style.setProperty('background-color', offBg, 'important');
                         container.style.setProperty('border-color', 'rgb(200, 200, 200)', 'important');
                         handle.style.transform = 'translateX(0)';
                     }
@@ -220,7 +231,7 @@ window.v4UIAtomsInputsScript = `
                     const trans = trackW - trackH;
                     handle.style.transform = 'translateX(' + trans + 'px)';
                 } else {
-                    container.style.setProperty('background-color', 'rgb(203, 213, 225)', 'important');
+                    container.style.setProperty('background-color', offBg, 'important');
                     container.style.setProperty('border-color', 'rgb(200, 200, 200)', 'important');
                     handle.style.transform = 'translateX(0)';
                 }
@@ -290,13 +301,14 @@ window.v4UIAtomsInputsScript = `
                 }
 
                 // 3. Tab Buttons Active Style
+                const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
                 tabBtns.forEach(tab => {
                     const mode = tab.getAttribute('data-mode');
                     const isActive = (mode === curMode);
                     if (isActive) tab.classList.add('active');
                     else tab.classList.remove('active');
-                    tab.style.background = isActive ? '#e5e7eb' : '#ffffff';
-                    tab.style.color = isActive ? '#111827' : '#6b7280';
+                    tab.style.background = isActive ? (isStdV2 ? '#f0f0f0' : '#e5e7eb') : '#ffffff';
+                    tab.style.color = isActive ? (isStdV2 ? '#050505' : '#111827') : (isStdV2 ? '#646464' : '#6b7280');
                     tab.style.fontWeight = isActive ? '600' : '500';
                 });
 
@@ -307,7 +319,7 @@ window.v4UIAtomsInputsScript = `
                     const text = rawText.split(String.fromCharCode(10)).join('').split(String.fromCharCode(13)).join('');
                     const curLen = text.length;
                     counterEl.innerText = curLen + ' / ' + (maxLen > 0 ? maxLen + '\uC790' : '\uBB34\uC81C\uD55C');
-                    counterEl.style.color = (maxLen > 0 && curLen > maxLen) ? '#e11d48' : '#64748b';
+                    counterEl.style.color = (maxLen > 0 && curLen > maxLen) ? '#e11d48' : (isStdV2 ? '#969696' : '#64748b');
                 }
 
                 // 5. Resizer Readonly Guard
@@ -325,12 +337,13 @@ window.v4UIAtomsInputsScript = `
             // Content update listener
             const onContentInput = () => {
                 if (counterEl) {
+                    const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
                     const maxLen = parseInt(container.getAttribute('data-max-length'), 10) || 2000;
                     const rawText = contentView ? contentView.innerText || '' : '';
                     const text = rawText.split(String.fromCharCode(10)).join('').split(String.fromCharCode(13)).join('');
                     const curLen = text.length;
                     counterEl.innerText = curLen + ' / ' + (maxLen > 0 ? maxLen + '\uC790' : '\uBB34\uC81C\uD55C');
-                    counterEl.style.color = (maxLen > 0 && curLen > maxLen) ? '#e11d48' : '#64748b';
+                    counterEl.style.color = (maxLen > 0 && curLen > maxLen) ? '#e11d48' : (isStdV2 ? '#969696' : '#64748b');
                 }
                 markDirty();
             };
@@ -516,9 +529,10 @@ window.v4UIAtomsInputsScript = `
                             optEl.appendChild(check);
                         }
                     } else {
+                        const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
                         optEl.classList.remove('active');
                         optEl.style.backgroundColor = '';
-                        optEl.style.color = 'var(--v4-text-color, #0f172a)';
+                        optEl.style.color = isStdV2 ? '#050505' : 'var(--v4-text-color, #0f172a)';
                         optEl.style.fontWeight = '400';
                         const check = optEl.querySelector('.v4-option-check');
                         if (check) check.remove();
@@ -689,14 +703,18 @@ window.v4UIAtomsInputsScript = `
 
             const optionsList = container.querySelector('.v4-selectbox-options');
             if (optionsList) {
+                const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
+                const optFontSize = isStdV2 ? '13px' : '12px';
+                const optBorderCol = isStdV2 ? '#f0f0f0' : 'var(--v4-disabled-bg, #f3f4f6)';
+                const optTextCol = isStdV2 ? '#050505' : 'var(--v4-text-color, #0f172a)';
                 optionsList.innerHTML = optArr.map(function(opt, idx) {
                     const isSelected = selIndices.indexOf(idx) !== -1;
                     const isLast = idx === optArr.length - 1;
-                    const borderStyle = isLast ? '' : ' border-bottom: 1.6px solid var(--v4-disabled-bg, #f3f4f6);';
-                    const activeBg = isSelected ? ' background-color: rgba(99, 102, 241, 0.08); color: var(--v4-accent-color, #4f46e5); font-weight: 600;' : ' color: var(--v4-text-color, #0f172a); font-weight: 400;';
+                    const borderStyle = isLast ? '' : ' border-bottom: 1.6px solid ' + optBorderCol + ';';
+                    const activeBg = isSelected ? ' background-color: rgba(99, 102, 241, 0.08); color: var(--v4-accent-color, #4f46e5); font-weight: 600;' : ' color: ' + optTextCol + '; font-weight: 400;';
                     const checkIcon = isSelected ? '<span class="v4-option-check" style="margin-left: auto; color: var(--v4-accent-color, #4f46e5); font-size: 13px; font-weight: bold; line-height: 1;">\u2713</span>' : '';
                     const activeClass = isSelected ? ' active' : '';
-                    return '<div class="v4-selectbox-option' + activeClass + '" data-index="' + idx + '" data-selected="' + (isSelected ? 'true' : 'false') + '" style="height: 30px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; cursor: pointer; user-select: none;' + activeBg + borderStyle + ' box-sizing: border-box;"><span class="v4-option-label" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + opt + '</span>' + checkIcon + '</div>';
+                    return '<div class="v4-selectbox-option' + activeClass + '" data-index="' + idx + '" data-selected="' + (isSelected ? 'true' : 'false') + '" style="height: 30px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; font-size: ' + optFontSize + '; cursor: pointer; user-select: none;' + activeBg + borderStyle + ' box-sizing: border-box;"><span class="v4-option-label" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + opt + '</span>' + checkIcon + '</div>';
                 }).join('');
             }
 
@@ -749,13 +767,14 @@ window.v4UIAtomsInputsScript = `
                         }
                         if (d.filePlaceholder !== undefined) container.setAttribute('data-placeholder', d.filePlaceholder);
                         
+                        const isStdV2 = !!(s.getAttribute('data-v4-std') === '2' || (s.closest && s.closest('[data-v4-std="2"]')));
                         const isSel = container.getAttribute('data-selected') === 'true';
                         const fName = container.getAttribute('data-file-name') || '';
                         const placeholder = container.getAttribute('data-placeholder') || '\uC120\uD0DD\uB41C \uD30C\uC77C \uC5C6\uC74C';
                         const txt = container.querySelector('.v4-fileupload-textbox');
                         if (txt) {
                             txt.innerText = isSel ? fName : placeholder;
-                            txt.style.color = isSel ? '#374151' : '#9ca3af';
+                            txt.style.color = isSel ? (isStdV2 ? '#050505' : '#374151') : (isStdV2 ? '#969696' : '#9ca3af');
                         }
                         
             }
@@ -825,6 +844,9 @@ window.v4UIAtomsInputsScript = `
                             const endGroup = groups.length > 1 ? groups[1] : null;
         
                             if (d.mode === 'detailed') {
+                                const isStdV2 = !!(s.getAttribute('data-v4-std') === '2' || (s.closest && s.closest('[data-v4-std="2"]')));
+                                const dpFs = isStdV2 ? '13px' : '12px';
+                                const dpCol = isStdV2 ? '#050505' : 'var(--v4-text-color, #0f172a)';
                                 if (presetsDiv) presetsDiv.style.display = 'none';
         
                                 // Ensure start time field exists
@@ -833,7 +855,7 @@ window.v4UIAtomsInputsScript = `
                                     startTimeEl = document.createElement('div');
                                     startTimeEl.className = 'v4-dp-time-field v4-dp-start-time v4-editable-cell';
                                     startTimeEl.contentEditable = container.getAttribute('data-disabled') === 'true' ? 'false' : 'true';
-                                    startTimeEl.style.cssText = 'font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); outline: none; white-space: nowrap; font-family: inherit; margin-left: 6px; -webkit-user-select: text; user-select: text; min-width: 50px;';
+                                    startTimeEl.style.cssText = 'font-size: ' + dpFs + '; font-weight: 400; color: ' + dpCol + '; outline: none; white-space: nowrap; font-family: inherit; margin-left: 6px; -webkit-user-select: text; user-select: text; min-width: 50px;';
                                     const icon = startGroup.querySelector('svg');
                                     if (icon) startGroup.insertBefore(startTimeEl, icon);
                                     else startGroup.appendChild(startTimeEl);
@@ -849,7 +871,7 @@ window.v4UIAtomsInputsScript = `
                                     endTimeEl = document.createElement('div');
                                     endTimeEl.className = 'v4-dp-time-field v4-dp-end-time v4-editable-cell';
                                     endTimeEl.contentEditable = container.getAttribute('data-disabled') === 'true' ? 'false' : 'true';
-                                    endTimeEl.style.cssText = 'font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); outline: none; white-space: nowrap; font-family: inherit; margin-left: 6px; -webkit-user-select: text; user-select: text; min-width: 50px;';
+                                    endTimeEl.style.cssText = 'font-size: ' + dpFs + '; font-weight: 400; color: ' + dpCol + '; outline: none; white-space: nowrap; font-family: inherit; margin-left: 6px; -webkit-user-select: text; user-select: text; min-width: 50px;';
                                     const icon = endGroup.querySelector('svg');
                                     if (icon) endGroup.insertBefore(endTimeEl, icon);
                                     else endGroup.appendChild(endTimeEl);
@@ -890,14 +912,15 @@ window.v4UIAtomsInputsScript = `
                         }
         
                         if (d.defaultPreset !== undefined) {
+                            const isStdV2 = !!(s.getAttribute('data-v4-std') === '2' || (s.closest && s.closest('[data-v4-std="2"]')));
                             container.setAttribute('data-default-preset', d.defaultPreset);
                             container.querySelectorAll('.v4-dp-preset-btn').forEach(btn => {
                                 const isActive = btn.getAttribute('data-preset') === d.defaultPreset;
                                 btn.style.background = isActive ? '#1d4ed8' : '#ffffff';
-                                btn.style.border = '1.6px solid ' + (isActive ? '#1d4ed8' : '#cccccc');
-                                btn.style.color = isActive ? '#ffffff' : '#0f172a';
+                                btn.style.border = '1.6px solid ' + (isActive ? '#1d4ed8' : (isStdV2 ? '#c8c8c8' : '#cccccc'));
+                                btn.style.color = isActive ? '#ffffff' : (isStdV2 ? '#050505' : '#0f172a');
                                 btn.style.fontWeight = '400';
-                                btn.style.fontSize = '12px';
+                                btn.style.fontSize = isStdV2 ? '13px' : '12px';
                                 btn.style.fontFamily = 'inherit';
                                 if (isActive) btn.classList.add('v4-dp-preset-active');
                                 else btn.classList.remove('v4-dp-preset-active');
@@ -1006,6 +1029,8 @@ window.v4UIAtomsInputsScript = `
                 const handle = container.querySelector('.v4-toggle-handle');
                 const isChecked = container.getAttribute('data-checked') === 'true';
                 const toggleColor = container.getAttribute('data-color') || '#3b82f6';
+                const isStdV2 = !!(s.getAttribute('data-v4-std') === '2' || (s.closest && s.closest('[data-v4-std="2"]')));
+                const offBg = container.getAttribute('data-off-bg') || (isStdV2 ? '#e6e6e6' : 'rgb(203, 213, 225)');
                 if (handle) {
                     if (isChecked) {
                         container.style.setProperty('background-color', toggleColor, 'important');
@@ -1015,7 +1040,7 @@ window.v4UIAtomsInputsScript = `
                         const trans = trackW - trackH;
                         handle.style.transform = 'translateX(' + trans + 'px)';
                     } else {
-                        container.style.setProperty('background-color', 'rgb(203, 213, 225)', 'important');
+                        container.style.setProperty('background-color', offBg, 'important');
                         container.style.setProperty('border-color', 'rgb(200, 200, 200)', 'important');
                         handle.style.transform = 'translateX(0)';
                     }

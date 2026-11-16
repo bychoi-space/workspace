@@ -153,6 +153,10 @@ if (!window.v4IframeInserterScript) {
             } catch(e) {}
         }
         
+        if (!isPinMarker && window.V4DimmedLayer && typeof window.V4DimmedLayer.resolveActiveMountHost === 'function') {
+            host = window.V4DimmedLayer.resolveActiveMountHost(host);
+        }
+
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
         // Phase 3: Detect if insertion falls within an existing Fixed HUD element
@@ -210,6 +214,9 @@ if (!window.v4IframeInserterScript) {
             if (typeof window.updateHandles === 'function') window.updateHandles(v);
         } else {
             v.className = 'lf-component' + (d.isGroup ? ' lf-group' : '') + (d.className ? ' ' + d.className : ''); 
+            if (!d.preserveLegacyStyle) {
+                v.setAttribute('data-v4-std', '2');
+            }
             v.style.transform = 'none';
             if (d.style) {
                 Object.assign(v.style, d.style);
@@ -265,7 +272,7 @@ if (!window.v4IframeInserterScript) {
             }
         }
         
-        const trailingRef = Array.from(host.children).find(c => (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
+        const trailingRef = Array.from(host.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
         if (trailingRef && trailingRef.parentNode === host) {
             host.insertBefore(v, trailingRef);
         } else {
@@ -291,6 +298,9 @@ if (!window.v4IframeInserterScript) {
             type: 'LF_COMP_SELECTED', 
             ...styles
         });
+        if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
+            window.V4DimmedLayer.syncStateToParent();
+        }
         markDirty();
     }
 

@@ -172,6 +172,24 @@ window.v4ScrollPinScript = `
             hosts.forEach(function(el) {
                 if (el.classList.contains('dragging-now')) return;
 
+                // Self-healing: Components nested inside an .lf-group are never independent scroll-pinned hosts
+                var enclosingGroup = (el.parentElement && el.parentElement.closest) ? el.parentElement.closest('.lf-group') : null;
+                if (enclosingGroup) {
+                    el.style.removeProperty('transform');
+                    el.style.removeProperty('will-change');
+                    el.style.removeProperty('transition');
+                    if (!enclosingGroup.hasAttribute('data-scroll-fixed') || enclosingGroup.getAttribute('data-scroll-fixed') === 'none') {
+                        el.removeAttribute('data-scroll-fixed');
+                        el.removeAttribute('data-scroll-effect');
+                        el.removeAttribute('data-scroll-target-y');
+                        el.removeAttribute('data-scroll-sticky-top');
+                        el.removeAttribute('data-scroll-sticky-bottom');
+                        el.removeAttribute('data-scroll-divider');
+                        el.removeAttribute('data-scroll-divider-active');
+                    }
+                    return;
+                }
+
                 var mode = el.getAttribute('data-scroll-fixed');
                 if (!mode || mode === 'none') return;
 
@@ -315,7 +333,12 @@ window.v4ScrollPinScript = `
 
                     if (!hostInfo) {
                         var hostEl = hostId ? document.getElementById(hostId) : null;
-                        if (!hostEl || !hostEl.isConnected || !hostEl.hasAttribute('data-scroll-fixed') || hostEl.getAttribute('data-scroll-fixed') === 'none') {
+                        var isHostNestedInGroup = !!(hostEl && hostEl.parentElement && hostEl.parentElement.closest && hostEl.parentElement.closest('.lf-group'));
+                        var pinContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function')
+                            ? window.ResponsiveFrameUtils.getContainer(p)
+                            : (p.closest ? p.closest('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area') : null);
+                        var isHostInSameFrame = !pinContainer || (hostEl && pinContainer.contains(hostEl));
+                        if (!hostEl || !hostEl.isConnected || isHostNestedInGroup || !isHostInSameFrame || !hostEl.hasAttribute('data-scroll-fixed') || hostEl.getAttribute('data-scroll-fixed') === 'none') {
                             // Self-healing: if host does not exist or is no longer scroll-pinned, release pin
                             p.removeAttribute('data-scroll-fixed');
                             p.removeAttribute('data-fixed-host');
@@ -654,6 +677,22 @@ window.v4ScrollPinScript = `
                     el.style.removeProperty('transform');
                     el.style.removeProperty('will-change');
                     el.style.removeProperty('transition');
+
+                    if (el.classList && el.classList.contains('lf-group') && el.querySelectorAll) {
+                        el.querySelectorAll('[data-scroll-fixed]').forEach(function(desc) {
+                            if (desc.classList.contains('pin-marker') || desc.classList.contains('text-marker')) return;
+                            desc.removeAttribute('data-scroll-fixed');
+                            desc.removeAttribute('data-scroll-effect');
+                            desc.removeAttribute('data-scroll-target-y');
+                            desc.removeAttribute('data-scroll-sticky-top');
+                            desc.removeAttribute('data-scroll-sticky-bottom');
+                            desc.removeAttribute('data-scroll-divider');
+                            desc.removeAttribute('data-scroll-divider-active');
+                            desc.style.removeProperty('transform');
+                            desc.style.removeProperty('will-change');
+                            desc.style.removeProperty('transition');
+                        });
+                    }
 
                     // Restore pre-fixed Z-index if preserved, avoiding artificial inflation
                     var preFixedZ = parseInt(el.getAttribute('data-pre-fixed-z'), 10);

@@ -416,6 +416,9 @@ window.v4ShortcutsScript = `
                         try { window.SelectionAdorner.clear(); } catch(adErr) {}
                     }
                     notifyParent({ type: 'LF_DESELECT' });
+                    if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
+                        window.V4DimmedLayer.syncStateToParent();
+                    }
                     markDirty();
                 }
         }

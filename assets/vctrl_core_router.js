@@ -21,491 +21,510 @@
 
     // Modular Parent Core Message Handlers Table Map (SSOT)
     const v4ParentCoreHandlers = {
-                'LF_FOCUS_PARENT_QUILL': function () {
-                    if (window.SmartGuide) window.SmartGuide.clearGuides(true);
-                    if (window.quillEditor) {
-                        window.quillEditor.focus();
-                        const length = window.quillEditor.getLength();
-                        window.quillEditor.setSelection(length, 0);
+        'LF_FOCUS_PARENT_QUILL': function () {
+            if (window.SmartGuide) window.SmartGuide.clearGuides(true);
+            if (window.quillEditor) {
+                window.quillEditor.focus();
+                const length = window.quillEditor.getLength();
+                window.quillEditor.setSelection(length, 0);
+            }
+        },
+        'LF_SNAP_START': function () {
+            if (window.SmartGuide) {
+                window.SmartGuide.clearGuides(true);
+                window.SmartGuide.findSnapTargets();
+            }
+        },
+        'LF_CLEAR_SMARTGUIDE': function () {
+            if (window.SmartGuide) window.SmartGuide.clearGuides(true);
+        },
+        'LF_SNAP_REQUEST': function (data, e) {
+            const DOM = window.DOM;
+            const targetWindow = (DOM && DOM.iframe && DOM.iframe.contentWindow) || e.source;
+            if (window.SmartGuide && targetWindow) {
+                const snap = window.SmartGuide.calculateSnap(data.x, data.y, data.w, data.h, !!data.isArrowKey, data.activeId);
+                window.SmartGuide.drawGuides(snap);
+                window.MessageHub.send(targetWindow, 'LF_SNAP_RESPONSE', snap);
+            }
+        },
+        'LF_SNAP_END': function (data) {
+            if (window.SmartGuide) {
+                if (data && data.x !== undefined && data.y !== undefined && data.id) {
+                    const compW = data.w || data.width || 100;
+                    const compH = data.h || data.height || 40;
+                    window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 7000);
+                } else {
+                    window.SmartGuide.clearGuides();
+                }
+            }
+        },
+        'LF_DESELECT': function () {
+            if (window.SmartGuide) window.SmartGuide.clearGuides(true);
+        },
+        'LF_RESTORE_CONNECTORS': function (data) {
+            if (window.state && data.connectors) {
+                window.state.connectors = data.connectors;
+                if (window.ConnectorEngine) window.ConnectorEngine.redrawAll();
+            }
+        },
+        'LF_TOGGLE_GRID_REQUEST': function () {
+            if (typeof window.toggleResponsiveGrid === 'function') {
+                window.toggleResponsiveGrid();
+            }
+        },
+        'LF_DIMMED_LAYER_STATE': function (data) {
+            if (window.InspectorDimmedLayer && typeof window.InspectorDimmedLayer.syncFromIframe === 'function') {
+                window.InspectorDimmedLayer.syncFromIframe(data);
+            }
+        },
+        'LF_UPDATE_PIN_POS': function (data) {
+            if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
+                const pin = window.state.activeFile.meta.description[data.index];
+                if (pin) {
+                    if (!pin.pins) pin.pins = {};
+                    const mergeFramePin = function (fKey) {
+                        const prev = pin.pins[fKey] || {};
+                        const next = Object.assign({}, prev, { x: data.x, y: data.y, active: true });
+                        if (data.fixedHost !== undefined) {
+                            if (data.fixedHost) next.fixedHost = data.fixedHost;
+                            else delete next.fixedHost;
+                        }
+                        if (data.scrollFixed !== undefined) {
+                            next.scrollFixed = data.scrollFixed;
+                        }
+                        pin.pins[fKey] = next;
+                    };
+
+                    if (data.frame === 'left') {
+                        mergeFramePin('left');
+                        pin.pins.pc = Object.assign({}, pin.pins.left);
+                        pin.target = 'frame';
+                        pin.x = data.x;
+                        pin.y = data.y;
+                    } else if (data.frame === 'right') {
+                        mergeFramePin('right');
+                        pin.pins.mobile = Object.assign({}, pin.pins.right);
+                        pin.target = 'frame';
+                    } else if (data.frame === 'canvas') {
+                        mergeFramePin('canvas');
+                        pin.target = 'canvas';
+                        pin.x = data.x;
+                        pin.y = data.y;
+                    } else if (data.frame === 'mobile') {
+                        mergeFramePin('mobile');
+                        pin.pins.right = Object.assign({}, pin.pins.mobile);
+                        pin.target = 'frame';
+                    } else if (data.frame === 'pc') {
+                        mergeFramePin('pc');
+                        pin.pins.left = Object.assign({}, pin.pins.pc);
+                        pin.target = 'frame';
+                        pin.x = data.x;
+                        pin.y = data.y;
+                    } else {
+                        pin.x = data.x;
+                        pin.y = data.y;
+                        if (data.fixedHost !== undefined) {
+                            if (data.fixedHost) pin.fixedHost = data.fixedHost;
+                            else delete pin.fixedHost;
+                        }
+                        if (data.scrollFixed !== undefined) {
+                            pin.scrollFixed = data.scrollFixed;
+                        }
                     }
-                },
-                'LF_SNAP_START': function () {
-                    if (window.SmartGuide) {
-                        window.SmartGuide.clearGuides(true);
-                        window.SmartGuide.findSnapTargets();
+                    if (data.standardized) pin.standardized = true;
+
+                    // Recompute top-level summary flags for sidebar badge without cross-contaminating frames
+                    if (data.frame) {
+                        const pcEntry = pin.pins.pc || pin.pins.left || {};
+                        const mobEntry = pin.pins.mobile || pin.pins.right || {};
+                        const anyHost = pcEntry.fixedHost || mobEntry.fixedHost || null;
+                        if (anyHost) pin.fixedHost = anyHost;
+                        else delete pin.fixedHost;
+
+                        if (pcEntry.scrollFixed === 'viewport' && mobEntry.scrollFixed === 'viewport') {
+                            pin.scrollFixed = 'viewport';
+                        } else if (!anyHost && pcEntry.scrollFixed !== 'viewport' && mobEntry.scrollFixed !== 'viewport') {
+                            pin.scrollFixed = 'none';
+                        }
                     }
+
+                    if (typeof window.markAsDirty === 'function') window.markAsDirty();
+                }
+            }
+        },
+        'LF_CREATE_GROUND_PIN': function (data) {
+            const state = window.state || {};
+            if (state.isReadOnly) return;
+            if (!state.activeFile) return;
+            if (!state.activeFile.meta.description) {
+                state.activeFile.meta.description = [];
+            }
+            const newIdx = state.activeFile.meta.description.length;
+            const posX = Math.round(data.x || 800);
+            const posY = Math.round(data.y || 450);
+
+            state.activeFile.meta.description.push({
+                type: "pin",
+                target: "canvas",
+                text: "Edit Text",
+                html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;">Edit Text</div>',
+                x: posX,
+                y: posY,
+                pins: {
+                    canvas: { x: posX, y: posY, active: true }
                 },
-                'LF_CLEAR_SMARTGUIDE': function () {
-                    if (window.SmartGuide) window.SmartGuide.clearGuides(true);
-                },
-                'LF_SNAP_REQUEST': function (data, e) {
-                    const DOM = window.DOM;
-                    const targetWindow = (DOM && DOM.iframe && DOM.iframe.contentWindow) || e.source;
-                    if (window.SmartGuide && targetWindow) {
-                        const snap = window.SmartGuide.calculateSnap(data.x, data.y, data.w, data.h, !!data.isArrowKey, data.activeId);
-                        window.SmartGuide.drawGuides(snap);
-                        window.MessageHub.send(targetWindow, 'LF_SNAP_RESPONSE', snap);
+                standardized: true
+            });
+
+            if (typeof window.renderDescriptionList === 'function') {
+                window.renderDescriptionList();
+            }
+
+            const DOM = window.DOM || {};
+            if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
+                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_GROUND_PIN', {
+                    index: newIdx,
+                    number: newIdx + 1,
+                    x: posX,
+                    y: posY
+                });
+            }
+            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+        },
+        'LF_DELETE_PIN': function (data) {
+            if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
+                window.state.activeFile.meta.description.splice(data.index, 1);
+                if (typeof window.renderDescriptionList === 'function') {
+                    window.renderDescriptionList(window.state.activeFile.meta.description);
+                }
+                const DOM = window.DOM;
+                if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
+                    window.MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: data.index, pins: window.state.activeFile.meta.description });
+                }
+                if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            }
+        },
+        'LF_TABLE_SIZE_CHANGED': function () {
+            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+        },
+        'LF_GRID_COL_FOCUSED': function (data) {
+            if (window.InspectorGrid && typeof window.InspectorGrid.focusColumnCard === 'function') {
+                if (data && typeof data.activeColIndex === 'number' && data.activeColIndex >= 0) {
+                    window.InspectorGrid.focusColumnCard(data.activeColIndex);
+                }
+            }
+        },
+        'LF_QUERY_ITEM_FOCUSED': function (data) {
+            if (window.InspectorAdminSettings && typeof window.InspectorAdminSettings.focusRowBlock === 'function') {
+                if (data && (typeof data.activeRowIndex === 'number' || data.isGroupHeader)) {
+                    window.InspectorAdminSettings.focusRowBlock(data.activeRowIndex, data.activeColIndex, data.isGroupHeader);
+                }
+            }
+        },
+        'LF_COMP_SELECTED': function (data) {
+            const state = window.state || {};
+            const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));
+            if (window.SmartGuide) {
+                if (isResponsive) {
+                    window.SmartGuide.clearGuides(true);
+                } else {
+                    window.SmartGuide.findSnapTargets();
+                }
+            }
+            const activeEl = document.activeElement;
+            const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+            let isTyping = !isBtn && activeEl && (
+                activeEl.tagName === 'INPUT' ||
+                activeEl.tagName === 'TEXTAREA' ||
+                activeEl.tagName === 'SELECT' ||
+                activeEl.isContentEditable
+            );
+
+            const isNewSelection = Boolean(data.id && data.id !== state.editingIndex);
+            state.previousEditingIndex = state.editingIndex;
+            if (isNewSelection && activeEl && typeof activeEl.blur === 'function') {
+                if (activeEl.classList && activeEl.classList.contains('v4-prop-input')) {
+                    if (!activeEl.dataset.editingCompId && state.previousEditingIndex) {
+                        activeEl.dataset.editingCompId = state.previousEditingIndex;
                     }
-                },
-                'LF_SNAP_END': function (data) {
-                    if (window.SmartGuide) {
-                        if (data && data.x !== undefined && data.y !== undefined && data.id) {
-                            const compW = data.w || data.width || 100;
-                            const compH = data.h || data.height || 40;
-                            window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 7000);
+                }
+                activeEl.blur();
+                isTyping = false;
+            }
+
+            if (data.isDescriptionPin) {
+                state.isEditing = false;
+                state.editingIndex = -1;
+                if (window.state) window.state.selectedComponent = null;
+                if (!isTyping && typeof window.switchSidebarTab === 'function') window.switchSidebarTab('description');
+                if (typeof window.focusDescriptionRow === 'function') {
+                    window.focusDescriptionRow(data.pinIndex, false);
+                }
+                const DOM = window.DOM;
+                if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
+                    try { DOM.iframe.contentWindow.focus(); } catch (err) { }
+                }
+            } else {
+                state.isEditing = true;
+                state.editingIndex = data.id;
+                if (window.state) {
+                    window.state.selectedComponent = Object.assign({ id: data.id }, data);
+                }
+
+                if (window.GroupingManager) {
+                    let selectedIds = (typeof window.GroupingManager.getSelectedIds === 'function') ? [...window.GroupingManager.getSelectedIds()] : [];
+                    let selectedIdsIsGroupMap = (typeof window.GroupingManager.getSelectedIdsIsGroupMap === 'function') ? Object.assign({}, window.GroupingManager.getSelectedIdsIsGroupMap()) : {};
+
+                    if (data.shiftKey) {
+                        if (selectedIds.includes(data.id)) {
+                            selectedIds = selectedIds.filter(function (id) { return id !== data.id; });
+                            delete selectedIdsIsGroupMap[data.id];
                         } else {
-                            window.SmartGuide.clearGuides();
+                            selectedIds.push(data.id);
+                            selectedIdsIsGroupMap[data.id] = !!data.isGroup;
                         }
-                    }
-                },
-                'LF_DESELECT': function () {
-                    if (window.SmartGuide) window.SmartGuide.clearGuides(true);
-                },
-                'LF_RESTORE_CONNECTORS': function (data) {
-                    if (window.state && data.connectors) {
-                        window.state.connectors = data.connectors;
-                        if (window.ConnectorEngine) window.ConnectorEngine.redrawAll();
-                    }
-                },
-                'LF_TOGGLE_GRID_REQUEST': function () {
-                    if (typeof window.toggleResponsiveGrid === 'function') {
-                        window.toggleResponsiveGrid();
-                    }
-                },
-                'LF_UPDATE_PIN_POS': function (data) {
-                    if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
-                        const pin = window.state.activeFile.meta.description[data.index];
-                        if (pin) {
-                            if (!pin.pins) pin.pins = {};
-                            if (data.frame === 'left') {
-                                pin.pins.left = { x: data.x, y: data.y, active: true };
-                                pin.pins.pc = pin.pins.left;
-                                pin.target = 'frame';
-                                pin.x = data.x;
-                                pin.y = data.y;
-                            } else if (data.frame === 'right') {
-                                pin.pins.right = { x: data.x, y: data.y, active: true };
-                                pin.pins.mobile = pin.pins.right;
-                                pin.target = 'frame';
-                            } else if (data.frame === 'canvas') {
-                                pin.pins.canvas = { x: data.x, y: data.y, active: true };
-                                pin.target = 'canvas';
-                                pin.x = data.x;
-                                pin.y = data.y;
-                            } else if (data.frame === 'mobile') {
-                                pin.pins.mobile = { x: data.x, y: data.y, active: true };
-                                pin.pins.right = pin.pins.mobile;
-                                pin.target = 'frame';
-                            } else if (data.frame === 'pc') {
-                                pin.pins.pc = { x: data.x, y: data.y, active: true };
-                                pin.pins.left = pin.pins.pc;
-                                pin.target = 'frame';
-                                pin.x = data.x;
-                                pin.y = data.y;
-                            } else {
-                                pin.x = data.x;
-                                pin.y = data.y;
-                            }
-                            if (data.standardized) pin.standardized = true;
-
-                            // Synchronize scroll-pinned host attachment to metadata SSOT
-                            if (data.fixedHost !== undefined) {
-                                if (data.fixedHost) {
-                                    pin.fixedHost = data.fixedHost;
-                                    if (data.frame && pin.pins[data.frame]) {
-                                        pin.pins[data.frame].fixedHost = data.fixedHost;
-                                    }
-                                } else {
-                                    delete pin.fixedHost;
-                                    if (data.frame && pin.pins[data.frame]) {
-                                        delete pin.pins[data.frame].fixedHost;
-                                    }
-                                }
-                            }
-                            if (data.scrollFixed !== undefined) {
-                                pin.scrollFixed = data.scrollFixed;
-                                if (data.frame && pin.pins[data.frame]) {
-                                    pin.pins[data.frame].scrollFixed = data.scrollFixed;
-                                }
-                            }
-
-                            if (typeof window.markAsDirty === 'function') window.markAsDirty();
+                    } else {
+                        if (selectedIds.length > 1 && selectedIds.includes(data.id)) {
+                            // Keep current multi-selection state
+                        } else {
+                            selectedIds = [data.id];
+                            selectedIdsIsGroupMap = { [data.id]: !!data.isGroup };
                         }
-                    }
-                },
-                'LF_CREATE_GROUND_PIN': function (data) {
-                    const state = window.state || {};
-                    if (state.isReadOnly) return;
-                    if (!state.activeFile) return;
-                    if (!state.activeFile.meta.description) {
-                        state.activeFile.meta.description = [];
-                    }
-                    const newIdx = state.activeFile.meta.description.length;
-                    const posX = Math.round(data.x || 800);
-                    const posY = Math.round(data.y || 450);
-
-                    state.activeFile.meta.description.push({
-                        type: "pin",
-                        target: "canvas",
-                        text: "Edit Text",
-                        html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;">Edit Text</div>',
-                        x: posX,
-                        y: posY,
-                        pins: {
-                            canvas: { x: posX, y: posY, active: true }
-                        },
-                        standardized: true
-                    });
-
-                    if (typeof window.renderDescriptionList === 'function') {
-                        window.renderDescriptionList();
                     }
 
-                    const DOM = window.DOM || {};
-                    if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-                        window.MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_GROUND_PIN', {
-                            index: newIdx,
-                            number: newIdx + 1,
-                            x: posX,
-                            y: posY
-                        });
+                    if (typeof window.GroupingManager.setSelectedIds === 'function') {
+                        window.GroupingManager.setSelectedIds(selectedIds);
                     }
-                    if (typeof window.markAsDirty === 'function') window.markAsDirty();
-                },
-                'LF_DELETE_PIN': function (data) {
-                    if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
-                        window.state.activeFile.meta.description.splice(data.index, 1);
-                        if (typeof window.renderDescriptionList === 'function') {
-                            window.renderDescriptionList(window.state.activeFile.meta.description);
-                        }
-                        const DOM = window.DOM;
-                        if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                            window.MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: data.index, pins: window.state.activeFile.meta.description });
-                        }
-                        if (typeof window.markAsDirty === 'function') window.markAsDirty();
+                    if (typeof window.GroupingManager.setSelectedIdsIsGroupMap === 'function') {
+                        window.GroupingManager.setSelectedIdsIsGroupMap(selectedIdsIsGroupMap);
                     }
-                },
-                'LF_TABLE_SIZE_CHANGED': function () {
-                    if (typeof window.markAsDirty === 'function') window.markAsDirty();
-                },
-                'LF_GRID_COL_FOCUSED': function (data) {
-                    if (window.InspectorGrid && typeof window.InspectorGrid.focusColumnCard === 'function') {
-                        if (data && typeof data.activeColIndex === 'number' && data.activeColIndex >= 0) {
-                            window.InspectorGrid.focusColumnCard(data.activeColIndex);
-                        }
+                    if (typeof window.GroupingManager.updateSelectionUI === 'function') {
+                        window.GroupingManager.updateSelectionUI();
                     }
-                },
-                'LF_QUERY_ITEM_FOCUSED': function (data) {
-                    if (window.InspectorAdminSettings && typeof window.InspectorAdminSettings.focusRowBlock === 'function') {
-                        if (data && (typeof data.activeRowIndex === 'number' || data.isGroupHeader)) {
-                            window.InspectorAdminSettings.focusRowBlock(data.activeRowIndex, data.activeColIndex, data.isGroupHeader);
-                        }
+
+                    if (window.state) {
+                        window.state.selectedIds = [...selectedIds];
                     }
-                },
-                'LF_COMP_SELECTED': function (data) {
-                    const state = window.state || {};
-                    const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));
+
                     if (window.SmartGuide) {
                         if (isResponsive) {
                             window.SmartGuide.clearGuides(true);
+                        } else if (selectedIds.length === 1 && !data.isConnector && data.id) {
+                            const compW = data.w || data.width || 100;
+                            const compH = data.h || data.height || 40;
+                            window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 7000);
+                        } else if (selectedIds.length > 1) {
+                            window.SmartGuide.clearGuides(true);
+                        }
+                    }
+
+                    const DOM = window.DOM;
+                    if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
+                        window.MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
+                    }
+
+                    if (!isTyping) {
+                        if (selectedIds.length === 1) {
+                            if (typeof window.updateProperties === 'function') window.updateProperties(data, isNewSelection);
                         } else {
-                            window.SmartGuide.findSnapTargets();
+                            if (typeof window.updateProperties === 'function') window.updateProperties(null, isNewSelection);
                         }
                     }
-                    const activeEl = document.activeElement;
-                    const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-                    let isTyping = !isBtn && activeEl && (
-                        activeEl.tagName === 'INPUT' ||
-                        activeEl.tagName === 'TEXTAREA' ||
-                        activeEl.tagName === 'SELECT' ||
-                        activeEl.isContentEditable
-                    );
-
-                    const isNewSelection = Boolean(data.id && data.id !== state.editingIndex);
-                    state.previousEditingIndex = state.editingIndex;
-                    if (isNewSelection && activeEl && typeof activeEl.blur === 'function') {
-                        if (activeEl.classList && activeEl.classList.contains('v4-prop-input')) {
-                            if (!activeEl.dataset.editingCompId && state.previousEditingIndex) {
-                                activeEl.dataset.editingCompId = state.previousEditingIndex;
-                            }
-                        }
-                        activeEl.blur();
-                        isTyping = false;
-                    }
-
-                    if (data.isDescriptionPin) {
-                        state.isEditing = false;
-                        state.editingIndex = -1;
-                        if (window.state) window.state.selectedComponent = null;
-                        if (!isTyping && typeof window.switchSidebarTab === 'function') window.switchSidebarTab('description');
-                        if (typeof window.focusDescriptionRow === 'function') {
-                            window.focusDescriptionRow(data.pinIndex, false);
-                        }
-                        const DOM = window.DOM;
-                        if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                            try { DOM.iframe.contentWindow.focus(); } catch (err) { }
-                        }
-                    } else {
-                        state.isEditing = true;
-                        state.editingIndex = data.id;
-                        if (window.state) {
-                            window.state.selectedComponent = Object.assign({ id: data.id }, data);
-                        }
-
-                        if (window.GroupingManager) {
-                            let selectedIds = (typeof window.GroupingManager.getSelectedIds === 'function') ? [...window.GroupingManager.getSelectedIds()] : [];
-                            let selectedIdsIsGroupMap = (typeof window.GroupingManager.getSelectedIdsIsGroupMap === 'function') ? Object.assign({}, window.GroupingManager.getSelectedIdsIsGroupMap()) : {};
-
-                            if (data.shiftKey) {
-                                if (selectedIds.includes(data.id)) {
-                                    selectedIds = selectedIds.filter(function (id) { return id !== data.id; });
-                                    delete selectedIdsIsGroupMap[data.id];
-                                } else {
-                                    selectedIds.push(data.id);
-                                    selectedIdsIsGroupMap[data.id] = !!data.isGroup;
-                                }
-                            } else {
-                                if (selectedIds.length > 1 && selectedIds.includes(data.id)) {
-                                    // Keep current multi-selection state
-                                } else {
-                                    selectedIds = [data.id];
-                                    selectedIdsIsGroupMap = { [data.id]: !!data.isGroup };
-                                }
-                            }
-
-                            if (typeof window.GroupingManager.setSelectedIds === 'function') {
-                                window.GroupingManager.setSelectedIds(selectedIds);
-                            }
-                            if (typeof window.GroupingManager.setSelectedIdsIsGroupMap === 'function') {
-                                window.GroupingManager.setSelectedIdsIsGroupMap(selectedIdsIsGroupMap);
-                            }
-                            if (typeof window.GroupingManager.updateSelectionUI === 'function') {
-                                window.GroupingManager.updateSelectionUI();
-                            }
-
-                            if (window.state) {
-                                window.state.selectedIds = [...selectedIds];
-                            }
-
-                            if (window.SmartGuide) {
-                                if (isResponsive) {
-                                    window.SmartGuide.clearGuides(true);
-                                } else if (selectedIds.length === 1 && !data.isConnector && data.id) {
-                                    const compW = data.w || data.width || 100;
-                                    const compH = data.h || data.height || 40;
-                                    window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 7000);
-                                } else if (selectedIds.length > 1) {
-                                    window.SmartGuide.clearGuides(true);
-                                }
-                            }
-
-                            const DOM = window.DOM;
-                            if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
-                            }
-
-                            if (!isTyping) {
-                                if (selectedIds.length === 1) {
-                                    if (typeof window.updateProperties === 'function') window.updateProperties(data, isNewSelection);
-                                } else {
-                                    if (typeof window.updateProperties === 'function') window.updateProperties(null, isNewSelection);
-                                }
-                            }
-                        } else {
-                            if (window.SmartGuide) {
-                                if (isResponsive) {
-                                    window.SmartGuide.clearGuides(true);
-                                } else if (!data.shiftKey && !data.isConnector && data.id) {
-                                    const compW = data.w || data.width || 100;
-                                    const compH = data.h || data.height || 40;
-                                    window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 7000);
-                                }
-                            }
-                            if (!isTyping && typeof window.updateProperties === 'function') window.updateProperties(data, isNewSelection);
+                } else {
+                    if (window.SmartGuide) {
+                        if (isResponsive) {
+                            window.SmartGuide.clearGuides(true);
+                        } else if (!data.shiftKey && !data.isConnector && data.id) {
+                            const compW = data.w || data.width || 100;
+                            const compH = data.h || data.height || 40;
+                            window.SmartGuide.showSelectionGuide(data.x, data.y, compW, compH, data.id, 7000);
                         }
                     }
-                },
-                'LF_MULTI_SELECTION_STYLES': function (data) {
+                    if (!isTyping && typeof window.updateProperties === 'function') window.updateProperties(data, isNewSelection);
+                }
+            }
+        },
+        'LF_MULTI_SELECTION_STYLES': function (data) {
+            if (window.state) {
+                window.state.selectedComponent = Object.assign({ id: data.id }, data);
+                window.state.selectedComponentStyles = data;
+            }
+            const activeEl = document.activeElement;
+            const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
+            const isTyping = !isBtn && activeEl && (
+                activeEl.tagName === 'INPUT' ||
+                activeEl.tagName === 'TEXTAREA' ||
+                activeEl.tagName === 'SELECT' ||
+                activeEl.isContentEditable
+            );
+            if (!isTyping && typeof window.updateProperties === 'function') {
+                window.updateProperties(data);
+            }
+        },
+        'LF_PASTE_COMPLETED': function (data) {
+            const state = window.state || {};
+            try {
+                if (window.SmartGuide) {
+                    try { window.SmartGuide.findSnapTargets(); } catch (e) { }
+                }
+                const activeEl = document.activeElement;
+                const isTyping = activeEl && (
+                    activeEl.tagName === 'INPUT' ||
+                    activeEl.tagName === 'TEXTAREA' ||
+                    activeEl.tagName === 'SELECT' ||
+                    activeEl.isContentEditable ||
+                    activeEl.closest('#floating-inspector-card') !== null ||
+                    activeEl.closest('#sidebar-right') !== null
+                );
+                state.isEditing = true;
+                const newIds = data.ids || [];
+                const groupMap = data.selectedIdsIsGroupMap || {};
+
+                if (newIds.length > 0) {
+                    state.editingIndex = newIds[0];
+                    window.activeCompId = newIds[0];
+                }
+
+                const DOM = window.DOM;
+                if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
+                    try { DOM.iframe.contentWindow.focus(); } catch (e) { }
+                }
+
+                if (window.GroupingManager) {
+                    if (typeof window.GroupingManager.setSelectedIds === 'function') {
+                        window.GroupingManager.setSelectedIds(newIds);
+                    }
+                    if (typeof window.GroupingManager.setSelectedIdsIsGroupMap === 'function') {
+                        window.GroupingManager.setSelectedIdsIsGroupMap(groupMap);
+                    }
+                    if (typeof window.GroupingManager.updateSelectionUI === 'function') {
+                        try { window.GroupingManager.updateSelectionUI(); } catch (e) { }
+                    }
                     if (window.state) {
-                        window.state.selectedComponent = Object.assign({ id: data.id }, data);
-                        window.state.selectedComponentStyles = data;
+                        window.state.selectedIds = [...newIds];
                     }
-                    const activeEl = document.activeElement;
-                    const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
-                    const isTyping = !isBtn && activeEl && (
-                        activeEl.tagName === 'INPUT' ||
-                        activeEl.tagName === 'TEXTAREA' ||
-                        activeEl.tagName === 'SELECT' ||
-                        activeEl.isContentEditable
-                    );
-                    if (!isTyping && typeof window.updateProperties === 'function') {
-                        window.updateProperties(data);
+                    if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
+                        window.MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: newIds });
                     }
-                },
-                'LF_PASTE_COMPLETED': function (data) {
-                    const state = window.state || {};
-                    try {
-                        if (window.SmartGuide) {
-                            try { window.SmartGuide.findSnapTargets(); } catch (e) { }
-                        }
-                        const activeEl = document.activeElement;
-                        const isTyping = activeEl && (
-                            activeEl.tagName === 'INPUT' ||
-                            activeEl.tagName === 'TEXTAREA' ||
-                            activeEl.tagName === 'SELECT' ||
-                            activeEl.isContentEditable ||
-                            activeEl.closest('#floating-inspector-card') !== null ||
-                            activeEl.closest('#sidebar-right') !== null
-                        );
-                        state.isEditing = true;
-                        const newIds = data.ids || [];
-                        const groupMap = data.selectedIdsIsGroupMap || {};
-
-                        if (newIds.length > 0) {
-                            state.editingIndex = newIds[0];
-                            window.activeCompId = newIds[0];
-                        }
-
-                        const DOM = window.DOM;
-                        if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                            try { DOM.iframe.contentWindow.focus(); } catch (e) { }
-                        }
-
-                        if (window.GroupingManager) {
-                            if (typeof window.GroupingManager.setSelectedIds === 'function') {
-                                window.GroupingManager.setSelectedIds(newIds);
-                            }
-                            if (typeof window.GroupingManager.setSelectedIdsIsGroupMap === 'function') {
-                                window.GroupingManager.setSelectedIdsIsGroupMap(groupMap);
-                            }
-                            if (typeof window.GroupingManager.updateSelectionUI === 'function') {
-                                try { window.GroupingManager.updateSelectionUI(); } catch (e) { }
-                            }
-                            if (window.state) {
-                                window.state.selectedIds = [...newIds];
-                            }
-                            if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: newIds });
-                            }
-                            if (!isTyping) {
-                                if (newIds.length === 1 && data.firstCompStyles) {
-                                    state.selectedComponent = Object.assign({ id: newIds[0] }, data.firstCompStyles);
-                                    if (typeof window.updateProperties === 'function') {
-                                        try { window.updateProperties(data.firstCompStyles); } catch (e) { }
-                                    }
-                                } else {
-                                    state.selectedComponent = null;
-                                    if (typeof window.updateProperties === 'function') {
-                                        try { window.updateProperties(); } catch (e) { }
-                                    }
-                                }
+                    if (!isTyping) {
+                        if (newIds.length === 1 && data.firstCompStyles) {
+                            state.selectedComponent = Object.assign({ id: newIds[0] }, data.firstCompStyles);
+                            if (typeof window.updateProperties === 'function') {
+                                try { window.updateProperties(data.firstCompStyles); } catch (e) { }
                             }
                         } else {
-                            if (!isTyping && typeof window.updateProperties === 'function') {
-                                if (newIds.length === 1 && data.firstCompStyles) {
-                                    state.selectedComponent = Object.assign({ id: newIds[0] }, data.firstCompStyles);
-                                }
-                                try { window.updateProperties(data.firstCompStyles || {}); } catch (e) { }
+                            state.selectedComponent = null;
+                            if (typeof window.updateProperties === 'function') {
+                                try { window.updateProperties(); } catch (e) { }
                             }
                         }
-
-                        if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
-                        if (DOM && DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
-                        if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
-                        if (window.state) window.state.isHandMode = false;
-                    } catch (pasteErr) {
-                        console.error("[Core] Error in LF_PASTE_COMPLETED handler:", pasteErr);
                     }
-                },
-                'LF_SPACE_DOWN': function () {
-                    const DOM = window.DOM;
-                    if (DOM && DOM.canvas) DOM.canvas.classList.add('hand-active');
-                    if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'none';
-                    if (window.state) window.state.isHandMode = true;
-                },
-                'LF_SPACE_UP': function () {
-                    const DOM = window.DOM;
-                    if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
-                    if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
-                    if (window.state) window.state.isHandMode = false;
-                },
-                'LF_IFRAME_WHEEL_ZOOM': function (data) {
-                    const DOM = window.DOM;
-                    if (DOM && DOM.iframe && DOM.canvas && window.state) {
-                        const iframeRect = DOM.iframe.getBoundingClientRect();
-                        const parentClientX = data.clientX + iframeRect.left;
-                        const parentClientY = data.clientY + iframeRect.top;
-
-                        const canvasRect = DOM.canvas.getBoundingClientRect();
-                        const mx = parentClientX - canvasRect.left;
-                        const my = parentClientY - canvasRect.top;
-
-                        const state = window.state;
-                        const s = state.transform.scale;
-                        const ns = Math.max(0.1, Math.min(s * (1 + (data.deltaY > 0 ? -0.1 : 0.1)), 20));
-
-                        state.transform.x = mx - (mx - state.transform.x) * (ns / s);
-                        state.transform.y = my - (my - state.transform.y) * (ns / s);
-                        state.transform.scale = ns;
-                        state.viewMode = 'custom';
-                        if (typeof window.updateTransform === 'function') {
-                            window.updateTransform();
+                } else {
+                    if (!isTyping && typeof window.updateProperties === 'function') {
+                        if (newIds.length === 1 && data.firstCompStyles) {
+                            state.selectedComponent = Object.assign({ id: newIds[0] }, data.firstCompStyles);
                         }
-                    }
-                },
-                'LF_TOGGLE_CRISP_VIEW': function () {
-                    if (typeof window.toggleCrispView === 'function') {
-                        window.toggleCrispView();
-                    }
-                },
-                'LF_DIRTY': function () {
-                    if (typeof window.markAsDirty === 'function') {
-                        window.markAsDirty();
-                    }
-                },
-                'LF_TRIGGER_SAVE': function () {
-                    if (typeof window.handleGlobalSave === 'function') {
-                        window.handleGlobalSave();
-                    }
-                },
-                'LF_SHOW_TOAST': function (data) {
-                    if (typeof window.showToast === 'function') {
-                        window.showToast(data.message, data.toastType || 'info');
-                    }
-                },
-                'LF_INSERT_IMAGE_COMP': function (data) {
-                    const state = window.state || {};
-                    if (state.isReadOnly) return;
-                    if (!state.activeFile) return;
-                    const base64 = data && data.base64;
-                    if (!base64) return;
-
-                    if (data.fromPaste) {
-                        const sig = computeImageSignature(base64);
-                        let rootWin = window;
-                        try { rootWin = window.top || window; } catch (e) { rootWin = window; }
-                        if (rootWin.__lf_clipboard_source__ === 'internal' &&
-                            rootWin.__lf_suppressed_img_sig__ &&
-                            sig === rootWin.__lf_suppressed_img_sig__) {
-                            console.log("[CoreRouter] Suppressed stale OS clipboard image in favor of internal copied object.");
-                            triggerIframeObjectPaste();
-                            return;
-                        }
-                        rootWin.__lf_clipboard_source__ = 'external';
-                        rootWin.__lf_last_external_img_sig__ = sig;
-                        rootWin.__lf_suppressed_img_sig__ = null;
-                    }
-
-                    if (typeof window.processAndInsertRawImage === 'function') {
-                        window.processAndInsertRawImage(base64, function () {
-                            const DOM = window.DOM || {};
-                            const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
-                            if (activeIframe && activeIframe.contentWindow) {
-                                try { activeIframe.contentWindow.focus(); } catch (err) { }
-                            }
-                        });
+                        try { window.updateProperties(data.firstCompStyles || {}); } catch (e) { }
                     }
                 }
+
+                if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
+                if (DOM && DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
+                if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
+                if (window.state) window.state.isHandMode = false;
+            } catch (pasteErr) {
+                console.error("[Core] Error in LF_PASTE_COMPLETED handler:", pasteErr);
+            }
+        },
+        'LF_SPACE_DOWN': function () {
+            const DOM = window.DOM;
+            if (DOM && DOM.canvas) DOM.canvas.classList.add('hand-active');
+            if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'none';
+            if (window.state) window.state.isHandMode = true;
+        },
+        'LF_SPACE_UP': function () {
+            const DOM = window.DOM;
+            if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
+            if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
+            if (window.state) window.state.isHandMode = false;
+        },
+        'LF_IFRAME_WHEEL_ZOOM': function (data) {
+            const DOM = window.DOM;
+            if (DOM && DOM.iframe && DOM.canvas && window.state) {
+                const iframeRect = DOM.iframe.getBoundingClientRect();
+                const parentClientX = data.clientX + iframeRect.left;
+                const parentClientY = data.clientY + iframeRect.top;
+
+                const canvasRect = DOM.canvas.getBoundingClientRect();
+                const mx = parentClientX - canvasRect.left;
+                const my = parentClientY - canvasRect.top;
+
+                const state = window.state;
+                const s = state.transform.scale;
+                const ns = Math.max(0.1, Math.min(s * (1 + (data.deltaY > 0 ? -0.1 : 0.1)), 20));
+
+                state.transform.x = mx - (mx - state.transform.x) * (ns / s);
+                state.transform.y = my - (my - state.transform.y) * (ns / s);
+                state.transform.scale = ns;
+                state.viewMode = 'custom';
+                if (typeof window.updateTransform === 'function') {
+                    window.updateTransform();
+                }
+            }
+        },
+        'LF_TOGGLE_CRISP_VIEW': function () {
+            if (typeof window.toggleCrispView === 'function') {
+                window.toggleCrispView();
+            }
+        },
+        'LF_DIRTY': function () {
+            if (typeof window.markAsDirty === 'function') {
+                window.markAsDirty();
+            }
+        },
+        'LF_TRIGGER_SAVE': function () {
+            if (typeof window.handleGlobalSave === 'function') {
+                window.handleGlobalSave();
+            }
+        },
+        'LF_SHOW_TOAST': function (data) {
+            if (typeof window.showToast === 'function') {
+                window.showToast(data.message, data.toastType || 'info');
+            }
+        },
+        'LF_INSERT_IMAGE_COMP': function (data) {
+            const state = window.state || {};
+            if (state.isReadOnly) return;
+            if (!state.activeFile) return;
+            const base64 = data && data.base64;
+            if (!base64) return;
+
+            if (data.fromPaste) {
+                const sig = computeImageSignature(base64);
+                let rootWin = window;
+                try { rootWin = window.top || window; } catch (e) { rootWin = window; }
+                if (rootWin.__lf_clipboard_source__ === 'internal' &&
+                    rootWin.__lf_suppressed_img_sig__ &&
+                    sig === rootWin.__lf_suppressed_img_sig__) {
+                    console.log("[CoreRouter] Suppressed stale OS clipboard image in favor of internal copied object.");
+                    triggerIframeObjectPaste();
+                    return;
+                }
+                rootWin.__lf_clipboard_source__ = 'external';
+                rootWin.__lf_last_external_img_sig__ = sig;
+                rootWin.__lf_suppressed_img_sig__ = null;
+            }
+
+            if (typeof window.processAndInsertRawImage === 'function') {
+                window.processAndInsertRawImage(base64, function () {
+                    const DOM = window.DOM || {};
+                    const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+                    if (activeIframe && activeIframe.contentWindow) {
+                        try { activeIframe.contentWindow.focus(); } catch (err) { }
+                    }
+                });
+            }
+        }
     };
 
     // Expose parent core handlers table map for extensible hook wiring

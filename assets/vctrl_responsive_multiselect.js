@@ -34,6 +34,7 @@ window.v4ResponsiveMultiselectScript = `
             if (!c || !c.getBoundingClientRect) return;
             if (c.id && c.id.startsWith('v4-pin-')) return;
             if (c.closest && c.closest('.v4-pin-layer')) return;
+            if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(c)) return;
             const rect = c.getBoundingClientRect();
             let isChild = false;
             let parent = c.parentElement;
@@ -674,7 +675,7 @@ window.v4ResponsiveMultiselectScript = `
                     if (groupParent && (groupParent.classList.contains('v4-pin-layer') || (groupParent.closest && groupParent.closest('.v4-pin-layer')))) {
                         groupParent = (groupParent.closest && groupParent.closest('.pc-content-inner, .mobile-content-inner, .canvas, .page, #canvas-page, #canvas')) || host;
                     }
-                    if (groupParent && groupParent.querySelector && (!groupParent.classList || (!groupParent.classList.contains('pc-content-inner') && !groupParent.classList.contains('mobile-content-inner')))) {
+                    if (groupParent && groupParent.querySelector && (!groupParent.classList || (!groupParent.classList.contains('pc-content-inner') && !groupParent.classList.contains('mobile-content-inner') && !groupParent.classList.contains('v4-dimmed-overlay-layer')))) {
                         const childInner = groupParent.querySelector('.pc-content-inner, .mobile-content-inner');
                         if (childInner) groupParent = childInner;
                     }
@@ -691,18 +692,41 @@ window.v4ResponsiveMultiselectScript = `
         
                     group.innerHTML = '<div class="lf-delete-trigger">&times;</div>';
         
-                    items.forEach(item => {
+                    items.forEach((item, childIdx) => {
                         if (item.type === 'connector') return; // virtual, don't move into DOM
                         item.el.style.left = (item.l - minX) + 'px';
                         item.el.style.top = (item.t - minY) + 'px';
                         item.el.style.width = item.w + 'px';
                         item.el.style.height = item.h + 'px';
                         item.el.classList.remove('selected');
+                        // Clean independent scroll-pin attributes when nesting inside a group
+                        const stripScrollPinAttrs = function(node) {
+                            if (!node || !node.removeAttribute) return;
+                            node.removeAttribute('data-scroll-fixed');
+                            node.removeAttribute('data-scroll-effect');
+                            node.removeAttribute('data-scroll-target-y');
+                            node.removeAttribute('data-scroll-sticky-top');
+                            node.removeAttribute('data-scroll-sticky-bottom');
+                            node.removeAttribute('data-scroll-divider');
+                            node.removeAttribute('data-scroll-divider-active');
+                            node.removeAttribute('data-pre-fixed-z');
+                            node.style.removeProperty('transform');
+                            node.style.removeProperty('will-change');
+                            node.style.removeProperty('transition');
+                            const curZ = parseInt(node.style.zIndex, 10);
+                            if (!isNaN(curZ) && curZ >= 100000) {
+                                node.style.zIndex = String(1000 + childIdx * 10);
+                            }
+                        };
+                        stripScrollPinAttrs(item.el);
+                        if (item.el.querySelectorAll) {
+                            item.el.querySelectorAll('[data-scroll-fixed]').forEach(stripScrollPinAttrs);
+                        }
                         group.appendChild(item.el);
                     });
         
                     // Insert group into parent DOM right before pin layer or script tag, ensuring both topmost z-index and DOM order
-                    const trailingRef = Array.from(groupParent.children).find(c => (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
+                    const trailingRef = Array.from(groupParent.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
                     if (trailingRef && trailingRef.parentNode === groupParent) {
                         groupParent.insertBefore(group, trailingRef);
                     } else {
@@ -723,6 +747,9 @@ window.v4ResponsiveMultiselectScript = `
                         shiftKey: false,
                         ...window._getCompStyles(group)
                     });
+                    if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
+                        window.V4DimmedLayer.syncStateToParent();
+                    }
                     markDirty();
     };
 
@@ -828,7 +855,7 @@ window.v4ResponsiveMultiselectScript = `
                             if (group.parentNode === targetParent) {
                                 targetParent.insertBefore(c, group);
                             } else {
-                                const trailingRef = Array.from(targetParent.children).find(item => (item.classList && item.classList.contains('v4-pin-layer')) || (!item.classList.contains('lf-component') && (item.tagName === 'SCRIPT' || item.id === 'v4-inlined-script')));
+                                const trailingRef = Array.from(targetParent.children).find(item => (item.classList && (item.classList.contains('v4-dimmed-overlay-layer') || item.classList.contains('v4-pin-layer') || item.classList.contains('v4-selection-adorner-layer') || item.classList.contains('v4-responsive-guide-layer'))) || (!item.classList.contains('lf-component') && (item.tagName === 'SCRIPT' || item.id === 'v4-inlined-script')));
                                 if (trailingRef && trailingRef.parentNode === targetParent) {
                                     targetParent.insertBefore(c, trailingRef);
                                 } else {
@@ -844,6 +871,9 @@ window.v4ResponsiveMultiselectScript = `
         
                     group.remove();
                     notifyParent({ type: 'LF_UNGROUPED_SYNC_SELECTION', ids: newIds });
+                    if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
+                        window.V4DimmedLayer.syncStateToParent();
+                    }
                     markDirty();
     };
 

@@ -62,9 +62,11 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'ResponsiveSmartGuide', key: 'v4ResponsiveSmartGuideScript' },
     { name: 'ResponsivePins', key: 'v4ResponsivePinsScript' },
     { name: 'IframeStyleExtractor', key: 'v4IframeStyleExtractorScript' },
+    { name: 'IframeDimmedLayer', key: 'v4IframeDimmedLayerScript' },
     { name: 'IframeLayering', key: 'v4IframeLayeringScript' },
     { name: 'IframeInserter', key: 'v4IframeInserterScript' },
     { name: 'SelectionAdorner', key: 'v4SelectionAdornerScript' },
+    { name: 'ImageCrop', key: 'v4ImageCropScript' },
     { name: 'CoreScript', key: 'v4Script' },
     { name: 'ResponsiveMultiselect', key: 'v4ResponsiveMultiselectScript' },
     { name: 'ScrollPin', key: 'v4ScrollPinScript' }
@@ -95,7 +97,13 @@ function _prepareScreenViewport(DOM, fileName) {
     if (DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
     if (DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
     if (DOM.canvas) DOM.canvas.classList.remove('hand-active');
-    if (window.state) window.state.isHandMode = false;
+    if (window.state) {
+        window.state.isHandMode = false;
+        window.state.isImageCropping = false;
+    }
+    if (typeof window._syncImageCropUI === 'function') {
+        window._syncImageCropUI({ active: false, isCropped: false });
+    }
 
     if (state.isEditing && typeof window.closeActiveEditor === 'function') {
         window.closeActiveEditor(true);
@@ -179,6 +187,8 @@ function _compileScreenHtml(content, fileName, isResponsive) {
         'v4CommonScript', 'v4ObjectTextScript', 'v4ObjectShapeScript',
         'v4ObjectTableScript', 'v4ObjectConnectorScript', 'v4ConnectorScript',
         'v4GridScript', 'v4AccordionScript', 'v4TabScript', 'v4ResponsivePinsScript', 'spawnResponsiveDualPins',
+        'v4IframeDimmedLayerScript', 'V4DimmedLayer',
+        'v4ImageCropScript', 'V4ImageCropEngine',
         'LF_GROUP_SELECTED', 'GroupingManager', 'renderGrid', 'renderTabs'
     ];
     finalContent = finalContent.replace(scriptRegex, (match, scriptBody) => {
@@ -270,6 +280,9 @@ function _mountScreenIframe(iframe, finalContent, isResponsive, DOM) {
         }
         if (typeof window.renderDescriptionList === 'function') {
             setTimeout(window.renderDescriptionList, 100);
+        }
+        if (window.InspectorDimmedLayer && typeof window.InspectorDimmedLayer.queryIframeState === 'function') {
+            setTimeout(window.InspectorDimmedLayer.queryIframeState, 100);
         }
 
         setTimeout(() => {

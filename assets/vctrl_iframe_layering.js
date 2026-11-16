@@ -14,6 +14,7 @@ if (!window.v4IframeLayeringScript) {
         FIXED_HUD_MIN: 100000,
         FIXED_HUD_MAX: 179999,
         FIXED_PIN_MIN: 180000,
+        DIMMED_OVERLAY: 185000,
         FIXED_PIN_MAX: 199999,
         PIN_MIN: 200000,
         PIN_MAX: 249999,
@@ -25,11 +26,17 @@ if (!window.v4IframeLayeringScript) {
     };
     window.V4_Z_TIERS = V4_Z_TIERS;
 
+    function isTrailingLayerNode(c) {
+        if (!c) return false;
+        if (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) {
+            return true;
+        }
+        return (!c.classList || !c.classList.contains('lf-component')) && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+    }
+
     function insertBeforeTrailingRef(hostEl, el) {
         if (!hostEl || !el) return;
-        var trailingRef = Array.from(hostEl.children || []).find(function(c) {
-            return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
-        });
+        var trailingRef = Array.from(hostEl.children || []).find(isTrailingLayerNode);
         if (trailingRef && trailingRef.parentNode === hostEl) {
             hostEl.insertBefore(el, trailingRef);
         } else {
@@ -103,7 +110,7 @@ if (!window.v4IframeLayeringScript) {
         if (!host) return;
 
         // If host is not a direct inner container, but contains responsive inners, delegate to each inner
-        if (host.querySelectorAll && (!host.classList || (!host.classList.contains('mobile-content-inner') && !host.classList.contains('pc-content-inner')))) {
+        if (host.querySelectorAll && (!host.classList || (!host.classList.contains('mobile-content-inner') && !host.classList.contains('pc-content-inner') && !host.classList.contains('v4-dimmed-overlay-layer')))) {
             var inners = host.querySelectorAll('.mobile-content-inner, .pc-content-inner');
             if (inners.length > 0) {
                 // [Self-Healing Defense] Reparent any normal .lf-component mistakenly placed directly on .page/body into the inner frame
@@ -172,6 +179,16 @@ if (!window.v4IframeLayeringScript) {
                         cZ += 10;
                     });
                     healedNestedGroups = true;
+                }
+            });
+        }
+
+        // Recursively normalize isolated Dimmed Overlay Layer children independently
+        if (!host.classList || !host.classList.contains('v4-dimmed-overlay-layer')) {
+            Array.from(host.children || []).forEach(function(ch) {
+                if (ch.classList && ch.classList.contains('v4-dimmed-overlay-layer')) {
+                    ch.style.zIndex = String(V4_Z_TIERS.DIMMED_OVERLAY);
+                    normalizeZIndices(ch, force);
                 }
             });
         }
@@ -252,7 +269,7 @@ if (!window.v4IframeLayeringScript) {
         var targetParent = container || document.body;
 
         // If targetParent is a wrapper or scroll area, resolve to the appropriate inner container
-        if (targetParent.querySelector && (!targetParent.classList || (!targetParent.classList.contains('mobile-content-inner') && !targetParent.classList.contains('pc-content-inner')))) {
+        if (targetParent.querySelector && (!targetParent.classList || (!targetParent.classList.contains('mobile-content-inner') && !targetParent.classList.contains('pc-content-inner') && !targetParent.classList.contains('v4-dimmed-overlay-layer')))) {
             var activeInner = targetParent.querySelector('.mobile-column.active-column .mobile-content-inner, .pc-column.active-column .pc-content-inner')
                 || targetParent.querySelector('.mobile-content-inner, .pc-content-inner');
             if (activeInner) targetParent = activeInner;
@@ -262,12 +279,15 @@ if (!window.v4IframeLayeringScript) {
             healLeakedComponentsForInner(targetParent);
         }
 
+        var isHostDimmedLayer = !!(targetParent && targetParent.classList && targetParent.classList.contains('v4-dimmed-overlay-layer'));
         var maxZ = isFixed ? V4_Z_TIERS.FIXED_HUD_MIN : V4_Z_TIERS.CONTENT_MIN;
         var comps = (targetParent && targetParent.querySelectorAll) 
             ? targetParent.querySelectorAll('.lf-component') 
             : (document.querySelectorAll ? document.querySelectorAll('.lf-component') : []);
 
         comps.forEach(function(c) {
+            // Isolate z-index scanning between base container and .v4-dimmed-overlay-layer
+            if (!isHostDimmedLayer && c.closest && c.closest('.v4-dimmed-overlay-layer')) return;
             // Ignore nested components inside groups from defining top-level stacking order
             if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('lf-group')) return;
             if (c.classList && c.classList.contains('lf-in-group')) return;
@@ -401,9 +421,7 @@ if (!window.v4IframeLayeringScript) {
                     }
                 });
 
-                var trailingRef = Array.from(parent.children).find(function(c) {
-                    return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
-                });
+                var trailingRef = Array.from(parent.children).find(isTrailingLayerNode);
 
                 items.forEach(function(el) {
                     var isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
@@ -643,9 +661,7 @@ if (!window.v4IframeLayeringScript) {
                     return c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker');
                 });
 
-                var trailingRef = Array.from(parent.children).find(function(c) {
-                    return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
-                });
+                var trailingRef = Array.from(parent.children).find(isTrailingLayerNode);
 
                 items.forEach(function(el) {
                     if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;

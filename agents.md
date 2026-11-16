@@ -81,11 +81,11 @@
 - **모듈러 아키텍처 (Modular Architecture)**: 엔진 안정성과 확장성을 위해 역할을 엄격히 분리합니다.
   - **`vctrl_core.js` (Core Orchestrator - Parent Side)**:
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, 스크린 로딩 파이프라인, 내비게이션 보호 및 중앙 생명주기 조율을 전담합니다.
-    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 31개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
+    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 32개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
   - **`vctrl_storage.js` (Storage Engine - Parent Side)**:
     - **역할**: 스크린 직렬화(`getIframeHTML`), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, GitHub API 원격 커밋 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
   - **`vctrl_core_router.js` (Core Message Router - Parent Side)**:
-    - **역할**: 부모-Iframe 간 통신 조율자. 중앙 `MessageHub` 리스너 및 23개 부모 측 코어 핸들러 테이블(`v4ParentCoreHandlers`), 부모 포커스 시 이미지 붙여넣기(`paste`)를 전담 격리합니다 (`window.CoreRouter`).
+    - **역할**: 부모-Iframe 간 통신 조율자. 중앙 `MessageHub` 리스너 및 24개 부모 측 코어 핸들러 테이블(`v4ParentCoreHandlers`), 부모 포커스 시 이미지 붙여넣기(`paste`)를 전담 격리합니다 (`window.CoreRouter`).
     - **오브젝트 선택 라우팅 & 포커스 해제**: `LF_COMP_SELECTED` 수신 시 이전 선택 ID(`state.previousEditingIndex`)를 보존하여 신규 컴포넌트 선택 여부(`isNewSelection`)를 판별하고, 부모 창의 활성 인풋 포커스 잔류를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 전달합니다.
   - **`vctrl_parent_shortcuts.js` (Parent Shortcuts Engine - Parent Side)**:
     - **역할**: 부모 창의 전역 키보드 핫키(최우선 순위 `Ctrl+S`, `F2` 모드 스왑, `Shift+G` 반응형 그리드 토글, `Escape` 모달 닫기) 가드 및 캔버스 단축키(`Arrow`, `Delete`, `Space`, `Ctrl+C/V/X/G`)의 활성 iframe 프록시 토스를 전담합니다 (`window.ParentShortcuts`).
@@ -96,7 +96,7 @@
   - **`vctrl_clipboard.js` (Clipboard & URL Manager - Parent Side)**:
     - **역할**: 프로젝트 URL 및 스크린 공유 URL 복사, 헤더 드롭다운 메뉴 제어, 시스템 클립보드 비동기 복사 fallback(`copyTextToClipboard`), 프로젝트 간(Cross-Project) 및 탭 간(Cross-Tab) 오브젝트/서식 클립보드 하이브리드 영속화(`window.top` 메모리 + `localStorage` dual-layer SSOT)를 전담합니다.
   - **`vctrl_component_atoms_data.js` (Atoms Definition SSOT - Parent Side)**:
-    - **역할**: V4 아톰 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY.atoms`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, 스테퍼, 셀렉트박스, 체크박스, 라디오, 토글, 파일업로드, 데이트피커, 서치바, 아코디언, 알림, 팝업, 커서, 웹 에디터 아톰 등의 템플릿 마크업을 전담 정의합니다.
+    - **역할**: V4 아톰 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY.atoms`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, 스테퍼, 셀렉트박스, 체크박스, 라디오, 토글, 파일업로드, 데이트피커, 서치바, 아코디언, 알림, 팝업, 커서, 웹 에디터 아톰 등의 템플릿 마크업을 전담 정의합니다. 모든 신규 생성 오브젝트는 `data-v4-std="2"` 스코프 하에 공통 기본값(배경 `#FFFFFF` / 계층 헤더 `#F0F0F0`, 테두리 `#C8C8C8`, 텍스트 `#050505`, 폰트 `13px`, 커넥터 `#646464`)을 따르며 기존 저장 화면은 100% 보존됩니다.
   - **`vctrl_component_data.js` (Component Definition SSOT - Parent Side)**:
     - **역할**: V4 분자/유기체/캔버스배경 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY`)의 단일 진실 공급원. `molecules`, `organisms`, `canvasBackgrounds` 템플릿 마크업 및 카테고리 메타데이터를 전담 정의합니다.
   - **`vctrl_component_logos_templates.js` & `vctrl_component_icons_data.js` (Brand Logos, Atomic Quick Templates & SVG Icons Catalog SSOT - Parent Side)**:
@@ -137,9 +137,11 @@
     - **`vctrl_inspector_actionbar.js` (`window.InspectorActionBar`)**: 다중 선택 액션 바(`#selection-actions-bar`), 그룹/그룹해제, 레이어 순서(앞/뒤), 정렬 및 균등 분배, 서식 복사/붙여넣기, 그룹 치수(W/H) 실시간 계산 동기화 및 인스펙터 바디 재배치(`relocate`), 숨김(`hide`) 전담 SSOT 모듈.
     - **`vctrl_inspector_sync.js` (`window.InspectorPropertySync`)**: 컴포넌트 속성 동기화 디스패처 및 15개 컴포넌트 타입(Shape/Pin, Table, Line, Illustration, Icon, Atom, Popup, Accordion, Grid, Admin-Settings, Tab 등) 전용 프로퍼티 바인딩/추출 서브 동기화 전담 SSOT 모듈.
     - **`inspector_text_formatter.js` (`window.InspectorTextFormatter`)**: Quill 에디터와 캔버스 텍스트 셀 간 연속 공백 보존(`preserveConsecutiveSpaces`, 선행/다중 공백 NBSP 변환) 및 폰트 사이즈 인라인 정규화(`normalizeHtmlForQuill`)를 전담합니다.
-  - **`vctrl_iframe_adorner.js` (Selection Adorner Engine - Iframe Side, 29th Module)**:
+  - **`vctrl_iframe_adorner.js` (Selection Adorner Engine - Iframe Side)**:
     - **역할**: iframe 내부 단일/다중 선택 및 그룹 선택 바운딩 박스/아도너 오버레이(`window.SelectionAdorner`)의 렌더링, 갱신(`update`), 정리(`clear`) 전담 SSOT 모듈.
     - **그룹 드래그 실시간 동기화 및 자식 반경 격리**: 마우스 드래그(`vctrl_iframe_drag.js`의 `handleMouseMove`/`handleMouseUp`) 중 `window.updateHandles(window.activeEl)`를 통해 1:1 프레임 단위로 좌표를 추종하여 고스트 잔상을 원천 차단하며, `.lf-group` 선택 시에는 직계 자식 도형만 탐색(`!isGroup` 가드 및 `:scope > .v4-shape-...`)하여 내부 뱃지/원형 아톰의 `border-radius`가 그룹 테두리로 전염되지 않도록 격리합니다.
+  - **`vctrl_iframe_image_crop.js` (PPT-Style Non-Destructive Image Crop Engine - Iframe Side)**:
+    - **역할**: Image SHAPE(`.v4-shape.v4-shape-image`)의 PPT 스타일 비파괴 자르기(`window.V4ImageCropEngine`, `v4ImageCropScript`) 전담 SSOT 모듈. 인스펙터 `[자르기]` 버튼 진입 시 8방향 검은색 크롭 핸들(`ㄱ`/`ㅡ`/`ㅣ`), 바깥 영역 반투명 고스트 미리보기, 내부 이미지 위치 패닝(Pan), 인스펙터 수치(W/H) 직접 입력 크롭, `Enter`/외부 클릭 확정, `Esc` 취소, `[자르기 초기화]` 원본 복원을 처리하며, `data-crop-l/t/r/b` 정규화 비율과 `%` 단위 `background-size`/`background-position` 투영으로 리사이즈·복사·저장·PDF 출력 시에도 무손실 비파괴 크롭 상태를 100% 보존합니다.
   - **`vctrl_common.js` (Common Bus, Sanitizer & Utilities)**:
     - **역할**: 
       1. 부모-Iframe 통신 인터페이스: `window.EditorBus`(`sendToIframe`, `sendToParent`)
@@ -148,8 +150,10 @@
       4. 반응형 문서 판별 SSOT: `isResponsiveDocument(doc)`
   - **`vctrl_component_library.js` & `vctrl_component_inserter.js` (Library & Insertion Engine)**:
     - **역할**: 사이드바 라이브러리 목록 렌더링(`renderV4Shapes`, `renderAtomicLibrary`, `renderIllustrationLibrary`), 2열 대칭 일러스트 라이브러리, 사이드바 라이브러리 3대 아코디언(`V4SidebarAccordion`: ICON LIBRARY, ILLUSTRATION, COMPONENTS 3개 섹션 기본 접힘(`is-collapsed`) 시작 및 검색 자동 펼침/복원, `localStorage` 영속화), 국영문 하이브리드 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성, 이미지 업로드/붙여넣기 시 다단계 밉맵(`0.55x`) + 언샵 마스크(Unsharp Mask) + 텍스트 획 대비 보존 기반 고선명 리샘플링(`window.createCrispImageDataUrl`, `window.processAndInsertRawImage`, `window.top.__lf_orig_image_cache__`)을 전담합니다. `viewer.html`에서 `vctrl_inspector.js`보다 먼저 로드되어 라이브러리 UI 바인딩의 SSOT를 책임집니다.
-  - **`vctrl_canvas_background.js` (Canvas Background Engine - Parent Side)**:
-    - **역할**: 캔버스 배경 이미지 업로드, 클라이언트 브라우저 실시간 스마트 압축(JPEG 85% / 1920px max), 실시간 투명도(Opacity) 슬라이더 조절, 저채도 프리셋 렌더링 및 활성 iframe(`LF_SET_CANVAS_BACKGROUND`) 동기화를 독립 전담합니다.
+  - **`vctrl_canvas_background.js` & `assets/inspector/inspector_dimmed_layer.js` (Canvas Background & Dimmed Layer Controllers - Parent Side)**:
+    - **역할**: `vctrl_canvas_background.js`는 캔버스 배경 이미지 업로드, 실시간 스마트 압축(JPEG 85% / 1920px max), 투명도 조절 및 `LF_SET_CANVAS_BACKGROUND` 동기화를 전담하며, `inspector_dimmed_layer.js`(`window.InspectorDimmedLayer`)는 우측 사이드바 `CANVAS & BACKGROUND` 영역에서 프레임별 독립/동시 딤드 레이어 제어(ON/OFF, `[딤드·팝업 편집]` ↔ `[바닥 화면 편집]` 전환, 농도/색상)를 전담합니다.
+  - **`vctrl_iframe_dimmed_layer.js` (Dimmed Overlay Layer Engine - Iframe Side)**:
+    - **역할**: 바닥 화면 오브젝트(`1,000~69,999`) 및 스크롤 고정 HUD(`100,000~179,999`) 위, 디스크립션 핀(`.v4-pin-layer`: `250,000`) 및 기즈모(`300,000+`) 아래에 단일 격리 스태킹 컨텍스트(`.v4-dimmed-overlay-layer`, `z-index: 185000`, `isolation: isolate`)를 생성하여 Z-Index 인플레이션 없이 상위 팝업 레이어 저작, 클릭/마키/스마트가이드 레이어 격리(`isComponentSelectable`, `isSameLayerScope`), 바닥 편집 중 임시 숨김(`.v4-dimmed-temp-hidden`)을 전담합니다 (`window.V4DimmedLayer`).
   - **`vctrl_pdf_exporter.js` (PDF Export Engine)**:
     - **역할**: `metadata.json`의 `screenOrder` 기준 전체 스크린 일괄 고해상도 PDF 결합 생성 및 장문 캔버스 캡처 전담.
   - **`vctrl_presentation_pen.js` (Presentation Drawing Engine - PC Dedicated)**:

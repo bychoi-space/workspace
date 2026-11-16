@@ -35,6 +35,7 @@ $jsFiles = @(
     "assets/vctrl_iframe_layering.js",
     "assets/vctrl_iframe_inserter.js",
     "assets/vctrl_iframe_adorner.js",
+    "assets/vctrl_iframe_image_crop.js",
     "assets/vctrl_iframe_script.js",
     "assets/vctrl_iframe_grid.js",
     "assets/vctrl_iframe_accordion.js",
@@ -146,12 +147,14 @@ $htmlContent = @"
             { name: 'v4ResponsiveSmartGuideScript', code: window.v4ResponsiveSmartGuideScript },
             { name: 'v4ResponsivePinsScript', code: window.v4ResponsivePinsScript },
             { name: 'v4IframeStyleExtractorScript', code: window.v4IframeStyleExtractorScript },
+            { name: 'v4IframeDimmedLayerScript', code: window.v4IframeDimmedLayerScript },
             { name: 'v4IframeLayeringScript', code: window.v4IframeLayeringScript },
             { name: 'v4IframeInserterScript', code: window.v4IframeInserterScript },
             { name: 'v4Script', code: window.v4Script },
             { name: 'v4ResponsiveMultiselectScript', code: window.v4ResponsiveMultiselectScript },
             { name: 'v4ScrollPinScript', code: window.v4ScrollPinScript },
-            { name: 'v4SelectionAdornerScript', code: window.v4SelectionAdornerScript }
+            { name: 'v4SelectionAdornerScript', code: window.v4SelectionAdornerScript },
+            { name: 'v4ImageCropScript', code: window.v4ImageCropScript }
         ];
 
         inlinedScripts.forEach(item => {

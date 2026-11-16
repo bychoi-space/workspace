@@ -78,6 +78,11 @@ window.v4ResponsiveSmartGuideMathScript = `
 
             components.forEach((c, idx) => {
                 if (c === activeEl || c.classList.contains('dragging-now')) return;
+                const ownerComp = c.classList.contains('lf-component') ? c : c.closest('.lf-component');
+                if (ownerComp && window.V4DimmedLayer) {
+                    if (typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(ownerComp)) return;
+                    if (activeEl && typeof window.V4DimmedLayer.isSameLayerScope === 'function' && !window.V4DimmedLayer.isSameLayerScope(activeEl, ownerComp)) return;
+                }
                 // Exclude components inside frame columns when calculating on canvas base
                 if (context.type === 'canvas' && c.closest('.frame-column, .pc-browser-frame, .mobile-browser-frame')) return;
                 // Allow container ancestors to be included as container candidates (excluded from sibling raycast)
@@ -132,6 +137,11 @@ window.v4ResponsiveSmartGuideMathScript = `
             const rows = rootScope.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr');
             rows.forEach((row, rIdx) => {
                 if (row === activeEl) return;
+                const rowOwner = row.closest('.lf-component');
+                if (rowOwner && window.V4DimmedLayer) {
+                    if (typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(rowOwner)) return;
+                    if (activeEl && typeof window.V4DimmedLayer.isSameLayerScope === 'function' && !window.V4DimmedLayer.isSameLayerScope(activeEl, rowOwner)) return;
+                }
                 if (context.type === 'canvas' && row.closest('.frame-column, .pc-browser-frame, .mobile-browser-frame')) return;
                 const pos = this.getPureOffset(row, context.inner);
                 const l = pos.left;
@@ -656,6 +666,7 @@ window.v4ResponsiveSmartGuideMathScript = `
         // Subroutines for collectSnapTargets
         _collectComponentSnapTargets: function(targets, rects) {
             document.querySelectorAll('.lf-component:not(.selected)').forEach(function(c) {
+                if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(c)) return;
                 var l = parseFloat(c.style.left) || 0;
                 var t = parseFloat(c.style.top) || 0;
                 var shapeLine = c.querySelector('.v4-shape-line') || (c.classList.contains('v4-shape-line') ? c : null);
@@ -697,6 +708,7 @@ window.v4ResponsiveSmartGuideMathScript = `
             document.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr').forEach(function(row, rIdx) {
                 var parentComp = row.closest('.lf-component');
                 if (!parentComp) return;
+                if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(parentComp)) return;
                 var parentLeft = parseFloat(parentComp.style.left) || 0;
                 var parentTop = parseFloat(parentComp.style.top) || 0;
                 var cRect = parentComp.getBoundingClientRect();
@@ -726,6 +738,7 @@ window.v4ResponsiveSmartGuideMathScript = `
             document.querySelectorAll('.v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell').forEach(function(cell, cIdx) {
                 var parentComp = cell.closest('.lf-component');
                 if (!parentComp) return;
+                if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(parentComp)) return;
                 var parentLeft = parseFloat(parentComp.style.left) || 0;
                 var parentTop = parseFloat(parentComp.style.top) || 0;
                 var cRect = parentComp.getBoundingClientRect();
@@ -907,6 +920,7 @@ window.v4ResponsiveSmartGuideMathScript = `
             document.querySelectorAll('.v4-admin-settings-container').forEach(function(container) {
                 var comp = container.closest('.lf-component');
                 if (!comp || comp.classList.contains('selected')) return;
+                if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(comp)) return;
 
                 var scrollX = window.scrollX || 0;
                 var scrollY = window.scrollY || 0;

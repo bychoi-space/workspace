@@ -1112,14 +1112,20 @@ window.v4TableScript = `
                     const tc = templateRow.cells[i];
                     c.style.cssText = tc.style.cssText;
                 } else {
-                    c.style.border = '1.6px solid var(--v4-border-color, #cbd5e1)';
+                    const isStdV2 = !!(table.closest && table.closest('[data-v4-std="2"]'));
+                    c.style.border = isStdV2 ? '1.6px solid #c8c8c8' : '1.6px solid var(--v4-border-color, #cbd5e1)';
                     c.style.padding = '12px 6px';
                     c.style.textAlign = 'center';
                     c.style.verticalAlign = 'middle';
+                    if (isStdV2) {
+                        c.style.color = '#050505';
+                        c.style.fontSize = '13px';
+                    }
                 }
             }
         } else if (act === 'add-col' || act === 'add_col') {
             const insertIdx = targetColIndex !== -1 ? targetColIndex + 1 : -1;
+            const isStdV2 = !!(table.closest && table.closest('[data-v4-std="2"]'));
             
             let colgroup = table.querySelector('colgroup');
             if (!colgroup) {
@@ -1155,10 +1161,11 @@ window.v4TableScript = `
                     if (templateCell) {
                         th.style.cssText = templateCell.style.cssText;
                     } else {
-                        th.style.background = 'var(--header-dark, #374151)';
-                        th.style.color = '#ffffff';
-                        th.style.fontWeight = '800';
-                        th.style.border = '1.6px solid var(--v4-border-color, #475569)';
+                        th.style.background = isStdV2 ? '#f0f0f0' : 'var(--header-dark, #374151)';
+                        th.style.color = isStdV2 ? '#050505' : '#ffffff';
+                        th.style.fontWeight = isStdV2 ? '500' : '800';
+                        th.style.fontSize = isStdV2 ? '13px' : '12px';
+                        th.style.border = isStdV2 ? '1.6px solid #c8c8c8' : '1.6px solid var(--v4-border-color, #475569)';
                         th.style.padding = '12px 6px';
                         th.style.textAlign = 'center';
                         th.style.verticalAlign = 'middle';
@@ -1172,10 +1179,14 @@ window.v4TableScript = `
                     if (templateCell) {
                         c.style.cssText = templateCell.style.cssText;
                     } else {
-                        c.style.border = '1.6px solid var(--v4-border-color, #cbd5e1)';
+                        c.style.border = isStdV2 ? '1.6px solid #c8c8c8' : '1.6px solid var(--v4-border-color, #cbd5e1)';
                         c.style.padding = '12px 6px';
                         c.style.textAlign = 'center';
                         c.style.verticalAlign = 'middle';
+                        if (isStdV2) {
+                            c.style.color = '#050505';
+                            c.style.fontSize = '13px';
+                        }
                     }
                 }
             });

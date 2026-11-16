@@ -546,6 +546,9 @@ window.v4ResponsiveSmartGuideScript = `
             }
 
             let hoverTarget = elUnderMouse.closest('.lf-component');
+            if (hoverTarget && window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(hoverTarget)) {
+                hoverTarget = null;
+            }
             if (hoverTarget === activeEl || (hoverTarget && activeEl.contains(hoverTarget))) {
                 hoverTarget = null;
             }

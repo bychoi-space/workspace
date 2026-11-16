@@ -190,8 +190,8 @@ window.ResponsiveFrameUtils = {
         cleanEmptyStyleRules: cleanEmptyStyleRules,
         cleanDOM: function(root) {
             if (!root) return root;
-            // 1. Remove runtime UI helpers (ports, handles, guide layers, marquee box, selection adorners)
-            root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(function(el) {
+            // 1. Remove runtime UI helpers (ports, handles, guide layers, marquee box, selection adorners, image crop overlays)
+            root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner, .v4-image-crop-layer').forEach(function(el) {
                 el.remove();
             });
 
@@ -246,7 +246,7 @@ window.ResponsiveFrameUtils = {
 
             // 2. Remove active state classes
             root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
-                el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');
+                el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped', 'v4-cropping-active');
             });
             root.querySelectorAll('.selected-cell').forEach(function(el) {
                 el.classList.remove('selected-cell');
@@ -256,6 +256,20 @@ window.ResponsiveFrameUtils = {
             root.querySelectorAll('[data-scroll-fixed], .pin-marker').forEach(function(el) {
                 el.style.removeProperty('transform');
                 el.style.removeProperty('will-change');
+            });
+
+            // 2.15 Normalize dedicated Dimmed Overlay Layers (strip transient editor-only flags; prune unused empty layers)
+            root.querySelectorAll('.v4-dimmed-overlay-layer').forEach(function(layer) {
+                var isEnabled = layer.getAttribute('data-dimmed-enabled') === 'true';
+                var hasChildComps = layer.querySelectorAll('.lf-component').length > 0;
+                if (!isEnabled && !hasChildComps) {
+                    layer.remove();
+                    return;
+                }
+                layer.classList.remove('v4-dimmed-temp-hidden');
+                layer.removeAttribute('data-dimmed-edit-mode');
+                layer.style.display = isEnabled ? 'block' : 'none';
+                layer.style.pointerEvents = isEnabled ? 'auto' : 'none';
             });
 
             // 2.2 Clean runtime injected engine styles and scripts to keep saved HTML pure and lightweight
@@ -844,7 +858,7 @@ window.v4CommonScript = `
         },
         cleanDOM: function(root) {
             if (!root) return root;
-            root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner').forEach(function(el) {
+            root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner, .v4-image-crop-layer').forEach(function(el) {
                 el.remove();
             });
             var zwsChar = String.fromCharCode(8203);
@@ -867,7 +881,7 @@ window.v4CommonScript = `
                 }
             });
             root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
-                el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');
+                el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped', 'v4-cropping-active');
             });
             root.querySelectorAll('[data-scroll-fixed], .pin-marker').forEach(function(el) {
                 el.style.removeProperty('transform');

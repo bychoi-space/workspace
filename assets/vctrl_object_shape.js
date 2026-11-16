@@ -247,6 +247,9 @@ window.v4ObjectShapeScript = `
                                 // SVG container shapes maintain a transparent container background so bounding box isn't rendered
                                 t.style.background = 'transparent';
                                 t.style.backgroundColor = 'transparent';
+                            } else if (t.classList.contains('v4-shape-image')) {
+                                // Preserve background-image, background-size, and background-position on Image SHAPE
+                                t.style.setProperty('background-color', val, 'important');
                             } else {
                                 t.style[key] = val;
                             }

@@ -48,8 +48,8 @@ window.V4UndoManager = (function() {
 
         const clone = host.cloneNode(true);
         clone.querySelectorAll('script').forEach(el => el.remove());
-        clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(el => el.remove());
-        clone.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected'));
+        clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger, .v4-image-crop-layer').forEach(el => el.remove());
+        clone.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected', 'v4-cropping-active'));
         return clone.innerHTML;
     }
 
@@ -156,6 +156,9 @@ window.V4UndoManager = (function() {
     }
 
     function applySnapshot(snapshotObj) {
+        if (window.V4ImageCropEngine && typeof window.V4ImageCropEngine.isActive === 'function' && window.V4ImageCropEngine.isActive()) {
+            window.V4ImageCropEngine.cancel();
+        }
         const currentLive = captureLiveScroll();
         const savedScroll = snapshotObj.scrollState || {};
 
@@ -289,6 +292,9 @@ window.V4UndoManager = (function() {
             if (typeof notifyParent === 'function') notifyParent({ type: 'LF_RESTORE_CONNECTORS', connectors: snapshotObj.connectors });
         }
         if (typeof window.initHandles === 'function') window.initHandles();
+        if (window.V4DimmedLayer && typeof window.V4DimmedLayer.initDimmedLayers === 'function') {
+            window.V4DimmedLayer.initDimmedLayers();
+        }
         if (typeof window.markDirty === 'function') window.markDirty();
 
         // Re-bind height controls if in responsive template

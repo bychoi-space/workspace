@@ -75,6 +75,7 @@ window.v4UIAtomsScript = `
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
         targets.forEach(s => {
+            const isStdV2 = !!(s.getAttribute('data-v4-std') === '2' || (s.closest && s.closest('[data-v4-std="2"]')) || s.querySelector('[data-v4-std="2"]'));
             const container = s.querySelector('.v4-checkbox-container, .v4-radio-container') || (s.classList.contains('v4-checkbox-container') || s.classList.contains('v4-radio-container') ? s : null);
             if (container) {
                 container.setAttribute('data-checked', d.checked ? 'true' : 'false');
@@ -82,10 +83,10 @@ window.v4UIAtomsScript = `
                 if (inner) {
                     if (d.checked) {
                         inner.style.backgroundColor = 'rgb(50, 50, 50)';
-                        inner.style.borderColor = 'rgb(255, 255, 255)';
+                        inner.style.borderColor = isStdV2 ? 'rgb(50, 50, 50)' : 'rgb(255, 255, 255)';
                     } else {
-                        inner.style.backgroundColor = 'rgb(250, 250, 250)';
-                        inner.style.borderColor = 'rgb(150, 150, 150)';
+                        inner.style.backgroundColor = isStdV2 ? 'rgb(255, 255, 255)' : 'rgb(250, 250, 250)';
+                        inner.style.borderColor = isStdV2 ? 'rgb(200, 200, 200)' : 'rgb(150, 150, 150)';
                     }
                 }
             }
@@ -388,7 +389,8 @@ window.v4UIAtomsScript = `
                     if (btn) btn.style.borderRadius = d.buttonRadius + 'px';
                 }
                 if (d.buttonFontSize !== undefined) {
-                    const fontVal = parseInt(d.buttonFontSize) || 12;
+                    const isStdV2 = !!(s.getAttribute('data-v4-std') === '2' || (s.closest && s.closest('[data-v4-std="2"]')));
+                    const fontVal = parseInt(d.buttonFontSize) || (isStdV2 ? 13 : 12);
                     container.setAttribute('data-font-size', fontVal);
                     const btn = container.querySelector('.v4-custom-btn');
                     if (btn) btn.style.setProperty('font-size', fontVal + 'px', 'important');
@@ -413,6 +415,7 @@ window.v4UIAtomsScript = `
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
         targets.forEach(s => {
+            var isStdV2 = !!(s.getAttribute('data-v4-std') === '2' || (s.closest && s.closest('[data-v4-std="2"]')));
             var container = s.querySelector('.v4-btn-container') || (s.classList.contains('v4-btn-container') ? s : null);
             if (!container) return;
             var btn = container.querySelector('.v4-custom-btn');
@@ -423,7 +426,7 @@ window.v4UIAtomsScript = `
             span.style.visibility = 'hidden';
             span.style.position = 'absolute';
             span.style.whiteSpace = 'nowrap';
-            span.style.fontSize = (btn ? window.getComputedStyle(btn).fontSize : '') || '12px';
+            span.style.fontSize = (btn ? window.getComputedStyle(btn).fontSize : '') || (isStdV2 ? '13px' : '12px');
             span.style.fontFamily = (btn ? window.getComputedStyle(btn).fontFamily : '') || 'inherit';
             span.style.fontWeight = (btn ? window.getComputedStyle(btn).fontWeight : '') || '400';
             span.innerText = text;
@@ -523,6 +526,12 @@ window.v4UIAtomsScript = `
                         if (d.groupHeaderBg !== undefined) container.setAttribute('data-group-header-bg', d.groupHeaderBg);
                         if (d.groupHeaderColor !== undefined) container.setAttribute('data-group-header-color', d.groupHeaderColor);
         
+                        const isStdV2 = !!(s.getAttribute('data-v4-std') === '2' || (s.closest && s.closest('[data-v4-std="2"]')) || container.getAttribute('data-v4-std') === '2');
+                        const adminBorderCss = isStdV2 ? '1.6px solid #c8c8c8' : '1.6px solid rgb(226, 232, 240)';
+                        const adminLabelBg = isStdV2 ? '#f0f0f0' : '#f1f5f9';
+                        const adminTextCol = isStdV2 ? '#050505' : 'var(--v4-text-color, #0f172a)';
+                        const adminFontSize = isStdV2 ? '13px' : '12px';
+
                         const hasGroupHeader = container.getAttribute('data-show-group-header') === 'true';
                         const headerHeight = hasGroupHeader ? 40 : 0;
         
@@ -535,14 +544,14 @@ window.v4UIAtomsScript = `
                                 container.insertBefore(headerEl, container.firstChild);
                             }
                             const titleText = container.getAttribute('data-group-header-title') || '\uADF8\uB8F9\uBA85';
-                            const bgCol = container.getAttribute('data-group-header-bg') || '#73829c';
-                            const textCol = container.getAttribute('data-group-header-color') || '#ffffff';
+                            const bgCol = container.getAttribute('data-group-header-bg') || (isStdV2 ? '#f0f0f0' : '#73829c');
+                            const textCol = container.getAttribute('data-group-header-color') || (isStdV2 ? '#050505' : '#ffffff');
                             
                             if (headerEl.innerText !== titleText && document.activeElement !== headerEl) {
                                 headerEl.innerText = titleText;
                             }
                             headerEl.contentEditable = 'true';
-                            headerEl.style.cssText = 'height: 40px; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; font-family: inherit; background: ' + bgCol + '; color: ' + textCol + '; box-sizing: border-box; width: 100%; outline: none; border-bottom: 1.6px solid rgb(226, 232, 240); border-top-left-radius: 6.4px; border-top-right-radius: 6.4px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; overflow: hidden; clip-path: inset(0 0 0 0 round 6.4px 6.4px 0 0); -webkit-clip-path: inset(0 0 0 0 round 6.4px 6.4px 0 0); background-clip: padding-box; flex-shrink: 0 !important;';
+                            headerEl.style.cssText = 'height: 40px; display: flex; align-items: center; padding: 0 16px; font-size: ' + adminFontSize + '; font-weight: 400; font-family: inherit; background: ' + bgCol + '; color: ' + textCol + '; box-sizing: border-box; width: 100%; outline: none; border-bottom: ' + adminBorderCss + '; border-top-left-radius: 6.4px; border-top-right-radius: 6.4px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; overflow: hidden; clip-path: inset(0 0 0 0 round 6.4px 6.4px 0 0); -webkit-clip-path: inset(0 0 0 0 round 6.4px 6.4px 0 0); background-clip: padding-box; flex-shrink: 0 !important;';
                             headerEl.setAttribute('data-enforced-bg', bgCol);
                             headerEl.setAttribute('data-enforced-color', textCol);
                             
@@ -615,7 +624,7 @@ window.v4UIAtomsScript = `
                                     const reqArr = reqRaw.split(',').map(v => v.trim() === 'true');
                                     
                                     const isLastRow = (i === totalRows);
-                                    const rowBorder = isLastRow ? 'none' : '1.6px solid rgb(226, 232, 240)';
+                                    const rowBorder = isLastRow ? 'none' : adminBorderCss;
                                     
                                     const rowEl = document.createElement('div');
                                     rowEl.className = 'v4-admin-row';
@@ -642,7 +651,7 @@ window.v4UIAtomsScript = `
                                                 labelRadius = 'border-bottom-left-radius: 6.4px; ';
                                             }
                                         }
-                                        labelCell.style.cssText = 'width: ' + labelWidth + 'px; background: #f1f5f9; display: flex; align-items: center; padding: 0 16px; font-size: 12px; font-weight: 400; color: var(--v4-text-color, #0f172a); font-family: inherit; border-right: 1.6px solid rgb(226, 232, 240); ' + labelRadius + 'box-sizing: border-box; flex-shrink: 0; outline: none; cursor: text; user-select: text; -webkit-user-select: text;';
+                                        labelCell.style.cssText = 'width: ' + labelWidth + 'px; background: ' + adminLabelBg + '; display: flex; align-items: center; padding: 0 16px; font-size: ' + adminFontSize + '; font-weight: 400; color: ' + adminTextCol + '; font-family: inherit; border-right: ' + adminBorderCss + '; ' + labelRadius + 'box-sizing: border-box; flex-shrink: 0; outline: none; cursor: text; user-select: text; -webkit-user-select: text;';
                                         labelCell.innerText = colLabel;
             
                                         if (!labelCell.dataset.inputBound) {
@@ -711,7 +720,7 @@ window.v4UIAtomsScript = `
                                         
                                         let cellStyle = flexStyle + ' display: flex; align-items: center; padding: 0 16px; box-sizing: border-box;';
                                         if (c < colsAttr - 1) {
-                                            cellStyle += ' border-right: 1.6px solid rgb(226, 232, 240);';
+                                            cellStyle += ' border-right: ' + adminBorderCss + ';';
                                         } else {
                                             cellStyle += ' border-right: 1.6px solid transparent;';
                                         }
@@ -724,7 +733,7 @@ window.v4UIAtomsScript = `
                             } else {
                                 const rows = tableDiv.querySelectorAll('.v4-admin-row');
                                 rows.forEach((r, idx) => {
-                                    r.style.borderBottom = (idx === rows.length - 1) ? 'none' : '1.6px solid rgb(226, 232, 240)';
+                                    r.style.borderBottom = (idx === rows.length - 1) ? 'none' : adminBorderCss;
                                     const firstLabel = r.querySelector('.v4-admin-label-cell');
                                     if (firstLabel) {
                                         if (idx === 0) {

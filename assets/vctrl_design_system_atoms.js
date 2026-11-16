@@ -309,10 +309,11 @@ window.v4DesignSystemAtomsScript = `
             if (btnContainer) {
                 const btn = btnContainer.querySelector('.v4-custom-btn');
                 if (btn) {
+                    const isStdV2 = !!(c.getAttribute('data-v4-std') === '2' || (c.closest && c.closest('[data-v4-std="2"]')));
                     const style = btnContainer.getAttribute('data-btn-style') || 'normal';
                     const text = btnContainer.getAttribute('data-text') !== null ? btnContainer.getAttribute('data-text') : (btn.innerText || '\uBC84\uD2BC');
                     const radius = btnContainer.getAttribute('data-btn-radius') || '6';
-                    const fontSize = parseInt(btnContainer.getAttribute('data-font-size')) || 12;
+                    const fontSize = parseInt(btnContainer.getAttribute('data-font-size')) || (isStdV2 ? 13 : 12);
 
                     const targetClass = 'v4-custom-btn style-' + style;
                     const targetRadius = radius + 'px';
@@ -414,16 +415,20 @@ window.v4DesignSystemAtomsScript = `
             if (endTimeEl && endTimeEl.innerText !== targetEndTime) endTimeEl.innerText = targetEndTime;
 
             if (!isDis) {
+                const isStdV2 = !!(c.getAttribute('data-v4-std') === '2' || (c.closest && c.closest('[data-v4-std="2"]')));
+                const defBorderHex = isStdV2 ? '#c8c8c8' : '#cccccc';
+                const defTextHex = isStdV2 ? '#050505' : '#0f172a';
+                const defFontSize = isStdV2 ? '13px' : '12px';
                 dp.querySelectorAll('.v4-dp-preset-btn').forEach(function(btn) {
                     const isActive = btn.getAttribute('data-preset') === defaultPreset;
                     const targetBg = isActive ? '#1d4ed8' : '#ffffff';
-                    const targetBorder = '1.6px solid ' + (isActive ? '#1d4ed8' : '#cccccc');
-                    const targetColor = isActive ? '#ffffff' : '#0f172a';
+                    const targetBorder = '1.6px solid ' + (isActive ? '#1d4ed8' : defBorderHex);
+                    const targetColor = isActive ? '#ffffff' : defTextHex;
                     if (btn.style.background !== targetBg) btn.style.background = targetBg;
                     if (btn.style.border !== targetBorder) btn.style.border = targetBorder;
                     if (btn.style.color !== targetColor) btn.style.color = targetColor;
                     if (btn.style.fontWeight !== '400') btn.style.fontWeight = '400';
-                    if (btn.style.fontSize !== '12px') btn.style.fontSize = '12px';
+                    if (btn.style.fontSize !== defFontSize) btn.style.fontSize = defFontSize;
                     if (btn.style.fontFamily !== 'inherit') btn.style.fontFamily = 'inherit';
                     if (isActive) {
                         if (!btn.classList.contains('v4-dp-preset-active')) btn.classList.add('v4-dp-preset-active');
@@ -578,7 +583,8 @@ window.v4DesignSystemAtomsScript = `
                     if (counter.style.display !== newCounterDisplay) counter.style.display = newCounterDisplay;
                 }
 
-                const newColor = text.length === 0 ? '#a3a3a3' : '#374151';
+                const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
+                const newColor = text.length === 0 ? (isStdV2 ? '#969696' : '#a3a3a3') : (isStdV2 ? '#050505' : '#374151');
                 if (input.style.color !== newColor) input.style.color = newColor;
             };
             input._v4UpdateTextInputUI = updateUI;

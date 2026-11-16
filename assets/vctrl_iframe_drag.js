@@ -15,7 +15,37 @@ window.v4DragResizeScript = `
     let attachedPinsStart = null;
     
 
+    function _parseTransformY(el) {
+        if (!el || !el.style || !el.style.transform) return 0;
+        var tr = String(el.style.transform);
+        var idx3d = tr.indexOf('translate3d(');
+        if (idx3d !== -1) {
+            var inner3d = tr.slice(idx3d + 12);
+            var close3d = inner3d.indexOf(')');
+            if (close3d !== -1) inner3d = inner3d.slice(0, close3d);
+            var parts3d = inner3d.split(',');
+            if (parts3d.length >= 2) return parseFloat(parts3d[1]) || 0;
+        }
+        var idxY = tr.indexOf('translateY(');
+        if (idxY !== -1) {
+            var innerY = tr.slice(idxY + 11);
+            var closeY = innerY.indexOf(')');
+            if (closeY !== -1) innerY = innerY.slice(0, closeY);
+            return parseFloat(innerY) || 0;
+        }
+        var idx2d = tr.indexOf('translate(');
+        if (idx2d !== -1) {
+            var inner2d = tr.slice(idx2d + 10);
+            var close2d = inner2d.indexOf(')');
+            if (close2d !== -1) inner2d = inner2d.slice(0, close2d);
+            var parts2d = inner2d.split(',');
+            if (parts2d.length >= 2) return parseFloat(parts2d[1]) || 0;
+        }
+        return 0;
+    }
+
     function _handleResponsiveCrossFrameDrop(activeEl, isResp) {
+        if (!activeEl || activeEl.classList.contains('pin-marker') || activeEl.classList.contains('text-marker')) return;
         var pcFrame = document.querySelector('.pc-browser-frame, .pc-frame');
         var mobileFrame = document.querySelector('.mobile-frame, .mobile-browser-frame');
         var pcInner = document.querySelector('.pc-content-inner');
@@ -88,20 +118,26 @@ window.v4DragResizeScript = `
     function _handlePinMarkerDropAnchoring(pin) {
         if (!pin || (!pin.classList.contains('text-marker') && !pin.classList.contains('pin-marker'))) return;
         var parent = pin.parentElement;
+        var pinContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function')
+            ? window.ResponsiveFrameUtils.getContainer(pin)
+            : (pin.closest ? pin.closest('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area, .mobile-content, .pc-content') : null);
         var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
             ? window.ResponsiveFrameUtils.getScrollArea(pin)
             : (pin.closest ? pin.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content') : null);
-        var scrollTop = scrollArea ? (scrollArea.scrollTop || 0) : 0;
 
         var pinFrame = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
             ? window.ResponsiveFrameUtils.getFrameType(pin)
             : (pin.getAttribute('data-frame') || '');
 
         var allPinnedHosts = Array.from(document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])')).filter(function(el) {
-            return el !== pin && el !== parent && !el.classList.contains('pin-marker') && !el.classList.contains('text-marker');
+            if (!el || el === pin || el === parent) return false;
+            if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return false;
+            if (el.parentElement && el.parentElement.closest && el.parentElement.closest('.lf-group')) return false;
+            return true;
         });
 
         var pinnedHosts = allPinnedHosts.filter(function(host) {
+            if (pinContainer && !pinContainer.contains(host)) return false;
             if (pinFrame) {
                 var hostFrame = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function')
                     ? window.ResponsiveFrameUtils.getFrameType(host)
@@ -121,6 +157,11 @@ window.v4DragResizeScript = `
         var pCenterX = pinRect.left + pinRect.width / 2;
         var pCenterY = pinRect.top + pinRect.height / 2;
 
+        var coordOriginEl = parent || pinContainer || scrollArea || document.body;
+        var originRect = coordOriginEl ? coordOriginEl.getBoundingClientRect() : { top: 0, left: 0 };
+        var visualDropTop = pinRect.top - originRect.top;
+        var visualDropLeft = pinRect.left - originRect.left;
+
         var matchedHost = null;
         for (var i = 0; i < pinnedHosts.length; i++) {
             var hRect = pinnedHosts[i].getBoundingClientRect();
@@ -138,17 +179,14 @@ window.v4DragResizeScript = `
             pin.style.setProperty('z-index', '200050', 'important');
             pin.style.willChange = 'transform';
 
-            var hRect = matchedHost.getBoundingClientRect();
-            var offsetInsideHostY = pinRect.top - hRect.top;
-            var offsetInsideHostX = pinRect.left - hRect.left;
-            var hostDomTop = parseFloat(matchedHost.style.top) || 0;
-            var hostDomLeft = parseFloat(matchedHost.style.left) || 0;
-
-            pin.style.top = Math.round(hostDomTop + offsetInsideHostY) + 'px';
-            pin.style.left = Math.round(hostDomLeft + offsetInsideHostX) + 'px';
+            var hostDy = _parseTransformY(matchedHost);
+            pin.style.top = Math.max(0, Math.round(visualDropTop - hostDy)) + 'px';
+            pin.style.left = Math.max(0, Math.round(visualDropLeft)) + 'px';
 
             if (matchedHost.style.transform) {
                 pin.style.setProperty('transform', matchedHost.style.transform, 'important');
+            } else {
+                pin.style.removeProperty('transform');
             }
 
             if (parent) {
@@ -169,17 +207,13 @@ window.v4DragResizeScript = `
                 pin.style.setProperty('z-index', '200050', 'important');
                 pin.style.willChange = 'transform';
             } else {
-                var scrollAreaRect = scrollArea ? scrollArea.getBoundingClientRect() : { top: 0, left: 0 };
-                var freeTop = (pinRect.top - scrollAreaRect.top) + scrollTop;
-                var freeLeft = (pinRect.left - scrollAreaRect.left);
-
                 pin.removeAttribute('data-scroll-fixed');
                 pin.removeAttribute('data-fixed-host');
                 pin.style.removeProperty('transform');
                 pin.style.removeProperty('will-change');
                 pin.style.setProperty('z-index', '200000', 'important');
-                pin.style.top = Math.max(0, Math.round(freeTop)) + 'px';
-                pin.style.left = Math.max(0, Math.round(freeLeft)) + 'px';
+                pin.style.top = Math.max(0, Math.round(visualDropTop)) + 'px';
+                pin.style.left = Math.max(0, Math.round(visualDropLeft)) + 'px';
             }
         }
     }

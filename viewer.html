@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +9,11 @@
     <meta http-equiv="Expires" content="0">
     <title>bychoi workspace - Editor</title>
     <link rel="icon" type="image/svg+xml" href="assets/logo.svg?v=V402_TRANSPARENT_FAVICON">
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    
+
     <!-- Quill.js Library (Rich Text Editor) -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -22,8 +24,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <link rel="stylesheet" href="assets/viewer.css?v=V415_RESTORE_FULLSCREEN_LEFT_SIDEBAR">
-    <link rel="stylesheet" href="assets/ui_library.css?v=V371_INSPECTOR_RESTORATION">
+    <link rel="stylesheet" href="assets/viewer.css?v=V421_DIMMED_UI_FIX">
+    <link rel="stylesheet" href="assets/ui_library.css?v=V424_IMAGE_CROP">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
         if (window.location.protocol.startsWith('http')) {
@@ -50,21 +52,21 @@
     <script>
         // PWA & Direct-Entry Project Parameter Guard:
         // If viewer is launched without a valid project query parameter, immediately bounce to Dashboard index.html
-        (function() {
+        (function () {
             try {
                 var params = new URLSearchParams(window.location.search);
                 var project = params.get('project');
                 if (!project || project.trim() === '' || project === 'Default_Project') {
                     window.location.replace('index.html');
                 }
-            } catch (_) {}
+            } catch (_) { }
         })();
 
         // --- Console Log Auto-Clearing Guard (Disabled console.clear for better debugging visibility) ---
-        (function() {
+        (function () {
             let logCount = 0;
             const originalLog = console.log;
-            console.log = function(...args) {
+            console.log = function (...args) {
                 logCount++;
                 if (logCount > 1500) { // Bump limit
                     // console.clear(); // Keep logs preserved
@@ -77,23 +79,23 @@
 
         // Register Service Worker for PWA Installation (Strictly guarded for HTTP/HTTPS environments)
         if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js').catch(function() {});
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('sw.js').catch(function () { });
             });
         }
 
-        window.onerror = function(msg, url, line, col, error) {
+        window.onerror = function (msg, url, line, col, error) {
             const dc = document.getElementById('debug-console');
-            if (dc) { 
-                dc.style.display = 'block'; 
+            if (dc) {
+                dc.style.display = 'block';
                 const fileName = url ? url.split('/').pop() : 'inline';
                 dc.innerText = `[ERROR] ${msg} (${fileName}:${line}:${col})`;
                 if (error && error.stack) console.error(error.stack);
             }
             return false;
         };
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
                 const loader = document.getElementById('loading-overlay');
                 if (loader && !loader.classList.contains('fade-out')) {
                     loader.classList.add('fade-out');
@@ -102,6 +104,7 @@
         });
     </script>
 </head>
+
 <body class="dark-mode">
     <div id="debug-console"></div>
     <!-- Premium Loading Screen Overlay (Adaptive for PC, Tablet & Mobile) -->
@@ -120,13 +123,13 @@
                 <span class="material-icons-outlined loading-spinner-icon">sync</span>
             </div>
         </div>
-        
+
         <div class="loading-bar-container">
             <div class="loading-bar-progress">
                 <div class="loading-bar-glow-head"></div>
             </div>
         </div>
-        
+
         <div class="loading-text-wrapper">
             <div class="loading-text" id="loading-text-display">Loading Project</div>
             <div class="loading-subtext" id="loading-subtext-display">Connecting Workspace Engine...</div>
@@ -141,10 +144,11 @@
             <div class="toolbar-divider"></div>
             <img src="assets/logo.svg" class="brand-logo" alt="Logo" loading="lazy">
             <span class="brand-name">bychoi workspace</span>
-            <span id="viewer-project-category-badge" class="viewer-project-category-badge" style="display: none;"></span>
+            <span id="viewer-project-category-badge" class="viewer-project-category-badge"
+                style="display: none;"></span>
             <span class="toolbar-file-name" id="file-name-display">Loading...</span>
         </div>
-        
+
         <!-- Center: Project Metadata (Horizontal & Compact) -->
         <div class="header-metadata" id="top-metadata-panel">
             <div class="empty-text toolbar-meta-loading">Loading metadata...</div>
@@ -157,7 +161,8 @@
                     <button class="tool-btn" onclick="adjustZoom(-0.1)" title="축소 (Ctrl + -)">
                         <span class="material-icons-outlined">remove</span>
                     </button>
-                    <span class="zoom-level" id="zoom-txt" onclick="toggleCrispView()" title="100% 선명 뷰 / 화면 맞춤 전환 (단축키: `)">100%</span>
+                    <span class="zoom-level" id="zoom-txt" onclick="toggleCrispView()"
+                        title="100% 선명 뷰 / 화면 맞춤 전환 (단축키: `)">100%</span>
                     <button class="tool-btn" onclick="adjustZoom(0.1)" title="확대 (Ctrl + +)">
                         <span class="material-icons-outlined">add</span>
                     </button>
@@ -165,13 +170,15 @@
 
                 <div class="toolbar-divider action-divider"></div>
 
-                <button class="tool-btn" id="btn-crisp-toggle" onclick="toggleCrispView()" title="화면 맞춤 / 100% 뷰 전환 (단축키: `, Home)">
+                <button class="tool-btn" id="btn-crisp-toggle" onclick="toggleCrispView()"
+                    title="화면 맞춤 / 100% 뷰 전환 (단축키: `, Home)">
                     <span class="material-icons-outlined" id="icon-crisp-toggle">fit_screen</span>
                 </button>
                 <button class="tool-btn" id="btn-fullscreen-toggle" title="전체보기 (F)">
                     <span class="material-icons-outlined">fullscreen</span>
                 </button>
-                <button class="tool-btn" id="btn-toggle-responsive-grid" title="격자무늬 On/Off (Shift + G)" style="display: none;">
+                <button class="tool-btn" id="btn-toggle-responsive-grid" title="격자무늬 On/Off (Shift + G)"
+                    style="display: none;">
                     <span class="material-icons-outlined" id="icon-responsive-grid">grid_on</span>
                 </button>
             </div>
@@ -206,7 +213,8 @@
             </button>
             <button id="btn-global-save" class="btn-accent btn-global-save">전체 저장</button>
             <div class="toolbar-divider action-divider"></div>
-            <button class="panel-toggle-btn header-sidebar-toggle" id="btn-toggle-right" onclick="window.toggleSidebar('right')" title="우측 패널 접기/펼치기 (R)">
+            <button class="panel-toggle-btn header-sidebar-toggle" id="btn-toggle-right"
+                onclick="window.toggleSidebar('right')" title="우측 패널 접기/펼치기 (R)">
                 <span class="material-icons-outlined">chevron_right</span>
             </button>
         </div>
@@ -232,7 +240,7 @@
             <div id="screens-list">
                 <div class="empty-text">Loading screens...</div>
             </div>
-            
+
             <!-- Sidebar Footer for Metadata Info -->
             <div class="sidebar-footer" id="sidebar-footer">
                 <div class="v4-meta-updated" id="meta-bar-updated">
@@ -252,9 +260,12 @@
             <main class="canvas" id="canvas">
                 <div class="stage" id="stage">
                     <div class="artboard-wrapper" id="artboard-wrapper">
-                        <iframe id="main-iframe" class="artboard-iframe" style="width: 1600px; height: 900px; display: none;" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" loading="lazy"></iframe>
+                        <iframe id="main-iframe" class="artboard-iframe"
+                            style="width: 1600px; height: 900px; display: none;"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-modals" loading="lazy"></iframe>
                         <div class="pins-layer" id="pins-layer"></div>
-                        <svg id="guide-layer" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:300000;"></svg>
+                        <svg id="guide-layer"
+                            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:300000;"></svg>
                     </div>
                 </div>
 
@@ -279,10 +290,12 @@
                             <button id="btn-floating-dock" title="우측 사이드바로 도킹" class="floating-inspector-header-btn">
                                 <span class="material-icons-outlined">dock</span>
                             </button>
-                            <button id="btn-floating-minimize" title="최소화" class="floating-inspector-header-btn floating-inspector-minimize-btn">
+                            <button id="btn-floating-minimize" title="최소화"
+                                class="floating-inspector-header-btn floating-inspector-minimize-btn">
                                 <span class="material-icons-outlined">keyboard_arrow_down</span>
                             </button>
-                            <button id="btn-floating-close" title="속성 닫기 / 선택 해제 (Esc)" class="floating-inspector-header-btn">
+                            <button id="btn-floating-close" title="속성 닫기 / 선택 해제 (Esc)"
+                                class="floating-inspector-header-btn">
                                 <span class="material-icons-outlined">close</span>
                             </button>
                         </div>
@@ -296,7 +309,8 @@
                             <div class="selection-count-group">
                                 <span class="material-icons-outlined selection-count-icon">info</span>
                                 <span id="selection-count" class="selection-count-txt">
-                                    <span id="selection-number" class="selection-count-number">0</span> <span id="selection-label">OBJECT</span> SELECTED
+                                    <span id="selection-number" class="selection-count-number">0</span> <span
+                                        id="selection-label">OBJECT</span> SELECTED
                                 </span>
                             </div>
                             <!-- Group Dimension Info Display -->
@@ -315,38 +329,70 @@
                             <div id="selection-scroll-pin-bar" class="selection-scroll-pin-bar" style="display: none;">
                                 <div class="scroll-pin-header">
                                     <div class="scroll-pin-title-wrap">
-                                        <svg class="lf-icon scroll-pin-title-icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H7M15 19H9"/></svg>
+                                        <svg class="lf-icon scroll-pin-title-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2v20M17 5H7M15 19H9" />
+                                        </svg>
                                         <span class="scroll-pin-title" id="scroll-pin-title-text">SCROLL PIN</span>
                                     </div>
                                     <span class="scroll-pin-badge" id="scroll-pin-status-badge">SCROLL</span>
                                 </div>
                                 <!-- Object Pin Modes (Normal Components / Groups) -->
-                                <div id="scroll-pin-object-group" class="scroll-pin-segment-group scroll-pin-object-stack">
+                                <div id="scroll-pin-object-group"
+                                    class="scroll-pin-segment-group scroll-pin-object-stack">
                                     <div class="scroll-pin-row">
-                                        <button id="btn-scroll-pin-none" class="v4-inspector-btn scroll-pin-btn active" data-pin="none" title="일반 스크롤 (화면 스크롤 시 함께 이동)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 3v18M18 9l-6-6-6 6M18 15l-6 6-6-6"/></svg>
+                                        <button id="btn-scroll-pin-none" class="v4-inspector-btn scroll-pin-btn active"
+                                            data-pin="none" title="일반 스크롤 (화면 스크롤 시 함께 이동)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                                <path d="M12 3v18M18 9l-6-6-6 6M18 15l-6 6-6-6" />
+                                            </svg>
                                             <span>일반</span>
                                         </button>
-                                        <button id="btn-scroll-pin-top" class="v4-inspector-btn scroll-pin-btn" data-pin="top" title="상단 고정 (스크롤 시 화면 상단에 고정)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24"><line x1="4" y1="4" x2="20" y2="4" stroke-width="2.5"/><polyline points="16 14 12 10 8 14"/><line x1="12" y1="10" x2="12" y2="20"/></svg>
+                                        <button id="btn-scroll-pin-top" class="v4-inspector-btn scroll-pin-btn"
+                                            data-pin="top" title="상단 고정 (스크롤 시 화면 상단에 고정)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                                <line x1="4" y1="4" x2="20" y2="4" stroke-width="2.5" />
+                                                <polyline points="16 14 12 10 8 14" />
+                                                <line x1="12" y1="10" x2="12" y2="20" />
+                                            </svg>
                                             <span>상단</span>
                                         </button>
-                                        <button id="btn-scroll-pin-bottom" class="v4-inspector-btn scroll-pin-btn" data-pin="bottom" title="하단 고정 (스크롤 시 화면 하단에 고정)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20" stroke-width="2.5"/><polyline points="16 10 12 14 8 10"/><line x1="12" y1="4" x2="12" y2="14"/></svg>
+                                        <button id="btn-scroll-pin-bottom" class="v4-inspector-btn scroll-pin-btn"
+                                            data-pin="bottom" title="하단 고정 (스크롤 시 화면 하단에 고정)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                                <line x1="4" y1="20" x2="20" y2="20" stroke-width="2.5" />
+                                                <polyline points="16 10 12 14 8 10" />
+                                                <line x1="12" y1="4" x2="12" y2="14" />
+                                            </svg>
                                             <span>하단</span>
                                         </button>
                                     </div>
                                     <div class="scroll-pin-row">
-                                        <button id="btn-scroll-pin-custom" class="v4-inspector-btn scroll-pin-btn" data-pin="custom" title="자유 플로팅 (현재 배치된 화면 위치에 항상 고정)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                                        <button id="btn-scroll-pin-custom" class="v4-inspector-btn scroll-pin-btn"
+                                            data-pin="custom" title="자유 플로팅 (현재 배치된 화면 위치에 항상 고정)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                                <circle cx="12" cy="12" r="3.5" />
+                                                <path
+                                                    d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                                            </svg>
                                             <span>플로팅</span>
                                         </button>
-                                        <button id="btn-scroll-pin-sticky" class="v4-inspector-btn scroll-pin-btn" data-pin="sticky" title="상단 스티키 (스크롤 중 지정 높이에 도달하면 고정)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><line x1="3" y1="18" x2="21" y2="18" stroke-dasharray="2 2"/><polygon points="8 14 12 10 16 14"/></svg>
+                                        <button id="btn-scroll-pin-sticky" class="v4-inspector-btn scroll-pin-btn"
+                                            data-pin="sticky" title="상단 스티키 (스크롤 중 지정 높이에 도달하면 고정)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                                <line x1="3" y1="6" x2="21" y2="6" stroke-width="2" />
+                                                <line x1="3" y1="18" x2="21" y2="18" stroke-dasharray="2 2" />
+                                                <polygon points="8 14 12 10 16 14" />
+                                            </svg>
                                             <span>스티키(상)</span>
                                         </button>
-                                        <button id="btn-scroll-pin-sticky-bottom" class="v4-inspector-btn scroll-pin-btn" data-pin="sticky-bottom" title="하단 스티키 안착 (스크롤 시 하단 고정, 본문 위치 도달 시 안착)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24"><line x1="3" y1="18" x2="21" y2="18" stroke-width="2"/><line x1="3" y1="6" x2="21" y2="6" stroke-dasharray="2 2"/><polygon points="8 10 12 14 16 10"/></svg>
+                                        <button id="btn-scroll-pin-sticky-bottom"
+                                            class="v4-inspector-btn scroll-pin-btn" data-pin="sticky-bottom"
+                                            title="하단 스티키 안착 (스크롤 시 하단 고정, 본문 위치 도달 시 안착)">
+                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                                <line x1="3" y1="18" x2="21" y2="18" stroke-width="2" />
+                                                <line x1="3" y1="6" x2="21" y2="6" stroke-dasharray="2 2" />
+                                                <polygon points="8 10 12 14 16 10" />
+                                            </svg>
                                             <span>스티키(하)</span>
                                         </button>
                                     </div>
@@ -355,7 +401,8 @@
                                 <div id="scroll-pin-effect-bar" class="scroll-pin-effect-bar" style="display: none;">
                                     <span class="scroll-pin-effect-label">스크롤 반응 (Effect)</span>
                                     <div class="scroll-pin-effect-select-wrap">
-                                        <select id="scroll-pin-effect-select" class="v4-prop-select scroll-pin-effect-select">
+                                        <select id="scroll-pin-effect-select"
+                                            class="v4-prop-select scroll-pin-effect-select">
                                             <option value="always">상시 고정 (Always)</option>
                                             <option value="hide-down">스크롤 내릴 때 숨김 (Hide Down)</option>
                                             <option value="hide-up">스크롤 올릴 때 숨김 (Hide Up)</option>
@@ -363,13 +410,21 @@
                                     </div>
                                 </div>
                                 <!-- Description Pin Modes (Numbered Markers) -->
-                                <div id="scroll-pin-marker-group" class="scroll-pin-segment-group scroll-pin-marker-group" style="display: none;">
-                                    <button id="btn-pin-pos-content" class="v4-inspector-btn scroll-pin-btn active" data-pin="none" title="본문 배치 (본문과 함께 자연스럽게 스크롤)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="2"/></svg>
+                                <div id="scroll-pin-marker-group"
+                                    class="scroll-pin-segment-group scroll-pin-marker-group" style="display: none;">
+                                    <button id="btn-pin-pos-content" class="v4-inspector-btn scroll-pin-btn active"
+                                        data-pin="none" title="본문 배치 (본문과 함께 자연스럽게 스크롤)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <rect x="4" y="4" width="16" height="16" rx="2" />
+                                            <circle cx="9" cy="9" r="2" />
+                                        </svg>
                                         <span>본문 배치</span>
                                     </button>
-                                    <button id="btn-pin-pos-fixed" class="v4-inspector-btn scroll-pin-btn" data-pin="viewport" title="화면 핀 고정 (스크롤과 무관하게 화면에 항상 고정 📌)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 17v5M9 2h6l-1 7h3l-5 8-5-8h3L9 2z"/></svg>
+                                    <button id="btn-pin-pos-fixed" class="v4-inspector-btn scroll-pin-btn"
+                                        data-pin="viewport" title="화면 핀 고정 (스크롤과 무관하게 화면에 항상 고정 📌)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path d="M12 17v5M9 2h6l-1 7h3l-5 8-5-8h3L9 2z" />
+                                        </svg>
                                         <span>화면 고정 📌</span>
                                     </button>
                                 </div>
@@ -377,7 +432,8 @@
                                 <div id="scroll-pin-offset-bar" class="scroll-pin-offset-bar" style="display: none;">
                                     <span class="scroll-pin-offset-label" id="scroll-pin-offset-label">VIEWPORT Y</span>
                                     <div class="scroll-pin-offset-input-wrap">
-                                        <input type="number" id="scroll-pin-offset-input" class="scroll-pin-offset-input" placeholder="0">
+                                        <input type="number" id="scroll-pin-offset-input"
+                                            class="scroll-pin-offset-input" placeholder="0">
                                         <span class="scroll-pin-offset-unit">px</span>
                                     </div>
                                 </div>
@@ -392,77 +448,130 @@
                             </div>
                             <div class="selection-btn-stack">
                                 <div class="selection-btn-row">
-                                    <button id="btn-group-action" class="v4-inspector-btn btn-accent" style="display: none;">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                    <button id="btn-group-action" class="v4-inspector-btn btn-accent"
+                                        style="display: none;">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <rect x="3" y="3" width="7" height="7"></rect>
+                                            <rect x="14" y="3" width="7" height="7"></rect>
+                                            <rect x="14" y="14" width="7" height="7"></rect>
+                                            <rect x="3" y="14" width="7" height="7"></rect>
+                                        </svg>
                                         GROUP
                                     </button>
-                                    <button id="btn-ungroup-action" class="v4-inspector-btn btn-secondary" style="display: none;">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                                    <button id="btn-ungroup-action" class="v4-inspector-btn btn-secondary"
+                                        style="display: none;">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                        </svg>
                                         UNGROUP
                                     </button>
                                 </div>
                                 <button id="btn-add-molecules-action" class="v4-inspector-btn btn-primary">
-                                    <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+                                    <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <path d="M12 5v14M5 12h14"></path>
+                                    </svg>
                                     ADD TO MOLECULES
                                 </button>
                                 <div class="selection-btn-row">
                                     <button id="btn-bring-front-action" class="v4-inspector-btn btn-secondary">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <polyline points="17 11 12 6 7 11"></polyline>
+                                            <polyline points="17 18 12 13 7 18"></polyline>
+                                        </svg>
                                         앞으로 가져오기
                                     </button>
                                     <button id="btn-send-back-action" class="v4-inspector-btn btn-secondary">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><polyline points="17 13 12 18 7 13"></polyline><polyline points="17 6 12 11 7 6"></polyline></svg>
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <polyline points="17 13 12 18 7 13"></polyline>
+                                            <polyline points="17 6 12 11 7 6"></polyline>
+                                        </svg>
                                         뒤로 보내기
                                     </button>
                                 </div>
                                 <div class="selection-btn-row" id="selection-style-action-row">
-                                    <button id="btn-copy-format-action" class="v4-inspector-btn btn-secondary" title="도형 서식 복사 (Ctrl + Shift + C)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                                    <button id="btn-copy-format-action" class="v4-inspector-btn btn-secondary"
+                                        title="도형 서식 복사 (Ctrl + Shift + C)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path
+                                                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                                        </svg>
                                         서식 복사
                                     </button>
-                                    <button id="btn-paste-format-action" class="v4-inspector-btn btn-secondary" title="도형 서식 붙여넣기 (Ctrl + Shift + V)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M18 4V3c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V6h1v4H9v11c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-9h8V4h-3z"/></svg>
+                                    <button id="btn-paste-format-action" class="v4-inspector-btn btn-secondary"
+                                        title="도형 서식 붙여넣기 (Ctrl + Shift + V)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path
+                                                d="M18 4V3c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V6h1v4H9v11c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-9h8V4h-3z" />
+                                        </svg>
                                         서식 붙여넣기
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Alignment Section -->
-                            <div id="selection-align-bar" class="v4-inspector-panel selection-align-panel" style="display: none;">
+                            <div id="selection-align-bar" class="v4-inspector-panel selection-align-panel"
+                                style="display: none;">
                                 <div class="selection-align-header">
                                     <span class="selection-align-title">ALIGNMENT</span>
                                 </div>
                                 <div class="selection-align-grid-3">
-                                    <button id="btn-align-left" class="v4-inspector-btn btn-secondary selection-align-btn" title="Left (Ctrl+1)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M4 2v20M8 6h12v4H8zM8 14h8v4H8z"/></svg>
+                                    <button id="btn-align-left"
+                                        class="v4-inspector-btn btn-secondary selection-align-btn"
+                                        title="Left (Ctrl+1)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path d="M4 2v20M8 6h12v4H8zM8 14h8v4H8z" />
+                                        </svg>
                                     </button>
-                                    <button id="btn-align-center" class="v4-inspector-btn btn-secondary selection-align-btn" title="Center (Ctrl+2)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M12 2v2M12 20v2M8 4h8v6H8zM6 14h12v6H6z"/></svg>
+                                    <button id="btn-align-center"
+                                        class="v4-inspector-btn btn-secondary selection-align-btn"
+                                        title="Center (Ctrl+2)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2v2M12 20v2M8 4h8v6H8zM6 14h12v6H6z" />
+                                        </svg>
                                     </button>
-                                    <button id="btn-align-right" class="v4-inspector-btn btn-secondary selection-align-btn" title="Right (Ctrl+3)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M20 2v20M4 6h12v4H4zM8 14h12v4H8z"/></svg>
+                                    <button id="btn-align-right"
+                                        class="v4-inspector-btn btn-secondary selection-align-btn"
+                                        title="Right (Ctrl+3)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path d="M20 2v20M4 6h12v4H4zM8 14h12v4H8z" />
+                                        </svg>
                                     </button>
                                 </div>
                                 <div class="selection-align-grid-3">
-                                    <button id="btn-align-top" class="v4-inspector-btn btn-secondary selection-align-btn" title="Top (Ctrl+4)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 4h20M6 8v12h4V8zM14 8v8h4V8z"/></svg>
+                                    <button id="btn-align-top"
+                                        class="v4-inspector-btn btn-secondary selection-align-btn" title="Top (Ctrl+4)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path d="M2 4h20M6 8v12h4V8zM14 8v8h4V8z" />
+                                        </svg>
                                     </button>
-                                    <button id="btn-align-middle" class="v4-inspector-btn btn-secondary selection-align-btn" title="Middle (Ctrl+5)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 12h2M20 12h2M4 8h6v8H4zM14 6h6v12h-6z"/></svg>
+                                    <button id="btn-align-middle"
+                                        class="v4-inspector-btn btn-secondary selection-align-btn"
+                                        title="Middle (Ctrl+5)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path d="M2 12h2M20 12h2M4 8h6v8H4zM14 6h6v12h-6z" />
+                                        </svg>
                                     </button>
-                                    <button id="btn-align-bottom" class="v4-inspector-btn btn-secondary selection-align-btn" title="Bottom (Ctrl+6)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24"><path d="M2 20h20M6 4v12h4V4zM14 8v8h4V8z"/></svg>
+                                    <button id="btn-align-bottom"
+                                        class="v4-inspector-btn btn-secondary selection-align-btn"
+                                        title="Bottom (Ctrl+6)">
+                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <path d="M2 20h20M6 4v12h4V4zM14 8v8h4V8z" />
+                                        </svg>
                                     </button>
                                 </div>
                                 <div class="selection-align-grid-2">
-                                    <button id="btn-align-distribute-h" class="v4-inspector-btn btn-secondary selection-align-btn" title="Distribute Horizontally">
+                                    <button id="btn-align-distribute-h"
+                                        class="v4-inspector-btn btn-secondary selection-align-btn"
+                                        title="Distribute Horizontally">
                                         <svg class="lf-icon" viewBox="0 0 24 24">
                                             <line x1="4" y1="2" x2="4" y2="22"></line>
                                             <line x1="20" y1="2" x2="20" y2="22"></line>
                                             <rect x="9" y="6" width="6" height="12" rx="1"></rect>
                                         </svg>
                                     </button>
-                                    <button id="btn-align-distribute-v" class="v4-inspector-btn btn-secondary selection-align-btn" title="Distribute Vertically">
+                                    <button id="btn-align-distribute-v"
+                                        class="v4-inspector-btn btn-secondary selection-align-btn"
+                                        title="Distribute Vertically">
                                         <svg class="lf-icon" viewBox="0 0 24 24">
                                             <line x1="2" y1="4" x2="22" y2="4"></line>
                                             <line x1="20" y1="2" x2="20" y2="20"></line>
@@ -521,32 +630,42 @@
                     <button type="button" class="desc-tool-btn" id="desc-tool-bold" data-cmd="bold" title="굵게 (Ctrl+B)">
                         <b>B</b>
                     </button>
-                    <button type="button" class="desc-tool-btn" id="desc-tool-underline" data-cmd="underline" title="밑줄 (Ctrl+U)">
+                    <button type="button" class="desc-tool-btn" id="desc-tool-underline" data-cmd="underline"
+                        title="밑줄 (Ctrl+U)">
                         <u>U</u>
                     </button>
                     <div class="desc-tool-divider"></div>
                     <div class="desc-color-picker-wrap">
-                        <button type="button" class="desc-tool-btn desc-tool-color" id="desc-tool-color-btn" title="글자색">
+                        <button type="button" class="desc-tool-btn desc-tool-color" id="desc-tool-color-btn"
+                            title="글자색">
                             <span class="desc-color-letter">A</span>
                             <span class="desc-color-bar" id="desc-active-color-bar"></span>
                         </button>
                         <div class="desc-color-popover" id="desc-color-popover">
                             <div class="desc-preset-grid">
-                                <button type="button" class="desc-color-swatch" data-color="#cbd5e1" style="background:#cbd5e1;" title="기본 본문 (#cbd5e1)"></button>
-                                <button type="button" class="desc-color-swatch" data-color="#ffffff" style="background:#ffffff;" title="화이트 (#ffffff)"></button>
-                                <button type="button" class="desc-color-swatch" data-color="#ef4444" style="background:#ef4444;" title="포인트 레드 (#ef4444)"></button>
-                                <button type="button" class="desc-color-swatch" data-color="#38bdf8" style="background:#38bdf8;" title="스카이 블루 (#38bdf8)"></button>
-                                <button type="button" class="desc-color-swatch" data-color="#34d399" style="background:#34d399;" title="에메랄드 그린 (#34d399)"></button>
-                                <button type="button" class="desc-color-swatch" data-color="#fbbf24" style="background:#fbbf24;" title="앰버 옐로우 (#fbbf24)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#cbd5e1"
+                                    style="background:#cbd5e1;" title="기본 본문 (#cbd5e1)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#ffffff"
+                                    style="background:#ffffff;" title="화이트 (#ffffff)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#ef4444"
+                                    style="background:#ef4444;" title="포인트 레드 (#ef4444)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#38bdf8"
+                                    style="background:#38bdf8;" title="스카이 블루 (#38bdf8)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#34d399"
+                                    style="background:#34d399;" title="에메랄드 그린 (#34d399)"></button>
+                                <button type="button" class="desc-color-swatch" data-color="#fbbf24"
+                                    style="background:#fbbf24;" title="앰버 옐로우 (#fbbf24)"></button>
                             </div>
                             <label class="desc-custom-color-row">
                                 <span class="desc-custom-color-label">직접 선택</span>
-                                <input type="color" class="desc-native-color-input" id="desc-native-color" value="#cbd5e1" title="커스텀 컬러 선택">
+                                <input type="color" class="desc-native-color-input" id="desc-native-color"
+                                    value="#cbd5e1" title="커스텀 컬러 선택">
                             </label>
                         </div>
                     </div>
                     <div class="desc-tool-divider"></div>
-                    <button type="button" class="desc-tool-btn" id="desc-tool-clear" data-cmd="removeFormat" title="서식 지우기">
+                    <button type="button" class="desc-tool-btn" id="desc-tool-clear" data-cmd="removeFormat"
+                        title="서식 지우기">
                         <span style="font-size: 11px;">T&times;</span>
                     </button>
                 </div>
@@ -579,7 +698,9 @@
                     <span class="panel-header-title title-canvas-bg">CANVAS & BACKGROUND</span>
                 </div>
                 <div id="v4-canvas-bg-body" class="components-body canvas-bg-body">
-                    <button type="button" id="btn-open-canvas-bg" class="canvas-bg-entry-card" onclick="if(typeof window.openCanvasBackgroundModal==='function')window.openCanvasBackgroundModal();" title="스크린 배경 이미지 설정">
+                    <button type="button" id="btn-open-canvas-bg" class="canvas-bg-entry-card"
+                        onclick="if(typeof window.openCanvasBackgroundModal==='function')window.openCanvasBackgroundModal();"
+                        title="스크린 배경 이미지 설정">
                         <div class="canvas-bg-entry-icon-wrap">
                             <span class="material-icons-outlined">wallpaper</span>
                         </div>
@@ -589,6 +710,98 @@
                         </div>
                         <span class="material-icons-outlined canvas-bg-entry-arrow">chevron_right</span>
                     </button>
+
+                    <!-- Dimmed Overlay Layer Authoring Card (Isolated Stacking Context) -->
+                    <div id="v4-dimmed-layer-card" class="dimmed-layer-card">
+                        <div class="dimmed-card-header">
+                            <div class="dimmed-card-title-wrap">
+                                <span class="dimmed-card-icon">
+                                    <svg class="lf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                        <polyline points="2 12 12 17 22 12"></polyline>
+                                        <polyline points="2 17 12 22 22 17"></polyline>
+                                    </svg>
+                                </span>
+                                <span class="dimmed-card-title">딤드 레이어 (Dimmed)</span>
+                            </div>
+                            <span id="dimmed-layer-quick-badge" class="dimmed-status-badge">OFF</span>
+                        </div>
+
+                        <!-- Multi-frame selector (PC / Mobile or Left / Right + Sync toggle) -->
+                        <div id="dimmed-frame-tabs-row" class="dimmed-frame-tabs-row" style="display: none;">
+                            <div id="dimmed-frame-tabs-group" class="dimmed-frame-tabs-group"></div>
+                            <button type="button" id="btn-dimmed-sync-all" class="dimmed-sync-btn"
+                                title="모든 프레임에 딤드 설정 동시 적용">
+                                <svg class="lf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                                <span>동시 적용</span>
+                            </button>
+                        </div>
+
+                        <!-- Enable Toggle Row -->
+                        <div class="dimmed-enable-row">
+                            <div class="dimmed-enable-meta">
+                                <span id="dimmed-enable-label" class="dimmed-enable-label">화면 딤드 사용</span>
+                                <span id="dimmed-object-count-badge" class="dimmed-obj-count-badge"
+                                    style="display: none;">오브젝트 0</span>
+                            </div>
+                            <label class="v4-toggle-switch" title="딤드 레이어 활성화 / 비활성화">
+                                <input type="checkbox" id="dimmed-enable-toggle">
+                                <span class="v4-toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Preserved objects info when dimmed is toggled OFF -->
+                        <div id="dimmed-preserved-note" class="dimmed-preserved-note" style="display: none;"></div>
+
+                        <!-- Expanded Authoring Controls when Dimmed is ON -->
+                        <div id="dimmed-active-controls" class="dimmed-active-controls" style="display: none;">
+                            <div class="dimmed-mode-switch-group">
+                                <button type="button" id="btn-dimmed-mode-overlay" class="dimmed-mode-btn active"
+                                    title="바닥 화면을 잠그고 딤드 레이어 위의 팝업 오브젝트를 편집합니다">
+                                    <svg class="lf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                                        <rect x="7" y="7" width="10" height="10" rx="1.5"></rect>
+                                    </svg>
+                                    <span>딤드·팝업 편집</span>
+                                </button>
+                                <button type="button" id="btn-dimmed-mode-base" class="dimmed-mode-btn"
+                                    title="딤드와 팝업을 임시로 숨기고 바닥 본문 화면을 편집합니다">
+                                    <svg class="lf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                                    </svg>
+                                    <span>바닥 화면 편집</span>
+                                </button>
+                            </div>
+                            <div id="dimmed-mode-hint" class="dimmed-mode-hint">바닥 화면이 잠기고 딤드 레이어 위에 팝업을 안전하게 배치합니다.
+                            </div>
+
+                            <div class="dimmed-Divider"></div>
+
+                            <div class="dimmed-opacity-header">
+                                <span class="dimmed-sub-label">딤드 농도</span>
+                                <div class="dimmed-opacity-right">
+                                    <div id="dimmed-opacity-presets" class="dimmed-opacity-presets"></div>
+                                    <span id="dimmed-opacity-val" class="dimmed-opacity-val">50%</span>
+                                </div>
+                            </div>
+                            <input type="range" id="dimmed-opacity-slider" class="dimmed-opacity-slider" min="10"
+                                max="85" step="5" value="50">
+
+                            <div class="dimmed-tint-row">
+                                <span class="dimmed-sub-label">딤드 색상</span>
+                                <div id="dimmed-tint-swatches" class="dimmed-tint-swatches"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Part 1: COMPONENTS -->
@@ -612,59 +825,79 @@
                 </div>
 
                 <!-- Part 3: ICON LIBRARY -->
-                <div id="icon-library-header" class="panel-header header-icon collapsible-header is-collapsed" onclick="if(window.V4SidebarAccordion)window.V4SidebarAccordion.toggle('icon-library');" title="아이콘 라이브러리 접기/펼치기">
+                <div id="icon-library-header" class="panel-header header-icon collapsible-header is-collapsed"
+                    onclick="if(window.V4SidebarAccordion)window.V4SidebarAccordion.toggle('icon-library');"
+                    title="아이콘 라이브러리 접기/펼치기">
                     <div class="panel-header-left">
                         <span class="panel-header-title title-icon">ICON LIBRARY</span>
                         <span class="section-count-badge badge-icon" id="icon-library-total-badge">36</span>
                     </div>
                     <span class="material-icons-outlined panel-header-chevron">expand_more</span>
                 </div>
-                <div id="icon-library-body" class="components-body collapsible-body is-collapsed" style="display: none !important;">
+                <div id="icon-library-body" class="components-body collapsible-body is-collapsed"
+                    style="display: none !important;">
                     <div id="icon-library-container" class="component-grid">
                         <!-- Dynamic icons rendered here -->
                     </div>
                 </div>
 
                 <!-- Part 4: ILLUSTRATION LIBRARY -->
-                <div id="illustration-library-header" class="panel-header header-illustration collapsible-header is-collapsed" onclick="if(window.V4SidebarAccordion)window.V4SidebarAccordion.toggle('illustration-library');" title="일러스트 라이브러리 접기/펼치기">
+                <div id="illustration-library-header"
+                    class="panel-header header-illustration collapsible-header is-collapsed"
+                    onclick="if(window.V4SidebarAccordion)window.V4SidebarAccordion.toggle('illustration-library');"
+                    title="일러스트 라이브러리 접기/펼치기">
                     <div class="panel-header-left">
                         <span class="panel-header-title title-illustration">ILLUSTRATION</span>
-                        <span class="section-count-badge badge-illustration" id="illustration-library-total-badge">25</span>
+                        <span class="section-count-badge badge-illustration"
+                            id="illustration-library-total-badge">25</span>
                     </div>
                     <span class="material-icons-outlined panel-header-chevron">expand_more</span>
                 </div>
-                <div id="illustration-library-body" class="components-body collapsible-body is-collapsed" style="display: none !important;">
+                <div id="illustration-library-body" class="components-body collapsible-body is-collapsed"
+                    style="display: none !important;">
                     <div id="illustration-library-container" class="component-grid">
                         <!-- Dynamic illustrations rendered here -->
                     </div>
                 </div>
 
                 <!-- Part 5: MOLECULES -->
-                <div id="molecules-header" class="panel-header header-molecules collapsible-header is-collapsed" onclick="if(window.V4SidebarAccordion)window.V4SidebarAccordion.toggle('molecules');" title="컴포넌트 라이브러리 접기/펼치기">
+                <div id="molecules-header" class="panel-header header-molecules collapsible-header is-collapsed"
+                    onclick="if(window.V4SidebarAccordion)window.V4SidebarAccordion.toggle('molecules');"
+                    title="컴포넌트 라이브러리 접기/펼치기">
                     <div class="panel-header-left">
                         <span id="molecules-header-text" class="panel-header-title title-molecules">COMPONENTS</span>
                         <span class="section-count-badge badge-molecules" id="molecules-total-badge">5</span>
                     </div>
                     <span class="material-icons-outlined panel-header-chevron">expand_more</span>
                 </div>
-                <div id="molecules-body" class="components-body collapsible-body is-collapsed" style="display: none !important;">
+                <div id="molecules-body" class="components-body collapsible-body is-collapsed"
+                    style="display: none !important;">
                     <div id="custom-molecules-container" class="molecules-container">
-                        <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'Workspace Header')">Workspace Header</button>
-                        <button class="v4-inspector-btn molecule-btn" onclick="insertAtomicComponent('component', 'Workspace MO Header (Detail)')">Workspace MO Header (Detail)</button>
-                        <button class="v4-inspector-btn molecule-btn" onclick="insertV4ComponentById('v4-mobile-fixed-header')" title="상단 고정 GNB 헤더">Fixed Header (GNB)</button>
-                        <button class="v4-inspector-btn molecule-btn" onclick="insertV4ComponentById('v4-mobile-fixed-bottom-cta')" title="하단 고정 구매/장바구니 CTA 독">Fixed Bottom CTA</button>
-                        <button class="v4-inspector-btn molecule-btn" onclick="insertV4ComponentById('v4-mobile-fixed-bottom-nav')" title="하단 고정 5-탭 네비게이션 독">Fixed 5-Tab Nav</button>
+                        <button class="v4-inspector-btn molecule-btn"
+                            onclick="insertAtomicComponent('component', 'Workspace Header')">Workspace Header</button>
+                        <button class="v4-inspector-btn molecule-btn"
+                            onclick="insertAtomicComponent('component', 'Workspace MO Header (Detail)')">Workspace MO
+                            Header (Detail)</button>
+                        <button class="v4-inspector-btn molecule-btn"
+                            onclick="insertV4ComponentById('v4-mobile-fixed-header')" title="상단 고정 GNB 헤더">Fixed Header
+                            (GNB)</button>
+                        <button class="v4-inspector-btn molecule-btn"
+                            onclick="insertV4ComponentById('v4-mobile-fixed-bottom-cta')"
+                            title="하단 고정 구매/장바구니 CTA 독">Fixed Bottom CTA</button>
+                        <button class="v4-inspector-btn molecule-btn"
+                            onclick="insertV4ComponentById('v4-mobile-fixed-bottom-nav')"
+                            title="하단 고정 5-탭 네비게이션 독">Fixed 5-Tab Nav</button>
                     </div>
                 </div>
-                </div> <!-- Close #tab-editor -->
+            </div> <!-- Close #tab-editor -->
 
-                <!-- Tab / Container: Smart Inspector (Docked Object Properties) -->
-                <div id="tab-inspector" class="tab-pane sidebar-inspector-pane" style="display: none;">
-                    <div class="sidebar-inspector-body" id="sidebar-inspector-body">
-                        <!-- Dynamic Selection Actions & Active Sections will be injected here -->
-                    </div>
+            <!-- Tab / Container: Smart Inspector (Docked Object Properties) -->
+            <div id="tab-inspector" class="tab-pane sidebar-inspector-pane" style="display: none;">
+                <div class="sidebar-inspector-body" id="sidebar-inspector-body">
+                    <!-- Dynamic Selection Actions & Active Sections will be injected here -->
                 </div>
-         </aside>
+            </div>
+        </aside>
     </div>
 
     <!-- Left Sidebar Mini Collapsed Screen Hover Flyout -->
@@ -719,7 +952,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modals extracted dynamically -->
 
     <!-- Revision History Modal -->
@@ -731,8 +964,10 @@
                     <h3 class="history-dialog-title">프로젝트 재개정 이력</h3>
                 </div>
                 <div class="history-header-actions">
-                    <button id="btn-add-history" class="history-btn-add" title="새 재개정 이력 직접 추가"><span class="material-icons-outlined" style="font-size:16px;">add</span> 이력 추가</button>
-                    <button id="btn-close-history" class="history-dialog-close" title="닫기"><span class="material-icons-outlined">close</span></button>
+                    <button id="btn-add-history" class="history-btn-add" title="새 재개정 이력 직접 추가"><span
+                            class="material-icons-outlined" style="font-size:16px;">add</span> 이력 추가</button>
+                    <button id="btn-close-history" class="history-dialog-close" title="닫기"><span
+                            class="material-icons-outlined">close</span></button>
                 </div>
             </div>
             <div id="history-popup-list" class="history-dialog-list">
@@ -743,10 +978,12 @@
 
     <!-- Smart Dual-Frame Focus Switcher (Mobile App / PC Web / Full) -->
     <div id="v4-frame-switcher" class="v4-frame-switcher" style="display: none;">
-        <button type="button" class="v4-frame-switch-btn is-hidden" id="btn-focus-mobile" data-focus="mobile" title="모바일 핏 (세로형)" style="display: none !important;">
+        <button type="button" class="v4-frame-switch-btn is-hidden" id="btn-focus-mobile" data-focus="mobile"
+            title="모바일 핏 (세로형)" style="display: none !important;">
             <span class="material-icons-outlined">smartphone</span>
         </button>
-        <button type="button" class="v4-frame-switch-btn is-hidden" id="btn-focus-pc" data-focus="pc" title="PC 핏 (가로형)" style="display: none !important;">
+        <button type="button" class="v4-frame-switch-btn is-hidden" id="btn-focus-pc" data-focus="pc" title="PC 핏 (가로형)"
+            style="display: none !important;">
             <span class="material-icons-outlined">desktop_windows</span>
         </button>
         <button type="button" class="v4-frame-switch-btn active" id="btn-focus-full" data-focus="full" title="전체 화면 핏">
@@ -761,10 +998,12 @@
     </button>
 
     <!-- Mobile Floating Screen Navigation Arrows & Page Indicator (Direct Body Layer) -->
-    <button type="button" id="dock-btn-prev" class="v4-edge-nav-btn v4-edge-nav-prev" aria-label="이전 화면" title="이전 화면 (Left Arrow)">
+    <button type="button" id="dock-btn-prev" class="v4-edge-nav-btn v4-edge-nav-prev" aria-label="이전 화면"
+        title="이전 화면 (Left Arrow)">
         <span class="material-icons-outlined">chevron_left</span>
     </button>
-    <button type="button" id="dock-btn-next" class="v4-edge-nav-btn v4-edge-nav-next" aria-label="다음 화면" title="다음 화면 (Right Arrow)">
+    <button type="button" id="dock-btn-next" class="v4-edge-nav-btn v4-edge-nav-next" aria-label="다음 화면"
+        title="다음 화면 (Right Arrow)">
         <span class="material-icons-outlined">chevron_right</span>
     </button>
     <div id="dock-page-indicator" class="v4-edge-page-indicator">01 / 01</div>
@@ -815,57 +1054,59 @@
     </aside>
 
     <!-- Script modularization: Pure Vanilla V3 Migration -->
-    <script src="assets/vctrl_typography.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_typography.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <!-- Dynamic UI Library for Inspectors, Library Icons & Modals -->
-    <script src="assets/ui_library_fallback.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_ui_library.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/ui_library_fallback.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_ui_library.js?v=V424_IMAGE_CROP"></script>
     <script src="assets/templates.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_clipboard.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/app.js?v=V411_VIEWER_VISUAL_RENEWAL"></script>
-    
+
     <!-- Modularized Engine -->
-    <script src="assets/vctrl_undo.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_undo.js?v=V424_IMAGE_CROP"></script>
     <script src="assets/vctrl_text_measurer.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_ui_atoms.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_ui_atoms_inputs.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_ui_atoms.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_ui_atoms_inputs.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_ui_atoms_cursor.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_design_system_atoms.js?v=V418_MODULAR_DIAGNOSIS"></script>
+    <script src="assets/vctrl_design_system_atoms.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_design_system_shapes_tables.js?v=V418_MODULAR_DIAGNOSIS"></script>
-    <script src="assets/vctrl_design_system.js?v=V418_MODULAR_DIAGNOSIS"></script>
-    <script src="assets/vctrl_clipboard_objects.js?v=V403_CLONED_FORMAT_PAINTER_FIX"></script>
+    <script src="assets/vctrl_design_system.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_clipboard_objects.js?v=V424_IMAGE_CROP"></script>
     <script src="assets/vctrl_format_painter.js?v=V403_CLONED_FORMAT_PAINTER_FIX"></script>
-    <script src="assets/vctrl_shortcuts.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
-    <script src="assets/vctrl_common.js?v=V417_IA_CELL_BG_SYNC"></script>
-    <script src="assets/vctrl_object_shape.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_shortcuts.js?v=V420_DIMMED_LAYER"></script>
+    <script src="assets/vctrl_common.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_object_shape.js?v=V424_IMAGE_CROP"></script>
     <script src="assets/vctrl_object_connector.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/responsive_frame.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
-    <script src="assets/vctrl_iframe_styles.js?v=V417_IA_CELL_BG_SYNC"></script>
-    <script src="assets/vctrl_iframe_style_extractor.js?v=V417_IA_CELL_BG_SYNC"></script>
-    <script src="assets/vctrl_iframe_layering.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
-    <script src="assets/vctrl_iframe_inserter.js?v=V396_PIN_ZINDEX_LAYER_FIX"></script>
+    <script src="assets/vctrl_iframe_styles.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_iframe_style_extractor.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_iframe_dimmed_layer.js?v=V420_DIMMED_LAYER"></script>
+    <script src="assets/vctrl_iframe_layering.js?v=V420_DIMMED_LAYER"></script>
+    <script src="assets/vctrl_iframe_inserter.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_iframe_adorner.js?v=V403_SELECTION_ADORNER"></script>
-    <script src="assets/vctrl_iframe_script.js?v=V412_IA_TABLE_PROPS"></script>
-    <script src="assets/vctrl_iframe_grid.js?v=V396_PIN_ZINDEX_LAYER_FIX"></script>
-    <script src="assets/vctrl_iframe_accordion.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_iframe_tab.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_iframe_drag.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_iframe_image_crop.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_iframe_script.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_iframe_grid.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_iframe_accordion.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_iframe_tab.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_iframe_drag.js?v=V423_PIN_ANCHOR_FIX"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V391_MOBILE_RESTORE_FULLSCREEN_CLEAN"></script>
-    <script src="assets/vctrl_core.js?v=V412_IA_TABLE_PROPS"></script>
+    <script src="assets/vctrl_core.js?v=V424_IMAGE_CROP"></script>
     <script src="assets/vctrl_storage.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_core_router.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
-    <script src="assets/vctrl_parent_shortcuts.js?v=V360_RECURSION_HOTFIX"></script>
+    <script src="assets/vctrl_core_router.js?v=V423_PIN_ANCHOR_FIX"></script>
+    <script src="assets/vctrl_parent_shortcuts.js?v=V424_IMAGE_CROP"></script>
     <script src="assets/vctrl_smartguide.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_responsive_smartguide_math.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_responsive_smartguide.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_responsive_multiselect.js?v=V416_IA_MOLECULE_SUPPORT"></script>
-    <script src="assets/vctrl_iframe_scroll_pin.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
-    <script src="assets/vctrl_responsive_pins.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
+    <script src="assets/vctrl_responsive_smartguide_math.js?v=V420_DIMMED_LAYER"></script>
+    <script src="assets/vctrl_responsive_smartguide.js?v=V420_DIMMED_LAYER"></script>
+    <script src="assets/vctrl_responsive_multiselect.js?v=V423_PIN_ANCHOR_FIX"></script>
+    <script src="assets/vctrl_iframe_scroll_pin.js?v=V423_PIN_ANCHOR_FIX"></script>
+    <script src="assets/vctrl_responsive_pins.js?v=V423_PIN_ANCHOR_FIX"></script>
     <script src="assets/vctrl_grouping.js?v=V416_IA_MOLECULE_SUPPORT"></script>
     <script src="assets/vctrl_color_picker.js?v=V419_PALETTE_9COL"></script>
-    <script src="assets/vctrl_component_atoms_data.js?v=V402_ATOM_CATALOG_DECOUPLED"></script>
-    <script src="assets/vctrl_component_data.js?v=V418_MODULAR_DIAGNOSIS"></script>
-    <script src="assets/vctrl_component_logos_templates.js?v=V418_MODULAR_DIAGNOSIS"></script>
+    <script src="assets/vctrl_component_atoms_data.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_component_data.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_component_logos_templates.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_component_icons_data.js?v=V418_MODULAR_DIAGNOSIS"></script>
     <script src="assets/vctrl_component_illustrations.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_component_library.js?v=V360_RECURSION_HOTFIX"></script>
@@ -880,13 +1121,14 @@
     <script src="assets/vctrl_revision_history.js?v=V360_RECURSION_HOTFIX"></script>
     <script src="assets/vctrl_annotation_pins.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
     <script src="assets/vctrl_canvas_viewport.js?v=V415_RESTORE_FULLSCREEN_LEFT_SIDEBAR"></script>
-    <script src="assets/vctrl_properties.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
-    <script src="assets/vctrl_connectors.js?v=V360_RECURSION_HOTFIX"></script>
-    
+    <script src="assets/vctrl_properties.js?v=V424_IMAGE_CROP"></script>
+    <script src="assets/vctrl_connectors.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+
     <!-- V4 Premium Addons -->
-    <script src="assets/vctrl_table.js?v=V417_IA_CELL_BG_SYNC"></script>
-    <script src="assets/vctrl_component_inserter.js?v=V361_GRID_HIGHLIGHT"></script>
+    <script src="assets/vctrl_table.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_component_inserter.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
     <script src="assets/vctrl_canvas_background.js?v=V361_GRID_HIGHLIGHT"></script>
+    <script src="assets/inspector/inspector_dimmed_layer.js?v=V420_DIMMED_LAYER"></script>
     <script src="assets/inspector/inspector_grid.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_accordion.js?v=V361_GRID_HIGHLIGHT"></script>
     <script src="assets/inspector/inspector_tab.js?v=V361_GRID_HIGHLIGHT"></script>
@@ -899,4 +1141,5 @@
     <script src="assets/inspector/inspector_popup.js?v=V361_POPUP_INSPECTOR"></script>
     <script src="assets/vctrl_resolution_engine.js?v=V413_DESKTOP_FULLSCREEN_FIT_FIX"></script>
 </body>
+
 </html>

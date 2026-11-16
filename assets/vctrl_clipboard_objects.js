@@ -78,7 +78,7 @@ window.v4ClipboardObjectsScript = `
         topLevelSelected.forEach(el => {
             const cleanClasses = el.className.split(' ')
                 .map(c => c.trim())
-                .filter(c => c && c !== 'selected' && c !== 'dragging-now' && c !== 'lf-in-group')
+                .filter(c => c && c !== 'selected' && c !== 'dragging-now' && c !== 'lf-in-group' && c !== 'v4-cropping-active')
                 .join(' ');
 
             const attrs = {};
@@ -138,6 +138,11 @@ window.v4ClipboardObjectsScript = `
                 p = p.parentElement;
             }
 
+            let curScreenName = '';
+            try {
+                curScreenName = (window.parent && window.parent.state && window.parent.state.activeFile && window.parent.state.activeFile.name) || '';
+            } catch (e) {}
+
             clipboardData.push({
                 html: clone.innerHTML,
                 className: cleanClasses,
@@ -147,6 +152,8 @@ window.v4ClipboardObjectsScript = `
                 width: parseFloat(el.style.width) || el.offsetWidth || 120,
                 height: parseFloat(el.style.height) || el.offsetHeight || 30,
                 frameContainer: frameContainer,
+                sourceScreen: curScreenName,
+                inDimmedOverlay: !!(el.closest && el.closest('.v4-dimmed-overlay-layer')),
                 isGroup: el.classList.contains('lf-group'),
                 isPinMarker: el.classList.contains('pin-marker'),
                 isTextMarker: el.classList.contains('text-marker'),
@@ -239,6 +246,9 @@ window.v4ClipboardObjectsScript = `
         }
 
         notifyParent({ type: 'LF_DESELECT' });
+        if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
+            window.V4DimmedLayer.syncStateToParent();
+        }
         markDirty();
         console.log("[Clipboard Debug] Cut operation complete.");
     };
@@ -454,7 +464,32 @@ window.v4ClipboardObjectsScript = `
                 return maxZ + 10;
             };
 
-            const pasteHost = isResponsiveTemplate ? targetHost : (document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body);
+            const rawPasteHost = isResponsiveTemplate ? targetHost : (document.querySelector('.canvas, .page, #canvas-page, #canvas') || document.body);
+            const pasteHost = (window.V4DimmedLayer && typeof window.V4DimmedLayer.resolveActiveMountHost === 'function')
+                ? window.V4DimmedLayer.resolveActiveMountHost(rawPasteHost)
+                : rawPasteHost;
+            const targetInDimmed = !!(pasteHost && pasteHost.classList && pasteHost.classList.contains('v4-dimmed-overlay-layer'));
+
+            // Preserve exact 1:1 coordinates (0px offset) when pasting across screens or across Base <-> Dimmed layers
+            let curPasteScreen = '';
+            try {
+                curPasteScreen = (window.parent && window.parent.state && window.parent.state.activeFile && window.parent.state.activeFile.name) || '';
+            } catch (e) {}
+            const srcScreen = componentItems[0] ? (componentItems[0].sourceScreen || '') : '';
+            const srcInDimmed = componentItems[0] ? !!componentItems[0].inDimmedOverlay : false;
+            const isCrossLayerOrScreen = (srcScreen && curPasteScreen && srcScreen !== curPasteScreen) || (srcInDimmed !== targetInDimmed);
+            if (isSameFrame && isCrossLayerOrScreen && !isCutOperation) {
+                baseLeft = minLeft;
+                baseTop = minTop;
+                if (isResponsiveTemplate && targetCol) {
+                    const colScroll = targetCol.querySelector('.mobile-content-area, .mobile-content, .pc-content-area');
+                    const scrollTop = colScroll ? colScroll.scrollTop : 0;
+                    const visibleH = colScroll ? (colScroll.clientHeight || 810) : 810;
+                    if ((baseTop + groupH) < scrollTop || baseTop > (scrollTop + visibleH - 20)) {
+                        baseTop = Math.max(15, Math.round(scrollTop + (visibleH / 2) - (groupH / 2)));
+                    }
+                }
+            }
 
             // Extract original z-indexes to preserve relative layering inside copied group using compact rank steps
             const copiedZs = componentItems.map(item => {
@@ -469,7 +504,7 @@ window.v4ClipboardObjectsScript = `
             const baseTopNormalZ = getHostTopZ(pasteHost, false);
             const baseTopFixedZ = getHostTopZ(pasteHost, true);
 
-            const trailingRef = Array.from(pasteHost.children).find(c => (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script' || c.classList.contains('v4-responsive-guide-layer'))));
+            const trailingRef = Array.from(pasteHost.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer'))) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script' || c.classList.contains('v4-responsive-guide-layer'))));
 
             componentItems.forEach((item, idx) => {
                 // [CRITICAL DEFENSE] Ignore any pin marker items from clipboard
@@ -642,6 +677,9 @@ window.v4ClipboardObjectsScript = `
                     selectedIdsIsGroupMap: selectedIdsIsGroupMap,
                     firstCompStyles: firstStyles
                 });
+            }
+            if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
+                window.V4DimmedLayer.syncStateToParent();
             }
             if (typeof window.markDirty === 'function') window.markDirty();
             else if (typeof markDirty === 'function') markDirty();

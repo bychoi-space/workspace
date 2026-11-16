@@ -215,11 +215,18 @@ window.v4ResponsivePinsScript = `
 
     function _findPinnedHostUnderPin(pin) {
         if (!pin) return null;
+        var pinContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function')
+            ? window.ResponsiveFrameUtils.getContainer(pin)
+            : (pin.closest ? pin.closest('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area, .mobile-content, .pc-content') : null);
         var pinRect = pin.getBoundingClientRect();
         var pCenterX = pinRect.left + pinRect.width / 2;
         var pCenterY = pinRect.top + pinRect.height / 2;
         var pinnedHosts = Array.from(document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])')).filter(function(el) {
-            return el !== pin && !el.classList.contains('pin-marker') && !el.classList.contains('text-marker');
+            if (!el || el === pin) return false;
+            if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return false;
+            if (el.parentElement && el.parentElement.closest && el.parentElement.closest('.lf-group')) return false;
+            if (pinContainer && !pinContainer.contains(el)) return false;
+            return true;
         });
         for (var i = 0; i < pinnedHosts.length; i++) {
             var hRect = pinnedHosts[i].getBoundingClientRect();
@@ -435,11 +442,16 @@ window.v4ResponsivePinsScript = `
 
                     if (descList[i]) {
                         if (!descList[i].pins) descList[i].pins = {};
-                        descList[i].pins[ctx.frame1Type] = {
+                        var f1Entry = {
                             x: parseFloat(pin.style.left) || 0,
                             y: parseFloat(pin.style.top) || 0,
-                            active: true
+                            active: true,
+                            scrollFixed: pin.getAttribute('data-scroll-fixed') || 'none'
                         };
+                        if (pin.hasAttribute('data-fixed-host')) {
+                            f1Entry.fixedHost = pin.getAttribute('data-fixed-host');
+                        }
+                        descList[i].pins[ctx.frame1Type] = f1Entry;
                         if (ctx.isMobileCompare) {
                             descList[i].pins.pc = descList[i].pins.left;
                         }
@@ -464,11 +476,16 @@ window.v4ResponsivePinsScript = `
 
                     if (descList[i]) {
                         if (!descList[i].pins) descList[i].pins = {};
-                        descList[i].pins[ctx.frame2Type] = {
+                        var f2Entry = {
                             x: parseFloat(pin.style.left) || 0,
                             y: parseFloat(pin.style.top) || 0,
-                            active: true
+                            active: true,
+                            scrollFixed: pin.getAttribute('data-scroll-fixed') || 'none'
                         };
+                        if (pin.hasAttribute('data-fixed-host')) {
+                            f2Entry.fixedHost = pin.getAttribute('data-fixed-host');
+                        }
+                        descList[i].pins[ctx.frame2Type] = f2Entry;
                         if (ctx.isMobileCompare) {
                             descList[i].pins.mobile = descList[i].pins.right;
                         }
@@ -657,7 +674,12 @@ window.v4ResponsivePinsScript = `
                 p2Pos = (item.pins && item.pins.mobile) ? item.pins.mobile : { x: 170, y: 180 };
             }
 
-            var isPinFixed = (item.scrollFixed === 'viewport' || item.scrollFixed === 'fixed' || item.scrollFixed === 'top');
+            var f1PinMeta = (item.pins && item.pins[ctx.frame1Type]) ? item.pins[ctx.frame1Type] : null;
+            var f2PinMeta = (item.pins && item.pins[ctx.frame2Type]) ? item.pins[ctx.frame2Type] : null;
+            var f1ScrollFixedRaw = (f1PinMeta && f1PinMeta.scrollFixed !== undefined) ? f1PinMeta.scrollFixed : item.scrollFixed;
+            var f2ScrollFixedRaw = (f2PinMeta && f2PinMeta.scrollFixed !== undefined) ? f2PinMeta.scrollFixed : item.scrollFixed;
+            var isPin1ViewportFixed = (f1ScrollFixedRaw === 'viewport' || f1ScrollFixedRaw === 'fixed');
+            var isPin2ViewportFixed = (f2ScrollFixedRaw === 'viewport' || f2ScrollFixedRaw === 'fixed');
 
             if (ctx.frame1) {
                 var existing1 = document.getElementById('v4-pin-' + ctx.frame1Type + '-' + idx);
@@ -675,11 +697,11 @@ window.v4ResponsivePinsScript = `
                     }
                 }
 
-                var hostId1 = (item.pins && item.pins[ctx.frame1Type] && item.pins[ctx.frame1Type].fixedHost) ? item.pins[ctx.frame1Type].fixedHost : item.fixedHost;
+                var hostId1 = (f1PinMeta && f1PinMeta.fixedHost !== undefined) ? f1PinMeta.fixedHost : item.fixedHost;
                 var hostEl1 = hostId1 ? document.getElementById(hostId1) : null;
-                var hasValidHost1 = hostEl1 && hostEl1.isConnected && hostEl1.hasAttribute('data-scroll-fixed') && hostEl1.getAttribute('data-scroll-fixed') !== 'none';
+                var hasValidHost1 = !!(hostEl1 && hostEl1.isConnected && ctx.frame1.contains(hostEl1) && !(hostEl1.parentElement && hostEl1.parentElement.closest('.lf-group')) && hostEl1.hasAttribute('data-scroll-fixed') && hostEl1.getAttribute('data-scroll-fixed') !== 'none');
 
-                if (!hasValidHost1 && !isPinFixed && pin1) {
+                if (!hasValidHost1 && !isPin1ViewportFixed && pin1) {
                     var detectedHost1 = _findPinnedHostUnderPin(pin1);
                     if (detectedHost1 && detectedHost1.id) {
                         hasValidHost1 = true;
@@ -697,7 +719,7 @@ window.v4ResponsivePinsScript = `
                     if (hostEl1.style.transform) {
                         pin1.style.setProperty('transform', hostEl1.style.transform, 'important');
                     }
-                } else if (isPinFixed && pin1) {
+                } else if (isPin1ViewportFixed && pin1) {
                     pin1.setAttribute('data-scroll-fixed', 'viewport');
                     pin1.removeAttribute('data-fixed-host');
                     pin1.style.setProperty('z-index', '200050', 'important');
@@ -727,11 +749,11 @@ window.v4ResponsivePinsScript = `
                     }
                 }
 
-                var hostId2 = (item.pins && item.pins[ctx.frame2Type] && item.pins[ctx.frame2Type].fixedHost) ? item.pins[ctx.frame2Type].fixedHost : item.fixedHost;
+                var hostId2 = (f2PinMeta && f2PinMeta.fixedHost !== undefined) ? f2PinMeta.fixedHost : item.fixedHost;
                 var hostEl2 = hostId2 ? document.getElementById(hostId2) : null;
-                var hasValidHost2 = hostEl2 && hostEl2.isConnected && hostEl2.hasAttribute('data-scroll-fixed') && hostEl2.getAttribute('data-scroll-fixed') !== 'none';
+                var hasValidHost2 = !!(hostEl2 && hostEl2.isConnected && ctx.frame2.contains(hostEl2) && !(hostEl2.parentElement && hostEl2.parentElement.closest('.lf-group')) && hostEl2.hasAttribute('data-scroll-fixed') && hostEl2.getAttribute('data-scroll-fixed') !== 'none');
 
-                if (!hasValidHost2 && !isPinFixed && pin2) {
+                if (!hasValidHost2 && !isPin2ViewportFixed && pin2) {
                     var detectedHost2 = _findPinnedHostUnderPin(pin2);
                     if (detectedHost2 && detectedHost2.id) {
                         hasValidHost2 = true;
@@ -749,7 +771,7 @@ window.v4ResponsivePinsScript = `
                     if (hostEl2.style.transform) {
                         pin2.style.setProperty('transform', hostEl2.style.transform, 'important');
                     }
-                } else if (isPinFixed && pin2) {
+                } else if (isPin2ViewportFixed && pin2) {
                     pin2.setAttribute('data-scroll-fixed', 'viewport');
                     pin2.removeAttribute('data-fixed-host');
                     pin2.style.setProperty('z-index', '200050', 'important');

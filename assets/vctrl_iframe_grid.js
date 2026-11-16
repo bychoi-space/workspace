@@ -73,25 +73,33 @@ window.v4GridScript = `
         return true;
     };
 
-    var getCellContentForType = function(type, rIdx, col, isClickable, fillMock) {
+    var getCellContentForType = function(type, rIdx, col, isClickable, fillMock, isStdV2) {
         if (type === "checkbox") {
             return '<input type="checkbox">';
         }
         if (type === "action") {
-            return '<button type="button" class="v4-grid-action-btn">\uC0C1\uC138</button>';
+            return '<button type="button" class="v4-grid-action-btn"' + (isStdV2 ? ' style="border:1.2px solid #c8c8c8; background:#ffffff; color:#050505; font-size:13px;"' : '') + '>\uC0C1\uC138</button>';
         }
         if (type === "delete") {
             return '<button type="button" class="v4-grid-action-btn danger v4-grid-delete-box-btn" title="\uC0AD\uC81C" style="width:24px; height:24px; min-width:24px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; font-size:15px; font-weight:700; border:1.2px solid #fecaca; background:#ffffff; color:#ef4444; cursor:pointer; line-height:1; box-sizing:border-box;">&times;</button>';
         }
         if (type === "order") {
-            return '<div class="v4-grid-order-group" style="display:inline-flex; align-items:center; justify-content:center; gap:3px; vertical-align:middle;"><button type="button" class="v4-grid-order-btn btn-order-up" title="\uC704\uB85C \uC774\uB3D9" style="width:22px; height:22px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; font-size:9px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; cursor:pointer; line-height:1; box-sizing:border-box; user-select:none;">\u25B2</button><button type="button" class="v4-grid-order-btn btn-order-down" title="\uC544\uB798\uB85C \uC774\uB3D9" style="width:22px; height:22px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; font-size:9px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; cursor:pointer; line-height:1; box-sizing:border-box; user-select:none;">\u25BC</button></div>';
+            var ordBorder = isStdV2 ? '#c8c8c8' : '#cbd5e1';
+            var ordCol = isStdV2 ? '#646464' : '#475569';
+            return '<div class="v4-grid-order-group" style="display:inline-flex; align-items:center; justify-content:center; gap:3px; vertical-align:middle;"><button type="button" class="v4-grid-order-btn btn-order-up" title="\uC704\uB85C \uC774\uB3D9" style="width:22px; height:22px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; font-size:9px; border:1px solid ' + ordBorder + '; background:#ffffff; color:' + ordCol + '; cursor:pointer; line-height:1; box-sizing:border-box; user-select:none;">\u25B2</button><button type="button" class="v4-grid-order-btn btn-order-down" title="\uC544\uB798\uB85C \uC774\uB3D9" style="width:22px; height:22px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; font-size:9px; border:1px solid ' + ordBorder + '; background:#ffffff; color:' + ordCol + '; cursor:pointer; line-height:1; box-sizing:border-box; user-select:none;">\u25BC</button></div>';
         }
         if (type === "image") {
-            return '<div class="v4-grid-image-box" style="width:32px; height:32px; margin:0 auto; display:inline-flex; align-items:center; justify-content:center; vertical-align:middle; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; pointer-events:none; box-sizing:border-box;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>';
+            var imgBg = isStdV2 ? '#f0f0f0' : '#f1f5f9';
+            var imgBorder = isStdV2 ? '#c8c8c8' : '#e2e8f0';
+            var imgStroke = isStdV2 ? '#969696' : '#94a3b8';
+            return '<div class="v4-grid-image-box" style="width:32px; height:32px; margin:0 auto; display:inline-flex; align-items:center; justify-content:center; vertical-align:middle; background:' + imgBg + '; border:1px solid ' + imgBorder + '; border-radius:6px; overflow:hidden; pointer-events:none; box-sizing:border-box;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="' + imgStroke + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>';
         }
         if (type === "input") {
             var sampleVal = String(rIdx + 1);
-            return '<input type="text" class="v4-grid-input" value="' + sampleVal + '" placeholder="\uC785\uB825" style="width:100%; height:26px; padding:0 8px; border:1.6px solid rgb(226,232,240); border-radius:4px; background:#ffffff; font-size:12px; color:#0f172a; box-sizing:border-box; text-align:inherit; outline:none; user-select:text; cursor:text;">';
+            var inpBorder = isStdV2 ? 'rgb(200,200,200)' : 'rgb(226,232,240)';
+            var inpFs = isStdV2 ? '13px' : '12px';
+            var inpCol = isStdV2 ? '#050505' : '#0f172a';
+            return '<input type="text" class="v4-grid-input" value="' + sampleVal + '" placeholder="\uC785\uB825" style="width:100%; height:26px; padding:0 8px; border:1.6px solid ' + inpBorder + '; border-radius:4px; background:#ffffff; font-size:' + inpFs + '; color:' + inpCol + '; box-sizing:border-box; text-align:inherit; outline:none; user-select:text; cursor:text;">';
         }
         if (!fillMock) {
             return "";
@@ -828,14 +836,23 @@ window.v4GridScript = `
         });
     };
 
-    var updateGridThead = function(table, columns, rowHeightVal) {
+    var updateGridThead = function(table, columns, rowHeightVal, isStdV2) {
         var thead = table.querySelector("thead");
         if (!thead) return;
         var headerRow = thead.querySelector("tr");
         if (!headerRow) return;
 
+        var stdBorder = isStdV2 ? "1.6px solid #c8c8c8" : "1.6px solid rgb(226, 232, 240)";
+        var stdHeadBg = isStdV2 ? "#f0f0f0" : "#f8fafc";
+        var stdHeadColor = isStdV2 ? "#050505" : "#334155";
+        var stdFontSize = isStdV2 ? "13px" : "12px";
+
         headerRow.style.setProperty("height", rowHeightVal, "important");
         headerRow.style.setProperty("min-height", rowHeightVal, "important");
+        if (isStdV2) {
+            headerRow.style.borderBottom = stdBorder;
+            headerRow.style.background = stdHeadBg;
+        }
         var ths = Array.from(headerRow.querySelectorAll("th"));
         while (ths.length < columns.length) {
             var newTh = document.createElement("th");
@@ -844,9 +861,9 @@ window.v4GridScript = `
             newTh.style.display = "table-cell";
             newTh.style.verticalAlign = "middle";
             newTh.style.boxSizing = "border-box";
-            newTh.style.fontSize = "12px";
+            newTh.style.fontSize = stdFontSize;
             newTh.style.fontWeight = "500";
-            newTh.style.color = "#334155";
+            newTh.style.color = stdHeadColor;
             headerRow.appendChild(newTh);
             ths.push(newTh);
         }
@@ -873,11 +890,11 @@ window.v4GridScript = `
             th.style.setProperty("width", w, "important");
             th.style.setProperty("min-width", w, "important");
             th.style.setProperty("max-width", w, "important");
-            th.style.borderRight = "1.6px solid rgb(226, 232, 240)";
+            th.style.borderRight = stdBorder;
             th.style.setProperty("text-align", align, "important");
             th.style.setProperty("padding", col.type === "checkbox" ? "0" : "0 8px", "important");
             th.style.fontWeight = "500";
-            th.style.color = "#334155";
+            th.style.color = stdHeadColor;
             th.style.setProperty("height", rowHeightVal, "important");
             th.style.setProperty("min-height", rowHeightVal, "important");
             th.style.setProperty("vertical-align", "middle", "important");
@@ -894,7 +911,7 @@ window.v4GridScript = `
                 th.style.removeProperty("box-shadow");
                 th.style.removeProperty("background");
                 th.style.removeProperty("background-color");
-                th.style.setProperty("background-color", "#f8fafc", "important");
+                th.style.setProperty("background-color", stdHeadBg, "important");
             }
 
             if (col.type === "checkbox") {
@@ -932,9 +949,13 @@ window.v4GridScript = `
         });
     };
 
-    var updateGridTbody = function(table, columns, rowCount, rowHeightVal, isZebra, fillMock) {
+    var updateGridTbody = function(table, columns, rowCount, rowHeightVal, isZebra, fillMock, isStdV2) {
         var tbody = table.querySelector("tbody");
         if (!tbody) return;
+
+        var stdBorder = isStdV2 ? "1.6px solid #c8c8c8" : "1.6px solid rgb(226,232,240)";
+        var stdFontSize = isStdV2 ? "13px" : "12px";
+        var stdTextColor = isStdV2 ? "#050505" : "#0f172a";
 
         var rows = Array.from(tbody.querySelectorAll("tr"));
         while (rows.length < rowCount) {
@@ -951,7 +972,7 @@ window.v4GridScript = `
         }
         
         rows.forEach(function(row, rIdx) {
-            row.style.borderBottom = "1.6px solid rgb(226,232,240)";
+            row.style.borderBottom = stdBorder;
             row.style.setProperty("height", rowHeightVal, "important");
             row.style.setProperty("min-height", rowHeightVal, "important");
             if (!isZebra) {
@@ -968,7 +989,8 @@ window.v4GridScript = `
                 newTd.style.display = "table-cell";
                 newTd.style.verticalAlign = "middle";
                 newTd.style.boxSizing = "border-box";
-                newTd.style.fontSize = "12px";
+                newTd.style.fontSize = stdFontSize;
+                if (isStdV2) newTd.style.color = stdTextColor;
                 row.appendChild(newTd);
                 tds.push(newTd);
             }
@@ -979,7 +1001,7 @@ window.v4GridScript = `
             columns.forEach(function(col, cIdx) {
                 var td = tds[cIdx];
                 var align = getResolvedAlign(col);
-                td.style.borderRight = "1.6px solid rgb(226,232,240)";
+                td.style.borderRight = stdBorder;
                 td.style.setProperty("height", rowHeightVal, "important");
                 td.style.setProperty("min-height", rowHeightVal, "important");
                 td.style.setProperty("vertical-align", "middle", "important");
@@ -1056,32 +1078,35 @@ window.v4GridScript = `
                     } else if (col.type === "action") {
                         td.className = "v4-grid-cell" + hlClass;
                         td.contentEditable = "false";
-                        td.innerHTML = '<button type="button" class="v4-grid-action-btn">\uC0C1\uC138</button>';
+                        td.innerHTML = getCellContentForType("action", rIdx, col, false, true, isStdV2);
                     } else if (col.type === "delete") {
                         td.className = "v4-grid-cell" + hlClass;
                         td.contentEditable = "false";
-                        td.innerHTML = getCellContentForType("delete", rIdx, col, false, true);
+                        td.innerHTML = getCellContentForType("delete", rIdx, col, false, true, isStdV2);
                     } else if (col.type === "order") {
                         td.className = "v4-grid-cell" + hlClass;
                         td.contentEditable = "false";
-                        td.innerHTML = getCellContentForType("order", rIdx, col, false, true);
+                        td.innerHTML = getCellContentForType("order", rIdx, col, false, true, isStdV2);
                     } else if (col.type === "image") {
                         td.className = "v4-grid-cell" + hlClass;
                         td.contentEditable = "false";
-                        td.innerHTML = getCellContentForType("image", rIdx, col, false, true);
+                        td.innerHTML = getCellContentForType("image", rIdx, col, false, true, isStdV2);
                     } else if (col.type === "input") {
                         td.className = "v4-grid-cell" + hlClass;
                         td.contentEditable = "false";
                         var existingInp = td.querySelector("input.v4-grid-input");
                         var currentVal = (existingInp && isUserModified) ? existingInp.value : String(rIdx + 1);
-                        td.innerHTML = '<input type="text" class="v4-grid-input" value="' + currentVal + '" placeholder="\uC785\uB825" style="width:100%; height:26px; padding:0 8px; border:1.6px solid rgb(226,232,240); border-radius:4px; background:#ffffff; font-size:12px; color:#0f172a; box-sizing:border-box; text-align:inherit; outline:none; user-select:text; cursor:text;">';
+                        var inpBorder = isStdV2 ? 'rgb(200,200,200)' : 'rgb(226,232,240)';
+                        var inpFs = isStdV2 ? '13px' : '12px';
+                        var inpCol = isStdV2 ? '#050505' : '#0f172a';
+                        td.innerHTML = '<input type="text" class="v4-grid-input" value="' + currentVal + '" placeholder="\uC785\uB825" style="width:100%; height:26px; padding:0 8px; border:1.6px solid ' + inpBorder + '; border-radius:4px; background:#ffffff; font-size:' + inpFs + '; color:' + inpCol + '; box-sizing:border-box; text-align:inherit; outline:none; user-select:text; cursor:text;">';
                     } else {
                         td.className = "v4-grid-cell v4-editable-cell" + (isClickable ? " v4-grid-clickable-cell" : "") + hlClass;
                         td.contentEditable = "true";
-                        td.style.color = "";
+                        td.style.color = isStdV2 && !isClickable ? stdTextColor : "";
                         td.style.fontWeight = "";
-                        td.style.fontSize = "";
-                        td.innerHTML = getCellContentForType(col.type, rIdx, col, isClickable, fillMock || (prevType !== col.type));
+                        td.style.fontSize = isStdV2 ? stdFontSize : "";
+                        td.innerHTML = getCellContentForType(col.type, rIdx, col, isClickable, fillMock || (prevType !== col.type), isStdV2);
                     }
 
                     if (!hl || !hl.enabled) {
@@ -1098,7 +1123,15 @@ window.v4GridScript = `
         bindGridInteractiveControls(table);
     };
 
-    var buildFreshGridHtml = function(columns, rowCount, showPagination, rowHeightVal, isZebra, totalColWidth) {
+    var buildFreshGridHtml = function(columns, rowCount, showPagination, rowHeightVal, isZebra, totalColWidth, isStdV2) {
+        var stdBorder = isStdV2 ? "1.6px solid #c8c8c8" : "1.6px solid rgb(226,232,240)";
+        var stdHeadBg = isStdV2 ? "#f0f0f0" : "#f8fafc";
+        var stdHeadColor = isStdV2 ? "#050505" : "#334155";
+        var stdBodyColor = isStdV2 ? "#050505" : "#0f172a";
+        var stdFontSize = isStdV2 ? "13px" : "12px";
+        var stdZebraBg = isStdV2 ? "#fafafa" : "#f8fafc";
+        var stdFooterColor = isStdV2 ? "#646464" : "#64748b";
+
         var colgroupHtml = "<colgroup>";
         columns.forEach(function(col) {
             var w = col.width;
@@ -1114,13 +1147,13 @@ window.v4GridScript = `
         });
         colgroupHtml += "</colgroup>";
         
-        var headerHtml = '<tr style="height:' + rowHeightVal + ' !important; background:#f8fafc; border-bottom:1.6px solid rgb(226,232,240); box-sizing:border-box;">';
+        var headerHtml = '<tr style="height:' + rowHeightVal + ' !important; background:' + stdHeadBg + '; border-bottom:' + stdBorder + '; box-sizing:border-box;">';
         columns.forEach(function(col, index) {
-            var borderRight = " border-right:1.6px solid rgb(226,232,240);";
+            var borderRight = " border-right:" + stdBorder + ";";
             var align = getResolvedAlign(col);
             var hl = getResolvedHighlight(col);
             var hlClass = (hl && hl.enabled) ? " v4-grid-col-highlight" : "";
-            var hlBg = (hl && hl.enabled) ? (hl.headerBg || hl.bg) : "#f8fafc";
+            var hlBg = (hl && hl.enabled) ? (hl.headerBg || hl.bg) : stdHeadBg;
             var hlShadow = (hl && hl.enabled) ? " box-shadow: inset 0 2px 0 0 " + hl.border + ", inset 2px 0 0 0 " + hl.border + ", inset -2px 0 0 0 " + hl.border + " !important;" : "";
             var badgeHtml = "";
             if (hl && hl.enabled && hl.badgeText) {
@@ -1130,27 +1163,27 @@ window.v4GridScript = `
             if (col.type === "checkbox") {
                 headerHtml += '<th class="v4-grid-cell v4-grid-check-col' + hlClass + '" data-type="checkbox" data-align="center" style="display:table-cell; vertical-align:middle; text-align:center; height:' + rowHeightVal + ' !important;' + borderRight + hlShadow + ' box-sizing:border-box; padding:0; font-weight:normal; position:sticky; top:0; z-index:10; background:' + hlBg + ';"><input type="checkbox"></th>';
             } else {
-                headerHtml += '<th class="v4-grid-cell v4-editable-cell' + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '" style="display:table-cell; vertical-align:middle; text-align:' + align + '; height:' + rowHeightVal + ' !important; padding:0 8px;' + borderRight + hlShadow + ' box-sizing:border-box; font-size:12px; font-weight:500; color:#334155; user-select:none; position:sticky; top:0; z-index:10; background:' + hlBg + ';">' + (col.name || "") + badgeHtml + "</th>";
+                headerHtml += '<th class="v4-grid-cell v4-editable-cell' + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '" style="display:table-cell; vertical-align:middle; text-align:' + align + '; height:' + rowHeightVal + ' !important; padding:0 8px;' + borderRight + hlShadow + ' box-sizing:border-box; font-size:' + stdFontSize + '; font-weight:500; color:' + stdHeadColor + '; user-select:none; position:sticky; top:0; z-index:10; background:' + hlBg + ';">' + (col.name || "") + badgeHtml + "</th>";
             }
         });
         headerHtml += "</tr>";
         
         var bodyHtml = "";
         for (var i = 0; i < rowCount; i++) {
-            var borderBottom = "1.6px solid rgb(226,232,240)";
-            var rowBg = (!isZebra || i % 2 === 0) ? "#ffffff" : "#f8fafc";
+            var borderBottom = stdBorder;
+            var rowBg = (!isZebra || i % 2 === 0) ? "#ffffff" : stdZebraBg;
             
             bodyHtml += '<tr style="height:' + rowHeightVal + ' !important; border-bottom:' + borderBottom + '; box-sizing:border-box; background:' + rowBg + ';">';
             
             columns.forEach(function(col, colIndex) {
-                var borderRight = " border-right:1.6px solid rgb(226,232,240);";
+                var borderRight = " border-right:" + stdBorder + ";";
                 var align = getResolvedAlign(col);
                 var heightStyle = " height:" + rowHeightVal + " !important; min-height:" + rowHeightVal + " !important; vertical-align:middle !important; box-sizing:border-box !important;";
                 var isClickable = !!col.clickable && col.type !== "checkbox" && col.type !== "action" && col.type !== "delete" && col.type !== "image" && col.type !== "input" && col.type !== "order";
                 var clickableAttr = ' data-clickable="' + (isClickable ? "true" : "false") + '"';
                 var clickableClass = isClickable ? " v4-grid-clickable-cell" : "";
                 var clickableStyle = isClickable ? " color:#2563eb !important; cursor:pointer !important;" : "";
-                var cellContent = getCellContentForType(col.type, i, col, isClickable, true);
+                var cellContent = getCellContentForType(col.type, i, col, isClickable, true, isStdV2);
 
                 var hl = getResolvedHighlight(col);
                 var hlClass = (hl && hl.enabled) ? " v4-grid-col-highlight" : "";
@@ -1171,7 +1204,7 @@ window.v4GridScript = `
                 } else if (col.type === "action" || col.type === "input") {
                     bodyHtml += '<td class="v4-grid-cell' + hlClass + '" data-type="' + col.type + '" data-align="center"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:center;' + heightStyle + borderRight + hlBgStyle + hlShadowStyle + ' padding:0 8px;">' + cellContent + '</td>';
                 } else {
-                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:' + align + ";" + heightStyle + " padding:0 8px;" + borderRight + hlBgStyle + hlShadowStyle + " font-size:12px; " + (isClickable ? clickableStyle : "color:#0f172a; font-weight:500;") + '">' + cellContent + '</td>';
+                    bodyHtml += '<td class="v4-grid-cell v4-editable-cell' + clickableClass + hlClass + '" contenteditable="true" data-type="' + col.type + '" data-align="' + align + '"' + clickableAttr + ' style="display:table-cell; vertical-align:middle; text-align:' + align + ";" + heightStyle + " padding:0 8px;" + borderRight + hlBgStyle + hlShadowStyle + " font-size:" + stdFontSize + "; " + (isClickable ? clickableStyle : "color:" + stdBodyColor + "; font-weight:500;") + '">' + cellContent + '</td>';
                 }
             });
             bodyHtml += "</tr>";
@@ -1188,10 +1221,10 @@ window.v4GridScript = `
                                  "</table>" +
                                  "</div>";
                                  
-        var footerHtml = '<div class="v4-grid-footer" style="height:36px; padding:0 12px; display:' + displayFooter + '; align-items:center; justify-content:space-between; background:#f8fafc; border-top:1.6px solid rgb(226,232,240); box-sizing:border-box; width:100%; flex-shrink:0;">' +
-                         '<span style="font-size:11px; color:#64748b; font-family:Inter,sans-serif;">1/27</span>' +
-                         '<div class="v4-grid-pages" style="font-size:11px; color:#64748b; cursor:pointer; font-family:Inter,sans-serif;">\u25C0 1 2 3 4 5 \u25B6</div>' +
-                         '<span style="font-size:11px; color:#64748b; font-family:Inter,sans-serif;">Page Size 100</span>' +
+        var footerHtml = '<div class="v4-grid-footer" style="height:36px; padding:0 12px; display:' + displayFooter + '; align-items:center; justify-content:space-between; background:' + stdHeadBg + '; border-top:' + stdBorder + '; box-sizing:border-box; width:100%; flex-shrink:0;">' +
+                         '<span style="font-size:12px; color:' + stdFooterColor + '; font-family:inherit;">1/27</span>' +
+                         '<div class="v4-grid-pages" style="font-size:12px; color:' + stdFooterColor + '; cursor:pointer; font-family:inherit;">\u25C0 1 2 3 4 5 \u25B6</div>' +
+                         '<span style="font-size:12px; color:' + stdFooterColor + '; font-family:inherit;">Page Size 100</span>' +
                          '</div>';
         
         return tableContainerHtml + footerHtml;
@@ -1241,6 +1274,7 @@ window.v4GridScript = `
             totalColWidth += w;
         });
 
+        var isStdV2 = !!(container.getAttribute("data-v4-std") === "2" || (container.closest && container.closest('[data-v4-std="2"]')));
         var table = container.querySelector("table");
         if (table) {
             table.style.setProperty("height", "auto", "important");
@@ -1249,12 +1283,16 @@ window.v4GridScript = `
             table.style.setProperty("table-layout", "fixed", "important");
 
             updateGridColgroup(table, columns);
-            updateGridThead(table, columns, rowHeightVal);
-            updateGridTbody(table, columns, rowCount, rowHeightVal, isZebra, fillMock);
+            updateGridThead(table, columns, rowHeightVal, isStdV2);
+            updateGridTbody(table, columns, rowCount, rowHeightVal, isZebra, fillMock, isStdV2);
             
             var footer = container.querySelector(".v4-grid-footer");
             if (footer) {
                 footer.style.display = showPagination ? "flex" : "none";
+                if (isStdV2) {
+                    footer.style.background = "#f0f0f0";
+                    footer.style.borderTop = "1.6px solid #c8c8c8";
+                }
             }
             var wrapper = container.querySelector(".v4-grid-table-wrapper");
             if (wrapper) {
@@ -1268,7 +1306,7 @@ window.v4GridScript = `
         }
 
         // Fresh Container Builder
-        container.innerHTML = buildFreshGridHtml(columns, rowCount, showPagination, rowHeightVal, isZebra, totalColWidth);
+        container.innerHTML = buildFreshGridHtml(columns, rowCount, showPagination, rowHeightVal, isZebra, totalColWidth, isStdV2);
 
         var renderedTable = container.querySelector("table");
         if (renderedTable) {

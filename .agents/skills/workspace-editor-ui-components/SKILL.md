@@ -61,6 +61,19 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - Use `stroke-width="1.2"` for SVG atoms (library icons and canvas-inserted SVG atoms) unless existing context requires otherwise.
 - Add `background-image: none !important;` when `.lf-icon` is applied to new SVG/custom atoms to avoid sprite interference.
 
+## V4.2 신규 오브젝트 생성 기본값 통일 표준 (Unified Object Creation Defaults - `data-v4-std="2"`)
+- **기존 스크린 100% 무오염 원칙**: 기존에 저장된 스크린 HTML 객체들은 기존 스타일을 그대로 보존하며, `vctrl_iframe_inserter.js`를 통해 새로 생성되는 컴포넌트에만 `data-v4-std="2"` 속성을 부여하여 CSS 토큰(`vctrl_typography.js`, `vctrl_iframe_styles.js`) 및 동적 서브 렌더러(`isStdV2`)에서 격리 적용한다.
+- **4대 공통 생성 기본값**:
+  1. **배경색 (Background)**: `#FFFFFF`
+  2. **테두리색 (Border / Stroke)**: `#C8C8C8` (`1.6px solid`)
+  3. **텍스트색 (Text Color)**: `#050505`
+  4. **폰트 크기 (Font Size)**: `13px`
+- **특수 컴포넌트 맞춤 표준**:
+  - **계층형 서브 헤더·라벨셀·비활성 탭 배경**: `Table` 헤더(`th`), `Grid UI` 헤더(`th`)/푸터, `Query Item` 라벨셀/그룹헤더, `Popup`/`Alert` 상단 헤더바, `Web Editor` 상단 툴바, 비활성 `Tab`, `Stepper` 경계 비활성 버튼 배경은 무채색 **`#F0F0F0`** 적용.
+  - **선·커넥터**: 일반 직선(`Line`)은 `#C8C8C8`, 포트 연결 플로우차트 선(`Connector`)은 화살촉 시인성을 위해 **`#646464`** 적용.
+  - **순수 텍스트(`Text` 툴) / 이미지·일러스트 / 아이콘·로고**: 외부 배경·테두리는 `transparent` 유지 (텍스트 `#050505` / `13px`, 단색 아이콘·로고 `color: #050505`).
+  - **상태형 폼 아톰**: 체크박스·라디오 선택(ON) 아이콘 박스 `#323232` 배경/테두리 + `#FFFFFF` 마크, 미선택(OFF) `#FFFFFF` 배경 + `#C8C8C8` 테두리; 토글 OFF 트랙 `#E6E6E6` 배경 + `#C8C8C8` 테두리; Placeholder·글자수 카운터 `#969696`.
+
 ## 신규 도형·아톰·아이콘 공통 UI 준수 및 디자인 시스템 표준화 규격 (Common UI Conformance SSOT)
 - **독단적/비표준 UI 개발 전면 금지**: 신규 도형, 아톰, 아이콘 추가 시 워크스페이스 공통 UI 규격을 벗어난 임의의 컨트롤(독자 체크박스, 단위 텍스트 내장 인풋 래퍼, 비표준 여백/폰트 등)을 혼자만 다르게 작성하는 행위를 엄격히 금지한다.
 - **Y/N 세그먼트 토글 버튼 그룹 표준 (Segmented Toggle Buttons)**:

@@ -54,6 +54,7 @@ window.v4TabScript = `
         container.setAttribute('data-tabs', JSON.stringify(tabs));
 
         // Rebuild DOM items cleanly
+        var isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
         container.innerHTML = '';
         for (var i = 0; i < tabs.length; i++) {
             var tab = tabs[i];
@@ -63,8 +64,8 @@ window.v4TabScript = `
             itemDiv.className = 'v4-tab-item' + (isCurrentActive ? ' active' : '');
             itemDiv.setAttribute('data-index', i);
             
-            var borderRight = (i === tabs.length - 1) ? 'none' : '1.6px solid rgb(226, 232, 240)';
-            var bg = isCurrentActive ? '#ffffff' : '#f8fafc';
+            var borderRight = (i === tabs.length - 1) ? 'none' : (isStdV2 ? '1.6px solid #c8c8c8' : '1.6px solid rgb(226, 232, 240)');
+            var bg = isCurrentActive ? '#ffffff' : (isStdV2 ? '#f0f0f0' : '#f8fafc');
             itemDiv.style.cssText = 'flex: 1 1 0; min-width: 0; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; box-sizing: border-box; border-right: ' + borderRight + '; background: ' + bg + '; padding: 0 8px; user-select: none; transition: background-color 0.15s ease;';
 
             var indicator = document.createElement('div');
@@ -76,7 +77,10 @@ window.v4TabScript = `
             textSpan.className = 'v4-tab-text v4-editable-cell';
             textSpan.setAttribute('contenteditable', 'true');
             textSpan.innerText = tab.name || ('Tab ' + (i + 1));
-            textSpan.style.cssText = 'font-size: 12px; font-family: inherit; color: ' + (isCurrentActive ? '#0f172a' : '#64748b') + '; font-weight: ' + (isCurrentActive ? '600' : '400') + '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; outline: none; pointer-events: auto;';
+            var tabFs = isStdV2 ? '13px' : '12px';
+            var tabActiveCol = isStdV2 ? '#050505' : '#0f172a';
+            var tabInactiveCol = isStdV2 ? '#646464' : '#64748b';
+            textSpan.style.cssText = 'font-size: ' + tabFs + '; font-family: inherit; color: ' + (isCurrentActive ? tabActiveCol : tabInactiveCol) + '; font-weight: ' + (isCurrentActive ? '600' : '400') + '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; outline: none; pointer-events: auto;';
 
             // Inline text editing handler
             (function(idx, spanEl) {

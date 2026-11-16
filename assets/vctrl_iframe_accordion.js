@@ -48,10 +48,11 @@ window.v4AccordionScript = `
     }
 
     function applyAccordionBorder(container, borderType, borderColor) {
+        const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
         const bType = borderType || container.getAttribute('data-border-type') || 'all';
         container.setAttribute('data-border-type', bType);
 
-        const color = borderColor !== undefined ? borderColor : (container.getAttribute('data-border-color') || container.style.borderColor || '#ffffff');
+        const color = borderColor !== undefined ? borderColor : (container.getAttribute('data-border-color') || container.style.borderColor || (isStdV2 ? '#c8c8c8' : '#ffffff'));
         if (borderColor !== undefined) {
             container.setAttribute('data-border-color', borderColor);
         }
@@ -106,16 +107,18 @@ window.v4AccordionScript = `
             body.style.background = customBodyBg;
         }
 
-        const defaultTextColor = isContainerDark ? '#ffffff' : '#0f172a';
+        const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
+        const defaultTextColor = isContainerDark ? '#ffffff' : (isStdV2 ? '#050505' : '#0f172a');
         const finalColor = customTextColor || inheritedColor || defaultTextColor;
         const t1Color = customTextColor || inheritedColor || defaultTextColor;
-        const t2Color = customTextColor || inheritedColor || (isContainerDark ? '#e2e8f0' : '#334155');
-        const dividerColor = isContainerDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)';
+        const t2Color = customTextColor || inheritedColor || (isContainerDark ? '#e2e8f0' : (isStdV2 ? '#050505' : '#334155'));
+        const dividerColor = isContainerDark ? 'rgba(255, 255, 255, 0.08)' : (isStdV2 ? '#c8c8c8' : 'rgba(0, 0, 0, 0.08)');
         const radioAccent = isContainerDark ? '#00e5ff' : '#2563eb';
-        const arrowColor = customTextColor || (isContainerDark ? '#94a3b8' : '#64748b');
+        const arrowColor = customTextColor || (isContainerDark ? '#94a3b8' : (isStdV2 ? '#646464' : '#64748b'));
 
-        const headerFontSize = parseInt(container.getAttribute('data-header-font-size')) || 12;
-        const subFontSize = parseInt(container.getAttribute('data-sub-font-size')) || 12;
+        const fallbackFs = isStdV2 ? 13 : 12;
+        const headerFontSize = parseInt(container.getAttribute('data-header-font-size')) || fallbackFs;
+        const subFontSize = parseInt(container.getAttribute('data-sub-font-size')) || fallbackFs;
 
         if (headerTitle) {
             headerTitle.style.fontSize = headerFontSize + 'px';

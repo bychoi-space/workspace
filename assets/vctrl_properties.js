@@ -86,9 +86,14 @@
                 window.activeIllustrationRatio = activeIllustrationRatio;
             }
 
-            // Show/hide Preserve Aspect Ratio row depending on whether this is an image
+            // Show/hide Preserve Aspect Ratio & Image Crop rows depending on whether this is an image / Image SHAPE
             const ratioRow = document.getElementById('shape-aspect-ratio-row');
             const chk = document.getElementById('chk-preserve-aspect-ratio');
+            const selIdsCount = (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function')
+                ? window.GroupingManager.getSelectedIds().length
+                : ((window.state && Array.isArray(window.state.selectedIds)) ? window.state.selectedIds.length : 1);
+            const isSingleImageShape = !!(data.isImageShape && selIdsCount <= 1);
+
             if (data.isImage) {
                 // Store natural or current ratio as the lock ratio
                 activeImageRatio = (data.imageRatio && data.imageRatio > 0) 
@@ -100,6 +105,24 @@
                 activeImageRatio = null;
                 if (ratioRow) ratioRow.classList.remove('is-visible');
                 if (chk) chk.checked = false;
+            }
+
+            syncImageCropUI({
+                showRow: isSingleImageShape,
+                active: false,
+                isCropped: !!data.isCropped
+            });
+        });
+
+        MessageHub.subscribe('LF_IMAGE_CROP_STATE', (data) => {
+            const isActive = !!(data && data.active);
+            const isCropped = !!(data && data.isCropped);
+            syncImageCropUI({
+                active: isActive,
+                isCropped: isCropped
+            });
+            if (data && data.w !== undefined && data.h !== undefined) {
+                updateAllInputs(data.w, data.h);
             }
         });
 
@@ -159,11 +182,12 @@
             const lineLenInp = document.getElementById('prop-line-length');
             if (lineLenInp) lineLenInp.value = 200;
 
-            // Hide ratio row on deselect
+            // Hide ratio & crop rows on deselect
             const ratioRow = document.getElementById('shape-aspect-ratio-row');
             const chk = document.getElementById('chk-preserve-aspect-ratio');
             if (ratioRow) ratioRow.classList.remove('is-visible');
             if (chk) chk.checked = false;
+            syncImageCropUI({ showRow: false, active: false, isCropped: false });
 
             if (typeof window._syncShapePaddingInputs === 'function') {
                 window._syncShapePaddingInputs({ padTop: 5, padBottom: 5, padLeft: 10, padRight: 10 });
@@ -213,9 +237,36 @@
                     if (ratioRow) ratioRow.classList.remove('is-visible');
                     if (chk) chk.checked = false;
                 }
+                syncImageCropUI({
+                    showRow: !!(data.firstCompStyles.isImageShape && newIds.length === 1),
+                    active: false,
+                    isCropped: !!data.firstCompStyles.isCropped
+                });
             }
         });
     }
+
+    function syncImageCropUI(opts) {
+        opts = opts || {};
+        const cropRow = document.getElementById('shape-image-crop-row');
+        const toggleBtn = document.getElementById('btn-image-crop-toggle');
+        const toggleTxt = document.getElementById('txt-image-crop-toggle');
+        const resetBtn = document.getElementById('btn-image-crop-reset');
+
+        if (opts.showRow !== undefined && cropRow) {
+            cropRow.classList.toggle('is-visible', !!opts.showRow);
+        }
+        if (opts.active !== undefined) {
+            if (window.state) window.state.isImageCropping = !!opts.active;
+            if (toggleBtn) toggleBtn.classList.toggle('is-cropping', !!opts.active);
+            if (toggleTxt) toggleTxt.textContent = opts.active ? '자르기 적용' : '자르기';
+        }
+        if (resetBtn && (opts.isCropped !== undefined || opts.active !== undefined)) {
+            const canReset = !!(opts.isCropped);
+            resetBtn.disabled = !canReset;
+        }
+    }
+    window._syncImageCropUI = syncImageCropUI;
 
     function getActiveTargetId() {
         if (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function') {
@@ -369,6 +420,16 @@
         if (isCurrentActive) {
             activeCompId = targetIds[0];
             window.activeCompId = targetIds[0];
+        }
+
+        // When PPT Image Crop Mode is active, numeric W/H edits adjust the crop frame independently
+        if (window.state && window.state.isImageCropping && (type === 'width' || type === 'height')) {
+            MessageHub.send(iframeEl.contentWindow, 'LF_IMAGE_CROP_SET_SIZE', {
+                id: targetIds[0],
+                width: type === 'width' ? val : undefined,
+                height: type === 'height' ? val : undefined
+            });
+            return;
         }
 
         const chk = document.getElementById('chk-preserve-aspect-ratio');
@@ -570,6 +631,32 @@
                 if (wrapper) wrapper.classList.add('transparent-active');
             }
             applyStyle(prop, 'transparent');
+            return;
+        }
+
+        const cropToggleBtn = e.target.closest('#btn-image-crop-toggle');
+        if (cropToggleBtn) {
+            const targetIds = getActiveTargetIds();
+            const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+            if (targetIds.length === 0 || !iframeWin) return;
+            const isCroppingNow = !!(window.state && window.state.isImageCropping);
+            if (isCroppingNow) {
+                MessageHub.send(iframeWin, 'LF_IMAGE_CROP_APPLY', { id: targetIds[0] });
+            } else {
+                MessageHub.send(iframeWin, 'LF_IMAGE_CROP_START', { id: targetIds[0] });
+            }
+            try { iframeWin.focus(); } catch (focusErr) {}
+            return;
+        }
+
+        const cropResetBtn = e.target.closest('#btn-image-crop-reset');
+        if (cropResetBtn) {
+            if (cropResetBtn.disabled) return;
+            const targetIds = getActiveTargetIds();
+            const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+            if (targetIds.length === 0 || !iframeWin) return;
+            MessageHub.send(iframeWin, 'LF_IMAGE_CROP_RESET', { id: targetIds[0] });
+            try { iframeWin.focus(); } catch (focusErr) {}
             return;
         }
 

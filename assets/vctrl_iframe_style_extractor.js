@@ -420,8 +420,9 @@ if (!window.v4IframeStyleExtractorScript) {
         const adminRowCount = adminSettingsContainer ? parseInt(adminSettingsContainer.getAttribute('data-row-count')) || 3 : 3;
         const adminShowGroupHeader = adminSettingsContainer ? adminSettingsContainer.getAttribute('data-show-group-header') === 'true' : false;
         const adminGroupHeaderTitle = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-title') || '\uADF8\uB8F9\uBA85') : '\uADF8\uB8F9\uBA85';
-        const adminGroupHeaderBg = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-bg') || '#73829c') : '#73829c';
-        const adminGroupHeaderColor = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-color') || '#ffffff') : '#ffffff';
+        const isAdminStdV2 = !!(adminSettingsContainer && (adminSettingsContainer.getAttribute('data-v4-std') === '2' || (adminSettingsContainer.closest && adminSettingsContainer.closest('[data-v4-std="2"]'))));
+        const adminGroupHeaderBg = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-bg') || (isAdminStdV2 ? '#f0f0f0' : '#73829c')) : '#73829c';
+        const adminGroupHeaderColor = adminSettingsContainer ? (adminSettingsContainer.getAttribute('data-group-header-color') || (isAdminStdV2 ? '#050505' : '#ffffff')) : '#ffffff';
         const firstLabel = adminSettingsContainer ? adminSettingsContainer.querySelector('.v4-admin-label-cell') : null;
         const adminLabelWidth = firstLabel ? (parseInt(firstLabel.style.width) || parseInt(window.getComputedStyle(firstLabel).width) || 140) : 140;
         const adminRowData = {};
@@ -505,6 +506,17 @@ if (!window.v4IframeStyleExtractorScript) {
             isMedia: isMedia,
             isIcon: !!icon,
             isImage: isImage,
+            isImageShape: !!((shape && shape.classList.contains('v4-shape-image')) || c.classList.contains('v4-shape-image')),
+            isCropped: (function() {
+                const imgShape = (shape && shape.classList.contains('v4-shape-image')) ? shape : (c.classList.contains('v4-shape-image') ? c : null);
+                if (!imgShape) return false;
+                return (
+                    (parseFloat(imgShape.getAttribute('data-crop-l')) || 0) > 0.0005 ||
+                    (parseFloat(imgShape.getAttribute('data-crop-t')) || 0) > 0.0005 ||
+                    (parseFloat(imgShape.getAttribute('data-crop-r')) || 0) > 0.0005 ||
+                    (parseFloat(imgShape.getAttribute('data-crop-b')) || 0) > 0.0005
+                );
+            })(),
             imageRatio: (function() {
                 if (!isImage) return null;
                 const r = c.getAttribute('data-aspect-ratio') || (shape && shape.getAttribute('data-aspect-ratio'));
@@ -668,7 +680,8 @@ if (!window.v4IframeStyleExtractorScript) {
                     const fs = parseInt(_getVal(inputContainer, "fontSize"));
                     if (!isNaN(fs) && fs > 0) return fs;
                 }
-                return 14;
+                const isCompStdV2 = !!(c.getAttribute('data-v4-std') === '2' || (c.closest && c.closest('[data-v4-std="2"]')));
+                return isCompStdV2 ? 13 : 14;
             })(),
             fontFamily: (function() {
                 const cell = textCell || (shape ? shape.querySelector('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay') : null);
@@ -691,7 +704,7 @@ if (!window.v4IframeStyleExtractorScript) {
             })(),
             tableHeader: window.rgbToHex(table ? _getVal(table.querySelector("th"), "backgroundColor") : ""),
             tableHeaderText: window.rgbToHex(table ? _getVal(table.querySelector("th"), "color") : ""),
-            iconColor: window.rgbToHex(detectedIconColor || "#000000"),
+            iconColor: window.rgbToHex(detectedIconColor || ((c.getAttribute('data-v4-std') === '2' || (c.closest && c.closest('[data-v4-std="2"]'))) ? "#050505" : "#000000")),
             borderRadius: shapeCornerInfo.radius,
             borderCornerDir: shapeCornerInfo.dir,
             borderRadiusCss: shapeCornerInfo.css,

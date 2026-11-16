@@ -171,15 +171,22 @@ window.v4DesignSystemScript = `
 
             document.querySelectorAll('.lf-component .v4-shape.v4-shape-image').forEach(function(shape) {
                 var comp = shape.closest('.lf-component');
-                if (!comp || comp.classList.contains('dragging-now')) return;
+                if (!comp || comp.classList.contains('dragging-now') || comp.classList.contains('v4-cropping-active')) return;
                 var compW = parseInt(comp.style.width) || comp.offsetWidth || 0;
                 var compH = parseInt(comp.style.height) || comp.offsetHeight || 0;
                 if (compW < 24 || compH < 24) return;
 
+                var cropL = parseFloat(shape.getAttribute('data-crop-l')) || 0;
+                var cropT = parseFloat(shape.getAttribute('data-crop-t')) || 0;
+                var cropR = parseFloat(shape.getAttribute('data-crop-r')) || 0;
+                var cropB = parseFloat(shape.getAttribute('data-crop-b')) || 0;
+                var visFracW = Math.max(0.02, 1 - cropL - cropR);
+                var visFracH = Math.max(0.02, 1 - cropT - cropB);
+
                 var natW = parseInt(shape.getAttribute('data-natural-width')) || parseInt(comp.getAttribute('data-natural-width')) || 0;
                 var natH = parseInt(shape.getAttribute('data-natural-height')) || parseInt(comp.getAttribute('data-natural-height')) || 0;
-                var targetW = Math.round(compW * 1.15);
-                var targetH = Math.round(compH * 1.15);
+                var targetW = Math.round((compW / visFracW) * 1.15);
+                var targetH = Math.round((compH / visFracH) * 1.15);
                 if (natW > 0 && targetW > natW) targetW = natW;
                 if (natH > 0 && targetH > natH) targetH = natH;
 
@@ -205,11 +212,18 @@ window.v4DesignSystemScript = `
                 if (shape._v4CrispTimer) clearTimeout(shape._v4CrispTimer);
                 shape._v4CrispTimer = setTimeout(function() {
                     shape._v4CrispTimer = null;
+                    if (comp.classList.contains('v4-cropping-active')) return;
                     var latestW = parseInt(comp.style.width) || comp.offsetWidth || 0;
                     var latestH = parseInt(comp.style.height) || comp.offsetHeight || 0;
                     if (latestW < 24 || latestH < 24) return;
-                    var finW = Math.round(latestW * 1.15);
-                    var finH = Math.round(latestH * 1.15);
+                    var cL = parseFloat(shape.getAttribute('data-crop-l')) || 0;
+                    var cT = parseFloat(shape.getAttribute('data-crop-t')) || 0;
+                    var cR = parseFloat(shape.getAttribute('data-crop-r')) || 0;
+                    var cB = parseFloat(shape.getAttribute('data-crop-b')) || 0;
+                    var vW = Math.max(0.02, 1 - cL - cR);
+                    var vH = Math.max(0.02, 1 - cT - cB);
+                    var finW = Math.round((latestW / vW) * 1.15);
+                    var finH = Math.round((latestH / vH) * 1.15);
                     if (natW > 0 && finW > natW) finW = natW;
                     if (natH > 0 && finH > natH) finH = natH;
                     var finKey = finW + 'x' + finH;
@@ -239,7 +253,12 @@ window.v4DesignSystemScript = `
                             shape.setAttribute('data-crisp-size', finKey);
                             shape.style.backgroundImage = 'url("' + crispUrl + '")';
                         } else {
+                            shape._v4LastAppliedUrl = srcUrl;
                             shape.setAttribute('data-crisp-size', finKey);
+                            var liveUrl = extractDataUrlFromBg(shape.style.backgroundImage || '');
+                            if (srcUrl && liveUrl !== srcUrl) {
+                                shape.style.backgroundImage = 'url("' + srcUrl + '")';
+                            }
                         }
                     };
                     img.src = srcUrl;
@@ -255,20 +274,23 @@ window.v4DesignSystemScript = `
             document.querySelectorAll('.v4-admin-group-header').forEach(function(header) {
                 const container = header.closest('.v4-admin-settings-container');
                 if (container) {
-                    const bgCol = container.getAttribute('data-group-header-bg') || '#73829c';
-                    const textCol = container.getAttribute('data-group-header-color') || '#ffffff';
+                    const isStdV2 = !!(container.getAttribute('data-v4-std') === '2' || (container.closest && container.closest('[data-v4-std="2"]')));
+                    const bgCol = container.getAttribute('data-group-header-bg') || (isStdV2 ? '#f0f0f0' : '#73829c');
+                    const textCol = container.getAttribute('data-group-header-color') || (isStdV2 ? '#050505' : '#ffffff');
+                    const targetFs = isStdV2 ? '13px' : '12px';
+                    const targetBorder = isStdV2 ? '1.6px solid rgb(200, 200, 200)' : '1.6px solid rgb(226, 232, 240)';
 
                     if (header.style.height !== '40px') header.style.height = '40px';
                     if (header.style.display !== 'flex') header.style.display = 'flex';
                     if (header.style.alignItems !== 'center') header.style.alignItems = 'center';
                     if (header.style.padding !== '0px 16px') header.style.padding = '0 16px';
-                    if (header.style.fontSize !== '12px') header.style.fontSize = '12px';
+                    if (header.style.fontSize !== targetFs) header.style.fontSize = targetFs;
                     if (header.style.fontWeight !== '400') header.style.fontWeight = '400';
                     if (header.style.fontFamily !== 'inherit') header.style.fontFamily = 'inherit';
                     if (header.style.boxSizing !== 'border-box') header.style.boxSizing = 'border-box';
                     if (header.style.width !== '100%') header.style.width = '100%';
                     if (header.style.outline !== 'none') header.style.outline = 'none';
-                    if (header.style.borderBottom !== '1.6px solid rgb(226, 232, 240)') header.style.borderBottom = '1.6px solid rgb(226, 232, 240)';
+                    if (header.style.borderBottom !== targetBorder) header.style.borderBottom = targetBorder;
                     if (header.style.flexShrink !== '0') header.style.flexShrink = '0';
                     if (header.style.borderTopLeftRadius !== '6.4px') header.style.borderTopLeftRadius = '6.4px';
                     if (header.style.borderTopRightRadius !== '6.4px') header.style.borderTopRightRadius = '6.4px';

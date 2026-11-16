@@ -761,15 +761,6 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
-    },
-    "99_Blank_119.html": {
-      "title": "99_Blank_119",
-      "type": "blank",
-      "updatedAt": "2026-11-16T07:46:52.292Z",
-      "template": "template_blank.html",
-      "description": [],
-      "connectors": [],
-      "version": 0.1
     }
   },
   "assignee": "최범열",
@@ -794,8 +785,7 @@
     "renewal_order_4.html",
     "renewal_order_6.html",
     "renewal_order_3.html",
-    "renewal_payEnd.html",
-    "99_Blank_119.html"
+    "renewal_payEnd.html"
   ],
   "updated": "2026-11-16 17:17:09",
   "version": 0.1,

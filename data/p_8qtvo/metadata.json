@@ -169,7 +169,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-09T10:25:51.487Z",
+      "updatedAt": "2026-11-16T06:25:20.828Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -577,7 +577,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (Te-Be) 결제약관보기",
       "type": "ui",
-      "updatedAt": "2026-11-16T06:24:13.652Z",
+      "updatedAt": "2026-11-16T03:10:38.953Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -799,7 +799,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 15:24:13",
+  "updated": "2026-11-16 15:25:20",
   "version": 0.1,
   "category": "project"
 }

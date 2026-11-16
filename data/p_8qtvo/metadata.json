@@ -116,7 +116,7 @@
     "renewal_payEnd.html": {
       "title": "주문완료",
       "type": "ui",
-      "updatedAt": "2026-11-10T09:03:53.474Z",
+      "updatedAt": "2026-11-16T00:25:21.419Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -251,7 +251,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (Te-Be) 배송지변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T00:20:05.693Z",
+      "updatedAt": "2026-11-13T09:15:34.933Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -282,7 +282,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 09:20:05",
+  "updated": "2026-11-16 09:25:21",
   "version": 0.1,
   "category": "project"
 }

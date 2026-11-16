@@ -453,7 +453,7 @@
     "renewal_order_6.html": {
       "title": "주문서 (Te-Be) 배송지변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T03:07:32.580Z",
+      "updatedAt": "2026-11-16T03:09:54.063Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -487,7 +487,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 12:08:51",
+  "updated": "2026-11-16 12:09:53",
   "version": 0.1,
   "category": "project"
 }

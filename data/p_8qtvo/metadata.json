@@ -116,7 +116,7 @@
     "renewal_payEnd.html": {
       "title": "주문완료",
       "type": "ui",
-      "updatedAt": "2026-11-16T00:25:30.841Z",
+      "updatedAt": "2026-11-16T00:26:21.756Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -282,7 +282,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 09:25:30",
+  "updated": "2026-11-16 09:26:21",
   "version": 0.1,
   "category": "project"
 }

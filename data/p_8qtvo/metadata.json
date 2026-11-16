@@ -295,7 +295,7 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-13T05:41:01.120Z",
+      "updatedAt": "2026-11-16T06:26:21.858Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -666,7 +666,7 @@
     "renewal_cart_6.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",
       "type": "ui",
-      "updatedAt": "2026-11-16T06:26:07.162Z",
+      "updatedAt": "2026-11-16T04:29:38.709Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -799,7 +799,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 15:26:07",
+  "updated": "2026-11-16 15:26:21",
   "version": 0.1,
   "category": "project"
 }

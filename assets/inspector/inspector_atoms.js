@@ -1,14 +1,14 @@
 /**
- * assets/inspector_atoms.js
- * Domain Inspector Module: Atomic Components (Stepper, Selectbox, FileUpload, Alert, Button, Toggle)
- * Encapsulates state synchronization (Read) and event handling (Write).
+ * assets/inspector/inspector_atoms.js
+ * Domain Inspector Module: Shared Atom Helpers & Control Widgets (Stepper, Selectbox, FileUpload, Alert, Button, Toggle)
+ * Form input atoms are modularized in inspector_atoms_inputs.js; Cursor & WebEditor in inspector_atoms_advanced.js.
  */
 (function() {
-    console.log("[Inspector Atoms] Domain module loaded.");
+    console.log("[Inspector Atoms] Core & Widgets module loaded.");
 
     const highlightActive = window.highlightActive;
 
-    const getActiveTargetIds = () => {
+    const getActiveTargetIds = function() {
         if (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function') {
             const selIds = window.GroupingManager.getSelectedIds();
             if (Array.isArray(selIds) && selIds.length > 0) return selIds;
@@ -21,7 +21,7 @@
         return window.activeCompId ? [window.activeCompId] : [];
     };
 
-    const notifyIframe = (data) => {
+    const notifyIframe = function(data) {
         if (data && typeof data === 'object') {
             const targetIds = getActiveTargetIds();
             if (targetIds.length > 0) {
@@ -32,24 +32,34 @@
         window.notifyIframe(data);
     };
 
+    const syncAtomColor = function(id, wrapperId, color, isTransparent) {
+        const picker = document.getElementById(id);
+        const wrapper = document.getElementById(wrapperId);
+        if (picker && color) picker.value = color;
+        if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
+    };
+
     // --- Disabled State Common Sync ---
-    const syncDisabled = (comp) => {
+    const syncDisabled = function(comp) {
         if (!comp) return;
         const isDis = (comp.disabled === true || comp.disabled === 'true');
-        document.querySelectorAll('.btn-atom-disabled').forEach(btn => {
+        document.querySelectorAll('.btn-atom-disabled').forEach(function(btn) {
             const btnIsDis = btn.dataset.disabled === 'true';
             highlightActive(btn, isDis === btnIsDis);
         });
     };
 
     // --- Disabled State Common Events ---
-    const bindDisabledEvents = () => {
-        document.addEventListener('click', (e) => {
+    let _disabledDelegationBound = false;
+    const bindDisabledEvents = function() {
+        if (_disabledDelegationBound) return;
+        _disabledDelegationBound = true;
+        document.addEventListener('click', function(e) {
             const btn = e.target && e.target.closest ? e.target.closest('.btn-atom-disabled') : null;
             if (!btn) return;
             const isDis = btn.dataset.disabled === 'true';
             const group = btn.closest('.prop-group, .v4-flex-gap-4') || document;
-            group.querySelectorAll('.btn-atom-disabled').forEach(b => {
+            group.querySelectorAll('.btn-atom-disabled').forEach(function(b) {
                 highlightActive(b, b.dataset.disabled === String(isDis));
             });
             notifyIframe({ type: 'LF_UPDATE_ATOM_DISABLED', disabled: isDis });
@@ -57,14 +67,22 @@
     };
     bindDisabledEvents();
 
+    window.InspectorAtomsShared = {
+        getActiveTargetIds: getActiveTargetIds,
+        notifyIframe: notifyIframe,
+        syncAtomColor: syncAtomColor,
+        syncDisabled: syncDisabled,
+        bindDisabledEvents: bindDisabledEvents
+    };
+
     // --- Stepper Component ---
-    const syncStepper = (comp) => {
+    const syncStepper = function(comp) {
         if (!comp) return;
         const activeY = document.getElementById('btn-stepper-btn-y');
         const activeN = document.getElementById('btn-stepper-btn-n');
         const disabledY = document.getElementById('btn-stepper-disabled-y');
         const disabledN = document.getElementById('btn-stepper-disabled-n');
-        
+
         if (activeY && activeN) {
             highlightActive(activeY, comp.btnEnabled === true);
             highlightActive(activeN, comp.btnEnabled === false);
@@ -73,25 +91,25 @@
             highlightActive(disabledY, comp.disabled === true || comp.disabled === 'true');
             highlightActive(disabledN, comp.disabled === false || comp.disabled === 'false');
         }
-        
+
         const minInput = document.getElementById('prop-stepper-min');
         if (minInput && comp.minVal !== undefined) minInput.value = comp.minVal;
-        
+
         const maxInput = document.getElementById('prop-stepper-max');
         if (maxInput && comp.maxVal !== undefined) maxInput.value = comp.maxVal;
-        
+
         const stepInput = document.getElementById('prop-stepper-step');
         if (stepInput && document.activeElement !== stepInput && comp.stepVal !== undefined) {
             stepInput.value = comp.stepVal;
         }
-        
+
         const btnTextInput = document.getElementById('prop-stepper-btn-text');
         if (btnTextInput && comp.btnText !== undefined) btnTextInput.value = comp.btnText;
 
         syncDisabled(comp);
     };
 
-    const bindStepperEvents = () => {
+    const bindStepperEvents = function() {
         const btnY = document.getElementById('btn-stepper-btn-y');
         const btnN = document.getElementById('btn-stepper-btn-n');
         const minInp = document.getElementById('prop-stepper-min');
@@ -101,50 +119,50 @@
         const disN = document.getElementById('btn-stepper-disabled-n');
 
         if (btnY) {
-            btnY.onclick = () => {
+            btnY.onclick = function() {
                 highlightActive(btnY, true);
                 highlightActive(btnN, false);
                 notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', btnEnabled: true });
             };
         }
         if (btnN) {
-            btnN.onclick = () => {
+            btnN.onclick = function() {
                 highlightActive(btnY, false);
                 highlightActive(btnN, true);
                 notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', btnEnabled: false });
             };
         }
         if (minInp) {
-            minInp.oninput = () => {
+            minInp.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', minVal: minInp.value });
             };
         }
         if (maxInp) {
-            maxInp.oninput = () => {
+            maxInp.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', maxVal: maxInp.value });
             };
         }
         const stepInp = document.getElementById('prop-stepper-step');
         if (stepInp) {
-            stepInp.oninput = () => {
+            stepInp.oninput = function() {
                 const step = Math.max(1, parseInt(stepInp.value) || 1);
                 notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', stepVal: step });
             };
         }
         if (txtInp) {
-            txtInp.oninput = () => {
+            txtInp.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', btnText: txtInp.value });
             };
         }
         if (disY) {
-            disY.onclick = () => {
+            disY.onclick = function() {
                 highlightActive(disY, true);
                 highlightActive(disN, false);
                 notifyIframe({ type: 'LF_UPDATE_ATOM_DISABLED', disabled: true });
             };
         }
         if (disN) {
-            disN.onclick = () => {
+            disN.onclick = function() {
                 highlightActive(disY, false);
                 highlightActive(disN, true);
                 notifyIframe({ type: 'LF_UPDATE_ATOM_DISABLED', disabled: false });
@@ -153,7 +171,18 @@
     };
 
     // --- Selectbox Component ---
-    const syncSelectbox = (comp) => {
+    const _renderSelectboxOptionRows = function(options, selectedIndices) {
+        return options.map(function(optText, idx) {
+            const isChecked = selectedIndices.indexOf(idx) !== -1;
+            return '<div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">' +
+                '<span style="font-size: 10px; color: #94a3b8; width: 40px; flex-shrink: 0;">Item ' + (idx + 1) + '</span>' +
+                '<input type="text" class="selectbox-option-input" data-index="' + idx + '" value="' + (optText || '') + '" style="flex: 1; min-width: 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
+                '<input type="checkbox" class="selectbox-option-check" data-index="' + idx + '" ' + (isChecked ? 'checked' : '') + ' title="\uC120\uD0DD\uB41C \uD56D\uBAA9\uC73C\uB85C \uD65C\uC131\uD654" style="accent-color: var(--accent, #6e56cf); cursor: pointer; width: 15px; height: 15px; margin: 0; flex-shrink: 0;">' +
+            '</div>';
+        }).join('');
+    };
+
+    const syncSelectbox = function(comp) {
         if (!comp) return;
         const activeY = document.getElementById('btn-selectbox-dropdown-y');
         const activeN = document.getElementById('btn-selectbox-dropdown-n');
@@ -184,16 +213,9 @@
             const activeEl = document.activeElement;
             const isTyping = activeEl && inputsContainer.contains(activeEl) && activeEl.classList.contains('selectbox-option-input');
             if (!isTyping) {
-                inputsContainer.innerHTML = options.map((optText, idx) => {
-                    const isChecked = selectedIndices.indexOf(idx) !== -1;
-                    return '<div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">' +
-                        '<span style="font-size: 10px; color: #94a3b8; width: 40px; flex-shrink: 0;">Item ' + (idx + 1) + '</span>' +
-                        '<input type="text" class="selectbox-option-input" data-index="' + idx + '" value="' + (optText || '') + '" style="flex: 1; min-width: 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
-                        '<input type="checkbox" class="selectbox-option-check" data-index="' + idx + '" ' + (isChecked ? 'checked' : '') + ' title="선택된 항목으로 활성화" style="accent-color: var(--accent, #6e56cf); cursor: pointer; width: 15px; height: 15px; margin: 0; flex-shrink: 0;">' +
-                    '</div>';
-                }).join('');
+                inputsContainer.innerHTML = _renderSelectboxOptionRows(options, selectedIndices);
             } else {
-                inputsContainer.querySelectorAll('.selectbox-option-check').forEach(cb => {
+                inputsContainer.querySelectorAll('.selectbox-option-check').forEach(function(cb) {
                     const idx = parseInt(cb.dataset.index);
                     const shouldBeChecked = selectedIndices.indexOf(idx) !== -1;
                     if (cb.checked !== shouldBeChecked) cb.checked = shouldBeChecked;
@@ -203,7 +225,7 @@
         syncDisabled(comp);
     };
 
-    const bindSelectboxEvents = () => {
+    const bindSelectboxEvents = function() {
         const dropY = document.getElementById('btn-selectbox-dropdown-y');
         const dropN = document.getElementById('btn-selectbox-dropdown-n');
         const defText = document.getElementById('prop-selectbox-default-text');
@@ -211,7 +233,7 @@
         const inputsContainer = document.getElementById('selectbox-options-inputs-container');
 
         if (dropY) {
-            dropY.onclick = () => {
+            dropY.onclick = function() {
                 highlightActive(dropY, true);
                 highlightActive(dropN, false);
                 const dc = document.getElementById('selectbox-default-controls');
@@ -222,7 +244,7 @@
             };
         }
         if (dropN) {
-            dropN.onclick = () => {
+            dropN.onclick = function() {
                 highlightActive(dropY, false);
                 highlightActive(dropN, true);
                 const dc = document.getElementById('selectbox-default-controls');
@@ -233,49 +255,42 @@
             };
         }
         if (defText) {
-            defText.oninput = () => {
+            defText.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', defaultText: defText.value });
             };
         }
         if (countInp) {
-            countInp.oninput = () => {
+            countInp.oninput = function() {
                 const count = Math.max(1, Math.min(10, parseInt(countInp.value) || 1));
                 const currentInputs = inputsContainer ? Array.from(inputsContainer.querySelectorAll('.selectbox-option-input')) : [];
                 const currentChecks = inputsContainer ? Array.from(inputsContainer.querySelectorAll('.selectbox-option-check')) : [];
-                const currentValues = currentInputs.map(inp => inp.value);
-                const currentCheckedIndices = currentChecks.filter(cb => cb.checked).map(cb => parseInt(cb.dataset.index));
+                const currentValues = currentInputs.map(function(inp) { return inp.value; });
+                const currentCheckedIndices = currentChecks.filter(function(cb) { return cb.checked; }).map(function(cb) { return parseInt(cb.dataset.index); });
                 while (currentValues.length < count) {
                     currentValues.push('Option ' + (currentValues.length + 1));
                 }
                 if (currentValues.length > count) {
                     currentValues.length = count;
                 }
-                const filteredCheckedIndices = currentCheckedIndices.filter(idx => idx < count);
+                const filteredCheckedIndices = currentCheckedIndices.filter(function(idx) { return idx < count; });
                 if (inputsContainer) {
-                    inputsContainer.innerHTML = currentValues.map((v, i) => {
-                        const isChecked = filteredCheckedIndices.indexOf(i) !== -1;
-                        return '<div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">' +
-                            '<span style="font-size: 10px; color: #94a3b8; width: 40px; flex-shrink: 0;">Item ' + (i + 1) + '</span>' +
-                            '<input type="text" class="selectbox-option-input" data-index="' + i + '" value="' + v + '" style="flex: 1; min-width: 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
-                            '<input type="checkbox" class="selectbox-option-check" data-index="' + i + '" ' + (isChecked ? 'checked' : '') + ' title="선택된 항목으로 활성화" style="accent-color: var(--accent, #6e56cf); cursor: pointer; width: 15px; height: 15px; margin: 0; flex-shrink: 0;">' +
-                        '</div>';
-                    }).join('');
+                    inputsContainer.innerHTML = _renderSelectboxOptionRows(currentValues, filteredCheckedIndices);
                 }
                 notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', options: currentValues, selectedIndices: filteredCheckedIndices });
             };
         }
         if (inputsContainer) {
-            inputsContainer.oninput = (e) => {
+            inputsContainer.oninput = function(e) {
                 if (e.target && e.target.classList.contains('selectbox-option-input')) {
                     const allInps = Array.from(inputsContainer.querySelectorAll('.selectbox-option-input'));
-                    const vals = allInps.map(inp => inp.value);
+                    const vals = allInps.map(function(inp) { return inp.value; });
                     notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', options: vals });
                 }
             };
-            inputsContainer.onchange = (e) => {
+            inputsContainer.onchange = function(e) {
                 if (e.target && e.target.classList.contains('selectbox-option-check')) {
                     const allChecks = Array.from(inputsContainer.querySelectorAll('.selectbox-option-check:checked'));
-                    const checkedIndices = allChecks.map(cb => parseInt(cb.dataset.index));
+                    const checkedIndices = allChecks.map(function(cb) { return parseInt(cb.dataset.index); });
                     notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', selectedIndices: checkedIndices });
                 }
             };
@@ -283,7 +298,7 @@
     };
 
     // --- FileUpload Component ---
-    const syncFileupload = (comp) => {
+    const syncFileupload = function(comp) {
         if (!comp) return;
         const activeY = document.getElementById('btn-fileupload-selected-y');
         const activeN = document.getElementById('btn-fileupload-selected-n');
@@ -316,7 +331,7 @@
         syncDisabled(comp);
     };
 
-    const bindFileuploadEvents = () => {
+    const bindFileuploadEvents = function() {
         const selY = document.getElementById('btn-fileupload-selected-y');
         const selN = document.getElementById('btn-fileupload-selected-n');
         const nameInp = document.getElementById('prop-fileupload-file-name');
@@ -324,7 +339,7 @@
         const btnTextInp = document.getElementById('prop-fileupload-btn-text');
 
         if (selY) {
-            selY.onclick = () => {
+            selY.onclick = function() {
                 highlightActive(selY, true);
                 highlightActive(selN, false);
                 const nc = document.getElementById('fileupload-name-controls');
@@ -335,7 +350,7 @@
             };
         }
         if (selN) {
-            selN.onclick = () => {
+            selN.onclick = function() {
                 highlightActive(selY, false);
                 highlightActive(selN, true);
                 const nc = document.getElementById('fileupload-name-controls');
@@ -346,65 +361,60 @@
             };
         }
         if (nameInp) {
-            nameInp.oninput = () => {
+            nameInp.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_FILEUPLOAD_PROPERTIES', fileName: nameInp.value });
             };
         }
         if (phInp) {
-            phInp.oninput = () => {
+            phInp.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_FILEUPLOAD_PROPERTIES', filePlaceholder: phInp.value });
             };
         }
         if (btnTextInp) {
-            btnTextInp.oninput = () => {
+            btnTextInp.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_FILEUPLOAD_PROPERTIES', fileButtonText: btnTextInp.value });
             };
         }
     };
 
     // --- Alert Component ---
-    const syncAlert = (comp) => {
+    const syncAlert = function(comp) {
         if (!comp) return;
 
-        // Show Description (Y/N)
         const isShowDesc = comp.alertShowDesc !== undefined ? (comp.alertShowDesc === true || comp.alertShowDesc === 'true') : false;
         const btnDescY = document.getElementById('btn-alert-desc-y');
         const btnDescN = document.getElementById('btn-alert-desc-n');
         if (btnDescY) highlightActive(btnDescY, isShowDesc);
         if (btnDescN) highlightActive(btnDescN, !isShowDesc);
 
-        // Description Text
         const descInput = document.getElementById('prop-alert-desc');
         if (descInput && document.activeElement !== descInput && comp.alertDesc !== undefined) {
             descInput.value = comp.alertDesc;
         }
 
-        // Alert Message
         const msgText = document.getElementById('prop-alert-message');
         if (msgText && document.activeElement !== msgText && comp.alertMessage !== undefined) {
             msgText.value = comp.alertMessage;
         }
-        
-        // Button Count
+
         const count = comp.alertBtnCount || 1;
         for (let i = 1; i <= 3; i++) {
             const btn = document.getElementById('btn-alert-count-' + i);
             if (btn) highlightActive(btn, count === i);
         }
-        
-        // Buttons 1~3 Text and Style
+
         const btn1 = document.getElementById('prop-alert-btn-1');
         if (btn1 && document.activeElement !== btn1 && comp.alertBtnText1 !== undefined) btn1.value = comp.alertBtnText1;
         const sel1 = document.getElementById('prop-alert-btn-style-1');
         if (sel1 && comp.alertBtnStyle1) sel1.value = comp.alertBtnStyle1;
-        
+
         const btn2 = document.getElementById('prop-alert-btn-2');
         if (btn2 && document.activeElement !== btn2 && comp.alertBtnText2 !== undefined) btn2.value = comp.alertBtnText2;
         const sel2 = document.getElementById('prop-alert-btn-style-2');
         if (sel2 && comp.alertBtnStyle2) sel2.value = comp.alertBtnStyle2;
         const btn2Container = document.getElementById('prop-alert-btn-2-container');
         if (btn2Container) btn2Container.style.display = count >= 2 ? 'flex' : 'none';
-        
+
         const btn3 = document.getElementById('prop-alert-btn-3');
         if (btn3 && document.activeElement !== btn3 && comp.alertBtnText3 !== undefined) btn3.value = comp.alertBtnText3;
         const sel3 = document.getElementById('prop-alert-btn-style-3');
@@ -413,62 +423,42 @@
         if (btn3Container) btn3Container.style.display = count >= 3 ? 'flex' : 'none';
     };
 
-    const bindAlertEvents = () => {
-        // Description Toggle (Y / N)
+    const bindAlertEvents = function() {
         const btnDescY = document.getElementById('btn-alert-desc-y');
         const btnDescN = document.getElementById('btn-alert-desc-n');
         if (btnDescY) {
-            btnDescY.onclick = () => {
+            btnDescY.onclick = function() {
                 highlightActive(btnDescY, true);
                 if (btnDescN) highlightActive(btnDescN, false);
-                notifyIframe({
-                    type: 'LF_UPDATE_ALERT_PROPERTIES',
-                    showDesc: true,
-                    alertShowDesc: true
-                });
+                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', showDesc: true, alertShowDesc: true });
             };
         }
         if (btnDescN) {
-            btnDescN.onclick = () => {
+            btnDescN.onclick = function() {
                 if (btnDescY) highlightActive(btnDescY, false);
                 highlightActive(btnDescN, true);
-                notifyIframe({
-                    type: 'LF_UPDATE_ALERT_PROPERTIES',
-                    showDesc: false,
-                    alertShowDesc: false
-                });
+                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', showDesc: false, alertShowDesc: false });
             };
         }
 
-        // Description Text
         const descInp = document.getElementById('prop-alert-desc');
         if (descInp) {
-            descInp.oninput = () => {
-                notifyIframe({
-                    type: 'LF_UPDATE_ALERT_PROPERTIES',
-                    descText: descInp.value,
-                    alertDesc: descInp.value
-                });
+            descInp.oninput = function() {
+                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', descText: descInp.value, alertDesc: descInp.value });
             };
         }
 
-        // Alert Message
         const msgInp = document.getElementById('prop-alert-message');
         if (msgInp) {
-            msgInp.oninput = () => {
-                notifyIframe({
-                    type: 'LF_UPDATE_ALERT_PROPERTIES',
-                    messageText: msgInp.value,
-                    alertMessage: msgInp.value
-                });
+            msgInp.oninput = function() {
+                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', messageText: msgInp.value, alertMessage: msgInp.value });
             };
         }
 
-        // Button Count (1 ~ 3)
         for (let i = 1; i <= 3; i++) {
             const countBtn = document.getElementById('btn-alert-count-' + i);
             if (countBtn) {
-                countBtn.onclick = () => {
+                countBtn.onclick = function() {
                     for (let j = 1; j <= 3; j++) {
                         const b = document.getElementById('btn-alert-count-' + j);
                         if (b) highlightActive(b, i === j);
@@ -477,16 +467,12 @@
                     const c3 = document.getElementById('prop-alert-btn-3-container');
                     if (c2) c2.style.display = i >= 2 ? 'flex' : 'none';
                     if (c3) c3.style.display = i >= 3 ? 'flex' : 'none';
-                    notifyIframe({
-                        type: 'LF_UPDATE_ALERT_PROPERTIES',
-                        btnCount: i,
-                        alertBtnCount: i
-                    });
+                    notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', btnCount: i, alertBtnCount: i });
                 };
             }
             const txt = document.getElementById('prop-alert-btn-' + i);
             if (txt) {
-                txt.oninput = () => {
+                txt.oninput = function() {
                     const payload = { type: 'LF_UPDATE_ALERT_PROPERTIES' };
                     payload['btnText' + i] = txt.value;
                     payload['alertBtnText' + i] = txt.value;
@@ -495,7 +481,7 @@
             }
             const sel = document.getElementById('prop-alert-btn-style-' + i);
             if (sel) {
-                sel.onchange = () => {
+                sel.onchange = function() {
                     const payload = { type: 'LF_UPDATE_ALERT_PROPERTIES' };
                     payload['btnStyle' + i] = sel.value;
                     payload['alertBtnStyle' + i] = sel.value;
@@ -506,26 +492,26 @@
     };
 
     // --- Button Component ---
-    const syncButton = (comp) => {
+    const syncButton = function(comp) {
         if (!comp) return;
         syncDisabled(comp);
         const txtInput = document.getElementById('prop-button-text');
         if (txtInput && document.activeElement !== txtInput && comp.buttonText !== undefined) {
             txtInput.value = comp.buttonText;
         }
-        
+
         const fontInput = document.getElementById('prop-button-font-size');
         if (fontInput && document.activeElement !== fontInput && comp.buttonFontSize !== undefined) {
             fontInput.value = comp.buttonFontSize;
         }
-        
+
         const selStyle = document.getElementById('prop-button-style');
         if (selStyle && comp.buttonStyle !== undefined) {
             selStyle.value = comp.buttonStyle;
             const customColorsDiv = document.getElementById('prop-button-custom-colors');
             if (customColorsDiv) customColorsDiv.style.display = (comp.buttonStyle === 'custom') ? 'block' : 'none';
         }
-        
+
         const radiusSlider = document.getElementById('prop-button-border-radius');
         const radiusTxt = document.getElementById('txt-button-border-radius');
         if (radiusSlider && document.activeElement !== radiusSlider && comp.buttonRadius !== undefined) {
@@ -539,31 +525,25 @@
 
         if (comp.buttonStyle === 'custom' && comp.currentStyles) {
             const s = comp.currentStyles;
-            const syncColorLocal = (id, wrapperId, color, isTransparent) => {
-                const picker = document.getElementById(id);
-                const wrapper = document.getElementById(wrapperId);
-                if (picker && color) picker.value = color;
-                if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
-            };
-            syncColorLocal('prop-button-bg-color', 'button-bg-wrapper', s.bg, s.isBgTransparent);
-            syncColorLocal('prop-button-border-color', 'button-border-wrapper', s.border, s.isBorderTransparent);
-            syncColorLocal('prop-button-text-color', 'button-text-wrapper', s.text, false);
+            syncAtomColor('prop-button-bg-color', 'button-bg-wrapper', s.bg, s.isBgTransparent);
+            syncAtomColor('prop-button-border-color', 'button-border-wrapper', s.border, s.isBorderTransparent);
+            syncAtomColor('prop-button-text-color', 'button-text-wrapper', s.text, false);
         }
     };
 
-    const bindButtonEvents = () => {
+    const bindButtonEvents = function() {
         const txtInp = document.getElementById('prop-button-text');
         const fontInp = document.getElementById('prop-button-font-size');
         const styleSel = document.getElementById('prop-button-style');
         const radiusSlider = document.getElementById('prop-button-border-radius');
 
         if (txtInp) {
-            txtInp.oninput = () => {
+            txtInp.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_BUTTON_PROPERTIES', buttonText: txtInp.value });
             };
         }
         if (fontInp) {
-            fontInp.oninput = () => {
+            fontInp.oninput = function() {
                 const sz = parseInt(fontInp.value);
                 if (!isNaN(sz) && sz >= 8) {
                     notifyIframe({ type: 'LF_UPDATE_BUTTON_PROPERTIES', buttonFontSize: sz });
@@ -571,14 +551,14 @@
             };
         }
         if (styleSel) {
-            styleSel.onchange = () => {
+            styleSel.onchange = function() {
                 const cDiv = document.getElementById('prop-button-custom-colors');
                 if (cDiv) cDiv.style.display = (styleSel.value === 'custom') ? 'block' : 'none';
                 notifyIframe({ type: 'LF_UPDATE_BUTTON_PROPERTIES', buttonStyle: styleSel.value });
             };
         }
         if (radiusSlider) {
-            radiusSlider.oninput = () => {
+            radiusSlider.oninput = function() {
                 const r = parseInt(radiusSlider.value) || 0;
                 const rTxt = document.getElementById('txt-button-border-radius');
                 if (rTxt) rTxt.innerText = r;
@@ -588,14 +568,14 @@
         }
         const btnFitText = document.getElementById('btn-button-fit-text');
         if (btnFitText) {
-            btnFitText.onclick = () => {
+            btnFitText.onclick = function() {
                 notifyIframe({ type: 'LF_FIT_BUTTON_TO_TEXT' });
             };
         }
     };
 
     // --- Toggle Component ---
-    const syncToggle = (comp) => {
+    const syncToggle = function(comp) {
         if (!comp) return;
         const btnOn = document.getElementById('btn-toggle-on');
         const btnOff = document.getElementById('btn-toggle-off');
@@ -610,35 +590,35 @@
         syncDisabled(comp);
     };
 
-    const bindToggleEvents = () => {
+    const bindToggleEvents = function() {
         const btnOn = document.getElementById('btn-toggle-on');
         const btnOff = document.getElementById('btn-toggle-off');
         const colorPicker = document.getElementById('prop-toggle-color');
 
         if (btnOn) {
-            btnOn.onclick = () => {
+            btnOn.onclick = function() {
                 highlightActive(btnOn, true);
                 highlightActive(btnOff, false);
                 notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: true });
             };
         }
         if (btnOff) {
-            btnOff.onclick = () => {
+            btnOff.onclick = function() {
                 highlightActive(btnOn, false);
                 highlightActive(btnOff, true);
                 notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: false });
             };
         }
         if (colorPicker) {
-            colorPicker.oninput = () => {
+            colorPicker.oninput = function() {
                 notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', color: colorPicker.value });
             };
         }
     };
 
     // Global delegation safeguard for Toggle controls
-    document.addEventListener('click', (e) => {
-        const btnOn = e.target.closest && e.target.closest('#btn-toggle-on');
+    document.addEventListener('click', function(e) {
+        const btnOn = e.target && e.target.closest ? e.target.closest('#btn-toggle-on') : null;
         if (btnOn) {
             const btnOff = document.getElementById('btn-toggle-off');
             highlightActive(btnOn, true);
@@ -646,853 +626,22 @@
             notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: true });
             return;
         }
-        const btnOff = e.target.closest && e.target.closest('#btn-toggle-off');
+        const btnOff = e.target && e.target.closest ? e.target.closest('#btn-toggle-off') : null;
         if (btnOff) {
-            const btnOn = document.getElementById('btn-toggle-on');
-            if (btnOn) highlightActive(btnOn, false);
+            const btnOnEl = document.getElementById('btn-toggle-on');
+            if (btnOnEl) highlightActive(btnOnEl, false);
             highlightActive(btnOff, true);
             notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: false });
-            return;
         }
     });
 
-    document.addEventListener('input', (e) => {
+    document.addEventListener('input', function(e) {
         if (e.target && e.target.id === 'prop-toggle-color') {
             notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', color: e.target.value });
         }
     });
 
-    // Common Color Sync Helper
-    const syncAtomColor = (id, wrapperId, color, isTransparent) => {
-        const picker = document.getElementById(id);
-        const wrapper = document.getElementById(wrapperId);
-        if (picker && color) picker.value = color;
-        if (wrapper) wrapper.classList.toggle('transparent-active', isTransparent);
-    };
-
-    // --- Checkbox & Radio Component Sync ---
-    const syncCheckboxRadio = (comp) => {
-        if (!comp) return;
-        const activeY = document.getElementById('btn-atom-active-y');
-        const activeN = document.getElementById('btn-atom-active-n');
-        const textY = document.getElementById('btn-atom-text-y');
-        const textN = document.getElementById('btn-atom-text-n');
-
-        if (activeY && activeN) {
-            highlightActive(activeY, comp.checked === true);
-            highlightActive(activeN, comp.checked === false);
-        }
-        if (textY && textN) {
-            highlightActive(textY, comp.textEnabled === true);
-            highlightActive(textN, comp.textEnabled === false);
-        }
-        
-        const s = comp.currentStyles || {};
-        syncAtomColor('atom-bg-color', 'atom-bg-wrapper', s.bg, s.isBgTransparent);
-        syncAtomColor('atom-border-color', 'atom-border-wrapper', s.border, s.isBorderTransparent);
-
-        const textInp = document.getElementById('prop-atom-text-content');
-        if (textInp && comp.checkboxText !== undefined) {
-            if (document.activeElement !== textInp) {
-                textInp.value = comp.checkboxText;
-            }
-        }
-
-        const wIconInp = document.getElementById('prop-width-icon');
-        const hIconInp = document.getElementById('prop-height-icon');
-        if (wIconInp && document.activeElement !== wIconInp) {
-            wIconInp.value = Math.round(comp.boxW !== undefined ? comp.boxW : 20);
-        }
-        if (hIconInp && document.activeElement !== hIconInp) {
-            hIconInp.value = Math.round(comp.boxH !== undefined ? comp.boxH : 20);
-        }
-        syncDisabled(comp);
-    };
-
-    // --- Textbox & Textarea Component Sync ---
-    const syncTextboxTextarea = (comp) => {
-        if (!comp) return;
-        const activeY = document.getElementById('btn-input-counter-y');
-        const activeN = document.getElementById('btn-input-counter-n');
-
-        if (activeY && activeN) {
-            highlightActive(activeY, comp.showCounter === true);
-            highlightActive(activeN, comp.showCounter === false);
-        }
-        
-        const phInput = document.getElementById('prop-input-placeholder');
-        if (phInput && document.activeElement !== phInput && comp.placeholderText !== undefined) {
-            phInput.value = comp.placeholderText;
-        }
-        
-        const mlInput = document.getElementById('prop-input-maxlength');
-        const mlTxt = document.getElementById('txt-input-maxlength');
-        if (mlInput && document.activeElement !== mlInput && comp.maxLength !== undefined) {
-            mlInput.value = comp.maxLength;
-            if (mlTxt) mlTxt.innerText = comp.maxLength;
-        }
-        
-        const s = comp.currentStyles || {};
-        syncAtomColor('input-bg-color', 'input-bg-wrapper', s.bg, s.isBgTransparent);
-        syncAtomColor('input-border-color', 'input-border-wrapper', s.border, s.isBorderTransparent);
-
-        // Sync Font Size & Font Family
-        const fsInput = document.getElementById('prop-input-fontsize');
-        if (fsInput && document.activeElement !== fsInput && s.fontSize !== undefined) {
-            fsInput.value = s.fontSize;
-        }
-        const ffInput = document.getElementById('prop-input-fontfamily');
-        if (ffInput && s.fontFamily !== undefined) {
-            const normalizedFont = s.fontFamily.replace(/['"]/g, '');
-            let matched = false;
-            for (let i = 0; i < ffInput.options.length; i++) {
-                const optVal = ffInput.options[i].value.replace(/['"]/g, '');
-                if (optVal === normalizedFont) {
-                    ffInput.selectedIndex = i;
-                    matched = true;
-                    break;
-                }
-            }
-            if (!matched) {
-                ffInput.value = 'inherit';
-            }
-        }
-        syncDisabled(comp);
-    };
-
-    // --- SearchBar Component Sync ---
-    const syncSearchBar = (comp) => {
-        if (!comp) return;
-        const phInput = document.getElementById('prop-searchbar-placeholder');
-        if (phInput && document.activeElement !== phInput && comp.searchbarPlaceholder !== undefined) {
-            phInput.value = comp.searchbarPlaceholder;
-        }
-        
-        const s = comp.currentStyles || {};
-        const fsInput = document.getElementById('prop-searchbar-fontsize');
-        if (fsInput && document.activeElement !== fsInput && s.fontSize !== undefined) {
-            fsInput.value = s.fontSize;
-        }
-        syncDisabled(comp);
-    };
-
-    // --- DatePicker Component Sync ---
-    const syncDatePicker = (comp) => {
-        if (!comp) return;
-        // Sync Mode selector
-        const btnModeSimple = document.getElementById('btn-dp-mode-simple');
-        const btnModeDetailed = document.getElementById('btn-dp-mode-detailed');
-        const mode = comp.dpMode || 'simple';
-        highlightActive(btnModeSimple, mode === 'simple');
-        highlightActive(btnModeDetailed, mode === 'detailed');
-
-        const timeWrapper = document.getElementById('dp-time-inputs-wrapper');
-        const presetsToggleWrapper = document.getElementById('dp-presets-toggle-wrapper');
-        const showEndToggleWrapper = document.getElementById('dp-show-end-toggle-wrapper');
-        const defaultPresetWrapper = document.getElementById('dp-default-preset-wrapper');
-
-        if (timeWrapper) timeWrapper.style.display = mode === 'detailed' ? 'block' : 'none';
-        if (presetsToggleWrapper) presetsToggleWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
-        if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
-        if (defaultPresetWrapper) defaultPresetWrapper.style.display = mode === 'detailed' ? 'none' : 'block';
-
-        // Sync presets show/hide toggle
-        const presetsY = document.getElementById('btn-dp-presets-y');
-        const presetsN = document.getElementById('btn-dp-presets-n');
-        const showPresets = comp.dpShowPresets !== false;
-        highlightActive(presetsY, showPresets);
-        highlightActive(presetsN, !showPresets);
-
-        // Sync show end date toggle
-        const showEndY = document.getElementById('btn-dp-show-end-y');
-        const showEndN = document.getElementById('btn-dp-show-end-n');
-        const showEndDate = comp.dpShowEndDate !== false;
-        highlightActive(showEndY, showEndDate);
-        highlightActive(showEndN, !showEndDate);
-
-        // Sync default preset buttons
-        const presetKeys = ['none', '1D', '1W', '1M', '6M', 'all'];
-        const currentPreset = comp.dpDefaultPreset || 'none';
-        presetKeys.forEach(key => {
-            const btn = document.getElementById('btn-dp-default-' + key);
-            highlightActive(btn, key === currentPreset);
-        });
-
-        // Sync date inputs
-        const startInput = document.getElementById('prop-dp-start-date');
-        const endInput = document.getElementById('prop-dp-end-date');
-        if (startInput && comp.dpStartDate !== undefined) {
-            if (document.activeElement !== startInput) startInput.value = comp.dpStartDate || '';
-        }
-        if (endInput && comp.dpEndDate !== undefined) {
-            if (document.activeElement !== endInput) endInput.value = comp.dpEndDate || '';
-        }
-
-        // Sync time inputs
-        const startTimeInput = document.getElementById('prop-dp-start-time');
-        const endTimeInput = document.getElementById('prop-dp-end-time');
-        if (startTimeInput && comp.dpStartTime !== undefined) {
-            if (document.activeElement !== startTimeInput) startTimeInput.value = comp.dpStartTime || '';
-        }
-        if (endTimeInput && comp.dpEndTime !== undefined) {
-            if (document.activeElement !== endTimeInput) endTimeInput.value = comp.dpEndTime || '';
-        }
-        syncDisabled(comp);
-    };
-
-    // --- Checkbox & Radio Events (Dedicated Domain Module) ---
-    const initCheckboxRadioEvents = () => {
-        const activeY = document.getElementById('btn-atom-active-y');
-        const activeN = document.getElementById('btn-atom-active-n');
-        const textY = document.getElementById('btn-atom-text-y');
-        const textN = document.getElementById('btn-atom-text-n');
-        
-
-        if (activeY) {
-            activeY.onclick = () => {
-                highlightActive(activeY, true);
-                highlightActive(activeN, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_STATE', checked: true });
-            };
-        }
-        if (activeN) {
-            activeN.onclick = () => {
-                highlightActive(activeN, true);
-                highlightActive(activeY, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_STATE', checked: false });
-            };
-        }
-        
-        if (textY) {
-            textY.onclick = () => {
-                highlightActive(textY, true);
-                highlightActive(textN, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_TEXT_ENABLED', enabled: true });
-            };
-        }
-        if (textN) {
-            textN.onclick = () => {
-                highlightActive(textN, true);
-                highlightActive(textY, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_TEXT_ENABLED', enabled: false });
-            };
-        }
-
-        const labelTextInp = document.getElementById('prop-atom-text-content');
-        if (labelTextInp) {
-            labelTextInp.oninput = function() {
-                notifyIframe({
-                    type: 'LF_UPDATE_ATOM_LABEL_TEXT',
-                    text: this.value
-                });
-            };
-        }
-
-        const widthIconInp = document.getElementById('prop-width-icon');
-        const heightIconInp = document.getElementById('prop-height-icon');
-
-        if (widthIconInp) {
-            widthIconInp.oninput = function() {
-                const val = parseInt(this.value);
-                if (!isNaN(val) && val > 0) {
-                    notifyIframe({
-                        type: 'LF_UPDATE_ATOM_ICON_SIZE',
-                        width: val,
-                        height: heightIconInp ? (parseInt(heightIconInp.value) || val) : val
-                    });
-                }
-            };
-        }
-        if (heightIconInp) {
-            heightIconInp.oninput = function() {
-                const val = parseInt(this.value);
-                if (!isNaN(val) && val > 0) {
-                    notifyIframe({
-                        type: 'LF_UPDATE_ATOM_ICON_SIZE',
-                        width: widthIconInp ? (parseInt(widthIconInp.value) || val) : val,
-                        height: val
-                    });
-                }
-            };
-        }
-    };
-    initCheckboxRadioEvents();
-
-    // Textbox / Textarea Inspector Events
-
-    // --- Textbox & Textarea Events (Dedicated Domain Module) ---
-    const initTextboxTextareaEvents = () => {
-        const phInput = document.getElementById('prop-input-placeholder');
-        if (phInput) {
-            phInput.oninput = () => {
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', placeholderText: phInput.value });
-            };
-        }
-
-        const mlInput = document.getElementById('prop-input-maxlength');
-        if (mlInput) {
-            mlInput.oninput = () => {
-                let val = parseInt(mlInput.value);
-                if (isNaN(val) || val < 1) val = 1;
-                const txt = document.getElementById('txt-input-maxlength');
-                if (txt) txt.innerText = val;
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', maxLength: val });
-            };
-        }
-
-        const counterY = document.getElementById('btn-input-counter-y');
-        const counterN = document.getElementById('btn-input-counter-n');
-
-        if (counterY) {
-            counterY.onclick = () => {
-                highlightActive(counterY, true);
-                highlightActive(counterN, false);
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', showCounter: true });
-            };
-        }
-        if (counterN) {
-            counterN.onclick = () => {
-                highlightActive(counterN, true);
-                highlightActive(counterY, false);
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', showCounter: false });
-            };
-        }
-
-        // Font Size & Font Family Controls
-        const fsInput = document.getElementById('prop-input-fontsize');
-        if (fsInput) {
-            fsInput.oninput = () => {
-                let val = parseInt(fsInput.value);
-                if (isNaN(val) || val < 1) val = 12;
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', fontSize: val });
-            };
-        }
-
-        const ffInput = document.getElementById('prop-input-fontfamily');
-        if (ffInput) {
-            ffInput.onchange = () => {
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', fontFamily: ffInput.value });
-            };
-        }
-    };
-    initTextboxTextareaEvents();
-
-    // Search Bar Inspector Events
-
-    // --- SearchBar Events (Dedicated Domain Module) ---
-    const initSearchBarEvents = () => {
-        const phInput = document.getElementById('prop-searchbar-placeholder');
-        if (phInput) {
-            phInput.oninput = () => {
-                notifyIframe({ type: 'LF_UPDATE_SEARCHBAR_PROPERTIES', placeholderText: phInput.value });
-            };
-        }
-
-        const fsInput = document.getElementById('prop-searchbar-fontsize');
-        if (fsInput) {
-            fsInput.oninput = () => {
-                notifyIframe({ type: 'LF_UPDATE_SEARCHBAR_PROPERTIES', fontSize: parseInt(fsInput.value) });
-            };
-        }
-    };
-    initSearchBarEvents();
-
-    // Stepper Inspector Events
-
-    // --- DatePicker Events (Dedicated Domain Module) ---
-    const initDatePickerEvents = () => {
-        // Show Presets Toggle
-        const presetsY = document.getElementById('btn-dp-presets-y');
-        const presetsN = document.getElementById('btn-dp-presets-n');
-        if (presetsY) {
-            presetsY.onclick = () => {
-                highlightActive(presetsY, true);
-                highlightActive(presetsN, false);
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showPresets: true });
-            };
-        }
-        if (presetsN) {
-            presetsN.onclick = () => {
-                highlightActive(presetsN, true);
-                highlightActive(presetsY, false);
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showPresets: false });
-            };
-        }
-
-        // Show End Date Toggle
-        const showEndY = document.getElementById('btn-dp-show-end-y');
-        const showEndN = document.getElementById('btn-dp-show-end-n');
-        if (showEndY) {
-            showEndY.onclick = () => {
-                highlightActive(showEndY, true);
-                highlightActive(showEndN, false);
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showEndDate: true });
-            };
-        }
-        if (showEndN) {
-            showEndN.onclick = () => {
-                highlightActive(showEndN, true);
-                highlightActive(showEndY, false);
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showEndDate: false });
-            };
-        }
-
-        // Default Preset Buttons
-        const presetKeys = ['none', '1D', '1W', '1M', '6M', 'all'];
-        presetKeys.forEach(key => {
-            const btn = document.getElementById('btn-dp-default-' + key);
-            if (btn) {
-                btn.onclick = () => {
-                    presetKeys.forEach(k => {
-                        const b = document.getElementById('btn-dp-default-' + k);
-                        highlightActive(b, k === key);
-                    });
-                    notifyIframe({ type: 'LF_UPDATE_DATEPICKER', defaultPreset: key });
-                };
-            }
-        });
-
-        // Mode Selector Buttons
-        const modeSimpleBtn = document.getElementById('btn-dp-mode-simple');
-        const modeDetailedBtn = document.getElementById('btn-dp-mode-detailed');
-        const timeInputsWrapper = document.getElementById('dp-time-inputs-wrapper');
-        const presetsToggleWrapper = document.getElementById('dp-presets-toggle-wrapper');
-        const showEndToggleWrapper = document.getElementById('dp-show-end-toggle-wrapper');
-        const defaultPresetWrapper = document.getElementById('dp-default-preset-wrapper');
-        
-        if (modeSimpleBtn) {
-            modeSimpleBtn.onclick = () => {
-                highlightActive(modeSimpleBtn, true);
-                highlightActive(modeDetailedBtn, false);
-                if (timeInputsWrapper) timeInputsWrapper.style.display = 'none';
-                if (presetsToggleWrapper) presetsToggleWrapper.style.display = 'block';
-                if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
-                if (defaultPresetWrapper) defaultPresetWrapper.style.display = 'block';
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', mode: 'simple' });
-            };
-        }
-        if (modeDetailedBtn) {
-            modeDetailedBtn.onclick = () => {
-                highlightActive(modeDetailedBtn, true);
-                highlightActive(modeSimpleBtn, false);
-                if (timeInputsWrapper) timeInputsWrapper.style.display = 'block';
-                if (presetsToggleWrapper) presetsToggleWrapper.style.display = 'none';
-                if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
-                if (defaultPresetWrapper) defaultPresetWrapper.style.display = 'none';
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', mode: 'detailed' });
-            };
-        }
-
-        // Auto-slash formatter for YYYY/MM/DD
-        const formatSlashDate = (value) => {
-            let val = value.replace(/[^0-9]/g, '');
-            let formatted = '';
-            if (val.length > 0) {
-                formatted += val.substring(0, 4);
-                if (val.length > 4) {
-                    formatted += '/' + val.substring(4, 6);
-                    if (val.length > 6) {
-                        formatted += '/' + val.substring(6, 8);
-                    }
-                }
-            }
-            return formatted;
-        };
-
-        // Auto-colon formatter for HH:MM:SS
-        const formatColonTime = (value) => {
-            let val = value.replace(/[^0-9]/g, '');
-            let formatted = '';
-            if (val.length > 0) {
-                formatted += val.substring(0, 2);
-                if (val.length > 2) {
-                    formatted += ':' + val.substring(2, 4);
-                    if (val.length > 4) {
-                        formatted += ':' + val.substring(4, 6);
-                    }
-                }
-            }
-            return formatted;
-        };
-
-        // Start/End Date Direct Input
-        const startInput = document.getElementById('prop-dp-start-date');
-        if (startInput) {
-            startInput.addEventListener('input', function(e) {
-                if (e.inputType !== 'deleteContentBackward') {
-                    this.value = formatSlashDate(this.value);
-                }
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', startDate: this.value });
-            });
-        }
-        const endInput = document.getElementById('prop-dp-end-date');
-        if (endInput) {
-            endInput.addEventListener('input', function(e) {
-                if (e.inputType !== 'deleteContentBackward') {
-                    this.value = formatSlashDate(this.value);
-                }
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', endDate: this.value });
-            });
-        }
-
-        // Start/End Time Direct Input
-        const startTimeInput = document.getElementById('prop-dp-start-time');
-        if (startTimeInput) {
-            startTimeInput.addEventListener('input', function(e) {
-                if (e.inputType !== 'deleteContentBackward') {
-                    this.value = formatColonTime(this.value);
-                }
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', startTime: this.value });
-            });
-        }
-        const endTimeInput = document.getElementById('prop-dp-end-time');
-        if (endTimeInput) {
-            endTimeInput.addEventListener('input', function(e) {
-                if (e.inputType !== 'deleteContentBackward') {
-                    this.value = formatColonTime(this.value);
-                }
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', endTime: this.value });
-            });
-        }
-    };
-    initDatePickerEvents();
-
-    window.syncAccordionSubItemInputs = (texts) => {
-        if (window.InspectorAccordion && typeof window.InspectorAccordion.syncSubItemInputs === 'function') {
-            window.InspectorAccordion.syncSubItemInputs(texts);
-        }
-    };
-
-    window.syncAccordionHierarchyInputs = (hierarchy) => {
-        if (window.InspectorAccordion && typeof window.InspectorAccordion.syncHierarchyInputs === 'function') {
-            window.InspectorAccordion.syncHierarchyInputs(hierarchy);
-        }
-    };
-
-
-    // --- Mouse Cursor Component ---
-    const syncCursor = (comp) => {
-        if (!comp) return;
-
-        // 0. Dimensions Synchronization
-        const isShowText = comp.showText !== false && comp.showText !== 'false';
-        const wCursorInp = document.getElementById('prop-width-cursor');
-        const hCursorInp = document.getElementById('prop-height-cursor');
-        if (wCursorInp && document.activeElement !== wCursorInp) {
-            wCursorInp.value = Math.round(comp.w || comp.width || (isShowText ? 140 : 32));
-        }
-        if (hCursorInp && document.activeElement !== hCursorInp) {
-            hCursorInp.value = Math.round(comp.h || comp.height || 32);
-        }
-
-        // 1. Cursor Type (default / pointer / text)
-        const curType = comp.cursorType || 'default';
-        const btnDef = document.getElementById('btn-cursor-type-default');
-        const btnPtr = document.getElementById('btn-cursor-type-pointer');
-        const btnTxt = document.getElementById('btn-cursor-type-text');
-        if (btnDef) highlightActive(btnDef, curType === 'default');
-        if (btnPtr) highlightActive(btnPtr, curType === 'pointer');
-        if (btnTxt) highlightActive(btnTxt, curType === 'text');
-
-        // 2. Show Description Text (true / false)
-        const btnTextY = document.getElementById('btn-cursor-text-y');
-        const btnTextN = document.getElementById('btn-cursor-text-n');
-        if (btnTextY && btnTextN) {
-            highlightActive(btnTextY, isShowText);
-            highlightActive(btnTextN, !isShowText);
-        }
-
-        // Toggle text input group visibility
-        const textInpGroup = document.getElementById('cursor-text-input-group');
-        const badgeThemeGroup = document.getElementById('cursor-badge-theme-group');
-        if (textInpGroup) textInpGroup.style.display = isShowText ? 'block' : 'none';
-        if (badgeThemeGroup) badgeThemeGroup.style.display = isShowText ? 'block' : 'none';
-
-        // 3. Description Text Input (Focus Guard)
-        const textInp = document.getElementById('prop-cursor-text');
-        if (textInp && document.activeElement !== textInp) {
-            textInp.value = comp.cursorText !== undefined ? comp.cursorText : 'Click Event';
-        }
-
-        // 4. Badge Theme Style (dark / blue / light)
-        const theme = comp.badgeStyle || 'dark';
-        const btnDark = document.getElementById('btn-cursor-theme-dark');
-        const btnBlue = document.getElementById('btn-cursor-theme-blue');
-        const btnLight = document.getElementById('btn-cursor-theme-light');
-        if (btnDark) highlightActive(btnDark, theme === 'dark');
-        if (btnBlue) highlightActive(btnBlue, theme === 'blue');
-        if (btnLight) highlightActive(btnLight, theme === 'light');
-    };
-
-    const bindCursorEvents = () => {
-        // Cursor Type Selection
-        const types = ['default', 'pointer', 'text'];
-        types.forEach(t => {
-            const btn = document.getElementById('btn-cursor-type-' + t);
-            if (btn && !btn._bound) {
-                btn._bound = true;
-                btn.onclick = () => {
-                    types.forEach(o => {
-                        const b = document.getElementById('btn-cursor-type-' + o);
-                        if (b) highlightActive(b, o === t);
-                    });
-                    notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', cursorType: t });
-                };
-            }
-        });
-
-        // Show/Hide Description Text
-        const btnTextY = document.getElementById('btn-cursor-text-y');
-        const btnTextN = document.getElementById('btn-cursor-text-n');
-        const textInpGroup = document.getElementById('cursor-text-input-group');
-        const badgeThemeGroup = document.getElementById('cursor-badge-theme-group');
-
-        if (btnTextY && !btnTextY._bound) {
-            btnTextY._bound = true;
-            btnTextY.onclick = () => {
-                highlightActive(btnTextY, true);
-                if (btnTextN) highlightActive(btnTextN, false);
-                if (textInpGroup) textInpGroup.style.display = 'block';
-                if (badgeThemeGroup) badgeThemeGroup.style.display = 'block';
-                const wCursorInp = document.getElementById('prop-width-cursor');
-                const hCursorInp = document.getElementById('prop-height-cursor');
-                if (wCursorInp && parseInt(wCursorInp.value) <= 32) wCursorInp.value = 140;
-                if (hCursorInp) hCursorInp.value = 32;
-                notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', showText: true });
-            };
-        }
-        if (btnTextN && !btnTextN._bound) {
-            btnTextN._bound = true;
-            btnTextN.onclick = () => {
-                if (btnTextY) highlightActive(btnTextY, false);
-                highlightActive(btnTextN, true);
-                if (textInpGroup) textInpGroup.style.display = 'none';
-                if (badgeThemeGroup) badgeThemeGroup.style.display = 'none';
-                const wCursorInp = document.getElementById('prop-width-cursor');
-                const hCursorInp = document.getElementById('prop-height-cursor');
-                if (wCursorInp) wCursorInp.value = 32;
-                if (hCursorInp) hCursorInp.value = 32;
-                notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', showText: false });
-            };
-        }
-
-        // Description Text Input
-        const textInp = document.getElementById('prop-cursor-text');
-        if (textInp && !textInp._bound) {
-            textInp._bound = true;
-            textInp.addEventListener('input', function() {
-                notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', cursorText: this.value });
-            });
-        }
-
-        // Badge Themes
-        const themes = ['dark', 'blue', 'light'];
-        themes.forEach(th => {
-            const btn = document.getElementById('btn-cursor-theme-' + th);
-            if (btn && !btn._bound) {
-                btn._bound = true;
-                btn.onclick = () => {
-                    themes.forEach(o => {
-                        const b = document.getElementById('btn-cursor-theme-' + o);
-                        if (b) highlightActive(b, o === th);
-                    });
-                    notifyIframe({ type: 'LF_UPDATE_CURSOR_PROPERTIES', badgeStyle: th });
-                };
-            }
-        });
-    };
-    const initCursorEvents = bindCursorEvents;
-
-    // --- Web Editor Component ---
-    const syncWebEditor = (comp) => {
-        if (!comp) return;
-
-        // 1. Dimensions
-        const wInp = document.getElementById('prop-width-webeditor');
-        const hInp = document.getElementById('prop-height-webeditor');
-        if (wInp && comp.w !== undefined && document.activeElement !== wInp) wInp.value = Math.round(comp.w);
-        if (hInp && comp.h !== undefined && document.activeElement !== hInp) hInp.value = Math.round(comp.h);
-
-        // 2. Editor Mode (editor / html / text)
-        const modeSelect = document.getElementById('prop-webeditor-mode');
-        if (modeSelect && comp.editorMode) {
-            modeSelect.value = comp.editorMode;
-        }
-
-        // 3. Toolbar Mode (full / simple / none)
-        const toolbarSelect = document.getElementById('prop-webeditor-toolbar');
-        if (toolbarSelect && comp.toolbarMode) {
-            toolbarSelect.value = comp.toolbarMode;
-        }
-
-        // 4. Counter Toggle (Y / N)
-        const btnCounterY = document.getElementById('btn-webeditor-counter-y');
-        const btnCounterN = document.getElementById('btn-webeditor-counter-n');
-        if (btnCounterY && btnCounterN && comp.showCounter !== undefined) {
-            const isShow = (comp.showCounter === true || comp.showCounter === 'true');
-            highlightActive(btnCounterY, isShow);
-            highlightActive(btnCounterN, !isShow);
-        }
-
-        // 5. Max Length
-        const maxLenInp = document.getElementById('prop-webeditor-maxlength');
-        const maxLenTxt = document.getElementById('txt-webeditor-maxlength');
-        if (comp.maxLength !== undefined) {
-            const mVal = parseInt(comp.maxLength, 10) || 2000;
-            if (maxLenInp && document.activeElement !== maxLenInp) {
-                maxLenInp.value = mVal;
-            }
-            if (maxLenTxt) {
-                maxLenTxt.innerText = mVal;
-            }
-        }
-
-        // 6. Read-only (disabled) Toggle (Y / N)
-        const btnRoY = document.getElementById('btn-webeditor-readonly-y');
-        const btnRoN = document.getElementById('btn-webeditor-readonly-n');
-        if (btnRoY && btnRoN) {
-            const isRo = (comp.readonly === true || comp.readonly === 'true' || comp.disabled === true || comp.disabled === 'true');
-            highlightActive(btnRoY, isRo);
-            highlightActive(btnRoN, !isRo);
-        }
-    };
-
-    let _webeditorEventsBound = false;
-    const bindWebEditorEvents = () => {
-        // Direct event attachment on elements if present
-        const btnCounterY = document.getElementById('btn-webeditor-counter-y');
-        const btnCounterN = document.getElementById('btn-webeditor-counter-n');
-        if (btnCounterY) {
-            btnCounterY.onclick = () => {
-                highlightActive(btnCounterY, true);
-                if (btnCounterN) highlightActive(btnCounterN, false);
-                notifyIframe({
-                    type: 'LF_UPDATE_PROP',
-                    prop: 'showCounter',
-                    value: true
-                });
-            };
-        }
-        if (btnCounterN) {
-            btnCounterN.onclick = () => {
-                highlightActive(btnCounterN, true);
-                if (btnCounterY) highlightActive(btnCounterY, false);
-                notifyIframe({
-                    type: 'LF_UPDATE_PROP',
-                    prop: 'showCounter',
-                    value: false
-                });
-            };
-        }
-
-        const btnRoY = document.getElementById('btn-webeditor-readonly-y');
-        const btnRoN = document.getElementById('btn-webeditor-readonly-n');
-        if (btnRoY) {
-            btnRoY.onclick = () => {
-                highlightActive(btnRoY, true);
-                if (btnRoN) highlightActive(btnRoN, false);
-                notifyIframe({
-                    type: 'LF_UPDATE_PROP',
-                    prop: 'readonly',
-                    value: true
-                });
-            };
-        }
-        if (btnRoN) {
-            btnRoN.onclick = () => {
-                highlightActive(btnRoN, true);
-                if (btnRoY) highlightActive(btnRoY, false);
-                notifyIframe({
-                    type: 'LF_UPDATE_PROP',
-                    prop: 'readonly',
-                    value: false
-                });
-            };
-        }
-
-        const maxLenInp = document.getElementById('prop-webeditor-maxlength');
-        if (maxLenInp) {
-            maxLenInp.oninput = (e) => {
-                let val = parseInt(e.target.value, 10);
-                if (isNaN(val) || val < 0) val = 0;
-                const txt = document.getElementById('txt-webeditor-maxlength');
-                if (txt) txt.innerText = val;
-                notifyIframe({
-                    type: 'LF_UPDATE_PROP',
-                    prop: 'maxLength',
-                    value: val
-                });
-            };
-        }
-
-        if (_webeditorEventsBound) return;
-        _webeditorEventsBound = true;
-
-        // Delegated click support
-        document.addEventListener('click', (e) => {
-            const btn = e.target && e.target.closest ? e.target.closest('#btn-webeditor-counter-y, #btn-webeditor-counter-n, #btn-webeditor-readonly-y, #btn-webeditor-readonly-n') : null;
-            if (!btn) return;
-            if (btn.id === 'btn-webeditor-counter-y') {
-                highlightActive(btn, true);
-                const n = document.getElementById('btn-webeditor-counter-n');
-                if (n) highlightActive(n, false);
-                notifyIframe({ type: 'LF_UPDATE_PROP', prop: 'showCounter', value: true });
-            } else if (btn.id === 'btn-webeditor-counter-n') {
-                highlightActive(btn, true);
-                const y = document.getElementById('btn-webeditor-counter-y');
-                if (y) highlightActive(y, false);
-                notifyIframe({ type: 'LF_UPDATE_PROP', prop: 'showCounter', value: false });
-            } else if (btn.id === 'btn-webeditor-readonly-y') {
-                highlightActive(btn, true);
-                const n = document.getElementById('btn-webeditor-readonly-n');
-                if (n) highlightActive(n, false);
-                notifyIframe({ type: 'LF_UPDATE_PROP', prop: 'readonly', value: true });
-            } else if (btn.id === 'btn-webeditor-readonly-n') {
-                highlightActive(btn, true);
-                const y = document.getElementById('btn-webeditor-readonly-y');
-                if (y) highlightActive(y, false);
-                notifyIframe({ type: 'LF_UPDATE_PROP', prop: 'readonly', value: false });
-            }
-        });
-
-        // Mode, Toolbar change
-        document.addEventListener('change', (e) => {
-            if (e.target && e.target.id === 'prop-webeditor-mode') {
-                const newMode = e.target.value;
-                notifyIframe({
-                    type: 'LF_UPDATE_PROP',
-                    prop: 'editorMode',
-                    value: newMode
-                });
-            }
-            if (e.target && e.target.id === 'prop-webeditor-toolbar') {
-                const newToolbar = e.target.value;
-                notifyIframe({
-                    type: 'LF_UPDATE_PROP',
-                    prop: 'toolbarMode',
-                    value: newToolbar
-                });
-            }
-        });
-
-        // Delegated Max Length input
-        document.addEventListener('input', (e) => {
-            if (e.target && e.target.id === 'prop-webeditor-maxlength') {
-                let val = parseInt(e.target.value, 10);
-                if (isNaN(val) || val < 0) val = 0;
-                const txt = document.getElementById('txt-webeditor-maxlength');
-                if (txt) txt.innerText = val;
-                notifyIframe({
-                    type: 'LF_UPDATE_PROP',
-                    prop: 'maxLength',
-                    value: val
-                });
-            }
-        });
-    };
-    bindWebEditorEvents();
-
-    window.InspectorAtoms = {
+    window.InspectorAtoms = Object.assign(window.InspectorAtoms || {}, {
         syncStepper: syncStepper,
         syncSelectbox: syncSelectbox,
         syncFileupload: syncFileupload,
@@ -1500,48 +649,25 @@
         syncButton: syncButton,
         syncToggle: syncToggle,
         syncDisabled: syncDisabled,
-        syncCheckboxRadio: syncCheckboxRadio,
-        syncTextboxTextarea: syncTextboxTextarea,
-        syncSearchBar: syncSearchBar,
-        syncDatePicker: syncDatePicker,
-        syncCursor: syncCursor,
-        syncWebEditor: syncWebEditor,
         bindStepperEvents: bindStepperEvents,
         bindSelectboxEvents: bindSelectboxEvents,
         bindFileuploadEvents: bindFileuploadEvents,
         bindAlertEvents: bindAlertEvents,
         bindButtonEvents: bindButtonEvents,
         bindToggleEvents: bindToggleEvents,
-        bindCheckboxRadioEvents: initCheckboxRadioEvents,
-        bindTextboxTextareaEvents: initTextboxTextareaEvents,
-        bindSearchBarEvents: initSearchBarEvents,
-        bindDatePickerEvents: initDatePickerEvents,
-        bindCursorEvents: bindCursorEvents,
-        bindWebEditorEvents: bindWebEditorEvents,
         bindDisabledEvents: bindDisabledEvents,
         bindAllEvents: function() {
-            bindDisabledEvents();
-            bindStepperEvents();
-            bindSelectboxEvents();
-            bindFileuploadEvents();
-            bindAlertEvents();
-            bindButtonEvents();
-            bindToggleEvents();
-            bindCursorEvents();
-            bindWebEditorEvents();
-            if (typeof initCheckboxRadioEvents === 'function') initCheckboxRadioEvents();
-            if (typeof initTextboxTextareaEvents === 'function') initTextboxTextareaEvents();
-            if (typeof initSearchBarEvents === 'function') initSearchBarEvents();
-            if (typeof initDatePickerEvents === 'function') initDatePickerEvents();
+            const api = window.InspectorAtoms || {};
+            const binderNames = [
+                'bindDisabledEvents', 'bindStepperEvents', 'bindSelectboxEvents',
+                'bindFileuploadEvents', 'bindAlertEvents', 'bindButtonEvents',
+                'bindToggleEvents', 'bindCheckboxRadioEvents', 'bindTextboxTextareaEvents',
+                'bindSearchBarEvents', 'bindDatePickerEvents', 'bindCursorEvents',
+                'bindWebEditorEvents'
+            ];
+            binderNames.forEach(function(fnName) {
+                if (typeof api[fnName] === 'function') api[fnName]();
+            });
         }
-    };
-    window._syncWebEditorProps = syncWebEditor;
-    
-    // Global alias exports for backwards-compatibility
-    window.initCheckboxRadioEvents = initCheckboxRadioEvents;
-    window.initTextboxTextareaEvents = initTextboxTextareaEvents;
-    window.initSearchbarEvents = initSearchBarEvents;
-    window.initDatePickerEvents = initDatePickerEvents;
-    window.initCursorEvents = initCursorEvents;
-    window.initWebEditorEvents = bindWebEditorEvents;
+    });
 })();

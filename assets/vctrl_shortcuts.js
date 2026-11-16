@@ -352,10 +352,15 @@ window.v4ShortcutsScript = `
                     
                     if (c.classList.contains('lf-group')) {
                         const connIdsStr = c.getAttribute('data-connectors');
-                        const connIds = connIdsStr ? JSON.parse(connIdsStr) : [];
-                        connIds.forEach(connId => {
-                            notifyParent({ type: 'LF_SHIFT_CONNECTOR_POS', id: connId, dx: dx, dy: dy });
-                        });
+                        let connIds = [];
+                        if (connIdsStr) {
+                            try { connIds = JSON.parse(connIdsStr); } catch (err) { connIds = []; }
+                        }
+                        if (Array.isArray(connIds)) {
+                            connIds.forEach(connId => {
+                                notifyParent({ type: 'LF_SHIFT_CONNECTOR_POS', id: connId, dx: dx, dy: dy });
+                            });
+                        }
                         c.querySelectorAll('.text-marker, .pin-marker').forEach(child => {
                             const idx = parseInt(child.id.replace('v4-pin-', ''));
                             const childRect = child.getBoundingClientRect();

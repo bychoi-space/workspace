@@ -1,24 +1,35 @@
 /**
  * assets/vctrl_design_system.js
- * Design System & Styling enforcement module for LF Editor Studio (Iframe Side).
- * 
+ * Core Design System Orchestrator, MutationObserver & Media/Admin Layout Enforcer (Iframe Side).
+ * Delegates Atom box normalization to vctrl_design_system_atoms.js and Shape/Table rules to vctrl_design_system_shapes_tables.js.
+ *
  * [WARNING FOR DEVELOPERS & AI AGENTS]
- * This file is wrapped in an outer template literal (window.v4DesignSystemScript = `...`).
- * 1. DO NOT use unescaped backticks (`) inside this file.
+ * This file is wrapped in an outer template literal (window.v4DesignSystemScript).
+ * 1. DO NOT use inner backticks or template interpolation inside this file.
  * 2. Use double quotes (") or single quotes (') for string literals.
- * 3. If you must use a backtick, it MUST be escaped as \` to avoid syntax errors.
  */
 
 window.v4DesignSystemScript = `
 (function() {
+    const _stripAllWhitespace = function(str) {
+        if (!str) return '';
+        return String(str).split(' ').join('').split(String.fromCharCode(9)).join('').split(String.fromCharCode(10)).join('').split(String.fromCharCode(13)).join('');
+    };
 
-    const _enforceEarlyTextAutoSizing = () => {
+    const _stripSelectedClassToken = function(clsStr) {
+        if (!clsStr) return '';
+        return String(clsStr).split(' ').filter(function(tok) {
+            return tok && tok !== 'selected';
+        }).join(' ');
+    };
+
+    const _enforceEarlyTextAutoSizing = function() {
         if (typeof window.initHandles === 'function') {
-            try { window.initHandles(); } catch(e) { console.error("Error in initHandles:", e); }
+            try { window.initHandles(); } catch (e) { console.error("Error in initHandles:", e); }
         }
-        
+
         try {
-            document.querySelectorAll('.lf-component').forEach(c => {
+            document.querySelectorAll('.lf-component').forEach(function(c) {
                 if (c.closest && c.closest('.lf-group')) return;
                 const shapeText = c.querySelector('.v4-shape-text');
                 const hasText = c.querySelector('.v4-shape-text-content') || c.querySelector('.v4-shape-text-overlay') || c.querySelector('.v4-editable-cell') || (shapeText && shapeText.querySelector('p'));
@@ -29,55 +40,50 @@ window.v4DesignSystemScript = `
                         const container = document.createElement('div');
                         container.className = 'v4-shape-text-content';
                         container.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0px; box-sizing: border-box; overflow: hidden;';
-                        pElements.forEach(p => container.appendChild(p));
+                        pElements.forEach(function(p) { container.appendChild(p); });
                         if (container.childNodes.length === 0) {
                             container.innerHTML = '<p><br></p>';
                         }
                         shapeText.appendChild(container);
-                        textContainer = container;
                     }
-                    
-                    // Trigger auto-resize & shrink
                     if (window.resizeToFitText) window.resizeToFitText(c, true);
                 }
             });
-            document.querySelectorAll('.text-marker, .v4-text-box, .v4-text-shape').forEach(c => {
+            document.querySelectorAll('.text-marker, .v4-text-box, .v4-text-shape').forEach(function(c) {
                 if (c.closest && c.closest('.lf-group')) return;
-                if (c.querySelector('.v4-shape')) return; // Exclude Shape components from text marker auto-sizing loop
+                if (c.querySelector('.v4-shape')) return;
                 const isManualResized = c.getAttribute('data-resized') === 'true';
                 if (!isManualResized) {
                     if (window.resizeToFitText) window.resizeToFitText(c, false);
                 }
             });
-        } catch(e) {
+        } catch (e) {
             console.error("[DesignSystem] Error in early resizeToFitText:", e);
         }
     };
 
-    const _bindAllAtomInteractiveEvents = () => {
-        try { if (window.bindStepperEvents) window.bindStepperEvents(); } catch(e) { console.error("Error in bindStepperEvents:", e); }
-        try { if (window.bindFileuploadEvents) window.bindFileuploadEvents(); } catch(e) { console.error("Error in bindFileuploadEvents:", e); }
-        try { if (window.bindAccordionEvents) window.bindAccordionEvents(); } catch(e) { console.error("Error in bindAccordionEvents:", e); }
-        try { if (window.bindAdminSettingsEvents) window.bindAdminSettingsEvents(); } catch(e) { console.error("Error in bindAdminSettingsEvents:", e); }
-        try { if (window.bindToggleEvents) window.bindToggleEvents(); } catch(e) { console.error("Error in bindToggleEvents:", e); }
-        try { if (window.bindCursorEvents) window.bindCursorEvents(); } catch(e) { console.error("Error in bindCursorEvents:", e); }
-        try { if (window.bindWebEditorEvents) window.bindWebEditorEvents(); } catch(e) { console.error("Error in bindWebEditorEvents:", e); }
-        try { if (window.bindSelectboxEvents) window.bindSelectboxEvents(); } catch(e) { console.error("Error in bindSelectboxEvents:", e); }
-        try { if (window.bindIaTreeTables) window.bindIaTreeTables(); } catch(e) { console.error("Error in bindIaTreeTables:", e); }
+    const _bindAllAtomInteractiveEvents = function() {
+        try { if (window.bindStepperEvents) window.bindStepperEvents(); } catch (e) { console.error("Error in bindStepperEvents:", e); }
+        try { if (window.bindFileuploadEvents) window.bindFileuploadEvents(); } catch (e) { console.error("Error in bindFileuploadEvents:", e); }
+        try { if (window.bindAccordionEvents) window.bindAccordionEvents(); } catch (e) { console.error("Error in bindAccordionEvents:", e); }
+        try { if (window.bindAdminSettingsEvents) window.bindAdminSettingsEvents(); } catch (e) { console.error("Error in bindAdminSettingsEvents:", e); }
+        try { if (window.bindToggleEvents) window.bindToggleEvents(); } catch (e) { console.error("Error in bindToggleEvents:", e); }
+        try { if (window.bindCursorEvents) window.bindCursorEvents(); } catch (e) { console.error("Error in bindCursorEvents:", e); }
+        try { if (window.bindWebEditorEvents) window.bindWebEditorEvents(); } catch (e) { console.error("Error in bindWebEditorEvents:", e); }
+        try { if (window.bindSelectboxEvents) window.bindSelectboxEvents(); } catch (e) { console.error("Error in bindSelectboxEvents:", e); }
+        try { if (window.bindIaTreeTables) window.bindIaTreeTables(); } catch (e) { console.error("Error in bindIaTreeTables:", e); }
     };
 
-    const _enforcePatternAndIconStyles = () => {
-
+    const _enforcePatternAndIconStyles = function() {
         try {
-            // Restore pattern styles for pattern shapes with strict Value Comparison Guard
-            document.querySelectorAll('.v4-shape-pattern-grid').forEach(t => {
+            document.querySelectorAll('.v4-shape-pattern-grid').forEach(function(t) {
                 if (t.style.overflow !== 'hidden') {
                     t.style.setProperty('overflow', 'hidden', 'important');
                 }
                 const pType = t.getAttribute('data-pattern-type') || 'grid';
                 let bgImg = '';
                 let bgSize = '';
-                
+
                 if (pType === 'grid') {
                     bgImg = 'linear-gradient(45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08)), linear-gradient(-45deg, rgba(0, 0, 0, 0.08) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.08) 75%, rgba(0, 0, 0, 0.08))';
                     bgSize = '12px 12px';
@@ -94,16 +100,16 @@ window.v4DesignSystemScript = `
                     bgImg = 'linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px)';
                     bgSize = '12px 100%';
                 }
-                
-                // Compare and update only if values actually changed to prevent infinite MutationObserver recursive loops
+
                 const curBgImg = t.style.backgroundImage || '';
                 const curBgSize = t.style.backgroundSize || '';
                 const curBgColor = t.style.backgroundColor || '';
-                
-                const cleanImg = (str) => str.replace(/\s+/g, '').replace(/['"]/g, '');
+
+                const cleanImg = function(str) {
+                    return _stripAllWhitespace(str).split('"').join('').split("'").join('');
+                };
                 if (cleanImg(curBgImg) !== cleanImg(bgImg)) {
                     t.style.setProperty('background-image', bgImg, 'important');
-                    console.log("[DesignSystem] Enforcing pattern style type:", pType, "on element:", t);
                 }
                 if (curBgSize !== bgSize) {
                     t.style.setProperty('background-size', bgSize, 'important');
@@ -112,17 +118,16 @@ window.v4DesignSystemScript = `
                     t.style.setProperty('background-color', '#ffffff', 'important');
                 }
             });
-        } catch(e) {
+        } catch (e) {
             console.error("Error in pattern shape style enforcement:", e);
         }
 
         try {
-            // Enforce Slim Line (1.2) for all SVG icons
-            document.querySelectorAll('.lf-component > svg.lf-icon:not(.v4-logo-img), .lf-component .v4-searchbar-icon-wrap svg').forEach(svg => {
+            document.querySelectorAll('.lf-component > svg.lf-icon:not(.v4-logo-img), .lf-component .v4-searchbar-icon-wrap svg').forEach(function(svg) {
                 if (svg.getAttribute('stroke-width') && svg.getAttribute('stroke-width') !== '1.2') {
                     svg.setAttribute('stroke-width', '1.2');
                 }
-                svg.querySelectorAll('path, circle, rect, line, polyline, polygon').forEach(shape => {
+                svg.querySelectorAll('path, circle, rect, line, polyline, polygon').forEach(function(shape) {
                     if (shape.getAttribute('stroke-width') && shape.getAttribute('stroke-width') !== '1.2') {
                         shape.setAttribute('stroke-width', '1.2');
                     }
@@ -131,13 +136,12 @@ window.v4DesignSystemScript = `
                     }
                 });
             });
-        } catch(e) {
+        } catch (e) {
             console.error("Error in icon stroke-width enforcement:", e);
         }
 
         try {
-            // Enforce balanced bounding box for SISUN Logo (aligned with standard icon breathing room)
-            document.querySelectorAll('.lf-component > svg.v4-logo-img').forEach(svg => {
+            document.querySelectorAll('.lf-component > svg.v4-logo-img').forEach(function(svg) {
                 const vb = svg.getAttribute('viewBox');
                 if (vb === '0 0 200 40' || vb === '0 0 156 26') {
                     svg.setAttribute('viewBox', '0 0 176 32');
@@ -145,12 +149,12 @@ window.v4DesignSystemScript = `
                     if (text) text.setAttribute('y', '54%');
                 }
             });
-        } catch(e) {
+        } catch (e) {
             console.error("Error in SISUN logo viewBox enforcement:", e);
         }
     };
 
-    const _enforceCrispImageResampling = () => {
+    const _enforceCrispImageResampling = function() {
         try {
             var extractDataUrlFromBg = function(bgStr) {
                 if (!bgStr || typeof bgStr !== 'string') return '';
@@ -241,19 +245,19 @@ window.v4DesignSystemScript = `
                     img.src = srcUrl;
                 }, 150);
             });
-        } catch(e) {
+        } catch (e) {
             console.error("Error in crisp image resampling enforcement:", e);
         }
     };
 
-    const _enforceAdminSettingsLayout = () => {
+    const _enforceAdminSettingsLayout = function() {
         try {
-            document.querySelectorAll('.v4-admin-group-header').forEach(header => {
+            document.querySelectorAll('.v4-admin-group-header').forEach(function(header) {
                 const container = header.closest('.v4-admin-settings-container');
                 if (container) {
                     const bgCol = container.getAttribute('data-group-header-bg') || '#73829c';
                     const textCol = container.getAttribute('data-group-header-color') || '#ffffff';
-                    
+
                     if (header.style.height !== '40px') header.style.height = '40px';
                     if (header.style.display !== 'flex') header.style.display = 'flex';
                     if (header.style.alignItems !== 'center') header.style.alignItems = 'center';
@@ -276,7 +280,7 @@ window.v4DesignSystemScript = `
                         header.style.webkitClipPath = 'inset(0 0 0 0 round 6.4px 6.4px 0 0)';
                     }
                     if (header.style.backgroundClip !== 'padding-box') header.style.backgroundClip = 'padding-box';
-                    
+
                     if (header.getAttribute('data-enforced-bg') !== bgCol) {
                         header.style.backgroundColor = bgCol;
                         header.setAttribute('data-enforced-bg', bgCol);
@@ -285,18 +289,18 @@ window.v4DesignSystemScript = `
                         header.style.color = textCol;
                         header.setAttribute('data-enforced-color', textCol);
                     }
-                    
+
                     if (!header.dataset.inputBound) {
                         header.dataset.inputBound = 'true';
-                        header.oninput = (e) => {
+                        header.oninput = function(e) {
                             container.setAttribute('data-group-header-title', e.target.innerText);
-                            markDirty();
+                            if (typeof window.markDirty === 'function') window.markDirty();
                         };
                     }
                 }
             });
 
-            document.querySelectorAll('.v4-admin-settings-container').forEach(container => {
+            document.querySelectorAll('.v4-admin-settings-container').forEach(function(container) {
                 const comp = container.closest('.lf-component');
                 if (comp) {
                     if (comp.style.background && comp.style.background !== 'transparent') comp.style.background = 'transparent';
@@ -310,8 +314,7 @@ window.v4DesignSystemScript = `
                 if (container.style.maskImage !== 'radial-gradient(white, black)') container.style.maskImage = 'radial-gradient(white, black)';
                 if (container.style.transform !== 'translateZ(0px)' && !container.style.transform.includes('translateZ')) container.style.transform = 'translateZ(0)';
 
-                // Auto cleanup legacy action bar if present
-                container.querySelectorAll('.v4-admin-action-bar').forEach(ab => ab.remove());
+                container.querySelectorAll('.v4-admin-action-bar').forEach(function(ab) { ab.remove(); });
                 container.removeAttribute('data-show-action-bar');
                 container.removeAttribute('data-action-align');
 
@@ -326,10 +329,8 @@ window.v4DesignSystemScript = `
                         }
                     }
                     const lastRowFirstLabel = rows[rows.length - 1].querySelector('.v4-admin-label-cell');
-                    if (lastRowFirstLabel) {
-                        if (lastRowFirstLabel.style.borderBottomLeftRadius !== '6.4px') {
-                            lastRowFirstLabel.style.borderBottomLeftRadius = '6.4px';
-                        }
+                    if (lastRowFirstLabel && lastRowFirstLabel.style.borderBottomLeftRadius !== '6.4px') {
+                        lastRowFirstLabel.style.borderBottomLeftRadius = '6.4px';
                     }
                 }
 
@@ -339,17 +340,16 @@ window.v4DesignSystemScript = `
                     if (table.style.height !== 'auto') table.style.height = 'auto';
                 }
                 if (comp) {
-                    const hasGroupHeader = container.getAttribute('data-show-group-header') === 'true';
                     const headerHeight = hasGroupHeader ? 40 : 0;
                     const totalRows = parseInt(container.getAttribute('data-row-count')) || 1;
                     const globalRowHeight = parseInt(container.getAttribute('data-row-height')) || 44;
-                    
+
                     let expectedHeight = headerHeight;
                     for (let i = 1; i <= totalRows; i++) {
                         const specificHeight = parseInt(container.getAttribute('data-row' + i + '-height')) || globalRowHeight;
                         expectedHeight += specificHeight;
                     }
-                    
+
                     const currentHeight = parseInt(comp.style.height) || 0;
                     if (currentHeight !== expectedHeight) {
                         comp.style.height = expectedHeight + 'px';
@@ -357,914 +357,55 @@ window.v4DesignSystemScript = `
                     }
                 }
             });
-        } catch(e) { console.error("Error in admin settings enforceDesignSystem:", e); }
-    };
-
-    const _normalizeComponentIdsAndAtomBoxes = () => {
-        const seenIds = new Set();
-        document.querySelectorAll('.lf-component').forEach((c, idx) => {
-            if (!c.id) {
-                const isPin = c.classList.contains('pin-marker') || c.classList.contains('text-marker');
-                c.id = (isPin ? 'v4-pin-' : 'v4-comp-') + Date.now() + '-' + idx;
-            }
-            if (seenIds.has(c.id)) {
-                const isPin = c.classList.contains('pin-marker') || c.classList.contains('text-marker');
-                const oldId = c.id;
-                c.id = (isPin ? 'v4-pin-' : 'v4-comp-') + Date.now() + '-dedup-' + Math.floor(Math.random() * 1000) + '-' + idx;
-                console.log("[V4 Self-healing] Deduplicated ID from: " + oldId + " to: " + c.id);
-            }
-            seenIds.add(c.id);
-
-            // [Description Pin SSOT] Ensure all description pins strictly stay at topmost 200000 z-index tier
-            if (c.classList.contains('pin-marker')) {
-                if (c.style.zIndex !== '200000') {
-                    c.style.zIndex = '200000';
-                }
-            }
-        });
-        
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.querySelector('.v4-checkbox-container') || c.querySelector('.v4-radio-container')) {
-                if (window.resizeAtomToFitText) window.resizeAtomToFitText(c);
-            }
-        });
-
-        // === Atom Dimension Normalization ===
-        // Atom components let internal CSS (flexbox, content) determine their size,
-        // so the outer .lf-component wrapper may have no explicit style.width/height.
-        // Grouping and other coordinate operations use style values as SSOT,
-        // so we write offsetWidth/offsetHeight into the wrapper once at load time.
-        const ATOM_SELECTORS = [
-            '.v4-checkbox-container', '.v4-radio-container',
-            '.v4-textbox-container', '.v4-textarea-container',
-            '.v4-searchbar-container', '.v4-stepper-container',
-            '.v4-selectbox-container', '.v4-fileupload-container',
-            '.v4-alert-container', '.v4-btn-container',
-            '.v4-datepicker-container', '.v4-accordion-container',
-            '.v4-grid-container', '.v4-admin-settings-container',
-            '.v4-toggle-container', '.v4-tab-container'
-        ].join(', ');
-
-        document.querySelectorAll('.lf-component').forEach(c => {
-            // Skip group wrappers (their size is calculated separately)
-            if (c.classList.contains('lf-group')) return;
-            // Skip if the component is inside a group
-            if (c.closest && c.closest('.lf-group')) return;
-            // Skip if the outer wrapper already has explicit dimensions (preserve SSOT)
-            if (c.style.width && c.style.height) return;
-            // Only normalize atom components
-            if (!c.querySelector(ATOM_SELECTORS)) return;
-
-            const w = c.offsetWidth;
-            const h = c.offsetHeight;
-            if (w > 0 && !c.style.width) c.style.width = w + 'px';
-            if (h > 0 && !c.style.height) c.style.height = h + 'px';
-        });
-        // ====================================
-    };
-
-    const _enforceAccordionStepperSelectboxFileupload = () => {
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
-            const accordion = c.querySelector('.v4-accordion-container');
-            if (accordion) {
-                const expanded = accordion.getAttribute('data-expanded') === 'true';
-                const header = accordion.querySelector('.v4-accordion-header');
-                const body = accordion.querySelector('.v4-accordion-body');
-                const chevron = accordion.querySelector('.v4-accordion-chevron');
-                
-                const itemHeight = parseInt(accordion.getAttribute('data-item-height'));
-                if (itemHeight) {
-                    if (header) {
-                        header.style.height = itemHeight + 'px';
-                    }
-                    accordion.querySelectorAll('.v4-accordion-item').forEach(item => {
-                        item.style.setProperty('height', itemHeight + 'px', 'important');
-                        item.style.setProperty('line-height', itemHeight + 'px', 'important');
-                        item.style.setProperty('display', 'flex', 'important');
-                        item.style.setProperty('align-items', 'center', 'important');
-                        item.style.setProperty('box-sizing', 'border-box', 'important');
-                        item.style.setProperty('padding-top', '0', 'important');
-                        item.style.setProperty('padding-bottom', '0', 'important');
-                    });
-                }
-                
-                const headerFontSize = parseInt(accordion.getAttribute('data-header-font-size'));
-                if (headerFontSize) {
-                    const headerTitle = accordion.querySelector('.v4-accordion-title-text');
-                    if (headerTitle) headerTitle.style.fontSize = headerFontSize + 'px';
-                }
-                const subFontSize = parseInt(accordion.getAttribute('data-sub-font-size'));
-                if (subFontSize) {
-                    accordion.querySelectorAll('.v4-accordion-item, .v4-accordion-tier1-header, .v4-accordion-tier2-header, .v4-accordion-tier3-header, .v4-accordion-body .v4-editable-cell').forEach(el => {
-                        el.style.fontSize = subFontSize + 'px';
-                    });
-                }
-                
-                const borderType = accordion.getAttribute('data-border-type');
-                if (borderType === 'top-bottom') {
-                    accordion.style.borderLeft = 'none';
-                    accordion.style.borderRight = 'none';
-                    accordion.style.borderRadius = '0px';
-                    if (!expanded && header) {
-                        header.style.borderBottom = 'none';
-                    }
-                }
-                const chevronType = accordion.getAttribute('data-chevron-type');
-                if (chevron) {
-                    if (chevronType === 'chevron' && !chevron.querySelector('svg')) {
-                        chevron.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px; height:13px; display:inline-block; vertical-align:middle; pointer-events:none;"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-                        chevron.style.fontSize = '0px';
-                        chevron.style.display = 'inline-flex';
-                        chevron.style.alignItems = 'center';
-                        chevron.style.justifyContent = 'center';
-                    } else if (chevronType === 'triangle' && chevron.querySelector('svg')) {
-                        chevron.innerHTML = '▼';
-                        chevron.style.fontSize = '10px';
-                        chevron.style.display = 'inline-block';
-                    }
-                }
-
-                if (body) {
-                    body.style.display = expanded ? 'flex' : 'none';
-                }
-                if (chevron) {
-                    chevron.style.transform = expanded ? 'rotate(180deg)' : 'rotate(0deg)';
-                }
-                
-                if (c.getAttribute('data-resized') !== 'true') {
-                    const headerHeight = header ? header.offsetHeight || 36 : 36;
-                    let totalHeight = headerHeight;
-                    if (expanded && body) {
-                        const origDisplay = body.style.display;
-                        body.style.display = 'flex';
-                        totalHeight += body.offsetHeight || 0;
-                        body.style.display = origDisplay;
-                    }
-                    c.style.height = totalHeight + 'px';
-                }
-                if (typeof window.updateHandles === 'function') window.updateHandles(c);
-            }
-        });
-
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
-            const stepper = c.querySelector('.v4-stepper-container');
-            if (stepper) {
-                const btnEnabled = stepper.getAttribute('data-btn-enabled') !== 'false';
-                const targetW = btnEnabled ? '134px' : '80px';
-                const targetH = '30px';
-                
-                if (c.getAttribute('data-resized') !== 'true') {
-                    if (c.style.width !== targetW) c.style.width = targetW;
-                    if (c.style.height !== targetH) c.style.height = targetH;
-                }
-                
-                if (stepper.style.width !== '100%') stepper.style.width = '100%';
-                if (stepper.style.height !== '100%') stepper.style.height = '100%';
-                const ctrl = stepper.querySelector('.v4-stepper-control');
-                const act = stepper.querySelector('.v4-stepper-action');
-                if (ctrl && ctrl.style.height !== '100%') ctrl.style.height = '100%';
-                if (act && act.style.height !== '100%') act.style.height = '100%';
-                
-                if (typeof window.updateHandles === 'function') window.updateHandles(c);
-            }
-        });
-
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
-            const selectbox = c.querySelector('.v4-selectbox-container');
-            if (selectbox) {
-                const dropdownActive = selectbox.getAttribute('data-dropdown-active') === 'true';
-                const optionsRaw = selectbox.getAttribute('data-options') || "";
-                const optionsArr = optionsRaw.split(',').map(s => s.trim()).filter(Boolean);
-                const optCount = Math.max(1, optionsArr.length);
-                
-                if (c.getAttribute('data-resized') !== 'true') {
-                    const targetW = '150px';
-                    if (c.style.width !== targetW) c.style.width = targetW;
-                    const targetH = dropdownActive ? (30 + (optCount * 30)) + 'px' : '30px';
-                    if (c.style.height !== targetH) c.style.height = targetH;
-                }
-                
-                if (selectbox.style.width !== '100%') selectbox.style.width = '100%';
-                if (selectbox.style.height !== '100%') selectbox.style.height = '100%';
-                
-                const header = selectbox.querySelector('.v4-selectbox-header');
-                if (header) {
-                    if (dropdownActive) {
-                        if (header.style.height !== '30px') header.style.height = '30px';
-                    } else {
-                        if (header.style.height !== '100%') header.style.height = '100%';
-                    }
-                    if (header.style.flexShrink !== '0') header.style.flexShrink = '0';
-                    if (header.style.width !== '100%') header.style.width = '100%';
-                }
-
-                const optionsList = selectbox.querySelector('.v4-selectbox-options');
-                if (optionsList) {
-                    optionsList.style.display = dropdownActive ? 'block' : 'none';
-                    if (optionsList.style.position !== 'relative') optionsList.style.position = 'relative';
-                    if (optionsList.style.top !== '0px' && optionsList.style.top !== '0') optionsList.style.top = '0';
-                    if (optionsList.style.flex !== '1 1 0%' && optionsList.style.flex !== '1') optionsList.style.flex = '1';
-                    if (optionsList.style.width !== '100%') optionsList.style.width = '100%';
-                }
-                
-                if (typeof window.updateHandles === 'function') window.updateHandles(c);
-            }
-        });
-
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
-            const fileupload = c.querySelector('.v4-fileupload-container');
-            if (fileupload) {
-                if (c.getAttribute('data-resized') !== 'true') {
-                    const targetW = '300px';
-                    const targetH = '30px';
-                    if (c.style.width !== targetW) c.style.width = targetW;
-                    if (c.style.height !== targetH) c.style.height = targetH;
-                }
-                
-                if (fileupload.style.width !== '100%') fileupload.style.width = '100%';
-                if (fileupload.style.height !== '100%') fileupload.style.height = '100%';
-                
-                if (typeof window.updateHandles === 'function') window.updateHandles(c);
-            }
-        });
-    };
-
-    const _enforceAlertToggleButtonLayouts = () => {
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
-            const alert = c.querySelector('.v4-alert-container');
-            if (alert) {
-                const btn1 = alert.querySelector('.v4-alert-btn-1');
-                const btn2 = alert.querySelector('.v4-alert-btn-2');
-                const btn3 = alert.querySelector('.v4-alert-btn-3');
-                if (btn1) {
-                    const style1 = alert.getAttribute('data-btn-style-1') || 'normal';
-                    const targetClass = 'v4-alert-btn v4-alert-btn-1 style-' + style1;
-                    if (btn1.className !== targetClass) btn1.className = targetClass;
-                }
-                if (btn2) {
-                    const style2 = alert.getAttribute('data-btn-style-2') || 'normal';
-                    const targetClass = 'v4-alert-btn v4-alert-btn-2 style-' + style2;
-                    if (btn2.className !== targetClass) btn2.className = targetClass;
-                }
-                if (btn3) {
-                    const style3 = alert.getAttribute('data-btn-style-3') || 'normal';
-                    const targetClass = 'v4-alert-btn v4-alert-btn-3 style-' + style3;
-                    if (btn3.className !== targetClass) btn3.className = targetClass;
-                }
-
-                if (c.getAttribute('data-resized') !== 'true') {
-                    const header = alert.querySelector('.v4-alert-header');
-                    const msgEl = alert.querySelector('.v4-alert-message');
-                    const buttonsEl = alert.querySelector('.v4-alert-buttons');
-                    
-                    const showDesc = alert.getAttribute('data-show-desc') === 'true';
-                    const descWrapper = alert.querySelector('.v4-alert-desc-wrapper');
-                    let descH = 0;
-                    if (descWrapper) {
-                        if (showDesc) {
-                            descWrapper.style.display = 'flex';
-                            descH = descWrapper.offsetHeight || 27;
-                            descH += 8;
-                        } else {
-                            descWrapper.style.display = 'none';
-                        }
-                    }
-                    
-                    const headerH = header ? header.offsetHeight : 32;
-                    const msgH = msgEl ? msgEl.scrollHeight : 21;
-                    const msgMargin = msgEl ? 14 : 0;
-                    const buttonsH = buttonsEl ? buttonsEl.offsetHeight : 28;
-                    const paddingH = 32;
-                    
-                    const targetH = headerH + paddingH + msgH + msgMargin + buttonsH + 2 + descH;
-                    const finalHeight = Math.max(120, targetH) + 'px';
-                    
-                    if (c.style.height !== finalHeight) c.style.height = finalHeight;
-                    if (alert.style.height !== '100%') alert.style.height = '100%';
-                    if (alert.style.width !== '100%') alert.style.width = '100%';
-                } else {
-                    if (alert.style.width !== '100%') alert.style.width = '100%';
-                    if (alert.style.height !== '100%') alert.style.height = '100%';
-                }
-                if (typeof window.updateHandles === 'function') window.updateHandles(c);
-            }
-        });
-
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
-            const toggle = c.querySelector('.v4-toggle-container');
-            if (toggle) {
-                if (c.getAttribute('data-resized') !== 'true') {
-                    if (c.style.width !== '40px') c.style.width = '40px';
-                    if (c.style.height !== '20px') c.style.height = '20px';
-                }
-                if (toggle.style.width !== '100%') toggle.style.width = '100%';
-                if (toggle.style.height !== '100%') toggle.style.height = '100%';
-                if (typeof window.updateHandles === 'function') window.updateHandles(c);
-            }
-        });
-
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
-            const btnContainer = c.querySelector('.v4-btn-container');
-            if (btnContainer) {
-                const btn = btnContainer.querySelector('.v4-custom-btn');
-                if (btn) {
-                    const style = btnContainer.getAttribute('data-btn-style') || 'normal';
-                    const text = btnContainer.getAttribute('data-text') !== null ? btnContainer.getAttribute('data-text') : (btn.innerText || '버튼');
-                    const radius = btnContainer.getAttribute('data-btn-radius') || '6';
-                    const fontSize = parseInt(btnContainer.getAttribute('data-font-size')) || 12;
-                    
-                    const targetClass = 'v4-custom-btn style-' + style;
-                    const targetRadius = radius + 'px';
-                    const targetFontSize = fontSize + 'px';
-                    
-                    if (btn.className !== targetClass) btn.className = targetClass;
-                    if (btn.style.borderRadius !== targetRadius) btn.style.borderRadius = targetRadius;
-                    if (btn.innerText !== text) btn.innerText = text;
-                    if (btn.style.fontSize !== targetFontSize) btn.style.setProperty('font-size', targetFontSize, 'important');
-
-                    if (style !== 'custom') {
-                        if (btn.style.backgroundColor !== '') btn.style.backgroundColor = '';
-                        if (btn.style.borderColor !== '') btn.style.borderColor = '';
-                        if (btn.style.color !== '') btn.style.color = '';
-                    }
-
-                    if (btn.style.borderWidth !== '1.6px') btn.style.setProperty('border-width', '1.6px', 'important');
-                    if (btn.style.borderStyle !== 'solid') btn.style.setProperty('border-style', 'solid', 'important');
-                }
-                
-                if (c.getAttribute('data-resized') !== 'true') {
-                    const targetW = '80px';
-                    const targetH = '30px';
-                    if (c.style.width !== targetW) c.style.width = targetW;
-                    if (c.style.height !== targetH) c.style.height = targetH;
-                }
-                
-                if (btnContainer.style.width !== '100%') btnContainer.style.width = '100%';
-                if (btnContainer.style.height !== '100%') btnContainer.style.height = '100%';
-                
-                if (typeof window.updateHandles === 'function') window.updateHandles(c);
-            }
-        });
-    };
-
-    const _enforceDatepickerLayout = () => {
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
-            const dp = c.querySelector('.v4-datepicker-container');
-            if (!dp) return;
-
-            const _fmtDate = (dt) => {
-                const y = dt.getFullYear();
-                const m = String(dt.getMonth() + 1).padStart(2, '0');
-                const d2 = String(dt.getDate()).padStart(2, '0');
-                return y + '/' + m + '/' + d2;
-            };
-
-            const isDis = (dp.getAttribute('data-disabled') === 'true' || c.getAttribute('data-disabled') === 'true');
-            const showPresets = dp.getAttribute('data-show-presets') !== 'false';
-            const presetsDiv = dp.querySelector('.v4-dp-presets');
-            const showEndDate = dp.getAttribute('data-show-end-date') !== 'false';
-            const sep = dp.querySelector('.v4-dp-separator');
-            const groups = dp.querySelectorAll('.v4-dp-input-group');
-            const mode = dp.getAttribute('data-mode') || 'simple';
-            const isDetailed = mode === 'detailed';
-
-            const startEl = dp.querySelector('.v4-dp-start');
-            const endEl = dp.querySelector('.v4-dp-end');
-            const startTimeEl = dp.querySelector('.v4-dp-start-time');
-            const endTimeEl = dp.querySelector('.v4-dp-end-time');
-            
-            const storedStart = dp.getAttribute('data-start-date');
-            const storedEnd = dp.getAttribute('data-end-date');
-            const storedStartTime = dp.getAttribute('data-start-time');
-            const storedEndTime = dp.getAttribute('data-end-time');
-            
-            const defaultPreset = dp.getAttribute('data-default-preset') || 'none';
-
-            if (isDetailed) {
-                if (presetsDiv && presetsDiv.style.display !== 'none') presetsDiv.style.display = 'none';
-                if (startTimeEl && startTimeEl.style.display !== 'inline-block') startTimeEl.style.display = 'inline-block';
-                if (endTimeEl && endTimeEl.style.display !== 'inline-block') endTimeEl.style.display = 'inline-block';
-                if (sep) {
-                    const targetDisplay = showEndDate ? 'inline-flex' : 'none';
-                    if (sep.style.display !== targetDisplay) sep.style.display = targetDisplay;
-                }
-                if (groups && groups.length > 1) {
-                    const targetDisplay = showEndDate ? 'inline-flex' : 'none';
-                    if (groups[1].style.display !== targetDisplay) groups[1].style.display = targetDisplay;
-                }
-            } else {
-                if (startTimeEl && startTimeEl.style.display !== 'none') startTimeEl.style.display = 'none';
-                if (endTimeEl && endTimeEl.style.display !== 'none') endTimeEl.style.display = 'none';
-                if (sep) {
-                    const targetDisplay = showEndDate ? 'inline-flex' : 'none';
-                    if (sep.style.display !== targetDisplay) sep.style.display = targetDisplay;
-                }
-                if (groups && groups.length > 1) {
-                    const targetDisplay = showEndDate ? 'inline-flex' : 'none';
-                    if (groups[1].style.display !== targetDisplay) groups[1].style.display = targetDisplay;
-                }
-                if (presetsDiv) {
-                    const targetDisplay = showPresets ? 'inline-flex' : 'none';
-                    if (presetsDiv.style.display !== targetDisplay) presetsDiv.style.display = targetDisplay;
-                }
-            }
-
-            const targetStart = (storedStart !== null && storedStart !== undefined) ? storedStart : '';
-            const targetEnd = (storedEnd !== null && storedEnd !== undefined) ? storedEnd : '';
-            const targetStartTime = (storedStartTime !== null && storedStartTime !== undefined) ? storedStartTime : '';
-            const targetEndTime = (storedEndTime !== null && storedEndTime !== undefined) ? storedEndTime : '';
-
-            if (startEl && startEl.innerText !== targetStart) startEl.innerText = targetStart;
-            if (endEl && endEl.innerText !== targetEnd) endEl.innerText = targetEnd;
-            if (startTimeEl && startTimeEl.innerText !== targetStartTime) startTimeEl.innerText = targetStartTime;
-            if (endTimeEl && endTimeEl.innerText !== targetEndTime) endTimeEl.innerText = targetEndTime;
-
-            if (!isDis) {
-                dp.querySelectorAll('.v4-dp-preset-btn').forEach(btn => {
-                    const isActive = btn.getAttribute('data-preset') === defaultPreset;
-                    const targetBg = isActive ? '#1d4ed8' : '#ffffff';
-                    const targetBorder = '1.6px solid ' + (isActive ? '#1d4ed8' : '#cccccc');
-                    const targetColor = isActive ? '#ffffff' : '#0f172a';
-                    const targetFw = '400';
-                    if (btn.style.background !== targetBg) btn.style.background = targetBg;
-                    if (btn.style.border !== targetBorder) btn.style.border = targetBorder;
-                    if (btn.style.color !== targetColor) btn.style.color = targetColor;
-                    if (btn.style.fontWeight !== targetFw) btn.style.fontWeight = targetFw;
-                    if (btn.style.fontSize !== '12px') btn.style.fontSize = '12px';
-                    if (btn.style.fontFamily !== 'inherit') btn.style.fontFamily = 'inherit';
-                    if (isActive) {
-                        if (!btn.classList.contains('v4-dp-preset-active')) btn.classList.add('v4-dp-preset-active');
-                    } else {
-                        if (btn.classList.contains('v4-dp-preset-active')) btn.classList.remove('v4-dp-preset-active');
-                    }
-                });
-            }
-
-            if (dp.style.width !== '100%') dp.style.width = '100%';
-            if (dp.style.height !== '100%') dp.style.height = '100%';
-            if (c.style.height !== '30px') c.style.height = '30px';
-
-            // Dynamically adjust component wrapper width to match the inner content size
-            const fieldsEl = dp.querySelector('.v4-dp-fields');
-            const presetsEl = dp.querySelector('.v4-dp-presets');
-            let contentW = 0;
-            if (fieldsEl) {
-                contentW += fieldsEl.offsetWidth || (showEndDate ? (isDetailed ? 370 : 266) : (isDetailed ? 190 : 126));
-            }
-            if (!isDetailed && showPresets && presetsEl) {
-                contentW += 8; // gap
-                contentW += presetsEl.offsetWidth || 204;
-            }
-            if (contentW > 0) {
-                const targetW = (contentW + 4) + 'px'; // add minor border/rounding padding
-                if (c.style.width !== targetW) {
-                    c.style.width = targetW;
-                }
-            }
-
-            if (typeof window.updateHandles === 'function') window.updateHandles(c);
-        });
-    };
-
-    const _enforceTextInputContainers = () => {
-        document.querySelectorAll('.v4-textbox-container, .v4-textarea-container').forEach(container => {
-            if (container.closest && container.closest('.lf-group')) return;
-            const isTextarea = container.classList.contains('v4-textarea-container');
-            const input = container.querySelector(isTextarea ? '.v4-textarea-input' : '.v4-textbox-input');
-            const placeholder = container.querySelector(isTextarea ? '.v4-textarea-placeholder' : '.v4-textbox-placeholder');
-            const counter = container.querySelector(isTextarea ? '.v4-textarea-counter' : '.v4-textbox-counter');
-            
-            if (!input) return;
-
-            if (placeholder) {
-                const phText = container.getAttribute('data-placeholder');
-                if (phText !== null && placeholder.textContent !== phText) {
-                    placeholder.textContent = phText;
-                }
-            }
-
-            const restoreFonts = () => {
-                const fs = container.getAttribute('data-fontsize');
-                const ff = container.getAttribute('data-fontfamily');
-                if (fs) {
-                    const fsVal = fs + 'px';
-                    if (input.style.fontSize !== fsVal) input.style.fontSize = fsVal;
-                    if (placeholder && placeholder.style.fontSize !== fsVal) placeholder.style.fontSize = fsVal;
-                }
-                if (ff) {
-                    if (input.style.fontFamily !== ff) input.style.fontFamily = ff;
-                    if (placeholder && placeholder.style.fontFamily !== ff) placeholder.style.fontFamily = ff;
-                    if (counter && counter.style.fontFamily !== ff) counter.style.fontFamily = ff;
-                }
-            };
-
-            if (input._eventsBound) {
-                const max = parseInt(container.getAttribute('data-maxlength')) || 100;
-                const showCounter = container.getAttribute('data-show-counter') !== 'false';
-                const text = input.innerText || "";
-                if (counter) {
-                    const currentLen = Math.min(text.length, max);
-                    const newText = currentLen + '/' + max;
-                    const newDisplay = showCounter ? 'block' : 'none';
-                    if (counter.textContent !== newText) counter.textContent = newText;
-                    if (counter.style.display !== newDisplay) counter.style.display = newDisplay;
-                }
-                restoreFonts();
-                return;
-            }
-            input._eventsBound = true;
-            input.removeAttribute('data-events-bound');
-            restoreFonts();
-            
-            const getMaxLength = () => parseInt(container.getAttribute('data-maxlength')) || 100;
-            const getShowCounter = () => container.getAttribute('data-show-counter') !== 'false';
-            
-            const updateUI = () => {
-                const text = input.innerText || "";
-                if (placeholder) {
-                    const phDisplay = text.length === 0 ? 'block' : 'none';
-                    if (placeholder.style.display !== phDisplay) placeholder.style.display = phDisplay;
-                }
-                
-                const max = getMaxLength();
-                if (text.length > max) {
-                    const selection = window.getSelection();
-                    const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-                    const offset = range ? range.startOffset : 0;
-                    
-                    input.innerText = text.substring(0, max);
-                    
-                    if (range && input.firstChild) {
-                        try {
-                            const newRange = document.createRange();
-                            newRange.setStart(input.firstChild, Math.min(offset, max));
-                            newRange.collapse(true);
-                            selection.removeAllRanges();
-                            selection.addRange(newRange);
-                        } catch(e) {}
-                    }
-                }
-                
-                if (counter) {
-                    const currentLen = Math.min(input.innerText.length, max);
-                    const newCounterText = currentLen + '/' + max;
-                    const newCounterDisplay = getShowCounter() ? 'block' : 'none';
-                    if (counter.textContent !== newCounterText) counter.textContent = newCounterText;
-                    if (counter.style.display !== newCounterDisplay) counter.style.display = newCounterDisplay;
-                }
-                
-                const newColor = text.length === 0 ? '#a3a3a3' : '#374151';
-                if (input.style.color !== newColor) input.style.color = newColor;
-            };
-            
-            input.addEventListener('input', () => {
-                updateUI();
-                markDirty();
-            });
-            input.addEventListener('focus', () => {
-                if (placeholder) placeholder.style.display = 'none';
-            });
-            input.addEventListener('blur', () => {
-                updateUI();
-            });
-            
-            updateUI();
-        });
-    };
-
-    const _migrateLegacyCoordsAndIcons = () => {
-        const targetPageEl = document.querySelector('.page') || document.querySelector('.artboard') || document.body;
-        const curCanvasW = targetPageEl ? (targetPageEl.offsetWidth || 1600) : 1600;
-        const curCanvasH = targetPageEl ? (targetPageEl.offsetHeight || 900) : 900;
-
-        document.querySelectorAll('.lf-component').forEach(c => {
-            if (c.parentElement !== document.body) return;
-            const lStr = c.style.left || "";
-            const tStr = c.style.top || "";
-            
-            if (lStr.includes('%')) {
-                const val = parseFloat(lStr);
-                const px = (val / 100) * curCanvasW;
-                c.style.left = px + 'px';
-                console.log("[V4 Migration] Migrated " + c.id + " left: " + lStr + " -> " + c.style.left);
-            }
-            if (tStr.includes('%')) {
-                const val = parseFloat(tStr);
-                const px = (val / 100) * curCanvasH;
-                c.style.top = px + 'px';
-                console.log("[V4 Migration] Migrated " + c.id + " top: " + tStr + " -> " + c.style.top);
-            }
-        });
-
-        document.querySelectorAll('.lf-component img').forEach(img => {
-            const parent = img.parentElement;
-            if (!parent) return;
-            
-            const isLogo = img.classList.contains('v4-logo-img');
-            const isShare = img.src && img.src.includes('iconShare');
-            const isIcon = img.classList.contains('lf-icon');
-            
-            if (isLogo || isShare || isIcon) {
-                const div = document.createElement('div');
-                div.className = img.className;
-                if (!div.classList.contains('lf-icon')) {
-                    div.classList.add('lf-icon');
-                }
-                
-                const origSrc = img.getAttribute('data-original-src') || img.src;
-                div.setAttribute('data-original-src', origSrc);
-                
-                const origBg = img.getAttribute('data-original-bg');
-                if (origBg) div.setAttribute('data-original-bg', origBg);
-                
-                div.style.cssText = img.style.cssText;
-                div.style.width = '100%';
-                div.style.height = '100%';
-                div.style.pointerEvents = 'none';
-                
-                if (!isLogo) {
-                    div.style.setProperty('padding', '8px', 'important');
-                    div.style.setProperty('box-sizing', 'border-box', 'important');
-                    div.style.setProperty('background-origin', 'content-box', 'important');
-                    div.style.setProperty('background-clip', 'content-box', 'important');
-                    div.style.setProperty('mask-origin', 'content-box', 'important');
-                    div.style.setProperty('webkit-mask-origin', 'content-box', 'important');
-                    div.style.setProperty('mask-clip', 'content-box', 'important');
-                    div.style.setProperty('webkit-mask-clip', 'content-box', 'important');
-                }
-                
-                const isColored = img.style.backgroundColor || img.getAttribute('data-original-bg');
-                if (isColored) {
-                    const color = img.style.backgroundColor || '';
-                    div.style.setProperty('background-color', color, 'important');
-                    div.style.setProperty('background-image', 'none', 'important');
-                    
-                    const bgUrl = 'url("' + origSrc + '")';
-                    div.setAttribute('data-original-bg', bgUrl);
-                    div.style.setProperty('webkit-mask-image', bgUrl, 'important');
-                    div.style.setProperty('webkit-mask-position', 'center', 'important');
-                    div.style.setProperty('webkit-mask-size', 'contain', 'important');
-                    div.style.setProperty('webkit-mask-repeat', 'no-repeat', 'important');
-                    
-                    div.style.setProperty('mask-image', bgUrl, 'important');
-                    div.style.setProperty('mask-position', 'center', 'important');
-                    div.style.setProperty('mask-size', 'contain', 'important');
-                    div.style.setProperty('mask-repeat', 'no-repeat', 'important');
-                } else {
-                    div.style.setProperty('background-image', 'url("' + origSrc + '")', 'important');
-                    div.style.setProperty('background-size', 'contain', 'important');
-                    div.style.setProperty('background-position', 'center', 'important');
-                    div.style.setProperty('background-repeat', 'no-repeat', 'important');
-                }
-                
-                parent.replaceChild(div, img);
-                console.log("[V4 Migration] Migrated image icon/logo to div element:", origSrc);
-            }
-        });
-    };
-
-    const _enforceShapesAndArrows = () => {
-        window.buildArrowPath = function(width, height, dir) {
-            const w = Math.max(20, parseFloat(width) || 100);
-            const h = Math.max(20, parseFloat(height) || 100);
-            const direction = dir || 'right';
-
-            if (direction === 'right') {
-                const stemTop = h * 0.3;
-                const stemBot = h * 0.7;
-                const headLen = Math.min(w * 0.45, Math.max(h * 0.75, 20));
-                const headX = w - headLen;
-                return 'M 0,' + stemTop + ' L ' + headX + ',' + stemTop + ' L ' + headX + ',0 L ' + w + ',' + (h / 2) + ' L ' + headX + ',' + h + ' L ' + headX + ',' + stemBot + ' L 0,' + stemBot + ' Z';
-            } 
-            else if (direction === 'left') {
-                const stemTop = h * 0.3;
-                const stemBot = h * 0.7;
-                const headLen = Math.min(w * 0.45, Math.max(h * 0.75, 20));
-                const headX = headLen;
-                return 'M ' + w + ',' + stemTop + ' L ' + headX + ',' + stemTop + ' L ' + headX + ',0 L 0,' + (h / 2) + ' L ' + headX + ',' + h + ' L ' + headX + ',' + stemBot + ' L ' + w + ',' + stemBot + ' Z';
-            } 
-            else if (direction === 'up') {
-                const stemLeft = w * 0.3;
-                const stemRight = w * 0.7;
-                const headLen = Math.min(h * 0.45, Math.max(w * 0.75, 20));
-                const headY = headLen;
-                return 'M ' + stemLeft + ',' + h + ' L ' + stemLeft + ',' + headY + ' L 0,' + headY + ' L ' + (w / 2) + ',0 L ' + w + ',' + headY + ' L ' + stemRight + ',' + headY + ' L ' + stemRight + ',' + h + ' Z';
-            } 
-            else if (direction === 'down') {
-                const stemLeft = w * 0.3;
-                const stemRight = w * 0.7;
-                const headLen = Math.min(h * 0.45, Math.max(w * 0.75, 20));
-                const headY = h - headLen;
-                return 'M ' + stemLeft + ',0 L ' + stemLeft + ',' + headY + ' L 0,' + headY + ' L ' + (w / 2) + ',' + h + ' L ' + w + ',' + headY + ' L ' + stemRight + ',' + headY + ' L ' + stemRight + ',0 Z';
-            }
-            return '';
-        };
-
-        document.querySelectorAll('.v4-shape').forEach(s => {
-            if (s.classList.contains('v4-shape-diamond') || s.classList.contains('v4-shape-triangle') || s.classList.contains('v4-shape-arrow')) {
-                s.style.setProperty('border-width', '0px', 'important');
-                if (s.classList.contains('v4-shape-arrow')) {
-                    const svg = s.querySelector('svg');
-                    const comp = s.closest('.lf-component') || s;
-                    const w = parseFloat(comp.style.width) || comp.offsetWidth || 100;
-                    const h = parseFloat(comp.style.height) || comp.offsetHeight || 100;
-
-                    if (svg) {
-                        const targetViewBox = '0 0 ' + w + ' ' + h;
-                        if (svg.getAttribute('viewBox') !== targetViewBox) {
-                            svg.setAttribute('viewBox', targetViewBox);
-                        }
-                        if (svg.getAttribute('preserveAspectRatio') !== 'none') {
-                            svg.setAttribute('preserveAspectRatio', 'none');
-                        }
-                    }
-
-                    const dir = s.getAttribute('data-direction') || s.getAttribute('data-arrow-dir') || 'right';
-                    const targetD = window.buildArrowPath(w, h, dir);
-                    const path = s.querySelector('.v4-arrow-path');
-                    if (path && targetD && path.getAttribute('d') !== targetD) {
-                        path.setAttribute('d', targetD);
-                    }
-                    if (!s.getAttribute('data-direction') && !s.getAttribute('data-arrow-dir')) {
-                        s.setAttribute('data-direction', 'right');
-                        s.setAttribute('data-arrow-dir', 'right');
-                    }
-                }
-                return;
-            }
-            if (s.style.borderWidth !== '1.6px') s.style.setProperty('border-width', '1.6px', 'important');
-        });
-    };
-
-    const _enforceTablesGridsAndSvgStrokes = () => {
-        document.querySelectorAll('table.v4-premium-table, table.v4-table, .v4-grid-container table').forEach(t => { if (t.classList.contains('v4-ia-tree-table')) return;
-            if (t.style.borderWidth !== '1.6px') t.style.setProperty('border-width', '1.6px', 'important');
-            if (t.style.height !== 'auto') t.style.setProperty('height', 'auto', 'important');
-            
-            t.querySelectorAll('td, th').forEach(cell => {
-                const isCheckbox = cell.classList.contains('v4-grid-check-col') || 
-                                 cell.querySelector('input[type="checkbox"]') || 
-                                 cell.getAttribute('data-type') === 'checkbox';
-                if (!isCheckbox) {
-                    const nestedEditable = cell.querySelector('.v4-editable-cell, [contenteditable="true"]');
-                    if (nestedEditable) {
-                        const text = nestedEditable.innerText || nestedEditable.innerHTML || '';
-                        nestedEditable.remove();
-                        cell.innerHTML = text;
-                    }
-                    const target = cell;
-
-                    if (!target.classList.contains('v4-editable-cell')) {
-                        target.classList.add('v4-editable-cell');
-                    }
-                    if (target.getAttribute('contenteditable') !== 'true') {
-                        target.setAttribute('contenteditable', 'true');
-                    }
-                    if (!target._eventsBound) {
-                        target._eventsBound = true;
-                        target.removeAttribute('data-events-bound');
-                        
-                        const selectParentComponent = () => {
-                            const comp = target.closest('.lf-component');
-                            if (comp && !comp.classList.contains('selected')) {
-                                document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected'));
-                                comp.classList.add('selected');
-                                if (window.updateHandles) window.updateHandles(comp);
-                                
-                                notifyParent({
-                                    type: "LF_COMP_SELECTED",
-                                    shiftKey: false,
-                                    ...window._getCompStyles(comp)
-                                });
-                            }
-                        };
-
-                        target.addEventListener('mousedown', function(e) {
-                            selectParentComponent();
-                        });
-                        target.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            selectParentComponent();
-                        });
-                        target.addEventListener('input', function() {
-                            if (window.markDirty) window.markDirty();
-                            const thCell = target.tagName === 'TH' ? target : target.closest('th');
-                            if (thCell) {
-                                try {
-                                    const gridContainer = thCell.closest('.v4-grid-container');
-                                    if (gridContainer) {
-                                        const cols = JSON.parse(gridContainer.getAttribute('data-columns') || '[]');
-                                        const idx = Array.from(thCell.parentElement.children).indexOf(thCell);
-                                        if (cols[idx]) {
-                                            cols[idx].name = thCell.innerText.replace(' ⇅', '').replace('\u21C5', '').replace('⇅', '').trim();
-                                            gridContainer.setAttribute('data-columns', JSON.stringify(cols));
-                                        }
-                                    }
-                                } catch(err) {}
-                            }
-                        });
-                    }
-                }
-            });
-            if (window.TableSelection) window.TableSelection.bindEvents(t);
-        });
-        document.querySelectorAll('.v4-grid-container').forEach(grid => {
-            const showPagination = grid.getAttribute('data-pagination') !== 'false';
-            const rowCount = parseInt(grid.getAttribute('data-row-count')) || 5;
-            const rowHeight = parseInt(grid.getAttribute('data-row-height')) || 50;
-            const footer = grid.querySelector('.v4-grid-footer');
-            if (footer) {
-                const targetDisplay = showPagination ? 'flex' : 'none';
-                if (footer.style.display !== targetDisplay) footer.style.display = targetDisplay;
-            }
-            const wrapper = grid.querySelector('.v4-grid-table-wrapper');
-            if (wrapper) {
-                const targetHeight = showPagination ? 'calc(100% - 36px)' : '100%';
-                if (wrapper.style.height !== targetHeight) wrapper.style.height = targetHeight;
-            }
-            if (grid.style.borderWidth !== '1.6px') grid.style.setProperty('border-width', '1.6px', 'important');
-        });
-        document.querySelectorAll('polygon, path, rect, circle').forEach(svg => {
-            if (svg.closest('.connector-line')) return;
-            if (svg.getAttribute('stroke-width') !== '1.6') svg.setAttribute('stroke-width', '1.6');
-            if (svg.style.strokeWidth !== '1.6') svg.style.strokeWidth = '1.6';
-            if (svg.style.vectorEffect !== 'non-scaling-stroke') svg.style.vectorEffect = 'non-scaling-stroke';
-        });
-
-        // Clean z-index rules from .lf-component.selected stylesheets inside the iframe
-        for (let i = 0; i < document.styleSheets.length; i++) {
-            try {
-                const sheet = document.styleSheets[i];
-                const rules = sheet.cssRules || sheet.rules;
-                if (rules) {
-                    for (let j = rules.length - 1; j >= 0; j--) {
-                        const rule = rules[j];
-                        if (rule.selectorText && rule.selectorText.includes('.lf-component.selected')) {
-                            rule.style.removeProperty('z-index');
-                        }
-                    }
-                }
-            } catch (e) {
-                // Ignore security errors for external stylesheets
-            }
+        } catch (e) {
+            console.error("Error in admin settings enforceDesignSystem:", e);
         }
     };
 
-    window.enforceDesignSystem = () => {
+    window.enforceDesignSystem = function() {
         _enforceEarlyTextAutoSizing();
         _bindAllAtomInteractiveEvents();
         _enforcePatternAndIconStyles();
         _enforceCrispImageResampling();
         _enforceAdminSettingsLayout();
-        _normalizeComponentIdsAndAtomBoxes();
-        _enforceAccordionStepperSelectboxFileupload();
-        _enforceAlertToggleButtonLayouts();
-        _enforceDatepickerLayout();
-        _enforceTextInputContainers();
-        _migrateLegacyCoordsAndIcons();
-        _enforceShapesAndArrows();
-        _enforceTablesGridsAndSvgStrokes();
+        if (window.V4DesignSystemAtoms && typeof window.V4DesignSystemAtoms.runAll === 'function') {
+            window.V4DesignSystemAtoms.runAll();
+        }
+        if (window.V4DesignSystemShapesTables && typeof window.V4DesignSystemShapesTables.runAll === 'function') {
+            window.V4DesignSystemShapesTables.runAll();
+        }
     };
 
     let dsObserver = null;
     let enforceQueued = false;
-    const runEnforceSafe = (mutationsList) => {
+    const runEnforceSafe = function(mutationsList) {
         if (enforceQueued) return;
         if (window.isMarqueeActive) return;
 
-        // Skip mutation if caused solely by SmartGuide overlays, drag handles, resizers, or selection class toggling
         if (mutationsList && Array.isArray(mutationsList) && mutationsList.length > 0) {
-            const isIgnorableMutation = mutationsList.every(m => {
+            const isIgnorableMutation = mutationsList.every(function(m) {
                 const target = m.target;
                 if (!target) return true;
                 const el = target.nodeType === 1 ? target : target.parentElement;
                 if (!el) return true;
 
-                // 1. Overlay / Guide / Handle mutations
                 const isOverlay = !!(
                     el.closest('.v4-responsive-guide-layer') ||
                     el.closest('.pc-guide-layer') ||
                     el.closest('.mobile-guide-layer') ||
                     el.closest('.lf-drag-handle') ||
                     el.closest('.lf-resizer') ||
+                    el.closest('.v4-selection-adorner-layer') ||
                     el.classList.contains('v4-responsive-guide-layer') ||
                     el.classList.contains('pc-guide-layer') ||
-                    el.classList.contains('mobile-guide-layer')
+                    el.classList.contains('mobile-guide-layer') ||
+                    el.classList.contains('v4-selection-adorner-layer')
                 );
                 if (isOverlay) return true;
 
-                // 2. Selection class toggle mutations (only 'selected' class added or removed)
                 if (m.type === 'attributes' && m.attributeName === 'class') {
-                    const oldClass = (m.oldValue || '').replace(/\bselected\b/g, '').replace(/\s+/g, ' ').trim();
-                    const currentClass = (el.className || '').replace(/\bselected\b/g, '').replace(/\s+/g, ' ').trim();
+                    const oldClass = _stripSelectedClassToken(m.oldValue || '');
+                    const currentClass = _stripSelectedClassToken(el.className || '');
                     if (oldClass === currentClass) {
                         return true;
                     }
@@ -1275,11 +416,11 @@ window.v4DesignSystemScript = `
         }
 
         enforceQueued = true;
-        window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(function() {
             if (dsObserver) dsObserver.disconnect();
             try {
                 window.enforceDesignSystem();
-            } catch(e) {
+            } catch (e) {
                 console.error("[DesignSystem] enforceDesignSystem error:", e);
             }
             if (dsObserver) {
@@ -1289,203 +430,20 @@ window.v4DesignSystemScript = `
         });
     };
 
-    window.suspendDesignSystem = () => {
+    window.suspendDesignSystem = function() {
         if (dsObserver) {
             dsObserver.disconnect();
-            console.log("[DesignSystem] Suspended MutationObserver during batch DOM transformations.");
         }
     };
 
-    window.resumeDesignSystem = () => {
+    window.resumeDesignSystem = function() {
         if (dsObserver) {
             runEnforceSafe();
-            console.log("[DesignSystem] Resumed MutationObserver.");
         }
     };
 
-
-    if (typeof window.toggleIaG1 !== 'function') {
-        window.toggleIaG1 = function(g1Key, btnEl, ev) {
-            if (ev) { ev.stopPropagation(); ev.preventDefault(); }
-            var table = (btnEl && btnEl.closest ? btnEl.closest('table.v4-ia-tree-table') : null) || document.querySelector('table.v4-ia-tree-table');
-            if (!table) return;
-            var rows = table.querySelectorAll('tbody tr[data-g1="' + g1Key + '"]');
-            if (!rows.length) return;
-            var rootRow = rows[0];
-            var nextFoldState = !rootRow.classList.contains('is-folded-root');
-            if (nextFoldState) {
-                rootRow.classList.add('is-folded-root');
-                if (btnEl) btnEl.textContent = '\u25B6';
-            } else {
-                rootRow.classList.remove('is-folded-root');
-                if (btnEl) btnEl.textContent = '\u25BC';
-            }
-            for (var i = 1; i < rows.length; i++) {
-                if (nextFoldState) rows[i].classList.add('ia-hidden-g1');
-                else rows[i].classList.remove('ia-hidden-g1');
-            }
-            if (typeof window.markDirty === 'function') window.markDirty();
-        };
-    }
-
-    if (typeof window.toggleIaG2 !== 'function') {
-        window.toggleIaG2 = function(g2Key, btnEl, ev) {
-            if (ev) { ev.stopPropagation(); ev.preventDefault(); }
-            var table = (btnEl && btnEl.closest ? btnEl.closest('table.v4-ia-tree-table') : null) || document.querySelector('table.v4-ia-tree-table');
-            if (!table) return;
-            var rootRow = table.querySelector('tbody tr[data-g2="' + g2Key + '"]');
-            var childRows = table.querySelectorAll('tbody tr[data-g2-parent="' + g2Key + '"]');
-            if (!rootRow || !childRows.length) return;
-            var isFolded = (btnEl && btnEl.textContent.trim() === '\u25B6') || childRows[0].classList.contains('ia-hidden-g2');
-            var nextFold = !isFolded;
-            if (nextFold) {
-                rootRow.classList.add('is-folded-root');
-                if (btnEl) btnEl.textContent = '\u25B6';
-            } else {
-                rootRow.classList.remove('is-folded-root');
-                if (btnEl) btnEl.textContent = '\u25BC';
-            }
-            for (var i = 0; i < childRows.length; i++) {
-                if (nextFold) childRows[i].classList.add('ia-hidden-g2');
-                else childRows[i].classList.remove('ia-hidden-g2');
-            }
-            if (typeof window.markDirty === 'function') window.markDirty();
-        };
-    }
-
-    if (typeof window.bindIaTreeTables !== 'function') {
-        window.bindIaTreeTables = function() {
-            var tables = document.querySelectorAll('table.v4-ia-tree-table');
-            tables.forEach(function(table) {
-                var comp = table.closest('.lf-component');
-                if (!table || !comp || table._iaPropsBound) return;
-                table._iaPropsBound = true;
-                table._tableSelectionBound = true;
-                table.querySelectorAll('.selected-cell').forEach(function(c) { c.classList.remove('selected-cell'); });
-
-                var isDragSelecting = false;
-                var dragStartRow = -1;
-                var dragStartCol = -1;
-
-                var syncToParentInspector = function() {
-                    document.querySelectorAll('.lf-component').forEach(function(x) { x.classList.remove('selected'); });
-                    comp.classList.add('selected');
-                    window.activeEl = comp;
-                    if (typeof window.updateHandles === 'function') window.updateHandles(comp);
-                    if (typeof window.notifyParent === 'function') {
-                        var compStyles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id, isTable: true };
-                        compStyles.isTable = true;
-                        window.notifyParent(Object.assign({ type: 'LF_COMP_SELECTED', shiftKey: false, isResponsive: false }, compStyles));
-                    }
-                    var notifyCells = function() {
-                        var selected = table.querySelectorAll('.selected-cell');
-                        if (!selected.length) {
-                            if (typeof window.notifyParent === 'function') window.notifyParent({ type: 'LF_CELL_SELECTED', cellData: null });
-                            return;
-                        }
-                        var repCell = (window._iaLastClickedCell && window._iaLastClickedCell.classList && window._iaLastClickedCell.classList.contains('selected-cell')) ? window._iaLastClickedCell : selected[0];
-                        var innerSpan = repCell.querySelector('.v4-editable-cell');
-                        var bg = '#ffffff';
-                        if (repCell.getAttribute('data-bg-transparent') === 'true') {
-                            bg = 'transparent';
-                        } else if (repCell.style.backgroundColor && repCell.style.backgroundColor !== 'initial' && repCell.style.backgroundColor !== 'inherit') {
-                            bg = repCell.style.backgroundColor;
-                        } else if (repCell.tagName === 'TH') {
-                            bg = (repCell.parentElement && repCell.parentElement.rowIndex === 0) ? '#27272a' : '#3f3f46';
-                        }
-                        var color = (innerSpan && innerSpan.style.color) || repCell.style.color || window.getComputedStyle(innerSpan || repCell).color || '#1e293b';
-                        var rawAlign = repCell.style.textAlign || window.getComputedStyle(repCell).textAlign || 'center';
-                        var align = (rawAlign === 'start' || rawAlign === 'left' || rawAlign === '-webkit-left') ? 'left' : ((rawAlign === 'end' || rawAlign === 'right' || rawAlign === '-webkit-right') ? 'right' : 'center');
-                        var w = Math.round(repCell.getBoundingClientRect().width) || repCell.offsetWidth || 120;
-                        var h = Math.round(repCell.getBoundingClientRect().height) || repCell.offsetHeight || 36;
-                        if (typeof window.notifyParent === 'function') {
-                            window.notifyParent({
-                                type: 'LF_CELL_SELECTED',
-                                cellData: { count: selected.length, backgroundColor: bg, color: color, textAlign: align, width: w, height: h }
-                            });
-                        }
-                    };
-                    notifyCells();
-                    setTimeout(notifyCells, 20);
-                };
-
-                table.addEventListener('mousedown', function(e) {
-                    if (e.button !== 0 || e.target.closest('.ia-toggle-btn')) return;
-                    var cell = e.target.closest('td, th');
-                    if (!cell) return;
-                    window._iaLastClickedCell = cell;
-                    var isAlreadyEditingThisCell = (document.activeElement && document.activeElement.isContentEditable && cell.contains(document.activeElement));
-                    var tr = cell.parentElement;
-                    var allRows = Array.from(table.rows);
-                    dragStartRow = allRows.indexOf(tr);
-                    dragStartCol = Array.from(tr.cells).indexOf(cell);
-                    isDragSelecting = !isAlreadyEditingThisCell;
-                    var isFullRowSelect = cell.classList.contains('col-site') || e.altKey;
-                    if (!e.shiftKey) {
-                        table.querySelectorAll('.selected-cell').forEach(function(c) { c.classList.remove('selected-cell'); });
-                        if (isFullRowSelect && tr) Array.from(tr.cells).forEach(function(rc) { rc.classList.add('selected-cell'); });
-                        else cell.classList.add('selected-cell');
-                    } else {
-                        if (isFullRowSelect && tr) {
-                            var addFlag = !cell.classList.contains('selected-cell');
-                            Array.from(tr.cells).forEach(function(rc) { rc.classList.toggle('selected-cell', addFlag); });
-                        } else cell.classList.toggle('selected-cell');
-                    }
-                    window._iaSuppressGlobalClear = true;
-                    syncToParentInspector();
-                    setTimeout(function() {
-                        window._iaSuppressGlobalClear = false;
-                        if (window.V4DragResizeEngine) {
-                            window.V4DragResizeEngine.isPendingDrag = false;
-                            window.V4DragResizeEngine.isDragging = false;
-                        }
-                        syncToParentInspector();
-                    }, 0);
-                });
-
-                table.addEventListener('mouseover', function(e) {
-                    if (!isDragSelecting) return;
-                    if (window.V4DragResizeEngine) {
-                        window.V4DragResizeEngine.isPendingDrag = false;
-                        window.V4DragResizeEngine.isDragging = false;
-                    }
-                    var cell = e.target.closest('td, th');
-                    if (!cell) return;
-                    var tr = cell.parentElement;
-                    var allRows = Array.from(table.rows);
-                    var curRow = allRows.indexOf(tr);
-                    var curCol = Array.from(tr.cells).indexOf(cell);
-                    if (curRow < 0 || curCol < 0) return;
-                    var minR = Math.min(dragStartRow, curRow), maxR = Math.max(dragStartRow, curRow);
-                    var minC = Math.min(dragStartCol, curCol), maxC = Math.max(dragStartCol, curCol);
-                    table.querySelectorAll('.selected-cell').forEach(function(c) { c.classList.remove('selected-cell'); });
-                    for (var r = minR; r <= maxR; r++) {
-                        var rowEl = allRows[r];
-                        if (!rowEl || rowEl.classList.contains('ia-hidden-g1') || rowEl.classList.contains('ia-hidden-g2')) continue;
-                        for (var c = minC; c <= maxC; c++) {
-                            if (rowEl.cells[c]) rowEl.cells[c].classList.add('selected-cell');
-                        }
-                    }
-                });
-
-                document.addEventListener('mouseup', function() {
-                    if (isDragSelecting) {
-                        isDragSelecting = false;
-                        syncToParentInspector();
-                    }
-                });
-
-                document.addEventListener('mousedown', function(e) {
-                    if (!e.target.closest('table.v4-ia-tree-table')) {
-                        table.querySelectorAll('.selected-cell').forEach(function(c) { c.classList.remove('selected-cell'); });
-                    }
-                });
-            });
-        };
-    }
-
     if (typeof window.enforceDesignSystem === 'function') {
-        dsObserver = new MutationObserver((mutations) => runEnforceSafe(mutations));
+        dsObserver = new MutationObserver(function(mutations) { runEnforceSafe(mutations); });
         runEnforceSafe();
         setTimeout(runEnforceSafe, 500);
     }

@@ -552,22 +552,8 @@ window.v4UIAtomsInputsScript = `
     // --- Registered Modular Message Handlers for Inputs & Controls ---
     window.v4MessageHandlers = window.v4MessageHandlers || {};
 
-    function _getTargetComponents(d) {
-        if (d && d.ids && Array.isArray(d.ids) && d.ids.length > 0) {
-            const list = d.ids.map(id => document.getElementById(id)).filter(Boolean);
-            if (list.length > 0) return list;
-        }
-        if (d && d.id) {
-            const single = document.getElementById(d.id);
-            if (single) return [single];
-        }
-        const selected = Array.from(document.querySelectorAll('.lf-component.selected'));
-        if (selected.length > 0) return selected;
-        return [];
-    }
-
     window.v4MessageHandlers['LF_UPDATE_STEPPER_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -616,7 +602,7 @@ window.v4UIAtomsInputsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_SELECTBOX_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -746,7 +732,7 @@ window.v4UIAtomsInputsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_FILEUPLOAD_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -788,7 +774,7 @@ window.v4UIAtomsInputsScript = `
 
 
     window.v4MessageHandlers['LF_UPDATE_DATEPICKER'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -954,30 +940,27 @@ window.v4UIAtomsInputsScript = `
 
 
     window.v4MessageHandlers['LF_UPDATE_TEXTBOX_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
         targets.forEach(s => {
             const container = s.querySelector('.v4-textbox-container, .v4-textarea-container') || (s.classList.contains('v4-textbox-container') || s.classList.contains('v4-textarea-container') ? s : null);
             if (container) {
+                const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
+                const placeholder = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
                 if (d.placeholderText !== undefined) {
-                    const ph = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
-                    if (ph) ph.textContent = d.placeholderText;
+                    if (placeholder) placeholder.textContent = d.placeholderText;
                     container.setAttribute('data-placeholder', d.placeholderText);
                 }
                 if (d.maxLength !== undefined) container.setAttribute('data-maxlength', d.maxLength);
                 if (d.showCounter !== undefined) container.setAttribute('data-show-counter', d.showCounter ? 'true' : 'false');
                 if (d.fontSize !== undefined) {
-                    const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
-                    const placeholder = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
                     if (input) input.style.fontSize = d.fontSize + 'px';
                     if (placeholder) placeholder.style.fontSize = d.fontSize + 'px';
                     container.setAttribute('data-fontsize', d.fontSize);
                 }
                 if (d.fontFamily !== undefined) {
-                    const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
-                    const placeholder = container.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
                     const counter = container.querySelector('.v4-textbox-counter, .v4-textarea-counter');
                     if (input) input.style.fontFamily = d.fontFamily;
                     if (placeholder) placeholder.style.fontFamily = d.fontFamily;
@@ -985,8 +968,12 @@ window.v4UIAtomsInputsScript = `
                     container.setAttribute('data-fontfamily', d.fontFamily);
                 }
 
-                const input = container.querySelector('.v4-textbox-input, .v4-textarea-input');
-                if (input) input.dataset.eventsBound = "false";
+                if (input) {
+                    input.removeAttribute('data-events-bound');
+                    if (typeof input._v4UpdateTextInputUI === 'function') {
+                        input._v4UpdateTextInputUI();
+                    }
+                }
             }
         });
 
@@ -1002,7 +989,7 @@ window.v4UIAtomsInputsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_TOGGLE_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -1048,7 +1035,7 @@ window.v4UIAtomsInputsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_SEARCHBAR_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 

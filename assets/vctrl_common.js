@@ -216,6 +216,34 @@ window.ResponsiveFrameUtils = {
                 }
             });
             
+            // 1.2 Normalize empty Textbox/Textarea orphan <br> and placeholder visibility before saving
+            var lfChar = String.fromCharCode(10);
+            var crChar = String.fromCharCode(13);
+            var bomChar = String.fromCharCode(65279);
+            root.querySelectorAll('.v4-textbox-container, .v4-textarea-container').forEach(function(container) {
+                var isTextarea = container.classList.contains('v4-textarea-container');
+                var input = container.querySelector(isTextarea ? '.v4-textarea-input' : '.v4-textbox-input');
+                var ph = container.querySelector(isTextarea ? '.v4-textarea-placeholder' : '.v4-textbox-placeholder');
+                var counter = container.querySelector(isTextarea ? '.v4-textarea-counter' : '.v4-textbox-counter');
+                if (!input) return;
+                input.removeAttribute('data-events-bound');
+                var rawTxt = (input.textContent || '').split(zwsChar).join('').split(bomChar).join('').split(lfChar).join('').split(crChar).join('');
+                var isEmptyDom = rawTxt.length === 0 && (!isTextarea || input.querySelectorAll('br').length <= 1);
+                if (isEmptyDom) {
+                    if (input.innerHTML !== '') input.innerHTML = '';
+                    if (ph) {
+                        var phAttr = container.getAttribute('data-placeholder');
+                        if (phAttr !== null && ph.textContent !== phAttr) ph.textContent = phAttr;
+                        var hasPh = (ph.textContent || '').length > 0;
+                        ph.style.display = hasPh ? 'block' : 'none';
+                    }
+                    if (counter) {
+                        var maxLen = parseInt(container.getAttribute('data-maxlength')) || 100;
+                        counter.textContent = '0/' + maxLen;
+                    }
+                }
+            });
+
             // 2. Remove active state classes
             root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
                 el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped');
@@ -327,9 +355,42 @@ window.hexToRgba = function(hex, opacity) {
     return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
 };
 
+window.isDarkColor = function(colorStr, threshold) {
+    if (!colorStr || colorStr === 'transparent' || colorStr === 'none') return false;
+    const str = String(colorStr).trim();
+    let r = -1, g = -1, b = -1;
+    if (str.indexOf('#') === 0) {
+        let hex = str.substring(1);
+        if (hex.length === 3) {
+            hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+        }
+        if (hex.length >= 6) {
+            r = parseInt(hex.substring(0, 2), 16);
+            g = parseInt(hex.substring(2, 4), 16);
+            b = parseInt(hex.substring(4, 6), 16);
+        }
+    } else if (str.indexOf('rgb') === 0) {
+        const openIdx = str.indexOf('(');
+        const closeIdx = str.indexOf(')');
+        if (openIdx !== -1 && closeIdx > openIdx) {
+            const parts = str.substring(openIdx + 1, closeIdx).split(',');
+            if (parts.length >= 3) {
+                r = parseInt(parts[0].trim(), 10);
+                g = parseInt(parts[1].trim(), 10);
+                b = parseInt(parts[2].trim(), 10);
+            }
+        }
+    }
+    if (isNaN(r) || isNaN(g) || isNaN(b) || r < 0 || g < 0 || b < 0) return false;
+    const limit = (typeof threshold === 'number') ? threshold : (128 / 255);
+    const lum = ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255;
+    return lum < limit;
+};
+
 window.EditorBus.rgbToHex = window.rgbToHex;
 window.EditorBus.hexToRgb = window.hexToRgb;
 window.EditorBus.hexToRgba = window.hexToRgba;
+window.EditorBus.isDarkColor = window.isDarkColor;
 
 // Universal Screen Category Data SSOT
 window.getCategoryData = function(type) {
@@ -646,6 +707,54 @@ window.v4CommonScript = `
         var g = (num >> 8) & 255;
         var b = num & 255;
         return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
+    };
+
+    // Universal Perceived Luminance Dark Color Detector (Iframe SSOT)
+    window.isDarkColor = function(colorStr, threshold) {
+        if (!colorStr || colorStr === 'transparent' || colorStr === 'none') return false;
+        var str = String(colorStr).trim();
+        var r = -1, g = -1, b = -1;
+        if (str.indexOf('#') === 0) {
+            var hex = str.substring(1);
+            if (hex.length === 3) {
+                hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+            }
+            if (hex.length >= 6) {
+                r = parseInt(hex.substring(0, 2), 16);
+                g = parseInt(hex.substring(2, 4), 16);
+                b = parseInt(hex.substring(4, 6), 16);
+            }
+        } else if (str.indexOf('rgb') === 0) {
+            var openIdx = str.indexOf('(');
+            var closeIdx = str.indexOf(')');
+            if (openIdx !== -1 && closeIdx > openIdx) {
+                var parts = str.substring(openIdx + 1, closeIdx).split(',');
+                if (parts.length >= 3) {
+                    r = parseInt(parts[0].trim(), 10);
+                    g = parseInt(parts[1].trim(), 10);
+                    b = parseInt(parts[2].trim(), 10);
+                }
+            }
+        }
+        if (isNaN(r) || isNaN(g) || isNaN(b) || r < 0 || g < 0 || b < 0) return false;
+        var limit = (typeof threshold === 'number') ? threshold : (128 / 255);
+        var lum = ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255;
+        return lum < limit;
+    };
+
+    // Universal Multi-Selection & Single Target Component Resolver (Iframe SSOT)
+    window._getTargetComponents = function(d) {
+        if (d && d.ids && Array.isArray(d.ids) && d.ids.length > 0) {
+            var list = d.ids.map(function(id) { return document.getElementById(id); }).filter(Boolean);
+            if (list.length > 0) return list;
+        }
+        if (d && d.id) {
+            var single = document.getElementById(d.id);
+            if (single) return [single];
+        }
+        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        if (selected.length > 0) return selected;
+        return [];
     };
 
     // Universal Connector Path Data Calculator

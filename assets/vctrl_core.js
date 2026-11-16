@@ -44,6 +44,8 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'UIAtoms', key: 'v4UIAtomsScript' },
     { name: 'UIAtomsInputs', key: 'v4UIAtomsInputsScript' },
     { name: 'UIAtomsCursor', key: 'v4UIAtomsCursorScript' },
+    { name: 'DesignSystemAtoms', key: 'v4DesignSystemAtomsScript' },
+    { name: 'DesignSystemShapesTables', key: 'v4DesignSystemShapesTablesScript' },
     { name: 'DesignSystem', key: 'v4DesignSystemScript' },
     { name: 'ClipboardObjects', key: 'v4ClipboardObjectsScript' },
     { name: 'FormatPainter', key: 'v4FormatPainterScript' },
@@ -173,7 +175,7 @@ function _compileScreenHtml(content, fileName, isResponsive) {
     const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
     const keywords = [
         'V4UndoManager', 'reorderAllPins', 'v4Script', 'v4ShortcutsScript',
-        'v4DesignSystemScript', 'v4TextMeasurerScript', 'v4UIAtomsScript', 'v4UIAtomsInputsScript', 'v4UIAtomsCursorScript',
+        'v4DesignSystemAtomsScript', 'v4DesignSystemShapesTablesScript', 'v4DesignSystemScript', 'v4TextMeasurerScript', 'v4UIAtomsScript', 'v4UIAtomsInputsScript', 'v4UIAtomsCursorScript',
         'v4CommonScript', 'v4ObjectTextScript', 'v4ObjectShapeScript',
         'v4ObjectTableScript', 'v4ObjectConnectorScript', 'v4ConnectorScript',
         'v4GridScript', 'v4AccordionScript', 'v4TabScript', 'v4ResponsivePinsScript', 'spawnResponsiveDualPins',

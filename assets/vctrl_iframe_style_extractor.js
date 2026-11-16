@@ -47,7 +47,16 @@ if (!window.v4IframeStyleExtractorScript) {
         const isTextbox = isGroup ? false : (!!c.querySelector('.v4-textbox-container') || c.classList.contains('v4-textbox-container'));
         const isTextarea = isGroup ? false : (!!c.querySelector('.v4-textarea-container') || c.classList.contains('v4-textarea-container'));
         const inputContainer = isGroup ? null : (c.querySelector('.v4-textbox-container, .v4-textarea-container') || (isTextbox || isTextarea ? c : null));
-        const placeholderText = inputContainer ? (inputContainer.getAttribute('data-placeholder') || inputContainer.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder')?.textContent || "Placeholder") : "";
+        let placeholderText = "";
+        if (inputContainer) {
+            const phAttr = inputContainer.getAttribute('data-placeholder');
+            if (phAttr !== null) {
+                placeholderText = phAttr;
+            } else {
+                const phEl = inputContainer.querySelector('.v4-textbox-placeholder, .v4-textarea-placeholder');
+                placeholderText = phEl ? (phEl.textContent || "") : "Placeholder";
+            }
+        }
         const maxLength = inputContainer ? (parseInt(inputContainer.getAttribute('data-maxlength')) || 100) : 100;
         const showCounter = inputContainer ? (inputContainer.getAttribute('data-show-counter') !== 'false') : false;
 

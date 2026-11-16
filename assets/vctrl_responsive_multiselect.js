@@ -741,7 +741,11 @@ window.v4ResponsiveMultiselectScript = `
                     const groupZ = parseInt(group.style.zIndex, 10) || 1010;
         
                     const groupedConnectorIdsStr = group.getAttribute('data-connectors');
-                    const groupedConnectorIds = groupedConnectorIdsStr ? JSON.parse(groupedConnectorIdsStr) : [];
+                    let groupedConnectorIds = [];
+                    if (groupedConnectorIdsStr) {
+                        try { groupedConnectorIds = JSON.parse(groupedConnectorIdsStr); } catch (err) { groupedConnectorIds = []; }
+                    }
+                    if (!Array.isArray(groupedConnectorIds)) groupedConnectorIds = [];
         
                     const children = Array.from(group.children).filter(c => c.classList.contains('lf-component'));
                     const childZs = children.map(c => parseInt(c.style.zIndex, 10) || 1000);

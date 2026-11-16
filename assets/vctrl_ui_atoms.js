@@ -69,22 +69,8 @@ window.v4UIAtomsScript = `
     // --- Registered Modular Message Handlers for UI Atoms & Widgets ---
     window.v4MessageHandlers = window.v4MessageHandlers || {};
 
-    function _getTargetComponents(d) {
-        if (d && d.ids && Array.isArray(d.ids) && d.ids.length > 0) {
-            const list = d.ids.map(id => document.getElementById(id)).filter(Boolean);
-            if (list.length > 0) return list;
-        }
-        if (d && d.id) {
-            const single = document.getElementById(d.id);
-            if (single) return [single];
-        }
-        const selected = Array.from(document.querySelectorAll('.lf-component.selected'));
-        if (selected.length > 0) return selected;
-        return [];
-    }
-
     window.v4MessageHandlers['LF_UPDATE_ATOM_STATE'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -115,7 +101,7 @@ window.v4UIAtomsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_ATOM_ICON_SIZE'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -156,7 +142,7 @@ window.v4UIAtomsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_ATOM_TEXT_ENABLED'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -180,7 +166,7 @@ window.v4UIAtomsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_ATOM_LABEL_TEXT'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -207,7 +193,7 @@ window.v4UIAtomsScript = `
     // [Phase 6 Decoupling] LF_UPDATE_STEPPER_PROPERTIES, LF_UPDATE_SELECTBOX_PROPERTIES, LF_UPDATE_FILEUPLOAD_PROPERTIES moved to vctrl_ui_atoms_inputs.js
 
     window.v4MessageHandlers['LF_UPDATE_ATOM_DISABLED'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const disabledStr = d.disabled ? 'true' : 'false';
@@ -241,7 +227,7 @@ window.v4UIAtomsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_ALERT_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -325,7 +311,7 @@ window.v4UIAtomsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_POPUP_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -379,7 +365,7 @@ window.v4UIAtomsScript = `
     };
 
     window.v4MessageHandlers['LF_UPDATE_BUTTON_PROPERTIES'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
@@ -422,7 +408,7 @@ window.v4UIAtomsScript = `
     };
 
     window.v4MessageHandlers['LF_FIT_BUTTON_TO_TEXT'] = function(d) {
-        const targets = _getTargetComponents(d);
+        const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 

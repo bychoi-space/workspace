@@ -20,6 +20,8 @@ $jsFiles = @(
     "assets/vctrl_ui_atoms_inputs.js",
     "assets/vctrl_ui_atoms_cursor.js",
     "assets/vctrl_component_illustrations.js",
+    "assets/vctrl_design_system_atoms.js",
+    "assets/vctrl_design_system_shapes_tables.js",
     "assets/vctrl_design_system.js",
     "assets/vctrl_clipboard_objects.js",
     "assets/vctrl_format_painter.js",
@@ -70,6 +72,8 @@ $jsFiles = @(
     "assets/inspector/inspector_tab.js",
     "assets/inspector/inspector_shapes.js",
     "assets/inspector/inspector_atoms.js",
+    "assets/inspector/inspector_atoms_inputs.js",
+    "assets/inspector/inspector_atoms_advanced.js",
     "assets/inspector/inspector_admin_settings.js",
     "assets/inspector/inspector_text_formatter.js",
     "assets/inspector/inspector_table.js",
@@ -78,6 +82,8 @@ $jsFiles = @(
     "assets/vctrl_canvas_background.js",
     "assets/vctrl_component_atoms_data.js",
     "assets/vctrl_component_data.js",
+    "assets/vctrl_component_logos_templates.js",
+    "assets/vctrl_component_icons_data.js",
     "assets/vctrl_core_router.js",
     "assets/vctrl_parent_shortcuts.js",
     "assets/vctrl_pdf_exporter.js",
@@ -122,6 +128,8 @@ $htmlContent = @"
             { name: 'v4UIAtomsScript', code: window.v4UIAtomsScript },
             { name: 'v4UIAtomsInputsScript', code: window.v4UIAtomsInputsScript },
             { name: 'v4UIAtomsCursorScript', code: window.v4UIAtomsCursorScript },
+            { name: 'v4DesignSystemAtomsScript', code: window.v4DesignSystemAtomsScript },
+            { name: 'v4DesignSystemShapesTablesScript', code: window.v4DesignSystemShapesTablesScript },
             { name: 'v4DesignSystemScript', code: window.v4DesignSystemScript },
             { name: 'v4ClipboardObjectsScript', code: window.v4ClipboardObjectsScript },
             { name: 'v4FormatPainterScript', code: window.v4FormatPainterScript },
@@ -142,7 +150,8 @@ $htmlContent = @"
             { name: 'v4IframeInserterScript', code: window.v4IframeInserterScript },
             { name: 'v4Script', code: window.v4Script },
             { name: 'v4ResponsiveMultiselectScript', code: window.v4ResponsiveMultiselectScript },
-            { name: 'v4ScrollPinScript', code: window.v4ScrollPinScript }
+            { name: 'v4ScrollPinScript', code: window.v4ScrollPinScript },
+            { name: 'v4SelectionAdornerScript', code: window.v4SelectionAdornerScript }
         ];
 
         inlinedScripts.forEach(item => {

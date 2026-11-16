@@ -409,7 +409,7 @@
 
         if (compStyles.isTextbox || compStyles.isTextarea) {
             const phInput = document.getElementById('prop-input-placeholder');
-            if (phInput && compStyles.placeholderText !== undefined) {
+            if (phInput && compStyles.placeholderText !== undefined && (isNewComp || document.activeElement !== phInput)) {
                 phInput.value = compStyles.placeholderText;
             }
         }

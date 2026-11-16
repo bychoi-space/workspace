@@ -354,6 +354,12 @@ window.v4DragResizeScript = `
                     });
                 }
 
+                if (typeof window.updateHandles === 'function') {
+                    window.updateHandles(window.activeEl);
+                } else if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                    window.SelectionAdorner.update();
+                }
+
                 markDirty();
             }
 
@@ -483,6 +489,12 @@ window.v4DragResizeScript = `
                 _handleResponsiveCrossFrameDrop(window.activeEl, isResp);
                 _handlePinMarkerDropAnchoring(window.activeEl);
                 _dispatchPinPositionUpdates(window.activeEl);
+
+                if (typeof window.updateHandles === 'function') {
+                    window.updateHandles(window.activeEl);
+                } else if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                    window.SelectionAdorner.update();
+                }
 
                 if (attachedPinsStart && attachedPinsStart.length > 0) {
                     attachedPinsStart.forEach(function(item) {

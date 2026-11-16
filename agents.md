@@ -81,7 +81,7 @@
 - **모듈러 아키텍처 (Modular Architecture)**: 엔진 안정성과 확장성을 위해 역할을 엄격히 분리합니다.
   - **`vctrl_core.js` (Core Orchestrator - Parent Side)**:
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, 스크린 로딩 파이프라인, 내비게이션 보호 및 중앙 생명주기 조율을 전담합니다.
-    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 29개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
+    - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 31개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
   - **`vctrl_storage.js` (Storage Engine - Parent Side)**:
     - **역할**: 스크린 직렬화(`getIframeHTML`), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, GitHub API 원격 커밋 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
   - **`vctrl_core_router.js` (Core Message Router - Parent Side)**:
@@ -99,6 +99,8 @@
     - **역할**: V4 아톰 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY.atoms`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, 스테퍼, 셀렉트박스, 체크박스, 라디오, 토글, 파일업로드, 데이트피커, 서치바, 아코디언, 알림, 팝업, 커서, 웹 에디터 아톰 등의 템플릿 마크업을 전담 정의합니다.
   - **`vctrl_component_data.js` (Component Definition SSOT - Parent Side)**:
     - **역할**: V4 분자/유기체/캔버스배경 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY`)의 단일 진실 공급원. `molecules`, `organisms`, `canvasBackgrounds` 템플릿 마크업 및 카테고리 메타데이터를 전담 정의합니다.
+  - **`vctrl_component_logos_templates.js` & `vctrl_component_icons_data.js` (Brand Logos, Atomic Quick Templates & SVG Icons Catalog SSOT - Parent Side)**:
+    - **역할**: 브랜드 로고 Base64 레지스트리(`window.V4_LOGO_DATA`, `window.V4_BRAND_LOGO_MAP`), 아톰 빠른 생성 템플릿(`window.V4_ATOMIC_TEMPLATES`), 국영문 벡터 아이콘 SVG 패스 맵(`window.V4_ICON_SVG_MAP`)을 단일 책임 원칙에 따라 분리 전담합니다.
   - **`vctrl_component_illustrations.js` (Illustration Catalog SSOT - Parent Side)**:
     - **역할**: 3D Admin, 2D Admin, 고객 구매 여정, 아토믹 디자인 시스템 26종 일러스트레이션 및 6종 Apple 스타일 Animated WebP 모션 인터랙션 카탈로그 메타데이터 전담 (`window.V4_COMPONENT_LIBRARY.illustrations`).
   - **`vctrl_canvas_viewport.js` (Canvas Viewport Engine - Parent Side)**:
@@ -120,8 +122,8 @@
     - **역할**: 특수 쉐입, 커넥터 객체, 그리드 테이블, 아코디언, 탭 계층 구조 컴포넌트의 전용 동적 렌더링 및 스타일 핸들링을 분리 전담합니다.
   - **`vctrl_undo.js` (Undo Layer - Iframe Side)**:
     - **역할**: iframe 내부의 V4UndoManager 및 Undo/Redo 로컬 상태 관리를 전담합니다.
-  - **`vctrl_design_system.js` (Design Observer - Iframe Side)**:
-    - **역할**: 1.6px 보더 두께 유지, % 좌표의 px 자동 마이그레이션, img-to-div 전환, 아톰 크기 자동 보정(Design System), 이미지 도형(`.v4-shape.v4-shape-image`) 리사이즈 시 150ms 디바운스 기반 선명도 재샘플링(`data-crisp-size`, `window.top.createCrispImageDataUrl`)을 전담합니다.
+  - **`vctrl_design_system.js` / `vctrl_design_system_atoms.js` / `vctrl_design_system_shapes_tables.js` (Design Observer & Domain Enforcers - Iframe Side)**:
+    - **역할**: `vctrl_design_system.js`는 코어 `MutationObserver` 루프, 초기 텍스트 피팅, 패턴/아이콘 슬림 라인(1.2), 이미지 도형(`.v4-shape.v4-shape-image`) 150ms 디바운스 선명도 재샘플링(`data-crisp-size`, `window.top.createCrispImageDataUrl`) 및 어드민 설정 레이아웃 보정을 총괄하며, 아톰 박스/입력 컨트롤 정규화는 `vctrl_design_system_atoms.js`(`window.V4DesignSystemAtoms`), 레거시 `%` 좌표·`img-to-div` 마이그레이션·SVG 쉐입/테이블 보더(1.6px)·IA 트리 테이블 폴딩은 `vctrl_design_system_shapes_tables.js`(`window.V4DesignSystemShapesTables`)가 전담합니다.
   - **`vctrl_shortcuts.js` (Interaction Layer - Iframe Side)**:
     - **역할**: 키보드 핫키 단축키 바인딩, 크로스 스크린 복사/붙여넣기(`window.top.__lf_global_clipboard__`), 외부 OS 클립보드 이미지(`paste` 이벤트 `image/*`) 감지 및 캔버스 삽입 연동, 도형 서식 복사/붙여넣기(`Ctrl+Shift+C` / `Ctrl+Shift+V`, `window.top.__lf_global_style_clipboard__`) 연동을 전담합니다. 일반 `Ctrl+V` 입력 시 네이티브 `paste` 이벤트 발화를 보장하기 위해 `keydown`에서 `e.preventDefault()`를 생략합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
   - **`vctrl_grouping.js` (Interaction Layer)**:
@@ -129,14 +131,15 @@
   - **`vctrl_inspector.js` 및 `assets/inspector/*` (UI Controller & Domain Inspectors)**:
     - **역할**: 시스템의 '얼굴'. `vctrl_inspector.js`는 사이드바 탭 전환, 메타데이터 입력 UI, 화면 목록 렌더링, Quill 에디터 초기화 및 플로팅 카드를 총괄하며, 각 컴포넌트별 상세 속성 제어는 분리된 도메인 인스펙터(`inspector_grid.js`, `inspector_accordion.js`, `inspector_tab.js`, `inspector_shapes.js`, `inspector_atoms.js`, `inspector_popup.js`, `inspector_admin_settings.js`, `inspector_text_formatter.js`, `inspector_scroll_pin.js`)가 전담합니다.
     - **오브젝트 프로퍼티 3중 판정 및 강제 동기화**: `window.updateProperties(compStyles, isNewSelectionExplicit)` 확장 인터페이스를 통해 신규 컴포넌트 선택 여부를 3중 판정(`isNewSelectionExplicit === true || compStyles.id !== state.previousEditingIndex || compStyles.id !== state._lastInspectorCompId`)하고, 타이핑 중 판정(`isTypingInInspector`) 오작동을 리셋하여 동일 쉐입(Rect ➔ Rect 등) 전환 시에도 가로/세로 크기(`DOM.propWidth`, `DOM.propHeight`)를 100% 즉시 갱신합니다.
-    - **`inspector_atoms.js` (`window.InspectorAtoms`)**: 체크박스/라디오, 텍스트박스/텍스트에어리어, 서치바, 데이트피커 등 아톰 속성 인스펙터 동기화 전담 SSOT 모듈.
+    - **`inspector_atoms.js` / `inspector_atoms_inputs.js` / `inspector_atoms_advanced.js` (`window.InspectorAtoms`)**: 위젯형 컨트롤(스테퍼, 셀렉트박스, 파일업로드, 알림, 버튼, 토글 및 공통 헬퍼 `window.InspectorAtomsShared`), 폼 입력형 아톰(체크박스/라디오, 텍스트박스/텍스트에어리어, 서치바, 데이트피커), 고급 인터랙티브 아톰(마우스 커서, 웹 에디터)의 인스펙터 속성 동기화 및 이벤트를 3개 도메인 모듈로 분리 전담하는 SSOT입니다.
     - **`inspector_popup.js` (`window.InspectorPopup`)**: 팝업 윈도우 컴포넌트(`v4-atom-popup`)의 크기, 테두리, 배경색, 타이틀, 버튼 텍스트/스타일 등 인스펙터 속성 동기화 및 캔버스 양방향 이벤트 제어 전담 SSOT 모듈.
     - **`inspector_scroll_pin.js` (`window.InspectorScrollPin`)**: 반응형 화면 및 캔버스 요소의 스크롤 핀(상단/하단/커스텀/스티키), 뷰포트 고정 모드 및 이펙트(`data-scroll-effect`) 인스펙터 바인딩과 UI 동기화 전담 SSOT 모듈.
     - **`vctrl_inspector_actionbar.js` (`window.InspectorActionBar`)**: 다중 선택 액션 바(`#selection-actions-bar`), 그룹/그룹해제, 레이어 순서(앞/뒤), 정렬 및 균등 분배, 서식 복사/붙여넣기, 그룹 치수(W/H) 실시간 계산 동기화 및 인스펙터 바디 재배치(`relocate`), 숨김(`hide`) 전담 SSOT 모듈.
     - **`vctrl_inspector_sync.js` (`window.InspectorPropertySync`)**: 컴포넌트 속성 동기화 디스패처 및 15개 컴포넌트 타입(Shape/Pin, Table, Line, Illustration, Icon, Atom, Popup, Accordion, Grid, Admin-Settings, Tab 등) 전용 프로퍼티 바인딩/추출 서브 동기화 전담 SSOT 모듈.
     - **`inspector_text_formatter.js` (`window.InspectorTextFormatter`)**: Quill 에디터와 캔버스 텍스트 셀 간 연속 공백 보존(`preserveConsecutiveSpaces`, 선행/다중 공백 NBSP 변환) 및 폰트 사이즈 인라인 정규화(`normalizeHtmlForQuill`)를 전담합니다.
   - **`vctrl_iframe_adorner.js` (Selection Adorner Engine - Iframe Side, 29th Module)**:
-    - **역할**: iframe 내부 다중 선택 및 그룹 선택 바운딩 박스/아도너 오버레이(`window.SelectionAdorner`)의 렌더링, 갱신(`update`), 정리(`clear`) 전담 SSOT 모듈.
+    - **역할**: iframe 내부 단일/다중 선택 및 그룹 선택 바운딩 박스/아도너 오버레이(`window.SelectionAdorner`)의 렌더링, 갱신(`update`), 정리(`clear`) 전담 SSOT 모듈.
+    - **그룹 드래그 실시간 동기화 및 자식 반경 격리**: 마우스 드래그(`vctrl_iframe_drag.js`의 `handleMouseMove`/`handleMouseUp`) 중 `window.updateHandles(window.activeEl)`를 통해 1:1 프레임 단위로 좌표를 추종하여 고스트 잔상을 원천 차단하며, `.lf-group` 선택 시에는 직계 자식 도형만 탐색(`!isGroup` 가드 및 `:scope > .v4-shape-...`)하여 내부 뱃지/원형 아톰의 `border-radius`가 그룹 테두리로 전염되지 않도록 격리합니다.
   - **`vctrl_common.js` (Common Bus, Sanitizer & Utilities)**:
     - **역할**: 
       1. 부모-Iframe 통신 인터페이스: `window.EditorBus`(`sendToIframe`, `sendToParent`)
@@ -188,15 +191,17 @@
   - **`vctrl_iframe_layering.js` (Layer Ordering Engine - Iframe Side)**:
     - **역할**: 맨 앞으로 가져오기(`Ctrl+]`), 맨 뒤로 보내기(`Ctrl+[`), Z-Index 자동 재계산 및 캔버스 컨테이너 셀프 힐링 전담 (`v4IframeLayeringScript`).
   - **`vctrl_iframe_style_extractor.js` (Deep Style Extractor - Iframe Side)**:
-    - **역할**: 서식 복사를 위해 도형, 텍스트, 아톰, 테이블의 인라인/컴퓨티드 스타일을 심층 추출 및 정규화 전담 (`v4IframeStyleExtractorScript`).
+    - **역할**: 서식 복사를 위해 도형, 텍스트, 아톰, 테이블의 인라인/컴퓨티드 스타일을 심층 추출 및 정규화 전담 (`v4IframeStyleExtractorScript`). `Textbox`/`Textarea`의 `data-placeholder=""`(빈 문자열) 추출 시 falsy 폴백(`|| "Placeholder"`)을 배제하고 `getAttribute('data-placeholder') !== null` 명시적 검사로 빈 문자열 상태를 보존합니다.
     - **알파(투명도) 추출 SSOT (`window._getAlphaPercent`)**: `rgba(...)`, CSS Color 4 슬래시 구문(`rgb(r g b / a)`), 퍼센트(`%`) 표기까지 견고하게 파싱하며, 알파 값이 0인 경우 `isBgTransparent: true` 및 `isBorderTransparent: true`로 명시적 투명 플래그를 정규화합니다.
   - **`vctrl_properties.js` (Properties Controller - Parent Side)**:
     - **역할**: 부모 창 측 컴포넌트 속성 매핑 및 플로팅 인스펙터 패널 바인딩 헬퍼.
     - **강제 프로퍼티 동기화 파이프라인**: `LF_COMP_SELECTED` 수신 시 활성 대상 ID 변경을 감지하여 부모 activeElement를 즉시 포커스 해제하고, `updateAllInputs(w, h, force = true)`를 호출하여 포커스 가드를 확실히 우회함으로써 동일 유형 쉐입 간 연속 선택 시에도 가로/세로 수치가 100% 강제 동기화되도록 보장합니다.
+  - **`inspector/inspector_shapes.js` (`window.InspectorShapes` - Parent Side)**:
+    - **역할**: 도형 전용 인스펙터 바인딩 및 `Rect` 방향별 모서리 둥글기(`data-corner-dir`: `all`, `top`, `bottom`, `left`, `right`, `buildCornerRadiusStyle`) 동기화 전담.
   - **`inspector/inspector_table.js` (Table Domain Inspector - Parent Side)**:
     - **역할**: 테이블 열/행 치수 제어, 행 추가/삭제, 셀 정렬 및 인스펙터 UI 동기화 전담.
   - **`inspector/inspector_quill.js` (Quill Rich Text Controller - Parent Side)**:
-    - **역할**: Quill 리치 텍스트 에디터 초기화, 커스텀 폰트 크기/컬러 피커 툴바 바인딩 및 캔버스 텍스트 셀 양방향 동기화 전담.
+    - **역할**: Quill 리치 텍스트 에디터 초기화, 커스텀 폰트 크기/컬러 피커 툴바 바인딩, 전체 텍스트 삭제 시 Sticky Format 및 커서 포커스 보존, 빈 순수 도형 텍스트(`Text SHAPE`) 포커스 해제 시 자동 정리(`LF_CLEANUP_EMPTY_TEXT_SHAPES`) 및 캔버스 텍스트 셀 양방향 동기화 전담. (오브젝트 단순 클릭 선택 시 자동 `quill.focus()`를 배제하여 방향키 오브젝트 이동과 충돌하지 않도록 보장합니다.)
   - **`vctrl_resolution_engine.js` (Resolution & Mobile Read-Only Engine - Parent Side)**:
     - **역할**: 뷰포트 해상도 반응형 엔진(`res-narrow`, `res-compact`, `res-wide`), 스마트 프레임 포커스 스위처(`v4-frame-switcher`, `focusFrame`), 모바일/태블릿 네이티브 브라우저 전체화면(`requestFullscreen`/`exitFullscreen`)과 젠 모드(`toggleZenMode`), 화면 회전 권장 토스트(`showRotationToast`) 및 모바일 뷰어 인터랙션 제어 전담.
   - **`app.js` & `dashboard.js` (Dashboard & Project Workspace Controller)**:

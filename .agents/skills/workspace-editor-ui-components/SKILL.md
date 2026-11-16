@@ -362,3 +362,14 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - **Single-Line 4 Meta Chips**: `.card-meta-clean`은 `flex-wrap: nowrap; gap: 4px;`를 유지하고 동일 연도 기간은 `YYYY.MM.DD ~ MM.DD`(`formatCompactPeriod`)로 축약하여 `[담당자]`, `[기간]`, `[Figma]`, `[Notion]` 4개 칩이 항상 1줄에 수납되도록 보장한다.
 - **Viewer Shell Modular Renewal Blocks (`assets/viewer.css`, `assets/vctrl_screen_manager.js`)**:
   - `assets/viewer.css` 하단의 `[VIEWER-RENEWAL-1]`(헤더 카테고리 배지 및 캡슐 칩), `[VIEWER-RENEWAL-2]`(좌측 접힘 사이드바 `.chip-pad-num` `01`~`99` 2자리 숫자 칩 + 3px 액센트 바), `[VIEWER-RENEWAL-3]`(우측 라이브러리 섹션 타이틀 및 컴포넌트 타일 입체화), `[VIEWER-RENEWAL-4]`(우측 상단 보조 버튼 vs `변경사항 저장` 메인 CTA 분리) 블록은 상호 독립된 모듈 구조를 유지하여 개별 튜닝 및 롤백이 즉시 가능하도록 관리한다.
+
+## Shape Corner Direction, Empty Text Cleanup, Textbox Placeholder & Group Adorner Guards
+- **Rect SHAPE 방향별 모서리 둥글기 (`data-corner-dir`, `inspector_shapes.js`)**:
+  - `Rect` 도형은 전체(`all`), 상단(`top`), 하단(`bottom`), 좌측(`left`), 우측(`right`) 5종 모서리 방향(`data-corner-dir`)과 반경(`border-radius`) 조합을 `window.InspectorShapes.buildCornerRadiusStyle(radius, dir)` 단일 헬퍼로 계산하여 인스펙터와 캔버스 양쪽에 일관되게 동기화한다.
+- **빈 도형 텍스트(`Text SHAPE`) 자동 정리 및 Quill 서식 유지 (`inspector_quill.js`, `vctrl_object_shape.js`, `vctrl_common.js`)**:
+  - Quill 에디터에서 전체 삭제 시에도 기존 폰트 크기·색상·굵기(`Sticky Format`)와 에디터 포커스를 그대로 보존하되, 포커스 해제·선택 변경·저장(`ScreenSanitizer.cleanDOM` 및 `LF_CLEANUP_EMPTY_TEXT_SHAPES`) 시 텍스트가 완전히 비어 있는 순수 도형 텍스트(`.v4-text-shape` / `.v4-text-box`)는 유령 박스로 남지 않도록 자동 제거한다. (단, 오브젝트 단순 클릭 선택 시에는 자동 `quill.focus()`를 호출하지 않아 방향키 이동 단축키가 정상 동작하도록 보장한다.)
+- **Textbox / Textarea 빈 Placeholder(`""`) 보존 및 고아 `<br>` 자가 치유 (`vctrl_design_system.js`, `vctrl_iframe_style_extractor.js`, `vctrl_ui_atoms_inputs.js`)**:
+  - `data-placeholder=""`(빈 문자열)일 때 falsy 폴백(`|| "Placeholder"`)으로 덮어쓰지 않고 `getAttribute('data-placeholder') !== null` 명시적 검사로 빈 값을 보존한다.
+  - `contenteditable` 입력창 내부의 고아 `<br>`·개행·제로폭 공백을 `_isTextInputDomEmpty`로 판별 및 자동 정제하고, `input._v4UpdateTextInputUI()`를 통해 인스펙터에서 Placeholder 재입력 시 즉시 화면에 재노출되도록 보장한다.
+- **SelectionAdorner 그룹 드래그 실시간 추종 및 자식 반경 오염 차단 (`vctrl_iframe_adorner.js`, `vctrl_iframe_drag.js`)**:
+  - 마우스 드래그 이동 중 매 프레임 `window.updateHandles(window.activeEl)`를 호출하여 아도너 오버레이 잔상을 차단하고, `.lf-group` 선택 시 내부 손자 뱃지/원형의 `border-radius`(예: `999px`)가 그룹 직사각형 외곽선으로 전염되지 않도록 `!isGroup` 가드로 격리한다.

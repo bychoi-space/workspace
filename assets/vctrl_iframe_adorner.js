@@ -75,15 +75,17 @@ window.v4SelectionAdornerScript = `
                 box.style.outline = '2px solid ' + borderColor;
                 box.style.outlineOffset = '0px';
                 box.style.background = 'transparent';
-                var compRad = comp.style.borderRadius || window.getComputedStyle(comp).borderRadius;
-                if (!compRad || compRad === '0px') {
-                    var innerShape = comp.querySelector('.v4-shape-rect, .v4-shape-circle, .v4-shape-webpage, .v4-shape-pattern-grid');
-                    if (innerShape) {
-                        compRad = innerShape.style.borderRadius || window.getComputedStyle(innerShape).borderRadius;
+                if (!isGroup) {
+                    var compRad = comp.style.borderRadius || window.getComputedStyle(comp).borderRadius;
+                    if (!compRad || compRad === '0px') {
+                        var innerShape = comp.querySelector(':scope > .v4-shape-rect, :scope > .v4-shape-circle, :scope > .v4-shape-webpage, :scope > .v4-shape-pattern-grid');
+                        if (innerShape) {
+                            compRad = innerShape.style.borderRadius || window.getComputedStyle(innerShape).borderRadius;
+                        }
                     }
-                }
-                if (compRad && compRad !== '0px') {
-                    box.style.borderRadius = compRad;
+                    if (compRad && compRad !== '0px') {
+                        box.style.borderRadius = compRad;
+                    }
                 }
                 layer.appendChild(box);
             });

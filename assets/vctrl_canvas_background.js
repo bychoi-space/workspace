@@ -29,22 +29,10 @@
         bgColor: '#f8fafc'
     };
 
-    function rgbToHex(rgb) {
+    const resolveCanvasBgHex = function(rgb) {
         if (!rgb) return '#f8fafc';
         return (window.rgbToHex && window.rgbToHex(rgb)) || ((typeof rgb === 'string' && rgb.startsWith('#')) ? rgb : '#f8fafc');
-    }
-
-    function isDarkColor(hex) {
-        if (!hex || !hex.startsWith('#')) return false;
-        const cleanHex = hex.replace('#', '');
-        if (cleanHex.length !== 6) return false;
-        const r = parseInt(cleanHex.substring(0, 2), 16);
-        const g = parseInt(cleanHex.substring(2, 4), 16);
-        const b = parseInt(cleanHex.substring(4, 6), 16);
-        // Perceived luminance
-        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-        return yiq < 128;
-    }
+    };
 
     function getSliderOpacity() {
         const slider = document.getElementById('canvas-bg-opacity-slider');
@@ -77,15 +65,15 @@
             const pageBgColor = pageEl && pageEl.dataset ? pageEl.dataset.canvasBgColor : null;
 
             if (pageBgColor) {
-                bgColor = rgbToHex(pageBgColor);
+                bgColor = resolveCanvasBgHex(pageBgColor);
             } else if (targetCanvas) {
                 const inlineBg = (targetCanvas.dataset && targetCanvas.dataset.canvasBgColor) ? targetCanvas.dataset.canvasBgColor : targetCanvas.style.backgroundColor;
                 if (inlineBg) {
-                    bgColor = rgbToHex(inlineBg);
+                    bgColor = resolveCanvasBgHex(inlineBg);
                 } else if (doc.defaultView) {
                     const compBg = doc.defaultView.getComputedStyle(targetCanvas).backgroundColor;
                     if (compBg && compBg !== 'rgba(0, 0, 0, 0)' && compBg !== 'transparent') {
-                        bgColor = rgbToHex(compBg);
+                        bgColor = resolveCanvasBgHex(compBg);
                     }
                 }
             }
@@ -161,7 +149,7 @@
             if (badge) badge.innerText = '단색 배경 (' + activeBgColor + ')';
             if (previewEmpty) {
                 previewEmpty.style.display = 'flex';
-                const dark = isDarkColor(activeBgColor);
+                const dark = window.isDarkColor ? window.isDarkColor(activeBgColor) : false;
                 previewEmpty.style.color = dark ? '#e2e8f0' : '#475569';
                 previewEmpty.innerHTML = '<span class="material-icons-outlined" style="color:' + (dark ? '#38bdf8' : '#0284c7') + ';">palette</span><span>단색 배경이 적용 중입니다 (' + activeBgColor + ')</span>';
             }
@@ -260,7 +248,7 @@
 
     window.applyCanvasBackgroundColor = function(rawColor) {
         if (!rawColor) return;
-        const hex = rgbToHex(rawColor);
+        const hex = resolveCanvasBgHex(rawColor);
         sendCanvasBgMessage({
             action: 'set_color',
             color: hex

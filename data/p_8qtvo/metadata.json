@@ -296,7 +296,7 @@
     "renewal_cart_4.html": {
       "title": "장바구니 (To-Be) 옵션변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T01:23:43.045Z",
+      "updatedAt": "2026-11-16T01:24:03.950Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
@@ -328,7 +328,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 10:23:43",
+  "updated": "2026-11-16 10:24:03",
   "version": 0.1,
   "category": "project"
 }

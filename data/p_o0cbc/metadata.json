@@ -1238,6 +1238,12 @@
       "updatedAt": "2026-11-13T07:12:17.306Z",
       "version": 0.1,
       "connectors": []
+    },
+    "07_PC_Design_90.html": {
+      "title": "07_PC_Design_90",
+      "type": "default",
+      "updatedAt": "2026-11-16T00:10:11.490Z",
+      "template": "template_pc_ui.html"
     }
   },
   "developer": "",
@@ -1261,6 +1267,7 @@
     "09_Admin_PC_Scroll_4.html",
     "09_Admin_PC_Scroll_524.html",
     "09_Admin_PC_Scroll_410.html",
-    "09_Admin_PC_Scroll_727.html"
+    "09_Admin_PC_Scroll_727.html",
+    "07_PC_Design_90.html"
   ]
 }

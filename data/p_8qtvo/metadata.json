@@ -453,9 +453,87 @@
     "renewal_order_3.html": {
       "title": "주문서 (Te-Be) 결제약관보기",
       "type": "ui",
-      "updatedAt": "2026-11-16T03:21:03.784Z",
+      "updatedAt": "2026-11-16T03:24:19.710Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[약관보기] 버튼 클릭 시, 팝업 호출",
+          "html": "[약관보기] 버튼 클릭 시, 팝업 호출",
+          "x": 1049,
+          "y": 456,
+          "pins": {
+            "pc": {
+              "x": 1049,
+              "y": 456,
+              "active": true,
+              "fixedHost": "group-1794363100036",
+              "scrollFixed": "sticky"
+            },
+            "mobile": {
+              "x": 280,
+              "y": 2080,
+              "active": true,
+              "fixedHost": "group-1792991444702",
+              "scrollFixed": "sticky-bottom"
+            },
+            "left": {
+              "x": 1049,
+              "y": 456,
+              "active": true,
+              "fixedHost": "group-1794363100036",
+              "scrollFixed": "sticky"
+            },
+            "right": {
+              "x": 280,
+              "y": 2080,
+              "active": true,
+              "fixedHost": "group-1792991444702",
+              "scrollFixed": "sticky-bottom"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "sticky-bottom",
+          "fixedHost": "group-1792991444702"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[주문동의] 항목 기본값 활성화 (펼치기)\n나머지 항목 기본값 비활성화 (접기)\n\n\n※ 약관 순서와 상세 내용은 추후 업데이트 예정",
+          "html": "[주문동의] 항목 기본값 활성화 (펼치기)<div>나머지 항목 기본값 비활성화 (접기)</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ 약관 순서와 상세 내용은 추후 업데이트 예정</span></div>",
+          "x": 391,
+          "y": 158,
+          "pins": {
+            "pc": {
+              "x": 391,
+              "y": 158,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 14,
+              "y": 158,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 391,
+              "y": 158,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 14,
+              "y": 158,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "editor",
@@ -487,7 +565,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 12:21:03",
+  "updated": "2026-11-16 12:24:19",
   "version": 0.1,
   "category": "project"
 }

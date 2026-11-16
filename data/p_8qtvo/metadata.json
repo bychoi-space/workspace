@@ -57,7 +57,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:55:22.997Z",
+      "updatedAt": "2026-11-16T04:56:24.748Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -129,8 +129,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "text": "[혜택 정보] 영역\n- 보유한 쿠폰을 표시하고, 최대 할인 자동 적용하는 기능 신규 적용",
+          "html": "[혜택 정보] 영역<div>- 보유한 쿠폰을 표시하고, 최대 할인 자동 적용하는 기능 신규 적용</div>",
           "x": 20,
           "y": 845,
           "pins": {
@@ -802,7 +802,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 13:55:22",
+  "updated": "2026-11-16 13:56:24",
   "version": 0.1,
   "category": "project"
 }

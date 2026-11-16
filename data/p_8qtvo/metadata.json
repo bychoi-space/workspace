@@ -460,6 +460,17 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": ""
+    },
+    "renewal_order_6.html": {
+      "title": "주문서 (Te-Be) 배송지변경",
+      "type": "ui",
+      "updatedAt": "2026-11-16T03:07:32.580Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "editor",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",
@@ -481,6 +492,7 @@
     "renewal_cart_4.html",
     "renewal_cart_3.html",
     "renewal_order_2.html",
+    "renewal_order_6.html",
     "renewal_order_4.html",
     "renewal_order_3.html",
     "renewal_order_5.html",

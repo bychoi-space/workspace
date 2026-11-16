@@ -296,9 +296,78 @@
     "renewal_cart_4.html": {
       "title": "장바구니 (To-Be) 옵션변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T01:24:03.950Z",
+      "updatedAt": "2026-11-16T01:39:10.830Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[옵션변경] 버튼\n- 클릭 시 하단에 '옵션변경' 영역 확장\n- 활성화 된 상태에서 재클릭 시 영역 축소 (비활성화)",
+          "html": "[옵션변경] 버튼<div>- 클릭 시 하단에 '옵션변경' 영역 확장</div><div>- 활성화 된 상태에서 재클릭 시 영역 축소 (비활성화)</div>",
+          "x": 620,
+          "y": 310,
+          "pins": {
+            "pc": {
+              "x": 620,
+              "y": 310,
+              "active": true
+            },
+            "mobile": {
+              "x": 0,
+              "y": 305,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 620,
+              "y": 310,
+              "active": true
+            },
+            "right": {
+              "x": 0,
+              "y": 305,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "옵션변경 영역\n- 컬러, 사이즈, 수량 변경 기능 제공\n- 컬러, 사이즈, 수량 수정하여도 즉시 적용하지 않음\n- 컬러, 사이즈, 수량 수정 후 [적용] 버튼 클릭 시 변경",
+          "html": "옵션변경 영역<div>- 컬러, 사이즈, 수량 변경 기능 제공</div><div>- 컬러, 사이즈, 수량 수정하여도 즉시 적용하지 않음</div><div>- 컬러, 사이즈, 수량 수정 후 [적용] 버튼 클릭 시 변경</div>",
+          "x": 20,
+          "y": 422,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 422,
+              "active": true
+            },
+            "mobile": {
+              "x": 0,
+              "y": 355,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 422,
+              "active": true
+            },
+            "right": {
+              "x": 0,
+              "y": 355,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -328,7 +397,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 10:24:03",
+  "updated": "2026-11-16 10:39:10",
   "version": 0.1,
   "category": "project"
 }

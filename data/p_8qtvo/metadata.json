@@ -46,7 +46,7 @@
     "03_Order_UI_Improvement_Strategy.html": {
       "title": "시선닷컴 주문 화면 UI 개선 전략",
       "type": "plan",
-      "updatedAt": "2026-11-13T07:00:00.000Z",
+      "updatedAt": "2026-11-16T06:48:00.322Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -262,7 +262,7 @@
     "99_Blank_924.html": {
       "title": "시선닷컴 문제점 분석 (장바구니)",
       "type": "plan",
-      "updatedAt": "2026-11-16T06:44:53.006Z",
+      "updatedAt": "2026-11-11T07:54:55.465Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -799,7 +799,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 15:44:52",
+  "updated": "2026-11-16 15:48:00",
   "version": 0.1,
   "category": "project"
 }

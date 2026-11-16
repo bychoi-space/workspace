@@ -169,7 +169,7 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-16T06:25:20.828Z",
+      "updatedAt": "2026-11-09T10:25:51.487Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -420,7 +420,7 @@
     "renewal_cart_4.html": {
       "title": "장바구니 (To-Be) 옵션변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T01:12:03.003Z",
+      "updatedAt": "2026-11-16T06:25:37.945Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -799,7 +799,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 15:25:20",
+  "updated": "2026-11-16 15:25:37",
   "version": 0.1,
   "category": "project"
 }

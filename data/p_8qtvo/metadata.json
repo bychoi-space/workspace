@@ -295,7 +295,7 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-13T05:41:01.120Z",
+      "updatedAt": "2026-11-16T05:58:28.662Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -379,11 +379,10 @@
               "scrollFixed": "none"
             },
             "mobile": {
-              "x": 96,
-              "y": 37,
+              "x": 100,
+              "y": 555,
               "active": true,
-              "fixedHost": "v4-comp-1790842739611",
-              "scrollFixed": "sticky-bottom"
+              "scrollFixed": "none"
             },
             "left": {
               "x": 861,
@@ -392,16 +391,14 @@
               "scrollFixed": "none"
             },
             "right": {
-              "x": 96,
-              "y": 37,
+              "x": 100,
+              "y": 555,
               "active": true,
-              "fixedHost": "v4-comp-1790842739611",
-              "scrollFixed": "sticky-bottom"
+              "scrollFixed": "none"
             }
           },
           "standardized": true,
-          "scrollFixed": "sticky-bottom",
-          "fixedHost": "v4-comp-1790842739611"
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -802,7 +799,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 13:56:24",
+  "updated": "2026-11-16 14:58:27",
   "version": 0.1,
   "category": "project"
 }

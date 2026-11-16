@@ -57,7 +57,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:51:41.114Z",
+      "updatedAt": "2026-11-16T04:53:03.671Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -768,7 +768,7 @@
     "renewal_payEnd.html",
     "03_Cart_Order_Benchmark_Analysis.html"
   ],
-  "updated": "2026-11-16 13:51:40",
+  "updated": "2026-11-16 13:53:03",
   "version": 0.1,
   "category": "project"
 }

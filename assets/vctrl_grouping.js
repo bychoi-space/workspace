@@ -70,7 +70,39 @@ window.GroupingManager = (function() {
                      }
                  }
              });
+             MessageHub.subscribe('BYCHOI_LOCK_STATE_CHANGED', (data) => {
+                 const locked = !!(data && data.locked);
+                 const btnLock = document.getElementById('btn-lock-object-action');
+                 const txtLock = document.getElementById('txt-lock-object-action');
+                 const iconLock = document.getElementById('icon-lock-object-action');
+                 if (btnLock) {
+                     btnLock.classList.toggle('active', locked);
+                     btnLock.classList.toggle('is-locked-active', locked);
+                 }
+                 if (txtLock) txtLock.textContent = locked ? '잠금 해제' : '위치 잠금';
+                 if (iconLock) {
+                     iconLock.innerHTML = locked
+                         ? '<rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>'
+                         : '<rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.8-1.2"></path>';
+                 }
+             });
          }
+
+         const triggerToggleLock = () => {
+             let ids = getEffectiveSelectedIds();
+             if ((!ids || ids.length === 0) && window.state && window.state.selectedComponent && window.state.selectedComponent.id) {
+                 ids = [window.state.selectedComponent.id];
+             }
+             const compIds = (ids || []).filter(id => typeof id === 'string' && id.indexOf('conn_') !== 0);
+             if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
+                 window.EditorBus.sendToIframe({ type: 'BYCHOI_TOGGLE_LOCK', ids: compIds });
+             } else {
+                 const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+                 if (iframe && iframe.contentWindow) {
+                     iframe.contentWindow.postMessage({ type: 'BYCHOI_TOGGLE_LOCK', ids: compIds }, '*');
+                 }
+             }
+         };
  
          const triggerCopyFormat = () => {
              if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
@@ -124,12 +156,20 @@ window.GroupingManager = (function() {
          if (btnCopyFormatDirect) btnCopyFormatDirect.onclick = triggerCopyFormat;
          const btnPasteFormatDirect = document.getElementById('btn-paste-format-action');
          if (btnPasteFormatDirect) btnPasteFormatDirect.onclick = triggerPasteFormat;
+         const btnLockDirect = document.getElementById('btn-lock-object-action');
+         if (btnLockDirect) btnLockDirect.onclick = triggerToggleLock;
  
          // Keyboard Shortcuts
          window.addEventListener('keydown', (e) => {
              if (window.state && window.state.isReadOnly) return;
              const keyChar = (e.key || '').toLowerCase();
-             if ((e.ctrlKey || e.metaKey) && keyChar === 'g') {
+             const inInputEarly = e.target && (e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || (e.target.closest && e.target.closest('.ql-editor, [contenteditable="true"]')));
+             if ((e.ctrlKey || e.metaKey) && e.shiftKey && (keyChar === 'l' || e.code === 'KeyL') && !inInputEarly) {
+                 e.preventDefault();
+                 triggerToggleLock();
+                 return;
+             }
+             if ((e.ctrlKey || e.metaKey) && keyChar === 'g' && !inInputEarly) {
                  e.preventDefault();
                  if (e.shiftKey) ungroupSelected();
                  else groupSelected();
@@ -477,6 +517,13 @@ window.GroupingManager = (function() {
 
             if (selectionNumber) selectionNumber.innerText = activeIds.length;
             if (selectionLabel) selectionLabel.innerText = activeIds.length > 1 ? 'OBJECTS' : 'OBJECT';
+            const selectionCountGroup = document.querySelector('#selection-actions-bar .selection-count-group');
+            if (selectionCountGroup) {
+                selectionCountGroup.style.setProperty('display', activeIds.length >= 2 ? 'flex' : 'none', 'important');
+            }
+            if (activeIds.length >= 2 && typeof window.syncInspectorContextHeader === 'function') {
+                window.syncInspectorContextHeader(window.state && window.state.selectedComponentStyles, 'multi');
+            }
 
             // Show Align Bar if at least 1 object selected (unless single group component)
             if (alignBar) {

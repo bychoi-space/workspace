@@ -271,6 +271,9 @@ function _mountScreenIframe(iframe, finalContent, isResponsive, DOM) {
             } else {
                 iframe.contentWindow.postMessage({ type: 'BYCHOI_SYNC_SHELL_THEME', theme: curTheme }, '*');
             }
+            if (typeof window.syncFullscreenStateToIframe === 'function') {
+                window.syncFullscreenStateToIframe();
+            }
         }
 
         if (isResponsive && iframe.contentWindow) {

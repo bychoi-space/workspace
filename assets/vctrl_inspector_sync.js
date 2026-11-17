@@ -82,6 +82,11 @@
         }
         if (bgColorGroup) bgColorGroup.style.display = isPattern ? 'none' : 'grid';
         if (bgOpacityGroup) bgOpacityGroup.style.display = isPattern ? 'none' : 'block';
+        const borderDetailGroup = document.getElementById('shape-border-detail-group');
+        const isPinMarkerEarly = (compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex)) || !!compStyles.isDescriptionPin;
+        if (borderDetailGroup) {
+            borderDetailGroup.style.display = isPinMarkerEarly ? 'none' : 'block';
+        }
 
         const cornerGroup = document.getElementById('shape-corner-style-group');
         const arrowGroup = document.getElementById('shape-arrow-direction-group');
@@ -276,33 +281,239 @@
     };
 
     function _syncComponentTypeProperties(compStyles, editingType) {
+        let res;
         if (editingType === 'pin' || editingType === 'shape') {
-            return _syncShapeOrPinTypeProps(compStyles);
+            res = _syncShapeOrPinTypeProps(compStyles);
+        } else if (ATOM_PROP_SYNC_MAP[editingType]) {
+            res = _syncAtomTypeProps(compStyles, editingType);
+        } else {
+            const strategy = TYPE_SYNC_STRATEGIES[editingType];
+            if (typeof strategy === 'function') {
+                res = strategy(compStyles);
+            } else if (compStyles && (compStyles.isCheckbox || compStyles.isRadio)) {
+                res = _syncCheckboxRadioTypeProps(compStyles);
+            }
         }
-        if (ATOM_PROP_SYNC_MAP[editingType]) {
-            return _syncAtomTypeProps(compStyles, editingType);
+        _syncSliderNumberInputs();
+        return res;
+    }
+
+    // --- B-2: Universal Bi-Directional Slider <-> Direct Numeric Input Synchronizer ---
+    function _syncSliderNumberInputs() {
+        document.querySelectorAll('.v4-slider-num-input[data-slider-target]').forEach(function(numInp) {
+            const targetId = numInp.getAttribute('data-slider-target');
+            if (!targetId) return;
+            const slider = document.getElementById(targetId);
+            if (!slider) return;
+            const val = parseInt(slider.value, 10);
+            const cleanVal = isNaN(val) ? 0 : val;
+            if (document.activeElement !== numInp) {
+                numInp.value = cleanVal;
+            }
+            const legacyTxt = document.getElementById('txt-' + targetId.replace(/^prop-/, ''));
+            if (legacyTxt) legacyTxt.innerText = cleanVal;
+        });
+    }
+
+    let _sliderNumericDelegationBound = false;
+    function _bindSliderNumericDelegation() {
+        if (_sliderNumericDelegationBound || typeof document === 'undefined') return;
+        _sliderNumericDelegationBound = true;
+
+        // 1. Range slider drag -> instant update to paired numeric input
+        document.addEventListener('input', function(e) {
+            const t = e.target;
+            if (!t || t.tagName !== 'INPUT') return;
+
+            if (t.type === 'range' && t.id) {
+                const pairedNum = document.querySelector('.v4-slider-num-input[data-slider-target="' + t.id + '"]');
+                if (pairedNum && document.activeElement !== pairedNum) {
+                    pairedNum.value = parseInt(t.value, 10) || 0;
+                }
+                return;
+            }
+
+            // 2. Direct keyboard number input -> clamp & forward event to paired range slider
+            if (t.classList && t.classList.contains('v4-slider-num-input')) {
+                const sliderId = t.getAttribute('data-slider-target');
+                const slider = sliderId ? document.getElementById(sliderId) : null;
+                if (!slider) return;
+                const rawStr = String(t.value).trim();
+                if (rawStr === '' || rawStr === '-') return;
+                const parsed = parseInt(rawStr, 10);
+                if (isNaN(parsed)) return;
+                const minV = !isNaN(parseFloat(slider.min)) ? parseFloat(slider.min) : 0;
+                const maxV = !isNaN(parseFloat(slider.max)) ? parseFloat(slider.max) : 100;
+                const clamped = Math.max(minV, Math.min(maxV, parsed));
+                if (String(slider.value) !== String(clamped)) {
+                    slider.value = clamped;
+                    slider.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+        });
+
+        const finalizeSliderNumericInput = function(e) {
+            const t = e.target;
+            if (!t || !t.classList || !t.classList.contains('v4-slider-num-input')) return;
+            const sliderId = t.getAttribute('data-slider-target');
+            const slider = sliderId ? document.getElementById(sliderId) : null;
+            if (!slider) return;
+            const minV = !isNaN(parseFloat(slider.min)) ? parseFloat(slider.min) : 0;
+            const maxV = !isNaN(parseFloat(slider.max)) ? parseFloat(slider.max) : 100;
+            const parsed = parseInt(String(t.value).trim(), 10);
+            const finalVal = isNaN(parsed) ? (parseInt(slider.value, 10) || 0) : Math.max(minV, Math.min(maxV, parsed));
+            t.value = finalVal;
+            if (String(slider.value) !== String(finalVal)) {
+                slider.value = finalVal;
+                slider.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            slider.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+
+        document.addEventListener('change', finalizeSliderNumericInput);
+        document.addEventListener('focusout', finalizeSliderNumericInput);
+    }
+    _bindSliderNumericDelegation();
+
+    // --- B-3: Smart Contextual Inspector Header Resolver & Synchronizer ---
+    const INSPECTOR_TYPE_HEADER_MAP = {
+        'group': { title: '그룹 오브젝트', badge: 'GROUP' },
+        'pin': { title: '화면 설명 핀', badge: 'PIN' },
+        'table': { title: '표 (테이블)', badge: 'TABLE' },
+        'grid': { title: '데이터 그리드', badge: 'GRID' },
+        'textbox': { title: '텍스트 입력창', badge: 'INPUT' },
+        'textarea': { title: '멀티라인 입력창', badge: 'INPUT' },
+        'searchbar': { title: '검색창', badge: 'SEARCH' },
+        'stepper': { title: '스테퍼', badge: 'STEPPER' },
+        'selectbox': { title: '셀렉트박스', badge: 'SELECT' },
+        'fileupload': { title: '파일 업로드', badge: 'FILE' },
+        'alert': { title: '알림창 (Alert)', badge: 'ALERT' },
+        'popup': { title: '레이어 팝업', badge: 'POPUP' },
+        'button': { title: '버튼', badge: 'BUTTON' },
+        'datepicker': { title: '데이트피커', badge: 'DATE' },
+        'toggle': { title: '토글 스위치', badge: 'TOGGLE' },
+        'accordion': { title: '아코디언 메뉴', badge: 'TREE' },
+        'admin-settings': { title: '조회 조건 테이블', badge: 'QUERY' },
+        'tab': { title: '탭 컨트롤러', badge: 'TAB' },
+        'cursor': { title: '마우스 커서', badge: 'CURSOR' },
+        'webeditor': { title: '웹 에디터', badge: 'EDITOR' }
+    };
+
+    function _resolveShapeSubMeta(compStyles) {
+        if (!compStyles) return { title: '사각형 도형', badge: 'SHAPE' };
+        const isPinMarker = (compStyles.pinIndex !== undefined && compStyles.pinIndex !== -1 && !isNaN(compStyles.pinIndex)) || !!compStyles.isDescriptionPin;
+        if (isPinMarker) return { title: '화면 설명 핀', badge: 'PIN' };
+        if (compStyles.isImage || compStyles.isImageShape) return { title: '이미지 도형', badge: 'IMAGE' };
+        const isTextOnly = !!compStyles.isTextShape || (compStyles.id && String(compStyles.id).indexOf('v4-text-') === 0) || (compStyles.classList && (compStyles.classList.includes('v4-text-shape') || compStyles.classList.includes('v4-text-box')));
+        if (isTextOnly) return { title: '텍스트 상자', badge: 'TEXT' };
+        const st = String(compStyles.shapeType || '').toLowerCase();
+        if (st === 'circle' || compStyles.id === 'v4-shape-circle') return { title: '원형 도형', badge: 'CIRCLE' };
+        if (st === 'triangle' || compStyles.id === 'v4-shape-triangle') return { title: '삼각형 도형', badge: 'SHAPE' };
+        if (st === 'diamond' || compStyles.id === 'v4-shape-diamond') return { title: '마름모 도형', badge: 'SHAPE' };
+        if (st === 'arrow' || compStyles.id === 'v4-shape-arrow') return { title: '화살표 도형', badge: 'ARROW' };
+        if (st === 'wave' || compStyles.id === 'v4-shape-wave') return { title: '물결 도형', badge: 'WAVE' };
+        if (st === 'pattern' || compStyles.id === 'v4-shape-pattern-grid') return { title: '패턴 그리드', badge: 'PATTERN' };
+        if (st === 'webpage' || compStyles.id === 'v4-shape-webpage') return { title: '웹 프레임', badge: 'FRAME' };
+        return { title: '사각형 도형', badge: 'SHAPE' };
+    }
+
+    function _resolveInspectorHeaderMeta(compStyles, editingType) {
+        const selIds = (window.GroupingManager && typeof window.GroupingManager.getSelectedIds === 'function')
+            ? window.GroupingManager.getSelectedIds()
+            : ((window.state && Array.isArray(window.state.selectedIds)) ? window.state.selectedIds : []);
+        const count = Array.isArray(selIds) ? selIds.length : 0;
+
+        if (!compStyles && count === 0 && !editingType) {
+            return { title: 'OBJECT PROPERTIES', badge: '' };
         }
-        const strategy = TYPE_SYNC_STRATEGIES[editingType];
-        if (typeof strategy === 'function') {
-            return strategy(compStyles);
+
+        if (count >= 2 || editingType === 'multi') {
+            const n = Math.max(2, count);
+            return { title: n + '개 오브젝트 선택', badge: 'MULTI' };
         }
-        if (compStyles && (compStyles.isCheckbox || compStyles.isRadio)) {
-            return _syncCheckboxRadioTypeProps(compStyles);
+
+        const type = editingType || (compStyles ? _detectComponentType(compStyles) : 'comp');
+        if (type === 'shape') return _resolveShapeSubMeta(compStyles);
+        if (type === 'line') {
+            const isElbow = compStyles && (compStyles.connectorType === 'elbow' || compStyles.lineType === 'elbow');
+            return { title: isElbow ? '꺾은선 커넥터' : '직선 / 커넥터', badge: 'LINE' };
         }
+        if (type === 'illustration') {
+            const isMotion = !!(compStyles && compStyles.isMotion);
+            return { title: isMotion ? '모션 그래픽' : '일러스트레이션', badge: isMotion ? 'MOTION' : 'ILLUST' };
+        }
+        if (type === 'icon') {
+            if (compStyles && compStyles.isCheckbox) return { title: '체크박스', badge: 'ATOM' };
+            if (compStyles && compStyles.isRadio) return { title: '라디오 버튼', badge: 'ATOM' };
+            return { title: '벡터 아이콘', badge: 'ICON' };
+        }
+        if (INSPECTOR_TYPE_HEADER_MAP[type]) {
+            return INSPECTOR_TYPE_HEADER_MAP[type];
+        }
+        if (compStyles && compStyles.isCheckbox) return { title: '체크박스', badge: 'ATOM' };
+        if (compStyles && compStyles.isRadio) return { title: '라디오 버튼', badge: 'ATOM' };
+        return { title: '오브젝트 속성', badge: 'OBJECT' };
+    }
+
+    function _syncInspectorContextHeader(compStyles, editingType) {
+        const meta = _resolveInspectorHeaderMeta(compStyles, editingType);
+        const isLocked = !!(compStyles && compStyles.isLocked);
+        const sTitle = document.getElementById('sidebar-inspector-title') || document.querySelector('#sidebar-inspector-header .sidebar-inspector-title');
+        const fTitle = document.getElementById('floating-inspector-title') || document.querySelector('#floating-inspector-card .floating-inspector-title');
+        const sBadge = document.getElementById('sidebar-inspector-badge');
+        const fBadge = document.getElementById('floating-inspector-badge');
+
+        if (sTitle) sTitle.textContent = meta.title;
+        if (fTitle) fTitle.textContent = meta.title;
+
+        const badgeTxt = isLocked ? 'LOCKED' : meta.badge;
+        [sBadge, fBadge].forEach(function(b) {
+            if (!b) return;
+            b.classList.toggle('is-locked', isLocked);
+            if (badgeTxt) {
+                b.textContent = badgeTxt;
+                b.style.display = 'inline-flex';
+            } else {
+                b.textContent = '';
+                b.style.display = 'none';
+            }
+        });
     }
 
     function _syncCommonPropertyControls(compStyles, editingType, isNewComp) {
         const DOM = window.DOM || {};
         const s = (compStyles && compStyles.currentStyles) || {};
 
-        // Synchronize Dimensions (Width / Height) as an authoritative inspector safeguard
+        // Synchronize Position (X / Y) & Dimensions (Width / Height) as an authoritative inspector safeguard
         if (compStyles) {
+            const isLockedComp = !!compStyles.isLocked;
+            const rawX = compStyles.x;
+            const rawY = compStyles.y;
             const rawW = compStyles.w !== undefined ? compStyles.w : compStyles.width;
             const rawH = compStyles.h !== undefined ? compStyles.h : compStyles.height;
+            if (rawX !== undefined && !isNaN(parseFloat(rawX))) {
+                const xVal = Math.round(parseFloat(rawX));
+                document.querySelectorAll('.v4-prop-input[data-prop="left"]').forEach(inp => {
+                    inp.disabled = isLockedComp;
+                    if (isNewComp || inp !== document.activeElement) inp.value = xVal;
+                    if (compStyles && compStyles.id) inp.dataset.boundCompId = compStyles.id;
+                    if (isNewComp) delete inp.dataset.editingCompId;
+                });
+            }
+            if (rawY !== undefined && !isNaN(parseFloat(rawY))) {
+                const yVal = Math.round(parseFloat(rawY));
+                document.querySelectorAll('.v4-prop-input[data-prop="top"]').forEach(inp => {
+                    inp.disabled = isLockedComp;
+                    if (isNewComp || inp !== document.activeElement) inp.value = yVal;
+                    if (compStyles && compStyles.id) inp.dataset.boundCompId = compStyles.id;
+                    if (isNewComp) delete inp.dataset.editingCompId;
+                });
+            }
             if (rawW !== undefined && !isNaN(parseFloat(rawW))) {
                 const wVal = Math.round(parseFloat(rawW));
                 document.querySelectorAll('.v4-prop-input[data-prop="width"]').forEach(inp => {
                     if (inp.id === 'prop-width-icon') return;
+                    inp.disabled = isLockedComp;
                     if (isNewComp || inp !== document.activeElement) inp.value = wVal;
                     if (compStyles && compStyles.id) inp.dataset.boundCompId = compStyles.id;
                     if (isNewComp) delete inp.dataset.editingCompId;
@@ -312,6 +523,7 @@
                 const hVal = Math.round(parseFloat(rawH));
                 document.querySelectorAll('.v4-prop-input[data-prop="height"]').forEach(inp => {
                     if (inp.id === 'prop-height-icon') return;
+                    inp.disabled = isLockedComp;
                     if (isNewComp || inp !== document.activeElement) inp.value = hVal;
                     if (compStyles && compStyles.id) inp.dataset.boundCompId = compStyles.id;
                     if (isNewComp) delete inp.dataset.editingCompId;
@@ -357,6 +569,9 @@
             if (wrapper) {
                 if (s.bg === 'transparent' || !s.bg || opacityVal === 0 || s.isBgTransparent) wrapper.classList.add('transparent-active');
                 else wrapper.classList.remove('transparent-active');
+            }
+            if (typeof window._syncShapeBorderControls === 'function') {
+                window._syncShapeBorderControls(s.borderStyle || 'solid', s.borderWidth !== undefined ? s.borderWidth : 1.6);
             }
         }
 
@@ -469,6 +684,8 @@
                 }
             }
         }
+
+        _syncSliderNumberInputs();
     }
 
     // Specific Component Synchronizers
@@ -597,13 +814,19 @@
         syncTextboxTextarea: _syncTextboxTextareaProps,
         syncToggle: _syncToggleProps,
         syncDatePicker: _syncDatePickerProps,
-        syncWebEditor: _syncWebEditorProps
+        syncWebEditor: _syncWebEditorProps,
+        syncSliderNumberInputs: _syncSliderNumberInputs,
+        resolveInspectorHeaderMeta: _resolveInspectorHeaderMeta,
+        syncInspectorContextHeader: _syncInspectorContextHeader
     };
 
     // Backward-Compatible Global Bindings
     window._detectComponentType = _detectComponentType;
     window._syncComponentTypeProperties = _syncComponentTypeProperties;
     window._syncCommonPropertyControls = _syncCommonPropertyControls;
+    window.syncSliderNumberInputs = _syncSliderNumberInputs;
+    window.resolveInspectorHeaderMeta = _resolveInspectorHeaderMeta;
+    window.syncInspectorContextHeader = _syncInspectorContextHeader;
     window._syncStepperProps = _syncStepperProps;
     window._syncCursorProps = _syncCursorProps;
     window._syncAtomDisabledProps = _syncAtomDisabledProps;

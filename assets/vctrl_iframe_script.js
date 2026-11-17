@@ -85,13 +85,19 @@ window.v4Script = `
         if (!c) return;
         const t = parseInt(c.style.top) || 0;
         const l = parseInt(c.style.left) || 0;
+        const isLocked = c.getAttribute('data-locked') === 'true';
         const del = c.querySelector(':scope > .bychoi-delete-trigger');
         if (del) { 
-            const targetTop = t < 16 ? '4px' : '-12px'; 
-            if (del.style.top !== targetTop) del.style.top = targetTop;
-            const rightDist = window.innerWidth - (l + (c.offsetWidth || 0));
-            const targetRight = rightDist < 16 ? '4px' : '-12px'; 
-            if (del.style.right !== targetRight) del.style.right = targetRight;
+            if (isLocked) {
+                del.style.setProperty('display', 'none', 'important');
+            } else {
+                del.style.removeProperty('display');
+                const targetTop = t < 16 ? '4px' : '-12px'; 
+                if (del.style.top !== targetTop) del.style.top = targetTop;
+                const rightDist = window.innerWidth - (l + (c.offsetWidth || 0));
+                const targetRight = rightDist < 16 ? '4px' : '-12px'; 
+                if (del.style.right !== targetRight) del.style.right = targetRight;
+            }
         }
         if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
             window.SelectionAdorner.update();
@@ -232,6 +238,7 @@ window.v4Script = `
         }
 
         if (d && c) { 
+            if (c.getAttribute('data-locked') === 'true') return;
             if (window.V4UndoManager) window.V4UndoManager.saveState();
 
             if (c.classList.contains('connector-line')) {
@@ -382,6 +389,7 @@ window.v4Script = `
             
             const targets = [];
             document.querySelectorAll('.bychoi-component:not(.connector-line):not(.pin-marker):not(.text-marker):not(.v4-pin-marker)').forEach(c => {
+                if (c.getAttribute('data-locked') === 'true') return;
                 if (c.id && c.id.startsWith('v4-pin-')) return;
                 if (c.closest && c.closest('.v4-pin-layer')) return;
                 if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(c)) return;
@@ -791,6 +799,14 @@ window.v4Script = `
             if (s.style.background && s.style.background !== 'transparent') s.style.background = 'transparent';
             if (s.style.backgroundColor && s.style.backgroundColor !== 'transparent') s.style.backgroundColor = 'transparent';
             if (d.style) {
+                if (d.style.left !== undefined) s.style.left = typeof d.style.left === 'number' ? d.style.left + 'px' : d.style.left;
+                if (d.style.top !== undefined) {
+                    s.style.top = typeof d.style.top === 'number' ? d.style.top + 'px' : d.style.top;
+                    var admFixed = s.getAttribute('data-scroll-fixed');
+                    if (admFixed === 'custom' || admFixed === 'floating') {
+                        s.setAttribute('data-scroll-target-y', String(Math.round(parseFloat(s.style.top) || 0)));
+                    }
+                }
                 if (d.style.width !== undefined) { s.setAttribute('data-resized', 'true'); s.style.setProperty('width', typeof d.style.width === 'number' ? d.style.width + 'px' : d.style.width, 'important'); if (adminSettings !== s) adminSettings.style.setProperty('width', '100%', 'important'); var adminTable = adminSettings.querySelector('.v4-admin-settings-table'); if (adminTable) adminTable.style.setProperty('width', '100%', 'important'); }
                 if (d.style.height !== undefined) s.style.height = typeof d.style.height === 'number' ? d.style.height + 'px' : d.style.height;
             }
@@ -801,6 +817,39 @@ window.v4Script = `
         if (!t) return;
         
         if (d.style) {
+            if (d.style.left !== undefined) {
+                s.style.left = typeof d.style.left === 'number' ? d.style.left + 'px' : d.style.left;
+                if (typeof window.updateAnchoredConnectorsLocal === 'function' && s.id) {
+                    window.updateAnchoredConnectorsLocal(s.id);
+                }
+            }
+            if (d.style.top !== undefined) {
+                s.style.top = typeof d.style.top === 'number' ? d.style.top + 'px' : d.style.top;
+                var sFixed = s.getAttribute('data-scroll-fixed');
+                if (sFixed === 'custom' || sFixed === 'floating') {
+                    s.setAttribute('data-scroll-target-y', String(Math.round(parseFloat(s.style.top) || 0)));
+                }
+                if (typeof window.updateAnchoredConnectorsLocal === 'function' && s.id) {
+                    window.updateAnchoredConnectorsLocal(s.id);
+                }
+            }
+            if ((d.style.left !== undefined || d.style.top !== undefined) && (s.classList.contains('text-marker') || s.classList.contains('pin-marker'))) {
+                var pFrame = typeof detectFrameType === 'function' ? detectFrameType(s) : (s.getAttribute('data-frame') || '');
+                var pIdx = parseInt(s.getAttribute('data-index'));
+                if (isNaN(pIdx)) {
+                    pIdx = parseInt(s.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
+                }
+                if (!isNaN(pIdx)) {
+                    notifyParent({
+                        type: 'BYCHOI_UPDATE_PIN_POS',
+                        index: pIdx,
+                        frame: pFrame,
+                        x: parseFloat(s.style.left) || 0,
+                        y: parseFloat(s.style.top) || 0,
+                        standardized: true
+                    });
+                }
+            }
             if (d.style.width !== undefined || d.style.height !== undefined) {
                 s.setAttribute('data-resized', 'true');
             }
@@ -858,9 +907,26 @@ window.v4Script = `
             }
 
             var styleToAssign = Object.assign({}, d.style);
+            delete styleToAssign.left;
+            delete styleToAssign.top;
             if (!isInnerBox) {
                 delete styleToAssign.width;
                 delete styleToAssign.height;
+            }
+            if (styleToAssign.borderStyle !== undefined) {
+                var normBsVal = (styleToAssign.borderStyle === 'dashed' || styleToAssign.borderStyle === 'dotted') ? styleToAssign.borderStyle : 'solid';
+                s.setAttribute('data-border-style', normBsVal);
+                t.setAttribute('data-border-style', normBsVal);
+                t.style.setProperty('border-style', normBsVal, 'important');
+                delete styleToAssign.borderStyle;
+            }
+            if (styleToAssign.borderWidth !== undefined) {
+                var parsedBwVal = parseFloat(styleToAssign.borderWidth);
+                var normBwVal = !isNaN(parsedBwVal) ? Math.max(0, parsedBwVal) : 1.6;
+                s.setAttribute('data-border-width', String(normBwVal));
+                t.setAttribute('data-border-width', String(normBwVal));
+                t.style.setProperty('border-width', normBwVal + 'px', 'important');
+                delete styleToAssign.borderWidth;
             }
             var cornerDirToAssign = null;
             if (styleToAssign.cornerDir !== undefined) {
@@ -1213,7 +1279,7 @@ window.v4Script = `
 
         'BYCHOI_DELETE_SELECTED': function(d) {
             const s = document.querySelector('.bychoi-component.selected'); 
-            if (s) { 
+            if (s && s.getAttribute('data-locked') !== 'true') { 
                 if (window.V4UndoManager) window.V4UndoManager.saveState();
                 s.remove(); 
                 markDirty(); 
@@ -1221,6 +1287,64 @@ window.v4Script = `
                 if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
                     window.V4DimmedLayer.syncStateToParent();
                 }
+            }
+        },
+
+        'BYCHOI_TOGGLE_LOCK': function(d) {
+            var targets = [];
+            if (d && d.ids && Array.isArray(d.ids) && d.ids.length > 0) {
+                d.ids.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el && el.classList.contains('bychoi-component') && !el.classList.contains('connector-line')) {
+                        targets.push(el);
+                    }
+                });
+            }
+            if (targets.length === 0) {
+                targets = Array.from(document.querySelectorAll('.bychoi-component.selected:not(.connector-line)'));
+            }
+            if (targets.length === 0) return;
+
+            if (window.V4UndoManager) window.V4UndoManager.saveState();
+
+            var nextLockState = (d && typeof d.locked === 'boolean')
+                ? d.locked
+                : !targets.every(function(el) { return el.getAttribute('data-locked') === 'true'; });
+
+            targets.forEach(function(el) {
+                if (nextLockState) {
+                    el.setAttribute('data-locked', 'true');
+                } else {
+                    el.removeAttribute('data-locked');
+                }
+                if (typeof window.updateHandles === 'function') {
+                    window.updateHandles(el);
+                }
+            });
+
+            if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
+                window.SelectionAdorner.update();
+            }
+            markDirty();
+
+            notifyParent({
+                type: 'BYCHOI_SHOW_TOAST',
+                message: nextLockState ? '오브젝트 위치가 잠겼습니다.' : '오브젝트 잠금이 해제되었습니다.'
+            });
+
+            if (targets.length === 1 && typeof window._getCompStyles === 'function') {
+                var isResp = !!(window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive());
+                notifyParent(Object.assign({
+                    type: 'BYCHOI_COMP_SELECTED',
+                    shiftKey: false,
+                    isResponsive: isResp
+                }, window._getCompStyles(targets[0])));
+            } else {
+                notifyParent({
+                    type: 'BYCHOI_LOCK_STATE_CHANGED',
+                    locked: nextLockState,
+                    ids: targets.map(function(el) { return el.id; })
+                });
             }
         },
 

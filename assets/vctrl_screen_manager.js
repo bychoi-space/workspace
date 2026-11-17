@@ -5,6 +5,8 @@
 (function() {
     console.log("[VCTRL SCREEN MANAGER] Module loaded.");
     const getCategoryData = (type) => (typeof window.getCategoryData === 'function' ? window.getCategoryData(type) : { label: 'ETC', code: 'ET', class: 'badge-default' });
+    let flyoutHideTimer = null;
+    let currentFlyoutScreen = null;
 
     // --- Screen Flyout & List Rendering ---
 window.showScreenFlyout = function(item, screenData) {
@@ -267,6 +269,198 @@ window.updateActiveScreenInUI = function(activeName) {
     });
     if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
         window.ResolutionEngine.syncScreenList();
+    }
+};
+
+let _isScreenNavigating = false;
+let _boundaryToastHideTimer = null;
+let _boundaryToastRemoveTimer = null;
+
+function _isModalElementVisible(el) {
+    if (!el) return false;
+    if (el.classList && (el.classList.contains('active') || el.classList.contains('is-open') || el.classList.contains('show'))) {
+        return true;
+    }
+    const inlineDisplay = el.style ? el.style.display : '';
+    return inlineDisplay === 'flex' || inlineDisplay === 'block' || inlineDisplay === 'grid';
+}
+
+window.isBlockingOverlayOpen = function() {
+    if (_isModalElementVisible(document.getElementById('save-overlay'))) return true;
+    if (_isModalElementVisible(document.getElementById('notification-overlay'))) return true;
+    if (_isModalElementVisible(document.getElementById('v4-bottom-sheet'))) return true;
+
+    const modals = document.querySelectorAll('.modal-overlay');
+    for (let i = 0; i < modals.length; i++) {
+        if (_isModalElementVisible(modals[i])) return true;
+    }
+    return false;
+};
+
+function _showScreenBoundaryToast(message) {
+    let container = document.getElementById('v4-toast-container');
+    if (!container) {
+        if (typeof window.showToast === 'function') {
+            window.showToast(message, 'info');
+            const created = document.querySelector('#v4-toast-container .v4-toast:last-child');
+            if (created) created.setAttribute('data-boundary-toast', 'true');
+            return;
+        }
+        if (typeof window.showGlobalToast === 'function') {
+            window.showGlobalToast(message, 'info');
+            return;
+        }
+        container = document.createElement('div');
+        container.id = 'v4-toast-container';
+        document.body.appendChild(container);
+    }
+
+    let existing = container.querySelector('.v4-toast[data-boundary-toast="true"]');
+    if (_boundaryToastHideTimer) {
+        clearTimeout(_boundaryToastHideTimer);
+        _boundaryToastHideTimer = null;
+    }
+    if (_boundaryToastRemoveTimer) {
+        clearTimeout(_boundaryToastRemoveTimer);
+        _boundaryToastRemoveTimer = null;
+    }
+
+    if (existing) {
+        const textSpan = existing.querySelector('.v4-boundary-toast-text') || existing.querySelector('span:last-child');
+        if (textSpan) textSpan.textContent = message;
+        existing.classList.remove('hide');
+        existing.classList.add('show');
+    } else {
+        existing = document.createElement('div');
+        existing.className = 'v4-toast info';
+        existing.setAttribute('data-boundary-toast', 'true');
+        existing.innerHTML =
+            '<span class="material-icons-outlined v4-toast-icon">info</span>' +
+            '<span class="v4-boundary-toast-text" style="flex-grow: 1;"></span>';
+        const textSpan = existing.querySelector('.v4-boundary-toast-text');
+        if (textSpan) textSpan.textContent = message;
+        container.appendChild(existing);
+        requestAnimationFrame(() => {
+            existing.classList.add('show');
+        });
+    }
+
+    _boundaryToastHideTimer = setTimeout(() => {
+        if (existing && existing.isConnected) {
+            existing.classList.remove('show');
+            existing.classList.add('hide');
+            _boundaryToastRemoveTimer = setTimeout(() => {
+                if (existing && existing.isConnected) existing.remove();
+            }, 400);
+        }
+    }, 2200);
+}
+
+function _getOrderedScreensForNav() {
+    const st = window.state || {};
+    if (Array.isArray(st.screens) && st.screens.length > 0) {
+        return st.screens;
+    }
+    if (window.ResolutionEngine && typeof window.ResolutionEngine.getScreensList === 'function') {
+        const list = window.ResolutionEngine.getScreensList();
+        if (Array.isArray(list) && list.length > 0) return list;
+    }
+    if (st.projectMetadata && st.projectMetadata.screens) {
+        const order = st.projectMetadata.screenOrder;
+        if (Array.isArray(order) && order.length > 0) {
+            return order.map(name => ({ name: name }));
+        }
+        return Object.keys(st.projectMetadata.screens).map(name => ({ name: name }));
+    }
+    return [];
+}
+
+function _resolveActiveScreenIndexForNav(screens) {
+    if (!Array.isArray(screens) || screens.length === 0) return -1;
+    const st = window.state || {};
+    let activeName = (st.activeFile && st.activeFile.name) || '';
+    if (!activeName && window.location && window.location.search) {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            activeName = params.get('file') || '';
+        } catch (err) {}
+    }
+    if (!activeName) return 0;
+
+    const normActive = String(activeName).toLowerCase().replace(/\.html$/i, '');
+    for (let i = 0; i < screens.length; i++) {
+        const item = screens[i];
+        const sName = typeof item === 'string' ? item : (item && (item.name || item.file)) || '';
+        const normItem = String(sName).toLowerCase().replace(/\.html$/i, '');
+        if (normItem === normActive) return i;
+    }
+    return -1;
+}
+
+window.navigateScreenByOffset = async function(direction) {
+    const st = window.state || {};
+    if (!st.currentProject) return false;
+    if (st.isImageCropping) return false;
+    if (typeof window.isBlockingOverlayOpen === 'function' && window.isBlockingOverlayOpen()) return false;
+    if (_isScreenNavigating) return false;
+
+    const screens = _getOrderedScreensForNav();
+    if (!screens || screens.length === 0) return false;
+
+    let curIdx = _resolveActiveScreenIndexForNav(screens);
+    if (curIdx < 0) curIdx = 0;
+
+    const delta = direction < 0 ? -1 : 1;
+    const nextIdx = curIdx + delta;
+
+    // Boundary Stop (Option 1) with clear Korean toast feedback
+    if (nextIdx < 0) {
+        _showScreenBoundaryToast('첫 화면입니다.');
+        return false;
+    }
+    if (nextIdx >= screens.length) {
+        _showScreenBoundaryToast('마지막 화면입니다.');
+        return false;
+    }
+
+    const target = screens[nextIdx];
+    const targetFile = typeof target === 'string' ? target : (target && (target.name || target.file));
+    if (!targetFile) return false;
+
+    _isScreenNavigating = true;
+    try {
+        if (typeof window.hideScreenFlyout === 'function') {
+            window.hideScreenFlyout(0);
+        }
+        if (typeof window.checkUnsavedChanges === 'function' && !(await window.checkUnsavedChanges())) {
+            return false;
+        }
+
+        if (window.ResolutionEngine) {
+            window.ResolutionEngine._userSelectedFocus = null;
+        }
+
+        try {
+            const nextUrl = new URL(window.location.href);
+            nextUrl.searchParams.set('file', targetFile);
+            window.history.pushState(null, '', nextUrl.toString());
+        } catch (urlErr) {
+            const fallbackUrl = `viewer.html?project=${st.currentProject}&file=${targetFile}`;
+            window.history.pushState(null, '', fallbackUrl);
+        }
+
+        if (typeof window.updateActiveScreenInUI === 'function') {
+            window.updateActiveScreenInUI(targetFile);
+        }
+        if (typeof window.loadScreen === 'function') {
+            await window.loadScreen(targetFile);
+        }
+        return true;
+    } catch (err) {
+        console.error('[ScreenManager] navigateScreenByOffset failed:', err);
+        return false;
+    } finally {
+        _isScreenNavigating = false;
     }
 };
 
@@ -948,6 +1142,12 @@ window.handleDeleteScreen = async function (name, sha) {
         }
     }
 };
+
+    window.ScreenManager = Object.assign(window.ScreenManager || {}, {
+        navigateByOffset: window.navigateScreenByOffset,
+        handleDeleteScreen: window.handleDeleteScreen,
+        isBlockingOverlayOpen: window.isBlockingOverlayOpen
+    });
 
     // Note: Project Revision History Modal & Controller is fully modularized and owned by assets/vctrl_revision_history.js (SSOT).
 

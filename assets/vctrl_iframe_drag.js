@@ -276,6 +276,11 @@ window.v4DragResizeScript = `
         
         handleMouseDown: function(e, h, r, d, c) {
             if (!c) return;
+            if (c.getAttribute('data-locked') === 'true') {
+                isPendingDrag = false;
+                isDragging = false;
+                return;
+            }
             isPendingDrag = true;
             isDragging = false;
             window.activeEl = c;
@@ -374,6 +379,12 @@ window.v4DragResizeScript = `
                             window.activeEl.style.top = snap.y + 'px';
                         }
                     }
+                    notifyParent({
+                        type: 'BYCHOI_POS_CHANGED',
+                        id: window.activeEl.id,
+                        x: parseFloat(window.activeEl.style.left) || 0,
+                        y: parseFloat(window.activeEl.style.top) || 0
+                    });
                 } else {
                     notifyParent({ type: 'BYCHOI_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight, activeId: window.activeEl.id });
                 }
@@ -523,6 +534,12 @@ window.v4DragResizeScript = `
                 _handleResponsiveCrossFrameDrop(window.activeEl, isResp);
                 _handlePinMarkerDropAnchoring(window.activeEl);
                 _dispatchPinPositionUpdates(window.activeEl);
+                notifyParent({
+                    type: 'BYCHOI_POS_CHANGED',
+                    id: window.activeEl.id,
+                    x: parseFloat(window.activeEl.style.left) || 0,
+                    y: parseFloat(window.activeEl.style.top) || 0
+                });
 
                 if (typeof window.updateHandles === 'function') {
                     window.updateHandles(window.activeEl);
@@ -556,6 +573,10 @@ window.v4DragResizeScript = `
         },
         
         startResize: function(e, r) {
+            if (r && r.parentElement && r.parentElement.getAttribute('data-locked') === 'true') {
+                isResizing = false;
+                return;
+            }
             if (window.V4UndoManager) window.V4UndoManager.saveState();
             isResizing = true;
             window.activeEl = r.parentElement;

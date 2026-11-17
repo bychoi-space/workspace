@@ -377,7 +377,7 @@
                     <div class="prop-group">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <label class="v4-prop-label" style="margin: 0;">컬럼 ${c + 1} 항목명 (Col ${c + 1} Name)</label>
-                            <label title="필수값 (*)" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; font-size: 9px; color: ${isColReq ? '#ffffff' : '#94a3b8'}; font-weight: 600; background: ${isColReq ? 'rgba(110, 86, 207, 0.25)' : 'rgba(255, 255, 255, 0.05)'}; border: 1px solid ${isColReq ? 'var(--accent, #6e56cf)' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 4px; padding: 2px 6px; user-select: none; transition: all 0.15s ease;">
+                            <label title="필수값 (*)" class="admin-req-pill ${isColReq ? 'is-active' : ''}">
                                 <input type="checkbox" class="admin-col-required-chk" data-col-idx="${c}" ${isColReq ? 'checked' : ''} style="cursor: pointer; accent-color: var(--accent, #6e56cf); margin: 0; width: 12px; height: 12px;">
                                 필수 (*)
                             </label>
@@ -476,7 +476,11 @@
                 inp.oninput = updateConfig;
             });
             labelsContainer.querySelectorAll('.admin-col-required-chk').forEach(chk => {
-                chk.onchange = updateConfig;
+                chk.onchange = () => {
+                    const pill = chk.closest('.admin-req-pill');
+                    if (pill) pill.classList.toggle('is-active', chk.checked);
+                    updateConfig();
+                };
             });
 
             colSelect.onchange = () => {
@@ -495,7 +499,7 @@
                         <div class="prop-group">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                                 <label class="v4-prop-label" style="margin: 0;">컬럼 ${c + 1} 항목명 (Col ${c + 1} Name)</label>
-                                <label title="필수값 (*)" style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer; margin: 0; font-size: 9px; color: ${isColReq ? '#ffffff' : '#94a3b8'}; font-weight: 600; background: ${isColReq ? 'rgba(110, 86, 207, 0.25)' : 'rgba(255, 255, 255, 0.05)'}; border: 1px solid ${isColReq ? 'var(--accent, #6e56cf)' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 4px; padding: 2px 6px; user-select: none; transition: all 0.15s ease;">
+                                <label title="필수값 (*)" class="admin-req-pill ${isColReq ? 'is-active' : ''}">
                                     <input type="checkbox" class="admin-col-required-chk" data-col-idx="${c}" ${isColReq ? 'checked' : ''} style="cursor: pointer; accent-color: var(--accent, #6e56cf); margin: 0; width: 12px; height: 12px;">
                                     필수 (*)
                                 </label>
@@ -510,7 +514,11 @@
                     inp.oninput = updateConfig;
                 });
                 labelsContainer.querySelectorAll('.admin-col-required-chk').forEach(chk => {
-                    chk.onchange = updateConfig;
+                    chk.onchange = () => {
+                        const pill = chk.closest('.admin-req-pill');
+                        if (pill) pill.classList.toggle('is-active', chk.checked);
+                        updateConfig();
+                    };
                 });
 
                 updateConfig();

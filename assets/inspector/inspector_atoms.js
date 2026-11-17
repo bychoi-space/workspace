@@ -174,10 +174,10 @@
     const _renderSelectboxOptionRows = function(options, selectedIndices) {
         return options.map(function(optText, idx) {
             const isChecked = selectedIndices.indexOf(idx) !== -1;
-            return '<div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">' +
-                '<span style="font-size: 10px; color: #94a3b8; width: 40px; flex-shrink: 0;">Item ' + (idx + 1) + '</span>' +
-                '<input type="text" class="selectbox-option-input" data-index="' + idx + '" value="' + (optText || '') + '" style="flex: 1; min-width: 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
-                '<input type="checkbox" class="selectbox-option-check" data-index="' + idx + '" ' + (isChecked ? 'checked' : '') + ' title="\uC120\uD0DD\uB41C \uD56D\uBAA9\uC73C\uB85C \uD65C\uC131\uD654" style="accent-color: var(--accent, #6e56cf); cursor: pointer; width: 15px; height: 15px; margin: 0; flex-shrink: 0;">' +
+            return '<div class="selectbox-option-row" style="display: flex; align-items: center; gap: 8px; background: var(--ed-surface-2, rgba(255,255,255,0.03)); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--ed-border, rgba(255,255,255,0.08));">' +
+                '<span style="font-size: 10px; color: var(--ed-text-3, #94a3b8); width: 40px; flex-shrink: 0; font-weight: 600;">Item ' + (idx + 1) + '</span>' +
+                '<input type="text" class="selectbox-option-input" data-index="' + idx + '" value="' + (optText || '') + '" style="flex: 1; min-width: 0; background: var(--ed-input-bg, rgba(0,0,0,0.3)); border: 1px solid var(--ed-border, rgba(255,255,255,0.1)); color: var(--ed-text-1, #fff); padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-family: inherit;">' +
+                '<input type="checkbox" class="selectbox-option-check" data-index="' + idx + '" ' + (isChecked ? 'checked' : '') + ' title="\uC120\uD0DD\uB41C \uD56D\uBAA9\uC73C\uB85C \uD65C\uC131\uD654" style="accent-color: var(--ed-accent, var(--accent, #6e56cf)); cursor: pointer; width: 15px; height: 15px; margin: 0; flex-shrink: 0;">' +
             '</div>';
         }).join('');
     };
@@ -514,10 +514,12 @@
 
         const radiusSlider = document.getElementById('prop-button-border-radius');
         const radiusTxt = document.getElementById('txt-button-border-radius');
+        const radiusNum = document.getElementById('num-button-border-radius');
         if (radiusSlider && document.activeElement !== radiusSlider && comp.buttonRadius !== undefined) {
             const r = parseInt(comp.buttonRadius) || 0;
             radiusSlider.value = r;
             if (radiusTxt) radiusTxt.innerText = r;
+            if (radiusNum && document.activeElement !== radiusNum) radiusNum.value = r;
             if (typeof window._syncButtonCornerBtns === 'function') {
                 window._syncButtonCornerBtns(r);
             }

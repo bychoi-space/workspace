@@ -1136,11 +1136,139 @@ body.editor-page .floating-inspector-header,
 body.editor-page .sidebar-inspector-header {
     background: var(--ed-surface-1) !important;
     border-bottom: 1px solid var(--ed-border) !important;
+    min-height: 41px !important;
+    padding: 6px 10px !important;
+    gap: 6px !important;
+}
+
+body.editor-page .floating-inspector-title-group,
+body.editor-page .sidebar-inspector-title-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+}
+
+body.editor-page .floating-inspector-icon,
+body.editor-page .sidebar-inspector-icon {
+    font-size: 15px !important;
+    color: var(--ed-accent) !important;
+    flex-shrink: 0 !important;
 }
 
 body.editor-page .floating-inspector-title,
 body.editor-page .sidebar-inspector-title {
     color: var(--ed-text-1) !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.01em !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+body.editor-page .inspector-context-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    padding: 0 5.5px;
+    border-radius: 4px;
+    background: var(--ed-toggle-active-bg);
+    border: 1px solid var(--ed-toggle-active-border);
+    color: var(--ed-toggle-active-text);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+body.editor-page .inspector-context-badge.is-locked {
+    background: rgba(245, 158, 11, 0.16) !important;
+    border-color: rgba(245, 158, 11, 0.42) !important;
+    color: #d97706 !important;
+}
+
+html[data-theme="dark"] body.editor-page .inspector-context-badge.is-locked {
+    background: rgba(245, 158, 11, 0.18) !important;
+    border-color: rgba(251, 191, 36, 0.38) !important;
+    color: #fbbf24 !important;
+}
+
+/* Part C: Shape Border Style & Width Grid, Group X/Y Stack, Lock Button & Disabled Inputs */
+body.editor-page .v4-shape-border-grid {
+    display: grid !important;
+    grid-template-columns: 1.38fr 0.62fr !important;
+    gap: 6px !important;
+    align-items: end !important;
+}
+
+body.editor-page .v4-shape-border-style-btn,
+body.editor-page .v4-line-style-btn {
+    padding: 0 4px !important;
+    gap: 3px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+}
+
+body.editor-page #shape-border-width {
+    width: 100% !important;
+    height: 26px !important;
+    padding: 0 22px 0 8px !important;
+    border-radius: 6px !important;
+    background: var(--ed-input-bg) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    text-align: right !important;
+    box-sizing: border-box !important;
+}
+
+body.editor-page #shape-border-width:focus {
+    background: var(--ed-input-focus) !important;
+    border-color: var(--ed-accent) !important;
+    box-shadow: 0 0 0 2px var(--ed-accent-subtle) !important;
+    outline: none !important;
+}
+
+body.editor-page .group-dimension-bar-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+body.editor-page .v4-lock-toggle-btn.is-locked-active {
+    background: rgba(245, 158, 11, 0.14) !important;
+    border-color: rgba(245, 158, 11, 0.45) !important;
+    color: #b45309 !important;
+    font-weight: 650 !important;
+}
+
+html[data-theme="dark"] body.editor-page .v4-lock-toggle-btn.is-locked-active {
+    background: rgba(245, 158, 11, 0.18) !important;
+    border-color: rgba(251, 191, 36, 0.42) !important;
+    color: #fbbf24 !important;
+}
+
+body.editor-page .v4-prop-input:disabled {
+    opacity: 0.52 !important;
+    cursor: not-allowed !important;
+}
+
+/* Collapse redundant static English card titles now that Contextual Inspector Header displays type + badge */
+body.editor-page .v4-card-section:not(#tab-inspector-section):not(#checkbox-radio-inspector-section) > .v4-section-header:first-child {
+    display: none !important;
+}
+
+body.editor-page .sidebar-inspector-body > .v4-card-section,
+body.editor-page .floating-inspector-body > .v4-card-section,
+body.editor-page .sidebar-inspector-body > #text-editor-section,
+body.editor-page .floating-inspector-body > #text-editor-section {
+    margin-top: 0 !important;
 }
 
 body.editor-page .floating-inspector-header-btn,
@@ -1165,7 +1293,7 @@ body.editor-page .selection-scroll-pin-bar {
 }
 
 body.editor-page .sidebar-inspector-body .v4-card-section {
-    padding: 12px 11px !important;
+    padding: 11px 10px !important;
 }
 
 body.editor-page .v4-corner-dir-grid {
@@ -1176,6 +1304,65 @@ body.editor-page .v4-corner-dir-grid {
 body.editor-page .v4-corner-dir-btn[data-corner-dir="all"] {
     padding: 0 6px !important;
     gap: 3.5px !important;
+}
+
+/* Proportional Korean Toggle Grids for 252px Docked Right Sidebar */
+body.editor-page .v4-dp-mode-grid {
+    display: grid !important;
+    grid-template-columns: 0.74fr 1.26fr !important;
+    gap: 4px !important;
+}
+
+body.editor-page .v4-dp-end-grid {
+    display: grid !important;
+    grid-template-columns: 1.08fr 0.92fr !important;
+    gap: 4px !important;
+}
+
+body.editor-page .v4-dp-mode-grid .v4-inspector-btn,
+body.editor-page .v4-dp-end-grid .v4-inspector-btn,
+body.editor-page #btn-dp-default-none {
+    padding: 0 5px !important;
+    font-size: 11px !important;
+    letter-spacing: -0.02em !important;
+    white-space: nowrap !important;
+}
+
+/* Slider Header Direct Numeric Input Box (Opacity % & Radius px) */
+body.editor-page .v4-prop-input-wrap-w62 {
+    position: relative !important;
+    width: 58px !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+body.editor-page .v4-slider-num-input {
+    width: 100% !important;
+    height: 22px !important;
+    padding: 0 18px 0 6px !important;
+    border-radius: 5px !important;
+    background: var(--ed-input-bg) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-align: right !important;
+    line-height: 20px !important;
+    box-sizing: border-box !important;
+}
+
+body.editor-page .v4-slider-num-input:focus {
+    background: var(--ed-input-focus) !important;
+    border-color: var(--ed-accent) !important;
+    box-shadow: 0 0 0 2px var(--ed-accent-subtle) !important;
+    outline: none !important;
+}
+
+body.editor-page .v4-prop-input-wrap-w62 .v4-prop-unit {
+    right: 5px !important;
+    font-size: 9.5px !important;
+    pointer-events: none !important;
 }
 
 body.editor-page .v4-card-section-title,
@@ -1535,21 +1722,261 @@ html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-lineheight .ql-
     background: var(--ed-accent-subtle) !important;
 }
 
-/* Custom Color Palette Popup */
+/* Global 9-Column Color Palette Popover (#v4-global-color-palette-popover) & Quill Color/Hex Bars */
+body.editor-page #v4-global-color-palette-popover,
 body.editor-page .bychoi-color-palette-popup {
     background: var(--ed-modal-bg) !important;
     border: 1px solid var(--ed-border-hover) !important;
     box-shadow: var(--ed-popover-shadow) !important;
 }
 
-body.editor-page .bychoi-palette-swatch {
+body.editor-page .v4-palette-info-bar {
+    border-bottom: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .v4-palette-group-label,
+body.editor-page .v4-palette-recent-header {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .v4-palette-hex-readout {
+    color: var(--ed-accent) !important;
+}
+
+body.editor-page .v4-palette-divider {
+    background: var(--ed-border) !important;
+}
+
+body.editor-page .v4-palette-recent-wrap,
+body.editor-page .v4-palette-footer,
+body.editor-page .v4-palette-hex-bar,
+body.editor-page .ql-custom-color-footer,
+body.editor-page .ql-custom-hex-bar {
+    border-top: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .v4-palette-item,
+body.editor-page .bychoi-palette-swatch,
+html[data-theme="light"] body.editor-page .ql-color-picker .ql-picker-options .ql-picker-item {
     border: 1px solid var(--ed-border-hover) !important;
 }
 
+body.editor-page .v4-palette-item:hover {
+    border-color: var(--ed-text-1) !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25) !important;
+}
+
+body.editor-page .v4-palette-item.selected {
+    border: 2px solid var(--ed-accent) !important;
+    box-shadow: 0 0 0 1px var(--ed-modal-bg), 0 0 6px var(--ed-accent-subtle) !important;
+}
+
+body.editor-page .v4-palette-custom-action,
+body.editor-page .ql-custom-color-action,
 body.editor-page .bychoi-palette-custom-btn {
+    background: var(--ed-toggle-active-bg) !important;
+    border: 1px solid var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+}
+
+body.editor-page .v4-palette-custom-action:hover,
+body.editor-page .ql-custom-color-action:hover {
+    background: var(--ed-accent-solid) !important;
+    border-color: var(--ed-accent-solid) !important;
+    color: #ffffff !important;
+}
+
+body.editor-page .v4-palette-reset-btn,
+body.editor-page .ql-custom-color-reset,
+body.editor-page .v4-hex-btn-cancel,
+body.editor-page .ql-hex-btn-cancel {
     background: var(--ed-surface-2) !important;
     border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .v4-palette-reset-btn:hover,
+body.editor-page .ql-custom-color-reset:hover,
+body.editor-page .v4-hex-btn-cancel:hover,
+body.editor-page .ql-hex-btn-cancel:hover {
+    background: rgba(239, 68, 68, 0.14) !important;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+body.editor-page .v4-hex-prefix,
+body.editor-page .ql-hex-prefix {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .v4-hex-preview,
+body.editor-page .ql-hex-preview,
+body.editor-page .v4-color-wrapper {
+    border: 1px solid var(--ed-border-hover) !important;
+}
+
+body.editor-page .v4-hex-input,
+body.editor-page .ql-hex-input {
+    background: var(--ed-input-bg) !important;
+    border: 1px solid var(--ed-border) !important;
     color: var(--ed-text-1) !important;
+}
+
+body.editor-page .v4-hex-input:focus,
+body.editor-page .ql-hex-input:focus {
+    border-color: var(--ed-accent) !important;
+    box-shadow: 0 0 0 2px var(--ed-accent-subtle) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-hex-btn-apply,
+html[data-theme="light"] body.editor-page .ql-hex-btn-apply {
+    background: rgba(16, 185, 129, 0.14) !important;
+    color: #059669 !important;
+    border: 1px solid rgba(16, 185, 129, 0.45) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-hex-btn-apply:hover,
+html[data-theme="light"] body.editor-page .ql-hex-btn-apply:hover {
+    background: #10b981 !important;
+    color: #ffffff !important;
+}
+
+/* Dynamic Sub-Inspector Cards (Grid Columns, Accordion Tiers, Admin Required Pill, Tab Rows, Pin Badges) */
+body.editor-page .v4-accordion-tier1-group,
+body.editor-page .v4-tab-item-row {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .v4-accordion-tier2-group-box {
+    background: var(--ed-surface-1) !important;
+    border: 1px dashed var(--ed-border-hover) !important;
+}
+
+body.editor-page .grid-clickable-wrapper,
+body.editor-page .grid-highlight-wrapper {
+    border-top: 1px dashed var(--ed-border) !important;
+}
+
+body.editor-page .grid-hl-active-label {
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .grid-hl-active-label[data-hl-state="new"] {
+    color: #dc2626 !important;
+}
+
+body.editor-page .grid-hl-active-label[data-hl-state="del"] {
+    color: #ea580c !important;
+}
+
+body.editor-page .grid-hl-active-label[data-hl-state="focus"] {
+    color: #2563eb !important;
+}
+
+html[data-theme="dark"] body.editor-page .grid-hl-active-label[data-hl-state="new"] { color: #f87171 !important; }
+html[data-theme="dark"] body.editor-page .grid-hl-active-label[data-hl-state="del"] { color: #fb923c !important; }
+html[data-theme="dark"] body.editor-page .grid-hl-active-label[data-hl-state="focus"] { color: #60a5fa !important; }
+
+body.editor-page .btn-col-hl {
+    height: 23px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: 5px !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    padding: 0 6px !important;
+    gap: 5px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: var(--ed-toggle-idle-bg) !important;
+    border: 1px solid var(--ed-toggle-idle-border) !important;
+    color: var(--ed-toggle-idle-text) !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .btn-col-hl:hover {
+    background: var(--ed-surface-3) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .grid-hl-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+body.editor-page .grid-hl-dot.dot-new { background: #ef4444; }
+body.editor-page .grid-hl-dot.dot-del { background: #f97316; }
+body.editor-page .grid-hl-dot.dot-focus { background: #3b82f6; }
+
+body.editor-page .btn-col-hl-none.is-selected {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+    font-weight: 700 !important;
+}
+
+body.editor-page .btn-col-hl-new.is-selected {
+    background: rgba(239, 68, 68, 0.14) !important;
+    border-color: #ef4444 !important;
+    color: #b91c1c !important;
+    font-weight: 700 !important;
+}
+
+body.editor-page .btn-col-hl-del.is-selected {
+    background: rgba(249, 115, 22, 0.14) !important;
+    border-color: #f97316 !important;
+    color: #c2410c !important;
+    font-weight: 700 !important;
+}
+
+body.editor-page .btn-col-hl-focus.is-selected {
+    background: rgba(37, 99, 235, 0.14) !important;
+    border-color: #2563eb !important;
+    color: #1d4ed8 !important;
+    font-weight: 700 !important;
+}
+
+html[data-theme="dark"] body.editor-page .btn-col-hl-new.is-selected { color: #fecaca !important; background: rgba(239, 68, 68, 0.24) !important; }
+html[data-theme="dark"] body.editor-page .btn-col-hl-del.is-selected { color: #fed7aa !important; background: rgba(249, 115, 22, 0.24) !important; }
+html[data-theme="dark"] body.editor-page .btn-col-hl-focus.is-selected { color: #bfdbfe !important; background: rgba(37, 99, 235, 0.24) !important; }
+
+body.editor-page .admin-req-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    margin: 0;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--ed-text-2);
+    background: var(--ed-toggle-idle-bg);
+    border: 1px solid var(--ed-toggle-idle-border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+
+body.editor-page .admin-req-pill.is-active {
+    background: var(--ed-toggle-active-bg);
+    border-color: var(--ed-toggle-active-border);
+    color: var(--ed-toggle-active-text);
+    font-weight: 700;
+}
+
+body.editor-page .desc-pin-fixed-badge {
+    background: var(--ed-toggle-active-bg) !important;
+    border: 1px solid var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
 }
 
 /* ==========================================================================

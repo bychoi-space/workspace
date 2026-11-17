@@ -32,6 +32,7 @@ window.v4ResponsiveMultiselectScript = `
         
         components.forEach(function(c) {
             if (!c || !c.getBoundingClientRect) return;
+            if (c.getAttribute('data-locked') === 'true') return;
             if (c.id && c.id.startsWith('v4-pin-')) return;
             if (c.closest && c.closest('.v4-pin-layer')) return;
             if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(c)) return;
@@ -224,6 +225,7 @@ window.v4ResponsiveMultiselectScript = `
         if (items.length === 1) {
             const item = items[0];
             const el = item.el;
+            if (el && el.getAttribute('data-locked') === 'true') return;
             const isResponsiveTemplate = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.isResponsive === 'function')
                 ? window.ResponsiveFrameUtils.isResponsive(doc)
                 : !!(doc.querySelector('.pc-content-inner, .mobile-content-inner, .pc-browser-frame, .mobile-browser-frame, .pc-content-area, .mobile-content-area'));
@@ -418,7 +420,7 @@ window.v4ResponsiveMultiselectScript = `
                 const dx = currentX - item.x;
                 currentX += item.w + gapSize;
                 
-                if (dx === 0) return;
+                if (dx === 0 || (item.el && item.el.getAttribute('data-locked') === 'true')) return;
                 const newAbsX = item.x + dx;
 
                 if (item.type === 'connector') {
@@ -476,7 +478,7 @@ window.v4ResponsiveMultiselectScript = `
                 const dy = currentY - item.y;
                 currentY += item.h + gapSize;
                 
-                if (dy === 0) return;
+                if (dy === 0 || (item.el && item.el.getAttribute('data-locked') === 'true')) return;
                 const newAbsY = item.y + dy;
 
                 if (item.type === 'connector') {
@@ -521,6 +523,7 @@ window.v4ResponsiveMultiselectScript = `
         }
 
         items.forEach(function(item) {
+            if (item.el && item.el.getAttribute('data-locked') === 'true') return;
             let dx = 0, dy = 0;
             switch(alignType) {
                 case 'left':   dx = minX - item.x; break;

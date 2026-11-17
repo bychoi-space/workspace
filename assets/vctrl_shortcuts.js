@@ -50,6 +50,33 @@ window.v4ShortcutsScript = `
     document.addEventListener('keydown', e => {
         const inInputEarly = isInputActive(e.target) || isInputActive(document.activeElement);
 
+        // PageUp / PageDown Screen Navigation (+ ArrowUp / ArrowDown strictly in Fullscreen Mode)
+        const isPageUpKey = (e.key === 'PageUp' || e.code === 'PageUp');
+        const isPageDownKey = (e.key === 'PageDown' || e.code === 'PageDown');
+        const isFsMode = !!window.__v4_is_fullscreen_mode__;
+        const isFsArrowUpKey = isFsMode && (e.key === 'ArrowUp' || e.code === 'ArrowUp');
+        const isFsArrowDownKey = isFsMode && (e.key === 'ArrowDown' || e.code === 'ArrowDown');
+        if ((isPageUpKey || isPageDownKey || isFsArrowUpKey || isFsArrowDownKey) && !inInputEarly && !e.isComposing && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+            const isCroppingNow = !!(window.V4ImageCropEngine && typeof window.V4ImageCropEngine.isActive === 'function' && window.V4ImageCropEngine.isActive());
+            if (!isCroppingNow) {
+                e.preventDefault();
+                if (!e.repeat) {
+                    const navPayload = {
+                        type: 'BYCHOI_NAVIGATE_SCREEN',
+                        direction: (isPageUpKey || isFsArrowUpKey) ? -1 : 1
+                    };
+                    if (typeof window.notifyParent === 'function') {
+                        window.notifyParent(navPayload);
+                    } else if (typeof notifyParent === 'function') {
+                        notifyParent(navPayload);
+                    } else if (window.parent) {
+                        window.parent.postMessage(navPayload, '*');
+                    }
+                }
+                return;
+            }
+        }
+
         // 100% Crisp View / Fit View Toggle Shortcut (Backquote, Home, or Alt+Backquote)
         const isCrispToggleKey = (
             e.code === 'Backquote' || 
@@ -176,9 +203,18 @@ window.v4ShortcutsScript = `
         const isX = e.key === 'x' || e.key === 'X' || e.code === 'KeyX';
         const isV = e.key === 'v' || e.key === 'V' || e.code === 'KeyV';
         const isG = e.key === 'g' || e.key === 'G' || e.code === 'KeyG';
+        const isL = e.key === 'l' || e.key === 'L' || e.code === 'KeyL';
         const isZ = e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ';
         const isY = e.key === 'y' || e.key === 'Y' || e.code === 'KeyY';
         const inInput = isInputActive(e.target) || isInputActive(document.activeElement);
+
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && isL && !inInput) {
+            e.preventDefault();
+            if (window.v4MessageHandlers && typeof window.v4MessageHandlers['BYCHOI_TOGGLE_LOCK'] === 'function') {
+                window.v4MessageHandlers['BYCHOI_TOGGLE_LOCK']({});
+            }
+            return;
+        }
 
         if ((e.ctrlKey || e.metaKey) && ((isZ && e.shiftKey) || isY) && !inInput) {
             e.preventDefault();
@@ -274,7 +310,7 @@ window.v4ShortcutsScript = `
             e.preventDefault();
             notifyParent({ type: 'BYCHOI_SPACE_DOWN' });
         } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code) && !inInput) {
-            const selected = document.querySelectorAll('.bychoi-component.selected');
+            const selected = Array.from(document.querySelectorAll('.bychoi-component.selected')).filter(c => c.getAttribute('data-locked') !== 'true');
             if (selected.length > 0) {
                 e.preventDefault();
                 if (window.V4UndoManager && !isArrowMoving) {
@@ -375,6 +411,12 @@ window.v4ShortcutsScript = `
                 if (activeEl) {
                     if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
                         window.ResponsiveSmartGuide.onNudge(activeEl);
+                        notifyParent({
+                            type: 'BYCHOI_POS_CHANGED',
+                            id: activeEl.id,
+                            x: parseFloat(activeEl.style.left) || 0,
+                            y: parseFloat(activeEl.style.top) || 0
+                        });
                     } else {
                         const logicalX = parseFloat(activeEl.style.left) || 0;
                         const logicalY = parseFloat(activeEl.style.top) || 0;
@@ -392,7 +434,7 @@ window.v4ShortcutsScript = `
                 }
             }
         } else if ((e.code === 'Delete' || e.code === 'Backspace') && !inInput) {
-                const selected = document.querySelectorAll('.bychoi-component.selected');
+                const selected = Array.from(document.querySelectorAll('.bychoi-component.selected')).filter(c => c.getAttribute('data-locked') !== 'true');
                 if (selected.length > 0) {
                     e.preventDefault();
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -510,6 +552,10 @@ window.v4ShortcutsScript = `
 
     window.addEventListener('message', e => {
         const d = e.data; if (!d) return;
+        if (d.type === 'BYCHOI_SYNC_FULLSCREEN_STATE') {
+            window.__v4_is_fullscreen_mode__ = !!d.fullscreen;
+            return;
+        }
         if (d.type === 'BYCHOI_RESPONSE_CLIPBOARD') {
             console.log("[Clipboard Debug] Iframe received BYCHOI_RESPONSE_CLIPBOARD with items:", d.clipboard);
             window.pasteCopiedObjectsFromData(d.clipboard);

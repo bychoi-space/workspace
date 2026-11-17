@@ -49,6 +49,10 @@
         syncColor('accordion-text-color', 'accordion-text-wrapper', data.textColor, false);
         syncColor('accordion-body-bg-color', 'accordion-body-bg-wrapper', data.bodyBg, false);
         syncColor('accordion-border-color', 'accordion-border-wrapper', data.border, false);
+        const btnLight = document.getElementById('btn-accordion-theme-light');
+        const btnDark = document.getElementById('btn-accordion-theme-dark');
+        if (btnLight) highlightActive(btnLight, isLight);
+        if (btnDark) highlightActive(btnDark, !isLight);
         notifyAccordion(data);
     };
 

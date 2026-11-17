@@ -69,7 +69,8 @@
             const isChecked = (i === activeIndex);
 
             const row = document.createElement('div');
-            row.style.cssText = 'display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);';
+            row.className = 'v4-tab-item-row';
+            row.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 6px;';
 
             const radio = document.createElement('input');
             radio.type = 'radio';

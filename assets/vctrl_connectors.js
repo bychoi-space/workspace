@@ -131,16 +131,7 @@ window.ConnectorEngine = (function() {
             });
         }
 
-        // Line Editor Event Listeners
-        document.getElementById('line-stroke-color')?.addEventListener('input', (e) => window.updateSelectedStyle({ stroke: e.target.value }));
-        document.getElementById('line-stroke-width')?.addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value) || 1.6;
-            const display = document.getElementById('txt-line-stroke-width');
-            if (display) display.innerText = val.toFixed(1);
-            window.updateSelectedStyle({ strokeWidth: val });
-        });
-        document.getElementById('line-marker-start')?.addEventListener('change', (e) => window.updateSelectedStyle({ markerStart: e.target.value }));
-        document.getElementById('line-marker-end')?.addEventListener('change', (e) => window.updateSelectedStyle({ markerEnd: e.target.value }));
+        // Line Editor Event Listeners (Delegated via handleLineEditorInputEvent SSOT; keep legacy dash-array & W/H delta hooks)
         document.getElementById('line-dash-array')?.addEventListener('change', (e) => window.updateSelectedStyle({ dashArray: e.target.value }));
         document.getElementById('prop-line-width')?.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value) || 0;
@@ -248,7 +239,7 @@ window.ConnectorEngine = (function() {
                 // Reset previously highlighted port
                 if (window.lastHighlightedPort) {
                     window.lastHighlightedPort.style.transform = '';
-                    window.lastHighlightedPort.style.background = '#00e5ff';
+                    window.lastHighlightedPort.style.background = '';
                     window.lastHighlightedPort = null;
                 }
 
@@ -296,7 +287,7 @@ window.ConnectorEngine = (function() {
     function onGlobalMouseUp() {
         if (window.lastHighlightedPort) {
             window.lastHighlightedPort.style.transform = '';
-            window.lastHighlightedPort.style.background = '#00e5ff';
+            window.lastHighlightedPort.style.background = '';
             window.lastHighlightedPort = null;
         }
 
@@ -400,6 +391,10 @@ window.ConnectorEngine = (function() {
         const shapeEditor = document.getElementById('shape-inspector-section');
         if (lineEditor) {
             lineEditor.style.display = 'block';
+            const orientGroup = document.getElementById('line-orientation-group');
+            const lenGroup = document.getElementById('line-length-group');
+            if (orientGroup) orientGroup.style.display = 'none';
+            if (lenGroup) lenGroup.style.display = 'none';
             const conn = window.state.connectors.find(c => c.id === lastId);
             if (conn) {
                 const colorInput = document.getElementById('line-stroke-color');
@@ -415,6 +410,14 @@ window.ConnectorEngine = (function() {
                 if (startMarker) startMarker.value = conn.style.markerStart || '';
                 if (endMarker) endMarker.value = conn.style.markerEnd || '';
                 if (dashArray) dashArray.value = conn.style.dashArray || '';
+
+                const curDash = conn.style.dashArray || '';
+                const connLineStyle = (curDash === '1 5' || curDash === '1,5') ? 'dotted' : (curDash ? 'dashed' : 'solid');
+                ['solid', 'dashed', 'dotted'].forEach(s => {
+                    const btn = document.getElementById('btn-line-style-' + s);
+                    if (btn) highlightActive(btn, s === connLineStyle);
+                });
+
                 const propLineWidth = document.getElementById('prop-line-width');
                 const propLineHeight = document.getElementById('prop-line-height');
                 if (propLineWidth) propLineWidth.value = Math.round(Math.abs(conn.end.x - conn.start.x));
@@ -426,8 +429,18 @@ window.ConnectorEngine = (function() {
         if (window.MessageHub) {
             const conn = window.state.connectors.find(c => c.id === lastId);
             const x = conn ? Math.min(conn.start.x, conn.end.x) : 0;
+            const y = conn ? Math.min(conn.start.y, conn.end.y) : 0;
             const w = conn ? Math.abs(conn.end.x - conn.start.x) : 0;
-            window.MessageHub.send(window, 'BYCHOI_COMP_SELECTED', { id: lastId, isConnector: true, x: x, w: w });
+            const h = conn ? Math.abs(conn.end.y - conn.start.y) : 0;
+            window.MessageHub.send(window, 'BYCHOI_COMP_SELECTED', {
+                id: lastId,
+                isConnector: true,
+                connectorType: conn ? conn.type : 'elbow',
+                x: x,
+                y: y,
+                w: w,
+                h: h
+            });
         }
         redrawAll();
     }
@@ -544,10 +557,37 @@ window.ConnectorEngine = (function() {
 
     window._syncLineEditorProps = (compStyles) => {
         if (!compStyles) return;
+        const isDynamicConn = !!(compStyles.isConnector || (compStyles.id && String(compStyles.id).indexOf('conn_') === 0));
+        const orientGroup = document.getElementById('line-orientation-group');
+        const lenGroup = document.getElementById('line-length-group');
+        if (orientGroup) orientGroup.style.display = isDynamicConn ? 'none' : 'block';
+        if (lenGroup) lenGroup.style.display = isDynamicConn ? 'none' : 'block';
+        if (isDynamicConn) {
+            const conn = window.state && Array.isArray(window.state.connectors)
+                ? window.state.connectors.find(c => c && c.id === compStyles.id)
+                : null;
+            if (conn && conn.style) {
+                const startM = document.getElementById('line-marker-start');
+                const endM = document.getElementById('line-marker-end');
+                if (startM) startM.value = conn.style.markerStart || '';
+                if (endM) endM.value = conn.style.markerEnd || '';
+                const curDash = conn.style.dashArray || '';
+                const connStyle = (curDash === '1 5' || curDash === '1,5') ? 'dotted' : (curDash ? 'dashed' : 'solid');
+                ['solid', 'dashed', 'dotted'].forEach(s => {
+                    const btn = document.getElementById('btn-line-style-' + s);
+                    if (btn) highlightActive(btn, s === connStyle);
+                });
+            }
+            return;
+        }
         const dir = compStyles.lineDir || 'horizontal';
         const style = compStyles.lineStyle || 'solid';
         const thickness = parseFloat(compStyles.lineThickness) || 1.6;
         const color = compStyles.lineColor || '#c8c8c8';
+        const markerStartEl = document.getElementById('line-marker-start');
+        const markerEndEl = document.getElementById('line-marker-end');
+        if (markerStartEl) markerStartEl.value = compStyles.lineMarkerStart || '';
+        if (markerEndEl) markerEndEl.value = compStyles.lineMarkerEnd || '';
 
         document.querySelectorAll('.v4-line-dir-btn').forEach(b => {
             const btnDir = b.dataset.dir;
@@ -628,20 +668,21 @@ window.ConnectorEngine = (function() {
         const styleBtn = e.target.closest('.v4-line-style-btn');
         if (styleBtn) {
             const st = styleBtn.dataset.style;
+            ['solid', 'dashed', 'dotted'].forEach(s => {
+                const b = document.getElementById('btn-line-style-' + s);
+                if (b) highlightActive(b, s === st);
+            });
+            if (selectedConnectorIds.length > 0 && typeof window.updateSelectedStyle === 'function') {
+                const dashVal = st === 'dashed' ? '6 4' : (st === 'dotted' ? '1 5' : '');
+                window.updateSelectedStyle({ dashArray: dashVal });
+            }
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             const target = getActiveLineTarget();
-            if (iframeWin && target.id) {
+            if (iframeWin && target.id && String(target.id).indexOf('conn_') !== 0) {
                 MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                     id: target.id,
                     ids: target.ids,
                     style: { lineStyle: st }
-                });
-                ['solid', 'dashed', 'dotted'].forEach(s => {
-                    const b = document.getElementById('btn-line-style-' + s);
-                    if (b) {
-                        const isActive = s === st;
-                        highlightActive(b, isActive);
-                    }
                 });
             }
             return;
@@ -653,9 +694,12 @@ window.ConnectorEngine = (function() {
             const val = parseFloat(e.target.value) || 1.6;
             const txt = document.getElementById('txt-line-stroke-width');
             if (txt) txt.innerText = val;
+            if (selectedConnectorIds.length > 0 && typeof window.updateSelectedStyle === 'function') {
+                window.updateSelectedStyle({ strokeWidth: val });
+            }
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             const target = getActiveLineTarget();
-            if (iframeWin && target.id) {
+            if (iframeWin && target.id && String(target.id).indexOf('conn_') !== 0) {
                 MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                     id: target.id,
                     ids: target.ids,
@@ -666,13 +710,31 @@ window.ConnectorEngine = (function() {
             const val = e.target.value;
             const wrapper = e.target.closest('.v4-color-wrapper');
             if (wrapper) wrapper.classList.remove('transparent-active');
+            if (selectedConnectorIds.length > 0 && typeof window.updateSelectedStyle === 'function') {
+                window.updateSelectedStyle({ stroke: val });
+            }
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             const target = getActiveLineTarget();
-            if (iframeWin && target.id) {
+            if (iframeWin && target.id && String(target.id).indexOf('conn_') !== 0) {
                 MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                     id: target.id,
                     ids: target.ids,
                     style: { lineColor: val }
+                });
+            }
+        } else if (e.target.id === 'line-marker-start' || e.target.id === 'line-marker-end') {
+            const isStart = e.target.id === 'line-marker-start';
+            const val = e.target.value || '';
+            if (selectedConnectorIds.length > 0 && typeof window.updateSelectedStyle === 'function') {
+                window.updateSelectedStyle(isStart ? { markerStart: val } : { markerEnd: val });
+            }
+            const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
+            const target = getActiveLineTarget();
+            if (iframeWin && target.id && String(target.id).indexOf('conn_') !== 0) {
+                MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
+                    id: target.id,
+                    ids: target.ids,
+                    style: isStart ? { lineMarkerStart: val } : { lineMarkerEnd: val }
                 });
             }
         } else if (e.target.id === 'prop-line-length') {

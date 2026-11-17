@@ -738,8 +738,8 @@
 .v4-prop-input-cyan {
     width: 100% !important;
     background: rgba(15, 23, 42, 0.8) !important;
-    border: 1px solid rgba(0, 229, 255, 0.4) !important;
-    color: #00e5ff !important;
+    border: 1px solid rgba(124, 102, 220, 0.45) !important;
+    color: #c4b5fd !important;
     padding: 4px 6px !important;
     border-radius: var(--radius-sm, 4px) !important;
     font-size: 11px !important;
@@ -966,10 +966,10 @@
 .v4-pill-btn-mini.active.cyan,
 .v4-pill-btn-24.active.cyan,
 .v4-pill-btn-medium.active.cyan {
-    background: rgba(0, 229, 255, 0.2) !important;
-    border-color: #00e5ff !important;
-    color: #00e5ff !important;
-    box-shadow: 0 0 6px rgba(0, 229, 255, 0.3) !important;
+    background: rgba(110, 86, 207, 0.24) !important;
+    border-color: var(--accent, #6e56cf) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 6px rgba(110, 86, 207, 0.3) !important;
 }
 
 .v4-btn-xs {
@@ -1392,8 +1392,8 @@
 }
 
 .v4-prop-select.cyan {
-    border-color: rgba(0, 229, 255, 0.3) !important;
-    color: #00e5ff !important;
+    border-color: rgba(124, 102, 220, 0.4) !important;
+    color: #c4b5fd !important;
 }
 
 .v4-prop-select option {
@@ -1501,31 +1501,31 @@ select.v4-prop-input-styled,
 }
 
 .grid-col-card.v4-grid-col-card-focused {
-    border-color: #00e5ff !important;
-    background: rgba(0, 229, 255, 0.09) !important;
-    box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
+    border-color: var(--ed-accent, #7c66dc) !important;
+    background: rgba(124, 102, 220, 0.1) !important;
+    box-shadow: 0 0 12px rgba(124, 102, 220, 0.35) !important;
     animation: v4-grid-col-pulse 1.4s ease-in-out !important;
 }
 
 @keyframes v4-grid-col-pulse {
     0% {
-        box-shadow: 0 0 0 rgba(0, 229, 255, 0);
-        border-color: rgba(0, 229, 255, 0.3);
+        box-shadow: 0 0 0 rgba(124, 102, 220, 0);
+        border-color: rgba(124, 102, 220, 0.35);
     }
     30% {
-        box-shadow: 0 0 18px rgba(0, 229, 255, 0.6);
-        border-color: #00e5ff;
-        background: rgba(0, 229, 255, 0.15);
+        box-shadow: 0 0 16px rgba(124, 102, 220, 0.5);
+        border-color: #7c66dc;
+        background: rgba(124, 102, 220, 0.16);
     }
     70% {
-        box-shadow: 0 0 14px rgba(0, 229, 255, 0.4);
-        border-color: #00e5ff;
-        background: rgba(0, 229, 255, 0.09);
+        box-shadow: 0 0 12px rgba(124, 102, 220, 0.32);
+        border-color: #7c66dc;
+        background: rgba(124, 102, 220, 0.1);
     }
     100% {
-        box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
-        border-color: rgba(0, 229, 255, 0.6);
-        background: rgba(0, 229, 255, 0.05);
+        box-shadow: 0 0 8px rgba(124, 102, 220, 0.2);
+        border-color: rgba(124, 102, 220, 0.6);
+        background: rgba(124, 102, 220, 0.06);
     }
 }
 
@@ -1541,9 +1541,9 @@ select.v4-prop-input-styled,
 
 .admin-row-config-block.v4-admin-row-block-focused,
 .prop-group.v4-admin-row-block-focused {
-    border-color: #00e5ff !important;
-    background: rgba(0, 229, 255, 0.09) !important;
-    box-shadow: 0 0 14px rgba(0, 229, 255, 0.45) !important;
+    border-color: var(--ed-accent, #7c66dc) !important;
+    background: rgba(124, 102, 220, 0.1) !important;
+    box-shadow: 0 0 12px rgba(124, 102, 220, 0.35) !important;
     animation: v4-admin-row-pulse 1.4s ease-in-out !important;
 }
 
@@ -1568,30 +1568,30 @@ select.v4-prop-input-styled,
 }
 
 .admin-col-label-input.v4-admin-col-focused {
-    border-color: #00e5ff !important;
-    background: rgba(0, 229, 255, 0.12) !important;
-    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5) !important;
+    border-color: var(--ed-accent, #7c66dc) !important;
+    background: rgba(124, 102, 220, 0.12) !important;
+    box-shadow: 0 0 8px rgba(124, 102, 220, 0.4) !important;
 }
 
 @keyframes v4-admin-row-pulse {
     0% {
-        box-shadow: 0 0 0 rgba(0, 229, 255, 0);
-        border-color: rgba(0, 229, 255, 0.3);
+        box-shadow: 0 0 0 rgba(124, 102, 220, 0);
+        border-color: rgba(124, 102, 220, 0.35);
     }
     30% {
-        box-shadow: 0 0 18px rgba(0, 229, 255, 0.6);
-        border-color: #00e5ff;
-        background: rgba(0, 229, 255, 0.15);
+        box-shadow: 0 0 16px rgba(124, 102, 220, 0.5);
+        border-color: #7c66dc;
+        background: rgba(124, 102, 220, 0.16);
     }
     70% {
-        box-shadow: 0 0 14px rgba(0, 229, 255, 0.4);
-        border-color: #00e5ff;
-        background: rgba(0, 229, 255, 0.09);
+        box-shadow: 0 0 12px rgba(124, 102, 220, 0.32);
+        border-color: #7c66dc;
+        background: rgba(124, 102, 220, 0.1);
     }
     100% {
-        box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
-        border-color: rgba(0, 229, 255, 0.6);
-        background: rgba(0, 229, 255, 0.05);
+        box-shadow: 0 0 8px rgba(124, 102, 220, 0.2);
+        border-color: rgba(124, 102, 220, 0.6);
+        background: rgba(124, 102, 220, 0.06);
     }
 }
 

@@ -795,6 +795,9 @@ function _handleNoSelection() {
     }
     state.isEditing = false;
     state.editingIndex = -1;
+    if (typeof window.syncInspectorContextHeader === 'function') {
+        window.syncInspectorContextHeader(null, null);
+    }
     if (window.InspectorActionBar && typeof window.InspectorActionBar.hide === 'function') {
         window.InspectorActionBar.hide();
     } else {
@@ -883,6 +886,9 @@ window.updateProperties = function(compStyles, isNewSelectionExplicit) {
 
         // Show/Hide buttons inside selection-actions-bar based on selection count and type
         _syncSelectionActionBar(compStyles);
+        if (typeof window.syncInspectorContextHeader === 'function') {
+            window.syncInspectorContextHeader(compStyles, state.editingType);
+        }
 
         // Load content to Quill
         _syncQuillContent(compStyles, state.editingType);
@@ -1085,13 +1091,12 @@ if (btnFloatingClose) {
 window._syncArrowDirBtns = (currentDir) => {
     const targetDir = currentDir || 'right';
     document.querySelectorAll('.v4-arrow-dir-btn').forEach(b => {
-        const btnDir = b.dataset.dir;
-        if (btnDir === targetDir) {
-            b.classList.add('active');
-            b.style.cssText = 'height: 28px; background: rgba(0,229,255,0.15); border: 1.6px solid rgba(0,229,255,0.4); border-radius: 6px; color: #00e5ff; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;';
+        const isTarget = (b.dataset.dir === targetDir);
+        b.style.cssText = '';
+        if (typeof window.highlightActive === 'function') {
+            window.highlightActive(b, isTarget);
         } else {
-            b.classList.remove('active');
-            b.style.cssText = 'height: 28px; background: rgba(255, 255, 255, 0.05); border: 1.6px solid rgba(255, 255, 255, 0.15); border-radius: 6px; color: #94a3b8; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;';
+            b.classList.toggle('active', isTarget);
         }
     });
 };

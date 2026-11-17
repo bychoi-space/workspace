@@ -68,14 +68,19 @@ window.v4FormatPainterScript = `
 
     function _extractComponentBorderStyle(targetComp, shape, cur) {
         var detectedBorderStyle = 'solid';
+        var detectedBorderWidth = '1.6px';
         if (shape) {
-            detectedBorderStyle = shape.getAttribute('data-line-style') || (shape.style && shape.style.borderStyle) || 'solid';
+            detectedBorderStyle = shape.getAttribute('data-border-style') || shape.getAttribute('data-line-style') || (shape.style && shape.style.borderStyle) || 'solid';
+            var bwAttr = shape.getAttribute('data-border-width');
+            if (bwAttr !== null && bwAttr !== '' && !isNaN(parseFloat(bwAttr))) {
+                detectedBorderWidth = parseFloat(bwAttr) + 'px';
+            }
         } else if (targetComp.style && targetComp.style.borderStyle) {
             detectedBorderStyle = targetComp.style.borderStyle;
         }
         return {
             color: cur.border || '',
-            width: '1.6px',
+            width: detectedBorderWidth,
             style: detectedBorderStyle,
             radius: cur.borderRadius !== undefined ? cur.borderRadius : 0,
             cornerDir: cur.borderCornerDir || 'all',
@@ -593,24 +598,28 @@ window.v4FormatPainterScript = `
             } else {
                 const bColor = styleData.border.color || '#c8c8c8';
                 const bStyle = styleData.border.style || 'solid';
+                const bWidthNum = styleData.border.width !== undefined ? (parseFloat(styleData.border.width) || 1.6) : 1.6;
+                const bWidthStr = String(bWidthNum);
+                shape.setAttribute('data-border-style', bStyle);
+                shape.setAttribute('data-border-width', bWidthStr);
                 if (svgShape) {
                     svgShape.style.stroke = bColor;
                     svgShape.setAttribute('stroke', bColor);
-                    svgShape.style.strokeWidth = '1.6';
-                    svgShape.setAttribute('stroke-width', '1.6');
+                    svgShape.style.strokeWidth = bWidthStr;
+                    svgShape.setAttribute('stroke-width', bWidthStr);
                     if (bStyle === 'dashed') {
                         svgShape.style.strokeDasharray = '6 4';
                         svgShape.setAttribute('stroke-dasharray', '6 4');
                     } else if (bStyle === 'dotted') {
-                        svgShape.style.strokeDasharray = '1 5';
-                        svgShape.setAttribute('stroke-dasharray', '1 5');
+                        svgShape.style.strokeDasharray = '2 4';
+                        svgShape.setAttribute('stroke-dasharray', '2 4');
                     } else {
                         svgShape.style.strokeDasharray = 'none';
                         svgShape.removeAttribute('stroke-dasharray');
                     }
                 }
                 shape.style.borderColor = bColor;
-                shape.style.borderWidth = '1.6px';
+                shape.style.borderWidth = bWidthNum + 'px';
                 shape.style.borderStyle = bStyle;
             }
 

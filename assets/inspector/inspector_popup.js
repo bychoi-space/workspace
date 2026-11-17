@@ -83,11 +83,15 @@
         const radius = parseInt(comp.popupRadius) || 8;
         const radiusSlider = document.getElementById('prop-popup-border-radius');
         const radiusTxt = document.getElementById('txt-popup-border-radius');
+        const radiusNum = document.getElementById('num-popup-border-radius');
         if (radiusSlider && document.activeElement !== radiusSlider) {
             radiusSlider.value = radius;
         }
         if (radiusTxt) {
             radiusTxt.innerText = radius;
+        }
+        if (radiusNum && document.activeElement !== radiusNum) {
+            radiusNum.value = radius;
         }
     };
 
@@ -162,6 +166,8 @@
             radiusSlider.addEventListener('input', (e) => {
                 const val = parseInt(e.target.value) || 0;
                 if (radiusTxt) radiusTxt.innerText = val;
+                const radiusNum = document.getElementById('num-popup-border-radius');
+                if (radiusNum && document.activeElement !== radiusNum) radiusNum.value = val;
                 notifyPopup({ borderRadius: val });
             });
         }
@@ -174,6 +180,8 @@
                     const r = parseInt(btn.dataset.radius) || 0;
                     if (radiusSlider) radiusSlider.value = r;
                     if (radiusTxt) radiusTxt.innerText = r;
+                    const radiusNum = document.getElementById('num-popup-border-radius');
+                    if (radiusNum) radiusNum.value = r;
                     notifyPopup({ borderRadius: r });
                 });
             }

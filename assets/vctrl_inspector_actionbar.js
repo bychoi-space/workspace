@@ -22,12 +22,16 @@
 
             const hasSelection = selIds.length > 0 || !!(compStyles && compStyles.id);
 
-            // Update selection count & label SSOT
+            // Update selection count & label SSOT (Hide redundant 1 OBJECT SELECTED banner on single selection)
             const selectionNumber = document.getElementById('selection-number');
             const selectionLabel = document.getElementById('selection-label');
+            const selectionCountGroup = document.querySelector('#selection-actions-bar .selection-count-group');
             const effectiveCount = selIds.length > 0 ? selIds.length : (compStyles && compStyles.id ? 1 : 0);
             if (selectionNumber) selectionNumber.innerText = effectiveCount;
             if (selectionLabel) selectionLabel.innerText = effectiveCount > 1 ? 'OBJECTS' : 'OBJECT';
+            if (selectionCountGroup) {
+                selectionCountGroup.style.setProperty('display', effectiveCount >= 2 ? 'flex' : 'none', 'important');
+            }
 
             if (btnGroup) btnGroup.style.setProperty('display', (selIds.length > 1) ? 'flex' : 'none', 'important');
             if (btnUngroup) btnUngroup.style.setProperty('display', isSingleGroup ? 'flex' : 'none', 'important');
@@ -56,6 +60,30 @@
             const styleActionRow = document.getElementById('selection-style-action-row');
             if (styleActionRow) styleActionRow.style.setProperty('display', isSingleGroup ? 'none' : 'flex', 'important');
 
+            // Synchronize Lock / Unlock Toggle Button (C-4)
+            const lockRow = document.getElementById('selection-lock-action-row');
+            const btnLock = document.getElementById('btn-lock-object-action');
+            const txtLock = document.getElementById('txt-lock-object-action');
+            const iconLock = document.getElementById('icon-lock-object-action');
+            const isConnectorOnly = !!(compStyles && (compStyles.isConnector || (compStyles.id && String(compStyles.id).indexOf('conn_') === 0))) ||
+                (selIds.length > 0 && selIds.every(id => typeof id === 'string' && id.indexOf('conn_') === 0));
+            if (lockRow) {
+                lockRow.style.setProperty('display', (hasSelection && !isConnectorOnly) ? 'flex' : 'none', 'important');
+            }
+            const isLocked = !!(compStyles && compStyles.isLocked);
+            if (btnLock) {
+                btnLock.classList.toggle('active', isLocked);
+                btnLock.classList.toggle('is-locked-active', isLocked);
+            }
+            if (txtLock) {
+                txtLock.textContent = isLocked ? '잠금 해제' : '위치 잠금';
+            }
+            if (iconLock) {
+                iconLock.innerHTML = isLocked
+                    ? '<rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>'
+                    : '<rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.8-1.2"></path>';
+            }
+
             if (groupDimBar) {
                 if (isSingleGroup) {
                     groupDimBar.style.setProperty('display', 'flex', 'important');
@@ -64,15 +92,20 @@
                     if (compStyles && typeof compStyles.w === 'number') {
                         wVal = Math.round(compStyles.w);
                         hVal = Math.round(compStyles.h);
-                    } else if (selIds.length === 1) {
-                        try {
-                            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-                            const groupEl = iframeDoc?.getElementById(selIds[0]);
-                            if (groupEl) {
-                                wVal = Math.round(parseFloat(groupEl.style.width) || groupEl.offsetWidth || 0);
-                                hVal = Math.round(parseFloat(groupEl.style.height) || groupEl.offsetHeight || 0);
-                            }
-                        } catch(e) {}
+                    }
+                    const grpLeftInp = document.getElementById('prop-left-group');
+                    const grpTopInp = document.getElementById('prop-top-group');
+                    if (grpLeftInp) {
+                        grpLeftInp.disabled = isLocked;
+                        if (compStyles && compStyles.x !== undefined && document.activeElement !== grpLeftInp) {
+                            grpLeftInp.value = Math.round(parseFloat(compStyles.x) || 0);
+                        }
+                    }
+                    if (grpTopInp) {
+                        grpTopInp.disabled = isLocked;
+                        if (compStyles && compStyles.y !== undefined && document.activeElement !== grpTopInp) {
+                            grpTopInp.value = Math.round(parseFloat(compStyles.y) || 0);
+                        }
                     }
                     if (groupDimWidth) groupDimWidth.innerText = wVal + 'px';
                     if (groupDimHeight) groupDimHeight.innerText = hVal + 'px';

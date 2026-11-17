@@ -40,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
     <link rel="stylesheet" href="assets/viewer.css?v=V437_ALIGNMENT_POLISH">
-    <link rel="stylesheet" href="assets/ui_library.css?v=V436_CORNER_QUILL">
+    <link rel="stylesheet" href="assets/ui_library.css?v=V439_INSPECTOR_PART_A">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
         if (window.location.protocol.startsWith('http')) {
@@ -59,11 +59,11 @@
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
 
     <link rel="stylesheet" href="assets/responsive_workspace.css?v=V433_SHELL_CONTRAST">
-    <link rel="stylesheet" href="assets/viewer_theme.css?v=V438_SCROLLPIN_CONTRAST">
+    <link rel="stylesheet" href="assets/viewer_theme.css?v=V441_INSPECTOR_PART_C">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="assets/vctrl_pdf_exporter.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_pdf_exporter.js?v=V444_PDF_TAINT_AND_DESC"></script>
     <script>
         // PWA & Direct-Entry Project Parameter Guard:
         // If viewer is launched without a valid project query parameter, immediately bounce to Dashboard index.html
@@ -199,16 +199,21 @@
             </div>
 
             <!-- Compact 3-Segment Theme Switcher (System / Light / Dark) -->
-            <div id="viewer-theme-switcher" class="theme-switcher viewer-theme-switcher" data-theme-switcher role="group" aria-label="화면 테마 설정">
-                <button type="button" class="theme-seg-btn" data-theme-option="system" title="시스템 설정 자동 추종 (OS 테마 동기화)" aria-label="시스템 설정 자동 추종">
-                    <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <div id="viewer-theme-switcher" class="theme-switcher viewer-theme-switcher" data-theme-switcher
+                role="group" aria-label="화면 테마 설정">
+                <button type="button" class="theme-seg-btn" data-theme-option="system" title="시스템 설정 자동 추종 (OS 테마 동기화)"
+                    aria-label="시스템 설정 자동 추종">
+                    <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor"
+                        stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect x="2.5" y="3.5" width="19" height="13" rx="2"></rect>
                         <line x1="8.5" y1="20.5" x2="15.5" y2="20.5"></line>
                         <line x1="12" y1="16.5" x2="12" y2="20.5"></line>
                     </svg>
                 </button>
-                <button type="button" class="theme-seg-btn" data-theme-option="light" title="라이트 모드" aria-label="라이트 모드">
-                    <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <button type="button" class="theme-seg-btn" data-theme-option="light" title="라이트 모드"
+                    aria-label="라이트 모드">
+                    <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor"
+                        stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="12" cy="12" r="4"></circle>
                         <line x1="12" y1="2.5" x2="12" y2="4.5"></line>
                         <line x1="12" y1="19.5" x2="12" y2="21.5"></line>
@@ -221,7 +226,8 @@
                     </svg>
                 </button>
                 <button type="button" class="theme-seg-btn" data-theme-option="dark" title="다크 모드" aria-label="다크 모드">
-                    <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor"
+                        stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"></path>
                     </svg>
                 </button>
@@ -330,7 +336,8 @@
                     <div class="floating-inspector-header">
                         <div class="floating-inspector-title-group">
                             <span class="material-icons-outlined floating-inspector-icon">tune</span>
-                            <span class="floating-inspector-title">OBJECT PROPERTIES</span>
+                            <span id="floating-inspector-title" class="floating-inspector-title">OBJECT PROPERTIES</span>
+                            <span id="floating-inspector-badge" class="inspector-context-badge" style="display: none;"></span>
                         </div>
                         <div class="floating-header-btn-group">
                             <button id="btn-floating-swap" title="좌/우 위치 전환" class="floating-inspector-header-btn">
@@ -362,16 +369,34 @@
                                         id="selection-label">OBJECT</span> SELECTED
                                 </span>
                             </div>
-                            <!-- Group Dimension Info Display -->
-                            <div id="group-dimension-bar" class="group-dimension-bar" style="display: none;">
-                                <div class="group-dim-item">
-                                    <span class="group-dim-label">WIDTH</span>
-                                    <span id="group-dim-width" class="group-dim-val">0px</span>
+                            <!-- Group Position & Dimension Info Display -->
+                            <div id="group-dimension-bar" class="group-dimension-bar-stack" style="display: none;">
+                                <div class="v4-prop-grid-2 gap-8">
+                                    <div class="prop-subgroup">
+                                        <label class="v4-unified-label v4-prop-label bold" data-prop="left">가로 위치 (X)</label>
+                                        <div class="v4-prop-input-wrap">
+                                            <input type="number" id="prop-left-group" class="v4-prop-input v4-prop-input-styled" data-prop="left" value="0" placeholder="0">
+                                            <span class="v4-prop-unit">px</span>
+                                        </div>
+                                    </div>
+                                    <div class="prop-subgroup">
+                                        <label class="v4-unified-label v4-prop-label bold" data-prop="top">세로 위치 (Y)</label>
+                                        <div class="v4-prop-input-wrap">
+                                            <input type="number" id="prop-top-group" class="v4-prop-input v4-prop-input-styled" data-prop="top" value="0" placeholder="0">
+                                            <span class="v4-prop-unit">px</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="group-dim-divider"></div>
-                                <div class="group-dim-item">
-                                    <span class="group-dim-label">HEIGHT</span>
-                                    <span id="group-dim-height" class="group-dim-val">0px</span>
+                                <div class="group-dimension-bar">
+                                    <div class="group-dim-item">
+                                        <span class="group-dim-label">WIDTH</span>
+                                        <span id="group-dim-width" class="group-dim-val">0px</span>
+                                    </div>
+                                    <div class="group-dim-divider"></div>
+                                    <div class="group-dim-item">
+                                        <span class="group-dim-label">HEIGHT</span>
+                                        <span id="group-dim-height" class="group-dim-val">0px</span>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Scroll Pin Navigation Bar (Responsive Sticky/Fixed Pin) -->
@@ -555,6 +580,16 @@
                                         서식 붙여넣기
                                     </button>
                                 </div>
+                                <div class="selection-btn-row" id="selection-lock-action-row">
+                                    <button id="btn-lock-object-action" class="v4-inspector-btn btn-secondary v4-lock-toggle-btn"
+                                        title="오브젝트 위치·크기·삭제 잠금 토글 (Ctrl + Shift + L)">
+                                        <svg id="icon-lock-object-action" class="bychoi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="4" y="11" width="16" height="10" rx="2"></rect>
+                                            <path d="M8 11V7a4 4 0 0 1 7.8-1.2"></path>
+                                        </svg>
+                                        <span id="txt-lock-object-action">위치 잠금</span>
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Alignment Section -->
@@ -594,7 +629,8 @@
                                 </div>
                                 <div class="selection-align-grid-3">
                                     <button id="btn-align-top"
-                                        class="v4-inspector-btn btn-secondary selection-align-btn" title="상단 정렬 (Ctrl+4)">
+                                        class="v4-inspector-btn btn-secondary selection-align-btn"
+                                        title="상단 정렬 (Ctrl+4)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <line x1="3" y1="4" x2="21" y2="4"></line>
                                             <rect x="6" y="7.5" width="4" height="12.5" rx="1"></rect>
@@ -620,10 +656,10 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <div id="selection-distribute-row" class="selection-align-grid-2" style="display: none;">
+                                <div id="selection-distribute-row" class="selection-align-grid-2"
+                                    style="display: none;">
                                     <button id="btn-align-distribute-h"
-                                        class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="가로 간격 균등 배분">
+                                        class="v4-inspector-btn btn-secondary selection-align-btn" title="가로 간격 균등 배분">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <line x1="4" y1="3" x2="4" y2="21"></line>
                                             <line x1="20" y1="3" x2="20" y2="21"></line>
@@ -631,8 +667,7 @@
                                         </svg>
                                     </button>
                                     <button id="btn-align-distribute-v"
-                                        class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="세로 간격 균등 배분">
+                                        class="v4-inspector-btn btn-secondary selection-align-btn" title="세로 간격 균등 배분">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <line x1="3" y1="4" x2="21" y2="4"></line>
                                             <line x1="3" y1="20" x2="21" y2="20"></line>
@@ -666,7 +701,8 @@
             <div id="sidebar-inspector-header" class="sidebar-inspector-header" style="display: none;">
                 <div class="sidebar-inspector-title-group">
                     <span class="material-icons-outlined sidebar-inspector-icon">tune</span>
-                    <span class="sidebar-inspector-title">OBJECT PROPERTIES</span>
+                    <span id="sidebar-inspector-title" class="sidebar-inspector-title">OBJECT PROPERTIES</span>
+                    <span id="sidebar-inspector-badge" class="inspector-context-badge" style="display: none;"></span>
                 </div>
                 <div class="sidebar-inspector-actions">
                     <button id="btn-sidebar-popout" class="sidebar-header-btn" title="캔버스 플로팅 카드로 꺼내기 (팝아웃)">
@@ -1098,7 +1134,8 @@
                 <span class="v4-sheet-meta-sub" id="v4-sheet-meta-updated">최종 수정: -</span>
             </div>
             <div class="v4-sheet-meta-actions">
-                <button type="button" class="v4-sheet-action-chip" data-theme-cycle title="테마 전환" aria-label="테마 전환"></button>
+                <button type="button" class="v4-sheet-action-chip" data-theme-cycle title="테마 전환"
+                    aria-label="테마 전환"></button>
                 <button type="button" id="v4-sheet-btn-history" class="v4-sheet-action-chip" title="재개정 이력">
                     <span class="material-icons-outlined" style="font-size:15px;">history</span> 이력
                 </button>
@@ -1119,8 +1156,8 @@
     <script src="assets/vctrl_theme.js?v=V433_SHELL_CONTRAST"></script>
     <script src="assets/vctrl_typography.js?v=V432_VIEWER_DUAL_THEME"></script>
     <!-- Dynamic UI Library for Inspectors, Library Icons & Modals -->
-    <script src="assets/ui_library_fallback.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_ui_library.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/ui_library_fallback.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_ui_library.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/templates.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_clipboard.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/app.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1132,41 +1169,41 @@
     <script src="assets/vctrl_ui_atoms_inputs.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_ui_atoms_cursor.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_design_system_atoms.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_design_system_shapes_tables.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_design_system_shapes_tables.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_design_system.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_clipboard_objects.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_format_painter.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_shortcuts.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_clipboard_objects.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_format_painter.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_shortcuts.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
     <script src="assets/vctrl_common.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_object_shape.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_object_connector.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_object_shape.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_object_connector.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/responsive_frame.js?v=V435_CLEAN_INPUTS"></script>
     <script src="assets/vctrl_iframe_styles.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_iframe_style_extractor.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_iframe_style_extractor.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_iframe_dimmed_layer.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_layering.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_inserter.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_iframe_adorner.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_iframe_adorner.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_iframe_image_crop.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_iframe_script.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_iframe_script.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_iframe_grid.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_accordion.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_tab.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_iframe_drag.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_iframe_drag.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_core.js?v=V433_SHELL_CONTRAST"></script>
+    <script src="assets/vctrl_core.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
     <script src="assets/vctrl_storage.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_autosave.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_core_router.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_parent_shortcuts.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_core_router.js?v=V442_SCREEN_PAGE_NAV"></script>
+    <script src="assets/vctrl_parent_shortcuts.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
     <script src="assets/vctrl_smartguide.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_smartguide_math.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_smartguide.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_responsive_multiselect.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_responsive_multiselect.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_iframe_scroll_pin.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_pins.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_grouping.js?v=V437_ALIGNMENT_POLISH"></script>
+    <script src="assets/vctrl_grouping.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_color_picker.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_component_atoms_data.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_component_data.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1177,32 +1214,32 @@
     <script src="assets/inspector/inspector_text_formatter.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_system_modals.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/inspector/inspector_quill.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/inspector/inspector_scroll_pin.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_inspector_actionbar.js?v=V437_ALIGNMENT_POLISH"></script>
-    <script src="assets/vctrl_inspector_sync.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_inspector.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_screen_manager.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_scroll_pin.js?v=V439_INSPECTOR_PART_A"></script>
+    <script src="assets/vctrl_inspector_actionbar.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_inspector_sync.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_inspector.js?v=V440_INSPECTOR_PART_B"></script>
+    <script src="assets/vctrl_screen_manager.js?v=V442_SCREEN_PAGE_NAV"></script>
     <script src="assets/vctrl_revision_history.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/vctrl_annotation_pins.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/vctrl_canvas_viewport.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/vctrl_properties.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/vctrl_connectors.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_canvas_viewport.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
+    <script src="assets/vctrl_properties.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_connectors.js?v=V441_INSPECTOR_PART_C"></script>
 
     <!-- V4 Premium Addons -->
     <script src="assets/vctrl_table.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/vctrl_component_inserter.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/vctrl_canvas_background.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/inspector/inspector_dimmed_layer.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/inspector/inspector_grid.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/inspector/inspector_accordion.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/inspector/inspector_tab.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/inspector/inspector_shapes.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/inspector/inspector_atoms.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_grid.js?v=V439_INSPECTOR_PART_A"></script>
+    <script src="assets/inspector/inspector_accordion.js?v=V439_INSPECTOR_PART_A"></script>
+    <script src="assets/inspector/inspector_tab.js?v=V439_INSPECTOR_PART_A"></script>
+    <script src="assets/inspector/inspector_shapes.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/inspector/inspector_atoms.js?v=V440_INSPECTOR_PART_B"></script>
     <script src="assets/inspector/inspector_atoms_inputs.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/inspector/inspector_atoms_advanced.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/inspector/inspector_admin_settings.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_admin_settings.js?v=V439_INSPECTOR_PART_A"></script>
     <script src="assets/inspector/inspector_table.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/inspector/inspector_popup.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_popup.js?v=V440_INSPECTOR_PART_B"></script>
     <script src="assets/vctrl_resolution_engine.js?v=V429_BYCHOI_NAMESPACE"></script>
 </body>
 

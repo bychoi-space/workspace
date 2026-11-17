@@ -4,7 +4,7 @@
  * V203_ASPECT_RATIO_LOCK: Added "Preserve Aspect Ratio" lock for image shapes.
  */
 
-(function() {
+(function () {
     console.log("%c [VCTRL PROPERTIES] Initializing Universal Property Controller (V203)... ", "background: #8b5cf6; color: #fff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
     let activeCompId = null;
@@ -16,6 +16,8 @@
         borderColor: '테두리색 (Border)',
         color: '글자색 (Text)',
         iconColor: '아이콘색 (Icon)',
+        left: '가로 위치 (X)',
+        top: '세로 위치 (Y)',
         width: '가로 크기 (W)',
         height: '세로 크기 (H)'
     };
@@ -29,7 +31,7 @@
         });
     }
     window.initUnifiedLabels = initLabels;
-    
+
     // Run immediately or on DOMContentLoaded
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initLabels);
@@ -64,6 +66,7 @@
                 }
             }
             updateAllInputs(data.w, data.h, true);
+            updateAllPositionInputs(data.x, data.y, true);
             syncAllColors(data.currentStyles || {});
 
             if (data.boxW !== undefined) {
@@ -96,8 +99,8 @@
 
             if (data.isImage) {
                 // Store natural or current ratio as the lock ratio
-                activeImageRatio = (data.imageRatio && data.imageRatio > 0) 
-                    ? data.imageRatio 
+                activeImageRatio = (data.imageRatio && data.imageRatio > 0)
+                    ? data.imageRatio
                     : ((data.h && data.h > 0) ? (data.w / data.h) : null);
                 if (ratioRow) ratioRow.classList.add('is-visible');
                 if (chk) chk.checked = true; // Default locked to preserve aspect ratio
@@ -123,6 +126,9 @@
             });
             if (data && data.w !== undefined && data.h !== undefined) {
                 updateAllInputs(data.w, data.h);
+                if (data && (data.x !== undefined || data.y !== undefined)) {
+                    updateAllPositionInputs(data.x, data.y);
+                }
             }
         });
 
@@ -133,6 +139,9 @@
                 return;
             }
             updateAllInputs(data.w, data.h);
+            if (data && (data.x !== undefined || data.y !== undefined)) {
+                updateAllPositionInputs(data.x, data.y);
+            }
             if (data.boxW !== undefined) {
                 const wIconInp = document.getElementById('prop-width-icon');
                 if (wIconInp && document.activeElement !== wIconInp) wIconInp.value = Math.round(data.boxW);
@@ -165,6 +174,7 @@
             activeCompId = null;
             activeImageRatio = null;
             updateAllInputs(0, 0);
+            updateAllPositionInputs(0, 0);
             syncAllColors({});
 
             const wIconInp = document.getElementById('prop-width-icon');
@@ -211,6 +221,7 @@
 
             if (data.firstCompStyles) {
                 updateAllInputs(data.firstCompStyles.w, data.firstCompStyles.h);
+                updateAllPositionInputs(data.firstCompStyles.x, data.firstCompStyles.y);
                 syncAllColors(data.firstCompStyles.currentStyles || {});
 
                 if (data.firstCompStyles.boxW !== undefined) {
@@ -225,10 +236,10 @@
                 const ratioRow = document.getElementById('shape-aspect-ratio-row');
                 const chk = document.getElementById('chk-preserve-aspect-ratio');
                 if (data.firstCompStyles.isImage) {
-                    activeImageRatio = (data.firstCompStyles.imageRatio && data.firstCompStyles.imageRatio > 0) 
-                        ? data.firstCompStyles.imageRatio 
-                        : ((data.firstCompStyles.h && data.firstCompStyles.h > 0) 
-                            ? (data.firstCompStyles.w / data.firstCompStyles.h) 
+                    activeImageRatio = (data.firstCompStyles.imageRatio && data.firstCompStyles.imageRatio > 0)
+                        ? data.firstCompStyles.imageRatio
+                        : ((data.firstCompStyles.h && data.firstCompStyles.h > 0)
+                            ? (data.firstCompStyles.w / data.firstCompStyles.h)
                             : null);
                     if (ratioRow) ratioRow.classList.add('is-visible');
                     if (chk) chk.checked = true; // Default locked to preserve aspect ratio
@@ -244,6 +255,21 @@
                 });
             }
         });
+
+        const syncLivePositionFromCanvas = (data) => {
+            if (!data) return;
+            const currentActiveId = activeCompId || (window.state && (window.state.editingIndex || (window.state.selectedComponent && window.state.selectedComponent.id))) || null;
+            const incomingId = data.id || data.activeId || null;
+            if (incomingId && currentActiveId && String(incomingId) !== String(currentActiveId)) {
+                return;
+            }
+            if (data.x !== undefined || data.y !== undefined) {
+                updateAllPositionInputs(data.x, data.y);
+            }
+        };
+        MessageHub.subscribe('BYCHOI_SNAP_REQUEST', syncLivePositionFromCanvas);
+        MessageHub.subscribe('BYCHOI_SNAP_END', syncLivePositionFromCanvas);
+        MessageHub.subscribe('BYCHOI_POS_CHANGED', syncLivePositionFromCanvas);
     }
 
     function syncImageCropUI(opts) {
@@ -305,6 +331,25 @@
         return singleId ? [singleId] : [];
     }
 
+    function updateAllPositionInputs(x, y, force) {
+        const inputs = document.querySelectorAll('.v4-prop-input[data-prop="left"], .v4-prop-input[data-prop="top"]');
+        inputs.forEach(input => {
+            if (!force && input === document.activeElement) return;
+            const prop = input.dataset.prop;
+            if (prop === 'left' && x !== undefined && !isNaN(parseFloat(x))) {
+                input.value = Math.round(parseFloat(x));
+            }
+            if (prop === 'top' && y !== undefined && !isNaN(parseFloat(y))) {
+                input.value = Math.round(parseFloat(y));
+            }
+            if (force) {
+                delete input.dataset.editingCompId;
+                if (activeCompId) input.dataset.boundCompId = activeCompId;
+            }
+        });
+    }
+    window.updateAllPositionInputs = updateAllPositionInputs;
+
     function updateAllInputs(w, h, force) {
         const groupDimWidth = document.getElementById('group-dim-width');
         const groupDimHeight = document.getElementById('group-dim-height');
@@ -333,10 +378,10 @@
             }
             const prop = input.dataset.prop;
             const wrapper = input.closest('.v4-color-wrapper');
-            
+
             let val = '';
             let isTransparent = false;
-            
+
             if (prop === 'background') {
                 val = s.bg || '#ffffff';
                 isTransparent = s.isBgTransparent || false;
@@ -350,11 +395,11 @@
                 val = s.iconColor || '#000000';
                 isTransparent = false;
             }
-            
+
             if (val.startsWith('rgb')) {
                 val = (typeof window.rgbToHex === 'function' ? window.rgbToHex(val) : val) || val;
             }
-            
+
             input.value = val;
             if (wrapper) {
                 wrapper.classList.toggle('transparent-active', isTransparent);
@@ -391,18 +436,23 @@
                 e.preventDefault();
                 const step = e.shiftKey ? 10 : 1;
                 const delta = e.key === 'ArrowUp' ? step : -step;
-                e.target.value = Math.max(1, parseInt(e.target.value || 0) + delta);
-                applyDimension(e.target.dataset.prop, e.target.value, e.target);
+                const prop = e.target.dataset.prop;
+                const rawCur = parseInt(e.target.value || 0, 10) || 0;
+                e.target.value = (prop === 'left' || prop === 'top') ? (rawCur + delta) : Math.max(1, rawCur + delta);
+                applyDimension(prop, e.target.value, e.target);
             }
         }
     });
 
     function applyDimension(type, value, sourceInput) {
-        const val = parseInt(value) || 0;
-        if (val < 1) return;
+        const isPos = (type === 'left' || type === 'top');
+        const parsedVal = parseInt(value, 10);
+        if (isNaN(parsedVal)) return;
+        const val = isPos ? parsedVal : parsedVal;
+        if (!isPos && val < 1) return;
 
-        const iframeEl = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) 
-            ? window.DOM.iframe 
+        const iframeEl = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow)
+            ? window.DOM.iframe
             : (document.getElementById('main-iframe') || document.getElementById('screen-iframe'));
 
         if (!iframeEl || !iframeEl.contentWindow) return;
@@ -422,6 +472,30 @@
             window.activeCompId = targetIds[0];
         }
 
+        if (isPos && targetIds.length === 1 && String(targetIds[0]).indexOf('conn_') === 0 && window.state && Array.isArray(window.state.connectors)) {
+            const conn = window.state.connectors.find(c => c && c.id === targetIds[0]);
+            if (conn && conn.start && conn.end) {
+                const curMinX = Math.min(conn.start.x, conn.end.x);
+                const curMinY = Math.min(conn.start.y, conn.end.y);
+                const dx = type === 'left' ? (val - curMinX) : 0;
+                const dy = type === 'top' ? (val - curMinY) : 0;
+                if (window.ConnectorEngine && typeof window.ConnectorEngine.shiftConnectors === 'function') {
+                    window.ConnectorEngine.shiftConnectors([conn.id], dx, dy);
+                } else {
+                    conn.start.x += dx; conn.end.x += dx;
+                    conn.start.y += dy; conn.end.y += dy;
+                    conn.start.targetId = null; conn.start.side = null;
+                    conn.end.targetId = null; conn.end.side = null;
+                    if (window.ConnectorEngine && typeof window.ConnectorEngine.redrawAll === 'function') {
+                        window.ConnectorEngine.redrawAll();
+                    }
+                    MessageHub.send(iframeEl.contentWindow, 'BYCHOI_SYNC_CONNECTORS', { connectors: window.state.connectors });
+                }
+                if (window.markAsDirty) window.markAsDirty();
+            }
+            return;
+        }
+
         // When PPT Image Crop Mode is active, numeric W/H edits adjust the crop frame independently
         if (window.state && window.state.isImageCropping && (type === 'width' || type === 'height')) {
             MessageHub.send(iframeEl.contentWindow, 'BYCHOI_IMAGE_CROP_SET_SIZE', {
@@ -435,10 +509,10 @@
         const chk = document.getElementById('chk-preserve-aspect-ratio');
         const chkIll = document.getElementById('chk-preserve-aspect-ratio-illustration');
         const isEditingIll = window.state && window.state.editingType === 'illustration';
-        const lockRatio = isEditingIll 
-            ? (window.activeIllustrationRatio || activeIllustrationRatio || 1) 
+        const lockRatio = isEditingIll
+            ? (window.activeIllustrationRatio || activeIllustrationRatio || 1)
             : activeImageRatio;
-        const shouldLock = isEditingIll 
+        const shouldLock = isEditingIll
             ? (chkIll && chkIll.checked && lockRatio !== null)
             : (chk && chk.checked && lockRatio !== null);
 
@@ -531,7 +605,7 @@
                     window.updateQuillAutoContrast(window.quillEditor);
                 }
             }
-            
+
             const wrapper = e.target.closest('.v4-color-wrapper');
             if (wrapper) wrapper.classList.remove('transparent-active');
 
@@ -587,12 +661,14 @@
 
     // Custom Transparency Buttons (V4 Addon Declarative Migration)
     const TRANSPARENCY_BUTTONS = {
-        'btn-shape-bg-none': { wrapper: 'shape-bg-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { background: 'transparent', backgroundColor: 'transparent' } }), extra: () => {
-            const slider = document.getElementById('shape-bg-opacity');
-            const txt = document.getElementById('txt-shape-bg-opacity');
-            if (slider) slider.value = 0;
-            if (txt) txt.innerText = 0;
-        }},
+        'btn-shape-bg-none': {
+            wrapper: 'shape-bg-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { background: 'transparent', backgroundColor: 'transparent' } }), extra: () => {
+                const slider = document.getElementById('shape-bg-opacity');
+                const txt = document.getElementById('txt-shape-bg-opacity');
+                if (slider) slider.value = 0;
+                if (txt) txt.innerText = 0;
+            }
+        },
         'btn-shape-border-none': { wrapper: 'shape-border-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: 'transparent' } }) },
         'btn-table-border-none': { wrapper: 'table-border-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-table', style: { borderColor: 'transparent' } }) },
         'btn-icon-border-none': { wrapper: 'icon-border-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.bychoi-icon', style: { borderColor: 'transparent' } }) },
@@ -621,12 +697,12 @@
             const targetIds = getActiveTargetIds();
             if (targetIds.length === 0 || !iframeWin) return;
             const conf = TRANSPARENCY_BUTTONS[tBtn.id];
-            
+
             const wrapper = document.getElementById(conf.wrapper);
             if (wrapper) wrapper.classList.add('transparent-active');
-            
+
             if (conf.extra) conf.extra();
-            
+
             const msg = conf.msg();
             MessageHub.send(iframeWin, msg.type, { ...msg, id: targetIds[0], ids: targetIds });
             if (window.markAsDirty) window.markAsDirty();
@@ -656,7 +732,7 @@
             } else {
                 MessageHub.send(iframeWin, 'BYCHOI_IMAGE_CROP_START', { id: targetIds[0] });
             }
-            try { iframeWin.focus(); } catch (focusErr) {}
+            try { iframeWin.focus(); } catch (focusErr) { }
             return;
         }
 
@@ -667,7 +743,7 @@
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             if (targetIds.length === 0 || !iframeWin) return;
             MessageHub.send(iframeWin, 'BYCHOI_IMAGE_CROP_RESET', { id: targetIds[0] });
-            try { iframeWin.focus(); } catch (focusErr) {}
+            try { iframeWin.focus(); } catch (focusErr) { }
             return;
         }
 
@@ -681,7 +757,7 @@
             const newH = Math.max(10, Math.round(curW / activeImageRatio));
             const hInp = document.getElementById('prop-height');
             if (hInp) hInp.value = newH;
-            
+
             MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                 id: targetIds[0],
                 ids: targetIds,
@@ -702,7 +778,7 @@
             const newH = Math.max(10, Math.round(curW / ratio));
             const hInp = document.getElementById('prop-height-illustration');
             if (hInp) hInp.value = newH;
-            
+
             MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                 id: targetIds[0],
                 ids: targetIds,
@@ -714,13 +790,13 @@
     });
 
     function applyStyle(prop, value) {
-        const iframeEl = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) 
-            ? window.DOM.iframe 
+        const iframeEl = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow)
+            ? window.DOM.iframe
             : (document.getElementById('main-iframe') || document.getElementById('screen-iframe'));
 
         const targetIds = getActiveTargetIds();
         if (targetIds.length === 0 || !iframeEl || !iframeEl.contentWindow) return;
-        
+
         const style = {};
         if (prop === 'background') {
             style['background'] = value;
@@ -728,13 +804,13 @@
         } else {
             style[prop] = value;
         }
-        
+
         MessageHub.send(iframeEl.contentWindow, 'BYCHOI_UPDATE_STYLE', {
             id: targetIds[0],
             ids: targetIds,
             style: style
         });
-        
+
         if (window.markAsDirty) window.markAsDirty();
     }
 

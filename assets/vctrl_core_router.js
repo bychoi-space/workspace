@@ -480,6 +480,12 @@
                 window.toggleCrispView();
             }
         },
+        'BYCHOI_NAVIGATE_SCREEN': function (data) {
+            if (!data || (data.direction !== -1 && data.direction !== 1)) return;
+            if (typeof window.navigateScreenByOffset === 'function') {
+                window.navigateScreenByOffset(data.direction);
+            }
+        },
         'BYCHOI_DIRTY': function () {
             if (typeof window.markAsDirty === 'function') {
                 window.markAsDirty();

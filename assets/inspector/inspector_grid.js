@@ -168,31 +168,31 @@
 
             <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
                 <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">텍스트 정렬 (Alignment)</label>
-                <div style="display: flex; gap: 4px;">
-                    <button type="button" class="v4-inspector-btn btn-col-align btn-align-left" data-align="left" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'left' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">좌</button>
-                    <button type="button" class="v4-inspector-btn btn-col-align btn-align-center" data-align="center" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'center' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">중</button>
-                    <button type="button" class="v4-inspector-btn btn-col-align btn-align-right" data-align="right" style="height: 22px; width: 24px; border-radius: 4px; font-size: 9px; padding: 0; cursor: pointer; ${align === 'right' ? 'background:rgba(110, 86, 207, 0.25); border:1px solid #6e56cf; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(110, 86, 207, 0.3);' : 'background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#94a3b8;'}">우</button>
+                <div style="display: flex; gap: 4px; width: 80px;">
+                    <button type="button" class="v4-inspector-btn v4-inspector-toggle-btn btn-col-align btn-align-left ${align === 'left' ? 'active' : ''}" data-align="left" style="height: 22px; font-size: 9.5px; padding: 0;">좌</button>
+                    <button type="button" class="v4-inspector-btn v4-inspector-toggle-btn btn-col-align btn-align-center ${align === 'center' ? 'active' : ''}" data-align="center" style="height: 22px; font-size: 9.5px; padding: 0;">중</button>
+                    <button type="button" class="v4-inspector-btn v4-inspector-toggle-btn btn-col-align btn-align-right ${align === 'right' ? 'active' : ''}" data-align="right" style="height: 22px; font-size: 9.5px; padding: 0;">우</button>
                 </div>
             </div>
 
-            <div class="grid-clickable-wrapper" style="display:${isCheckbox || isAction || isDelete || isImage || isInput || isOrder ? 'none' : 'flex'}; align-items:center; justify-content:space-between; margin-top:4px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06);">
+            <div class="grid-clickable-wrapper" style="display:${isCheckbox || isAction || isDelete || isImage || isInput || isOrder ? 'none' : 'flex'}; align-items:center; justify-content:space-between; margin-top:4px; padding-top:4px;">
                 <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">클릭 링크 (Clickable)</label>
-                <div style="display: flex; gap: 4px; width: 68px;">
-                    <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-y ${isClickable ? 'active cyan' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">Y</button>
-                    <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-n ${!isClickable ? 'active cyan' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">N</button>
+                <div style="display: flex; gap: 4px; width: 80px;">
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-y ${isClickable ? 'active' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">Y</button>
+                    <button class="v4-inspector-btn v4-inspector-toggle-btn btn-col-clickable-n ${!isClickable ? 'active' : ''}" data-index="${index}" style="height: 20px; font-size: 10px;">N</button>
                 </div>
             </div>
 
-            <div class="grid-highlight-wrapper" style="display:flex; flex-direction:column; gap:4px; margin-top:2px; padding-top:4px; border-top:1px dashed rgba(255,255,255,0.06); width:100%; box-sizing:border-box;">
+            <div class="grid-highlight-wrapper" style="display:flex; flex-direction:column; gap:4px; margin-top:2px; padding-top:4px; width:100%; box-sizing:border-box;">
                 <div style="display:flex; align-items:center; justify-content:space-between;">
-                    <label style="font-size: 8px; color: #94a3b8; font-weight:600;">컬럼 강조 (Highlight)</label>
-                    <span class="grid-hl-active-label" style="font-size: 8.5px; font-weight:bold; color: ${hlPreset === 'none' ? '#64748b' : (hlPreset === 'new' ? '#ef4444' : ((hlPreset === 'del' || hlPreset === 'mod') ? '#f97316' : '#38bdf8'))};">${hlPreset === 'none' ? '일반' : (hlPreset === 'new' ? '신규 (NEW)' : ((hlPreset === 'del' || hlPreset === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'))}</span>
+                    <label class="v4-prop-label" style="font-size: 8.5px; margin: 0;">컬럼 강조 (Highlight)</label>
+                    <span class="grid-hl-active-label" data-hl-state="${hlPreset === 'mod' ? 'del' : hlPreset}">${hlPreset === 'none' ? '일반' : (hlPreset === 'new' ? '신규 (NEW)' : ((hlPreset === 'del' || hlPreset === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'))}</span>
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px; width:100%; box-sizing:border-box;">
-                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-none" data-preset="none" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'none' ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;'}">없음</button>
-                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-new" data-preset="new" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'new' ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;'}">🔴 신규</button>
-                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-del btn-col-hl-mod" data-preset="del" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${(hlPreset === 'del' || hlPreset === 'mod') ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;'}">🟠 삭제</button>
-                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-focus" data-preset="focus" style="height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ${hlPreset === 'focus' ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;'}">🔵 포커스</button>
+                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-none ${hlPreset === 'none' ? 'is-selected' : ''}" data-preset="none">없음</button>
+                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-new ${hlPreset === 'new' ? 'is-selected' : ''}" data-preset="new"><span class="grid-hl-dot dot-new"></span>신규</button>
+                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-del btn-col-hl-mod ${(hlPreset === 'del' || hlPreset === 'mod') ? 'is-selected' : ''}" data-preset="del"><span class="grid-hl-dot dot-del"></span>삭제</button>
+                    <button type="button" class="v4-inspector-btn btn-col-hl btn-col-hl-focus ${hlPreset === 'focus' ? 'is-selected' : ''}" data-preset="focus"><span class="grid-hl-dot dot-focus"></span>포커스</button>
                 </div>
             </div>
         `;
@@ -223,22 +223,13 @@
                 
                 hlBtns.forEach(b => {
                     const bKey = b.getAttribute('data-preset');
-                    const isSelected = (bKey === pKey);
-                    const baseStyle = 'height:22px; width:100%; box-sizing:border-box; border-radius:4px; font-size:10px; padding:0 4px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; transition:all 0.15s ease; ';
-                    if (bKey === 'none') {
-                        b.style.cssText = baseStyle + (isSelected ? 'background:rgba(148,163,184,0.2); border:1px solid #94a3b8; color:#ffffff; font-weight:bold;' : 'background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8;');
-                    } else if (bKey === 'new') {
-                        b.style.cssText = baseStyle + (isSelected ? 'background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(239,68,68,0.4);' : 'background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#fca5a5;');
-                    } else if (bKey === 'del' || bKey === 'mod') {
-                        b.style.cssText = baseStyle + (isSelected ? 'background:rgba(249,115,22,0.25); border:1px solid #f97316; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(249,115,22,0.4);' : 'background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); color:#fdba74;');
-                    } else if (bKey === 'focus') {
-                        b.style.cssText = baseStyle + (isSelected ? 'background:rgba(37,99,235,0.25); border:1px solid #2563eb; color:#ffffff; font-weight:bold; box-shadow:0 0 6px rgba(37,99,235,0.4);' : 'background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.2); color:#93c5fd;');
-                    }
+                    const isSelected = (bKey === pKey || (bKey === 'del' && pKey === 'mod'));
+                    b.classList.toggle('is-selected', isSelected);
                 });
                 
                 if (hlLabel) {
                     hlLabel.textContent = (pKey === 'none') ? '일반' : ((pKey === 'new') ? '신규 (NEW)' : ((pKey === 'del' || pKey === 'mod') ? '삭제 (DEL)' : '포커스 (BLUE)'));
-                    hlLabel.style.color = (pKey === 'none') ? '#64748b' : ((pKey === 'new') ? '#ef4444' : ((pKey === 'del' || pKey === 'mod') ? '#f97316' : '#38bdf8'));
+                    hlLabel.setAttribute('data-hl-state', (pKey === 'mod') ? 'del' : pKey);
                 }
                 
                 triggerColUpdate();

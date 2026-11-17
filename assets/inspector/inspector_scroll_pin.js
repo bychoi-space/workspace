@@ -93,7 +93,7 @@
                             if (labelEl) {
                                 const bSpan = document.createElement('span');
                                 bSpan.className = 'desc-pin-fixed-badge';
-                                bSpan.innerText = '📌 고정';
+                                bSpan.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:3px;flex-shrink:0;"><path d="M12 17v5M9 2h6l-1 7h3l-5 8-5-8h3L9 2z"/></svg>고정';
                                 labelEl.parentNode.insertBefore(bSpan, labelEl.nextSibling);
                             }
                         }
@@ -153,7 +153,7 @@
             if (badge) {
                 badge.className = 'scroll-pin-badge';
                 if (isFixedPin) {
-                    badge.innerText = 'FIXED PIN 📌';
+                    badge.innerText = 'FIXED PIN';
                     badge.classList.add('badge-viewport');
                 } else {
                     badge.innerText = 'CONTENT PIN';

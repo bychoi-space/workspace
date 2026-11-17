@@ -60,8 +60,9 @@ window.v4SelectionAdornerScript = `
                 if (w <= 0 || h <= 0) return;
 
                 var isGroup = comp.classList.contains('bychoi-group');
+                var isLocked = comp.getAttribute('data-locked') === 'true';
                 var box = document.createElement('div');
-                box.className = 'v4-selection-adorner' + (isGroup ? ' is-group' : '');
+                box.className = 'v4-selection-adorner' + (isGroup ? ' is-group' : '') + (isLocked ? ' is-locked' : '');
                 box.style.position = 'absolute';
                 box.style.left = l + 'px';
                 box.style.top = t + 'px';
@@ -71,8 +72,8 @@ window.v4SelectionAdornerScript = `
                 box.style.boxSizing = 'border-box';
                 box.style.zIndex = '310000';
 
-                var borderColor = isGroup ? '#10b981' : '#6366f1';
-                box.style.outline = '2px solid ' + borderColor;
+                var borderColor = isLocked ? '#f59e0b' : (isGroup ? '#10b981' : '#6366f1');
+                box.style.outline = (isLocked ? '1.8px dashed ' : '2px solid ') + borderColor;
                 box.style.outlineOffset = '0px';
                 box.style.background = 'transparent';
                 if (!isGroup) {
@@ -86,6 +87,13 @@ window.v4SelectionAdornerScript = `
                     if (compRad && compRad !== '0px') {
                         box.style.borderRadius = compRad;
                     }
+                }
+                if (isLocked) {
+                    var lockBadge = document.createElement('div');
+                    lockBadge.className = 'v4-locked-adorner-badge';
+                    lockBadge.style.cssText = 'position:absolute; top:' + (t < 16 ? '4px' : '-10px') + '; right:' + ((w < 30) ? '-10px' : '-10px') + '; width:20px; height:20px; border-radius:999px; background:#f59e0b; color:#ffffff; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(15,23,42,0.28); pointer-events:none;';
+                    lockBadge.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>';
+                    box.appendChild(lockBadge);
                 }
                 layer.appendChild(box);
             });

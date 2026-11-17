@@ -170,6 +170,24 @@
         setTimeout(function() { window.centerView(); }, 100);
     };
 
+    window.isFullscreenModeActive = function() {
+        var doc = document;
+        var isNativeFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+        return !!(doc.body && doc.body.classList && doc.body.classList.contains('fullscreen-mode')) || isNativeFs;
+    };
+
+    window.syncFullscreenStateToIframe = function() {
+        var DOM = window.DOM || {};
+        var iframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
+        if (!iframe || !iframe.contentWindow) return;
+        var fsActive = window.isFullscreenModeActive();
+        if (window.MessageHub && typeof window.MessageHub.send === 'function') {
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_FULLSCREEN_STATE', { fullscreen: fsActive });
+        } else {
+            iframe.contentWindow.postMessage({ type: 'BYCHOI_SYNC_FULLSCREEN_STATE', fullscreen: fsActive }, '*');
+        }
+    };
+
     window.toggleFullscreen = function(forceExit) {
         var DOM = window.DOM;
         var doc = document;
@@ -180,6 +198,7 @@
 
         doc.body.classList.toggle('fullscreen-mode', !shouldExit);
         doc.body.classList.toggle('zen-mode', !shouldExit);
+        window.syncFullscreenStateToIframe();
 
         // Native Browser Fullscreen: requests fullscreen to hide browser UI & state bar
         try {
@@ -394,6 +413,20 @@
                 }
             });
             ro.observe(DOM.canvas);
+        }
+
+        document.addEventListener('fullscreenchange', window.syncFullscreenStateToIframe);
+        document.addEventListener('webkitfullscreenchange', window.syncFullscreenStateToIframe);
+        if (document.body && typeof MutationObserver !== 'undefined') {
+            var _lastFsClassState = window.isFullscreenModeActive();
+            var fsBodyObserver = new MutationObserver(function() {
+                var nowFs = window.isFullscreenModeActive();
+                if (nowFs !== _lastFsClassState) {
+                    _lastFsClassState = nowFs;
+                    window.syncFullscreenStateToIframe();
+                }
+            });
+            fsBodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
         }
 
         console.log("[VCTRL CANVAS VIEWPORT] Canvas Viewport Engine initialized successfully.");

@@ -148,8 +148,10 @@ window.v4DesignSystemShapesTablesScript = `
         };
 
         document.querySelectorAll('.v4-shape').forEach(function(s) {
-            if (s.classList.contains('v4-shape-diamond') || s.classList.contains('v4-shape-triangle') || s.classList.contains('v4-shape-arrow')) {
-                s.style.setProperty('border-width', '0px', 'important');
+            if (s.classList.contains('v4-shape-diamond') || s.classList.contains('v4-shape-triangle') || s.classList.contains('v4-shape-arrow') || s.classList.contains('v4-shape-wave') || s.classList.contains('v4-shape-line')) {
+                if (!s.classList.contains('v4-shape-wave') && !s.classList.contains('v4-shape-line')) {
+                    s.style.setProperty('border-width', '0px', 'important');
+                }
                 if (s.classList.contains('v4-shape-arrow')) {
                     const svg = s.querySelector('svg');
                     const comp = s.closest('.bychoi-component') || s;
@@ -175,7 +177,14 @@ window.v4DesignSystemShapesTablesScript = `
                 }
                 return;
             }
-            if (s.style.borderWidth !== '1.6px') s.style.setProperty('border-width', '1.6px', 'important');
+            var customBwAttr = s.getAttribute('data-border-width');
+            var parsedBw = (customBwAttr !== null && customBwAttr !== '') ? parseFloat(customBwAttr) : NaN;
+            var targetBw = !isNaN(parsedBw) ? (parsedBw + 'px') : '1.6px';
+            if (s.style.borderWidth !== targetBw) s.style.setProperty('border-width', targetBw, 'important');
+            var customBsAttr = s.getAttribute('data-border-style');
+            if (customBsAttr && (customBsAttr === 'solid' || customBsAttr === 'dashed' || customBsAttr === 'dotted')) {
+                if (s.style.borderStyle !== customBsAttr) s.style.setProperty('border-style', customBsAttr, 'important');
+            }
         });
     };
 
@@ -269,9 +278,13 @@ window.v4DesignSystemShapesTablesScript = `
         });
 
         document.querySelectorAll('polygon, path, rect, circle').forEach(function(svg) {
-            if (svg.closest('.connector-line')) return;
-            if (svg.getAttribute('stroke-width') !== '1.6') svg.setAttribute('stroke-width', '1.6');
-            if (svg.style.strokeWidth !== '1.6') svg.style.strokeWidth = '1.6';
+            if (svg.closest('.connector-line, defs, marker, .v4-shape-line')) return;
+            var hostShape = svg.closest ? svg.closest('.v4-shape') : null;
+            var customSwAttr = hostShape ? hostShape.getAttribute('data-border-width') : null;
+            var parsedSw = (customSwAttr !== null && customSwAttr !== '') ? parseFloat(customSwAttr) : NaN;
+            var targetSw = !isNaN(parsedSw) ? String(parsedSw) : '1.6';
+            if (svg.getAttribute('stroke-width') !== targetSw) svg.setAttribute('stroke-width', targetSw);
+            if (svg.style.strokeWidth !== targetSw) svg.style.strokeWidth = targetSw;
             if (svg.style.vectorEffect !== 'non-scaling-stroke') svg.style.vectorEffect = 'non-scaling-stroke';
         });
 

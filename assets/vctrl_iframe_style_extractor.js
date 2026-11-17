@@ -464,6 +464,8 @@ if (!window.v4IframeStyleExtractorScript) {
                 return curH > curW ? 'vertical' : 'horizontal';
             })(),
             lineStyle: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-line-style') || 'solid') : 'solid',
+            lineMarkerStart: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-marker-start') || '') : '',
+            lineMarkerEnd: shape && shape.classList.contains('v4-shape-line') ? (shape.getAttribute('data-marker-end') || '') : '',
             lineThickness: (function() {
                 if (!shape || !shape.classList.contains('v4-shape-line')) return 1.6;
                 const attrWidth = shape.getAttribute('data-line-width');
@@ -760,7 +762,25 @@ if (!window.v4IframeStyleExtractorScript) {
             padTop: _readShapePad('data-pad-top', 'paddingTop', 5),
             padBottom: _readShapePad('data-pad-bottom', 'paddingBottom', 5),
             padLeft: _readShapePad('data-pad-left', 'paddingLeft', 10),
-            padRight: _readShapePad('data-pad-right', 'paddingRight', 10)
+            padRight: _readShapePad('data-pad-right', 'paddingRight', 10),
+            borderStyle: (function() {
+                if (shape) {
+                    const bs = shape.getAttribute('data-border-style') || shape.style.borderStyle;
+                    if (bs === 'dashed' || bs === 'dotted' || bs === 'solid') return bs;
+                }
+                const cBs = c.getAttribute('data-border-style') || c.style.borderStyle;
+                if (cBs === 'dashed' || cBs === 'dotted' || cBs === 'solid') return cBs;
+                return 'solid';
+            })(),
+            borderWidth: (function() {
+                if (shape) {
+                    const bw = shape.getAttribute('data-border-width');
+                    if (bw !== null && bw !== '' && !isNaN(parseFloat(bw))) return parseFloat(bw);
+                }
+                const cBw = c.getAttribute('data-border-width');
+                if (cBw !== null && cBw !== '' && !isNaN(parseFloat(cBw))) return parseFloat(cBw);
+                return 1.6;
+            })()
         };
     };
 
@@ -905,6 +925,7 @@ if (!window.v4IframeStyleExtractorScript) {
             ...widgetAtoms.props,
             html: textCell ? textCell.innerHTML : (shape ? (shape.querySelector('.v4-shape-text-content')?.innerHTML ?? shape.querySelector('.v4-shape-text-overlay')?.innerHTML ?? shape.innerHTML) : (table ? table.innerHTML : "")),
             isGroup: c.classList.contains('bychoi-group'),
+            isLocked: c.getAttribute('data-locked') === 'true',
             scrollFixed: c.getAttribute('data-scroll-fixed') || 'none',
             scrollEffect: c.getAttribute('data-scroll-effect') || 'always',
             scrollDivider: c.hasAttribute('data-scroll-divider') && c.getAttribute('data-scroll-divider') !== 'false' && c.getAttribute('data-scroll-divider') !== 'none',

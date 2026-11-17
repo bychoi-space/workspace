@@ -124,10 +124,10 @@
         document.querySelectorAll('.v4-pattern-type-btn').forEach(btn => {
             const bType = btn.dataset.type;
             if (bType === selectedType) {
-                btn.style.setProperty('border', '1.6px solid var(--accent, #6e56cf)', 'important');
-                btn.style.setProperty('box-shadow', '0 0 8px rgba(110, 86, 207, 0.4)', 'important');
+                btn.style.setProperty('border', '1.6px solid var(--ed-accent, var(--accent, #6e56cf))', 'important');
+                btn.style.setProperty('box-shadow', '0 0 0 2px var(--ed-accent-subtle, rgba(110, 86, 207, 0.22))', 'important');
             } else {
-                btn.style.setProperty('border', '1.6px solid rgba(255, 255, 255, 0.15)', 'important');
+                btn.style.setProperty('border', '1.6px solid var(--ed-border, rgba(148, 163, 184, 0.28))', 'important');
                 btn.style.setProperty('box-shadow', 'none', 'important');
             }
         });
@@ -141,6 +141,20 @@
         });
     };
     window._syncWaveDirBtns = syncWaveDirBtns;
+
+    const syncShapeBorderControls = (borderStyle, borderWidth) => {
+        const normStyle = (borderStyle === 'dashed' || borderStyle === 'dotted') ? borderStyle : 'solid';
+        document.querySelectorAll('.v4-shape-border-style-btn').forEach(btn => {
+            const bs = btn.getAttribute('data-border-style') || 'solid';
+            setBtnActive(btn, bs === normStyle);
+        });
+        const bwInput = document.getElementById('shape-border-width');
+        if (bwInput && document.activeElement !== bwInput && borderWidth !== undefined) {
+            const parsed = parseFloat(borderWidth);
+            bwInput.value = !isNaN(parsed) ? parsed : 1.6;
+        }
+    };
+    window._syncShapeBorderControls = syncShapeBorderControls;
 
     // --- Action Handlers (Write) ---
     const applyCornerRadius = (val, explicitDir) => {
@@ -173,6 +187,8 @@
             }
         }
         if (txt) txt.innerText = numVal;
+        const numInp = document.getElementById('num-shape-border-radius');
+        if (numInp && document.activeElement !== numInp) numInp.value = numVal;
         syncCornerBtns(numVal);
     };
 
@@ -352,6 +368,9 @@
             if (compStyles.waveDir) {
                 syncWaveDirBtns(compStyles.waveDir);
             }
+
+            // Border Style & Width
+            syncShapeBorderControls(s.borderStyle || 'solid', s.borderWidth !== undefined ? s.borderWidth : 1.6);
         },
 
         bindEvents: function() {
@@ -426,19 +445,8 @@
         const r = parseInt(val, 10) || 0;
         document.querySelectorAll('.btn-btn-corner').forEach(btn => {
             const br = parseInt(btn.getAttribute('data-radius'), 10) || 0;
-            if (br === r) {
-                btn.classList.add('active');
-                btn.style.borderColor = 'var(--accent, #6e56cf)';
-                btn.style.color = '#ffffff';
-                btn.style.background = 'rgba(110, 86, 207, 0.25)';
-                btn.style.boxShadow = '0 0 6px rgba(110, 86, 207, 0.3)';
-            } else {
-                btn.classList.remove('active');
-                btn.style.borderColor = '';
-                btn.style.color = '';
-                btn.style.background = '';
-                btn.style.boxShadow = '';
-            }
+            btn.style.cssText = '';
+            highlightActive(btn, br === r);
         });
     }
 
@@ -502,6 +510,28 @@
             return;
         }
 
+        // Shape border style button (solid / dashed / dotted)
+        const borderStyleBtn = e.target.closest('.v4-shape-border-style-btn');
+        if (borderStyleBtn) {
+            const bStyle = borderStyleBtn.getAttribute('data-border-style') || 'solid';
+            syncShapeBorderControls(bStyle, undefined);
+            const targetIds = getActiveTargetIds();
+            if (targetIds.length > 0) {
+                notifyIframe({
+                    type: 'BYCHOI_UPDATE_STYLE',
+                    id: targetIds[0],
+                    ids: targetIds,
+                    selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker',
+                    style: { borderStyle: bStyle }
+                });
+                if (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles) {
+                    window.state.selectedComponentStyles.currentStyles.borderStyle = bStyle;
+                }
+                if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            }
+            return;
+        }
+
         // Button corner presets
         const btnCorner = e.target.closest('.btn-btn-corner');
         if (btnCorner) {
@@ -532,6 +562,8 @@
                 opacitySlider.value = 100;
                 const txt = document.getElementById('txt-shape-bg-opacity');
                 if (txt) txt.innerText = 100;
+                const numOp = document.getElementById('num-shape-bg-opacity');
+                if (numOp && document.activeElement !== numOp) numOp.value = 100;
             }
 
             const rgbaColor = (window.hexToRgba ? window.hexToRgba(colorHex, opacityVal / 100) : colorHex);
@@ -577,6 +609,27 @@
             if (typeof window.markAsDirty === 'function') window.markAsDirty();
         } else if (e.target.id === 'prop-button-border-radius') {
             syncButtonCornerBtns(e.target.value);
+        } else if (e.target.id === 'shape-border-width') {
+            const rawStr = String(e.target.value).trim();
+            if (rawStr === '') return;
+            const bwVal = Math.max(0, Math.min(20, parseFloat(rawStr)));
+            if (isNaN(bwVal)) return;
+            const targetIds = getActiveTargetIds();
+            if (targetIds.length > 0) {
+                notifyIframe({
+                    type: 'BYCHOI_UPDATE_STYLE',
+                    id: targetIds[0],
+                    ids: targetIds,
+                    selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker',
+                    style: { borderWidth: bwVal }
+                });
+                const borderWrap = document.getElementById('shape-border-wrapper');
+                if (borderWrap && bwVal === 0) borderWrap.classList.add('transparent-active');
+                if (window.state && window.state.selectedComponentStyles && window.state.selectedComponentStyles.currentStyles) {
+                    window.state.selectedComponentStyles.currentStyles.borderWidth = bwVal;
+                }
+                if (typeof window.markAsDirty === 'function') window.markAsDirty();
+            }
         }
     });
 

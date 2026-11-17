@@ -199,19 +199,38 @@ window.v4ObjectConnectorScript = `
 
             const startMId = 'm-start-' + conn.id;
             const endMId = 'm-end-' + conn.id;
+            const buildMarkerDef = (mId, mType, isStart) => {
+                if (!mType || mType === 'none') return '';
+                const normType = (mType === 'open' || mType === 'dot') ? mType : 'arrow';
+                const orientVal = isStart ? 'auto-start-reverse' : 'auto';
+                if (normType === 'dot') {
+                    return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="' + orientVal + '">' +
+                        '<circle cx="5" cy="5" r="3.8" fill="' + color + '" />' +
+                    '</marker>';
+                }
+                if (normType === 'open') {
+                    return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="' + orientVal + '">' +
+                        '<path d="M 1.5 1.5 L 8.5 5 L 1.5 8.5" fill="none" stroke="' + color + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />' +
+                    '</marker>';
+                }
+                return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="' + orientVal + '">' +
+                    '<path d="M 0 0 L 10 5 L 0 10 z" fill="' + color + '" />' +
+                '</marker>';
+            };
+
+            const hasStartM = !!(conn.style.markerStart && conn.style.markerStart !== 'none');
+            const hasEndM = !!(conn.style.markerEnd && conn.style.markerEnd !== 'none');
+            const isRoundDot = conn.style.dashArray === '1 5' || conn.style.dashArray === '1,5';
 
             svg.innerHTML = '<defs>' +
-                '<marker id="' + startMId + '" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">' +
-                    '<path d="M 0 0 L 10 5 L 0 10 z" fill="' + color + '" />' +
-                '</marker>' +
-                '<marker id="' + endMId + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">' +
-                    '<path d="M 0 0 L 10 5 L 0 10 z" fill="' + color + '" />' +
-                '</marker>' +
+                buildMarkerDef(startMId, conn.style.markerStart, true) +
+                buildMarkerDef(endMId, conn.style.markerEnd, false) +
             '</defs>' +
             '<path d="' + pathData + '" stroke="transparent" stroke-width="40" fill="none" style="cursor:pointer; pointer-events:auto;" class="connector-hit-area" />' +
             '<path d="' + pathData + '" stroke="' + color + '" stroke-width="' + width + '" fill="none" ' +
-                  'marker-start="' + (conn.style.markerStart ? 'url(#' + startMId + ')' : '') + '" ' +
-                  'marker-end="' + (conn.style.markerEnd ? 'url(#' + endMId + ')' : '') + '" ' +
+                  (hasStartM ? 'marker-start="url(#' + startMId + ')" ' : '') +
+                  (hasEndM ? 'marker-end="url(#' + endMId + ')" ' : '') +
+                  (isRoundDot ? 'stroke-linecap="round" ' : '') +
                   'style="pointer-events:none;" ' +
                   (conn.style.dashArray ? 'stroke-dasharray="' + conn.style.dashArray + '"' : '') + ' />';
 

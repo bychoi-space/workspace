@@ -269,6 +269,38 @@
         return false;
     }
 
+    function isFullscreenPresentationActive() {
+        if (typeof window.isFullscreenModeActive === 'function') {
+            return window.isFullscreenModeActive();
+        }
+        const doc = document;
+        const isNativeFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+        return !!(doc.body && doc.body.classList && doc.body.classList.contains('fullscreen-mode')) || isNativeFs;
+    }
+
+    function handlePageScreenNavigation(e, isInput, state) {
+        const isPageUp = e.key === 'PageUp' || e.code === 'PageUp';
+        const isPageDown = e.key === 'PageDown' || e.code === 'PageDown';
+        const isFs = isFullscreenPresentationActive();
+        const isFsArrowUp = isFs && (e.key === 'ArrowUp' || e.code === 'ArrowUp');
+        const isFsArrowDown = isFs && (e.key === 'ArrowDown' || e.code === 'ArrowDown');
+
+        if (!isPageUp && !isPageDown && !isFsArrowUp && !isFsArrowDown) return false;
+        if (e.isComposing || isInput) return false;
+        if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return false;
+        if (state && state.isImageCropping) return false;
+        if (typeof window.isBlockingOverlayOpen === 'function' && window.isBlockingOverlayOpen()) return false;
+
+        e.preventDefault();
+        if (e.repeat) return true;
+
+        if (typeof window.navigateScreenByOffset === 'function') {
+            const dir = (isPageUp || isFsArrowUp) ? -1 : 1;
+            window.navigateScreenByOffset(dir);
+        }
+        return true;
+    }
+
     function initParentShortcuts() {
         if (_initialized) return;
         _initialized = true;
@@ -276,9 +308,12 @@
         // Unified Global Keyboard Shortcuts & Event Proxying to Canvas Iframe
         window.addEventListener('keydown', function (e) {
             const state = window.state || {};
-            if (state.isReadOnly) return;
-
             const isInput = isInputElement(e.target);
+
+            // 0. PageUp / PageDown Screen Navigation (Active in both Edit & Read-Only / Presentation Modes)
+            if (handlePageScreenNavigation(e, isInput, state)) return;
+
+            if (state.isReadOnly) return;
 
             // 1. Global Save Shortcut (Ctrl+S / Cmd+S)
             if (handleSaveShortcut(e, isInput)) return;

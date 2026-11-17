@@ -84,7 +84,7 @@ window.v4ClipboardObjectsScript = `
             const attrs = {};
             Array.from(el.attributes).forEach(attr => {
                 const name = attr.name;
-                if (name === 'data-source-id' || name === 'data-target-id') return;
+                if (name === 'data-source-id' || name === 'data-target-id' || name === 'data-locked') return;
                 if (name.startsWith('data-') || name === 'id') {
                     attrs[name] = attr.value;
                 }
@@ -213,6 +213,7 @@ window.v4ClipboardObjectsScript = `
 
         const affectedGroups = new Set();
         selected.forEach(c => {
+            if (c.getAttribute('data-locked') === 'true') return;
             if (c.parentElement && c.parentElement.classList.contains('bychoi-group')) {
                 affectedGroups.add(c.parentElement);
             }

@@ -90,9 +90,9 @@
     - **역할**: 부모-Iframe 간 통신 조율자. 중앙 `MessageHub` 리스너 및 24개 부모 측 코어 핸들러 테이블(`v4ParentCoreHandlers`), 부모 포커스 시 이미지 붙여넣기(`paste`)를 전담 격리합니다 (`window.CoreRouter`).
     - **오브젝트 선택 라우팅 & 포커스 해제**: `BYCHOI_COMP_SELECTED` 수신 시 이전 선택 ID(`state.previousEditingIndex`)를 보존하여 신규 컴포넌트 선택 여부(`isNewSelection`)를 판별하고, 부모 창의 활성 인풋 포커스 잔류를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 전달합니다.
   - **`vctrl_parent_shortcuts.js` (Parent Shortcuts Engine - Parent Side)**:
-    - **역할**: 부모 창의 전역 키보드 핫키(최우선 순위 `Ctrl+S`, `F2` 모드 스왑, `Shift+G` 반응형 그리드 토글, `Escape` 모달 닫기) 가드 및 캔버스 단축키(`Arrow`, `Delete`, `Space`, `Ctrl+C/V/X/G`)의 활성 iframe 프록시 토스를 전담합니다 (`window.ParentShortcuts`).
+    - **역할**: 부모 창의 전역 키보드 핫키(편집·발표 모드 공통 `PageUp`/`PageDown` 및 `[전체보기]` 모드 전용 `ArrowUp`/`ArrowDown` 이전·다음 스크린 전환, 최우선 순위 `Ctrl+S`, `F2` 모드 스왑, `Shift+G` 반응형 그리드 토글, `Escape` 모달 닫기) 가드 및 캔버스 단축키(`Arrow`, `Delete`, `Space`, `Ctrl+C/V/X/G`)의 활성 iframe 프록시 토스를 전담합니다 (`window.ParentShortcuts`).
   - **`vctrl_screen_manager.js` (Screen Manager - Parent Side)**:
-    - **역할**: 화면 순서 변경(`screenOrder`), 화면 추가(`+`), 복제, 삭제, 활성 스크린 전환 및 메타데이터 저장 동기화를 전담합니다.
+    - **역할**: 화면 순서 변경(`screenOrder`), 화면 추가(`+`), 복제, 삭제, 활성 스크린 전환(`navigateScreenByOffset`, 첫/마지막 화면 경계 정지 및 중복 방지 토스트 피드백 포함) 및 메타데이터 저장 동기화를 전담합니다.
   - **`vctrl_revision_history.js` (Project Revision History Engine - Parent Side)**:
     - **역할**: 프로젝트 재개정 이력 전용 도메인 모듈. 재개정 이력 팝업 모달(`#history-modal`), 버전/일자/작성자/개발자/변경내용 인라인 추가/수정/삭제 렌더링(`window.renderHistoryPopup`) 및 메타데이터 동기화를 전담합니다.
   - **`vctrl_clipboard.js` (Clipboard & URL Manager - Parent Side)**:
@@ -159,7 +159,7 @@
   - **`vctrl_iframe_dimmed_layer.js` (Dimmed Overlay Layer Engine - Iframe Side)**:
     - **역할**: 바닥 화면 오브젝트(`1,000~69,999`) 및 스크롤 고정 HUD(`100,000~179,999`) 위, 디스크립션 핀(`.v4-pin-layer`: `250,000`) 및 기즈모(`300,000+`) 아래에 단일 격리 스태킹 컨텍스트(`.v4-dimmed-overlay-layer`, `z-index: 185000`, `isolation: isolate`)를 생성하여 Z-Index 인플레이션 없이 상위 팝업 레이어 저작, 클릭/마키/스마트가이드 레이어 격리(`isComponentSelectable`, `isSameLayerScope`), 바닥 편집 중 임시 숨김(`.v4-dimmed-temp-hidden`)을 전담합니다 (`window.V4DimmedLayer`).
   - **`vctrl_pdf_exporter.js` (PDF Export Engine)**:
-    - **역할**: `metadata.json`의 `screenOrder` 기준 전체 스크린 일괄 고해상도 PDF 결합 생성 및 장문 캔버스 캡처 전담.
+    - **역할**: `metadata.json`의 `screenOrder` 기준 전체 스크린 일괄 고해상도 PDF 결합 생성, 상대경로/외부 리소스 사전 Base64 인라인 치환(`allowTaint: false` 및 `file://` GitHub CORS 브릿지로 `Tainted canvas` 원천 차단), 핀 번호 마커(`1..N`) 정합성 복원 및 우측 `DESCRIPTION`(`SCENE ANNOTATIONS`, `400px`) 명세 패널 합성 출력 전담.
   - **`vctrl_presentation_pen.js` (Presentation Drawing Engine - PC Dedicated)**:
     - **역할**: 데스크톱 PC 풀스크린 모드(`F`)에서 `Shift` 키 홀드 시 캔버스 형광펜/레이저 포인터 실시간 드로잉 인터랙션 전담.
     - **모바일 절대 격리**: 모바일/터치 디바이스(`isMobileOrTouchDevice()`, `pointer: coarse`, `max-width: 1050px`)에서는 키보드 단축키 툴팁(`presentation-pen-tooltip`) 및 캔버스를 100% 원천 비활성화/숨김 처리하여 모바일 뷰어 화면에 노출되지 않도록 엄격히 차단합니다.

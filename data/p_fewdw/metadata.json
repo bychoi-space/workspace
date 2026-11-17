@@ -9,10 +9,38 @@
       "version": 0.1
     },
     "01_Project_Summary_365.html": {
-      "title": "01_Project_Summary_365",
-      "type": "plan",
-      "updatedAt": "2026-11-17T05:20:05.835Z",
-      "template": "template_project_summary.html"
+      "description": [
+        {
+          "type": "pin",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 670,
+          "y": 430,
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 670,
+          "y": 430,
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 670,
+          "y": 430,
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "updatedAt": "2026-11-17T05:22:31.433Z",
+      "version": 0.1
     }
   },
   "assignee": "고범곤",
@@ -20,5 +48,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/407f6986169c8099839ae4564caee147",
   "themeIndex": 1,
-  "category": "admin"
+  "category": "admin",
+  "updated": "2026-11-17 14:22:31",
+  "version": 0.1
 }

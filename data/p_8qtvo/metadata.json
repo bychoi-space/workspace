@@ -46,7 +46,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:56:24.748Z",
+      "updatedAt": "2026-11-17T01:40:58.223Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -118,8 +118,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[혜택 정보] 영역\n- 보유한 쿠폰을 표시하고, 최대 할인 자동 적용하는 기능 신규 적용",
-          "html": "[혜택 정보] 영역<div>- 보유한 쿠폰을 표시하고, 최대 할인 자동 적용하는 기능 신규 적용</div>",
+          "text": "[혜택 정보] 영역\n- 보유한 쿠폰을 표시하고, 최대 할인 자동 적용하는 기능 신규 적용\n- 기본값 : 토글 OFF",
+          "html": "[혜택 정보] 영역<div>- 보유한 쿠폰을 표시하고, 최대 할인 자동 적용하는 기능 신규 적용</div><div>- 기본값 : 토글 OFF</div>",
           "x": 20,
           "y": 845,
           "pins": {
@@ -148,6 +148,45 @@
           },
           "standardized": true,
           "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[결제 금액] 영역\n- 용어 통일\n- UI 변경사항은 없음",
+          "html": "[결제 금액] 영역<div>- 용어 통일</div><div>- UI 변경사항은 없음</div>",
+          "x": 830,
+          "y": 180,
+          "pins": {
+            "pc": {
+              "x": 830,
+              "y": 180,
+              "active": true,
+              "scrollFixed": "sticky",
+              "fixedHost": "group-1794363100036"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 1284,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 830,
+              "y": 180,
+              "active": true,
+              "scrollFixed": "sticky",
+              "fixedHost": "group-1794363100036"
+            },
+            "right": {
+              "x": 0,
+              "y": 1284,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none",
+          "fixedHost": "group-1794363100036"
         }
       ],
       "connectors": [],
@@ -823,7 +862,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-17 09:30:34",
+  "updated": "2026-11-17 10:40:58",
   "version": 0.1,
   "category": "project"
 }

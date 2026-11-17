@@ -931,7 +931,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (Te-Be) 결제약관보기",
       "type": "ui",
-      "updatedAt": "2026-11-16T03:10:38.953Z",
+      "updatedAt": "2026-11-17T08:17:34.599Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -1014,8 +1014,8 @@
       ],
       "connectors": [],
       "version": 0.1,
-      "defaultTab": "editor",
-      "screenDesc": ""
+      "defaultTab": "description",
+      "screenDesc": "[object Object],[object Object]"
     },
     "renewal_cart_6.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",

@@ -7,6 +7,12 @@
       "updatedAt": "2026-11-17T05:07:53.889Z",
       "template": "template_cover.html",
       "version": 0.1
+    },
+    "01_Project_Summary_365.html": {
+      "title": "01_Project_Summary_365",
+      "type": "plan",
+      "updatedAt": "2026-11-17T05:20:05.835Z",
+      "template": "template_project_summary.html"
     }
   },
   "assignee": "고범곤",

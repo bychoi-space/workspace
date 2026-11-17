@@ -34,10 +34,10 @@
 
         if (!_currentHistoryList || _currentHistoryList.length === 0) {
             listContainer.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; text-align: center; color: var(--text-secondary); width: 100%;">
-                    <span class="material-icons-outlined" style="font-size: 40px; margin-bottom: 12px; opacity: 0.35;">history</span>
-                    <div style="font-size: 15px; font-weight: 500; margin-bottom: 6px;">기록된 재개정 이력이 없습니다.</div>
-                    <div style="font-size: 12.5px; opacity: 0.7;">우측 상단의 '+ 이력 추가' 버튼을 눌러 새 이력을 등록할 수 있습니다.</div>
+                <div class="history-empty-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; text-align: center; color: var(--text-secondary); width: 100%;">
+                    <span class="material-icons-outlined history-empty-icon" style="font-size: 40px; margin-bottom: 12px; opacity: 0.45;">history</span>
+                    <div class="history-empty-title" style="font-size: 15px; font-weight: 600; margin-bottom: 6px;">기록된 재개정 이력이 없습니다.</div>
+                    <div class="history-empty-sub" style="font-size: 12.5px;">우측 상단의 '+ 이력 추가' 버튼을 눌러 새 이력을 등록할 수 있습니다.</div>
                 </div>
             `;
         } else {
@@ -132,9 +132,9 @@
                         <div class="history-message-txt">${msgDisplay}</div>
 
                         <div class="history-meta-row">
-                            ${assigneeDisplay ? `<span class="history-meta-chip"><span class="material-icons-outlined" style="font-size:13px; color:#38bdf8;">person</span> 담당: ${assigneeDisplay}</span>` : ''}
-                            ${devDisplay ? `<span class="history-meta-chip"><span class="material-icons-outlined" style="font-size:13px; color:#a78bfa;">code</span> 개발: ${devDisplay}</span>` : ''}
-                            ${fileDisplay && fileDisplay !== 'n/a' ? `<span class="history-meta-chip"><span class="material-icons-outlined" style="font-size:13px; color:#94a3b8;">description</span> ${fileDisplay}</span>` : ''}
+                            ${assigneeDisplay ? `<span class="history-meta-chip"><span class="material-icons-outlined history-meta-icon is-assignee">person</span> 담당: ${assigneeDisplay}</span>` : ''}
+                            ${devDisplay ? `<span class="history-meta-chip"><span class="material-icons-outlined history-meta-icon is-dev">code</span> 개발: ${devDisplay}</span>` : ''}
+                            ${fileDisplay && fileDisplay !== 'n/a' ? `<span class="history-meta-chip"><span class="material-icons-outlined history-meta-icon is-file">description</span> ${fileDisplay}</span>` : ''}
                         </div>
                     </div>
                 `;

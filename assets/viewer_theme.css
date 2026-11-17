@@ -106,10 +106,18 @@ body.editor-page {
     --accent-subtle: var(--ed-accent-subtle);
     --hover-bg: var(--ed-surface-2);
 
+    font-family: 'Pretendard Variable', Pretendard, 'Inter', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
     background-color: var(--ed-canvas-bg) !important;
     background-image: none !important;
     animation: none !important;
     color: var(--ed-text-1);
+}
+
+body.editor-page button,
+body.editor-page input,
+body.editor-page select,
+body.editor-page textarea {
+    font-family: inherit;
 }
 
 /* ==========================================================================
@@ -394,30 +402,69 @@ body.editor-page .action-pill-group {
     background: var(--ed-surface-1) !important;
     border: 1px solid var(--ed-border) !important;
     height: 28px;
-    padding: 0 4px !important;
+    padding: 0 3px !important;
     border-radius: 6px !important;
     display: inline-flex;
     align-items: center;
+    gap: 2px;
     box-sizing: border-box;
+    box-shadow: none !important;
 }
 
+body.editor-page .action-pill-group .zoom-controls,
+body.editor-page .zoom-controls {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .action-pill-group .zoom-level,
 body.editor-page .zoom-level {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border-subtle) !important;
     color: var(--ed-text-1) !important;
-    font-size: 11.5px !important;
-    font-weight: 650 !important;
-    min-width: 38px;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    font-variant-numeric: tabular-nums !important;
+    min-width: 40px !important;
+    height: 20px !important;
+    line-height: 18px !important;
+    padding: 0 5px !important;
+    border-radius: 4.5px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     cursor: pointer;
+    box-sizing: border-box;
+    transition: background-color 0.14s ease, color 0.14s ease, border-color 0.14s ease;
 }
 
-body.editor-page .tool-btn {
+body.editor-page .action-pill-group .zoom-level:hover,
+body.editor-page .zoom-level:hover {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+}
+
+body.editor-page .tool-btn,
+body.editor-page .zoom-controls .tool-btn {
+    background: transparent !important;
+    border: none !important;
     color: var(--ed-text-2) !important;
-    width: 24px;
-    height: 24px;
+    width: 22px !important;
+    height: 22px !important;
     border-radius: 5px !important;
 }
 
-body.editor-page .tool-btn:hover {
+body.editor-page .tool-btn:hover,
+body.editor-page .zoom-controls .tool-btn:hover {
     color: var(--ed-text-1) !important;
     background: var(--ed-surface-2) !important;
     transform: none !important;
@@ -641,13 +688,61 @@ body.editor-page #sidebar-left:not(.collapsed) .screen-item .screen-name {
     color: inherit !important;
 }
 
-body.editor-page .screen-actions button {
-    color: var(--ed-text-3) !important;
+body.editor-page .screen-actions {
+    gap: 2px !important;
+    flex-shrink: 0;
 }
 
-body.editor-page .screen-actions button:hover {
-    color: var(--ed-text-1) !important;
-    background: var(--ed-surface-3) !important;
+body.editor-page .screen-actions button,
+body.editor-page .screen-edit-btn,
+body.editor-page .screen-copy-btn,
+body.editor-page .screen-delete-btn {
+    width: 22px !important;
+    height: 22px !important;
+    padding: 0 !important;
+    border-radius: 5px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: var(--ed-text-3) !important;
+    opacity: 0.72;
+    box-shadow: none !important;
+    transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease, opacity 0.14s ease !important;
+}
+
+body.editor-page .screen-item:hover .screen-actions button,
+body.editor-page .screen-item.active .screen-actions button {
+    opacity: 1;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .screen-actions .screen-edit-btn:hover {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+}
+
+body.editor-page .screen-actions .screen-copy-btn:hover {
+    background: rgba(14, 165, 233, 0.18) !important;
+    border-color: rgba(56, 189, 248, 0.45) !important;
+    color: #38bdf8 !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-actions .screen-copy-btn:hover {
+    background: #e0f2fe !important;
+    border-color: #7dd3fc !important;
+    color: #0369a1 !important;
+}
+
+body.editor-page .screen-actions .screen-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.18) !important;
+    border-color: rgba(248, 113, 113, 0.45) !important;
+    color: #fca5a5 !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-actions .screen-delete-btn:hover {
+    background: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    color: #dc2626 !important;
 }
 
 /* Collapsed 50px Screen Rail Chips */
@@ -685,14 +780,74 @@ body.editor-page #sidebar-left.collapsed .screen-item.active .screen-collapsed-c
 }
 
 /* Left Sidebar Footer */
-body.editor-page .sidebar-footer {
+body.editor-page .sidebar-footer,
+body.editor-page #sidebar-footer {
     background: transparent !important;
+    border-top: 1px solid var(--ed-border) !important;
+    padding: 8px 10px !important;
+}
+
+body.editor-page #sidebar-left:not(.collapsed) .v4-meta-updated {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    box-shadow: var(--ed-card-shadow) !important;
+    padding: 6px 8px !important;
+    border-radius: 7px !important;
+    opacity: 1 !important;
+    gap: 5px !important;
+}
+
+body.editor-page #sidebar-left.collapsed #sidebar-footer {
+    padding: 8px 0 !important;
     border-top: 1px solid var(--ed-border) !important;
 }
 
-body.editor-page .meta-updated-txt,
+body.editor-page #sidebar-left.collapsed .v4-meta-updated {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
 body.editor-page .meta-history-icon {
-    color: var(--ed-text-3) !important;
+    color: var(--ed-accent) !important;
+    opacity: 0.9 !important;
+    font-size: 13.5px !important;
+    flex-shrink: 0;
+}
+
+body.editor-page .meta-updated-txt {
+    color: var(--ed-text-2) !important;
+    font-size: 10.5px !important;
+    font-weight: 550 !important;
+    letter-spacing: -0.02em !important;
+    font-variant-numeric: tabular-nums !important;
+    opacity: 1 !important;
+}
+
+body.editor-page #btn-show-history,
+body.editor-page #sidebar-left.collapsed #btn-show-history {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed #btn-show-history {
+    background: var(--ed-surface-1) !important;
+}
+
+body.editor-page #btn-show-history:hover,
+body.editor-page #sidebar-left.collapsed #btn-show-history:hover {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+    transform: none !important;
+}
+
+body.editor-page #btn-show-history .meta-visibility-icon {
+    color: inherit !important;
+    font-size: 14px !important;
 }
 
 /* Screen Hover Flyout Card */
@@ -725,7 +880,37 @@ body.editor-page .screen-hover-flyout .flyout-actions {
 body.editor-page .screen-hover-flyout .flyout-btn-edit {
     background: var(--ed-surface-2) !important;
     border-color: var(--ed-border) !important;
-    color: var(--ed-text-1) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .screen-hover-flyout .flyout-btn-edit:hover {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-hover-flyout .flyout-btn-copy {
+    background: #f0f9ff !important;
+    border-color: #bae6fd !important;
+    color: #0369a1 !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-hover-flyout .flyout-btn-copy:hover {
+    background: #0284c7 !important;
+    border-color: #0284c7 !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-hover-flyout .flyout-btn-delete {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+    color: #dc2626 !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-hover-flyout .flyout-btn-delete:hover {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: #ffffff !important;
 }
 
 /* ==========================================================================
@@ -801,10 +986,16 @@ body.editor-page .sidebar-tabs .tab-btn {
     background: transparent !important;
     border: 1px solid transparent !important;
     color: var(--ed-text-2) !important;
-    font-size: 11.5px !important;
-    font-weight: 600 !important;
+    font-family: inherit !important;
+    font-size: 11px !important;
+    font-weight: 650 !important;
+    letter-spacing: 0.03em !important;
     box-shadow: none !important;
     white-space: nowrap !important;
+}
+
+body.editor-page .sidebar-tabs .tab-btn .material-icons-outlined {
+    font-size: 15px !important;
 }
 
 body.editor-page .sidebar-tabs .tab-btn:hover:not(.active) {
@@ -816,7 +1007,7 @@ body.editor-page .sidebar-tabs .tab-btn.active {
     background: var(--ed-seg-active-bg) !important;
     border-color: var(--ed-border) !important;
     color: var(--ed-text-1) !important;
-    font-weight: 650 !important;
+    font-weight: 700 !important;
     box-shadow: var(--ed-seg-active-shadow) !important;
 }
 
@@ -1255,6 +1446,28 @@ body.editor-page .v4-component-item:hover {
 
 body.editor-page .v4-component-name {
     color: var(--ed-text-1) !important;
+}
+
+body.editor-page .v4-comp-btn {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .v4-component-item:hover .v4-comp-btn {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .v4-comp-edit-btn:hover {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-comp-delete-btn:hover {
+    background: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    color: #dc2626 !important;
 }
 
 /* ==========================================================================
@@ -2245,7 +2458,8 @@ body.editor-page .loading-subtext {
 
 body.editor-page .modal-overlay,
 body.editor-page .dialog-overlay,
-body.editor-page .history-dialog-overlay {
+body.editor-page .history-dialog-overlay,
+body.editor-page .history-modal-overlay {
     background: var(--ed-modal-overlay) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
@@ -2257,6 +2471,20 @@ body.editor-page .history-dialog-card {
     background: var(--ed-modal-bg) !important;
     border: 1px solid var(--ed-border-hover) !important;
     box-shadow: var(--ed-popover-shadow) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .modal-card .btn-secondary,
+body.editor-page .dialog-card .btn-secondary {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .modal-card .btn-secondary:hover,
+body.editor-page .dialog-card .btn-secondary:hover {
+    background: var(--ed-border-subtle) !important;
+    border-color: var(--ed-border-hover) !important;
     color: var(--ed-text-1) !important;
 }
 
@@ -2286,13 +2514,107 @@ body.editor-page .bg-color-hex-input {
     color: var(--ed-text-1) !important;
 }
 
+body.editor-page .history-form-input:focus,
+body.editor-page .history-form-textarea:focus {
+    background: var(--ed-input-focus) !important;
+    border-color: var(--ed-accent) !important;
+    box-shadow: 0 0 0 2px var(--ed-accent-subtle) !important;
+}
+
+/* Revision History Modal Header, Cards, Badges, Actions & Inline Edit Form */
+body.editor-page .history-dialog-header {
+    border-bottom: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .history-dialog-title-group,
+body.editor-page .history-dialog-title-group .material-icons-outlined {
+    color: var(--ed-accent) !important;
+}
+
+body.editor-page .history-btn-add {
+    background: var(--ed-toggle-active-bg) !important;
+    border: 1px solid var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+    font-weight: 650 !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .history-btn-add:hover {
+    background: var(--ed-accent-solid) !important;
+    border-color: var(--ed-accent-solid) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+body.editor-page #btn-close-history,
+body.editor-page .history-dialog-close,
+body.editor-page .history-close-btn {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page #btn-close-history:hover,
+body.editor-page .history-dialog-close:hover,
+body.editor-page .history-close-btn:hover {
+    background: var(--ed-border-subtle) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
 body.editor-page .history-item-card,
-body.editor-page .history-edit-form,
 body.editor-page .bg-controls-grid,
 body.editor-page .bg-solid-color-wrap,
 body.editor-page .bg-preset-card {
     background: var(--ed-surface-1) !important;
-    border-color: var(--ed-border) !important;
+    border: 1px solid var(--ed-border) !important;
+    box-shadow: var(--ed-card-shadow) !important;
+}
+
+body.editor-page .history-item-card:hover {
+    border-color: var(--ed-border-hover) !important;
+    background: var(--ed-surface-1) !important;
+}
+
+html[data-theme="light"] body.editor-page .history-item-card:hover {
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07) !important;
+}
+
+body.editor-page .history-card-header {
+    border-bottom: 1px solid var(--ed-border-subtle) !important;
+}
+
+html[data-theme="light"] body.editor-page .history-version-badge {
+    background: #eef2ff !important;
+    border: 1px solid #c7d2fe !important;
+    color: #4338ca !important;
+    font-weight: 700 !important;
+}
+
+body.editor-page .history-action-btn {
+    background: var(--ed-toggle-idle-bg) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+    font-weight: 600 !important;
+}
+
+body.editor-page .history-action-btn:hover,
+body.editor-page .history-action-btn.edit:hover {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+}
+
+body.editor-page .history-action-btn.delete:hover {
+    background: rgba(239, 68, 68, 0.18) !important;
+    border-color: #f87171 !important;
+    color: #fca5a5 !important;
+}
+
+html[data-theme="light"] body.editor-page .history-action-btn.delete:hover {
+    background: #fef2f2 !important;
+    border-color: #fca5a5 !important;
+    color: #dc2626 !important;
 }
 
 body.editor-page .history-message-txt,
@@ -2308,8 +2630,77 @@ body.editor-page .history-form-label {
 
 body.editor-page .history-meta-chip {
     background: var(--ed-surface-2) !important;
-    border-color: var(--ed-border) !important;
+    border: 1px solid var(--ed-border) !important;
     color: var(--ed-text-2) !important;
+    font-weight: 550 !important;
+}
+
+html[data-theme="light"] body.editor-page .history-meta-chip {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #334155 !important;
+}
+
+body.editor-page .history-meta-icon {
+    font-size: 13.5px !important;
+}
+
+body.editor-page .history-meta-icon.is-assignee { color: #38bdf8 !important; }
+body.editor-page .history-meta-icon.is-dev { color: #a78bfa !important; }
+body.editor-page .history-meta-icon.is-file { color: #94a3b8 !important; }
+
+html[data-theme="light"] body.editor-page .history-meta-icon.is-assignee { color: #0284c7 !important; }
+html[data-theme="light"] body.editor-page .history-meta-icon.is-dev { color: #6d28d9 !important; }
+html[data-theme="light"] body.editor-page .history-meta-icon.is-file { color: #475569 !important; }
+
+body.editor-page .history-edit-form {
+    background: var(--ed-surface-2) !important;
+    border: 1.5px solid var(--ed-toggle-active-border) !important;
+}
+
+html[data-theme="light"] body.editor-page .history-edit-form {
+    background: #f8fafc !important;
+}
+
+body.editor-page .history-form-actions {
+    border-top: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .history-btn-cancel {
+    background: var(--ed-toggle-idle-bg) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .history-btn-cancel:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .history-btn-save {
+    background: var(--ed-accent-solid) !important;
+    border: 1px solid var(--ed-accent-solid) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px var(--ed-accent-subtle) !important;
+}
+
+body.editor-page .history-btn-save:hover {
+    background: var(--ed-accent-hover) !important;
+    border-color: var(--ed-accent-hover) !important;
+    box-shadow: 0 4px 10px var(--ed-accent-subtle) !important;
+}
+
+body.editor-page .history-empty-state {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .history-empty-title {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .history-empty-sub {
+    color: var(--ed-text-3) !important;
 }
 
 /* Add Screen Modal Template Cards in Light Mode */

@@ -1,6 +1,14 @@
 {
   "title": "[회원] 과다 반품 고객 식별 화면",
-  "screens": {},
+  "screens": {
+    "00_Cover_338.html": {
+      "title": "00_Cover_338",
+      "type": "cover",
+      "updatedAt": "2026-11-17T05:07:53.889Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "고범곤",
   "developer": "",
   "figmaUrl": "",

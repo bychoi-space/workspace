@@ -351,12 +351,12 @@
     "renewal_payEnd.html": {
       "title": "주문완료",
       "type": "ui",
-      "updatedAt": "2026-11-16T09:04:17.044Z",
+      "updatedAt": "2026-11-17T07:54:47.957Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [],
       "connectors": [],
       "version": 0.1,
-      "defaultTab": "editor",
+      "defaultTab": "description",
       "screenDesc": ""
     },
     "99_Blank_924.html": {
@@ -899,6 +899,6 @@
     "renewal_payEnd.html"
   ],
   "updated": "2026-11-17 16:28:17",
-  "version": 0.1,
+  "version": 0.2,
   "category": "project"
 }

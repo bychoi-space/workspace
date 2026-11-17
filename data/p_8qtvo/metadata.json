@@ -197,14 +197,14 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-17T04:31:55.787Z",
+      "updatedAt": "2026-11-17T04:54:12.309Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "[쿠폰 혜택 / 최대 할인 적용] 영역\n - 신규 개설 영역\n - Default '최대 할인 적용' = On",
-          "html": "[쿠폰 혜택 / 최대 할인 적용] 영역<div> - 신규 개설 영역</div><div> - Default '최대 할인 적용' = On</div>",
+          "text": "[쿠폰 혜택 / 최대 할인 적용] 영역\n - 신규 개설 영역\n - Default '최대 할인 적용' = Off",
+          "html": "[쿠폰 혜택 / 최대 할인 적용] 영역<div> - 신규 개설 영역</div><div> - Default '최대 할인 적용' = Off</div>",
           "x": 20,
           "y": 170,
           "pins": {
@@ -862,7 +862,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-17 13:31:55",
+  "updated": "2026-11-17 13:54:11",
   "version": 0.1,
   "category": "project"
 }

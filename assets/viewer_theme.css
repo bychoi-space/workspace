@@ -1,0 +1,1483 @@
+/* ==========================================================================
+   bychoi workspace — Studio Editor Dual-Theme Design System (viewer_theme.css)
+   Supports System (OS Auto), Light Mode, and Dark Mode for viewer.html Shell.
+   Strictly isolated to body.editor-page UI Shell (0% mutation of #main-iframe).
+   ========================================================================== */
+
+:root,
+html[data-theme="dark"] {
+    --ed-shell-bg: #101218;
+    --ed-toolbar-bg: #101218;
+    --ed-shell-divider: rgba(255, 255, 255, 0.1);
+    --ed-subheader-bg: #141720;
+    --ed-canvas-bg: #181b24;
+    --ed-canvas-dot: rgba(255, 255, 255, 0.055);
+    --ed-canvas-inset-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.35);
+    --ed-surface-1: #171a24;
+    --ed-surface-2: #1f2332;
+    --ed-surface-3: #262b3d;
+    --ed-card-shadow: none;
+    --ed-input-bg: #12151e;
+    --ed-input-focus: #161a26;
+    --ed-border: rgba(255, 255, 255, 0.09);
+    --ed-border-subtle: rgba(255, 255, 255, 0.06);
+    --ed-border-hover: rgba(255, 255, 255, 0.19);
+    --ed-text-1: #f1f5f9;
+    --ed-text-2: #94a3b8;
+    --ed-text-3: #64748b;
+    --ed-accent: #8b78e6;
+    --ed-accent-solid: #6e56cf;
+    --ed-accent-hover: #5e43c8;
+    --ed-accent-subtle: rgba(110, 86, 207, 0.16);
+    --ed-lib-icon: #cbd5e1;
+    --ed-seg-active-bg: #262c3f;
+    --ed-seg-active-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    --ed-popover-shadow: 0 16px 38px -8px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.4);
+    --ed-artboard-shadow: 0 20px 50px rgba(0, 0, 0, 0.52), 0 0 0 1px rgba(255, 255, 255, 0.09);
+    --ed-modal-overlay: rgba(7, 9, 14, 0.76);
+    --ed-modal-bg: #161a25;
+    --ed-scrollbar: rgba(148, 163, 184, 0.18);
+    --ed-scrollbar-hover: rgba(148, 163, 184, 0.34);
+    --ed-toggle-active-bg: rgba(110, 86, 207, 0.24);
+    --ed-toggle-active-border: #7c66dc;
+    --ed-toggle-active-text: #ffffff;
+    --ed-toggle-idle-bg: #181b25;
+    --ed-toggle-idle-border: rgba(255, 255, 255, 0.1);
+    --ed-toggle-idle-text: #94a3b8;
+}
+
+html[data-theme="light"] {
+    /* 3-Tier Architectural Separation:
+       1) Authored Screen = #FFFFFF (Brightest Focal Point)
+       2) Shell Panels (Header / Left Rail / Right Sidebar) = #F1F3F8 with #CBD2E1 crisp structural dividers
+       3) Recessed Canvas Stage = #DCE0EA with subtle inset shadow */
+    --ed-shell-bg: #f1f3f8;
+    --ed-toolbar-bg: #f1f3f8;
+    --ed-shell-divider: #cbd2e1;
+    --ed-subheader-bg: #e7ebf3;
+    --ed-canvas-bg: #dce0ea;
+    --ed-canvas-dot: rgba(15, 23, 42, 0.1);
+    --ed-canvas-inset-shadow: inset 0 1px 4px rgba(15, 23, 42, 0.06);
+    --ed-surface-1: #ffffff;
+    --ed-surface-2: #e5e9f2;
+    --ed-surface-3: #ffffff;
+    --ed-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --ed-input-bg: #ffffff;
+    --ed-input-focus: #ffffff;
+    --ed-border: #d5dbe7;
+    --ed-border-subtle: #dfe4ef;
+    --ed-border-hover: #aeb8cc;
+    --ed-text-1: #0f172a;
+    --ed-text-2: #475569;
+    --ed-text-3: #64748b;
+    --ed-accent: #5b46c6;
+    --ed-accent-solid: #5b46c6;
+    --ed-accent-hover: #4c38b0;
+    --ed-accent-subtle: rgba(91, 70, 198, 0.11);
+    --ed-lib-icon: #334155;
+    --ed-seg-active-bg: #ffffff;
+    --ed-seg-active-shadow: 0 1px 3px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.06);
+    --ed-popover-shadow: 0 14px 34px -8px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(15, 23, 42, 0.06);
+    --ed-artboard-shadow: 0 14px 34px rgba(15, 23, 42, 0.11), 0 2px 6px rgba(15, 23, 42, 0.06), 0 0 0 1px #c3cad8;
+    --ed-modal-overlay: rgba(15, 23, 42, 0.42);
+    --ed-modal-bg: #ffffff;
+    --ed-scrollbar: rgba(15, 23, 42, 0.16);
+    --ed-scrollbar-hover: rgba(15, 23, 42, 0.3);
+    --ed-toggle-active-bg: rgba(91, 70, 198, 0.12);
+    --ed-toggle-active-border: #5b46c6;
+    --ed-toggle-active-text: #4330a3;
+    --ed-toggle-idle-bg: #ffffff;
+    --ed-toggle-idle-border: #d5dbe7;
+    --ed-toggle-idle-text: #475569;
+}
+
+body.editor-page {
+    --bg-base: var(--ed-canvas-bg);
+    --panel-bg: var(--ed-shell-bg);
+    --panel-bg-nav: var(--ed-shell-bg);
+    --panel-bg-data: var(--ed-shell-bg);
+    --border-color: var(--ed-border);
+    --text-primary: var(--ed-text-1);
+    --text-secondary: var(--ed-text-2);
+    --text-muted: var(--ed-text-3);
+    --accent: var(--ed-accent-solid);
+    --accent-hover: var(--ed-accent-hover);
+    --accent-light: var(--ed-accent);
+    --accent-subtle: var(--ed-accent-subtle);
+    --hover-bg: var(--ed-surface-2);
+
+    background-color: var(--ed-canvas-bg) !important;
+    background-image: none !important;
+    animation: none !important;
+    color: var(--ed-text-1);
+}
+
+/* ==========================================================================
+   1. Slim 3-Zone Studio Top Header & Project Info Popover
+   ========================================================================== */
+body.editor-page .toolbar {
+    height: 48px;
+    background: var(--ed-toolbar-bg) !important;
+    border-bottom: 1px solid var(--ed-shell-divider) !important;
+    box-shadow: none !important;
+    padding: 0 12px;
+    overflow: visible !important;
+    z-index: 250;
+}
+
+body.editor-page .toolbar .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+body.editor-page .toolbar .brand-logo {
+    width: 19px;
+    height: 19px;
+    margin: 0 2px 0 0;
+    flex-shrink: 0;
+}
+
+/* Hide redundant "bychoi workspace" wordmark in editor header so Project Title leads cleanly */
+body.editor-page .toolbar .brand .brand-name {
+    display: none !important;
+}
+
+body.editor-page .toolbar-divider {
+    height: 15px;
+    background: var(--ed-border) !important;
+    margin: 0 5px;
+}
+
+/* Monotone Category Pill with Subtle Colored Dot */
+body.editor-page .viewer-project-category-badge {
+    --badge-dot: var(--cat-accent-dark, var(--ed-accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 5.5px;
+    height: 23px;
+    padding: 0 8px;
+    border-radius: 5px;
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border-subtle) !important;
+    color: var(--ed-text-2) !important;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-left: 2px;
+}
+
+html[data-theme="light"] body.editor-page .viewer-project-category-badge {
+    --badge-dot: var(--cat-accent-light, var(--ed-accent));
+}
+
+body.editor-page .viewer-project-category-badge .viewer-cat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--badge-dot);
+    flex-shrink: 0;
+}
+
+body.editor-page .toolbar .toolbar-file-name,
+body.editor-page #file-name-display {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 4px !important;
+    color: var(--ed-text-1) !important;
+    font-size: 13.5px !important;
+    font-weight: 650 !important;
+    letter-spacing: -0.02em !important;
+    max-width: 280px !important;
+    box-shadow: none !important;
+}
+
+/* Compact Project Info Popover & Quick Links (#top-metadata-panel) */
+body.editor-page .header-metadata {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 10px 0 4px;
+    overflow: visible !important;
+    min-width: 0;
+}
+
+body.editor-page .header-metadata .v4-meta-horizontal {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px !important;
+    position: relative;
+}
+
+.project-meta-popover-anchor {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.project-meta-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5.5px;
+    height: 27px;
+    padding: 0 9px;
+    border-radius: 6px;
+    background: var(--ed-surface-1);
+    border: 1px solid var(--ed-border);
+    color: var(--ed-text-2);
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 550;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    white-space: nowrap;
+    max-width: 240px;
+    transition: all 0.15s ease;
+}
+
+.project-meta-trigger-btn:hover,
+.project-meta-trigger-btn.active {
+    background: var(--ed-surface-2);
+    border-color: var(--ed-border-hover);
+    color: var(--ed-text-1);
+}
+
+.project-meta-summary-txt {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.project-meta-chevron {
+    opacity: 0.7;
+    flex-shrink: 0;
+    transition: transform 0.16s ease;
+}
+
+.project-meta-trigger-btn.active .project-meta-chevron {
+    transform: rotate(180deg);
+}
+
+/* Floating Project Info Popover Card */
+.project-meta-popover-card {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 310px;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--ed-modal-bg);
+    border: 1px solid var(--ed-border-hover);
+    box-shadow: var(--ed-popover-shadow);
+    z-index: 20500;
+    flex-direction: column;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+.project-meta-popover-card.is-open {
+    display: flex;
+    animation: metaPopoverFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes metaPopoverFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.project-meta-popover-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ed-border-subtle);
+}
+
+.project-meta-popover-title {
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--ed-text-1);
+}
+
+.project-meta-popover-hint {
+    font-size: 10.5px;
+    color: var(--ed-text-3);
+    font-weight: 500;
+}
+
+.project-meta-popover-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.project-meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.project-meta-field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ed-text-2);
+}
+
+body.editor-page .project-meta-popover-card .project-meta-input {
+    width: 100% !important;
+    height: 30px !important;
+    padding: 0 9px !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--ed-border) !important;
+    background: var(--ed-input-bg) !important;
+    color: var(--ed-text-1) !important;
+    font-family: inherit !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    box-sizing: border-box !important;
+    outline: none !important;
+}
+
+body.editor-page .project-meta-popover-card .project-meta-input::placeholder {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .project-meta-popover-card .project-meta-input:focus {
+    border-color: var(--ed-accent) !important;
+    background: var(--ed-input-focus) !important;
+    box-shadow: 0 0 0 2px var(--ed-accent-subtle) !important;
+}
+
+/* Figma / Notion Quick Links in Header */
+body.editor-page .header-metadata .v4-meta-chip.meta-chip-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4.5px !important;
+    height: 27px !important;
+    padding: 0 8.5px !important;
+    border-radius: 6px !important;
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+    font-size: 11px !important;
+    font-weight: 550 !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .header-metadata .v4-meta-chip.meta-chip-link:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
+/* Right Toolbar Actions & Compact Theme Switcher */
+body.editor-page .toolbar .actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+body.editor-page .action-pill-group {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    height: 28px;
+    padding: 0 4px !important;
+    border-radius: 6px !important;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+body.editor-page .zoom-level {
+    color: var(--ed-text-1) !important;
+    font-size: 11.5px !important;
+    font-weight: 650 !important;
+    min-width: 38px;
+    text-align: center;
+    cursor: pointer;
+}
+
+body.editor-page .tool-btn {
+    color: var(--ed-text-2) !important;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px !important;
+}
+
+body.editor-page .tool-btn:hover {
+    color: var(--ed-text-1) !important;
+    background: var(--ed-surface-2) !important;
+    transform: none !important;
+}
+
+body.editor-page .tool-btn.active {
+    color: var(--ed-accent) !important;
+    background: var(--ed-accent-subtle) !important;
+}
+
+/* Compact 3-Icon Theme Switcher inside Editor Header */
+.viewer-theme-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    padding: 2px;
+    height: 28px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    background: var(--ed-surface-1);
+    border: 1px solid var(--ed-border);
+}
+
+.viewer-theme-switcher .theme-seg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 22px;
+    padding: 0;
+    border-radius: 4.5px;
+    border: none;
+    background: transparent;
+    color: var(--ed-text-3);
+    cursor: pointer;
+    transition: color 0.14s ease, background-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.viewer-theme-switcher .theme-seg-btn .theme-seg-label {
+    display: none !important;
+}
+
+.viewer-theme-switcher .theme-seg-btn:hover:not(.active) {
+    color: var(--ed-text-1);
+}
+
+.viewer-theme-switcher .theme-seg-btn.active {
+    background: var(--ed-seg-active-bg);
+    color: var(--ed-text-1);
+    box-shadow: var(--ed-seg-active-shadow);
+}
+
+/* URL Copy, PDF, Auto-Save Badge & Global Save CTA */
+body.editor-page .toolbar .actions .btn-copy-url,
+body.editor-page .toolbar .actions .btn-export-pdf {
+    height: 28px !important;
+    padding: 0 10px !important;
+    border-radius: 6px !important;
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+    font-family: inherit !important;
+    font-size: 11.5px !important;
+    font-weight: 550 !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .toolbar .actions .btn-copy-url:hover,
+body.editor-page .toolbar .actions .btn-copy-url.active,
+body.editor-page .toolbar .actions .btn-export-pdf:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+    transform: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .url-copy-menu {
+    background: var(--ed-modal-bg) !important;
+    border: 1px solid var(--ed-border-hover) !important;
+    box-shadow: var(--ed-popover-shadow) !important;
+    border-radius: 9px !important;
+    z-index: 20500 !important;
+}
+
+body.editor-page .url-copy-menu-item:hover {
+    background: var(--ed-surface-2) !important;
+}
+
+body.editor-page .menu-item-title {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .menu-item-sub {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .url-copy-menu-divider {
+    background: var(--ed-border-subtle) !important;
+}
+
+body.editor-page .toolbar .actions .autosave-status-badge {
+    height: 28px;
+    padding: 0 9px;
+    border-radius: 6px;
+    background: var(--ed-surface-1);
+    border: 1px solid var(--ed-border);
+    color: var(--ed-text-2);
+    font-size: 11px;
+}
+
+body.editor-page .toolbar .actions #btn-global-save {
+    animation: none !important;
+    height: 28px !important;
+    padding: 0 13px !important;
+    border-radius: 6px !important;
+    background: var(--ed-accent-solid) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    color: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.editor-page .toolbar .actions #btn-global-save:hover {
+    background: var(--ed-accent-hover) !important;
+    transform: translateY(-1px) !important;
+    filter: none !important;
+}
+
+body.editor-page .header-sidebar-toggle,
+body.editor-page .panel-toggle-btn {
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+    background: transparent !important;
+}
+
+body.editor-page .header-sidebar-toggle:hover,
+body.editor-page .panel-toggle-btn:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
+/* ==========================================================================
+   2. Left Sidebar (Project Screens Rail & Expanded List + Hover Flyout)
+   ========================================================================== */
+body.editor-page #sidebar-left,
+body.editor-page .sidebar-left {
+    background: var(--ed-shell-bg) !important;
+    border-right: 1px solid var(--ed-shell-divider) !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .sidebar-left .panel-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .sidebar-left .panel-title-txt {
+    color: var(--ed-text-2) !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em !important;
+}
+
+body.editor-page .btn-add-action {
+    color: var(--ed-accent) !important;
+}
+
+body.editor-page .btn-add-action:hover {
+    color: var(--ed-accent-hover) !important;
+    box-shadow: none !important;
+    transform: scale(1.06);
+}
+
+body.editor-page #sidebar-left.collapsed .btn-add-action,
+body.editor-page #sidebar-left.collapsed #btn-add-screen {
+    background: var(--ed-accent-subtle) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-accent) !important;
+}
+
+body.editor-page #sidebar-left.collapsed .btn-add-action:hover,
+body.editor-page #sidebar-left.collapsed #btn-add-screen:hover {
+    background: var(--ed-accent-solid) !important;
+    border-color: var(--ed-accent-solid) !important;
+    color: #ffffff !important;
+}
+
+/* Expanded Screen List Items */
+body.editor-page #sidebar-left:not(.collapsed) .screen-item {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border-subtle) !important;
+    border-radius: 8px !important;
+    color: var(--ed-text-2) !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+}
+
+body.editor-page #sidebar-left:not(.collapsed) .screen-item:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+    transform: none !important;
+}
+
+body.editor-page #sidebar-left:not(.collapsed) .screen-item.active {
+    background: var(--ed-accent-subtle) !important;
+    border: 1px solid var(--ed-toggle-active-border) !important;
+    border-left: 3px solid var(--ed-accent-solid) !important;
+    color: var(--ed-text-1) !important;
+    font-weight: 650 !important;
+    box-shadow: none !important;
+}
+
+body.editor-page #sidebar-left:not(.collapsed) .screen-item .screen-name {
+    color: inherit !important;
+}
+
+body.editor-page .screen-actions button {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .screen-actions button:hover {
+    color: var(--ed-text-1) !important;
+    background: var(--ed-surface-3) !important;
+}
+
+/* Collapsed 50px Screen Rail Chips */
+body.editor-page #sidebar-left.collapsed .screen-collapsed-chip {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    box-shadow: none !important;
+}
+
+body.editor-page #sidebar-left.collapsed .screen-collapsed-chip .chip-pad-num {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page #sidebar-left.collapsed .screen-item:not(.active):hover .screen-collapsed-chip {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+}
+
+body.editor-page #sidebar-left.collapsed .screen-item:not(.active):hover .screen-collapsed-chip .chip-pad-num {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page #sidebar-left.collapsed .screen-item.active .screen-collapsed-chip {
+    background: var(--ed-accent-solid) !important;
+    border-color: var(--ed-accent-solid) !important;
+    box-shadow: 0 2px 8px var(--ed-accent-subtle) !important;
+}
+
+body.editor-page #sidebar-left.collapsed .screen-item.active .screen-collapsed-chip::before {
+    background: rgba(255, 255, 255, 0.85) !important;
+}
+
+body.editor-page #sidebar-left.collapsed .screen-item.active .screen-collapsed-chip .chip-pad-num {
+    color: #ffffff !important;
+}
+
+/* Left Sidebar Footer */
+body.editor-page .sidebar-footer {
+    background: transparent !important;
+    border-top: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .meta-updated-txt,
+body.editor-page .meta-history-icon {
+    color: var(--ed-text-3) !important;
+}
+
+/* Screen Hover Flyout Card */
+body.editor-page .screen-hover-flyout {
+    background: var(--ed-modal-bg) !important;
+    border: 1px solid var(--ed-border-hover) !important;
+    box-shadow: var(--ed-popover-shadow) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .screen-hover-flyout .flyout-nub {
+    background: var(--ed-modal-bg) !important;
+    border-left: 1px solid var(--ed-border-hover) !important;
+    border-bottom: 1px solid var(--ed-border-hover) !important;
+}
+
+body.editor-page .screen-hover-flyout .flyout-title {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .screen-hover-flyout .flyout-filename,
+body.editor-page .screen-hover-flyout .flyout-res {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .screen-hover-flyout .flyout-actions {
+    border-top: 1px solid var(--ed-border-subtle) !important;
+}
+
+body.editor-page .screen-hover-flyout .flyout-btn-edit {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+}
+
+/* ==========================================================================
+   3. Center Canvas Backdrop & Artboard Elevation (0% Content Mutation)
+   ========================================================================== */
+body.editor-page .canvas {
+    background-color: var(--ed-canvas-bg) !important;
+    background-image: radial-gradient(var(--ed-canvas-dot) 1px, transparent 0) !important;
+    background-size: 20px 20px !important;
+    box-shadow: var(--ed-canvas-inset-shadow) !important;
+    transition: background-color 0.2s ease;
+}
+
+body.editor-page .artboard-iframe.borderless-artboard,
+body.editor-page .artboard-wrapper.borderless-artboard .artboard-iframe {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color-scheme: normal !important;
+}
+
+body.editor-page .artboard-iframe:not(.borderless-artboard) {
+    border: 1px solid var(--ed-border) !important;
+    box-shadow: var(--ed-artboard-shadow) !important;
+    border-radius: 6px !important;
+    color-scheme: normal !important;
+}
+
+body.editor-page .placeholder-card {
+    background: var(--ed-modal-bg) !important;
+    border: 1px dashed var(--ed-border-hover) !important;
+    box-shadow: var(--ed-popover-shadow) !important;
+}
+
+body.editor-page .placeholder-title {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .placeholder-subtitle {
+    color: var(--ed-text-2) !important;
+}
+
+/* ==========================================================================
+   4. Right Sidebar (Tabs, Search, Library Sections & Uniform Asset Tiles)
+   ========================================================================== */
+body.editor-page #sidebar-right,
+body.editor-page .sidebar-right {
+    background: var(--ed-shell-bg) !important;
+    border-left: 1px solid var(--ed-shell-divider) !important;
+    box-shadow: none !important;
+}
+
+body.editor-page #sidebar-right:not(.collapsed) {
+    width: 252px;
+    min-width: 252px;
+    max-width: 252px;
+    flex-shrink: 0;
+}
+
+body.editor-page .sidebar-tabs {
+    background: var(--ed-shell-bg) !important;
+    border-bottom: 1px solid var(--ed-shell-divider) !important;
+    padding: 6px 8px !important;
+    gap: 4px !important;
+}
+
+body.editor-page .sidebar-tabs .tab-btn {
+    height: 31px !important;
+    padding: 0 6px !important;
+    gap: 5px !important;
+    border-radius: 6px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: var(--ed-text-2) !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    white-space: nowrap !important;
+}
+
+body.editor-page .sidebar-tabs .tab-btn:hover:not(.active) {
+    background: var(--ed-surface-2) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .sidebar-tabs .tab-btn.active {
+    background: var(--ed-seg-active-bg) !important;
+    border-color: var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+    font-weight: 650 !important;
+    box-shadow: var(--ed-seg-active-shadow) !important;
+}
+
+/* Sidebar Search Input */
+body.editor-page .sidebar-search-container {
+    padding: 9px 10px !important;
+}
+
+body.editor-page .v4-search-wrapper {
+    background: var(--ed-input-bg) !important;
+    border: 1px solid var(--ed-border) !important;
+    border-radius: 7px !important;
+}
+
+body.editor-page .v4-search-wrapper:focus-within {
+    background: var(--ed-input-focus) !important;
+    border-color: var(--ed-accent) !important;
+    box-shadow: 0 0 0 2px var(--ed-accent-subtle) !important;
+}
+
+body.editor-page #sidebar-search-input {
+    color: var(--ed-text-1) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.editor-page #sidebar-search-input::placeholder {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .v4-search-wrapper .search-icon,
+body.editor-page #sidebar-search-clear {
+    color: var(--ed-text-3) !important;
+}
+
+/* Unified Monotone Studio Section Headers (Replaces Rainbow Left Bars) */
+body.editor-page #tab-editor > .panel-header,
+body.editor-page #tab-description > .panel-header {
+    background: var(--ed-subheader-bg) !important;
+    border: none !important;
+    border-top: 1px solid var(--ed-border) !important;
+    border-bottom: 1px solid var(--ed-border) !important;
+    border-left: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 8px 10px !important;
+}
+
+body.editor-page #tab-editor .components-body {
+    padding: 9px 9px 11px 9px !important;
+}
+
+body.editor-page #tab-editor .component-grid {
+    gap: 6px !important;
+}
+
+body.editor-page #tab-editor > .panel-header .panel-header-title,
+body.editor-page #tab-description .panel-header-subtitle {
+    color: var(--ed-text-2) !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em !important;
+}
+
+body.editor-page .panel-header-chevron {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .section-count-badge {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border-subtle) !important;
+    color: var(--ed-text-3) !important;
+}
+
+/* Canvas Background & Dimmed Layer Entry Cards */
+body.editor-page .canvas-bg-entry-card,
+body.editor-page .dimmed-layer-card {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .canvas-bg-entry-card:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+}
+
+body.editor-page .canvas-bg-entry-icon-wrap,
+body.editor-page .dimmed-card-icon {
+    background: var(--ed-accent-subtle) !important;
+    color: var(--ed-accent) !important;
+}
+
+body.editor-page .canvas-bg-entry-title,
+body.editor-page .dimmed-card-title,
+body.editor-page .dimmed-enable-label {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .canvas-bg-entry-sub,
+body.editor-page .dimmed-sub-label,
+body.editor-page .dimmed-mode-hint {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .dimmed-frame-tabs-group,
+body.editor-page .dimmed-mode-switch-group {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .dimmed-frame-tab,
+body.editor-page .dimmed-mode-btn {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .dimmed-frame-tab.active,
+body.editor-page .dimmed-mode-btn.active {
+    background: var(--ed-seg-active-bg) !important;
+    color: var(--ed-text-1) !important;
+    box-shadow: var(--ed-seg-active-shadow) !important;
+}
+
+/* Uniform Component Tiles (Shapes, Atoms, Icons, Logos, Illustrations) */
+body.editor-page #tab-editor .component-grid > .component-item.v4-card,
+body.editor-page .v4-card-atom,
+body.editor-page .v4-card-icon {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    border-radius: 8px !important;
+    box-shadow: var(--ed-card-shadow) !important;
+}
+
+body.editor-page #tab-editor .component-grid > .component-item.v4-card:hover,
+body.editor-page .v4-card-atom:hover,
+body.editor-page .v4-card-icon:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-1px) !important;
+}
+
+body.editor-page #tab-editor .component-grid > .component-item.v4-card .material-icons-outlined,
+body.editor-page .v4-card-atom-icon {
+    color: var(--ed-lib-icon) !important;
+}
+
+body.editor-page .v4-card-atom-svg,
+body.editor-page .v4-card-atom-svg *,
+body.editor-page .v4-card-atom-check-svg {
+    stroke: var(--ed-lib-icon) !important;
+    color: var(--ed-lib-icon) !important;
+}
+
+body.editor-page .v4-card-atom-check-box,
+body.editor-page .v4-card-atom-radio-circle {
+    border-color: var(--ed-lib-icon) !important;
+    background: transparent !important;
+}
+
+body.editor-page .v4-card-icon-svg {
+    color: var(--ed-lib-icon) !important;
+}
+
+body.editor-page .v4-logo-mask-base {
+    background-color: var(--ed-lib-icon) !important;
+}
+
+body.editor-page #tab-editor .component-grid > .component-item.v4-card span:not(.material-icons-outlined),
+body.editor-page .v4-card-icon-label,
+body.editor-page .illustration-label {
+    color: var(--ed-text-2) !important;
+    font-weight: 550 !important;
+}
+
+body.editor-page #tab-editor .component-grid > .component-item.v4-card:hover span:not(.material-icons-outlined),
+body.editor-page .v4-card-icon:hover .v4-card-icon-label {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .illustration-group-divider {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border-subtle) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .illustration-group-title {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .v4-component-item {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .v4-component-item:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+}
+
+body.editor-page .v4-component-name {
+    color: var(--ed-text-1) !important;
+}
+
+/* ==========================================================================
+   5. Scene Annotations (Description Panel & Rich Text Contrast Adaptation)
+   ========================================================================== */
+body.editor-page .desc-toolbar {
+    background: var(--ed-shell-bg) !important;
+    border-bottom: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .sidebar-right .description-container {
+    padding: 10px !important;
+}
+
+body.editor-page .sidebar-inspector-body {
+    padding: 12px 10px !important;
+    gap: 12px !important;
+}
+
+body.editor-page .desc-tool-btn {
+    color: var(--ed-text-2) !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+}
+
+body.editor-page .desc-tool-btn:hover,
+body.editor-page .desc-tool-btn.active {
+    color: var(--ed-text-1) !important;
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border) !important;
+}
+
+body.editor-page .desc-color-popover {
+    background: var(--ed-modal-bg) !important;
+    border: 1px solid var(--ed-border-hover) !important;
+    box-shadow: var(--ed-popover-shadow) !important;
+}
+
+body.editor-page .sidebar-right .desc-row {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    border-radius: 9px !important;
+    box-shadow: var(--ed-card-shadow) !important;
+}
+
+body.editor-page .sidebar-right .desc-row:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    transform: none !important;
+}
+
+body.editor-page .sidebar-right .desc-row.highlight,
+body.editor-page .sidebar-right .desc-row.selected-pin,
+body.editor-page .sidebar-right .desc-row.active-desc {
+    background: rgba(239, 68, 68, 0.07) !important;
+    border-color: rgba(239, 68, 68, 0.38) !important;
+    border-left: 3px solid #ef4444 !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .desc-header-label {
+    color: var(--ed-text-1) !important;
+    font-weight: 650 !important;
+}
+
+body.editor-page .desc-pin-anchor-btn {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .desc-pin-anchor-btn:hover {
+    color: var(--ed-text-1) !important;
+    border-color: var(--ed-border-hover) !important;
+}
+
+body.editor-page .sidebar-right .desc-input {
+    color: var(--ed-text-1) !important;
+}
+
+/* Light Mode Non-Destructive Readability Mapping for Saved Pastel Annotation Spans */
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input [style*="251, 191, 36"],
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input font[color="#fbbf24"] {
+    color: #b45309 !important;
+}
+
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input [style*="56, 189, 248"],
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input font[color="#38bdf8"] {
+    color: #0284c7 !important;
+}
+
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input [style*="52, 211, 153"],
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input font[color="#34d399"] {
+    color: #059669 !important;
+}
+
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input [style*="255, 255, 255"],
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input font[color="#ffffff"],
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input [style*="203, 213, 225"],
+html[data-theme="light"] body.editor-page .sidebar-right .desc-input font[color="#cbd5e1"] {
+    color: #0f172a !important;
+}
+
+/* ==========================================================================
+   6. Docked & Floating Object Property Inspectors (Full Dual-Theme Support)
+   ========================================================================== */
+body.editor-page .floating-inspector-card {
+    background: var(--ed-modal-bg) !important;
+    border: 1px solid var(--ed-border-hover) !important;
+    box-shadow: var(--ed-popover-shadow) !important;
+    border-radius: 10px !important;
+}
+
+body.editor-page .floating-inspector-header,
+body.editor-page .sidebar-inspector-header {
+    background: var(--ed-surface-1) !important;
+    border-bottom: 1px solid var(--ed-border) !important;
+}
+
+body.editor-page .floating-inspector-title,
+body.editor-page .sidebar-inspector-title {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .floating-inspector-header-btn,
+body.editor-page .sidebar-header-btn {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .floating-inspector-header-btn:hover,
+body.editor-page .sidebar-header-btn:hover {
+    background: var(--ed-surface-2) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .v4-card-section,
+body.editor-page #text-editor-section,
+body.editor-page .selection-actions-bar,
+body.editor-page .selection-align-panel,
+body.editor-page .selection-scroll-pin-bar {
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    border-radius: 8px !important;
+}
+
+body.editor-page .v4-card-section-title,
+body.editor-page #content-editor-label,
+body.editor-page .selection-align-title,
+body.editor-page .scroll-pin-title {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .v4-card-divider {
+    border-top: 1px solid var(--ed-border-subtle) !important;
+}
+
+body.editor-page .v4-prop-label,
+body.editor-page .v4-prop-label.bold,
+body.editor-page .selection-count-txt,
+body.editor-page .group-dim-label,
+body.editor-page .scroll-pin-effect-label,
+body.editor-page .scroll-pin-offset-label,
+body.editor-page .scroll-pin-divider-label {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .group-dim-val,
+body.editor-page .selection-count-number {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .v4-prop-input-styled,
+body.editor-page .v4-prop-input-base,
+body.editor-page .v4-prop-select,
+body.editor-page .scroll-pin-offset-input {
+    background: var(--ed-input-bg) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .v4-prop-input-styled:focus,
+body.editor-page .v4-prop-input-base:focus,
+body.editor-page .v4-prop-select:focus,
+body.editor-page .scroll-pin-offset-input:focus {
+    background: var(--ed-input-focus) !important;
+    border-color: var(--ed-accent) !important;
+    box-shadow: 0 0 0 2px var(--ed-accent-subtle) !important;
+}
+
+body.editor-page .v4-prop-select option {
+    background: var(--ed-modal-bg);
+    color: var(--ed-text-1);
+}
+
+body.editor-page .v4-inspector-btn.btn-secondary,
+body.editor-page .v4-cell-align-btn,
+body.editor-page .scroll-pin-btn {
+    background: var(--ed-toggle-idle-bg) !important;
+    border: 1px solid var(--ed-toggle-idle-border) !important;
+    color: var(--ed-toggle-idle-text) !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .v4-inspector-btn.btn-secondary:hover,
+body.editor-page .v4-cell-align-btn:hover,
+body.editor-page .scroll-pin-btn:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .v4-inspector-toggle-btn.active,
+body.editor-page .v4-cell-align-btn.active,
+body.editor-page .scroll-pin-btn.active {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+}
+
+/* Quill Rich Text Toolbar & Editor inside Inspector (Light Mode Adaptation) */
+html[data-theme="light"] body.editor-page .ql-toolbar.ql-snow {
+    background: #f1f3f8 !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="light"] body.editor-page .ql-container.ql-snow {
+    background: #ffffff !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    border-top: none !important;
+    color: #0f172a !important;
+}
+
+html[data-theme="light"] body.editor-page .ql-snow .ql-stroke:not(.ql-color-label):not(.ql-bg-label) {
+    stroke: #334155 !important;
+}
+
+html[data-theme="light"] body.editor-page .ql-snow .ql-fill:not(.ql-color-label):not(.ql-bg-label) {
+    fill: #334155 !important;
+}
+
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker,
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-size .ql-picker-label,
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-size .ql-picker-label::before {
+    color: #1e293b !important;
+}
+
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-size .ql-picker-label,
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-color .ql-picker-label,
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-background .ql-picker-label {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.14) !important;
+}
+
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-size.ql-expanded .ql-picker-options,
+html[data-theme="light"] body.editor-page .ql-snow .ql-color-picker.ql-expanded .ql-picker-options,
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-color.ql-expanded .ql-picker-options,
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-background.ql-expanded .ql-picker-options {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.16) !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16) !important;
+}
+
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-size .ql-picker-item,
+html[data-theme="light"] body.editor-page .ql-snow .ql-picker.ql-size .ql-picker-item::before {
+    color: #334155 !important;
+}
+
+/* Custom Color Palette Popup */
+body.editor-page .bychoi-color-palette-popup {
+    background: var(--ed-modal-bg) !important;
+    border: 1px solid var(--ed-border-hover) !important;
+    box-shadow: var(--ed-popover-shadow) !important;
+}
+
+body.editor-page .bychoi-palette-swatch {
+    border: 1px solid var(--ed-border-hover) !important;
+}
+
+body.editor-page .bychoi-palette-custom-btn {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+}
+
+/* ==========================================================================
+   7. Modals, Revision History, Loading Overlay, Toasts & Mobile Sheet
+   ========================================================================== */
+body.editor-page .loading-overlay,
+body.editor-page .save-overlay {
+    background: var(--ed-shell-bg) !important;
+}
+
+body.editor-page .orbit-core-emblem {
+    background: var(--ed-surface-1) !important;
+    border-color: var(--ed-border-hover) !important;
+}
+
+body.editor-page .loading-bar-container {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border) !important;
+}
+
+body.editor-page .loading-text,
+body.editor-page .save-text {
+    color: var(--ed-accent) !important;
+    text-shadow: none !important;
+}
+
+body.editor-page .loading-subtext {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .modal-overlay,
+body.editor-page .dialog-overlay,
+body.editor-page .history-dialog-overlay {
+    background: var(--ed-modal-overlay) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+body.editor-page .modal-card,
+body.editor-page .dialog-card,
+body.editor-page .history-dialog-card {
+    background: var(--ed-modal-bg) !important;
+    border: 1px solid var(--ed-border-hover) !important;
+    box-shadow: var(--ed-popover-shadow) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .modal-title,
+body.editor-page .dialog-title,
+body.editor-page .history-dialog-title,
+body.editor-page .bg-section-title,
+body.editor-page .bg-upload-text {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .modal-subtitle,
+body.editor-page .dialog-message,
+body.editor-page .bg-upload-sub,
+body.editor-page .bg-color-custom-label {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .form-input,
+body.editor-page .dialog-input,
+body.editor-page .dialog-textarea,
+body.editor-page .history-form-input,
+body.editor-page .history-form-textarea,
+body.editor-page .bg-color-hex-input {
+    background: var(--ed-input-bg) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .history-item-card,
+body.editor-page .history-edit-form,
+body.editor-page .bg-controls-grid,
+body.editor-page .bg-solid-color-wrap,
+body.editor-page .bg-preset-card {
+    background: var(--ed-surface-1) !important;
+    border-color: var(--ed-border) !important;
+}
+
+body.editor-page .history-message-txt,
+body.editor-page .bg-preset-title,
+body.editor-page .bg-control-label {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .history-date-txt,
+body.editor-page .history-form-label {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .history-meta-chip {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border) !important;
+    color: var(--ed-text-2) !important;
+}
+
+/* Add Screen Modal Template Cards in Light Mode */
+html[data-theme="light"] body.editor-page .template-card {
+    background: var(--ed-surface-1) !important;
+    border-color: var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+}
+
+html[data-theme="light"] body.editor-page .template-card h4,
+html[data-theme="light"] body.editor-page .template-title {
+    color: var(--ed-text-1) !important;
+}
+
+html[data-theme="light"] body.editor-page .template-card p,
+html[data-theme="light"] body.editor-page .template-desc {
+    color: var(--ed-text-2) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-toast {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Mobile Read-Only Bottom Sheet & Floating Controls in Light Mode */
+html[data-theme="light"] body.editor-page .v4-bottom-sheet {
+    background: #ffffff !important;
+    border-top-color: rgba(15, 23, 42, 0.12) !important;
+    box-shadow: 0 -12px 36px rgba(15, 23, 42, 0.14) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-title-text,
+html[data-theme="light"] body.editor-page .v4-sheet-meta-title,
+html[data-theme="light"] body.editor-page .v4-sheet-item-title {
+    color: #0f172a !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-meta-card,
+html[data-theme="light"] body.editor-page .v4-sheet-item {
+    background: #f7f8fa !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-item.active {
+    background: rgba(91, 70, 198, 0.1) !important;
+    border-color: rgba(91, 70, 198, 0.35) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-action-chip,
+html[data-theme="light"] body.editor-page .v4-sheet-close-btn {
+    background: #eef0f5 !important;
+    border-color: rgba(15, 23, 42, 0.1) !important;
+    color: #334155 !important;
+}
+
+html[data-theme="light"] body.editor-page #dock-btn-prev,
+html[data-theme="light"] body.editor-page #dock-btn-next,
+html[data-theme="light"] body.editor-page #dock-page-indicator {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(15, 23, 42, 0.14) !important;
+    color: #0f172a !important;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12) !important;
+}
+
+@media (max-width: 960px), (max-height: 600px) and (max-width: 1050px), (pointer: coarse) and (max-width: 1366px) {
+    html[data-theme="light"] body.editor-page .toolbar {
+        background: rgba(255, 255, 255, 0.92) !important;
+        border-color: rgba(15, 23, 42, 0.14) !important;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12) !important;
+    }
+
+    html[data-theme="light"] body.editor-page .toolbar #btn-back {
+        background: #eef0f5 !important;
+        color: #0f172a !important;
+    }
+
+    .viewer-theme-switcher,
+    body.editor-page .viewer-project-category-badge {
+        display: none !important;
+    }
+}

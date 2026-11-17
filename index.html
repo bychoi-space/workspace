@@ -8,13 +8,28 @@
     <meta http-equiv="Expires" content="0">
     <title>bychoi workspace - Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="assets/logo.svg?v=V402_TRANSPARENT_FAVICON">
+    <meta name="theme-color" content="#0b0d12">
+    <script>
+        (function() {
+            try {
+                var mode = localStorage.getItem('bychoi_ui_theme') || 'system';
+                if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system';
+                var isDark = mode === 'dark' || (mode === 'system' && (!window.matchMedia || window.matchMedia('(prefers-color-scheme: dark)').matches));
+                var resolved = isDark ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', resolved);
+                document.documentElement.setAttribute('data-theme-mode', mode);
+                var tc = document.querySelector('meta[name="theme-color"]');
+                if (tc) tc.setAttribute('content', resolved === 'light' ? '#f5f6f8' : '#0b0d12');
+            } catch (e) {}
+        })();
+    </script>
     <!-- 폰트 및 아이콘 시스템 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="assets/style.css?v=V429_BYCHOI_NAMESPACE">
-    <link rel="stylesheet" href="assets/theme.css?v=V429_BYCHOI_NAMESPACE">
-    <link rel="stylesheet" href="assets/dashboard.css?v=V429_BYCHOI_NAMESPACE">
+    <link rel="stylesheet" href="assets/style.css?v=V431_DUAL_THEME">
+    <link rel="stylesheet" href="assets/theme.css?v=V431_DUAL_THEME">
+    <link rel="stylesheet" href="assets/dashboard.css?v=V431_DUAL_THEME">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
         if (window.location.protocol.startsWith('http')) {
@@ -31,7 +46,6 @@
     <link rel="apple-touch-icon" href="assets/icon-192.png?v=V402_TRANSPARENT_FAVICON">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=V402_TRANSPARENT_FAVICON">
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
-    <meta name="theme-color" content="#0e0f17">
     <script>
         // Global PWA Install Capture (Early execution in <head> for Chrome & Samsung Internet)
         window._deferredInstallPrompt = null;
@@ -60,31 +74,79 @@
     <script src="assets/responsive_frame.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/vctrl_pdf_exporter.js?v=V429_BYCHOI_NAMESPACE"></script>
 </head>
-<body>
-    <!-- Premium Animated Background -->
-    <div class="bg-mesh-container">
+<body class="dashboard-page">
+    <!-- Ambient Surface Layer -->
+    <div class="bg-mesh-container" aria-hidden="true">
         <div class="bg-image-layer"></div>
         <div class="bg-blob bg-blob-1"></div>
         <div class="bg-blob bg-blob-2"></div>
         <div class="bg-blob bg-blob-3"></div>
     </div>
-    <div class="bg-noise"></div>
+    <div class="bg-noise" aria-hidden="true"></div>
 
     <!-- Header Toolbar -->
     <header class="toolbar">
-        <a href="index.html" class="brand">
-            <img src="assets/logo.svg" class="brand-logo" alt="Logo" loading="lazy">
-            <span class="brand-name">bychoi workspace</span>
-        </a>
-        
-        <div class="actions">
-            <!-- PWA Install Button -->
-            <button id="btn-install-app" class="btn-install-app" title="홈 화면에 앱 설치하기" style="display: none;">
-                <span class="material-icons-outlined">install_mobile</span>
-                <span class="install-btn-text">앱 설치</span>
-            </button>
-            <div class="gh-wrapper">
-                <span id="gh-status"></span>
+        <div class="toolbar-inner">
+            <a href="index.html" class="brand">
+                <img src="assets/logo.svg" class="brand-logo" alt="Logo" loading="lazy">
+                <span class="brand-name">bychoi workspace</span>
+                <span class="brand-tag">Planning Studio</span>
+            </a>
+
+            <div class="actions">
+                <div class="gh-wrapper">
+                    <span id="gh-status"></span>
+                </div>
+
+                <!-- PWA Install Button -->
+                <button id="btn-install-app" class="btn-install-app" type="button" title="홈 화면에 앱 설치하기" style="display: none;">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="6" y="2.5" width="12" height="19" rx="2.2"></rect>
+                        <path d="M12 8v6"></path>
+                        <path d="M9.5 11.5L12 14l2.5-2.5"></path>
+                        <line x1="10" y1="18.5" x2="14" y2="18.5"></line>
+                    </svg>
+                    <span class="install-btn-text">앱 설치</span>
+                </button>
+
+                <!-- 3-Segment Theme Switcher (System / Light / Dark) -->
+                <div id="theme-switcher" class="theme-switcher" data-theme-switcher role="group" aria-label="화면 테마 설정">
+                    <button type="button" class="theme-seg-btn" data-theme-option="system" title="시스템 설정 자동 추종 (OS 테마 동기화)" aria-label="시스템 설정 자동 추종">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="2.5" y="3.5" width="19" height="13" rx="2"></rect>
+                            <line x1="8.5" y1="20.5" x2="15.5" y2="20.5"></line>
+                            <line x1="12" y1="16.5" x2="12" y2="20.5"></line>
+                        </svg>
+                        <span class="theme-seg-label">System</span>
+                    </button>
+                    <button type="button" class="theme-seg-btn" data-theme-option="light" title="라이트 모드" aria-label="라이트 모드">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <line x1="12" y1="2.5" x2="12" y2="4.5"></line>
+                            <line x1="12" y1="19.5" x2="12" y2="21.5"></line>
+                            <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line>
+                            <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line>
+                            <line x1="2.5" y1="12" x2="4.5" y2="12"></line>
+                            <line x1="19.5" y1="12" x2="21.5" y2="12"></line>
+                            <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line>
+                            <line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line>
+                        </svg>
+                        <span class="theme-seg-label">Light</span>
+                    </button>
+                    <button type="button" class="theme-seg-btn" data-theme-option="dark" title="다크 모드" aria-label="다크 모드">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"></path>
+                        </svg>
+                        <span class="theme-seg-label">Dark</span>
+                    </button>
+                </div>
+
+                <button id="btn-show-auth" class="toolbar-icon-btn" type="button" title="저장소 연결 설정" aria-label="저장소 연결 설정">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
             </div>
         </div>
     </header>
@@ -92,20 +154,33 @@
     <!-- Dashboard View -->
     <div id="dashboard-view">
         <div class="dashboard-header">
-            <h2 class="dashboard-title">My Projects</h2>
-            
+            <div class="dashboard-title-wrap">
+                <h2 class="dashboard-title">My Projects</h2>
+                <span id="project-total-badge" class="project-total-badge" aria-live="polite"></span>
+            </div>
+
             <!-- Search Bar (Centered & Highlighted) -->
             <div class="search-container">
-                <span class="material-icons-outlined search-icon">search</span>
-                <input type="text" id="project-search-input" placeholder="프로젝트명, 분류 또는 제목으로 검색..." autocomplete="off">
+                <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <line x1="20" y1="20" x2="16.2" y2="16.2"></line>
+                </svg>
+                <input type="text" id="project-search-input" placeholder="프로젝트명, 분류, 담당자 검색..." autocomplete="off">
+                <kbd class="search-kbd-hint" aria-hidden="true">/</kbd>
                 <!-- Auto-complete dropdown -->
                 <div id="search-dropdown" class="search-dropdown"></div>
             </div>
 
-            <button class="btn-accent btn-new-project" id="btn-create-project" title="새 프로젝트 생성">
-                <span class="material-icons-outlined">create_new_folder</span>
-                <span>New Project</span>
-            </button>
+            <div class="dashboard-header-actions">
+                <button type="button" class="mobile-landscape-theme-btn" data-theme-cycle title="테마 전환" aria-label="테마 전환"></button>
+                <button class="btn-accent btn-new-project" id="btn-create-project" type="button" title="새 프로젝트 생성">
+                    <svg class="plus-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>New Project</span>
+                </button>
+            </div>
         </div>
 
         <!-- Category Filter Bar (Option B Merge) -->
@@ -360,9 +435,10 @@
         </div>
     </div>
 
-    <script src="assets/templates.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/vctrl_clipboard.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/app.js?v=V430_BYCHOI_SELECT_FIX"></script>
-    <script src="assets/dashboard.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_theme.js?v=V431_DUAL_THEME"></script>
+    <script src="assets/templates.js?v=V431_DUAL_THEME"></script>
+    <script src="assets/vctrl_clipboard.js?v=V431_DUAL_THEME"></script>
+    <script src="assets/app.js?v=V431_DUAL_THEME"></script>
+    <script src="assets/dashboard.js?v=V431_DUAL_THEME"></script>
 </body>
 </html>

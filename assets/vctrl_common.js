@@ -273,6 +273,8 @@ window.ResponsiveFrameUtils = {
             });
 
             // 2.2 Clean runtime injected engine styles and scripts to keep saved HTML pure and lightweight
+            if (root.removeAttribute) root.removeAttribute('data-shell-theme');
+            root.querySelectorAll('[data-shell-theme]').forEach(function(el) { el.removeAttribute('data-shell-theme'); });
             root.querySelectorAll('#v4-inlined-style, #v4-responsive-frame-style, #v4-typography-rules, #v4-scroll-pin-style, #v4-cover-theme-fix, #v4-inlined-script').forEach(function(el) {
                 el.remove();
             });
@@ -300,11 +302,11 @@ window.highlightActive = function(btn, isActive) {
     if (btn.classList) {
         btn.classList.toggle('active', active);
     }
-    btn.style.background = active ? 'rgba(110, 86, 207, 0.25)' : 'rgba(255, 255, 255, 0.05)';
-    btn.style.borderColor = active ? '#6e56cf' : 'rgba(255, 255, 255, 0.15)';
-    btn.style.color = active ? '#ffffff' : '#94a3b8';
-    btn.style.fontWeight = active ? 'bold' : 'normal';
-    btn.style.boxShadow = active ? '0 0 6px rgba(110, 86, 207, 0.3)' : 'none';
+    btn.style.background = active ? 'var(--ed-toggle-active-bg, rgba(110, 86, 207, 0.25))' : 'var(--ed-toggle-idle-bg, rgba(255, 255, 255, 0.05))';
+    btn.style.borderColor = active ? 'var(--ed-toggle-active-border, #6e56cf)' : 'var(--ed-toggle-idle-border, rgba(255, 255, 255, 0.15))';
+    btn.style.color = active ? 'var(--ed-toggle-active-text, #ffffff)' : 'var(--ed-toggle-idle-text, #94a3b8)';
+    btn.style.fontWeight = active ? '600' : '500';
+    btn.style.boxShadow = 'none';
 };
 
 window.rgbToHex = function(rgb) {
@@ -887,6 +889,8 @@ window.v4CommonScript = `
                 el.style.removeProperty('transform');
                 el.style.removeProperty('will-change');
             });
+            if (root.removeAttribute) root.removeAttribute('data-shell-theme');
+            root.querySelectorAll('[data-shell-theme]').forEach(function(el) { el.removeAttribute('data-shell-theme'); });
             root.querySelectorAll('#v4-inlined-style, #v4-responsive-frame-style, #v4-typography-rules, #v4-scroll-pin-style, #v4-cover-theme-fix, #v4-inlined-script').forEach(function(el) {
                 el.remove();
             });

@@ -212,6 +212,13 @@ function _compileScreenHtml(content, fileName, isResponsive) {
         finalContent = syncCoverMetadata(finalContent, state.projectMetadata, false, fileName);
     }
 
+    // Stamp transient shell theme onto <html ...> for zero-flash responsive frame label contrast (stripped on save by ScreenSanitizer)
+    const initShellTheme = (window.ThemeManager && typeof window.ThemeManager.getEffectiveTheme === 'function')
+        ? window.ThemeManager.getEffectiveTheme()
+        : (document.documentElement.getAttribute('data-theme') || 'dark');
+    finalContent = finalContent.replace(/\sdata-shell-theme=["'][^"']*["']/gi, '');
+    finalContent = finalContent.replace(/<html\b/i, '<html data-shell-theme="' + (initShellTheme === 'light' ? 'light' : 'dark') + '"');
+
     return finalContent;
 }
 
@@ -254,6 +261,17 @@ function _mountScreenIframe(iframe, finalContent, isResponsive, DOM) {
         clearTimeout(loadTimeout);
         if (typeof window.hideLoading === 'function') window.hideLoading();
         iframe.onload = null;
+
+        if (iframe.contentWindow) {
+            const curTheme = (window.ThemeManager && typeof window.ThemeManager.getEffectiveTheme === 'function')
+                ? window.ThemeManager.getEffectiveTheme()
+                : (document.documentElement.getAttribute('data-theme') || 'dark');
+            if (window.MessageHub) {
+                MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_SHELL_THEME', { theme: curTheme });
+            } else {
+                iframe.contentWindow.postMessage({ type: 'BYCHOI_SYNC_SHELL_THEME', theme: curTheme }, '*');
+            }
+        }
 
         if (isResponsive && iframe.contentWindow) {
             const isGridVisible = localStorage.getItem('responsive_grid_visible') !== 'false';
@@ -308,11 +326,10 @@ function _updateViewerProjectHeader(DOM) {
     if (catBadgeEl && typeof window.resolveProjectCategory === 'function') {
         const cat = window.resolveProjectCategory(state.currentProject, state.projectMetadata);
         if (cat) {
-            catBadgeEl.style.setProperty('--cat-accent', cat.accentColor || '#818cf8');
-            catBadgeEl.style.setProperty('--cat-bg', cat.badgeBg || 'rgba(129, 140, 248, 0.14)');
-            catBadgeEl.style.setProperty('--cat-border', cat.badgeBorder || 'rgba(129, 140, 248, 0.34)');
+            catBadgeEl.style.setProperty('--cat-accent-dark', cat.accentColor || '#818cf8');
+            catBadgeEl.style.setProperty('--cat-accent-light', cat.lightAccent || cat.accentColor || '#4f46e5');
             catBadgeEl.innerHTML = `
-                <span class="viewer-cat-icon">${cat.svgIcon || ''}</span>
+                <span class="viewer-cat-dot" aria-hidden="true"></span>
                 <span class="viewer-cat-text">${cat.badge || cat.shortName || ''}</span>
             `;
             catBadgeEl.title = `과제 분류: ${cat.name || cat.badge}`;
@@ -320,6 +337,18 @@ function _updateViewerProjectHeader(DOM) {
         }
     }
 }
+
+window.addEventListener('bychoi:themechange', function (e) {
+    const iframe = (window.DOM && window.DOM.iframe) || document.getElementById('main-iframe');
+    if (iframe && iframe.contentWindow) {
+        const nextTheme = (e && e.detail && e.detail.theme) ? e.detail.theme : (document.documentElement.getAttribute('data-theme') || 'dark');
+        if (window.MessageHub) {
+            MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_SHELL_THEME', { theme: nextTheme });
+        } else {
+            iframe.contentWindow.postMessage({ type: 'BYCHOI_SYNC_SHELL_THEME', theme: nextTheme }, '*');
+        }
+    }
+});
 
 function _syncScreenStateAndMetadata(fileName, content, DOM) {
     let scMeta = (state.projectMetadata.screens || {})[fileName] || {};

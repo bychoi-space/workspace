@@ -12,6 +12,7 @@ $jsFiles = @(
     "assets/vctrl_typography.js",
     "assets/ui_library_fallback.js",
     "assets/vctrl_ui_library.js",
+    "assets/vctrl_theme.js",
     "assets/templates.js",
     "assets/app.js",
     "assets/vctrl_undo.js",

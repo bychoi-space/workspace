@@ -5,14 +5,36 @@
  */
 window.responsiveFrameStyles = `
 :root {
-    --v4-primary: #6366f1;
-    --v4-accent: #00e5ff;
+    --v4-primary: #6e56cf;
+    --v4-accent: #7c66dc;
     --v4-bg: #1e293b;
     --v4-frame-bg: #ffffff;
     --v4-text: #0f172a;
     --v4-subtext: #475569;
     --v4-border-color: #cbd5e1;
     --v4-header-bg: #f8fafc;
+    --v4-label-text: #94a3b8;
+    --v4-label-title: #cbd5e1;
+    --v4-label-active: #a78bfa;
+    --v4-label-hover-bg: rgba(255, 255, 255, 0.06);
+    --v4-label-input-bg: rgba(15, 23, 42, 0.55);
+    --v4-label-input-border: rgba(255, 255, 255, 0.14);
+    --v4-label-input-text: #e2e8f0;
+}
+
+html[data-shell-theme="light"] {
+    --v4-border-color: #bcc4d4;
+    --v4-label-text: #475569;
+    --v4-label-title: #334155;
+    --v4-label-active: #5b46c6;
+    --v4-label-hover-bg: rgba(15, 23, 42, 0.06);
+    --v4-label-input-bg: #ffffff;
+    --v4-label-input-border: #c5cddb;
+    --v4-label-input-text: #0f172a;
+}
+
+html {
+    background: transparent !important;
 }
 
 body {
@@ -58,14 +80,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
-    height: 32px;
-    background: #141720;
-    border: 1.6px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    color: #f1f5f9;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-    font-size: 11px;
+    padding: 0 4px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--v4-label-title);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Pretendard Variable', sans-serif;
+    font-size: 11.5px;
     box-sizing: border-box;
     margin-bottom: 6px;
     user-select: none;
@@ -77,48 +99,54 @@ body {
 .frame-label-title {
     display: flex;
     align-items: center;
-    gap: 6px;
-    color: #f1f5f9;
+    gap: 5px;
+    color: var(--v4-label-title);
     font-family: inherit;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
 
+.frame-label-title .material-icons-outlined,
+.frame-label-title svg {
+    font-size: 14px !important;
+    color: var(--v4-label-text) !important;
+}
+
 .frame-title-input {
     background: transparent;
-    border: 1.2px solid transparent;
+    border: 1px solid transparent;
     border-radius: 5px;
-    color: #f8fafc;
-    font-size: 11px;
+    color: var(--v4-label-title);
+    font-size: 11.5px;
     font-weight: 600;
     font-family: inherit;
     padding: 1px 5px;
     width: 170px;
     outline: none;
-    letter-spacing: -0.2px;
-    transition: all 0.2s;
+    letter-spacing: -0.015em;
+    transition: all 0.16s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
 
 .frame-title-input:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--v4-label-hover-bg);
 }
 
 .frame-title-input:focus {
     border-color: var(--v4-accent);
-    background: rgba(15, 23, 42, 0.9);
-    box-shadow: 0 0 6px rgba(0, 229, 255, 0.25);
+    background: var(--v4-label-input-bg);
+    color: var(--v4-label-input-text);
+    box-shadow: 0 0 0 2px rgba(124, 102, 220, 0.2);
 }
 
 .frame-label-height-control {
     display: flex;
     align-items: center;
     gap: 5px;
-    color: #94a3b8;
+    color: var(--v4-label-text);
     font-size: 10.5px;
     font-weight: 500;
     font-family: inherit;
@@ -128,19 +156,19 @@ body {
 }
 
 .frame-label-input {
-    width: 50px;
+    width: 48px;
     height: 20px;
     border-radius: 5px;
-    border: 1.2px solid rgba(0, 229, 255, 0.35);
-    background: #0f131a;
-    color: #38bdf8;
+    border: 1px solid var(--v4-label-input-border);
+    background: var(--v4-label-input-bg);
+    color: var(--v4-label-input-text);
     font-size: 10.5px;
     font-weight: 600;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, monospace;
     text-align: center;
     outline: none;
     padding: 0;
-    transition: all 0.2s;
+    transition: all 0.16s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -148,7 +176,7 @@ body {
 
 .frame-label-input:focus {
     border-color: var(--v4-accent);
-    box-shadow: 0 0 6px rgba(0, 229, 255, 0.3);
+    box-shadow: 0 0 0 2px rgba(124, 102, 220, 0.22);
 }
 
 /* --- Scrollable Content Containers --- */
@@ -187,18 +215,21 @@ body {
     background: #475569 !important;
 }
 
-/* --- Active Frame Selection Highlights (Zero-Shift) --- */
+/* --- Active Frame Selection Highlights (Zero-Shift Figma Studio Ring) --- */
 .pc-browser-frame, .mobile-frame, .mobile-browser-frame {
     transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .pc-browser-frame.active-frame, .mobile-frame.active-frame, .mobile-browser-frame.active-frame {
-    border: 1.6px solid #00e5ff !important;
-    box-shadow: 0 0 0 0.8px rgba(0, 229, 255, 0.8), 0 20px 40px rgba(0, 0, 0, 0.25) !important;
+    border: 1.6px solid var(--v4-accent) !important;
+    box-shadow: 0 0 0 1px rgba(124, 102, 220, 0.38), 0 18px 36px rgba(15, 23, 42, 0.16) !important;
 }
 
-.pc-column.active-column .frame-label-bar, .mobile-column.active-column .frame-label-bar {
-    border-color: rgba(0, 229, 255, 0.5) !important;
+.pc-column.active-column .frame-title-input,
+.mobile-column.active-column .frame-title-input,
+.pc-column.active-column .frame-label-title .material-icons-outlined,
+.mobile-column.active-column .frame-label-title .material-icons-outlined {
+    color: var(--v4-label-active) !important;
 }
 
 /* --- Grid Paper Canvas Inner Layers --- */
@@ -455,41 +486,40 @@ body.hide-frame-grid .mobile-content-inner,
 }
 
 .flow-arrow-badge {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    background: rgba(15, 23, 42, 0.75);
-    border: 1.6px solid var(--v4-accent, #00e5ff);
-    box-shadow: 0 0 16px rgba(0, 229, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.3);
+    background: var(--v4-label-input-bg);
+    border: 1.6px solid var(--v4-accent, #7c66dc);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--v4-accent, #00e5ff);
+    color: var(--v4-label-active, #7c66dc);
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .flow-arrow-badge:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 24px rgba(0, 229, 255, 0.6), 0 6px 16px rgba(0, 0, 0, 0.4);
-    background: rgba(15, 23, 42, 0.9);
+    transform: scale(1.06);
+    box-shadow: 0 6px 16px rgba(124, 102, 220, 0.25);
 }
 
 .flow-arrow-badge .flow-arrow-icon {
-    font-size: 24px;
+    font-size: 22px;
     transition: transform 0.3s ease;
 }
 
 .flow-arrow-label {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
-    letter-spacing: 0.8px;
-    color: var(--v4-accent, #00e5ff);
+    letter-spacing: 0.6px;
+    color: var(--v4-label-active, #7c66dc);
     text-transform: uppercase;
-    background: rgba(0, 229, 255, 0.1);
+    background: rgba(124, 102, 220, 0.12);
     padding: 3px 8px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 229, 255, 0.25);
+    border-radius: 999px;
+    border: 1px solid rgba(124, 102, 220, 0.28);
 }
 
 /* --- Base Canvas Guide Layer & Components --- */

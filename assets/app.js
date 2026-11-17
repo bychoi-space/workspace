@@ -1247,7 +1247,7 @@ window.PROJECT_CATEGORIES = [
             <circle cx="4.5" cy="5.25" r="0.75" fill="currentColor"/>
             <circle cx="6.8" cy="5.25" r="0.75" fill="currentColor"/>
             <rect x="4.5" y="9.2" width="5.5" height="3.8" rx="0.8" fill="currentColor" fill-opacity="0.45"/>
-            <rect x="14" y="8.5" width="8" height="12.5" rx="2" fill="#0f172a" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="14" y="8.5" width="8" height="12.5" rx="2" fill="var(--cat-svg-cutout, #0f172a)" stroke="currentColor" stroke-width="1.8"/>
             <rect x="15.5" y="10.2" width="5" height="7.5" rx="0.8" fill="currentColor" fill-opacity="0.32"/>
             <line x1="16.8" y1="19.2" x2="19.2" y2="19.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>`
@@ -1276,7 +1276,7 @@ window.PROJECT_CATEGORIES = [
             <line x1="7" y1="3.2" x2="7" y2="17.2" stroke="currentColor" stroke-width="1.6"/>
             <line x1="9.5" y1="7.2" x2="15.8" y2="7.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
             <line x1="9.5" y1="10.6" x2="14.2" y2="10.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-            <circle cx="17.5" cy="17.2" r="4.6" fill="#0f172a" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="17.5" cy="17.2" r="4.6" fill="var(--cat-svg-cutout, #0f172a)" stroke="currentColor" stroke-width="1.8"/>
             <circle cx="17.5" cy="17.2" r="1.6" fill="currentColor"/>
             <path d="M17.5 11.4V12.6M17.5 21.8V23M11.7 17.2H12.9M22.1 17.2H23.3M13.4 13.1L14.3 14M20.7 20.4L21.6 21.3M21.6 13.1L20.7 14M14.3 20.4L13.4 21.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>`
@@ -1303,7 +1303,7 @@ window.PROJECT_CATEGORIES = [
         svgIcon: `<svg class="category-custom-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="2" y="3" width="11.5" height="9.5" rx="2" stroke="currentColor" stroke-width="1.8" fill="currentColor" fill-opacity="0.18"/>
             <line x1="4.5" y1="6.2" x2="10.8" y2="6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <rect x="10.5" y="11.5" width="11.5" height="9.5" rx="2" fill="#0f172a" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="10.5" y="11.5" width="11.5" height="9.5" rx="2" fill="var(--cat-svg-cutout, #0f172a)" stroke="currentColor" stroke-width="1.8"/>
             <circle cx="16.25" cy="16.25" r="2.1" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.35"/>
             <path d="M16 4.5H20.5V9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M18.2 2.8L20.6 4.6L18.2 6.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1359,7 +1359,7 @@ window.PROJECT_CATEGORIES = [
         svgIcon: `<svg class="category-custom-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M4.5 19.5C4.5 15 10.5 15.5 11.5 12C12.5 8.5 18 9.5 18.5 5.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
             <circle cx="4.5" cy="19.5" r="2.3" fill="currentColor"/>
-            <circle cx="11.5" cy="12" r="2.2" fill="#0f172a" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="11.5" cy="12" r="2.2" fill="var(--cat-svg-cutout, #0f172a)" stroke="currentColor" stroke-width="1.8"/>
             <path d="M16.5 2.5V10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             <path d="M16.5 2.8L22 5.2L16.5 7.6V2.8Z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
         </svg>`

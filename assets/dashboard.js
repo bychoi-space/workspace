@@ -171,8 +171,11 @@ function renderThemePresets(selectedCategoryOrIndex) {
     autoCard.dataset.categoryId = 'auto';
     autoCard.dataset.index = '-1';
     autoCard.innerHTML = `
-        <div class="category-preset-icon" style="background: linear-gradient(135deg, #312e81 0%, #4f46e5 100%); color: #c7d2fe;">
-            <span class="material-icons-outlined">auto_awesome</span>
+        <div class="category-preset-icon category-preset-icon-auto">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"></path>
+                <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"></path>
+            </svg>
         </div>
         <div class="category-preset-info">
             <span class="category-preset-name">자동 분류 (제목 및 화면 기반 스마트 매칭)</span>
@@ -181,19 +184,18 @@ function renderThemePresets(selectedCategoryOrIndex) {
     `;
     container.appendChild(autoCard);
 
-    // 2. 7 Semantic Category Cards
+    // 2. Semantic Category Cards
     PROJECT_CATEGORIES.forEach((cat, idx) => {
         const card = document.createElement('button');
         card.type = 'button';
         card.className = `category-preset-card ${activeCatId === cat.id ? 'active' : ''}`;
         card.dataset.categoryId = cat.id;
         card.dataset.index = String(idx);
-        card.style.setProperty('--cat-accent', cat.accentColor);
-        card.style.setProperty('--cat-border', cat.badgeBorder);
-        card.style.setProperty('--cat-bg', cat.badgeBg);
+        card.style.setProperty('--cat-accent-dark', cat.accentColor);
+        card.style.setProperty('--cat-accent-light', cat.lightAccent || cat.accentColor);
         card.innerHTML = `
-            <div class="category-preset-icon" style="background: ${cat.solidGradient}; color: #ffffff;">
-                ${cat.svgIcon || `<span class="material-icons-outlined">${cat.icon}</span>`}
+            <div class="category-preset-icon">
+                ${cat.svgIcon || ''}
             </div>
             <div class="category-preset-info">
                 <span class="category-preset-name">${cat.name}</span>
@@ -236,7 +238,7 @@ function getFilteredProjects() {
     });
 }
 
-// Render top Category Filter Bar (Option B Merge)
+// Render top Category Filter Bar
 function renderCategoryFilterBar() {
     const bar = document.getElementById('category-filter-bar');
     if (!bar) return;
@@ -251,9 +253,21 @@ function renderCategoryFilterBar() {
         }
     });
 
+    const totalBadge = document.getElementById('project-total-badge');
+    if (totalBadge) {
+        totalBadge.textContent = counts.all > 0 ? String(counts.all) : '';
+    }
+
     let html = `
         <button type="button" class="category-tab-btn ${state.activeCategory === 'all' ? 'active' : ''}" data-category="all">
-            <span class="material-icons-outlined category-tab-icon">grid_view</span>
+            <span class="category-tab-svg-wrap category-tab-all-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3.5" y="3.5" width="7" height="7" rx="1.5"></rect>
+                    <rect x="13.5" y="3.5" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3.5" y="13.5" width="7" height="7" rx="1.5"></rect>
+                    <rect x="13.5" y="13.5" width="7" height="7" rx="1.5"></rect>
+                </svg>
+            </span>
             <span class="category-tab-label">전체 과제</span>
             <span class="category-tab-count">${counts.all}</span>
         </button>
@@ -264,8 +278,8 @@ function renderCategoryFilterBar() {
         const isActive = state.activeCategory === cat.id;
         const isEmpty = count === 0;
         html += `
-            <button type="button" class="category-tab-btn ${isActive ? 'active' : ''} ${isEmpty ? 'is-empty' : ''}" data-category="${cat.id}" style="--tab-accent: ${cat.accentColor}; --tab-bg: ${cat.badgeBg}; --tab-border: ${cat.badgeBorder};">
-                <span class="category-tab-svg-wrap" style="color: ${isActive ? '#ffffff' : cat.accentColor};">${cat.svgIcon}</span>
+            <button type="button" class="category-tab-btn ${isActive ? 'active' : ''} ${isEmpty ? 'is-empty' : ''}" data-category="${cat.id}" style="--tab-accent-dark: ${cat.accentColor}; --tab-accent-light: ${cat.lightAccent || cat.accentColor};">
+                <span class="category-tab-dot" aria-hidden="true"></span>
                 <span class="category-tab-label">${cat.shortName}</span>
                 <span class="category-tab-count">${count}</span>
             </button>
@@ -347,7 +361,7 @@ async function refreshFileList() {
 
         if (legacies.length > 0) {
             console.log("[Migration] Found legacy files in root. Moving to Default_Project...");
-            updateStatusUI('기존 파일 마이그레이션 중... ⏳', '#facc15');
+            updateStatusUI('기존 파일 마이그레이션 중...', '#f59e0b');
             
             const defaultMeta = await fetchProjectMetadata('Default_Project');
             for (const f of legacies) {
@@ -448,18 +462,28 @@ function renderSkeletons(count = 6) {
         updateStatusUI('', '');
     } catch (err) {
         console.error("refreshFileList error:", err); if (DOM.globalLoader) DOM.globalLoader.classList.remove('active', 'mobile-nano-only');
-        updateStatusUI('연결 확인 필요 ⚠️', '#fb923c');
+        updateStatusUI('연결 확인 필요', '#f97316');
         DOM.list.innerHTML = `
-            <div class="empty-text" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
-                <div style="font-size: 24px; margin-bottom: 16px; opacity:0.5;">📡</div>
-                <div style="font-weight: 600; margin-bottom: 8px;">데이터를 불러오는 데 어려움이 있습니다.</div>
-                <div style="font-size: 13px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.6;">
+            <div class="empty-state-card">
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                    </svg>
+                </div>
+                <div class="empty-state-title">데이터를 불러오는 데 어려움이 있습니다</div>
+                <div class="empty-state-desc">
                     원격 저장소에 접근할 수 없거나 토큰 권한이 만료되었을 수 있습니다.<br>
                     설정을 확인하거나 잠시 후 다시 시도해 주세요.
                 </div>
-                <button onclick="location.reload()" class="btn-secondary" style="width:auto; padding: 0 20px;">
-                    <span class="material-icons-outlined" style="font-size:18px; margin-right:6px;">refresh</span>
-                    새로고침
+                <button onclick="location.reload()" class="btn-secondary empty-state-btn" type="button">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    <span>새로고침</span>
                 </button>
             </div>`;
     } finally {
@@ -573,6 +597,14 @@ function ensureDayOfWeek(dateStr) {
 }
 
 
+function escapeHtmlAttr(str) {
+    return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
 async function renderList(projectsToRender = getFilteredProjects()) {
     if (projectsToRender.length === 0) {
         const isSearch = document.getElementById('project-search-input') && document.getElementById('project-search-input').value.trim() !== '';
@@ -585,10 +617,14 @@ async function renderList(projectsToRender = getFilteredProjects()) {
             msg = `'${activeCatObj.name}' 분류에 등록된 프로젝트가 없습니다. 프로젝트 정보 수정에서 분류를 지정할 수 있습니다.`;
         }
         DOM.list.innerHTML = `
-            <div class="empty-text" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: rgba(30, 41, 59, 0.4); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
-                <span class="material-icons-outlined" style="font-size: 44px; color: var(--accent-light, #9e8cfc); opacity: 0.7; margin-bottom: 14px; display: block;">folder_open</span>
-                <div style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">표시할 프로젝트가 없습니다</div>
-                <div style="font-size: 13px; color: var(--text-secondary);">${msg}</div>
+            <div class="empty-state-card">
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <div class="empty-state-title">표시할 프로젝트가 없습니다</div>
+                <div class="empty-state-desc">${escapeHtmlAttr(msg)}</div>
             </div>`;
         return;
     }
@@ -599,118 +635,140 @@ async function renderList(projectsToRender = getFilteredProjects()) {
         card.className = 'file-card';
         card.style.setProperty('--card-index', i);
         card.href = `viewer.html?project=${encodeURIComponent(p.name)}`;
-        
+
         const m = p.meta || {};
         const mainTitle = m.title || p.name;
 
         // Resolve semantic project category
         const category = resolveProjectCategory(p.name, m);
         card.dataset.category = category.id;
-        card.style.setProperty('--card-accent', category.lightAccent || category.accentColor);
-        card.style.setProperty('--card-glow', category.glowColor);
-        card.style.setProperty('--card-border-tint', category.accentColor);
+        card.style.setProperty('--card-accent-dark', category.accentColor);
+        card.style.setProperty('--card-accent-light', category.lightAccent || category.accentColor);
 
         // Extract screen composition summary
         const screenSummary = getScreenCompositionSummary(m);
 
-        const hasMeta = (m.assignee && m.assignee.trim()) || 
-                        (m.period && m.period.trim()) || 
-                        (m.figmaUrl && m.figmaUrl.trim()) ||
-                        (m.notionUrl && m.notionUrl.trim());
+        const assigneeVal = (m.assignee && m.assignee.trim()) ? m.assignee.trim() : '';
+        const periodVal = (m.period && m.period.trim()) ? m.period.trim() : '';
+        const figmaVal = (m.figmaUrl && m.figmaUrl.trim()) ? m.figmaUrl.trim() : '';
+        const notionVal = (m.notionUrl && m.notionUrl.trim()) ? m.notionUrl.trim() : '';
+        const hasMeta = Boolean(assigneeVal || periodVal || figmaVal || notionVal);
 
-        let chipsHtml = '';
-        if (hasMeta) {
-            chipsHtml += `<div class="card-meta-chips">`;
-            if (m.assignee && m.assignee.trim()) {
-                chipsHtml += `
-                    <div class="meta-chip meta-chip-assignee" title="담당자: ${m.assignee}">
-                        <span class="material-icons-outlined">person</span>
-                        <span>${m.assignee}</span>
-                    </div>`;
+        let leftMetaHtml = '';
+        if (assigneeVal || periodVal) {
+            const parts = [];
+            if (assigneeVal) {
+                parts.push(`<span class="meta-text-item meta-text-assignee" title="담당자: ${escapeHtmlAttr(assigneeVal)}">${escapeHtmlAttr(assigneeVal)}</span>`);
             }
-            if (m.period && m.period.trim()) {
-                const rawPeriod = m.period.includes(' ~ ') ? m.period.split(' ~ ')[0] : m.period;
+            if (periodVal) {
+                const rawPeriod = periodVal.includes(' ~ ') ? periodVal.split(' ~ ')[0] : periodVal;
                 const displayPeriod = ensureDayOfWeek(rawPeriod);
-                chipsHtml += `
-                    <div class="meta-chip meta-chip-period" title="기간: ${m.period}">
-                        <span class="material-icons-outlined">event</span>
-                        <span>${displayPeriod}</span>
-                    </div>`;
+                parts.push(`<span class="meta-text-item meta-text-period" title="기간: ${escapeHtmlAttr(periodVal)}">${escapeHtmlAttr(displayPeriod)}</span>`);
             }
-            if (m.figmaUrl && m.figmaUrl.trim()) {
-                chipsHtml += `
-                    <a href="${m.figmaUrl}" target="_blank" rel="noopener noreferrer" class="meta-chip meta-chip-figma" title="Figma 바로가기">
-                        <span class="material-icons-outlined">brush</span>
-                        <span>Figma</span>
-                    </a>`;
-            }
-            if (m.notionUrl && m.notionUrl.trim()) {
-                chipsHtml += `
-                    <a href="${m.notionUrl}" target="_blank" rel="noopener noreferrer" class="meta-chip meta-chip-notion" title="Notion 바로가기">
-                        <svg class="meta-chip-svg" viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-                            <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.373-.747.934zm14.337.747.093 10.92-2.147.14-.093-7.56-3.267 7.7-1.727.093-3.174-7.514v7.7l-2.007.14V7.942l2.613-.187 3.5 7.98 3.314-7.887z"/>
-                        </svg>
-                        <span>Notion</span>
-                    </a>`;
-            }
-            chipsHtml += `</div>`;
+            leftMetaHtml = parts.join('<span class="meta-dot-sep" aria-hidden="true">·</span>');
         } else {
             const latestDate = getLatestUpdateDate(m);
             const relativeTime = formatRelativeTime(latestDate);
-            const updateStr = relativeTime ? `${relativeTime} 업데이트` : '업데이트 없음';
-            
-            chipsHtml += `
-                <div class="card-meta-chips">
-                    <div class="meta-chip meta-chip-update" title="${updateStr}">
-                        <span class="material-icons-outlined">schedule</span>
-                        <span>${updateStr}</span>
-                    </div>
-                    <div class="meta-chip meta-chip-add-cta" data-project="${p.name}" title="프로젝트 정보 입력하기">
-                        <span class="material-icons-outlined">add</span>
-                        <span>정보 입력하기</span>
-                    </div>
+            const updateStr = relativeTime ? `${relativeTime} 업데이트` : '업데이트 기록 없음';
+            leftMetaHtml = `<span class="meta-text-item meta-text-update" title="${escapeHtmlAttr(updateStr)}">${escapeHtmlAttr(updateStr)}</span>`;
+        }
+
+        let rightLinksHtml = '';
+        if (figmaVal) {
+            rightLinksHtml += `
+                <a href="${escapeHtmlAttr(figmaVal)}" target="_blank" rel="noopener noreferrer" class="meta-chip meta-chip-figma" title="Figma 바로가기">
+                    <svg class="meta-chip-svg" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z"></path>
+                        <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z"></path>
+                        <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z"></path>
+                        <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z"></path>
+                        <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z"></path>
+                    </svg>
+                    <span>Figma</span>
+                </a>`;
+        }
+        if (notionVal) {
+            rightLinksHtml += `
+                <a href="${escapeHtmlAttr(notionVal)}" target="_blank" rel="noopener noreferrer" class="meta-chip meta-chip-notion" title="Notion 바로가기">
+                    <svg class="meta-chip-svg" viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true">
+                        <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.373-.747.934zm14.337.747.093 10.92-2.147.14-.093-7.56-3.267 7.7-1.727.093-3.174-7.514v7.7l-2.007.14V7.942l2.613-.187 3.5 7.98 3.314-7.887z"/>
+                    </svg>
+                    <span>Notion</span>
+                </a>`;
+        }
+        if (!hasMeta) {
+            rightLinksHtml += `
+                <div class="meta-chip meta-chip-add-cta" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 정보 입력하기">
+                    <svg class="meta-chip-svg" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>정보 입력</span>
                 </div>`;
         }
 
         card.innerHTML = `
-            <div class="copy-url-btn-card" data-project="${p.name}" title="프로젝트 단축 URL 복사">
-                <span class="material-icons-outlined">link</span>
-            </div>
-            <div class="pdf-btn-card" data-project="${p.name}" title="프로젝트 전체 스크린 PDF 다운로드">
-                <span class="material-icons-outlined">picture_as_pdf</span>
-            </div>
-            <div class="edit-btn-card" data-project="${p.name}" title="정보 수정">
-                <span class="material-icons-outlined">edit</span>
-            </div>
-            <div class="delete-btn-card" data-project="${p.name}" title="프로젝트 삭제">
-                <span class="material-icons-outlined">delete_outline</span>
-            </div>
-
-            <!-- Compact Semantic Category Header Banner (Option A - Light Card Edition) -->
-            <div class="card-category-banner" style="background: ${category.headerBg}; border-bottom: 1px solid ${category.headerBorder};">
+            <div class="card-category-banner">
                 <div class="card-category-left">
-                    <div class="card-category-icon-box" style="background: ${category.solidGradient};">
-                        ${category.svgIcon || `<span class="material-icons-outlined">${category.icon}</span>`}
+                    <div class="card-category-icon-box" aria-hidden="true">
+                        ${category.svgIcon || ''}
                     </div>
-                    <span class="card-category-badge" style="color: ${category.headerTextColor};">${category.name}</span>
+                    <span class="card-category-badge">${escapeHtmlAttr(category.name)}</span>
                 </div>
                 <div class="card-category-right">
                     <span class="card-screen-count-pill" title="총 ${p.screens}개 화면">
-                        <span class="material-icons-outlined">filter_none</span>
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="7" y="3" width="14" height="14" rx="2"></rect>
+                            <path d="M17 17v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h2"></path>
+                        </svg>
                         <span>${p.screens}</span>
                     </span>
+                    <div class="card-action-group">
+                        <div class="copy-url-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 URL 복사">
+                            <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                        </div>
+                        <div class="pdf-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="전체 화면 PDF 다운로드">
+                            <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <path d="M12 18v-6"></path>
+                                <path d="M9.5 15.5L12 18l2.5-2.5"></path>
+                            </svg>
+                        </div>
+                        <div class="edit-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 정보 수정">
+                            <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 20h9"></path>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="delete-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 삭제">
+                            <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Card Body: Full Title + Screen Composition Summary + Footer Chips -->
             <div class="card-info">
-                <div class="card-name" title="${mainTitle}">${mainTitle}</div>
-                <div class="card-screen-summary" title="화면 구성: ${screenSummary.fullText}">
-                    <span class="material-icons-outlined card-summary-icon">auto_awesome_motion</span>
-                    <span class="card-summary-text">${screenSummary.shortText}</span>
+                <div class="card-name" title="${escapeHtmlAttr(mainTitle)}">${escapeHtmlAttr(mainTitle)}</div>
+                <div class="card-screen-summary" title="화면 구성: ${escapeHtmlAttr(screenSummary.fullText)}">
+                    <svg class="card-summary-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    <span class="card-summary-text">${escapeHtmlAttr(screenSummary.shortText)}</span>
                 </div>
                 <div class="card-footer-divider"></div>
-                ${chipsHtml}
+                <div class="card-meta-chips">
+                    <div class="card-meta-primary">${leftMetaHtml}</div>
+                    ${rightLinksHtml ? `<div class="card-meta-links">${rightLinksHtml}</div>` : ''}
+                </div>
             </div>
         `;
         DOM.list.appendChild(card);
@@ -767,7 +825,7 @@ document.addEventListener('click', async (e) => {
         
         const confirmed = await Notification.confirm(`'${projectName}' 프로젝트와 모든 관련 파일을 삭제하시겠습니까?\n이 작업은 절대 되돌릴 수 없습니다.`, "프로젝트 영구 삭제");
         if (confirmed) {
-            updateStatusUI('프로젝트 삭제 중... ⏳', '#f87171');
+            updateStatusUI('프로젝트 삭제 중...', '#f87171');
             
             // 게이지바 초기화 및 활성화
             let deleteProgress = 10;
@@ -874,7 +932,7 @@ async function openEditProjectModal(projectName) {
     context.currentEditingProject = projectName;
     if (DOM.modalMainTitle) DOM.modalMainTitle.innerText = "프로젝트 정보 수정";
     if (DOM.groupIdField) DOM.groupIdField.style.display = "none";
-    updateStatusUI('메타데이터 로딩 중... ⏳', '#facc15');
+    updateStatusUI('메타데이터 로딩 중...', '#f59e0b');
     
     let m = null;
     try {
@@ -981,7 +1039,7 @@ if (DOM.btnModalSave) {
         }
     } catch (err) {
         console.error("[ModalSave] Error:", err);
-        DOM.btnModalSave.innerText = "에러 발생 ❌";
+        DOM.btnModalSave.innerText = "저장 실패";
         DOM.btnModalSave.style.background = "#ef4444";
         DOM.btnModalSave.disabled = false;
         DOM.btnModalSave.style.opacity = '';
@@ -1091,19 +1149,59 @@ if (searchInput && searchDropdown) {
                 const cat = resolveProjectCategory(p.name, p.meta);
                 const url = `viewer.html?project=${encodeURIComponent(p.name)}`;
                 return `
-                    <a href="${url}" class="search-item" style="text-decoration:none;">
-                        <span class="search-item-icon" style="color:${cat.accentColor}; display:inline-flex; align-items:center; justify-content:center;">${cat.svgIcon || `<span class="material-icons-outlined">${cat.icon}</span>`}</span>
+                    <a href="${url}" class="search-item" style="text-decoration:none; --search-cat-dark:${cat.accentColor}; --search-cat-light:${cat.lightAccent || cat.accentColor};">
+                        <span class="search-item-icon">${cat.svgIcon || ''}</span>
                         <div style="display:flex; flex-direction:column; min-width:0; flex:1;">
-                            <span class="search-item-title">${mainTitle}</span>
-                            <span class="search-item-sub">${cat.name} • ID: ${p.name}</span>
+                            <span class="search-item-title">${escapeHtmlAttr(mainTitle)}</span>
+                            <span class="search-item-sub">${escapeHtmlAttr(cat.name)} · ${escapeHtmlAttr(p.name)}</span>
                         </div>
                     </a>
                 `;
             }).join('');
             searchDropdown.classList.add('active');
         } else {
-            searchDropdown.innerHTML = `<div class="search-item" style="justify-content:center;"><span class="search-item-title" style="color:var(--text-secondary);">검색 결과가 없습니다.</span></div>`;
+            searchDropdown.innerHTML = `<div class="search-item" style="justify-content:center;"><span class="search-item-title" style="color:var(--dash-text-2, var(--text-secondary));">검색 결과가 없습니다.</span></div>`;
             searchDropdown.classList.add('active');
+        }
+    });
+
+    // Quick '/' focus & 'Escape' dismiss for Studio Search & Modals
+    document.addEventListener('keydown', (e) => {
+        const activeTag = document.activeElement ? document.activeElement.tagName : '';
+        const isTyping = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable);
+
+        if (e.key === '/' && !isTyping && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            const anyModalOpen = document.querySelector('.modal-overlay.active, .dialog-overlay.active');
+            if (!anyModalOpen) {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            }
+            return;
+        }
+
+        if (e.key === 'Escape') {
+            if (searchDropdown.classList.contains('active')) {
+                searchDropdown.classList.remove('active');
+            }
+            if (document.activeElement === searchInput) {
+                if (searchInput.value) {
+                    searchInput.value = '';
+                    renderList(getFilteredProjects());
+                }
+                searchInput.blur();
+                return;
+            }
+            if (DOM.modal && DOM.modal.classList.contains('active')) {
+                DOM.modal.classList.remove('active');
+            }
+            if (DOM.authModal && DOM.authModal.classList.contains('active')) {
+                hideAuthModal();
+            }
+            const guideModal = document.getElementById('modal-install-guide');
+            if (guideModal && guideModal.style.display === 'flex') {
+                guideModal.style.display = 'none';
+            }
         }
     });
 

@@ -1613,7 +1613,8 @@ body.fullscreen-mode #btn-fullscreen-exit {
 }
 
 #sidebar-right {
-    width: 275px;
+    width: 252px;
+    flex-shrink: 0;
     background: var(--panel-bg);
     display: flex;
     flex-direction: column;

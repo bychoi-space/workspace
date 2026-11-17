@@ -1408,6 +1408,12 @@ window.v4Script = `
                 var curBgColor = canvas.dataset.canvasBgColor || canvas.style.backgroundColor || (isResponsive ? '#ffffff' : '#f8fafc');
                 notifyParent({ type: 'BYCHOI_CANVAS_BACKGROUND_UPDATED', hasBg: true, url: d.imageUrl, opacity: opVal, bgColor: curBgColor });
             }
+        },
+        'BYCHOI_SYNC_SHELL_THEME': function(d) {
+            var shellTheme = (d && d.theme === 'light') ? 'light' : 'dark';
+            if (document.documentElement) {
+                document.documentElement.setAttribute('data-shell-theme', shellTheme);
+            }
         }
     };
 

@@ -27,10 +27,10 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '사각형 사각도형',
             category: 'Shapes',
             icon: 'crop_square',
-            iconColor: '#00e5ff',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '100px',
             height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<div style="width: 40px; height: 30px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 4px;"></div>`,
             html: `
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c8c8c8; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #050505; overflow: hidden; box-sizing: border-box;">
@@ -43,10 +43,10 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '원 원형 동그라미',
             category: 'Shapes',
             icon: 'panorama_fish_eye',
-            iconColor: '#00e5ff',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '100px',
             height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<div style="width: 30px; height: 30px; background: #ffffff; border: 1.6px solid #c8c8c8; border-radius: 50%;"></div>`,
             html: `
             <div class="v4-shape v4-shape-circle" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c8c8c8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #050505; overflow: hidden; box-sizing: border-box;">
@@ -59,10 +59,10 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '삼각형 삼각 세모',
             category: 'Shapes',
             icon: 'change_history',
-            iconColor: '#00e5ff',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '100px',
             height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<div style="width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 30px solid rgb(255, 255, 255);"></div>`,
             html: `
             <div class="v4-shape v4-shape-triangle" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: flex-end; justify-content: center; color: #050505; overflow: visible; box-sizing: border-box; position: relative;">
@@ -80,11 +80,11 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '다이아몬드 마름모 조건 의사결정',
             category: 'Shapes',
             iconType: 'svg',
-            iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 18px; height: 18px;"><polygon points="12 2 22 12 12 22 2 12"></polygon></svg>',
-            iconColor: '#00e5ff',
+            iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 18px; height: 18px; color: var(--ed-lib-icon, currentColor);"><polygon points="12 2 22 12 12 22 2 12"></polygon></svg>',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '100px',
             height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<div style="width: 30px; height: 30px; background: #ffffff; border: 1.6px solid #c8c8c8; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>`,
             html: `
             <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: #050505; overflow: visible; box-sizing: border-box; position: relative;">
@@ -100,10 +100,10 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '직선 라인 선 구분선 디바이더 가로선 세로선',
             category: 'Shapes',
             icon: 'horizontal_rule',
-            iconColor: '#00e5ff',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '200px',
             height: '2px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<div style="display: flex; align-items: center; justify-content: center; width: 34px; height: 30px;"><div style="width: 100%; height: 2px; background: #00e5ff; border-radius: 1px;"></div></div>`,
             html: `
             <div class="v4-shape v4-shape-line" data-line-dir="horizontal" data-line-style="solid" data-line-width="1.6" data-line-color="#c8c8c8" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; overflow: visible; box-sizing: border-box; position: relative;">
@@ -118,10 +118,10 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '화살표 방향 지시 흐름도',
             category: 'Shapes',
             icon: 'trending_flat',
-            iconColor: '#00e5ff',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '100px',
             height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<svg viewBox="0 0 100 100" style="width: 30px; height: 30px; overflow: visible;"><path d="M 0,30 L 60,30 L 60,10 L 100,50 L 60,90 L 60,70 L 0,70 Z" style="fill: rgb(255, 255, 255); stroke: rgb(200, 200, 200); stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,
             html: `
             <div class="v4-shape v4-shape-arrow" data-arrow-dir="right" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; color: #050505; overflow: visible; box-sizing: border-box; position: relative;">
@@ -141,8 +141,8 @@ window.V4_COMPONENT_LIBRARY = {
             isTool: true,
             toolName: 'text',
             icon: 'title',
-            iconColor: '#00e5ff',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
+            cardStyle: '',
             html: '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:#050505; font-size:13px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5; white-space:nowrap;">Edit Text</div>'
         },
         {
@@ -151,10 +151,10 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '표 테이블',
             category: 'Shapes',
             icon: 'table_chart',
-            iconColor: '#00e5ff',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '200px',
             height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<div style="width: 80px; height: 40px; border: 1.6px solid #c8c8c8; background: #f0f0f0; border-radius: 4px;"></div>`,
             html: `
             <table class="v4-premium-table" style="background: #ffffff; border: 1.6px solid #c8c8c8; color: #050505; font-family: inherit; width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; box-sizing: border-box;">
@@ -182,10 +182,10 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '이미지 사진 첨부 업로드 파일 그림 png jpg',
             category: 'Shapes',
             icon: 'image',
-            iconColor: '#00e5ff',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '120px',
             height: '100px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<div style="width: 40px; height: 30px; background: rgba(0, 229, 255, 0.1); border: 1.6px solid rgba(0, 229, 255, 0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center;"><span class="material-icons-outlined" style="font-size: 18px; color: #00e5ff;">image</span></div>`,
             html: `<div class="v4-shape v4-shape-image" data-natural-width="120" data-natural-height="100" data-aspect-ratio="1.2" style="width: 100%; height: 100%; background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23cbd5e1%22 stroke-width=%221.6%22><rect width=%2220%22 height=%2220%22 x=%222%22 y=%222%22 rx=%222%22 ry=%222%22/><circle cx=%228.5%22 cy=%228.5%22 r=%221.5%22/><path d=%22M21 15l-5-5L5 21%22/></svg>'); background-size: cover; background-position: center; background-repeat: no-repeat; box-sizing: border-box; border: 1.6px solid transparent;"></div>`
         },
@@ -197,10 +197,10 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '웹페이지 브라우저 화면 창 홈페이지 사이트',
             category: 'Shapes',
             icon: 'web',
-            iconColor: '#00e5ff',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
             width: '160px',
             height: '120px',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            cardStyle: '',
             previewHtml: `<div style="width: 38px; height: 28px; background: var(--v4-component-bg, rgb(255, 255, 255)); border: 1.6px solid var(--v4-border-color, rgb(200, 200, 200)); border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box;"><div style="width: 100%; height: 7px; background: rgba(0, 0, 0, 0.05); border-bottom: 1px solid var(--v4-border-color, rgb(200, 200, 200)); display: flex; align-items: center; padding: 0 4px; gap: 2px;"><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #ef4444;"></div><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #eab308;"></div><div style="width: 2.5px; height: 2.5px; border-radius: 50%; background: #22c55e;"></div></div></div>`,
             html: `
             <div class="v4-shape v4-shape-webpage" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; background: #ffffff; border: 1.6px solid #c8c8c8; border-radius: 8px; overflow: hidden; box-sizing: border-box;">
@@ -222,8 +222,8 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '패턴 격자 그리드 모눈종이',
             category: 'Shapes',
             icon: 'grid_4x4',
-            iconColor: '#00e5ff',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
+            cardStyle: '',
             previewHtml: `<div class="v4-shape-pattern-grid" style="width: 40px; height: 30px; background: #ffffff; border: 1.6px solid #c8c8c8;"></div>`,
             html: `
             <div class="v4-shape v4-shape-pattern-grid" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #c8c8c8; display: flex; align-items: center; justify-content: center; color: #050505; overflow: hidden; box-sizing: border-box;">
@@ -236,8 +236,8 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '물결 웨이브 파도 구분선',
             category: 'Shapes',
             icon: 'waves',
-            iconColor: '#00e5ff',
-            cardStyle: 'background: rgba(0, 229, 255, 0.05); border: 1.6px solid rgba(0, 229, 255, 0.1) !important;',
+            iconColor: 'var(--ed-lib-icon, currentColor)',
+            cardStyle: '',
             width: '360px',
             height: '20px',
             previewHtml: `<svg viewBox="0 0 100 20" preserveAspectRatio="none" style="width: 45px; height: 15px;"><polygon points="0,6 12.5,2 25,6 37.5,2 50,6 62.5,2 75,6 87.5,2 100,6 100,16 87.5,12 75,16 62.5,12 50,16 37.5,12 25,16 12.5,12 0,16" style="fill: #ffffff; stroke: #00e5ff; stroke-width: 1.6; vector-effect: non-scaling-stroke;" /></svg>`,

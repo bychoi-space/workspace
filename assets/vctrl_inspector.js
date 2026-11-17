@@ -343,21 +343,52 @@ window.switchSidebarTab = function(tabName) {
 
 // --- 3. UI Rendering & Inspector Dispatcher Sub-modules ---
 
-// 3.1 Project Metadata UI Manager (SSOT)
+// 3.1 Project Metadata UI Manager (SSOT — Compact Popover + Persistent Inputs)
 const ProjectMetadataManager = {
+    _escapeAttr(val) {
+        return String(val || '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    },
+    _computeSummary(assignee, developer, period) {
+        const parts = [];
+        const a = String(assignee || '').trim();
+        const d = String(developer || '').trim();
+        const p = String(period || '').trim();
+        if (a) parts.push(a);
+        else if (d) parts.push(d);
+        if (p) {
+            const shortP = p.includes(' ~ ') ? (p.split(' ~ ')[0] + '~') : p;
+            parts.push(shortP);
+        }
+        return parts.length > 0 ? parts.join(' · ') : '프로젝트 정보';
+    },
     renderBar(pm) {
+        const safePm = pm || {};
+        const figmaUrl = (safePm.figmaUrl && safePm.figmaUrl.trim()) ? safePm.figmaUrl.trim() : '';
+        const notionUrl = (safePm.notionUrl && safePm.notionUrl.trim()) ? safePm.notionUrl.trim() : '';
+        const summaryTxt = this._computeSummary(safePm.assignee, safePm.developer, safePm.period);
+
         let linksHtml = '';
-        if (pm.figmaUrl && pm.figmaUrl.trim()) {
+        if (figmaUrl) {
             linksHtml += `
-                <a href="${pm.figmaUrl}" target="_blank" rel="noopener noreferrer" class="v4-meta-chip meta-chip-link meta-chip-figma" title="Figma 바로가기 (새 창)">
-                    <span class="material-icons-outlined" style="font-size:13px; line-height:1;">brush</span>
+                <a href="${this._escapeAttr(figmaUrl)}" target="_blank" rel="noopener noreferrer" class="v4-meta-chip meta-chip-link meta-chip-figma" title="Figma 바로가기 (새 창)">
+                    <svg class="meta-chip-svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z"></path>
+                        <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z"></path>
+                        <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z"></path>
+                        <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z"></path>
+                        <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z"></path>
+                    </svg>
                     <span>Figma</span>
                 </a>`;
         }
-        if (pm.notionUrl && pm.notionUrl.trim()) {
+        if (notionUrl) {
             linksHtml += `
-                <a href="${pm.notionUrl}" target="_blank" rel="noopener noreferrer" class="v4-meta-chip meta-chip-link meta-chip-notion" title="Notion 바로가기 (새 창)">
-                    <svg class="meta-chip-svg" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="flex-shrink:0;">
+                <a href="${this._escapeAttr(notionUrl)}" target="_blank" rel="noopener noreferrer" class="v4-meta-chip meta-chip-link meta-chip-notion" title="Notion 바로가기 (새 창)">
+                    <svg class="meta-chip-svg" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="flex-shrink:0;" aria-hidden="true">
                         <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.373-.747.934zm14.337.747.093 10.92-2.147.14-.093-7.56-3.267 7.7-1.727.093-3.174-7.514v7.7l-2.007.14V7.942l2.613-.187 3.5 7.98 3.314-7.887z"/>
                     </svg>
                     <span>Notion</span>
@@ -366,49 +397,132 @@ const ProjectMetadataManager = {
 
         DOM.metadataPanel.innerHTML = `
             <div class="v4-meta-horizontal">
-                <input type="hidden" id="viewer-meta-title" value="${pm.title || ''}">
-                <div class="v4-meta-chip meta-chip-assignee" title="담당자 (Assignee)">
-                    <span class="meta-chip-label">ASSIGNEE</span>
-                    <span class="meta-chip-divider"></span>
-                    <input type="text" id="viewer-meta-assignee" class="meta-chip-input" value="${pm.assignee || ''}" placeholder="담당자" autocomplete="off">
-                </div>
-                <div class="v4-meta-chip meta-chip-developer" title="개발자 (Developer)">
-                    <span class="meta-chip-label">DEV</span>
-                    <span class="meta-chip-divider"></span>
-                    <input type="text" id="viewer-meta-developer" class="meta-chip-input" value="${pm.developer || ''}" placeholder="개발자" autocomplete="off">
-                </div>
-                <div class="v4-meta-chip meta-chip-period" title="사업 기간 (Period)">
-                    <span class="meta-chip-label">PERIOD</span>
-                    <span class="meta-chip-divider"></span>
-                    <input type="text" id="viewer-meta-period" class="meta-chip-input" value="${pm.period || ''}" placeholder="사업 기간" autocomplete="off">
+                <input type="hidden" id="viewer-meta-title" value="${this._escapeAttr(safePm.title || '')}">
+                <div class="project-meta-popover-anchor" id="project-meta-popover-anchor">
+                    <button type="button" class="project-meta-trigger-btn" id="btn-project-meta-popover" aria-expanded="false" title="프로젝트 담당자·개발자·기간 확인 및 편집">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span class="project-meta-summary-txt" id="project-meta-summary-txt">${this._escapeAttr(summaryTxt)}</span>
+                        <svg class="project-meta-chevron" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="project-meta-popover-card" id="project-meta-popover-card" role="dialog" aria-label="프로젝트 메타 정보">
+                        <div class="project-meta-popover-head">
+                            <span class="project-meta-popover-title">프로젝트 기본 정보</span>
+                            <span class="project-meta-popover-hint">자동 저장 연동</span>
+                        </div>
+                        <div class="project-meta-popover-row-2">
+                            <label class="project-meta-field">
+                                <span class="project-meta-field-label">담당 기획자</span>
+                                <input type="text" id="viewer-meta-assignee" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.assignee || '')}" placeholder="담당자 입력" autocomplete="off">
+                            </label>
+                            <label class="project-meta-field">
+                                <span class="project-meta-field-label">담당 개발자</span>
+                                <input type="text" id="viewer-meta-developer" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.developer || '')}" placeholder="개발자 입력" autocomplete="off">
+                            </label>
+                        </div>
+                        <label class="project-meta-field">
+                            <span class="project-meta-field-label">진행 기간</span>
+                            <input type="text" id="viewer-meta-period" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.period || '')}" placeholder="예: 2026.10.01 ~ 2026.12.31" autocomplete="off">
+                        </label>
+                    </div>
                 </div>
                 ${linksHtml}
             </div>
         `;
         this.bindEvents();
     },
+    _refreshSummaryFromInputs() {
+        const summaryEl = document.getElementById('project-meta-summary-txt');
+        if (!summaryEl) return;
+        const aVal = document.getElementById('viewer-meta-assignee')?.value || '';
+        const dVal = document.getElementById('viewer-meta-developer')?.value || '';
+        const pVal = document.getElementById('viewer-meta-period')?.value || '';
+        summaryEl.textContent = this._computeSummary(aVal, dVal, pVal);
+    },
     bindEvents() {
-        // Additional metadata bar events can be bound here
+        const anchor = document.getElementById('project-meta-popover-anchor');
+        const trigger = document.getElementById('btn-project-meta-popover');
+        const popover = document.getElementById('project-meta-popover-card');
+        if (trigger && popover && anchor) {
+            trigger.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const nextOpen = !popover.classList.contains('is-open');
+                popover.classList.toggle('is-open', nextOpen);
+                trigger.classList.toggle('active', nextOpen);
+                trigger.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
+            };
+        }
+
+        ['viewer-meta-assignee', 'viewer-meta-developer', 'viewer-meta-period'].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => this._refreshSummaryFromInputs());
+            }
+        });
+
+        if (!this._outsideClickBound) {
+            this._outsideClickBound = true;
+            document.addEventListener('click', (e) => {
+                const pop = document.getElementById('project-meta-popover-card');
+                const anc = document.getElementById('project-meta-popover-anchor');
+                const trg = document.getElementById('btn-project-meta-popover');
+                if (pop && pop.classList.contains('is-open') && anc && !anc.contains(e.target)) {
+                    // Keep open if clicking inside Flatpickr calendar
+                    if (e.target.closest && e.target.closest('.flatpickr-calendar')) return;
+                    pop.classList.remove('is-open');
+                    if (trg) {
+                        trg.classList.remove('active');
+                        trg.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const pop = document.getElementById('project-meta-popover-card');
+                    const trg = document.getElementById('btn-project-meta-popover');
+                    if (pop && pop.classList.contains('is-open')) {
+                        pop.classList.remove('is-open');
+                        if (trg) {
+                            trg.classList.remove('active');
+                            trg.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                }
+            });
+        }
     },
     updateFields(pm) {
-        const titleIn = document.getElementById('viewer-meta-title'); if (titleIn) titleIn.value = pm.title || '';
-        const assigneeIn = document.getElementById('viewer-meta-assignee'); if (assigneeIn && document.activeElement !== assigneeIn) assigneeIn.value = pm.assignee || '';
-        const devIn = document.getElementById('viewer-meta-developer'); if (devIn && document.activeElement !== devIn) devIn.value = pm.developer || '';
-        const periodIn = document.getElementById('viewer-meta-period'); if (periodIn && document.activeElement !== periodIn) periodIn.value = pm.period || '';
+        const safePm = pm || {};
+        const titleIn = document.getElementById('viewer-meta-title'); if (titleIn) titleIn.value = safePm.title || '';
+        const assigneeIn = document.getElementById('viewer-meta-assignee'); if (assigneeIn && document.activeElement !== assigneeIn) assigneeIn.value = safePm.assignee || '';
+        const devIn = document.getElementById('viewer-meta-developer'); if (devIn && document.activeElement !== devIn) devIn.value = safePm.developer || '';
+        const periodIn = document.getElementById('viewer-meta-period'); if (periodIn && document.activeElement !== periodIn) periodIn.value = safePm.period || '';
+        this._refreshSummaryFromInputs();
     }
 };
 
 // 3.2 Update Top Metadata Bar & Footer
 function _syncTopMetadataBar(pm) {
     if (!DOM.metadataPanel) return;
-    if (!DOM.metadataPanel.innerHTML.includes('v4-meta-horizontal')) {
-        ProjectMetadataManager.renderBar(pm);
+    const safePm = pm || {};
+    const linksSig = ((safePm.figmaUrl || '').trim()) + '|' + ((safePm.notionUrl || '').trim());
+    const popEl = document.getElementById('project-meta-popover-card');
+    const isEditingPopover = popEl && popEl.contains(document.activeElement);
+    if (!DOM.metadataPanel.innerHTML.includes('v4-meta-horizontal') || (!isEditingPopover && ProjectMetadataManager._lastLinksSig !== linksSig)) {
+        ProjectMetadataManager._lastLinksSig = linksSig;
+        ProjectMetadataManager.renderBar(safePm);
     } else {
-        ProjectMetadataManager.updateFields(pm);
+        ProjectMetadataManager.updateFields(safePm);
     }
     const updatedTxt = document.getElementById('meta-updated-txt');
     if (updatedTxt) {
-        updatedTxt.innerText = pm.updated ? `최종 업데이트: ${pm.updated}` : '최종 업데이트: -';
+        updatedTxt.innerText = safePm.updated ? `최종 업데이트: ${safePm.updated}` : '최종 업데이트: -';
     }
 }
 

@@ -97,6 +97,8 @@
     - **역할**: 프로젝트 재개정 이력 전용 도메인 모듈. 재개정 이력 팝업 모달(`#history-modal`), 버전/일자/작성자/개발자/변경내용 인라인 추가/수정/삭제 렌더링(`window.renderHistoryPopup`) 및 메타데이터 동기화를 전담합니다.
   - **`vctrl_clipboard.js` (Clipboard & URL Manager - Parent Side)**:
     - **역할**: 프로젝트 URL 및 스크린 공유 URL 복사, 헤더 드롭다운 메뉴 제어, 시스템 클립보드 비동기 복사 fallback(`copyTextToClipboard`), 프로젝트 간(Cross-Project) 및 탭 간(Cross-Tab) 오브젝트/서식 클립보드 하이브리드 영속화(`window.top` 메모리 + `localStorage` dual-layer SSOT)를 전담합니다.
+  - **`vctrl_theme.js` / `dashboard.css` / `viewer_theme.css` (Dual-Theme UI Shell Engine SSOT - Parent Side)**:
+    - **역할**: `index.html`(`body.dashboard-page`) 및 `viewer.html`(`body.editor-page`)의 다크/라이트/시스템(OS `prefers-color-scheme` 실시간 추종 기본값) 3단 듀얼 테마 상태(`localStorage` 키 `bychoi_ui_theme`), `<head>` 무깜빡임(Zero-FOUC) 동기 부트스트랩, 탭 간 `storage` 동기화, 반응형 프레임 외곽 라벨 가독성 브릿지(`BYCHOI_SYNC_SHELL_THEME`, 저장 시 `ScreenSanitizer.cleanDOM`에서 완전 제거)를 전담하며, `#main-iframe` 내부의 사용자 작성 원본 화면 마크업/색상은 100% 무오염으로 격리 보존합니다 (`window.ThemeManager`).
   - **`vctrl_component_atoms_data.js` (Atoms Definition SSOT - Parent Side)**:
     - **역할**: V4 아톰 컴포넌트 라이브러리(`window.V4_COMPONENT_LIBRARY.atoms`)의 단일 진실 공급원. 표준 버튼, 뱃지, 텍스트박스, 텍스트에어리어, 스테퍼, 셀렉트박스, 체크박스, 라디오, 토글, 파일업로드, 데이트피커, 서치바, 아코디언, 알림, 팝업, 커서, 웹 에디터 아톰 등의 템플릿 마크업을 전담 정의합니다. 모든 신규 생성 오브젝트는 `data-v4-std="2"` 스코프 하에 공통 기본값(배경 `#FFFFFF` / 계층 헤더 `#F0F0F0`, 테두리 `#C8C8C8`, 텍스트 `#050505`, 폰트 `13px`, 커넥터 `#646464`)을 따르며 기존 저장 화면은 100% 보존됩니다.
   - **`vctrl_component_data.js` (Component Definition SSOT - Parent Side)**:

@@ -509,9 +509,118 @@
     "renewal_order_4.html": {
       "title": "주문서 (Te-Be) 배송지없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-17T07:55:11.094Z",
+      "updatedAt": "2026-11-17T07:56:52.289Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[배송 정보] 영역\n- 로그인 된 회원의 등록된 배송지 정보가 없을 경우 입력 폼 즉시 노출\n- [기본배송지] 플래그 및 [배송지 변경] 버튼 미노출\n- 필수 입력 항목 : 이름, 주소, 연락처\n- 선택 입력 항목 : 배송 요청사항\n\n\n※ 필수 항목 미입력 상태에서 [결제하기] 클릭 시 입력 안내 얼럿 노출",
+          "html": "[배송 정보] 영역<div>- 로그인 된 회원의 등록된 배송지 정보가 없을 경우 입력 폼 즉시 노출</div><div>- [기본배송지] 플래그 및 [배송지 변경] 버튼 미노출</div><div>- 필수 입력 항목 : 이름, 주소, 연락처</div><div>- 선택 입력 항목 : 배송 요청사항</div><div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">※ 필수 항목 미입력 상태에서 [결제하기] 클릭 시 입력 안내 얼럿 노출</span></div>",
+          "x": 20,
+          "y": 175,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 175,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 60,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 175,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 60,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[주소찾기] 버튼\n- 클릭 시 우편번호 검색 레이어 호출\n- 주소 선택 시 우편번호, 기본주소 영역 자동 입력 (임의 수정 불가)\n- 주소 선택 완료 후 상세주소 입력란으로 포커스 자동 이동",
+          "html": "[주소찾기] 버튼<div>- 클릭 시 우편번호 검색 레이어 호출</div><div>- 주소 선택 시 우편번호, 기본주소 영역 자동 입력 (임의 수정 불가)</div><div>- 주소 선택 완료 후 상세주소 입력란으로 포커스 자동 이동</div>",
+          "x": 262,
+          "y": 268,
+          "pins": {
+            "pc": {
+              "x": 262,
+              "y": 268,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 212,
+              "y": 140,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 262,
+              "y": 268,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 212,
+              "y": 140,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "'기본배송지 등록' Check Box\n- Default 활성화\n- 활성화 상태에서 결제 완료 시 입력한 배송지를 회원 기본배송지로 자동 등록\n- 비활성화 시 이번 주문 건에만 일회성 배송지로 적용",
+          "html": "'기본배송지 등록' Check Box<div>- Default 활성화</div><div>- 활성화 상태에서 결제 완료 시 입력한 배송지를 회원 기본배송지로 자동 등록</div><div>- 비활성화 시 이번 주문 건에만 일회성 배송지로 적용</div>",
+          "x": 38,
+          "y": 460,
+          "pins": {
+            "pc": {
+              "x": 38,
+              "y": 460,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 352,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 38,
+              "y": 460,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 352,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -666,9 +775,154 @@
     "renewal_order_6.html": {
       "title": "주문서 (Te-Be) 배송지변경",
       "type": "ui",
-      "updatedAt": "2026-11-17T07:55:02.014Z",
+      "updatedAt": "2026-11-17T07:56:52.289Z",
       "template": "template_responsive_pc_mobile.html",
-      "description": [],
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[배송지 변경] 팝업\n- 바닥 화면 '배송지 변경' 버튼 클릭 시 팝업 호출\n- [새로운 배송지] / [배송지 목록] 탭 구조로 구성\n- 팝업 최초 호출 시 Default 노출 탭 : [배송지 목록] 탭 활성화\n\n\n※ PC 화면은 탭별 UI 확인을 위해 팝업을 좌/우 병렬 배치하여 표현",
+          "html": "[배송지 변경] 팝업<div>- 바닥 화면 '배송지 변경' 버튼 클릭 시 팝업 호출</div><div>- [새로운 배송지] / [배송지 목록] 탭 구조로 구성</div><div>- 팝업 최초 호출 시 Default 노출 탭 : [배송지 목록] 탭 활성화</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ PC 화면은 탭별 UI 확인을 위해 팝업을 좌/우 병렬 배치하여 표현</span></div>",
+          "x": 155,
+          "y": 95,
+          "pins": {
+            "pc": {
+              "x": 155,
+              "y": 95,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 10,
+              "y": 146,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 155,
+              "y": 95,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 10,
+              "y": 146,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[새로운 배송지] 탭\n- 신규 배송지 정보 직접 입력 기능 제공\n   : 필수 입력 - 이름, 주소([주소찾기] 연동), 연락처\n   : 선택 입력 - 배송 요청사항\n- '기본배송지 등록' Check Box 제공 (Default 활성화)\n   : 활성화 시 회원 기본배송지로 저장 및 바닥 화면 배송 정보에 반영\n   : 비활성화 시 현재 주문서에만 일회성 배송지로 반영",
+          "html": "[새로운 배송지] 탭<div>- 신규 배송지 정보 직접 입력 기능 제공\n   : 필수 입력 - 이름, 주소([주소찾기] 연동), 연락처\n   : 선택 입력 - 배송 요청사항</div><div>- '기본배송지 등록' Check Box 제공 (Default 활성화)\n   : 활성화 시 회원 기본배송지로 저장 및 바닥 화면 배송 정보에 반영\n   : 비활성화 시 현재 주문서에만 일회성 배송지로 반영</div>",
+          "x": 175,
+          "y": 155,
+          "pins": {
+            "pc": {
+              "x": 175,
+              "y": 155,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 10,
+              "y": 206,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 175,
+              "y": 155,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 10,
+              "y": 206,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[적용] / [취소] 버튼\n- [적용] 버튼 클릭 시 입력된 배송지 정보를 바닥 화면에 반영 후 팝업 자동 닫힘 처리\n   (필수 항목 미입력 시 입력 안내 얼럿 노출)\n- [취소] 또는 우측 상단 [×] 버튼 클릭 시 팝업 닫힘 처리\n- 안내 얼럿 없음",
+          "html": "[적용] / [취소] 버튼<div>- [적용] 버튼 클릭 시 입력된 배송지 정보를 바닥 화면에 반영 후 팝업 자동 닫힘 처리\n   (필수 항목 미입력 시 입력 안내 얼럿 노출)</div><div>- [취소] 또는 우측 상단 [×] 버튼 클릭 시 팝업 닫힘 처리</div><div>- 안내 얼럿 없음</div>",
+          "x": 285,
+          "y": 540,
+          "pins": {
+            "pc": {
+              "x": 285,
+              "y": 540,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 120,
+              "y": 591,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 285,
+              "y": 540,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 120,
+              "y": 591,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[배송지 목록] 탭\n- 회원 계정에 등록된 배송지 리스트 호출 ([기본배송지] 최상단 고정 노출)\n- 리스트 내 [적용] 버튼 클릭 시 선택한 배송지 정보를 바닥 화면에 반영 후 팝업 자동 닫힘 처리\n- 리스트 내 [수정] 버튼 클릭 시 선택한 배송지 정보가 세팅된 입력 폼으로 전환되어 수정 가능",
+          "html": "[배송지 목록] 탭<div>- 회원 계정에 등록된 배송지 리스트 호출 ([기본배송지] 최상단 고정 노출)</div><div>- 리스트 내 [적용] 버튼 클릭 시 선택한 배송지 정보를 바닥 화면에 반영 후 팝업 자동 닫힘 처리</div><div>- 리스트 내 [수정] 버튼 클릭 시 선택한 배송지 정보가 세팅된 입력 폼으로 전환되어 수정 가능</div>",
+          "x": 785,
+          "y": 155,
+          "pins": {
+            "pc": {
+              "x": 785,
+              "y": 155,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 175,
+              "y": 206,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 785,
+              "y": 155,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 175,
+              "y": 206,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
@@ -898,7 +1152,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-17 16:28:17",
+  "updated": "2026-11-17 16:56:52",
   "version": 0.2,
   "category": "project"
 }

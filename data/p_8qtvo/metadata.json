@@ -46,7 +46,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-17T06:29:13.643Z",
+      "updatedAt": "2026-11-17T07:28:17.956Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -187,6 +187,42 @@
           "standardized": true,
           "scrollFixed": "none",
           "fixedHost": "group-1794363100036"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[결제 수단] 영역\n- PC UI 변경사항 없음\n- Mobile UI 표현 방법 수정",
+          "html": "[결제 수단] 영역\n- PC UI 변경사항 없음\n- Mobile UI 표현 방법 수정",
+          "x": 20,
+          "y": 1285,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 1285,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 1544,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 1285,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 1544,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
         }
       ],
       "connectors": [],
@@ -862,7 +898,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-17 16:22:03",
+  "updated": "2026-11-17 16:28:17",
   "version": 0.1,
   "category": "project"
 }

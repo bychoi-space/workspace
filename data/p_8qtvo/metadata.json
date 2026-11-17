@@ -320,7 +320,7 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-13T05:41:01.120Z",
+      "updatedAt": "2026-11-17T00:30:34.923Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -392,8 +392,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "Edit Text",
-          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "text": "주문하기 버튼 클릭 시, 선택 된 상품이 없을 경우 얼럿 노출",
+          "html": "주문하기 버튼 클릭 시, 선택 된 상품이 없을 경우 얼럿 노출",
           "x": 861,
           "y": 370,
           "pins": {
@@ -823,7 +823,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-16 18:24:43",
+  "updated": "2026-11-17 09:30:34",
   "version": 0.1,
   "category": "project"
 }

@@ -39,8 +39,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <link rel="stylesheet" href="assets/viewer.css?v=V434_STAGE_MATTE">
-    <link rel="stylesheet" href="assets/ui_library.css?v=V432_VIEWER_DUAL_THEME">
+    <link rel="stylesheet" href="assets/viewer.css?v=V437_ALIGNMENT_POLISH">
+    <link rel="stylesheet" href="assets/ui_library.css?v=V436_CORNER_QUILL">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
         if (window.location.protocol.startsWith('http')) {
@@ -59,7 +59,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
 
     <link rel="stylesheet" href="assets/responsive_workspace.css?v=V433_SHELL_CONTRAST">
-    <link rel="stylesheet" href="assets/viewer_theme.css?v=V434_STAGE_MATTE">
+    <link rel="stylesheet" href="assets/viewer_theme.css?v=V438_SCROLLPIN_CONTRAST">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -566,65 +566,77 @@
                                 <div class="selection-align-grid-3">
                                     <button id="btn-align-left"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="Left (Ctrl+1)">
+                                        title="좌측 정렬 (Ctrl+1)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <path d="M4 2v20M8 6h12v4H8zM8 14h8v4H8z" />
+                                            <line x1="4" y1="3" x2="4" y2="21"></line>
+                                            <rect x="7.5" y="6" width="12.5" height="4" rx="1"></rect>
+                                            <rect x="7.5" y="14" width="8.5" height="4" rx="1"></rect>
                                         </svg>
                                     </button>
                                     <button id="btn-align-center"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="Center (Ctrl+2)">
+                                        title="가로 중앙 정렬 (Ctrl+2)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <path d="M12 2v2M12 20v2M8 4h8v6H8zM6 14h12v6H6z" />
+                                            <path d="M12 2.5V6M12 10v4M12 18v3.5"></path>
+                                            <rect x="7.5" y="6" width="9" height="4" rx="1"></rect>
+                                            <rect x="4.5" y="14" width="15" height="4" rx="1"></rect>
                                         </svg>
                                     </button>
                                     <button id="btn-align-right"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="Right (Ctrl+3)">
+                                        title="우측 정렬 (Ctrl+3)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <path d="M20 2v20M4 6h12v4H4zM8 14h12v4H8z" />
+                                            <line x1="20" y1="3" x2="20" y2="21"></line>
+                                            <rect x="4" y="6" width="12.5" height="4" rx="1"></rect>
+                                            <rect x="8" y="14" width="8.5" height="4" rx="1"></rect>
                                         </svg>
                                     </button>
                                 </div>
                                 <div class="selection-align-grid-3">
                                     <button id="btn-align-top"
-                                        class="v4-inspector-btn btn-secondary selection-align-btn" title="Top (Ctrl+4)">
+                                        class="v4-inspector-btn btn-secondary selection-align-btn" title="상단 정렬 (Ctrl+4)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <path d="M2 4h20M6 8v12h4V8zM14 8v8h4V8z" />
+                                            <line x1="3" y1="4" x2="21" y2="4"></line>
+                                            <rect x="6" y="7.5" width="4" height="12.5" rx="1"></rect>
+                                            <rect x="14" y="7.5" width="4" height="8.5" rx="1"></rect>
                                         </svg>
                                     </button>
                                     <button id="btn-align-middle"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="Middle (Ctrl+5)">
+                                        title="세로 중앙 정렬 (Ctrl+5)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <path d="M2 12h2M20 12h2M4 8h6v8H4zM14 6h6v12h-6z" />
+                                            <path d="M2.5 12H6M10 12h4M18 12h3.5"></path>
+                                            <rect x="6" y="4.5" width="4" height="15" rx="1"></rect>
+                                            <rect x="14" y="7.5" width="4" height="9" rx="1"></rect>
                                         </svg>
                                     </button>
                                     <button id="btn-align-bottom"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="Bottom (Ctrl+6)">
+                                        title="하단 정렬 (Ctrl+6)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <path d="M2 20h20M6 4v12h4V4zM14 8v8h4V8z" />
+                                            <line x1="3" y1="20" x2="21" y2="20"></line>
+                                            <rect x="6" y="4" width="4" height="12.5" rx="1"></rect>
+                                            <rect x="14" y="8" width="4" height="8.5" rx="1"></rect>
                                         </svg>
                                     </button>
                                 </div>
-                                <div class="selection-align-grid-2">
+                                <div id="selection-distribute-row" class="selection-align-grid-2" style="display: none;">
                                     <button id="btn-align-distribute-h"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="Distribute Horizontally">
+                                        title="가로 간격 균등 배분">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <line x1="4" y1="2" x2="4" y2="22"></line>
-                                            <line x1="20" y1="2" x2="20" y2="22"></line>
-                                            <rect x="9" y="6" width="6" height="12" rx="1"></rect>
+                                            <line x1="4" y1="3" x2="4" y2="21"></line>
+                                            <line x1="20" y1="3" x2="20" y2="21"></line>
+                                            <rect x="9.5" y="6" width="5" height="12" rx="1"></rect>
                                         </svg>
                                     </button>
                                     <button id="btn-align-distribute-v"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
-                                        title="Distribute Vertically">
+                                        title="세로 간격 균등 배분">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <line x1="2" y1="4" x2="22" y2="4"></line>
-                                            <line x1="20" y1="2" x2="20" y2="20"></line>
-                                            <rect x="6" y="9" width="12" height="6" rx="1"></rect>
+                                            <line x1="3" y1="4" x2="21" y2="4"></line>
+                                            <line x1="3" y1="20" x2="21" y2="20"></line>
+                                            <rect x="6" y="9.5" width="12" height="5" rx="1"></rect>
                                         </svg>
                                     </button>
                                 </div>
@@ -1128,7 +1140,7 @@
     <script src="assets/vctrl_common.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_object_shape.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_object_connector.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/responsive_frame.js?v=V433_SHELL_CONTRAST"></script>
+    <script src="assets/responsive_frame.js?v=V435_CLEAN_INPUTS"></script>
     <script src="assets/vctrl_iframe_styles.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_style_extractor.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_dimmed_layer.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1154,7 +1166,7 @@
     <script src="assets/vctrl_responsive_multiselect.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_scroll_pin.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_pins.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_grouping.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_grouping.js?v=V437_ALIGNMENT_POLISH"></script>
     <script src="assets/vctrl_color_picker.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_component_atoms_data.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_component_data.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1166,7 +1178,7 @@
     <script src="assets/vctrl_system_modals.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/inspector/inspector_quill.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/inspector/inspector_scroll_pin.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_inspector_actionbar.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_inspector_actionbar.js?v=V437_ALIGNMENT_POLISH"></script>
     <script src="assets/vctrl_inspector_sync.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_inspector.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_screen_manager.js?v=V429_BYCHOI_NAMESPACE"></script>

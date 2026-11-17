@@ -3390,6 +3390,10 @@ body.fullscreen-mode .stage {
     gap: 6px;
 }
 
+.selection-align-grid-3 + .selection-align-grid-3 {
+    margin-top: 6px;
+}
+
 .selection-align-grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

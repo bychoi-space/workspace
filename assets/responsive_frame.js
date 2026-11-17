@@ -156,7 +156,7 @@ body {
 }
 
 .frame-label-input {
-    width: 48px;
+    width: 44px;
     height: 20px;
     border-radius: 5px;
     border: 1px solid var(--v4-label-input-border);
@@ -167,11 +167,20 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, monospace;
     text-align: center;
     outline: none;
-    padding: 0;
+    padding: 0 3px;
+    box-sizing: border-box;
+    -moz-appearance: textfield;
+    appearance: textfield;
     transition: all 0.16s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+}
+
+.frame-label-input::-webkit-outer-spin-button,
+.frame-label-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .frame-label-input:focus {

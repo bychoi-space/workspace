@@ -817,16 +817,26 @@
 
 .v4-corner-dir-grid {
     display: grid !important;
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    grid-template-columns: 1.42fr repeat(4, minmax(0, 1fr)) !important;
     gap: 4px !important;
 }
 
 .v4-corner-dir-btn {
-    padding: 0 3px !important;
+    padding: 0 4px !important;
     gap: 3px !important;
     font-size: 10.5px !important;
     white-space: nowrap !important;
     min-width: 0 !important;
+}
+
+.v4-corner-dir-btn[data-corner-dir="all"] {
+    padding: 0 6px !important;
+    gap: 3.5px !important;
+}
+
+.v4-corner-dir-btn .v4-svg-icon-12 {
+    width: 11px !important;
+    height: 11px !important;
 }
 
 .v4-prop-grid-6 {

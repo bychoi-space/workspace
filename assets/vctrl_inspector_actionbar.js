@@ -34,18 +34,23 @@
             if (btnAddToMolecules) btnAddToMolecules.style.setProperty('display', canAddMolecule ? 'flex' : 'none', 'important');
             if (alignBar) {
                 alignBar.style.setProperty('display', (hasSelection && !isSingleGroup) ? 'block' : 'none', 'important');
+                const distRow = document.getElementById('selection-distribute-row');
                 const btnDistH = document.getElementById('btn-align-distribute-h');
                 const btnDistV = document.getElementById('btn-align-distribute-v');
+                const showDistribute = selIds.length >= 2;
                 const canDistribute = selIds.length >= 3;
+                if (distRow) {
+                    distRow.style.setProperty('display', showDistribute ? 'grid' : 'none', 'important');
+                }
                 if (btnDistH) {
                     btnDistH.style.opacity = canDistribute ? '1' : '0.35';
                     btnDistH.style.pointerEvents = canDistribute ? 'auto' : 'none';
-                    btnDistH.title = canDistribute ? 'Distribute Horizontally' : 'Distribute Horizontally (3개 이상 선택 시 사용 가능)';
+                    btnDistH.title = canDistribute ? '가로 간격 균등 배분' : '가로 간격 균등 배분 (3개 이상 선택 시 사용 가능)';
                 }
                 if (btnDistV) {
                     btnDistV.style.opacity = canDistribute ? '1' : '0.35';
                     btnDistV.style.pointerEvents = canDistribute ? 'auto' : 'none';
-                    btnDistV.title = canDistribute ? 'Distribute Vertically' : 'Distribute Vertically (3개 이상 선택 시 사용 가능)';
+                    btnDistV.title = canDistribute ? '세로 간격 균등 배분' : '세로 간격 균등 배분 (3개 이상 선택 시 사용 가능)';
                 }
             }
             const styleActionRow = document.getElementById('selection-style-action-row');

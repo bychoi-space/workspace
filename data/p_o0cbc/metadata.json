@@ -311,7 +311,7 @@
           "scrollFixed": "none"
         }
       ],
-      "updatedAt": "2026-11-17T00:16:02.967Z",
+      "updatedAt": "2026-11-17T00:18:27.162Z",
       "version": 0.1,
       "connectors": []
     },
@@ -820,7 +820,7 @@
   "themeIndex": 2,
   "category": "front_admin",
   "assignee": "고범곤",
-  "updated": "2026-11-17 09:16:02",
+  "updated": "2026-11-17 09:18:27",
   "version": 0.1,
   "period": "",
   "screenOrder": [

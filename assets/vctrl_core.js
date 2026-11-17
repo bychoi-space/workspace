@@ -1,5 +1,5 @@
 /**
- * vctrl_core.js - Central Orchestrator for LF Editor Studio
+ * vctrl_core.js - Central Orchestrator for bychoi workspace Studio
  * Responsibility: State management, Message routing, Save/Load orchestration.
  */
 
@@ -149,7 +149,9 @@ function _detectScreenResponsive(fileName, content) {
 }
 
 function _compileScreenHtml(content, fileName, isResponsive) {
-    let finalContent = content;
+    let finalContent = (typeof window.upgradeBychoiMarkupNamespace === 'function')
+        ? window.upgradeBychoiMarkupNamespace(content)
+        : content;
 
     // Ensure Pretendard Variable WebFont CDN is loaded in iframe head
     const pretendardCdnTag = '<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">';
@@ -189,7 +191,7 @@ function _compileScreenHtml(content, fileName, isResponsive) {
         'v4GridScript', 'v4AccordionScript', 'v4TabScript', 'v4ResponsivePinsScript', 'spawnResponsiveDualPins',
         'v4IframeDimmedLayerScript', 'V4DimmedLayer',
         'v4ImageCropScript', 'V4ImageCropEngine',
-        'LF_GROUP_SELECTED', 'GroupingManager', 'renderGrid', 'renderTabs'
+        'BYCHOI_GROUP_SELECTED', 'GroupingManager', 'renderGrid', 'renderTabs'
     ];
     finalContent = finalContent.replace(scriptRegex, (match, scriptBody) => {
         if (/data-keep\s*=\s*["']true["']|id\s*=\s*["']ia-tree-script["']/i.test(match)) return match;
@@ -257,7 +259,7 @@ function _mountScreenIframe(iframe, finalContent, isResponsive, DOM) {
             const isGridVisible = localStorage.getItem('responsive_grid_visible') !== 'false';
             setTimeout(() => {
                 if (window.MessageHub) {
-                    MessageHub.send(iframe.contentWindow, 'LF_SET_RESPONSIVE_GRID', { visible: isGridVisible });
+                    MessageHub.send(iframe.contentWindow, 'BYCHOI_SET_RESPONSIVE_GRID', { visible: isGridVisible });
                 }
             }, 80);
         }
@@ -267,14 +269,14 @@ function _mountScreenIframe(iframe, finalContent, isResponsive, DOM) {
             const descList = state.activeFile?.meta?.description || [];
             setTimeout(() => {
                 if (window.MessageHub) {
-                    MessageHub.send(iframe.contentWindow, 'LF_IMPORT_RESPONSIVE_PINS', { pins: descList });
+                    MessageHub.send(iframe.contentWindow, 'BYCHOI_IMPORT_RESPONSIVE_PINS', { pins: descList });
                 }
             }, 80);
         } else {
             const legacyPins = (state.activeFile?.meta?.description || []).filter(p => p.type === 'pin' || p.type === 'text' || p.text || p.html);
             if (iframe.contentWindow) {
                 setTimeout(() => {
-                    iframe.contentWindow.postMessage({ type: 'LF_IMPORT_PINS', pins: legacyPins }, '*');
+                    iframe.contentWindow.postMessage({ type: 'BYCHOI_IMPORT_PINS', pins: legacyPins }, '*');
                 }, 80);
             }
         }
@@ -461,13 +463,13 @@ window.V4UndoManager = {
     saveState: function () {
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            MessageHub.send(iframe.contentWindow, 'LF_SAVE_UNDO');
+            MessageHub.send(iframe.contentWindow, 'BYCHOI_SAVE_UNDO');
         }
     },
     undo: function () {
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            MessageHub.send(iframe.contentWindow, 'LF_TRIGGER_UNDO');
+            MessageHub.send(iframe.contentWindow, 'BYCHOI_TRIGGER_UNDO');
         }
     }
 };
@@ -477,7 +479,7 @@ window.markAsDirty = function () {
     // Sync connectors to iframe for Undo support
     const iframe = document.getElementById('main-iframe');
     if (iframe && iframe.contentWindow && window.state && window.state.connectors) {
-        MessageHub.send(iframe.contentWindow, 'LF_SYNC_CONNECTORS', { connectors: window.state.connectors });
+        MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_CONNECTORS', { connectors: window.state.connectors });
     }
 
     // Continuously reset idle debounce timers on every edit (MUST run before hasUnsavedChanges early return)
@@ -866,9 +868,9 @@ window.toggleResponsiveGrid = function () {
     const iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe');
     if (iframe && iframe.contentWindow) {
         if (window.MessageHub) {
-            MessageHub.send(iframe.contentWindow, 'LF_SET_RESPONSIVE_GRID', { visible: newVisible });
+            MessageHub.send(iframe.contentWindow, 'BYCHOI_SET_RESPONSIVE_GRID', { visible: newVisible });
         } else {
-            iframe.contentWindow.postMessage({ type: 'LF_SET_RESPONSIVE_GRID', visible: newVisible }, '*');
+            iframe.contentWindow.postMessage({ type: 'BYCHOI_SET_RESPONSIVE_GRID', visible: newVisible }, '*');
         }
     }
     if (typeof window.updateResponsiveGridBtnUI === 'function') {

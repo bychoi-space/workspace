@@ -3,7 +3,7 @@
  * 
  * Dedicated Multi-Selection (Marquee) Coordinate Normalizer for Responsive PC & Mobile Screens.
  * - Resolves the coordinate space mismatch caused by nested scroll containers (.pc-content-inner, .mobile-content-inner).
- * - Intercepts LF_MARQUEE_START to recalculate targets with accurate viewport bounding rectangles.
+ * - Intercepts BYCHOI_MARQUEE_START to recalculate targets with accurate viewport bounding rectangles.
  * - Strictly isolated: 0% side-effect or interference on non-responsive standard templates.
  */
 
@@ -28,7 +28,7 @@ window.v4ResponsiveMultiselectScript = `
 
     function recalculateTargetsForResponsive() {
         const correctedTargets = [];
-        const components = document.querySelectorAll('.lf-component:not(.connector-line):not(.pin-marker):not(.text-marker):not(.v4-pin-marker)');
+        const components = document.querySelectorAll('.bychoi-component:not(.connector-line):not(.pin-marker):not(.text-marker):not(.v4-pin-marker)');
         
         components.forEach(function(c) {
             if (!c || !c.getBoundingClientRect) return;
@@ -39,7 +39,7 @@ window.v4ResponsiveMultiselectScript = `
             let isChild = false;
             let parent = c.parentElement;
             while (parent && parent !== document.body) {
-                if (parent.classList && (parent.classList.contains('lf-component') || parent.classList.contains('lf-group'))) {
+                if (parent.classList && (parent.classList.contains('bychoi-component') || parent.classList.contains('bychoi-group'))) {
                     isChild = true;
                     break;
                 }
@@ -64,7 +64,7 @@ window.v4ResponsiveMultiselectScript = `
             window._responsiveMarqueeInterceptorAttached = true;
             const originalNotifyParent = window.notifyParent;
             window.notifyParent = function(data) {
-                if (data && data.type === 'LF_MARQUEE_START' && checkIsResponsiveScreen()) {
+                if (data && data.type === 'BYCHOI_MARQUEE_START' && checkIsResponsiveScreen()) {
                     try {
                         const targets = recalculateTargetsForResponsive();
                         if (targets && targets.length > 0) {
@@ -90,7 +90,7 @@ window.v4ResponsiveMultiselectScript = `
 
     let prevMarqueeSelectedIds = new Set();
 
-    window.v4MessageHandlers['LF_UPDATE_MARQUEE_SELECTION'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_MARQUEE_SELECTION'] = function(d) {
         const ids = d.ids || [];
         const isDragging = !!d.isDragging;
         const idSet = new Set(ids);
@@ -116,7 +116,7 @@ window.v4ResponsiveMultiselectScript = `
             prevMarqueeSelectedIds = idSet;
         } else {
             // Drag finished: Ensure 100% full integrity sync and reset state
-            const allComps = document.querySelectorAll('.lf-component');
+            const allComps = document.querySelectorAll('.bychoi-component');
             for (let i = 0; i < allComps.length; i++) {
                 const x = allComps[i];
                 const shouldBeSelected = idSet.has(x.id);
@@ -145,7 +145,7 @@ window.v4ResponsiveMultiselectScript = `
                 const homoInfo = window.getHomogeneousSelectionInfo();
                 if (homoInfo && homoInfo.isMultiSame) {
                     window.notifyParent({
-                        type: 'LF_MULTI_SELECTION_STYLES',
+                        type: 'BYCHOI_MULTI_SELECTION_STYLES',
                         isMultiSameType: true,
                         commonType: homoInfo.commonType,
                         selectedCount: homoInfo.count,
@@ -157,7 +157,7 @@ window.v4ResponsiveMultiselectScript = `
         }
     };
 
-    window.v4MessageHandlers['LF_ALIGN_SELECTED'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_ALIGN_SELECTED'] = function(d) {
         const ids = d.ids || [];
         const alignType = d.alignType || d.type;
         if (ids.length < 1) return;
@@ -165,7 +165,7 @@ window.v4ResponsiveMultiselectScript = `
 
         const doc = document;
         const items = [];
-        const allHandles = doc.querySelectorAll('.lf-drag-handle, .lf-resizer, .lf-delete-trigger');
+        const allHandles = doc.querySelectorAll('.bychoi-drag-handle, .bychoi-resizer, .bychoi-delete-trigger');
         const handleStates = Array.from(allHandles).map(function(h) { return h.style.display; });
         allHandles.forEach(function(h) { h.style.display = 'none'; });
 
@@ -175,7 +175,7 @@ window.v4ResponsiveMultiselectScript = `
             
             let parent = el.parentElement;
             while (parent && parent !== doc.body) {
-                if (parent.classList.contains('lf-group') && ids.includes(parent.id)) return false;
+                if (parent.classList.contains('bychoi-group') && ids.includes(parent.id)) return false;
                 parent = parent.parentElement;
             }
             return true;
@@ -203,7 +203,7 @@ window.v4ResponsiveMultiselectScript = `
                     
                     let parent = el.parentElement;
                     while (parent && parent !== doc.body) {
-                        if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                        if (parent.classList.contains('bychoi-component') || parent.classList.contains('bychoi-group')) {
                             absL += parseFloat(parent.style.left) || 0;
                             absT += parseFloat(parent.style.top) || 0;
                         }
@@ -352,14 +352,14 @@ window.v4ResponsiveMultiselectScript = `
                         if (window.parent && window.parent.ConnectorEngine) {
                             window.parent.ConnectorEngine.redrawAll();
                         }
-                        notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
+                        notifyParent({ type: 'BYCHOI_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
                     }
                 } else {
                     let parentL = 0;
                     let parentT = 0;
                     let parent = item.el.parentElement;
                     while (parent && parent !== doc.body && !parent.classList.contains('pc-content-inner') && !parent.classList.contains('mobile-content-inner')) {
-                        if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                        if (parent.classList.contains('bychoi-component') || parent.classList.contains('bychoi-group')) {
                             parentL += parseFloat(parent.style.left) || 0;
                             parentT += parseFloat(parent.style.top) || 0;
                         }
@@ -375,7 +375,7 @@ window.v4ResponsiveMultiselectScript = `
 
                     if (item.type === 'marker') {
                         const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: targetL, y: targetT });
+                        notifyParent({ type: 'BYCHOI_UPDATE_PIN_POS', index: idx, x: targetL, y: targetT });
                     }
 
                     if (window.parent && window.parent.ConnectorEngine && typeof window.parent.ConnectorEngine.syncAnchoredPositions === 'function') {
@@ -388,7 +388,7 @@ window.v4ResponsiveMultiselectScript = `
 
                     if (typeof window._getCompStyles === 'function') {
                         const compStyles = window._getCompStyles(item.el);
-                        notifyParent(Object.assign({ type: 'LF_COMP_SELECTED', id: item.id }, compStyles));
+                        notifyParent(Object.assign({ type: 'BYCHOI_COMP_SELECTED', id: item.id }, compStyles));
                     }
                 }
                 markDirty();
@@ -433,7 +433,7 @@ window.v4ResponsiveMultiselectScript = `
                     let parentL = 0;
                     let parent = item.el.parentElement;
                     while (parent && parent !== doc.body) {
-                        if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                        if (parent.classList.contains('bychoi-component') || parent.classList.contains('bychoi-group')) {
                             parentL += parseFloat(parent.style.left) || 0;
                         }
                         parent = parent.parentElement;
@@ -444,7 +444,7 @@ window.v4ResponsiveMultiselectScript = `
                     }
                     if (item.type === 'marker') {
                         const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: newAbsX, y: item.y });
+                        notifyParent({ type: 'BYCHOI_UPDATE_PIN_POS', index: idx, x: newAbsX, y: item.y });
                     }
                 }
             });
@@ -456,7 +456,7 @@ window.v4ResponsiveMultiselectScript = `
                 if (window.parent && window.parent.ConnectorEngine) {
                     window.parent.ConnectorEngine.redrawAll();
                 }
-                notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
+                notifyParent({ type: 'BYCHOI_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
             }
             markDirty();
             return;
@@ -491,7 +491,7 @@ window.v4ResponsiveMultiselectScript = `
                     let parentT = 0;
                     let parent = item.el.parentElement;
                     while (parent && parent !== doc.body) {
-                        if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                        if (parent.classList.contains('bychoi-component') || parent.classList.contains('bychoi-group')) {
                             parentT += parseFloat(parent.style.top) || 0;
                         }
                         parent = parent.parentElement;
@@ -502,7 +502,7 @@ window.v4ResponsiveMultiselectScript = `
                     }
                     if (item.type === 'marker') {
                         const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: item.x, y: newAbsY });
+                        notifyParent({ type: 'BYCHOI_UPDATE_PIN_POS', index: idx, x: item.x, y: newAbsY });
                     }
                 }
             });
@@ -514,7 +514,7 @@ window.v4ResponsiveMultiselectScript = `
                 if (window.parent && window.parent.ConnectorEngine) {
                     window.parent.ConnectorEngine.redrawAll();
                 }
-                notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
+                notifyParent({ type: 'BYCHOI_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
             }
             markDirty();
             return;
@@ -551,7 +551,7 @@ window.v4ResponsiveMultiselectScript = `
                 let parentT = 0;
                 let parent = item.el.parentElement;
                 while (parent && parent !== doc.body) {
-                    if (parent.classList.contains('lf-component') || parent.classList.contains('lf-group')) {
+                    if (parent.classList.contains('bychoi-component') || parent.classList.contains('bychoi-group')) {
                         parentL += parseFloat(parent.style.left) || 0;
                         parentT += parseFloat(parent.style.top) || 0;
                     }
@@ -567,7 +567,7 @@ window.v4ResponsiveMultiselectScript = `
                 
                 if (item.type === 'marker') {
                     const idx = parseInt(item.el.getAttribute('data-index')) || parseInt(item.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
-                    notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: newAbsX, y: newAbsY });
+                    notifyParent({ type: 'BYCHOI_UPDATE_PIN_POS', index: idx, x: newAbsX, y: newAbsY });
                 }
             }
         });
@@ -580,12 +580,12 @@ window.v4ResponsiveMultiselectScript = `
             if (window.parent && window.parent.ConnectorEngine) {
                 window.parent.ConnectorEngine.redrawAll();
             }
-            notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
+            notifyParent({ type: 'BYCHOI_SYNC_CONNECTORS', connectors: window.parent && window.parent.state ? window.parent.state.connectors : null });
         }
         markDirty();
     };
 
-    window.v4MessageHandlers['LF_GROUP_SELECTED'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_GROUP_SELECTED'] = function(d) {
         const ids = d.ids || [];
                     if (ids.length < 2) return;
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -653,7 +653,7 @@ window.v4ResponsiveMultiselectScript = `
                     });
         
                     // 2. Hide handles for clean state AFTER gathering coordinates
-                    const allHandles = doc.querySelectorAll('.lf-drag-handle, .lf-resizer, .lf-delete-trigger');
+                    const allHandles = doc.querySelectorAll('.bychoi-drag-handle, .bychoi-resizer, .bychoi-delete-trigger');
                     const handleStates = Array.from(allHandles).map(h => h.style.display);
                     allHandles.forEach(h => h.style.display = 'none');
         
@@ -665,7 +665,7 @@ window.v4ResponsiveMultiselectScript = `
                     const groupId = 'group-' + Date.now();
                     const group = doc.createElement('div');
                     group.id = groupId;
-                    group.className = 'lf-component lf-group selected';
+                    group.className = 'bychoi-component bychoi-group selected';
                     if (groupedConnectorIds.length > 0) {
                         group.setAttribute('data-connectors', JSON.stringify(groupedConnectorIds));
                     }
@@ -690,7 +690,7 @@ window.v4ResponsiveMultiselectScript = `
                         background: 'transparent', border: 'none', zIndex: String(targetGroupZ)
                     });
         
-                    group.innerHTML = '<div class="lf-delete-trigger">&times;</div>';
+                    group.innerHTML = '<div class="bychoi-delete-trigger">&times;</div>';
         
                     items.forEach((item, childIdx) => {
                         if (item.type === 'connector') return; // virtual, don't move into DOM
@@ -726,7 +726,7 @@ window.v4ResponsiveMultiselectScript = `
                     });
         
                     // Insert group into parent DOM right before pin layer or script tag, ensuring both topmost z-index and DOM order
-                    const trailingRef = Array.from(groupParent.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
+                    const trailingRef = Array.from(groupParent.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) || (!c.classList.contains('bychoi-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
                     if (trailingRef && trailingRef.parentNode === groupParent) {
                         groupParent.insertBefore(group, trailingRef);
                     } else {
@@ -743,7 +743,7 @@ window.v4ResponsiveMultiselectScript = `
         
                     // Notify parent with full group styles so Object Properties panel recognizes it as a group immediately
                     notifyParent({
-                        type: 'LF_COMP_SELECTED',
+                        type: 'BYCHOI_COMP_SELECTED',
                         shiftKey: false,
                         ...window._getCompStyles(group)
                     });
@@ -753,7 +753,7 @@ window.v4ResponsiveMultiselectScript = `
                     markDirty();
     };
 
-    window.v4MessageHandlers['LF_UNGROUP_SELECTED'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UNGROUP_SELECTED'] = function(d) {
         const ids = d.ids || [];
                     if (ids.length < 1) return;
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -761,7 +761,7 @@ window.v4ResponsiveMultiselectScript = `
                     const doc = document;
                     const host = doc.body;
                     const group = doc.getElementById(ids[0]);
-                    if (!group || !group.classList.contains('lf-group')) return;
+                    if (!group || !group.classList.contains('bychoi-group')) return;
         
                     const groupL = parseFloat(group.style.left) || 0;
                     const groupT = parseFloat(group.style.top) || 0;
@@ -774,7 +774,7 @@ window.v4ResponsiveMultiselectScript = `
                     }
                     if (!Array.isArray(groupedConnectorIds)) groupedConnectorIds = [];
         
-                    const children = Array.from(group.children).filter(c => c.classList.contains('lf-component'));
+                    const children = Array.from(group.children).filter(c => c.classList.contains('bychoi-component'));
                     const childZs = children.map(c => parseInt(c.style.zIndex, 10) || 1000);
                     const sortedChildRanks = childZs.map((z, i) => ({ z, i })).sort((a, b) => (a.z !== b.z ? a.z - b.z : a.i - b.i));
                     const childRankOffsetMap = {};
@@ -841,7 +841,7 @@ window.v4ResponsiveMultiselectScript = `
                         if (isMarker) {
                             const pinIdx = parseInt(c.getAttribute('data-index')) || parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                             if (!isNaN(pinIdx)) {
-                                notifyParent({ type: 'LF_UPDATE_PIN_POS', index: pinIdx, x: absL, y: absT });
+                                notifyParent({ type: 'BYCHOI_UPDATE_PIN_POS', index: pinIdx, x: absL, y: absT });
                             }
                             const pinLayer = (targetParent && targetParent.querySelector) ? targetParent.querySelector(':scope > .v4-pin-layer, .v4-pin-layer') : null;
                             if (pinLayer) {
@@ -855,7 +855,7 @@ window.v4ResponsiveMultiselectScript = `
                             if (group.parentNode === targetParent) {
                                 targetParent.insertBefore(c, group);
                             } else {
-                                const trailingRef = Array.from(targetParent.children).find(item => (item.classList && (item.classList.contains('v4-dimmed-overlay-layer') || item.classList.contains('v4-pin-layer') || item.classList.contains('v4-selection-adorner-layer') || item.classList.contains('v4-responsive-guide-layer'))) || (!item.classList.contains('lf-component') && (item.tagName === 'SCRIPT' || item.id === 'v4-inlined-script')));
+                                const trailingRef = Array.from(targetParent.children).find(item => (item.classList && (item.classList.contains('v4-dimmed-overlay-layer') || item.classList.contains('v4-pin-layer') || item.classList.contains('v4-selection-adorner-layer') || item.classList.contains('v4-responsive-guide-layer'))) || (!item.classList.contains('bychoi-component') && (item.tagName === 'SCRIPT' || item.id === 'v4-inlined-script')));
                                 if (trailingRef && trailingRef.parentNode === targetParent) {
                                     targetParent.insertBefore(c, trailingRef);
                                 } else {
@@ -870,20 +870,20 @@ window.v4ResponsiveMultiselectScript = `
                     });
         
                     group.remove();
-                    notifyParent({ type: 'LF_UNGROUPED_SYNC_SELECTION', ids: newIds });
+                    notifyParent({ type: 'BYCHOI_UNGROUPED_SYNC_SELECTION', ids: newIds });
                     if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
                         window.V4DimmedLayer.syncStateToParent();
                     }
                     markDirty();
     };
 
-    window.v4MessageHandlers['LF_EXTRACT_MOLECULE'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_EXTRACT_MOLECULE'] = function(d) {
         const group = document.getElementById(d.id);
-        if (!group || (!group.classList.contains('lf-group') && !group.classList.contains('lf-component'))) return;
-        const isGroupEl = group.classList.contains('lf-group');
+        if (!group || (!group.classList.contains('bychoi-group') && !group.classList.contains('bychoi-component'))) return;
+        const isGroupEl = group.classList.contains('bychoi-group');
 
         const clone = group.cloneNode(true);
-        clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(el => el.remove());
+        clone.querySelectorAll('.bychoi-resizer, .bychoi-drag-handle, .bychoi-delete-trigger').forEach(el => el.remove());
         clone.querySelectorAll('.selected-cell').forEach(el => el.classList.remove('selected-cell'));
         clone.removeAttribute('id');
         clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
@@ -899,7 +899,7 @@ window.v4ResponsiveMultiselectScript = `
             html: clone.innerHTML
         };
 
-        notifyParent({ type: 'LF_MOLECULE_EXTRACTED', moleculeData });
+        notifyParent({ type: 'BYCHOI_MOLECULE_EXTRACTED', moleculeData });
     };
 
 })();

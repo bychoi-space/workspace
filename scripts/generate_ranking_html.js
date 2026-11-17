@@ -5,7 +5,7 @@ const logos = JSON.parse(fs.readFileSync('data/p_lus0e/_logos.json', 'utf8'));
 function rectShape(id, left, top, width, height, bg, border, radius = '8px', zIndex = 101) {
     return `
         <!-- Rect Shape: ${id} -->
-        <div id="${id}" class="lf-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
+        <div id="${id}" class="bychoi-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: ${bg}; border: 1.6px solid ${border}; border-radius: ${radius}; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
@@ -16,7 +16,7 @@ function rectShape(id, left, top, width, height, bg, border, radius = '8px', zIn
 function textShape(id, left, top, width, height, contentHtml, fontSize = '13px', fontWeight = '400', color = '#334155', align = 'left', zIndex = 102) {
     return `
         <!-- Text Shape: ${id} -->
-        <div id="${id}" class="lf-component v4-text-shape" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex}; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
+        <div id="${id}" class="bychoi-component v4-text-shape" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex}; --v4-text-adjust-y: 0px; --v4-text-shape-pad-y: 2px; min-width: unset !important; min-height: unset !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: ${color}; font-size: ${fontSize}; font-weight: ${fontWeight}; display: block; text-align: ${align}; width: 100%; height: 100%; padding: 2px !important; box-sizing: border-box; line-height: 1.2;">
                 ${contentHtml}
             </div>
@@ -27,7 +27,7 @@ function textShape(id, left, top, width, height, contentHtml, fontSize = '13px',
 function multiLineText(id, left, top, width, height, contentHtml, fontSize = '13px', fontWeight = '400', color = '#334155', lineHeight = '1.5', zIndex = 102) {
     return `
         <!-- Multi-line Flow Text: ${id} -->
-        <div id="${id}" class="lf-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
+        <div id="${id}" class="bychoi-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left;">
                     <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: ${color}; font-size: ${fontSize}; font-weight: ${fontWeight}; text-align: left; width: 100%; height: 100%; padding: 0 !important; box-sizing: border-box; white-space: normal !important; word-break: keep-all; line-height: ${lineHeight};">
@@ -42,7 +42,7 @@ function multiLineText(id, left, top, width, height, contentHtml, fontSize = '13
 function badgeShape(id, left, top, width, height, text, bg, border, textColor, fontSize = '12px', radius = '6px', zIndex = 102) {
     return `
         <!-- Badge: ${id} -->
-        <div id="${id}" class="lf-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
+        <div id="${id}" class="bychoi-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: ${bg}; border: 1.6px solid ${border}; border-radius: ${radius}; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; text-align: center;">
                     <p><span style="font-size: ${fontSize}; font-weight: 700; color: ${textColor};">${text}</span></p>
@@ -55,8 +55,8 @@ function badgeShape(id, left, top, width, height, text, bg, border, textColor, f
 function logoShape(id, left, top, width, height, logoBase64, maskColor = '#0f172a', zIndex = 102) {
     return `
         <!-- Logo Shape: ${id} -->
-        <div id="${id}" class="lf-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
-            <div class="lf-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('${logoBase64}'); mask-image: url('${logoBase64}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: ${maskColor} !important; pointer-events: none;"></div>
+        <div id="${id}" class="bychoi-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};" data-resized="true">
+            <div class="bychoi-icon v4-logo-img" style="width: 100%; height: 100%; box-sizing: border-box; padding: 2px !important; background-origin: content-box !important; background-clip: content-box !important; mask-origin: content-box !important; -webkit-mask-origin: content-box !important; mask-clip: content-box !important; -webkit-mask-clip: content-box !important; -webkit-mask-image: url('${logoBase64}'); mask-image: url('${logoBase64}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; background-color: ${maskColor} !important; pointer-events: none;"></div>
         </div>`;
 }
 
@@ -64,8 +64,8 @@ function logoShape(id, left, top, width, height, logoBase64, maskColor = '#0f172
 function iconShape(id, left, top, width, height, svgInner, color = '#2563eb', zIndex = 102) {
     return `
         <!-- Icon Shape: ${id} -->
-        <div id="${id}" class="lf-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};">
-            <svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;">
+        <div id="${id}" class="bychoi-component" style="position: absolute; top: ${top}px; left: ${left}px; width: ${width}px; height: ${height}px; z-index: ${zIndex};">
+            <svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
                 ${svgInner}
             </svg>
         </div>`;
@@ -106,7 +106,7 @@ let html = `<!DOCTYPE html>
             overflow: hidden;
             margin: 0 auto;
         }
-        .lf-component {
+        .bychoi-component {
             box-sizing: border-box;
             user-select: none;
         }
@@ -201,7 +201,7 @@ html += rectShape('b2_donut_bg', 60, 260, 260, 250, '#f8fafc', '#e2e8f0', '8px',
 
 // SVG Donut Infographic (Top: 270, Left: 125, W: 130, H: 130)
 html += `
-    <div id="b2_donut_svg" class="lf-component" style="position: absolute; top: 270px; left: 125px; width: 130px; height: 130px; z-index: 102;">
+    <div id="b2_donut_svg" class="bychoi-component" style="position: absolute; top: 270px; left: 125px; width: 130px; height: 130px; z-index: 102;">
         <svg viewBox="0 0 120 120" style="width: 100%; height: 100%; transform: rotate(-90deg);">
             <circle cx="60" cy="60" r="46" fill="none" stroke="#f1f5f9" stroke-width="14" />
             <!-- 35% GMV (#2563eb) : 101.1 -->

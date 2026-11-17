@@ -765,13 +765,13 @@ if (!window.v4IframeStyleExtractorScript) {
     };
 
     window._getCompStyles = (c) => {
-        const isGroup = c.classList.contains('lf-group');
+        const isGroup = c.classList.contains('bychoi-group');
         const shape = isGroup ? null : c.querySelector('.v4-shape');
         const table = isGroup ? null : c.querySelector('table');
         const isIllustration = isGroup ? false : !!c.querySelector('.v4-illustration-container');
         const isMotion = isGroup ? false : !!c.querySelector('.v4-motion-container');
         const isMedia = isIllustration || isMotion;
-        const icon = isGroup ? null : (c.querySelector('.lf-icon') || (!isMedia && !shape && !table && c.querySelector('img')));
+        const icon = isGroup ? null : (c.querySelector('.bychoi-icon') || (!isMedia && !shape && !table && c.querySelector('img')));
         const textCell = isGroup ? null : c.querySelector('.v4-editable-cell');
         const isPin = isGroup ? false : (c.classList.contains('text-marker') || c.classList.contains('pin-marker') || c.classList.contains('v4-text-box') || c.classList.contains('v4-text-shape'));
         const isImage = isGroup ? false : (
@@ -904,7 +904,7 @@ if (!window.v4IframeStyleExtractorScript) {
             disabled: disabled,
             ...widgetAtoms.props,
             html: textCell ? textCell.innerHTML : (shape ? (shape.querySelector('.v4-shape-text-content')?.innerHTML ?? shape.querySelector('.v4-shape-text-overlay')?.innerHTML ?? shape.innerHTML) : (table ? table.innerHTML : "")),
-            isGroup: c.classList.contains('lf-group'),
+            isGroup: c.classList.contains('bychoi-group'),
             scrollFixed: c.getAttribute('data-scroll-fixed') || 'none',
             scrollEffect: c.getAttribute('data-scroll-effect') || 'always',
             scrollDivider: c.hasAttribute('data-scroll-divider') && c.getAttribute('data-scroll-divider') !== 'false' && c.getAttribute('data-scroll-divider') !== 'none',

@@ -108,7 +108,7 @@
             const reqId = 'save_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
             let settled = false;
             const handler = (e) => {
-                if (e.data && e.data.type === 'LF_SAVE_CONTENT_RESPONSE') {
+                if (e.data && e.data.type === 'BYCHOI_SAVE_CONTENT_RESPONSE') {
                     if (e.data.requestId && e.data.requestId !== reqId) return;
                     if (settled) return;
                     settled = true;
@@ -119,7 +119,7 @@
             window.addEventListener('message', handler);
             if (activeIframe && activeIframe.contentWindow) {
                 activeIframe.contentWindow.postMessage({
-                    type: 'LF_REQUEST_SAVE_CONTENT',
+                    type: 'BYCHOI_REQUEST_SAVE_CONTENT',
                     silent: isSilent,
                     requestId: reqId
                 }, '*');

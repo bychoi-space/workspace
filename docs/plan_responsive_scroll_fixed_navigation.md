@@ -49,7 +49,7 @@ graph TD
     B --> D[".mobile-content / .pc-content-area (스크롤 컨테이너: overflow-y: scroll)"]
     B --> E[".mobile-home-indicator (하단 홈바 - 고정)"]
     D --> F[".mobile-content-inner / .pc-content-inner (가변 높이 캔버스: position: relative)"]
-    F --> G[".lf-component / .lf-group (절대좌표 객체: position: absolute)"]
+    F --> G[".bychoi-component / .bychoi-group (절대좌표 객체: position: absolute)"]
     F --> H["svg.v4-responsive-guide-layer (스마트 가이드)"]
     F --> I[".pin-marker (어노테이션 핀)"]
 ```
@@ -89,7 +89,7 @@ graph TD
 ### 4.1 핵심 동작 원리 (Core Mechanics)
 
 1. **데이터 마킹 (`data-scroll-fixed`)**:
-   - 고정하고 싶은 오브젝트 또는 그룹(`.lf-group`, `.lf-component`)에 HTML 커스텀 속성을 부여합니다:
+   - 고정하고 싶은 오브젝트 또는 그룹(`.bychoi-group`, `.bychoi-component`)에 HTML 커스텀 속성을 부여합니다:
      - `data-scroll-fixed="top"`: 스크롤 상단 고정 (GNB, 검색바 등)
      - `data-scroll-fixed="bottom"`: 스크롤 하단 고정 (하단 구매하기 CTA, 5탭 네비게이션 등)
      - 속성이 없거나 `none`이면 일반 스크롤 객체로 동작.
@@ -172,11 +172,11 @@ gantt
 - **[Phase 1] 코어 스크롤 엔진 (`assets/vctrl_iframe_scroll_pin.js` 신설) - [✅ 완료]**:
   - 단일 책임 원칙(SRP)에 따라 독립 모듈로 생성 (`ENGINE_SCRIPT_REGISTRY` 27번째 모듈 등록).
   - RAF 기반 `updateScrollPins()` 가상 스티키 HUD 엔진 및 수동 스크롤 옵저버 구현.
-  - `.lf-component:not([data-scroll-fixed])` CSS 분기 및 뷰포트 배지(`PIN TOP`, `PIN BOTTOM`) 적용.
+  - `.bychoi-component:not([data-scroll-fixed])` CSS 분기 및 뷰포트 배지(`PIN TOP`, `PIN BOTTOM`) 적용.
 - **[Phase 2] 인스펙터 속성 연동 (`viewer.html`, `viewer.css`, `assets/vctrl_inspector.js`) - [✅ 완료]**:
   - `#selection-actions-bar` 내 스크롤 고정 세그먼트 컨트롤 UI(`[일반]`, `[상단]`, `[하단]`) 탑재.
-  - 반응형 스크린 감지 및 실시간 속성 동기화 (`LF_SET_SCROLL_FIXED`, Optimistic UI, UndoManager 통합).
-  - 그룹(`.lf-group`) 및 일반 컴포넌트(`.lf-component`) 양방향 토글 및 뱃지 상태 실시간 연동.
+  - 반응형 스크린 감지 및 실시간 속성 동기화 (`BYCHOI_SET_SCROLL_FIXED`, Optimistic UI, UndoManager 통합).
+  - 그룹(`.bychoi-group`) 및 일반 컴포넌트(`.bychoi-component`) 양방향 토글 및 뱃지 상태 실시간 연동.
 - **[Phase 3] 정제 및 핀 연동 (`assets/vctrl_common.js`, `assets/vctrl_iframe_scroll_pin.js`, `assets/vctrl_iframe_drag.js`, `assets/vctrl_shortcuts.js`) - [✅ 완료]**:
   - `ScreenSanitizer.cleanDOM` 단일 진실 공급원(부모 및 inlined)에서 저장 시 임시 `transform` 및 `will-change` 속성을 완벽히 제거하고 `data-scroll-fixed` 원본 속성 영구 보존.
   - 고정된 헤더/풋터 영역 위에 배치된 어노테이션 핀(`.pin-marker`)이 스크롤 시 부모 요소를 부드럽게 추종하도록 좌표 동기화.
@@ -187,7 +187,7 @@ gantt
     2. `v4-mobile-fixed-bottom-cta`: 하단 고정 구매/장바구니 CTA 독 (찜하기 하트 + 공유 + 장바구니 + 바로구매 그라디언트 버튼, `data-scroll-fixed="bottom"`).
     3. `v4-mobile-fixed-bottom-nav`: 하단 고정 5-탭 네비게이션 바 (홈, 카테고리, 혜택, 찜, 마이페이지 탭, `data-scroll-fixed="bottom"`).
   - 컴포넌트 삽입기(`vctrl_component_inserter.js`, `vctrl_iframe_inserter.js`) 연동:
-    - 삽입 시 `data-scroll-fixed` 속성을 `.lf-component` 루트 래퍼로 전파.
+    - 삽입 시 `data-scroll-fixed` 속성을 `.bychoi-component` 루트 래퍼로 전파.
     - 상단 고정(`top`)은 프레임 최상단(`left: 0, top: 0`) 자동 도킹, 하단 고정(`bottom`)은 현재 뷰포트 하단(`left: 0, top: sTop + vHeight - compH`) 스마트 자동 도킹.
     - 삽입 즉시 `ScrollPinEngine.scheduleUpdate()` 실행하여 지연 없이 즉시 고정 렌더링.
   - UI 라이브러리 연동:

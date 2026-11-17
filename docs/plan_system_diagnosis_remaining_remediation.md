@@ -159,7 +159,7 @@ function _syncAdminSettingsProps(comp, forceRebuild = false) {
    - 가짜 데이터나 Mock 주입 0건. 실제 디스크 데이터(`metadata.json`, 화면 HTML) 100% 보존.
 2. **[사이드이펙트 원천 차단] (Zero Side-Effects)**:
    - 전역 인터페이스(`window.updateProperties`, `window._syncAdminSettingsProps`) 시그니처 100% 유지.
-   - 스크롤 핀 분리 시 캔버스 Iframe 통신 프로토콜(`LF_SET_SCROLL_FIXED`) 100% 보존.
+   - 스크롤 핀 분리 시 캔버스 Iframe 통신 프로토콜(`BYCHOI_SET_SCROLL_FIXED`) 100% 보존.
 3. **[스크립트/런타임 에러 0건] (Zero Runtime Errors)**:
    - 모든 DOM 접근 시 옵셔널 체이닝(`?.`) 및 요소 존재 가드 철저 적용.
 4. **[백틱 충돌 에러 0건] (Zero Backtick Syntax Collisions)**:

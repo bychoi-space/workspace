@@ -39,7 +39,7 @@ description: Use when the user requests "시스템 전체 정밀 진단" (System
 ### 4. 코드의 복잡도가 너무 높아서 파편화해야 하는 경우 조치 (Complexity Fragmentation)
 - **점검 기준**:
   - 단일 함수의 길이가 **150라인 이상**이거나, 중첩 분기문(`if-else`, `switch-case`, 삼항 연산자) 깊이가 지나치게 깊은 거대 함수.
-  - 단일 이벤트 리스너(예: `updateProperties`, `LF_UPDATE_STYLE`, `init`) 내에서 수십 가지 컴포넌트 타입(도형, 텍스트, 아톰, 테이블, 그리드 등)의 스타일과 DOM을 한 번에 제어하는 모놀리식 구조.
+  - 단일 이벤트 리스너(예: `updateProperties`, `BYCHOI_UPDATE_STYLE`, `init`) 내에서 수십 가지 컴포넌트 타입(도형, 텍스트, 아톰, 테이블, 그리드 등)의 스타일과 DOM을 한 번에 제어하는 모놀리식 구조.
 - **분석 및 조치 방안**:
   - 전략 패턴(Strategy Pattern) 또는 디스패처 맵(Handler Map)을 적용하여 컴포넌트별/도메인별 순수 핸들러 함수로 잘게 파편화.
   - 가독성을 높이고 회귀(Regression) 사이드이펙트를 원천 차단.

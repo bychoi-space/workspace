@@ -16,7 +16,7 @@
 3. **컨테이너 판별식 Fallback의 모바일 편향 차단**:
    - PC 프레임 내 오브젝트임에도 컨테이너 판별 실패 시 모바일(360px)로 잘못 지정되어 좌측으로 쏠리던 버그 원천 차단.
 4. **다중 오브젝트 정렬 후 핸들/선택 테두리/인스펙터 실시간 동기화**:
-   - 정렬 후 DOM의 `style.left/top`만 바뀌고 드래그 핸들(`.lf-drag-handle`), 리사이저(`.lf-resizer`), 선택 박스(`SelectionAdorner`), 인스펙터 속성(X, Y)이 갱신되지 않던 동기화 단절 현상 완전 해소.
+   - 정렬 후 DOM의 `style.left/top`만 바뀌고 드래그 핸들(`.bychoi-drag-handle`), 리사이저(`.bychoi-resizer`), 선택 박스(`SelectionAdorner`), 인스펙터 속성(X, Y)이 갱신되지 않던 동기화 단절 현상 완전 해소.
 
 ---
 
@@ -67,7 +67,7 @@
 ### 2.4 결함 4: 다중 정렬 후 조작 인터페이스(핸들, 아도너, 인스펙터) 미갱신
 - **발생 위치**: `assets/vctrl_responsive_multiselect.js` Line 480-496
 - **원인 메커니즘**:
-  - 다중 오브젝트 정렬 연산 후 `item.el.style.left`와 `style.top`만 갱신하고, 드래그 핸들(`.lf-drag-handle`)과 리사이저(`.lf-resizer`) 갱신 함수인 `window.updateHandles(el)` 및 `window.SelectionAdorner.update()`를 호출하지 않았습니다.
+  - 다중 오브젝트 정렬 연산 후 `item.el.style.left`와 `style.top`만 갱신하고, 드래그 핸들(`.bychoi-drag-handle`)과 리사이저(`.bychoi-resizer`) 갱신 함수인 `window.updateHandles(el)` 및 `window.SelectionAdorner.update()`를 호출하지 않았습니다.
   - 이로 인해 조작 핸들이 이전 위치에 그대로 붕 떠서 분리되고, 선택 테두리가 어긋나며, 부모 창 인스펙터(X/Y 좌표)도 갱신되지 않았습니다.
 
 ### 2.5 결함 5: 부모 창 `alignSelected`의 `activeIds` 누락 취약점
@@ -138,12 +138,12 @@
     ```
 
 ### Step 3: `assets/vctrl_responsive_multiselect.js` 정렬 엔진 코어 재구축
-- **수정 위치**: `window.v4MessageHandlers['LF_ALIGN_SELECTED']` (Line 148~496)
+- **수정 위치**: `window.v4MessageHandlers['BYCHOI_ALIGN_SELECTED']` (Line 148~496)
 - **작업 내용**:
   1. **단일 오브젝트 정렬 (`items.length === 1`)**:
      - `ResponsiveFrameUtils`를 통한 프레임 타입('pc', 'mobile') 및 컨테이너/스크롤 영역 정확한 탐색.
      - 가시 뷰포트 높이(`vHeight`) 및 현재 스크롤(`sTop`) 기반 수학 적용.
-     - 정렬 완료 후 `window.updateHandles(item.el)` 및 `notifyParent({ type: 'LF_COMP_SELECTED', ... })` 호출로 부모 인스펙터 동기화.
+     - 정렬 완료 후 `window.updateHandles(item.el)` 및 `notifyParent({ type: 'BYCHOI_COMP_SELECTED', ... })` 호출로 부모 인스펙터 동기화.
   2. **다중 오브젝트 정렬 (`items.length > 1`)**:
      - 선택 요소들의 상호 상대 정렬(Bounding Box 기준) 수행.
      - 정렬 루프 완료 후 모든 대상 요소에 대해 `window.updateHandles(item.el)` 실행하여 핸들/리사이저 즉시 스냅.

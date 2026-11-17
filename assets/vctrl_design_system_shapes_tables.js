@@ -24,7 +24,7 @@ window.v4DesignSystemShapesTablesScript = `
         const curCanvasW = targetPageEl ? (targetPageEl.offsetWidth || 1600) : 1600;
         const curCanvasH = targetPageEl ? (targetPageEl.offsetHeight || 900) : 900;
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
             if (c.parentElement !== document.body) return;
             const lStr = c.style.left || "";
             const tStr = c.style.top || "";
@@ -43,19 +43,19 @@ window.v4DesignSystemShapesTablesScript = `
             }
         });
 
-        document.querySelectorAll('.lf-component img').forEach(function(img) {
+        document.querySelectorAll('.bychoi-component img').forEach(function(img) {
             const parent = img.parentElement;
             if (!parent) return;
 
             const isLogo = img.classList.contains('v4-logo-img');
             const isShare = img.src && img.src.includes('iconShare');
-            const isIcon = img.classList.contains('lf-icon');
+            const isIcon = img.classList.contains('bychoi-icon');
 
             if (isLogo || isShare || isIcon) {
                 const div = document.createElement('div');
                 div.className = img.className;
-                if (!div.classList.contains('lf-icon')) {
-                    div.classList.add('lf-icon');
+                if (!div.classList.contains('bychoi-icon')) {
+                    div.classList.add('bychoi-icon');
                 }
 
                 const origSrc = img.getAttribute('data-original-src') || img.src;
@@ -152,7 +152,7 @@ window.v4DesignSystemShapesTablesScript = `
                 s.style.setProperty('border-width', '0px', 'important');
                 if (s.classList.contains('v4-shape-arrow')) {
                     const svg = s.querySelector('svg');
-                    const comp = s.closest('.lf-component') || s;
+                    const comp = s.closest('.bychoi-component') || s;
                     const w = parseFloat(comp.style.width) || comp.offsetWidth || 100;
                     const h = parseFloat(comp.style.height) || comp.offsetHeight || 100;
 
@@ -210,14 +210,14 @@ window.v4DesignSystemShapesTablesScript = `
                         target.removeAttribute('data-events-bound');
 
                         const selectParentComponent = function() {
-                            const comp = target.closest('.lf-component');
+                            const comp = target.closest('.bychoi-component');
                             if (comp && !comp.classList.contains('selected')) {
-                                document.querySelectorAll('.lf-component').forEach(function(x) { x.classList.remove('selected'); });
+                                document.querySelectorAll('.bychoi-component').forEach(function(x) { x.classList.remove('selected'); });
                                 comp.classList.add('selected');
                                 if (window.updateHandles) window.updateHandles(comp);
                                 const styles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id };
                                 _sendParentMsg(Object.assign({
-                                    type: "LF_COMP_SELECTED",
+                                    type: "BYCHOI_COMP_SELECTED",
                                     shiftKey: false
                                 }, styles));
                             }
@@ -282,7 +282,7 @@ window.v4DesignSystemShapesTablesScript = `
                 if (rules) {
                     for (let j = rules.length - 1; j >= 0; j--) {
                         const rule = rules[j];
-                        if (rule.selectorText && rule.selectorText.includes('.lf-component.selected')) {
+                        if (rule.selectorText && rule.selectorText.includes('.bychoi-component.selected')) {
                             rule.style.removeProperty('z-index');
                         }
                     }
@@ -347,7 +347,7 @@ window.v4DesignSystemShapesTablesScript = `
         window.bindIaTreeTables = function() {
             var tables = document.querySelectorAll('table.v4-ia-tree-table');
             tables.forEach(function(table) {
-                var comp = table.closest('.lf-component');
+                var comp = table.closest('.bychoi-component');
                 if (!table || !comp || table._iaPropsBound) return;
                 table._iaPropsBound = true;
                 table._tableSelectionBound = true;
@@ -358,18 +358,18 @@ window.v4DesignSystemShapesTablesScript = `
                 var dragStartCol = -1;
 
                 var syncToParentInspector = function() {
-                    document.querySelectorAll('.lf-component').forEach(function(x) { x.classList.remove('selected'); });
+                    document.querySelectorAll('.bychoi-component').forEach(function(x) { x.classList.remove('selected'); });
                     comp.classList.add('selected');
                     window.activeEl = comp;
                     if (typeof window.updateHandles === 'function') window.updateHandles(comp);
                     var compStyles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id, isTable: true };
                     compStyles.isTable = true;
-                    _sendParentMsg(Object.assign({ type: 'LF_COMP_SELECTED', shiftKey: false, isResponsive: false }, compStyles));
+                    _sendParentMsg(Object.assign({ type: 'BYCHOI_COMP_SELECTED', shiftKey: false, isResponsive: false }, compStyles));
 
                     var notifyCells = function() {
                         var selected = table.querySelectorAll('.selected-cell');
                         if (!selected.length) {
-                            _sendParentMsg({ type: 'LF_CELL_SELECTED', cellData: null });
+                            _sendParentMsg({ type: 'BYCHOI_CELL_SELECTED', cellData: null });
                             return;
                         }
                         var repCell = (window._iaLastClickedCell && window._iaLastClickedCell.classList && window._iaLastClickedCell.classList.contains('selected-cell')) ? window._iaLastClickedCell : selected[0];
@@ -388,7 +388,7 @@ window.v4DesignSystemShapesTablesScript = `
                         var w = Math.round(repCell.getBoundingClientRect().width) || repCell.offsetWidth || 120;
                         var h = Math.round(repCell.getBoundingClientRect().height) || repCell.offsetHeight || 36;
                         _sendParentMsg({
-                            type: 'LF_CELL_SELECTED',
+                            type: 'BYCHOI_CELL_SELECTED',
                             cellData: { count: selected.length, backgroundColor: bg, color: color, textAlign: align, width: w, height: h }
                         });
                     };

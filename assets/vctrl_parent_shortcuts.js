@@ -65,7 +65,7 @@
         if (activeIframe && activeIframe.contentWindow) {
             try { activeIframe.contentWindow.focus(); } catch (err) { }
             activeIframe.contentWindow.postMessage({
-                type: 'LF_SHORTCUT_KEY_PROXY',
+                type: 'BYCHOI_SHORTCUT_KEY_PROXY',
                 code: 'F2',
                 key: 'F2',
                 shiftKey: !!e.shiftKey,
@@ -84,7 +84,7 @@
             console.log("[V4 Core] Parent Redo (Ctrl+Y / Ctrl+Shift+Z) caught. Triggering child redo.");
             const activeIframe = getActiveIframe();
             if (activeIframe && activeIframe.contentWindow) {
-                activeIframe.contentWindow.postMessage({ type: 'LF_TRIGGER_REDO' }, '*');
+                activeIframe.contentWindow.postMessage({ type: 'BYCHOI_TRIGGER_REDO' }, '*');
             }
             return true;
         }
@@ -93,7 +93,7 @@
             console.log("[V4 Core] Parent Ctrl+Z caught. Triggering child undo.");
             const activeIframe = getActiveIframe();
             if (activeIframe && activeIframe.contentWindow) {
-                activeIframe.contentWindow.postMessage({ type: 'LF_TRIGGER_UNDO' }, '*');
+                activeIframe.contentWindow.postMessage({ type: 'BYCHOI_TRIGGER_UNDO' }, '*');
             } else if (window.V4UndoManager) {
                 window.V4UndoManager.undo();
             }
@@ -171,7 +171,7 @@
         if (window.state && window.state.isImageCropping) {
             const activeIframe = getActiveIframe();
             if (activeIframe && activeIframe.contentWindow) {
-                activeIframe.contentWindow.postMessage({ type: 'LF_IMAGE_CROP_CANCEL' }, '*');
+                activeIframe.contentWindow.postMessage({ type: 'BYCHOI_IMAGE_CROP_CANCEL' }, '*');
             }
             return true;
         }
@@ -197,12 +197,12 @@
         if ((e.ctrlKey || e.metaKey) && isV && !e.shiftKey) {
             const keydownStamp = Date.now();
             setTimeout(function () {
-                if ((window.__lf_last_parent_paste_time__ || 0) < keydownStamp) {
+                if ((window.__bychoi_last_parent_paste_time__ || 0) < keydownStamp) {
                     const activeIframe = getActiveIframe();
                     if (activeIframe && activeIframe.contentWindow) {
                         try { activeIframe.contentWindow.focus(); } catch (err) { }
                         activeIframe.contentWindow.postMessage({
-                            type: 'LF_SHORTCUT_KEY_PROXY',
+                            type: 'BYCHOI_SHORTCUT_KEY_PROXY',
                             code: e.code || 'KeyV',
                             key: e.key || 'v',
                             shiftKey: false,
@@ -223,7 +223,7 @@
                     try {
                         const onCopy = function (ce) {
                             if (ce && ce.clipboardData) {
-                                ce.clipboardData.setData('text/plain', '__LF_INTERNAL_CLIPBOARD__');
+                                ce.clipboardData.setData('text/plain', '');
                                 ce.preventDefault();
                             }
                         };
@@ -237,7 +237,7 @@
             if (activeIframe && activeIframe.contentWindow) {
                 try { activeIframe.contentWindow.focus(); } catch (err) { }
                 activeIframe.contentWindow.postMessage({
-                    type: 'LF_SHORTCUT_KEY_PROXY',
+                    type: 'BYCHOI_SHORTCUT_KEY_PROXY',
                     code: e.code,
                     key: e.key,
                     shiftKey: e.shiftKey,
@@ -260,7 +260,7 @@
             const activeIframe = getActiveIframe();
             if (activeIframe && activeIframe.contentWindow) {
                 activeIframe.contentWindow.postMessage({
-                    type: 'LF_SET_ALT_KEY_STATE',
+                    type: 'BYCHOI_SET_ALT_KEY_STATE',
                     isAltDown: true
                 }, '*');
             }
@@ -301,7 +301,7 @@
                     e.preventDefault();
                     const activeIframe = getActiveIframe();
                     if (activeIframe && activeIframe.contentWindow) {
-                        activeIframe.contentWindow.postMessage({ type: 'LF_IMAGE_CROP_APPLY' }, '*');
+                        activeIframe.contentWindow.postMessage({ type: 'BYCHOI_IMAGE_CROP_APPLY' }, '*');
                     }
                     return;
                 }
@@ -332,7 +332,7 @@
                     _isInspectActive = false;
                     if (activeIframe && activeIframe.contentWindow) {
                         activeIframe.contentWindow.postMessage({
-                            type: 'LF_SET_ALT_KEY_STATE',
+                            type: 'BYCHOI_SET_ALT_KEY_STATE',
                             isAltDown: false
                         }, '*');
                     }
@@ -342,7 +342,7 @@
             if (e.code === 'Space') {
                 if (activeIframe && activeIframe.contentWindow) {
                     activeIframe.contentWindow.postMessage({
-                        type: 'LF_SHORTCUT_KEY_PROXY',
+                        type: 'BYCHOI_SHORTCUT_KEY_PROXY',
                         code: e.code,
                         key: e.key,
                         shiftKey: e.shiftKey,
@@ -356,7 +356,7 @@
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
                 if (activeIframe && activeIframe.contentWindow) {
                     activeIframe.contentWindow.postMessage({
-                        type: 'LF_SHORTCUT_KEY_PROXY',
+                        type: 'BYCHOI_SHORTCUT_KEY_PROXY',
                         code: e.code,
                         key: e.key,
                         shiftKey: e.shiftKey,
@@ -374,7 +374,7 @@
             const activeIframe = getActiveIframe();
             if (activeIframe && activeIframe.contentWindow) {
                 activeIframe.contentWindow.postMessage({
-                    type: 'LF_SET_ALT_KEY_STATE',
+                    type: 'BYCHOI_SET_ALT_KEY_STATE',
                     isAltDown: false
                 }, '*');
             }

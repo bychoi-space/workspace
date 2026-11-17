@@ -19,27 +19,27 @@ window.GroupingManager = (function() {
     const init = () => {
         // Listen for marquee messages from Core (Iframe)
         if (window.MessageHub) {
-            MessageHub.subscribe('LF_SHORTCUT_TRIGGERED', (data) => {
+            MessageHub.subscribe('BYCHOI_SHORTCUT_TRIGGERED', (data) => {
                 if (data.shortcut === 'group') {
                     groupSelected();
                 } else if (data.shortcut === 'ungroup') {
                     ungroupSelected();
                 }
             });
-            MessageHub.subscribe('LF_SHORTCUT_ALIGN', (data) => {
+            MessageHub.subscribe('BYCHOI_SHORTCUT_ALIGN', (data) => {
                 alignSelected(data.alignType);
             });
-            MessageHub.subscribe('LF_MARQUEE_START', (data) => {
+            MessageHub.subscribe('BYCHOI_MARQUEE_START', (data) => {
                 if (window.state.isReadOnly || window.state.tool !== 'select') return;
                 startMarquee(data);
             });
-            MessageHub.subscribe('LF_MARQUEE_MOVE', (data) => {
+            MessageHub.subscribe('BYCHOI_MARQUEE_MOVE', (data) => {
                 updateMarquee(data);
             });
-            MessageHub.subscribe('LF_MARQUEE_END', () => {
+            MessageHub.subscribe('BYCHOI_MARQUEE_END', () => {
                 endMarquee();
             });
-            MessageHub.subscribe('LF_UNGROUPED_SYNC_SELECTION', (data) => {
+            MessageHub.subscribe('BYCHOI_UNGROUPED_SYNC_SELECTION', (data) => {
                 selectedIds = data.ids || [];
                 selectedIdsIsGroupMap = {};
                 syncWithCore();
@@ -47,7 +47,7 @@ window.GroupingManager = (function() {
                     window.updateProperties(null, true);
                 }
             });
-             MessageHub.subscribe('LF_DESELECT', () => {
+             MessageHub.subscribe('BYCHOI_DESELECT', () => {
                  selectedIds = [];
                  selectedIdsIsGroupMap = {};
                  updateSelectionUI();
@@ -55,7 +55,7 @@ window.GroupingManager = (function() {
                      window.updateProperties();
                  }
              });
-             MessageHub.subscribe('LF_MOLECULE_EXTRACTED', async (data) => {
+             MessageHub.subscribe('BYCHOI_MOLECULE_EXTRACTED', async (data) => {
                  const mol = data.moleculeData;
                  if (!window.state.globalComponents) window.state.globalComponents = [];
                  window.state.globalComponents.unshift(mol);
@@ -74,22 +74,22 @@ window.GroupingManager = (function() {
  
          const triggerCopyFormat = () => {
              if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
-                 window.EditorBus.sendToIframe({ type: 'LF_TRIGGER_COPY_STYLE' });
+                 window.EditorBus.sendToIframe({ type: 'BYCHOI_TRIGGER_COPY_STYLE' });
              } else {
                  const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
                  if (iframe && iframe.contentWindow) {
-                     iframe.contentWindow.postMessage({ type: 'LF_TRIGGER_COPY_STYLE' }, '*');
+                     iframe.contentWindow.postMessage({ type: 'BYCHOI_TRIGGER_COPY_STYLE' }, '*');
                  }
              }
          };
 
          const triggerPasteFormat = () => {
              if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
-                 window.EditorBus.sendToIframe({ type: 'LF_TRIGGER_PASTE_STYLE' });
+                 window.EditorBus.sendToIframe({ type: 'BYCHOI_TRIGGER_PASTE_STYLE' });
              } else {
                  const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
                  if (iframe && iframe.contentWindow) {
-                     iframe.contentWindow.postMessage({ type: 'LF_TRIGGER_PASTE_STYLE' }, '*');
+                     iframe.contentWindow.postMessage({ type: 'BYCHOI_TRIGGER_PASTE_STYLE' }, '*');
                  }
              }
          };
@@ -334,7 +334,7 @@ window.GroupingManager = (function() {
          // Sync visual selection inside iframe via MessageHub (Live Dragging)
          const iframe = document.getElementById('main-iframe');
          if (iframe && iframe.contentWindow && window.MessageHub) {
-             window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { 
+             window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_MARQUEE_SELECTION', { 
                  ids: selectedIds, 
                  isDragging: true 
              });
@@ -363,10 +363,10 @@ window.GroupingManager = (function() {
          if (selectedIds.length > 0) {
              const iframe = document.getElementById('main-iframe') || document.getElementById('screen-iframe');
              if (selectedIds.length === 1 && iframe && iframe.contentWindow) {
-                 window.MessageHub.send(iframe.contentWindow, 'LF_SELECT_ID', { id: selectedIds[0] });
+                 window.MessageHub.send(iframe.contentWindow, 'BYCHOI_SELECT_ID', { id: selectedIds[0] });
              } else if (selectedIds.length > 1) {
                  if (iframe && iframe.contentWindow) {
-                     window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { 
+                     window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_MARQUEE_SELECTION', { 
                          ids: selectedIds, 
                          isDragging: false 
                      });
@@ -414,7 +414,7 @@ window.GroupingManager = (function() {
         }
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_DESELECT_ALL');
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_DESELECT_ALL');
         }
         syncWithCore();
     };
@@ -521,7 +521,7 @@ window.GroupingManager = (function() {
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_ALIGN_SELECTED', { ids: activeIds, alignType: type });
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_ALIGN_SELECTED', { ids: activeIds, alignType: type });
         }
     };
 
@@ -531,7 +531,7 @@ window.GroupingManager = (function() {
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_GROUP_SELECTED', { ids: activeIds });
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_GROUP_SELECTED', { ids: activeIds });
         }
     };
 
@@ -541,7 +541,7 @@ window.GroupingManager = (function() {
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_UNGROUP_SELECTED', { ids: activeIds });
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UNGROUP_SELECTED', { ids: activeIds });
         }
     };
 
@@ -554,7 +554,7 @@ window.GroupingManager = (function() {
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_BRING_FRONT', { ids: activeIds, id: activeIds[0] });
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_BRING_FRONT', { ids: activeIds, id: activeIds[0] });
         }
     };
 
@@ -567,7 +567,7 @@ window.GroupingManager = (function() {
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_SEND_BACK', { ids: activeIds, id: activeIds[0] });
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_SEND_BACK', { ids: activeIds, id: activeIds[0] });
         }
     };
 
@@ -580,7 +580,7 @@ window.GroupingManager = (function() {
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_BRING_FORWARD', { ids: activeIds, id: activeIds[0] });
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_BRING_FORWARD', { ids: activeIds, id: activeIds[0] });
         }
     };
 
@@ -593,7 +593,7 @@ window.GroupingManager = (function() {
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_SEND_BACKWARD', { ids: activeIds, id: activeIds[0] });
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_SEND_BACKWARD', { ids: activeIds, id: activeIds[0] });
         }
     };
 
@@ -611,7 +611,7 @@ window.GroupingManager = (function() {
         
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_EXTRACT_MOLECULE', { id: activeIds[0], name: name });
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_EXTRACT_MOLECULE', { id: activeIds[0], name: name });
         }
     };
 

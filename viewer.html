@@ -18,14 +18,14 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-    <link rel="stylesheet" href="assets/style.css?v=V426_WHITE_COLOR_FIX">
-    <link rel="stylesheet" href="assets/theme.css?v=V371_INSPECTOR_RESTORATION">
+    <link rel="stylesheet" href="assets/style.css?v=V429_BYCHOI_NAMESPACE">
+    <link rel="stylesheet" href="assets/theme.css?v=V429_BYCHOI_NAMESPACE">
     <!-- Flatpickr (Date Picker) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <link rel="stylesheet" href="assets/viewer.css?v=V427_HYBRID_AUTOSAVE">
-    <link rel="stylesheet" href="assets/ui_library.css?v=V424_IMAGE_CROP">
+    <link rel="stylesheet" href="assets/viewer.css?v=V429_BYCHOI_NAMESPACE">
+    <link rel="stylesheet" href="assets/ui_library.css?v=V429_BYCHOI_NAMESPACE">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
         if (window.location.protocol.startsWith('http')) {
@@ -44,11 +44,11 @@
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
     <meta name="theme-color" content="#12151c">
 
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V427_HYBRID_AUTOSAVE">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V429_BYCHOI_NAMESPACE">
     <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="assets/vctrl_pdf_exporter.js?v=V347_WHIMSICAL_UNIFIED"></script>
+    <script src="assets/vctrl_pdf_exporter.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script>
         // PWA & Direct-Entry Project Parameter Guard:
         // If viewer is launched without a valid project query parameter, immediately bounce to Dashboard index.html
@@ -334,7 +334,7 @@
                             <div id="selection-scroll-pin-bar" class="selection-scroll-pin-bar" style="display: none;">
                                 <div class="scroll-pin-header">
                                     <div class="scroll-pin-title-wrap">
-                                        <svg class="lf-icon scroll-pin-title-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon scroll-pin-title-icon" viewBox="0 0 24 24">
                                             <path d="M12 2v20M17 5H7M15 19H9" />
                                         </svg>
                                         <span class="scroll-pin-title" id="scroll-pin-title-text">SCROLL PIN</span>
@@ -347,14 +347,14 @@
                                     <div class="scroll-pin-row">
                                         <button id="btn-scroll-pin-none" class="v4-inspector-btn scroll-pin-btn active"
                                             data-pin="none" title="일반 스크롤 (화면 스크롤 시 함께 이동)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <svg class="bychoi-icon" viewBox="0 0 24 24">
                                                 <path d="M12 3v18M18 9l-6-6-6 6M18 15l-6 6-6-6" />
                                             </svg>
                                             <span>일반</span>
                                         </button>
                                         <button id="btn-scroll-pin-top" class="v4-inspector-btn scroll-pin-btn"
                                             data-pin="top" title="상단 고정 (스크롤 시 화면 상단에 고정)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <svg class="bychoi-icon" viewBox="0 0 24 24">
                                                 <line x1="4" y1="4" x2="20" y2="4" stroke-width="2.5" />
                                                 <polyline points="16 14 12 10 8 14" />
                                                 <line x1="12" y1="10" x2="12" y2="20" />
@@ -363,7 +363,7 @@
                                         </button>
                                         <button id="btn-scroll-pin-bottom" class="v4-inspector-btn scroll-pin-btn"
                                             data-pin="bottom" title="하단 고정 (스크롤 시 화면 하단에 고정)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <svg class="bychoi-icon" viewBox="0 0 24 24">
                                                 <line x1="4" y1="20" x2="20" y2="20" stroke-width="2.5" />
                                                 <polyline points="16 10 12 14 8 10" />
                                                 <line x1="12" y1="4" x2="12" y2="14" />
@@ -374,7 +374,7 @@
                                     <div class="scroll-pin-row">
                                         <button id="btn-scroll-pin-custom" class="v4-inspector-btn scroll-pin-btn"
                                             data-pin="custom" title="자유 플로팅 (현재 배치된 화면 위치에 항상 고정)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <svg class="bychoi-icon" viewBox="0 0 24 24">
                                                 <circle cx="12" cy="12" r="3.5" />
                                                 <path
                                                     d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
@@ -383,7 +383,7 @@
                                         </button>
                                         <button id="btn-scroll-pin-sticky" class="v4-inspector-btn scroll-pin-btn"
                                             data-pin="sticky" title="상단 스티키 (스크롤 중 지정 높이에 도달하면 고정)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <svg class="bychoi-icon" viewBox="0 0 24 24">
                                                 <line x1="3" y1="6" x2="21" y2="6" stroke-width="2" />
                                                 <line x1="3" y1="18" x2="21" y2="18" stroke-dasharray="2 2" />
                                                 <polygon points="8 14 12 10 16 14" />
@@ -393,7 +393,7 @@
                                         <button id="btn-scroll-pin-sticky-bottom"
                                             class="v4-inspector-btn scroll-pin-btn" data-pin="sticky-bottom"
                                             title="하단 스티키 안착 (스크롤 시 하단 고정, 본문 위치 도달 시 안착)">
-                                            <svg class="lf-icon" viewBox="0 0 24 24">
+                                            <svg class="bychoi-icon" viewBox="0 0 24 24">
                                                 <line x1="3" y1="18" x2="21" y2="18" stroke-width="2" />
                                                 <line x1="3" y1="6" x2="21" y2="6" stroke-dasharray="2 2" />
                                                 <polygon points="8 10 12 14 16 10" />
@@ -419,7 +419,7 @@
                                     class="scroll-pin-segment-group scroll-pin-marker-group" style="display: none;">
                                     <button id="btn-pin-pos-content" class="v4-inspector-btn scroll-pin-btn active"
                                         data-pin="none" title="본문 배치 (본문과 함께 자연스럽게 스크롤)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <rect x="4" y="4" width="16" height="16" rx="2" />
                                             <circle cx="9" cy="9" r="2" />
                                         </svg>
@@ -427,7 +427,7 @@
                                     </button>
                                     <button id="btn-pin-pos-fixed" class="v4-inspector-btn scroll-pin-btn"
                                         data-pin="viewport" title="화면 핀 고정 (스크롤과 무관하게 화면에 항상 고정 📌)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M12 17v5M9 2h6l-1 7h3l-5 8-5-8h3L9 2z" />
                                         </svg>
                                         <span>화면 고정 📌</span>
@@ -455,7 +455,7 @@
                                 <div class="selection-btn-row">
                                     <button id="btn-group-action" class="v4-inspector-btn btn-accent"
                                         style="display: none;">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <rect x="3" y="3" width="7" height="7"></rect>
                                             <rect x="14" y="3" width="7" height="7"></rect>
                                             <rect x="14" y="14" width="7" height="7"></rect>
@@ -465,28 +465,28 @@
                                     </button>
                                     <button id="btn-ungroup-action" class="v4-inspector-btn btn-secondary"
                                         style="display: none;">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                                         </svg>
                                         UNGROUP
                                     </button>
                                 </div>
                                 <button id="btn-add-molecules-action" class="v4-inspector-btn btn-primary">
-                                    <svg class="lf-icon" viewBox="0 0 24 24">
+                                    <svg class="bychoi-icon" viewBox="0 0 24 24">
                                         <path d="M12 5v14M5 12h14"></path>
                                     </svg>
                                     ADD TO MOLECULES
                                 </button>
                                 <div class="selection-btn-row">
                                     <button id="btn-bring-front-action" class="v4-inspector-btn btn-secondary">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <polyline points="17 11 12 6 7 11"></polyline>
                                             <polyline points="17 18 12 13 7 18"></polyline>
                                         </svg>
                                         앞으로 가져오기
                                     </button>
                                     <button id="btn-send-back-action" class="v4-inspector-btn btn-secondary">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <polyline points="17 13 12 18 7 13"></polyline>
                                             <polyline points="17 6 12 11 7 6"></polyline>
                                         </svg>
@@ -496,7 +496,7 @@
                                 <div class="selection-btn-row" id="selection-style-action-row">
                                     <button id="btn-copy-format-action" class="v4-inspector-btn btn-secondary"
                                         title="도형 서식 복사 (Ctrl + Shift + C)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path
                                                 d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
                                         </svg>
@@ -504,7 +504,7 @@
                                     </button>
                                     <button id="btn-paste-format-action" class="v4-inspector-btn btn-secondary"
                                         title="도형 서식 붙여넣기 (Ctrl + Shift + V)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path
                                                 d="M18 4V3c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V6h1v4H9v11c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-9h8V4h-3z" />
                                         </svg>
@@ -523,21 +523,21 @@
                                     <button id="btn-align-left"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
                                         title="Left (Ctrl+1)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M4 2v20M8 6h12v4H8zM8 14h8v4H8z" />
                                         </svg>
                                     </button>
                                     <button id="btn-align-center"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
                                         title="Center (Ctrl+2)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M12 2v2M12 20v2M8 4h8v6H8zM6 14h12v6H6z" />
                                         </svg>
                                     </button>
                                     <button id="btn-align-right"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
                                         title="Right (Ctrl+3)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M20 2v20M4 6h12v4H4zM8 14h12v4H8z" />
                                         </svg>
                                     </button>
@@ -545,21 +545,21 @@
                                 <div class="selection-align-grid-3">
                                     <button id="btn-align-top"
                                         class="v4-inspector-btn btn-secondary selection-align-btn" title="Top (Ctrl+4)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M2 4h20M6 8v12h4V8zM14 8v8h4V8z" />
                                         </svg>
                                     </button>
                                     <button id="btn-align-middle"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
                                         title="Middle (Ctrl+5)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M2 12h2M20 12h2M4 8h6v8H4zM14 6h6v12h-6z" />
                                         </svg>
                                     </button>
                                     <button id="btn-align-bottom"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
                                         title="Bottom (Ctrl+6)">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M2 20h20M6 4v12h4V4zM14 8v8h4V8z" />
                                         </svg>
                                     </button>
@@ -568,7 +568,7 @@
                                     <button id="btn-align-distribute-h"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
                                         title="Distribute Horizontally">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <line x1="4" y1="2" x2="4" y2="22"></line>
                                             <line x1="20" y1="2" x2="20" y2="22"></line>
                                             <rect x="9" y="6" width="6" height="12" rx="1"></rect>
@@ -577,7 +577,7 @@
                                     <button id="btn-align-distribute-v"
                                         class="v4-inspector-btn btn-secondary selection-align-btn"
                                         title="Distribute Vertically">
-                                        <svg class="lf-icon" viewBox="0 0 24 24">
+                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <line x1="2" y1="4" x2="22" y2="4"></line>
                                             <line x1="20" y1="2" x2="20" y2="20"></line>
                                             <rect x="6" y="9" width="12" height="6" rx="1"></rect>
@@ -721,7 +721,7 @@
                         <div class="dimmed-card-header">
                             <div class="dimmed-card-title-wrap">
                                 <span class="dimmed-card-icon">
-                                    <svg class="lf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    <svg class="bychoi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                                         <polyline points="2 12 12 17 22 12"></polyline>
@@ -738,7 +738,7 @@
                             <div id="dimmed-frame-tabs-group" class="dimmed-frame-tabs-group"></div>
                             <button type="button" id="btn-dimmed-sync-all" class="dimmed-sync-btn"
                                 title="모든 프레임에 딤드 설정 동시 적용">
-                                <svg class="lf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                <svg class="bychoi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
@@ -768,7 +768,7 @@
                             <div class="dimmed-mode-switch-group">
                                 <button type="button" id="btn-dimmed-mode-overlay" class="dimmed-mode-btn active"
                                     title="바닥 화면을 잠그고 딤드 레이어 위의 팝업 오브젝트를 편집합니다">
-                                    <svg class="lf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    <svg class="bychoi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="3" y="3" width="18" height="18" rx="3"></rect>
                                         <rect x="7" y="7" width="10" height="10" rx="1.5"></rect>
@@ -777,7 +777,7 @@
                                 </button>
                                 <button type="button" id="btn-dimmed-mode-base" class="dimmed-mode-btn"
                                     title="딤드와 팝업을 임시로 숨기고 바닥 본문 화면을 편집합니다">
-                                    <svg class="lf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    <svg class="bychoi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="3" y="3" width="18" height="18" rx="2"></rect>
                                         <line x1="3" y1="9" x2="21" y2="9"></line>
@@ -1059,93 +1059,93 @@
     </aside>
 
     <!-- Script modularization: Pure Vanilla V3 Migration -->
-    <script src="assets/vctrl_typography.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_typography.js?v=V429_BYCHOI_NAMESPACE"></script>
     <!-- Dynamic UI Library for Inspectors, Library Icons & Modals -->
-    <script src="assets/ui_library_fallback.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_ui_library.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/templates.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_clipboard.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/app.js?v=V427_HYBRID_AUTOSAVE"></script>
+    <script src="assets/ui_library_fallback.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_ui_library.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/templates.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_clipboard.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/app.js?v=V430_BYCHOI_SELECT_FIX"></script>
 
     <!-- Modularized Engine -->
-    <script src="assets/vctrl_undo.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_text_measurer.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_ui_atoms.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_ui_atoms_inputs.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_ui_atoms_cursor.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_design_system_atoms.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_design_system_shapes_tables.js?v=V418_MODULAR_DIAGNOSIS"></script>
-    <script src="assets/vctrl_design_system.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_clipboard_objects.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_format_painter.js?v=V403_CLONED_FORMAT_PAINTER_FIX"></script>
-    <script src="assets/vctrl_shortcuts.js?v=V420_DIMMED_LAYER"></script>
-    <script src="assets/vctrl_common.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_object_shape.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_object_connector.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/responsive_frame.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
-    <script src="assets/vctrl_iframe_styles.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_iframe_style_extractor.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_iframe_dimmed_layer.js?v=V420_DIMMED_LAYER"></script>
-    <script src="assets/vctrl_iframe_layering.js?v=V420_DIMMED_LAYER"></script>
-    <script src="assets/vctrl_iframe_inserter.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_iframe_adorner.js?v=V403_SELECTION_ADORNER"></script>
-    <script src="assets/vctrl_iframe_image_crop.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_iframe_script.js?v=V427_HYBRID_AUTOSAVE"></script>
-    <script src="assets/vctrl_iframe_grid.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_iframe_accordion.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_iframe_tab.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_iframe_drag.js?v=V423_PIN_ANCHOR_FIX"></script>
-    <script src="assets/vctrl_iframe_ports.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_presentation_pen.js?v=V391_MOBILE_RESTORE_FULLSCREEN_CLEAN"></script>
-    <script src="assets/vctrl_core.js?v=V428_INSTANT_SWITCH_AUTOSAVE"></script>
-    <script src="assets/vctrl_storage.js?v=V428_INSTANT_SWITCH_AUTOSAVE"></script>
-    <script src="assets/vctrl_autosave.js?v=V428_INSTANT_SWITCH_AUTOSAVE"></script>
-    <script src="assets/vctrl_core_router.js?v=V428_INSTANT_SWITCH_AUTOSAVE"></script>
-    <script src="assets/vctrl_parent_shortcuts.js?v=V424_IMAGE_CROP"></script>
-    <script src="assets/vctrl_smartguide.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_responsive_smartguide_math.js?v=V420_DIMMED_LAYER"></script>
-    <script src="assets/vctrl_responsive_smartguide.js?v=V420_DIMMED_LAYER"></script>
-    <script src="assets/vctrl_responsive_multiselect.js?v=V423_PIN_ANCHOR_FIX"></script>
-    <script src="assets/vctrl_iframe_scroll_pin.js?v=V423_PIN_ANCHOR_FIX"></script>
-    <script src="assets/vctrl_responsive_pins.js?v=V423_PIN_ANCHOR_FIX"></script>
-    <script src="assets/vctrl_grouping.js?v=V416_IA_MOLECULE_SUPPORT"></script>
-    <script src="assets/vctrl_color_picker.js?v=V426_WHITE_COLOR_FIX"></script>
-    <script src="assets/vctrl_component_atoms_data.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_component_data.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_component_logos_templates.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_component_icons_data.js?v=V418_MODULAR_DIAGNOSIS"></script>
-    <script src="assets/vctrl_component_illustrations.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_component_library.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/inspector/inspector_text_formatter.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_system_modals.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/inspector/inspector_quill.js?v=V425_QUILL_AUTO_CONTRAST"></script>
-    <script src="assets/inspector/inspector_scroll_pin.js?v=V364_SCROLL_PIN_SSOT"></script>
-    <script src="assets/vctrl_inspector_actionbar.js?v=V416_IA_MOLECULE_SUPPORT"></script>
-    <script src="assets/vctrl_inspector_sync.js?v=V417_IA_CELL_BG_SYNC"></script>
-    <script src="assets/vctrl_inspector.js?v=V425_QUILL_AUTO_CONTRAST"></script>
-    <script src="assets/vctrl_screen_manager.js?v=V411_VIEWER_VISUAL_RENEWAL"></script>
-    <script src="assets/vctrl_revision_history.js?v=V360_RECURSION_HOTFIX"></script>
-    <script src="assets/vctrl_annotation_pins.js?v=V401_UNIFIED_ZINDEX_ENGINE"></script>
-    <script src="assets/vctrl_canvas_viewport.js?v=V415_RESTORE_FULLSCREEN_LEFT_SIDEBAR"></script>
-    <script src="assets/vctrl_properties.js?v=V425_QUILL_AUTO_CONTRAST"></script>
-    <script src="assets/vctrl_connectors.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
+    <script src="assets/vctrl_undo.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_text_measurer.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_ui_atoms.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_ui_atoms_inputs.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_ui_atoms_cursor.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_design_system_atoms.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_design_system_shapes_tables.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_design_system.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_clipboard_objects.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_format_painter.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_shortcuts.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_common.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_object_shape.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_object_connector.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/responsive_frame.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_styles.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_style_extractor.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_dimmed_layer.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_layering.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_inserter.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_adorner.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_image_crop.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_script.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_grid.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_accordion.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_tab.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_drag.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_ports.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_presentation_pen.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_core.js?v=V430_BYCHOI_SELECT_FIX"></script>
+    <script src="assets/vctrl_storage.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_autosave.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_core_router.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_parent_shortcuts.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_smartguide.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_responsive_smartguide_math.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_responsive_smartguide.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_responsive_multiselect.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_iframe_scroll_pin.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_responsive_pins.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_grouping.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_color_picker.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_component_atoms_data.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_component_data.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_component_logos_templates.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_component_icons_data.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_component_illustrations.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_component_library.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_text_formatter.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_system_modals.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_quill.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_scroll_pin.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_inspector_actionbar.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_inspector_sync.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_inspector.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_screen_manager.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_revision_history.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_annotation_pins.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_canvas_viewport.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_properties.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_connectors.js?v=V429_BYCHOI_NAMESPACE"></script>
 
     <!-- V4 Premium Addons -->
-    <script src="assets/vctrl_table.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_component_inserter.js?v=V422_UNIFIED_OBJECT_DEFAULTS"></script>
-    <script src="assets/vctrl_canvas_background.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/inspector/inspector_dimmed_layer.js?v=V420_DIMMED_LAYER"></script>
-    <script src="assets/inspector/inspector_grid.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/inspector/inspector_accordion.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/inspector/inspector_tab.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/inspector/inspector_shapes.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/inspector/inspector_atoms.js?v=V418_MODULAR_DIAGNOSIS"></script>
-    <script src="assets/inspector/inspector_atoms_inputs.js?v=V418_MODULAR_DIAGNOSIS"></script>
-    <script src="assets/inspector/inspector_atoms_advanced.js?v=V418_MODULAR_DIAGNOSIS"></script>
-    <script src="assets/inspector/inspector_admin_settings.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/inspector/inspector_table.js?v=V361_GRID_HIGHLIGHT"></script>
-    <script src="assets/inspector/inspector_popup.js?v=V361_POPUP_INSPECTOR"></script>
-    <script src="assets/vctrl_resolution_engine.js?v=V413_DESKTOP_FULLSCREEN_FIT_FIX"></script>
+    <script src="assets/vctrl_table.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_component_inserter.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_canvas_background.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_dimmed_layer.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_grid.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_accordion.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_tab.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_shapes.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_atoms.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_atoms_inputs.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_atoms_advanced.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_admin_settings.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_table.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/inspector/inspector_popup.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_resolution_engine.js?v=V429_BYCHOI_NAMESPACE"></script>
 </body>
 
 </html>

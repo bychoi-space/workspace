@@ -35,12 +35,12 @@
         }
         
         /* V4 Component Base Styles */
-        .lf-component { position: absolute !important; box-sizing: border-box !important; transition: outline 0.1s; z-index: 500; }
-        .lf-component:hover { outline: 2px solid var(--v4-accent) !important; cursor: move !important; }
-        .lf-component.selected { outline: 2px solid var(--v4-accent) !important; z-index: 10001 !important; }
+        .bychoi-component { position: absolute !important; box-sizing: border-box !important; transition: outline 0.1s; z-index: 500; }
+        .bychoi-component:hover { outline: 2px solid var(--v4-accent) !important; cursor: move !important; }
+        .bychoi-component.selected { outline: 2px solid var(--v4-accent) !important; z-index: 10001 !important; }
         
-        .lf-drag-handle { position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: var(--v4-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; z-index: 100; opacity: 0; transition: opacity 0.2s; }
-        .lf-component:hover .lf-drag-handle, .lf-component.selected .lf-drag-handle { opacity: 1; }
+        .bychoi-drag-handle { position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: var(--v4-accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: move; z-index: 100; opacity: 0; transition: opacity 0.2s; }
+        .bychoi-component:hover .bychoi-drag-handle, .bychoi-component.selected .bychoi-drag-handle { opacity: 1; }
         
         .v4-card {
             background: #fff;
@@ -85,7 +85,7 @@
   --v4-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   --v4-placeholder-color: #94a3b8;
 }
-body, .page, .lf-component {
+body, .page, .bychoi-component {
   font-family: var(--v4-font-family) !important;
 }
 .v4-editable-cell, .v4-shape, .v4-shape-rect, .v4-shape-circle, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-arrow, .v4-shape-pattern-grid, .v4-shape-wave, .v4-shape-webpage, .text-marker, .v4-text-box, .v4-text-shape {
@@ -145,7 +145,7 @@ body, .page, .lf-component {
         </div>
 
         <!-- Editable Main Title - Balanced Typography -->
-        <div id="cover-title" class="lf-component" style="top: 220px; left: 80px; min-width: 800px;">
+        <div id="cover-title" class="bychoi-component" style="top: 220px; left: 80px; min-width: 800px;">
             
             
             <div id="cover-project-title" contenteditable="true" class="v4-editable-cell" style="font-size: 48px; font-weight: 900; line-height: 1.15; letter-spacing: -2px; color: var(--v4-text); margin-bottom: 28px;">업무 진행 방향</div>
@@ -156,7 +156,7 @@ body, .page, .lf-component {
         </div>
 
         <!-- Editable Version Info - Clean Badges -->
-        <div id="cover-version" class="lf-component" style="top: 500px; left: 80px;">
+        <div id="cover-version" class="bychoi-component" style="top: 500px; left: 80px;">
             
             
             <div style="display: flex; align-items: center; gap: 24px;">
@@ -168,7 +168,7 @@ body, .page, .lf-component {
         </div>
 
         <!-- Editable Project Info Table - High Legibility -->
-        <div id="cover-info-table" class="lf-component v4-card" style="bottom: 80px; right: 80px; width: 540px; padding: 0; overflow: hidden;">
+        <div id="cover-info-table" class="bychoi-component v4-card" style="bottom: 80px; right: 80px; width: 540px; padding: 0; overflow: hidden;">
             
             
             <table class="cover-info-premium-table">

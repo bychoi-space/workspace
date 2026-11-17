@@ -1389,7 +1389,7 @@ body {
 }
 
 /* Marker Hover Delete Button */
-.lf-delete-trigger {
+.bychoi-delete-trigger {
     position: absolute;
     top: -10px;
     right: -10px;
@@ -1410,13 +1410,13 @@ body {
     z-index: 200;
     pointer-events: auto;
 }
-.pin-marker:hover .lf-delete-trigger,
-.text-marker:hover .lf-delete-trigger { display: flex; } #
-.text-marker:hover .lf-delete-trigger {
+.pin-marker:hover .bychoi-delete-trigger,
+.text-marker:hover .bychoi-delete-trigger { display: flex; } #
+.text-marker:hover .bychoi-delete-trigger {
     opacity: 1;
     transform: scale(1);
 }
-.lf-delete-trigger:hover {
+.bychoi-delete-trigger:hover {
     background: #f43f5e;
     transform: scale(1.2) !important;
 }
@@ -1667,7 +1667,7 @@ body {
 .badge-mobile-ui { background: #8b5cf6; color: #fff; }
 .badge-admin { background: #475569; color: #fff; }
 .badge-admin-nbos { background: #334155; color: #fff; }
-.badge-admin-onesphere { background: #9333ea; color: #fff; }
+.badge-admin-modern { background: #9333ea; color: #fff; }
 .badge-default { background: rgba(255,255,255,0.1); color: var(--text-secondary); }
 
 /* Add Action Buttons */
@@ -2826,18 +2826,18 @@ body.drag-active #drop-overlay {
     z-index: 102 !important;
 }
 
-.pin-marker .lf-drag-handle,
-.pin-marker .lf-resizer,
-.pin-marker .lf-delete-trigger,
-.pin-marker .lf-connector-port,
-.pin-marker:hover .lf-drag-handle,
-.pin-marker:hover .lf-resizer,
-.pin-marker:hover .lf-delete-trigger,
-.pin-marker:hover .lf-connector-port,
-.pin-marker.selected .lf-drag-handle,
-.pin-marker.selected .lf-resizer,
-.pin-marker.selected .lf-delete-trigger,
-.pin-marker.selected .lf-connector-port {
+.pin-marker .bychoi-drag-handle,
+.pin-marker .bychoi-resizer,
+.pin-marker .bychoi-delete-trigger,
+.pin-marker .bychoi-connector-port,
+.pin-marker:hover .bychoi-drag-handle,
+.pin-marker:hover .bychoi-resizer,
+.pin-marker:hover .bychoi-delete-trigger,
+.pin-marker:hover .bychoi-connector-port,
+.pin-marker.selected .bychoi-drag-handle,
+.pin-marker.selected .bychoi-resizer,
+.pin-marker.selected .bychoi-delete-trigger,
+.pin-marker.selected .bychoi-connector-port {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
@@ -3670,21 +3670,21 @@ body.drag-active #drop-overlay {
 }
 
 /* Workspace Sprite Icons */
-svg.lf-icon {
+svg.bychoi-icon {
     background-image: none !important;
 }
-svg.lf-icon:not(.v4-logo-img),
-svg.lf-icon:not(.v4-logo-img) path,
-svg.lf-icon:not(.v4-logo-img) circle,
-svg.lf-icon:not(.v4-logo-img) rect,
-svg.lf-icon:not(.v4-logo-img) line,
-svg.lf-icon:not(.v4-logo-img) polyline,
-svg.lf-icon:not(.v4-logo-img) polygon,
+svg.bychoi-icon:not(.v4-logo-img),
+svg.bychoi-icon:not(.v4-logo-img) path,
+svg.bychoi-icon:not(.v4-logo-img) circle,
+svg.bychoi-icon:not(.v4-logo-img) rect,
+svg.bychoi-icon:not(.v4-logo-img) line,
+svg.bychoi-icon:not(.v4-logo-img) polyline,
+svg.bychoi-icon:not(.v4-logo-img) polygon,
 .v4-searchbar-icon-wrap svg,
 .v4-searchbar-icon-wrap svg * {
     stroke-width: 1.2 !important;
 }
-.lf-icon {
+.bychoi-icon {
     width: 40px;
     height: 40px;
     display: inline-block;
@@ -3694,16 +3694,16 @@ svg.lf-icon:not(.v4-logo-img) polygon,
 
 
 /* --- Restored Component Handles (Phase 1: Drag Handle & Resizer Hidden) --- */
-.lf-drag-handle,
-.lf-resizer { 
+.bychoi-drag-handle,
+.bychoi-resizer { 
     display: none !important; 
     opacity: 0 !important; 
     visibility: hidden !important; 
     pointer-events: none !important; 
 }
-.lf-delete-trigger { position: absolute; top: -10px; right: -10px; width: 22px; height: 22px; background: #ef4444; color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; border: 2px solid #1e2128; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 2000; pointer-events: auto; }
-.pin-marker:hover .lf-delete-trigger, .pin-marker.active .lf-delete-trigger, .pin-marker.highlight .lf-delete-trigger, .text-marker:hover .lf-delete-trigger, .text-marker.active .lf-delete-trigger, .text-marker.editing-active .lf-delete-trigger, .text-marker.highlight .lf-delete-trigger { display: flex !important; }
-.text-marker:hover .lf-drag-handle, .text-marker.active .lf-drag-handle, .text-marker.editing-active .lf-drag-handle, .text-marker.highlight .lf-drag-handle { display: none !important; }
+.bychoi-delete-trigger { position: absolute; top: -10px; right: -10px; width: 22px; height: 22px; background: #ef4444; color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; border: 2px solid #1e2128; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 2000; pointer-events: auto; }
+.pin-marker:hover .bychoi-delete-trigger, .pin-marker.active .bychoi-delete-trigger, .pin-marker.highlight .bychoi-delete-trigger, .text-marker:hover .bychoi-delete-trigger, .text-marker.active .bychoi-delete-trigger, .text-marker.editing-active .bychoi-delete-trigger, .text-marker.highlight .bychoi-delete-trigger { display: flex !important; }
+.text-marker:hover .bychoi-drag-handle, .text-marker.active .bychoi-drag-handle, .text-marker.editing-active .bychoi-drag-handle, .text-marker.highlight .bychoi-drag-handle { display: none !important; }
 
 /* --- Premium Button Design Standard (V4 Inspector Unified) --- */
 .v4-inspector-btn {

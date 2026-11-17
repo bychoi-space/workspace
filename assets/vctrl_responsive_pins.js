@@ -130,7 +130,7 @@ window.v4ResponsivePinsScript = `
 
         // [Self-Healing] Ensure no regular components are trapped inside pin layer
         var trapped = Array.from(layer.children).filter(function(c) {
-            return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && (!c.id || !c.id.startsWith('v4-pin-'));
+            return c.classList && c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && (!c.id || !c.id.startsWith('v4-pin-'));
         });
         if (trapped.length > 0) {
             trapped.forEach(function(tc) {
@@ -156,7 +156,7 @@ window.v4ResponsivePinsScript = `
 
         pin = document.createElement('div');
         pin.id = pinId;
-        pin.className = 'lf-component pin-marker';
+        pin.className = 'bychoi-component pin-marker';
         pin.setAttribute('data-frame', frame);
         pin.setAttribute('data-index', String(index));
         pin.setAttribute('data-pin-num', String(number));
@@ -204,7 +204,7 @@ window.v4ResponsivePinsScript = `
         pin.style.top = posY + 'px';
 
         pin.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + number + '</div>' +
-                        '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
+                        '<div class="bychoi-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
 
         if (typeof window.updateHandles === 'function') {
             window.updateHandles(pin);
@@ -224,7 +224,7 @@ window.v4ResponsivePinsScript = `
         var pinnedHosts = Array.from(document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])')).filter(function(el) {
             if (!el || el === pin) return false;
             if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return false;
-            if (el.parentElement && el.parentElement.closest && el.parentElement.closest('.lf-group')) return false;
+            if (el.parentElement && el.parentElement.closest && el.parentElement.closest('.bychoi-group')) return false;
             if (pinContainer && !pinContainer.contains(el)) return false;
             return true;
         });
@@ -270,7 +270,7 @@ window.v4ResponsivePinsScript = `
 
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
-                    type: 'LF_UPDATE_PIN_POS',
+                    type: 'BYCHOI_UPDATE_PIN_POS',
                     index: index,
                     frame: ctx.frame1Type,
                     x: parseFloat(pin1.style.left) || 0,
@@ -302,7 +302,7 @@ window.v4ResponsivePinsScript = `
 
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
-                    type: 'LF_UPDATE_PIN_POS',
+                    type: 'BYCHOI_UPDATE_PIN_POS',
                     index: index,
                     frame: ctx.frame2Type,
                     x: parseFloat(pin2.style.left) || 0,
@@ -314,7 +314,7 @@ window.v4ResponsivePinsScript = `
             }
         }
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
             c.classList.remove('selected');
         });
 
@@ -325,7 +325,7 @@ window.v4ResponsivePinsScript = `
 
         if (typeof window.notifyParent === 'function') {
             window.notifyParent({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 id: pin1 ? pin1.id : (pin2 ? pin2.id : ''),
                 isTable: false,
                 isShape: false,
@@ -353,7 +353,7 @@ window.v4ResponsivePinsScript = `
 
         if (typeof window.notifyParent === 'function') {
             window.notifyParent({
-                type: 'LF_UPDATE_PIN_POS',
+                type: 'BYCHOI_UPDATE_PIN_POS',
                 index: index,
                 frame: 'canvas',
                 x: parseFloat(pin.style.left) || 0,
@@ -362,7 +362,7 @@ window.v4ResponsivePinsScript = `
             });
         }
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
             c.classList.remove('selected');
         });
 
@@ -372,7 +372,7 @@ window.v4ResponsivePinsScript = `
 
         if (typeof window.notifyParent === 'function') {
             window.notifyParent({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 id: pin.id,
                 isTable: false,
                 isShape: false,
@@ -548,7 +548,7 @@ window.v4ResponsivePinsScript = `
     };
 
     window.focusResponsivePin = function(index, shouldScroll) {
-        document.querySelectorAll('.lf-component.selected').forEach(function(el) {
+        document.querySelectorAll('.bychoi-component.selected').forEach(function(el) {
             el.classList.remove('selected');
         });
 
@@ -699,7 +699,7 @@ window.v4ResponsivePinsScript = `
 
                 var hostId1 = (f1PinMeta && f1PinMeta.fixedHost !== undefined) ? f1PinMeta.fixedHost : item.fixedHost;
                 var hostEl1 = hostId1 ? document.getElementById(hostId1) : null;
-                var hasValidHost1 = !!(hostEl1 && hostEl1.isConnected && ctx.frame1.contains(hostEl1) && !(hostEl1.parentElement && hostEl1.parentElement.closest('.lf-group')) && hostEl1.hasAttribute('data-scroll-fixed') && hostEl1.getAttribute('data-scroll-fixed') !== 'none');
+                var hasValidHost1 = !!(hostEl1 && hostEl1.isConnected && ctx.frame1.contains(hostEl1) && !(hostEl1.parentElement && hostEl1.parentElement.closest('.bychoi-group')) && hostEl1.hasAttribute('data-scroll-fixed') && hostEl1.getAttribute('data-scroll-fixed') !== 'none');
 
                 if (!hasValidHost1 && !isPin1ViewportFixed && pin1) {
                     var detectedHost1 = _findPinnedHostUnderPin(pin1);
@@ -751,7 +751,7 @@ window.v4ResponsivePinsScript = `
 
                 var hostId2 = (f2PinMeta && f2PinMeta.fixedHost !== undefined) ? f2PinMeta.fixedHost : item.fixedHost;
                 var hostEl2 = hostId2 ? document.getElementById(hostId2) : null;
-                var hasValidHost2 = !!(hostEl2 && hostEl2.isConnected && ctx.frame2.contains(hostEl2) && !(hostEl2.parentElement && hostEl2.parentElement.closest('.lf-group')) && hostEl2.hasAttribute('data-scroll-fixed') && hostEl2.getAttribute('data-scroll-fixed') !== 'none');
+                var hasValidHost2 = !!(hostEl2 && hostEl2.isConnected && ctx.frame2.contains(hostEl2) && !(hostEl2.parentElement && hostEl2.parentElement.closest('.bychoi-group')) && hostEl2.hasAttribute('data-scroll-fixed') && hostEl2.getAttribute('data-scroll-fixed') !== 'none');
 
                 if (!hasValidHost2 && !isPin2ViewportFixed && pin2) {
                     var detectedHost2 = _findPinnedHostUnderPin(pin2);
@@ -793,7 +793,7 @@ window.v4ResponsivePinsScript = `
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};
 
-    window.v4MessageHandlers['LF_IMPORT_PINS'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_IMPORT_PINS'] = function(d) {
         if (isResponsiveScreen()) {
             window.importResponsivePins(d ? d.pins : []);
             return;
@@ -819,18 +819,18 @@ window.v4ResponsivePinsScript = `
             host.appendChild(div);
             
             const isPinType = (pin.type === 'pin' || pin.type === undefined);
-            div.className = 'lf-component ' + (isPinType ? 'pin-marker' : 'text-marker');
+            div.className = 'bychoi-component ' + (isPinType ? 'pin-marker' : 'text-marker');
             
             if (isPinType) {
                 div.setAttribute('data-index', idx);
                 div.setAttribute('data-pin-num', idx + 1);
                 div.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
-                                '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
+                                '<div class="bychoi-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
                 div.style.width = '20px';
                 div.style.height = '20px';
             } else {
                 div.innerHTML = '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:' + (pin.color || '#000') + '">' + (pin.html || pin.text || '') + '</div>' +
-                                '<div class="lf-delete-trigger">&times;</div>';
+                                '<div class="bychoi-delete-trigger">&times;</div>';
                 div.style.width = 'fit-content';
                 div.style.height = 'auto';
             }
@@ -851,7 +851,7 @@ window.v4ResponsivePinsScript = `
         });
     };
 
-    window.v4MessageHandlers['LF_REORDER_PINS'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_REORDER_PINS'] = function(d) {
         if (isResponsiveScreen()) {
             window.reorderResponsivePins(d ? d.deletedIndex : undefined);
             return;
@@ -865,18 +865,18 @@ window.v4ResponsivePinsScript = `
             host.appendChild(div);
             
             const isPinType = (pin.type === 'pin' || pin.type === undefined);
-            div.className = 'lf-component ' + (isPinType ? 'pin-marker' : 'text-marker');
+            div.className = 'bychoi-component ' + (isPinType ? 'pin-marker' : 'text-marker');
             
             if (isPinType) {
                 div.setAttribute('data-index', idx);
                 div.setAttribute('data-pin-num', idx + 1);
                 div.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
-                                '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
+                                '<div class="bychoi-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
                 div.style.width = '20px';
                 div.style.height = '20px';
             } else {
                 div.innerHTML = '<div class="v4-editable-cell" contenteditable="true" style="outline:none; color:' + (pin.color || '#000') + '">' + (pin.html || pin.text || '') + '</div>' +
-                                '<div class="lf-delete-trigger">&times;</div>';
+                                '<div class="bychoi-delete-trigger">&times;</div>';
                 div.style.width = 'fit-content';
                 div.style.height = 'auto';
             }
@@ -897,8 +897,8 @@ window.v4ResponsivePinsScript = `
         });
     };
 
-    window.v4MessageHandlers['LF_UPDATE_PIN_CONTENT'] = function(d) {
-        const comp = (d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+    window.v4MessageHandlers['BYCHOI_UPDATE_PIN_CONTENT'] = function(d) {
+        const comp = (d.id ? document.getElementById(d.id) : null) || document.querySelector('.bychoi-component.selected');
         if (comp) {
             const cell = comp.querySelector('.v4-editable-cell') || (comp.classList.contains('v4-editable-cell') ? comp : null);
             if (cell) {
@@ -935,19 +935,19 @@ window.v4ResponsivePinsScript = `
         const d = e.data;
         if (!d || typeof d !== 'object') return;
 
-        if (d.type === 'LF_INSERT_RESPONSIVE_PINS') {
+        if (d.type === 'BYCHOI_INSERT_RESPONSIVE_PINS') {
             window.spawnResponsiveDualPins(d.index, d.number, d.pcPos || d.pos1, d.mobilePos || d.pos2);
-        } else if (d.type === 'LF_INSERT_GROUND_PIN') {
+        } else if (d.type === 'BYCHOI_INSERT_GROUND_PIN') {
             window.spawnGroundPin(d.index, d.number, d.x, d.y);
-        } else if (d.type === 'LF_FOCUS_PIN') {
+        } else if (d.type === 'BYCHOI_FOCUS_PIN') {
             window.focusResponsivePin(d.index, d.scroll !== false);
-        } else if (d.type === 'LF_HIGHLIGHT_PIN') {
+        } else if (d.type === 'BYCHOI_HIGHLIGHT_PIN') {
             window.highlightResponsivePins(d.index, !!d.active);
-        } else if (d.type === 'LF_IMPORT_RESPONSIVE_PINS') {
+        } else if (d.type === 'BYCHOI_IMPORT_RESPONSIVE_PINS') {
             window.importResponsivePins(d.pins);
-        } else if (d.type === 'LF_REORDER_RESPONSIVE_PINS') {
+        } else if (d.type === 'BYCHOI_REORDER_RESPONSIVE_PINS') {
             window.reorderResponsivePins(d ? d.deletedIndex : undefined);
-        } else if (d.type === 'LF_REORDER_PINS') {
+        } else if (d.type === 'BYCHOI_REORDER_PINS') {
             window.reorderAllPins(d ? d.deletedIndex : undefined);
         }
     });
@@ -957,7 +957,7 @@ window.v4ResponsivePinsScript = `
         var target = e.target;
         if (!target) return;
 
-        if ((window.ResponsiveFrameUtils && window.ResponsiveFrameUtils.getContainer(target)) || target.closest('.mobile-content-inner, .pc-content-inner, .mobile-content-area, .pc-content-area, .lf-component, .v4-editable-cell, input, textarea, button')) {
+        if ((window.ResponsiveFrameUtils && window.ResponsiveFrameUtils.getContainer(target)) || target.closest('.mobile-content-inner, .pc-content-inner, .mobile-content-area, .pc-content-area, .bychoi-component, .v4-editable-cell, input, textarea, button')) {
             return;
         }
 
@@ -967,7 +967,7 @@ window.v4ResponsivePinsScript = `
             var groundY = Math.round(e.pageY);
             if (typeof window.notifyParent === 'function') {
                 window.notifyParent({
-                    type: 'LF_CREATE_GROUND_PIN',
+                    type: 'BYCHOI_CREATE_GROUND_PIN',
                     x: groundX,
                     y: groundY
                 });

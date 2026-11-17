@@ -14,7 +14,7 @@
 - **[AGENTS.md](file:///c:/Users/sisun/ai_work/AGENTS.md)**:
   - `## 🔍 시스템 전체 정밀 진단 6대 필수 기준 프로토콜` 섹션 공식 신설.
   - 실제 코드베이스에 존재하나 문서상 누락되었던 **18개 핵심 모듈의 아키텍처 역할 및 책임 정의 완벽 반영**.
-  - 최근 추가된 **WAVE 도형 세로 방향 규격** 및 **Grid UI 컬럼 하이라이트(`LF_SET_GRID_COLUMN_HIGHLIGHT`) 규격** 공식화.
+  - 최근 추가된 **WAVE 도형 세로 방향 규격** 및 **Grid UI 컬럼 하이라이트(`BYCHOI_SET_GRID_COLUMN_HIGHLIGHT`) 규격** 공식화.
 - **[workspace-editor-system-diagnosis](file:///c:/Users/sisun/ai_work/.agents/skills/workspace-editor-system-diagnosis/SKILL.md)**:
   - 시스템 정밀 진단 시 지켜야 할 전수 조사 프로세스와 6대 기준 분석 가이드라인을 담은 신규 스킬 제정.
 - **[GEMINI.md](file:///c:/Users/sisun/ai_work/GEMINI.md)**:
@@ -82,7 +82,7 @@
 - **18개 미기재 모듈 정식 등재**:
   - `vctrl_ui_atoms.js`, `vctrl_clipboard_objects.js`, `vctrl_format_painter.js`, `vctrl_smartguide.js`, `vctrl_responsive_smartguide.js`, `vctrl_responsive_multiselect.js`, `vctrl_color_picker.js`, `vctrl_table.js`, `vctrl_typography.js`, `vctrl_ui_library.js`, `vctrl_system_modals.js`, `vctrl_iframe_inserter.js`, `vctrl_iframe_layering.js`, `vctrl_iframe_style_extractor.js`, `vctrl_properties.js`, `inspector_table.js`, `inspector_quill.js`, `app.js & dashboard.js`를 [AGENTS.md](file:///c:/Users/sisun/ai_work/AGENTS.md)의 `모듈러 아키텍처`에 완벽히 추가 등록 완료.
 - **최신 쉐입 및 그리드 규격 명문화**:
-  - `WAVE 도형 가로/세로 방향 지원 표준 규칙` 및 `Grid UI 컬럼 강조(LF_SET_GRID_COLUMN_HIGHLIGHT) 규칙`을 [AGENTS.md](file:///c:/Users/sisun/ai_work/AGENTS.md)에 정식 추가 완료.
+  - `WAVE 도형 가로/세로 방향 지원 표준 규칙` 및 `Grid UI 컬럼 강조(BYCHOI_SET_GRID_COLUMN_HIGHLIGHT) 규칙`을 [AGENTS.md](file:///c:/Users/sisun/ai_work/AGENTS.md)에 정식 추가 완료.
 - **아키텍처 정합성 검증**:
   - `[SECTION 6] Rules & Skills Architecture Alignment` 검사 결과 **불일치 모듈 0건 (100% 일치)** 달성.
 
@@ -198,7 +198,7 @@
      - `viewer.html`에 `<script src="assets/vctrl_component_illustrations.js"></script>` 스크립트 태그 등록.
 
 2. **`assets/vctrl_ui_atoms_cursor.js` 신규 분리 (214라인, 35.3KB)**:
-   - **기존 문제**: `vctrl_ui_atoms.js` (108.3KB, 1361라인) 내에 거대한 base64 포인터/아이빔 이미지와 마우스 커서 아톰의 너비 자동 맞춤(`fitCursorWidth`), 이벤트 바인딩(`bindCursorEvents`), 프로퍼티 동기화(`LF_UPDATE_CURSOR_PROPERTIES`)가 35KB를 차지하여 파일 비대화의 주원인이 됨.
+   - **기존 문제**: `vctrl_ui_atoms.js` (108.3KB, 1361라인) 내에 거대한 base64 포인터/아이빔 이미지와 마우스 커서 아톰의 너비 자동 맞춤(`fitCursorWidth`), 이벤트 바인딩(`bindCursorEvents`), 프로퍼티 동기화(`BYCHOI_UPDATE_CURSOR_PROPERTIES`)가 35KB를 차지하여 파일 비대화의 주원인이 됨.
    - **조치 내역**:
      - `assets/vctrl_ui_atoms_cursor.js` 신규 엔진 모듈을 생성하여 `window.v4UIAtomsCursorScript`로 완전 분리.
      - `assets/vctrl_ui_atoms.js`: 커서 관련 로직과 base64 이미지를 제거하고 표준 입력/폼 아톰에 집중하도록 하여 파일 용량을 **108.3KB ➔ 73.7KB (약 32% 감축)** 로 경량화.

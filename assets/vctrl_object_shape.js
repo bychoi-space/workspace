@@ -9,7 +9,7 @@ window.v4ObjectShapeScript = `
             components = d.ids.map(id => document.getElementById(id)).filter(Boolean);
         }
         if (components.length === 0) {
-            const single = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+            const single = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.bychoi-component.selected');
             if (single) components = [single];
         }
         if (components.length === 0) return false;
@@ -182,7 +182,7 @@ window.v4ObjectShapeScript = `
 
                             if (typeof window.notifyParent === 'function') {
                                 window.notifyParent({
-                                    type: 'LF_COMP_RESIZED',
+                                    type: 'BYCHOI_COMP_RESIZED',
                                     id: s.id,
                                     width: s.style.width,
                                     height: s.style.height
@@ -376,7 +376,7 @@ window.v4ObjectShapeScript = `
         }
         if (validComponents.length > 0 && typeof window.notifyParent === 'function' && typeof window._getCompStyles === 'function') {
             window.notifyParent({
-                type: 'LF_COMP_RESIZED',
+                type: 'BYCHOI_COMP_RESIZED',
                 ...window._getCompStyles(validComponents[0])
             });
         }
@@ -384,14 +384,14 @@ window.v4ObjectShapeScript = `
     };
 
     function isStandaloneTextShapeComp(el) {
-        if (!el || !el.classList || !el.classList.contains('lf-component')) return false;
-        if (el.classList.contains('lf-group')) return false;
+        if (!el || !el.classList || !el.classList.contains('bychoi-component')) return false;
+        if (el.classList.contains('bychoi-group')) return false;
         if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return false;
         if (el.id && el.id.indexOf('v4-pin-') === 0) return false;
         if (el.getAttribute('data-index') !== null || el.getAttribute('data-pin-num') !== null) return false;
         var isTextCls = el.classList.contains('v4-text-shape') || el.classList.contains('v4-text-box');
         if (!isTextCls) return false;
-        if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .lf-icon, .v4-illustration-container, .v4-motion-container')) return false;
+        if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .bychoi-icon, .v4-illustration-container, .v4-motion-container')) return false;
         return true;
     }
 
@@ -414,7 +414,7 @@ window.v4ObjectShapeScript = `
             var target = document.getElementById(options.id);
             if (target) candidates.push(target);
         } else {
-            candidates = Array.from(document.querySelectorAll('.lf-component.v4-text-shape, .lf-component.v4-text-box'));
+            candidates = Array.from(document.querySelectorAll('.bychoi-component.v4-text-shape, .bychoi-component.v4-text-box'));
         }
         if (candidates.length === 0) return 0;
 
@@ -438,7 +438,7 @@ window.v4ObjectShapeScript = `
                 wasAnySelected = true;
                 if (window.activeEl === el) window.activeEl = null;
             }
-            if (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('lf-group')) {
+            if (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('bychoi-group')) {
                 affectedGroups.add(el.parentElement);
             }
             el.remove();
@@ -446,7 +446,7 @@ window.v4ObjectShapeScript = `
         });
 
         affectedGroups.forEach(function(g) {
-            if (g && g.isConnected && g.querySelectorAll('.lf-component').length === 0) {
+            if (g && g.isConnected && g.querySelectorAll('.bychoi-component').length === 0) {
                 if (g.classList.contains('selected') || window.activeEl === g) {
                     wasAnySelected = true;
                     if (window.activeEl === g) window.activeEl = null;
@@ -457,7 +457,7 @@ window.v4ObjectShapeScript = `
 
         if (removedCount > 0) {
             if (typeof window.markDirty === 'function') window.markDirty();
-            var remainingSelected = document.querySelectorAll('.lf-component.selected').length;
+            var remainingSelected = document.querySelectorAll('.bychoi-component.selected').length;
             if (wasAnySelected && remainingSelected === 0) {
                 if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
                     window.ResponsiveSmartGuide.clearGuides(true);
@@ -466,7 +466,7 @@ window.v4ObjectShapeScript = `
                     try { window.SelectionAdorner.clear(); } catch (adErr) {}
                 }
                 if (options.deselectIfRemoved && typeof window.notifyParent === 'function') {
-                    window.notifyParent({ type: 'LF_DESELECT' });
+                    window.notifyParent({ type: 'BYCHOI_DESELECT' });
                 }
             } else if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
                 try { window.SelectionAdorner.update(); } catch (adUpdErr) {}
@@ -483,12 +483,12 @@ window.v4ObjectShapeScript = `
     window.v4ObjectShape.cleanupEmptyTextShapes = cleanupEmptyTextShapes;
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};
-    window.v4MessageHandlers['LF_CLEANUP_EMPTY_TEXT_SHAPES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_CLEANUP_EMPTY_TEXT_SHAPES'] = function(d) {
         cleanupEmptyTextShapes(d || {});
     };
 
-    window.v4MessageHandlers['LF_UPDATE_SHAPE_TEXT'] = function(d) {
-        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected'); 
+    window.v4MessageHandlers['BYCHOI_UPDATE_SHAPE_TEXT'] = function(d) {
+        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.bychoi-component.selected'); 
         if (!s) return;
         const shape = s.querySelector('.v4-shape');
         if (!shape) {

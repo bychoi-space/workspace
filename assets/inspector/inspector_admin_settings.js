@@ -19,7 +19,7 @@
         const updateWidth = (val) => {
             const iframe = document.getElementById('main-iframe');
             if (iframe && iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
+                window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
                     labelWidth: val
                 });
             }
@@ -88,7 +88,7 @@
                 groupHeaderColor: colorInp ? colorInp.value : '#ffffff',
                 ...extraProps
             };
-            window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', payload);
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES', payload);
             
             if (window.state && window.state.selectedComponentStyles) {
                 window.state.selectedComponentStyles.adminShowGroupHeader = payload.showGroupHeader;
@@ -263,7 +263,7 @@
         }
 
         // 2. Notify iframe via MessageHub
-        window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
+        window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
             rowCount: newRowCount,
             rows: rowsArray
         });
@@ -458,7 +458,7 @@
                     window.state.selectedComponentStyles[`adminRow${i}Ratio`] = currentRatio;
                 }
                 if (iframe && iframe.contentWindow && window.MessageHub) {
-                    window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
+                    window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
                         rowNum: i,
                         label: getMergedLabels(),
                         cols: currentCols,
@@ -531,7 +531,7 @@
                     const currentCount = parseInt(rowCountText.innerText) || 1;
                     if (currentCount < 20) {
                         const newCount = currentCount + 1;
-                        window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
+                        window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
                             rowCount: newCount
                         });
 
@@ -586,7 +586,7 @@
                     const currentCount = parseInt(rowCountText.innerText) || 1;
                     if (currentCount > 1) {
                         const newCount = currentCount - 1;
-                        window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
+                        window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES', {
                             rowCount: newCount
                         });
 
@@ -709,14 +709,14 @@
     if (!window._adminFocusListenerBound) {
         window._adminFocusListenerBound = true;
         if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
-            window.MessageHub.subscribe('LF_QUERY_ITEM_FOCUSED', (data) => {
+            window.MessageHub.subscribe('BYCHOI_QUERY_ITEM_FOCUSED', (data) => {
                 if (data && (typeof data.activeRowIndex === 'number' || data.isGroupHeader)) {
                     focusRowBlock(data.activeRowIndex, data.activeColIndex, data.isGroupHeader);
                 }
             });
         }
         window.addEventListener('message', (e) => {
-            if (e.data && e.data.type === 'LF_QUERY_ITEM_FOCUSED') {
+            if (e.data && e.data.type === 'BYCHOI_QUERY_ITEM_FOCUSED') {
                 focusRowBlock(e.data.activeRowIndex, e.data.activeColIndex, e.data.isGroupHeader);
             }
         });

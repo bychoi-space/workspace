@@ -58,7 +58,7 @@
 
 #### ③ Z-Index 무한 인플레이션 및 내부 아톰(삭제 트리거 등)과의 역전
 - **원인**: 컴포넌트 추가/레이어 변경 시마다 Z-Index가 +10씩 누적 증가하여 5만 이상으로 폭증.
-- **결과**: `viewer.css`에 하드코딩된 삭제 트리거(`.lf-delete-trigger { z-index: 10002; }`)나 텍스트 마커 핸들보다 컴포넌트 Z-Index가 커지면서 인터랙션 도구가 요소 뒤로 깔리는 2차 부작용 잠재.
+- **결과**: `viewer.css`에 하드코딩된 삭제 트리거(`.bychoi-delete-trigger { z-index: 10002; }`)나 텍스트 마커 핸들보다 컴포넌트 Z-Index가 커지면서 인터랙션 도구가 요소 뒤로 깔리는 2차 부작용 잠재.
 
 ---
 
@@ -69,7 +69,7 @@
 | 티어 (Tier) | 할당 대역 (Z-Index Range) | 대상 객체 및 컴포넌트 | 불변 동작 규칙 (Invariants) |
 | :---: | :---: | :--- | :--- |
 | **Tier 0**<br>Canvas Base | `0` ~ `999` | • 캔버스 배경 그리드/패턴 (`#canvas-bg-layer`)<br>• 프레임 섀도우 및 캔버스 베이스플레이트 | 어떤 상황에서도 모든 컴포넌트 밑에 깔려 있어야 함 |
-| **Tier 1**<br>Normal Content | `1,000` ~ `79,999`<br>*(기본 스택)* | • 일반 도형(Rect, Circle, Triangle, Diamond)<br>• 텍스트, 테이블, 카드, 이미지, 버튼, 아톰<br>• 일반 그룹(`.lf-group`) | • 일반 본문 스크롤 흐름을 따름<br>• 요소 간 상대적 순서 보존<br>• **80,000 도달 시 자동 정규화(Compaction)** |
+| **Tier 1**<br>Normal Content | `1,000` ~ `79,999`<br>*(기본 스택)* | • 일반 도형(Rect, Circle, Triangle, Diamond)<br>• 텍스트, 테이블, 카드, 이미지, 버튼, 아톰<br>• 일반 그룹(`.bychoi-group`) | • 일반 본문 스크롤 흐름을 따름<br>• 요소 간 상대적 순서 보존<br>• **80,000 도달 시 자동 정규화(Compaction)** |
 | **Tier 2**<br>Fixed HUD | `100,000` ~ `179,999`<br>*(고정 스택)* | • 상단 고정 헤더 (`data-scroll-fixed="top"`)<br>• 하단 고정 독 (`data-scroll-fixed="bottom"`)<br>• 고정 헤더 내부에 배치된 하위 아이콘/텍스트/배지 | • 스크롤 시 본문 요소보다 항상 위에서 플로팅<br>• 본문 요소가 스크롤될 때 헤더 밑으로 통과<br>• 헤더 내부에 생성된 신규 요소는 이 대역으로 진입 |
 | **Tier 3**<br>Annotation Pins | `200,000` ~ `249,999`<br>*(어노테이션)* | • 디스크립션 핀 마커 (`.pin-marker`, `200,000`)<br>• 핀 번호 배지 (`.pin-number-badge`)<br>• 고정 HUD 추종 핀 (`200,050`)<br>• 활성 편집 핀 / 호버 핀 (`200,100`) | • **절대 가림 방지**: 본문 및 고정 헤더보다 무조건 상위<br>• 고정 헤더 위 핀은 헤더와 함께 스크롤 추종 |
 | **Tier 4**<br>Interactive Gizmos | `300,000` ~ `399,999`<br>*(에디터 도구)* | • 스마트 가이드 라인 및 거리 칩 (`300,000`)<br>• 멀티셀렉트 마키 선택 상자 (`310,000`)<br>• 리사이즈 핸들 / 커넥터 포트 (`320,000`)<br>• 선택 컴포넌트 삭제 트리거 (`330,000`) | • 캔버스 조작 도구는 오브젝트나 핀에 가려지지 않음<br>• 조작 즉시 시각적 피드백 보장 |
@@ -85,7 +85,7 @@
 
 ```mermaid
 flowchart TD
-    Start[컴포넌트 삽입 요청: LF_INSERT_COMPONENT] --> CheckCoord{생성 위치가 상단/하단<br>고정 HUD 영역과 교차하는가?}
+    Start[컴포넌트 삽입 요청: BYCHOI_INSERT_COMPONENT] --> CheckCoord{생성 위치가 상단/하단<br>고정 HUD 영역과 교차하는가?}
     
     CheckCoord -- "YES (상단 헤더 내부: Y < HeaderHeight)" --> AssignHUD[Tier 2 할당: z-index = 100,000 + offset<br>data-scroll-fixed = top 동기화]
     AssignHUD --> Mount[DOM에 컴포넌트 마운트 및 선택 처리]
@@ -133,9 +133,9 @@ flowchart TD
 | 대상 파일 | 수정 항목 및 담당 역할 | 핵심 변경 내용 |
 | :--- | :--- | :--- |
 | [`assets/vctrl_iframe_layering.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_layering.js) | • `getNextTopZIndex`<br>• `handleBringFront`<br>• `handleSendBack`<br>• `normalizeZIndices` | • 99,000 인위적 제한 제거<br>• 6대 티어 상수 체계(`TIER_RANGES`) 도입<br>• Z-Index 자동 정규화(Compaction) 함수 구현 |
-| [`assets/vctrl_iframe_scroll_pin.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_scroll_pin.js) | • `updatePins`<br>• `LF_SET_SCROLL_FIXED`<br>• 핀 마커 동기화 | • 고정 해제 시 미정의 변수(`maxNormalZ`) 방어 수정<br>• Tier 2 대역(100,000~179,999) 내의 안전한 Z-Index 동기화 |
+| [`assets/vctrl_iframe_scroll_pin.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_scroll_pin.js) | • `updatePins`<br>• `BYCHOI_SET_SCROLL_FIXED`<br>• 핀 마커 동기화 | • 고정 해제 시 미정의 변수(`maxNormalZ`) 방어 수정<br>• Tier 2 대역(100,000~179,999) 내의 안전한 Z-Index 동기화 |
 | [`assets/vctrl_iframe_inserter.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_inserter.js) | • `handleInsertComponent` | • 생성 위치와 고정 HUD 간의 교차 감지<br>• 헤더 영역 생성 시 Tier 2 지능형 할당 |
-| [`assets/vctrl_iframe_styles.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_styles.js) | • CSS 룰 정의 | • 삭제 트리거(`.lf-delete-trigger`): `z-index: 330000` 승격<br>• 핀 마커/핸들 Tier 3 규격 통일 |
+| [`assets/vctrl_iframe_styles.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_styles.js) | • CSS 룰 정의 | • 삭제 트리거(`.bychoi-delete-trigger`): `z-index: 330000` 승격<br>• 핀 마커/핸들 Tier 3 규격 통일 |
 | [`assets/viewer.css`](file:///c:/Users/sisun/ai_work/assets/viewer.css) | • 부모 및 Iframe 공통 CSS | • 삭제 트리거 및 아도너 Z-Index 통일<br>• 시스템 모달 및 컨텍스트 메뉴 Tier 5 적용 |
 
 ---
@@ -157,7 +157,7 @@ flowchart TD
 3. 일반 본문인 경우 `Tier 1` 최상단으로 부여하여 기존 본문 뒤로 깔리지 않도록 보장 완료.
 
 ### 🚀 Phase 4: CSS 삭제 트리거 및 디스크립션 핀/아도너 위계 보강 [완료]
-1. 삭제 트리거(`.lf-delete-trigger`)를 `Tier 4`(`330,000`)로 상향 (`assets/vctrl_iframe_styles.js`, `assets/viewer.css`).
+1. 삭제 트리거(`.bychoi-delete-trigger`)를 `Tier 4`(`330,000`)로 상향 (`assets/vctrl_iframe_styles.js`, `assets/viewer.css`).
 2. 선택 아도너(`.v4-selection-adorner-layer`, `.v4-selection-adorner`)를 `Tier 4`(`310,000`)로 상향 (`assets/vctrl_iframe_script.js`, `assets/css/canvas.css`).
 3. 스마트 가이드 라인(`.smart-guide-line`) 및 툴팁을 `Tier 4`(`320,000`)로 상향 (`assets/css/canvas.css`).
 4. 디스크립션 핀(`Tier 3`, `200,000~200,050`) 불변성 확인.

@@ -4,7 +4,7 @@
 
 ### 1.1. 배경 및 문제 상황
 - **기존 동작**:
-  - 스크린 내 오브젝트 복사(`Ctrl+C`) 및 서식 복사(`Ctrl+Shift+C`) 실행 시, 데이터는 브라우저의 런타임 메모리인 최상위 윈도우 인스턴스(`(window.top || window).__lf_global_clipboard__`)에만 저장되었습니다.
+  - 스크린 내 오브젝트 복사(`Ctrl+C`) 및 서식 복사(`Ctrl+Shift+C`) 실행 시, 데이터는 브라우저의 런타임 메모리인 최상위 윈도우 인스턴스(`(window.top || window).__bychoi_global_clipboard__`)에만 저장되었습니다.
   - **동일 프로젝트 내 스크린 전환**: `viewer.html` 부모 창이 유지된 채 iframe의 `srcdoc`만 교체되므로 메모리가 보존되어 정상 동작했습니다.
 - **프로젝트 간 이동 시 발생하는 결함**:
   - 사용자가 **다른 프로젝트의 스크린**으로 이동하기 위해 대시보드(`index.html`)로 이동하거나 주소창 URL(`viewer.html?project=...`)을 변경하면, 브라우저 페이지 전체가 언로드(Page Navigation/Reload)되어 **`window.top`의 모든 자바스크립트 런타임 메모리가 완전히 소멸(GC)**됩니다.
@@ -28,8 +28,8 @@
 | 평가 항목 | 수준 | 상세 근거 |
 | :--- | :---: | :--- |
 | **종합 체감 난이도** | **보통 (Medium)** | 핵심 아키텍처 및 렌더링 파이프라인 변경 없이 부모 측 클립보드 매니저([`vctrl_clipboard.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_clipboard.js)) 단일 모듈에 격리된 안전한 보강 작업 |
-| **코드 변경 범위** | **작음 (Small, 약 50줄 내외)** | `LF_SAVE_CLIPBOARD`, `LF_REQUEST_CLIPBOARD`, `LF_SAVE_STYLE_CLIPBOARD`, `LF_REQUEST_STYLE_CLIPBOARD` 핸들러 내 영속화 유틸리티 연동 |
-| **회귀 위험도 (Regression Risk)** | **매우 낮음 (Very Low)** | 기존 `(window.top || window).__lf_global_clipboard__` 인터페이스를 100% 유지한 채 2차 저장소로 `localStorage`를 연계하므로 기존 기능 100% 호환 |
+| **코드 변경 범위** | **작음 (Small, 약 50줄 내외)** | `BYCHOI_SAVE_CLIPBOARD`, `BYCHOI_REQUEST_CLIPBOARD`, `BYCHOI_SAVE_STYLE_CLIPBOARD`, `BYCHOI_REQUEST_STYLE_CLIPBOARD` 핸들러 내 영속화 유틸리티 연동 |
+| **회귀 위험도 (Regression Risk)** | **매우 낮음 (Very Low)** | 기존 `(window.top || window).__bychoi_global_clipboard__` 인터페이스를 100% 유지한 채 2차 저장소로 `localStorage`를 연계하므로 기존 기능 100% 호환 |
 | **핵심 주의 사항** | **3대 방어선 필요** | 1) `QuotaExceededError` 용량 초과 방어<br>2) `JSON.parse` 파싱 오류 안전 가드<br>3) 멀티 탭 storage 이벤트 동기화 |
 
 ---
@@ -53,9 +53,9 @@
 ### 4.1. 모듈별 역할 및 영향도 분석
 | 모듈 파일 | 소속 및 역할 | 이번 작업에서의 변경 사항 |
 | :--- | :--- | :--- |
-| **`assets/vctrl_clipboard.js`** | **[핵심 대상]** 부모 창의 클립보드 SSOT 관리자. `LF_SAVE_CLIPBOARD`, `LF_REQUEST_CLIPBOARD` 수신 및 응답 전담 | - `localStorage` 하이브리드 영속화 헬퍼(`safeSetStorage`, `safeGetStorage`) 도입<br>- 클립보드 저장 시 `window.top` + `localStorage` 동시 저장<br>- 클립보드 요청 시 `window.top` 부재 시 `localStorage` 자동 복원<br>- 서식 클립보드(`styleClipboard`) 동반 영속화 |
+| **`assets/vctrl_clipboard.js`** | **[핵심 대상]** 부모 창의 클립보드 SSOT 관리자. `BYCHOI_SAVE_CLIPBOARD`, `BYCHOI_REQUEST_CLIPBOARD` 수신 및 응답 전담 | - `localStorage` 하이브리드 영속화 헬퍼(`safeSetStorage`, `safeGetStorage`) 도입<br>- 클립보드 저장 시 `window.top` + `localStorage` 동시 저장<br>- 클립보드 요청 시 `window.top` 부재 시 `localStorage` 자동 복원<br>- 서식 클립보드(`styleClipboard`) 동반 영속화 |
 | **`assets/vctrl_clipboard_objects.js`** | Iframe 내부의 캔버스 오브젝트 직렬화/역직렬화 엔진 (`v4ClipboardObjectsScript`) | **수정 불필요**: 이미 완벽한 JSON 직렬화/역직렬화 및 안착 알고리즘을 갖추고 있으며 부모와의 통신 규격이 유지되므로 기존 코드 100% 보존 |
-| **`assets/vctrl_format_painter.js`** | Iframe 내부의 도형 및 타이포그래피 서식 복사/붙여넣기 엔진 (`v4FormatPainterScript`) | **수정 불필요**: `LF_SAVE_STYLE_CLIPBOARD` 및 `LF_REQUEST_STYLE_CLIPBOARD` 통신 규격이 유지되므로 기존 코드 100% 보존 |
+| **`assets/vctrl_format_painter.js`** | Iframe 내부의 도형 및 타이포그래피 서식 복사/붙여넣기 엔진 (`v4FormatPainterScript`) | **수정 불필요**: `BYCHOI_SAVE_STYLE_CLIPBOARD` 및 `BYCHOI_REQUEST_STYLE_CLIPBOARD` 통신 규격이 유지되므로 기존 코드 100% 보존 |
 | **`assets/vctrl_shortcuts.js`** | Iframe 내부 키보드 핫키(`Ctrl+C`, `Ctrl+V`, `Ctrl+X` 등) 리스너 및 프록시 | **수정 불필요**: 통신 프로토콜 변경 없음 |
 | **`AGENTS.md` & `SKILL.md`** | 시스템 아키텍처 룰 및 스킬 SSOT 문서 | 하이브리드 영속화 아키텍처 명세 최신 동기화 반영 |
 
@@ -77,9 +77,9 @@ sequenceDiagram
 
     Note over User, IframeA: [Step 1] 프로젝트 A에서 오브젝트 복사
     User->>IframeA: 오브젝트 선택 후 Ctrl+C
-    IframeA->>ParentA: postMessage('LF_SAVE_CLIPBOARD', { clipboard: [...] })
-    ParentA->>ParentA: 1차 메모리 캐시: (window.top).__lf_global_clipboard__ = data
-    ParentA->>Storage: 2차 영속화: safeSetStorage('__lf_global_clipboard__', data)
+    IframeA->>ParentA: postMessage('BYCHOI_SAVE_CLIPBOARD', { clipboard: [...] })
+    ParentA->>ParentA: 1차 메모리 캐시: (window.top).__bychoi_global_clipboard__ = data
+    ParentA->>Storage: 2차 영속화: safeSetStorage('__bychoi_global_clipboard__', data)
 
     Note over User, ParentB: [Step 2] 다른 프로젝트로 이동 (새로고침 or 새 탭)
     User->>ParentB: 프로젝트 B 진입 (viewer.html?project=p_target)
@@ -87,22 +87,22 @@ sequenceDiagram
 
     Note over User, IframeB: [Step 3] 프로젝트 B에서 오브젝트 붙여넣기
     User->>IframeB: 붙여넣기 실행 (Ctrl+V)
-    IframeB->>ParentB: postMessage('LF_REQUEST_CLIPBOARD')
+    IframeB->>ParentB: postMessage('BYCHOI_REQUEST_CLIPBOARD')
     ParentB->>ParentB: 1차 메모리 검사 (비어있음)
-    ParentB->>Storage: 2차 스토리지 검사: safeGetStorage('__lf_global_clipboard__')
+    ParentB->>Storage: 2차 스토리지 검사: safeGetStorage('__bychoi_global_clipboard__')
     Storage-->>ParentB: 영속화된 클립보드 데이터 반환
-    ParentB->>ParentB: 메모리 복원 (Hydration): (window.top).__lf_global_clipboard__ = data
-    ParentB->>IframeB: notifyIframe('LF_RESPONSE_CLIPBOARD', { clipboard: data })
+    ParentB->>ParentB: 메모리 복원 (Hydration): (window.top).__bychoi_global_clipboard__ = data
+    ParentB->>IframeB: notifyIframe('BYCHOI_RESPONSE_CLIPBOARD', { clipboard: data })
     IframeB->>IframeB: pasteCopiedObjectsFromData() 실행
     IframeB-->>User: 대상 스크린에 스마트 안착 완료!
 ```
 
 ### 5.2. 스토리지 키 규격 (SSOT Storage Keys)
 1. **오브젝트 클립보드 키**:
-   - 키 이름: `__lf_global_clipboard__`
+   - 키 이름: `__bychoi_global_clipboard__`
    - 데이터 타입: JSON String (직렬화된 컴포넌트 속성 배열 `Array<ComponentClipboardItem>`)
 2. **스타일 서식 클립보드 키**:
-   - 키 이름: `__lf_global_style_clipboard__`
+   - 키 이름: `__bychoi_global_style_clipboard__`
    - 데이터 타입: JSON String (직렬화된 스타일 속성 객체 `StyleClipboardItem`)
 
 ### 5.3. 3대 안전 가드 설계 (3-Tier Safety Guards)
@@ -145,13 +145,13 @@ function safeGetStorage(key, isArrayExpected = true) {
 - 사용자가 탭 1에서 복사한 즉시 탭 2의 `window.top` 변수도 최신 상태를 유지할 수 있도록 `storage` 이벤트 리스너 바인딩:
 ```javascript
 window.addEventListener('storage', function(e) {
-    if (e.key === '__lf_global_clipboard__' && e.newValue) {
+    if (e.key === '__bychoi_global_clipboard__' && e.newValue) {
         try {
-            (window.top || window).__lf_global_clipboard__ = JSON.parse(e.newValue);
+            (window.top || window).__bychoi_global_clipboard__ = JSON.parse(e.newValue);
         } catch(err) {}
-    } else if (e.key === '__lf_global_style_clipboard__' && e.newValue) {
+    } else if (e.key === '__bychoi_global_style_clipboard__' && e.newValue) {
         try {
-            (window.top || window).__lf_global_style_clipboard__ = JSON.parse(e.newValue);
+            (window.top || window).__bychoi_global_style_clipboard__ = JSON.parse(e.newValue);
         } catch(err) {}
     }
 });
@@ -197,13 +197,13 @@ window.addEventListener('storage', function(e) {
 
     // Multi-tab Storage Synchronization
     window.addEventListener('storage', function (e) {
-        if (e.key === '__lf_global_clipboard__' && e.newValue) {
+        if (e.key === '__bychoi_global_clipboard__' && e.newValue) {
             try {
-                (window.top || window).__lf_global_clipboard__ = JSON.parse(e.newValue);
+                (window.top || window).__bychoi_global_clipboard__ = JSON.parse(e.newValue);
             } catch (err) { }
-        } else if (e.key === '__lf_global_style_clipboard__' && e.newValue) {
+        } else if (e.key === '__bychoi_global_style_clipboard__' && e.newValue) {
             try {
-                (window.top || window).__lf_global_style_clipboard__ = JSON.parse(e.newValue);
+                (window.top || window).__bychoi_global_style_clipboard__ = JSON.parse(e.newValue);
             } catch (err) { }
         }
     });
@@ -212,69 +212,69 @@ window.addEventListener('storage', function(e) {
         const data = e.data;
         if (!data || !data.type) return;
 
-        if (data.type === 'LF_SAVE_CLIPBOARD') {
+        if (data.type === 'BYCHOI_SAVE_CLIPBOARD') {
             console.log('[ClipboardManager] Parent saving clipboard to Memory & LocalStorage:', data.clipboard);
             try {
-                (window.top || window).__lf_global_clipboard__ = data.clipboard;
+                (window.top || window).__bychoi_global_clipboard__ = data.clipboard;
             } catch (err) {
-                window.__lf_global_clipboard__ = data.clipboard;
+                window.__bychoi_global_clipboard__ = data.clipboard;
             }
-            safeSetStorage('__lf_global_clipboard__', data.clipboard);
+            safeSetStorage('__bychoi_global_clipboard__', data.clipboard);
 
-        } else if (data.type === 'LF_REQUEST_CLIPBOARD') {
+        } else if (data.type === 'BYCHOI_REQUEST_CLIPBOARD') {
             let storedData = null;
             try {
-                storedData = (window.top || window).__lf_global_clipboard__;
+                storedData = (window.top || window).__bychoi_global_clipboard__;
             } catch (err) {
-                storedData = window.__lf_global_clipboard__;
+                storedData = window.__bychoi_global_clipboard__;
             }
 
             // Fallback & Hydrate from LocalStorage if memory is empty
             if (!storedData || !Array.isArray(storedData) || storedData.length === 0) {
-                storedData = safeGetStorage('__lf_global_clipboard__', true) || [];
+                storedData = safeGetStorage('__bychoi_global_clipboard__', true) || [];
                 try {
-                    (window.top || window).__lf_global_clipboard__ = storedData;
+                    (window.top || window).__bychoi_global_clipboard__ = storedData;
                 } catch (err) {
-                    window.__lf_global_clipboard__ = storedData;
+                    window.__bychoi_global_clipboard__ = storedData;
                 }
             }
 
-            console.log('[ClipboardManager] Responding to LF_REQUEST_CLIPBOARD with ' + storedData.length + ' item(s).');
+            console.log('[ClipboardManager] Responding to BYCHOI_REQUEST_CLIPBOARD with ' + storedData.length + ' item(s).');
             notifyIframe({
-                type: 'LF_RESPONSE_CLIPBOARD',
+                type: 'BYCHOI_RESPONSE_CLIPBOARD',
                 clipboard: storedData
             });
 
-        } else if (data.type === 'LF_SAVE_STYLE_CLIPBOARD') {
+        } else if (data.type === 'BYCHOI_SAVE_STYLE_CLIPBOARD') {
             console.log('[ClipboardManager] Parent saving style clipboard to Memory & LocalStorage:', data.styleClipboard);
             try {
-                (window.top || window).__lf_global_style_clipboard__ = data.styleClipboard;
+                (window.top || window).__bychoi_global_style_clipboard__ = data.styleClipboard;
             } catch (err) {
-                window.__lf_global_style_clipboard__ = data.styleClipboard;
+                window.__bychoi_global_style_clipboard__ = data.styleClipboard;
             }
-            safeSetStorage('__lf_global_style_clipboard__', data.styleClipboard);
+            safeSetStorage('__bychoi_global_style_clipboard__', data.styleClipboard);
 
-        } else if (data.type === 'LF_REQUEST_STYLE_CLIPBOARD') {
+        } else if (data.type === 'BYCHOI_REQUEST_STYLE_CLIPBOARD') {
             let storedStyle = null;
             try {
-                storedStyle = (window.top || window).__lf_global_style_clipboard__;
+                storedStyle = (window.top || window).__bychoi_global_style_clipboard__;
             } catch (err) {
-                storedStyle = window.__lf_global_style_clipboard__;
+                storedStyle = window.__bychoi_global_style_clipboard__;
             }
 
             // Fallback & Hydrate from LocalStorage if memory is empty
             if (!storedStyle) {
-                storedStyle = safeGetStorage('__lf_global_style_clipboard__', false);
+                storedStyle = safeGetStorage('__bychoi_global_style_clipboard__', false);
                 try {
-                    (window.top || window).__lf_global_style_clipboard__ = storedStyle;
+                    (window.top || window).__bychoi_global_style_clipboard__ = storedStyle;
                 } catch (err) {
-                    window.__lf_global_style_clipboard__ = storedStyle;
+                    window.__bychoi_global_style_clipboard__ = storedStyle;
                 }
             }
 
-            console.log('[ClipboardManager] Responding to LF_REQUEST_STYLE_CLIPBOARD.');
+            console.log('[ClipboardManager] Responding to BYCHOI_REQUEST_STYLE_CLIPBOARD.');
             notifyIframe({
-                type: 'LF_RESPONSE_STYLE_CLIPBOARD',
+                type: 'BYCHOI_RESPONSE_STYLE_CLIPBOARD',
                 styleClipboard: storedStyle
             });
         }

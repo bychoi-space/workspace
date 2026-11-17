@@ -840,7 +840,7 @@ body.fullscreen-mode #btn-fullscreen-exit {
 }
 
 /* Premium Custom Color Palette Popup */
-.lf-color-palette-popup {
+.bychoi-color-palette-popup {
     position: fixed;
     z-index: 10020;
     background: rgba(15, 23, 42, 0.95);
@@ -855,10 +855,10 @@ body.fullscreen-mode #btn-fullscreen-exit {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    animation: lf-fade-in-scale 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: bychoi-fade-in-scale 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes lf-fade-in-scale {
+@keyframes bychoi-fade-in-scale {
     from {
         opacity: 0;
         transform: scale(0.95);
@@ -870,13 +870,13 @@ body.fullscreen-mode #btn-fullscreen-exit {
     }
 }
 
-.lf-palette-grid {
+.bychoi-palette-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 6px;
 }
 
-.lf-palette-swatch {
+.bychoi-palette-swatch {
     width: 20px;
     height: 20px;
     border-radius: 4px;
@@ -886,13 +886,13 @@ body.fullscreen-mode #btn-fullscreen-exit {
     box-sizing: border-box;
 }
 
-.lf-palette-swatch:hover {
+.bychoi-palette-swatch:hover {
     transform: scale(1.15);
     border-color: rgba(255, 255, 255, 0.7);
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
 }
 
-.lf-palette-custom-btn {
+.bychoi-palette-custom-btn {
     width: 100%;
     height: 28px;
     border-radius: var(--radius-md, 6px);
@@ -911,13 +911,13 @@ body.fullscreen-mode #btn-fullscreen-exit {
     box-sizing: border-box;
 }
 
-.lf-palette-custom-btn:hover {
+.bychoi-palette-custom-btn:hover {
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-1px);
 }
 
-.lf-palette-custom-btn:active {
+.bychoi-palette-custom-btn:active {
     transform: translateY(0);
 }
 
@@ -2986,8 +2986,8 @@ body.fullscreen-mode .stage {
     text-align: center !important;
 }
 
-.selection-scroll-pin-bar .scroll-pin-btn .lf-icon,
-.scroll-pin-btn .lf-icon {
+.selection-scroll-pin-bar .scroll-pin-btn .bychoi-icon,
+.scroll-pin-btn .bychoi-icon {
     width: 14px !important;
     height: 14px !important;
     stroke-width: 1.8 !important;
@@ -3350,7 +3350,7 @@ body.fullscreen-mode .stage {
     font-size: 11px !important;
 }
 
-.selection-actions-bar .lf-icon {
+.selection-actions-bar .bychoi-icon {
     width: 14px !important;
     height: 14px !important;
     flex-shrink: 0 !important;
@@ -3916,13 +3916,13 @@ body.fullscreen-mode .stage {
     border: 3.5px solid rgba(110, 86, 207, 0.2) !important;
     border-top-color: var(--accent, #6e56cf) !important;
     border-radius: 50% !important;
-    animation: lf-spin 0.9s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite !important;
+    animation: bychoi-spin 0.9s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite !important;
     filter: drop-shadow(0 0 12px var(--accent-subtle, rgba(110, 86, 207, 0.4))) !important;
     box-sizing: border-box;
     margin: 0 auto;
 }
 
-@keyframes lf-spin {
+@keyframes bychoi-spin {
     to {
         transform: rotate(360deg);
     }
@@ -4225,26 +4225,26 @@ td.v4-editable-cell:focus {
 }
 
 /* Drag Handle & Selection UI (Phase 1: Hidden) */
-.lf-drag-handle,
-.lf-resizer {
+.bychoi-drag-handle,
+.bychoi-resizer {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
 }
 
-.lf-component:hover .lf-drag-handle,
-.text-marker:hover .lf-drag-handle,
-.lf-component.selected .lf-drag-handle,
-.lf-component:hover .lf-resizer,
-.lf-component.selected .lf-resizer {
+.bychoi-component:hover .bychoi-drag-handle,
+.text-marker:hover .bychoi-drag-handle,
+.bychoi-component.selected .bychoi-drag-handle,
+.bychoi-component:hover .bychoi-resizer,
+.bychoi-component.selected .bychoi-resizer {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
 }
 
-.lf-delete-trigger {
+.bychoi-delete-trigger {
     position: absolute;
     top: -12px;
     right: -12px;
@@ -4264,8 +4264,8 @@ td.v4-editable-cell:focus {
     box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
 }
 
-.lf-component:hover .lf-delete-trigger,
-.lf-component.selected .lf-delete-trigger {
+.bychoi-component:hover .bychoi-delete-trigger,
+.bychoi-component.selected .bychoi-delete-trigger {
     display: flex;
 }
 
@@ -4521,7 +4521,7 @@ td.v4-editable-cell:focus {
     flex-shrink: 0;
 }
 
-.dimmed-card-icon .lf-icon {
+.dimmed-card-icon .bychoi-icon {
     width: 14px;
     height: 14px;
 }
@@ -4648,7 +4648,7 @@ td.v4-editable-cell:focus {
     flex-shrink: 0;
 }
 
-.dimmed-sync-btn .lf-icon {
+.dimmed-sync-btn .bychoi-icon {
     width: 12px;
     height: 12px;
 }
@@ -4754,7 +4754,7 @@ td.v4-editable-cell:focus {
     white-space: nowrap;
 }
 
-.dimmed-mode-btn .lf-icon {
+.dimmed-mode-btn .bychoi-icon {
     width: 13px;
     height: 13px;
     flex-shrink: 0;
@@ -5546,7 +5546,7 @@ td.v4-editable-cell:focus {
 
 #sidebar-left.collapsed .screen-collapsed-chip.badge-admin::before,
 #sidebar-left.collapsed .screen-collapsed-chip.badge-admin-nbos::before,
-#sidebar-left.collapsed .screen-collapsed-chip.badge-admin-onesphere::before {
+#sidebar-left.collapsed .screen-collapsed-chip.badge-admin-modern::before {
     background: #94a3b8;
 }
 

@@ -74,11 +74,11 @@ window.v4ResponsiveSmartGuideMathScript = `
             } else {
                 rootScope = context.inner || document.body;
             }
-            const components = rootScope.querySelectorAll('.lf-component, .v4-admin-label-cell, .v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell');
+            const components = rootScope.querySelectorAll('.bychoi-component, .v4-admin-label-cell, .v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell');
 
             components.forEach((c, idx) => {
                 if (c === activeEl || c.classList.contains('dragging-now')) return;
-                const ownerComp = c.classList.contains('lf-component') ? c : c.closest('.lf-component');
+                const ownerComp = c.classList.contains('bychoi-component') ? c : c.closest('.bychoi-component');
                 if (ownerComp && window.V4DimmedLayer) {
                     if (typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(ownerComp)) return;
                     if (activeEl && typeof window.V4DimmedLayer.isSameLayerScope === 'function' && !window.V4DimmedLayer.isSameLayerScope(activeEl, ownerComp)) return;
@@ -137,7 +137,7 @@ window.v4ResponsiveSmartGuideMathScript = `
             const rows = rootScope.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr');
             rows.forEach((row, rIdx) => {
                 if (row === activeEl) return;
-                const rowOwner = row.closest('.lf-component');
+                const rowOwner = row.closest('.bychoi-component');
                 if (rowOwner && window.V4DimmedLayer) {
                     if (typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(rowOwner)) return;
                     if (activeEl && typeof window.V4DimmedLayer.isSameLayerScope === 'function' && !window.V4DimmedLayer.isSameLayerScope(activeEl, rowOwner)) return;
@@ -150,7 +150,7 @@ window.v4ResponsiveSmartGuideMathScript = `
                 const h = pos.height || row.offsetHeight || parseFloat(row.style.height) || 36;
                 if (w < 10 || h < 5) return;
 
-                const parentComp = row.closest('.lf-component');
+                const parentComp = row.closest('.bychoi-component');
                 const tableId = parentComp ? parentComp.id : ('table-' + rIdx);
                 const isAncestor = activeEl ? row.contains(activeEl) : false;
 
@@ -665,7 +665,7 @@ window.v4ResponsiveSmartGuideMathScript = `
 
         // Subroutines for collectSnapTargets
         _collectComponentSnapTargets: function(targets, rects) {
-            document.querySelectorAll('.lf-component:not(.selected)').forEach(function(c) {
+            document.querySelectorAll('.bychoi-component:not(.selected)').forEach(function(c) {
                 if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(c)) return;
                 var l = parseFloat(c.style.left) || 0;
                 var t = parseFloat(c.style.top) || 0;
@@ -706,7 +706,7 @@ window.v4ResponsiveSmartGuideMathScript = `
         _collectTableAndGridRowTargets: function(rects) {
             // Virtual row containers for multi-row tables (Query Item & Grid UI)
             document.querySelectorAll('.v4-admin-settings-table .v4-admin-row, .v4-grid-container table thead tr, .v4-grid-container table tbody tr').forEach(function(row, rIdx) {
-                var parentComp = row.closest('.lf-component');
+                var parentComp = row.closest('.bychoi-component');
                 if (!parentComp) return;
                 if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(parentComp)) return;
                 var parentLeft = parseFloat(parentComp.style.left) || 0;
@@ -736,7 +736,7 @@ window.v4ResponsiveSmartGuideMathScript = `
 
             // Grid UI Cells for column line distances
             document.querySelectorAll('.v4-grid-container th.v4-grid-cell, .v4-grid-container td.v4-grid-cell').forEach(function(cell, cIdx) {
-                var parentComp = cell.closest('.lf-component');
+                var parentComp = cell.closest('.bychoi-component');
                 if (!parentComp) return;
                 if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(parentComp)) return;
                 var parentLeft = parseFloat(parentComp.style.left) || 0;
@@ -918,7 +918,7 @@ window.v4ResponsiveSmartGuideMathScript = `
         _collectAdminSettingsTargets: function(targets) {
             // Add snapping targets for Query Item (Admin Settings) rows & inner cells
             document.querySelectorAll('.v4-admin-settings-container').forEach(function(container) {
-                var comp = container.closest('.lf-component');
+                var comp = container.closest('.bychoi-component');
                 if (!comp || comp.classList.contains('selected')) return;
                 if (window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(comp)) return;
 

@@ -1,7 +1,7 @@
 /**
  * vctrl_typography.js - Central Typography & Design Tokens Module (SSOT)
  * Responsibility: Unified typography constants, CSS custom properties injection,
- * and global style normalization for all LF Editor library objects (Shapes, Atoms, Molecules).
+ * and global style normalization for all bychoi workspace library objects (Shapes, Atoms, Molecules).
  */
 
 (function() {
@@ -80,7 +80,7 @@
                 '  --v4-comp-fs: 13px;',
                 '  --v4-comp-tc: #050505;',
                 '}',
-                'body, .page, .lf-component {',
+                'body, .page, .bychoi-component {',
                 '  font-family: var(--v4-font-family) !important;',
                 '}',
                 '.v4-editable-cell, .v4-shape, .v4-shape-rect, .v4-shape-circle, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-arrow, .v4-shape-pattern-grid, .v4-shape-wave, .v4-shape-webpage, .text-marker, .v4-text-box, .v4-text-shape {',

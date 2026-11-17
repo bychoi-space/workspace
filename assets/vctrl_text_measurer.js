@@ -2,8 +2,8 @@ window.v4TextMeasurerScript = `
 (function() {
     const resizeAtomToFitText = (s) => {
         if (!s) return;
-        // Skip resizing if the atom component is already grouped inside an 'lf-group' to prevent layout breakages.
-        if (s.closest && s.closest('.lf-group')) {
+        // Skip resizing if the atom component is already grouped inside an 'bychoi-group' to prevent layout breakages.
+        if (s.closest && s.closest('.bychoi-group')) {
             return;
         }
         const container = s.querySelector('.v4-checkbox-container, .v4-radio-container');
@@ -455,7 +455,7 @@ window.v4TextMeasurerScript = `
         if (!cell) return;
 
         // Zero-Drift Guard: Temporarily hide delete trigger before querying bounding dimensions
-        const delTrigger = c.querySelector(':scope > .lf-delete-trigger');
+        const delTrigger = c.querySelector(':scope > .bychoi-delete-trigger');
         const origDelDisplay = delTrigger ? delTrigger.style.display : '';
         if (delTrigger) delTrigger.style.setProperty('display', 'none', 'important');
 
@@ -550,7 +550,7 @@ window.v4TextMeasurerScript = `
             components = d.ids.map(id => document.getElementById(id)).filter(Boolean);
         }
         if (components.length === 0) {
-            const single = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+            const single = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.bychoi-component.selected');
             if (single) components = [single];
         }
         if (components.length === 0) return false;

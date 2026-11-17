@@ -39,7 +39,7 @@
 
     // 1. Message Listeners
     if (window.MessageHub) {
-        MessageHub.subscribe('LF_COMP_SELECTED', (data) => {
+        MessageHub.subscribe('BYCHOI_COMP_SELECTED', (data) => {
             const targetId = data.id || window.activeCompId || (window.state && window.state.selectedComponent && window.state.selectedComponent.id) || null;
             const isTargetChanged = Boolean(targetId && targetId !== activeCompId);
             if (isTargetChanged && document.activeElement && typeof document.activeElement.blur === 'function') {
@@ -114,7 +114,7 @@
             });
         });
 
-        MessageHub.subscribe('LF_IMAGE_CROP_STATE', (data) => {
+        MessageHub.subscribe('BYCHOI_IMAGE_CROP_STATE', (data) => {
             const isActive = !!(data && data.active);
             const isCropped = !!(data && data.isCropped);
             syncImageCropUI({
@@ -126,7 +126,7 @@
             }
         });
 
-        MessageHub.subscribe('LF_COMP_RESIZED', (data) => {
+        MessageHub.subscribe('BYCHOI_COMP_RESIZED', (data) => {
             const currentActiveId = activeCompId || (window.state && (window.state.editingIndex || (window.state.selectedComponent && window.state.selectedComponent.id))) || null;
             if (data && data.id && currentActiveId && String(data.id) !== String(currentActiveId)) {
                 // Reject stale resized notification from previously modified component to prevent overwriting newly selected component inputs
@@ -161,7 +161,7 @@
             }
         });
 
-        MessageHub.subscribe('LF_DESELECT', () => {
+        MessageHub.subscribe('BYCHOI_DESELECT', () => {
             activeCompId = null;
             activeImageRatio = null;
             updateAllInputs(0, 0);
@@ -195,7 +195,7 @@
         });
 
         // Synchronize target component and inputs on paste completion
-        MessageHub.subscribe('LF_PASTE_COMPLETED', (data) => {
+        MessageHub.subscribe('BYCHOI_PASTE_COMPLETED', (data) => {
             const newIds = data.ids || [];
             if (newIds.length > 0) {
                 const targetId = newIds[0];
@@ -424,7 +424,7 @@
 
         // When PPT Image Crop Mode is active, numeric W/H edits adjust the crop frame independently
         if (window.state && window.state.isImageCropping && (type === 'width' || type === 'height')) {
-            MessageHub.send(iframeEl.contentWindow, 'LF_IMAGE_CROP_SET_SIZE', {
+            MessageHub.send(iframeEl.contentWindow, 'BYCHOI_IMAGE_CROP_SET_SIZE', {
                 id: targetIds[0],
                 width: type === 'width' ? val : undefined,
                 height: type === 'height' ? val : undefined
@@ -466,7 +466,7 @@
             }
         }
 
-        MessageHub.send(iframeEl.contentWindow, 'LF_UPDATE_STYLE', {
+        MessageHub.send(iframeEl.contentWindow, 'BYCHOI_UPDATE_STYLE', {
             id: targetIds[0],
             ids: targetIds,
             style: style
@@ -492,20 +492,20 @@
     }
 
     const SPECIAL_STYLE_CONFIGS = {
-        'table-font-size': (val) => ({ type: 'LF_UPDATE_STYLE', selector: 'table', subSelector: 'td, th', subStyle: { fontSize: val + 'px' } }),
-        'table-border-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: 'table', style: { borderColor: val }, subSelector: 'td, th', subStyle: { borderColor: val } }),
-        'shape-font-size': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { fontSize: val + 'px' } }),
-        'shape-text-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { color: val } }),
-        'shape-border-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: val } }),
+        'table-font-size': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: 'table', subSelector: 'td, th', subStyle: { fontSize: val + 'px' } }),
+        'table-border-color': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: 'table', style: { borderColor: val }, subSelector: 'td, th', subStyle: { borderColor: val } }),
+        'shape-font-size': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { fontSize: val + 'px' } }),
+        'shape-text-color': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell', style: { color: val } }),
+        'shape-border-color': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: val } }),
         'shape-border-radius': (val) => ({
-            type: 'LF_UPDATE_STYLE',
+            type: 'BYCHOI_UPDATE_STYLE',
             selector: '.v4-shape-rect, .v4-shape-webpage, .v4-shape-pattern-grid',
             style: (window.InspectorShapes && typeof window.InspectorShapes.buildCornerRadiusStyle === 'function')
                 ? window.InspectorShapes.buildCornerRadiusStyle(val)
                 : { borderRadius: val + 'px', cornerDir: 'all' }
         }),
-        'text-color-picker': (val) => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-editable-cell', style: { color: val } }),
-        'icon-color': (val) => ({ type: 'LF_UPDATE_STYLE', selector: 'img, .lf-icon', style: { color: val } })
+        'text-color-picker': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-editable-cell', style: { color: val } }),
+        'icon-color': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: 'img, .bychoi-icon', style: { color: val } })
         // Note: shape-bg-color and shape-bg-opacity are handled by SSOT input handlers in assets/inspector/inspector_shapes.js
     };
 
@@ -587,19 +587,19 @@
 
     // Custom Transparency Buttons (V4 Addon Declarative Migration)
     const TRANSPARENCY_BUTTONS = {
-        'btn-shape-bg-none': { wrapper: 'shape-bg-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { background: 'transparent', backgroundColor: 'transparent' } }), extra: () => {
+        'btn-shape-bg-none': { wrapper: 'shape-bg-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { background: 'transparent', backgroundColor: 'transparent' } }), extra: () => {
             const slider = document.getElementById('shape-bg-opacity');
             const txt = document.getElementById('txt-shape-bg-opacity');
             if (slider) slider.value = 0;
             if (txt) txt.innerText = 0;
         }},
-        'btn-shape-border-none': { wrapper: 'shape-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: 'transparent' } }) },
-        'btn-table-border-none': { wrapper: 'table-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.v4-table', style: { borderColor: 'transparent' } }) },
-        'btn-icon-border-none': { wrapper: 'icon-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '.lf-icon', style: { borderColor: 'transparent' } }) },
+        'btn-shape-border-none': { wrapper: 'shape-border-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker', style: { borderColor: 'transparent' } }) },
+        'btn-table-border-none': { wrapper: 'table-border-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.v4-table', style: { borderColor: 'transparent' } }) },
+        'btn-icon-border-none': { wrapper: 'icon-border-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '.bychoi-icon', style: { borderColor: 'transparent' } }) },
         'btn-line-color-none': {
             wrapper: 'line-color-wrapper',
             msg: () => ({
-                type: 'LF_UPDATE_STYLE',
+                type: 'BYCHOI_UPDATE_STYLE',
                 selector: '.v4-shape-line, .v4-shape-line line',
                 style: {
                     lineColor: 'transparent',
@@ -608,8 +608,8 @@
                 }
             })
         },
-        'btn-button-bg-none': { wrapper: 'button-bg-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '', style: { background: 'transparent', backgroundColor: 'transparent' } }) },
-        'btn-button-border-none': { wrapper: 'button-border-wrapper', msg: () => ({ type: 'LF_UPDATE_STYLE', selector: '', style: { borderColor: 'transparent' } }) }
+        'btn-button-bg-none': { wrapper: 'button-bg-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '', style: { background: 'transparent', backgroundColor: 'transparent' } }) },
+        'btn-button-border-none': { wrapper: 'button-border-wrapper', msg: () => ({ type: 'BYCHOI_UPDATE_STYLE', selector: '', style: { borderColor: 'transparent' } }) }
     };
 
     document.addEventListener('click', (e) => {
@@ -652,9 +652,9 @@
             if (targetIds.length === 0 || !iframeWin) return;
             const isCroppingNow = !!(window.state && window.state.isImageCropping);
             if (isCroppingNow) {
-                MessageHub.send(iframeWin, 'LF_IMAGE_CROP_APPLY', { id: targetIds[0] });
+                MessageHub.send(iframeWin, 'BYCHOI_IMAGE_CROP_APPLY', { id: targetIds[0] });
             } else {
-                MessageHub.send(iframeWin, 'LF_IMAGE_CROP_START', { id: targetIds[0] });
+                MessageHub.send(iframeWin, 'BYCHOI_IMAGE_CROP_START', { id: targetIds[0] });
             }
             try { iframeWin.focus(); } catch (focusErr) {}
             return;
@@ -666,7 +666,7 @@
             const targetIds = getActiveTargetIds();
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             if (targetIds.length === 0 || !iframeWin) return;
-            MessageHub.send(iframeWin, 'LF_IMAGE_CROP_RESET', { id: targetIds[0] });
+            MessageHub.send(iframeWin, 'BYCHOI_IMAGE_CROP_RESET', { id: targetIds[0] });
             try { iframeWin.focus(); } catch (focusErr) {}
             return;
         }
@@ -682,7 +682,7 @@
             const hInp = document.getElementById('prop-height');
             if (hInp) hInp.value = newH;
             
-            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+            MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                 id: targetIds[0],
                 ids: targetIds,
                 style: { height: newH + 'px' }
@@ -703,7 +703,7 @@
             const hInp = document.getElementById('prop-height-illustration');
             if (hInp) hInp.value = newH;
             
-            MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+            MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                 id: targetIds[0],
                 ids: targetIds,
                 style: { height: newH + 'px' }
@@ -729,7 +729,7 @@
             style[prop] = value;
         }
         
-        MessageHub.send(iframeEl.contentWindow, 'LF_UPDATE_STYLE', {
+        MessageHub.send(iframeEl.contentWindow, 'BYCHOI_UPDATE_STYLE', {
             id: targetIds[0],
             ids: targetIds,
             style: style

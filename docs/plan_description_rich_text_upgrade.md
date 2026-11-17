@@ -28,7 +28,7 @@
 | [assets/theme.css](file:///c:/Users/sisun/ai_work/assets/theme.css) | 테마별 컬러 및 hover/active 인터랙션 시각 일관성 보정 | **낮음** |
 | `data/p_xxxx/metadata.json` | 각 프로젝트별 화면 설명 배열 (`screens[fileName].description`) | **무영향** (기존 스키마와 100% 호환 확장) |
 | [assets/vctrl_core.js](file:///c:/Users/sisun/ai_work/assets/vctrl_core.js) | 스크린 로드, 저장, 핀 생성 로직 | **무영향** (기존 데이터 통로 그대로 활용) |
-| [assets/vctrl_responsive_pins.js](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_pins.js) | 핀 재정렬(`LF_REORDER_PINS`), 하이라이트(`LF_HIGHLIGHT_PIN`), 포커스(`LF_FOCUS_PIN`) 통신 | **무영향** (순수 인덱스 기반 통신 유지) |
+| [assets/vctrl_responsive_pins.js](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_pins.js) | 핀 재정렬(`BYCHOI_REORDER_PINS`), 하이라이트(`BYCHOI_HIGHLIGHT_PIN`), 포커스(`BYCHOI_FOCUS_PIN`) 통신 | **무영향** (순수 인덱스 기반 통신 유지) |
 
 ---
 
@@ -169,7 +169,7 @@
 | **4. 스크립트/런타임 에러 0건** | `window._activeDescEditor` 유효성 검증, `editor.offsetParent` 가드, 옵셔널 체이닝 철저 적용. | **PASS** |
 | **5. 백틱 충돌 에러 0건** | `vctrl_annotation_pins.js`는 부모 창 파일이며 백틱 중첩 리터럴을 사용하지 않고 안전한 문자열 결합 적용. | **PASS** |
 | **6. 구문/브래킷 에러 0건 & 정적 검증** | 코드 수정 후 반드시 `powershell -ExecutionPolicy Bypass -File scripts/check_syntax.ps1`을 자체 구동하여 0 에러 확인. | **PASS** |
-| **7. CORS 에러 0건 & 통신 프로토콜 준수** | 부모 창 내부 DOM 연산으로 CORS와 무관하며, iframe과의 기존 `MessageHub` 핀 신호(`LF_FOCUS_PIN` 등) 100% 유지. | **PASS** |
+| **7. CORS 에러 0건 & 통신 프로토콜 준수** | 부모 창 내부 DOM 연산으로 CORS와 무관하며, iframe과의 기존 `MessageHub` 핀 신호(`BYCHOI_FOCUS_PIN` 등) 100% 유지. | **PASS** |
 
 ---
 

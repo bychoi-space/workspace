@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_common.js
- * Shared common helper functions for LF Editor Studio (Iframe Side).
+ * Shared common helper functions for bychoi workspace Studio (Iframe Side).
  * 
  * [WARNING FOR DEVELOPERS & AI AGENTS]
  * This file is wrapped in an outer template literal (window.v4CommonScript = `...`).
@@ -191,26 +191,26 @@ window.ResponsiveFrameUtils = {
         cleanDOM: function(root) {
             if (!root) return root;
             // 1. Remove runtime UI helpers (ports, handles, guide layers, marquee box, selection adorners, image crop overlays)
-            root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner, .v4-image-crop-layer').forEach(function(el) {
+            root.querySelectorAll('.bychoi-resizer, .bychoi-delete-trigger, .bychoi-drag-handle, .bychoi-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner, .v4-image-crop-layer').forEach(function(el) {
                 el.remove();
             });
 
             // 1.1 Remove empty standalone Text SHAPE residue (.v4-text-shape / .v4-text-box)
             var zwsChar = String.fromCharCode(8203);
-            root.querySelectorAll('.lf-component.v4-text-shape, .lf-component.v4-text-box').forEach(function(el) {
-                if (el.classList.contains('lf-group') || el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
+            root.querySelectorAll('.bychoi-component.v4-text-shape, .bychoi-component.v4-text-box').forEach(function(el) {
+                if (el.classList.contains('bychoi-group') || el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
                 if (el.id && el.id.indexOf('v4-pin-') === 0) return;
                 if (el.getAttribute('data-index') !== null || el.getAttribute('data-pin-num') !== null) return;
-                if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .lf-icon, .v4-illustration-container, .v4-motion-container')) return;
+                if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .bychoi-icon, .v4-illustration-container, .v4-motion-container')) return;
                 var cell = el.querySelector('.v4-editable-cell');
                 if (!cell) return;
                 var clone = cell.cloneNode(true);
                 clone.querySelectorAll('.ql-cursor').forEach(function(cur) { cur.remove(); });
                 var cleanedTxt = (clone.textContent || '').split(zwsChar).join('').trim();
                 if (cleanedTxt.length === 0) {
-                    var parentGrp = (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('lf-group')) ? el.parentElement : null;
+                    var parentGrp = (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('bychoi-group')) ? el.parentElement : null;
                     el.remove();
-                    if (parentGrp && parentGrp.querySelectorAll('.lf-component').length === 0) {
+                    if (parentGrp && parentGrp.querySelectorAll('.bychoi-component').length === 0) {
                         parentGrp.remove();
                     }
                 }
@@ -245,7 +245,7 @@ window.ResponsiveFrameUtils = {
             });
 
             // 2. Remove active state classes
-            root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
+            root.querySelectorAll('.bychoi-component, .v4-shape').forEach(function(el) {
                 el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped', 'v4-cropping-active');
             });
             root.querySelectorAll('.selected-cell').forEach(function(el) {
@@ -261,7 +261,7 @@ window.ResponsiveFrameUtils = {
             // 2.15 Normalize dedicated Dimmed Overlay Layers (strip transient editor-only flags; prune unused empty layers)
             root.querySelectorAll('.v4-dimmed-overlay-layer').forEach(function(layer) {
                 var isEnabled = layer.getAttribute('data-dimmed-enabled') === 'true';
-                var hasChildComps = layer.querySelectorAll('.lf-component').length > 0;
+                var hasChildComps = layer.querySelectorAll('.bychoi-component').length > 0;
                 if (!isEnabled && !hasChildComps) {
                     layer.remove();
                     return;
@@ -420,7 +420,7 @@ window.getCategoryData = function(type) {
         'mobile-ui': { label: 'MOBILE', code: 'MO', class: 'badge-mobile-ui' },
         'admin': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
         'admin-nbos': { label: 'ADMIN', code: 'AD', class: 'badge-admin' },
-        'admin-onesphere': { label: 'ADMIN', code: 'AD', class: 'badge-admin' }
+        'admin-modern': { label: 'ADMIN', code: 'AD', class: 'badge-admin' }
     };
     return categories[type] || { label: 'ETC', code: (type || 'ET').slice(0, 2).toUpperCase(), class: 'badge-default' };
 };
@@ -630,7 +630,7 @@ window.v4CommonScript = `
     
     // Core shared message helpers
     window.notifyParent = function(data) { if (window.parent) window.parent.postMessage(data, '*'); };
-    window.markDirty = function() { window.notifyParent({ type: 'LF_DIRTY' }); };
+    window.markDirty = function() { window.notifyParent({ type: 'BYCHOI_DIRTY' }); };
     window.EditorBus = {
         sendToParent: function(data) { window.notifyParent(data); }
     };
@@ -766,7 +766,7 @@ window.v4CommonScript = `
             var single = document.getElementById(d.id);
             if (single) return [single];
         }
-        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        var selected = Array.from(document.querySelectorAll('.bychoi-component.selected'));
         if (selected.length > 0) return selected;
         return [];
     };
@@ -858,29 +858,29 @@ window.v4CommonScript = `
         },
         cleanDOM: function(root) {
             if (!root) return root;
-            root.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle, .lf-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner, .v4-image-crop-layer').forEach(function(el) {
+            root.querySelectorAll('.bychoi-resizer, .bychoi-delete-trigger, .bychoi-drag-handle, .bychoi-connector-port, svg.v4-responsive-guide-layer, .v4-marquee-box, .smart-guide-line, .v4-selection-adorner-layer, .v4-selection-adorner, .v4-image-crop-layer').forEach(function(el) {
                 el.remove();
             });
             var zwsChar = String.fromCharCode(8203);
-            root.querySelectorAll('.lf-component.v4-text-shape, .lf-component.v4-text-box').forEach(function(el) {
-                if (el.classList.contains('lf-group') || el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
+            root.querySelectorAll('.bychoi-component.v4-text-shape, .bychoi-component.v4-text-box').forEach(function(el) {
+                if (el.classList.contains('bychoi-group') || el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
                 if (el.id && el.id.indexOf('v4-pin-') === 0) return;
                 if (el.getAttribute('data-index') !== null || el.getAttribute('data-pin-num') !== null) return;
-                if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .lf-icon, .v4-illustration-container, .v4-motion-container')) return;
+                if (el.querySelector('.v4-shape, .v4-textbox-container, .v4-textarea-container, table, .bychoi-icon, .v4-illustration-container, .v4-motion-container')) return;
                 var cell = el.querySelector('.v4-editable-cell');
                 if (!cell) return;
                 var clone = cell.cloneNode(true);
                 clone.querySelectorAll('.ql-cursor').forEach(function(cur) { cur.remove(); });
                 var cleanedTxt = (clone.textContent || '').split(zwsChar).join('').trim();
                 if (cleanedTxt.length === 0) {
-                    var parentGrp = (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('lf-group')) ? el.parentElement : null;
+                    var parentGrp = (el.parentElement && el.parentElement.classList && el.parentElement.classList.contains('bychoi-group')) ? el.parentElement : null;
                     el.remove();
-                    if (parentGrp && parentGrp.querySelectorAll('.lf-component').length === 0) {
+                    if (parentGrp && parentGrp.querySelectorAll('.bychoi-component').length === 0) {
                         parentGrp.remove();
                     }
                 }
             });
-            root.querySelectorAll('.lf-component, .v4-shape').forEach(function(el) {
+            root.querySelectorAll('.bychoi-component, .v4-shape').forEach(function(el) {
                 el.classList.remove('selected', 'dragging-now', 'hover-target', 'v4-guide-snapped', 'v4-cropping-active');
             });
             root.querySelectorAll('[data-scroll-fixed], .pin-marker').forEach(function(el) {

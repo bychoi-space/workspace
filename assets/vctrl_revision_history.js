@@ -425,8 +425,8 @@
             try {
                 let html = '';
                 try {
-                    if (window.LF_TEMPLATES && window.LF_TEMPLATES['history_modal.html']) {
-                        html = window.LF_TEMPLATES['history_modal.html'];
+                    if (window.BYCHOI_TEMPLATES && window.BYCHOI_TEMPLATES['history_modal.html']) {
+                        html = window.BYCHOI_TEMPLATES['history_modal.html'];
                     } else if (window.location.protocol !== 'file:') {
                         const response = await fetch('assets/templates/history_modal.html');
                         if (response.ok) {

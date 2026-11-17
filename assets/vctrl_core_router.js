@@ -14,14 +14,14 @@
         window.addEventListener('mouseup', function () {
             const DOM = window.DOM;
             if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                DOM.iframe.contentWindow.postMessage({ type: 'LF_PARENT_MOUSEUP' }, '*');
+                DOM.iframe.contentWindow.postMessage({ type: 'BYCHOI_PARENT_MOUSEUP' }, '*');
             }
         });
     }
 
     // Modular Parent Core Message Handlers Table Map (SSOT)
     const v4ParentCoreHandlers = {
-        'LF_FOCUS_PARENT_QUILL': function () {
+        'BYCHOI_FOCUS_PARENT_QUILL': function () {
             if (window.SmartGuide) window.SmartGuide.clearGuides(true);
             if (window.quillEditor) {
                 window.quillEditor.focus();
@@ -29,25 +29,25 @@
                 window.quillEditor.setSelection(length, 0);
             }
         },
-        'LF_SNAP_START': function () {
+        'BYCHOI_SNAP_START': function () {
             if (window.SmartGuide) {
                 window.SmartGuide.clearGuides(true);
                 window.SmartGuide.findSnapTargets();
             }
         },
-        'LF_CLEAR_SMARTGUIDE': function () {
+        'BYCHOI_CLEAR_SMARTGUIDE': function () {
             if (window.SmartGuide) window.SmartGuide.clearGuides(true);
         },
-        'LF_SNAP_REQUEST': function (data, e) {
+        'BYCHOI_SNAP_REQUEST': function (data, e) {
             const DOM = window.DOM;
             const targetWindow = (DOM && DOM.iframe && DOM.iframe.contentWindow) || e.source;
             if (window.SmartGuide && targetWindow) {
                 const snap = window.SmartGuide.calculateSnap(data.x, data.y, data.w, data.h, !!data.isArrowKey, data.activeId);
                 window.SmartGuide.drawGuides(snap);
-                window.MessageHub.send(targetWindow, 'LF_SNAP_RESPONSE', snap);
+                window.MessageHub.send(targetWindow, 'BYCHOI_SNAP_RESPONSE', snap);
             }
         },
-        'LF_SNAP_END': function (data) {
+        'BYCHOI_SNAP_END': function (data) {
             if (window.SmartGuide) {
                 if (data && data.x !== undefined && data.y !== undefined && data.id) {
                     const compW = data.w || data.width || 100;
@@ -58,26 +58,26 @@
                 }
             }
         },
-        'LF_DESELECT': function () {
+        'BYCHOI_DESELECT': function () {
             if (window.SmartGuide) window.SmartGuide.clearGuides(true);
         },
-        'LF_RESTORE_CONNECTORS': function (data) {
+        'BYCHOI_RESTORE_CONNECTORS': function (data) {
             if (window.state && data.connectors) {
                 window.state.connectors = data.connectors;
                 if (window.ConnectorEngine) window.ConnectorEngine.redrawAll();
             }
         },
-        'LF_TOGGLE_GRID_REQUEST': function () {
+        'BYCHOI_TOGGLE_GRID_REQUEST': function () {
             if (typeof window.toggleResponsiveGrid === 'function') {
                 window.toggleResponsiveGrid();
             }
         },
-        'LF_DIMMED_LAYER_STATE': function (data) {
+        'BYCHOI_DIMMED_LAYER_STATE': function (data) {
             if (window.InspectorDimmedLayer && typeof window.InspectorDimmedLayer.syncFromIframe === 'function') {
                 window.InspectorDimmedLayer.syncFromIframe(data);
             }
         },
-        'LF_UPDATE_PIN_POS': function (data) {
+        'BYCHOI_UPDATE_PIN_POS': function (data) {
             if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
                 const pin = window.state.activeFile.meta.description[data.index];
                 if (pin) {
@@ -155,7 +155,7 @@
                 }
             }
         },
-        'LF_CREATE_GROUND_PIN': function (data) {
+        'BYCHOI_CREATE_GROUND_PIN': function (data) {
             const state = window.state || {};
             if (state.isReadOnly) return;
             if (!state.activeFile) return;
@@ -185,7 +185,7 @@
 
             const DOM = window.DOM || {};
             if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_GROUND_PIN', {
+                window.MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_INSERT_GROUND_PIN', {
                     index: newIdx,
                     number: newIdx + 1,
                     x: posX,
@@ -194,7 +194,7 @@
             }
             if (typeof window.markAsDirty === 'function') window.markAsDirty();
         },
-        'LF_DELETE_PIN': function (data) {
+        'BYCHOI_DELETE_PIN': function (data) {
             if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
                 window.state.activeFile.meta.description.splice(data.index, 1);
                 if (typeof window.renderDescriptionList === 'function') {
@@ -202,29 +202,29 @@
                 }
                 const DOM = window.DOM;
                 if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                    window.MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: data.index, pins: window.state.activeFile.meta.description });
+                    window.MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_REORDER_PINS', { deletedIndex: data.index, pins: window.state.activeFile.meta.description });
                 }
                 if (typeof window.markAsDirty === 'function') window.markAsDirty();
             }
         },
-        'LF_TABLE_SIZE_CHANGED': function () {
+        'BYCHOI_TABLE_SIZE_CHANGED': function () {
             if (typeof window.markAsDirty === 'function') window.markAsDirty();
         },
-        'LF_GRID_COL_FOCUSED': function (data) {
+        'BYCHOI_GRID_COL_FOCUSED': function (data) {
             if (window.InspectorGrid && typeof window.InspectorGrid.focusColumnCard === 'function') {
                 if (data && typeof data.activeColIndex === 'number' && data.activeColIndex >= 0) {
                     window.InspectorGrid.focusColumnCard(data.activeColIndex);
                 }
             }
         },
-        'LF_QUERY_ITEM_FOCUSED': function (data) {
+        'BYCHOI_QUERY_ITEM_FOCUSED': function (data) {
             if (window.InspectorAdminSettings && typeof window.InspectorAdminSettings.focusRowBlock === 'function') {
                 if (data && (typeof data.activeRowIndex === 'number' || data.isGroupHeader)) {
                     window.InspectorAdminSettings.focusRowBlock(data.activeRowIndex, data.activeColIndex, data.isGroupHeader);
                 }
             }
         },
-        'LF_COMP_SELECTED': function (data) {
+        'BYCHOI_COMP_SELECTED': function (data) {
             const state = window.state || {};
             const isResponsive = !!(data.isResponsive || state.isCurrentResponsiveScreen || (state.activeFile?.meta?.template === 'template_responsive_pc_mobile.html') || (state.activeFile?.meta?.template === 'template_admin_pc_scroll.html') || (state.activeFile?.meta?.template === 'template_responsive_mobile_compare.html'));
             if (window.SmartGuide) {
@@ -323,7 +323,7 @@
 
                     const DOM = window.DOM;
                     if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                        window.MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
+                        window.MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_UPDATE_MARQUEE_SELECTION', { ids: selectedIds });
                     }
 
                     if (!isTyping) {
@@ -347,7 +347,7 @@
                 }
             }
         },
-        'LF_MULTI_SELECTION_STYLES': function (data) {
+        'BYCHOI_MULTI_SELECTION_STYLES': function (data) {
             if (window.state) {
                 window.state.selectedComponent = Object.assign({ id: data.id }, data);
                 window.state.selectedComponentStyles = data;
@@ -364,7 +364,7 @@
                 window.updateProperties(data);
             }
         },
-        'LF_PASTE_COMPLETED': function (data) {
+        'BYCHOI_PASTE_COMPLETED': function (data) {
             const state = window.state || {};
             try {
                 if (window.SmartGuide) {
@@ -407,7 +407,7 @@
                         window.state.selectedIds = [...newIds];
                     }
                     if (DOM && DOM.iframe && DOM.iframe.contentWindow) {
-                        window.MessageHub.send(DOM.iframe.contentWindow, 'LF_UPDATE_MARQUEE_SELECTION', { ids: newIds });
+                        window.MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_UPDATE_MARQUEE_SELECTION', { ids: newIds });
                     }
                     if (!isTyping) {
                         if (newIds.length === 1 && data.firstCompStyles) {
@@ -436,22 +436,22 @@
                 if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
                 if (window.state) window.state.isHandMode = false;
             } catch (pasteErr) {
-                console.error("[Core] Error in LF_PASTE_COMPLETED handler:", pasteErr);
+                console.error("[Core] Error in BYCHOI_PASTE_COMPLETED handler:", pasteErr);
             }
         },
-        'LF_SPACE_DOWN': function () {
+        'BYCHOI_SPACE_DOWN': function () {
             const DOM = window.DOM;
             if (DOM && DOM.canvas) DOM.canvas.classList.add('hand-active');
             if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'none';
             if (window.state) window.state.isHandMode = true;
         },
-        'LF_SPACE_UP': function () {
+        'BYCHOI_SPACE_UP': function () {
             const DOM = window.DOM;
             if (DOM && DOM.canvas) DOM.canvas.classList.remove('hand-active');
             if (DOM && DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
             if (window.state) window.state.isHandMode = false;
         },
-        'LF_IFRAME_WHEEL_ZOOM': function (data) {
+        'BYCHOI_IFRAME_WHEEL_ZOOM': function (data) {
             const DOM = window.DOM;
             if (DOM && DOM.iframe && DOM.canvas && window.state) {
                 const iframeRect = DOM.iframe.getBoundingClientRect();
@@ -475,27 +475,27 @@
                 }
             }
         },
-        'LF_TOGGLE_CRISP_VIEW': function () {
+        'BYCHOI_TOGGLE_CRISP_VIEW': function () {
             if (typeof window.toggleCrispView === 'function') {
                 window.toggleCrispView();
             }
         },
-        'LF_DIRTY': function () {
+        'BYCHOI_DIRTY': function () {
             if (typeof window.markAsDirty === 'function') {
                 window.markAsDirty();
             }
         },
-        'LF_TRIGGER_SAVE': function () {
+        'BYCHOI_TRIGGER_SAVE': function () {
             if (typeof window.handleGlobalSave === 'function') {
                 window.handleGlobalSave();
             }
         },
-        'LF_SHOW_TOAST': function (data) {
+        'BYCHOI_SHOW_TOAST': function (data) {
             if (typeof window.showToast === 'function') {
                 window.showToast(data.message, data.toastType || 'info');
             }
         },
-        'LF_INSERT_IMAGE_COMP': function (data) {
+        'BYCHOI_INSERT_IMAGE_COMP': function (data) {
             const state = window.state || {};
             if (state.isReadOnly) return;
             if (!state.activeFile) return;
@@ -506,16 +506,16 @@
                 const sig = computeImageSignature(base64);
                 let rootWin = window;
                 try { rootWin = window.top || window; } catch (e) { rootWin = window; }
-                if (rootWin.__lf_clipboard_source__ === 'internal' &&
-                    rootWin.__lf_suppressed_img_sig__ &&
-                    sig === rootWin.__lf_suppressed_img_sig__) {
+                if (rootWin.__bychoi_clipboard_source__ === 'internal' &&
+                    rootWin.__bychoi_suppressed_img_sig__ &&
+                    sig === rootWin.__bychoi_suppressed_img_sig__) {
                     console.log("[CoreRouter] Suppressed stale OS clipboard image in favor of internal copied object.");
                     triggerIframeObjectPaste();
                     return;
                 }
-                rootWin.__lf_clipboard_source__ = 'external';
-                rootWin.__lf_last_external_img_sig__ = sig;
-                rootWin.__lf_suppressed_img_sig__ = null;
+                rootWin.__bychoi_clipboard_source__ = 'external';
+                rootWin.__bychoi_last_external_img_sig__ = sig;
+                rootWin.__bychoi_suppressed_img_sig__ = null;
             }
 
             if (typeof window.processAndInsertRawImage === 'function') {
@@ -548,7 +548,7 @@
         if (activeIframe && activeIframe.contentWindow) {
             try { activeIframe.contentWindow.focus(); } catch (err) { }
             activeIframe.contentWindow.postMessage({
-                type: 'LF_SHORTCUT_KEY_PROXY',
+                type: 'BYCHOI_SHORTCUT_KEY_PROXY',
                 code: 'KeyV',
                 key: 'v',
                 shiftKey: false,
@@ -561,7 +561,7 @@
     // Parent-side paste event listener for handling pasted image files when parent has focus
     function setupParentPasteProxy() {
         window.addEventListener('paste', function (e) {
-            window.__lf_last_parent_paste_time__ = Date.now();
+            window.__bychoi_last_parent_paste_time__ = Date.now();
             const state = window.state || {};
             if (state.isReadOnly) return;
 
@@ -611,8 +611,8 @@
                 const reader = new FileReader();
                 reader.onload = function (evt) {
                     const base64 = evt && evt.target && evt.target.result;
-                    if (base64 && typeof v4ParentCoreHandlers['LF_INSERT_IMAGE_COMP'] === 'function') {
-                        v4ParentCoreHandlers['LF_INSERT_IMAGE_COMP']({
+                    if (base64 && typeof v4ParentCoreHandlers['BYCHOI_INSERT_IMAGE_COMP'] === 'function') {
+                        v4ParentCoreHandlers['BYCHOI_INSERT_IMAGE_COMP']({
                             base64: base64,
                             fromPaste: true
                         });

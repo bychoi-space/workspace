@@ -13,9 +13,9 @@
         }
         body { margin:0; padding:0; background:#2d2d2d; font-family:'Pretendard Variable', Pretendard, 'Inter','Noto Sans KR',sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; }
         .artboard { width:1600px; height:900px; background:#fff; position:relative; box-shadow:0 30px 60px rgba(0,0,0,0.4); overflow:hidden; }
-        .lf-component { position:absolute; transition:all 0.2s cubic-bezier(0.4,0,0.2,1); box-sizing:border-box; }
-        .lf-component:hover { outline:2px dashed var(--v4-accent); outline-offset:2px; }
-        .lf-component.selected { outline:2px solid var(--v4-accent); z-index:100; }
+        .bychoi-component { position:absolute; transition:all 0.2s cubic-bezier(0.4,0,0.2,1); box-sizing:border-box; }
+        .bychoi-component:hover { outline:2px dashed var(--v4-accent); outline-offset:2px; }
+        .bychoi-component.selected { outline:2px solid var(--v4-accent); z-index:100; }
         .v4-editable-cell { outline:none; padding:4px; transition:background 0.2s; }
         .v4-editable-cell:focus { background:rgba(99,102,241,0.05); box-shadow:inset 0 0 0 1px var(--v4-accent); border-radius:2px; }
         .v4-shape-container { width:100%; height:100%; display:flex; align-items:center; justify-content:center; border-radius:8px; font-weight:700; }
@@ -32,28 +32,28 @@
     </style>
 <style id="v4-inlined-style">
 :root { --v4-primary:#6366f1; --v4-accent:#00e5ff; --v4-bg-dark:#0a0b10; --v4-panel-bg:rgba(23,25,35,0.7); --v4-border:rgba(255,255,255,0.08); --v4-text-main:#f8fafc; --v4-text-dim:#94a3b8; }
-.lf-component { position:absolute; cursor:pointer; transition:outline 0.2s; }
-.lf-component.selected { outline:2px solid #6366f1; z-index:1001; }
-.lf-drag-handle { position:absolute; top:-12px; left:-12px; width:24px; height:24px; background:#6366f1; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:move; opacity:0; transition:all 0.2s; border:2px solid #fff; z-index:10; }
-.lf-component:hover .lf-drag-handle,.lf-component.selected .lf-drag-handle { opacity:1; top:-16px; left:-16px; }
-.lf-resizer { position:absolute; bottom:-5px; right:-5px; width:12px; height:12px; background:#6366f1; cursor:nwse-resize; border-radius:50%; border:2px solid #fff; opacity:0; transition:0.2s; z-index:10; }
-.lf-component:hover .lf-resizer,.lf-component.selected .lf-resizer { opacity:1; }
-.lf-delete-trigger { position:absolute; top:-12px; right:-12px; width:24px; height:24px; background:#ef4444; color:#fff; border-radius:50%; display:none; align-items:center; justify-content:center; cursor:pointer; border:2px solid #fff; z-index:10001; font-size:14px; font-weight:bold; }
-.lf-component:hover .lf-delete-trigger,.lf-component.selected .lf-delete-trigger { display:flex; }
+.bychoi-component { position:absolute; cursor:pointer; transition:outline 0.2s; }
+.bychoi-component.selected { outline:2px solid #6366f1; z-index:1001; }
+.bychoi-drag-handle { position:absolute; top:-12px; left:-12px; width:24px; height:24px; background:#6366f1; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:move; opacity:0; transition:all 0.2s; border:2px solid #fff; z-index:10; }
+.bychoi-component:hover .bychoi-drag-handle,.bychoi-component.selected .bychoi-drag-handle { opacity:1; top:-16px; left:-16px; }
+.bychoi-resizer { position:absolute; bottom:-5px; right:-5px; width:12px; height:12px; background:#6366f1; cursor:nwse-resize; border-radius:50%; border:2px solid #fff; opacity:0; transition:0.2s; z-index:10; }
+.bychoi-component:hover .bychoi-resizer,.bychoi-component.selected .bychoi-resizer { opacity:1; }
+.bychoi-delete-trigger { position:absolute; top:-12px; right:-12px; width:24px; height:24px; background:#ef4444; color:#fff; border-radius:50%; display:none; align-items:center; justify-content:center; cursor:pointer; border:2px solid #fff; z-index:10001; font-size:14px; font-weight:bold; }
+.bychoi-component:hover .bychoi-delete-trigger,.bychoi-component.selected .bychoi-delete-trigger { display:flex; }
 .v4-editable-cell:focus { outline:2px solid #6366f1; background:rgba(99,102,241,0.05) !important; }
 </style>
 </head>
 <body>
     <div class="artboard" id="canvas">
         <!-- Title Shape -->
-        <div class="lf-component" id="comp-title-shape" style="top:40px; left:40px; width:320px; height:56px;">
+        <div class="bychoi-component" id="comp-title-shape" style="top:40px; left:40px; width:320px; height:56px;">
             <div class="v4-shape-container" style="background:#4b5563; color:#fff; font-size:18px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
                 <div class="v4-editable-cell" contenteditable="true">{{SCREEN_NAME}}</div>
             </div>
         </div>
 
         <!-- Main Data Table -->
-        <div class="lf-component" id="comp-main-table" style="top:130px; left:40px; width:1360px; height:auto;">
+        <div class="bychoi-component" id="comp-main-table" style="top:130px; left:40px; width:1360px; height:auto;">
             <div class="table-scroll-wrap">
                 <table class="v4-premium-table">
                     <thead>
@@ -152,7 +152,7 @@
         </div>
 
         <!-- Footer Info -->
-        <div class="lf-component" style="bottom:30px; left:40px; color:#999; font-size:12px; display:flex; align-items:center; gap:12px;">
+        <div class="bychoi-component" style="bottom:30px; left:40px; color:#999; font-size:12px; display:flex; align-items:center; gap:12px;">
             <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:grayscale(1) opacity(0.4);">
                 <rect x="15" y="22" width="55" height="14" rx="7" fill="#6366f1" />
                 <rect x="25" y="43" width="55" height="14" rx="7" fill="#6366f1" opacity="0.7" />
@@ -166,16 +166,16 @@
     let isDragging = false, isResizing = false, activeEl = null;
     let startX, startY, startW, startH, startTop, startLeft;
     function notifyParent(data) { window.parent.postMessage(data, '*'); }
-    function markDirty() { notifyParent({ type: 'LF_DIRTY' }); }
+    function markDirty() { notifyParent({ type: 'BYCHOI_DIRTY' }); }
     document.addEventListener('mousedown', e => {
-        const h = e.target.closest('.lf-drag-handle'), r = e.target.closest('.lf-resizer'), d = e.target.closest('.lf-delete-trigger'), c = e.target.closest('.lf-component');
+        const h = e.target.closest('.bychoi-drag-handle'), r = e.target.closest('.bychoi-resizer'), d = e.target.closest('.bychoi-delete-trigger'), c = e.target.closest('.bychoi-component');
         if (d && c) { c.remove(); markDirty(); return; }
         if (c) { 
-            document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected')); 
+            document.querySelectorAll('.bychoi-component').forEach(x => x.classList.remove('selected')); 
             c.classList.add('selected'); 
             const isPin = c.classList.contains('text-marker');
             notifyParent({ 
-                type: 'LF_COMP_SELECTED', 
+                type: 'BYCHOI_COMP_SELECTED', 
                 id: c.id, 
                 isTable: !!c.querySelector('table'), 
                 isShape: !!c.querySelector('.v4-shape'),
@@ -183,7 +183,7 @@
                 pinIndex: isPin ? parseInt(c.id.replace('v4-pin-', '')) : -1
             }); 
         }
-        else { document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected')); notifyParent({ type: 'LF_DESELECT' }); }
+        else { document.querySelectorAll('.bychoi-component').forEach(x => x.classList.remove('selected')); notifyParent({ type: 'BYCHOI_DESELECT' }); }
         if (h) { isDragging = true; activeEl = h.parentElement; startX = e.clientX; startY = e.clientY; startTop = parseInt(activeEl.style.top) || 0; startLeft = parseInt(activeEl.style.left) || 0; e.preventDefault(); }
         else if (r) { isResizing = true; activeEl = r.parentElement; startX = e.clientX; startY = e.clientY; startW = activeEl.offsetWidth; startH = activeEl.offsetHeight; e.preventDefault(); }
     });
@@ -195,12 +195,12 @@
     document.addEventListener('input', e => { if (e.target.classList.contains('v4-editable-cell')) markDirty(); });
     window.addEventListener('message', e => {
         const d = e.data; if (!d) return;
-        if (d.type === 'LF_REQUEST_SAVE_CONTENT') { const c = document.documentElement.cloneNode(true); c.querySelectorAll('.lf-resizer, .lf-delete-trigger, .lf-drag-handle').forEach(el => el.remove()); c.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected')); notifyParent({ type: 'LF_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML }); }
-        else if (d.type === 'LF_INSERT_COMPONENT') { const v = document.createElement('div'); v.id = d.id || ('v4-comp-' + Date.now()); v.className = 'lf-component'; v.style.position = 'absolute'; v.style.top = '100px'; v.style.left = '100px'; v.style.zIndex = '1000'; if (d.style) Object.assign(v.style, d.style); v.innerHTML = '<div class="lf-drag-handle"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' + d.html + '<div class="lf-resizer"></div><div class="lf-delete-trigger">×</div>'; document.body.appendChild(v); document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected')); v.classList.add('selected'); const isPin = v.classList.contains('text-marker'); notifyParent({ type: 'LF_COMP_SELECTED', id: v.id, isTable: !!v.querySelector('table'), isShape: !!v.querySelector('.v4-shape'), isPin: isPin, pinIndex: isPin ? parseInt(v.id.replace('v4-pin-', '')) : -1 }); markDirty(); }
-        else if (d.type === 'LF_UPDATE_STYLE') { const s = document.querySelector('.lf-component.selected'); if (!s) return; const t = d.selector ? s.querySelector(d.selector) : s; if (!t) return; if (d.style) Object.assign(t.style, d.style); if (d.subSelector && d.subStyle) t.querySelectorAll(d.subSelector).forEach(el => Object.assign(el.style, d.subStyle)); markDirty(); }
-        else if (d.type === 'LF_TABLE_ACTION') { const t = document.querySelector('.lf-component.selected table'); if (!t) return; if (d.action === 'ADD_ROW') { const b = t.querySelector('tbody') || t, l = t.querySelector('tr:last-child'); if (l) { const n = l.cloneNode(true); n.querySelectorAll('td, th').forEach(x => { x.innerText = "-"; }); b.appendChild(n); } } else if (d.action === 'DEL_ROW') { const r = t.querySelectorAll('tr'); if (r.length > 1) r[r.length - 1].remove(); } else if (d.action === 'ADD_COL') { t.querySelectorAll('tr').forEach(tr => { const x = tr.querySelector('td:last-child') || tr.querySelector('th:last-child'); if (x) { const n = x.cloneNode(true); n.innerText = "-"; tr.appendChild(n); } }); } else if (d.action === 'DEL_COL') { t.querySelectorAll('tr').forEach(tr => { const x = tr.querySelectorAll('td, th'); if (x.length > 1) x[x.length - 1].remove(); }); } markDirty(); }
-        else if (d.type === 'LF_DELETE_SELECTED') { const s = document.querySelector('.lf-component.selected'); if (s) { s.remove(); markDirty(); } }
-        else if (d.type === 'LF_DESELECT_ALL') { document.querySelectorAll('.lf-component').forEach(x => x.classList.remove('selected')); }
+        if (d.type === 'BYCHOI_REQUEST_SAVE_CONTENT') { const c = document.documentElement.cloneNode(true); c.querySelectorAll('.bychoi-resizer, .bychoi-delete-trigger, .bychoi-drag-handle').forEach(el => el.remove()); c.querySelectorAll('.bychoi-component').forEach(el => el.classList.remove('selected')); notifyParent({ type: 'BYCHOI_SAVE_CONTENT_RESPONSE', html: "<!DOCTYPE html>\\n" + c.outerHTML }); }
+        else if (d.type === 'BYCHOI_INSERT_COMPONENT') { const v = document.createElement('div'); v.id = d.id || ('v4-comp-' + Date.now()); v.className = 'bychoi-component'; v.style.position = 'absolute'; v.style.top = '100px'; v.style.left = '100px'; v.style.zIndex = '1000'; if (d.style) Object.assign(v.style, d.style); v.innerHTML = '<div class="bychoi-drag-handle"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M10,13V11H14V13H10M10,9V7H14V9H10M10,17V15H14V17H10M6,13V11H8V13H6M6,9V7H8V9H6M6,17V15H8V17H6M16,13V11H18V13H16M16,9V7H18V9H16M16,17V15H18V17H16Z"/></svg></div>' + d.html + '<div class="bychoi-resizer"></div><div class="bychoi-delete-trigger">×</div>'; document.body.appendChild(v); document.querySelectorAll('.bychoi-component').forEach(x => x.classList.remove('selected')); v.classList.add('selected'); const isPin = v.classList.contains('text-marker'); notifyParent({ type: 'BYCHOI_COMP_SELECTED', id: v.id, isTable: !!v.querySelector('table'), isShape: !!v.querySelector('.v4-shape'), isPin: isPin, pinIndex: isPin ? parseInt(v.id.replace('v4-pin-', '')) : -1 }); markDirty(); }
+        else if (d.type === 'BYCHOI_UPDATE_STYLE') { const s = document.querySelector('.bychoi-component.selected'); if (!s) return; const t = d.selector ? s.querySelector(d.selector) : s; if (!t) return; if (d.style) Object.assign(t.style, d.style); if (d.subSelector && d.subStyle) t.querySelectorAll(d.subSelector).forEach(el => Object.assign(el.style, d.subStyle)); markDirty(); }
+        else if (d.type === 'BYCHOI_TABLE_ACTION') { const t = document.querySelector('.bychoi-component.selected table'); if (!t) return; if (d.action === 'ADD_ROW') { const b = t.querySelector('tbody') || t, l = t.querySelector('tr:last-child'); if (l) { const n = l.cloneNode(true); n.querySelectorAll('td, th').forEach(x => { x.innerText = "-"; }); b.appendChild(n); } } else if (d.action === 'DEL_ROW') { const r = t.querySelectorAll('tr'); if (r.length > 1) r[r.length - 1].remove(); } else if (d.action === 'ADD_COL') { t.querySelectorAll('tr').forEach(tr => { const x = tr.querySelector('td:last-child') || tr.querySelector('th:last-child'); if (x) { const n = x.cloneNode(true); n.innerText = "-"; tr.appendChild(n); } }); } else if (d.action === 'DEL_COL') { t.querySelectorAll('tr').forEach(tr => { const x = tr.querySelectorAll('td, th'); if (x.length > 1) x[x.length - 1].remove(); }); } markDirty(); }
+        else if (d.type === 'BYCHOI_DELETE_SELECTED') { const s = document.querySelector('.bychoi-component.selected'); if (s) { s.remove(); markDirty(); } }
+        else if (d.type === 'BYCHOI_DESELECT_ALL') { document.querySelectorAll('.bychoi-component').forEach(x => x.classList.remove('selected')); }
     });
 })();
 </script>

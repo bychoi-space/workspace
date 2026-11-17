@@ -18,7 +18,7 @@ description: Use when performing static code verification, syntax checking (scri
 ## Static Verification Standards
 - **Syntax & Bracket Integrity**: `powershell -ExecutionPolicy Bypass -File scripts/check_syntax.ps1`을 실행하여 전체 엔진 JS 파일의 브래킷 밸런스 및 Node VM 기반 `ENGINE_SCRIPT_REGISTRY` 25개 전 모듈 인라인 스크립트 컴파일 무결성을 100% 검증합니다.
 - **Headless Browser Comprehensive Check**: 필요시 `powershell -ExecutionPolicy Bypass -File scripts/verify_all.ps1`을 통해 실제 Chromium/Edge Headless 환경에서 40여 개 전체 엔진 스크립트의 런타임 구문 로드 및 인라인 함수 생성을 전수 검사합니다.
-- **Event Flow Non-Blocking Check**: `mouseup` / `mousemove` 리스너 내 조기 종료(`return;`) 남용으로 하위 상태 해제(`LF_MARQUEE_END`)가 차단되지 않는지 이벤트 루프를 검증합니다.
+- **Event Flow Non-Blocking Check**: `mouseup` / `mousemove` 리스너 내 조기 종료(`return;`) 남용으로 하위 상태 해제(`BYCHOI_MARQUEE_END`)가 차단되지 않는지 이벤트 루프를 검증합니다.
 - **Module Boundary & SSOT Consistency**: `metadata.json` 스펙 및 `MessageHub` / `EditorBus` 통신 규격이 일치하는지 정적 추적합니다.
 - **Unified Z-Index Architecture & Pin Layer Verification**: `window.V4_Z_TIERS` 8대 티어 규격 정합성을 검증하고 임의의 비표준 z-index(99999 등) 잔류 여부를 점검합니다. `.v4-pin-layer`의 `z-index: 250000 !important;` 및 `pointer-events: none;` 선언 정합성과, 핀 마커의 `pointer-events: auto;` 속성을 정적 확인합니다.
 - **Stacking Context Isolation Immunity Verification**: 어드민 테이블 등 `isolation: isolate; contain: paint;` 속성을 갖는 컴포넌트와 디스크립션 핀의 DOM 계층 분리를 정적 검증하고, 필요시 Headless Chromium Stacking Context Hit-Test를 통해 핀이 항상 최상단에 렌더링되는지 확인합니다.

@@ -133,7 +133,7 @@
                         if (!fKey) return;
                         _state.activeFrame = fKey;
                         renderUI();
-                        sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                        sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                             frames: [fKey],
                             focusFrame: fKey,
                             saveUndo: false,
@@ -247,7 +247,7 @@
                 if (_state.syncAllFrames) {
                     const cur = getSelectedFrameObj();
                     if (cur) {
-                        sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                        sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                             frames: _state.frames.map(function(f) { return f.key; }),
                             enabled: cur.enabled,
                             editMode: cur.editMode,
@@ -271,7 +271,7 @@
                 }
                 const nextEnabled = !!enableToggle.checked;
                 const targets = getTargetFrameKeys();
-                sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                     frames: targets,
                     enabled: nextEnabled,
                     editMode: 'overlay',
@@ -286,7 +286,7 @@
             btnOverlay._bound = true;
             btnOverlay.addEventListener('click', function() {
                 const targets = getTargetFrameKeys();
-                sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                     frames: targets,
                     editMode: 'overlay',
                     focusFrame: _state.activeFrame,
@@ -299,7 +299,7 @@
             btnBase._bound = true;
             btnBase.addEventListener('click', function() {
                 const targets = getTargetFrameKeys();
-                sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                     frames: targets,
                     editMode: 'base',
                     focusFrame: _state.activeFrame,
@@ -322,7 +322,7 @@
                 if (opVal) opVal.textContent = val + '%';
                 const shouldSaveUndo = !_sliderUndoSaved;
                 _sliderUndoSaved = true;
-                sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                     frames: getTargetFrameKeys(),
                     opacity: val,
                     saveUndo: shouldSaveUndo,
@@ -332,7 +332,7 @@
             opSlider.addEventListener('change', function() {
                 const val = parseInt(opSlider.value, 10);
                 if (isNaN(val)) return;
-                sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                     frames: getTargetFrameKeys(),
                     opacity: val,
                     saveUndo: !_sliderUndoSaved,
@@ -352,7 +352,7 @@
                 chip.addEventListener('click', function() {
                     const pct = parseInt(chip.getAttribute('data-opacity'), 10);
                     if (isNaN(pct)) return;
-                    sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                    sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                         frames: getTargetFrameKeys(),
                         opacity: pct,
                         saveUndo: true,
@@ -375,7 +375,7 @@
                 sw.addEventListener('click', function() {
                     const hex = sw.getAttribute('data-color');
                     if (!hex) return;
-                    sendToIframeDimmed('LF_UPDATE_DIMMED_LAYER', {
+                    sendToIframeDimmed('BYCHOI_UPDATE_DIMMED_LAYER', {
                         frames: getTargetFrameKeys(),
                         color: hex,
                         saveUndo: true,
@@ -409,7 +409,7 @@
     }
 
     function queryIframeState() {
-        sendToIframeDimmed('LF_QUERY_DIMMED_LAYER_STATE', {});
+        sendToIframeDimmed('BYCHOI_QUERY_DIMMED_LAYER_STATE', {});
     }
 
     function init() {

@@ -36,7 +36,7 @@ window.v4SelectionAdornerScript = `
         },
         update: function(target) {
             this.clear();
-            var selectedComps = target ? [target] : Array.from(document.querySelectorAll('.lf-component.selected'));
+            var selectedComps = target ? [target] : Array.from(document.querySelectorAll('.bychoi-component.selected'));
             if (selectedComps.length === 0) return;
 
             var self = this;
@@ -59,7 +59,7 @@ window.v4SelectionAdornerScript = `
 
                 if (w <= 0 || h <= 0) return;
 
-                var isGroup = comp.classList.contains('lf-group');
+                var isGroup = comp.classList.contains('bychoi-group');
                 var box = document.createElement('div');
                 box.className = 'v4-selection-adorner' + (isGroup ? ' is-group' : '');
                 box.style.position = 'absolute';

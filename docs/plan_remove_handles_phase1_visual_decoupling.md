@@ -11,8 +11,8 @@
 
 ### 1) 배경
 - 현재 에디터 화면에서 오브젝트에 마우스 호버(`:hover`)를 하거나 클릭하여 선택(`.selected`)하면:
-  - 오브젝트 좌측 상단에 파란색 원형 **이동 버튼 (`.lf-drag-handle`)** 노출
-  - 오브젝트 우측 하단에 파란색 원형 **크기 조절 버튼 (`.lf-resizer`)** 노출
+  - 오브젝트 좌측 상단에 파란색 원형 **이동 버튼 (`.bychoi-drag-handle`)** 노출
+  - 오브젝트 우측 하단에 파란색 원형 **크기 조절 버튼 (`.bychoi-resizer`)** 노출
 - **사용자 요구사항**:
   - 이동 버튼은 과거 레거시 인터페이스로, 현재는 **오브젝트 본체 드래그** 또는 **키보드 방향키 이동**이 완벽하게 지원되므로 시각적 노이즈에 불과함.
   - 크기 조절 버튼 또한 우측 인스펙터의 수치(`Width / Height`) 직접 입력을 기본으로 통일하며, 구형 점 핸들을 우선 화면에서 걷어내길 희망함.
@@ -26,10 +26,10 @@
 ## 2. 해결 원칙 및 세부 설계
 
 ### 1) 완전 비노출 및 마우스 이벤트 차단
-- `.lf-drag-handle`과 `.lf-resizer`에 `display: none !important;`를 전역 적용.
+- `.bychoi-drag-handle`과 `.bychoi-resizer`에 `display: none !important;`를 전역 적용.
 - `display: none`이 적용되면 브라우저 렌더 트리에서 제외되므로:
   - 마우스 호버 시 시각적으로 전혀 나타나지 않음.
-  - 마우스 클릭 시 `e.target.closest('.lf-drag-handle')`나 `e.target.closest('.lf-resizer')`가 일체 잡히지 않고, 오직 컴포넌트 본체(`.lf-component`)로만 이벤트가 전달됨.
+  - 마우스 클릭 시 `e.target.closest('.bychoi-drag-handle')`나 `e.target.closest('.bychoi-resizer')`가 일체 잡히지 않고, 오직 컴포넌트 본체(`.bychoi-component`)로만 이벤트가 전달됨.
 
 ### 2) 본체 드래그 이동 무결성 유지
 - `vctrl_iframe_script.js` 라인 672의 드래그 분기:
@@ -43,7 +43,7 @@
   - `h`가 `null`이어도 `c && !e.target.closest('td, th')`에 의해 컴포넌트 본체 클릭 드래그가 100% 정상 발동됨.
   - 키보드 화살표 키 이동(Nudge)은 컴포넌트의 `.selected` 클래스 유무로만 판단하므로 완벽하게 동작함.
 
-### 3) 삭제 버튼(`.lf-delete-trigger`) 및 포트(`.lf-connector-port`) 보존
+### 3) 삭제 버튼(`.bychoi-delete-trigger`) 및 포트(`.bychoi-connector-port`) 보존
 - 사용자가 요청하지 않은 우측 상단의 삭제 단추(`×`) 및 커넥터 연결 포트는 정상적으로 노출 및 작동하도록 건드리지 않음.
 
 ### 4) 엔진 의존성 무손상 (Zero-Breakage)
@@ -54,13 +54,13 @@
 ## 3. 작업 대상 파일 및 변경 사항 (Target Files)
 
 ### 1. [assets/vctrl_iframe_styles.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_styles.js)
-- `.lf-drag-handle`, `.lf-resizer` 스타일 선언부 수정:
+- `.bychoi-drag-handle`, `.bychoi-resizer` 스타일 선언부 수정:
   ```css
   /* ==========================================================================
      PHASE 1: Drag Handle & Resizer Complete Visual Hiding
      ========================================================================== */
-  .lf-drag-handle,
-  .lf-resizer {
+  .bychoi-drag-handle,
+  .bychoi-resizer {
       display: none !important;
       pointer-events: none !important;
       opacity: 0 !important;
@@ -70,10 +70,10 @@
 - 기존의 `:hover`, `.selected` 시 `opacity: 1` 처리되던 불필요한 규칙 오버라이드 및 정리.
 
 ### 2. [assets/style.css](file:///c:/Users/sisun/ai_work/assets/style.css)
-- 부모 창 및 공통 스타일시트에 잔존하는 `.lf-drag-handle`, `.lf-resizer` 규칙에 `display: none !important;` 반영.
+- 부모 창 및 공통 스타일시트에 잔존하는 `.bychoi-drag-handle`, `.bychoi-resizer` 규칙에 `display: none !important;` 반영.
 
 ### 3. [enhanced_v4/style_v4.css](file:///c:/Users/sisun/ai_work/enhanced_v4/style_v4.css)
-- Enhanced V4 스타일시트 내 `.lf-drag-handle` 블록(Lines 267~299)에 `display: none !important;` 적용.
+- Enhanced V4 스타일시트 내 `.bychoi-drag-handle` 블록(Lines 267~299)에 `display: none !important;` 적용.
 
 ---
 

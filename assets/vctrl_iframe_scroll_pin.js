@@ -172,8 +172,8 @@ window.v4ScrollPinScript = `
             hosts.forEach(function(el) {
                 if (el.classList.contains('dragging-now')) return;
 
-                // Self-healing: Components nested inside an .lf-group are never independent scroll-pinned hosts
-                var enclosingGroup = (el.parentElement && el.parentElement.closest) ? el.parentElement.closest('.lf-group') : null;
+                // Self-healing: Components nested inside an .bychoi-group are never independent scroll-pinned hosts
+                var enclosingGroup = (el.parentElement && el.parentElement.closest) ? el.parentElement.closest('.bychoi-group') : null;
                 if (enclosingGroup) {
                     el.style.removeProperty('transform');
                     el.style.removeProperty('will-change');
@@ -333,7 +333,7 @@ window.v4ScrollPinScript = `
 
                     if (!hostInfo) {
                         var hostEl = hostId ? document.getElementById(hostId) : null;
-                        var isHostNestedInGroup = !!(hostEl && hostEl.parentElement && hostEl.parentElement.closest && hostEl.parentElement.closest('.lf-group'));
+                        var isHostNestedInGroup = !!(hostEl && hostEl.parentElement && hostEl.parentElement.closest && hostEl.parentElement.closest('.bychoi-group'));
                         var pinContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function')
                             ? window.ResponsiveFrameUtils.getContainer(p)
                             : (p.closest ? p.closest('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area') : null);
@@ -352,7 +352,7 @@ window.v4ScrollPinScript = `
                                     pIdx = parseInt((p.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''), 10);
                                 }
                                 var fType = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getFrameType === 'function') ? window.ResponsiveFrameUtils.getFrameType(p) : (p.getAttribute('data-frame') || '');
-                                window.notifyParent({ type: 'LF_UPDATE_PIN_POS', index: pIdx, frame: fType, x: parseFloat(p.style.left) || 0, y: parseFloat(p.style.top) || 0, fixedHost: null, scrollFixed: 'none', standardized: true });
+                                window.notifyParent({ type: 'BYCHOI_UPDATE_PIN_POS', index: pIdx, frame: fType, x: parseFloat(p.style.left) || 0, y: parseFloat(p.style.top) || 0, fixedHost: null, scrollFixed: 'none', standardized: true });
                             }
                             return;
                         }
@@ -398,7 +398,7 @@ window.v4ScrollPinScript = `
 
             // Follow selected pinned element in real-time
             if (window.SelectionAdorner && typeof window.SelectionAdorner.update === 'function') {
-                if (document.querySelector('.lf-component.selected[data-scroll-fixed]')) {
+                if (document.querySelector('.bychoi-component.selected[data-scroll-fixed]')) {
                     window.SelectionAdorner.update();
                 }
             }
@@ -459,10 +459,10 @@ window.v4ScrollPinScript = `
 
     // Register Message Handler for Dynamic Toggle
     if (!window.v4MessageHandlers) window.v4MessageHandlers = {};
-    window.v4MessageHandlers['LF_SET_SCROLL_FIXED'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_SET_SCROLL_FIXED'] = function(d) {
         if (!d || typeof d !== 'object') return;
         if (!d.mode || typeof d.mode !== 'string') {
-            console.warn('[ScrollPinEngine] Ignored LF_SET_SCROLL_FIXED with invalid or missing mode:', d);
+            console.warn('[ScrollPinEngine] Ignored BYCHOI_SET_SCROLL_FIXED with invalid or missing mode:', d);
             return;
         }
 
@@ -481,10 +481,10 @@ window.v4ScrollPinScript = `
 
         var maxNormalZ = 1000;
         var maxFixedZ = 100000;
-        var allComps = document.querySelectorAll ? document.querySelectorAll('.lf-component') : [];
+        var allComps = document.querySelectorAll ? document.querySelectorAll('.bychoi-component') : [];
         allComps.forEach(function(c) {
-            if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('lf-group')) return;
-            if (c.classList && c.classList.contains('lf-in-group')) return;
+            if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('bychoi-group')) return;
+            if (c.classList && c.classList.contains('bychoi-in-group')) return;
             if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
             var z = parseInt(c.style.zIndex, 10);
             if (isNaN(z)) {
@@ -582,7 +582,7 @@ window.v4ScrollPinScript = `
                             delete el.dataset.autoBg;
                             el.removeAttribute('data-auto-bg');
                         }
-                        if (el.querySelector && el.querySelector('.v4-shape, .v4-shape-circle, .v4-shape-rect, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-wave, .lf-icon, svg')) {
+                        if (el.querySelector && el.querySelector('.v4-shape, .v4-shape-circle, .v4-shape-rect, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-wave, .bychoi-icon, svg')) {
                             if (el.style.backgroundColor && el.style.backgroundColor !== 'transparent') {
                                 el.style.backgroundColor = '';
                                 el.style.removeProperty('background-color');
@@ -598,7 +598,7 @@ window.v4ScrollPinScript = `
                     var parent = el.parentElement;
                     if (parent) {
                         var trailingRef = Array.from(parent.children).find(function(c) {
-                            return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+                            return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('bychoi-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
                         });
                         if (trailingRef && trailingRef.parentNode === parent) {
                             parent.insertBefore(el, trailingRef);
@@ -611,7 +611,7 @@ window.v4ScrollPinScript = `
                         var frameContainer = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getContainer === 'function')
                             ? window.ResponsiveFrameUtils.getContainer(el)
                             : (el.closest('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content-area') || parent);
-                        var allPinsInFrame = frameContainer ? frameContainer.querySelectorAll('.lf-component.pin-marker, .lf-component.text-marker') : document.querySelectorAll('.lf-component.pin-marker, .lf-component.text-marker');
+                        var allPinsInFrame = frameContainer ? frameContainer.querySelectorAll('.bychoi-component.pin-marker, .bychoi-component.text-marker') : document.querySelectorAll('.bychoi-component.pin-marker, .bychoi-component.text-marker');
 
                         allPinsInFrame.forEach(function(p) {
                             if (!p || p === el) return;
@@ -636,7 +636,7 @@ window.v4ScrollPinScript = `
                                         ? window.ResponsiveFrameUtils.getFrameType(p)
                                         : (p.getAttribute('data-frame') || '');
                                     window.notifyParent({
-                                        type: 'LF_UPDATE_PIN_POS',
+                                        type: 'BYCHOI_UPDATE_PIN_POS',
                                         index: pIdx,
                                         frame: fType,
                                         x: parseFloat(p.style.left) || 0,
@@ -678,7 +678,7 @@ window.v4ScrollPinScript = `
                     el.style.removeProperty('will-change');
                     el.style.removeProperty('transition');
 
-                    if (el.classList && el.classList.contains('lf-group') && el.querySelectorAll) {
+                    if (el.classList && el.classList.contains('bychoi-group') && el.querySelectorAll) {
                         el.querySelectorAll('[data-scroll-fixed]').forEach(function(desc) {
                             if (desc.classList.contains('pin-marker') || desc.classList.contains('text-marker')) return;
                             desc.removeAttribute('data-scroll-fixed');
@@ -710,7 +710,7 @@ window.v4ScrollPinScript = `
                         delete el.dataset.autoBg;
                         el.removeAttribute('data-auto-bg');
                     }
-                    if (el.querySelector && el.querySelector('.v4-shape, .v4-shape-circle, .v4-shape-rect, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-wave, .lf-icon, svg')) {
+                    if (el.querySelector && el.querySelector('.v4-shape, .v4-shape-circle, .v4-shape-rect, .v4-shape-triangle, .v4-shape-diamond, .v4-shape-wave, .bychoi-icon, svg')) {
                         if (el.style.backgroundColor && el.style.backgroundColor !== 'transparent') {
                             el.style.backgroundColor = '';
                             el.style.removeProperty('background-color');
@@ -746,7 +746,7 @@ window.v4ScrollPinScript = `
                                     ? window.ResponsiveFrameUtils.getFrameType(p)
                                     : (p.getAttribute('data-frame') || '');
                                 window.notifyParent({
-                                    type: 'LF_UPDATE_PIN_POS',
+                                    type: 'BYCHOI_UPDATE_PIN_POS',
                                     index: pIdx,
                                     frame: fType,
                                     x: parseFloat(p.style.left) || 0,

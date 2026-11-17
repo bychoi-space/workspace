@@ -130,7 +130,7 @@
                     : rawHtml;
 
                 if (window.state.editingType === 'shape') {
-                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', {
+                    MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_SHAPE_TEXT', {
                         id: window.state.editingIndex,
                         html: cleanHtml,
                         align: activeAlign,
@@ -138,7 +138,7 @@
                     });
                     if (typeof window.markAsDirty === 'function') window.markAsDirty();
                 } else if (window.state.editingType === 'pin') {
-                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', {
+                    MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_PIN_CONTENT', {
                         id: window.state.editingIndex,
                         html: cleanHtml,
                         align: activeAlign,
@@ -611,7 +611,7 @@
                 }
                 const iframe = document.getElementById('main-iframe');
                 if (iframe && iframe.contentWindow) {
-                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', { 
+                    MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_PIN_CONTENT', { 
                         id: state.editingIndex,
                         html: html,
                         align: activeAlign,
@@ -622,7 +622,7 @@
             } else if (state.editingType === 'shape') {
                 const iframe = document.getElementById('main-iframe');
                 if (iframe && iframe.contentWindow) {
-                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_SHAPE_TEXT', { 
+                    MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_SHAPE_TEXT', { 
                         id: state.editingIndex,
                         html: html,
                         align: activeAlign,
@@ -633,7 +633,7 @@
             } else {
                 const iframe = document.getElementById('main-iframe');
                 if (iframe && iframe.contentWindow) {
-                    MessageHub.send(iframe.contentWindow, 'LF_UPDATE_PIN_CONTENT', { 
+                    MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_PIN_CONTENT', { 
                         id: state.editingIndex,
                         html: html,
                         align: activeAlign,
@@ -697,7 +697,7 @@
 
         const iframe = document.getElementById('main-iframe') || (window.DOM && window.DOM.iframe);
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_CLEANUP_EMPTY_TEXT_SHAPES', {
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_CLEANUP_EMPTY_TEXT_SHAPES', {
                 id: targetId,
                 forceBlur: true,
                 deselectIfRemoved: true
@@ -782,7 +782,7 @@
 
 // Subscribe to direct iframe text changes to sync Quill editor in real-time
 if (window.MessageHub) {
-    MessageHub.subscribe('LF_PIN_TEXT_CHANGED', (data) => {
+    MessageHub.subscribe('BYCHOI_PIN_TEXT_CHANGED', (data) => {
         if (!window.quillEditor || !data) return;
         
         const isMatch = (state.editingIndex === data.id) ||

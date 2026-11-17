@@ -86,7 +86,7 @@
 - `template_plan.html`: `.page { width: 1600px; height: 900px; }`, 상단 통합 헤더 카드 `width: 1540px;` (좌우 30px 대칭 마진)
 - `template_plan_delivery.html`: `.artboard { width: 1600px; height: 900px; }`
 - `template_mobile_ui_1.html` ~ `3.html`: `.page { width: 1600px; height: 900px; }`
-- `template_onesphere.html`: `.page { width: 1600px; height: 900px; }`
+- `template_admin_modern.html`: `.page { width: 1600px; height: 900px; }`
 
 ---
 

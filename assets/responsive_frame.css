@@ -417,7 +417,7 @@ body.hide-frame-grid .mobile-content-inner,
 }
 
 /* --- Standard Component Absolute Position --- */
-.lf-component {
+.bychoi-component {
     position: absolute !important;
     box-sizing: border-box !important;
     z-index: 500;
@@ -500,7 +500,7 @@ svg.canvas-guide-layer {
     overflow: visible;
 }
 
-.page > .lf-component {
+.page > .bychoi-component {
     z-index: 500;
 }
 
@@ -522,48 +522,48 @@ svg.canvas-guide-layer {
 
 /* Universal Pin & Text Marker Layering (Tier 6: 200,000+) */
 .pin-marker,
-.lf-component.pin-marker,
+.bychoi-component.pin-marker,
 .text-marker,
-.lf-component.text-marker,
-.pc-content-inner > .lf-component.pin-marker,
-.mobile-content-inner > .lf-component.pin-marker,
-.page > .lf-component.pin-marker {
+.bychoi-component.text-marker,
+.pc-content-inner > .bychoi-component.pin-marker,
+.mobile-content-inner > .bychoi-component.pin-marker,
+.page > .bychoi-component.pin-marker {
     z-index: 200000 !important;
     pointer-events: auto !important;
 }
 
 .pin-marker.selected,
-.lf-component.pin-marker.selected,
+.bychoi-component.pin-marker.selected,
 .text-marker.selected,
-.lf-component.text-marker.selected {
+.bychoi-component.text-marker.selected {
     z-index: 200005 !important;
 }
 
 .pin-marker:hover,
-.lf-component.pin-marker:hover,
+.bychoi-component.pin-marker:hover,
 .text-marker:hover,
-.lf-component.text-marker:hover {
+.bychoi-component.text-marker:hover {
     z-index: 200005 !important;
 }
 
 .pin-marker[data-scroll-fixed],
-.lf-component.pin-marker[data-scroll-fixed],
+.bychoi-component.pin-marker[data-scroll-fixed],
 .text-marker[data-scroll-fixed],
-.lf-component.text-marker[data-scroll-fixed] {
+.bychoi-component.text-marker[data-scroll-fixed] {
     z-index: 200050 !important;
 }
 
 .pin-marker[data-scroll-fixed].selected,
-.lf-component.pin-marker[data-scroll-fixed].selected,
+.bychoi-component.pin-marker[data-scroll-fixed].selected,
 .text-marker[data-scroll-fixed].selected,
-.lf-component.text-marker[data-scroll-fixed].selected {
+.bychoi-component.text-marker[data-scroll-fixed].selected {
     z-index: 200055 !important;
 }
 
 .pin-marker[data-scroll-fixed]:hover,
-.lf-component.pin-marker[data-scroll-fixed]:hover,
+.bychoi-component.pin-marker[data-scroll-fixed]:hover,
 .text-marker[data-scroll-fixed]:hover,
-.lf-component.text-marker[data-scroll-fixed]:hover {
+.bychoi-component.text-marker[data-scroll-fixed]:hover {
     z-index: 200055 !important;
 }
 

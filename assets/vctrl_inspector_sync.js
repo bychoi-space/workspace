@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_inspector_sync.js
- * Component Properties Synchronizer & Type Strategy Dispatcher for LF Editor Studio.
+ * Component Properties Synchronizer & Type Strategy Dispatcher for bychoi workspace Studio.
  * Decoupled from vctrl_inspector.js to isolate property mapping from UI shell/docking.
  * 
  * Complies with AGENTS.md 7 Mandatory Gateways:

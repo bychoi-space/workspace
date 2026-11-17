@@ -50,8 +50,8 @@ window.v4ImageCropScript = `
     function getBestSourceUrl(comp, shape) {
         try {
             var rootWin = window.top || window.parent || window;
-            if (comp && comp.id && rootWin.__lf_orig_image_cache__ && rootWin.__lf_orig_image_cache__[comp.id]) {
-                return rootWin.__lf_orig_image_cache__[comp.id];
+            if (comp && comp.id && rootWin.__bychoi_orig_image_cache__ && rootWin.__bychoi_orig_image_cache__[comp.id]) {
+                return rootWin.__bychoi_orig_image_cache__[comp.id];
             }
         } catch (err) {}
         if (shape && shape._v4OrigDataUrl) {
@@ -333,7 +333,7 @@ window.v4ImageCropScript = `
             }
         }
         document.querySelectorAll('.v4-image-crop-layer').forEach(function(el) { el.remove(); });
-        document.querySelectorAll('.lf-component.v4-cropping-active').forEach(function(el) { el.classList.remove('v4-cropping-active'); });
+        document.querySelectorAll('.bychoi-component.v4-cropping-active').forEach(function(el) { el.classList.remove('v4-cropping-active'); });
         session = null;
     }
 
@@ -346,7 +346,7 @@ window.v4ImageCropScript = `
             applyCrop();
         }
 
-        var comp = (targetId ? document.getElementById(targetId) : null) || document.querySelector('.lf-component.selected');
+        var comp = (targetId ? document.getElementById(targetId) : null) || document.querySelector('.bychoi-component.selected');
         if (!comp) return;
         var shape = comp.querySelector('.v4-shape.v4-shape-image') || (comp.classList.contains('v4-shape-image') ? comp : null);
         if (!shape) return;
@@ -401,7 +401,7 @@ window.v4ImageCropScript = `
         if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.clearGuides === 'function') {
             window.ResponsiveSmartGuide.clearGuides(true);
         }
-        sendToParent({ type: 'LF_CLEAR_SMARTGUIDE' });
+        sendToParent({ type: 'BYCHOI_CLEAR_SMARTGUIDE' });
 
         var container = getContainer(comp);
         var offset = computeParentToContainerOffset(comp, container);
@@ -444,7 +444,7 @@ window.v4ImageCropScript = `
         updateOverlayPositions();
 
         sendToParent({
-            type: 'LF_IMAGE_CROP_STATE',
+            type: 'BYCHOI_IMAGE_CROP_STATE',
             active: true,
             id: comp.id,
             isCropped: crop.isCropped,
@@ -508,14 +508,14 @@ window.v4ImageCropScript = `
             nowCropped = applyCropCssToShape(comp, shape, newL, newT, newR, newB, boxW, boxH);
 
             if (typeof window.markDirty === 'function') window.markDirty();
-            else sendToParent({ type: 'LF_DIRTY' });
+            else sendToParent({ type: 'BYCHOI_DIRTY' });
 
             if (typeof window.enforceDesignSystem === 'function') {
                 window.enforceDesignSystem();
             }
 
             sendToParent({
-                type: 'LF_SNAP_END',
+                type: 'BYCHOI_SNAP_END',
                 id: comp.id,
                 x: boxL,
                 y: boxT,
@@ -526,7 +526,7 @@ window.v4ImageCropScript = `
 
         if (comp && comp.isConnected) {
             if (!silentSelectionSync) {
-                document.querySelectorAll('.lf-component').forEach(function(el) { el.classList.remove('selected'); });
+                document.querySelectorAll('.bychoi-component').forEach(function(el) { el.classList.remove('selected'); });
                 comp.classList.add('selected');
                 window.activeEl = comp;
                 if (typeof window.updateHandles === 'function') {
@@ -536,12 +536,12 @@ window.v4ImageCropScript = `
                 }
                 var styles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id, w: boxW, h: boxH, isImage: true, isImageShape: true, isCropped: nowCropped };
                 sendToParent(Object.assign({
-                    type: 'LF_COMP_SELECTED',
+                    type: 'BYCHOI_COMP_SELECTED',
                     shiftKey: false
                 }, styles));
             }
             sendToParent({
-                type: 'LF_IMAGE_CROP_STATE',
+                type: 'BYCHOI_IMAGE_CROP_STATE',
                 active: false,
                 id: comp.id,
                 isCropped: nowCropped,
@@ -549,7 +549,7 @@ window.v4ImageCropScript = `
                 h: boxH
             });
         } else {
-            sendToParent({ type: 'LF_IMAGE_CROP_STATE', active: false, id: null, isCropped: false });
+            sendToParent({ type: 'BYCHOI_IMAGE_CROP_STATE', active: false, id: null, isCropped: false });
         }
         return true;
     }
@@ -572,13 +572,13 @@ window.v4ImageCropScript = `
             var compW = parseFloat(comp.style.width) || comp.offsetWidth || 200;
             var compH = parseFloat(comp.style.height) || comp.offsetHeight || 200;
             sendToParent({
-                type: 'LF_COMP_RESIZED',
+                type: 'BYCHOI_COMP_RESIZED',
                 id: comp.id,
                 w: Math.round(compW),
                 h: Math.round(compH)
             });
             sendToParent({
-                type: 'LF_IMAGE_CROP_STATE',
+                type: 'BYCHOI_IMAGE_CROP_STATE',
                 active: false,
                 id: comp.id,
                 isCropped: crop.isCropped,
@@ -586,7 +586,7 @@ window.v4ImageCropScript = `
                 h: Math.round(compH)
             });
         } else {
-            sendToParent({ type: 'LF_IMAGE_CROP_STATE', active: false, id: null, isCropped: false });
+            sendToParent({ type: 'BYCHOI_IMAGE_CROP_STATE', active: false, id: null, isCropped: false });
         }
         return true;
     }
@@ -595,14 +595,14 @@ window.v4ImageCropScript = `
         if (session) {
             teardownOverlay();
         }
-        var comp = (targetId ? document.getElementById(targetId) : null) || document.querySelector('.lf-component.selected');
+        var comp = (targetId ? document.getElementById(targetId) : null) || document.querySelector('.bychoi-component.selected');
         if (!comp) return;
         var shape = comp.querySelector('.v4-shape.v4-shape-image') || (comp.classList.contains('v4-shape-image') ? comp : null);
         if (!shape) return;
 
         var crop = readCropFractions(shape);
         if (!crop.isCropped && !hasCropAttributes(shape)) {
-            sendToParent({ type: 'LF_IMAGE_CROP_STATE', active: false, id: comp.id, isCropped: false });
+            sendToParent({ type: 'BYCHOI_IMAGE_CROP_STATE', active: false, id: comp.id, isCropped: false });
             return;
         }
 
@@ -651,7 +651,7 @@ window.v4ImageCropScript = `
         shape._v4ScheduledKey = '';
 
         if (typeof window.markDirty === 'function') window.markDirty();
-        else sendToParent({ type: 'LF_DIRTY' });
+        else sendToParent({ type: 'BYCHOI_DIRTY' });
 
         if (typeof window.enforceDesignSystem === 'function') {
             window.enforceDesignSystem();
@@ -664,7 +664,7 @@ window.v4ImageCropScript = `
         }
 
         sendToParent({
-            type: 'LF_SNAP_END',
+            type: 'BYCHOI_SNAP_END',
             id: comp.id,
             x: fullL,
             y: fullT,
@@ -674,12 +674,12 @@ window.v4ImageCropScript = `
 
         var styles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id, w: fullW, h: fullH, isImage: true, isImageShape: true, isCropped: false };
         sendToParent(Object.assign({
-            type: 'LF_COMP_SELECTED',
+            type: 'BYCHOI_COMP_SELECTED',
             shiftKey: false
         }, styles));
 
         sendToParent({
-            type: 'LF_IMAGE_CROP_STATE',
+            type: 'BYCHOI_IMAGE_CROP_STATE',
             active: false,
             id: comp.id,
             isCropped: false,
@@ -709,7 +709,7 @@ window.v4ImageCropScript = `
         }
         updateOverlayPositions();
         sendToParent({
-            type: 'LF_COMP_RESIZED',
+            type: 'BYCHOI_COMP_RESIZED',
             id: session.comp ? session.comp.id : null,
             w: Math.round(session.boxW),
             h: Math.round(session.boxH)
@@ -762,7 +762,7 @@ window.v4ImageCropScript = `
         }
 
         // Clicking anywhere outside the active crop box & handles commits the crop (PPT Standard UX)
-        var clickedOtherComp = e.target.closest ? e.target.closest('.lf-component') : null;
+        var clickedOtherComp = e.target.closest ? e.target.closest('.bychoi-component') : null;
         if (clickedOtherComp && session.comp && clickedOtherComp !== session.comp) {
             // Commit silently and allow normal mousedown to select the newly clicked component
             applyCrop(true);
@@ -873,7 +873,7 @@ window.v4ImageCropScript = `
 
             updateOverlayPositions();
             sendToParent({
-                type: 'LF_COMP_RESIZED',
+                type: 'BYCHOI_COMP_RESIZED',
                 id: session.comp ? session.comp.id : null,
                 w: Math.round(session.boxW),
                 h: Math.round(session.boxH)
@@ -919,19 +919,19 @@ window.v4ImageCropScript = `
 
     // Register Message Handlers into Global Iframe Dispatcher Registry SSOT
     window.v4MessageHandlers = window.v4MessageHandlers || {};
-    window.v4MessageHandlers['LF_IMAGE_CROP_START'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_IMAGE_CROP_START'] = function(d) {
         startCrop(d && d.id);
     };
-    window.v4MessageHandlers['LF_IMAGE_CROP_APPLY'] = function() {
+    window.v4MessageHandlers['BYCHOI_IMAGE_CROP_APPLY'] = function() {
         applyCrop(false);
     };
-    window.v4MessageHandlers['LF_IMAGE_CROP_CANCEL'] = function() {
+    window.v4MessageHandlers['BYCHOI_IMAGE_CROP_CANCEL'] = function() {
         cancelCrop();
     };
-    window.v4MessageHandlers['LF_IMAGE_CROP_RESET'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_IMAGE_CROP_RESET'] = function(d) {
         resetCrop(d && d.id);
     };
-    window.v4MessageHandlers['LF_IMAGE_CROP_SET_SIZE'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_IMAGE_CROP_SET_SIZE'] = function(d) {
         if (d) setCropBoxSize(d.width, d.height);
     };
 

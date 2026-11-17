@@ -16,7 +16,7 @@
 | **1. 대용량 파일 분리** | `[COMPLETED]` | 최상위 #1 `vctrl_design_system.js`(`85.2KB`), #2 `vctrl_component_data.js`(`81.4KB`), #5 `inspector_atoms.js`(`70.0KB`)를 각 3개 도메인 모듈로 분할하여 **9개 모듈 전수 `35 KB` 미만 / `700 L` 미만** 달성 |
 | **2. 미사용 고아 소스 (Dead Code)** | `[PASS]` | 미참조/미로드 고아 JS·CSS·미디어 파일 **0건 (참조 무결성 100%)** |
 | **3. 동일 코드 공통화 (SSOT)** | `[COMPLETED]` | `_getTargetComponents`, `isDarkColor`, `rgbToHex` 중복 선언 전수 제거 및 [vctrl_common.js](file:///c:/Users/sisun/ai_work/assets/vctrl_common.js) SSOT 통합 완료 |
-| **4. 고복잡도 거대 함수 파편화** | `[COMPLETED]` | 시스템 #1 거대 함수 `renderAccordionBody`(`585 L` ➔ `8 L` 전략 디스패처 + 계층별 서브 렌더러), `LF_UPDATE_ACCORDION_PROPERTIES`(`166 L`), `_enforceAccordionStepperSelectboxFileupload`(`170 L`), `initDatePickerEvents`(`156 L`) 파편화 완료 |
+| **4. 고복잡도 거대 함수 파편화** | `[COMPLETED]` | 시스템 #1 거대 함수 `renderAccordionBody`(`585 L` ➔ `8 L` 전략 디스패처 + 계층별 서브 렌더러), `BYCHOI_UPDATE_ACCORDION_PROPERTIES`(`166 L`), `_enforceAccordionStepperSelectboxFileupload`(`170 L`), `initDatePickerEvents`(`156 L`) 파편화 완료 |
 | **5. 룰 및 스킬 동기화 상태** | `[PASS]` | 활성 80개 모듈 누락 **0건** ([AGENTS.md](file:///c:/Users/sisun/ai_work/AGENTS.md), `SKILL.md` 100% 동기화 완료) |
 | **6. 빌드 최신성 및 커버리지** | `[PASS]` | `templates.js`·`ui_library_fallback.js` `UP TO DATE`, `check_syntax.ps1`·`verify_all.ps1` 커버리지 `100% COMPLETE` |
 

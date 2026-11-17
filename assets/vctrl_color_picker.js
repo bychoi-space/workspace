@@ -316,8 +316,8 @@
         }
 
         if (window.MessageHub) {
-            window.MessageHub.subscribe('LF_DESELECT', function () { window.closeV4ColorPalette(); });
-            window.MessageHub.subscribe('LF_COMP_DESELECTED', function () { window.closeV4ColorPalette(); });
+            window.MessageHub.subscribe('BYCHOI_DESELECT', function () { window.closeV4ColorPalette(); });
+            window.MessageHub.subscribe('BYCHOI_COMP_DESELECTED', function () { window.closeV4ColorPalette(); });
         }
 
         window.addEventListener('blur', function () {

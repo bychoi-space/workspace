@@ -184,35 +184,35 @@
             activeY.onclick = function() {
                 highlightActive(activeY, true);
                 highlightActive(activeN, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_STATE', checked: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ATOM_STATE', checked: true });
             };
         }
         if (activeN) {
             activeN.onclick = function() {
                 highlightActive(activeN, true);
                 highlightActive(activeY, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_STATE', checked: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ATOM_STATE', checked: false });
             };
         }
         if (textY) {
             textY.onclick = function() {
                 highlightActive(textY, true);
                 highlightActive(textN, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_TEXT_ENABLED', enabled: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ATOM_TEXT_ENABLED', enabled: true });
             };
         }
         if (textN) {
             textN.onclick = function() {
                 highlightActive(textN, true);
                 highlightActive(textY, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_TEXT_ENABLED', enabled: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ATOM_TEXT_ENABLED', enabled: false });
             };
         }
 
         const labelTextInp = document.getElementById('prop-atom-text-content');
         if (labelTextInp) {
             labelTextInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_ATOM_LABEL_TEXT', text: this.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ATOM_LABEL_TEXT', text: this.value });
             };
         }
 
@@ -224,7 +224,7 @@
                 const val = parseInt(this.value);
                 if (!isNaN(val) && val > 0) {
                     notifyIframe({
-                        type: 'LF_UPDATE_ATOM_ICON_SIZE',
+                        type: 'BYCHOI_UPDATE_ATOM_ICON_SIZE',
                         width: val,
                         height: heightIconInp ? (parseInt(heightIconInp.value) || val) : val
                     });
@@ -236,7 +236,7 @@
                 const val = parseInt(this.value);
                 if (!isNaN(val) && val > 0) {
                     notifyIframe({
-                        type: 'LF_UPDATE_ATOM_ICON_SIZE',
+                        type: 'BYCHOI_UPDATE_ATOM_ICON_SIZE',
                         width: widthIconInp ? (parseInt(widthIconInp.value) || val) : val,
                         height: val
                     });
@@ -251,7 +251,7 @@
         const phInput = document.getElementById('prop-input-placeholder');
         if (phInput) {
             phInput.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', placeholderText: phInput.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TEXTBOX_PROPERTIES', placeholderText: phInput.value });
             };
         }
 
@@ -262,7 +262,7 @@
                 if (isNaN(val) || val < 1) val = 1;
                 const txt = document.getElementById('txt-input-maxlength');
                 if (txt) txt.innerText = val;
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', maxLength: val });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TEXTBOX_PROPERTIES', maxLength: val });
             };
         }
 
@@ -273,14 +273,14 @@
             counterY.onclick = function() {
                 highlightActive(counterY, true);
                 highlightActive(counterN, false);
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', showCounter: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TEXTBOX_PROPERTIES', showCounter: true });
             };
         }
         if (counterN) {
             counterN.onclick = function() {
                 highlightActive(counterN, true);
                 highlightActive(counterY, false);
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', showCounter: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TEXTBOX_PROPERTIES', showCounter: false });
             };
         }
 
@@ -289,14 +289,14 @@
             fsInput.oninput = function() {
                 let val = parseInt(fsInput.value);
                 if (isNaN(val) || val < 1) val = 12;
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', fontSize: val });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TEXTBOX_PROPERTIES', fontSize: val });
             };
         }
 
         const ffInput = document.getElementById('prop-input-fontfamily');
         if (ffInput) {
             ffInput.onchange = function() {
-                notifyIframe({ type: 'LF_UPDATE_TEXTBOX_PROPERTIES', fontFamily: ffInput.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TEXTBOX_PROPERTIES', fontFamily: ffInput.value });
             };
         }
     };
@@ -307,14 +307,14 @@
         const phInput = document.getElementById('prop-searchbar-placeholder');
         if (phInput) {
             phInput.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_SEARCHBAR_PROPERTIES', placeholderText: phInput.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_SEARCHBAR_PROPERTIES', placeholderText: phInput.value });
             };
         }
 
         const fsInput = document.getElementById('prop-searchbar-fontsize');
         if (fsInput) {
             fsInput.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_SEARCHBAR_PROPERTIES', fontSize: parseInt(fsInput.value) });
+                notifyIframe({ type: 'BYCHOI_UPDATE_SEARCHBAR_PROPERTIES', fontSize: parseInt(fsInput.value) });
             };
         }
     };
@@ -328,14 +328,14 @@
             presetsY.onclick = function() {
                 highlightActive(presetsY, true);
                 highlightActive(presetsN, false);
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showPresets: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_DATEPICKER', showPresets: true });
             };
         }
         if (presetsN) {
             presetsN.onclick = function() {
                 highlightActive(presetsN, true);
                 highlightActive(presetsY, false);
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showPresets: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_DATEPICKER', showPresets: false });
             };
         }
 
@@ -345,14 +345,14 @@
             showEndY.onclick = function() {
                 highlightActive(showEndY, true);
                 highlightActive(showEndN, false);
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showEndDate: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_DATEPICKER', showEndDate: true });
             };
         }
         if (showEndN) {
             showEndN.onclick = function() {
                 highlightActive(showEndN, true);
                 highlightActive(showEndY, false);
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', showEndDate: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_DATEPICKER', showEndDate: false });
             };
         }
 
@@ -365,7 +365,7 @@
                         const b = document.getElementById('btn-dp-default-' + k);
                         highlightActive(b, k === key);
                     });
-                    notifyIframe({ type: 'LF_UPDATE_DATEPICKER', defaultPreset: key });
+                    notifyIframe({ type: 'BYCHOI_UPDATE_DATEPICKER', defaultPreset: key });
                 };
             }
         });
@@ -385,7 +385,7 @@
                 if (presetsToggleWrapper) presetsToggleWrapper.style.display = 'block';
                 if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
                 if (defaultPresetWrapper) defaultPresetWrapper.style.display = 'block';
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', mode: 'simple' });
+                notifyIframe({ type: 'BYCHOI_UPDATE_DATEPICKER', mode: 'simple' });
             };
         }
         if (modeDetailedBtn) {
@@ -396,7 +396,7 @@
                 if (presetsToggleWrapper) presetsToggleWrapper.style.display = 'none';
                 if (showEndToggleWrapper) showEndToggleWrapper.style.display = 'block';
                 if (defaultPresetWrapper) defaultPresetWrapper.style.display = 'none';
-                notifyIframe({ type: 'LF_UPDATE_DATEPICKER', mode: 'detailed' });
+                notifyIframe({ type: 'BYCHOI_UPDATE_DATEPICKER', mode: 'detailed' });
             };
         }
     };
@@ -436,7 +436,7 @@
                     if (e.inputType !== 'deleteContentBackward') {
                         this.value = formatter(this.value);
                     }
-                    const payload = { type: 'LF_UPDATE_DATEPICKER' };
+                    const payload = { type: 'BYCHOI_UPDATE_DATEPICKER' };
                     payload[propName] = this.value;
                     notifyIframe(payload);
                 });

@@ -62,7 +62,7 @@
             group.querySelectorAll('.btn-atom-disabled').forEach(function(b) {
                 highlightActive(b, b.dataset.disabled === String(isDis));
             });
-            notifyIframe({ type: 'LF_UPDATE_ATOM_DISABLED', disabled: isDis });
+            notifyIframe({ type: 'BYCHOI_UPDATE_ATOM_DISABLED', disabled: isDis });
         });
     };
     bindDisabledEvents();
@@ -122,50 +122,50 @@
             btnY.onclick = function() {
                 highlightActive(btnY, true);
                 highlightActive(btnN, false);
-                notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', btnEnabled: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_STEPPER_PROPERTIES', btnEnabled: true });
             };
         }
         if (btnN) {
             btnN.onclick = function() {
                 highlightActive(btnY, false);
                 highlightActive(btnN, true);
-                notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', btnEnabled: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_STEPPER_PROPERTIES', btnEnabled: false });
             };
         }
         if (minInp) {
             minInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', minVal: minInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_STEPPER_PROPERTIES', minVal: minInp.value });
             };
         }
         if (maxInp) {
             maxInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', maxVal: maxInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_STEPPER_PROPERTIES', maxVal: maxInp.value });
             };
         }
         const stepInp = document.getElementById('prop-stepper-step');
         if (stepInp) {
             stepInp.oninput = function() {
                 const step = Math.max(1, parseInt(stepInp.value) || 1);
-                notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', stepVal: step });
+                notifyIframe({ type: 'BYCHOI_UPDATE_STEPPER_PROPERTIES', stepVal: step });
             };
         }
         if (txtInp) {
             txtInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_STEPPER_PROPERTIES', btnText: txtInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_STEPPER_PROPERTIES', btnText: txtInp.value });
             };
         }
         if (disY) {
             disY.onclick = function() {
                 highlightActive(disY, true);
                 highlightActive(disN, false);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_DISABLED', disabled: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ATOM_DISABLED', disabled: true });
             };
         }
         if (disN) {
             disN.onclick = function() {
                 highlightActive(disY, false);
                 highlightActive(disN, true);
-                notifyIframe({ type: 'LF_UPDATE_ATOM_DISABLED', disabled: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ATOM_DISABLED', disabled: false });
             };
         }
     };
@@ -240,7 +240,7 @@
                 const dpc = document.getElementById('selectbox-dropdown-controls');
                 if (dc) dc.style.display = 'block';
                 if (dpc) dpc.style.display = 'block';
-                notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', dropdownActive: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_SELECTBOX_PROPERTIES', dropdownActive: true });
             };
         }
         if (dropN) {
@@ -251,12 +251,12 @@
                 const dpc = document.getElementById('selectbox-dropdown-controls');
                 if (dc) dc.style.display = 'block';
                 if (dpc) dpc.style.display = 'none';
-                notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', dropdownActive: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_SELECTBOX_PROPERTIES', dropdownActive: false });
             };
         }
         if (defText) {
             defText.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', defaultText: defText.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_SELECTBOX_PROPERTIES', defaultText: defText.value });
             };
         }
         if (countInp) {
@@ -276,7 +276,7 @@
                 if (inputsContainer) {
                     inputsContainer.innerHTML = _renderSelectboxOptionRows(currentValues, filteredCheckedIndices);
                 }
-                notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', options: currentValues, selectedIndices: filteredCheckedIndices });
+                notifyIframe({ type: 'BYCHOI_UPDATE_SELECTBOX_PROPERTIES', options: currentValues, selectedIndices: filteredCheckedIndices });
             };
         }
         if (inputsContainer) {
@@ -284,14 +284,14 @@
                 if (e.target && e.target.classList.contains('selectbox-option-input')) {
                     const allInps = Array.from(inputsContainer.querySelectorAll('.selectbox-option-input'));
                     const vals = allInps.map(function(inp) { return inp.value; });
-                    notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', options: vals });
+                    notifyIframe({ type: 'BYCHOI_UPDATE_SELECTBOX_PROPERTIES', options: vals });
                 }
             };
             inputsContainer.onchange = function(e) {
                 if (e.target && e.target.classList.contains('selectbox-option-check')) {
                     const allChecks = Array.from(inputsContainer.querySelectorAll('.selectbox-option-check:checked'));
                     const checkedIndices = allChecks.map(function(cb) { return parseInt(cb.dataset.index); });
-                    notifyIframe({ type: 'LF_UPDATE_SELECTBOX_PROPERTIES', selectedIndices: checkedIndices });
+                    notifyIframe({ type: 'BYCHOI_UPDATE_SELECTBOX_PROPERTIES', selectedIndices: checkedIndices });
                 }
             };
         }
@@ -346,7 +346,7 @@
                 const pc = document.getElementById('fileupload-placeholder-controls');
                 if (nc) nc.style.display = 'block';
                 if (pc) pc.style.display = 'none';
-                notifyIframe({ type: 'LF_UPDATE_FILEUPLOAD_PROPERTIES', fileSelected: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_FILEUPLOAD_PROPERTIES', fileSelected: true });
             };
         }
         if (selN) {
@@ -357,22 +357,22 @@
                 const pc = document.getElementById('fileupload-placeholder-controls');
                 if (nc) nc.style.display = 'none';
                 if (pc) pc.style.display = 'block';
-                notifyIframe({ type: 'LF_UPDATE_FILEUPLOAD_PROPERTIES', fileSelected: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_FILEUPLOAD_PROPERTIES', fileSelected: false });
             };
         }
         if (nameInp) {
             nameInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_FILEUPLOAD_PROPERTIES', fileName: nameInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_FILEUPLOAD_PROPERTIES', fileName: nameInp.value });
             };
         }
         if (phInp) {
             phInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_FILEUPLOAD_PROPERTIES', filePlaceholder: phInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_FILEUPLOAD_PROPERTIES', filePlaceholder: phInp.value });
             };
         }
         if (btnTextInp) {
             btnTextInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_FILEUPLOAD_PROPERTIES', fileButtonText: btnTextInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_FILEUPLOAD_PROPERTIES', fileButtonText: btnTextInp.value });
             };
         }
     };
@@ -430,28 +430,28 @@
             btnDescY.onclick = function() {
                 highlightActive(btnDescY, true);
                 if (btnDescN) highlightActive(btnDescN, false);
-                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', showDesc: true, alertShowDesc: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ALERT_PROPERTIES', showDesc: true, alertShowDesc: true });
             };
         }
         if (btnDescN) {
             btnDescN.onclick = function() {
                 if (btnDescY) highlightActive(btnDescY, false);
                 highlightActive(btnDescN, true);
-                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', showDesc: false, alertShowDesc: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ALERT_PROPERTIES', showDesc: false, alertShowDesc: false });
             };
         }
 
         const descInp = document.getElementById('prop-alert-desc');
         if (descInp) {
             descInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', descText: descInp.value, alertDesc: descInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ALERT_PROPERTIES', descText: descInp.value, alertDesc: descInp.value });
             };
         }
 
         const msgInp = document.getElementById('prop-alert-message');
         if (msgInp) {
             msgInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', messageText: msgInp.value, alertMessage: msgInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_ALERT_PROPERTIES', messageText: msgInp.value, alertMessage: msgInp.value });
             };
         }
 
@@ -467,13 +467,13 @@
                     const c3 = document.getElementById('prop-alert-btn-3-container');
                     if (c2) c2.style.display = i >= 2 ? 'flex' : 'none';
                     if (c3) c3.style.display = i >= 3 ? 'flex' : 'none';
-                    notifyIframe({ type: 'LF_UPDATE_ALERT_PROPERTIES', btnCount: i, alertBtnCount: i });
+                    notifyIframe({ type: 'BYCHOI_UPDATE_ALERT_PROPERTIES', btnCount: i, alertBtnCount: i });
                 };
             }
             const txt = document.getElementById('prop-alert-btn-' + i);
             if (txt) {
                 txt.oninput = function() {
-                    const payload = { type: 'LF_UPDATE_ALERT_PROPERTIES' };
+                    const payload = { type: 'BYCHOI_UPDATE_ALERT_PROPERTIES' };
                     payload['btnText' + i] = txt.value;
                     payload['alertBtnText' + i] = txt.value;
                     notifyIframe(payload);
@@ -482,7 +482,7 @@
             const sel = document.getElementById('prop-alert-btn-style-' + i);
             if (sel) {
                 sel.onchange = function() {
-                    const payload = { type: 'LF_UPDATE_ALERT_PROPERTIES' };
+                    const payload = { type: 'BYCHOI_UPDATE_ALERT_PROPERTIES' };
                     payload['btnStyle' + i] = sel.value;
                     payload['alertBtnStyle' + i] = sel.value;
                     notifyIframe(payload);
@@ -539,14 +539,14 @@
 
         if (txtInp) {
             txtInp.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_BUTTON_PROPERTIES', buttonText: txtInp.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_BUTTON_PROPERTIES', buttonText: txtInp.value });
             };
         }
         if (fontInp) {
             fontInp.oninput = function() {
                 const sz = parseInt(fontInp.value);
                 if (!isNaN(sz) && sz >= 8) {
-                    notifyIframe({ type: 'LF_UPDATE_BUTTON_PROPERTIES', buttonFontSize: sz });
+                    notifyIframe({ type: 'BYCHOI_UPDATE_BUTTON_PROPERTIES', buttonFontSize: sz });
                 }
             };
         }
@@ -554,7 +554,7 @@
             styleSel.onchange = function() {
                 const cDiv = document.getElementById('prop-button-custom-colors');
                 if (cDiv) cDiv.style.display = (styleSel.value === 'custom') ? 'block' : 'none';
-                notifyIframe({ type: 'LF_UPDATE_BUTTON_PROPERTIES', buttonStyle: styleSel.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_BUTTON_PROPERTIES', buttonStyle: styleSel.value });
             };
         }
         if (radiusSlider) {
@@ -563,13 +563,13 @@
                 const rTxt = document.getElementById('txt-button-border-radius');
                 if (rTxt) rTxt.innerText = r;
                 if (typeof window._syncButtonCornerBtns === 'function') window._syncButtonCornerBtns(r);
-                notifyIframe({ type: 'LF_UPDATE_BUTTON_PROPERTIES', buttonRadius: r });
+                notifyIframe({ type: 'BYCHOI_UPDATE_BUTTON_PROPERTIES', buttonRadius: r });
             };
         }
         const btnFitText = document.getElementById('btn-button-fit-text');
         if (btnFitText) {
             btnFitText.onclick = function() {
-                notifyIframe({ type: 'LF_FIT_BUTTON_TO_TEXT' });
+                notifyIframe({ type: 'BYCHOI_FIT_BUTTON_TO_TEXT' });
             };
         }
     };
@@ -599,19 +599,19 @@
             btnOn.onclick = function() {
                 highlightActive(btnOn, true);
                 highlightActive(btnOff, false);
-                notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: true });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TOGGLE_PROPERTIES', checked: true });
             };
         }
         if (btnOff) {
             btnOff.onclick = function() {
                 highlightActive(btnOn, false);
                 highlightActive(btnOff, true);
-                notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: false });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TOGGLE_PROPERTIES', checked: false });
             };
         }
         if (colorPicker) {
             colorPicker.oninput = function() {
-                notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', color: colorPicker.value });
+                notifyIframe({ type: 'BYCHOI_UPDATE_TOGGLE_PROPERTIES', color: colorPicker.value });
             };
         }
     };
@@ -623,7 +623,7 @@
             const btnOff = document.getElementById('btn-toggle-off');
             highlightActive(btnOn, true);
             if (btnOff) highlightActive(btnOff, false);
-            notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: true });
+            notifyIframe({ type: 'BYCHOI_UPDATE_TOGGLE_PROPERTIES', checked: true });
             return;
         }
         const btnOff = e.target && e.target.closest ? e.target.closest('#btn-toggle-off') : null;
@@ -631,13 +631,13 @@
             const btnOnEl = document.getElementById('btn-toggle-on');
             if (btnOnEl) highlightActive(btnOnEl, false);
             highlightActive(btnOff, true);
-            notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', checked: false });
+            notifyIframe({ type: 'BYCHOI_UPDATE_TOGGLE_PROPERTIES', checked: false });
         }
     });
 
     document.addEventListener('input', function(e) {
         if (e.target && e.target.id === 'prop-toggle-color') {
-            notifyIframe({ type: 'LF_UPDATE_TOGGLE_PROPERTIES', color: e.target.value });
+            notifyIframe({ type: 'BYCHOI_UPDATE_TOGGLE_PROPERTIES', color: e.target.value });
         }
     });
 

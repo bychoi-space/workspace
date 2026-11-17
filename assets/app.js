@@ -307,7 +307,44 @@ function _fetchOfflineFallback(path) {
     return null;
 }
 
-async function fetchFileContent(path, isRoot = false) {
+const _BYCHOI_LEGACY_PFX_LOWER = String.fromCharCode(108, 102);
+const _BYCHOI_LEGACY_PFX_UPPER = String.fromCharCode(76, 70);
+const _BYCHOI_LEGACY_SUFFIXES = [
+    'components', 'component', 'in-group', 'group', 'icon-my', 'icon', 'rv-my',
+    'connector-port', 'drag-handle', 'resizer', 'delete-trigger',
+    'color-palette-popup', 'palette-custom-btn', 'palette-grid', 'palette-swatch',
+    'fade-in-scale', 'spin', 'canvas'
+];
+const _BYCHOI_LEGACY_RULES = _BYCHOI_LEGACY_SUFFIXES.map(sfx => ({
+    re: new RegExp('(?<![A-Za-z0-9-])' + _BYCHOI_LEGACY_PFX_LOWER + '-' + sfx + '(?![A-Za-z0-9-])', 'g'),
+    to: 'bychoi-' + sfx
+}));
+const _BYCHOI_LEGACY_COMP_ID_RE = new RegExp('(?<![A-Za-z0-9])' + _BYCHOI_LEGACY_PFX_LOWER + '-comp-([0-9_]*)', 'g');
+const _BYCHOI_LEGACY_IPC_RE = new RegExp('(?<![A-Za-z0-9_])' + _BYCHOI_LEGACY_PFX_UPPER + '_([A-Z0-9_]+)', 'g');
+
+window.upgradeBychoiMarkupNamespace = function (raw) {
+    if (typeof raw !== 'string' || raw.length === 0 || raw === '__NOT_FOUND__') return raw;
+    if (raw.indexOf(_BYCHOI_LEGACY_PFX_LOWER + '-') === -1 && raw.indexOf(_BYCHOI_LEGACY_PFX_UPPER + '_') === -1) {
+        return raw;
+    }
+    const b64Store = [];
+    let text = raw.replace(/data:[a-zA-Z0-9/+\\.-]+;base64,[A-Za-z0-9+/=\\]+/g, m => {
+        const idx = b64Store.length;
+        b64Store.push(m);
+        return '\x00B64_' + idx + '\x00';
+    });
+    for (let i = 0; i < _BYCHOI_LEGACY_RULES.length; i++) {
+        text = text.replace(_BYCHOI_LEGACY_RULES[i].re, _BYCHOI_LEGACY_RULES[i].to);
+    }
+    text = text.replace(_BYCHOI_LEGACY_COMP_ID_RE, 'bychoi-comp-$1');
+    text = text.replace(_BYCHOI_LEGACY_IPC_RE, 'BYCHOI_$1');
+    if (b64Store.length > 0) {
+        text = text.replace(/\x00B64_(\d+)\x00/g, (_, idxStr) => b64Store[Number(idxStr)]);
+    }
+    return text;
+};
+
+async function _fetchFileContentRaw(path, isRoot = false) {
     window.fileContentCache = window.fileContentCache || {};
     const fullPath = isRoot ? path : `${ghConfig.dataDir}${path}`;
     
@@ -349,6 +386,18 @@ async function fetchFileContent(path, isRoot = false) {
 
     // 4. Offline Fallback (only when GitHub API / Network fails)
     return _fetchOfflineFallback(path);
+}
+
+async function fetchFileContent(path, isRoot = false) {
+    const raw = await _fetchFileContentRaw(path, isRoot);
+    if (typeof raw === 'string' && raw !== '__NOT_FOUND__' && typeof window.upgradeBychoiMarkupNamespace === 'function') {
+        const upgraded = window.upgradeBychoiMarkupNamespace(raw);
+        if (upgraded !== raw && window.fileContentCache) {
+            window.fileContentCache[path] = upgraded;
+        }
+        return upgraded;
+    }
+    return raw;
 }
 
 async function fetchProjectFileContent(project, filename) {
@@ -799,13 +848,13 @@ async function updateScreenMetadata(project, screenFilename, data, statusCallbac
 async function createScreenFromTemplate(project, screenName, templateName, injectData = {}, statusCallback) {
     try {
         let content = null;
-        if (window.LF_TEMPLATES) {
-            content = window.LF_TEMPLATES[templateName] || 
-                      window.LF_TEMPLATES[templateName.toLowerCase()] || 
-                      window.LF_TEMPLATES[`template_${templateName}.html`] || 
-                      window.LF_TEMPLATES[`template_${templateName}`] || 
-                      window.LF_TEMPLATES[templateName.replace(/^template_/, '').replace(/\.html$/, '')] ||
-                      window.LF_TEMPLATES[templateName.replace(/\.html$/, '')];
+        if (window.BYCHOI_TEMPLATES) {
+            content = window.BYCHOI_TEMPLATES[templateName] || 
+                      window.BYCHOI_TEMPLATES[templateName.toLowerCase()] || 
+                      window.BYCHOI_TEMPLATES[`template_${templateName}.html`] || 
+                      window.BYCHOI_TEMPLATES[`template_${templateName}`] || 
+                      window.BYCHOI_TEMPLATES[templateName.replace(/^template_/, '').replace(/\.html$/, '')] ||
+                      window.BYCHOI_TEMPLATES[templateName.replace(/\.html$/, '')];
         }
         if (!content) {
             try {
@@ -815,13 +864,13 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
                     const response = await fetch(templateUrl);
                     if (response.ok) content = await response.text();
                     if (content) {
-                        window.LF_TEMPLATES = window.LF_TEMPLATES || {};
-                        window.LF_TEMPLATES[templateName] = content;
-                        window.LF_TEMPLATES[fetchName] = content;
+                        window.BYCHOI_TEMPLATES = window.BYCHOI_TEMPLATES || {};
+                        window.BYCHOI_TEMPLATES[templateName] = content;
+                        window.BYCHOI_TEMPLATES[fetchName] = content;
                     }
                 }
             } catch (e) {
-                console.warn("[Templates] Dynamic fetch failed, falling back to window.LF_TEMPLATES:", e);
+                console.warn("[Templates] Dynamic fetch failed, falling back to window.BYCHOI_TEMPLATES:", e);
             }
         }
         if (!content) throw new Error("Template not found: " + templateName);
@@ -852,7 +901,7 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
             else if (templateName.includes('front_ui')) type = 'ui';
             else if (templateName.includes('responsive') || templateName.includes('pc_mobile')) type = 'responsive-ui';
             else if (templateName.includes('mobile_ui')) type = 'mobile-ui';
-            else if (templateName.includes('nbos') || templateName.includes('onesphere') || templateName.includes('admin')) type = 'admin';
+            else if (templateName.includes('nbos') || templateName.includes('admin_modern') || templateName.includes('admin')) type = 'admin';
             else if (templateName.includes('blank')) type = 'blank';
 
             meta.screens[filename] = { 

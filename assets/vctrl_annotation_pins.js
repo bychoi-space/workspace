@@ -289,7 +289,7 @@
         var highlight = function(active) { 
             row.classList.toggle('highlight', active); 
             if (DOM && DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_HIGHLIGHT_PIN', { index: index, active: active });
+                window.MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_HIGHLIGHT_PIN', { index: index, active: active });
             }
         };
         row.onmouseenter = function() { highlight(true); };
@@ -314,7 +314,7 @@
                 window.state.selectedIds = [];
             }
             if (DOM && DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_FOCUS_PIN', { index: index });
+                window.MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_FOCUS_PIN', { index: index });
             }
         };
         row.onclick = function(e) {
@@ -370,7 +370,7 @@
 
                     if (currentDOM.iframe.contentWindow && window.MessageHub) {
                         pinIds.forEach(function(pId) {
-                            window.MessageHub.send(currentDOM.iframe.contentWindow, 'LF_SET_SCROLL_FIXED', {
+                            window.MessageHub.send(currentDOM.iframe.contentWindow, 'BYCHOI_SET_SCROLL_FIXED', {
                                 id: pId,
                                 ids: pinIds,
                                 mode: newMode
@@ -443,7 +443,7 @@
                     
                     var currentDOM = window.DOM;
                     if (currentDOM && currentDOM.iframe && currentDOM.iframe.contentWindow && window.MessageHub) {
-                        window.MessageHub.send(currentDOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: index, pins: list });
+                        window.MessageHub.send(currentDOM.iframe.contentWindow, 'BYCHOI_REORDER_PINS', { deletedIndex: index, pins: list });
                     }
                 }
             };
@@ -526,7 +526,7 @@
         
         var DOM = window.DOM;
         if (DOM && DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(DOM.iframe.contentWindow, 'LF_REORDER_PINS', { deletedIndex: index, pins: state.activeFile.meta.description });
+            window.MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_REORDER_PINS', { deletedIndex: index, pins: state.activeFile.meta.description });
         }
     };
 
@@ -665,7 +665,7 @@
 
             var DOM = window.DOM || {};
             if (DOM.iframe && DOM.iframe.contentWindow && window.MessageHub) {
-                MessageHub.send(DOM.iframe.contentWindow, 'LF_INSERT_RESPONSIVE_PINS', {
+                MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_INSERT_RESPONSIVE_PINS', {
                     index: newIdx,
                     number: newIdx + 1,
                     isMobileCompare: isMobileCompare,
@@ -728,7 +728,7 @@
 
     // MessageHub Deselection Integration
     if (window.MessageHub) {
-        MessageHub.subscribe('LF_DESELECT', function() {
+        MessageHub.subscribe('BYCHOI_DESELECT', function() {
             if (window.closeActiveEditor) window.closeActiveEditor(true);
         });
     }

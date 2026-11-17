@@ -415,10 +415,10 @@ function _syncTopMetadataBar(pm) {
 // 3.3 Apply Inspector Docked / Floating Mode
 function _applyInspectorDockMode() {
     if (!state.inspectorMode) {
-        try { state.inspectorMode = localStorage.getItem('lf_inspector_mode') || 'docked'; } catch (_) { state.inspectorMode = 'docked'; }
+        try { state.inspectorMode = localStorage.getItem('bychoi_inspector_mode') || 'docked'; } catch (_) { state.inspectorMode = 'docked'; }
     }
     if (!state.floatingSide) {
-        try { state.floatingSide = localStorage.getItem('lf_inspector_floating_side') || 'right'; } catch (_) { state.floatingSide = 'right'; }
+        try { state.floatingSide = localStorage.getItem('bychoi_inspector_floating_side') || 'right'; } catch (_) { state.floatingSide = 'right'; }
     }
 
     const isDocked = (state.inspectorMode === 'docked');
@@ -850,7 +850,7 @@ if (floatingInspectorCard) {
             const currentSide = state.floatingSide || 'right';
             const nextSide = (currentSide === 'right') ? 'left' : 'right';
             state.floatingSide = nextSide;
-            try { localStorage.setItem('lf_inspector_floating_side', nextSide); } catch (_) {}
+            try { localStorage.setItem('bychoi_inspector_floating_side', nextSide); } catch (_) {}
             if (nextSide === 'left') {
                 floatingInspectorCard.style.left = '24px';
                 floatingInspectorCard.style.right = 'auto';
@@ -865,7 +865,7 @@ if (floatingInspectorCard) {
         btnFloatingDock.onclick = (e) => {
             e.stopPropagation();
             state.inspectorMode = 'docked';
-            try { localStorage.setItem('lf_inspector_mode', 'docked'); } catch (_) {}
+            try { localStorage.setItem('bychoi_inspector_mode', 'docked'); } catch (_) {}
             window.restorePropertiesSections();
             floatingInspectorCard.style.setProperty('display', 'none', 'important');
             if (typeof window.updateProperties === 'function') {
@@ -879,7 +879,7 @@ if (btnSidebarPopout) {
     btnSidebarPopout.onclick = (e) => {
         e.stopPropagation();
         state.inspectorMode = 'floating';
-        try { localStorage.setItem('lf_inspector_mode', 'floating'); } catch (_) {}
+        try { localStorage.setItem('bychoi_inspector_mode', 'floating'); } catch (_) {}
         window.restorePropertiesSections();
         if (typeof window.setSidebarInspectorVisible === 'function') {
             window.setSidebarInspectorVisible(false);
@@ -940,14 +940,14 @@ window.deselectAll = function() {
     if (window.SmartGuide && typeof window.SmartGuide.clearGuides === 'function') {
         window.SmartGuide.clearGuides(true);
     }
-    // 9. Dispatch LF_DESELECT to parent MessageHub subscribers
+    // 9. Dispatch BYCHOI_DESELECT to parent MessageHub subscribers
     if (window.MessageHub) {
-        window.MessageHub.send(window, 'LF_DESELECT');
+        window.MessageHub.send(window, 'BYCHOI_DESELECT');
     }
     // 10. Notify iframe to clear canvas selection and handles
     const iframe = document.getElementById('main-iframe') || (window.DOM && window.DOM.iframe);
     if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage({ type: 'LF_DESELECT' }, '*');
+        iframe.contentWindow.postMessage({ type: 'BYCHOI_DESELECT' }, '*');
     }
 };
 
@@ -1019,7 +1019,7 @@ window.editorSearchQuery = '';
     }
 })();
 if (window.MessageHub) {
-    MessageHub.subscribe('LF_DESELECT', () => {
+    MessageHub.subscribe('BYCHOI_DESELECT', () => {
         if (window.state) {
             window.state.selectedIds = [];
         }

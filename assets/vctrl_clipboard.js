@@ -189,13 +189,13 @@
 
     // Initial Startup Hydration from LocalStorage
     try {
-        const initialData = safeGetStorage('__lf_global_clipboard__', true);
+        const initialData = safeGetStorage('__bychoi_global_clipboard__', true);
         if (initialData && initialData.length > 0) {
-            (window.top || window).__lf_global_clipboard__ = initialData;
+            (window.top || window).__bychoi_global_clipboard__ = initialData;
         }
-        const initialStyle = safeGetStorage('__lf_global_style_clipboard__', false);
+        const initialStyle = safeGetStorage('__bychoi_global_style_clipboard__', false);
         if (initialStyle) {
-            (window.top || window).__lf_global_style_clipboard__ = initialStyle;
+            (window.top || window).__bychoi_global_style_clipboard__ = initialStyle;
         }
     } catch (hydrateErr) {
         console.warn('[ClipboardManager] Initial storage hydration error:', hydrateErr);
@@ -203,13 +203,13 @@
 
     // Multi-tab Storage Synchronization
     window.addEventListener('storage', function (e) {
-        if (e.key === '__lf_global_clipboard__' && e.newValue) {
+        if (e.key === '__bychoi_global_clipboard__' && e.newValue) {
             try {
-                (window.top || window).__lf_global_clipboard__ = JSON.parse(e.newValue);
+                (window.top || window).__bychoi_global_clipboard__ = JSON.parse(e.newValue);
             } catch (err) { }
-        } else if (e.key === '__lf_global_style_clipboard__' && e.newValue) {
+        } else if (e.key === '__bychoi_global_style_clipboard__' && e.newValue) {
             try {
-                (window.top || window).__lf_global_style_clipboard__ = JSON.parse(e.newValue);
+                (window.top || window).__bychoi_global_style_clipboard__ = JSON.parse(e.newValue);
             } catch (err) { }
         }
     });
@@ -218,75 +218,75 @@
         const data = e.data;
         if (!data || !data.type) return;
 
-        if (data.type === 'LF_SAVE_CLIPBOARD') {
+        if (data.type === 'BYCHOI_SAVE_CLIPBOARD') {
             console.log('[ClipboardManager] Parent saving clipboard to Memory & LocalStorage:', data.clipboard);
             let rootWin = window;
             try {
                 rootWin = window.top || window;
-                rootWin.__lf_global_clipboard__ = data.clipboard;
+                rootWin.__bychoi_global_clipboard__ = data.clipboard;
             } catch (err) {
-                window.__lf_global_clipboard__ = data.clipboard;
+                window.__bychoi_global_clipboard__ = data.clipboard;
             }
             if (data.isExplicitCopy) {
-                rootWin.__lf_clipboard_source__ = 'internal';
-                rootWin.__lf_suppressed_img_sig__ = rootWin.__lf_last_external_img_sig__ || null;
+                rootWin.__bychoi_clipboard_source__ = 'internal';
+                rootWin.__bychoi_suppressed_img_sig__ = rootWin.__bychoi_last_external_img_sig__ || null;
             }
-            safeSetStorage('__lf_global_clipboard__', data.clipboard);
+            safeSetStorage('__bychoi_global_clipboard__', data.clipboard);
 
-        } else if (data.type === 'LF_REQUEST_CLIPBOARD') {
+        } else if (data.type === 'BYCHOI_REQUEST_CLIPBOARD') {
             let storedData = null;
             try {
-                storedData = (window.top || window).__lf_global_clipboard__;
+                storedData = (window.top || window).__bychoi_global_clipboard__;
             } catch (err) {
-                storedData = window.__lf_global_clipboard__;
+                storedData = window.__bychoi_global_clipboard__;
             }
 
             // Fallback & Hydrate from LocalStorage if in-memory clipboard is empty
             if (!storedData || !Array.isArray(storedData) || storedData.length === 0) {
-                storedData = safeGetStorage('__lf_global_clipboard__', true) || [];
+                storedData = safeGetStorage('__bychoi_global_clipboard__', true) || [];
                 try {
-                    (window.top || window).__lf_global_clipboard__ = storedData;
+                    (window.top || window).__bychoi_global_clipboard__ = storedData;
                 } catch (err) {
-                    window.__lf_global_clipboard__ = storedData;
+                    window.__bychoi_global_clipboard__ = storedData;
                 }
             }
 
-            console.log('[ClipboardManager] Parent responding to LF_REQUEST_CLIPBOARD with ' + storedData.length + ' item(s).');
+            console.log('[ClipboardManager] Parent responding to BYCHOI_REQUEST_CLIPBOARD with ' + storedData.length + ' item(s).');
             notifyIframe({
-                type: 'LF_RESPONSE_CLIPBOARD',
+                type: 'BYCHOI_RESPONSE_CLIPBOARD',
                 clipboard: storedData
             });
 
-        } else if (data.type === 'LF_SAVE_STYLE_CLIPBOARD') {
+        } else if (data.type === 'BYCHOI_SAVE_STYLE_CLIPBOARD') {
             console.log('[ClipboardManager] Parent saving style clipboard to Memory & LocalStorage:', data.styleClipboard);
             try {
-                (window.top || window).__lf_global_style_clipboard__ = data.styleClipboard;
+                (window.top || window).__bychoi_global_style_clipboard__ = data.styleClipboard;
             } catch (err) {
-                window.__lf_global_style_clipboard__ = data.styleClipboard;
+                window.__bychoi_global_style_clipboard__ = data.styleClipboard;
             }
-            safeSetStorage('__lf_global_style_clipboard__', data.styleClipboard);
+            safeSetStorage('__bychoi_global_style_clipboard__', data.styleClipboard);
 
-        } else if (data.type === 'LF_REQUEST_STYLE_CLIPBOARD') {
+        } else if (data.type === 'BYCHOI_REQUEST_STYLE_CLIPBOARD') {
             let storedStyle = null;
             try {
-                storedStyle = (window.top || window).__lf_global_style_clipboard__;
+                storedStyle = (window.top || window).__bychoi_global_style_clipboard__;
             } catch (err) {
-                storedStyle = window.__lf_global_style_clipboard__;
+                storedStyle = window.__bychoi_global_style_clipboard__;
             }
 
             // Fallback & Hydrate from LocalStorage if in-memory style clipboard is empty
             if (!storedStyle) {
-                storedStyle = safeGetStorage('__lf_global_style_clipboard__', false);
+                storedStyle = safeGetStorage('__bychoi_global_style_clipboard__', false);
                 try {
-                    (window.top || window).__lf_global_style_clipboard__ = storedStyle;
+                    (window.top || window).__bychoi_global_style_clipboard__ = storedStyle;
                 } catch (err) {
-                    window.__lf_global_style_clipboard__ = storedStyle;
+                    window.__bychoi_global_style_clipboard__ = storedStyle;
                 }
             }
 
-            console.log('[ClipboardManager] Parent responding to LF_REQUEST_STYLE_CLIPBOARD.');
+            console.log('[ClipboardManager] Parent responding to BYCHOI_REQUEST_STYLE_CLIPBOARD.');
             notifyIframe({
-                type: 'LF_RESPONSE_STYLE_CLIPBOARD',
+                type: 'BYCHOI_RESPONSE_STYLE_CLIPBOARD',
                 styleClipboard: storedStyle
             });
         }

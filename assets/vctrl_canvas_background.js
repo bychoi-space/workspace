@@ -238,9 +238,9 @@
         const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
         if (!activeIframe || !activeIframe.contentWindow) return;
 
-        const data = Object.assign({ type: 'LF_SET_CANVAS_BACKGROUND' }, payload);
+        const data = Object.assign({ type: 'BYCHOI_SET_CANVAS_BACKGROUND' }, payload);
         if (window.MessageHub) {
-            window.MessageHub.send(activeIframe.contentWindow, 'LF_SET_CANVAS_BACKGROUND', payload);
+            window.MessageHub.send(activeIframe.contentWindow, 'BYCHOI_SET_CANVAS_BACKGROUND', payload);
         } else {
             activeIframe.contentWindow.postMessage(data, '*');
         }
@@ -397,7 +397,7 @@
     // Listen for parent-side background update messages from iframe
     window.addEventListener('message', function(e) {
         const d = e.data;
-        if (!d || d.type !== 'LF_CANVAS_BACKGROUND_UPDATED') return;
+        if (!d || d.type !== 'BYCHOI_CANVAS_BACKGROUND_UPDATED') return;
         _currentCanvasBgState.hasBg = !!d.hasBg;
         _currentCanvasBgState.url = d.url || '';
         _currentCanvasBgState.opacity = (d.opacity !== undefined) ? d.opacity : 1.0;

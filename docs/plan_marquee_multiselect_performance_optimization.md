@@ -27,8 +27,8 @@
 graph TD
     A["마우스 드래그 이동 (mousemove)"] --> B["vctrl_grouping.js: checkIntersections()"]
     B -->|매 프레임 실행| C["🚨 병목 2: ConnectorEngine.setSelectedIds() ➔ redrawAll() (SVG 전체 재렌더링)"]
-    B -->|선택 ID 변경 시| D["Iframe으로 LF_UPDATE_MARQUEE_SELECTION 전송"]
-    D --> E["vctrl_responsive_multiselect.js: querySelectorAll('.lf-component') 전수 루프"]
+    B -->|선택 ID 변경 시| D["Iframe으로 BYCHOI_UPDATE_MARQUEE_SELECTION 전송"]
+    D --> E["vctrl_responsive_multiselect.js: querySelectorAll('.bychoi-component') 전수 루프"]
     E -->|수십~수백 개 요소| F["x.classList.toggle('selected') 실행"]
     F -->|class 속성 변경 감지| G["🚨 병목 1: vctrl_design_system.js MutationObserver 트리거"]
     G --> H["🚨 1,120줄 거대 enforceDesignSystem() 매 프레임 전수 실행!"]
@@ -40,7 +40,7 @@ graph TD
 - **원인 메커니즘**:
   - `dsObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] })`로 설정되어 있음.
   - 마키 박스가 커지면서 오브젝트들의 `.selected` 클래스가 토글될 때마다 `dsObserver`가 즉시 감지.
-  - `runEnforceSafe`의 `isOnlyOverlayMutation` 가드는 스마트가이드와 핸들러만 스킵할 뿐 일반 `.lf-component`의 `class` 변경은 예외 처리하지 못함.
+  - `runEnforceSafe`의 `isOnlyOverlayMutation` 가드는 스마트가이드와 핸들러만 스킵할 뿐 일반 `.bychoi-component`의 `class` 변경은 예외 처리하지 못함.
   - 따라서 **마우스가 조금씩 움직일 때마다 1,120라인에 달하는 거대한 디자인 시스템 전수 검사 함수인 `window.enforceDesignSystem()`이 `requestAnimationFrame`마다 화면 전체 DOM을 상대로 강제 실행**됨.
   - `enforceDesignSystem()` 내부에서는 화면의 모든 SVG 아이콘 스트로크(`1.2px`), 로고, 헤더, 테이블, 패턴 도형, 아톰 규격을 찾기 위해 **수십 종의 `querySelectorAll`과 인라인 스타일 get/set을 반복 수행**함.
   - **결과**: 드래그하는 1초 동안 이 거대 루틴이 30~60회 반복 호출되어 브라우저 메인 스레드가 100% 고갈되고 5~10 FPS로 곤두박질치게 됨.
@@ -50,18 +50,18 @@ graph TD
 - **원인 메커니즘**:
   - `checkIntersections()` 상단에서 커넥터 선택 여부나 변경 여부와 상관없이 매 마우스 이동마다 `window.ConnectorEngine.setSelectedIds(connectorIdsToSelect)`를 무조건 호출.
   - `setSelectedIds()`는 직전 상태와의 Diffing 가드 없이 매번 무조건 `redrawAll()`을 호출.
-  - `redrawAll()`은 Iframe으로 `LF_RENDER_CONNECTORS` 메시지를 전송하여 **Iframe 내부의 모든 SVG 커넥터 라인, 마커, 앵커를 매 프레임마다 파괴하고 다시 그림**.
+  - `redrawAll()`은 Iframe으로 `BYCHOI_RENDER_CONNECTORS` 메시지를 전송하여 **Iframe 내부의 모든 SVG 커넥터 라인, 마커, 앵커를 매 프레임마다 파괴하고 다시 그림**.
 
 ### 🔴 [치명적 병목 3] Iframe 수신부의 매 프레임 전체 컴포넌트 전수 쿼리 (`querySelectorAll`)
 - **위치**: [`assets/vctrl_responsive_multiselect.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_multiselect.js#L94-L102)
 - **원인 메커니즘**:
-  - `LF_UPDATE_MARQUEE_SELECTION`이 도착할 때마다 `const allComps = document.querySelectorAll('.lf-component');`를 호출하여 전체 DOM 트리를 재탐색하고 모든 요소를 순회.
+  - `BYCHOI_UPDATE_MARQUEE_SELECTION`이 도착할 때마다 `const allComps = document.querySelectorAll('.bychoi-component');`를 호출하여 전체 DOM 트리를 재탐색하고 모든 요소를 순회.
   - 직전 프레임과의 차집합(Delta)만 타겟팅하는 최적화가 없어 $O(N)$ 전체 루프가 매 프레임 발생.
 
 ### 🟡 [구조적 병목 4] 드래그 시작 시점의 동기 강제 레이아웃 (Layout Thrashing)
 - **위치**: [`assets/vctrl_iframe_script.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_script.js#L394-L420)
 - **원인 메커니즘**:
-  - 마우스 다운 시점(`LF_MARQUEE_START`)에 전체 컴포넌트를 순회하며 `c.offsetWidth`, `c.offsetHeight`를 연속 호출하여 레이아웃을 강제로 플러시(Forced Synchronous Layout)시킴.
+  - 마우스 다운 시점(`BYCHOI_MARQUEE_START`)에 전체 컴포넌트를 순회하며 `c.offsetWidth`, `c.offsetHeight`를 연속 호출하여 레이아웃을 강제로 플러시(Forced Synchronous Layout)시킴.
 
 ---
 
@@ -74,7 +74,7 @@ graph TD
 
 ### 3.2 [핵심 원칙 2] O(Δ) Delta DOM Update & Element ID Targeting
 - **설계**:
-  - `assets/vctrl_responsive_multiselect.js`의 `LF_UPDATE_MARQUEE_SELECTION`에서 매번 `document.querySelectorAll('.lf-component')`를 하지 않습니다.
+  - `assets/vctrl_responsive_multiselect.js`의 `BYCHOI_UPDATE_MARQUEE_SELECTION`에서 매번 `document.querySelectorAll('.bychoi-component')`를 하지 않습니다.
   - 직전 프레임의 선택 ID 세트(`prevSelectedIdSet`)와 새로 들어온 ID 세트(`idSet`)를 비교하여:
     - **새로 추가된 ID들 (`addedIds`)**: `document.getElementById(id)?.classList.add('selected')`
     - **제거된 ID들 (`removedIds`)**: `document.getElementById(id)?.classList.remove('selected')`
@@ -109,8 +109,8 @@ if (mutationsList && Array.isArray(mutationsList) && mutationsList.length > 0) {
             el.closest('.v4-responsive-guide-layer') ||
             el.closest('.pc-guide-layer') ||
             el.closest('.mobile-guide-layer') ||
-            el.closest('.lf-drag-handle') ||
-            el.closest('.lf-resizer') ||
+            el.closest('.bychoi-drag-handle') ||
+            el.closest('.bychoi-resizer') ||
             el.classList.contains('v4-responsive-guide-layer') ||
             el.classList.contains('pc-guide-layer') ||
             el.classList.contains('mobile-guide-layer')
@@ -134,12 +134,12 @@ if (mutationsList && Array.isArray(mutationsList) && mutationsList.length > 0) {
 ```
 
 ### 4.2 [`assets/vctrl_responsive_multiselect.js`](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_multiselect.js)
-- **변경 위치**: `LF_UPDATE_MARQUEE_SELECTION` (L88-L125)
+- **변경 위치**: `BYCHOI_UPDATE_MARQUEE_SELECTION` (L88-L125)
 - **변경 내용**: `querySelectorAll` 전수 루프를 델타 차집합 $O(\Delta)$ 업데이트로 전면 교체.
 ```javascript
     let prevMarqueeSelectedIds = new Set();
 
-    window.v4MessageHandlers['LF_UPDATE_MARQUEE_SELECTION'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_MARQUEE_SELECTION'] = function(d) {
         const ids = d.ids || [];
         const isDragging = !!d.isDragging;
         const idSet = new Set(ids);
@@ -161,7 +161,7 @@ if (mutationsList && Array.isArray(mutationsList) && mutationsList.length > 0) {
             prevMarqueeSelectedIds = idSet;
         } else {
             // 드래그 종료 시 (isDragging === false): 완전한 일괄 정합성 동기화
-            const allComps = document.querySelectorAll('.lf-component');
+            const allComps = document.querySelectorAll('.bychoi-component');
             for (let i = 0; i < allComps.length; i++) {
                 const x = allComps[i];
                 const shouldBeSelected = idSet.has(x.id);
@@ -179,7 +179,7 @@ if (mutationsList && Array.isArray(mutationsList) && mutationsList.length > 0) {
                 const homoInfo = window.getHomogeneousSelectionInfo();
                 if (homoInfo && homoInfo.isMultiSame) {
                     window.notifyParent({
-                        type: 'LF_MULTI_SELECTION_STYLES',
+                        type: 'BYCHOI_MULTI_SELECTION_STYLES',
                         isMultiSameType: true,
                         commonType: homoInfo.commonType,
                         selectedCount: homoInfo.count,
@@ -248,10 +248,10 @@ if (mutationsList && Array.isArray(mutationsList) && mutationsList.length > 0) {
 ## 6. 사이드이펙트 방지 및 안전 검증 프로토콜 (Safety & Verification)
 
 ### 6.1 사이드이펙트 방지 방안 (Zero Side-Effects)
-1. **단일 컴포넌트 선택**: 단일 컴포넌트 클릭(`LF_COMP_SELECTED`) 시의 인스펙터 패널, 핸들러, 어도너 표시는 기존 코드 파이프라인을 그대로 보존.
+1. **단일 컴포넌트 선택**: 단일 컴포넌트 클릭(`BYCHOI_COMP_SELECTED`) 시의 인스펙터 패널, 핸들러, 어도너 표시는 기존 코드 파이프라인을 그대로 보존.
 2. **반응형 프레임 내 선택**: 반응형 PC/모바일 프레임 내부 스크롤 컨테이너의 좌표 변환 로직(`recalculateTargetsForResponsive`)을 그대로 유지하여 반응형 환경에서도 100% 정상 작동.
 3. **그룹화(`Ctrl+G`) 및 정렬 기능**: 최종 선택된 `selectedIds` 배열의 실체와 부모 창 `window.state.selectedIds` 동기화 로직은 그대로 유지되므로 단축키 및 상단 액션바 기능에 영향 0건.
-4. **디자인 시스템 보존**: 마키 드래그가 종료되는 순간(`LF_MARQUEE_END`) 정상 상태로 복귀하므로, 사용자가 폰트나 보더를 수정할 때의 디자인 시스템 강제 로직은 온전히 보존됨.
+4. **디자인 시스템 보존**: 마키 드래그가 종료되는 순간(`BYCHOI_MARQUEE_END`) 정상 상태로 복귀하므로, 사용자가 폰트나 보더를 수정할 때의 디자인 시스템 강제 로직은 온전히 보존됨.
 
 ### 6.2 정적 및 런타임 검증 절차
 1. **정적 문법 검증**:

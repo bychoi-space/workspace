@@ -373,7 +373,7 @@
         });
 
         if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
-            window.MessageHub.subscribe('LF_TOGGLE_CRISP_VIEW', function() {
+            window.MessageHub.subscribe('BYCHOI_TOGGLE_CRISP_VIEW', function() {
                 if (typeof window.toggleCrispView === 'function') {
                     window.toggleCrispView();
                 }

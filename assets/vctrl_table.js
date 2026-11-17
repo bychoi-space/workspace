@@ -478,7 +478,7 @@ window.v4TableScript = `
             const selected = document.querySelectorAll('.selected-cell');
             if (selected.length === 0) {
                 if (window.notifyParent) {
-                    window.notifyParent({ type: 'LF_CELL_SELECTED', cellData: null });
+                    window.notifyParent({ type: 'BYCHOI_CELL_SELECTED', cellData: null });
                 }
                 return;
             }
@@ -512,7 +512,7 @@ window.v4TableScript = `
 
             if (window.notifyParent) {
                 window.notifyParent({
-                    type: 'LF_CELL_SELECTED',
+                    type: 'BYCHOI_CELL_SELECTED',
                     cellData: {
                         count: selected.length,
                         backgroundColor: bg,
@@ -535,7 +535,7 @@ window.v4TableScript = `
 
     // Clear selection when clicking empty spaces inside canvas
     document.addEventListener('mousedown', (e) => {
-        if (!e.target.closest('table.v4-premium-table') && !e.target.closest('table.v4-table') && !e.target.closest('table.v4-ia-tree-table') && !e.target.closest('.v4-grid-container table') && !e.target.closest('.lf-delete-trigger') && !e.target.closest('.lf-drag-handle') && !e.target.closest('.lf-resizer')) {
+        if (!e.target.closest('table.v4-premium-table') && !e.target.closest('table.v4-table') && !e.target.closest('table.v4-ia-tree-table') && !e.target.closest('.v4-grid-container table') && !e.target.closest('.bychoi-delete-trigger') && !e.target.closest('.bychoi-drag-handle') && !e.target.closest('.bychoi-resizer')) {
             TableSelection.clearSelection();
         }
     });
@@ -549,7 +549,7 @@ window.v4TableScript = `
             if (cell) return [cell];
         }
 
-        const selectedComp = document.querySelector('.lf-component.selected');
+        const selectedComp = document.querySelector('.bychoi-component.selected');
         if (selectedComp) {
             const table = selectedComp.querySelector('table');
             if (table) {
@@ -558,7 +558,7 @@ window.v4TableScript = `
             }
         }
 
-        const anyTable = document.querySelector('.lf-component table, table');
+        const anyTable = document.querySelector('.bychoi-component table, table');
         if (anyTable) {
             return Array.from(anyTable.querySelectorAll('td, th'));
         }
@@ -993,12 +993,12 @@ window.v4TableScript = `
 
     // Registered Message Handlers for V4 Table
     window.v4MessageHandlers = window.v4MessageHandlers || {};
-    window.v4MessageHandlers['LF_UPDATE_CELL_STYLE'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_CELL_STYLE'] = function(d) {
         if (window.TableManager) {
             window.TableManager.updateSelectedCellsStyle(d.style);
         }
     };
-    window.v4MessageHandlers['LF_UPDATE_CELL_DIMENSION'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_CELL_DIMENSION'] = function(d) {
         if (window.TableManager) {
             if (d.width !== undefined) {
                 window.TableManager.updateSelectedColumnWidth(d.width);
@@ -1012,16 +1012,16 @@ window.v4TableScript = `
             }
         }
     };
-    window.v4MessageHandlers['LF_UPDATE_CELL_BORDER'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_CELL_BORDER'] = function(d) {
         if (window.TableManager && window.TableManager.updateSelectedCellsBorder) {
             window.TableManager.updateSelectedCellsBorder(d.borderType, d.color);
         }
     };
-    window.v4MessageHandlers['LF_TABLE_ACTION'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_TABLE_ACTION'] = function(d) {
         if (typeof window.syncTableComponentSize === 'function') {
             window.syncTableComponentSize();
         }
-        const s = document.querySelector('.lf-component.selected'); if (!s) return;
+        const s = document.querySelector('.bychoi-component.selected'); if (!s) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         
         const isGrid = s.classList.contains('v4-grid-container') || s.querySelector('.v4-grid-container');
@@ -1070,7 +1070,7 @@ window.v4TableScript = `
             
             if (window.notifyParent) {
                 window.notifyParent(Object.assign({
-                    type: "LF_COMP_SELECTED"
+                    type: "BYCHOI_COMP_SELECTED"
                 }, (typeof window._getCompStyles === 'function' ? window._getCompStyles(s) : {})));
             }
             

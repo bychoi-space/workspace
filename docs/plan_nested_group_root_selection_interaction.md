@@ -11,13 +11,13 @@
 
 - **원인 분석 ([vctrl_iframe_script.js:L571-L578](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_script.js#L571-L578))**:
   ```javascript
-  let parent = c.parentElement.closest('.lf-component');
+  let parent = c.parentElement.closest('.bychoi-component');
   while (parent) {
       if (parent.classList.contains('text-marker') || parent.classList.contains('pin-marker')) break;
       c = parent;
       // ⚠️ 문제 원인: 부모로 거슬러 올라가다가 '가장 먼저 만난 그룹'에서 탐색을 중단함
-      if (c.classList.contains('lf-group')) break; 
-      parent = c.parentElement.closest('.lf-component');
+      if (c.classList.contains('bychoi-group')) break; 
+      parent = c.parentElement.closest('.bychoi-component');
   }
   ```
   - 내부 서브그룹에 속한 자식 요소(아이콘, 텍스트 등)를 클릭하면: 첫 번째 만난 서브그룹에서 탐색이 멈춰 **소규모 그룹**이 선택됨.
@@ -41,11 +41,11 @@
 ## 3. 세부 설계 및 사이드이펙트 방지 대책
 
 ### 1) 부모 탐색 알고리즘 교정 ([vctrl_iframe_script.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_script.js))
-- 일반 클릭 시: 부모 체인을 따라 올라가며, 텍스트 마커/핀 마커가 아닌 한 **가장 바깥쪽 최상위 `.lf-component` (또는 최상위 `.lf-group`)까지 끝까지 거슬러 올라간 후 최종 선택**.
-- `Ctrl` (또는 `Cmd`) 키가 눌린 경우: 부모 탐색을 건너뛰고, 마우스가 타겟팅한 최하위 컴포넌트(`e.target.closest('.lf-component')`)를 그대로 유지하여 즉시 단독 선택(또는 `Shift` 동반 시 다중 선택 토글).
+- 일반 클릭 시: 부모 체인을 따라 올라가며, 텍스트 마커/핀 마커가 아닌 한 **가장 바깥쪽 최상위 `.bychoi-component` (또는 최상위 `.bychoi-group`)까지 끝까지 거슬러 올라간 후 최종 선택**.
+- `Ctrl` (또는 `Cmd`) 키가 눌린 경우: 부모 탐색을 건너뛰고, 마우스가 타겟팅한 최하위 컴포넌트(`e.target.closest('.bychoi-component')`)를 그대로 유지하여 즉시 단독 선택(또는 `Shift` 동반 시 다중 선택 토글).
 
 ### 2) 드래그 안전 가드 ([vctrl_iframe_drag.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_drag.js))
-- 반응형 컨테이너(`.pc-content-area`, `.mobile-content-area`) 내에서 요소를 드래그할 때, `window.activeEl.closest('.lf-group')` 내부의 자식 요소인 경우에는 부모 그룹 컨텍스트를 이탈하여 `document.body`로 빠져나오지 않도록 방어 가드를 적용합니다.
+- 반응형 컨테이너(`.pc-content-area`, `.mobile-content-area`) 내에서 요소를 드래그할 때, `window.activeEl.closest('.bychoi-group')` 내부의 자식 요소인 경우에는 부모 그룹 컨텍스트를 이탈하여 `document.body`로 빠져나오지 않도록 방어 가드를 적용합니다.
 
 ### 3) 텍스트 편집 및 더블클릭 파이프라인
 - 더블클릭 이벤트 리스너([vctrl_iframe_script.js:L680-L686](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_script.js#L680-L686))에서 `.v4-editable-cell`에 대한 인플레이스 텍스트 포커스(`focus()`)가 최우선 실행되도록 기존 동작을 안전하게 유지하고, 텍스트가 아닌 컴포넌트 더블클릭 시 자식 컴포넌트 선택 드릴다운을 지원합니다.
@@ -59,7 +59,7 @@
 #### 1. [assets/vctrl_iframe_script.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_script.js)
 - **`mousedown` 이벤트 핸들러 교정 (Lines 567~628)**:
   - `e.ctrlKey || e.metaKey` 감지 분기 추가 (`isDeepSelect`).
-  - 일반 클릭 시: 중간 `.lf-group`에서 `break`하지 않고, 최상위 Root `.lf-component`까지 루프를 완주하도록 수정.
+  - 일반 클릭 시: 중간 `.bychoi-group`에서 `break`하지 않고, 최상위 Root `.bychoi-component`까지 루프를 완주하도록 수정.
   - `isDeepSelect` 활성화 시: 상위 부모로 올라가지 않고 클릭된 최하위 컴포넌트를 유지하여 직접 선택.
 - **`dblclick` 이벤트 핸들러 보강 (Lines 680~686)**:
   - 텍스트 셀 우선 포커스를 보존하면서, 비텍스트 컴포넌트 더블클릭 시 해당 자식 컴포넌트 단독 선택(Drill-down) 및 인스펙터 동기화.

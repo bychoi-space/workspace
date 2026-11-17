@@ -12,14 +12,14 @@
 2. **에디터 정식 3계층 컴포넌트 구조**:
    - 모든 일러스트는 캔버스 삽입 시 에디터 표준 3계층 DOM 구조를 반드시 준수합니다:
      ```html
-     <div class="lf-component" style="position: absolute; width: ...px; height: ...px; ...">
+     <div class="bychoi-component" style="position: absolute; width: ...px; height: ...px; ...">
        <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
          <img src="assets/illustrations/..." alt="..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
        </div>
-       <!-- .lf-drag-handle, .lf-resizer, .lf-delete-trigger 자동 연동 -->
+       <!-- .bychoi-drag-handle, .bychoi-resizer, .bychoi-delete-trigger 자동 연동 -->
      </div>
      ```
-   - 최외곽 `.lf-component` 래퍼에 드래그, Nudge 이동, 크기 조절 점(`.lf-resizer`), `Delete` 삭제, `Ctrl + Z` 실행 취소(Undo), 서식 복사/붙여넣기가 100% 온전히 바인딩됩니다.
+   - 최외곽 `.bychoi-component` 래퍼에 드래그, Nudge 이동, 크기 조절 점(`.bychoi-resizer`), `Delete` 삭제, `Ctrl + Z` 실행 취소(Undo), 서식 복사/붙여넣기가 100% 온전히 바인딩됩니다.
 
 ---
 
@@ -35,7 +35,7 @@
 ### [규칙 2] 이미지 내부 텍스트 각인 절대 금지 (No Inset Text)
 - **절대 금지**: 이미지 그래픽 파일 내부에 한글/영문 텍스트(예: "상품관리", "Step 1", "CMS", "입장")를 직접 그려 넣거나 래스터화하여 각인하는 행위를 엄격히 금지합니다.
 - **이유**: 이미지에 박힌 글자는 사용자가 에디터 캔버스에서 오타를 수정하거나 문구를 변경할 수 없으며, 다국어 지원이나 인스펙터 편집을 불가능하게 만듭니다.
-- **표준 가이드**: 모든 텍스트, 단계 번호, 뱃지 라벨은 일러스트 이미지 외부에 **독립된 텍스트 아톰(`.lf-component.v4-text-shape`) 또는 뱃지 쉐입**으로 완전히 분리하여 캔버스에 배치해야 합니다.
+- **표준 가이드**: 모든 텍스트, 단계 번호, 뱃지 라벨은 일러스트 이미지 외부에 **독립된 텍스트 아톰(`.bychoi-component.v4-text-shape`) 또는 뱃지 쉐입**으로 완전히 분리하여 캔버스에 배치해야 합니다.
 
 ### [규칙 3] 표준 규격 및 해상도 준수 (Dimensions & Proportions)
 - 일러스트 유형별 기본 규격을 준수하여 제작합니다:

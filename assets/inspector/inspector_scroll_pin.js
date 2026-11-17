@@ -54,11 +54,11 @@
             }
         }
 
-        const messagePayload = Object.assign({ type: 'LF_SET_SCROLL_FIXED' }, payload);
+        const messagePayload = Object.assign({ type: 'BYCHOI_SET_SCROLL_FIXED' }, payload);
         if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
             window.EditorBus.sendToIframe(messagePayload);
         } else if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_SET_SCROLL_FIXED', payload);
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_SET_SCROLL_FIXED', payload);
         }
 
         if (window.state && window.state.selectedComponent) {

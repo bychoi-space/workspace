@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_presentation_pen.js
- * Presentation Laser Pointer and Highlighter Pen Stroke drawing module for LF Editor Studio.
+ * Presentation Laser Pointer and Highlighter Pen Stroke drawing module for bychoi workspace Studio.
  * Activated strictly inside [Fullscreen Mode] when holding the [Shift] key.
  * Fully encapsulated: Dynamically injects drawing canvas and monitors presentation state.
  */
@@ -104,7 +104,7 @@
     };
 
     // Global Proxy Event Listeners for Iframe communication
-    window.__lf_proxy_mousemove__ = function(e, iframeEl) {
+    window.__bychoi_proxy_mousemove__ = function(e, iframeEl) {
         if (isMobileOrTouchDevice()) return;
         const isFullscreen = document.body.classList.contains('fullscreen-mode');
         if (!isFullscreen || !iframeEl) return;
@@ -138,7 +138,7 @@
         }
     };
 
-    window.__lf_proxy_keydown__ = function(e) {
+    window.__bychoi_proxy_keydown__ = function(e) {
         const isFullscreen = document.body.classList.contains('fullscreen-mode');
         if (!isFullscreen) return;
         
@@ -151,7 +151,7 @@
         }
     };
 
-    window.__lf_proxy_keyup__ = function(e) {
+    window.__bychoi_proxy_keyup__ = function(e) {
         isShiftPressed = false;
         isDrawingPen = false;
         currentStroke = null;

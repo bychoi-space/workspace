@@ -38,7 +38,7 @@
         if (!item) return console.error("[V4] Component not found:", id);
 
         const isIllustration = item.category === 'Illustration' || (item.id && (item.id.startsWith('v4-ill-') || item.id.startsWith('v4-motion-')));
-        const isIcon = !isIllustration && (item.id.includes('icon') || (item.html && (item.html.includes('<img') || item.html.includes('lf-icon'))));
+        const isIcon = !isIllustration && (item.id.includes('icon') || (item.html && (item.html.includes('<img') || item.html.includes('bychoi-icon'))));
         const style = { 
             width: item.width || (isIllustration ? '200px' : (isIcon ? '30px' : '120px')), 
             height: item.height || (isIllustration ? '200px' : (isIcon ? '30px' : '40px')) 
@@ -60,7 +60,7 @@
             : ('v4-comp-' + Date.now());
 
         notifyIframe({
-            type: 'LF_INSERT_COMPONENT',
+            type: 'BYCHOI_INSERT_COMPONENT',
             id: targetId,
             html: item.html,
             style: style,
@@ -211,16 +211,16 @@
         const crispAttr = crispSizeKey ? ' data-crisp-size="' + crispSizeKey + '"' : '';
         try {
             const rootWin = window.top || window;
-            if (!rootWin.__lf_orig_image_cache__) {
-                rootWin.__lf_orig_image_cache__ = {};
-                rootWin.__lf_orig_image_keys__ = [];
+            if (!rootWin.__bychoi_orig_image_cache__) {
+                rootWin.__bychoi_orig_image_cache__ = {};
+                rootWin.__bychoi_orig_image_keys__ = [];
             }
             if (origBase64) {
-                rootWin.__lf_orig_image_cache__[targetId] = origBase64;
-                rootWin.__lf_orig_image_keys__.push(targetId);
-                while (rootWin.__lf_orig_image_keys__.length > 20) {
-                    const oldKey = rootWin.__lf_orig_image_keys__.shift();
-                    if (oldKey) delete rootWin.__lf_orig_image_cache__[oldKey];
+                rootWin.__bychoi_orig_image_cache__[targetId] = origBase64;
+                rootWin.__bychoi_orig_image_keys__.push(targetId);
+                while (rootWin.__bychoi_orig_image_keys__.length > 20) {
+                    const oldKey = rootWin.__bychoi_orig_image_keys__.shift();
+                    if (oldKey) delete rootWin.__bychoi_orig_image_cache__[oldKey];
                 }
             }
         } catch (err) {}
@@ -232,7 +232,7 @@
             height: finalH
         };
         notifyIframe({
-            type: 'LF_INSERT_COMPONENT',
+            type: 'BYCHOI_INSERT_COMPONENT',
             id: targetId,
             html: html,
             style: style,
@@ -253,7 +253,7 @@
         }
 
         let contentHtml = '';
-        const id = 'lf-comp-' + Date.now();
+        const id = 'bychoi-comp-' + Date.now();
         let defaultStyle = { width: '120px', height: '100px' };
 
         const atomicTemplates = window.V4_ATOMIC_TEMPLATES || {};
@@ -265,17 +265,17 @@
             defaultStyle = Object.assign({}, atomicTemplates[name].style);
         } else if (type === 'icon') {
             if (name === 'SISUN Logo' || name === 'Workspace Logo') {
-                contentHtml = '<svg viewBox="0 0 176 32" fill="currentColor" class="lf-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, \'Montserrat\', \'Inter\', \'Arial Black\', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>';
+                contentHtml = '<svg viewBox="0 0 176 32" fill="currentColor" class="bychoi-icon v4-logo-img" style="width:100%; height:100%; background-image: none !important; pointer-events: none;"><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, \'Montserrat\', \'Inter\', \'Arial Black\', sans-serif" font-weight="900" font-size="28" letter-spacing="-0.5px" fill="currentColor">SISUN.COM</text></svg>';
                 defaultStyle = { width: '120px', height: '22px', color: '#050505' };
             } else if (brandLogoMap[name]) {
                 const logoPath = brandLogoMap[name];
-                contentHtml = '<div class="lf-icon v4-logo-img" style="width:100%; height:100%; box-sizing:border-box; padding:2px !important; background-origin:content-box !important; background-clip:content-box !important; mask-origin:content-box !important; -webkit-mask-origin:content-box !important; mask-clip:content-box !important; -webkit-mask-clip:content-box !important; -webkit-mask-image:url(\'' + logoPath + '\'); mask-image:url(\'' + logoPath + '\'); -webkit-mask-size:contain; mask-size:contain; -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; -webkit-mask-position:center; mask-position:center; background-color:currentColor !important; pointer-events:none;"></div>';
+                contentHtml = '<div class="bychoi-icon v4-logo-img" style="width:100%; height:100%; box-sizing:border-box; padding:2px !important; background-origin:content-box !important; background-clip:content-box !important; mask-origin:content-box !important; -webkit-mask-origin:content-box !important; mask-clip:content-box !important; -webkit-mask-clip:content-box !important; -webkit-mask-image:url(\'' + logoPath + '\'); mask-image:url(\'' + logoPath + '\'); -webkit-mask-size:contain; mask-size:contain; -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; -webkit-mask-position:center; mask-position:center; background-color:currentColor !important; pointer-events:none;"></div>';
                 defaultStyle = { width: '30px', height: '30px', color: '#050505' };
             } else if (svgMap[name]) {
-                contentHtml = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;">' + svgMap[name] + '</svg>';
+                contentHtml = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;">' + svgMap[name] + '</svg>';
                 defaultStyle = { width: '30px', height: '30px', color: '#050505' };
             } else {
-                contentHtml = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+                contentHtml = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width:100%; height:100%; padding:3px; box-sizing:border-box; background-image: none !important;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
                 defaultStyle = { width: '30px', height: '30px', color: '#050505' };
             }
         }
@@ -284,9 +284,9 @@
         const activeIframe = DOM.iframe || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
         if (activeIframe && activeIframe.contentWindow) {
             if (window.MessageHub) {
-                window.MessageHub.send(activeIframe.contentWindow, 'LF_INSERT_V4_COMP', { id, html: contentHtml, style: defaultStyle });
+                window.MessageHub.send(activeIframe.contentWindow, 'BYCHOI_INSERT_V4_COMP', { id, html: contentHtml, style: defaultStyle });
             } else {
-                activeIframe.contentWindow.postMessage({ type: 'LF_INSERT_V4_COMP', id, html: contentHtml, style: defaultStyle }, '*');
+                activeIframe.contentWindow.postMessage({ type: 'BYCHOI_INSERT_V4_COMP', id, html: contentHtml, style: defaultStyle }, '*');
             }
         }
     };

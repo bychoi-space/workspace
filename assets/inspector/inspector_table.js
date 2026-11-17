@@ -3,7 +3,7 @@
  * Domain Inspector Module: Table & Cell Component
  * Encapsulates Table actions (Add/Del Row/Col, Merge/Split, Layout),
  * Cell dimensions (width/height), styles (bg, text color, borders, align),
- * and LF_CELL_SELECTED state synchronization.
+ * and BYCHOI_CELL_SELECTED state synchronization.
  */
 (function() {
     'use strict';
@@ -37,7 +37,7 @@
     function updateCellWidth(val) {
         const numVal = parseInt(val, 10);
         if (isNaN(numVal) || numVal < 10) return;
-        notifyIframe({ type: 'LF_UPDATE_CELL_DIMENSION', width: numVal });
+        notifyIframe({ type: 'BYCHOI_UPDATE_CELL_DIMENSION', width: numVal });
         
         const cellColWidthEl = document.getElementById('cell-col-width');
         const cellColWidthNumEl = document.getElementById('cell-col-width-num');
@@ -51,7 +51,7 @@
     function updateCellHeight(val) {
         const numVal = parseInt(val, 10);
         if (isNaN(numVal) || numVal < 10) return;
-        notifyIframe({ type: 'LF_UPDATE_CELL_DIMENSION', height: numVal });
+        notifyIframe({ type: 'BYCHOI_UPDATE_CELL_DIMENSION', height: numVal });
         
         const cellRowHeightEl = document.getElementById('cell-row-height');
         const cellRowHeightNumEl = document.getElementById('cell-row-height-num');
@@ -160,14 +160,14 @@
             cellBgColor.addEventListener('input', function() {
                 const wrapper = document.getElementById('cell-bg-wrapper');
                 if (wrapper) wrapper.classList.remove('transparent-active');
-                notifyIframe({ type: 'LF_UPDATE_CELL_STYLE', style: { backgroundColor: this.value } });
+                notifyIframe({ type: 'BYCHOI_UPDATE_CELL_STYLE', style: { backgroundColor: this.value } });
             });
         }
 
         const cellTextColor = document.getElementById('cell-text-color');
         if (cellTextColor) {
             cellTextColor.addEventListener('input', function() {
-                notifyIframe({ type: 'LF_UPDATE_CELL_STYLE', style: { color: this.value } });
+                notifyIframe({ type: 'BYCHOI_UPDATE_CELL_STYLE', style: { color: this.value } });
             });
         }
 
@@ -176,7 +176,7 @@
             btnCellBgNone.onclick = function() {
                 const wrapper = document.getElementById('cell-bg-wrapper');
                 if (wrapper) wrapper.classList.add('transparent-active');
-                notifyIframe({ type: 'LF_UPDATE_CELL_STYLE', style: { backgroundColor: 'transparent' } });
+                notifyIframe({ type: 'BYCHOI_UPDATE_CELL_STYLE', style: { backgroundColor: 'transparent' } });
             };
         }
 
@@ -214,7 +214,7 @@
             if (btn) {
                 btn.addEventListener('click', function() {
                     const color = getTableBorderColor();
-                    notifyIframe({ type: 'LF_UPDATE_CELL_BORDER', borderType: borderMap[btnId], color: color });
+                    notifyIframe({ type: 'BYCHOI_UPDATE_CELL_BORDER', borderType: borderMap[btnId], color: color });
                 });
             }
         });
@@ -235,7 +235,7 @@
             if (btn) {
                 btn.onclick = function() {
                     const fontSize = document.getElementById('table-font-size')?.value;
-                    notifyIframe({ type: 'LF_TABLE_ACTION', action: conf.action, fontSize: fontSize });
+                    notifyIframe({ type: 'BYCHOI_TABLE_ACTION', action: conf.action, fontSize: fontSize });
                 };
             }
         });
@@ -249,7 +249,7 @@
             let align = 'left';
             if (btn.id === 'btn-cell-align-center') align = 'center';
             if (btn.id === 'btn-cell-align-right') align = 'right';
-            notifyIframe({ type: 'LF_UPDATE_CELL_STYLE', style: { textAlign: align } });
+            notifyIframe({ type: 'BYCHOI_UPDATE_CELL_STYLE', style: { textAlign: align } });
             updateCellAlignButtonsUI(align);
         }
     });
@@ -265,11 +265,11 @@
         }
     });
 
-    // PostMessage listener for LF_CELL_SELECTED
+    // PostMessage listener for BYCHOI_CELL_SELECTED
     window.addEventListener('message', function(e) {
         const data = e.data;
         if (!data) return;
-        if (data.type === 'LF_CELL_SELECTED') {
+        if (data.type === 'BYCHOI_CELL_SELECTED') {
             syncCellData(data.cellData);
         }
     });

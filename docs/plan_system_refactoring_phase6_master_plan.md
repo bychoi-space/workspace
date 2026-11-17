@@ -137,7 +137,7 @@ graph TD
 - **대상**:
   - `assets/cursor_ibeam_trimmed.png` (2.0 KB)
   - `assets/cursor_pointer_trimmed.png` (7.3 KB)
-- **근거**: `vctrl_component_data.js` 및 `vctrl_ui_atoms_cursor.js`에서 순수 인라인 SVG(`<svg viewBox="0 0 24 24" class="lf-icon v4-cursor-svg">`)로 완벽 대체 완료되어 어떤 코드에서도 호출되지 않음.
+- **근거**: `vctrl_component_data.js` 및 `vctrl_ui_atoms_cursor.js`에서 순수 인라인 SVG(`<svg viewBox="0 0 24 24" class="bychoi-icon v4-cursor-svg">`)로 완벽 대체 완료되어 어떤 코드에서도 호출되지 않음.
 - **조치**: 2개 PNG 파일 안전 삭제.
 
 #### [Task A-3] 미사용 중복 `.jpg` 일러스트 및 레거시 일러스트 18종 정리
@@ -181,7 +181,7 @@ graph TD
 - **현황**: 단일 함수가 **528줄**(L27-L554)에 달하며, 23개 중앙 메시지 수신 분기가 하나의 거대한 switch-case에 누적되어 있음.
 - **조치**:
   1. `vctrl_iframe_script.js`의 `v4IframeCoreHandlers`와 동일한 패턴으로, 부모 창용 핸들러 맵 객체인 `const v4ParentCoreHandlers = { ... }`를 선언.
-  2. `LF_DIRTY`, `LF_SCREEN_LOADED`, `LF_SAVE_STYLE_CLIPBOARD`, `LF_REQUEST_STYLE_CLIPBOARD`, `LF_TEXTBOX_CLICK`, `LF_REORDER_PINS` 등의 각 case 본문을 순수 핸들러 함수로 분리 추출.
+  2. `BYCHOI_DIRTY`, `BYCHOI_SCREEN_LOADED`, `BYCHOI_SAVE_STYLE_CLIPBOARD`, `BYCHOI_REQUEST_STYLE_CLIPBOARD`, `BYCHOI_TEXTBOX_CLICK`, `BYCHOI_REORDER_PINS` 등의 각 case 본문을 순수 핸들러 함수로 분리 추출.
   3. `init()`의 `message` 이벤트 리스너를 **20줄 이내의 초경량 디스패처**로 전환:
      ```javascript
      window.addEventListener('message', function(e) {

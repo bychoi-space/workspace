@@ -158,7 +158,7 @@
             if (targetIds.length > 0) {
                 const stylePayload = buildCornerRadiusStyle(numVal, _activeCornerDir);
                 notifyIframe({
-                    type: 'LF_UPDATE_STYLE',
+                    type: 'BYCHOI_UPDATE_STYLE',
                     id: targetIds[0],
                     ids: targetIds,
                     selector: '.v4-shape-rect, .v4-shape-webpage, .v4-shape-pattern-grid',
@@ -219,7 +219,7 @@
         }
         
         notifyIframe({
-            type: 'LF_UPDATE_STYLE',
+            type: 'BYCHOI_UPDATE_STYLE',
             id: targetIds[0],
             ids: targetIds,
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell',
@@ -245,7 +245,7 @@
         }
         
         notifyIframe({
-            type: 'LF_UPDATE_STYLE',
+            type: 'BYCHOI_UPDATE_STYLE',
             id: targetIds[0],
             ids: targetIds,
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell, .v4-text-box .v4-editable-cell, .v4-text-shape .v4-editable-cell, .text-marker .v4-editable-cell',
@@ -277,7 +277,7 @@
         if (targetIds.length === 0) return;
 
         notifyIframe({
-            type: 'LF_UPDATE_STYLE',
+            type: 'BYCHOI_UPDATE_STYLE',
             id: targetIds[0],
             ids: targetIds,
             selector: '.v4-shape .v4-shape-text-content, .v4-shape .v4-shape-text-overlay, .v4-shape .v4-editable-cell',
@@ -452,7 +452,7 @@
             const pType = patternBtn.dataset.type;
             syncPatternVisualBtns(pType);
             notifyIframe({
-                type: 'LF_UPDATE_STYLE',
+                type: 'BYCHOI_UPDATE_STYLE',
                 selector: '.v4-shape',
                 style: { patternType: pType }
             });
@@ -468,7 +468,7 @@
                 window._syncArrowDirBtns(dir);
             }
             notifyIframe({
-                type: 'LF_UPDATE_ARROW_DIRECTION',
+                type: 'BYCHOI_UPDATE_ARROW_DIRECTION',
                 direction: dir
             });
             if (typeof window.markAsDirty === 'function') window.markAsDirty();
@@ -483,7 +483,7 @@
             const targetIds = getActiveTargetIds();
             if (targetIds.length > 0) {
                 notifyIframe({
-                    type: 'LF_UPDATE_STYLE',
+                    type: 'BYCHOI_UPDATE_STYLE',
                     id: targetIds[0],
                     ids: targetIds,
                     selector: '.v4-shape-wave',
@@ -538,7 +538,7 @@
             const targetIds = getActiveTargetIds();
 
             notifyIframe({
-                type: 'LF_UPDATE_STYLE',
+                type: 'BYCHOI_UPDATE_STYLE',
                 id: targetIds[0] || undefined,
                 ids: targetIds.length > 0 ? targetIds : undefined,
                 selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker',
@@ -559,7 +559,7 @@
             const targetIds = getActiveTargetIds();
 
             notifyIframe({
-                type: 'LF_UPDATE_STYLE',
+                type: 'BYCHOI_UPDATE_STYLE',
                 id: targetIds[0] || undefined,
                 ids: targetIds.length > 0 ? targetIds : undefined,
                 selector: '.v4-shape, .v4-text-shape, .v4-text-box, .text-marker',

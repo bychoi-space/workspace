@@ -1,6 +1,6 @@
 ---
 name: workspace-editor-ui-components
-description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons, modals, popups, editable cells, lf-component wrappers, delete triggers, Molecules save/load UI, typography, canvas sizing, 1.6px borders, visual component styling, or Workspace Editor design-system rules.
+description: Use when editing V4 components, .bychoi-icon SVG atoms, premium buttons, modals, popups, editable cells, bychoi-component wrappers, delete triggers, Molecules save/load UI, typography, canvas sizing, 1.6px borders, visual component styling, or Workspace Editor design-system rules.
 ---
 
 # Workspace Editor UI Components
@@ -12,11 +12,11 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   3. `Delete` 또는 `Backspace` 키보드 입력을 통한 **즉각 삭제** 보장
   4. 객체의 이동, 생성, 삭제, 그룹화 등 모든 상태 변경 전 **`V4UndoManager.saveState()` 호출을 통한 Ctrl+Z (Undo) 보장**
   5. **Ctrl+C / Ctrl+V / Ctrl+X 복사, 붙여넣기, 잘라내기 보장 (크로스 스크린 & 스마트 위치 결정)**:
-     - **전역 SSOT**: 서로 다른 스크린 iframe 간 복사/붙여넣기를 완벽 지원하기 위해 `window.top.__lf_global_clipboard__`를 전역 클립보드 SSOT로 사용한다.
-     - **그룹 내부 자식 컴포넌트 단독 복사 좌표 정규화**: 그룹(`.lf-group`) 내부의 자식 컴포넌트를 단일 선택하여 복사할 때, 조상 그룹 체인의 오프셋(`offsetLeft`, `offsetTop`)을 재귀적으로 누적 합산하여 캔버스/반응형 프레임 호스트 기준의 절대 위치(`absL`, `absT`)로 정규화하여 저장한다. 이를 통해 붙여넣기 시 스크린 최상단(0, 0)으로 튀는 현상을 원천 방지하고 독립 오브젝트로 안전하게 복제 생성한다.
+     - **전역 SSOT**: 서로 다른 스크린 iframe 간 복사/붙여넣기를 완벽 지원하기 위해 `window.top.__bychoi_global_clipboard__`를 전역 클립보드 SSOT로 사용한다.
+     - **그룹 내부 자식 컴포넌트 단독 복사 좌표 정규화**: 그룹(`.bychoi-group`) 내부의 자식 컴포넌트를 단일 선택하여 복사할 때, 조상 그룹 체인의 오프셋(`offsetLeft`, `offsetTop`)을 재귀적으로 누적 합산하여 캔버스/반응형 프레임 호스트 기준의 절대 위치(`absL`, `absT`)로 정규화하여 저장한다. 이를 통해 붙여넣기 시 스크린 최상단(0, 0)으로 튀는 현상을 원천 방지하고 독립 오브젝트로 안전하게 복제 생성한다.
      - **스마트 붙여넣기 위치 결정 (Smart Paste Positioning)**: 동일 스크린 및 동일 프레임 내 붙여넣기 시에는 원본 대비 겹침 방지 오프셋(+15px)을 적용하고, 다른 스크린이나 타 프레임으로 붙여넣을 때 또는 원본 위치가 스크롤 뷰포트를 벗어난 경우 현재 스크롤 뷰포트 정중앙(Viewport Center)에 지능적으로 자동 배치한다.
      - **붙여넣기 후 자동 선택 전환**: 복제 생성 완료 즉시 새로 생성된 객체들만 자동으로 선택(`.selected`) 상태로 전환하여 연속 이동 및 편집을 보장한다.
-     - **잘라내기(Ctrl+X) 시 빈 그룹 자동 청소**: 원본 객체를 복사 후 즉시 삭제하되, 그룹 내 마지막 자식 요소를 잘라냈을 경우 껍데기만 남은 빈 그룹 컨테이너(`div.lf-group`)를 감지하여 캔버스에서 안전하게 자동 제거한다.
+     - **잘라내기(Ctrl+X) 시 빈 그룹 자동 청소**: 원본 객체를 복사 후 즉시 삭제하되, 그룹 내 마지막 자식 요소를 잘라냈을 경우 껍데기만 남은 빈 그룹 컨테이너(`div.bychoi-group`)를 감지하여 캔버스에서 안전하게 자동 제거한다.
   6. **오브젝트 프로퍼티 플로팅 카드 (Object Properties Floating Card) 및 다중 선택**:
      - **플로팅 연동**: 선택 활성화 시 `#floating-inspector-card`가 노출되며, 현재 활성화된 속성 편집 섹션(예: `text-editor-section`) 및 툴바(`#selection-actions-bar`)가 `#floating-inspector-body` 내부로 동적으로 이동(`appendChild`)되어야 한다.
      - **DOM 복원 SSOT**: 선택 해제나 상태 변경 시, 동적 이동된 요소들의 상태 유실 및 파괴를 방지하기 위해 반드시 독립 저장소 컨테이너(`#inspector-panels-storage`)로 환원(`restorePropertiesSections()`)한 뒤 갱신해야 한다.
@@ -32,12 +32,12 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   8. **도형 서식 복사 및 붙여넣기 보장 (Format Painter - `Ctrl + Shift + C` / `Ctrl + Shift + V`)**:
      - **단축키 및 플로팅 툴바 바인딩**: 선택된 컴포넌트의 스타일 서식을 `Ctrl + Shift + C`로 복사하고, 대상 컴포넌트(단일 또는 N개 다중 선택)에 `Ctrl + Shift + V`로 즉시 일괄 적용한다. 플로팅 인스펙터 내 `#selection-style-action-row`의 `[서식 복사]` 및 `[서식 붙여넣기]` 버튼과 100% 양방향 연동된다 (단일 그룹 선택 시에는 자동 숨김).
      - **심층 서식 추출 및 복원 범위**: 도형 배경색(RGBA 투명도 포함), 테두리(색상, 1.6px 보더 두께, solid/dashed/dotted 스타일, 코너 반경 0~100px), 불투명도뿐만 아니라 하위 텍스트 셀(`.v4-editable-cell`, `.v4-shape-text-content`) 및 인라인 요소의 타이포그래피(글꼴, 크기, 글자색, 두께, 정렬), 테이블 헤더/본문 색상, 아이콘 채색 컬러를 심층 추출하여 오차 없이 이식한다.
-     - **전역 SSOT & 실행 취소**: 스크린 간 격리를 극복하기 위해 `(window.top || window).__lf_global_style_clipboard__`를 단일 진실 공급원으로 사용하며, 서식 적용 직전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 즉시 롤백할 수 있다. 서식 복사 및 적용 상태는 토스트 알림(`LF_SHOW_TOAST`)으로 안내된다.
+     - **전역 SSOT & 실행 취소**: 스크린 간 격리를 극복하기 위해 `(window.top || window).__bychoi_global_style_clipboard__`를 단일 진실 공급원으로 사용하며, 서식 적용 직전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 즉시 롤백할 수 있다. 서식 복사 및 적용 상태는 토스트 알림(`BYCHOI_SHOW_TOAST`)으로 안내된다.
   9. **동일 컴포넌트/쉐입 전환 시 인스펙터 프로퍼티 갱신 무결성 보장 (Identical Shape Property Sync Protocol)**:
      - **문제 배경**: 캔버스에서 동일한 SHAPE(예: Rect A 100x100 ➔ Rect B 200x200)를 연속 선택할 때, 인스펙터의 `#shape-inspector-section`이 닫히지 않고 DOM 입력 필드가 그대로 유지되는 상황에서 부모 창 activeElement(`#prop-width` 등) 포커스 잔류나 상태 갱신 순서 불일치로 인해 새 객체의 크기 수치가 갱신되지 않는 버그가 발생하지 않도록 4중 안전망을 필수로 유지한다.
      - **1. 선택 라우터 선행 백업**: `vctrl_core_router.js`에서 `state.editingIndex` 대입 전 `isNewSelection`을 판별하고 부모 활성 인풋을 즉시 `blur()` 처리한 뒤 `updateProperties(data, isNewSelection)`로 신규 선택을 명시 전달한다.
      - **2. 인스펙터 3중 판정 및 직접 대입**: `vctrl_inspector.js`의 `updateProperties`에서 `isNewComp` 3중 판정식을 적용하여 `isTypingInInspector`를 리셋하고, `_syncCommonPropertyControls`에서 `DOM.propWidth.value = Math.round(compStyles.w)`, `DOM.propHeight.value = Math.round(compStyles.h)`로 값을 직접 대입하여 화면 표시를 100% 강제 동기화한다.
-     - **3. 강제 프로퍼티 덮어쓰기 (`force = true`)**: `vctrl_properties.js`의 `LF_COMP_SELECTED` 리스너에서 컴포넌트 ID가 변경된 경우 `updateAllInputs(data.w, data.h, true)`를 호출하여 포커스 가드를 확실히 우회하고 가로/세로 수치를 강제 덮어쓴다.
+     - **3. 강제 프로퍼티 덮어쓰기 (`force = true`)**: `vctrl_properties.js`의 `BYCHOI_COMP_SELECTED` 리스너에서 컴포넌트 ID가 변경된 경우 `updateAllInputs(data.w, data.h, true)`를 호출하여 포커스 가드를 확실히 우회하고 가로/세로 수치를 강제 덮어쓴다.
      - **4. 캔버스 클릭 시 부모 잔류 포커스 즉시 정리**: `vctrl_iframe_script.js`에서 컴포넌트 `mousedown` 시 `window.parent?.document?.activeElement?.blur()`를 호출하여 부모 창 인풋에 남아있던 캐럿과 포커스를 즉각 정리한다.
   10. **레이어 4단계 정밀 순서 제어 보장 (Layer Ordering 4-Step Suite & Shortcuts SSOT)**:
      - **업계 표준 4대 단축키**: 맨 앞으로 가져오기(`Ctrl + Shift + ]`), 한 단계 앞으로(`Ctrl + ]`), 맨 뒤로 보내기(`Ctrl + Shift + [`), 한 단계 뒤로(`Ctrl + [`).
@@ -48,18 +48,18 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
       - `vctrl_properties.js`에서 다중 선택 시 타겟 ID 배열이 단일 요소로 축소되지 않도록 보존하고, `inspector_atoms.js`에서 IPC 메시지 전송 시 `id`와 `ids`를 동시에 전달하며, `vctrl_ui_atoms.js` 및 `vctrl_ui_atoms_inputs.js`에서 `_getTargetComponents(d)`를 통해 모든 대상을 순회 갱신한다.
       - 실행 취소(`Ctrl+Z`)는 단일 트랜잭션으로 원자적 롤백을 보장해야 한다.
 
-- **Unified Marker Structure**: Text markers must include a `.lf-drag-handle` (drag handle), `.lf-delete-trigger` (delete), and `.v4-editable-cell` (content) inside their `.lf-component` wrapper. All markers are aligned to their **Top-Left** corner (0, 0) and use **px** units for consistent coordinate mapping with shapes and atoms.
-- **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.lf-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
+- **Unified Marker Structure**: Text markers must include a `.bychoi-drag-handle` (drag handle), `.bychoi-delete-trigger` (delete), and `.v4-editable-cell` (content) inside their `.bychoi-component` wrapper. All markers are aligned to their **Top-Left** corner (0, 0) and use **px** units for consistent coordinate mapping with shapes and atoms.
+- **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.bychoi-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
 - Add `contenteditable="true"` and `.v4-editable-cell` to editor-linked text regions.
-- Inject `.lf-delete-trigger` (`×`) whenever users must be able to delete an object.
+- Inject `.bychoi-delete-trigger` (`×`) whenever users must be able to delete an object.
 - Keep editor canvas/page dimensions aligned to the Cover screen size, typically 1600x900 (legacy 1440x900 supported).
-- **사이드바 크기 변경 시 컴포넌트 래퍼 크기 연동**: Textbox/Textarea처럼 내부 컨테이너로 스타일 리디렉션이 발생하는 컴포넌트의 경우, 가로/세로 크기(`width`, `height`)는 내부 컨테이너가 아니라 **최외곽 래퍼인 `.lf-component`**에 직접 할당해야 리사이저 핀과 드래그 핸들이 어긋나지 않는다. 이때 내부 컨테이너의 가로/세로는 `100%`로 지정 및 유지되어 부모 크기 변화에 유연하게 동조되도록 해야 한다.
+- **사이드바 크기 변경 시 컴포넌트 래퍼 크기 연동**: Textbox/Textarea처럼 내부 컨테이너로 스타일 리디렉션이 발생하는 컴포넌트의 경우, 가로/세로 크기(`width`, `height`)는 내부 컨테이너가 아니라 **최외곽 래퍼인 `.bychoi-component`**에 직접 할당해야 리사이저 핀과 드래그 핸들이 어긋나지 않는다. 이때 내부 컨테이너의 가로/세로는 `100%`로 지정 및 유지되어 부모 크기 변화에 유연하게 동조되도록 해야 한다.
 
 ## Icon And Atom Rules
-- Include `.lf-icon` on every icon and atom component, including SVGs.
+- Include `.bychoi-icon` on every icon and atom component, including SVGs.
 - Use inline SVG for button icons to avoid font ligature issues.
 - Use `stroke-width="1.2"` for SVG atoms (library icons and canvas-inserted SVG atoms) unless existing context requires otherwise.
-- Add `background-image: none !important;` when `.lf-icon` is applied to new SVG/custom atoms to avoid sprite interference.
+- Add `background-image: none !important;` when `.bychoi-icon` is applied to new SVG/custom atoms to avoid sprite interference.
 
 ## V4.2 신규 오브젝트 생성 기본값 통일 표준 (Unified Object Creation Defaults - `data-v4-std="2"`)
 - **기존 스크린 100% 무오염 원칙**: 기존에 저장된 스크린 HTML 객체들은 기존 스타일을 그대로 보존하며, `vctrl_iframe_inserter.js`를 통해 새로 생성되는 컴포넌트에만 `data-v4-std="2"` 속성을 부여하여 CSS 토큰(`vctrl_typography.js`, `vctrl_iframe_styles.js`) 및 동적 서브 렌더러(`isStdV2`)에서 격리 적용한다.
@@ -97,13 +97,13 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - `assets/ui_library/inspector_panels.html` 수정 후 반드시 `powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1`을 실행하여 `assets/ui_library_fallback.js`를 재컴파일해야 한다.
 
 ## 아코디언 아톰(Accordion Atom) 비주얼 및 인스펙터 표준 규격
-- **계층 구조 규격**: `.lf-component` ➔ `.v4-accordion-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-accordion-item`. `1 Depth`(플랫 리스트), `2 Depth`(1티어 대분류 + 2티어 중분류), 및 `3 Depth`(1티어 대분류 + 2티어 중분류 + 3티어 소분류) 3대 계층 모드를 완벽 지원하며, `data-depth-type` 및 `data-hierarchy` 속성에 트리 구조와 선택 상태가 JSON으로 안전하게 영속화된다.
+- **계층 구조 규격**: `.bychoi-component` ➔ `.v4-accordion-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-accordion-item`. `1 Depth`(플랫 리스트), `2 Depth`(1티어 대분류 + 2티어 중분류), 및 `3 Depth`(1티어 대분류 + 2티어 중분류 + 3티어 소분류) 3대 계층 모드를 완벽 지원하며, `data-depth-type` 및 `data-hierarchy` 속성에 트리 구조와 선택 상태가 JSON으로 안전하게 영속화된다.
 - **선택 인디케이터 표준**: 최하위 항목 좌측에 라디오 버튼(`.v4-accordion-radio`)이 제공되며, 선택 시 텍스트 밑줄(`text-decoration: underline`)이 실시간 적용된다. 전체 아코디언 트리 내에서 단 하나의 최하위 항목만 배타적으로 선택(`active = true`) 상태를 유지한다.
 - **인스펙터 전용 패널 (`#accordion-inspector-section`)**: `inspector_accordion.js`를 통해 항목 추가/삭제, 1/2/3 Depth 간 무손실 스마트 마이그레이션(`setDepth`), 펼침/접힘 토글, 배경색, 테두리, 헤더/본문 폰트 스타일, 라디오 인디케이터를 단일 파이프라인으로 동기화한다.
 - **동적 높이 자동 피팅 및 무손실 동기화**: 항목 추가/삭제 및 트리 전환 시 아이템 개수와 행 높이에 맞춰 컨테이너 높이(`height`)가 자동 재계산되어 여백 틀어짐을 방지하며, 캔버스 인라인 텍스트 수정 시에도 부모 인스펙터로 즉시 반영된다. `V4UndoManager.saveState()`를 통해 `Ctrl+Z` Undo가 100% 보장된다.
 
 ## 웹 에디터 아톰(Web Editor Atom) 비주얼 및 인스펙터 표준 규격
-- **구조 규격**: `.lf-component` ➔ `.v4-webeditor-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-webeditor-toolbar` (상단 서식 도구) + `.v4-webeditor-body` (본문 작성부) + `.v4-webeditor-statusbar` (글자수 표시).
+- **구조 규격**: `.bychoi-component` ➔ `.v4-webeditor-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-webeditor-toolbar` (상단 서식 도구) + `.v4-webeditor-body` (본문 작성부) + `.v4-webeditor-statusbar` (글자수 표시).
 - **인스펙터 전용 패널 (`#webeditor-inspector-section`)**:
   - 툴바 모드: `<select id="prop-webeditor-toolbar" class="v4-prop-select">` (`full` 전체, `minimal` 핵심, `none` 숨김).
   - 에디터 모드: `<select id="prop-webeditor-mode" class="v4-prop-select">` (`editor` 편집 모드, `readonly` 읽기 전용).
@@ -114,7 +114,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 
 ## Animated WebP Motion Component Rules
 - **Format**: Motion components utilize Animated WebP format (`assets/illustrations/motion/*.webp`) for silky-smooth framerates, 60-80% smaller file sizes than GIF, and full 8-bit alpha transparency without fringe artifacts.
-- **Wrapping Standard**: Standard 3-layer architecture **`.lf-component` ➔ `.v4-motion-container` ➔ `<img src="..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**.
+- **Wrapping Standard**: Standard 3-layer architecture **`.bychoi-component` ➔ `.v4-motion-container` ➔ `<img src="..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**.
 - **Mouse & Canvas Event Guard**: Inner `<img>` must maintain `pointer-events: none; user-select: none;` to prevent native browser ghost dragging from colliding with canvas drag/resize handlers.
 - **Dedicated Inspector Panel**: Selecting an illustration or motion component triggers `isIllustration: true` or `isMotion: true`, opening the dedicated **ILLUSTRATION / MOTION EDITOR** (`#illustration-inspector-section`). Aspect ratio lock (`#chk-preserve-aspect-ratio-illustration`) is active by default to prevent distortion, the ratio snap/reset button (`#btn-snap-illustration-ratio`) restores natural dimensions, and icon color controls are excluded.
 
@@ -137,8 +137,8 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - Preserve or add `MutationObserver` correction only when the component can be mutated live; do not add broad observers speculatively.
 
 ## Line Shape Connector Visual Standard
-- **Dual Path Structure**: Connector lines inside `LF_RENDER_CONNECTORS` are rendered with two SVG paths: an invisible 40px hit-area path (`stroke="transparent" stroke-width="40"`) for easy selection, and a visible path (`stroke-width="1.6"` or `baseWidth + 1` when selected).
-- **Magnetic Port Highlight**: When dragging connector endpoints near a component's port (30px threshold), the target port element (`.lf-connector-port`) scales up (`transform: scale(1.8)`) and highlights with a pink background (`#fb7185`).
+- **Dual Path Structure**: Connector lines inside `BYCHOI_RENDER_CONNECTORS` are rendered with two SVG paths: an invisible 40px hit-area path (`stroke="transparent" stroke-width="40"`) for easy selection, and a visible path (`stroke-width="1.6"` or `baseWidth + 1` when selected).
+- **Magnetic Port Highlight**: When dragging connector endpoints near a component's port (30px threshold), the target port element (`.bychoi-connector-port`) scales up (`transform: scale(1.8)`) and highlights with a pink background (`#fb7185`).
 
 ## Premium Button And Popup Rules
 - Match the compact JIRA-link button style: pill shape, 26-28px height, 13-14px radius, centered flex alignment, `gap: 8px`, and `padding: 0`.
@@ -152,7 +152,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **아톰 이미지/아이콘 표준 및 채색 가이드 (Definitive Atom Image & Masking Unification)**:
   - **1. Replaced Element (<img>) 사용 절대 금지**: 브라우저 그래픽 최적화 특성상 `<img>` 태그에 `-webkit-mask-image`를 주입하고 `src`를 투명화하여 `background-color`를 주입하는 동적 조색 기법은 엘리먼트 증발을 초래합니다. 따라서 신규 이미지 기반 아톰은 절대 `<img>` 태그로 작성해서는 안 되며, **`<div>` 엘리먼트와 `background-image` 스타일 조합**으로 설계해야 합니다.
   - **2. <img>-to-<div> 자동 실시간 마이그레이션**: 스크린 로딩 및 DOM 감시(`enforceDesignSystem()`) 시 레거시 스크린 내의 구형 `<img>` 기반 아톰/로고는 스타일과 클래스를 100% 보존한 채 표준 `<div>`로 실시간 치환되도록 설계해야 합니다.
-  - **3. 여백(Padding) 및 마스크 영역 정합 표준**: 여백이 내장된 스프라이트 기반 아이콘들과의 시각적 크기/균형 조화를 위해, 꽉 차게 잘린 신규 이미지 아톰(예: Share 등) 및 커스텀 아톰에는 반드시 **`padding: 8px !important;`** 및 **`box-sizing: border-box !important;`**를 적용해야 합니다. 여백 안쪽으로 마스크와 배경, 채색 영역이 완벽히 수축 안착하도록 **`background-origin/clip: content-box`**와 **`mask-origin/clip: content-box`** (및 `-webkit-` 프리픽스) 스타일 속성을 생성 템플릿(`vctrl_core.js`) 및 스타일 업데이트 핸들러(`LF_UPDATE_STYLE` in `vctrl_iframe_script.js`) 양쪽에 모두 누락 없이 강제 적용 및 보존해야 합니다.
+  - **3. 여백(Padding) 및 마스크 영역 정합 표준**: 여백이 내장된 스프라이트 기반 아이콘들과의 시각적 크기/균형 조화를 위해, 꽉 차게 잘린 신규 이미지 아톰(예: Share 등) 및 커스텀 아톰에는 반드시 **`padding: 8px !important;`** 및 **`box-sizing: border-box !important;`**를 적용해야 합니다. 여백 안쪽으로 마스크와 배경, 채색 영역이 완벽히 수축 안착하도록 **`background-origin/clip: content-box`**와 **`mask-origin/clip: content-box`** (및 `-webkit-` 프리픽스) 스타일 속성을 생성 템플릿(`vctrl_core.js`) 및 스타일 업데이트 핸들러(`BYCHOI_UPDATE_STYLE` in `vctrl_iframe_script.js`) 양쪽에 모두 누락 없이 강제 적용 및 보존해야 합니다.
   - **4. 인라인 brightness 필터 금지**: 생성 템플릿에 `filter: brightness(0)`와 같은 하드코딩 필터 주입을 배제해야 하며, 스타일 업데이트 시 `t.style.filter = 'none'`을 우선 처리하여 채색 렌더러가 온전한 원색을 왜곡 없이 표현할 수 있게 보장합니다.
 
 ## Text And Layout
@@ -169,13 +169,13 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
       - **시각적 여백**: 상(4.0px), 하(4.0px), 좌(4.4px), 우(4.4px) ➔ **글자에 딱 밀착된 사방 ~4px 1:1 완벽 정대칭 핏 완성**.
   - **4. 재발 방지를 위한 5대 절대 금기 수칙 (Strict Anti-Patterns)**:
     - **[금기 1] 템플릿 리터럴 정규식 이중 백슬래시(`\\`) 필수**: `assets/vctrl_text_measurer.js`는 전체가 `window.v4TextMeasurerScript = \`...\``로 감싸져 있으므로 내부 정규식 작성 시 반드시 `\\u200B\\u00A0`, `<\\/span>`, `<br\\s*\\/?>`처럼 이중 백슬래시를 사용해야 한다. 단일 백슬래시 사용 시 iframe script 컴파일 오류(SyntaxError)로 이벤트 핸들러가 증발하여 **오브젝트 선택 불가(클릭 불능)** 버그가 일어난다.
-    - **[금기 2] `!important` 속성의 `removeProperty()` 해제 필수**: `.lf-drag-handle` 등에 `setProperty('display', 'none', 'important')` 조치 후 복원 시 반드시 `removeProperty('display')`를 호출해야 한다. 단순 `style.display = ""`는 `!important`를 지우지 못해 이동 핸들이 영구 증발(선택 불가)하는 치명적 버그가 유발된다.
+    - **[금기 2] `!important` 속성의 `removeProperty()` 해제 필수**: `.bychoi-drag-handle` 등에 `setProperty('display', 'none', 'important')` 조치 후 복원 시 반드시 `removeProperty('display')`를 호출해야 한다. 단순 `style.display = ""`는 `!important`를 지우지 못해 이동 핸들이 영구 증발(선택 불가)하는 치명적 버그가 유발된다.
     - **[금기 3] `measureContainer` Quill CSS 클래스 상속 및 `display: inline` 필수**: 측정용 `div` 생성 시 `className = 'ql-editor v4-editable-cell'`을 부여하고 `targetDoc.body`에 주입해야 하며, 내부 하위 엘리먼트는 반드시 `display: inline !important`를 유지해야 부분 텍스트 컬러/서식 변경(`span`) 시 공백 폭(Space Width) 소실로 인한 의도치 않은 자동 줄바꿈 오측정 버그를 방지할 수 있다.
     - **[금기 4] 유니코드 특수 공백 정제 (`Line 123`)**: Quill 에디터가 주입하는 `.ql-cursor` 및 `\u200B`, `\u00A0` 특수 공백은 측정 전 `sanitizeHtml` 정규식으로 100% 정제하여 무효 공백 픽셀로 인한 좌우 여백 비대화 왜곡을 차단한다.
     - **[금기 5] 거대 단일 if-else 오버라이드 금지 및 전략 패턴(Strategy Pattern) 준수**: 컴포넌트별 피팅 로직 수정 시 하나의 거대 함수에 패치식 `if-else`를 누적하지 말고, `COMP_TYPES` 디스패처를 통해 전용 피터(`fitStandaloneTextShape`, `fitTextBox`, `fitShapeText`, `fitDefaultCell`)로 100% 독립 분리하여 타 컴포넌트 사이드이펙트를 원천 차단한다.
-  - **5. 도형 텍스트 우측 하단 크기 조절 버튼(.lf-resizer) 완전 미노출 규격**:
-    - 도형 텍스트(`.v4-text-shape`, `.v4-text-box`, `.text-marker`)는 폰트 크기 변경에 따른 동적 자동 핏(Fit)을 따르므로 우측 하단의 수동 크기 조절 버튼(`.lf-resizer`)은 완전히 불필요하다.
-    - 이를 위해 `assets/vctrl_iframe_styles.js`에 `.v4-text-shape > .lf-resizer, .v4-text-box > .lf-resizer, .text-marker > .lf-resizer { display: none !important; }` CSS 선언부 및 `vctrl_text_measurer.js` 내의 `fitResult.hideResizer` 핸들러 제어 로직을 통해 리사이저 버튼을 완전히 숨겨야 한다.
+  - **5. 도형 텍스트 우측 하단 크기 조절 버튼(.bychoi-resizer) 완전 미노출 규격**:
+    - 도형 텍스트(`.v4-text-shape`, `.v4-text-box`, `.text-marker`)는 폰트 크기 변경에 따른 동적 자동 핏(Fit)을 따르므로 우측 하단의 수동 크기 조절 버튼(`.bychoi-resizer`)은 완전히 불필요하다.
+    - 이를 위해 `assets/vctrl_iframe_styles.js`에 `.v4-text-shape > .bychoi-resizer, .v4-text-box > .bychoi-resizer, .text-marker > .bychoi-resizer { display: none !important; }` CSS 선언부 및 `vctrl_text_measurer.js` 내의 `fitResult.hideResizer` 핸들러 제어 로직을 통해 리사이저 버튼을 완전히 숨겨야 한다.
 - **컴포넌트 라이브러리 템플릿 SSOT (`vctrl_component_data.js`)**: 우측 사이드바 및 캔버스에 삽입되는 모든 V4 아톰(버튼, 뱃지, 텍스트박스, 텍스트에어리어 등)의 템플릿과 메타데이터는 `assets/vctrl_component_data.js`의 `window.V4_COMPONENT_LIBRARY`를 단일 진실 공급원으로 참조해야 합니다.
 - **Quill 에디터 연속 공백 및 폰트 서식 보존 (`inspector_text_formatter.js`)**: 텍스트 에디터(Quill) 입력 중 들여쓰기 공백이나 2개 이상의 연속 공백이 브라우저에서 1개로 축약(collapsing)되는 것을 막기 위해 `window.InspectorTextFormatter.preserveConsecutiveSpaces`를 통해 선행 및 중복 공백을 `\u00A0` (NBSP)로 변환하고, 인라인 폰트 크기 누락 시 `normalizeHtmlForQuill`로 안전하게 보정해야 합니다.
 - Use font sizes within the project scale: 18-20px for main titles, 15-16px for section/table headers, 14-15px for body/table cells, 13.5px for labels/help text, and minimum 13px for compact markers/tags (13px 미만 폰트 사용은 가독성 저하로 전면 금지).
@@ -204,7 +204,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 ## 🪟 Popup (팝업) 컴포넌트 & 인스펙터 표준 규격 (V4 Popup Component Protocol)
 - **전용 렌더링 및 인스펙터 모듈**: [assets/inspector/inspector_popup.js](file:///c:/Users/sisun/ai_work/assets/inspector/inspector_popup.js) (`window.InspectorPopup`) 및 `vctrl_ui_atoms.js` (`v4-atom-popup`).
 - **표준 DOM 계층 구조**:
-  - 최외곽 래퍼: `.lf-component.v4-atom-popup` (드래그 핸들, 리사이저, 삭제 트리거 포함).
+  - 최외곽 래퍼: `.bychoi-component.v4-atom-popup` (드래그 핸들, 리사이저, 삭제 트리거 포함).
   - 팝업 헤더 바: `.popup-header-bar` (타이틀 텍스트 `.popup-title` + 닫기 단추 `.popup-close-btn`).
   - 팝업 본문: `.popup-body` (자유로운 내부 컴포넌트 배치 및 텍스트 편집 영역).
 - **인스펙터 양방향 동기화**:
@@ -212,7 +212,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - 테두리는 시스템 표준 `1.6px solid`를 준수하며, 부드러운 박스 섀도우를 통해 캔버스 상에서 모달/팝업 레이어의 입체감을 유지합니다.
 
 ## 📊 Grid & Table 컬럼 하이라이트 표준 (Grid Column Highlight Protocol)
-- **통신 프로토콜 및 모듈**: `LF_SET_GRID_COLUMN_HIGHLIGHT` 및 `LF_CLEAR_GRID_COLUMN_HIGHLIGHT`.
+- **통신 프로토콜 및 모듈**: `BYCHOI_SET_GRID_COLUMN_HIGHLIGHT` 및 `BYCHOI_CLEAR_GRID_COLUMN_HIGHLIGHT`.
 - **책임 분리**:
   - 인스펙터 측([assets/inspector/inspector_grid.js](file:///c:/Users/sisun/ai_work/assets/inspector/inspector_grid.js)): 그리드/테이블 컬럼 선택 UI, 하이라이트 토글 및 색상 피커 제어.
   - Iframe 측([assets/vctrl_iframe_grid.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_grid.js)): 대상 컬럼 셀(`th`, `td`)에 하이라이트 클래스 및 인라인 배경색(`rgba(...)`)을 정밀 주입/제거하고 원본 테두리와 정렬 상태 보존.
@@ -244,9 +244,9 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
   - Horizontal (`distribute_h`) and Vertical (`distribute_v`) distribution alignments require at least **3 selected objects**.
   - Distributes items evenly by computing identical distance gaps based on the outermost boundaries.
 - **Group Component Selection Outline**:
-  - Selected group components (`.lf-group`) display a **green outline (`#10b981`)** and green handles/resizers, differentiating them from the standard blue (`#6366f1`) single component selection border.
+  - Selected group components (`.bychoi-group`) display a **green outline (`#10b981`)** and green handles/resizers, differentiating them from the standard blue (`#6366f1`) single component selection border.
 - **Group Component Property Hiding**:
-  - For single selection of a grouped component (`.lf-group`), the OBJECT PROPERTIES floating card must hide all property editors and only show the group actions toolbar (`selection-actions-bar`) containing `[UNGROUP]`, `[ADD TO MOLECULES]`, `[BRING FRONT]`, and `[SEND BACK]`.
+  - For single selection of a grouped component (`.bychoi-group`), the OBJECT PROPERTIES floating card must hide all property editors and only show the group actions toolbar (`selection-actions-bar`) containing `[UNGROUP]`, `[ADD TO MOLECULES]`, `[BRING FRONT]`, and `[SEND BACK]`.
   - Recursive search queries inside groups during style retrieval must be bypassed to avoid false-positive sub-editor display.
 - **Library Component Renderer & Dead Code Removal SSOT**:
   - `renderV4Shapes` 및 `renderAtomicLibrary`는 [assets/vctrl_component_library.js](file:///c:/Users/sisun/ai_work/assets/vctrl_component_library.js)가 단일 책임으로 전담합니다.
@@ -291,7 +291,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **국영문 하이브리드 검색 필터링**:
   - `item.name`, `item.title`, `item.koName`(국문 동의어 키워드)을 모두 스캔하여 한글/영문 검색어 입력 시 즉각 필터링됩니다 (검색 시 디바이더는 자동 숨김).
 - **표준 3계층 컴포넌트 구조**:
-  - 클릭 삽입 시 캔버스 정중앙에 `.lf-component` ➔ `.v4-illustration-container` ➔ `<img style="object-fit: contain; pointer-events: none; user-select: none;">` 표준 3계층 구조로 주입되어 드래그, Nudge 이동, 크기 조절 점, 삭제, Undo를 100% 보장합니다.
+  - 클릭 삽입 시 캔버스 정중앙에 `.bychoi-component` ➔ `.v4-illustration-container` ➔ `<img style="object-fit: contain; pointer-events: none; user-select: none;">` 표준 3계층 구조로 주입되어 드래그, Nudge 이동, 크기 조절 점, 삭제, Undo를 100% 보장합니다.
 - **라이브러리 접기/펼치기 아코디언 및 상태 영속화 (`V4SidebarAccordion`)**:
   - `ICON LIBRARY`, `ILLUSTRATION`, `COMPONENTS` 3대 패널 헤더는 클릭 가능한 아코디언(`.collapsible-header`)으로 동작하며, 클릭 시 우측의 Chevron 화살표가 180도 회전(`transform: rotate(-90deg)`)하며 바디 영역을 숨기거나 노출합니다.
   - **기본값은 '모두 접은 상태 (Collapsed)'**: 화면 초기 로딩 시 3개 섹션 모두 기본 접힌 상태(`is-collapsed`)로 시작하여 사이드바 공간을 깔끔하게 유지하며, 사용자가 필요한 섹션만 펼쳐서 사용합니다.
@@ -332,7 +332,7 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
     1. `상시 고정 (기본)` (`always`): 스크롤 방향과 무관하게 항상 뷰포트에 밀착 노출.
     2. `스크롤 내릴 때 숨김` (`hide-down`): 스크롤 다운 시 상단 헤더가 위로 부드럽게 숨겨지고, 스크롤 업 시 즉각 다시 슬라이드 다운되어 노출.
     3. `스크롤 올릴 때 숨김` (`hide-up`): 스크롤 업 시 요소가 화면 밖으로 숨겨지고 스크롤 다운 시 다시 노출.
-  - 다크 테마 기반 `#0b0e14` 배경, `rgba(0, 229, 255, 0.4)` 포커스 링, 실시간 변경 시 `LF_SET_SCROLL_EFFECT`를 iframe으로 즉시 발행.
+  - 다크 테마 기반 `#0b0e14` 배경, `rgba(0, 229, 255, 0.4)` 포커스 링, 실시간 변경 시 `BYCHOI_SET_SCROLL_EFFECT`를 iframe으로 즉시 발행.
 - **Dynamic Offset Controls (`#scroll-pin-offset-bar`)**:
   - `[플로팅]` 선택 시: 현재 요소의 뷰포트 상대 $Y$ 좌표를 자동 캡처하여 표시하며, 수동 조절 가능 (`#scroll-pin-offset-input`).
   - `[스티키]` 선택 시: 헤더 아래 임계 여백 오프셋(`px`)을 직접 입력 가능.
@@ -380,9 +380,9 @@ description: Use when editing V4 components, .lf-icon SVG atoms, premium buttons
 - **Rect SHAPE 방향별 모서리 둥글기 (`data-corner-dir`, `inspector_shapes.js`)**:
   - `Rect` 도형은 전체(`all`), 상단(`top`), 하단(`bottom`), 좌측(`left`), 우측(`right`) 5종 모서리 방향(`data-corner-dir`)과 반경(`border-radius`) 조합을 `window.InspectorShapes.buildCornerRadiusStyle(radius, dir)` 단일 헬퍼로 계산하여 인스펙터와 캔버스 양쪽에 일관되게 동기화한다.
 - **빈 도형 텍스트(`Text SHAPE`) 자동 정리 및 Quill 서식 유지 (`inspector_quill.js`, `vctrl_object_shape.js`, `vctrl_common.js`)**:
-  - Quill 에디터에서 전체 삭제 시에도 기존 폰트 크기·색상·굵기(`Sticky Format`)와 에디터 포커스를 그대로 보존하되, 포커스 해제·선택 변경·저장(`ScreenSanitizer.cleanDOM` 및 `LF_CLEANUP_EMPTY_TEXT_SHAPES`) 시 텍스트가 완전히 비어 있는 순수 도형 텍스트(`.v4-text-shape` / `.v4-text-box`)는 유령 박스로 남지 않도록 자동 제거한다. (단, 오브젝트 단순 클릭 선택 시에는 자동 `quill.focus()`를 호출하지 않아 방향키 이동 단축키가 정상 동작하도록 보장한다.)
+  - Quill 에디터에서 전체 삭제 시에도 기존 폰트 크기·색상·굵기(`Sticky Format`)와 에디터 포커스를 그대로 보존하되, 포커스 해제·선택 변경·저장(`ScreenSanitizer.cleanDOM` 및 `BYCHOI_CLEANUP_EMPTY_TEXT_SHAPES`) 시 텍스트가 완전히 비어 있는 순수 도형 텍스트(`.v4-text-shape` / `.v4-text-box`)는 유령 박스로 남지 않도록 자동 제거한다. (단, 오브젝트 단순 클릭 선택 시에는 자동 `quill.focus()`를 호출하지 않아 방향키 이동 단축키가 정상 동작하도록 보장한다.)
 - **Textbox / Textarea 빈 Placeholder(`""`) 보존 및 고아 `<br>` 자가 치유 (`vctrl_design_system.js`, `vctrl_iframe_style_extractor.js`, `vctrl_ui_atoms_inputs.js`)**:
   - `data-placeholder=""`(빈 문자열)일 때 falsy 폴백(`|| "Placeholder"`)으로 덮어쓰지 않고 `getAttribute('data-placeholder') !== null` 명시적 검사로 빈 값을 보존한다.
   - `contenteditable` 입력창 내부의 고아 `<br>`·개행·제로폭 공백을 `_isTextInputDomEmpty`로 판별 및 자동 정제하고, `input._v4UpdateTextInputUI()`를 통해 인스펙터에서 Placeholder 재입력 시 즉시 화면에 재노출되도록 보장한다.
 - **SelectionAdorner 그룹 드래그 실시간 추종 및 자식 반경 오염 차단 (`vctrl_iframe_adorner.js`, `vctrl_iframe_drag.js`)**:
-  - 마우스 드래그 이동 중 매 프레임 `window.updateHandles(window.activeEl)`를 호출하여 아도너 오버레이 잔상을 차단하고, `.lf-group` 선택 시 내부 손자 뱃지/원형의 `border-radius`(예: `999px`)가 그룹 직사각형 외곽선으로 전염되지 않도록 `!isGroup` 가드로 격리한다.
+  - 마우스 드래그 이동 중 매 프레임 `window.updateHandles(window.activeEl)`를 호출하여 아도너 오버레이 잔상을 차단하고, `.bychoi-group` 선택 시 내부 손자 뱃지/원형의 `border-radius`(예: `999px`)가 그룹 직사각형 외곽선으로 전염되지 않도록 `!isGroup` 가드로 격리한다.

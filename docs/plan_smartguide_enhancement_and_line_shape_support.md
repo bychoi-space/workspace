@@ -28,7 +28,7 @@
 ```mermaid
 flowchart TD
     subgraph Bug Origin ["1. 타겟 수집 단계 (findSnapTargets)"]
-        A[".lf-component 전수 쿼리"] --> B["pos = getPureOffset(c)"]
+        A[".bychoi-component 전수 쿼리"] --> B["pos = getPureOffset(c)"]
         B --> C["w = pos.width || ... / h = pos.height || ..."]
         C --> D{"w < 10 || h < 10 ?"}
         D -- "가로선 (w=800, h=2) ➔ h < 10 참" --> E["즉시 return 탈락 ❌"]
@@ -53,8 +53,8 @@ flowchart TD
   if (w < 10 || h < 10) return; // 🚨 치명적 원인: 둘 중 하나라도 10 미만이면 전면 탈락!
   ```
 * **LINE SHAPE의 DOM 특성**:
-  - 가로선: 컨테이너 `.lf-component`의 `height`가 `1.6px ~ 2px` (인라인 스타일 `height: 2px;`, `data-line-dir="horizontal"`).
-  - 세로선: 컨테이너 `.lf-component`의 `width`가 `1.6px ~ 2px` (인라인 스타일 `width: 2px;`, `data-line-dir="vertical"`).
+  - 가로선: 컨테이너 `.bychoi-component`의 `height`가 `1.6px ~ 2px` (인라인 스타일 `height: 2px;`, `data-line-dir="horizontal"`).
+  - 세로선: 컨테이너 `.bychoi-component`의 `width`가 `1.6px ~ 2px` (인라인 스타일 `width: 2px;`, `data-line-dir="vertical"`).
 * **결과**:
   - 가로선은 `h < 10`에 걸려 무조건 `return;` 탈락.
   - 세로선은 `w < 10`에 걸려 무조건 `return;` 탈락.
@@ -72,7 +72,7 @@ flowchart TD
 | **4. 스크립트/런타임 에러 0건** | `null`/`undefined` 속성 접근 및 ReferenceError 100% 차단 | `pos?.width`, `shapeLine?.getAttribute` 등 철저한 옵셔널 체이닝 및 null-safe 연산자 적용. |
 | **5. 백틱 충돌 에러 0건** | 백틱 eval/srcdoc 인라인 파일 내 중첩 백틱(`` ` ``) 및 `${}` 보간 금지 | [assets/vctrl_responsive_smartguide.js](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_smartguide.js)는 파일 전체가 백틱으로 감싸진 인라인 모듈이므로, **내부 코드에서는 반드시 표준 따옴표(`'` 또는 `"`)와 덧셈 연산자(`+`)만을 사용**하여 SyntaxError 원천 차단. |
 | **6. 구문/브래킷 에러 0건 검증** | 브래킷 밸런스 무결성 및 자동 정적 검증 강제 | 수정 직후 `powershell -ExecutionPolicy Bypass -File scripts/check_syntax.ps1`을 자율 구동하여 **0 Errors (100% Pass)**를 확인한 뒤에만 완료 보고. |
-| **7. CORS 에러 0건 및 통신 프로토콜 준수** | 부모-Iframe 직접 접근 금지, MessageHub 준수 | 부모 창과의 거리 데이터 동기화 시 기존 표준 메시지(`LF_REQUEST_SNAP_TARGETS`, `LF_SNAP_TARGETS_RESPONSE`) 규격을 온전히 준수. |
+| **7. CORS 에러 0건 및 통신 프로토콜 준수** | 부모-Iframe 직접 접근 금지, MessageHub 준수 | 부모 창과의 거리 데이터 동기화 시 기존 표준 메시지(`BYCHOI_REQUEST_SNAP_TARGETS`, `BYCHOI_SNAP_TARGETS_RESPONSE`) 규격을 온전히 준수. |
 
 ---
 
@@ -90,7 +90,7 @@ flowchart TD
 ### 4.2 `workspace-editor-engine` 아키텍처 규칙 준수 전략
 * **Pure Data / No-Measure 원칙**: 줌 배율이나 테두리에 왜곡될 수 있는 불필요한 `getBoundingClientRect()` 호출을 최소화하고, 기존 `getPureOffset` 기반의 정밀 논리 픽셀(`px`) 산술 연산 유지.
 * **Iframe Unscaled Invariant (언스케일드 논리 좌표계 보존)**: 마우스 및 드래그 이벤트 시 절대 `/ scale`을 나누지 않는 순수 1:1 논리 픽셀 불변성을 철저히 유지.
-* **Zero-Drift Measurement**: 라인 도형 수집 시 UI 핸들(`.lf-drag-handle`)이 두께에 간섭하지 않도록 핸들 여백 배제.
+* **Zero-Drift Measurement**: 라인 도형 수집 시 UI 핸들(`.bychoi-drag-handle`)이 두께에 간섭하지 않도록 핸들 여백 배제.
 * **Z-Index Layering**: 스마트가이드 SVG 레이어의 `z-index: 300000` 및 `pointer-events: none` 유지로 캔버스 클릭 간섭 원천 차단.
 
 ### 4.3 `workspace-editor-browser-verification` 정책 준수 전략
@@ -169,7 +169,7 @@ mindmap
 
 1. **인터랙션 파이프라인**:
    - 객체가 선택된 상태에서 사용자가 `Alt` 키를 누르면 **Inspect Mode** 활성화.
-   - 마우스가 이동할 때(`mousemove`) 커서 아래에 있는 컴포넌트(`hoverTarget = document.elementFromPoint(e.clientX, e.clientY)?.closest('.lf-component')`)를 실시간 감지.
+   - 마우스가 이동할 때(`mousemove`) 커서 아래에 있는 컴포넌트(`hoverTarget = document.elementFromPoint(e.clientX, e.clientY)?.closest('.bychoi-component')`)를 실시간 감지.
 2. **1:1 상대 간격 계산**:
    - `active` 객체와 `hoverTarget` 간의 상/하/좌/우 절대 여백 또는 겹침 간격을 직관적인 단일 핑크/레드 선과 거리 뱃지로 렌더링.
    - `Alt` 키를 떼면(`keyup`) 즉시 인스펙트 가이드라인 소멸.

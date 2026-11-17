@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_iframe_ports.js
- * Mouse drag, port connections and connector rendering logic for LF Editor Studio (Iframe Side).
+ * Mouse drag, port connections and connector rendering logic for bychoi workspace Studio (Iframe Side).
  */
 
 window.v4PortConnectorScript = `
@@ -42,7 +42,7 @@ window.v4PortConnectorScript = `
             drawTempLine(connDragStartX, connDragStartY, logicalX, logicalY);
             
             // Toggle near-connector class based on distance inside iframe
-            document.querySelectorAll('.lf-component').forEach(comp => {
+            document.querySelectorAll('.bychoi-component').forEach(comp => {
                 if (comp.id === startComponentId) return;
                 const r = comp.getBoundingClientRect();
                 const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
@@ -53,7 +53,7 @@ window.v4PortConnectorScript = `
                 else comp.classList.remove('near-connector');
             });
 
-            const targetPort = e.target.closest('.lf-connector-port');
+            const targetPort = e.target.closest('.bychoi-connector-port');
             if (targetPort && targetPort.parentElement.id !== startComponentId) {
                 if (hoveredPort && hoveredPort !== targetPort) {
                     hoveredPort.style.transform = '';
@@ -75,7 +75,7 @@ window.v4PortConnectorScript = `
             if (!isDrawingConnector) return;
             isDrawingConnector = false;
             document.body.classList.remove('drawing-line-active');
-            document.querySelectorAll('.lf-component').forEach(comp => comp.classList.remove('near-connector'));
+            document.querySelectorAll('.bychoi-component').forEach(comp => comp.classList.remove('near-connector'));
             removeTempLine();
             if (hoveredPort) {
                 const targetComponentId = hoveredPort.parentElement.id;
@@ -85,7 +85,7 @@ window.v4PortConnectorScript = `
                 hoveredPort = null;
                 
                 notifyParent({
-                    type: 'LF_CREATE_CONNECTOR',
+                    type: 'BYCHOI_CREATE_CONNECTOR',
                     startId: startComponentId,
                     startSide: startPortSide,
                     endId: targetComponentId,

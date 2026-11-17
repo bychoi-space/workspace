@@ -81,7 +81,7 @@ stateDiagram-v2
 | **③ 더블클릭 텍스트 편집** | 셀 내부 더블클릭(`dblclick`) | **텍스트 커서 활성화 (`focus()`)** | 기존 PPT-style 더블클릭 룰 100% 유지 |
 | **④ 텍스트 편집 중 글자 블록 드래그** | 셀 편집 모드 진입 후 마우스 드래그 | **글자 블록 텍스트 선택 (컴포넌트 이동 차단)** | 타이핑 중 글자 블록 지정 정상 동작 |
 | **⑤ 체크박스 / 액션 버튼 클릭** | Grid UI의 `input[type="checkbox"]` 등 | **기본 폼 이벤트 즉시 실행** | 체크 토글 및 상세 버튼 정상 작동 |
-| **⑥ 테이블 리사이저 조작** | 우측 하단 `.lf-resizer` 드래그 | **테이블 크기 조절 (`isResizing = true`)** | 기존 리사이즈 엔진 유지 |
+| **⑥ 테이블 리사이저 조작** | 우측 하단 `.bychoi-resizer` 드래그 | **테이블 크기 조절 (`isResizing = true`)** | 기존 리사이즈 엔진 유지 |
 
 ---
 
@@ -137,7 +137,7 @@ stateDiagram-v2
 2. **PC / 모바일 반응형 프레임 간 드래그 드롭 무결성 유지**:
    - `vctrl_iframe_drag.js`의 PC ↔ Mobile 교차 드롭(Reparenting) 및 No-Measure 좌표 클램핑 로직은 `window.activeEl`을 기준으로 완벽히 동작하므로, 테이블 객체 이동 시에도 반응형 좌표가 100% 정상 보존됩니다.
 3. **스마트 가이드 및 스냅(Snap) 정상 연동**:
-   - 테이블이 드래그될 때 `LF_SNAP_REQUEST`와 `ResponsiveSmartGuide`가 정상 호출되어, 다른 도형이나 캔버스 중심선과의 자석 스냅선이 미려하게 표시됩니다.
+   - 테이블이 드래그될 때 `BYCHOI_SNAP_REQUEST`와 `ResponsiveSmartGuide`가 정상 호출되어, 다른 도형이나 캔버스 중심선과의 자석 스냅선이 미려하게 표시됩니다.
 4. **Undo / Redo 무결성**:
    - 드래그 임계값 4px를 넘는 순간 `window.V4UndoManager.saveState()`가 1회만 정확히 호출되므로, 드래그 후 `Ctrl+Z`를 누르면 원래 위치로 완벽히 복원됩니다.
 

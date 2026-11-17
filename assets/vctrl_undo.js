@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_undo.js
- * Undo & Redo management module for LF Editor Studio (Iframe Side).
+ * Undo & Redo management module for bychoi workspace Studio (Iframe Side).
  * 
  * [WARNING FOR DEVELOPERS & AI AGENTS]
  * This file is wrapped in an outer template literal (window.v4UndoScript = `...`).
@@ -48,8 +48,8 @@ window.V4UndoManager = (function() {
 
         const clone = host.cloneNode(true);
         clone.querySelectorAll('script').forEach(el => el.remove());
-        clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger, .v4-image-crop-layer').forEach(el => el.remove());
-        clone.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected', 'v4-cropping-active'));
+        clone.querySelectorAll('.bychoi-resizer, .bychoi-drag-handle, .bychoi-delete-trigger, .v4-image-crop-layer').forEach(el => el.remove());
+        clone.querySelectorAll('.bychoi-component').forEach(el => el.classList.remove('selected', 'v4-cropping-active'));
         return clone.innerHTML;
     }
 
@@ -210,11 +210,11 @@ window.V4UndoManager = (function() {
             const curPage = document.querySelector('.page, .canvas');
             const tempPage = temp.querySelector('.page, .canvas');
             if (curPage && tempPage) {
-                const curBaseComps = curPage.querySelectorAll(':scope > .lf-component');
+                const curBaseComps = curPage.querySelectorAll(':scope > .bychoi-component');
                 curBaseComps.forEach(el => {
                     if (!el.closest('.frame-column')) el.remove();
                 });
-                const tempBaseComps = tempPage.querySelectorAll(':scope > .lf-component');
+                const tempBaseComps = tempPage.querySelectorAll(':scope > .bychoi-component');
                 tempBaseComps.forEach(el => {
                     if (!el.closest('.frame-column')) {
                         curPage.appendChild(el.cloneNode(true));
@@ -223,11 +223,11 @@ window.V4UndoManager = (function() {
             }
 
             // Sync body-level components (connectors, pins, temporary body-dragged objects)
-            const curBodyComps = document.body.querySelectorAll(':scope > .lf-component');
+            const curBodyComps = document.body.querySelectorAll(':scope > .bychoi-component');
             curBodyComps.forEach(el => {
                 if (!el.closest('.page, .canvas, .frame-column')) el.remove();
             });
-            const tempBodyComps = temp.querySelectorAll(':scope > .lf-component');
+            const tempBodyComps = temp.querySelectorAll(':scope > .bychoi-component');
             tempBodyComps.forEach(el => {
                 if (!el.closest('.page, .canvas, .frame-column')) {
                     document.body.appendChild(el.cloneNode(true));
@@ -243,11 +243,11 @@ window.V4UndoManager = (function() {
             const curPage2 = document.querySelector('.page, .canvas');
             const tempPage2 = temp.querySelector('.page, .canvas');
             if (curPage2 && tempPage2) {
-                const curBaseComps = curPage2.querySelectorAll(':scope > .lf-component');
+                const curBaseComps = curPage2.querySelectorAll(':scope > .bychoi-component');
                 curBaseComps.forEach(el => {
                     if (!el.closest('.pc-content-area, .mobile-content-area, .pc-content, .mobile-content')) el.remove();
                 });
-                const tempBaseComps = tempPage2.querySelectorAll(':scope > .lf-component');
+                const tempBaseComps = tempPage2.querySelectorAll(':scope > .bychoi-component');
                 tempBaseComps.forEach(el => {
                     if (!el.closest('.pc-content-area, .mobile-content-area, .pc-content, .mobile-content')) {
                         curPage2.appendChild(el.cloneNode(true));
@@ -256,11 +256,11 @@ window.V4UndoManager = (function() {
             }
 
             // Sync body-level components (connectors, pins, temporary body-dragged objects)
-            const curBodyComps = document.body.querySelectorAll(':scope > .lf-component');
+            const curBodyComps = document.body.querySelectorAll(':scope > .bychoi-component');
             curBodyComps.forEach(el => {
                 if (!el.closest('.page, .canvas, .pc-content-area, .mobile-content-area, .pc-content, .mobile-content')) el.remove();
             });
-            const tempBodyComps = temp.querySelectorAll(':scope > .lf-component');
+            const tempBodyComps = temp.querySelectorAll(':scope > .bychoi-component');
             tempBodyComps.forEach(el => {
                 if (!el.closest('.page, .canvas, .pc-content-area, .mobile-content-area, .pc-content, .mobile-content')) {
                     document.body.appendChild(el.cloneNode(true));
@@ -289,7 +289,7 @@ window.V4UndoManager = (function() {
 
         if (snapshotObj.connectors) {
             currentConnectors = snapshotObj.connectors;
-            if (typeof notifyParent === 'function') notifyParent({ type: 'LF_RESTORE_CONNECTORS', connectors: snapshotObj.connectors });
+            if (typeof notifyParent === 'function') notifyParent({ type: 'BYCHOI_RESTORE_CONNECTORS', connectors: snapshotObj.connectors });
         }
         if (typeof window.initHandles === 'function') window.initHandles();
         if (window.V4DimmedLayer && typeof window.V4DimmedLayer.initDimmedLayers === 'function') {
@@ -386,7 +386,7 @@ window.V4UndoManager = (function() {
                     const sel = window.getSelection();
                     const hasActiveCaret = sel && sel.anchorNode && (sel.anchorNode === e.target || e.target.contains(sel.anchorNode));
                     const isExplicitEditing = e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true' && document.activeElement === e.target;
-                    if (isExplicitEditing && hasActiveCaret && e.target.closest && !e.target.closest('.lf-component.selected')) {
+                    if (isExplicitEditing && hasActiveCaret && e.target.closest && !e.target.closest('.bychoi-component.selected')) {
                         return;
                     }
                 }
@@ -400,13 +400,13 @@ window.V4UndoManager = (function() {
                 }
             });
             window.addEventListener('message', (e) => {
-                if (e.data && e.data.type === 'LF_SYNC_CONNECTORS') {
+                if (e.data && e.data.type === 'BYCHOI_SYNC_CONNECTORS') {
                     currentConnectors = e.data.connectors || [];
-                } else if (e.data && e.data.type === 'LF_SAVE_UNDO') {
+                } else if (e.data && e.data.type === 'BYCHOI_SAVE_UNDO') {
                     window.V4UndoManager.saveState();
-                } else if (e.data && e.data.type === 'LF_TRIGGER_UNDO') {
+                } else if (e.data && e.data.type === 'BYCHOI_TRIGGER_UNDO') {
                     window.V4UndoManager.undo();
-                } else if (e.data && e.data.type === 'LF_TRIGGER_REDO') {
+                } else if (e.data && e.data.type === 'BYCHOI_TRIGGER_REDO') {
                     window.V4UndoManager.redo();
                 }
             });

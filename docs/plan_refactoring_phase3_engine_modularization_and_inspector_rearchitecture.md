@@ -41,26 +41,26 @@
 // [Iframe Command Registry Pattern]
 const MessageDispatcher = {
     // 스타일 및 텍스트
-    LF_UPDATE_STYLE: (data) => handleUpdateStyle(data),
-    LF_UPDATE_SHAPE_TEXT: (data) => handleUpdateShapeText(data),
+    BYCHOI_UPDATE_STYLE: (data) => handleUpdateStyle(data),
+    BYCHOI_UPDATE_SHAPE_TEXT: (data) => handleUpdateShapeText(data),
 
     // 테이블 도메인 -> vctrl_table.js 로 위임
-    LF_TABLE_ACTION: (data) => window.V4TableEngine?.handleAction(data),
-    LF_UPDATE_CELL_STYLE: (data) => window.V4TableEngine?.handleCellStyle(data),
-    LF_UPDATE_CELL_DIMENSION: (data) => window.V4TableEngine?.handleCellDimension(data),
+    BYCHOI_TABLE_ACTION: (data) => window.V4TableEngine?.handleAction(data),
+    BYCHOI_UPDATE_CELL_STYLE: (data) => window.V4TableEngine?.handleCellStyle(data),
+    BYCHOI_UPDATE_CELL_DIMENSION: (data) => window.V4TableEngine?.handleCellDimension(data),
 
     // 그리드 도메인 -> vctrl_iframe_grid.js 로 위임
-    LF_UPDATE_GRID_PROPERTIES: (data) => window.V4GridEngine?.handleUpdate(data),
+    BYCHOI_UPDATE_GRID_PROPERTIES: (data) => window.V4GridEngine?.handleUpdate(data),
 
     // 아코디언 도메인 -> vctrl_iframe_accordion.js 로 위임
-    LF_UPDATE_ACCORDION_PROPERTIES: (data) => window.V4AccordionEngine?.handleUpdate(data),
+    BYCHOI_UPDATE_ACCORDION_PROPERTIES: (data) => window.V4AccordionEngine?.handleUpdate(data),
 
     // 그룹화 도메인 -> vctrl_grouping.js 위임
-    LF_GROUP_SELECTED: (data) => handleGroupSelected(data),
-    LF_UNGROUP_SELECTED: (data) => handleUngroupSelected(data),
+    BYCHOI_GROUP_SELECTED: (data) => handleGroupSelected(data),
+    BYCHOI_UNGROUP_SELECTED: (data) => handleUngroupSelected(data),
 
     // 저장 요청 -> ScreenSanitizer 적용
-    LF_REQUEST_SAVE_CONTENT: () => handleSaveContentResponse()
+    BYCHOI_REQUEST_SAVE_CONTENT: () => handleSaveContentResponse()
 };
 
 // 초경량 전역 메시지 리스너 (5줄)

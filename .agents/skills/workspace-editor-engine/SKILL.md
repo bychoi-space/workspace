@@ -17,12 +17,12 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - `vctrl_clipboard.js` owns URL copy dropdown handling, project & screen URL copying, and asynchronous system clipboard fallback (`copyTextToClipboard`).
 - `vctrl_component_data.js`, `vctrl_component_atoms_data.js`, `vctrl_component_logos_templates.js`, `vctrl_component_icons_data.js`, and `vctrl_component_illustrations.js` own V4 component library (`window.V4_COMPONENT_LIBRARY`), brand logos, atomic quick templates, and bilingual SVG icon maps SSOT.
 - `vctrl_canvas_viewport.js` owns Canvas Interaction (`adjustZoom`, `centerView`, `updateTransform`), 100% crisp snap (`toggleCrispView`), Fullscreen, and Global Space-key Panning logic (integrated with `vctrl_core.js` iframe event propagation).
-- `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, metadata description synchronization, dedicated overlay container (`.v4-pin-layer`) lifecycle (`ensurePinLayer`, loose pin self-healing), and viewport-scroll-aware safe spawn coordinates (`spawnPcX: 570, spawnPcY: 180 + scrollY`). Pin reordering logic is fully consolidated into `window.reorderAllPins` and `LF_REORDER_PINS` SSOT inside `vctrl_responsive_pins.js`.
+- `vctrl_annotation_pins.js` and `vctrl_responsive_pins.js` own annotation pin rendering, viewport positioning, metadata description synchronization, dedicated overlay container (`.v4-pin-layer`) lifecycle (`ensurePinLayer`, loose pin self-healing), and viewport-scroll-aware safe spawn coordinates (`spawnPcX: 570, spawnPcY: 180 + scrollY`). Pin reordering logic is fully consolidated into `window.reorderAllPins` and `BYCHOI_REORDER_PINS` SSOT inside `vctrl_responsive_pins.js`.
 - `vctrl_iframe_layering.js` owns the Unified 8-Tier Z-Index Architecture (`window.V4_Z_TIERS`, including `DIMMED_OVERLAY: 185000`), 4-operation layer suite (`handleBringToFront`, `handleBringForward`, `handleSendToBack`, `handleSendBackward`), and compaction threshold (`compactZIndices`).
 - `vctrl_iframe_dimmed_layer.js` and `assets/inspector/inspector_dimmed_layer.js` own the Isolated Dimmed Overlay Layer Authoring system (`.v4-dimmed-overlay-layer` with `z-index: 185000` and `isolation: isolate`), per-frame independent or synchronized Dimmed ON/OFF control inside `CANVAS & BACKGROUND`, transient `[딤드·팝업 편집]` ↔ `[바닥 화면 편집]` switching (`.v4-dimmed-temp-hidden` stripped on save via `ScreenSanitizer.cleanDOM`), and click/marquee/SmartGuide layer scope isolation (`window.V4DimmedLayer.isComponentSelectable`).
 - `vctrl_clipboard_objects.js` owns object copy/paste lifecycle, pasting tier rebase (`V4_Z_TIERS.NORMAL.MAX = 69900`, `V4_Z_TIERS.VIRTUAL_HUD.MAX = 179900`), and `trailingRef` guard ensuring pasted elements are placed before `.v4-pin-layer`.
 - `vctrl_iframe_scroll_pin.js` owns the Responsive Scroll Pinning & Smart HUD Fixed Engine (`window.ScrollPinEngine`). It manages the 4 object pinning modes (`top`, `bottom`, `custom`/`floating`, `sticky`), viewport description pins (`data-scroll-fixed="viewport"`), host-pinned markers (`data-fixed-host`), scroll-direction reactive reveal/hide effects (`data-scroll-effect`: `always`, `hide-down`, `hide-up`) with hardware-accelerated `translate3d` GPU transforms and `WeakMap` container state isolation, and unpinning lifecycle safe demotion back to Tier 2 (`Math.min(69900, maxNormalZ + 10)`).
-  - **Host-Pinned Marker Invariants (`vctrl_iframe_drag.js`, `vctrl_responsive_pins.js`, `vctrl_core_router.js`, `vctrl_responsive_multiselect.js`)**: (1) Elements nested inside an `.lf-group` (`el.parentElement.closest('.lf-group')`) MUST never act as scroll-fixed hosts (grouping strips `data-scroll-fixed*` on children, and `ScrollPinEngine` / `_handlePinMarkerDropAnchoring` ignore/self-heal nested attributes) so group-local `style.top` coordinates never teleport dropped pins; (2) pin drop coordinates MUST be computed directly from `pin.parentElement` (`.v4-pin-layer`) bounding rect minus host `_parseTransformY(matchedHost)` rather than `matchedHost.style.top`; and (3) `fixedHost` and `scrollFixed` metadata MUST be stored and restored per-frame (`pin.pins.pc` vs `pin.pins.mobile`) with `pinContainer.contains(hostEl)` validation so PC and Mobile pin attachments never cross-contaminate.
+  - **Host-Pinned Marker Invariants (`vctrl_iframe_drag.js`, `vctrl_responsive_pins.js`, `vctrl_core_router.js`, `vctrl_responsive_multiselect.js`)**: (1) Elements nested inside an `.bychoi-group` (`el.parentElement.closest('.bychoi-group')`) MUST never act as scroll-fixed hosts (grouping strips `data-scroll-fixed*` on children, and `ScrollPinEngine` / `_handlePinMarkerDropAnchoring` ignore/self-heal nested attributes) so group-local `style.top` coordinates never teleport dropped pins; (2) pin drop coordinates MUST be computed directly from `pin.parentElement` (`.v4-pin-layer`) bounding rect minus host `_parseTransformY(matchedHost)` rather than `matchedHost.style.top`; and (3) `fixedHost` and `scrollFixed` metadata MUST be stored and restored per-frame (`pin.pins.pc` vs `pin.pins.mobile`) with `pinContainer.contains(hostEl)` validation so PC and Mobile pin attachments never cross-contaminate.
 - `vctrl_connectors.js` owns connector spawning (`spawnLine`), 30px magnetic port snapping (`collectSnapTargets`), port highlighting, real-time anchoring (`syncAnchoredPositions`), and connector inspector routing.
 - `vctrl_iframe_ports.js` owns iframe-side port detection and port-drag connector initiation.
 - `vctrl_grouping.js` owns marquee selection, `selectedIds`, group move/delete/grouping behavior, and selected class sync.
@@ -66,20 +66,20 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - 반드시 `vctrl_common.js`의 `window.ScreenSanitizer.cleanDOM(targetDoc)` 단일 진실 공급원을 호출하여 선택선/마키박스/핸들/가이드라인/빈스타일을 완벽히 정제해야 한다.
 - **크로스 스크린 복사/붙여넣기 (Cross-Screen Clipboard Sync) 및 외부 이미지 붙여넣기(`Ctrl+V`) 하이브리드 파이프라인**:
   - 각 스크린 iframe은 고유한 `srcdoc` 컨텍스트(또는 `file://` sandboxed context)에서 로드되므로 격리되어 있어 `localStorage`나 iframe 간의 단순 전역 변수 공유가 불가능하다.
-  - 이를 극복하고 서로 다른 스크린을 넘나들며 오브젝트 복사/붙여넣기(`Ctrl+C` / `Ctrl+V`)를 지원하기 위해 최상위 윈도우(`window.top`)의 전역 프로퍼티인 `window.top.__lf_global_clipboard__`를 클립보드 데이터의 SSOT로 정의하여 통신한다.
-  - 복사 시 선택한 오브젝트 데이터(스타일, 속성, 내부 텍스트, HTML 등)를 JSON 형태로 직렬화하여 `window.top.__lf_global_clipboard__`에 저장하며, 붙여넣기 시 이를 역직렬화하여 겹침 방지 오프셋(+15px)을 더한 뒤 캔버스에 붙여넣는다.
+  - 이를 극복하고 서로 다른 스크린을 넘나들며 오브젝트 복사/붙여넣기(`Ctrl+C` / `Ctrl+V`)를 지원하기 위해 최상위 윈도우(`window.top`)의 전역 프로퍼티인 `window.top.__bychoi_global_clipboard__`를 클립보드 데이터의 SSOT로 정의하여 통신한다.
+  - 복사 시 선택한 오브젝트 데이터(스타일, 속성, 내부 텍스트, HTML 등)를 JSON 형태로 직렬화하여 `window.top.__bychoi_global_clipboard__`에 저장하며, 붙여넣기 시 이를 역직렬화하여 겹침 방지 오프셋(+15px)을 더한 뒤 캔버스에 붙여넣는다.
   - **외부 OS 클립보드 이미지 붙여넣기(`Ctrl+V`) 및 우선순위 화해 프로토콜**:
     - 크롬 우클릭 "이미지 복사" 또는 윈도우 화면 캡처 도구(`Win+Shift+S`)로 복사된 이미지를 `Ctrl+V`로 즉시 캔버스에 붙여넣기 위해, `vctrl_shortcuts.js` 및 `vctrl_parent_shortcuts.js`의 일반 `Ctrl+V` (`!e.shiftKey`) `keydown` 핸들러에서는 **`e.preventDefault()`를 절대 호출하지 않고** 브라우저 네이티브 `paste` 이벤트가 발화하도록 위임한다 (80ms fallback 타이머 포함).
-    - `paste` 이벤트(`vctrl_shortcuts.js` 및 `vctrl_core_router.js`의 `setupParentPasteProxy`)는 `e.clipboardData.items` 및 `files`에서 `image/*` Blob을 감지하여 `LF_INSERT_IMAGE_COMP`로 전달하고, 반응형 모바일 프레임(360px) 내부 삽입 시에는 프레임 너비(`hostW - 24`)에 맞춰 원본 비율을 유지한 채 자동 스케일링한다.
+    - `paste` 이벤트(`vctrl_shortcuts.js` 및 `vctrl_core_router.js`의 `setupParentPasteProxy`)는 `e.clipboardData.items` 및 `files`에서 `image/*` Blob을 감지하여 `BYCHOI_INSERT_IMAGE_COMP`로 전달하고, 반응형 모바일 프레임(360px) 내부 삽입 시에는 프레임 너비(`hostW - 24`)에 맞춰 원본 비율을 유지한 채 자동 스케일링한다.
     - **고해상도 캡처 이미지 다단계 밉맵(Mipmap) & 언샵 마스크 선명도 보정 SSOT (`window.createCrispImageDataUrl`, `window.processAndInsertRawImage`)**:
       - `1920x911` 등 대용량 화면 캡처 이미지를 `500x237px` ~ `780x540px` 박스로 축소 배치할 때 크롬 `background-image`의 단일 패스 2x2 Bilinear 샘플링으로 인해 1px 테이블 선과 한글 획이 소실되는 현상을 차단하기 위해, `vctrl_component_inserter.js`의 `window.createCrispImageDataUrl`이 `0.55x` 단계별 Progressive Step-Down Mipmap + 4-이웃 Unsharp Mask + Dark Stroke Contrast Preservation 리샘플링을 수행한다.
-      - 원본 무손실 이미지는 메모리 캐시(`window.top.__lf_orig_image_cache__`, 최근 20개 제한)에만 보관하여 HTML 파일 비대화를 방지하고, 사용자가 리사이즈 핸들이나 인스펙터로 이미지 크기를 변경하면 `vctrl_design_system.js`가 150ms 디바운스 후 변경된 박스 크기의 `1.15배` 해상도(`data-crisp-size`)로 즉시 재샘플링한다.
+      - 원본 무손실 이미지는 메모리 캐시(`window.top.__bychoi_orig_image_cache__`, 최근 20개 제한)에만 보관하여 HTML 파일 비대화를 방지하고, 사용자가 리사이즈 핸들이나 인스펙터로 이미지 크기를 변경하면 `vctrl_design_system.js`가 150ms 디바운스 후 변경된 박스 크기의 `1.15배` 해상도(`data-crisp-size`)로 즉시 재샘플링한다.
       - 또한 `#artboard-wrapper`(`viewer.css`)의 진입 애니메이션 종료 상태를 `filter: none;`으로 유지하고 `will-change: filter`를 배제하여 오프스크린 비트맵 래스터화 열화를 원천 차단한다.
-    - 내부 도형 복사(`Ctrl+C`/`Ctrl+X`) 시에는 포커스 이동 없는 `copy` 이벤트 가로채기(`clearSystemImageClipboard`)로 OS 클립보드의 이전 이미지를 초기화하고 `__lf_clipboard_source__ = 'internal'` 및 `__lf_suppressed_img_sig__` 시그니처 가드를 기록하여, 외부 이미지 붙여넣기 직후 내부 도형을 복사했을 때 이전 캡처 이미지가 잘못 붙여넣어지는 충돌을 100% 차단한다.
-  - **그룹 내부 자식 컴포넌트 단독 복사 정규화**: 그룹(`lf-group`) 내부의 자식 컴포넌트를 단독 선택하여 복사할 때는 상위 부모 그룹 체인의 `left`, `top` 오프셋을 누적 합산하여 호스트(캔버스/반응형 프레임) 기준의 절대 좌표로 정규화한 뒤 저장함으로써, 붙여넣기 시 스크린 최상단(0,0)에 배치되지 않고 원본 시각 위치 우측하단(+15px)에 정확히 독립 오브젝트로 복제되도록 보장한다.
+    - 내부 도형 복사(`Ctrl+C`/`Ctrl+X`) 시에는 포커스 이동 없는 `copy` 이벤트 가로채기(`clearSystemImageClipboard`)로 OS 클립보드의 이전 이미지를 초기화하고 `__bychoi_clipboard_source__ = 'internal'` 및 `__bychoi_suppressed_img_sig__` 시그니처 가드를 기록하여, 외부 이미지 붙여넣기 직후 내부 도형을 복사했을 때 이전 캡처 이미지가 잘못 붙여넣어지는 충돌을 100% 차단한다.
+  - **그룹 내부 자식 컴포넌트 단독 복사 정규화**: 그룹(`bychoi-group`) 내부의 자식 컴포넌트를 단독 선택하여 복사할 때는 상위 부모 그룹 체인의 `left`, `top` 오프셋을 누적 합산하여 호스트(캔버스/반응형 프레임) 기준의 절대 좌표로 정규화한 뒤 저장함으로써, 붙여넣기 시 스크린 최상단(0,0)에 배치되지 않고 원본 시각 위치 우측하단(+15px)에 정확히 독립 오브젝트로 복제되도록 보장한다.
 - **도형 서식 클립보드 파이프라인 (Format Painter Pipeline & Style Clipboard SSOT)**:
-  - `vctrl_shortcuts.js` (`copySelectedObjectStyle`, `pasteCopiedObjectStyle`)와 `vctrl_format_painter.js` (`LF_SAVE_STYLE_CLIPBOARD`, `LF_REQUEST_STYLE_CLIPBOARD`, `LF_RESPONSE_STYLE_CLIPBOARD`, `LF_SHOW_TOAST`)로 구성됩니다.
-  - `Ctrl + Shift + C` 복사 시 컴포넌트의 시각 스타일 및 텍스트 타이포그래피(폰트, 크기, 색상, 두께, 정렬)를 깊이 추출하여 부모 창의 `(window.top || window).__lf_global_style_clipboard__`에 저장합니다.
+  - `vctrl_shortcuts.js` (`copySelectedObjectStyle`, `pasteCopiedObjectStyle`)와 `vctrl_format_painter.js` (`BYCHOI_SAVE_STYLE_CLIPBOARD`, `BYCHOI_REQUEST_STYLE_CLIPBOARD`, `BYCHOI_RESPONSE_STYLE_CLIPBOARD`, `BYCHOI_SHOW_TOAST`)로 구성됩니다.
+  - `Ctrl + Shift + C` 복사 시 컴포넌트의 시각 스타일 및 텍스트 타이포그래피(폰트, 크기, 색상, 두께, 정렬)를 깊이 추출하여 부모 창의 `(window.top || window).__bychoi_global_style_clipboard__`에 저장합니다.
     - **DOM 실시간 알파 추출 폴백**: 인스펙터 상태에 투명도 수치가 누락되었거나 100으로 기본 설정되어 있더라도, 실시간 DOM `style.backgroundColor` 및 `window._getAlphaPercent`를 통해 실제 렌더링된 알파 퍼센트를 추출하여 `bgOpacity`로 보존합니다. 추출된 알파가 0인 경우 `isBgTransparent = true`로 자동 동기화합니다.
   - `Ctrl + Shift + V` 붙여넣기 시 부모에 클립보드 데이터를 요청하여 단일 또는 다중 선택된 N개 요소에 일괄 주입하며, 주입 전 `V4UndoManager.saveState()`를 호출하여 실행 취소를 보장합니다.
     - **통합 채우기 색상 해석기 (`_resolveFillColor`)**:
@@ -92,8 +92,8 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
       - 버튼 및 텍스트박스 아톰: `.v4-atom-btn` 및 `.v4-shape-text-box`에 동일하게 `_resolveFillColor` 결과 색상을 주입하여 일관된 시각 서식 적용.
     - **템플릿 리터럴 인라인 안전 원칙**: 인라인 모듈 스크립트 내부에서 정규식 백슬래시 탈출 버그(`\)` 파괴로 인한 `Unmatched ')'` 등)를 방지하기 위해 순수 문자열 조작 함수(`indexOf`, `lastIndexOf`, `split`, `substring`)로 색상 변환을 처리합니다.
 - **스크린 배경 설정 엔진 (Canvas Background Setting Pipeline)**:
-  - 부모 창의 `ComponentInserter.applyCanvasBackground()`에서 iframe으로 `LF_SET_CANVAS_BACKGROUND` 메시지를 디스패치합니다.
-  - Iframe 측(`vctrl_iframe_script.js`)에서는 캔버스 루트 최상단 자식으로 `#canvas_bg_layer` (`pointer-events: none !important; user-select: none; overflow: hidden;`)를 생성/갱신하고 `#canvas_bg_img`의 `src` 및 `opacity`를 적용한 뒤 부모 창으로 `LF_CANVAS_BACKGROUND_UPDATED` 신호를 회신합니다.
+  - 부모 창의 `ComponentInserter.applyCanvasBackground()`에서 iframe으로 `BYCHOI_SET_CANVAS_BACKGROUND` 메시지를 디스패치합니다.
+  - Iframe 측(`vctrl_iframe_script.js`)에서는 캔버스 루트 최상단 자식으로 `#canvas_bg_layer` (`pointer-events: none !important; user-select: none; overflow: hidden;`)를 생성/갱신하고 `#canvas_bg_img`의 `src` 및 `opacity`를 적용한 뒤 부모 창으로 `BYCHOI_CANVAS_BACKGROUND_UPDATED` 신호를 회신합니다.
 - **로컬 일일 데이터 자동 백업 및 무인 스케줄러 아키텍처 (Daily Auto Backup & Scheduler Pipeline)**:
   - `scripts/daily_auto_backup.ps1`은 `FileShare.ReadWrite` 스트림 복사로 파일 락 없이 `data/`를 임시 스테이징한 후 UTF-8 ZIP 압축 아카이브(`C:\ai_work_backups\daily\data_daily_*.zip`)를 생성합니다.
   - 아카이브 생성 즉시 내부 프로젝트 메타데이터 및 스크린 파일 개수를 전수 검증하며, 30일 경과 백업본을 자동 정리하되 최소 5개는 강제 보존합니다.
@@ -104,7 +104,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - **철저한 컴포넌트 스코프 조건부 격리**: 신규 아톰의 속성은 `isWebEditor ? webeditorMaxLength : maxLength`와 같이 대상 컴포넌트가 활성화되었을 때만 조건부로 할당하거나 고유 네임스페이스 속성을 사용하여, 비활성 컴포넌트나 타 아톰의 기본값(텍스트박스 기본 100자 등)에 절대 간섭하지 않도록 스코프를 완벽히 격리해야 한다.
   - **교차 회귀 검증 의무화**: 신규 아톰 추가/수정 후에는 신규 아톰뿐만 아니라 기존 유사 아톰(텍스트박스, 텍스트에어리어 등)을 캔버스에서 직접 클릭하여 기존 고유 속성과 기본값이 온전히 보존되는지 반드시 확인해야 한다.
 - **동일 컴포넌트 다중 선택 프로퍼티 일괄 업데이트 엔진 아키텍처 (Multi-Selection Batch Property Update Protocol)**:
-  - **다중 타겟 ID 보존 (`vctrl_properties.js`)**: 프로퍼티 패널에서 수치(`w`, `h`)나 상태를 변경할 때, `currentActiveIds.length > 1`인 다중 선택 환경에서는 타겟 ID가 `[editingTargetId]` 1개로 축소되지 않도록 가드하고 전체 `currentActiveIds`를 보존하여 IPC 메시지(`LF_UPDATE_DIMENSIONS`, `LF_UPDATE_ATOM_*`)를 발행한다.
+  - **다중 타겟 ID 보존 (`vctrl_properties.js`)**: 프로퍼티 패널에서 수치(`w`, `h`)나 상태를 변경할 때, `currentActiveIds.length > 1`인 다중 선택 환경에서는 타겟 ID가 `[editingTargetId]` 1개로 축소되지 않도록 가드하고 전체 `currentActiveIds`를 보존하여 IPC 메시지(`BYCHOI_UPDATE_DIMENSIONS`, `BYCHOI_UPDATE_ATOM_*`)를 발행한다.
   - **아톰 인스펙터 IPC 다중 브로드캐스트 (`inspector_atoms.js`)**: 아톰 속성 변경 시 `getActiveTargetIds()`를 통해 수집된 다중 ID 배열을 `notifyIframe` 래퍼에 전달하여 페이로드에 `id: targetIds[0]`, `ids: targetIds`를 동시에 실어 전송한다.
   - **Iframe 수신 처리 및 다중 대상 순회 (`_getTargetComponents`)**: `vctrl_ui_atoms.js` 및 `vctrl_ui_atoms_inputs.js`의 모든 컴포넌트 갱신 핸들러는 `_getTargetComponents(d)` 헬퍼를 통해 단일 ID(`d.id`)와 다중 ID(`d.ids`) 모두를 안전하게 배열로 확보하고, `targets.forEach` 루프로 선택된 모든 요소에 일괄 적용한다.
   - **원자적 Undo 트랜잭션**: 루프 시작 직전 `V4UndoManager.saveState()`를 1회만 호출하여 `Ctrl+Z` 실행 시 모든 선택 요소의 변경이 단일 트랜잭션으로 원자적 복원되도록 보장한다.
@@ -120,25 +120,25 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_canvas_viewport.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 한다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단한다.
   - **물리 픽셀 정렬 및 DPR 스냅 (`Math.round(val * dpr) / dpr`)**: `centerView()`와 `updateTransform()`의 좌표 `x`, `y`는 반드시 `window.devicePixelRatio`를 고려하여 `Math.round(val * dpr) / dpr`을 거쳐 물리 디스플레이 픽셀 그리드에 1:1로 안착시켜야 한다. 125%, 150% 등 윈도우 배율 환경에서의 서브픽셀 보간 블러를 원천 차단하며, 100% 해상도에서는 불필요한 `scale(1)` 없이 순수 2D 이동만 적용한다.
   - **글로벌 폰트 안티앨리어싱 및 서브픽셀 무결성 보장**: 모든 텍스트 요소와 인풋, iframe 영역에는 DirectWrite ClearType RGB 서브픽셀 렌더링을 위해 `-webkit-font-smoothing: subpixel-antialiased !important;`, `text-rendering: geometricPrecision !important;`, `font-synthesis: none;`을 필수로 적용하여 13px 등 작은 폰트에서도 칼같이 선명한 렌더링을 보장한다.
-- **Group-Aware State Sync**: 요소가 그룹화되어 계층 구조가 변경되더라도 `metadata.json`에 저장되는 데이터는 항상 **전체 스크린(body) 기준의 절대 좌표(px)**를 유지해야 한다. 그룹 내 자식 요소의 뷰포트 좌표를 실시간 역산하여 전역 데이터로 동기화(`LF_UPDATE_PIN_POS` 등)해야 한다.
+- **Group-Aware State Sync**: 요소가 그룹화되어 계층 구조가 변경되더라도 `metadata.json`에 저장되는 데이터는 항상 **전체 스크린(body) 기준의 절대 좌표(px)**를 유지해야 한다. 그룹 내 자식 요소의 뷰포트 좌표를 실시간 역산하여 전역 데이터로 동기화(`BYCHOI_UPDATE_PIN_POS` 등)해야 한다.
 
-- **MessageHub Nudge/Align/Undo**: Use MessageHub (`LF_NUDGE`, `LF_ALIGN_COMPONENTS`, `LF_SAVE_UNDO`) to synchronize keyboard movements and alignments from the parent window to the iframe components seamlessly.
-- **Keyboard Nudge Forwarding**: 사용자가 컴포넌트를 클릭하면 포커스가 iframe 내부로 이동하여 부모 창의 키보드 이벤트가 동작하지 않을 수 있다. 따라서 iframe 내부(`vctrl_core.js`의 `v4Script`)에도 화살표 키 리스너를 배치하여, iframe 내 요소가 선택된 경우 직접 이동시키고, 그렇지 않은 경우 `LF_NUDGE` 메시지를 통해 부모 창(커넥터, 텍스트 마커 등)에 이벤트를 전달해야 한다.
+- **MessageHub Nudge/Align/Undo**: Use MessageHub (`BYCHOI_NUDGE`, `BYCHOI_ALIGN_COMPONENTS`, `BYCHOI_SAVE_UNDO`) to synchronize keyboard movements and alignments from the parent window to the iframe components seamlessly.
+- **Keyboard Nudge Forwarding**: 사용자가 컴포넌트를 클릭하면 포커스가 iframe 내부로 이동하여 부모 창의 키보드 이벤트가 동작하지 않을 수 있다. 따라서 iframe 내부(`vctrl_core.js`의 `v4Script`)에도 화살표 키 리스너를 배치하여, iframe 내 요소가 선택된 경우 직접 이동시키고, 그렇지 않은 경우 `BYCHOI_NUDGE` 메시지를 통해 부모 창(커넥터, 텍스트 마커 등)에 이벤트를 전달해야 한다.
 - **통합 키보드 이벤트 파이프라인 (Unified Keyboard Event Pipeline)**: 기존에 분산되어 있던 부모 창과 iframe 내부의 키보드 이벤트 리스너를 단일화된 파이프라인으로 통합했다. 컴포넌트나 커넥터가 포커싱되었을 때 이벤트가 유실되거나 중복 처리되지 않도록, `vctrl_iframe_script.js` 내부의 통합 키보드 핸들러가 이벤트를 포착하고, 부모 창의 단일 리스너와 `MessageHub`를 통해 연동되어야 한다. 화살표 키 이동(Nudge), Delete/Backspace 삭제, Undo/Redo 등의 모든 인터랙션이 단일 이벤트 흐름으로 제어됨을 보장해야 한다.
-- **커넥터(Lines) 실시간 좌표 동기화 (Real-Time Connector Reconciliation)**: 사용자가 컴포넌트를 드래그하거나 화살표 키로 이동시킬 때, 컴포넌트에 연결된 모든 커넥터 라인(Lines)은 `syncAnchoredPositions()` 및 MessageHub 신호(`LF_SNAP_REQUEST`, `LF_COMP_RESIZED`)를 통해 실시간으로 시작/끝 좌표를 재계산하고 부드럽게 추종하도록 연동해야 한다. 드래그가 완료되면 이동된 최종 좌표 상태가 `V4UndoManager` 및 `metadata.json`에 영구히 저장되어야 한다.
-- **이벤트 핸들러 연쇄 차단 방지 (Non-Blocking Event Listener Flow)**: `mouseup` 또는 `mousemove`와 같은 전역 통합 이벤트 리스너를 수정할 때, 개별 조건문(예: `isConnectorDragging`) 처리 후 `return;`으로 조기 종료를 남용하지 말라. 조기 종료 시 하위의 `isMarquee` 상태 해제(`LF_MARQUEE_END`) 및 선택 박스(`.v4-marquee-box`) 제거 로직이 차단되어 클릭 시 캔버스에 파란색 점 잔상이 생성되거나 다중선택 드래그가 마비되는 사이드 이펙트가 발생하므로, 모든 상태 해제 연산은 독립 순차 구문으로 전개해야 한다.
+- **커넥터(Lines) 실시간 좌표 동기화 (Real-Time Connector Reconciliation)**: 사용자가 컴포넌트를 드래그하거나 화살표 키로 이동시킬 때, 컴포넌트에 연결된 모든 커넥터 라인(Lines)은 `syncAnchoredPositions()` 및 MessageHub 신호(`BYCHOI_SNAP_REQUEST`, `BYCHOI_COMP_RESIZED`)를 통해 실시간으로 시작/끝 좌표를 재계산하고 부드럽게 추종하도록 연동해야 한다. 드래그가 완료되면 이동된 최종 좌표 상태가 `V4UndoManager` 및 `metadata.json`에 영구히 저장되어야 한다.
+- **이벤트 핸들러 연쇄 차단 방지 (Non-Blocking Event Listener Flow)**: `mouseup` 또는 `mousemove`와 같은 전역 통합 이벤트 리스너를 수정할 때, 개별 조건문(예: `isConnectorDragging`) 처리 후 `return;`으로 조기 종료를 남용하지 말라. 조기 종료 시 하위의 `isMarquee` 상태 해제(`BYCHOI_MARQUEE_END`) 및 선택 박스(`.v4-marquee-box`) 제거 로직이 차단되어 클릭 시 캔버스에 파란색 점 잔상이 생성되거나 다중선택 드래그가 마비되는 사이드 이펙트가 발생하므로, 모든 상태 해제 연산은 독립 순차 구문으로 전개해야 한다.
 - **오브젝트 프로퍼티(인스펙터) 4중 안전망 동기화 파이프라인 (Inspector Property Synchronization SSOT)**:
   - **버그 배경**: 동일 쉐입(Rect 100x100 ➔ Rect 200x200 등) 연속 선택 시, 인스펙터 패널 섹션이 닫히지 않고 열려 있는 상태에서 부모 입력 필드의 포커스 잔류나 `state.editingIndex` 선행 갱신 레이스 컨디션으로 인해 새 객체의 크기(Width/Height)가 갱신되지 않고 이전 값으로 고정되던 문제를 원천 차단하기 위해 4중 안전망을 구축한다.
   - **1. CoreRouter 선행 백업 & 포커스 해제**: `vctrl_core_router.js`에서 `state.editingIndex`를 대입하기 전 이전 선택 ID를 백업(`const isNewSelection = (state.previousEditingIndex !== data.id)`), 신규 선택 시 부모 창의 활성 인풋 포커스를 즉시 해제(`document.activeElement.blur()`), `window.updateProperties(data, isNewSelection)`로 명시적 신규 선택 플래그 전달, 이후 `state.previousEditingIndex = data.id`를 안전하게 갱신한다.
   - **2. 인스펙터 3중 판정식 & 크기 인풋 직접 대입**: `vctrl_inspector.js`의 `updateProperties(compStyles, isNewSelectionExplicit)`에서 `const isNewComp = isNewSelectionExplicit === true || compStyles.id !== state.previousEditingIndex || compStyles.id !== state._lastInspectorCompId;` 3중 판정 적용. `isNewComp`일 때 `isTypingInInspector = false`로 강제 리셋하여 조기 return 방지. `_syncCommonPropertyControls`에서 `DOM.propWidth`, `DOM.propHeight` 등의 공통 크기 인풋에 대해 포커스 상태와 무관하게 `DOM.propWidth.value = Math.round(compStyles.w)`로 직접 값을 대입하여 화면 표시를 100% 강제 동기화한다.
-  - **3. LF_COMP_SELECTED 강제 프로퍼티 갱신**: `vctrl_properties.js`에서 대상 컴포넌트 ID가 변경된 경우(`targetId !== activeCompId`), 부모 activeElement를 즉시 blur 처리하고 `updateAllInputs(w, h, force = true)`를 호출하여 포커스 가드를 확실히 우회함으로써 이전 크기 수치가 화면에 잔존하지 않도록 강제 동기화한다.
+  - **3. BYCHOI_COMP_SELECTED 강제 프로퍼티 갱신**: `vctrl_properties.js`에서 대상 컴포넌트 ID가 변경된 경우(`targetId !== activeCompId`), 부모 activeElement를 즉시 blur 처리하고 `updateAllInputs(w, h, force = true)`를 호출하여 포커스 가드를 확실히 우회함으로써 이전 크기 수치가 화면에 잔존하지 않도록 강제 동기화한다.
   - **4. Iframe 캔버스 클릭 시 부모 잔류 포커스 즉시 정리**: `vctrl_iframe_script.js`에서 컴포넌트 `mousedown` 시 `window.parent?.document?.activeElement?.blur()`를 호출하여 부모 창 인풋에 남아있던 캐럿과 포커스를 즉각 정리한다 (백틱 충돌 0건 원칙 준수).
 - **오브젝트 프로퍼티 정렬(ALIGNMENT) 엔진 및 가시 뷰포트 통합 아키텍처 (Visible Viewport Alignment SSOT)**:
   - **단일 및 다중 오브젝트 정렬 일원화**: 단일 선택(`items.length === 1`) 시 ALIGNMENT 패널을 강제 은닉하던 `selIds.length > 1` 제한을 철폐하고, 단일 객체에서도 캔버스 또는 소속 프레임 기준 6대 정렬(`Left, Center, Right, Top, Middle, Bottom`)을 상시 지원한다 (단, 분배 정렬은 3개 이상 선택 시만 활성화).
   - **반응형 가시 뷰포트 정렬 수학 (Visible Viewport Math)**: PC 프레임 긴 문서(`1500px+`)에서 `offsetHeight` 전체를 기준으로 정렬하여 오브젝트가 화면 밖으로 추락하던 버그를 원천 차단하기 위해, 현재 스크롤 위치(`scrollTop`)와 뷰포트 높이(`clientHeight || 810px`)를 결합한 가시 뷰포트 수학을 강제한다:
     - 수직 중앙(`middle`): $\text{targetT} = \text{boundT} + \frac{\text{boundH} - \text{item.h}}{2}$ (여기서 $\text{boundT} = \text{scrollContainer.scrollTop}$, $\text{boundH} = \text{scrollContainer.clientHeight}$).
     - 하단(`bottom`): $\text{targetT} = \text{boundT} + \text{boundH} - \text{item.h} - 10$ (하단 10px 안전 여백).
-  - **정렬 후 조작 인터페이스 실시간 동기화**: 정렬 연산 완료 후 DOM `style.left/top` 갱신에 그치지 않고, 반드시 `window.updateHandles(el)` 및 `window.SelectionAdorner.update()`를 호출하여 드래그 핸들(`.lf-drag-handle`), 리사이저(`.lf-resizer`), 선택 박스, 부모 창 인스펙터(X/Y 좌표)를 1:1로 실시간 갱신한다.
+  - **정렬 후 조작 인터페이스 실시간 동기화**: 정렬 연산 완료 후 DOM `style.left/top` 갱신에 그치지 않고, 반드시 `window.updateHandles(el)` 및 `window.SelectionAdorner.update()`를 호출하여 드래그 핸들(`.bychoi-drag-handle`), 리사이저(`.bychoi-resizer`), 선택 박스, 부모 창 인스펙터(X/Y 좌표)를 1:1로 실시간 갱신한다.
   - **부모 창 `alignSelected` 안전 가드**: `activeIds`가 비어있을 때 `window.state.selectedComponent.id`로 fallback하는 안전 가드를 적용하여 단일 선택 상태에서도 인스펙터 정렬 버튼 클릭이 100% 정상 작동하도록 보장한다.
 
 ## Connector and Cross-Window Interaction Principles
@@ -152,9 +152,9 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
   - **통합 로직**: 다중 선택(Marquee) 및 교차 검사 시, 반드시 **이프레임 바디(Global Root)**를 기준점(Origin)으로 삼아 모든 좌표를 가상 공간으로 변환(Normalize)한 뒤 연산하라.
 
 - **Performance Optimization (rAF)**: 커넥터 재그리기와 같이 연산량이 많은 실시간 업데이트는 `requestAnimationFrame`을 사용하여 브라우저 주사율에 최적화하라.
-- **Selection Protection**: iframe 내부 클릭 시 발생하는 `LF_DESELECT`와 같은 전역 선택 해제 메시지가 현재 진행 중인 부모 창의 인터랙션(커넥터 드래그 등)을 강제로 중단시키지 않도록 방어 로직을 구축하라.
+- **Selection Protection**: iframe 내부 클릭 시 발생하는 `BYCHOI_DESELECT`와 같은 전역 선택 해제 메시지가 현재 진행 중인 부모 창의 인터랙션(커넥터 드래그 등)을 강제로 중단시키지 않도록 방어 로직을 구축하라.
 - **Z-Index Layering**: 커넥터 레이어와 같이 마우스 이벤트를 직접 받아야 하는 SVG 레이어는 iframe보다 높은 `z-index`(예: 10001)를 가져야 하며, 내부의 핸들/히트박스에는 `pointer-events: auto`를 명시적으로 부여해야 한다.
-- **Selection Loop Protection**: `LF_COMP_SELECTED` 메시지를 구독하여 기존 선택을 해제(clearSelection)하는 로직을 작성할 때, 현재 내가 선택한 컴포넌트(예: `isConnector: true`)에 대한 메시지까지 처리하여 자기 자신을 해제하지 않도록 메시지 데이터를 필터링하라.
+- **Selection Loop Protection**: `BYCHOI_COMP_SELECTED` 메시지를 구독하여 기존 선택을 해제(clearSelection)하는 로직을 작성할 때, 현재 내가 선택한 컴포넌트(예: `isConnector: true`)에 대한 메시지까지 처리하여 자기 자신을 해제하지 않도록 메시지 데이터를 필터링하라.
 
 ## 🏗️ Unified Object Architecture (Established)
 - **Terminology**: Text Boxes, Shapes, Atoms, and Lines are collectively referred to as **'모든 오브젝트' (All Objects)**.
@@ -166,12 +166,12 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 - **Global Screen Layer**: 모든 오브젝트는 iframe 내부의 **`document.body`**에 직접 위치한다. 특정 템플릿 영역(`.mobile-content` 등)에 종속되지 않음으로써 스크린 어디서든 자유로운 배치와 그룹화가 가능하다.
 - **Unified Coordinate System**: 모든 오브젝트는 고정 픽셀(**px**) 단위를 사용한다. 더 이상 퍼센트(%) 단위를 사용하지 않아 단위 변환 오차가 발생하지 않는다.
 - **Auto-Migration Strategy**: 스크린 로드 시 `%` 좌표가 발견되면 `enforceDesignSystem`을 통해 현재 화면 크기 기준의 **절대 픽셀(`px`)**로 즉시 자동 변환한다. 이는 그룹화 엔진이 `style.left/top` 데이터를 안전하게 산술 연산하기 위한 전제 조건이다.
-- **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.lf-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
+- **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.bychoi-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
 - **Persistence**: 저장 시 HTML DOM 스냅샷이 주체(SSOT)가 된다. 텍스트 마커의 경우 호환성을 위해 `metadata.json`의 `description` 리스트를 유지하지만, 이 또한 항상 `body` 기준의 절대 픽셀 좌표로 동기화되어야 한다.
 
 ## 📱 Responsive PC & Mobile Template Engine Architecture
 - **Dedicated Multi-Selection Interceptor (`vctrl_responsive_multiselect.js`)**:
-  - 반응형 스크린의 중첩 스크롤 컨테이너(`.pc-content-inner`, `.mobile-content-inner`) 내부 요소들은 마키 드래그 시 좌표 오차가 발생하므로, `LF_MARQUEE_START` 발생 시 `isResponsiveScreen()` 가드를 통해 실시간 Bounding Rect를 재계산(`recalculateTargetsForResponsive`)하여 정밀 스냅을 보장한다.
+  - 반응형 스크린의 중첩 스크롤 컨테이너(`.pc-content-inner`, `.mobile-content-inner`) 내부 요소들은 마키 드래그 시 좌표 오차가 발생하므로, `BYCHOI_MARQUEE_START` 발생 시 `isResponsiveScreen()` 가드를 통해 실시간 Bounding Rect를 재계산(`recalculateTargetsForResponsive`)하여 정밀 스냅을 보장한다.
 - **Cross-Frame Clipboard Pipeline (`vctrl_shortcuts.js`)**:
   - `isResponsiveTemplate` 엄격 가드를 통해 비반응형 템플릿과 100% 분리 실행.
   - `window.lastActiveFrame` (`'pc'` / `'mobile'`) 및 `.active-column`을 감지하여 타겟 컨테이너(`mobileInner` / `pcInner`)로 자동 라우팅.
@@ -228,7 +228,7 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 | :--- | :--- | :--- | :--- |
 | **Tier 1** | Base / Background | `0 ~ 999` | 캔버스 베이스라인, `#canvas_bg_layer` (`0`), 그리드 가이드선 (`10`) |
 | **Tier 2** | Content Components | `1,000 ~ 69,999` | 일반 도형, 텍스트, 아톰, 테이블, 커넥터, 일러스트 등 캔버스 상의 모든 표준 컨텐츠 컴포넌트 (초기 기본값 `1,000`, 생성 시 `+10` 증분). 티어 상한선 `69,900`. `69,000` 도달 시 비례 압축(`compactZIndices`)을 통해 공간 자동 정돈 |
-| **Tier 3** | Active Selection & Marquee | `70,000 ~ 79,999` | 선택 바운딩 아웃라인, 리사이즈 핸들(`.lf-drag-handle`, `.lf-resizer`), 마키 드래그 박스(`.v4-marquee-box` = `70,000`) |
+| **Tier 3** | Active Selection & Marquee | `70,000 ~ 79,999` | 선택 바운딩 아웃라인, 리사이즈 핸들(`.bychoi-drag-handle`, `.bychoi-resizer`), 마키 드래그 박스(`.v4-marquee-box` = `70,000`) |
 | **Tier 4** | In-Canvas Dropdowns & Popups | `80,000 ~ 99,999` | 셀렉트박스 드롭다운 리스트, 캔버스 인라인 팝업(`.v4-atom-popup` = `80,000 ~ 85,000`) |
 | **Tier 5** | Virtual Sticky HUD (Scroll Pinned) | `100,000 ~ 179,999` | 상단 헤더, 하단 독, 플로팅 툴바, 스티키 바 등 `data-scroll-fixed`가 부여된 스크롤 고정 요소 (`100,000 ~ 179,900`) |
 | **Tier 6** | Annotation Pin Dedicated Layer | `200,000 ~ 299,999` | 디스크립션 핀 전용 오버레이 컨테이너(`.v4-pin-layer` = `250,000 !important`), 일반 본문 핀(`.pin-marker` = `200,000`), 스크롤 고정 호스트 핀(`data-scroll-fixed="viewport"` = `200,050`) |
@@ -241,15 +241,15 @@ description: Use when editing Workspace Editor engine files, vctrl_core.js, vctr
 
 | 동작 (Action) | 키보드 단축키 (Win / Mac) | 메시지 액션 | 동작 메커니즘 및 무결성 보장 |
 | :--- | :--- | :--- | :--- |
-| **맨 앞으로 가져오기** | `Ctrl + Shift + ]` / `Cmd + Shift + ]` | `LF_BRING_FRONT` | 현재 요소가 속한 티어의 최상위 값(`normal` 티어의 경우 최대 `69,900`, `fixed` 티어의 경우 `179,900`)으로 안전하게 캡핑 승격. 상위 계층(핀 레이어 등) 침범 차단 |
-| **한 단계 앞으로** | `Ctrl + ]` / `Cmd + ]` | `LF_BRING_FORWARD` | 동일 티어 내에서 자신보다 바로 위에 위치한 형제 요소 1개와 z-index 단일 스텝 스왑(Swap). 상위 형제가 없으면 무동작 유지 |
-| **맨 뒤로 보내기** | `Ctrl + Shift + [` / `Cmd + Shift + [`` | `LF_SEND_BACK` | 현재 요소가 속한 티어의 바닥선(`1,000`)으로 안전하게 이동. 0 이하 음수 추락을 막기 위해 필요한 경우 전체 형제 요소의 z-index를 양수로 일괄 쉬프트 보정 |
-| **한 단계 뒤로** | `Ctrl + [` / `Cmd + [` | `LF_SEND_BACKWARD` | 동일 티어 내에서 자신보다 바로 아래에 위치한 형제 요소 1개와 z-index 단일 스텝 스왑(Swap). 하위 형제가 없으면 무동작 유지 |
+| **맨 앞으로 가져오기** | `Ctrl + Shift + ]` / `Cmd + Shift + ]` | `BYCHOI_BRING_FRONT` | 현재 요소가 속한 티어의 최상위 값(`normal` 티어의 경우 최대 `69,900`, `fixed` 티어의 경우 `179,900`)으로 안전하게 캡핑 승격. 상위 계층(핀 레이어 등) 침범 차단 |
+| **한 단계 앞으로** | `Ctrl + ]` / `Cmd + ]` | `BYCHOI_BRING_FORWARD` | 동일 티어 내에서 자신보다 바로 위에 위치한 형제 요소 1개와 z-index 단일 스텝 스왑(Swap). 상위 형제가 없으면 무동작 유지 |
+| **맨 뒤로 보내기** | `Ctrl + Shift + [` / `Cmd + Shift + [`` | `BYCHOI_SEND_BACK` | 현재 요소가 속한 티어의 바닥선(`1,000`)으로 안전하게 이동. 0 이하 음수 추락을 막기 위해 필요한 경우 전체 형제 요소의 z-index를 양수로 일괄 쉬프트 보정 |
+| **한 단계 뒤로** | `Ctrl + [` / `Cmd + [` | `BYCHOI_SEND_BACKWARD` | 동일 티어 내에서 자신보다 바로 아래에 위치한 형제 요소 1개와 z-index 단일 스텝 스왑(Swap). 하위 형제가 없으면 무동작 유지 |
 
 - **실행 취소(Undo) 보장**: 모든 레이어 변경 작업 전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 1프레임 즉시 복원할 수 있습니다.
 - **자동 비례 압축 (`normalizeZIndices`) 및 티어 판별 무결성**:
   - **속성 기반 엄격 티어 판별**: Scroll Pin(Tier 5) 여부는 `rawZ >= 100000` 수치 추정이 아닌 **오직 `c.hasAttribute('data-scroll-fixed')` 속성 유무**로만 판별합니다.
-  - **자동 정규화 및 그룹 자식 정돈**: 일반 오브젝트(`!isFixed`) 중 `z-index >= 69,000`인 요소가 존재하거나, 고정 요소(`isFixed`)가 `100,000 ~ 179,999` 범위를 벗어난 경우, 또는 `.lf-group` 내부 자식들의 `z-index`가 `50,000` 이상이거나 비정상 격차를 가질 경우, 기존 상대적 z-order 순서를 100% 보존하면서 `1,000`(`fixed`는 `100,000`)부터 `+10` 간격으로 즉시 재배치합니다.
+  - **자동 정규화 및 그룹 자식 정돈**: 일반 오브젝트(`!isFixed`) 중 `z-index >= 69,000`인 요소가 존재하거나, 고정 요소(`isFixed`)가 `100,000 ~ 179,999` 범위를 벗어난 경우, 또는 `.bychoi-group` 내부 자식들의 `z-index`가 `50,000` 이상이거나 비정상 격차를 가질 경우, 기존 상대적 z-order 순서를 100% 보존하면서 `1,000`(`fixed`는 `100,000`)부터 `+10` 간격으로 즉시 재배치합니다.
   - **그룹 해제(`Ungroup`) 및 다중 붙여넣기(`Paste`) 시 Rank 기반 `+10` 스텝 오프셋**: 그룹 해제(`vctrl_responsive_multiselect.js`)나 다중 붙여넣기(`vctrl_clipboard_objects.js`) 시 원시 `origZ - minZ` 차이를 그대로 합산하지 않고, 정렬 순위(Rank)에 따른 `rankIdx * 10` 오프셋을 적용하여 중첩 그룹 해제 반복 시 `z-index`가 기하급수적으로 부풀어 오르는 현상을 원천 방지합니다.
 
 ### 3. 디스크립션 핀 Stacking Context 격리 극복 및 전용 오버레이 (`.v4-pin-layer`)

@@ -80,7 +80,7 @@ window.V4_COMPONENT_LIBRARY = {
             koName: '다이아몬드 마름모 조건 의사결정',
             category: 'Shapes',
             iconType: 'svg',
-            iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 18px; height: 18px;"><polygon points="12 2 22 12 12 22 2 12"></polygon></svg>',
+            iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 18px; height: 18px;"><polygon points="12 2 22 12 12 22 2 12"></polygon></svg>',
             iconColor: '#00e5ff',
             width: '100px',
             height: '100px',
@@ -259,7 +259,7 @@ window.V4_COMPONENT_LIBRARY = {
             html: `
             <nav class="premium-gnb" style="display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 80px; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); width: 100%; color: white; font-family: 'Inter', sans-serif; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; gap: 32px;">
-                    <div style="font-size: 24px; font-weight: 900; letter-spacing: -1px;">LF<span style="color: #6366f1;">.</span></div>
+                    <div style="font-size: 24px; font-weight: 900; letter-spacing: -1px;">BYCHOI<span style="color: #6366f1;">.</span></div>
                     <div style="display: flex; gap: 24px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7);">
                         <span>NEW</span>
                         <span>MEN</span>

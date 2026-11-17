@@ -27,7 +27,7 @@ window.ConnectorEngine = (function() {
             if (window.markAsDirty) window.markAsDirty();
             const iframe = window.DOM?.iframe;
             if (window.MessageHub && iframe?.contentWindow && window.state?.connectors) {
-                MessageHub.send(iframe.contentWindow, 'LF_SYNC_CONNECTORS', { connectors: window.state.connectors });
+                MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_CONNECTORS', { connectors: window.state.connectors });
             }
         };
 
@@ -46,19 +46,19 @@ window.ConnectorEngine = (function() {
         }
 
         if (window.MessageHub) {
-            window.MessageHub.subscribe('LF_SNAP_REQUEST', syncAnchoredPositions);
-            window.MessageHub.subscribe('LF_SNAP_RESPONSE', syncAnchoredPositions);
-            window.MessageHub.subscribe('LF_SNAP_END', syncAnchoredPositions);
-            window.MessageHub.subscribe('LF_COMP_RESIZED', syncAnchoredPositions);
-            window.MessageHub.subscribe('LF_DESELECT', clearSelection); 
+            window.MessageHub.subscribe('BYCHOI_SNAP_REQUEST', syncAnchoredPositions);
+            window.MessageHub.subscribe('BYCHOI_SNAP_RESPONSE', syncAnchoredPositions);
+            window.MessageHub.subscribe('BYCHOI_SNAP_END', syncAnchoredPositions);
+            window.MessageHub.subscribe('BYCHOI_COMP_RESIZED', syncAnchoredPositions);
+            window.MessageHub.subscribe('BYCHOI_DESELECT', clearSelection); 
             
             // Forward selection from iframe
-            window.MessageHub.subscribe('LF_CONNECTOR_CLICKED', (data) => {
+            window.MessageHub.subscribe('BYCHOI_CONNECTOR_CLICKED', (data) => {
                 selectConnector(data.id, data.shiftKey);
             });
             
             // Handle handle drag from iframe
-            window.MessageHub.subscribe('LF_CONNECTOR_HANDLE_DOWN', (data) => {
+            window.MessageHub.subscribe('BYCHOI_CONNECTOR_HANDLE_DOWN', (data) => {
                 isDragging = true;
                 dragPoint = { connId: data.id, pointType: data.pointType };
                 collectSnapTargets();
@@ -66,7 +66,7 @@ window.ConnectorEngine = (function() {
             });
 
             // Handle connector position update from iframe (Group move)
-            window.MessageHub.subscribe('LF_UPDATE_CONNECTOR_POS', (data) => {
+            window.MessageHub.subscribe('BYCHOI_UPDATE_CONNECTOR_POS', (data) => {
                 const conn = window.state.connectors.find(c => c.id === data.id);
                 if (conn) {
                     conn.start.x = data.start.x;
@@ -75,7 +75,7 @@ window.ConnectorEngine = (function() {
                     conn.end.y = data.end.y;
                 }
             });
-            window.MessageHub.subscribe('LF_SHIFT_CONNECTOR_POS', (data) => {
+            window.MessageHub.subscribe('BYCHOI_SHIFT_CONNECTOR_POS', (data) => {
                 const conn = window.state.connectors.find(c => c.id === data.id);
                 if (conn) {
                     conn.start.x += data.dx;
@@ -86,15 +86,15 @@ window.ConnectorEngine = (function() {
                     if (window.markAsDirty) window.markAsDirty();
                     const iframe = window.DOM?.iframe;
                     if (window.MessageHub && iframe?.contentWindow && window.state?.connectors) {
-                        MessageHub.send(iframe.contentWindow, 'LF_SYNC_CONNECTORS', { connectors: window.state.connectors });
+                        MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_CONNECTORS', { connectors: window.state.connectors });
                     }
                 }
             });
-            window.MessageHub.subscribe('LF_CONNECTOR_HANDLE_MOVE', (data) => {
+            window.MessageHub.subscribe('BYCHOI_CONNECTOR_HANDLE_MOVE', (data) => {
                 onIframeMouseMove(data);
             });
-            window.MessageHub.subscribe('LF_CONNECTOR_HANDLE_UP', onGlobalMouseUp);
-            window.MessageHub.subscribe('LF_DELETE_CONNECTOR', (data) => {
+            window.MessageHub.subscribe('BYCHOI_CONNECTOR_HANDLE_UP', onGlobalMouseUp);
+            window.MessageHub.subscribe('BYCHOI_DELETE_CONNECTOR', (data) => {
                 if (data.id) {
                     window.state.connectors = window.state.connectors.filter(c => c.id !== data.id);
                     if (window.state.activeFile && window.state.activeFile.meta) {
@@ -105,7 +105,7 @@ window.ConnectorEngine = (function() {
                     if (window.markAsDirty) window.markAsDirty();
                 }
             });
-            window.MessageHub.subscribe('LF_CREATE_CONNECTOR', (data) => {
+            window.MessageHub.subscribe('BYCHOI_CREATE_CONNECTOR', (data) => {
                 if (window.V4UndoManager) window.V4UndoManager.saveState();
                 const id = 'conn_' + Date.now();
                 const newConnector = {
@@ -122,7 +122,7 @@ window.ConnectorEngine = (function() {
                 selectConnector(id);
                 if (window.markAsDirty) window.markAsDirty();
             });
-            window.MessageHub.subscribe('LF_SYNC_CONNECTORS', (data) => {
+            window.MessageHub.subscribe('BYCHOI_SYNC_CONNECTORS', (data) => {
                 window.state.connectors = data.connectors || [];
                 if (window.state.activeFile && window.state.activeFile.meta) {
                     window.state.activeFile.meta.connectors = window.state.connectors;
@@ -155,7 +155,7 @@ window.ConnectorEngine = (function() {
                     if (window.markAsDirty) window.markAsDirty();
                     const iframe = window.DOM?.iframe;
                     if (window.MessageHub && iframe?.contentWindow && window.state?.connectors) {
-                        MessageHub.send(iframe.contentWindow, 'LF_SYNC_CONNECTORS', { connectors: window.state.connectors });
+                        MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_CONNECTORS', { connectors: window.state.connectors });
                     }
                 }
             }
@@ -173,7 +173,7 @@ window.ConnectorEngine = (function() {
                     if (window.markAsDirty) window.markAsDirty();
                     const iframe = window.DOM?.iframe;
                     if (window.MessageHub && iframe?.contentWindow && window.state?.connectors) {
-                        MessageHub.send(iframe.contentWindow, 'LF_SYNC_CONNECTORS', { connectors: window.state.connectors });
+                        MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_CONNECTORS', { connectors: window.state.connectors });
                     }
                 }
             }
@@ -183,7 +183,7 @@ window.ConnectorEngine = (function() {
     function redrawAll() {
         const iframe = window.DOM?.iframe || document.getElementById('screen-iframe');
         if (window.MessageHub && iframe?.contentWindow) {
-            MessageHub.send(iframe.contentWindow, 'LF_RENDER_CONNECTORS', {
+            MessageHub.send(iframe.contentWindow, 'BYCHOI_RENDER_CONNECTORS', {
                 connectors: window.state.connectors || [],
                 selectedIds: selectedConnectorIds
             });
@@ -220,7 +220,7 @@ window.ConnectorEngine = (function() {
             // Dynamically calculate proximity to elements to toggle .near-connector inside iframe
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
             const iframeRect = iframe.getBoundingClientRect();
-            iframeDoc.querySelectorAll('.lf-component').forEach(comp => {
+            iframeDoc.querySelectorAll('.bychoi-component').forEach(comp => {
                 if (comp.id === dragPoint.connId) return;
                 const r = comp.getBoundingClientRect();
                 const left = r.left + iframeRect.left;
@@ -273,7 +273,7 @@ window.ConnectorEngine = (function() {
                     // Dynamically highlight snapped port inside iframe
                     const targetEl = iframeDoc.getElementById(bestSnap.id);
                     if (targetEl) {
-                        const portEl = targetEl.querySelector(`.lf-connector-port.port-${bestSnap.side}`);
+                        const portEl = targetEl.querySelector(`.bychoi-connector-port.port-${bestSnap.side}`);
                         if (portEl) {
                             portEl.style.transform = 'scale(1.8)';
                             portEl.style.background = '#fb7185';
@@ -303,7 +303,7 @@ window.ConnectorEngine = (function() {
         const iframe = window.DOM?.iframe;
         if (iframe) {
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            iframeDoc.querySelectorAll('.lf-component').forEach(comp => {
+            iframeDoc.querySelectorAll('.bychoi-component').forEach(comp => {
                 comp.classList.remove('near-connector');
             });
         }
@@ -316,7 +316,7 @@ window.ConnectorEngine = (function() {
             if (window.markAsDirty) window.markAsDirty();
             redrawAll();
             if (window.MessageHub && iframe?.contentWindow && window.state?.connectors) {
-                MessageHub.send(iframe.contentWindow, 'LF_SYNC_CONNECTORS', { connectors: window.state.connectors });
+                MessageHub.send(iframe.contentWindow, 'BYCHOI_SYNC_CONNECTORS', { connectors: window.state.connectors });
             }
         }
     }
@@ -328,7 +328,7 @@ window.ConnectorEngine = (function() {
         const iframeRect = iframe.getBoundingClientRect();
         
         snapTargets = [];
-        iframeDoc.querySelectorAll('.lf-component').forEach(comp => {
+        iframeDoc.querySelectorAll('.bychoi-component').forEach(comp => {
             if (dragPoint && comp.id === dragPoint.connId) return;
             
             // Physical bounding rect for client mouse comparison
@@ -427,7 +427,7 @@ window.ConnectorEngine = (function() {
             const conn = window.state.connectors.find(c => c.id === lastId);
             const x = conn ? Math.min(conn.start.x, conn.end.x) : 0;
             const w = conn ? Math.abs(conn.end.x - conn.start.x) : 0;
-            window.MessageHub.send(window, 'LF_COMP_SELECTED', { id: lastId, isConnector: true, x: x, w: w });
+            window.MessageHub.send(window, 'BYCHOI_COMP_SELECTED', { id: lastId, isConnector: true, x: x, w: w });
         }
         redrawAll();
     }
@@ -604,7 +604,7 @@ window.ConnectorEngine = (function() {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             const target = getActiveLineTarget();
             if (iframeWin && target.id) {
-                MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                     id: target.id,
                     ids: target.ids,
                     style: { lineDir: dir }
@@ -631,7 +631,7 @@ window.ConnectorEngine = (function() {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             const target = getActiveLineTarget();
             if (iframeWin && target.id) {
-                MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                     id: target.id,
                     ids: target.ids,
                     style: { lineStyle: st }
@@ -656,7 +656,7 @@ window.ConnectorEngine = (function() {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             const target = getActiveLineTarget();
             if (iframeWin && target.id) {
-                MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                     id: target.id,
                     ids: target.ids,
                     style: { lineThickness: val }
@@ -669,7 +669,7 @@ window.ConnectorEngine = (function() {
             const iframeWin = (window.DOM && window.DOM.iframe && window.DOM.iframe.contentWindow) || (document.getElementById('main-iframe') || document.getElementById('screen-iframe'))?.contentWindow;
             const target = getActiveLineTarget();
             if (iframeWin && target.id) {
-                MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                     id: target.id,
                     ids: target.ids,
                     style: { lineColor: val }
@@ -682,7 +682,7 @@ window.ConnectorEngine = (function() {
             if (iframeWin && target.id) {
                 const currentDir = e.target.getAttribute('data-dir') || 'horizontal';
                 const prop = currentDir === 'vertical' ? 'height' : 'width';
-                MessageHub.send(iframeWin, 'LF_UPDATE_STYLE', {
+                MessageHub.send(iframeWin, 'BYCHOI_UPDATE_STYLE', {
                     id: target.id,
                     ids: target.ids,
                     style: { [prop]: val + 'px' }

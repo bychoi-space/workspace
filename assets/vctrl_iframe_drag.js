@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_iframe_drag.js
- * Mouse drag and element resizing engine logic for LF Editor Studio (Iframe Side).
+ * Mouse drag and element resizing engine logic for bychoi workspace Studio (Iframe Side).
  */
 
 window.v4DragResizeScript = `
@@ -51,7 +51,7 @@ window.v4DragResizeScript = `
         var pcInner = document.querySelector('.pc-content-inner');
         var mobileInner = document.querySelector('.mobile-content-inner');
 
-        var isInsideGroup = !!(activeEl.parentElement && activeEl.parentElement.closest('.lf-group'));
+        var isInsideGroup = !!(activeEl.parentElement && activeEl.parentElement.closest('.bychoi-group'));
         if (isResp && pcFrame && mobileFrame && pcInner && mobileInner && !isInsideGroup) {
             var compRect = activeEl.getBoundingClientRect();
             var compCenterX = compRect.left + compRect.width / 2;
@@ -132,7 +132,7 @@ window.v4DragResizeScript = `
         var allPinnedHosts = Array.from(document.querySelectorAll('[data-scroll-fixed]:not([data-scroll-fixed="none"])')).filter(function(el) {
             if (!el || el === pin || el === parent) return false;
             if (el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return false;
-            if (el.parentElement && el.parentElement.closest && el.parentElement.closest('.lf-group')) return false;
+            if (el.parentElement && el.parentElement.closest && el.parentElement.closest('.bychoi-group')) return false;
             return true;
         });
 
@@ -191,7 +191,7 @@ window.v4DragResizeScript = `
 
             if (parent) {
                 var trailingRef = Array.from(parent.children).find(function(c) {
-                    return !c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+                    return !c.classList.contains('bychoi-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
                 });
                 if (trailingRef && trailingRef.parentNode === parent) {
                     parent.insertBefore(pin, trailingRef);
@@ -231,7 +231,7 @@ window.v4DragResizeScript = `
             var fixedHostAttr = activeEl.getAttribute('data-fixed-host') || null;
             var scrollFixedAttr = activeEl.getAttribute('data-scroll-fixed') || 'none';
             notifyParent({
-                type: 'LF_UPDATE_PIN_POS',
+                type: 'BYCHOI_UPDATE_PIN_POS',
                 index: idx,
                 frame: frameType,
                 x: parseFloat(activeEl.style.left) || 0,
@@ -241,7 +241,7 @@ window.v4DragResizeScript = `
                 scrollFixed: scrollFixedAttr
             });
         }
-        if (activeEl.classList.contains('lf-group')) {
+        if (activeEl.classList.contains('bychoi-group')) {
             var hostRect = document.body.getBoundingClientRect();
             activeEl.querySelectorAll('.text-marker, .pin-marker').forEach(function(child) {
                 var childIdx = parseInt(child.id.replace('v4-pin-', ''));
@@ -252,7 +252,7 @@ window.v4DragResizeScript = `
                     var childFixedHost = child.getAttribute('data-fixed-host') || null;
                     var childScrollFixed = child.getAttribute('data-scroll-fixed') || 'none';
                     notifyParent({
-                        type: 'LF_UPDATE_PIN_POS',
+                        type: 'BYCHOI_UPDATE_PIN_POS',
                         index: childIdx,
                         x: absX,
                         y: absY,
@@ -328,9 +328,9 @@ window.v4DragResizeScript = `
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
                     const isResp = window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive();
                     if (!isResp) {
-                        notifyParent({ type: 'LF_SNAP_START' });
+                        notifyParent({ type: 'BYCHOI_SNAP_START' });
                     }
-                    document.querySelectorAll('.lf-component.selected').forEach(s => s.classList.add('dragging-now'));
+                    document.querySelectorAll('.bychoi-component.selected').forEach(s => s.classList.add('dragging-now'));
 
                     if (window.activeEl) {
                         if (isResp) {
@@ -375,7 +375,7 @@ window.v4DragResizeScript = `
                         }
                     }
                 } else {
-                    notifyParent({ type: 'LF_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight, activeId: window.activeEl.id });
+                    notifyParent({ type: 'BYCHOI_SNAP_REQUEST', x: logicalX, y: logicalY, w: window.activeEl.offsetWidth, h: window.activeEl.offsetHeight, activeId: window.activeEl.id });
                 }
 
                 // Update attached pins if any (Co-drag Anchor)
@@ -496,7 +496,7 @@ window.v4DragResizeScript = `
                 
                 window.updateHandles(window.activeEl);
                 markDirty();
-                notifyParent({ type: 'LF_COMP_RESIZED', id: (window.activeEl && window.activeEl.id) || null, w: nw, h: nh });
+                notifyParent({ type: 'BYCHOI_COMP_RESIZED', id: (window.activeEl && window.activeEl.id) || null, w: nw, h: nh });
             }
         },
         
@@ -511,7 +511,7 @@ window.v4DragResizeScript = `
                     var compL = parseFloat(window.activeEl.style.left) || 0;
                     var compT = parseFloat(window.activeEl.style.top) || 0;
                     notifyParent({
-                        type: 'LF_SNAP_END',
+                        type: 'BYCHOI_SNAP_END',
                         id: window.activeEl.id,
                         x: compL,
                         y: compT,
@@ -541,14 +541,14 @@ window.v4DragResizeScript = `
                 window.activeEl.setAttribute('data-resized', 'true');
                 if (typeof window.enforceDesignSystem === 'function') window.enforceDesignSystem();
             }
-            document.querySelectorAll('.lf-component').forEach(function(s) { s.classList.remove('dragging-now'); });
+            document.querySelectorAll('.bychoi-component').forEach(function(s) { s.classList.remove('dragging-now'); });
             isPendingDrag = false;
             isDragging = false;
             isResizing = false;
             if (window.ScrollPinEngine && typeof window.ScrollPinEngine.scheduleUpdate === 'function') {
                 window.ScrollPinEngine.scheduleUpdate();
             }
-            if (!document.querySelector('.lf-component.selected')) {
+            if (!document.querySelector('.bychoi-component.selected')) {
                 window.activeEl = null;
             }
             groupChildrenStart = null;
@@ -564,8 +564,8 @@ window.v4DragResizeScript = `
             startW = window.activeEl.offsetWidth;
             startH = window.activeEl.offsetHeight;
             
-            if (window.activeEl.classList.contains('lf-group')) {
-                groupChildrenStart = Array.from(window.activeEl.querySelectorAll('.lf-component'))
+            if (window.activeEl.classList.contains('bychoi-group')) {
+                groupChildrenStart = Array.from(window.activeEl.querySelectorAll('.bychoi-component'))
                     .map(child => ({
                         el: child,
                         left: parseFloat(child.style.left) || 0,

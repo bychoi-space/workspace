@@ -56,7 +56,7 @@ window.v4ResponsiveSmartGuideScript = `
 
         getContainerContext: function(el) {
             if (!el) {
-                const sel = document.querySelector('.lf-component.selected');
+                const sel = document.querySelector('.bychoi-component.selected');
                 if (sel) el = sel;
             }
             if (!el) return null;
@@ -382,7 +382,7 @@ window.v4ResponsiveSmartGuideScript = `
             if (!this.isHoverInspecting) return;
             this.isHoverInspecting = false;
 
-            const activeEl = document.querySelector('.lf-component.selected') || window.activeEl;
+            const activeEl = document.querySelector('.bychoi-component.selected') || window.activeEl;
             if (activeEl) {
                 this.onSelect(activeEl, 7000);
                 return;
@@ -523,7 +523,7 @@ window.v4ResponsiveSmartGuideScript = `
         },
 
         renderAltInspect: function(clientX, clientY) {
-            const activeEl = document.querySelector('.lf-component.selected') || window.activeEl;
+            const activeEl = document.querySelector('.bychoi-component.selected') || window.activeEl;
             if (!activeEl) {
                 this.clearHoverInspect();
                 return;
@@ -545,7 +545,7 @@ window.v4ResponsiveSmartGuideScript = `
                 return;
             }
 
-            let hoverTarget = elUnderMouse.closest('.lf-component');
+            let hoverTarget = elUnderMouse.closest('.bychoi-component');
             if (hoverTarget && window.V4DimmedLayer && typeof window.V4DimmedLayer.isComponentSelectable === 'function' && !window.V4DimmedLayer.isComponentSelectable(hoverTarget)) {
                 hoverTarget = null;
             }

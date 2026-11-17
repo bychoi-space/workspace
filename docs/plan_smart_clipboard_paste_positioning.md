@@ -23,13 +23,13 @@
 
 | 게이트웨이 원칙 | 점검 항목 및 대응 계획 | 준수 여부 |
 | :--- | :--- | :---: |
-| **1. 운영 시스템 무결성 (Strict Production Integrity)** | 임의의 가짜 데이터나 모의 객체를 주입하지 않으며, 실제 클립보드 데이터(`v4Clipboard`, `window.top.__lf_global_clipboard__`)와 디스크 HTML/`metadata.json` 구조를 100% 보존합니다. | ✅ 준수 |
+| **1. 운영 시스템 무결성 (Strict Production Integrity)** | 임의의 가짜 데이터나 모의 객체를 주입하지 않으며, 실제 클립보드 데이터(`v4Clipboard`, `window.top.__bychoi_global_clipboard__`)와 디스크 HTML/`metadata.json` 구조를 100% 보존합니다. | ✅ 준수 |
 | **2. 사전 정밀 심층 분석 & 계획 수립 (Deep Analysis First)** | `assets/vctrl_clipboard_objects.js`, `assets/vctrl_iframe_script.js`, `assets/vctrl_clipboard.js`, 템플릿 구조를 전수 분석하고 전용 구현 계획서를 사전 확정합니다. | ✅ 준수 |
 | **3. 사이드이펙트 원천 차단 (Zero Side-Effects)** | 커넥터(Line), 그룹(Group), 잘라내기(`Ctrl+X`), 인스펙터 동기화, 스마트가이드 및 Z-Index 재배치 파이프라인의 기존 동작을 100% 유지합니다. | ✅ 준수 |
 | **4. 스크립트/런타임 에러 0건 (Zero Runtime Errors)** | `item.left`, `item.top`, `detectFrameType`, `targetCol` 객체 접근 시 철저한 널 가드(`?.`, `|| 0`)를 적용하여 콘솔 에러를 차단합니다. | ✅ 준수 |
 | **5. 백틱 충돌 에러 0건 (Zero Backtick Syntax Collisions)** | `vctrl_clipboard_objects.js` 파일 전체가 백틱(`` ` ``) 템플릿 리터럴로 감싸져 있으므로 내부에서 백틱 및 `${}` 변수 보간을 일절 사용하지 않고 표준 따옴표와 문자열 연결 연산자(`+`)만 사용합니다. | ✅ 준수 |
 | **6. 구문/브래킷 에러 0건 & 정적 검증 (Mandatory Static Verification)** | 작업 완료 즉시 `powershell -ExecutionPolicy Bypass -File scripts/check_syntax.ps1`을 실행하여 브래킷 밸런스 및 Node VM 인라인 스크립트 컴파일 0 Error를 자체 확인합니다. | ✅ 준수 |
-| **7. CORS 에러 0건 및 통신 프로토콜 준수 (Zero CORS Errors)** | Iframe과 부모 창 간의 `contentDocument` 직접 접근을 배제하고 `window.top.__lf_global_clipboard__` 및 `MessageHub`/`EditorBus` 규격을 준수합니다. | ✅ 준수 |
+| **7. CORS 에러 0건 및 통신 프로토콜 준수 (Zero CORS Errors)** | Iframe과 부모 창 간의 `contentDocument` 직접 접근을 배제하고 `window.top.__bychoi_global_clipboard__` 및 `MessageHub`/`EditorBus` 규격을 준수합니다. | ✅ 준수 |
 
 ---
 
@@ -40,8 +40,8 @@
 | :--- | :--- | :--- |
 | **`assets/vctrl_clipboard_objects.js`** | **[핵심 대상]** Iframe 내부의 오브젝트 복사/잘라내기/붙여넣기 직렬화 및 역직렬화 전담 엔진 (`window.v4ClipboardObjectsScript`). 현재 `isResponsiveTemplate` 여부와 무관하게 뷰포트 센터링이 강제 적용되어 있음. | - `sourceFrame` vs `targetFrame` 및 `isMultiFrame` 판정 로직 추가<br>- **동일 프레임**: `baseLeft = minLeft + offset`, `baseTop = minTop + offset`<br>- **프레임 이동**: 기존 뷰포트 정중앙 산출 유지<br>- 경계 가드(Clamping) 및 안전 보정 |
 | **`assets/vctrl_iframe_script.js`** | Iframe 내부의 이벤트 처리 및 프레임 감지 (`detectFrameType`), 프레임 클릭 시 활성 컬럼(`active-column`, `window.lastActiveFrame`) 실시간 추적. | - **수정 불필요 (기존 기능 100% 활용)**: 마우스 클릭/휠 시 `window.lastActiveFrame`이 정확히 갱신되고 있음을 확인 완료. |
-| **`assets/vctrl_clipboard.js`** | 부모 창의 글로벌 클립보드 SSOT (`window.top.__lf_global_clipboard__`) 저장 및 통신 핸들러. | - **수정 불필요**: 복사된 전체 오브젝트 속성(`frameContainer`, `left`, `top` 등)을 온전히 중계하고 있음을 확인 완료. |
-| **`assets/vctrl_shortcuts.js`** | `Ctrl+C`, `Ctrl+V`, `Ctrl+X` 핫키 바인딩 및 부모 프록시. | - **수정 불필요**: `window.pasteCopiedObjects()` 및 `LF_REQUEST_CLIPBOARD` 파이프라인 정상 유지. |
+| **`assets/vctrl_clipboard.js`** | 부모 창의 글로벌 클립보드 SSOT (`window.top.__bychoi_global_clipboard__`) 저장 및 통신 핸들러. | - **수정 불필요**: 복사된 전체 오브젝트 속성(`frameContainer`, `left`, `top` 등)을 온전히 중계하고 있음을 확인 완료. |
+| **`assets/vctrl_shortcuts.js`** | `Ctrl+C`, `Ctrl+V`, `Ctrl+X` 핫키 바인딩 및 부모 프록시. | - **수정 불필요**: `window.pasteCopiedObjects()` 및 `BYCHOI_REQUEST_CLIPBOARD` 파이프라인 정상 유지. |
 
 ---
 

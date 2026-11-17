@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_iframe_grid.js
- * Modular rendering engine for LF Editor Studio (Iframe Side).
+ * Modular rendering engine for bychoi workspace Studio (Iframe Side).
  * 
  * [WARNING FOR DEVELOPERS & AI AGENTS]
  * This file is wrapped in an outer template literal (window.v4GridScript = "...").
@@ -546,13 +546,13 @@ window.v4GridScript = `
         };
 
         var selectParentComponent = function(e) {
-            var comp = cell.closest(".lf-component");
+            var comp = cell.closest(".bychoi-component");
             if (comp) {
                 var isMulti = e ? (e.shiftKey || e.ctrlKey || e.metaKey) : false;
                 if (isMulti) {
                     comp.classList.toggle("selected");
                 } else {
-                    document.querySelectorAll(".lf-component").forEach(function(x) { x.classList.remove("selected"); });
+                    document.querySelectorAll(".bychoi-component").forEach(function(x) { x.classList.remove("selected"); });
                     comp.classList.add("selected");
                 }
                 if (window.updateHandles) window.updateHandles(comp);
@@ -564,7 +564,7 @@ window.v4GridScript = `
                 }
 
                 var payload = Object.assign({
-                    type: "LF_COMP_SELECTED",
+                    type: "BYCHOI_COMP_SELECTED",
                     shiftKey: isMulti,
                     activeColIndex: cIdx
                 }, compStyles);
@@ -582,9 +582,9 @@ window.v4GridScript = `
             var isBtn = (e.target && (e.target.tagName === "BUTTON" || !!e.target.closest("button")));
             if (isInput) {
                 e.stopPropagation();
-                var comp = cell.closest(".lf-component");
+                var comp = cell.closest(".bychoi-component");
                 if (comp && !comp.classList.contains("selected")) {
-                    document.querySelectorAll(".lf-component").forEach(function(x) { x.classList.remove("selected"); });
+                    document.querySelectorAll(".bychoi-component").forEach(function(x) { x.classList.remove("selected"); });
                     comp.classList.add("selected");
                     if (window.updateHandles) window.updateHandles(comp);
                 }
@@ -613,10 +613,10 @@ window.v4GridScript = `
         cell.addEventListener("focus", function() {
             cell.classList.add("active-cell-editing");
             var cIdx = getActiveColIndex();
-            var comp = cell.closest(".lf-component");
+            var comp = cell.closest(".bychoi-component");
             if (cIdx >= 0) {
                 var msg = {
-                    type: "LF_GRID_COL_FOCUSED",
+                    type: "BYCHOI_GRID_COL_FOCUSED",
                     compId: comp ? comp.id : null,
                     activeColIndex: cIdx
                 };
@@ -801,7 +801,7 @@ window.v4GridScript = `
                         }
                         if (typeof markDirty === "function") markDirty();
                         if (typeof notifyParent === "function") {
-                            notifyParent({ type: "LF_UPDATE_GRID_PROPERTIES", rowCount: newCount });
+                            notifyParent({ type: "BYCHOI_UPDATE_GRID_PROPERTIES", rowCount: newCount });
                         }
                     }
                 }
@@ -1231,7 +1231,7 @@ window.v4GridScript = `
     };
 
     var syncGridComponentHeight = function(container, rowHeightVal, rowCount, showPagination) {
-        var compEl = container.closest(".lf-component");
+        var compEl = container.closest(".bychoi-component");
         if (compEl) {
             if (!compEl.style.height) {
                 var rowHNum = parseInt(rowHeightVal) || 40;
@@ -1385,22 +1385,22 @@ window.v4GridScript = `
     }
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};
-    window.v4MessageHandlers["LF_UPDATE_GRID_PROPERTIES"] = function(d) {
+    window.v4MessageHandlers["BYCHOI_UPDATE_GRID_PROPERTIES"] = function(d) {
         var s = null;
         if (d && d.id) {
             var el = document.getElementById(d.id);
             if (el) {
-                s = el.closest(".lf-component") || el;
+                s = el.closest(".bychoi-component") || el;
             }
         }
         if (!s) {
-            s = document.querySelector(".lf-component.selected") || 
-                (document.querySelector(".selected-cell") ? document.querySelector(".selected-cell").closest(".lf-component") : null);
+            s = document.querySelector(".bychoi-component.selected") || 
+                (document.querySelector(".selected-cell") ? document.querySelector(".selected-cell").closest(".bychoi-component") : null);
         }
         if (!s) return;
         var container = s.classList.contains("v4-grid-container") ? s : (s.querySelector(".v4-grid-container") || s.closest(".v4-grid-container"));
         if (!container) return;
-        var comp = container.closest(".lf-component") || s;
+        var comp = container.closest(".bychoi-component") || s;
 
         if (window.V4UndoManager) window.V4UndoManager.saveState();
         
@@ -1533,7 +1533,7 @@ window.v4GridScript = `
         
         if (typeof window._getCompStyles === "function" && window.parent) {
             window.parent.postMessage(Object.assign({
-                type: "LF_COMP_SELECTED"
+                type: "BYCHOI_COMP_SELECTED"
             }, window._getCompStyles(comp)), "*");
         }
     };

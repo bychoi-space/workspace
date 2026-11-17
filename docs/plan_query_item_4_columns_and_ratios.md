@@ -37,9 +37,9 @@
 
 | 파일 경로 | 현재 역할 및 분석 내용 | 이번 작업에서의 변경 및 영향 범위 |
 | :--- | :--- | :--- |
-| **[assets/vctrl_ui_atoms.js](file:///c:/Users/sisun/ai_work/assets/vctrl_ui_atoms.js)** | Iframe 내부의 `LF_UPDATE_ADMIN_SETTINGS_PROPERTIES` 핸들러. 각 행의 `data-row{i}-cols`, `label`, `ratio` 등을 파싱하여 행과 셀을 동적으로 렌더링. | - `colsAttr === 2` 분기 내 `ratioAttr === '1:3'`, `ratioAttr === '3:1'` 지원<br>- $C_1 = W/4 - L$, $C_1 = 3W/4 - L$ flex calc 수식 추가<br>- `colsAttr === 4`일 때 4개의 라벨/컨텐츠 셀 렌더링 (루프는 이미 `for(c=0; c<colsAttr; c++)`로 일반화되어 있어 완벽 대응)<br>- 백틱(`` ` ``) 충돌 원천 차단 |
+| **[assets/vctrl_ui_atoms.js](file:///c:/Users/sisun/ai_work/assets/vctrl_ui_atoms.js)** | Iframe 내부의 `BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES` 핸들러. 각 행의 `data-row{i}-cols`, `label`, `ratio` 등을 파싱하여 행과 셀을 동적으로 렌더링. | - `colsAttr === 2` 분기 내 `ratioAttr === '1:3'`, `ratioAttr === '3:1'` 지원<br>- $C_1 = W/4 - L$, $C_1 = 3W/4 - L$ flex calc 수식 추가<br>- `colsAttr === 4`일 때 4개의 라벨/컨텐츠 셀 렌더링 (루프는 이미 `for(c=0; c<colsAttr; c++)`로 일반화되어 있어 완벽 대응)<br>- 백틱(`` ` ``) 충돌 원천 차단 |
 | **[assets/inspector/inspector_admin_settings.js](file:///c:/Users/sisun/ai_work/assets/inspector/inspector_admin_settings.js)** | 부모 창의 Query Item 인스펙터 패널 제어 모듈 (`_syncAdminSettingsProps`). 행 개수 증감, 행별 컬럼수/높이/라벨/비율 렌더링 및 변경 이벤트 전송. | - `admin-row-cols` 드롭다운에 `<option value="4">4개 컬럼</option>` 추가<br>- `admin-row-ratio-select` 드롭다운에 `1:3`, `3:1` 옵션 추가<br>- 컬럼 수가 4개일 때 컬럼 1~4 항목명 및 필수값 체크박스 렌더링 및 `updateConfig()` 바인딩<br>- `applyUpdatedRows()`, `getCurrentRowsData()` 데이터 추출 로직 보존 |
-| **[assets/vctrl_iframe_style_extractor.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_style_extractor.js)** | Iframe 내부 요소 선택 시 스타일 및 속성을 추출하여 부모 창(`LF_COMP_SELECTED`)으로 전달하는 SSOT 모듈. | - **분석 완료 (수정 불필요, 100% 자동 지원)**:<br>`adminRowData['adminRow' + i + 'Cols'] = parseInt(...) || 1;`<br>`adminRowData['adminRow' + i + 'Ratio'] = getAttribute(...) || '1:1';`<br>➔ 이미 임의의 정수 및 문자열 비율을 투명하게 추출하도록 구현되어 있음. |
+| **[assets/vctrl_iframe_style_extractor.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_style_extractor.js)** | Iframe 내부 요소 선택 시 스타일 및 속성을 추출하여 부모 창(`BYCHOI_COMP_SELECTED`)으로 전달하는 SSOT 모듈. | - **분석 완료 (수정 불필요, 100% 자동 지원)**:<br>`adminRowData['adminRow' + i + 'Cols'] = parseInt(...) || 1;`<br>`adminRowData['adminRow' + i + 'Ratio'] = getAttribute(...) || '1:1';`<br>➔ 이미 임의의 정수 및 문자열 비율을 투명하게 추출하도록 구현되어 있음. |
 | **[assets/vctrl_responsive_smartguide.js](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_smartguide.js)** | 스마트 가이드 스냅 엔진. `.v4-admin-content-cell` 및 `.v4-admin-label-cell`의 실제 렌더링 BoundingClientRect를 추종하여 10px 여백 및 중앙 스냅 계산. | - **분석 완료 (수정 불필요, 100% 자동 지원)**:<br>브라우저 실측 좌표(`cell.getBoundingClientRect().left + 10`) 기반이므로 4개 컬럼 분할 및 1:3, 3:1 분할 위치를 자동으로 정확하게 추종함. |
 | **[assets/vctrl_component_data.js](file:///c:/Users/sisun/ai_work/assets/vctrl_component_data.js)** | 컴포넌트 라이브러리(LIBRARY)의 초기 생성 템플릿 정의. | - 초기 기본 템플릿(1행 1컬럼) 유지 (신규 생성 시 하위 호환성 100% 유지) |
 | **[AGENTS.md](file:///c:/Users/sisun/ai_work/AGENTS.md)** | 시스템 코어 룰 문서. | - `Query Item(조회 항목) 및 전용 스마트 가이드 표준 규칙` 섹션에 4개 컬럼 및 1:3/3:1 분할 비율 규격 최신화 |
@@ -167,7 +167,7 @@
 6. **[구문 무결성 정적 검증 강제]**:
    - 코드 수정 완료 후 반드시 `powershell -ExecutionPolicy Bypass -File scripts/check_syntax.ps1` 및 `node scripts/diagnose_deep_inspection.js`를 구동하여 0 Errors 통과 확인.
 7. **[CORS 에러 0건]**:
-   - 부모 창과 Iframe 간 통신은 기존 표준 `MessageHub.send` (`LF_UPDATE_ADMIN_SETTINGS_PROPERTIES`) 프로토콜을 온전히 준수.
+   - 부모 창과 Iframe 간 통신은 기존 표준 `MessageHub.send` (`BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES`) 프로토콜을 온전히 준수.
 
 ---
 

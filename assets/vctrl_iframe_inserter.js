@@ -36,7 +36,7 @@ if (!window.v4IframeInserterScript) {
                           ((d.html && d.html.indexOf('data-scroll-fixed="top"') !== -1) ? 'top' : (d.scrollFixed || null));
 
         if (isResponsiveTemplate) {
-            const currentlySelected = document.querySelector('.lf-component.selected');
+            const currentlySelected = document.querySelector('.bychoi-component.selected');
             const isCanvasTarget = (window.lastActiveFrame === 'canvas') || 
                                    (currentlySelected && !currentlySelected.closest('.frame-column, .pc-browser-frame, .mobile-browser-frame, .pc-content-inner, .mobile-content-inner'));
 
@@ -199,7 +199,7 @@ if (!window.v4IframeInserterScript) {
 
         if (isPinMarker) {
             const idx = parseInt(d.id.replace('v4-pin-', '')) || 0;
-            v.className = 'lf-component pin-marker';
+            v.className = 'bychoi-component pin-marker';
             v.setAttribute('data-index', String(idx));
             v.setAttribute('data-pin-num', String(idx + 1));
             v.style.width = '20px';
@@ -210,10 +210,10 @@ if (!window.v4IframeInserterScript) {
                 v.style.willChange = 'transform';
             }
             v.innerHTML = '<div class="pin-number-badge" style="pointer-events:none; font-weight:500; font-size:12px; font-family:inherit; line-height:1; color:#ffffff;">' + (idx + 1) + '</div>' +
-                          '<div class="lf-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
+                          '<div class="bychoi-delete-trigger" style="right:-10px; top:-10px;">&times;</div>';
             if (typeof window.updateHandles === 'function') window.updateHandles(v);
         } else {
-            v.className = 'lf-component' + (d.isGroup ? ' lf-group' : '') + (d.className ? ' ' + d.className : ''); 
+            v.className = 'bychoi-component' + (d.isGroup ? ' bychoi-group' : '') + (d.className ? ' ' + d.className : ''); 
             if (!d.preserveLegacyStyle) {
                 v.setAttribute('data-v4-std', '2');
             }
@@ -224,7 +224,7 @@ if (!window.v4IframeInserterScript) {
                     v.style.zIndex = String(nextZ);
                 }
             }
-            v.innerHTML = d.html + '<div class="lf-delete-trigger">&times;</div>';
+            v.innerHTML = d.html + '<div class="bychoi-delete-trigger">&times;</div>';
             if (d.dataset) {
                 for (let k in d.dataset) {
                     v.setAttribute('data-' + k.replace(/([A-Z])/g, '-$1').toLowerCase(), d.dataset[k]);
@@ -259,7 +259,7 @@ if (!window.v4IframeInserterScript) {
             }
         } catch(scaleErr) {}
         
-        const children = Array.from(v.children).filter(c => c.classList.contains('lf-component') || c.classList.contains('lf-group'));
+        const children = Array.from(v.children).filter(c => c.classList.contains('bychoi-component') || c.classList.contains('bychoi-group'));
         if (children.length === 1) {
             const inner = children[0];
             const l = parseInt(inner.style.left) || 0;
@@ -272,13 +272,13 @@ if (!window.v4IframeInserterScript) {
             }
         }
         
-        const trailingRef = Array.from(host.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
+        const trailingRef = Array.from(host.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) || (!c.classList.contains('bychoi-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script')));
         if (trailingRef && trailingRef.parentNode === host) {
             host.insertBefore(v, trailingRef);
         } else {
             host.appendChild(v);
         }
-        document.querySelectorAll('.lf-component').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.bychoi-component').forEach(c => c.classList.remove('selected'));
         v.classList.add('selected');
         window.activeEl = v;
         if (typeof window.updateHandles === 'function') {
@@ -295,7 +295,7 @@ if (!window.v4IframeInserterScript) {
         }
         const styles = window._getCompStyles(v);
         notifyParent({ 
-            type: 'LF_COMP_SELECTED', 
+            type: 'BYCHOI_COMP_SELECTED', 
             ...styles
         });
         if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {

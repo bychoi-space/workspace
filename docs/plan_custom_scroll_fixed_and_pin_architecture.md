@@ -115,7 +115,7 @@ $$\Delta Y = \text{scrollTop} + (Y_{\text{target}} - \text{domTop})$$
 
 ```html
 <!-- [Case 1] 오브젝트 - 자유 플로팅 -->
-<div class="lf-component" id="comp-fab-chat"
+<div class="bychoi-component" id="comp-fab-chat"
      data-scroll-fixed="custom"
      data-scroll-target-y="380"
      style="position: absolute; left: 290px; top: 380px; z-index: 100010;">
@@ -123,7 +123,7 @@ $$\Delta Y = \text{scrollTop} + (Y_{\text{target}} - \text{domTop})$$
 </div>
 
 <!-- [Case 2] 오브젝트 - 임계치 스티키 -->
-<div class="lf-component lf-group" id="group-tab-bar"
+<div class="bychoi-component bychoi-group" id="group-tab-bar"
      data-scroll-fixed="sticky"
      data-scroll-sticky-top="50"
      style="position: absolute; left: 0px; top: 780px; z-index: 100020;">
@@ -131,14 +131,14 @@ $$\Delta Y = \text{scrollTop} + (Y_{\text{target}} - \text{domTop})$$
 </div>
 
 <!-- [Case 3] 디스크립션 핀 - 본문 배치 (일반) -->
-<div class="lf-component pin-marker" id="v4-pin-mobile-1"
+<div class="bychoi-component pin-marker" id="v4-pin-mobile-1"
      data-frame="mobile" data-index="1"
      style="position: absolute; left: 140px; top: 920px; z-index: 200000;">
   <div class="pin-number-badge">2</div>
 </div>
 
 <!-- [Case 4] 디스크립션 핀 - 화면 핀 고정 (뷰포트) -->
-<div class="lf-component pin-marker" id="v4-pin-mobile-2"
+<div class="bychoi-component pin-marker" id="v4-pin-mobile-2"
      data-frame="mobile" data-index="2"
      data-scroll-fixed="viewport"
      style="position: absolute; left: 310px; top: 80px; z-index: 200050 !important;">
@@ -199,7 +199,7 @@ $$\Delta Y = \text{scrollTop} + (Y_{\text{target}} - \text{domTop})$$
 │                                      │ • 현재 뷰포트 좌표 자동 캡처 및 오프셋 입력 연동       │
 ├──────────────────────────────────────┼────────────────────────────────────────────────────────┤
 │ 4. assets/vctrl_iframe_scroll_pin.js │ • ScrollPinEngine.updatePins: 4대 모드 수식 전면 구현  │
-│                                      │ • LF_SET_SCROLL_FIXED: 신규 모드 속성 및 z-index 처리  │
+│                                      │ • BYCHOI_SET_SCROLL_FIXED: 신규 모드 속성 및 z-index 처리  │
 │                                      │ • 백틱 충돌 0건(Gateway 5) 및 단일 쿼리 실시간 처리    │
 ├──────────────────────────────────────┼────────────────────────────────────────────────────────┤
 │ 5. assets/vctrl_iframe_drag.js       │ • 고정 객체/핀 드래그 시작 시 scrollTop 보정 연산     │
@@ -242,7 +242,7 @@ $$\Delta Y = \text{scrollTop} + (Y_{\text{target}} - \text{domTop})$$
 
 - [x] **Phase 1: Iframe 고정 물리 엔진 구현 ([assets/vctrl_iframe_scroll_pin.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_scroll_pin.js))**
   - `updatePins()` 함수에 4대 모드(custom, sticky, viewport, host-pinned) 수식 통합.
-  - `LF_SET_SCROLL_FIXED` 핸들러에 `custom`, `sticky`, `viewport` 디스패처 분기 추가.
+  - `BYCHOI_SET_SCROLL_FIXED` 핸들러에 `custom`, `sticky`, `viewport` 디스패처 분기 추가.
 - [x] **Phase 2: 인스펙터 UI 및 스타일 구현 ([viewer.html](file:///c:/Users/sisun/ai_work/viewer.html), [assets/viewer.css](file:///c:/Users/sisun/ai_work/assets/viewer.css))**
   - `#selection-scroll-pin-bar` 내 오브젝트용 5버튼 + 핀 전용 2버튼 세그먼트 마크업 추가.
   - 모던 다크/글래스모피즘 기반 프리미엄 UI 스타일링.

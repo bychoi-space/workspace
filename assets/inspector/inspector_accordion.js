@@ -20,9 +20,9 @@
     const notifyAccordion = (data) => {
         const iframe = document.getElementById('main-iframe');
         if (iframe && iframe.contentWindow && window.MessageHub) {
-            window.MessageHub.send(iframe.contentWindow, 'LF_UPDATE_ACCORDION_PROPERTIES', data);
+            window.MessageHub.send(iframe.contentWindow, 'BYCHOI_UPDATE_ACCORDION_PROPERTIES', data);
         } else if (window.EditorBus) {
-            window.EditorBus.sendToIframe(Object.assign({ type: 'LF_UPDATE_ACCORDION_PROPERTIES' }, data));
+            window.EditorBus.sendToIframe(Object.assign({ type: 'BYCHOI_UPDATE_ACCORDION_PROPERTIES' }, data));
         }
     };
 
@@ -64,7 +64,7 @@
         try {
             const iframe = document.getElementById('main-iframe');
             if (iframe && iframe.contentWindow && iframe.contentWindow.document) {
-                const activeElInIframe = iframe.contentWindow.document.querySelector('.lf-component.selected');
+                const activeElInIframe = iframe.contentWindow.document.querySelector('.bychoi-component.selected');
                 if (activeElInIframe) {
                     const accordionContainer = activeElInIframe.querySelector('.v4-accordion-container') || activeElInIframe;
                     if (accordionContainer) {
@@ -127,7 +127,7 @@
         try {
             const iframe = document.getElementById('main-iframe');
             if (iframe && iframe.contentWindow && iframe.contentWindow.document) {
-                const activeEl = iframe.contentWindow.document.querySelector('.lf-component.selected');
+                const activeEl = iframe.contentWindow.document.querySelector('.bychoi-component.selected');
                 if (activeEl) {
                     return activeEl.querySelector('.v4-accordion-container') || activeEl;
                 }

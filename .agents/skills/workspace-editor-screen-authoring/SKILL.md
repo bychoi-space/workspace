@@ -27,12 +27,12 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 
 ### 2. LIBRARY 표준 오브젝트 100% 활용 (Native Library Objects Only)
 - 스크린 내 존재하는 모든 시각 요소는 에디터 우측 사이드바 **`LIBRARY`에 존재하는 정식 3계층 표준 오브젝트**만을 조합하여 생성해야 합니다.
-  - **기본 오브젝트 구조**: `.lf-component` (최외곽 래퍼, `position: absolute; box-sizing: border-box;`)
+  - **기본 오브젝트 구조**: `.bychoi-component` (최외곽 래퍼, `position: absolute; box-sizing: border-box;`)
   - **도형 (Shapes)**: `.v4-shape.v4-shape-rect` (또는 `v4-shape-circle`, `v4-shape-diamond` 등) ➔ `.v4-shape-text-content`
-  - **텍스트 (Text Shape)**: `.lf-component.v4-text-shape` ➔ `.v4-editable-cell[contenteditable="true"]`
-  - **아이콘 (Icons / Atoms)**: SVG 내 `.lf-icon` 필수 포함, `stroke-width="1.2"` (또는 `1.6`), `fill="none"`
-  - **일러스트 (Illustrations / 3D & 2D)**: `.lf-component` ➔ `.v4-illustration-container` ➔ `<img src="assets/illustrations/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`
-  - **모션 인터랙션 (Animated WebP)**: `.lf-component` ➔ `.v4-motion-container` ➔ `<img src="assets/illustrations/motion/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`
+  - **텍스트 (Text Shape)**: `.bychoi-component.v4-text-shape` ➔ `.v4-editable-cell[contenteditable="true"]`
+  - **아이콘 (Icons / Atoms)**: SVG 내 `.bychoi-icon` 필수 포함, `stroke-width="1.2"` (또는 `1.6`), `fill="none"`
+  - **일러스트 (Illustrations / 3D & 2D)**: `.bychoi-component` ➔ `.v4-illustration-container` ➔ `<img src="assets/illustrations/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`
+  - **모션 인터랙션 (Animated WebP)**: `.bychoi-component` ➔ `.v4-motion-container` ➔ `<img src="assets/illustrations/motion/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`
   - **스크린 배경 이미지 (Canvas Background)**: 배경 이미지가 필요한 경우 캔버스 루트 `#canvas` 최상단 자식으로 `<div id="canvas_bg_layer" style="position: absolute; top: 0; left: 0; width: 1600px; height: 900px; z-index: 0; pointer-events: none !important; user-select: none; overflow: hidden;"><img id="canvas_bg_img" src="..." style="width: 100%; height: 100%; object-fit: cover; opacity: ...; pointer-events: none !important; user-select: none; display: block;"></div>` 무간섭 레이어 배치.
   - **뱃지/태그 (Badges)**: 콤팩트한 직사각형 도형 래퍼 + `.v4-shape-text-content`
 - **임의의 비표준 태그 금지**: 에디터 시스템 엔진이 인식할 수 없는 임의의 커스텀 태그나 비표준 클래스를 남발하여 인스펙터 선택/편집이 마비되는 현상을 차단합니다.
@@ -42,19 +42,19 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 - **단일 복합 카드 금지**: 하나의 카드 컨테이너 안에 배경, 아이콘, 뱃지, 제목, 본문 텍스트를 하나의 거대 HTML 블록으로 합쳐 넣는 행위를 **엄격히 금지**합니다. (그렇게 작성하면 인스펙터/Quill에서 한 글자만 수정해도 주변 아이콘과 레이아웃이 파괴됩니다.)
 - **텍스트 다중 문장 1개 도형 몰아넣기 절대 금지 (Text Fragmentation)**:
   - 본문 설명이나 리스트 내용도 **절대로 1개의 Text Shape 안에 모든 줄과 코드, 효과를 한꺼번에 몰아넣지 마십시오.**
-  - 하나의 카드 안에서도 내용은 **최소 2~3개의 독립된 텍스트 도형(`.lf-component.v4-text-shape`) 및 전용 쉐입으로 잘게 분리(파편화)**해야 합니다.
+  - 하나의 카드 안에서도 내용은 **최소 2~3개의 독립된 텍스트 도형(`.bychoi-component.v4-text-shape`) 및 전용 쉐입으로 잘게 분리(파편화)**해야 합니다.
     - 예: `[항목 1 불릿 텍스트]` (독립 컴포넌트)
     - 예: `[코드/수식/예시 박스]` (독립 배경 쉐입 + 텍스트 컴포넌트)
     - 예: `[결과/효과 불릿 텍스트]` (독립 컴포넌트)
   - 이렇게 나누어야 사용자가 특정 문장이나 코드만 마우스로 콕 찍어서 수정하거나 줄 간격을 자유롭게 재배치할 수 있습니다.
 - **원자적 분리 필수 구조 (예: 1개 카드 섹션 구성 시)**:
-  1. **카드 배경 쉐입**: `<div id="card_bg" class="lf-component" ...><div class="v4-shape v4-shape-rect" ...></div></div>`
-  2. **카드 아이콘 아톰**: `<div id="card_icon" class="lf-component" ...><svg class="lf-icon" ...></svg></div>`
-  3. **카드 제목 텍스트**: `<div id="card_title" class="lf-component v4-text-shape" ...><div class="v4-editable-cell" contenteditable="true" ...></div></div>`
-  4. **카드 상태 뱃지**: `<div id="card_badge" class="lf-component" ...><div class="v4-shape v4-shape-rect" ...></div></div>`
-  5. **본문 설명 문장 1 (줄바꿈 지원)**: `<div id="card_text_1" class="lf-component" ...><div class="v4-shape v4-shape-rect" style="width:100%; height:100%; background:transparent; border:1.6px solid transparent;"><div class="v4-shape-text-content" style="text-align:left; align-items:flex-start; justify-content:flex-start; padding:0 !important;"><div class="v4-editable-cell" ...></div></div></div></div>`
+  1. **카드 배경 쉐입**: `<div id="card_bg" class="bychoi-component" ...><div class="v4-shape v4-shape-rect" ...></div></div>`
+  2. **카드 아이콘 아톰**: `<div id="card_icon" class="bychoi-component" ...><svg class="bychoi-icon" ...></svg></div>`
+  3. **카드 제목 텍스트**: `<div id="card_title" class="bychoi-component v4-text-shape" ...><div class="v4-editable-cell" contenteditable="true" ...></div></div>`
+  4. **카드 상태 뱃지**: `<div id="card_badge" class="bychoi-component" ...><div class="v4-shape v4-shape-rect" ...></div></div>`
+  5. **본문 설명 문장 1 (줄바꿈 지원)**: `<div id="card_text_1" class="bychoi-component" ...><div class="v4-shape v4-shape-rect" style="width:100%; height:100%; background:transparent; border:1.6px solid transparent;"><div class="v4-shape-text-content" style="text-align:left; align-items:flex-start; justify-content:flex-start; padding:0 !important;"><div class="v4-editable-cell" ...></div></div></div></div>`
   6. **코드/키워드 강조 블록**: `<div id="card_code_bg" ...></div>` + `<div id="card_code_text" ...></div>`
-  7. **본문 설명 문장 2 (줄바꿈 지원)**: `<div id="card_text_2" class="lf-component" ...><div class="v4-shape v4-shape-rect" style="width:100%; height:100%; background:transparent; border:1.6px solid transparent;"><div class="v4-shape-text-content" style="text-align:left; align-items:flex-start; justify-content:flex-start; padding:0 !important;"><div class="v4-editable-cell" ...></div></div></div></div>`
+  7. **본문 설명 문장 2 (줄바꿈 지원)**: `<div id="card_text_2" class="bychoi-component" ...><div class="v4-shape v4-shape-rect" style="width:100%; height:100%; background:transparent; border:1.6px solid transparent;"><div class="v4-shape-text-content" style="text-align:left; align-items:flex-start; justify-content:flex-start; padding:0 !important;"><div class="v4-editable-cell" ...></div></div></div></div>`
 - 모든 원자적 요소는 독립적인 `id`, 고유의 `position: absolute; top: ...; left: ...; width: ...; height: ...;` 좌표를 갖고 개별 선택 가능해야 합니다.
 
 ### 4. 텍스트 폰트 크기 및 줄바꿈/오버플로우 엄격 제어 (Typography, Wrapping & Bounds)
@@ -82,14 +82,14 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 #### 🛡️ 텍스트 유형별 이원화 아키텍처 규칙 (Strict Text Architecture)
 * **[유형 A] 1줄 단일 텍스트 (Single-line Text)**:
   * **용도**: 대분류 메인 타이틀, 섹션 카드 헤더, 상태 뱃지, 단일 태그 라벨 등
-  * **표준 마크업**: `class="lf-component v4-text-shape"` 사용 (`white-space: nowrap !important;` 유지)
+  * **표준 마크업**: `class="bychoi-component v4-text-shape"` 사용 (`white-space: nowrap !important;` 유지)
 * **[유형 B] 2줄 이상 멀티라인 본문/설명 (Multiline Body/Description)**:
   * **용도**: 본문 설명문, 불릿 리스트 문장, 효과/결과 설명, 가이드 문구 등 모든 다중행 텍스트
   * **금지 사항**: **절대로 `v4-text-shape` 클래스를 붙이지 마십시오.** (붙이는 순간 nowrap 강제 주입 발동)
-  * **표준 마크업**: 반드시 **`class="lf-component"` + 투명 `v4-shape v4-shape-rect` + `v4-shape-text-content`** 3계층 구조를 사용하십시오:
+  * **표준 마크업**: 반드시 **`class="bychoi-component"` + 투명 `v4-shape v4-shape-rect` + `v4-shape-text-content`** 3계층 구조를 사용하십시오:
     ```html
     <!-- [표준 멀티라인 텍스트 구조 - 줄바꿈 100% 보장] -->
-    <div id="card_line_1" class="lf-component" style="position: absolute; top: ...px; left: ...px; width: 380px; height: 60px; z-index: 20;" data-resized="true">
+    <div id="card_line_1" class="bychoi-component" style="position: absolute; top: ...px; left: ...px; width: 380px; height: 60px; z-index: 20;" data-resized="true">
         <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent; box-sizing: border-box;">
             <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: left; align-items: flex-start; justify-content: flex-start; padding: 0 !important; box-sizing: border-box;">
                 <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #475569; font-size: 13px; font-weight: 400; text-align: left; width: 100%; line-height: 1.45; white-space: normal !important; word-break: break-word !important;">
@@ -125,7 +125,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
   - **표준 마크업 규격 (최소 200x200 이상 지향)**:
     ```html
     <!-- [표준 일러스트 컴포넌트 마크업 - 최소 200x200 이상] -->
-    <div id="comp_illustration_1" class="lf-component" style="position: absolute; top: 110px; left: 40px; width: 200px; height: 200px; z-index: 10;" data-resized="true">
+    <div id="comp_illustration_1" class="bychoi-component" style="position: absolute; top: 110px; left: 40px; width: 200px; height: 200px; z-index: 10;" data-resized="true">
         <div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
             <img src="assets/illustrations/order_policy_cart_30days.png" alt="장바구니 정책" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">
         </div>
@@ -218,7 +218,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
             overflow: hidden;
             margin: 0 auto;
         }
-        .lf-component {
+        .bychoi-component {
             position: absolute !important;
             box-sizing: border-box !important;
             user-select: none;
@@ -232,7 +232,7 @@ description: Use when the user asks AI to create, draw, generate, design, or com
             word-break: keep-all;
             font-family: inherit;
         }
-        .lf-icon {
+        .bychoi-icon {
             display: inline-block;
             vertical-align: middle;
         }
@@ -242,19 +242,19 @@ description: Use when the user asks AI to create, draw, generate, design, or com
     <div class="canvas" id="canvas">
 
         <!-- [0] 상단 글로벌 헤더 (Top: 20px, Left: 20px, Width: 1560px, Height: 50px) -->
-        <div id="hdr_bg" class="lf-component" style="position: absolute; top: 20px; left: 20px; width: 1560px; height: 50px; z-index: 100;" data-resized="true">
+        <div id="hdr_bg" class="bychoi-component" style="position: absolute; top: 20px; left: 20px; width: 1560px; height: 50px; z-index: 100;" data-resized="true">
             <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 8px; box-sizing: border-box;">
                 <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
             </div>
         </div>
 
-        <div id="hdr_icon" class="lf-component" style="position: absolute; top: 30px; left: 40px; width: 30px; height: 30px; z-index: 105;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; background-image: none !important;">
+        <div id="hdr_icon" class="bychoi-component" style="position: absolute; top: 30px; left: 40px; width: 30px; height: 30px; z-index: 105;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
                 <polygon points="12 2 2 7 12 12 22 7 12 2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
             </svg>
         </div>
 
-        <div id="hdr_title" class="lf-component v4-text-shape" style="position: absolute; top: 30px; left: 80px; width: 700px; height: 30px; z-index: 105; white-space: nowrap !important;">
+        <div id="hdr_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 30px; left: 80px; width: 700px; height: 30px; z-index: 105; white-space: nowrap !important;">
             <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 16px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 2px 3px !important; white-space: nowrap !important;">
                 <p style="white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 17px; white-space: nowrap !important;">[기획/분석] 핵심 타이틀 제목</strong></p>
             </div>
@@ -271,12 +271,12 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 
 ## 🚫 스크린 제작 안티패턴 (Strict Anti-Patterns)
 
-1. **[금기 1] 카드 내부 다중 태그 뭉치기**: 배경 div 안에 텍스트와 이미지를 전부 인라인으로 때려 넣는 구조 금지 (무조건 개별 `.lf-component`로 분리할 것).
+1. **[금기 1] 카드 내부 다중 태그 뭉치기**: 배경 div 안에 텍스트와 이미지를 전부 인라인으로 때려 넣는 구조 금지 (무조건 개별 `.bychoi-component`로 분리할 것).
 2. **[금기 2] 13px 미만 폰트 사용**: 9px, 10px, 11px, 12px 폰트 사용 금지 (최소 `13px` 엄수).
 3. **[금기 3] AI 지어내기 수치 삽입**: 근거 없는 퍼센트(%), 가상 금액, 거짓 벤치마크 내용 주입 금지 (기획서 팩트 기반 작성).
 4. **[금기 4] 복잡한 원색 난립**: 빨강, 노랑, 파랑, 보라 등 무지개색을 무분별하게 혼용하는 디자인 금지 (뉴트럴 + 단일/이중 포인트 컬러 준수).
 5. **[금기 5] 1600x900 초과 세로 스크롤 레이아웃**: 프레젠테이션/보고서 스크린은 1600x900 단일 화면 내에서 스크롤 없이 완결되는 컴팩트한 레이아웃을 지향해야 함.
-6. **[금기 6] 텍스트 1개 도형 몰아넣기 (No Single Text Dump)**: 불릿 리스트 여러 줄, 코드 박스, 효과 설명을 단 1개의 텍스트 도형에 몰아넣는 행위 금지. 사용자의 개별 편집 편의성을 위해 최소 2~3개의 독립된 `.lf-component`로 파편화할 것.
+6. **[금기 6] 텍스트 1개 도형 몰아넣기 (No Single Text Dump)**: 불릿 리스트 여러 줄, 코드 박스, 효과 설명을 단 1개의 텍스트 도형에 몰아넣는 행위 금지. 사용자의 개별 편집 편의성을 위해 최소 2~3개의 독립된 `.bychoi-component`로 파편화할 것.
 7. **[금기 7] 줄바꿈 미처리 및 카드 경계 침범 (No Text Overflow & Overlap)**: 본문 설명문에 `white-space: nowrap`을 오적용하거나 폭(width) 계산을 누락하여 텍스트가 카드를 뚫고 인접 영역을 침범·중첩하는 레이아웃 파괴 행위 절대 금지.
 8. **[금기 8] 일러스트 없는 밋밋한 상자 나열 또는 200x200 미만 소형 일러스트 배치**: 일러스트를 배제하거나, 이미지를 가로/세로 200px 미만으로 너무 작게 축소하여 잘 보이지 않게 배치하는 행위 지양 (최소 `200px × 200px` 이상 지향).
 9. **[금기 9] 1px 단위 불규칙 크기/간격 및 정렬 오차 (No Irregular 1px Sizing or Misalignment)**: 오브젝트의 가로/세로 크기나 여백을 `1px` 단위로 중구난방 설정하거나 동일 구조 오브젝트의 가로/세로 정렬이 어긋나는 행위 금지 (`width`/`height` 10단위 구성, 간격 `20/30/40/50px` 등 10단위 균형 배치, 동일 구조 오브젝트 0px 오차 정렬 엄수).

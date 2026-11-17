@@ -186,7 +186,7 @@ assets/
 2. **핀 네이밍 및 역할의 공식 명문화**:
    - [vctrl_responsive_pins.js](file:///c:/Users/sisun/ai_work/assets/vctrl_responsive_pins.js)의 헤더 주석 및 모듈 선언부에 **"Universal Pin Rendering & Reorder Engine (SSOT)"**임을 공식 명시하고, 표준 캔버스와 반응형 프레임 핀을 모두 총괄함을 명문화.
 3. **핀 메타데이터와 DOM 요소 간의 1:1 동기화 가드 강화**:
-   - 핀 번호 재정렬(`window.reorderAllPins`) 및 핀 삭제(`LF_DELETE_PIN`) 시 `state.activeFile.meta.description`과 iframe DOM 요소(`[data-pin-num]`) 간의 인덱스 불일치를 원천 차단하는 자가 치유(Self-healing) 가드를 단일화.
+   - 핀 번호 재정렬(`window.reorderAllPins`) 및 핀 삭제(`BYCHOI_DELETE_PIN`) 시 `state.activeFile.meta.description`과 iframe DOM 요소(`[data-pin-num]`) 간의 인덱스 불일치를 원천 차단하는 자가 치유(Self-healing) 가드를 단일화.
 
 #### 2) 무결성 검증 기준
 - 표준 1600x900 캔버스 화면 및 모바일 듀얼 화면에서 핀 추가(`+ Text`), 핀 이동, 핀 삭제, 핀 재정렬 후 저장/새로고침 시 번호와 위치가 100% 일치함을 보장.

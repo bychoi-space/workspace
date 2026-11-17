@@ -29,8 +29,8 @@ window.v4ObjectConnectorScript = `
     window.updateAnchoredConnectorsLocal = (movedId) => {
         const movedEl = document.getElementById(movedId);
         const movedIds = [movedId];
-        if (movedEl && movedEl.classList.contains('lf-group')) {
-            movedEl.querySelectorAll('.lf-component').forEach(child => {
+        if (movedEl && movedEl.classList.contains('bychoi-group')) {
+            movedEl.querySelectorAll('.bychoi-component').forEach(child => {
                 if (child.id) movedIds.push(child.id);
             });
         }
@@ -50,7 +50,7 @@ window.v4ObjectConnectorScript = `
                                 
                                 let parent = targetEl.parentElement;
                                 while (parent && parent !== document.body && parent !== document.documentElement) {
-                                    if (parent.style.position === 'absolute' || parent.classList.contains('lf-group')) {
+                                    if (parent.style.position === 'absolute' || parent.classList.contains('bychoi-group')) {
                                         left += parseFloat(parent.style.left) || 0;
                                         top += parseFloat(parent.style.top) || 0;
                                     }
@@ -148,9 +148,9 @@ window.v4ObjectConnectorScript = `
         }
     };
 
-    window.v4MessageHandlers['LF_RENDER_CONNECTORS'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_RENDER_CONNECTORS'] = function(d) {
         if (window.parent && window.parent.DEBUG_MODE) {
-            console.log("[V4 Iframe] LF_RENDER_CONNECTORS received:", d);
+            console.log("[V4 Iframe] BYCHOI_RENDER_CONNECTORS received:", d);
         }
         const host = document.querySelector('.page') || document.querySelector('.artboard') || document.body;
         if (window.parent && window.parent.DEBUG_MODE) {
@@ -179,7 +179,7 @@ window.v4ObjectConnectorScript = `
 
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.id = conn.id;
-            svg.setAttribute("class", "lf-component connector-line" + (isSelected ? " selected" : ""));
+            svg.setAttribute("class", "bychoi-component connector-line" + (isSelected ? " selected" : ""));
             Object.assign(svg.style, {
                 position: 'absolute',
                 left: minX + 'px',
@@ -219,7 +219,7 @@ window.v4ObjectConnectorScript = `
             if (hitArea) {
                 hitArea.onmousedown = (e) => {
                     e.stopPropagation();
-                    if (window.notifyParent) window.notifyParent({ type: 'LF_CONNECTOR_CLICKED', id: conn.id, shiftKey: e.shiftKey });
+                    if (window.notifyParent) window.notifyParent({ type: 'BYCHOI_CONNECTOR_CLICKED', id: conn.id, shiftKey: e.shiftKey });
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
                     window.isDraggingLine = true;
                     window.activeLineId = conn.id;
@@ -244,7 +244,7 @@ window.v4ObjectConnectorScript = `
                         e.stopPropagation();
                         window.isConnectorDragging = true;
                         document.body.classList.add('drawing-line-active');
-                        if (window.notifyParent) window.notifyParent({ type: 'LF_CONNECTOR_HANDLE_DOWN', id: conn.id, pointType: type });
+                        if (window.notifyParent) window.notifyParent({ type: 'BYCHOI_CONNECTOR_HANDLE_DOWN', id: conn.id, pointType: type });
                     };
                     svg.appendChild(handle);
                 });
@@ -253,8 +253,8 @@ window.v4ObjectConnectorScript = `
         });
     };
 
-    window.v4MessageHandlers['LF_UPDATE_ARROW_DIRECTION'] = function(d) {
-        const s = document.querySelector('.lf-component.selected'); 
+    window.v4MessageHandlers['BYCHOI_UPDATE_ARROW_DIRECTION'] = function(d) {
+        const s = document.querySelector('.bychoi-component.selected'); 
         if (!s) return;
         const shape = s.querySelector('.v4-shape-arrow, .v4-shape-triangle') || 
                       (s.classList.contains('v4-shape-arrow') || s.classList.contains('v4-shape-triangle') ? s : null) || 
@@ -268,7 +268,7 @@ window.v4ObjectConnectorScript = `
         shape.setAttribute('data-direction', dir);
 
         if (shape.classList.contains('v4-shape-arrow') || shape.id === 'v4-shape-arrow') {
-            const comp = shape.closest('.lf-component') || shape;
+            const comp = shape.closest('.bychoi-component') || shape;
             const w = parseFloat(comp.style.width) || comp.offsetWidth || 100;
             const h = parseFloat(comp.style.height) || comp.offsetHeight || 100;
             const svg = shape.querySelector('svg');

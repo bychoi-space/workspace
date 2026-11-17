@@ -13,14 +13,14 @@
 
     const notifyPopup = (data) => {
         if (typeof window.notifyIframe === 'function') {
-            window.notifyIframe(Object.assign({ type: 'LF_UPDATE_POPUP_PROPERTIES' }, data));
+            window.notifyIframe(Object.assign({ type: 'BYCHOI_UPDATE_POPUP_PROPERTIES' }, data));
             return;
         }
         const activeIframe = (window.DOM && window.DOM.iframe) || document.getElementById('main-iframe') || document.getElementById('screen-iframe');
         if (activeIframe && activeIframe.contentWindow) {
-            const payload = Object.assign({ type: 'LF_UPDATE_POPUP_PROPERTIES' }, data);
+            const payload = Object.assign({ type: 'BYCHOI_UPDATE_POPUP_PROPERTIES' }, data);
             if (window.MessageHub) {
-                window.MessageHub.send(activeIframe.contentWindow, 'LF_UPDATE_POPUP_PROPERTIES', payload);
+                window.MessageHub.send(activeIframe.contentWindow, 'BYCHOI_UPDATE_POPUP_PROPERTIES', payload);
                 return;
             }
             if (window.EditorBus) {

@@ -31,7 +31,7 @@ if (!window.v4IframeLayeringScript) {
         if (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) {
             return true;
         }
-        return (!c.classList || !c.classList.contains('lf-component')) && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
+        return (!c.classList || !c.classList.contains('bychoi-component')) && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script');
     }
 
     function insertBeforeTrailingRef(hostEl, el) {
@@ -62,7 +62,7 @@ if (!window.v4IframeLayeringScript) {
             );
             if (!isWrapper) break;
             var leakedInAnc = Array.from(anc.children || []).filter(function(c) {
-                return c !== inn && c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.classList.contains('frame-column');
+                return c !== inn && c.classList && c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.classList.contains('frame-column');
             });
             if (leakedInAnc.length > 0) {
                 leakedInAnc.forEach(function(lc) {
@@ -78,7 +78,7 @@ if (!window.v4IframeLayeringScript) {
         var pinLayers = inn.querySelectorAll ? inn.querySelectorAll('.v4-pin-layer') : [];
         pinLayers.forEach(function(pinLayer) {
             var trappedComps = Array.from(pinLayer.children || []).filter(function(c) {
-                return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && (!c.id || !c.id.startsWith('v4-pin-'));
+                return c.classList && c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && (!c.id || !c.id.startsWith('v4-pin-'));
             });
             if (trappedComps.length > 0) {
                 trappedComps.forEach(function(tc) {
@@ -113,9 +113,9 @@ if (!window.v4IframeLayeringScript) {
         if (host.querySelectorAll && (!host.classList || (!host.classList.contains('mobile-content-inner') && !host.classList.contains('pc-content-inner') && !host.classList.contains('v4-dimmed-overlay-layer')))) {
             var inners = host.querySelectorAll('.mobile-content-inner, .pc-content-inner');
             if (inners.length > 0) {
-                // [Self-Healing Defense] Reparent any normal .lf-component mistakenly placed directly on .page/body into the inner frame
+                // [Self-Healing Defense] Reparent any normal .bychoi-component mistakenly placed directly on .page/body into the inner frame
                 var leakedComps = Array.from(host.children || []).filter(function(c) {
-                    return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.classList.contains('frame-column');
+                    return c.classList && c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.classList.contains('frame-column');
                 });
                 var healedRoot = false;
                 if (leakedComps.length > 0) {
@@ -148,10 +148,10 @@ if (!window.v4IframeLayeringScript) {
         // Clean up any nested elements inside groups with legacy inflated z-indices while preserving relative order
         var healedNestedGroups = false;
         if (host.querySelectorAll) {
-            var groups = host.querySelectorAll('.lf-group');
+            var groups = host.querySelectorAll('.bychoi-group');
             groups.forEach(function(grp) {
                 var childComps = Array.from(grp.children || []).filter(function(nc) {
-                    return nc.classList && nc.classList.contains('lf-component') && !nc.classList.contains('pin-marker') && !nc.classList.contains('text-marker');
+                    return nc.classList && nc.classList.contains('bychoi-component') && !nc.classList.contains('pin-marker') && !nc.classList.contains('text-marker');
                 });
                 if (childComps.length === 0) return;
                 var maxChildZ = V4_Z_TIERS.CONTENT_MIN;
@@ -194,7 +194,7 @@ if (!window.v4IframeLayeringScript) {
         }
 
         var comps = Array.from(host.children).filter(function(c) {
-            return c.classList && c.classList.contains('lf-component');
+            return c.classList && c.classList.contains('bychoi-component');
         });
         if (comps.length === 0) return;
 
@@ -282,15 +282,15 @@ if (!window.v4IframeLayeringScript) {
         var isHostDimmedLayer = !!(targetParent && targetParent.classList && targetParent.classList.contains('v4-dimmed-overlay-layer'));
         var maxZ = isFixed ? V4_Z_TIERS.FIXED_HUD_MIN : V4_Z_TIERS.CONTENT_MIN;
         var comps = (targetParent && targetParent.querySelectorAll) 
-            ? targetParent.querySelectorAll('.lf-component') 
-            : (document.querySelectorAll ? document.querySelectorAll('.lf-component') : []);
+            ? targetParent.querySelectorAll('.bychoi-component') 
+            : (document.querySelectorAll ? document.querySelectorAll('.bychoi-component') : []);
 
         comps.forEach(function(c) {
             // Isolate z-index scanning between base container and .v4-dimmed-overlay-layer
             if (!isHostDimmedLayer && c.closest && c.closest('.v4-dimmed-overlay-layer')) return;
             // Ignore nested components inside groups from defining top-level stacking order
-            if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('lf-group')) return;
-            if (c.classList && c.classList.contains('lf-in-group')) return;
+            if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('bychoi-group')) return;
+            if (c.classList && c.classList.contains('bychoi-in-group')) return;
             if (c.classList && (c.classList.contains('pin-marker') || c.classList.contains('text-marker'))) return;
             if (c.id && c.id.indexOf('v4-pin-') === 0) return;
 
@@ -315,7 +315,7 @@ if (!window.v4IframeLayeringScript) {
         if (isFixed && maxZ >= V4_Z_TIERS.FIXED_HUD_MAX - 100) {
             normalizeZIndices(targetParent, true);
             var topFixedComps = Array.from(targetParent.children || []).filter(function(c) {
-                return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && c.hasAttribute('data-scroll-fixed');
+                return c.classList && c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && c.hasAttribute('data-scroll-fixed');
             });
             return V4_Z_TIERS.FIXED_HUD_MIN + (topFixedComps.length * 10);
         }
@@ -324,7 +324,7 @@ if (!window.v4IframeLayeringScript) {
         if (!isFixed && maxZ >= 69000) {
             normalizeZIndices(targetParent, true);
             var topNormalComps = Array.from(targetParent.children || []).filter(function(c) {
-                return c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.hasAttribute('data-scroll-fixed');
+                return c.classList && c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.hasAttribute('data-scroll-fixed');
             });
             return V4_Z_TIERS.CONTENT_MIN + (topNormalComps.length * 10);
         }
@@ -350,18 +350,18 @@ if (!window.v4IframeLayeringScript) {
     }
 
     function handleBringFront(d) {
-        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        var selected = Array.from(document.querySelectorAll('.bychoi-component.selected'));
         if (selected.length === 0) {
             if (d.ids && Array.isArray(d.ids)) {
                 d.ids.forEach(function(id) {
                     var el = document.getElementById(id);
-                    if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                    if (el && el.classList.contains('bychoi-component') && !selected.includes(el)) {
                         selected.push(el);
                     }
                 });
             } else if (d.id) {
                 var singleTarget = document.getElementById(d.id);
-                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                if (singleTarget && singleTarget.classList.contains('bychoi-component')) {
                     selected.push(singleTarget);
                 }
             }
@@ -369,7 +369,7 @@ if (!window.v4IframeLayeringScript) {
         var topLevelSelected = selected.filter(function(el) {
             var parent = el.parentElement;
             while (parent && parent !== document.body) {
-                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
+                if (parent.classList.contains('bychoi-component') && parent.classList.contains('selected')) return false;
                 parent = parent.parentElement;
             }
             return true;
@@ -403,7 +403,7 @@ if (!window.v4IframeLayeringScript) {
                 var maxNormalZ = V4_Z_TIERS.CONTENT_MIN;
                 var maxFixedZ = V4_Z_TIERS.FIXED_HUD_MIN;
                 var allComps = Array.from(parent.children || []).filter(function(c) {
-                    return c.classList && c.classList.contains('lf-component');
+                    return c.classList && c.classList.contains('bychoi-component');
                 });
 
                 allComps.forEach(function(c) {
@@ -469,18 +469,18 @@ if (!window.v4IframeLayeringScript) {
     }
 
     function handleSendBack(d) {
-        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        var selected = Array.from(document.querySelectorAll('.bychoi-component.selected'));
         if (selected.length === 0) {
             if (d.ids && Array.isArray(d.ids)) {
                 d.ids.forEach(function(id) {
                     var el = document.getElementById(id);
-                    if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                    if (el && el.classList.contains('bychoi-component') && !selected.includes(el)) {
                         selected.push(el);
                     }
                 });
             } else if (d.id) {
                 var singleTarget = document.getElementById(d.id);
-                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                if (singleTarget && singleTarget.classList.contains('bychoi-component')) {
                     selected.push(singleTarget);
                 }
             }
@@ -488,7 +488,7 @@ if (!window.v4IframeLayeringScript) {
         var topLevelSelected = selected.filter(function(el) {
             var parent = el.parentElement;
             while (parent && parent !== document.body) {
-                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
+                if (parent.classList.contains('bychoi-component') && parent.classList.contains('selected')) return false;
                 parent = parent.parentElement;
             }
             return true;
@@ -520,7 +520,7 @@ if (!window.v4IframeLayeringScript) {
                 normalizeZIndices(parent, false);
 
                 var siblingComps = Array.from(parent.children).filter(function(c) {
-                    return c.classList.contains('lf-component');
+                    return c.classList.contains('bychoi-component');
                 });
 
                 var minNormalZ = V4_Z_TIERS.CONTENT_MIN;
@@ -587,7 +587,7 @@ if (!window.v4IframeLayeringScript) {
                         parent.insertBefore(el, firstUnselectedComp);
                     } else {
                         var nonCompAnchor = Array.from(parent.children).find(function(c) {
-                            if (c.classList.contains('lf-component')) return false;
+                            if (c.classList.contains('bychoi-component')) return false;
                             if (c.id === 'canvas' || c.classList.contains('canvas') || c.classList.contains('page') || c.id === 'canvas-page') return false;
                             return true;
                         });
@@ -611,18 +611,18 @@ if (!window.v4IframeLayeringScript) {
     }
 
     function handleBringForward(d) {
-        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        var selected = Array.from(document.querySelectorAll('.bychoi-component.selected'));
         if (selected.length === 0) {
             if (d && d.ids && Array.isArray(d.ids)) {
                 d.ids.forEach(function(id) {
                     var el = document.getElementById(id);
-                    if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                    if (el && el.classList.contains('bychoi-component') && !selected.includes(el)) {
                         selected.push(el);
                     }
                 });
             } else if (d && d.id) {
                 var singleTarget = document.getElementById(d.id);
-                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                if (singleTarget && singleTarget.classList.contains('bychoi-component')) {
                     selected.push(singleTarget);
                 }
             }
@@ -630,7 +630,7 @@ if (!window.v4IframeLayeringScript) {
         var topLevelSelected = selected.filter(function(el) {
             var parent = el.parentElement;
             while (parent && parent !== document.body) {
-                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
+                if (parent.classList.contains('bychoi-component') && parent.classList.contains('selected')) return false;
                 parent = parent.parentElement;
             }
             return true;
@@ -658,7 +658,7 @@ if (!window.v4IframeLayeringScript) {
                 });
 
                 var siblingComps = Array.from(parent.children).filter(function(c) {
-                    return c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker');
+                    return c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker');
                 });
 
                 var trailingRef = Array.from(parent.children).find(isTrailingLayerNode);
@@ -716,18 +716,18 @@ if (!window.v4IframeLayeringScript) {
     }
 
     function handleSendBackward(d) {
-        var selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        var selected = Array.from(document.querySelectorAll('.bychoi-component.selected'));
         if (selected.length === 0) {
             if (d && d.ids && Array.isArray(d.ids)) {
                 d.ids.forEach(function(id) {
                     var el = document.getElementById(id);
-                    if (el && el.classList.contains('lf-component') && !selected.includes(el)) {
+                    if (el && el.classList.contains('bychoi-component') && !selected.includes(el)) {
                         selected.push(el);
                     }
                 });
             } else if (d && d.id) {
                 var singleTarget = document.getElementById(d.id);
-                if (singleTarget && singleTarget.classList.contains('lf-component')) {
+                if (singleTarget && singleTarget.classList.contains('bychoi-component')) {
                     selected.push(singleTarget);
                 }
             }
@@ -735,7 +735,7 @@ if (!window.v4IframeLayeringScript) {
         var topLevelSelected = selected.filter(function(el) {
             var parent = el.parentElement;
             while (parent && parent !== document.body) {
-                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) return false;
+                if (parent.classList.contains('bychoi-component') && parent.classList.contains('selected')) return false;
                 parent = parent.parentElement;
             }
             return true;
@@ -763,7 +763,7 @@ if (!window.v4IframeLayeringScript) {
                 });
 
                 var siblingComps = Array.from(parent.children).filter(function(c) {
-                    return c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker');
+                    return c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker');
                 });
 
                 items.forEach(function(el) {
@@ -820,20 +820,20 @@ if (!window.v4IframeLayeringScript) {
     }
 
     if (!window.v4MessageHandlers) window.v4MessageHandlers = {};
-    window.v4MessageHandlers['LF_NORMALIZE_Z_INDEX'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_NORMALIZE_Z_INDEX'] = function(d) {
         var targetEl = (d && d.containerId) ? document.getElementById(d.containerId) : null;
         normalizeZIndices(targetEl, true);
     };
-    window.v4MessageHandlers['LF_BRING_FRONT'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_BRING_FRONT'] = function(d) {
         handleBringFront(d || {});
     };
-    window.v4MessageHandlers['LF_SEND_BACK'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_SEND_BACK'] = function(d) {
         handleSendBack(d || {});
     };
-    window.v4MessageHandlers['LF_BRING_FORWARD'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_BRING_FORWARD'] = function(d) {
         handleBringForward(d || {});
     };
-    window.v4MessageHandlers['LF_SEND_BACKWARD'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_SEND_BACKWARD'] = function(d) {
         handleSendBackward(d || {});
     };
 

@@ -1,5 +1,5 @@
 /**
- * LF Editor - Unified Project PDF Exporter Module (v3 - High Fidelity True-to-Editor Renderer)
+ * bychoi workspace - Unified Project PDF Exporter Module (v3 - High Fidelity True-to-Editor Renderer)
  * Handles batch rendering of all screens within a project into a single PDF file (1600x900 / Dynamic Landscape).
  */
 
@@ -356,8 +356,8 @@ function compileScreenHtmlForPdf(rawHtml, screenFileName = '', dynamicContentH =
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style id="pdf-export-clean-overrides">
         /* Hide selection boxes, drag handles, resizers, inspector tools during PDF export */
-        .selection-box, .resize-handle, .lf-delete-trigger, .lf-drag-handle, .lf-resizer,
-        #floating-inspector-card, .smart-guide-line, .lf-connector-port, .guide-layer,
+        .selection-box, .resize-handle, .bychoi-delete-trigger, .bychoi-drag-handle, .bychoi-resizer,
+        #floating-inspector-card, .smart-guide-line, .bychoi-connector-port, .guide-layer,
         .selection-rect, .selection-overlay, .cell-resizer, #guide-layer, .pins-layer,
         .v4-selection-adorner-layer, .v4-selection-adorner {
             display: none !important;

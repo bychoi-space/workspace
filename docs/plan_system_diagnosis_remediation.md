@@ -133,12 +133,12 @@ function _syncComponentTypeProperties(compStyles, editingType) {
 1. `assets/vctrl_iframe_script.js` L950의 프록시 함수 `handleInsertComponent(d)` 완전 제거.
 2. `v4IframeCoreHandlers` 메시지 레지스트리에서 `window.handleInsertComponent`를 직접 호출하도록 안전하게 인라인화:
 ```javascript
-        'LF_INSERT_COMPONENT': function(d) {
+        'BYCHOI_INSERT_COMPONENT': function(d) {
             if (typeof window.handleInsertComponent === 'function') {
                 return window.handleInsertComponent(d);
             }
         },
-        'LF_INSERT_V4_COMP': function(d) {
+        'BYCHOI_INSERT_V4_COMP': function(d) {
             if (typeof window.handleInsertComponent === 'function') {
                 return window.handleInsertComponent(d);
             }
@@ -169,4 +169,4 @@ function _syncComponentTypeProperties(compStyles, editingType) {
    - [시나리오 1] 일반 도형(Rect, Wave, Arrow, Triangle) 클릭 시 shape-inspector-section이 정상 표시되고 방향/코너/배경색 옵션이 정상 동기화되는지 확인.
    - [시나리오 2] 버튼/뱃지/토글 등 V4 아톰 클릭 시 해당 아톰 인스펙터 패널이 정상 열리는지 확인.
    - [시나리오 3] 그리드 테이블/어드민 세팅 컴포넌트 선택 시 컬럼 및 라벨 인스펙터가 정상 작동하는지 확인.
-   - [시나리오 4] 왼쪽 툴바에서 컴포넌트 드래그 앤 드롭 또는 클릭 삽입(`LF_INSERT_COMPONENT`)이 정상 작동하는지 확인.
+   - [시나리오 4] 왼쪽 툴바에서 컴포넌트 드래그 앤 드롭 또는 클릭 삽입(`BYCHOI_INSERT_COMPONENT`)이 정상 작동하는지 확인.

@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_shortcuts.js
- * Keyboard Shortcuts & Clipboard sync module for LF Editor Studio (Iframe Side).
+ * Keyboard Shortcuts & Clipboard sync module for bychoi workspace Studio (Iframe Side).
  * 
  * [WARNING FOR DEVELOPERS & AI AGENTS]
  * This file is wrapped in an outer template literal (window.v4ShortcutsScript = `...`).
@@ -60,7 +60,7 @@ window.v4ShortcutsScript = `
         );
         if (isCrispToggleKey && !inInputEarly && !e.ctrlKey && !e.metaKey) {
             e.preventDefault();
-            notifyParent({ type: 'LF_TOGGLE_CRISP_VIEW' });
+            notifyParent({ type: 'BYCHOI_TOGGLE_CRISP_VIEW' });
             return;
         }
 
@@ -78,7 +78,7 @@ window.v4ShortcutsScript = `
             };
             if (typeMap[keyChar]) {
                 notifyParent({
-                    type: 'LF_SHORTCUT_ALIGN',
+                    type: 'BYCHOI_SHORTCUT_ALIGN',
                     alignType: typeMap[keyChar]
                 });
                 return;
@@ -98,7 +98,7 @@ window.v4ShortcutsScript = `
                     window.cleanupEmptyTextShapes({ forceBlur: true, deselectIfRemoved: true });
                 }
             } else {
-                const selected = document.querySelectorAll('.lf-component.selected');
+                const selected = document.querySelectorAll('.bychoi-component.selected');
                 if (selected.length > 0) {
                     const targetComp = selected[0];
                     const editable = targetComp.querySelector('.v4-editable-cell, [contenteditable="true"]') ||
@@ -109,7 +109,7 @@ window.v4ShortcutsScript = `
                             window.ResponsiveSmartGuide.clearGuides(true);
                         }
                         if (typeof notifyParent === 'function') {
-                            notifyParent({ type: 'LF_CLEAR_SMARTGUIDE' });
+                            notifyParent({ type: 'BYCHOI_CLEAR_SMARTGUIDE' });
                         }
                         if (typeof window.focusEditableCell === 'function') {
                             window.focusEditableCell(editable);
@@ -126,7 +126,7 @@ window.v4ShortcutsScript = `
                         }
                     } else {
                         console.log("[VCTRL SHORTCUTS] No inline editable element found, focusing parent Quill.");
-                        notifyParent({ type: 'LF_FOCUS_PARENT_QUILL' });
+                        notifyParent({ type: 'BYCHOI_FOCUS_PARENT_QUILL' });
                     }
                 }
             }
@@ -151,7 +151,7 @@ window.v4ShortcutsScript = `
             }
 
             // Tier 2: User has object(s) selected -> deselect all objects and notify parent
-            const selected = document.querySelectorAll('.lf-component.selected');
+            const selected = document.querySelectorAll('.bychoi-component.selected');
             if (selected.length > 0 || window.activeEl) {
                 e.preventDefault();
                 console.log("[VCTRL SHORTCUTS] Deselecting objects via Escape.");
@@ -166,7 +166,7 @@ window.v4ShortcutsScript = `
                 if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
                     try { window.SelectionAdorner.clear(); } catch(adErr) {}
                 }
-                notifyParent({ type: 'LF_DESELECT' });
+                notifyParent({ type: 'BYCHOI_DESELECT' });
                 return;
             }
         }
@@ -185,7 +185,7 @@ window.v4ShortcutsScript = `
             if (window.V4UndoManager && typeof window.V4UndoManager.redo === 'function') {
                 window.V4UndoManager.redo();
             } else if (typeof notifyParent === 'function') {
-                notifyParent({ type: 'LF_TRIGGER_REDO' });
+                notifyParent({ type: 'BYCHOI_TRIGGER_REDO' });
             }
             return;
         }
@@ -195,14 +195,14 @@ window.v4ShortcutsScript = `
             if (window.V4UndoManager && typeof window.V4UndoManager.undo === 'function') {
                 window.V4UndoManager.undo();
             } else if (typeof notifyParent === 'function') {
-                notifyParent({ type: 'LF_TRIGGER_UNDO' });
+                notifyParent({ type: 'BYCHOI_TRIGGER_UNDO' });
             }
             return;
         }
 
         if ((e.ctrlKey || e.metaKey) && isS) {
             e.preventDefault();
-            notifyParent({ type: 'LF_TRIGGER_SAVE' });
+            notifyParent({ type: 'BYCHOI_TRIGGER_SAVE' });
             return;
         }
         if ((e.ctrlKey || e.metaKey) && isC && !inInput) {
@@ -238,14 +238,14 @@ window.v4ShortcutsScript = `
 
         if (!e.ctrlKey && !e.metaKey && e.shiftKey && isG && !inInput) {
             e.preventDefault();
-            notifyParent({ type: 'LF_TOGGLE_GRID_REQUEST' });
+            notifyParent({ type: 'BYCHOI_TOGGLE_GRID_REQUEST' });
             return;
         }
 
         if ((e.ctrlKey || e.metaKey) && isG && !inInput) {
             e.preventDefault();
             notifyParent({
-                type: 'LF_SHORTCUT_TRIGGERED',
+                type: 'BYCHOI_SHORTCUT_TRIGGERED',
                 shortcut: e.shiftKey ? 'ungroup' : 'group'
             });
             return;
@@ -255,26 +255,26 @@ window.v4ShortcutsScript = `
             if (e.key === ']' || e.code === 'BracketRight') {
                 e.preventDefault();
                 if (e.shiftKey) {
-                    window.postMessage({ type: 'LF_BRING_FRONT' }, '*');
+                    window.postMessage({ type: 'BYCHOI_BRING_FRONT' }, '*');
                 } else {
-                    window.postMessage({ type: 'LF_BRING_FORWARD' }, '*');
+                    window.postMessage({ type: 'BYCHOI_BRING_FORWARD' }, '*');
                 }
                 return;
             } else if (e.key === '[' || e.code === 'BracketLeft') {
                 e.preventDefault();
                 if (e.shiftKey) {
-                    window.postMessage({ type: 'LF_SEND_BACK' }, '*');
+                    window.postMessage({ type: 'BYCHOI_SEND_BACK' }, '*');
                 } else {
-                    window.postMessage({ type: 'LF_SEND_BACKWARD' }, '*');
+                    window.postMessage({ type: 'BYCHOI_SEND_BACKWARD' }, '*');
                 }
                 return;
             }
         }
         else if (e.code === 'Space' && !inInput) {
             e.preventDefault();
-            notifyParent({ type: 'LF_SPACE_DOWN' });
+            notifyParent({ type: 'BYCHOI_SPACE_DOWN' });
         } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code) && !inInput) {
-            const selected = document.querySelectorAll('.lf-component.selected');
+            const selected = document.querySelectorAll('.bychoi-component.selected');
             if (selected.length > 0) {
                 e.preventDefault();
                 if (window.V4UndoManager && !isArrowMoving) {
@@ -282,7 +282,7 @@ window.v4ShortcutsScript = `
                     isArrowMoving = true;
                     const hasRespGuide = !!(window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive());
                     if (!hasRespGuide) {
-                        notifyParent({ type: 'LF_SNAP_START' });
+                        notifyParent({ type: 'BYCHOI_SNAP_START' });
                     }
                 }
                 const step = e.shiftKey ? 10 : 1;
@@ -343,14 +343,14 @@ window.v4ShortcutsScript = `
                         if (isNaN(idx)) {
                             idx = parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                         }
-                        notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, frame: frameType, x: l + dx, y: t + dy });
+                        notifyParent({ type: 'BYCHOI_UPDATE_PIN_POS', index: idx, frame: frameType, x: l + dx, y: t + dy });
                     }
                     
                     if (c.classList.contains('connector-line')) {
-                        notifyParent({ type: 'LF_SHIFT_CONNECTOR_POS', id: c.id, dx: dx, dy: dy });
+                        notifyParent({ type: 'BYCHOI_SHIFT_CONNECTOR_POS', id: c.id, dx: dx, dy: dy });
                     }
                     
-                    if (c.classList.contains('lf-group')) {
+                    if (c.classList.contains('bychoi-group')) {
                         const connIdsStr = c.getAttribute('data-connectors');
                         let connIds = [];
                         if (connIdsStr) {
@@ -358,7 +358,7 @@ window.v4ShortcutsScript = `
                         }
                         if (Array.isArray(connIds)) {
                             connIds.forEach(connId => {
-                                notifyParent({ type: 'LF_SHIFT_CONNECTOR_POS', id: connId, dx: dx, dy: dy });
+                                notifyParent({ type: 'BYCHOI_SHIFT_CONNECTOR_POS', id: connId, dx: dx, dy: dy });
                             });
                         }
                         c.querySelectorAll('.text-marker, .pin-marker').forEach(child => {
@@ -367,7 +367,7 @@ window.v4ShortcutsScript = `
                             const hostRect = document.body.getBoundingClientRect();
                             const absX = childRect.left - hostRect.left;
                             const absY = childRect.top - hostRect.top;
-                            notifyParent({ type: 'LF_UPDATE_PIN_POS', index: idx, x: absX, y: absY });
+                            notifyParent({ type: 'BYCHOI_UPDATE_PIN_POS', index: idx, x: absX, y: absY });
                         });
                     }
                 });
@@ -380,7 +380,7 @@ window.v4ShortcutsScript = `
                         const logicalY = parseFloat(activeEl.style.top) || 0;
                         
                         notifyParent({ 
-                            type: 'LF_SNAP_REQUEST', 
+                            type: 'BYCHOI_SNAP_REQUEST', 
                             x: logicalX, 
                             y: logicalY, 
                             w: activeEl.offsetWidth, 
@@ -392,20 +392,20 @@ window.v4ShortcutsScript = `
                 }
             }
         } else if ((e.code === 'Delete' || e.code === 'Backspace') && !inInput) {
-                const selected = document.querySelectorAll('.lf-component.selected');
+                const selected = document.querySelectorAll('.bychoi-component.selected');
                 if (selected.length > 0) {
                     e.preventDefault();
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
                     
                     selected.forEach(c => {
                         if (c.classList.contains('connector-line')) {
-                            notifyParent({ type: 'LF_DELETE_CONNECTOR', id: c.id });
+                            notifyParent({ type: 'BYCHOI_DELETE_CONNECTOR', id: c.id });
                         } else if (c.classList.contains('text-marker') || c.classList.contains('pin-marker')) {
                             let idx = parseInt(c.getAttribute('data-index'));
                             if (isNaN(idx)) {
                                 idx = parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''));
                             }
-                            notifyParent({ type: 'LF_DELETE_PIN', index: idx });
+                            notifyParent({ type: 'BYCHOI_DELETE_PIN', index: idx });
                             c.remove();
                         } else {
                             c.remove();
@@ -415,7 +415,7 @@ window.v4ShortcutsScript = `
                     if (window.SelectionAdorner && typeof window.SelectionAdorner.clear === 'function') {
                         try { window.SelectionAdorner.clear(); } catch(adErr) {}
                     }
-                    notifyParent({ type: 'LF_DESELECT' });
+                    notifyParent({ type: 'BYCHOI_DESELECT' });
                     if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
                         window.V4DimmedLayer.syncStateToParent();
                     }
@@ -425,7 +425,7 @@ window.v4ShortcutsScript = `
     });
     document.addEventListener('keyup', e => {
         if (e.code === 'Space') {
-            notifyParent({ type: 'LF_SPACE_UP' });
+            notifyParent({ type: 'BYCHOI_SPACE_UP' });
         } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
             isArrowMoving = false;
             if (window.ScrollPinEngine && typeof window.ScrollPinEngine.scheduleUpdate === 'function') {
@@ -434,14 +434,14 @@ window.v4ShortcutsScript = `
             if (window.ResponsiveSmartGuide && typeof window.ResponsiveSmartGuide.isResponsive === 'function' && window.ResponsiveSmartGuide.isResponsive()) {
                 window.ResponsiveSmartGuide.onNudgeEnd();
             } else {
-                const activeComp = document.querySelector('.lf-component.selected') || window.activeEl;
+                const activeComp = document.querySelector('.bychoi-component.selected') || window.activeEl;
                 if (activeComp) {
                     const compW = activeComp.offsetWidth || 100;
                     const compH = activeComp.offsetHeight || 40;
                     const compL = parseFloat(activeComp.style.left) || 0;
                     const compT = parseFloat(activeComp.style.top) || 0;
                     notifyParent({
-                        type: 'LF_SNAP_END',
+                        type: 'BYCHOI_SNAP_END',
                         id: activeComp.id,
                         x: compL,
                         y: compT,
@@ -449,7 +449,7 @@ window.v4ShortcutsScript = `
                         h: compH
                     });
                 } else {
-                    notifyParent({ type: 'LF_SNAP_END' });
+                    notifyParent({ type: 'BYCHOI_SNAP_END' });
                 }
             }
         }
@@ -494,7 +494,7 @@ window.v4ShortcutsScript = `
             reader.onload = function(evt) {
                 if (evt && evt.target && evt.target.result) {
                     notifyParent({
-                        type: 'LF_INSERT_IMAGE_COMP',
+                        type: 'BYCHOI_INSERT_IMAGE_COMP',
                         base64: evt.target.result,
                         fromPaste: true
                     });
@@ -510,24 +510,24 @@ window.v4ShortcutsScript = `
 
     window.addEventListener('message', e => {
         const d = e.data; if (!d) return;
-        if (d.type === 'LF_RESPONSE_CLIPBOARD') {
-            console.log("[Clipboard Debug] Iframe received LF_RESPONSE_CLIPBOARD with items:", d.clipboard);
+        if (d.type === 'BYCHOI_RESPONSE_CLIPBOARD') {
+            console.log("[Clipboard Debug] Iframe received BYCHOI_RESPONSE_CLIPBOARD with items:", d.clipboard);
             window.pasteCopiedObjectsFromData(d.clipboard);
             return;
         }
-        if (d.type === 'LF_TRIGGER_COPY_STYLE') {
+        if (d.type === 'BYCHOI_TRIGGER_COPY_STYLE') {
             window.copySelectedObjectStyle();
             return;
         }
-        if (d.type === 'LF_TRIGGER_PASTE_STYLE') {
+        if (d.type === 'BYCHOI_TRIGGER_PASTE_STYLE') {
             window.pasteCopiedObjectStyle();
             return;
         }
-        if (d.type === 'LF_RESPONSE_STYLE_CLIPBOARD') {
+        if (d.type === 'BYCHOI_RESPONSE_STYLE_CLIPBOARD') {
             window.pasteCopiedObjectStyle(d.styleClipboard);
             return;
         }
-        if (d.type === 'LF_SHORTCUT_KEY_PROXY') {
+        if (d.type === 'BYCHOI_SHORTCUT_KEY_PROXY') {
             const isCtrl = !!d.ctrlKey || !!d.metaKey;
             const isShift = !!d.shiftKey;
             const keyChar = (d.key || "").toLowerCase();
@@ -572,7 +572,7 @@ window.v4ShortcutsScript = `
         if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
             const msg = {
-                type: 'LF_IFRAME_WHEEL_ZOOM',
+                type: 'BYCHOI_IFRAME_WHEEL_ZOOM',
                 clientX: e.clientX,
                 clientY: e.clientY,
                 deltaY: e.deltaY

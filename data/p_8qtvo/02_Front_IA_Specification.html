@@ -25,7 +25,7 @@
     background: #ffffff;
     overflow: hidden;
   }
-  .lf-component {
+  .bychoi-component {
     position: absolute;
     box-sizing: border-box;
   }
@@ -292,7 +292,7 @@
 <div id="canvas-root">
 
   <!-- 1. 상단 글로벌 헤더 (10단위 규격: top:20, left:20, width:1560, height:50) -->
-  <div id="comp-ia-header" class="lf-component" style="top: 20px; left: 20px; width: 1560px; height: 50px; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; white-space: nowrap;">
+  <div id="comp-ia-header" class="bychoi-component" style="top: 20px; left: 20px; width: 1560px; height: 50px; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; white-space: nowrap;">
     <div style="display: flex; align-items: center; gap: 12px; white-space: nowrap; flex-shrink: 0;">
       <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px; flex-shrink: 0; display: block;">
         <polygon points="12 2 2 7 12 12 22 7 12 2" stroke-width="1.6" style="stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
@@ -307,7 +307,7 @@
   </div>
 
   <!-- 2. 시선닷컴 Front IA 계층형 아코디언 테이블 (10단위 규격: top:90, left:20, width:1560, height:790) -->
-  <div id="comp-ia-table-wrap" class="lf-component" style="top: 90px; left: 20px; width: 1560px; height: 790px; z-index: 10;">
+  <div id="comp-ia-table-wrap" class="bychoi-component" style="top: 90px; left: 20px; width: 1560px; height: 790px; z-index: 10;">
     <div class="ia-table-card">
       <div class="ia-scroll-viewport">
         <table class="v4-ia-tree-table" id="sisun-ia-table">
@@ -1804,7 +1804,7 @@
     var bindIaTable = function() {
       var tables = document.querySelectorAll('table.v4-ia-tree-table');
       tables.forEach(function(table) {
-        var comp = table.closest('.lf-component');
+        var comp = table.closest('.bychoi-component');
         if (!table || !comp || table._iaPropsBound) return;
         table._iaPropsBound = true;
         table._tableSelectionBound = true;
@@ -1824,7 +1824,7 @@
           if (typeof window.syncTableComponentSize === 'function' && !window.syncTableComponentSize._iaSizeGuarded) {
             var origSyncSize = window.syncTableComponentSize;
             window.syncTableComponentSize = function() {
-              var s = document.querySelector('.lf-component.selected');
+              var s = document.querySelector('.bychoi-component.selected');
               if (s && s.querySelector('.v4-ia-tree-table')) return;
               return origSyncSize.apply(this, arguments);
             };
@@ -1840,7 +1840,7 @@
         var dragStartCol = -1;
 
         var syncToParentInspector = function() {
-          document.querySelectorAll('.lf-component').forEach(function(x) {
+          document.querySelectorAll('.bychoi-component').forEach(function(x) {
             x.classList.remove('selected');
           });
           comp.classList.add('selected');
@@ -1853,7 +1853,7 @@
             var compStyles = (typeof window._getCompStyles === 'function') ? window._getCompStyles(comp) : { id: comp.id, isTable: true };
             compStyles.isTable = true;
             window.notifyParent(Object.assign({
-              type: 'LF_COMP_SELECTED',
+              type: 'BYCHOI_COMP_SELECTED',
               shiftKey: false,
               isResponsive: false
             }, compStyles));
@@ -1863,7 +1863,7 @@
             var selected = table.querySelectorAll('.selected-cell');
             if (!selected.length) {
               if (typeof window.notifyParent === 'function') {
-                window.notifyParent({ type: 'LF_CELL_SELECTED', cellData: null });
+                window.notifyParent({ type: 'BYCHOI_CELL_SELECTED', cellData: null });
               }
               return;
             }
@@ -1885,7 +1885,7 @@
 
             if (typeof window.notifyParent === 'function') {
               window.notifyParent({
-                type: 'LF_CELL_SELECTED',
+                type: 'BYCHOI_CELL_SELECTED',
                 cellData: {
                   count: selected.length,
                   backgroundColor: bg,
@@ -2006,8 +2006,8 @@
         var installStyleHook = function() {
           window.v4MessageHandlers = window.v4MessageHandlers || {};
           if (window.v4MessageHandlers._iaCellStyleHooked) return;
-          var origCellStyleHandler = window.v4MessageHandlers['LF_UPDATE_CELL_STYLE'];
-          window.v4MessageHandlers['LF_UPDATE_CELL_STYLE'] = function(d) {
+          var origCellStyleHandler = window.v4MessageHandlers['BYCHOI_UPDATE_CELL_STYLE'];
+          window.v4MessageHandlers['BYCHOI_UPDATE_CELL_STYLE'] = function(d) {
             var iaSelected = document.querySelectorAll('table.v4-ia-tree-table .selected-cell');
             if (iaSelected.length > 0 && d && d.style) {
               var undoMgr = window['V4Undo' + 'Manager'];

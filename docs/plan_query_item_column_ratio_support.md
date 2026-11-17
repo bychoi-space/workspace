@@ -21,9 +21,9 @@
 
 | 파일 경로 | 현재 역할 및 분석 내용 | 변경 및 영향 범위 |
 | :--- | :--- | :--- |
-| **`assets/vctrl_ui_atoms.js`** | Iframe 내부의 `LF_UPDATE_ADMIN_SETTINGS_PROPERTIES` 메시지 핸들러. 각 행의 `data-row{i}-cols`, `label`, `height` 등을 파싱하여 행과 셀을 동적으로 렌더링. | - `data-row{i}-ratio` 속성 저장/파싱 지원<br>- 2개 컬럼(`colsAttr === 2`)일 때 비율에 따라 `contentCell`의 `flex` 스타일을 `calc()` 수식으로 가변 적용 |
-| **`assets/inspector/inspector_admin_settings.js`** | 부모 창의 Query Item 인스펙터 패널 제어 모듈 (`_syncAdminSettingsProps`). 행 개수 증감, 행별 컬럼수/높이/라벨/필수값 렌더링 및 변경 이벤트 전송. | - 각 행 블록 내에 `admin-row-ratio-container` 동적 생성<br>- 컬럼 수가 2개일 때만 `display: block` 처리<br>- 컬럼 수 변경(`colSelect.onchange`) 시 즉시 토글<br>- 비율 변경 시 Iframe으로 `LF_UPDATE_ADMIN_SETTINGS_PROPERTIES` 전송<br>- 행 추가/삭제/이동(▲/▼/×) 시 ratio 속성 유지 |
-| **`assets/vctrl_iframe_style_extractor.js`** | Iframe 내부 요소 선택 시 스타일 및 속성을 추출하여 부모 창(`LF_COMP_SELECTED`)으로 전달하는 SSOT 모듈. | - `adminRowData['adminRow' + i + 'Ratio']` 추출 로직 추가 (기본값 `'1:1'`) |
+| **`assets/vctrl_ui_atoms.js`** | Iframe 내부의 `BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES` 메시지 핸들러. 각 행의 `data-row{i}-cols`, `label`, `height` 등을 파싱하여 행과 셀을 동적으로 렌더링. | - `data-row{i}-ratio` 속성 저장/파싱 지원<br>- 2개 컬럼(`colsAttr === 2`)일 때 비율에 따라 `contentCell`의 `flex` 스타일을 `calc()` 수식으로 가변 적용 |
+| **`assets/inspector/inspector_admin_settings.js`** | 부모 창의 Query Item 인스펙터 패널 제어 모듈 (`_syncAdminSettingsProps`). 행 개수 증감, 행별 컬럼수/높이/라벨/필수값 렌더링 및 변경 이벤트 전송. | - 각 행 블록 내에 `admin-row-ratio-container` 동적 생성<br>- 컬럼 수가 2개일 때만 `display: block` 처리<br>- 컬럼 수 변경(`colSelect.onchange`) 시 즉시 토글<br>- 비율 변경 시 Iframe으로 `BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES` 전송<br>- 행 추가/삭제/이동(▲/▼/×) 시 ratio 속성 유지 |
+| **`assets/vctrl_iframe_style_extractor.js`** | Iframe 내부 요소 선택 시 스타일 및 속성을 추출하여 부모 창(`BYCHOI_COMP_SELECTED`)으로 전달하는 SSOT 모듈. | - `adminRowData['adminRow' + i + 'Ratio']` 추출 로직 추가 (기본값 `'1:1'`) |
 | **`assets/vctrl_component_data.js`** | 컴포넌트 라이브러리(LIBRARY)의 초기 생성 템플릿 정의. | - 초기 템플릿의 속성 정합성 유지 (`data-row1-ratio="1:1"`) |
 | **`assets/vctrl_responsive_smartguide.js`** | 스마트 가이드 스냅 엔진. `.v4-admin-content-cell`의 실제 BoundingClientRect를 추종하여 10px 여백 스냅 계산. | - **수정 불필요 (100% 자동 호환)**: 브라우저 실측 좌표(`cell.getBoundingClientRect().left + 10`) 기반이므로 calc 분할 위치를 자동으로 정확하게 추종함 확인 |
 
@@ -102,10 +102,10 @@
 
 ### Step 1: Iframe 스타일 추출기 확장 (`assets/vctrl_iframe_style_extractor.js`)
 - `adminRowData['adminRow' + i + 'Ratio']` 속성 추가 (기본값 `'1:1'`).
-- `LF_COMP_SELECTED` 메시지를 통해 부모 측 인스펙터로 안전하게 전달.
+- `BYCHOI_COMP_SELECTED` 메시지를 통해 부모 측 인스펙터로 안전하게 전달.
 
 ### Step 2: Iframe 내부 렌더링 엔진 확장 (`assets/vctrl_ui_atoms.js`)
-- `LF_UPDATE_ADMIN_SETTINGS_PROPERTIES` 핸들러에서:
+- `BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES` 핸들러에서:
   - 단일 행 갱신(`d.rowNum !== undefined`): `d.ratio`가 전달되면 `container.setAttribute('data-row' + rNum + '-ratio', d.ratio)` 저장.
   - 일괄 행 갱신(`Array.isArray(d.rows)`): 각 행의 `rData.ratio` 저장 및 초과 행 속성 정리(`removeAttribute`).
 - `tableDiv` 내 행/셀 렌더링 루프에서:

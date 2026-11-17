@@ -289,7 +289,7 @@ if (!window.v4IframeDimmedLayerScript) {
         var cnt = 0;
         for (var i = 0; i < layerEl.children.length; i++) {
             var ch = layerEl.children[i];
-            if (ch.classList && ch.classList.contains('lf-component') && !isPinElement(ch)) {
+            if (ch.classList && ch.classList.contains('bychoi-component') && !isPinElement(ch)) {
                 cnt++;
             }
         }
@@ -298,7 +298,7 @@ if (!window.v4IframeDimmedLayerScript) {
 
     function clearIncompatibleSelections() {
         var changed = false;
-        var selected = document.querySelectorAll('.lf-component.selected');
+        var selected = document.querySelectorAll('.bychoi-component.selected');
         selected.forEach(function(el) {
             if (!isComponentSelectable(el)) {
                 el.classList.remove('selected');
@@ -313,9 +313,9 @@ if (!window.v4IframeDimmedLayerScript) {
                 window.ResponsiveSmartGuide.clearGuides(true);
             }
             if (typeof window.notifyParent === 'function') {
-                window.notifyParent({ type: 'LF_DESELECT' });
+                window.notifyParent({ type: 'BYCHOI_DESELECT' });
             } else if (window.parent) {
-                window.parent.postMessage({ type: 'LF_DESELECT' }, '*');
+                window.parent.postMessage({ type: 'BYCHOI_DESELECT' }, '*');
             }
         }
     }
@@ -360,7 +360,7 @@ if (!window.v4IframeDimmedLayerScript) {
 
     function syncStateToParent() {
         var payload = getStatePayload();
-        payload.type = 'LF_DIMMED_LAYER_STATE';
+        payload.type = 'BYCHOI_DIMMED_LAYER_STATE';
         if (typeof window.notifyParent === 'function') {
             window.notifyParent(payload);
         } else if (window.parent) {
@@ -450,10 +450,10 @@ if (!window.v4IframeDimmedLayerScript) {
     }
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};
-    window.v4MessageHandlers['LF_QUERY_DIMMED_LAYER_STATE'] = function() {
+    window.v4MessageHandlers['BYCHOI_QUERY_DIMMED_LAYER_STATE'] = function() {
         syncStateToParent();
     };
-    window.v4MessageHandlers['LF_UPDATE_DIMMED_LAYER'] = handleUpdateDimmedLayer;
+    window.v4MessageHandlers['BYCHOI_UPDATE_DIMMED_LAYER'] = handleUpdateDimmedLayer;
 
     window.V4DimmedLayer = {
         DIMMED_Z_INDEX: DIMMED_Z_INDEX,

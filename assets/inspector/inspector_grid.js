@@ -12,7 +12,7 @@
         const targetId = (window.state && window.state.selectedComponent && window.state.selectedComponent.id) ||
                          (window.state && window.state.editingIndex) ||
                          window.activeCompId || null;
-        const payload = Object.assign({ type: 'LF_UPDATE_GRID_PROPERTIES' }, data);
+        const payload = Object.assign({ type: 'BYCHOI_UPDATE_GRID_PROPERTIES' }, data);
         if (targetId && !payload.id) {
             payload.id = targetId;
         }
@@ -773,14 +773,14 @@
             if (!this._colFocusListenerBound) {
                 this._colFocusListenerBound = true;
                 if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
-                    window.MessageHub.subscribe('LF_GRID_COL_FOCUSED', (data) => {
+                    window.MessageHub.subscribe('BYCHOI_GRID_COL_FOCUSED', (data) => {
                         if (data && typeof data.activeColIndex === 'number' && data.activeColIndex >= 0) {
                             this.focusColumnCard(data.activeColIndex);
                         }
                     });
                 }
                 window.addEventListener('message', (e) => {
-                    if (e.data && e.data.type === 'LF_GRID_COL_FOCUSED' && typeof e.data.activeColIndex === 'number' && e.data.activeColIndex >= 0) {
+                    if (e.data && e.data.type === 'BYCHOI_GRID_COL_FOCUSED' && typeof e.data.activeColIndex === 'number' && e.data.activeColIndex >= 0) {
                         this.focusColumnCard(e.data.activeColIndex);
                     }
                 });

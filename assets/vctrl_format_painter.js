@@ -245,20 +245,20 @@ window.v4FormatPainterScript = `
 
         if (window.top) {
             try {
-                window.top.__lf_global_style_clipboard__ = styleData;
+                window.top.__bychoi_global_style_clipboard__ = styleData;
             } catch(e) {}
         }
         try {
-            localStorage.setItem('__lf_global_style_clipboard__', JSON.stringify(styleData));
+            localStorage.setItem('__bychoi_global_style_clipboard__', JSON.stringify(styleData));
         } catch(lsSaveErr) {}
 
         notifyParent({
-            type: 'LF_SAVE_STYLE_CLIPBOARD',
+            type: 'BYCHOI_SAVE_STYLE_CLIPBOARD',
             styleClipboard: styleData
         });
 
         notifyParent({
-            type: 'LF_SHOW_TOAST',
+            type: 'BYCHOI_SHOW_TOAST',
             message: '\uc11c\uc2dd\uc744 \ubcf5\uc0ac\ud560 \ub3c4\ud615\uc744 \uba3c\uc800 \uc120\ud0dd\ud574\uc8fc\uc138\uc694.',
             toastType: 'info'
         });
@@ -267,12 +267,12 @@ window.v4FormatPainterScript = `
     }
 
     window.copySelectedObjectStyle = function() {
-        var selected = document.querySelectorAll('.lf-component.selected');
+        var selected = document.querySelectorAll('.bychoi-component.selected');
         var targetComp = (selected && selected.length > 0) ? selected[0] : window.activeEl;
         if (!targetComp) {
             console.warn("[Style Clipboard] No component selected to copy format from.");
             notifyParent({
-                type: 'LF_SHOW_TOAST',
+                type: 'BYCHOI_SHOW_TOAST',
                 message: '\uc11c\uc2dd\uc744 \ubcf5\uc0ac\ud560 \ub3c4\ud615\uc744 \uba3c\uc800 \uc120\ud0dd\ud574\uc8fc\uc138\uc694.',
                 toastType: 'warning'
             });
@@ -318,7 +318,7 @@ window.v4FormatPainterScript = `
         }
 
         var styleData = {
-            type: 'LF_STYLE_CLIPBOARD',
+            type: 'BYCHOI_STYLE_CLIPBOARD',
             version: 2,
             timestamp: Date.now(),
             isShape: isShape,
@@ -800,12 +800,12 @@ window.v4FormatPainterScript = `
         let styleData = explicitStyleData || v4StyleClipboard;
         if (!styleData && window.top) {
             try {
-                styleData = window.top.__lf_global_style_clipboard__;
+                styleData = window.top.__bychoi_global_style_clipboard__;
             } catch(e) {}
         }
         if (!styleData) {
             try {
-                const rawStored = localStorage.getItem('__lf_global_style_clipboard__');
+                const rawStored = localStorage.getItem('__bychoi_global_style_clipboard__');
                 if (rawStored) {
                     styleData = JSON.parse(rawStored);
                     v4StyleClipboard = styleData;
@@ -815,20 +815,20 @@ window.v4FormatPainterScript = `
         if (!styleData) {
             console.warn("[Style Clipboard] No style data found in clipboard.");
             notifyParent({
-                type: 'LF_SHOW_TOAST',
+                type: 'BYCHOI_SHOW_TOAST',
                 message: '\ubcf5\uc0ac\ub41c \uc11c\uc2dd\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \uba3c\uc800 \ub3c4\ud615\uc744 \uc120\ud0dd\ud558\uace0 \uc11c\uc2dd\uc744 \ubcf5\uc0ac\ud558\uc138\uc694.',
                 toastType: 'warning'
             });
             return false;
         }
 
-        const selected = Array.from(document.querySelectorAll('.lf-component.selected'));
+        const selected = Array.from(document.querySelectorAll('.bychoi-component.selected'));
         if (selected.length === 0 && window.activeEl) {
             selected.push(window.activeEl);
         }
         if (selected.length === 0) {
             notifyParent({
-                type: 'LF_SHOW_TOAST',
+                type: 'BYCHOI_SHOW_TOAST',
                 message: '\uc11c\uc2dd\uc744 \uc801\uc6a9\ud560 \ub300\uc0c1 \ub3c4\ud615\uc744 \uba3c\uc800 \uc120\ud0dd\ud574\uc8fc\uc138\uc694.',
                 toastType: 'warning'
             });
@@ -857,10 +857,10 @@ window.v4FormatPainterScript = `
         if (selected.length > 0 && typeof window.notifyParent === 'function' && typeof window._getCompStyles === 'function') {
             const firstCompStyles = window._getCompStyles(selected[0]);
             notifyParent(Object.assign({
-                type: 'LF_COMP_RESIZED'
+                type: 'BYCHOI_COMP_RESIZED'
             }, firstCompStyles));
             notifyParent(Object.assign({
-                type: 'LF_COMP_SELECTED'
+                type: 'BYCHOI_COMP_SELECTED'
             }, firstCompStyles));
         }
 
@@ -869,7 +869,7 @@ window.v4FormatPainterScript = `
             : (appliedCount + '\uac1c \ub3c4\ud615\uc5d0 \uc11c\uc2dd\uc774 \uc77c\uad04 \uc801\uc6a9\ub418\uc5c8\uc2b5\ub2c8\ub2e4.');
 
         notifyParent({
-            type: 'LF_SHOW_TOAST',
+            type: 'BYCHOI_SHOW_TOAST',
             message: toastMsg,
             toastType: 'success'
         });

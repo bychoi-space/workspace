@@ -39,8 +39,8 @@ window.V4_COMPONENT_LIBRARY.atoms = [
             category: 'Atoms',
             width: '40px',
             height: '40px',
-            previewHtml: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 24px; height: 24px; color: white;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
-            html: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 100%; height: 100%; padding: 8px; color: #050505; box-sizing: border-box;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`
+            previewHtml: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 24px; height: 24px; color: white;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
+            html: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; padding: 8px; color: #050505; box-sizing: border-box;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`
         },
         {
             id: 'v4-atom-textbox',
@@ -194,12 +194,12 @@ window.V4_COMPONENT_LIBRARY.atoms = [
                 <div class="v4-dp-fields" style="display: inline-flex; align-items: center; gap: 0; border: 1.6px solid #c8c8c8; border-radius: 8px; background: #ffffff; height: 100%; min-height: 30px; overflow: hidden; box-sizing: border-box; flex-shrink: 0;">
                     <div class="v4-dp-input-group" style="display: inline-flex; align-items: center; padding: 0 10px; gap: 6px; height: 100%;">
                         <div class="v4-dp-date-field v4-dp-start v4-editable-cell" contenteditable="true" style="font-size: 13px; font-weight: 400; color: #050505; outline: none; white-space: nowrap; min-width: 82px; font-family: inherit; -webkit-user-select: text; user-select: text;"></div>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#969696" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 15px; height: 15px; flex-shrink: 0; pointer-events: none; background-image: none !important;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#969696" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 15px; height: 15px; flex-shrink: 0; pointer-events: none; background-image: none !important;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                     </div>
                     <div class="v4-dp-separator" style="color: #969696; font-size: 13px; padding: 0 2px; flex-shrink: 0; font-family: inherit;">-</div>
                     <div class="v4-dp-input-group" style="display: inline-flex; align-items: center; padding: 0 10px; gap: 6px; height: 100%;">
                         <div class="v4-dp-date-field v4-dp-end v4-editable-cell" contenteditable="true" style="font-size: 13px; font-weight: 400; color: #050505; outline: none; white-space: nowrap; min-width: 82px; font-family: inherit; -webkit-user-select: text; user-select: text;"></div>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#969696" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lf-icon" style="width: 15px; height: 15px; flex-shrink: 0; pointer-events: none; background-image: none !important;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#969696" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 15px; height: 15px; flex-shrink: 0; pointer-events: none; background-image: none !important;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                     </div>
                 </div>
                 <div class="v4-dp-presets" style="display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;">
@@ -303,7 +303,7 @@ window.V4_COMPONENT_LIBRARY.atoms = [
             html: `
             <div class="v4-cursor-container" data-cursor-type="default" data-cursor-text="Click Event" data-show-text="true" data-badge-style="dark" style="display: inline-flex; align-items: center; gap: 8px; width: 100%; height: 100%; box-sizing: border-box; pointer-events: auto; user-select: none;">
                 <div class="v4-cursor-icon-wrap" style="width: 24px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
-                    <svg viewBox="0 0 24 24" class="lf-icon v4-cursor-svg" style="width: 24px; height: 24px; display: block; overflow: visible; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35)); pointer-events: none;">
+                    <svg viewBox="0 0 24 24" class="bychoi-icon v4-cursor-svg" style="width: 24px; height: 24px; display: block; overflow: visible; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35)); pointer-events: none;">
                         <path class="v4-cursor-path" d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L6.35 2.85a.5.5 0 0 0-.85.36z" fill="#ffffff" stroke="#050505" stroke-width="1.6" stroke-linejoin="round" />
                     </svg>
                 </div>

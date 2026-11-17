@@ -31,7 +31,7 @@ window.v4ClipboardObjectsScript = `
         try {
             const onCopy = function(e) {
                 if (e && e.clipboardData) {
-                    e.clipboardData.setData('text/plain', '__LF_INTERNAL_CLIPBOARD__');
+                    e.clipboardData.setData('text/plain', '');
                     e.preventDefault();
                     cleared = true;
                 }
@@ -42,14 +42,14 @@ window.v4ClipboardObjectsScript = `
         } catch (err) {}
         if (!cleared && navigator.clipboard && typeof navigator.clipboard.writeText === 'function' && window.isSecureContext) {
             try {
-                navigator.clipboard.writeText('__LF_INTERNAL_CLIPBOARD__').catch(function() {});
+                navigator.clipboard.writeText('').catch(function() {});
             } catch (err) {}
         }
         return cleared;
     }
 
     window.copySelectedObjects = () => {
-        const selected = document.querySelectorAll('.lf-component.selected');
+        const selected = document.querySelectorAll('.bychoi-component.selected');
         const selectedConnIds = (window.parent && window.parent.ConnectorEngine && typeof window.parent.ConnectorEngine.getSelectedIds === 'function')
             ? window.parent.ConnectorEngine.getSelectedIds()
             : [];
@@ -64,7 +64,7 @@ window.v4ClipboardObjectsScript = `
             }
             let parent = el.parentElement;
             while (parent && parent !== document.body) {
-                if (parent.classList.contains('lf-component') && parent.classList.contains('selected')) {
+                if (parent.classList.contains('bychoi-component') && parent.classList.contains('selected')) {
                     return false;
                 }
                 parent = parent.parentElement;
@@ -78,7 +78,7 @@ window.v4ClipboardObjectsScript = `
         topLevelSelected.forEach(el => {
             const cleanClasses = el.className.split(' ')
                 .map(c => c.trim())
-                .filter(c => c && c !== 'selected' && c !== 'dragging-now' && c !== 'lf-in-group' && c !== 'v4-cropping-active')
+                .filter(c => c && c !== 'selected' && c !== 'dragging-now' && c !== 'bychoi-in-group' && c !== 'v4-cropping-active')
                 .join(' ');
 
             const attrs = {};
@@ -90,7 +90,7 @@ window.v4ClipboardObjectsScript = `
                 }
             });
 
-            if (el.classList.contains('lf-group')) {
+            if (el.classList.contains('bychoi-group')) {
                 const connIdsStr = el.getAttribute('data-connectors');
                 if (connIdsStr) {
                     try {
@@ -103,7 +103,7 @@ window.v4ClipboardObjectsScript = `
             }
 
             const clone = el.cloneNode(true);
-            clone.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger, .pin-marker, [id^="v4-pin-"]').forEach(h => h.remove());
+            clone.querySelectorAll('.bychoi-resizer, .bychoi-drag-handle, .bychoi-delete-trigger, .pin-marker, [id^="v4-pin-"]').forEach(h => h.remove());
 
             const isInsideMobile = !!el.closest('.mobile-content-inner, .mobile-content-area, .mobile-content');
             const isInsidePc = !!el.closest('.pc-content-inner, .pc-content-area');
@@ -120,7 +120,7 @@ window.v4ClipboardObjectsScript = `
             }
 
             // [CRITICAL GATEWAY FIX] Normalize coordinates to host/canvas root
-            // If el is grouped inside an lf-group, accumulate ancestor offsets so it won't paste at screen top (0,0)
+            // If el is grouped inside an bychoi-group, accumulate ancestor offsets so it won't paste at screen top (0,0)
             const getCoord = (val, offset) => (!isNaN(parseFloat(val)) ? parseFloat(val) : (offset || 0));
             let absL = getCoord(el.style.left, el.offsetLeft);
             let absT = getCoord(el.style.top, el.offsetTop);
@@ -131,7 +131,7 @@ window.v4ClipboardObjectsScript = `
                     p.id === 'canvas-page' || p.id === 'canvas')) {
                     break;
                 }
-                if (p.classList && (p.classList.contains('lf-group') || p.classList.contains('lf-component'))) {
+                if (p.classList && (p.classList.contains('bychoi-group') || p.classList.contains('bychoi-component'))) {
                     absL += getCoord(p.style.left, p.offsetLeft);
                     absT += getCoord(p.style.top, p.offsetTop);
                 }
@@ -154,7 +154,7 @@ window.v4ClipboardObjectsScript = `
                 frameContainer: frameContainer,
                 sourceScreen: curScreenName,
                 inDimmedOverlay: !!(el.closest && el.closest('.v4-dimmed-overlay-layer')),
-                isGroup: el.classList.contains('lf-group'),
+                isGroup: el.classList.contains('bychoi-group'),
                 isPinMarker: el.classList.contains('pin-marker'),
                 isTextMarker: el.classList.contains('text-marker'),
                 attributes: attrs
@@ -180,16 +180,16 @@ window.v4ClipboardObjectsScript = `
         const clearedSysClip = clearSystemImageClipboard();
         v4Clipboard = clipboardData;
         notifyParent({
-            type: 'LF_SAVE_CLIPBOARD',
+            type: 'BYCHOI_SAVE_CLIPBOARD',
             clipboard: clipboardData,
             isExplicitCopy: true,
             clearedSystemClipboard: clearedSysClip
         });
-        console.log("[Clipboard Debug] Copied " + clipboardData.length + " item(s). Notifying parent with LF_SAVE_CLIPBOARD.");
+        console.log("[Clipboard Debug] Copied " + clipboardData.length + " item(s). Notifying parent with BYCHOI_SAVE_CLIPBOARD.");
     };
 
     window.cutSelectedObjects = () => {
-        const selected = document.querySelectorAll('.lf-component.selected');
+        const selected = document.querySelectorAll('.bychoi-component.selected');
         const selectedConnIds = (window.parent && window.parent.ConnectorEngine && typeof window.parent.ConnectorEngine.getSelectedIds === 'function')
             ? window.parent.ConnectorEngine.getSelectedIds()
             : [];
@@ -201,11 +201,11 @@ window.v4ClipboardObjectsScript = `
         if (Array.isArray(v4Clipboard)) {
             v4Clipboard.forEach(item => item.isCut = true);
         }
-        if (window.top && Array.isArray(window.top.__lf_global_clipboard__)) {
-            window.top.__lf_global_clipboard__.forEach(item => item.isCut = true);
+        if (window.top && Array.isArray(window.top.__bychoi_global_clipboard__)) {
+            window.top.__bychoi_global_clipboard__.forEach(item => item.isCut = true);
         }
         notifyParent({
-            type: 'LF_SAVE_CLIPBOARD',
+            type: 'BYCHOI_SAVE_CLIPBOARD',
             clipboard: v4Clipboard
         });
 
@@ -213,31 +213,31 @@ window.v4ClipboardObjectsScript = `
 
         const affectedGroups = new Set();
         selected.forEach(c => {
-            if (c.parentElement && c.parentElement.classList.contains('lf-group')) {
+            if (c.parentElement && c.parentElement.classList.contains('bychoi-group')) {
                 affectedGroups.add(c.parentElement);
             }
             if (c.classList.contains('connector-line')) {
-                notifyParent({ type: 'LF_DELETE_CONNECTOR', id: c.id });
+                notifyParent({ type: 'BYCHOI_DELETE_CONNECTOR', id: c.id });
             } else if (c.classList.contains('text-marker') || c.classList.contains('pin-marker')) {
                 let idx = parseInt(c.getAttribute('data-index'));
                 if (isNaN(idx)) {
                     idx = parseInt(c.id.replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-', ''));
                 }
-                notifyParent({ type: 'LF_DELETE_PIN', index: idx });
+                notifyParent({ type: 'BYCHOI_DELETE_PIN', index: idx });
                 c.remove();
             } else {
                 c.remove();
             }
         });
         affectedGroups.forEach(g => {
-            if (g && g.querySelectorAll('.lf-component').length === 0) {
+            if (g && g.querySelectorAll('.bychoi-component').length === 0) {
                 g.remove();
             }
         });
 
         if (selectedConnIds.length > 0) {
             selectedConnIds.forEach(id => {
-                notifyParent({ type: 'LF_DELETE_CONNECTOR', id: id });
+                notifyParent({ type: 'BYCHOI_DELETE_CONNECTOR', id: id });
             });
         }
 
@@ -245,7 +245,7 @@ window.v4ClipboardObjectsScript = `
             try { window.SelectionAdorner.clear(); } catch(adErr) {}
         }
 
-        notifyParent({ type: 'LF_DESELECT' });
+        notifyParent({ type: 'BYCHOI_DESELECT' });
         if (window.V4DimmedLayer && typeof window.V4DimmedLayer.syncStateToParent === 'function') {
             window.V4DimmedLayer.syncStateToParent();
         }
@@ -264,13 +264,13 @@ window.v4ClipboardObjectsScript = `
             if (window.V4UndoManager) window.V4UndoManager.saveState();
 
             // [CRITICAL GATEWAY FIX] Capture currently selected element and active frame BEFORE clearing selection!
-            const currentlySelected = document.querySelector('.lf-component.selected');
+            const currentlySelected = document.querySelector('.bychoi-component.selected');
             const initialSelectedCol = currentlySelected ? currentlySelected.closest('.frame-column') : null;
             const initialSelectedFrameType = (currentlySelected && typeof window.detectFrameType === 'function')
                 ? window.detectFrameType(currentlySelected)
                 : null;
 
-            document.querySelectorAll('.lf-component').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.bychoi-component').forEach(el => el.classList.remove('selected'));
             
             // Responsive Screen Detection: PC/Mobile, Dual Mobile, Canvas
             const pcCol = document.querySelector('.pc-column');
@@ -291,11 +291,11 @@ window.v4ClipboardObjectsScript = `
 
             clipboardData.forEach(item => { item.isCut = false; });
             if (Array.isArray(v4Clipboard)) v4Clipboard.forEach(item => { item.isCut = false; });
-            if (window.top && Array.isArray(window.top.__lf_global_clipboard__)) {
-                window.top.__lf_global_clipboard__.forEach(item => { item.isCut = false; });
+            if (window.top && Array.isArray(window.top.__bychoi_global_clipboard__)) {
+                window.top.__bychoi_global_clipboard__.forEach(item => { item.isCut = false; });
             }
             notifyParent({
-                type: 'LF_SAVE_CLIPBOARD',
+                type: 'BYCHOI_SAVE_CLIPBOARD',
                 clipboard: clipboardData
             });
 
@@ -438,10 +438,10 @@ window.v4ClipboardObjectsScript = `
                 }
                 const tiers = window.V4_Z_TIERS || { CONTENT_MIN: 1000, CONTENT_MAX: 69999, FIXED_HUD_MIN: 100000, FIXED_HUD_MAX: 179999 };
                 let maxZ = isFixed ? tiers.FIXED_HUD_MIN : tiers.CONTENT_MIN;
-                const comps = (container && container.querySelectorAll) ? container.querySelectorAll('.lf-component') : (document.querySelectorAll ? document.querySelectorAll('.lf-component') : []);
+                const comps = (container && container.querySelectorAll) ? container.querySelectorAll('.bychoi-component') : (document.querySelectorAll ? document.querySelectorAll('.bychoi-component') : []);
                 comps.forEach(c => {
-                    if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('lf-group')) return;
-                    if (c.classList && c.classList.contains('lf-in-group')) return;
+                    if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('bychoi-group')) return;
+                    if (c.classList && c.classList.contains('bychoi-in-group')) return;
                     if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
                     let z = parseInt(c.style.zIndex, 10);
                     if (isNaN(z)) {
@@ -458,7 +458,7 @@ window.v4ClipboardObjectsScript = `
                 });
                 if (!isFixed && maxZ >= 69000) {
                     if (typeof window.normalizeZIndices === 'function') window.normalizeZIndices(container, true);
-                    const topNormalComps = Array.from(container.children || []).filter(c => c.classList && c.classList.contains('lf-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.hasAttribute('data-scroll-fixed'));
+                    const topNormalComps = Array.from(container.children || []).filter(c => c.classList && c.classList.contains('bychoi-component') && !c.classList.contains('pin-marker') && !c.classList.contains('text-marker') && !c.hasAttribute('data-scroll-fixed'));
                     return tiers.CONTENT_MIN + (topNormalComps.length * 10);
                 }
                 return maxZ + 10;
@@ -504,7 +504,7 @@ window.v4ClipboardObjectsScript = `
             const baseTopNormalZ = getHostTopZ(pasteHost, false);
             const baseTopFixedZ = getHostTopZ(pasteHost, true);
 
-            const trailingRef = Array.from(pasteHost.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer'))) || (!c.classList.contains('lf-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script' || c.classList.contains('v4-responsive-guide-layer'))));
+            const trailingRef = Array.from(pasteHost.children).find(c => (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer'))) || (!c.classList.contains('bychoi-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script' || c.classList.contains('v4-responsive-guide-layer'))));
 
             componentItems.forEach((item, idx) => {
                 // [CRITICAL DEFENSE] Ignore any pin marker items from clipboard
@@ -599,8 +599,8 @@ window.v4ClipboardObjectsScript = `
                     }
                 }
 
-                v.querySelectorAll('.lf-component').forEach(child => child.classList.remove('selected'));
-                v.querySelectorAll('.lf-resizer, .lf-drag-handle, .lf-delete-trigger').forEach(el => el.remove());
+                v.querySelectorAll('.bychoi-component').forEach(child => child.classList.remove('selected'));
+                v.querySelectorAll('.bychoi-resizer, .bychoi-drag-handle, .bychoi-delete-trigger').forEach(el => el.remove());
                 
                 newSelectedIds.push(newId);
             });
@@ -640,7 +640,7 @@ window.v4ClipboardObjectsScript = `
                 if (window.parent.ConnectorEngine && typeof window.parent.ConnectorEngine.setSelectedIds === 'function') {
                     window.parent.ConnectorEngine.setSelectedIds(pastedConnIds);
                 }
-                notifyParent({ type: 'LF_SYNC_CONNECTORS', connectors: window.parent.state.connectors });
+                notifyParent({ type: 'BYCHOI_SYNC_CONNECTORS', connectors: window.parent.state.connectors });
             }
 
             if (typeof window.enforceDesignSystem === 'function') {
@@ -672,7 +672,7 @@ window.v4ClipboardObjectsScript = `
                     } catch(adErr) {}
                 }
                 notifyParent({
-                    type: "LF_PASTE_COMPLETED",
+                    type: "BYCHOI_PASTE_COMPLETED",
                     ids: newSelectedIds,
                     selectedIdsIsGroupMap: selectedIdsIsGroupMap,
                     firstCompStyles: firstStyles
@@ -683,7 +683,7 @@ window.v4ClipboardObjectsScript = `
             }
             if (typeof window.markDirty === 'function') window.markDirty();
             else if (typeof markDirty === 'function') markDirty();
-            else notifyParent({ type: 'LF_DIRTY' });
+            else notifyParent({ type: 'BYCHOI_DIRTY' });
 
             try { window.focus(); } catch(e) {}
             console.log("[Clipboard Debug] Pasted " + clipboardData.length + " item(s) successfully.");
@@ -699,8 +699,8 @@ window.v4ClipboardObjectsScript = `
         }
         isPastingLocked = true;
         setTimeout(() => { isPastingLocked = false; }, 400);
-        console.log("[Clipboard Debug] pasteCopiedObjects calling LF_REQUEST_CLIPBOARD to parent.");
-        notifyParent({ type: 'LF_REQUEST_CLIPBOARD' });
+        console.log("[Clipboard Debug] pasteCopiedObjects calling BYCHOI_REQUEST_CLIPBOARD to parent.");
+        notifyParent({ type: 'BYCHOI_REQUEST_CLIPBOARD' });
     };
 
 })();

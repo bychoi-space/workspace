@@ -13,7 +13,7 @@ window.v4DesignSystemAtomsScript = `
 (function() {
     const normalizeComponentIdsAndAtomBoxes = function() {
         const seenIds = new Set();
-        document.querySelectorAll('.lf-component').forEach(function(c, idx) {
+        document.querySelectorAll('.bychoi-component').forEach(function(c, idx) {
             if (!c.id) {
                 const isPin = c.classList.contains('pin-marker') || c.classList.contains('text-marker');
                 c.id = (isPin ? 'v4-pin-' : 'v4-comp-') + Date.now() + '-' + idx;
@@ -33,7 +33,7 @@ window.v4DesignSystemAtomsScript = `
             }
         });
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
             if (c.querySelector('.v4-checkbox-container') || c.querySelector('.v4-radio-container')) {
                 if (window.resizeAtomToFitText) window.resizeAtomToFitText(c);
             }
@@ -50,9 +50,9 @@ window.v4DesignSystemAtomsScript = `
             '.v4-toggle-container', '.v4-tab-container'
         ].join(', ');
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group')) return;
-            if (c.closest && c.closest('.lf-group')) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group')) return;
+            if (c.closest && c.closest('.bychoi-group')) return;
             if (c.style.width && c.style.height) return;
             if (!c.querySelector(ATOM_SELECTORS)) return;
 
@@ -65,8 +65,8 @@ window.v4DesignSystemAtomsScript = `
 
     const enforceAccordionAndStepper = function() {
         const downTriChar = String.fromCharCode(9660);
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group') || (c.closest && c.closest('.bychoi-group'))) return;
             const accordion = c.querySelector('.v4-accordion-container');
             if (accordion) {
                 const expanded = accordion.getAttribute('data-expanded') === 'true';
@@ -140,8 +140,8 @@ window.v4DesignSystemAtomsScript = `
             }
         });
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group') || (c.closest && c.closest('.bychoi-group'))) return;
             const stepper = c.querySelector('.v4-stepper-container');
             if (stepper) {
                 const btnEnabled = stepper.getAttribute('data-btn-enabled') !== 'false';
@@ -166,8 +166,8 @@ window.v4DesignSystemAtomsScript = `
     };
 
     const enforceSelectboxAndFileupload = function() {
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group') || (c.closest && c.closest('.bychoi-group'))) return;
             const selectbox = c.querySelector('.v4-selectbox-container');
             if (selectbox) {
                 const dropdownActive = selectbox.getAttribute('data-dropdown-active') === 'true';
@@ -209,8 +209,8 @@ window.v4DesignSystemAtomsScript = `
             }
         });
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group') || (c.closest && c.closest('.bychoi-group'))) return;
             const fileupload = c.querySelector('.v4-fileupload-container');
             if (fileupload) {
                 if (c.getAttribute('data-resized') !== 'true') {
@@ -229,8 +229,8 @@ window.v4DesignSystemAtomsScript = `
     };
 
     const enforceAlertToggleButtonLayouts = function() {
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group') || (c.closest && c.closest('.bychoi-group'))) return;
             const alert = c.querySelector('.v4-alert-container');
             if (alert) {
                 const btn1 = alert.querySelector('.v4-alert-btn-1');
@@ -289,8 +289,8 @@ window.v4DesignSystemAtomsScript = `
             }
         });
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group') || (c.closest && c.closest('.bychoi-group'))) return;
             const toggle = c.querySelector('.v4-toggle-container');
             if (toggle) {
                 if (c.getAttribute('data-resized') !== 'true') {
@@ -303,8 +303,8 @@ window.v4DesignSystemAtomsScript = `
             }
         });
 
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group') || (c.closest && c.closest('.bychoi-group'))) return;
             const btnContainer = c.querySelector('.v4-btn-container');
             if (btnContainer) {
                 const btn = btnContainer.querySelector('.v4-custom-btn');
@@ -350,8 +350,8 @@ window.v4DesignSystemAtomsScript = `
     };
 
     const enforceDatepickerLayout = function() {
-        document.querySelectorAll('.lf-component').forEach(function(c) {
-            if (c.classList.contains('lf-group') || (c.closest && c.closest('.lf-group'))) return;
+        document.querySelectorAll('.bychoi-component').forEach(function(c) {
+            if (c.classList.contains('bychoi-group') || (c.closest && c.closest('.bychoi-group'))) return;
             const dp = c.querySelector('.v4-datepicker-container');
             if (!dp) return;
 
@@ -461,7 +461,7 @@ window.v4DesignSystemAtomsScript = `
     };
 
     const enforceTextInputContainers = function() {
-        const LF_CH = String.fromCharCode(10);
+        const NEWLINE_CH = String.fromCharCode(10);
         const CR_CH = String.fromCharCode(13);
         const ZWS_CH = String.fromCharCode(8203);
         const BOM_CH = String.fromCharCode(65279);
@@ -473,7 +473,7 @@ window.v4DesignSystemAtomsScript = `
 
         const isTextInputDomEmpty = function(inputEl, isMultiLine) {
             if (!inputEl) return true;
-            const rawDomText = stripInvisibleChars(inputEl.textContent || '').split(LF_CH).join('').split(CR_CH).join('');
+            const rawDomText = stripInvisibleChars(inputEl.textContent || '').split(NEWLINE_CH).join('').split(CR_CH).join('');
             if (rawDomText.length > 0) return false;
             if (isMultiLine) {
                 return inputEl.querySelectorAll('br').length <= 1;
@@ -485,8 +485,8 @@ window.v4DesignSystemAtomsScript = `
             if (isTextInputDomEmpty(inputEl, isMultiLine)) return '';
             let txt = stripInvisibleChars(inputEl.innerText || inputEl.textContent || '');
             if (!isMultiLine) {
-                txt = txt.split(LF_CH).join('').split(CR_CH).join('');
-            } else if (txt.endsWith(LF_CH)) {
+                txt = txt.split(NEWLINE_CH).join('').split(CR_CH).join('');
+            } else if (txt.endsWith(NEWLINE_CH)) {
                 txt = txt.slice(0, -1);
             }
             return txt;

@@ -102,24 +102,24 @@ window.v4UIAtomsCursorScript = `
 
             textEl.addEventListener('input', () => {
                 container.setAttribute('data-cursor-text', textEl.innerText);
-                const comp = container.closest('.lf-component');
+                const comp = container.closest('.bychoi-component');
                 if (comp) fitCursorWidth(comp);
                 markDirty();
             });
 
             textEl.addEventListener('blur', () => {
                 container.setAttribute('data-cursor-text', textEl.innerText);
-                const comp = container.closest('.lf-component');
+                const comp = container.closest('.bychoi-component');
                 if (comp) fitCursorWidth(comp);
                 markDirty();
                 if (comp && typeof window._getCompStyles === 'function') {
                     window.parent.postMessage(Object.assign({
-                        type: 'LF_COMP_SELECTED'
+                        type: 'BYCHOI_COMP_SELECTED'
                     }, window._getCompStyles(comp)), '*');
                 }
             });
 
-            const parentComp = container.closest('.lf-component');
+            const parentComp = container.closest('.bychoi-component');
             if (parentComp) {
                 fitCursorWidth(parentComp);
             }
@@ -131,8 +131,8 @@ window.v4UIAtomsCursorScript = `
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};
 
-    window.v4MessageHandlers['LF_UPDATE_CURSOR_PROPERTIES'] = function(d) {
-        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+    window.v4MessageHandlers['BYCHOI_UPDATE_CURSOR_PROPERTIES'] = function(d) {
+        const s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.bychoi-component.selected');
         if (!s) return;
         const container = s.querySelector('.v4-cursor-container') || (s.classList.contains('v4-cursor-container') ? s : null);
         if (!container) return;
@@ -150,7 +150,7 @@ window.v4UIAtomsCursorScript = `
                 } else if (d.cursorType === "text") {
                     iconWrap.innerHTML = '<div class="v4-cursor-visual" data-cursor-visual="text" style="width: 11px; height: 28px; background-image: url(' + ibeamSrc + '); background-size: contain; background-repeat: no-repeat; background-position: center; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25)); pointer-events: none; padding: 0 !important; margin: 0 !important;"></div>';
                 } else {
-                    iconWrap.innerHTML = '<svg viewBox="0 0 24 24" class="lf-icon v4-cursor-svg" style="width: 24px; height: 24px; display: block; overflow: visible; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35)); pointer-events: none;"><path class="v4-cursor-path" d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L6.35 2.85a.5.5 0 0 0-.85.36z" fill="#ffffff" stroke="#0f172a" stroke-width="1.6" stroke-linejoin="round" /></svg>';
+                    iconWrap.innerHTML = '<svg viewBox="0 0 24 24" class="bychoi-icon v4-cursor-svg" style="width: 24px; height: 24px; display: block; overflow: visible; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35)); pointer-events: none;"><path class="v4-cursor-path" d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L6.35 2.85a.5.5 0 0 0-.85.36z" fill="#ffffff" stroke="#0f172a" stroke-width="1.6" stroke-linejoin="round" /></svg>';
                 }
             }
         }
@@ -204,7 +204,7 @@ window.v4UIAtomsCursorScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage(Object.assign({
-                type: 'LF_COMP_SELECTED'
+                type: 'BYCHOI_COMP_SELECTED'
             }, window._getCompStyles(s)), '*');
         }
     };

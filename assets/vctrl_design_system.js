@@ -29,8 +29,8 @@ window.v4DesignSystemScript = `
         }
 
         try {
-            document.querySelectorAll('.lf-component').forEach(function(c) {
-                if (c.closest && c.closest('.lf-group')) return;
+            document.querySelectorAll('.bychoi-component').forEach(function(c) {
+                if (c.closest && c.closest('.bychoi-group')) return;
                 const shapeText = c.querySelector('.v4-shape-text');
                 const hasText = c.querySelector('.v4-shape-text-content') || c.querySelector('.v4-shape-text-overlay') || c.querySelector('.v4-editable-cell') || (shapeText && shapeText.querySelector('p'));
                 if (shapeText && hasText) {
@@ -50,7 +50,7 @@ window.v4DesignSystemScript = `
                 }
             });
             document.querySelectorAll('.text-marker, .v4-text-box, .v4-text-shape').forEach(function(c) {
-                if (c.closest && c.closest('.lf-group')) return;
+                if (c.closest && c.closest('.bychoi-group')) return;
                 if (c.querySelector('.v4-shape')) return;
                 const isManualResized = c.getAttribute('data-resized') === 'true';
                 if (!isManualResized) {
@@ -123,7 +123,7 @@ window.v4DesignSystemScript = `
         }
 
         try {
-            document.querySelectorAll('.lf-component > svg.lf-icon:not(.v4-logo-img), .lf-component .v4-searchbar-icon-wrap svg').forEach(function(svg) {
+            document.querySelectorAll('.bychoi-component > svg.bychoi-icon:not(.v4-logo-img), .bychoi-component .v4-searchbar-icon-wrap svg').forEach(function(svg) {
                 if (svg.getAttribute('stroke-width') && svg.getAttribute('stroke-width') !== '1.2') {
                     svg.setAttribute('stroke-width', '1.2');
                 }
@@ -141,7 +141,7 @@ window.v4DesignSystemScript = `
         }
 
         try {
-            document.querySelectorAll('.lf-component > svg.v4-logo-img').forEach(function(svg) {
+            document.querySelectorAll('.bychoi-component > svg.v4-logo-img').forEach(function(svg) {
                 const vb = svg.getAttribute('viewBox');
                 if (vb === '0 0 200 40' || vb === '0 0 156 26') {
                     svg.setAttribute('viewBox', '0 0 176 32');
@@ -169,8 +169,8 @@ window.v4DesignSystemScript = `
                 return raw;
             };
 
-            document.querySelectorAll('.lf-component .v4-shape.v4-shape-image').forEach(function(shape) {
-                var comp = shape.closest('.lf-component');
+            document.querySelectorAll('.bychoi-component .v4-shape.v4-shape-image').forEach(function(shape) {
+                var comp = shape.closest('.bychoi-component');
                 if (!comp || comp.classList.contains('dragging-now') || comp.classList.contains('v4-cropping-active')) return;
                 var compW = parseInt(comp.style.width) || comp.offsetWidth || 0;
                 var compH = parseInt(comp.style.height) || comp.offsetHeight || 0;
@@ -233,8 +233,8 @@ window.v4DesignSystemScript = `
                     var crispFn = null;
                     try {
                         var rootWin = window.top || window.parent || window;
-                        if (rootWin.__lf_orig_image_cache__ && comp.id && rootWin.__lf_orig_image_cache__[comp.id]) {
-                            cachedOrig = rootWin.__lf_orig_image_cache__[comp.id];
+                        if (rootWin.__bychoi_orig_image_cache__ && comp.id && rootWin.__bychoi_orig_image_cache__[comp.id]) {
+                            cachedOrig = rootWin.__bychoi_orig_image_cache__[comp.id];
                         }
                         if (typeof rootWin.createCrispImageDataUrl === 'function') {
                             crispFn = rootWin.createCrispImageDataUrl;
@@ -323,7 +323,7 @@ window.v4DesignSystemScript = `
             });
 
             document.querySelectorAll('.v4-admin-settings-container').forEach(function(container) {
-                const comp = container.closest('.lf-component');
+                const comp = container.closest('.bychoi-component');
                 if (comp) {
                     if (comp.style.background && comp.style.background !== 'transparent') comp.style.background = 'transparent';
                     if (comp.style.backgroundColor && comp.style.backgroundColor !== 'transparent') comp.style.backgroundColor = 'transparent';
@@ -415,8 +415,8 @@ window.v4DesignSystemScript = `
                     el.closest('.v4-responsive-guide-layer') ||
                     el.closest('.pc-guide-layer') ||
                     el.closest('.mobile-guide-layer') ||
-                    el.closest('.lf-drag-handle') ||
-                    el.closest('.lf-resizer') ||
+                    el.closest('.bychoi-drag-handle') ||
+                    el.closest('.bychoi-resizer') ||
                     el.closest('.v4-selection-adorner-layer') ||
                     el.classList.contains('v4-responsive-guide-layer') ||
                     el.classList.contains('pc-guide-layer') ||

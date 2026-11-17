@@ -1,6 +1,6 @@
 /**
  * assets/vctrl_iframe_accordion.js
- * Modular rendering engine for LF Editor Studio (Iframe Side).
+ * Modular rendering engine for bychoi workspace Studio (Iframe Side).
  *
  * [WARNING FOR DEVELOPERS & AI AGENTS]
  * This file is wrapped in an outer template literal (window.v4AccordionScript = `...`).
@@ -22,10 +22,10 @@ window.v4AccordionScript = `
     }
 
     function _notifyAccordionSelection(container) {
-        var compEl = container && container.closest ? container.closest('.lf-component') : null;
+        var compEl = container && container.closest ? container.closest('.bychoi-component') : null;
         if (compEl && typeof window._getCompStyles === 'function' && window.parent) {
             window.parent.postMessage(Object.assign({
-                type: 'LF_COMP_SELECTED'
+                type: 'BYCHOI_COMP_SELECTED'
             }, window._getCompStyles(compEl)), '*');
         }
     }
@@ -88,7 +88,7 @@ window.v4AccordionScript = `
     function _resolveAccordionContext(container, body) {
         const depthType = container.getAttribute('data-depth-type') || '1depth';
         const currentItemHeight = parseInt(container.getAttribute('data-item-height')) || 36;
-        const compEl = container.closest('.lf-component');
+        const compEl = container.closest('.bychoi-component');
         const compId = compEl ? compEl.id : 'accordion';
 
         const headerTitle = container.querySelector('.v4-accordion-title-text');
@@ -757,9 +757,9 @@ window.v4AccordionScript = `
     }
 
     window.v4MessageHandlers = window.v4MessageHandlers || {};
-    window.v4MessageHandlers['LF_UPDATE_ACCORDION_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_ACCORDION_PROPERTIES'] = function(d) {
         var targets = (typeof window._getTargetComponents === 'function') ? window._getTargetComponents(d) : [];
-        var s = targets[0] || (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+        var s = targets[0] || (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.bychoi-component.selected');
         if (!s) return;
         var container = s.querySelector('.v4-accordion-container') || (s.classList.contains('v4-accordion-container') ? s : null);
         if (!container) return;

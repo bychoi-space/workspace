@@ -25,13 +25,13 @@ description: Use when creating or editing Workspace Editor process screens, flow
   - Internal text must be encapsulated inside `.v4-shape-text-content` or `.v4-shape-text-overlay` with `.v4-editable-cell` to protect SVG paths from editor destruction.
 
 ## Connector Precision (`vctrl_connectors.js` & `vctrl_object_connector.js`)
-- **Dual Path Structure**: Connector lines inside `LF_RENDER_CONNECTORS` are rendered with two SVG paths: an invisible 40px hit-area path (`stroke="transparent" stroke-width="40"`) for easy selection, and a visible path (`stroke-width: 1.6` or `baseWidth + 1` when selected).
-- **Magnetic Port Snapping**: When dragging connector endpoints within **`30px`** of a component port, the target port element (`.lf-connector-port`) scales up (`transform: scale(1.8)`) and highlights with a pink background (`#fb7185`).
+- **Dual Path Structure**: Connector lines inside `BYCHOI_RENDER_CONNECTORS` are rendered with two SVG paths: an invisible 40px hit-area path (`stroke="transparent" stroke-width="40"`) for easy selection, and a visible path (`stroke-width: 1.6` or `baseWidth + 1` when selected).
+- **Magnetic Port Snapping**: When dragging connector endpoints within **`30px`** of a component port, the target port element (`.bychoi-connector-port`) scales up (`transform: scale(1.8)`) and highlights with a pink background (`#fb7185`).
 - **Real-Time Anchoring (`syncAnchoredPositions` & `updateAnchoredConnectorsLocal`)**:
   - When moving or resizing any node, connected lines automatically recompute endpoints and follow along smoothly.
   - Supports both straight (`Line (Straight)`) and elbow routing (`Line (Elbow)`: `M x1 y1 H midX V y2 H x2`).
 - **Connector Deletion**:
-  - Deleting a connector via `.lf-delete-trigger` or `Delete`/`Backspace` dispatches `LF_DELETE_CONNECTOR` to parent `ConnectorEngine` and synchronizes `metadata.json` connectors state.
+  - Deleting a connector via `.bychoi-delete-trigger` or `Delete`/`Backspace` dispatches `BYCHOI_DELETE_CONNECTOR` to parent `ConnectorEngine` and synchronizes `metadata.json` connectors state.
 
 ## Text & Typography
 - Keep labels short and readable.

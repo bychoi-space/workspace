@@ -88,7 +88,7 @@
     - **역할**: GitHub 커밋 과다 누적을 원천 차단하는 2계층 하이브리드 상시 자동 저장 엔진(`window.AutoSaveEngine`). Tier 1 브라우저 `IndexedDB`(`WorkspaceAutoSaveDB`) 1.5초 유휴 즉시 임시 보호(`baseSha`/`baseContentHash` 무결성 대조 기반 복구)와 Tier 2 25초 유휴 디바운스 + 최소 60초 간격 쿨다운 + Zero-Diff 중복 스킵 클라우드 자동 동기화, 화면 전환 시 네트워크 대기 없는 0ms 논블로킹 메모리 스냅샷 스테이징(`stageOutgoingScreenBeforeSwitch` + 백그라운드 큐 `_pendingSnapshots`), 헤더 상태 뱃지(`#autosave-status-badge`) 제어를 전담합니다.
   - **`vctrl_core_router.js` (Core Message Router - Parent Side)**:
     - **역할**: 부모-Iframe 간 통신 조율자. 중앙 `MessageHub` 리스너 및 24개 부모 측 코어 핸들러 테이블(`v4ParentCoreHandlers`), 부모 포커스 시 이미지 붙여넣기(`paste`)를 전담 격리합니다 (`window.CoreRouter`).
-    - **오브젝트 선택 라우팅 & 포커스 해제**: `LF_COMP_SELECTED` 수신 시 이전 선택 ID(`state.previousEditingIndex`)를 보존하여 신규 컴포넌트 선택 여부(`isNewSelection`)를 판별하고, 부모 창의 활성 인풋 포커스 잔류를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 전달합니다.
+    - **오브젝트 선택 라우팅 & 포커스 해제**: `BYCHOI_COMP_SELECTED` 수신 시 이전 선택 ID(`state.previousEditingIndex`)를 보존하여 신규 컴포넌트 선택 여부(`isNewSelection`)를 판별하고, 부모 창의 활성 인풋 포커스 잔류를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 전달합니다.
   - **`vctrl_parent_shortcuts.js` (Parent Shortcuts Engine - Parent Side)**:
     - **역할**: 부모 창의 전역 키보드 핫키(최우선 순위 `Ctrl+S`, `F2` 모드 스왑, `Shift+G` 반응형 그리드 토글, `Escape` 모달 닫기) 가드 및 캔버스 단축키(`Arrow`, `Delete`, `Space`, `Ctrl+C/V/X/G`)의 활성 iframe 프록시 토스를 전담합니다 (`window.ParentShortcuts`).
   - **`vctrl_screen_manager.js` (Screen Manager - Parent Side)**:
@@ -116,7 +116,7 @@
   - **`vctrl_iframe_ports.js` (Port Engine - Iframe Side)**:
     - **역할**: iframe 내부 요소의 edge/port 영역 감지 및 포트 드래그 커넥터 시작 연동 전담.
   - **`vctrl_iframe_script.js` (Rendering Engine Shell - Iframe Side)**:
-    - **역할**: 시스템의 '근육'. iframe 내부의 DOM 직접 조작, 기본 이벤트 리스너 바인딩, 커넥터 조작 핸들 이벤트 디스패칭(`LF_CONNECTOR_HANDLE_MOVE`), 컴포넌트 mousedown 시 부모 활성 인풋 포커스 즉시 정리(`pActive.blur()`) 등을 전담합니다.
+    - **역할**: 시스템의 '근육'. iframe 내부의 DOM 직접 조작, 기본 이벤트 리스너 바인딩, 커넥터 조작 핸들 이벤트 디스패칭(`BYCHOI_CONNECTOR_HANDLE_MOVE`), 컴포넌트 mousedown 시 부모 활성 인풋 포커스 즉시 정리(`pActive.blur()`) 등을 전담합니다.
     - **메시지 레지스트리 디스패처 (`window.v4MessageHandlers`)**: 거대한 `if-else` 분기문 대신 코어 핸들러 테이블 맵(`v4IframeCoreHandlers`)과 전역 `window.v4MessageHandlers` 레지스트리를 통한 초경량(10줄) 이벤트 디스패처 구조를 따릅니다. 신규 메시지 타입 추가 시 거대 if-else를 확장하지 않고 핸들러 테이블에 순수 함수로 등록해야 합니다. (백틱 충돌 0건 원칙 엄격 준수)
   - **`vctrl_iframe_drag.js` (Drag/Resize Engine - Iframe Side)**:
     - **역할**: iframe 내부 요소의 마우스 드래그 이동 및 리사이즈 조작 인터랙션을 전담합니다. 브라우저가 iframe 내부로 전달하는 마우스 이벤트(`e.clientX`, `e.clientY`)는 이미 언스케일드 논리 좌표계이므로, 드래그/리사이즈 이동량(`dx`, `dy`)에 절대 `/ scale`을 나누지 않는 순수 1:1 논리 픽셀 불변성을 유지해야 합니다.
@@ -127,7 +127,7 @@
   - **`vctrl_design_system.js` / `vctrl_design_system_atoms.js` / `vctrl_design_system_shapes_tables.js` (Design Observer & Domain Enforcers - Iframe Side)**:
     - **역할**: `vctrl_design_system.js`는 코어 `MutationObserver` 루프, 초기 텍스트 피팅, 패턴/아이콘 슬림 라인(1.2), 이미지 도형(`.v4-shape.v4-shape-image`) 150ms 디바운스 선명도 재샘플링(`data-crisp-size`, `window.top.createCrispImageDataUrl`) 및 어드민 설정 레이아웃 보정을 총괄하며, 아톰 박스/입력 컨트롤 정규화는 `vctrl_design_system_atoms.js`(`window.V4DesignSystemAtoms`), 레거시 `%` 좌표·`img-to-div` 마이그레이션·SVG 쉐입/테이블 보더(1.6px)·IA 트리 테이블 폴딩은 `vctrl_design_system_shapes_tables.js`(`window.V4DesignSystemShapesTables`)가 전담합니다.
   - **`vctrl_shortcuts.js` (Interaction Layer - Iframe Side)**:
-    - **역할**: 키보드 핫키 단축키 바인딩, 크로스 스크린 복사/붙여넣기(`window.top.__lf_global_clipboard__`), 외부 OS 클립보드 이미지(`paste` 이벤트 `image/*`) 감지 및 캔버스 삽입 연동, 도형 서식 복사/붙여넣기(`Ctrl+Shift+C` / `Ctrl+Shift+V`, `window.top.__lf_global_style_clipboard__`) 연동을 전담합니다. 일반 `Ctrl+V` 입력 시 네이티브 `paste` 이벤트 발화를 보장하기 위해 `keydown`에서 `e.preventDefault()`를 생략합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
+    - **역할**: 키보드 핫키 단축키 바인딩, 크로스 스크린 복사/붙여넣기(`window.top.__bychoi_global_clipboard__`), 외부 OS 클립보드 이미지(`paste` 이벤트 `image/*`) 감지 및 캔버스 삽입 연동, 도형 서식 복사/붙여넣기(`Ctrl+Shift+C` / `Ctrl+Shift+V`, `window.top.__bychoi_global_style_clipboard__`) 연동을 전담합니다. 일반 `Ctrl+V` 입력 시 네이티브 `paste` 이벤트 발화를 보장하기 위해 `keydown`에서 `e.preventDefault()`를 생략합니다. 핀 재정렬은 자체 중복 구현을 배제하고 `window.reorderAllPins`로 공식 위임합니다.
   - **`vctrl_grouping.js` (Interaction Layer)**:
     - **역할**: 다중 요소 관리자. 드래그 범위 선택(Marquee), 다중 선택 상태(`selectedIds`), 그룹 이동/삭제/그룹화 연산 로직 전담.
   - **`vctrl_inspector.js` 및 `assets/inspector/*` (UI Controller & Domain Inspectors)**:
@@ -141,7 +141,7 @@
     - **`inspector_text_formatter.js` (`window.InspectorTextFormatter`)**: Quill 에디터와 캔버스 텍스트 셀 간 연속 공백 보존(`preserveConsecutiveSpaces`, 선행/다중 공백 NBSP 변환) 및 폰트 사이즈 인라인 정규화(`normalizeHtmlForQuill`)를 전담합니다.
   - **`vctrl_iframe_adorner.js` (Selection Adorner Engine - Iframe Side)**:
     - **역할**: iframe 내부 단일/다중 선택 및 그룹 선택 바운딩 박스/아도너 오버레이(`window.SelectionAdorner`)의 렌더링, 갱신(`update`), 정리(`clear`) 전담 SSOT 모듈.
-    - **그룹 드래그 실시간 동기화 및 자식 반경 격리**: 마우스 드래그(`vctrl_iframe_drag.js`의 `handleMouseMove`/`handleMouseUp`) 중 `window.updateHandles(window.activeEl)`를 통해 1:1 프레임 단위로 좌표를 추종하여 고스트 잔상을 원천 차단하며, `.lf-group` 선택 시에는 직계 자식 도형만 탐색(`!isGroup` 가드 및 `:scope > .v4-shape-...`)하여 내부 뱃지/원형 아톰의 `border-radius`가 그룹 테두리로 전염되지 않도록 격리합니다.
+    - **그룹 드래그 실시간 동기화 및 자식 반경 격리**: 마우스 드래그(`vctrl_iframe_drag.js`의 `handleMouseMove`/`handleMouseUp`) 중 `window.updateHandles(window.activeEl)`를 통해 1:1 프레임 단위로 좌표를 추종하여 고스트 잔상을 원천 차단하며, `.bychoi-group` 선택 시에는 직계 자식 도형만 탐색(`!isGroup` 가드 및 `:scope > .v4-shape-...`)하여 내부 뱃지/원형 아톰의 `border-radius`가 그룹 테두리로 전염되지 않도록 격리합니다.
   - **`vctrl_iframe_image_crop.js` (PPT-Style Non-Destructive Image Crop Engine - Iframe Side)**:
     - **역할**: Image SHAPE(`.v4-shape.v4-shape-image`)의 PPT 스타일 비파괴 자르기(`window.V4ImageCropEngine`, `v4ImageCropScript`) 전담 SSOT 모듈. 인스펙터 `[자르기]` 버튼 진입 시 8방향 검은색 크롭 핸들(`ㄱ`/`ㅡ`/`ㅣ`), 바깥 영역 반투명 고스트 미리보기, 내부 이미지 위치 패닝(Pan), 인스펙터 수치(W/H) 직접 입력 크롭, `Enter`/외부 클릭 확정, `Esc` 취소, `[자르기 초기화]` 원본 복원을 처리하며, `data-crop-l/t/r/b` 정규화 비율과 `%` 단위 `background-size`/`background-position` 투영으로 리사이즈·복사·저장·PDF 출력 시에도 무손실 비파괴 크롭 상태를 100% 보존합니다.
   - **`vctrl_common.js` (Common Bus, Sanitizer & Utilities)**:
@@ -151,9 +151,9 @@
       3. 전역 화면 살균 SSOT: `window.ScreenSanitizer` (`splitStyleRules`, `cleanEmptyStyleRules`, `cleanDOM`)
       4. 반응형 문서 판별 SSOT: `isResponsiveDocument(doc)`
   - **`vctrl_component_library.js` & `vctrl_component_inserter.js` (Library & Insertion Engine)**:
-    - **역할**: 사이드바 라이브러리 목록 렌더링(`renderV4Shapes`, `renderAtomicLibrary`, `renderIllustrationLibrary`), 2열 대칭 일러스트 라이브러리, 사이드바 라이브러리 3대 아코디언(`V4SidebarAccordion`: ICON LIBRARY, ILLUSTRATION, COMPONENTS 3개 섹션 기본 접힘(`is-collapsed`) 시작 및 검색 자동 펼침/복원, `localStorage` 영속화), 국영문 하이브리드 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성, 이미지 업로드/붙여넣기 시 다단계 밉맵(`0.55x`) + 언샵 마스크(Unsharp Mask) + 텍스트 획 대비 보존 기반 고선명 리샘플링(`window.createCrispImageDataUrl`, `window.processAndInsertRawImage`, `window.top.__lf_orig_image_cache__`)을 전담합니다. `viewer.html`에서 `vctrl_inspector.js`보다 먼저 로드되어 라이브러리 UI 바인딩의 SSOT를 책임집니다.
+    - **역할**: 사이드바 라이브러리 목록 렌더링(`renderV4Shapes`, `renderAtomicLibrary`, `renderIllustrationLibrary`), 2열 대칭 일러스트 라이브러리, 사이드바 라이브러리 3대 아코디언(`V4SidebarAccordion`: ICON LIBRARY, ILLUSTRATION, COMPONENTS 3개 섹션 기본 접힘(`is-collapsed`) 시작 및 검색 자동 펼침/복원, `localStorage` 영속화), 국영문 하이브리드 검색 필터링, 캔버스 드롭 및 동적 컴포넌트 생성, 이미지 업로드/붙여넣기 시 다단계 밉맵(`0.55x`) + 언샵 마스크(Unsharp Mask) + 텍스트 획 대비 보존 기반 고선명 리샘플링(`window.createCrispImageDataUrl`, `window.processAndInsertRawImage`, `window.top.__bychoi_orig_image_cache__`)을 전담합니다. `viewer.html`에서 `vctrl_inspector.js`보다 먼저 로드되어 라이브러리 UI 바인딩의 SSOT를 책임집니다.
   - **`vctrl_canvas_background.js` & `assets/inspector/inspector_dimmed_layer.js` (Canvas Background & Dimmed Layer Controllers - Parent Side)**:
-    - **역할**: `vctrl_canvas_background.js`는 캔버스 배경 이미지 업로드, 실시간 스마트 압축(JPEG 85% / 1920px max), 투명도 조절 및 `LF_SET_CANVAS_BACKGROUND` 동기화를 전담하며, `inspector_dimmed_layer.js`(`window.InspectorDimmedLayer`)는 우측 사이드바 `CANVAS & BACKGROUND` 영역에서 프레임별 독립/동시 딤드 레이어 제어(ON/OFF, `[딤드·팝업 편집]` ↔ `[바닥 화면 편집]` 전환, 농도/색상)를 전담합니다.
+    - **역할**: `vctrl_canvas_background.js`는 캔버스 배경 이미지 업로드, 실시간 스마트 압축(JPEG 85% / 1920px max), 투명도 조절 및 `BYCHOI_SET_CANVAS_BACKGROUND` 동기화를 전담하며, `inspector_dimmed_layer.js`(`window.InspectorDimmedLayer`)는 우측 사이드바 `CANVAS & BACKGROUND` 영역에서 프레임별 독립/동시 딤드 레이어 제어(ON/OFF, `[딤드·팝업 편집]` ↔ `[바닥 화면 편집]` 전환, 농도/색상)를 전담합니다.
   - **`vctrl_iframe_dimmed_layer.js` (Dimmed Overlay Layer Engine - Iframe Side)**:
     - **역할**: 바닥 화면 오브젝트(`1,000~69,999`) 및 스크롤 고정 HUD(`100,000~179,999`) 위, 디스크립션 핀(`.v4-pin-layer`: `250,000`) 및 기즈모(`300,000+`) 아래에 단일 격리 스태킹 컨텍스트(`.v4-dimmed-overlay-layer`, `z-index: 185000`, `isolation: isolate`)를 생성하여 Z-Index 인플레이션 없이 상위 팝업 레이어 저작, 클릭/마키/스마트가이드 레이어 격리(`isComponentSelectable`, `isSameLayerScope`), 바닥 편집 중 임시 숨김(`.v4-dimmed-temp-hidden`)을 전담합니다 (`window.V4DimmedLayer`).
   - **`vctrl_pdf_exporter.js` (PDF Export Engine)**:
@@ -168,9 +168,9 @@
   - **`vctrl_ui_atoms_cursor.js` (UI Atoms Cursor Engine - Iframe Side)**:
     - **역할**: 포인터/아이빔(I-Beam) 마우스 커서 아톰 컴포넌트 이벤트 바인딩, 자동 너비 맞춤(`fitCursorWidth`), 배지 스타일 및 프로퍼티 동기화 전담 (`v4UIAtomsCursorScript`).
   - **`vctrl_clipboard_objects.js` (Canvas Object Clipboard Engine - Iframe Side)**:
-    - **역할**: 캔버스 오브젝트 복사/붙여넣기/잘라내기(`Ctrl+C`, `Ctrl+V`, `Ctrl+X`)의 JSON 직렬화 및 크로스 스크린 클립보드(`window.top.__lf_global_clipboard__`) 동기화 전담 (`v4ClipboardObjectsScript`). 동일 프레임(우측하단 +15px) 및 다중 프레임 간 이동(뷰포트 정중앙) 스마트 안착, 그룹 내부 컴포넌트 단독 복사 시 부모 그룹 오프셋 누적 절대 좌표 정규화, 잘라내기 시 고아 그룹 자동 정리를 전담합니다.
+    - **역할**: 캔버스 오브젝트 복사/붙여넣기/잘라내기(`Ctrl+C`, `Ctrl+V`, `Ctrl+X`)의 JSON 직렬화 및 크로스 스크린 클립보드(`window.top.__bychoi_global_clipboard__`) 동기화 전담 (`v4ClipboardObjectsScript`). 동일 프레임(우측하단 +15px) 및 다중 프레임 간 이동(뷰포트 정중앙) 스마트 안착, 그룹 내부 컴포넌트 단독 복사 시 부모 그룹 오프셋 누적 절대 좌표 정규화, 잘라내기 시 고아 그룹 자동 정리를 전담합니다.
   - **`vctrl_format_painter.js` (Format Painter Engine - Iframe Side)**:
-    - **역할**: 서식 복사/붙여넣기(`Ctrl+Shift+C`, `Ctrl+Shift+V`), 스타일 클립보드(`window.top.__lf_global_style_clipboard__`) 관리, 배경 투명도(`bgOpacity`)와 보더/타이포그래피 심층 주입 및 Undo 연동 전담 (`v4FormatPainterScript`).
+    - **역할**: 서식 복사/붙여넣기(`Ctrl+Shift+C`, `Ctrl+Shift+V`), 스타일 클립보드(`window.top.__bychoi_global_style_clipboard__`) 관리, 배경 투명도(`bgOpacity`)와 보더/타이포그래피 심층 주입 및 Undo 연동 전담 (`v4FormatPainterScript`).
     - **배경 투명도 및 채우기 색상 해석 SSOT (`_resolveFillColor`, `_hexToRgba`)**: 자체 포함된 순수 문자열 유틸리티로 템플릿 리터럴 인라인 내 백슬래시 탈출 위험을 원천 차단하며, `isBgTransparent` 여부 및 0~100% 투명도 수치를 계산하여 도형(Rect, Circle, Pattern Grid, SVG 쉐입), 버튼, 텍스트박스 전반에 정확한 RGBA 색상을 일관되게 적용합니다.
   - **`vctrl_smartguide.js` (Smart Guide Engine - Parent & Iframe Side)**:
     - **역할**: 일반 1600x900 캔버스 내 컴포넌트 이동/리사이즈 시 5px 자석 스냅선 및 중앙/경계선 가이드 렌더링 전담.
@@ -201,13 +201,13 @@
     - **알파(투명도) 추출 SSOT (`window._getAlphaPercent`)**: `rgba(...)`, CSS Color 4 슬래시 구문(`rgb(r g b / a)`), 퍼센트(`%`) 표기까지 견고하게 파싱하며, 알파 값이 0인 경우 `isBgTransparent: true` 및 `isBorderTransparent: true`로 명시적 투명 플래그를 정규화합니다.
   - **`vctrl_properties.js` (Properties Controller - Parent Side)**:
     - **역할**: 부모 창 측 컴포넌트 속성 매핑 및 플로팅 인스펙터 패널 바인딩 헬퍼.
-    - **강제 프로퍼티 동기화 파이프라인**: `LF_COMP_SELECTED` 수신 시 활성 대상 ID 변경을 감지하여 부모 activeElement를 즉시 포커스 해제하고, `updateAllInputs(w, h, force = true)`를 호출하여 포커스 가드를 확실히 우회함으로써 동일 유형 쉐입 간 연속 선택 시에도 가로/세로 수치가 100% 강제 동기화되도록 보장합니다.
+    - **강제 프로퍼티 동기화 파이프라인**: `BYCHOI_COMP_SELECTED` 수신 시 활성 대상 ID 변경을 감지하여 부모 activeElement를 즉시 포커스 해제하고, `updateAllInputs(w, h, force = true)`를 호출하여 포커스 가드를 확실히 우회함으로써 동일 유형 쉐입 간 연속 선택 시에도 가로/세로 수치가 100% 강제 동기화되도록 보장합니다.
   - **`inspector/inspector_shapes.js` (`window.InspectorShapes` - Parent Side)**:
     - **역할**: 도형 전용 인스펙터 바인딩 및 `Rect` 방향별 모서리 둥글기(`data-corner-dir`: `all`, `top`, `bottom`, `left`, `right`, `buildCornerRadiusStyle`) 동기화 전담.
   - **`inspector/inspector_table.js` (Table Domain Inspector - Parent Side)**:
     - **역할**: 테이블 열/행 치수 제어, 행 추가/삭제, 셀 정렬 및 인스펙터 UI 동기화 전담.
   - **`inspector/inspector_quill.js` (Quill Rich Text Controller - Parent Side)**:
-    - **역할**: Quill 리치 텍스트 에디터 초기화, 커스텀 폰트 크기/컬러 피커 툴바 바인딩, 전체 텍스트 삭제 시 Sticky Format 및 커서 포커스 보존, 빈 순수 도형 텍스트(`Text SHAPE`) 포커스 해제 시 자동 정리(`LF_CLEANUP_EMPTY_TEXT_SHAPES`) 및 캔버스 텍스트 셀 양방향 동기화 전담. (오브젝트 단순 클릭 선택 시 자동 `quill.focus()`를 배제하여 방향키 오브젝트 이동과 충돌하지 않도록 보장합니다.)
+    - **역할**: Quill 리치 텍스트 에디터 초기화, 커스텀 폰트 크기/컬러 피커 툴바 바인딩, 전체 텍스트 삭제 시 Sticky Format 및 커서 포커스 보존, 빈 순수 도형 텍스트(`Text SHAPE`) 포커스 해제 시 자동 정리(`BYCHOI_CLEANUP_EMPTY_TEXT_SHAPES`) 및 캔버스 텍스트 셀 양방향 동기화 전담. (오브젝트 단순 클릭 선택 시 자동 `quill.focus()`를 배제하여 방향키 오브젝트 이동과 충돌하지 않도록 보장합니다.)
   - **`vctrl_resolution_engine.js` (Resolution & Mobile Read-Only Engine - Parent Side)**:
     - **역할**: 뷰포트 해상도 반응형 엔진(`res-narrow`, `res-compact`, `res-wide`), 스마트 프레임 포커스 스위처(`v4-frame-switcher`, `focusFrame`), 모바일/태블릿 네이티브 브라우저 전체화면(`requestFullscreen`/`exitFullscreen`)과 젠 모드(`toggleZenMode`), 화면 회전 권장 토스트(`showRotationToast`) 및 모바일 뷰어 인터랙션 제어 전담.
   - **`app.js` & `dashboard.js` (Dashboard & Project Workspace Controller)**:
@@ -219,16 +219,16 @@
   - **금지**: 소스 코드 내부에 하드코딩된 한글 문자열 사용을 지양합니다. 파일 저장 시 인코딩 변환 문제로 코드가 깨지는 것을 방지해야 합니다.
   - **권장**: UI에 노출되는 특수문자는 반드시 HTML 엔티티(`&times;` 등)를 사용하고, 경고 문구 등은 ASCII 안전 문자열로 작성하거나, 수정 시 파일 인코딩이 `UTF-8`로 유지되는지 엄격히 확인하세요.
 - **아톰 컴포넌트 표준 (Atomic Component Standard & Definitive Masking Unification)**:
-  - 모든 아이콘 및 아톰 컴포넌트(SVG 포함)는 인스펙터와의 호환성을 위해 반드시 **`.lf-icon`** 클래스를 포함해야 합니다.
-  - **AI 직접 생성 시 표준 오브젝트 규격 준수 강제 (Native Standard Component Enforcement)**: AI가 스크린 HTML을 생성/수정할 때 임의의 변형 오브젝트 구조(아형 CSS 및 비표준 래퍼)를 사용하는 것은 엄격히 금지됩니다. 모든 도형/텍스트/컨테이너 오브젝트는 사이드바 `LIBRARY`에서 생성되는 정식 3계층 구조 **`.lf-component` ➔ `.v4-shape.v4-shape-rect` (또는 해당 쉐입 클래스) ➔ `.v4-shape-text-content` ➔ `<p><span>`** 표준 DOM 스펙을 100% 엄격하게 준수해야 합니다. 이를 위반하면 인스펙터 수치(`width`/`height`)와 캔버스 파란 선택선의 오프셋 왜곡 버그가 발생합니다.
+  - 모든 아이콘 및 아톰 컴포넌트(SVG 포함)는 인스펙터와의 호환성을 위해 반드시 **`.bychoi-icon`** 클래스를 포함해야 합니다.
+  - **AI 직접 생성 시 표준 오브젝트 규격 준수 강제 (Native Standard Component Enforcement)**: AI가 스크린 HTML을 생성/수정할 때 임의의 변형 오브젝트 구조(아형 CSS 및 비표준 래퍼)를 사용하는 것은 엄격히 금지됩니다. 모든 도형/텍스트/컨테이너 오브젝트는 사이드바 `LIBRARY`에서 생성되는 정식 3계층 구조 **`.bychoi-component` ➔ `.v4-shape.v4-shape-rect` (또는 해당 쉐입 클래스) ➔ `.v4-shape-text-content` ➔ `<p><span>`** 표준 DOM 스펙을 100% 엄격하게 준수해야 합니다. 이를 위반하면 인스펙터 수치(`width`/`height`)와 캔버스 파란 선택선의 오프셋 왜곡 버그가 발생합니다.
   - **독립 컴포넌트 구조 분리 및 인스펙터 편집 안전성 보장 (Atomic Component Separation Protocol)**: AI가 스크린을 생성/수정할 때, 아이콘, 뱃지, 제목, 불릿 텍스트 등이 포함된 카드형 컴포넌트를 단일 `.v4-shape` 내부 텍스트 래퍼에 통합 삽입하는 것을 엄격히 금지합니다. 인스펙터(Quill 에디터)에서 텍스트 수정 시 SVG 아이콘이나 뱃지 레이아웃 태그가 파괴/증발되는 버그를 방지하기 위해, 모든 복합 카드는 **[배경 쉐입] + [독립 SVG 아이콘 아톰] + [독립 뱃지 쉐입] + [독립 텍스트 쉐입]**의 개별 표준 아톰 오브젝트들로 각각 완전 분리하여 구조화해야 합니다.
   - SVG 아톰의 경우, 세련되고 섬세한 슬림 라인 UI 표준 유지를 위해 기본 `stroke-width`를 **`1.2`**로 설정하는 것을 원칙으로 합니다. (라이브러리 아이콘 및 캔버스 삽입 SVG 표준)
   - **스프라이트 아톰 반응형 크기 조절 규칙 (Responsive Sprite Sizing)**: 스프라이트 이미지 기반 아톰의 경우, 고정 픽셀(px) 단위 대신 백분율(%) 기반의 `background-size` 및 `background-position`을 사용하여 객체 크기를 조절할 때 스프라이트 내 다른 영역이 노출(bleeding)되지 않고 단일 객체의 크기만 반응형으로 완벽하게 조절되도록 구현해야 합니다. (예: 3열 2행 구조 스프라이트의 경우 `background-size: 300% 200% !important;`와 백분율 좌표 활용)
   - **Replaced Element (<img>) 금지 및 <div> 대체**: 브라우저 그래픽 최적화 특성상 `<img>` 태그에 `-webkit-mask-image`를 입히는 동적 채색 기법은 엘리먼트 증발을 초래하므로 신규 이미지 기반 아톰은 절대 `<img>` 태그로 작성해서는 안 되며, **`<div>` 엘리먼트와 `background-image` 스타일 조합**으로 설계해야 합니다. (레거시 스크린의 `<img>`는 `enforceDesignSystem()` 내의 `img-to-div` 동적 마이그레이션 모듈에 의해 로딩 시 자동으로 `<div>`로 치환됩니다.)
   - **Animated WebP 모션 컴포넌트 표준 (Motion Component Standard & Zero Side-Effects)**:
     - 동적 모션(클릭 유도, 스크롤 유도, 방사형 로딩 스피너, 프로그레스 바, 스켈레톤 패턴, 토스트 메시지 등)은 시스템 부하가 없고 투명 배경(Alpha)을 완벽 지원하는 **Animated WebP (`assets/illustrations/motion/*.webp`)**를 표준으로 사용합니다.
-    - **표준 DOM 스펙**: 반드시 정식 3계층 구조 **`.lf-component` ➔ `.v4-motion-container` ➔ `<img src="assets/illustrations/motion/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**을 준수해야 합니다.
-    - **이벤트 무간섭**: 내부 `<img>`에 `pointer-events: none; user-select: none;`을 적용하여 브라우저 기본 고스트 드래그를 차단하고, 캔버스 드래그/리사이즈/선택 이벤트가 최외곽 `.lf-component`로 100% 정상 수신되도록 보장합니다.
+    - **표준 DOM 스펙**: 반드시 정식 3계층 구조 **`.bychoi-component` ➔ `.v4-motion-container` ➔ `<img src="assets/illustrations/motion/..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**을 준수해야 합니다.
+    - **이벤트 무간섭**: 내부 `<img>`에 `pointer-events: none; user-select: none;`을 적용하여 브라우저 기본 고스트 드래그를 차단하고, 캔버스 드래그/리사이즈/선택 이벤트가 최외곽 `.bychoi-component`로 100% 정상 수신되도록 보장합니다.
     - **전용 인스펙터 분리 (Illustration / Motion Editor)**: 일반 아이콘(색상 조색 필요)과 분리된 전용 에디터 패널(`illustration-inspector-section`)을 제공합니다. 가로/세로 크기 변경 시 **비율 유지(Lock Ratio)**가 기본 활성화되며, 원본 비율 리셋 버튼(`btn-snap-illustration-ratio`)을 지원하고 불필요한 아이콘색 피커는 표시되지 않습니다.
 - **반응형 스크롤 핀 & 스마트 HUD 고정 엔진 아키텍처 (Responsive Scroll Pin & Smart HUD Architecture SSOT)**:
   - **1. 오브젝트 4대 고정 모드 (`data-scroll-fixed`)**:
@@ -257,8 +257,8 @@
       - In-Place Undo 및 스크린 저장/살균(`ScreenSanitizer.cleanDOM`) 시 런타임 transform만 정제하고 DOM 데이터 속성(`data-scroll-fixed`, `data-scroll-effect`, `data-scroll-target-y`, `data-scroll-sticky-top`)은 100% 영구 보존.
 
 - **도형/오브젝트 서식 복사·붙여넣기 및 배경 투명도 파이프라인 (Format Painter & Fill Opacity SSOT)**:
-  - **1. 클립보드 데이터 구조와 단일 진실 공급원 (`window.top.__lf_global_style_clipboard__`)**:
-    - `Ctrl + Shift + C` 복사 시 컴포넌트의 시각 스타일(배경색, 배경 투명도 `bgOpacity`, 투명 여부 `isBgTransparent`, 테두리 색상/두께/스타일/반경, 패턴)과 텍스트 타이포그래피(폰트, 크기, 색상, 두께, 자간, 행간, 정렬)를 심층 추출하여 부모 창의 `(window.top || window).__lf_global_style_clipboard__`에 저장합니다.
+  - **1. 클립보드 데이터 구조와 단일 진실 공급원 (`window.top.__bychoi_global_style_clipboard__`)**:
+    - `Ctrl + Shift + C` 복사 시 컴포넌트의 시각 스타일(배경색, 배경 투명도 `bgOpacity`, 투명 여부 `isBgTransparent`, 테두리 색상/두께/스타일/반경, 패턴)과 텍스트 타이포그래피(폰트, 크기, 색상, 두께, 자간, 행간, 정렬)를 심층 추출하여 부모 창의 `(window.top || window).__bychoi_global_style_clipboard__`에 저장합니다.
     - 추출 시 인스펙터 상태뿐만 아니라 실시간 DOM 스타일(`targetComp.style.backgroundColor`, `window._getAlphaPercent`)을 폴백으로 교차 검증하여 `bgOpacity`가 100%로 잘못 덮어씌워지지 않도록 실체 데이터를 보존합니다.
   - **2. 채우기 색상 해석 및 투명도 결합 아키텍처 (`_resolveFillColor`)**:
     - 붙여넣기 시 `_resolveFillColor(styleData)`를 통해 투명도 결합 색상을 단일 경로로 계산합니다:
@@ -334,7 +334,7 @@
   - 계층 데이터 및 선택 상태는 단일 진실 공급원(SSOT)인 `data-hierarchy` 속성에 JSON 배열 형태로 저장 및 복구되어야 합니다.
   - 아코디언 항목 추가/삭제, 1/2 Depth 전환, 펼침/접힘 토글 시 전체 컨테이너 높이(`height`)는 아이템 개수와 행 높이에 맞춰 자동으로 재계산되어 레이아웃 왜곡을 차단합니다.
   - 아코디언 전용 인스펙터(`inspector_accordion.js`)를 통해 배경색, 테두리, 헤더/본문 폰트 스타일, 라디오 인디케이터가 단일 파이프라인으로 동기화되며, 서식 복사/붙여넣기 및 `Ctrl+Z` Undo가 100% 보장됩니다.
-- **캔버스 크기**: 에디터 화면(`lf-canvas` 또는 `page`)의 크기는 레이아웃 틀어짐을 방지하기 위해 'Cover' 화면 크기(예: 1600x900)와 완벽하게 일치해야 합니다. (기존 1440x900 레거시 스크린은 로드 시 자동 감지되어 1440px 뷰포트로 안전하게 렌더링됨)
+- **캔버스 크기**: 에디터 화면(`bychoi-canvas` 또는 `page`)의 크기는 레이아웃 틀어짐을 방지하기 위해 'Cover' 화면 크기(예: 1600x900)와 완벽하게 일치해야 합니다. (기존 1440x900 레거시 스크린은 로드 시 자동 감지되어 1440px 뷰포트로 안전하게 렌더링됨)
 - **타이포그래피 가이드 및 텍스트 100% 선명도 유지 원칙 (Crisp Typography & Subpixel Integrity Protocol)**:
   - **폰트 크기 표준**: 대분류 타이틀: `18px` ~ `20px` / 중분류 헤더: `15px` ~ `16px` / 본문: `14px` ~ `15px` / 부가 설명: `13px` ~ `13.5px` / 최소 단위: `13px`
   - **1:1 픽셀 스케일 스냅 (`if (s >= 0.96) s = 1;`)**: `vctrl_canvas_viewport.js`의 `centerView()` 및 뷰포트 센터링 연산 시, 화면 배율 `s`가 0.96 이상일 때는 임의의 소수점 배율(예: 0.98, 0.99)로 리샘플링되지 않도록 반드시 **정확히 `1.0 (100%)` 1:1 픽셀로 강제 스냅**해야 합니다. 브라우저의 소수점 스케일 다운샘플링으로 인한 텍스트 번짐(Blurring)을 원천 차단합니다.
@@ -343,8 +343,8 @@
   - **블러 필터 지양**: `backdrop-filter: blur(...)`와 같이 캔버스 줌/스케일 환경에서 텍스트 래스터화를 뭉개는 필터 속성은 텍스트 영역에 사용을 금지합니다.
 - **도형 배경색 반투명 조절 (Opacity 0% ~ 100%)**: 도형 자체에 `opacity`를 입힐 경우 내부 텍스트의 가독성이 무너지므로, 반드시 배경색의 알파값(`rgba`)만을 조합 및 추출하여 배경 투명도를 표현해야 합니다. 투명도 슬라이더와 컬러 피커는 상호 상태를 유지하며 갱신되어야 하고, 투명(None) 버튼 클릭 시 투명도는 0%로 강제 동기화되어야 합니다.
 - **도형 코너 스타일 설정**: Rect 도형 선택 시 코너 라운드 반경(Radius 0px ~ 100px 슬라이더) 제어 및 직각/라운드(0px / 8px 적용) 변환 원터치 컨트롤을 제공해야 합니다.
-- **다중 선택 텍스트 긁힘 방지 (User Selection Prevention)**: 캔버스를 드래그(Marquee)하여 다중 선택할 때 브라우저 텍스트 Selection 하이라이트가 무관한 요소들에 잡히지 않도록, `body` 및 `.lf-component`에 `user-select: none` 속성을 필수로 강제하고, 드래그 `mousemove` 루프 내에서 `window.getSelection()?.removeAllRanges()`를 매프레임 호출하여 이중으로 차단해야 합니다. 단, `contenteditable` 영역은 `user-select: text`를 부여해 정상 편집을 허용합니다.
-- **라인(커넥터) 삭제 정합성 확보**: 마우스 호버 시 노출되는 X 삭제 단추(`.lf-delete-trigger`)나 키보드 입력으로 선을 삭제할 때 반드시 부모 창에 `LF_DELETE_CONNECTOR`를 전송해야 합니다. 또한, 부모 측은 `state.connectors` 배열의 필터링 재할당 시 참조 누수로 저장 대상 메타데이터(`state.activeFile.meta.connectors`)가 유실되지 않도록 새 참조 연결을 명시적으로 수립하여 새로고침 시 되살아나는 버그를 차단해야 합니다.
+- **다중 선택 텍스트 긁힘 방지 (User Selection Prevention)**: 캔버스를 드래그(Marquee)하여 다중 선택할 때 브라우저 텍스트 Selection 하이라이트가 무관한 요소들에 잡히지 않도록, `body` 및 `.bychoi-component`에 `user-select: none` 속성을 필수로 강제하고, 드래그 `mousemove` 루프 내에서 `window.getSelection()?.removeAllRanges()`를 매프레임 호출하여 이중으로 차단해야 합니다. 단, `contenteditable` 영역은 `user-select: text`를 부여해 정상 편집을 허용합니다.
+- **라인(커넥터) 삭제 정합성 확보**: 마우스 호버 시 노출되는 X 삭제 단추(`.bychoi-delete-trigger`)나 키보드 입력으로 선을 삭제할 때 반드시 부모 창에 `BYCHOI_DELETE_CONNECTOR`를 전송해야 합니다. 또한, 부모 측은 `state.connectors` 배열의 필터링 재할당 시 참조 누수로 저장 대상 메타데이터(`state.activeFile.meta.connectors`)가 유실되지 않도록 새 참조 연결을 명시적으로 수립하여 새로고침 시 되살아나는 버그를 차단해야 합니다.
 - **통합 헤더 아키텍처 (Unified Header Architecture)**:
   - 모든 주요 컨트롤과 프로젝트 메타데이터는 단일 행의 **통합 툴바(`.toolbar`)**로 통합되었습니다.
   - **3단 그룹화**: [Brand Group] - [Metadata Group] - [Actions Group] 순으로 배치하며, `white-space: nowrap`을 적용합니다.
@@ -356,11 +356,11 @@
   - 3. **Delete 삭제 보장**: 사이드바 버튼 외에도 `Delete` 또는 `Backspace` 키보드 입력만으로 즉시 삭제되어야 합니다.
   - 4. **Ctrl+Z (Undo) 보장**: 모든 객체의 이동, 생성, 삭제, 그룹화 동작은 `V4UndoManager.saveState()`를 거쳐 실행 취소가 가능해야 합니다.
   - 5. **Ctrl+C / Ctrl+V / Ctrl+X 복사, 붙여넣기, 잘라내기 보장 (크로스 스크린 & 스마트 위치 결정)**:
-    - **전역 SSOT (하이브리드 영속화)**: 동일 프로젝트 내 스크린 간 및 다른 프로젝트 스크린 간(Cross-Project), 멀티 탭 간 오브젝트 복사/붙여넣기를 완벽 지원하기 위해 `window.top.__lf_global_clipboard__` 메모리 변수와 브라우저 `localStorage`를 결합한 듀얼 레이어 하이브리드 SSOT를 사용합니다. 페이지 새로고침 시에도 `localStorage`로부터 자동 복원(Hydration)됩니다.
-    - **그룹 내부 자식 컴포넌트 단독 복사 좌표 정규화**: 그룹(`.lf-group`) 내부의 자식 컴포넌트를 단일 선택하여 복사할 때, 조상 그룹 체인의 오프셋(`offsetLeft`, `offsetTop`)을 재귀적으로 누적 합산하여 캔버스/반응형 프레임 호스트 기준의 절대 위치(`absL`, `absT`)로 정규화하여 저장합니다. 이를 통해 붙여넣기 시 스크린 최상단(0, 0)으로 튀는 현상을 원천 방지하고 독립 오브젝트로 안전하게 복제 생성합니다.
+    - **전역 SSOT (하이브리드 영속화)**: 동일 프로젝트 내 스크린 간 및 다른 프로젝트 스크린 간(Cross-Project), 멀티 탭 간 오브젝트 복사/붙여넣기를 완벽 지원하기 위해 `window.top.__bychoi_global_clipboard__` 메모리 변수와 브라우저 `localStorage`를 결합한 듀얼 레이어 하이브리드 SSOT를 사용합니다. 페이지 새로고침 시에도 `localStorage`로부터 자동 복원(Hydration)됩니다.
+    - **그룹 내부 자식 컴포넌트 단독 복사 좌표 정규화**: 그룹(`.bychoi-group`) 내부의 자식 컴포넌트를 단일 선택하여 복사할 때, 조상 그룹 체인의 오프셋(`offsetLeft`, `offsetTop`)을 재귀적으로 누적 합산하여 캔버스/반응형 프레임 호스트 기준의 절대 위치(`absL`, `absT`)로 정규화하여 저장합니다. 이를 통해 붙여넣기 시 스크린 최상단(0, 0)으로 튀는 현상을 원천 방지하고 독립 오브젝트로 안전하게 복제 생성합니다.
     - **스마트 붙여넣기 위치 결정 (Smart Paste Positioning)**: 동일 스크린 및 동일 프레임 내 붙여넣기 시에는 원본 대비 겹침 방지 오프셋(+15px)을 적용하고, 다른 스크린이나 타 프레임으로 붙여넣을 때 또는 원본 위치가 스크롤 뷰포트를 벗어난 경우 현재 스크롤 뷰포트 정중앙(Viewport Center)에 지능적으로 자동 배치합니다.
     - **붙여넣기 후 자동 선택 전환**: 복제 생성 완료 즉시 새로 생성된 객체들만 자동으로 선택(`.selected`) 상태로 전환하여 연속 이동 및 편집을 보장합니다.
-    - **잘라내기(Ctrl+X) 시 빈 그룹 자동 청소**: 원본 객체를 복사 후 즉시 삭제하되, 그룹 내 마지막 자식 요소를 잘라냈을 경우 껍데기만 남은 빈 그룹 컨테이너(`div.lf-group`)를 감지하여 캔버스에서 안전하게 자동 제거합니다.
+    - **잘라내기(Ctrl+X) 시 빈 그룹 자동 청소**: 원본 객체를 복사 후 즉시 삭제하되, 그룹 내 마지막 자식 요소를 잘라냈을 경우 껍데기만 남은 빈 그룹 컨테이너(`div.bychoi-group`)를 감지하여 캔버스에서 안전하게 자동 제거합니다.
   - 6. **Ctrl+S 전체저장 보장**: 포커스 위치에 관계없이 캔버스 내부 단축키 입력 시 즉시 툴바의 전체저장(`handleGlobalSave`)이 실행되도록 부모 창으로 이벤트를 프록시 토스해야 합니다.
   - 7. **오브젝트 프로퍼티 플로팅 카드 (Object Properties Floating Card) 및 다중 선택**:
     - **플로팅 연동**: 선택 활성화 시 `#floating-inspector-card`가 노출되며, 현재 활성화된 속성 편집 섹션(예: `text-editor-section`) 및 툴바(`#selection-actions-bar`)가 `#floating-inspector-body` 내부로 동적으로 이동(`appendChild`)되어야 합니다.
@@ -376,10 +376,10 @@
     - **입력 필드 예외 처리 (Keydown Hijacking 방지)**: 부모 창 또는 사이드바(Quill Editor 등)의 입력 폼에 포커스된 상태에서 키보드 이벤트가 가로채지는 문제를 막기 위해, 부모 keydown 리스너의 `isInput` 판단 분기문 시작 지점 등에서 `F2` 키 입력을 최우선적으로 가드하여 무조건 동작하도록 설계해야 합니다. 또한 IME 한글 입력 중 중복 이벤트를 방지하기 위해 `isComposing` 상태 체크 및 `e.key === 'F2'`와 `e.code === 'F2'` 검증을 동시에 거쳐야 합니다.
   - 9. **레이어 4단계 정밀 순서 제어 및 글로벌 단축키 (Layer Ordering 4-Step Suite & Shortcuts SSOT)**:
     - **업계 표준 4대 단축키 완벽 지원**:
-      - **맨 앞으로 가져오기 (`LF_BRING_FRONT`)**: `Ctrl + Shift + ]` (Mac: `Cmd + Shift + ]`). 현재 요소가 속한 티어의 최상위 값(`normal` 티어의 경우 최대 `69,900`, `fixed` 티어의 경우 `179,900`)으로 안전하게 캡핑 승격하며, 상위 계층(핀 레이어 등)을 침범하지 않습니다.
-      - **한 단계 앞으로 가져오기 (`LF_BRING_FORWARD`)**: `Ctrl + ]` (Mac: `Cmd + ]`). 동일 티어 내에서 자신보다 바로 위에 위치한 형제 요소 1개와 z-index를 단일 스텝 스왑(Swap)합니다.
-      - **맨 뒤로 보내기 (`LF_SEND_BACK`)**: `Ctrl + Shift + [` (Mac: `Cmd + Shift + [`). 현재 요소가 속한 티어의 바닥선(`1,000`)으로 내리며, 0 이하 음수 추락을 방지하기 위해 필요한 경우 전체 형제 요소의 z-index를 양수로 일괄 쉬프트 보정합니다.
-      - **한 단계 뒤로 보내기 (`LF_SEND_BACKWARD`)**: `Ctrl + [` (Mac: `Cmd + [`). 동일 티어 내에서 자신보다 바로 아래에 위치한 형제 요소 1개와 z-index를 단일 스텝 스왑(Swap)합니다.
+      - **맨 앞으로 가져오기 (`BYCHOI_BRING_FRONT`)**: `Ctrl + Shift + ]` (Mac: `Cmd + Shift + ]`). 현재 요소가 속한 티어의 최상위 값(`normal` 티어의 경우 최대 `69,900`, `fixed` 티어의 경우 `179,900`)으로 안전하게 캡핑 승격하며, 상위 계층(핀 레이어 등)을 침범하지 않습니다.
+      - **한 단계 앞으로 가져오기 (`BYCHOI_BRING_FORWARD`)**: `Ctrl + ]` (Mac: `Cmd + ]`). 동일 티어 내에서 자신보다 바로 위에 위치한 형제 요소 1개와 z-index를 단일 스텝 스왑(Swap)합니다.
+      - **맨 뒤로 보내기 (`BYCHOI_SEND_BACK`)**: `Ctrl + Shift + [` (Mac: `Cmd + Shift + [`). 현재 요소가 속한 티어의 바닥선(`1,000`)으로 내리며, 0 이하 음수 추락을 방지하기 위해 필요한 경우 전체 형제 요소의 z-index를 양수로 일괄 쉬프트 보정합니다.
+      - **한 단계 뒤로 보내기 (`BYCHOI_SEND_BACKWARD`)**: `Ctrl + [` (Mac: `Cmd + [`). 동일 티어 내에서 자신보다 바로 아래에 위치한 형제 요소 1개와 z-index를 단일 스텝 스왑(Swap)합니다.
     - **플로팅 인스펙터 버튼 연동**: `#selection-actions-bar`의 `[앞으로]` (`#btn-bring-front`), `[뒤로]` (`#btn-send-back`) 및 확장 레이어 조작 버튼과 100% 양방향 동기화됩니다.
     - **실행 취소(Undo) 보장**: 모든 레이어 변경 작업 전 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z`로 1프레임 즉시 복원할 수 있습니다.
   - 10. **그룹화 제어 (Grouping Shortcuts)**: `Ctrl + G` (그룹화), `Ctrl + Shift + G` (그룹 해제)를 지원합니다.
@@ -397,26 +397,26 @@
   - 13. **도형 서식 복사 및 붙여넣기 보장 (Format Painter Shortcuts - `Ctrl + Shift + C` / `Ctrl + Shift + V`)**:
     - **단축키 및 인터랙션**: 선택된 오브젝트의 스타일 서식을 **`Ctrl + Shift + C`**로 복사하고, 대상 컴포넌트(단일 또는 N개 다중 선택)에 **`Ctrl + Shift + V`**로 일괄 적용합니다. 플로팅 인스펙터(`#floating-inspector-card`) 내 `[서식 복사]` 및 `[서식 붙여넣기]` 버튼과 완벽히 동기화됩니다 (단일 그룹 선택 시에는 자동 미노출).
     - **서식 추출 범위**: 도형 스타일(배경색, 테두리 색상/두께/스타일/반경, 투명도)뿐만 아니라, 내부 하위 텍스트 셀(`.v4-editable-cell`, `.v4-shape-text-content`) 및 인라인 서식의 타이포그래피(글꼴 패밀리, 폰트 크기, 글자색, 두께, 정렬), 테이블 헤더/본문 색상, 아이콘 컬러까지 심층 추출하여 정밀 복원합니다.
-    - **전역 SSOT 및 실행 취소**: 스크린 iframe 격리를 극복하기 위해 최상위 부모 창 `(window.top || window).__lf_global_style_clipboard__`를 단일 진실 공급원으로 활용하며, 서식 주입 전 `V4UndoManager.saveState()`를 자동 호출하여 **`Ctrl + Z` (Undo)로 즉시 롤백**할 수 있습니다. 서식 복사/적용 상태는 화면 상단에 토스트 알림(`LF_SHOW_TOAST`)으로 즉시 피드백됩니다.
+    - **전역 SSOT 및 실행 취소**: 스크린 iframe 격리를 극복하기 위해 최상위 부모 창 `(window.top || window).__bychoi_global_style_clipboard__`를 단일 진실 공급원으로 활용하며, 서식 주입 전 `V4UndoManager.saveState()`를 자동 호출하여 **`Ctrl + Z` (Undo)로 즉시 롤백**할 수 있습니다. 서식 복사/적용 상태는 화면 상단에 토스트 알림(`BYCHOI_SHOW_TOAST`)으로 즉시 피드백됩니다.
   - 14. **동일 컴포넌트/쉐입 전환 시 오브젝트 프로퍼티(인스펙터) 4중 안전망 동기화 파이프라인 (Object Property Inspector Sync Pipeline SSOT)**:
     - **문제 정의 및 배경**: 캔버스 상에서 동일한 유형의 컴포넌트(예: 가로 100/세로 100인 Rect A ➔ 가로 200/세로 200인 Rect B)를 연속 선택할 때, 인스펙터 패널 섹션이 닫히지 않고 열려 있는 상태에서 부모 창 입력 필드의 잔류 포커스 또는 `state.editingIndex` 갱신 순서 불일치로 인해 새 객체의 크기(Width/Height)가 갱신되지 않고 이전 값(100x100)으로 고정 잔존하던 간헐적 버그를 원천 차단하기 위해 4중 안전망을 강제합니다.
     - **1중 안전망 (CoreRouter 선행 상태 백업 및 신규 선택 명시)**: `vctrl_core_router.js`에서 `state.editingIndex`를 덮어쓰기 전 이전 선택 ID를 보존(`const isNewSelection = (state.previousEditingIndex !== data.id)`)하고, 신규 선택 시 부모 창의 활성 인풋 포커스를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 인계합니다.
     - **2중 안전망 (인스펙터 3중 판정식 및 인풋 직접 대입)**: `vctrl_inspector.js`의 `updateProperties`에서 `const isNewComp = isNewSelectionExplicit === true || compStyles.id !== state.previousEditingIndex || compStyles.id !== state._lastInspectorCompId;` 3중 안전 판정을 거치며, `isNewComp`일 때 `isTypingInInspector = false`로 강제 리셋하여 조기 반환(`early return`)을 차단합니다. 또한 `_syncCommonPropertyControls` 내부에서 `DOM.propWidth`, `DOM.propHeight` 등의 공통 크기 인풋에 대해 `document.activeElement` 잔류와 무관하게 `Math.round(compStyles.w)`로 직접 값을 대입하여 화면 표시를 100% 보장합니다.
-    - **3중 안전망 (LF_COMP_SELECTED 수신 시 강제 동기화)**: `vctrl_properties.js`의 `updateAllInputs(w, h, force = true)` 파이프라인을 통해 컴포넌트 ID가 변경된 경우(`targetId !== activeCompId`) 활성 인풋 포커스 가드를 확실히 우회하여 가로/세로 수치를 강제 덮어씁니다.
+    - **3중 안전망 (BYCHOI_COMP_SELECTED 수신 시 강제 동기화)**: `vctrl_properties.js`의 `updateAllInputs(w, h, force = true)` 파이프라인을 통해 컴포넌트 ID가 변경된 경우(`targetId !== activeCompId`) 활성 인풋 포커스 가드를 확실히 우회하여 가로/세로 수치를 강제 덮어씁니다.
     - **4중 안전망 (Iframe 캔버스 클릭 시 부모 잔류 포커스 즉시 정리)**: `vctrl_iframe_script.js`에서 컴포넌트 `mousedown` 시 `window.parent?.document?.activeElement?.blur()`를 호출하여 부모 창 인풋에 남아있던 캐럿과 포커스를 즉각 정리합니다 (백틱 충돌 0건 원칙 준수).
   - 15. **동일 오브젝트 다중 선택 시 프로퍼티 일괄 반영 파이프라인 (Multi-Selection Batch Property Update Protocol SSOT)**:
     - **원칙 및 배경**: 캔버스 상에서 동일한 유형의 오브젝트들(버튼 다수, 텍스트박스 다수, 셀렉트박스 다수, 도형 다수 등)을 드래그(Marquee) 또는 Shift+Click으로 다중 선택했을 때, 프로퍼티 패널에서 수치(W/H), 상태(Disabled, Readonly), 텍스트/플레이스홀더, 색상, 서식을 수정하면 선택된 모든 객체에 실시간으로 일괄 동기화되어야 합니다.
-    - **타겟 ID 보존 파이프라인 (`vctrl_properties.js`)**: `applyDimension` 및 공통 속성 제어기에서 다중 선택(`currentActiveIds.length > 1`) 상태일 때 첫 번째 ID만 추출하여 타겟을 단일 요소(`[editingTargetId]`)로 축소하는 안티패턴을 배제하고, 활성 배열 `currentActiveIds` 전체를 `targetIds`로 보존하여 IPC 메시지(`LF_UPDATE_DIMENSIONS`, `LF_UPDATE_ATOM_*`)를 발행합니다.
+    - **타겟 ID 보존 파이프라인 (`vctrl_properties.js`)**: `applyDimension` 및 공통 속성 제어기에서 다중 선택(`currentActiveIds.length > 1`) 상태일 때 첫 번째 ID만 추출하여 타겟을 단일 요소(`[editingTargetId]`)로 축소하는 안티패턴을 배제하고, 활성 배열 `currentActiveIds` 전체를 `targetIds`로 보존하여 IPC 메시지(`BYCHOI_UPDATE_DIMENSIONS`, `BYCHOI_UPDATE_ATOM_*`)를 발행합니다.
     - **동종 오브젝트 지능형 식별 (`vctrl_iframe_script.js`)**: `window.getHomogeneousSelectionInfo`에서 기본 도형뿐만 아니라 패턴 그리드(`t === 'shape-pattern'`) 등을 정규화된 `shape` 군으로 일원화하여, 다중 선택 시에도 프로퍼티 패널이 올바른 동종 에디터 섹션을 활성화하도록 보장합니다.
     - **아톰 인스펙터 IPC 다중 브로드캐스트 (`inspector_atoms.js`)**: 아톰 속성 변경 시 최상위 래퍼 `notifyIframe`을 통해 `id: targetIds[0]`(대표 ID)와 `ids: targetIds`(전체 다중 선택 ID 목록)를 동시에 페이로드에 적재하여 iframe으로 전송합니다.
-    - **Iframe 수신 처리 및 일괄 순회 (`_getTargetComponents`)**: `vctrl_ui_atoms.js` 및 `vctrl_ui_atoms_inputs.js`의 모든 메시지 핸들러(`LF_UPDATE_BUTTON_PROPERTIES`, `LF_UPDATE_ATOM_*`, `LF_UPDATE_TEXTBOX_PROPERTIES`, `LF_UPDATE_SELECTBOX_PROPERTIES`, `LF_UPDATE_DATEPICKER`, `LF_UPDATE_TOGGLE_PROPERTIES`, `LF_UPDATE_SEARCHBAR_PROPERTIES` 등)는 `_getTargetComponents(d)`를 통해 `d.ids` 또는 `d.id`로부터 대상 요소 배열을 확보하고, `targets.forEach` 루프를 통해 선택된 모든 객체의 DOM 속성, 인라인 스타일, 내부 라벨/플레이스홀더, 카운터, 이벤트를 일괄 갱신합니다.
+    - **Iframe 수신 처리 및 일괄 순회 (`_getTargetComponents`)**: `vctrl_ui_atoms.js` 및 `vctrl_ui_atoms_inputs.js`의 모든 메시지 핸들러(`BYCHOI_UPDATE_BUTTON_PROPERTIES`, `BYCHOI_UPDATE_ATOM_*`, `BYCHOI_UPDATE_TEXTBOX_PROPERTIES`, `BYCHOI_UPDATE_SELECTBOX_PROPERTIES`, `BYCHOI_UPDATE_DATEPICKER`, `BYCHOI_UPDATE_TOGGLE_PROPERTIES`, `BYCHOI_UPDATE_SEARCHBAR_PROPERTIES` 등)는 `_getTargetComponents(d)`를 통해 `d.ids` 또는 `d.id`로부터 대상 요소 배열을 확보하고, `targets.forEach` 루프를 통해 선택된 모든 객체의 DOM 속성, 인라인 스타일, 내부 라벨/플레이스홀더, 카운터, 이벤트를 일괄 갱신합니다.
     - **실행 취소(Undo) 단일 트랜잭션 보장**: 다중 객체 갱신 루프 진입 직전 `V4UndoManager.saveState()`를 단 1회 호출하여, `Ctrl+Z` 실행 시 다중 선택된 모든 객체의 변경 전 상태가 단일 트랜잭션으로 원자적(Atomic) 롤백되도록 보장합니다.
 - **전사 Z-Index 8대 티어 아키텍처 (Unified 8-Tier Z-Index Architecture SSOT)**:
   - **배경 및 원칙**: 캔버스 내 일반 컴포넌트, 드롭다운, 스크롤 고정 HUD, 디스크립션 번호 핀, 시스템 오버레이, 전역 모달 간의 z-index 충돌 및 뒤섞임 현상을 원천 방지하기 위해 전사 8대 티어 단일 진실 공급원(`V4_Z_TIERS`)을 강제합니다.
   - **8대 티어 구간 정의**:
     - **Tier 1 (Base/Background, `0 ~ 999`)**: 캔버스 베이스라인, `#canvas_bg_layer` (`0`), 그리드 가이드.
     - **Tier 2 (Content Components, `1,000 ~ 69,999`)**: 일반 도형, 텍스트, 아톰, 테이블, 커넥터, 일러스트 등 캔버스 상의 모든 표준 컨텐츠 컴포넌트 (초기 기본값 `1,000` / 증분 `+10`). 티어 상한선은 `69,900`이며, `69,000` 도달 시 비례 압축(`compactZIndices`)을 통해 공간을 자동 정돈합니다.
-    - **Tier 3 (Active Selection & Marquee, `70,000 ~ 79,999`)**: 현재 선택 중인 객체의 핸들(`.lf-drag-handle`, `.lf-resizer`), 마키 드래그 박스(`.v4-marquee-box` = `70,000`).
+    - **Tier 3 (Active Selection & Marquee, `70,000 ~ 79,999`)**: 현재 선택 중인 객체의 핸들(`.bychoi-drag-handle`, `.bychoi-resizer`), 마키 드래그 박스(`.v4-marquee-box` = `70,000`).
     - **Tier 4 (In-Canvas Dropdowns & Popups, `80,000 ~ 99,999`)**: 셀렉트박스 드롭다운 리스트, 캔버스 인라인 팝업(`.v4-atom-popup` = `80,000 ~ 85,000`).
     - **Tier 5 (Virtual Sticky HUD / Scroll Pinned, `100,000 ~ 179,999`)**: 상단 헤더, 하단 독, 플로팅 툴바, 스티키 바 등 `data-scroll-fixed`가 부여된 스크롤 고정 요소 (`100,000 ~ 179,900`).
     - **Tier 6 (Annotation Pin Layer, `200,000 ~ 299,999`)**: 디스크립션 핀 전용 오버레이 컨테이너(`.v4-pin-layer` = `250,000 !important`), 일반 본문 핀(`.pin-marker` = `200,000`), 스크롤 고정 호스트 핀(`data-scroll-fixed="viewport"` = `200,050`).
@@ -424,7 +424,7 @@
     - **Tier 8 (Global Modals & Context Menus, `500,000 ~ 999,999`)**: 최상위 다이얼로그, 전역 컨텍스트 메뉴, 프레젠테이션 펜 캔버스 (`500,000 ~ 999,999`).
   - **티어 분류 단일 기준 및 비정상 고수치 자가 치유 프로토콜 (`normalizeZIndices` & `getNextTopZIndex`)**:
     - **Scroll Pin(Tier 5) 엄격 속성 판별**: 고정 요소(`fixedComps`) 여부는 `rawZ >= 100000`과 같은 수치 기반 추정을 전면 금지하고, 오직 **`c.hasAttribute('data-scroll-fixed')` 속성 유무**로만 판별합니다. 이를 통해 과거 오염으로 인해 `100,000` 이상의 `z-index`를 갖게 된 일반 컴포넌트가 Scroll Pin 티어로 오분류되어 신규 생성 컴포넌트(`1,000 ~ 69,900`)보다 항상 위에 고정되는 역전 현상을 원천 차단합니다.
-    - **고수치 일반 오브젝트 및 중첩 그룹 즉시 정규화**: `data-scroll-fixed`가 없는 일반 오브젝트 중 `z-index >= 69,000`인 요소가 감지되거나, Scroll Pin 오브젝트가 `100,000 ~ 179,999` 대역을 벗어난 경우, 또는 그룹(`.lf-group`) 내부 자식 요소의 `z-index >= 50,000`이거나 비정상 격차를 가질 경우, 기존 요소들의 상대적 위/아래(z-order) 순서를 100% 보존한 채 `+10` 간격(`1,000, 1,010...` / `100,000, 100,010...`)으로 즉시 자동 정규화합니다.
+    - **고수치 일반 오브젝트 및 중첩 그룹 즉시 정규화**: `data-scroll-fixed`가 없는 일반 오브젝트 중 `z-index >= 69,000`인 요소가 감지되거나, Scroll Pin 오브젝트가 `100,000 ~ 179,999` 대역을 벗어난 경우, 또는 그룹(`.bychoi-group`) 내부 자식 요소의 `z-index >= 50,000`이거나 비정상 격차를 가질 경우, 기존 요소들의 상대적 위/아래(z-order) 순서를 100% 보존한 채 `+10` 간격(`1,000, 1,010...` / `100,000, 100,010...`)으로 즉시 자동 정규화합니다.
     - **그룹 해제(`Ungroup`) 및 다중 붙여넣기(`Paste`) 시 Rank 기반 `+10` 스텝 오프셋 강제**: 그룹 해제(`vctrl_responsive_multiselect.js`) 및 클립보드 다중 붙여넣기(`vctrl_clipboard_objects.js`) 시 원시 `origZ - minZ` 차이를 그대로 더하면 반복 그룹화/해제 시 `z-index`가 기하급수적으로 폭증(`150,000+`, `320,000+`)하므로, 반드시 기존 `z-index` 정렬 순위(Rank)에 기반한 `rankIdx * 10` 오프셋을 적용하여 상대적 레이어 순서는 유지하면서 수치 폭증을 차단합니다.
 - **디스크립션 핀 전용 오버레이 컨테이너 (`.v4-pin-layer`) 격리 표준**:
   - **Stacking Context 격리 극복**: 어드민 테이블 등 `isolation: isolate; contain: paint; transform: translateZ(0);` 속성을 가진 컴포넌트 내부에 핀이 갇히거나 뒤로 가려지는 문제를 원천 차단하기 위해, 디스크립션 핀(`.pin-marker`)은 절대 `.pc-content-inner`나 `.mobile-content-inner`에 일반 형제 요소로 직접 주입하지 않습니다.
@@ -441,14 +441,14 @@
   - **자동 마이그레이션**: 스크린 로드 시 퍼센트(`%`) 단위가 발견되면 즉시 절대 픽셀(`px`)로 자동 변환하여 저장해야 합니다.
   - **글로벌 좌표 기준 고정**: 퍼센트 좌표를 절대 픽셀로 마이그레이션할 때, 가변 브라우저 해상도를 차단하고 현재 캔버스 너비(신규 1600x900 / 레거시 1440x900)를 기준으로 동적 변환하여 단일화해야 합니다.
 - **MutationObserver 무한 재귀 루프 방지 (Value Comparison Guard)**: `enforceDesignSystem()` 등 MutationObserver 감지 루프 내에서 실행되는 모든 DOM 쓰기 작업(예: 카운터 `textContent`, 플레이스홀더 `display`, 텍스트 상자 `innerText`, `style.color` 등)은 무한 재귀 호출로 인한 브라우저 프리징을 막기 위해 반드시 **이전 값과 신규 값의 엄격한 동등 비교 가드**를 거치도록 설계해야 합니다. (특히 `style.color`는 브라우저 내부적으로 `rgb` 혹은 `hex`로 다르게 반환될 수 있으므로 둘 다 비교하는 안전장치가 필수적입니다.)
-- **사이드바 크기 변경 시 컴포넌트 래퍼 크기 연동**: Textbox/Textarea처럼 내부 컨테이너로 스타일 리디렉션이 발생하는 컴포넌트의 경우, 가로/세로 크기(`width`, `height`)는 내부 컨테이너가 아니라 **최외곽 래퍼인 `.lf-component`**에 직접 할당해야 리사이저 핀과 드래그 핸들이 올바르게 위치합니다. 이때 내부 컨테이너의 가로/세로는 `100%`로 유지해 부모 크기에 유연하게 동조되도록 설계해야 합니다.
+- **사이드바 크기 변경 시 컴포넌트 래퍼 크기 연동**: Textbox/Textarea처럼 내부 컨테이너로 스타일 리디렉션이 발생하는 컴포넌트의 경우, 가로/세로 크기(`width`, `height`)는 내부 컨테이너가 아니라 **최외곽 래퍼인 `.bychoi-component`**에 직접 할당해야 리사이저 핀과 드래그 핸들이 올바르게 위치합니다. 이때 내부 컨테이너의 가로/세로는 `100%`로 유지해 부모 크기에 유연하게 동조되도록 설계해야 합니다.
 - **스마트 가이드 감도 및 동작 범위**: 스마트 가이드 자석 기능의 감도(임계값)는 5px로 축소하여 과도한 스냅을 조절하고, 이동 중인 컴포넌트 중심 300px 이내의 주변 오브젝트들하고만 정렬선이 반응하도록 제한합니다. 단, 캔버스 영역 외곽선 및 정중앙선은 거리에 무관하게 항상 동작해야 합니다.
 - **드래그 다중 선택 조건 (PowerPoint Style)**: 드래그 영역 상자 내에 오브젝트의 전체 경계선이 온전히 포함되어야만 다중 선택 상태로 처리되도록 구현합니다 (단순 교차/걸침 시 선택 배제). 선(커넥터)의 경우 양끝단 지점이 모두 드래그 영역 상자 내에 있어야 선택됩니다.
 - **기본 도형 스타일**: 도형의 기본 배경색은 `rgb(255, 255, 255)` (흰색), 테두리 색상은 `rgb(200, 200, 200)` (연한 회색)으로 고정하여 템플릿과 CSS에 일관적으로 적용합니다.
 - **동일 간격 정렬 분배 (Distribute Alignment)**: 3개 이상의 다중 선택된 컴포넌트 사이의 간격을 동일하게 맞춰주는 '가로 간격 동일하게', '세로 간격 동일하게' 분배 정렬 기능을 제공합니다.
 - **그룹 선택 비주얼**: 그룹화로 묶여 있는 오브젝트가 선택되었을 때는 일반 컴포넌트의 파란색 outline 대신 초록색(`#10b981`) outline과 초록색 핸들/리사이저를 적용하여 시각적 정체성을 분리합니다.
 - **그룹 컴포넌트 프로퍼티 생략 규칙 (Group Component Property Hiding)**:
-  - 단일 그룹 컴포넌트(`lf-group`) 선택 시, OBJECT PROPERTIES 플로팅 카드에서는 모든 입력 필드 및 상세 에디터 섹션(텍스트 에디터, 도형 색상 선택기 등)을 숨겨야 합니다.
+  - 단일 그룹 컴포넌트(`bychoi-group`) 선택 시, OBJECT PROPERTIES 플로팅 카드에서는 모든 입력 필드 및 상세 에디터 섹션(텍스트 에디터, 도형 색상 선택기 등)을 숨겨야 합니다.
   - 최상단에는 `"1 OBJECT SELECTED"` 문구와 함께 `[UNGROUP]`, `[ADD TO MOLECULES]`, `[BRING FRONT]`, `[SEND BACK]` 조작 버튼만 노출해야 합니다.
   - 이를 위해 그룹 컴포넌트 자체를 조회할 때 내부 자식 컴포넌트들(도형, 테이블, 아이콘 등)이 잘못 탐색되어 속성 에디터가 노출되는 현상을 완벽히 배제하도록 탐색 예외 처리가 필수적입니다.
 - **라이브러리 국영문 검색 지원 및 영문 표기 통일 규칙 (Library Naming & Dual-Language Search)**:
@@ -472,22 +472,22 @@
       - **시각적 여백**: 상(4.0px), 하(4.0px), 좌(4.4px), 우(4.4px) ➔ **글자에 딱 밀착된 사방 ~4px 1:1 완벽 정대칭 핏 완성**.
   - **4. 재발 방지를 위한 5대 절대 금기 수칙 (Strict Anti-Patterns)**:
     - **[금기 1] 템플릿 리터럴 정규식 이중 백슬래시(`\\`) 필수**: `assets/vctrl_text_measurer.js`는 전체가 `window.v4TextMeasurerScript = \`...\``로 감싸져 있으므로 내부 정규식 작성 시 반드시 `\\u200B\\u00A0`, `<\\/span>`, `<br\\s*\\/?>`처럼 이중 백슬래시를 사용해야 한다. 단일 백슬래시 사용 시 iframe script 컴파일 오류(SyntaxError)로 이벤트 핸들러가 증발하여 **오브젝트 선택 불가(클릭 불능)** 버그가 일어난다.
-    - **[금기 2] `!important` 속성의 `removeProperty()` 해제 필수**: `.lf-drag-handle` 등에 `setProperty('display', 'none', 'important')` 조치 후 복원 시 반드시 `removeProperty('display')`를 호출해야 한다. 단순 `style.display = ""`는 `!important`를 지우지 못해 이동 핸들이 영구 증발(선택 불가)하는 치명적 버그가 유발된다.
+    - **[금기 2] `!important` 속성의 `removeProperty()` 해제 필수**: `.bychoi-drag-handle` 등에 `setProperty('display', 'none', 'important')` 조치 후 복원 시 반드시 `removeProperty('display')`를 호출해야 한다. 단순 `style.display = ""`는 `!important`를 지우지 못해 이동 핸들이 영구 증발(선택 불가)하는 치명적 버그가 유발된다.
     - **[금기 3] `measureContainer` Quill CSS 클래스 상속 및 `display: inline` 필수**: 측정용 `div` 생성 시 `className = 'ql-editor v4-editable-cell'`을 부여하고 `targetDoc.body`에 주입해야 하며, 내부 하위 엘리먼트는 반드시 `display: inline !important`를 유지해야 부분 텍스트 컬러/서식 변경(`span`) 시 공백 폭(Space Width) 소실로 인한 의도치 않은 자동 줄바꿈 오측정 버그를 방지할 수 있다.
     - **[금기 4] 유니코드 특수 공백 정제 (`Line 123`)**: Quill 에디터가 주입하는 `.ql-cursor` 및 `\u200B`, `\u00A0` 특수 공백은 측정 전 `sanitizeHtml` 정규식으로 100% 정제하여 무효 공백 픽셀로 인한 좌우 여백 비대화 왜곡을 차단한다.
     - **[금기 5] 거대 단일 if-else 오버라이드 금지 및 전략 패턴(Strategy Pattern) 준수**: 컴포넌트별 피팅 로직 수정 시 하나의 거대 함수에 패치식 `if-else`를 누적하지 말고, `COMP_TYPES` 디스패처를 통해 전용 피터(`fitStandaloneTextShape`, `fitTextBox`, `fitShapeText`, `fitDefaultCell`)로 100% 독립 분리하여 타 컴포넌트 사이드이펙트를 원천 차단한다.
-  - **5. 도형 텍스트 우측 하단 크기 조절 버튼(.lf-resizer) 완전 미노출 규격**:
-    - 도형 텍스트(`.v4-text-shape`, `.v4-text-box`, `.text-marker`)는 폰트 크기 변경에 따른 동적 자동 핏(Fit)을 따르므로 우측 하단의 수동 크기 조절 버튼(`.lf-resizer`)은 완전히 불필요하다.
-    - 이를 위해 `assets/vctrl_iframe_styles.js`에 `.v4-text-shape > .lf-resizer, .v4-text-box > .lf-resizer, .text-marker > .lf-resizer { display: none !important; }` CSS 선언부 및 `vctrl_text_measurer.js` 내의 `fitResult.hideResizer` 핸들러 제어 로직을 통해 리사이저 버튼을 완전히 숨겨야 한다.
+  - **5. 도형 텍스트 우측 하단 크기 조절 버튼(.bychoi-resizer) 완전 미노출 규격**:
+    - 도형 텍스트(`.v4-text-shape`, `.v4-text-box`, `.text-marker`)는 폰트 크기 변경에 따른 동적 자동 핏(Fit)을 따르므로 우측 하단의 수동 크기 조절 버튼(`.bychoi-resizer`)은 완전히 불필요하다.
+    - 이를 위해 `assets/vctrl_iframe_styles.js`에 `.v4-text-shape > .bychoi-resizer, .v4-text-box > .bychoi-resizer, .text-marker > .bychoi-resizer { display: none !important; }` CSS 선언부 및 `vctrl_text_measurer.js` 내의 `fitResult.hideResizer` 핸들러 제어 로직을 통해 리사이저 버튼을 완전히 숨겨야 한다.
   - **6. ATOMIC 컴포넌트 크기 제어 3단계 표준 규격**:
     - **1단계 (완전 고정형 - Stepper, Date Picker, Toggle Button, Check Box, Radio)**:
-      - 캔버스 크기 조절 점(`.lf-resizer`): **미노출** (`display: none !important`)
+      - 캔버스 크기 조절 점(`.bychoi-resizer`): **미노출** (`display: none !important`)
       - 인스펙터 프로퍼티 (`Width / Height`): **미노출** (불필요한 크기 수치 입력창 제거하여 고유 옵션에 집중)
     - **2단계 (반고정/규격 폼 - File Upload, Alert, Button)**:
-      - 캔버스 크기 조절 점(`.lf-resizer`): **미노출** (마우스 드래그로 인한 비의도적 레이아웃 왜곡 방지)
+      - 캔버스 크기 조절 점(`.bychoi-resizer`): **미노출** (마우스 드래그로 인한 비의도적 레이아웃 왜곡 방지)
       - 인스펙터 프로퍼티 (`Width / Height`): **유지** (그리드나 상위 컨테이너 너비에 맞춘 정밀 픽셀 수치 조정 허용)
     - **3단계 (완전 가변형 - Textbox, Textarea, Search Bar, Selectbox, Image, Grid, Accordion, Popup, Shape)**:
-      - 캔버스 크기 조절 점(`.lf-resizer`) 및 인스펙터 프로퍼티 (`Width / Height`): **모두 노출 유지**
+      - 캔버스 크기 조절 점(`.bychoi-resizer`) 및 인스펙터 프로퍼티 (`Width / Height`): **모두 노출 유지**
 
 - **🖼️ 스크린 배경 설정 시스템 (Screen Background Setting Architecture & SSOT)**:
   - **최하단 무간섭 레이어 (`#canvas_bg_layer`)**:
@@ -501,8 +501,8 @@
     - **투명도(Opacity) 실시간 슬라이더**: 0% ~ 100% 범위에서 배경 이미지 투명도를 실시간 조절할 수 있습니다.
     - **사용자 커스텀 이미지 업로드**: 클라이언트 브라우저 Canvas를 통해 1920px max 해상도, JPEG 85% (~200KB)로 자동 경량화 압축 후 base64 인라인 주입을 지원합니다.
   - **메시지 통신 및 Undo 지원**:
-    - 부모 ➔ Iframe: `LF_SET_CANVAS_BACKGROUND` (`action: 'set' | 'remove' | 'update_opacity'`, `imageUrl`, `opacity`)
-    - Iframe ➔ 부모: `LF_CANVAS_BACKGROUND_UPDATED` (`hasBg`, `url`, `opacity`)
+    - 부모 ➔ Iframe: `BYCHOI_SET_CANVAS_BACKGROUND` (`action: 'set' | 'remove' | 'update_opacity'`, `imageUrl`, `opacity`)
+    - Iframe ➔ 부모: `BYCHOI_CANVAS_BACKGROUND_UPDATED` (`hasBg`, `url`, `opacity`)
     - 배경 변경 시 `V4UndoManager.saveState()`를 자동 호출하여 `Ctrl + Z` 실행 취소를 지원합니다.
 
 - **🎨 일러스트 라이브러리 및 3D/2D 에셋 표준 규격 (Illustration Library & Visual Assets Standards)**:
@@ -517,7 +517,7 @@
     3. **🛍️ Group 3: 고객 구매 여정 (8종)**: 01.입장 ➔ 02.탐색 ➔ 03.선택 ➔ 04.멤버십 ➔ 05.할인혜택 ➔ 06.주문결제 ➔ 07.배송수령 ➔ 08.반품교환 (`200px × 200px` 투명 PNG).
     4. **🧬 Group 4: 아토믹 디자인 시스템 (7종)**: 01.Atoms ➔ 02.Molecules ➔ 03.Organisms ➔ 04.Layout ➔ 05.Pages (높이 `240px` 통일) 및 아토믹 구조도 ➔ 스토리북 허브 (`320px × 240px` 투명 PNG).
   - **표준 3계층 컴포넌트 삽입 규격**:
-    - 캔버스 삽입 시 `.lf-component` 최외곽 래퍼 ➔ `.v4-illustration-container` ➔ `<img style="object-fit: contain; pointer-events: none; user-select: none;">` 표준 3계층 구조로 렌더링되며, 캔버스 드래그, Nudge 이동, 크기 조절 점(`.lf-resizer`), `Delete`, `Ctrl+Z`를 100% 보장합니다.
+    - 캔버스 삽입 시 `.bychoi-component` 최외곽 래퍼 ➔ `.v4-illustration-container` ➔ `<img style="object-fit: contain; pointer-events: none; user-select: none;">` 표준 3계층 구조로 렌더링되며, 캔버스 드래그, Nudge 이동, 크기 조절 점(`.bychoi-resizer`), `Delete`, `Ctrl+Z`를 100% 보장합니다.
   - **라이브러리 접기/펼치기 아코디언 및 상태 영속화 (`V4SidebarAccordion`)**:
     - `ICON LIBRARY` 및 `ILLUSTRATION` 헤더 클릭 시 개별 영역을 자유롭게 접고 펼칠 수 있는 독립 아코디언 컨트롤러(`assets/vctrl_component_library.js`) 탑재.
     - **상태 영속화 (`localStorage`)**: 사용자 설정 접힘 상태(`vctrl_sidebar_accordion_state`)를 로컬에 보존하여 화면 새로고침(F5) 후에도 접힘 상태를 100% 유지합니다.
@@ -552,8 +552,8 @@
 >   5. [11_Daily_Ranking_Batch_Percentile_851.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/11_Daily_Ranking_Batch_Percentile_851.html): 일일 랭킹 배치 파이프라인 & 백분위수 정규화 시뮬레이션 테이블 (최소 13px 폰트 규격 엄수)
 >   6. [01_Benchmark_Report_382.html](file:///c:/Users/sisun/ai_work/data/p_bujl8/01_Benchmark_Report_382.html): 이커머스 주문서 최대 할인 벤치마크 리포트
 - **1. 사실 기반 데이터 전용 (Fact-based Data Only)**: 무조건 사실 기반 데이터로만 스크린을 그린다. 거짓된 데이터나, AI가 상상하는 값을 수치화로 넣지 않는다. (환각 금지, 기획서/요청 데이터 100% 팩트 기반)
-- **2. LIBRARY 표준 오브젝트 100% 활용 (Native Library Objects Only)**: 스크린에 존재하는 모든 오브젝트는 LIBRARY에 존재하는 도형(`.v4-shape`), 아톰, 아이콘(`.lf-icon` SVG)을 활용한다. 비표준 임의 HTML 태그나 커스텀 스타일 클래스는 금지한다.
-- **3. 최소 단위 원자적 분리/파편화 (Atomic Granularity & Separation)**: 스크린을 구성하는 오브젝트는 최소 단위로 잘게 쪼개져서 파편화되어야 한다. 사용자가 캔버스 위에서 직접 내용을 클릭하여 수정하기 원활하게 하기 위함이다. 카드 1개를 구성하더라도 [배경 쉐입] + [독립 아이콘] + [독립 타이틀] + [독립 뱃지] + [독립 설명]으로 각각의 `.lf-component`로 완전 분리 배치해야 한다.
+- **2. LIBRARY 표준 오브젝트 100% 활용 (Native Library Objects Only)**: 스크린에 존재하는 모든 오브젝트는 LIBRARY에 존재하는 도형(`.v4-shape`), 아톰, 아이콘(`.bychoi-icon` SVG)을 활용한다. 비표준 임의 HTML 태그나 커스텀 스타일 클래스는 금지한다.
+- **3. 최소 단위 원자적 분리/파편화 (Atomic Granularity & Separation)**: 스크린을 구성하는 오브젝트는 최소 단위로 잘게 쪼개져서 파편화되어야 한다. 사용자가 캔버스 위에서 직접 내용을 클릭하여 수정하기 원활하게 하기 위함이다. 카드 1개를 구성하더라도 [배경 쉐입] + [독립 아이콘] + [독립 타이틀] + [독립 뱃지] + [독립 설명]으로 각각의 `.bychoi-component`로 완전 분리 배치해야 한다.
 - **4. 텍스트 폰트 크기 최소 13px 이상 (Min Font-Size >= 13px)**: 스크린의 텍스트 폰트 크기는 최소 13px 이상으로만 구성한다. 그 이하(10px, 11px, 12px 등)의 폰트 크기는 가독성을 저하시키므로 절대 사용하지 않는다.
 - **5. 이미지 및 일러스트 적극 활용 및 부재 시 즉시 제작 활용 원칙 (Proactive Illustration Usage & Instant Generation)**: 텍스트 위주의 밋밋하고 건조한 스크린 구성을 배제하고, 도메인/맥락에 부합하는 일러스트(3D/2D)와 그래픽을 적극 배치한다. 상황에 완벽히 부합하는 기존 이미지가 `assets/illustrations/`에 없을 경우, `generate_image` 도구를 가동하여 고품질 이미지를 즉시 직접 제작(`assets/illustrations/`에 저장)하여 화면에 반영한다.
 - **6. 간결하고 깔끔한 레이아웃 (Concise & Clutter-Free Layout)**: 스크린은 최대한 깔끔하게 구성되어야 하고, 불필요하게 많은 텍스트는 지양한다. 반드시 필요한 내용으로만 구성하고 중복되는 내용은 지양하며, 1600x900 단일 캔버스 내에서 스크롤 없이 완결되는 레이아웃을 구성한다.
@@ -562,7 +562,7 @@
 - **9. 표준 템플릿 기반 제작 시 픽셀 단위 레이아웃 100% 보존 (Strict Pixel-Perfect Template Preservation)**: 사용자가 지정하거나 제공된 표준 템플릿(예: [과제 개요] 등 `template_*.html`)을 바탕으로 스크린을 제작할 때는 도형, 텍스트 상자, 아이콘, 카드 등의 크기(`width/height`), 위치(`top/left`), 여백(`margin/padding`), 정렬(`align`), 계층(`z-index`)을 픽셀(PIXEL) 단위로 100% 보존해야 한다. AI가 임의로 도형 크기나 여백, 얼라인을 변경하는 행위는 전체 문서 시스템의 시각적 통일성을 파괴하므로 전면 금지하며, 오직 내부 콘텐츠(텍스트, 라벨, 적합한 일러스트 이미지 경로)만 정밀하게 1:1 치환해야 한다.
 - **임의의 기획 요약 및 누락 절대 금지 (1:1 Text & Data Match)**:
   - 원본 PPT(슬라이드) 또는 가이드 이미지를 바탕으로 스크린을 자동 생성할 때, 기획서의 핵심 데이터를 임의로 축소, 생략하거나 대체 텍스트로 요약하는 것을 전면 금지합니다.
-  - 슬라이드 속의 복잡한 표(Table)나 수치, 데이터 및 설명 텍스트는 **단 한 글자의 누락도 없이 100% 동일하게** 에디터 객체(`.lf-component`)로 코딩하여 완벽히 이식해야 합니다.
+  - 슬라이드 속의 복잡한 표(Table)나 수치, 데이터 및 설명 텍스트는 **단 한 글자의 누락도 없이 100% 동일하게** 에디터 객체(`.bychoi-component`)로 코딩하여 완벽히 이식해야 합니다.
 - **반응형 테이블 종속형 오버레이 구조화 (Nested Element Principle)**:
   - 특정 열(Column)이나 셀(Cell)을 덮어버리는 특수 레이어(예: 비효율 그레이 딤드 오버레이 등)를 설계할 때, 절대 테이블 외부에서 `position: absolute`와 고정 픽셀 좌표(`left/top`)로 얹어서는 안 됩니다.
   - 브라우저의 텍스트 길이에 따라 테이블 셀 너비가 유연하게 변하므로, 반드시 해당 열(`td`) 내부에 자식 노드로 오버레이 요소를 중첩하거나 해당 `td`들의 클래스 배경색 스타일링을 활용하여 **테이블과 자석처럼 결합하여 움직이게** 구현해야 합니다.
@@ -572,8 +572,8 @@
     - **외곽 테두리 누락 차단**: `border-collapse: collapse` 환경 하에서 테이블 전체의 상·하·좌·우 외곽선이 둥근 모서리나 영역 제한으로 인해 깎여 나가는(clipping) 현상을 방지하기 위해, 테이블 컴포넌트의 CSS 정의 및 템플릿 코드에서 `overflow: hidden`과 `border-radius` 속성을 반드시 제거하고 사방 `border`가 완전히 그려지도록 설정합니다.
     - **행 추가 시 높이 유지**: 테이블 행 추가(`add-row`) 시 신규 행이 납작하게 찌그러지지 않도록, 현재 포커스되거나 인접한 기준 행(`templateRow`)의 높이(`height` 스타일)를 복사하여 설정하고, 기준 행이 없거나 높이가 지정되어 있지 않을 경우 기본값인 **`50px`**이 강제 대입되도록 구현해야 합니다.
     - **행 삭제 시 테이블 높이 가변**: 테이블 행 삭제(`del-row`) 시, 테이블 자체에 고정된 `height: 100%` 스타일 때문에 테이블 `offsetHeight` 측정이 줄어들지 않아 부모 박스 높이가 그대로 유지되는 버그를 막아야 합니다. 이를 위해 크기 재측정(`syncTableComponentSize`) 시점에 일시적으로 테이블 `height` 스타일을 **`auto`**로 변경하여 남아 있는 잔여 행들의 순수 높이 합을 계산하여 전달한 뒤, 다시 원래 스타일(`100%`)로 복구해 주어야 합니다.
-    - **열/행 치수 변경 시 즉시 가변**: 특정 컬럼의 너비(`width`)나 행 높이(`height`)를 변경할 때(`LF_UPDATE_CELL_DIMENSION`)에도, 테이블의 크기를 재측정하는 `window.syncTableComponentSize`를 호출하여 부모 `.lf-component` 래퍼 박스의 가로/세로 크기도 유기적으로 실시간 변경(가변 처리)되게 동기화해야 합니다.
-    - **폰트 크기 변경 및 중요도 설정**: 테이블의 폰트 크기 변경(`LF_UPDATE_STYLE` with `fontSize`) 시, 전역 CSS의 하드코딩된 `!important` 폰트 크기 설정을 덮어쓰기 위해 `subSelector` 스타일 주입 시 일반 대입 대신 `setProperty(..., ..., 'important')` 방식을 사용하여 폰트 크기를 강제 적용하고, 스타일 반영 즉시 `window.syncTableComponentSize`를 호출하여 가이드 상자가 알맞게 늘어나도록 보장합니다.
+    - **열/행 치수 변경 시 즉시 가변**: 특정 컬럼의 너비(`width`)나 행 높이(`height`)를 변경할 때(`BYCHOI_UPDATE_CELL_DIMENSION`)에도, 테이블의 크기를 재측정하는 `window.syncTableComponentSize`를 호출하여 부모 `.bychoi-component` 래퍼 박스의 가로/세로 크기도 유기적으로 실시간 변경(가변 처리)되게 동기화해야 합니다.
+    - **폰트 크기 변경 및 중요도 설정**: 테이블의 폰트 크기 변경(`BYCHOI_UPDATE_STYLE` with `fontSize`) 시, 전역 CSS의 하드코딩된 `!important` 폰트 크기 설정을 덮어쓰기 위해 `subSelector` 스타일 주입 시 일반 대입 대신 `setProperty(..., ..., 'important')` 방식을 사용하여 폰트 크기를 강제 적용하고, 스타일 반영 즉시 `window.syncTableComponentSize`를 호출하여 가이드 상자가 알맞게 늘어나도록 보장합니다.
     - **열 추가 시 인접 스타일 복사**: 테이블 열 추가(`add-col`) 시 신규 추가되는 셀들이 기존 열들의 폰트 스타일, 배경색 등과 다르게 기본 스타일로 추가되는 버그를 차단하기 위해, 삽입 직전 인접한 기존 셀(`templateCell`)을 탐색하여 그 스타일(`style.cssText`)을 복사한 뒤 신규 셀(`th`, `td`)에 대입하여 비주얼 통일성을 상시 유지해야 합니다.
 - **양측 여백 및 테이블 크기 균형 가이드 (Balanced Layout Breathing Room & Exact Column Grid)**:
   - 열(Column) 개수가 줄어들거나 증가하더라도 테이블을 캔버스 크기에 꽉 채우기 위해 개별 열의 가로폭을 과도하게 늘려서(`width:100%` 등으로 무리한 팽창) 화면 끝단에 닿아 우측 여백이 잘리는 답답한 배치를 만들어서는 안 됩니다.
@@ -597,7 +597,7 @@
 - **중첩 삼항 연산자(Nested Ternaries) 지양 및 분기문 최적화**: 가독성을 해치고 브래킷 매칭 오류(SyntaxError)를 유발하기 쉬운 다중 중첩 삼항 연산자 대신 명확한 `if - else if` 분기 또는 매핑 객체(Dictionary)를 사용하세요. 특정 모듈(예: `vctrl_inspector.js`)의 SyntaxError로 인해 객체(예: `DOM`)가 생성되지 못하면, 이를 의존하는 다른 모듈들까지 `ReferenceError`로 작동을 멈추는 연쇄 장애가 발생하므로 구문 오류 예방에 최우선적으로 집중해야 합니다.
 - **템플릿 리터럴 내 문자열 이스케이프 및 결합 표준**: `vctrl_iframe_script.js`와 같이 파일 전체가 큰 백틱(`` ` ``) 템플릿 문자열로 감싸진 채 부모 측 브라우저에서 동적으로 평가(eval)되는 파일의 경우, 내부 코드에서 또다시 백틱(`` ` ``)이나 변수 보간(`${}`) 구문을 사용하면 문법 충돌(SyntaxError)이 일어나 작동이 중단됩니다. 이를 방지하기 위해 내부 문자열 표현은 반드시 표준적인 따옴표(싱글/더블)와 덧셈 연산자(`"Sub Item " + (i + 1)`)를 활용해 문자열을 결합해야 합니다.
 - **신규 아톰 추가 시 옵션 프로퍼티 플로팅 카드 통합 규칙**: 신규 아톰의 설정 패널을 디자인할 때는 우측 사이드바가 아닌 옵션 프로퍼티 플로팅 카드(`Object Properties Floating Card`)에 노출되도록 `vctrl_inspector.js` 내의 `DOM` 매핑 등록, `restorePropertiesSections` 복원 대상 등록, `updateProperties`의 보이기/숨기기 처리 및 선택 해제(Deselect) 시 숨김 처리를 빠짐없이 세트로 적용하여 사이드바에 옵션 패널이 잔존하는 버그를 원천 차단해야 합니다.
-- **이벤트 핸들러 연쇄 차단 방지 (Non-Blocking Event Listener Flow)**: `mouseup` 또는 `mousemove`와 같은 전역 통합 이벤트 리스너를 수정할 때, 개별 조건문(예: `isConnectorDragging`) 처리 후 `return;`으로 조기 종료를 남용하지 마세요. 조기 종료가 남용되면 하위의 `isMarquee` 상태 해제(`LF_MARQUEE_END`) 및 선택 박스(`.v4-marquee-box`) 제거 로직이 차단되어 클릭 시 캔버스에 파란색 점 잔상이 생성되거나 다중선택 드래그가 마비되는 사이드 이펙트가 발생합니다. 모든 상태 해제 연산은 상호 간섭이 없도록 독립 순차 구문으로 전개해야 합니다.
+- **이벤트 핸들러 연쇄 차단 방지 (Non-Blocking Event Listener Flow)**: `mouseup` 또는 `mousemove`와 같은 전역 통합 이벤트 리스너를 수정할 때, 개별 조건문(예: `isConnectorDragging`) 처리 후 `return;`으로 조기 종료를 남용하지 마세요. 조기 종료가 남용되면 하위의 `isMarquee` 상태 해제(`BYCHOI_MARQUEE_END`) 및 선택 박스(`.v4-marquee-box`) 제거 로직이 차단되어 클릭 시 캔버스에 파란색 점 잔상이 생성되거나 다중선택 드래그가 마비되는 사이드 이펙트가 발생합니다. 모든 상태 해제 연산은 상호 간섭이 없도록 독립 순차 구문으로 전개해야 합니다.
 
 ## 📱 [반응형] 템플릿(PC & Mobile) 전용 아키텍처 및 개발 표준 (Responsive Specification)
 - **1. 레이아웃 및 2단 독립 프레임 규격 (Layout & Containers)**:
@@ -645,7 +645,7 @@
 
 ## 📝 웹 에디터 아톰(Web Editor Atom) 표준 규칙
 - **웹 에디터 아톰 구조 및 표준 규격 (`v4-webeditor-container`)**:
-  - **컨테이너 아키텍처**: 표준 3계층 아키텍처 `.lf-component` ➔ `.v4-webeditor-container` (`display: flex; flex-direction: column; border: 1.6px solid var(--v4-border-color); border-radius: 6px; overflow: hidden; background: #ffffff;`) ➔ 상단 툴바(`.v4-webeditor-toolbar`) + 본문 작성 영역(`.v4-webeditor-body`) + 하단 상태바(`.v4-webeditor-statusbar`).
+  - **컨테이너 아키텍처**: 표준 3계층 아키텍처 `.bychoi-component` ➔ `.v4-webeditor-container` (`display: flex; flex-direction: column; border: 1.6px solid var(--v4-border-color); border-radius: 6px; overflow: hidden; background: #ffffff;`) ➔ 상단 툴바(`.v4-webeditor-toolbar`) + 본문 작성 영역(`.v4-webeditor-body`) + 하단 상태바(`.v4-webeditor-statusbar`).
   - **툴바 모드 (`data-toolbar-mode`)**:
     - `full`: 굵게, 기울임, 밑줄, 취소선, 글자색, 배경색, 정렬(좌/중/우), 글머리/번호 목록, 링크, 표 삽입 등 풀세트 툴바 제공.
     - `minimal`: 굵게, 기울임, 밑줄, 글자색, 정렬 등 핵심 서식 위주의 콤팩트 툴바 제공.
@@ -680,9 +680,9 @@
   - 좌표의 미세 오차와 줌 배율 간섭을 원천 배제하기 위해, 모든 스냅 타겟 생성 및 계산 시 브라우저 실제 크기 측정 대신 `style.left/top` px 수치 기반의 **Pure Data 연산(No-Measure Strategy)**을 활용합니다.
   - 캔버스의 시각적 공해를 줄이고 최적의 조작감을 보장하기 위해, 스마트 가이드 타겟의 기본 검색 반경은 **150px**로 좁히고, `Row` 및 `Col`이 붙은 가이드 타겟은 **가장 최상위 우선순위(Priority)**로 정렬하여 스냅되도록 매칭 로직을 구성합니다.
 - **다중 선택 및 그룹화 규칙 (Multi-Selection & Grouping Protocol)**:
-  - **그룹 내 아톰 예외 처리 (Atom Design-System Bypass)**: 그룹(`.lf-group`) 내부의 컴포넌트는 `enforceDesignSystem()` 등 실시간 디자인 강제화 보정 규칙에서 즉시 제외되어야 합니다. 특히 `closest('.lf-group')` 체크를 통해 스캔 루프를 탈출함으로써 컴포넌트 크기나 구조가 강제로 기본값(예: 버튼 80px, 아코디언 높이 등)으로 덮어씌워져 내부 텍스트 레이아웃이 쪼그라들거나 깨지는 오작동을 차단해야 합니다.
-  - **그룹 리사이즈 시 비례적 크기/위치 조절 (Proportional Child Scaling)**: 그룹(`.lf-group`)을 리사이즈할 때 내부의 모든 자식 컴포넌트들의 상대 좌표(`left`, `top`)와 크기(`width`, `height`)를 비례 계산(Scale Factor)하여 실시간 동기화해야 하며, 아톰 컴포넌트의 내부 스케일 요소도 비례 갱신해야 합니다. 또한, 리사이즈 완료 시 자식 요소들에 `data-resized="true"` 플래그를 자동으로 부여하여 그룹 해제나 새로고침 후에도 크기가 무너지지 않도록 보장해야 합니다.
-  - **Direct Child Selector 사용을 통한 핸들러 보호 (Direct Child Handle Isolation)**: `updateHandles`와 `initHandles` 등 드래그/리사이즈 조작 인터페이스 갱신 시 반드시 `:scope > .lf-drag-handle`, `:scope > .lf-resizer` 와 같은 직속 자식 셀렉터를 사용하여, 그룹 내부 자식 컴포넌트의 핸들과 오인되어 상위 그룹 전용 핸들이 누락되거나 소실되는 현상을 완벽하게 방지해야 합니다.
+  - **그룹 내 아톰 예외 처리 (Atom Design-System Bypass)**: 그룹(`.bychoi-group`) 내부의 컴포넌트는 `enforceDesignSystem()` 등 실시간 디자인 강제화 보정 규칙에서 즉시 제외되어야 합니다. 특히 `closest('.bychoi-group')` 체크를 통해 스캔 루프를 탈출함으로써 컴포넌트 크기나 구조가 강제로 기본값(예: 버튼 80px, 아코디언 높이 등)으로 덮어씌워져 내부 텍스트 레이아웃이 쪼그라들거나 깨지는 오작동을 차단해야 합니다.
+  - **그룹 리사이즈 시 비례적 크기/위치 조절 (Proportional Child Scaling)**: 그룹(`.bychoi-group`)을 리사이즈할 때 내부의 모든 자식 컴포넌트들의 상대 좌표(`left`, `top`)와 크기(`width`, `height`)를 비례 계산(Scale Factor)하여 실시간 동기화해야 하며, 아톰 컴포넌트의 내부 스케일 요소도 비례 갱신해야 합니다. 또한, 리사이즈 완료 시 자식 요소들에 `data-resized="true"` 플래그를 자동으로 부여하여 그룹 해제나 새로고침 후에도 크기가 무너지지 않도록 보장해야 합니다.
+  - **Direct Child Selector 사용을 통한 핸들러 보호 (Direct Child Handle Isolation)**: `updateHandles`와 `initHandles` 등 드래그/리사이즈 조작 인터페이스 갱신 시 반드시 `:scope > .bychoi-drag-handle`, `:scope > .bychoi-resizer` 와 같은 직속 자식 셀렉터를 사용하여, 그룹 내부 자식 컴포넌트의 핸들과 오인되어 상위 그룹 전용 핸들이 누락되거나 소실되는 현상을 완벽하게 방지해야 합니다.
 - **단일 및 다중 오브젝트 정렬 단축키 및 템플릿별 기준 규격 (Alignment Shortcuts & Container Isolation)**:
   - **단축키 바인딩**: 단일 선택(`items.length === 1`) 및 다중 선택(`items.length > 1`) 모두에서 **`Ctrl + 1 ~ 6`** 및 **`Alt + 1 ~ 6`**을 완벽 지원한다.
     - `Ctrl/Alt + 1`: 좌측 정렬 (Left)
@@ -699,7 +699,7 @@
       - 수직 중앙(`middle`): $\text{targetT} = \text{boundT} + \frac{\text{boundH} - \text{item.h}}{2}$.
       - 하단(`bottom`): $\text{targetT} = \text{boundT} + \text{boundH} - \text{item.h} - 10$ (하단 여백 10px 안전 패딩).
   - **다중 오브젝트 정렬 기준**: 선택된 오브젝트들의 전체 바운딩 박스(Bounding Box: `minX, minY ~ maxX, maxY`)를 기준으로 상호 상대 정렬 및 2대 균등 분배(가로/세로)를 수행.
-  - **정렬 후 조작 인터페이스 실시간 동기화**: 정렬 연산 완료 후 DOM의 `style.left/top` 갱신에 그치지 않고, 반드시 `window.updateHandles(el)` 및 `window.SelectionAdorner.update()`를 호출하여 드래그 핸들(`.lf-drag-handle`), 리사이저(`.lf-resizer`), 선택 박스, 부모 창 인스펙터(X/Y 좌표)를 1:1로 실시간 갱신해야 한다.
+  - **정렬 후 조작 인터페이스 실시간 동기화**: 정렬 연산 완료 후 DOM의 `style.left/top` 갱신에 그치지 않고, 반드시 `window.updateHandles(el)` 및 `window.SelectionAdorner.update()`를 호출하여 드래그 핸들(`.bychoi-drag-handle`), 리사이저(`.bychoi-resizer`), 선택 박스, 부모 창 인스펙터(X/Y 좌표)를 1:1로 실시간 갱신해야 한다.
   - **입력 포커스 가드 (`isInputActive`)**: 텍스트 상자, 셀 에디터, 인풋 등에서 타이핑 중일 때는 숫자 1~6 입력이 정렬 단축키로 오작동하지 않도록 철저히 가드 처리.
 - **[반응형] 템플릿 실행 취소(Ctrl+Z / Undo) 스마트 인플레이스 스크롤 보존 아키텍처 (Smart In-Place Scroll Preservation Protocol)**:
   - **스크롤 컨테이너 DOM 비파괴 원칙**: 반응형 템플릿에서 Undo 실행 시 `document.body.innerHTML = ''`로 DOM 전체를 날려버리면 `.pc-content-area`와 `.mobile-content-area` 스크롤 컨테이너 DOM 자체가 소멸되어 브라우저가 스크롤을 무조건 `0px`로 리셋한다. 따라서 반드시 내부 캔버스인 `.pc-content-inner` 및 `.mobile-content-inner`의 `innerHTML`과 `minHeight`만 인플레이스(In-place)로 교체하여 스크롤 컨테이너를 100% 보존해야 한다.
@@ -739,7 +739,7 @@
   - 인스펙터(`#inspector-shapes.js`)에서 가로/세로 방향 전환 토글 및 진폭/주기 파라미터를 제어할 수 있으며, 1.6px 보더 두께와 배경색 투명도(`rgba`) 연동 규칙을 완벽히 보존해야 합니다.
 
 ## 💡 Grid UI 컬럼 강조 표준 규칙 (Grid Column Highlight Protocol)
-- **동적 컬럼 하이라이트 메시지 (`LF_SET_GRID_COLUMN_HIGHLIGHT`)**:
+- **동적 컬럼 하이라이트 메시지 (`BYCHOI_SET_GRID_COLUMN_HIGHLIGHT`)**:
   - 특정 컬럼(열)의 데이터나 상태를 부각하기 위해 `colIndex` 기준 전용 하이라이트 클래스(`.highlight-col`) 및 인라인 배경/보더 스타일 주입을 지원합니다.
   - 부분 갱신(Partial update)이나 리렌더링 시에도 하이라이트 상태가 유실되지 않도록 `table` DOM의 `data-highlight-col` 속성에 SSOT로 저장되어 새로고침 후에도 100% 복구되어야 합니다.
 
@@ -758,7 +758,7 @@
 
 ## 📐 신규 스크린 생성 및 레이아웃 설계 4대 핵심 기하 규칙 (Screen Authoring Geometry & Illustration Standard)
 - **10단위 크기 규격화 (10px-Unit Width & Height)**:
-  - 스크린 내 모든 오브젝트(`.lf-component`)의 `[가로크기(width)]`와 `[세로크기(height)]`는 가급적이면 `1px` 단위가 아닌 **`10px` 단위**(예: `120px`, `200px`, `340px`, `500px` 등)로 구성합니다.
+  - 스크린 내 모든 오브젝트(`.bychoi-component`)의 `[가로크기(width)]`와 `[세로크기(height)]`는 가급적이면 `1px` 단위가 아닌 **`10px` 단위**(예: `120px`, `200px`, `340px`, `500px` 등)로 구성합니다.
 - **동일 구조 오브젝트의 무오차 정렬 (Zero-Error Alignment)**:
   - 동일한 구조나 위계를 가진 오브젝트(행/열 카드, 라벨, 뱃지, 타이틀 등)는 가로 정렬(`left`)과 세로 정렬(`top`)이 단 `1px`의 오차도 없이 정확하게 정렬되어야 합니다.
 - **10단위 간격 및 여백 균형 배치 (10px-Unit Balanced Spacing & Padding)**:

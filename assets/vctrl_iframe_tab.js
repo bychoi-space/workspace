@@ -111,10 +111,10 @@ window.v4TabScript = `
                         window.renderTabs(container);
 
                         // Notify parent of updated selection state
-                        var comp = container.closest('.lf-component');
+                        var comp = container.closest('.bychoi-component');
                         if (comp && typeof window._getCompStyles === 'function' && typeof window.notifyParent === 'function') {
                             window.notifyParent(Object.assign({
-                                type: 'LF_COMP_SELECTED'
+                                type: 'BYCHOI_COMP_SELECTED'
                             }, window._getCompStyles(comp)));
                         }
                     }
@@ -146,8 +146,8 @@ window.v4TabScript = `
 
     // Message handler for parent-side inspector updates
     window.v4MessageHandlers = window.v4MessageHandlers || {};
-    window.v4MessageHandlers['LF_UPDATE_TAB_PROPERTIES'] = function(d) {
-        var s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.lf-component.selected');
+    window.v4MessageHandlers['BYCHOI_UPDATE_TAB_PROPERTIES'] = function(d) {
+        var s = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.bychoi-component.selected');
         if (!s) return;
 
         var container = s.querySelector('.v4-tab-container') || (s.classList.contains('v4-tab-container') ? s : null);
@@ -200,10 +200,10 @@ window.v4TabScript = `
         }
 
         // Notify parent of updated state
-        var comp = container.closest('.lf-component') || s;
+        var comp = container.closest('.bychoi-component') || s;
         if (comp && typeof window._getCompStyles === 'function' && typeof window.notifyParent === 'function') {
             window.notifyParent(Object.assign({
-                type: 'LF_COMP_SELECTED'
+                type: 'BYCHOI_COMP_SELECTED'
             }, window._getCompStyles(comp)));
         }
     };

@@ -26,13 +26,13 @@ window.v4UIAtomsScript = `
 
     const bindAdminSettingsEvents = () => {
         document.querySelectorAll('.v4-admin-settings-container').forEach(container => {
-            const comp = container.closest('.lf-component');
+            const comp = container.closest('.bychoi-component');
             const headerEl = container.querySelector('.v4-admin-group-header');
             if (headerEl && !headerEl.dataset.focusBound) {
                 headerEl.dataset.focusBound = 'true';
                 headerEl.addEventListener('focus', function() {
                     notifyParent({
-                        type: 'LF_QUERY_ITEM_FOCUSED',
+                        type: 'BYCHOI_QUERY_ITEM_FOCUSED',
                         compId: comp ? comp.id : null,
                         isGroupHeader: true,
                         activeRowIndex: null,
@@ -48,7 +48,7 @@ window.v4UIAtomsScript = `
                         labelCell.dataset.focusBound = 'true';
                         labelCell.addEventListener('focus', function() {
                             notifyParent({
-                                type: 'LF_QUERY_ITEM_FOCUSED',
+                                type: 'BYCHOI_QUERY_ITEM_FOCUSED',
                                 compId: comp ? comp.id : null,
                                 isGroupHeader: false,
                                 activeRowIndex: rIdx + 1,
@@ -69,7 +69,7 @@ window.v4UIAtomsScript = `
     // --- Registered Modular Message Handlers for UI Atoms & Widgets ---
     window.v4MessageHandlers = window.v4MessageHandlers || {};
 
-    window.v4MessageHandlers['LF_UPDATE_ATOM_STATE'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_ATOM_STATE'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -95,13 +95,13 @@ window.v4UIAtomsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_ATOM_ICON_SIZE'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_ATOM_ICON_SIZE'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -132,7 +132,7 @@ window.v4UIAtomsScript = `
             const first = targets[0];
             const firstBox = first.querySelector('.v4-checkbox, .v4-radio');
             window.parent.postMessage({
-                type: 'LF_COMP_RESIZED',
+                type: 'BYCHOI_COMP_RESIZED',
                 id: first.id,
                 w: first.offsetWidth,
                 h: first.offsetHeight,
@@ -142,7 +142,7 @@ window.v4UIAtomsScript = `
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_ATOM_TEXT_ENABLED'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_ATOM_TEXT_ENABLED'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -160,13 +160,13 @@ window.v4UIAtomsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_ATOM_LABEL_TEXT'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_ATOM_LABEL_TEXT'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -185,15 +185,15 @@ window.v4UIAtomsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    // [Phase 6 Decoupling] LF_UPDATE_STEPPER_PROPERTIES, LF_UPDATE_SELECTBOX_PROPERTIES, LF_UPDATE_FILEUPLOAD_PROPERTIES moved to vctrl_ui_atoms_inputs.js
+    // [Phase 6 Decoupling] BYCHOI_UPDATE_STEPPER_PROPERTIES, BYCHOI_UPDATE_SELECTBOX_PROPERTIES, BYCHOI_UPDATE_FILEUPLOAD_PROPERTIES moved to vctrl_ui_atoms_inputs.js
 
-    window.v4MessageHandlers['LF_UPDATE_ATOM_DISABLED'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_ATOM_DISABLED'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -221,13 +221,13 @@ window.v4UIAtomsScript = `
         markDirty();
         if (typeof window._getCompStyles === 'function') {
             notifyParent({
-                type: 'LF_COMP_STYLES_RESPONSE',
+                type: 'BYCHOI_COMP_STYLES_RESPONSE',
                 ...window._getCompStyles(targets[0])
             });
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_ALERT_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_ALERT_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -305,13 +305,13 @@ window.v4UIAtomsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_POPUP_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_POPUP_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -360,12 +360,12 @@ window.v4UIAtomsScript = `
         markDirty();
         if (typeof window._getCompStyles === 'function' && window.parent) {
             window.parent.postMessage(Object.assign({
-                type: 'LF_COMP_SELECTED'
+                type: 'BYCHOI_COMP_SELECTED'
             }, window._getCompStyles(targets[0])), '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_BUTTON_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_BUTTON_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -403,13 +403,13 @@ window.v4UIAtomsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    window.v4MessageHandlers['LF_FIT_BUTTON_TO_TEXT'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_FIT_BUTTON_TO_TEXT'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -450,10 +450,10 @@ window.v4UIAtomsScript = `
             var first = targets[0];
             var compStyles = window._getCompStyles(first);
             window.parent.postMessage(Object.assign({
-                type: 'LF_COMP_SELECTED'
+                type: 'BYCHOI_COMP_SELECTED'
             }, compStyles), '*');
             window.parent.postMessage({
-                type: 'LF_COMP_RESIZED',
+                type: 'BYCHOI_COMP_RESIZED',
                 id: first.id || (compStyles && compStyles.id) || null,
                 w: parseFloat(first.style.width) || first.offsetWidth,
                 h: compStyles.h || parseFloat(first.style.height) || first.offsetHeight
@@ -462,10 +462,10 @@ window.v4UIAtomsScript = `
     };
 
 
-    // [Phase 6 Decoupling] LF_UPDATE_DATEPICKER moved to vctrl_ui_atoms_inputs.js
+    // [Phase 6 Decoupling] BYCHOI_UPDATE_DATEPICKER moved to vctrl_ui_atoms_inputs.js
 
-    window.v4MessageHandlers['LF_UPDATE_ADMIN_SETTINGS_PROPERTIES'] = function(d) {
-        const s = document.querySelector('.lf-component.selected'); if (!s) return;
+    window.v4MessageHandlers['BYCHOI_UPDATE_ADMIN_SETTINGS_PROPERTIES'] = function(d) {
+        const s = document.querySelector('.bychoi-component.selected'); if (!s) return;
         if (s.style.background && s.style.background !== 'transparent') s.style.background = 'transparent';
         if (s.style.backgroundColor && s.style.backgroundColor !== 'transparent') s.style.backgroundColor = 'transparent';
         const container = s.querySelector('.v4-admin-settings-container') || (s.classList.contains('v4-admin-settings-container') ? s : null);
@@ -562,7 +562,7 @@ window.v4UIAtomsScript = `
                                     markDirty();
                                     if (typeof window._getCompStyles === 'function') {
                                         window.parent.postMessage({
-                                            type: 'LF_COMP_SELECTED',
+                                            type: 'BYCHOI_COMP_SELECTED',
                                             ...window._getCompStyles(s)
                                         }, '*');
                                     }
@@ -571,9 +571,9 @@ window.v4UIAtomsScript = `
                             if (!headerEl.dataset.focusBound) {
                                 headerEl.dataset.focusBound = 'true';
                                 headerEl.addEventListener('focus', function() {
-                                    var comp = container.closest('.lf-component') || s;
+                                    var comp = container.closest('.bychoi-component') || s;
                                     notifyParent({
-                                        type: 'LF_QUERY_ITEM_FOCUSED',
+                                        type: 'BYCHOI_QUERY_ITEM_FOCUSED',
                                         compId: comp ? comp.id : null,
                                         isGroupHeader: true,
                                         activeRowIndex: null,
@@ -662,7 +662,7 @@ window.v4UIAtomsScript = `
                                                 markDirty();
                                                 if (typeof window._getCompStyles === 'function') {
                                                     window.parent.postMessage({
-                                                        type: 'LF_COMP_SELECTED',
+                                                        type: 'BYCHOI_COMP_SELECTED',
                                                         ...window._getCompStyles(s)
                                                     }, '*');
                                                 }
@@ -672,9 +672,9 @@ window.v4UIAtomsScript = `
                                             labelCell.dataset.focusBound = 'true';
                                             (function(rowIdx, colIdx) {
                                                 labelCell.addEventListener('focus', function() {
-                                                    var comp = container.closest('.lf-component') || s;
+                                                    var comp = container.closest('.bychoi-component') || s;
                                                     notifyParent({
-                                                        type: 'LF_QUERY_ITEM_FOCUSED',
+                                                        type: 'BYCHOI_QUERY_ITEM_FOCUSED',
                                                         compId: comp ? comp.id : null,
                                                         isGroupHeader: false,
                                                         activeRowIndex: rowIdx,
@@ -759,7 +759,7 @@ window.v4UIAtomsScript = `
                         // Notify parent about the updated selection properties
                         if (typeof window._getCompStyles === 'function') {
                             window.parent.postMessage({
-                                type: 'LF_COMP_SELECTED',
+                                type: 'BYCHOI_COMP_SELECTED',
                                 ...window._getCompStyles(s)
                             }, '*');
                         }
@@ -767,8 +767,8 @@ window.v4UIAtomsScript = `
     };
 
 
-    // [Phase 6 Decoupling] LF_UPDATE_TEXTBOX_PROPERTIES, LF_UPDATE_TOGGLE_PROPERTIES, LF_UPDATE_SEARCHBAR_PROPERTIES moved to vctrl_ui_atoms_inputs.js
-    // [Phase 3 Decoupling] LF_UPDATE_CURSOR_PROPERTIES moved to vctrl_ui_atoms_cursor.js
+    // [Phase 6 Decoupling] BYCHOI_UPDATE_TEXTBOX_PROPERTIES, BYCHOI_UPDATE_TOGGLE_PROPERTIES, BYCHOI_UPDATE_SEARCHBAR_PROPERTIES moved to vctrl_ui_atoms_inputs.js
+    // [Phase 3 Decoupling] BYCHOI_UPDATE_CURSOR_PROPERTIES moved to vctrl_ui_atoms_cursor.js
 
 })();
 `;

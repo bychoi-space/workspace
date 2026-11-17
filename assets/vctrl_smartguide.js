@@ -88,7 +88,7 @@
 
             // 3. Request Component Targets from Iframe (Asynchronous)
             if (DOM.iframe.contentWindow && window.MessageHub) {
-                window.MessageHub.send(DOM.iframe.contentWindow, 'LF_REQUEST_SNAP_TARGETS');
+                window.MessageHub.send(DOM.iframe.contentWindow, 'BYCHOI_REQUEST_SNAP_TARGETS');
             }
 
             if (window.DEBUG_MODE) {
@@ -659,7 +659,7 @@
 
     // Register MessageHub handlers if available
     if (window.MessageHub) {
-        window.MessageHub.register('LF_SNAP_TARGETS_RESPONSE', (data) => {
+        window.MessageHub.register('BYCHOI_SNAP_TARGETS_RESPONSE', (data) => {
             window.SmartGuide.handleIframeTargets(data);
         });
     }

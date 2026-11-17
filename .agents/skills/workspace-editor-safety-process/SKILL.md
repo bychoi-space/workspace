@@ -44,7 +44,7 @@ description: Use before risky Workspace Editor changes, broad refactors, metadat
   - When switching selection between identical shapes (e.g., Rect A ➔ Rect B), the inspector panel section (`#shape-inspector-section`) remains open without unmounting. To prevent input values (Width/Height) from sticking to the previous shape due to parent input focus retention or race conditions, strictly enforce the 4-layer guard:
     1. CoreRouter: Backup `previousEditingIndex`, blur active element on parent window, pass `isNewSelectionExplicit` flag.
     2. Inspector: Apply 3-tier `isNewComp` check, force reset `isTypingInInspector`, directly assign `Math.round(compStyles.w/h)` to input values.
-    3. Properties: Dispatch `updateAllInputs(w, h, force = true)` on `LF_COMP_SELECTED` to bypass input focus guards.
+    3. Properties: Dispatch `updateAllInputs(w, h, force = true)` on `BYCHOI_COMP_SELECTED` to bypass input focus guards.
     4. Iframe: Clear parent active input focus (`pActive.blur()`) on component `mousedown`.
 - **Cinematic Loader & Studio Docking Transition Safety Protocol**:
   - Always ensure `.loading-overlay` maintains `pointer-events: none` and `visibility: hidden` when `.fade-out` is applied so that canvas clicks and drags are never blocked by an invisible overlay layer.

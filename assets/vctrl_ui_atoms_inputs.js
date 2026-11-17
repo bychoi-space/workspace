@@ -165,8 +165,8 @@ window.v4UIAtomsInputsScript = `
                     
                     if (typeof window._getCompStyles === 'function') {
                         notifyParent({
-                            type: 'LF_COMP_SELECTED',
-                            ...window._getCompStyles(container.closest('.lf-component'))
+                            type: 'BYCHOI_COMP_SELECTED',
+                            ...window._getCompStyles(container.closest('.bychoi-component'))
                         });
                     }
                 };
@@ -214,8 +214,8 @@ window.v4UIAtomsInputsScript = `
                 
                 if (typeof window._getCompStyles === 'function') {
                     notifyParent({
-                        type: 'LF_COMP_SELECTED',
-                        ...window._getCompStyles(container.closest('.lf-component'))
+                        type: 'BYCHOI_COMP_SELECTED',
+                        ...window._getCompStyles(container.closest('.bychoi-component'))
                     });
                 }
             };
@@ -431,10 +431,10 @@ window.v4UIAtomsInputsScript = `
                     applyEditorState();
                     markDirty();
 
-                    const comp = container.closest('.lf-component');
+                    const comp = container.closest('.bychoi-component');
                     if (comp && typeof window._getCompStyles === 'function') {
                         notifyParent({
-                            type: 'LF_COMP_SELECTED',
+                            type: 'BYCHOI_COMP_SELECTED',
                             ...window._getCompStyles(comp)
                         });
                     }
@@ -448,7 +448,7 @@ window.v4UIAtomsInputsScript = `
                     e.preventDefault();
                     e.stopPropagation();
 
-                    const comp = container.closest('.lf-component');
+                    const comp = container.closest('.bychoi-component');
                     if (!comp) return;
 
                     if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -470,7 +470,7 @@ window.v4UIAtomsInputsScript = `
                         window.removeEventListener('mouseup', onUp);
                         if (typeof window._getCompStyles === 'function') {
                             notifyParent({
-                                type: 'LF_COMP_RESIZED',
+                                type: 'BYCHOI_COMP_RESIZED',
                                 ...window._getCompStyles(comp)
                             });
                         }
@@ -566,7 +566,7 @@ window.v4UIAtomsInputsScript = `
     // --- Registered Modular Message Handlers for Inputs & Controls ---
     window.v4MessageHandlers = window.v4MessageHandlers || {};
 
-    window.v4MessageHandlers['LF_UPDATE_STEPPER_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_STEPPER_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -609,13 +609,13 @@ window.v4UIAtomsInputsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_SELECTBOX_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_SELECTBOX_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -744,12 +744,12 @@ window.v4UIAtomsInputsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage(Object.assign({
-                type: 'LF_COMP_SELECTED'
+                type: 'BYCHOI_COMP_SELECTED'
             }, window._getCompStyles(targets[0])), '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_FILEUPLOAD_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_FILEUPLOAD_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -785,14 +785,14 @@ window.v4UIAtomsInputsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
 
-    window.v4MessageHandlers['LF_UPDATE_DATEPICKER'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_DATEPICKER'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -955,14 +955,14 @@ window.v4UIAtomsInputsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
 
-    window.v4MessageHandlers['LF_UPDATE_TEXTBOX_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_TEXTBOX_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -1005,13 +1005,13 @@ window.v4UIAtomsInputsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_TOGGLE_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_TOGGLE_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -1053,13 +1053,13 @@ window.v4UIAtomsInputsScript = `
 
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_SEARCHBAR_PROPERTIES'] = function(d) {
+    window.v4MessageHandlers['BYCHOI_UPDATE_SEARCHBAR_PROPERTIES'] = function(d) {
         const targets = window._getTargetComponents(d);
         if (targets.length === 0) return;
         if (window.V4UndoManager) window.V4UndoManager.saveState();
@@ -1086,14 +1086,14 @@ window.v4UIAtomsInputsScript = `
         markDirty();
         if (typeof window._getCompStyles === 'function') {
             window.parent.postMessage({
-                type: 'LF_COMP_SELECTED',
+                type: 'BYCHOI_COMP_SELECTED',
                 ...window._getCompStyles(targets[0])
             }, '*');
         }
     };
 
-    window.v4MessageHandlers['LF_UPDATE_PROP'] = function(d) {
-        const s = document.querySelector('.lf-component.selected');
+    window.v4MessageHandlers['BYCHOI_UPDATE_PROP'] = function(d) {
+        const s = document.querySelector('.bychoi-component.selected');
         if (!s) return;
         const container = s.querySelector('.v4-webeditor-container');
         if (container) {
@@ -1116,7 +1116,7 @@ window.v4UIAtomsInputsScript = `
             markDirty();
             if (typeof window._getCompStyles === 'function') {
                 window.parent.postMessage({
-                    type: 'LF_COMP_SELECTED',
+                    type: 'BYCHOI_COMP_SELECTED',
                     ...window._getCompStyles(s)
                 }, '*');
             }

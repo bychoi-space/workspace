@@ -312,7 +312,7 @@ window.handleEditScreen = async function(fileName) {
     if (editFilename) editFilename.innerText = fileName;
     if (editTitle) editTitle.value = meta.title || "";
     let screenType = meta.type || "default";
-    if (screenType === 'admin-nbos' || screenType === 'admin-onesphere') {
+    if (screenType === 'admin-nbos' || screenType === 'admin-modern') {
         screenType = 'admin';
     }
     if (editType) editType.value = screenType;

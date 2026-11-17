@@ -30,17 +30,17 @@
 | | `.pc-browser-frame`, `.mobile-frame` | 없음 / `overflow: hidden` | Stacking Context 생성 주체 |
 | | `.pc-content-inner`, `.mobile-content-inner` | 없음 / `min-height` 지정 | 실제 모든 콘텐츠의 루트 컨테이너 |
 | | SVG 스마트가이드 캔버스 (`canvas-guide-layer`) | `300000` | 프레임 내부 최상위 가이드 |
-| **일반 콘텐츠 컴포넌트** | `.lf-component` (기본값) | `100` ~ `500` | CSS 기본값과 인라인 저장값 불일치 |
+| **일반 콘텐츠 컴포넌트** | `.bychoi-component` (기본값) | `100` ~ `500` | CSS 기본값과 인라인 저장값 불일치 |
 | | 스크린 저장 인라인 컴포넌트 | `1000` ~ `11300` | 스크린마다 천차만별 (Compaction 미작동 시 폭증) |
 | | `.v4-selectbox-options` (드롭다운) | `10` ~ `1000` | 테이블 내부 배치 시 인접 컴포넌트에 가림 |
 | | 그리드 헤더 고정 (`th.v4-grid-cell`) | `10` !important | 테이블 내부 국소 스크롤용 |
 | **스크롤 고정 HUD** | `[data-scroll-fixed="top/bottom/custom"]` | `100000` | CSS 클래스 기반 고정값 부여 |
-| | 그룹 스크롤 고정 (`.lf-group[data-scroll-fixed]`) | `100000` | |
+| | 그룹 스크롤 고정 (`.bychoi-group[data-scroll-fixed]`) | `100000` | |
 | | 스크롤 고정 해제 시 | `Math.max(1010, maxNormalZ)` | `80000` 상한선 존재하나 compaction과 연동 미흡 |
 | **디스크립션 핀** | `.pin-marker` (기본) | `200000` !important | 반응형 프레임에서 일반 컴포넌트와 형제 배치 |
 | | `.pin-marker.selected` / `:hover` | `200005` !important | 선택 시 강조 |
 | | `.pin-marker[data-scroll-fixed]` | `200050` !important | 고정 요소 연동 핀 |
-| | 핀 삭제 트리거 (`.lf-delete-trigger`) | `330000` | 핀 자체보다 과도하게 높은 수치 부여 |
+| | 핀 삭제 트리거 (`.bychoi-delete-trigger`) | `330000` | 핀 자체보다 과도하게 높은 수치 부여 |
 | **기즈모 & 레이어 연산** | 컴포넌트 삭제 트리거 | `330000` | |
 | | 텍스트 박스 선택 아웃라인 | `10001` | 일반 컴포넌트 11300보다 낮아 가려짐 발생 |
 | | 커넥터 임시 SVG (`tempSvg`) | `10005` | 고정 요소 뒤로 숨는 현상 발생 |
@@ -89,12 +89,12 @@
 | 티어 (Tier) | 정규 범위 (Range) | 허용 오브젝트 및 셀렉터 | 고정/상승 규칙 | 안전 한계선 (Safety Fence) |
 | :--- | :--- | :--- | :--- | :--- |
 | **Tier 1<br>(Background)** | `0 ~ 999` | • 프레임 배경 아트보드<br>• 베이스 캔버스 그리드<br>• 바닥면 락(Lock) 오브젝트 | 기본값 `0`<br>최대 `999` | 일반 콘텐츠(Tier 2) 미만 유지 |
-| **Tier 2<br>(Content)** | `1,000 ~ 69,999` | • 일반 `.lf-component`<br>• `.lf-group`<br>• 텍스트, 도형, 표, 폼 요소 | 신규 생성: `maxNormalZ + 10`<br>간격: `10` 단위 | **최대 69,900 제한**.<br>도달 시 `normalizeZIndices` 실행하여 1,000부터 10단위 압축 |
+| **Tier 2<br>(Content)** | `1,000 ~ 69,999` | • 일반 `.bychoi-component`<br>• `.bychoi-group`<br>• 텍스트, 도형, 표, 폼 요소 | 신규 생성: `maxNormalZ + 10`<br>간격: `10` 단위 | **최대 69,900 제한**.<br>도달 시 `normalizeZIndices` 실행하여 1,000부터 10단위 압축 |
 | **Tier 3<br>(Active/Pop)** | `70,000 ~ 79,999` | • 드래그 중인 활성 컴포넌트<br>• `.v4-selectbox-options` (열림)<br>• 컴포넌트 호버 툴팁 | 활성화 시 일시 승격<br>비활성/드롭 시 복귀 | Tier 4(팝업)를 가리지 않음 |
 | **Tier 4<br>(Screen Popup)** | `80,000 ~ 99,999` | • 스크린 내 팝업 모달 (`.v4-popup-container`)<br>• 딤드(Dimmed) 백드롭 | 팝업 오픈 시 `80,000`<br>팝업 내 컴포넌트: `80,010+` | 스크롤 HUD(Tier 5) 미만 |
 | **Tier 5<br>(Scroll HUD)** | `100,000 ~ 199,999`| • `[data-scroll-fixed="top"]`<br>• `[data-scroll-fixed="bottom"]`<br>• `[data-scroll-fixed="custom/floating"]` | 고정 시: `100,000` 기본<br>HUD 간 정렬: `+10` | **고정 해제(Unpin) 시 즉시 Tier 2 최상위(`maxNormalZ + 10`)로 강등** |
 | **Tier 6<br>(Description)** | `200,000 ~ 299,999`| • `.v4-pin-layer` 오버레이: `250,000`<br>• 일반 핀: `200,000`<br>• 선택/호버: `200,005`<br>• 고정 핀: `200,050` | 전용 오버레이 컨테이너 격리<br>절대 최상위 가시성 보장 | 일반 컴포넌트가 어떤 수치라도 핀을 가릴 수 없음 |
-| **Tier 7<br>(Editor Gizmos)**| `300,000 ~ 499,999`| • `svg.canvas-guide-layer`: `300,000`<br>• `.lf-delete-trigger`: `330,000`<br>• 마퀴 선택 박스: `350,000`<br>• 프레임 헤더 컨트롤: `350,000` | 에디터 인터랙션 전용<br>`pointer-events` 정밀 제어 | 핀 및 콘텐츠의 조작 핸들 보장 |
+| **Tier 7<br>(Editor Gizmos)**| `300,000 ~ 499,999`| • `svg.canvas-guide-layer`: `300,000`<br>• `.bychoi-delete-trigger`: `330,000`<br>• 마퀴 선택 박스: `350,000`<br>• 프레임 헤더 컨트롤: `350,000` | 에디터 인터랙션 전용<br>`pointer-events` 정밀 제어 | 핀 및 콘텐츠의 조작 핸들 보장 |
 | **Tier 8<br>(System Modal)** | `500,000 ~ 999,999`| • 단축키 가이드 모달<br>• 수정 이력 모달, 커버 모달<br>• 로딩 인디케이터, 토스트 | 부모 뷰어 레벨 오버레이 | 캔버스 전체 조작 차단 모달 |
 
 ---
@@ -234,7 +234,7 @@
 | **4** | [assets/vctrl_iframe_scroll_pin.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_scroll_pin.js) | • `removeScrollFixed` (고정 해제 시): Tier 5에서 Tier 2 최상위(`Math.min(69900, maxNormalZ + 10)`)로 안전 강등 로직 정합성 일치<br>• 고정 활성화 시 `getNextTopZIndex(container, true)` 호출로 Tier 5 진입 보장 |
 | **5** | [assets/vctrl_clipboard_objects.js](file:///c:/Users/sisun/ai_work/assets/vctrl_clipboard_objects.js) | • `getHostTopZ`를 `V4_Z_TIERS` 스펙에 맞게 정밀 분기<br>• 일반 컴포넌트: Tier 2(`maxNormalZ + 10`, 최대 69,900 캡)<br>• 스크롤 고정 컴포넌트: Tier 5(`maxFixedZ + 10`, 100,000+)<br>• 붙여넣기 DOM 삽입 시 `.v4-pin-layer` 직전에 배치 보장 |
 | **6** | [assets/vctrl_shortcuts.js](file:///c:/Users/sisun/ai_work/assets/vctrl_shortcuts.js) | • 레이어 단축키 핸들러 확장: 맨 앞으로(`Ctrl+]`), 맨 뒤로(`Ctrl+[`), 한 단계 앞으로(`Ctrl+Shift+]`), 한 단계 뒤로(`Ctrl+Shift+[`) 메시지 발송 지원 |
-| **7** | [assets/vctrl_iframe_styles.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_styles.js)<br>[assets/responsive_frame.css](file:///c:/Users/sisun/ai_work/assets/responsive_frame.css)<br>[assets/responsive_frame.js](file:///c:/Users/sisun/ai_work/assets/responsive_frame.js) | • `.v4-pin-layer` CSS 클래스 선언 (`z-index: 250000 !important; pointer-events: none;`)<br>• `.lf-component[data-scroll-fixed]` 규칙과 Tier 5 연동<br>• `.frame-label-bar` 및 가이드 레이어 z-index 명문화 |
+| **7** | [assets/vctrl_iframe_styles.js](file:///c:/Users/sisun/ai_work/assets/vctrl_iframe_styles.js)<br>[assets/responsive_frame.css](file:///c:/Users/sisun/ai_work/assets/responsive_frame.css)<br>[assets/responsive_frame.js](file:///c:/Users/sisun/ai_work/assets/responsive_frame.js) | • `.v4-pin-layer` CSS 클래스 선언 (`z-index: 250000 !important; pointer-events: none;`)<br>• `.bychoi-component[data-scroll-fixed]` 규칙과 Tier 5 연동<br>• `.frame-label-bar` 및 가이드 레이어 z-index 명문화 |
 | **8** | [viewer.html](file:///c:/Users/sisun/ai_work/viewer.html) | • 엔진 스크립트 및 프레임 CSS 버전 쿼리스트링 갱신 (`?v=V401_UNIFIED_ZINDEX_ENGINE`) |
 
 ---

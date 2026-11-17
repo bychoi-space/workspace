@@ -65,6 +65,12 @@
       "connectors": [],
       "updatedAt": "2026-11-17T05:24:11.786Z",
       "version": 0.1
+    },
+    "09_Admin_PC_Scroll_406.html": {
+      "title": "09_Admin_PC_Scroll_406",
+      "type": "admin",
+      "updatedAt": "2026-11-17T05:24:40.072Z",
+      "template": "template_admin_pc_scroll.html"
     }
   },
   "assignee": "고범곤",

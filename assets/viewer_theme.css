@@ -896,7 +896,15 @@ body.editor-page .canvas-bg-entry-card,
 body.editor-page .dimmed-layer-card {
     background: var(--ed-surface-1) !important;
     border: 1px solid var(--ed-border) !important;
-    box-shadow: none !important;
+    box-shadow: var(--ed-card-shadow) !important;
+}
+
+body.editor-page .dimmed-layer-card.has-active-dimmed {
+    border-color: var(--ed-toggle-active-border) !important;
+}
+
+html[data-theme="light"] body.editor-page .dimmed-layer-card.has-active-dimmed {
+    border-color: rgba(91, 70, 198, 0.38) !important;
 }
 
 body.editor-page .canvas-bg-entry-card:hover {
@@ -922,6 +930,59 @@ body.editor-page .dimmed-mode-hint {
     color: var(--ed-text-2) !important;
 }
 
+/* Dimmed Header Status Badge & Object Count Badge */
+body.editor-page .dimmed-status-badge {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .dimmed-status-badge.is-on {
+    background: var(--ed-toggle-active-bg) !important;
+    border: 1px solid var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+}
+
+body.editor-page .dimmed-status-badge.is-base {
+    background: rgba(245, 158, 11, 0.18) !important;
+    border: 1px solid rgba(245, 158, 11, 0.45) !important;
+    color: #fcd34d !important;
+}
+
+html[data-theme="light"] body.editor-page .dimmed-status-badge.is-base {
+    background: #fef3c7 !important;
+    border-color: #d97706 !important;
+    color: #92400e !important;
+}
+
+body.editor-page .dimmed-obj-count-badge {
+    background: rgba(110, 86, 207, 0.2) !important;
+    border: 1px solid rgba(139, 120, 230, 0.34) !important;
+    color: #c4b5fd !important;
+    font-weight: 700 !important;
+}
+
+html[data-theme="light"] body.editor-page .dimmed-obj-count-badge {
+    background: #eef2ff !important;
+    border: 1px solid #c7d2fe !important;
+    color: #4338ca !important;
+}
+
+body.editor-page .dimmed-preserved-note {
+    background: var(--ed-surface-2) !important;
+    border: 1px dashed var(--ed-border-hover) !important;
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page .dimmed-active-controls {
+    border-top: 1px solid var(--ed-border-subtle) !important;
+}
+
+body.editor-page .dimmed-Divider {
+    background: var(--ed-border-subtle) !important;
+}
+
+/* Multi-Frame Selector Tabs, Dots & Sync Button */
 body.editor-page .dimmed-frame-tabs-group,
 body.editor-page .dimmed-mode-switch-group {
     background: var(--ed-surface-2) !important;
@@ -933,11 +994,162 @@ body.editor-page .dimmed-mode-btn {
     color: var(--ed-text-2) !important;
 }
 
-body.editor-page .dimmed-frame-tab.active,
-body.editor-page .dimmed-mode-btn.active {
+body.editor-page .dimmed-frame-tab:hover,
+body.editor-page .dimmed-mode-btn:hover {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .dimmed-frame-tab.active {
     background: var(--ed-seg-active-bg) !important;
     color: var(--ed-text-1) !important;
     box-shadow: var(--ed-seg-active-shadow) !important;
+}
+
+body.editor-page .dimmed-tab-dot {
+    background: var(--ed-text-3) !important;
+    opacity: 0.55;
+}
+
+body.editor-page .dimmed-tab-dot.is-on {
+    opacity: 1;
+    background: var(--ed-accent) !important;
+    box-shadow: 0 0 0 2px var(--ed-accent-subtle) !important;
+}
+
+body.editor-page .dimmed-tab-dot.is-base {
+    opacity: 1;
+    background: #f59e0b !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="light"] body.editor-page .dimmed-tab-dot.is-base {
+    background: #d97706 !important;
+}
+
+body.editor-page .dimmed-sync-btn {
+    background: var(--ed-toggle-idle-bg) !important;
+    border: 1px solid var(--ed-toggle-idle-border) !important;
+    color: var(--ed-toggle-idle-text) !important;
+}
+
+body.editor-page .dimmed-sync-btn:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .dimmed-sync-btn.active {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+    font-weight: 700 !important;
+}
+
+/* Layer Edit Mode Buttons (Overlay vs Base) & Warning Hint */
+body.editor-page #btn-dimmed-mode-overlay.active {
+    background: var(--ed-seg-active-bg) !important;
+    color: var(--ed-text-1) !important;
+    box-shadow: var(--ed-seg-active-shadow) !important;
+    font-weight: 700 !important;
+}
+
+html[data-theme="light"] body.editor-page #btn-dimmed-mode-overlay.active {
+    color: var(--ed-toggle-active-text) !important;
+}
+
+html[data-theme="light"] body.editor-page #btn-dimmed-mode-overlay.active .bychoi-icon {
+    color: var(--ed-accent) !important;
+}
+
+body.editor-page #btn-dimmed-mode-base.active {
+    background: rgba(245, 158, 11, 0.2) !important;
+    color: #fde68a !important;
+    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.45) !important;
+    font-weight: 700 !important;
+}
+
+html[data-theme="light"] body.editor-page #btn-dimmed-mode-base.active {
+    background: #fffbeb !important;
+    color: #92400e !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), inset 0 0 0 1px #d97706 !important;
+}
+
+body.editor-page .dimmed-mode-hint.is-base-warning {
+    color: #fcd34d !important;
+}
+
+html[data-theme="light"] body.editor-page .dimmed-mode-hint.is-base-warning {
+    color: #b45309 !important;
+    font-weight: 500 !important;
+}
+
+/* Opacity Presets (30% / 50% / 70%), Value Readout & Slider */
+body.editor-page .dimmed-preset-chip {
+    background: var(--ed-toggle-idle-bg) !important;
+    border: 1px solid var(--ed-toggle-idle-border) !important;
+    color: var(--ed-toggle-idle-text) !important;
+}
+
+body.editor-page .dimmed-preset-chip:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .dimmed-preset-chip.active {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+    font-weight: 700 !important;
+}
+
+body.editor-page .dimmed-opacity-val {
+    color: var(--ed-text-1) !important;
+    font-weight: 700 !important;
+    font-variant-numeric: tabular-nums !important;
+}
+
+body.editor-page .dimmed-opacity-slider {
+    accent-color: var(--ed-accent-solid) !important;
+}
+
+/* Dimmed Tint Color Swatches (블랙 / 슬레이트 / 화이트 — Zero Ellipsis & Crisp Dots) */
+body.editor-page .dimmed-tint-swatches {
+    gap: 4px !important;
+}
+
+body.editor-page .dimmed-tint-chip {
+    background: var(--ed-toggle-idle-bg) !important;
+    border: 1px solid var(--ed-toggle-idle-border) !important;
+    color: var(--ed-toggle-idle-text) !important;
+    padding: 0 4px !important;
+    gap: 4px !important;
+    font-size: 11px !important;
+    letter-spacing: -0.02em !important;
+}
+
+body.editor-page .dimmed-tint-chip:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-border-hover) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .dimmed-tint-chip.active {
+    background: var(--ed-toggle-active-bg) !important;
+    border-color: var(--ed-toggle-active-border) !important;
+    color: var(--ed-toggle-active-text) !important;
+    font-weight: 700 !important;
+}
+
+body.editor-page .dimmed-tint-swatch-dot {
+    width: 9px !important;
+    height: 9px !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+}
+
+html[data-theme="light"] body.editor-page .dimmed-tint-swatch-dot {
+    border: 1px solid rgba(15, 23, 42, 0.25) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
 }
 
 /* Uniform Component Tiles (Shapes, Atoms, Icons, Logos, Illustrations) */
@@ -977,12 +1189,36 @@ body.editor-page .v4-card-atom-radio-circle {
     background: transparent !important;
 }
 
-body.editor-page .v4-card-icon-svg {
+body.editor-page .v4-card-icon-svg,
+body.editor-page #icon-library-container svg.bychoi-icon:not(.v4-logo-img) {
     color: var(--ed-lib-icon) !important;
+    stroke: var(--ed-lib-icon) !important;
 }
 
-body.editor-page .v4-logo-mask-base {
+body.editor-page #icon-library-container .component-item:hover svg.bychoi-icon:not(.v4-logo-img) {
+    color: var(--ed-text-1) !important;
+    stroke: var(--ed-text-1) !important;
+}
+
+body.editor-page #icon-library-container svg.v4-logo-img,
+body.editor-page #icon-library-container svg.v4-logo-img text {
+    color: var(--ed-lib-icon) !important;
+    fill: var(--ed-lib-icon) !important;
+}
+
+body.editor-page #icon-library-container .component-item:hover svg.v4-logo-img,
+body.editor-page #icon-library-container .component-item:hover svg.v4-logo-img text {
+    color: var(--ed-text-1) !important;
+    fill: var(--ed-text-1) !important;
+}
+
+body.editor-page .v4-logo-mask-base,
+body.editor-page #icon-library-container div.v4-logo-img {
     background-color: var(--ed-lib-icon) !important;
+}
+
+body.editor-page #icon-library-container .component-item:hover div.v4-logo-img {
+    background-color: var(--ed-text-1) !important;
 }
 
 body.editor-page #tab-editor .component-grid > .component-item.v4-card span:not(.material-icons-outlined),

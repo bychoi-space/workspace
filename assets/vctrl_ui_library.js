@@ -93,7 +93,7 @@
         }
 
         // Try to load HTML blocks asynchronously
-        const uiVer = '?v=V441_INSPECTOR_PART_C';
+        const uiVer = '?v=V446_ICON_LIB_THEME';
         const res1 = await loadUIBlock('assets/ui_library/inspector_panels.html' + uiVer, 'inspector-panels-storage', false);
         const res2 = await loadUIBlock('assets/ui_library/atomic_cards.html' + uiVer, 'atomic-library-container', false);
         const res3 = await loadUIBlock('assets/ui_library/icon_cards.html' + uiVer, 'icon-library-container', false);

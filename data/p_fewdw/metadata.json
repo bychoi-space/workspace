@@ -14,32 +14,56 @@
           "type": "pin",
           "text": "Edit Text",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-          "x": 670,
-          "y": 430,
+          "x": 50,
+          "y": 112,
           "standardized": true,
-          "scrollFixed": "none"
+          "scrollFixed": "none",
+          "pins": {
+            "canvas": {
+              "x": 50,
+              "y": 112,
+              "active": true
+            }
+          },
+          "target": "canvas"
         },
         {
           "type": "pin",
           "text": "Edit Text",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-          "x": 670,
-          "y": 430,
+          "x": 1280,
+          "y": 166,
           "standardized": true,
-          "scrollFixed": "none"
+          "scrollFixed": "none",
+          "pins": {
+            "canvas": {
+              "x": 1280,
+              "y": 166,
+              "active": true
+            }
+          },
+          "target": "canvas"
         },
         {
           "type": "pin",
           "text": "Edit Text",
           "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
-          "x": 670,
-          "y": 430,
+          "x": 50,
+          "y": 482,
           "standardized": true,
-          "scrollFixed": "none"
+          "scrollFixed": "none",
+          "pins": {
+            "canvas": {
+              "x": 50,
+              "y": 482,
+              "active": true
+            }
+          },
+          "target": "canvas"
         }
       ],
       "connectors": [],
-      "updatedAt": "2026-11-17T05:22:31.433Z",
+      "updatedAt": "2026-11-17T05:23:34.150Z",
       "version": 0.1
     }
   },
@@ -49,6 +73,7 @@
   "notionUrl": "https://app.notion.com/p/407f6986169c8099839ae4564caee147",
   "themeIndex": 1,
   "category": "admin",
-  "updated": "2026-11-17 14:22:31",
+  "period": "",
+  "updated": "2026-11-17 14:23:34",
   "version": 0.1
 }

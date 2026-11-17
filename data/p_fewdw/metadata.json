@@ -12,8 +12,8 @@
       "description": [
         {
           "type": "pin",
-          "text": "[요건 정리] 반복적 과다 반품 고객 식별을 위한 화면 요청 (Notion 4629)\n- 요청: BO에서 과다 반품 고객을 직접 조회·식별할 수 있는 신규 화면\n- 조회조건: 브랜드(필수, 복수선택) / 고객번호(선택) / 주문일자(필수) / 반품율(필수, 범위 직접 입력)\n- 조회결과(요약): 회원번호별 브랜드별·합계 기간내 주문건수 / 반품건수 / 반품율\n- 반품사유 '단순변심'만 집계 대상 (회사 귀책 반품 제외)\n- 근거: 과다 반품 고객 제재 정책서(본문·별첨, 2026-09-01 제정)\n   · 5. 부서별 역할 - 커머스정보팀 '고객별 반품율 추출 기능 개발'\n- 연관 일감: 과다 반품 고객 신규 주문 제한 기능 (Notion 4005, 개발 완료)\n   · 회원상세 [악성고객 설정] + 결제 단계 주문 차단 반영 완료\n   · 본 일감은 그 앞 단계인 '대상 식별' 화면을 담당",
-          "html": "[요건 정리] 반복적 과다 반품 고객 식별을 위한 화면 요청 (Notion 4629)<div>- 요청: BO에서 과다 반품 고객을 직접 조회·식별할 수 있는 신규 화면</div><div>- 조회조건: 브랜드(필수, 복수선택) / 고객번호(선택) / 주문일자(필수) / 반품율(필수, 범위 직접 입력)</div><div>- 조회결과(요약): 회원번호별 브랜드별·합계 기간내 주문건수 / 반품건수 / 반품율</div><div>- 반품사유 '단순변심'만 집계 대상 (회사 귀책 반품 제외)</div><div>- 근거: 과다 반품 고객 제재 정책서(본문·별첨, 2026-09-01 제정)</div><div>   · 5. 부서별 역할 - 커머스정보팀 '고객별 반품율 추출 기능 개발'</div><div>- 연관 일감: 과다 반품 고객 신규 주문 제한 기능 (Notion 4005, 개발 완료)</div><div>   · 회원상세 [악성고객 설정] + 결제 단계 주문 차단 반영 완료</div><div>   · 본 일감은 그 앞 단계인 '대상 식별' 화면을 담당</div>",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
           "x": 50,
           "y": 112,
           "standardized": true,
@@ -29,15 +29,15 @@
         },
         {
           "type": "pin",
-          "text": "[메뉴 위치] 회원/마케팅 > 회원 > 과다반품고객조회 (신규)\n- 위치 선정 이유\n   · 조회 단위가 '회원'이고, 결과에서 회원상세(악성고객 설정)로 바로 이어지는 회원 관리 업무\n   · 연관 일감의 주문 제한 설정이 회원/마케팅 > 회원목록 > 회원상세에 있어, 같은 메뉴 그룹에서 '식별 → 제한 설정' 동선이 완결됨\n   · 통계 메뉴는 매출·상품 지표 중심이라 회원 단위 제재 업무와 성격이 다름 / 주문/배송 > 반품 화면은 주문 건 단위 처리 화면이라 회원별 집계에 부적합\n- 메뉴 순서: 회원 그룹 내 회원목록 바로 아래 (BO 실제 메뉴 구성 확인 후 확정)\n- 메뉴 권한: 운영관리 > 권한관리에서 부여된 계정만 (온라인CX·경영기획총괄·커머스정보팀)\n- 개인정보 포함 메뉴 → 조회·엑셀 다운로드 시 개인정보 접속기록 적재\n- FO 변경 없음 (주문 제한 안내·결제 차단은 연관 일감에서 반영 완료)",
-          "html": "[메뉴 위치] 회원/마케팅 &gt; 회원 &gt; 과다반품고객조회 (신규)<div>- 위치 선정 이유</div><div>   · 조회 단위가 '회원'이고, 결과에서 회원상세(악성고객 설정)로 바로 이어지는 회원 관리 업무</div><div>   · 연관 일감의 주문 제한 설정이 회원/마케팅 &gt; 회원목록 &gt; 회원상세에 있어, 같은 메뉴 그룹에서 '식별 → 제한 설정' 동선이 완결됨</div><div>   · 통계 메뉴는 매출·상품 지표 중심이라 회원 단위 제재 업무와 성격이 다름 / 주문/배송 &gt; 반품 화면은 주문 건 단위 처리 화면이라 회원별 집계에 부적합</div><div>- 메뉴 순서: 회원 그룹 내 회원목록 바로 아래 (BO 실제 메뉴 구성 확인 후 확정)</div><div>- 메뉴 권한: 운영관리 &gt; 권한관리에서 부여된 계정만 (온라인CX·경영기획총괄·커머스정보팀)</div><div>- 개인정보 포함 메뉴 → 조회·엑셀 다운로드 시 개인정보 접속기록 적재</div><div>- FO 변경 없음 (주문 제한 안내·결제 차단은 연관 일감에서 반영 완료)</div>",
-          "x": 1188,
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 1280,
           "y": 166,
           "standardized": true,
           "scrollFixed": "none",
           "pins": {
             "canvas": {
-              "x": 1188,
+              "x": 1280,
               "y": 166,
               "active": true
             }
@@ -46,8 +46,8 @@
         },
         {
           "type": "pin",
-          "text": "[정책 프로세스와 본 화면 역할]\n- 매월 15일, 전월 기준 직전 3개월 반품건수·반품율·반품금액 집계 → 기준 초과 고객 식별 (정책서 5. 온라인CX)\n- 사전고지(D+0, 1차 안내 이메일) → 경고(D+30, 2차 공식 경고) → 제한(D+60, 신규 주문 2개월 제한 후 자동 해제)\n- 제한 해제 후 재차 초과 시 사전고지 생략, 경고 단계부터 진입 (재범 가중)\n- 이의제기: 접수 후 5영업일 이내 재심사\n- 본 화면 역할: '대상 식별·리스트 작성' 단계\n   · 고지·경고 안내는 CX가 문자·이메일·전화로 진행 (광고성 수신 동의 여부와 무관)\n   · 제한 설정은 회원상세 [악성고객 설정]에서 진행\n- 판단 기준 수치(기준 반품율 등)는 시행세칙으로 별도 확정 예정\n   · 화면은 반품율 범위를 직접 입력하는 방식 → 기준이 바뀌어도 개발 없이 대응",
-          "html": "[정책 프로세스와 본 화면 역할]<div>- 매월 15일, 전월 기준 직전 3개월 반품건수·반품율·반품금액 집계 → 기준 초과 고객 식별 (정책서 5. 온라인CX)</div><div>- 사전고지(D+0, 1차 안내 이메일) → 경고(D+30, 2차 공식 경고) → 제한(D+60, 신규 주문 2개월 제한 후 자동 해제)</div><div>- 제한 해제 후 재차 초과 시 사전고지 생략, 경고 단계부터 진입 (재범 가중)</div><div>- 이의제기: 접수 후 5영업일 이내 재심사</div><div>- 본 화면 역할: '대상 식별·리스트 작성' 단계</div><div>   · 고지·경고 안내는 CX가 문자·이메일·전화로 진행 (광고성 수신 동의 여부와 무관)</div><div>   · 제한 설정은 회원상세 [악성고객 설정]에서 진행</div><div>- 판단 기준 수치(기준 반품율 등)는 시행세칙으로 별도 확정 예정</div><div>   · 화면은 반품율 범위를 직접 입력하는 방식 → 기준이 바뀌어도 개발 없이 대응</div>",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
           "x": 50,
           "y": 482,
           "standardized": true,
@@ -63,14 +63,189 @@
         }
       ],
       "connectors": [],
-      "updatedAt": "2026-11-17T05:24:11.786Z",
+      "updatedAt": "2026-11-17T05:23:34.150Z",
       "version": 0.1
     },
     "09_Admin_PC_Scroll_406.html": {
-      "title": "09_Admin_PC_Scroll_406",
-      "type": "admin",
-      "updatedAt": "2026-11-17T05:24:40.072Z",
-      "template": "template_admin_pc_scroll.html"
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 236,
+          "y": 140,
+          "pins": {
+            "pc": {
+              "x": 236,
+              "y": 140,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 236,
+              "y": 140,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 248,
+          "y": 116,
+          "pins": {
+            "pc": {
+              "x": 248,
+              "y": 116,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 248,
+              "y": 116,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 1000,
+          "y": 352,
+          "pins": {
+            "pc": {
+              "x": 1000,
+              "y": 352,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 1000,
+              "y": 352,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 248,
+          "y": 412,
+          "pins": {
+            "pc": {
+              "x": 248,
+              "y": 412,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 248,
+              "y": 412,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 248,
+          "y": 446,
+          "pins": {
+            "pc": {
+              "x": 248,
+              "y": 446,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 248,
+              "y": 446,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "Edit Text",
+          "html": "<div class=\"v4-editable-cell\" contenteditable=\"true\" style=\"outline:none; color:var(--v4-text-color, #0f172a); font-size:12px; font-weight:400; font-family:inherit; padding:2px 4px; display:block; text-align:left; line-height:1.5;\">Edit Text</div>",
+          "x": 1416,
+          "y": 412,
+          "pins": {
+            "pc": {
+              "x": 1416,
+              "y": 412,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 170,
+              "y": 180,
+              "active": true
+            },
+            "left": {
+              "x": 1416,
+              "y": 412,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "updatedAt": "2026-11-17T05:29:42.420Z",
+      "version": 0.1
     }
   },
   "assignee": "고범곤",
@@ -80,6 +255,6 @@
   "themeIndex": 1,
   "category": "admin",
   "period": "",
-  "updated": "2026-11-17 14:24:11",
+  "updated": "2026-11-17 14:29:42",
   "version": 0.1
 }

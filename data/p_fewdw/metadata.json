@@ -13,7 +13,7 @@
     "01_Project_Summary_365.html": {
       "description": [],
       "connectors": [],
-      "updatedAt": "2026-11-18T02:27:08.923Z",
+      "updatedAt": "2026-11-18T01:23:12.488Z",
       "version": 0.1
     },
     "09_Admin_PC_Scroll_406.html": {
@@ -194,7 +194,7 @@
         }
       ],
       "connectors": [],
-      "updatedAt": "2026-11-17T05:30:21.423Z",
+      "updatedAt": "2026-11-18T03:15:25.149Z",
       "version": 0.1
     }
   },
@@ -205,6 +205,6 @@
   "themeIndex": 1,
   "category": "admin",
   "period": "",
-  "updated": "2026-11-18 11:27:08",
+  "updated": "2026-11-18 12:15:25",
   "version": 0.1
 }

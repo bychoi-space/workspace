@@ -13,7 +13,7 @@
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
       "type": "ui",
-      "updatedAt": "2026-10-22T08:46:47.742Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -24,7 +24,7 @@
     "02_Front_IA_Specification.html": {
       "title": "시선닷컴 Front IA (계층구조 정의서)",
       "type": "ui",
-      "updatedAt": "2026-11-17T06:27:21.308Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -35,7 +35,7 @@
     "03_Order_UI_Improvement_Strategy.html": {
       "title": "시선닷컴 주문 화면 UI 개선 전략",
       "type": "plan",
-      "updatedAt": "2026-11-16T06:48:00.322Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -46,7 +46,7 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-17T07:28:17.956Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -233,14 +233,14 @@
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-17T04:54:12.309Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "[쿠폰 혜택 / 최대 할인 적용] 영역\n - 신규 개설 영역\n - Default '최대 할인 적용' = Off",
-          "html": "[쿠폰 혜택 / 최대 할인 적용] 영역<div> - 신규 개설 영역</div><div> - Default '최대 할인 적용' = Off</div>",
+          "text": "[쿠폰 혜택 / 최대 할인 적용] 영역\n- 신규 개설 영역\n- 보유한 쿠폰을 표시하고, 최대 할인 자동 적용하는 기능 신규 적용\n- 기본값 : 토글 OFF",
+          "html": "[쿠폰 혜택 / 최대 할인 적용] 영역<div>- 신규 개설 영역</div><div>- 보유한 쿠폰을 표시하고, 최대 할인 자동 적용하는 기능 신규 적용</div><div>- 기본값 : 토글 OFF</div>",
           "x": 20,
           "y": 170,
           "pins": {
@@ -309,8 +309,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[품절임박] 플래그\n- 재고 기준을 어떤 형태로 처리할지 개발팀 의논 필요\n- 온라인 재고만 제한할 경우, 너무 많은 상품에 품절임박 플래그가 표시 될 수 있음",
-          "html": "[품절임박] 플래그<div><span style=\"color: rgb(251, 191, 36);\">- 재고 기준을 어떤 형태로 처리할지 개발팀 의논 필요\n- 온라인 재고만 제한할 경우, 너무 많은 상품에 품절임박 플래그가 표시 될 수 있음</span></div>",
+          "text": "[품절임박] 플래그\n- 산정 기준 : 온·오프라인 통합재고 기준 적용 (온라인 단독 재고 적용 시 과다 노출 방지)\n- 통합재고 잔여 수량이 기준치 이하일 경우 '품절임박 (재고N)' 플래그 노출\n\n\n※ 세부 노출 기준 수량(N개 이하)은 추후 업데이트 예정",
+          "html": "[품절임박] 플래그<div>- 산정 기준 : 온·오프라인 통합재고 기준 적용 (온라인 단독 재고 적용 시 과다 노출 방지)</div><div>- 통합재고 잔여 수량이 기준치 이하일 경우 '품절임박 (재고N)' 플래그 노출</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ 세부 노출 기준 수량(N개 이하)은 추후 업데이트 예정</span></div>",
           "x": 157,
           "y": 508,
           "pins": {
@@ -351,7 +351,7 @@
     "renewal_payEnd.html": {
       "title": "주문완료",
       "type": "ui",
-      "updatedAt": "2026-11-17T08:28:28.224Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -501,8 +501,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[고객님 추천 상품] 영역\n- 주문 완료 후 후속 탐색 동선 강화를 위해 '{회원명} 고객님 추천 상품' 구좌 신규 배치\n- 좌/우 화살표 버튼으로 상품 캐러셀 탐색 제공 (PC 5열 / Mobile 2열 노출)\n\n\n※ 추천 상품 노출 기준(구매 연관 브랜드/카테고리 베스트 또는 개인화 추천 로직)은 개발팀 의논 필요",
-          "html": "[고객님 추천 상품] 영역<div>- 주문 완료 후 후속 탐색 동선 강화를 위해 '{회원명} 고객님 추천 상품' 구좌 신규 배치</div><div>- 좌/우 화살표 버튼으로 상품 캐러셀 탐색 제공 (PC 5열 / Mobile 2열 노출)</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ 추천 상품 노출 기준(구매 연관 브랜드/카테고리 베스트 또는 개인화 추천 로직)은 개발팀 의논 필요</span></div>",
+          "text": "[고객님 추천 상품] 영역\n- 주문 완료 후 후속 탐색 동선 강화를 위해 '{회원명} 고객님 추천 상품' 구좌 신규 배치\n- 좌/우 화살표 버튼으로 상품 캐러셀 탐색 제공 (PC 5열 / Mobile 2열 노출)\n\n\n※ 추천 상품 노출 로직은 추후 업데이트 예정",
+          "html": "[고객님 추천 상품] 영역<div>- 주문 완료 후 후속 탐색 동선 강화를 위해 '{회원명} 고객님 추천 상품' 구좌 신규 배치</div><div>- 좌/우 화살표 버튼으로 상품 캐러셀 탐색 제공 (PC 5열 / Mobile 2열 노출)</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ 추천 상품 노출 로직은 추후 업데이트 예정</span></div>",
           "x": 20,
           "y": 1412,
           "pins": {
@@ -576,14 +576,14 @@
     "renewal_cart_3.html": {
       "title": "장바구니 (To-Be) 상품없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-17T00:30:34.923Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "로그아웃 상태에서 [장바구니] 페이지 진입 시 UI",
-          "html": "로그아웃 상태에서 [장바구니] 페이지 진입 시 UI",
+          "text": "로그아웃(비회원) 상태에서 [장바구니] 페이지 진입 시 UI\n- 상단 로그인/회원가입 혜택 안내 영역 노출 (장바구니 담기는 비회원 상태에서도 가능)\n- 비회원 주문 불가 정책에 따라 비회원 상태에서 [주문하기] / [바로구매] 클릭 시 로그인 페이지로 이동하며, 로그인 완료 시 장바구니 상품을 회원 계정에 연동 후 주문서로 진입",
+          "html": "로그아웃(비회원) 상태에서 [장바구니] 페이지 진입 시 UI<div>- 상단 로그인/회원가입 혜택 안내 영역 노출 (장바구니 담기는 비회원 상태에서도 가능)</div><div>- 비회원 주문 불가 정책에 따라 비회원 상태에서 [주문하기] / [바로구매] 클릭 시 로그인 페이지로 이동하며, 로그인 완료 시 장바구니 상품을 회원 계정에 연동 후 주문서로 진입</div>",
           "x": 20,
           "y": 170,
           "pins": {
@@ -690,7 +690,7 @@
     "renewal_order_4.html": {
       "title": "주문서 (Te-Be) 배송지없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-17T07:56:52.289Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -810,7 +810,7 @@
     "renewal_cart_4.html": {
       "title": "장바구니 (To-Be) 옵션변경",
       "type": "ui",
-      "updatedAt": "2026-11-18T02:00:12.274Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -956,7 +956,7 @@
     "renewal_order_6.html": {
       "title": "주문서 (Te-Be) 배송지변경",
       "type": "ui",
-      "updatedAt": "2026-11-18T01:06:47.892Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -1112,7 +1112,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (Te-Be) 결제약관보기",
       "type": "ui",
-      "updatedAt": "2026-11-17T08:17:34.599Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -1159,8 +1159,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[주문동의] 항목 기본값 활성화 (펼치기)\n나머지 항목 기본값 비활성화 (접기)\n\n\n※ 약관 순서와 상세 내용은 추후 업데이트 예정",
-          "html": "[주문동의] 항목 기본값 활성화 (펼치기)<div>나머지 항목 기본값 비활성화 (접기)</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ 약관 순서와 상세 내용은 추후 업데이트 예정</span></div>",
+          "text": "결제 약관 항목 구성 및 기본 노출 상태\n- 항목 나열 순서 통일 (PC · Mobile 공통)\n   1. 주문동의 : 기본값 활성화 (펼치기)\n   2. 개인정보 수집 및 이용 동의 : 기본값 비활성화 (접기)\n   3. 개인정보 제공 및 위탁 동의 : 기본값 비활성화 (접기)\n   4. 전자금융거래 이용약관 : 기본값 비활성화 (접기)\n\n\n※ 약관별 상세 내용은 추후 업데이트 예정",
+          "html": "결제 약관 항목 구성 및 기본 노출 상태<div>- 항목 나열 순서 통일 (PC · Mobile 공통)</div><div>   1. 주문동의 : 기본값 활성화 (펼치기)\n   2. 개인정보 수집 및 이용 동의 : 기본값 비활성화 (접기)\n   3. 개인정보 제공 및 위탁 동의 : 기본값 비활성화 (접기)\n   4. 전자금융거래 이용약관 : 기본값 비활성화 (접기)</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ 약관별 상세 내용은 추후 업데이트 예정</span></div>",
           "x": 391,
           "y": 158,
           "pins": {
@@ -1201,7 +1201,7 @@
     "renewal_cart_6.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",
       "type": "ui",
-      "updatedAt": "2026-11-16T04:29:38.709Z",
+      "updatedAt": "2026-11-18T02:36:55.347Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -1345,7 +1345,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-18 11:00:12",
+  "updated": "2026-11-18 11:36:55",
   "version": 0.2,
   "category": "project"
 }

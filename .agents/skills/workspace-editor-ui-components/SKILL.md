@@ -118,6 +118,14 @@ description: Use when editing V4 components, .bychoi-icon SVG atoms, premium but
   - 최대 글자수 설정: 순수 수치 인풋 `#prop-webeditor-maxlength` (`.v4-prop-input-base`) 및 동적 라벨 연동 span (`#txt-webeditor-maxlength`, 기본 2000자).
 - **데이터 격리 원칙 (Zero Contamination)**: 웹 에디터 아톰의 기본 글자수(2000자)가 텍스트박스/텍스트에어리어 기본 최대글자수(100자)를 덮어쓰거나 오염시키지 않도록 `vctrl_iframe_style_extractor.js`에서 조건부 분기(`isWebEditor ? webeditorMaxLength : maxLength`)를 엄격히 유지해야 한다.
 
+## 알럿 아톰(Alert Window, `.v4-alert-container`) 삽입 및 세로 크기 표준 규격
+- **순정 구조 및 속성 계약 (Pure `.v4-alert-container` SSOT)**:
+  - 알럿 아톰(`v4-atom-alert`)을 HTML에 직접 삽입하거나 수정할 때는 반드시 `.bychoi-component` ➔ `.v4-alert-container` ➔ `.v4-alert-desc-wrapper > .v4-alert-desc-badge` + `.v4-alert-dialog` 구조를 따르며 `data-message`, `data-show-desc`, `data-desc`, `data-btn-count`, `data-btn-text-1~3`, `data-btn-style-1~3`만 사용한다.
+  - 임의의 `.v4-alert-callout-header` 및 `data-title-text` / `data-message-text` 속성을 사용 금지한다. 비표준 속성은 `enforceAlertToggleButtonLayouts()`(`vctrl_design_system_atoms.js`)에서 `data-show-desc` 누락(`descH = 0`)으로 판정되어 `height`가 `145px` 수준으로 축소되면서 하단 버튼이 잘리고 인스펙터(`inspector_atoms.js`)가 기본 예시 문구로 초기화되는 원인이 된다.
+- **자동 피팅 및 세로 크기(`height`) 산정 기준**:
+  - `.bychoi-component`에 `data-resized="true"`를 부여하지 않아야 로드 시 `enforceAlertToggleButtonLayouts()`가 실제 높이를 자동 계산해 동기화한다.
+  - 정적 `height` 역시 실제 계산 공식(`32 + 32 + msgH + 14 + 28 + 2 + (showDesc ? descWrapperH + 8 : 0)`, 래핑 줄 포함)에 맞춰 `data-show-desc="true"`일 때 **1줄 `157~163px`, 2줄 `175~181px`, 3줄 `192~200px`** (`false`일 때 `-35px`)로 설정하며, `.v4-alert-desc-badge`(`white-space: nowrap`) 길이를 수용하도록 `width`(`250~320px+`)를 확보한다.
+
 ## Animated WebP Motion Component Rules
 - **Format**: Motion components utilize Animated WebP format (`assets/illustrations/motion/*.webp`) for silky-smooth framerates, 60-80% smaller file sizes than GIF, and full 8-bit alpha transparency without fringe artifacts.
 - **Wrapping Standard**: Standard 3-layer architecture **`.bychoi-component` ➔ `.v4-motion-container` ➔ `<img src="..." style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;">`**.

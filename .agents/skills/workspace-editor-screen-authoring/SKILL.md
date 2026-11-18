@@ -180,6 +180,10 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 - **사용자 정돈 템플릿의 기하학적 구조(Geometry) 절대 보존**:
   - 사용자가 명시적으로 지정한 표준 템플릿(`assets/templates/template_*.html` 등)을 기반으로 복제/치환할 때는 도형의 크기, 위치 좌표, 여백, 정렬을 임의로 왜곡하지 않고 보존합니다.
 
+### 11. 알럿 아톰(`Alert Window`, `.v4-alert-container`) 삽입 시 마크업 및 세로 크기(Height) 엄수 규칙
+- **순정 구조 및 데이터 속성 필수**: 스크린에 알럿을 삽입할 때는 임의 마크업(`.v4-alert-callout-header`, `data-title-text`, `data-message-text`)을 절대 작성하지 말고, 반드시 순정 `.v4-alert-container`(`.v4-alert-desc-wrapper > .v4-alert-desc-badge` + `.v4-alert-dialog`) 및 `data-message`, `data-show-desc`, `data-desc`, `data-btn-count`, `data-btn-text-1~3` 계약을 정확히 준수해야 합니다.
+- **`data-resized` 미부여 & 줄 수 비례 세로 크기 확보**: `.bychoi-component`에 `data-resized="true"`를 넣지 않고, 초기 `height`는 래핑 포함 메시지 줄 수와 설명 배지(`data-show-desc="true"`)를 반영해 **1줄 `157~163px`, 2줄 `175~181px`, 3줄 `192~200px`** (`false`는 `-35px`)로 산정하며, `width`는 `white-space: nowrap` 배지 너비(`250~320px+`)보다 넉넉히 지정해 하단 버튼 클리핑 및 가로 돌출을 원천 차단합니다.
+
 ---
 
 ## 📐 표준 스크린 템플릿 코드 스켈레톤 (Reference Skeleton)
@@ -280,3 +284,4 @@ description: Use when the user asks AI to create, draw, generate, design, or com
 7. **[금기 7] 줄바꿈 미처리 및 카드 경계 침범 (No Text Overflow & Overlap)**: 본문 설명문에 `white-space: nowrap`을 오적용하거나 폭(width) 계산을 누락하여 텍스트가 카드를 뚫고 인접 영역을 침범·중첩하는 레이아웃 파괴 행위 절대 금지.
 8. **[금기 8] 일러스트 없는 밋밋한 상자 나열 또는 200x200 미만 소형 일러스트 배치**: 일러스트를 배제하거나, 이미지를 가로/세로 200px 미만으로 너무 작게 축소하여 잘 보이지 않게 배치하는 행위 지양 (최소 `200px × 200px` 이상 지향).
 9. **[금기 9] 1px 단위 불규칙 크기/간격 및 정렬 오차 (No Irregular 1px Sizing or Misalignment)**: 오브젝트의 가로/세로 크기나 여백을 `1px` 단위로 중구난방 설정하거나 동일 구조 오브젝트의 가로/세로 정렬이 어긋나는 행위 금지 (`width`/`height` 10단위 구성, 간격 `20/30/40/50px` 등 10단위 균형 배치, 동일 구조 오브젝트 0px 오차 정렬 엄수).
+10. **[금기 10] 알럿 아톰(`v4-atom-alert`) 비표준 변형 및 세로 높이 미달 클리핑**: `.v4-alert-container` 표준(`.v4-alert-desc-wrapper > .v4-alert-desc-badge`, `data-show-desc`, `data-desc`, `data-message`) 대신 임의 마크업·속성을 작성하거나 줄 수/배지를 고려하지 않고 높이를 낮게 지정(`120~145px` 등)하여 버튼이 박스 밖으로 삐져나오고 인스펙터 연동이 깨지는 행위 절대 금지.

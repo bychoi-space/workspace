@@ -667,6 +667,16 @@
     - 최대 글자수 입력창은 순수 공통 수치 인풋 `.v4-prop-input-base`와 실시간 동적 연동 라벨 카운터(`<span id="txt-webeditor-maxlength">2000</span>자`)를 결합한다.
     - 모드 및 툴바 선택 드롭다운은 좌측 정렬 클래스 `.v4-prop-select`를 필수로 적용한다.
 
+## 🔔 알럿 아톰(`Alert Window`, `.v4-alert-container`) 삽입 및 세로 크기(Height) 산정 표준 규칙
+- **네이티브 V4 마크업 및 `data-*` 속성 규격 엄수 (커스텀 변형 금지)**:
+  - 스크린에 알럿 아톰을 배치할 때는 반드시 `assets/vctrl_component_atoms_data.js`(`v4-atom-alert`)의 순정 3계층 구조(`.bychoi-component` ➔ `.v4-alert-container` ➔ `.v4-alert-desc-wrapper > .v4-alert-desc-badge` + `.v4-alert-dialog`)를 그대로 사용해야 한다.
+  - `.v4-alert-container`의 표준 데이터 속성(`data-message`, `data-show-desc="true"|"false"`, `data-desc`, `data-btn-count`, `data-btn-text-1~3`, `data-btn-style-1~3`)만 사용하며, 임의의 비표준 클래스(`.v4-alert-callout-header`)나 비표준 속성(`data-title-text`, `data-message-text`) 작성을 전면 금지한다. (비표준 구조 사용 시 `enforceAlertToggleButtonLayouts()`가 `data-show-desc`를 미활성으로 오판하여 세로 크기를 `145px`로 강제 축소해 버튼이 잘리고 인스펙터 동기화가 파손된다.)
+- **`data-resized="true"` 미부여 및 정밀 세로 크기(Height) 산정 공식**:
+  - `.bychoi-component`에는 **`data-resized="true"`를 부여하지 않아야** 런타임 `vctrl_design_system_atoms.js`의 `enforceAlertToggleButtonLayouts()`가 실제 메시지 줄 수와 설명 배지 높이에 맞춰 `height`를 자동 피팅한다.
+  - 동시에 정적 마크업의 초기 `height`도 실제 렌더링 높이(공식: `32(header) + 32(padding) + msgH(약 18px × 줄수, 래핑 줄 포함) + 14(margin) + 28(buttons) + 2 + (showDesc ? descH(약 35px) : 0)`)와 일치하게 부여한다: `data-show-desc="true"` 기준 **1줄 `157~163px`, 2줄 `175~181px`, 3줄 `192~200px`** (`false`일 때는 `-35px`).
+- **가로 너비(`width`) 및 배지 줄넘김 방어**:
+  - `.v4-alert-desc-badge`는 `white-space: nowrap`으로 렌더링되므로, 설명 문구 길이에 맞춰 `.bychoi-component`의 `width`(`250px ~ 320px+`)를 넉넉히 확보하여 배지 텍스트가 알럿 우측 경계를 넘치지 않도록 검증해야 한다.
+
 ## 📋 Query Item(조회 항목) 및 전용 스마트 가이드 표준 규칙
 - **조회 항목(Query Item) 아톰 구조 및 표준 규격**:
   - **기본 치수 및 프레임 최적화**: 기본 너비는 **`1160px`**(반응형 PC 프레임 `.pc-content-inner` 너비와 100% 일치하여 오버플로우 방지), 기본 높이는 **`44px`**(1행 기준), 행 단위 세로 크기는 **`44px`**(엔터프라이즈 폼 표준 높이)입니다.

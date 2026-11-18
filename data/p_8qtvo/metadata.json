@@ -46,13 +46,13 @@
     "03_Order_UI_Improvement_Strategy.html": {
       "title": "시선닷컴 주문 화면 UI 개선 전략",
       "type": "analysis",
-      "updatedAt": "2026-11-18T06:56:17.035Z",
+      "updatedAt": "2026-11-18T07:43:44.384Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "editor",
-      "screenDesc": "시선닷컴 AS-IS 문제점 및 국내 동종업계 벤치마크 분석(#05~#07) 기반 PC·Mobile TO-BE 화면 설계(#10~#23) 연결 개선 전략"
+      "screenDesc": "시선닷컴 AS-IS 문제점 및 국내 동종업계 벤치마크 분석(#07~#09) 기반 PC·Mobile TO-BE 화면 설계(#12~#27) 연결 개선 전략"
     },
     "renewal_order_2.html": {
       "title": "주문서 (To-Be)",
@@ -202,8 +202,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[결제 수단] 영역\n- 최초 진입 기본값 : 회원의 직전 주문 결제 수단 자동 선택 (결제 이력이 없는 최초 주문 시 '신용카드' 기본 선택)\n- PC UI 레이아웃 유지 / Mobile UI 다열 그리드 표현 방법 개선",
-          "html": "[결제 수단] 영역<div>- 최초 진입 기본값 : 회원의 직전 주문 결제 수단 자동 선택 (결제 이력이 없는 최초 주문 시 '신용카드' 기본 선택)</div><div>- PC UI 레이아웃 유지 / Mobile UI 다열 그리드 표현 방법 개선</div>",
+          "text": "[결제 수단] 영역\n- 최초 진입 기본값 : 회원의 직전 주문 결제 수단 자동 선택 (결제 이력이 없는 최초 주문 시 '신용카드' 기본 선택)\n- PC UI 레이아웃 유지 / Mobile UI 다열 그리드 표현 방법 개선\n- 하단 '신용카드 무이자 할부 안내' 클릭 시 반응형 테이블 팝업 호출 ('주문서 (To-Be) 무이자할부안내' 스크린 참고)",
+          "html": "[결제 수단] 영역<div>- 최초 진입 기본값 : 회원의 직전 주문 결제 수단 자동 선택 (결제 이력이 없는 최초 주문 시 '신용카드' 기본 선택)</div><div>- PC UI 레이아웃 유지 / Mobile UI 다열 그리드 표현 방법 개선</div><div>- 하단 '신용카드 무이자 할부 안내' 클릭 시 반응형 테이블 팝업 호출 ('주문서 (To-Be) 무이자할부안내' 스크린 참고)</div>",
           "x": 20,
           "y": 1285,
           "pins": {
@@ -2001,6 +2001,340 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": ""
+    },
+    "05_Order_Process_Flowchart.html": {
+      "title": "주문 · 결제 프로세스 흐름도 (E2E)",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T07:43:44.384Z",
+      "template": "template_process.html",
+      "version": 0.1,
+      "defaultTab": "editor",
+      "description": [],
+      "connectors": [],
+      "screenDesc": "시선닷컴 장바구니 · 주문서 · KPN PG 결제 · 주문완료/무통장 입금대기 · 주문실패 정상 및 예외 분기 통합 흐름도"
+    },
+    "06_Discount_Allocation_Simulation.html": {
+      "title": "[초안] 복합 할인 · 안분 정산 시뮬레이션",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T07:43:44.384Z",
+      "template": "template_process.html",
+      "version": 0.1,
+      "defaultTab": "editor",
+      "description": [],
+      "connectors": [],
+      "screenDesc": "상품 기본할인 → 상품쿠폰 → 장바구니쿠폰 → 보유 마일리지 → 구매 마일리지 즉시할인 5단계 차감 및 1원 단수 안분 시뮬레이션 초안"
+    },
+    "renewal_cart_5.html": {
+      "title": "장바구니 (To-Be) 비회원 상품담은경우",
+      "type": "ui",
+      "updatedAt": "2026-11-18T07:43:44.384Z",
+      "template": "template_responsive_pc_mobile.html",
+      "version": 0.1,
+      "defaultTab": "description",
+      "connectors": [],
+      "screenDesc": "",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[비회원 혜택 안내 바] 영역\n- 비회원(로그아웃) 상태에서 장바구니에 상품을 담은 경우 회원 전용 [쿠폰 혜택 / 최대 할인 적용] 바 대신 베이지 톤 로그인 유도 배너 노출\n- '로그인하시면 다양한 혜택 확인이 가능합니다.' 안내 문구 제공",
+          "html": "[비회원 혜택 안내 바] 영역<div>- 비회원(로그아웃) 상태에서 장바구니에 상품을 담은 경우 회원 전용 [쿠폰 혜택 / 최대 할인 적용] 바 대신 베이지 톤 로그인 유도 배너 노출</div><div>- '로그인하시면 다양한 혜택 확인이 가능합니다.' 안내 문구 제공</div>",
+          "x": 775,
+          "y": 195,
+          "pins": {
+            "pc": {
+              "x": 775,
+              "y": 195,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 335,
+              "y": 75,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 775,
+              "y": 195,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 335,
+              "y": 75,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[비회원 장바구니 상품 보관 및 로그인 병합] 정책\n- 비회원 상태에서도 상품 옵션·수량 담기, 선택삭제, 옵션 변경 가능 (브라우저 세션/스토리지 기반 유지)\n- 로그인 완료 시 비회원 장바구니에 담긴 상품은 기존 회원 장바구니에 자동 병합(Merge) 처리 (동일 상품·옵션 존재 시 수량 합산)",
+          "html": "[비회원 장바구니 상품 보관 및 로그인 병합] 정책<div>- 비회원 상태에서도 상품 옵션·수량 담기, 선택삭제, 옵션 변경 가능 (브라우저 세션/스토리지 기반 유지)</div><div>- 로그인 완료 시 비회원 장바구니에 담긴 상품은 기존 회원 장바구니에 자동 병합(Merge) 처리 (동일 상품·옵션 존재 시 수량 합산)</div>",
+          "x": 20,
+          "y": 300,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 300,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 220,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 300,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 220,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[로그인 / 회원가입] 진입 동선\n- [로그인] 클릭 시 로그인 페이지로 이동하며 returnUrl=/cart/list 파라미터를 전달하여 로그인 직후 장바구니로 즉시 복귀\n- 상품 카드 내 [쿠폰받기] 클릭 시에도 동일하게 로그인 안내 후 로그인 페이지 이동",
+          "html": "[로그인 / 회원가입] 진입 동선<div>- [로그인] 클릭 시 로그인 페이지로 이동하며 returnUrl=/cart/list 파라미터를 전달하여 로그인 직후 장바구니로 즉시 복귀</div><div>- 상품 카드 내 [쿠폰받기] 클릭 시에도 동일하게 로그인 안내 후 로그인 페이지 이동</div>",
+          "x": 605,
+          "y": 222,
+          "pins": {
+            "pc": {
+              "x": 605,
+              "y": 222,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 185,
+              "y": 142,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 605,
+              "y": 222,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 185,
+              "y": 142,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "비회원 [주문하기] / [바로구매] 클릭 시 로그인 유도 얼럿\n- 시선닷컴 비회원 주문 불가 정책에 따라 [주문하기] 또는 상품별 [바로구매] 클릭 시 주문서 진입을 차단하고 확인 얼럿 노출\n- 얼럿 문구 : '로그인 후 주문이 가능합니다. 로그인 페이지로 이동하시겠습니까?' ([취소] / [로그인])\n- [로그인] 선택 시 선택한 주문 대상 상품을 유지한 채 로그인 완료 후 주문서(/order/checkout) 또는 장바구니로 연결",
+          "html": "비회원 [주문하기] / [바로구매] 클릭 시 로그인 유도 얼럿<div>- 시선닷컴 비회원 주문 불가 정책에 따라 [주문하기] 또는 상품별 [바로구매] 클릭 시 주문서 진입을 차단하고 확인 얼럿 노출</div><div>- 얼럿 문구 : '로그인 후 주문이 가능합니다. 로그인 페이지로 이동하시겠습니까?' ([취소] / [로그인])</div><div>- [로그인] 선택 시 선택한 주문 대상 상품을 유지한 채 로그인 완료 후 주문서(/order/checkout) 또는 장바구니로 연결</div>",
+          "x": 820,
+          "y": 530,
+          "pins": {
+            "pc": {
+              "x": 820,
+              "y": 530,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 10,
+              "y": 1210,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 820,
+              "y": 530,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 10,
+              "y": 1210,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ]
+    },
+    "renewal_order_9.html": {
+      "title": "주문서 (To-Be) 무이자할부안내",
+      "type": "ui",
+      "updatedAt": "2026-11-18T07:43:44.384Z",
+      "template": "template_responsive_pc_mobile.html",
+      "version": 0.1,
+      "defaultTab": "description",
+      "connectors": [],
+      "screenDesc": "",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[신용카드 무이자 할부 안내] 팝업 호출 트리거\n- [결제 수단] 영역 하단 '신용카드 무이자 할부 안내 〉' 클릭 시 딤드(Dimmed) 레이어 위 반응형 안내 팝업 호출\n- 기존 통이미지(SmartEditor 업로드 PNG) 방식을 폐기하고 PC·Mobile 해상도별 가독성을 보장하는 HTML 데이터 테이블 구조로 전면 개편",
+          "html": "[신용카드 무이자 할부 안내] 팝업 호출 트리거<div>- [결제 수단] 영역 하단 '신용카드 무이자 할부 안내 〉' 클릭 시 딤드(Dimmed) 레이어 위 반응형 안내 팝업 호출</div><div>- 기존 통이미지(SmartEditor 업로드 PNG) 방식을 폐기하고 PC·Mobile 해상도별 가독성을 보장하는 HTML 데이터 테이블 구조로 전면 개편</div>",
+          "x": 255,
+          "y": 1544,
+          "pins": {
+            "pc": {
+              "x": 255,
+              "y": 1544,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 215,
+              "y": 1953,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 255,
+              "y": 1544,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 215,
+              "y": 1953,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[무이자 할부 / 부분무이자 할부] 2탭 분리 및 적용 기준 요약\n- 단일 긴 스크롤 이미지 대신 [무이자 할부] 탭(기본 활성)과 [부분무이자 할부] 탭으로 정보를 분리하여 탐색 피로도 최소화\n- 상단 요약 바에 당월 적용기간(승인일 기준) 및 공통 적용 기준(개인 신용카드 5만원 이상 결제 시) 상시 고정 노출\n- PC 화면에서는 좌(무이자 할부 활성)·우(부분무이자 할부 활성) 탭 상태를 병렬 배치하여 전체 스펙을 한눈에 정의",
+          "html": "[무이자 할부 / 부분무이자 할부] 2탭 분리 및 적용 기준 요약<div>- 단일 긴 스크롤 이미지 대신 [무이자 할부] 탭(기본 활성)과 [부분무이자 할부] 탭으로 정보를 분리하여 탐색 피로도 최소화</div><div>- 상단 요약 바에 당월 적용기간(승인일 기준) 및 공통 적용 기준(개인 신용카드 5만원 이상 결제 시) 상시 고정 노출</div><div>- PC 화면에서는 좌(무이자 할부 활성)·우(부분무이자 할부 활성) 탭 상태를 병렬 배치하여 전체 스펙을 한눈에 정의</div>",
+          "x": 40,
+          "y": 142,
+          "pins": {
+            "pc": {
+              "x": 40,
+              "y": 142,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 2,
+              "y": 128,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 40,
+              "y": 142,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 2,
+              "y": 128,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "카드사별 할부 개월 · 고객부담 회차 반응형 테이블\n- [무이자 할부] 카드사 · 무이자 기간 · 적용 기준 및 비고 3열 테이블 구성 (PC·Mobile 최소 13px 이상 타이포그래피 적용)\n- [부분무이자 할부] 카드사별 할부개월 및 고객부담 회차(잔여 회차 면제) 매핑 표기\n- 패션 전문몰과 무관한 PG 공통 특수업종(병원·손해보험·제약 등) 문구는 제외하여 고객 혼선 방지",
+          "html": "카드사별 할부 개월 · 고객부담 회차 반응형 테이블<div>- [무이자 할부] 카드사 · 무이자 기간 · 적용 기준 및 비고 3열 테이블 구성 (PC·Mobile 최소 13px 이상 타이포그래피 적용)</div><div>- [부분무이자 할부] 카드사별 할부개월 및 고객부담 회차(잔여 회차 면제) 매핑 표기</div><div>- 패션 전문몰과 무관한 PG 공통 특수업종(병원·손해보험·제약 등) 문구는 제외하여 고객 혼선 방지</div>",
+          "x": 40,
+          "y": 340,
+          "pins": {
+            "pc": {
+              "x": 40,
+              "y": 340,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 2,
+              "y": 320,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 40,
+              "y": 340,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 2,
+              "y": 320,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "제외 대상 카드 · 유의사항 안내 및 팝업 닫기\n- 법인·체크·GIFT·선불·하이브리드·은행계열·토스카드 제외 및 무이자 결제 시 포인트·마일리지 중복 적립 불가 안내\n- 비씨카드 BC마크 회원사 적용 기준 및 광주은행 BC 등 카드사별 예외 유의사항 명시\n- 우측 상단 [×], 하단 [닫기] 버튼 또는 백드롭 클릭 시 팝업 닫힘 및 주문서 작성 상태 유지",
+          "html": "제외 대상 카드 · 유의사항 안내 및 팝업 닫기<div>- 법인·체크·GIFT·선불·하이브리드·은행계열·토스카드 제외 및 무이자 결제 시 포인트·마일리지 중복 적립 불가 안내</div><div>- 비씨카드 BC마크 회원사 적용 기준 및 광주은행 BC 등 카드사별 예외 유의사항 명시</div><div>- 우측 상단 [×], 하단 [닫기] 버튼 또는 백드롭 클릭 시 팝업 닫힘 및 주문서 작성 상태 유지</div>",
+          "x": 40,
+          "y": 615,
+          "pins": {
+            "pc": {
+              "x": 40,
+              "y": 615,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 2,
+              "y": 580,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 40,
+              "y": 615,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 2,
+              "y": 580,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ]
     }
   },
   "assignee": "최범열",
@@ -2013,6 +2347,8 @@
     "00_Cover_234.html",
     "01_Project_Summary.html",
     "01_Order_Policy_Overview.html",
+    "05_Order_Process_Flowchart.html",
+    "06_Discount_Allocation_Simulation.html",
     "02_Front_IA_Specification.html",
     "99_Blank_924.html",
     "99_Blank_925.html",
@@ -2022,6 +2358,7 @@
     "renewal_cart_2.html",
     "renewal_cart_4.html",
     "renewal_cart_6.html",
+    "renewal_cart_5.html",
     "renewal_cart_3.html",
     "renewal_cart_7.html",
     "renewal_order_2.html",
@@ -2030,6 +2367,7 @@
     "renewal_order_7.html",
     "renewal_order_8.html",
     "renewal_order_3.html",
+    "renewal_order_9.html",
     "renewal_payEnd.html",
     "renewal_payEnd_2.html",
     "renewal_payFail.html"

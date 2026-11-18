@@ -698,5 +698,19 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/sisun_brand_keycolor_beige.png',
             previewHtml: `<img src="assets/illustrations/sisun_brand_keycolor_beige.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/sisun_brand_keycolor_beige.png" alt="시선닷컴 베이지 키컬러 전략" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-order-discount-sim',
+            name: '[3D] 할인·안분 정산',
+            title: '3D 주문서 복합 할인 · 쿠폰 · 마일리지 안분 정산 엔진 (Discount Allocation)',
+            koName: '3d 주문서 할인 쿠폰 마일리지 안분 정산 단수 시뮬레이션 discount coupon mileage allocation calculation',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '220px',
+            height: '220px',
+            thumb: 'assets/illustrations/order_discount_simulation_3d.png',
+            previewHtml: `<img src="assets/illustrations/order_discount_simulation_3d.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_discount_simulation_3d.png" alt="3D 복합 할인 및 안분 정산 엔진" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
 ];

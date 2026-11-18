@@ -2,10 +2,9 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>시선닷컴 주문 · 결제 End-to-End 프로세스 흐름도</title>
+    <title>주문 · 결제 프로세스 정의</title>
     <link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+KR:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     <style id="v4-flow-rules">
         :root {
             --v4-text-color: #0f172a;
@@ -26,7 +25,7 @@
         .canvas {
             width: 1600px;
             height: 900px;
-            background: #f8fafc;
+            background: #ffffff;
             position: relative;
             overflow: hidden;
             margin: 0 auto;
@@ -42,698 +41,130 @@
             word-break: keep-all;
             font-family: inherit;
         }
-        .v4-shape-text-content p,
-        .v4-shape-text-content span,
-        .v4-shape-text-content strong,
-        .v4-shape-text-content * {
+        .v4-premium-table th,
+        .v4-premium-table td {
+            box-sizing: border-box !important;
             white-space: normal !important;
             word-break: keep-all !important;
-            overflow-wrap: break-word !important;
-        }
-        .bychoi-icon {
-            display: inline-block;
-            vertical-align: middle;
         }
     </style>
 </head>
 <body>
     <div class="canvas" id="canvas">
 
-        <!-- =================================================================== -->
-        <!-- [0] GLOBAL HEADER (Top: 20, Left: 20, W: 1560, H: 50)               -->
-        <!-- =================================================================== -->
-        <div id="hdr_bg" class="bychoi-component" style="position: absolute; top: 20px; left: 20px; width: 1560px; height: 50px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #1e293b; border-radius: 10px; box-sizing: border-box;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="hdr_icon" class="bychoi-component" style="position: absolute; top: 30px; left: 40px; width: 30px; height: 30px; z-index: 105;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="1"></rect>
-                <path d="M10 6.5h4"></path>
-                <path d="M17.5 10v4"></path>
-                <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-                <path d="M10 17.5h4"></path>
-            </svg>
-        </div>
-        <div id="hdr_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 30px; left: 80px; width: 860px; height: 30px; z-index: 105; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="outline: none; color: #ffffff; font-size: 17px; font-weight: 800; text-align: left; width: 100%; height: 100%; line-height: 1.2; padding: 4px 4px !important; white-space: nowrap !important;">
-                <p style="white-space: nowrap !important;"><strong style="color: #ffffff; font-size: 17px; white-space: nowrap !important;">시선닷컴 주문 · 결제 End-to-End 프로세스 흐름도 (정상 · 예외 분기 통합)</strong></p>
-            </div>
-        </div>
-        <div id="hdr_badge" class="bychoi-component" style="position: absolute; top: 30px; left: 1380px; width: 180px; height: 30px; z-index: 105;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #334155; border-radius: 6px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #38bdf8; font-size: 13px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">PROCESS FLOW · v1.0</div>
+        <!-- [0] TOP BAR: PPT Title Pill + Minimal Legend (10px grid) -->
+        <div id="hdr_pill" class="bychoi-component" style="position: absolute; top: 20px; left: 40px; width: 260px; height: 40px; z-index: 120;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #334155; border: 1.6px solid #1e293b; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <div contenteditable="true" class="v4-editable-cell" style="color: #ffffff; font-size: 15px; font-weight: 700; text-align: center; width: 100%; white-space: nowrap !important;">주문 · 결제 프로세스 정의</div>
             </div>
         </div>
 
-        <!-- =================================================================== -->
-        <!-- [1] COLUMN STAGE HEADERS (Top: 90, Height: 40)                      -->
-        <!-- =================================================================== -->
-        <div id="col_lane_hdr" class="bychoi-component" style="position: absolute; top: 90px; left: 20px; width: 150px; height: 40px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 700; text-align: center; width: 100%;">주체 / 영역</div>
+        <div id="leg_front" class="bychoi-component" style="position: absolute; top: 25px; left: 1030px; width: 120px; height: 30px; z-index: 120;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1e293b; border: 1.6px solid #1e293b; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div contenteditable="true" class="v4-editable-cell" style="color: #ffffff; font-size: 13px; font-weight: 700; text-align: center; white-space: nowrap !important;">Front (고객)</div>
             </div>
         </div>
-        <div id="col_s1_hdr" class="bychoi-component" style="position: absolute; top: 90px; left: 190px; width: 320px; height: 40px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #93c5fd; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 14px; font-weight: 800; text-align: center; width: 100%;">STAGE 01 · 장바구니 · 회원 검증</div>
+        <div id="leg_pg" class="bychoi-component" style="position: absolute; top: 25px; left: 1160px; width: 120px; height: 30px; z-index: 120;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #1d4ed8; border: 1.6px solid #1d4ed8; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div contenteditable="true" class="v4-editable-cell" style="color: #ffffff; font-size: 13px; font-weight: 700; text-align: center; white-space: nowrap !important;">KPN PG</div>
             </div>
         </div>
-        <div id="col_s2_hdr" class="bychoi-component" style="position: absolute; top: 90px; left: 530px; width: 340px; height: 40px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eef2ff; border: 1.6px solid #a5b4fc; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #4338ca; font-size: 14px; font-weight: 800; text-align: center; width: 100%;">STAGE 02 · 주문서 · 할인·동의 검증</div>
+        <div id="leg_oms" class="bychoi-component" style="position: absolute; top: 25px; left: 1290px; width: 130px; height: 30px; z-index: 120;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #991b1b; border: 1.6px solid #991b1b; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div contenteditable="true" class="v4-editable-cell" style="color: #ffffff; font-size: 13px; font-weight: 700; text-align: center; white-space: nowrap !important;">OMS · 시스템</div>
             </div>
         </div>
-        <div id="col_s3_hdr" class="bychoi-component" style="position: absolute; top: 90px; left: 890px; width: 340px; height: 40px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #6ee7b7; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #047857; font-size: 14px; font-weight: 800; text-align: center; width: 100%;">STAGE 03 · 결제 분기 및 PG 승인</div>
-            </div>
-        </div>
-        <div id="col_s4_hdr" class="bychoi-component" style="position: absolute; top: 90px; left: 1250px; width: 330px; height: 40px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f1f5f9; border: 1.6px solid #94a3b8; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 14px; font-weight: 800; text-align: center; width: 100%;">STAGE 04 · 완료 · 입금대기 · 사후</div>
+        <div id="leg_cond" class="bychoi-component" style="position: absolute; top: 25px; left: 1430px; width: 130px; height: 30px; z-index: 120;" data-resized="true">
+            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fef9c3; border: 1.6px solid #d97706; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <div contenteditable="true" class="v4-editable-cell" style="color: #78350f; font-size: 13px; font-weight: 700; text-align: center; white-space: nowrap !important;">◇ 분기 조건</div>
             </div>
         </div>
 
-        <!-- =================================================================== -->
-        <!-- [2] LANE 01 : 고객 · Front UI (Top: 150 ~ 370)                       -->
-        <!-- =================================================================== -->
-        <div id="lane1_card" class="bychoi-component" style="position: absolute; top: 150px; left: 20px; width: 150px; height: 220px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="lane1_badge" class="bychoi-component" style="position: absolute; top: 170px; left: 40px; width: 110px; height: 30px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #2563eb; border: 1.6px solid #2563eb; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800; text-align: center; width: 100%;">LANE 01</div>
-            </div>
-        </div>
-        <div id="lane1_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 220px; left: 30px; width: 130px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 15px; font-weight: 800; text-align: center; width: 100%; height: 100%; white-space: nowrap !important;">고객 · Front</div>
-        </div>
-        <div id="lane1_sub" class="bychoi-component" style="position: absolute; top: 260px; left: 30px; width: 130px; height: 60px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; text-align: center; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; font-weight: 500; text-align: center; width: 100%; line-height: 1.45;">PC Web<br>Mobile App</div>
-                </div>
-            </div>
-        </div>
+        <!-- [1] CONTINUOUS ORTHOGONAL CONNECTORS -->
+        <div id="c_cart_mem" class="bychoi-component" style="position: absolute; top: 280px; left: 160px; width: 50px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 50 20" width="50" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 40 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="40,10 33,5.8 33,14.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_mem_y" class="bychoi-component" style="position: absolute; top: 280px; left: 300px; width: 70px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 70 20" width="70" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 60 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="60,10 53,5.8 53,14.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_mem_n" class="bychoi-component" style="position: absolute; top: 320px; left: 245px; width: 20px; height: 110px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 20 110" width="20" height="110" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 10 100" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="10,100 5.8,93 14.2,93" fill="#64748b"></polygon></svg></div>
+        <div id="c_login_merge" class="bychoi-component" style="position: absolute; top: 280px; left: 310px; width: 40px; height: 190px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 40 190" width="40" height="190" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 180 L 30 180 L 30 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="30,10 25.8,17 34.2,17" fill="#64748b"></polygon></svg></div>
+        <div id="c_stock_y" class="bychoi-component" style="position: absolute; top: 280px; left: 460px; width: 50px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 50 20" width="50" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 40 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="40,10 33,5.8 33,14.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_stock_n" class="bychoi-component" style="position: absolute; top: 170px; left: 405px; width: 20px; height: 90px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 20 90" width="20" height="90" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 80 L 10 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="10,10 5.8,17 14.2,17" fill="#64748b"></polygon></svg></div>
+        <div id="c_soldout_merge" class="bychoi-component" style="position: absolute; top: 130px; left: 470px; width: 105px; height: 130px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 105 130" width="105" height="130" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 95 10 L 95 120" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="95,120 90.8,113 99.2,113" fill="#64748b"></polygon></svg></div>
+        <div id="c_chk_zero" class="bychoi-component" style="position: absolute; top: 280px; left: 620px; width: 50px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 50 20" width="50" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 40 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="40,10 33,5.8 33,14.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_zero_n" class="bychoi-component" style="position: absolute; top: 280px; left: 760px; width: 60px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 60 20" width="60" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 50 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="50,10 43,5.8 43,14.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_zero_y" class="bychoi-component" style="position: absolute; top: 130px; left: 705px; width: 795px; height: 130px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 795 130" width="795" height="130" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 120 L 10 10 L 785 10 L 785 120" fill="none" stroke="#059669" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="785,120 780.8,113 789.2,113" fill="#059669"></polygon></svg></div>
+        <div id="c_pg_ok" class="bychoi-component" style="position: absolute; top: 280px; left: 930px; width: 50px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 50 20" width="50" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 40 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="40,10 33,5.8 33,14.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_pg_n" class="bychoi-component" style="position: absolute; top: 320px; left: 1015px; width: 20px; height: 110px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 20 110" width="20" height="110" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 10 100" fill="none" stroke="#dc2626" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="10,100 5.8,93 14.2,93" fill="#dc2626"></polygon></svg></div>
+        <div id="c_fail_retry" class="bychoi-component" style="position: absolute; top: 320px; left: 555px; width: 415px; height: 150px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 415 150" width="415" height="150" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 405 140 L 10 140 L 10 10" fill="none" stroke="#dc2626" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5 4"></path><polygon points="10,10 5.8,17 14.2,17" fill="#dc2626"></polygon></svg></div>
+        <div id="c_ok_comp" class="bychoi-component" style="position: absolute; top: 280px; left: 1070px; width: 360px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 360 20" width="360" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 350 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="350,10 343,5.8 343,14.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_ok_va" class="bychoi-component" style="position: absolute; top: 280px; left: 1100px; width: 40px; height: 190px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 40 190" width="40" height="190" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 10 180 L 30 180" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="10" cy="10" r="3.2" fill="#64748b"></circle><polygon points="30,180 23,175.8 23,184.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_va_chk" class="bychoi-component" style="position: absolute; top: 450px; left: 1250px; width: 50px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 50 20" width="50" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 40 10" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="40,10 33,5.8 33,14.2" fill="#64748b"></polygon></svg></div>
+        <div id="c_va_y" class="bychoi-component" style="position: absolute; top: 280px; left: 1335px; width: 20px; height: 150px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 20 150" width="20" height="150" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 140 L 10 10" fill="none" stroke="#059669" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="10,10 5.8,17 14.2,17" fill="#059669"></polygon></svg></div>
+        <div id="c_va_n" class="bychoi-component" style="position: absolute; top: 450px; left: 1390px; width: 50px; height: 20px; z-index: 110; pointer-events: none;" data-resized="true"><svg viewBox="0 0 50 20" width="50" height="20" style="width: 100%; height: 100%; display: block; overflow: visible;"><path d="M 10 10 L 40 10" fill="none" stroke="#dc2626" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><polygon points="40,10 33,5.8 33,14.2" fill="#dc2626"></polygon></svg></div>
 
-        <!-- Stage 1 : 장바구니 / 바로구매 -> Diamond 로그인 회원? -> Y / N 로그인 이동 -->
-        <div id="n1_cart_bg" class="bychoi-component" style="position: absolute; top: 150px; left: 190px; width: 150px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #2563eb; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n1_cart_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 160px; left: 200px; width: 130px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 14px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">장바구니 / 바로구매</div>
-        </div>
-        <div id="n1_cart_desc" class="bychoi-component" style="position: absolute; top: 190px; left: 200px; width: 130px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: center; line-height: 1.35;">옵션 · 수량 · 쿠폰받기</div>
-                </div>
-            </div>
-        </div>
+        <!-- [2] COMPACT 2-TIER NODES & CREAM DECISION DIAMONDS -->
+        <div id="n_cart" class="bychoi-component" style="position: absolute; top: 250px; left: 40px; width: 130px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #1e293b; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">Front</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">장바구니 · 바로구매</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">상품 선택 (#12)</div></div></div></div>
+        <div id="d_member" class="bychoi-component" style="position: absolute; top: 250px; left: 200px; width: 110px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative; box-sizing: border-box;"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;"><polygon points="50,2 98,50 50,98 2,50" style="fill: #fef9c3; stroke: #d97706; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon></svg><div class="v4-shape-text-content" style="width: 78%; z-index: 2; padding: 0 !important;"><div contenteditable="true" class="v4-editable-cell" style="color: #78350f; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25; white-space: nowrap;">회원 여부</div></div></div></div>
+        <div id="n_login" class="bychoi-component" style="position: absolute; top: 420px; left: 190px; width: 130px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #1e293b; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">Front</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">로그인 이동</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">상품 병합 (#15)</div></div></div></div>
+        <div id="d_stock" class="bychoi-component" style="position: absolute; top: 250px; left: 360px; width: 110px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative; box-sizing: border-box;"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;"><polygon points="50,2 98,50 50,98 2,50" style="fill: #fef9c3; stroke: #d97706; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon></svg><div class="v4-shape-text-content" style="width: 78%; z-index: 2; padding: 0 !important;"><div contenteditable="true" class="v4-editable-cell" style="color: #78350f; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25; white-space: nowrap;">재고 정상</div></div></div></div>
+        <div id="n_soldout" class="bychoi-component" style="position: absolute; top: 100px; left: 350px; width: 130px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #1e293b; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">Front</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">품절 제외 확인</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">Alert 안내 (#17)</div></div></div></div>
+        <div id="n_checkout" class="bychoi-component" style="position: absolute; top: 250px; left: 500px; width: 130px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #1e293b; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">Front</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">주문서 작성</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">배송 · 혜택 (#18)</div></div></div></div>
+        <div id="d_zero" class="bychoi-component" style="position: absolute; top: 250px; left: 660px; width: 110px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative; box-sizing: border-box;"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;"><polygon points="50,2 98,50 50,98 2,50" style="fill: #fef9c3; stroke: #d97706; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon></svg><div class="v4-shape-text-content" style="width: 78%; z-index: 2; padding: 0 !important;"><div contenteditable="true" class="v4-editable-cell" style="color: #78350f; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25; white-space: nowrap;">0원 결제</div></div></div></div>
+        <div id="n_pg" class="bychoi-component" style="position: absolute; top: 250px; left: 810px; width: 130px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #93c5fd; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #1d4ed8; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">KPN PG</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">전자결제 인증</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">카드 · 간편 · 무통장</div></div></div></div>
+        <div id="d_pg_ok" class="bychoi-component" style="position: absolute; top: 250px; left: 970px; width: 110px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative; box-sizing: border-box;"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;"><polygon points="50,2 98,50 50,98 2,50" style="fill: #fef9c3; stroke: #d97706; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon></svg><div class="v4-shape-text-content" style="width: 78%; z-index: 2; padding: 0 !important;"><div contenteditable="true" class="v4-editable-cell" style="color: #78350f; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25; white-space: nowrap;">정상 승인</div></div></div></div>
+        <div id="n_fail" class="bychoi-component" style="position: absolute; top: 420px; left: 960px; width: 130px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fda4af; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #be123c; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">Front</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">결제실패 · 취소</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">혜택 유지 (#27)</div></div></div></div>
+        <div id="n_va_wait" class="bychoi-component" style="position: absolute; top: 420px; left: 1130px; width: 130px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #1e293b; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">Front</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">입금대기</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">가상계좌 (#26)</div></div></div></div>
+        <div id="d_va_paid" class="bychoi-component" style="position: absolute; top: 420px; left: 1290px; width: 110px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative; box-sizing: border-box;"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;"><polygon points="50,2 98,50 50,98 2,50" style="fill: #fef9c3; stroke: #d97706; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon></svg><div class="v4-shape-text-content" style="width: 78%; z-index: 2; padding: 0 !important;"><div contenteditable="true" class="v4-editable-cell" style="color: #78350f; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25; white-space: nowrap;">3일 내 입금</div></div></div></div>
+        <div id="n_auto_cancel" class="bychoi-component" style="position: absolute; top: 420px; left: 1430px; width: 130px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fca5a5; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #991b1b; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">OMS · 시스템</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">미입금 자동취소</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">재고 · 혜택 복원</div></div></div></div>
+        <div id="n_complete" class="bychoi-component" style="position: absolute; top: 250px; left: 1420px; width: 140px; height: 80px; z-index: 120;" data-resized="true"><div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #059669; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box;"><div style="height: 26px; width: 100%; background: #065f46; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.01em; white-space: nowrap;">Front · OMS</div><div contenteditable="true" class="v4-editable-cell" style="flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 6px; box-sizing: border-box; text-align: center; outline: none; font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.25; white-space: nowrap;"><div style="font-size: 14px; font-weight: 700; color: #0f172a; white-space: nowrap;">주문완료</div><div style="font-size: 13px; font-weight: 500; color: #64748b; white-space: nowrap;">결제확정 (#25)</div></div></div></div>
 
-        <!-- Arrow n1_cart -> d1_member -->
-        <div id="arr_1" class="bychoi-component" style="position: absolute; top: 180px; left: 340px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
+        <!-- [3] BRANCH LABELS -->
+        <div id="lbl_mem_y" class="bychoi-component v4-text-shape" style="position: absolute; top: 264px; left: 312px; width: 24px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #0f172a; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">Y</div></div>
+        <div id="lbl_mem_n" class="bychoi-component v4-text-shape" style="position: absolute; top: 360px; left: 262px; width: 24px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #475569; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">N</div></div>
+        <div id="lbl_stk_y" class="bychoi-component v4-text-shape" style="position: absolute; top: 264px; left: 474px; width: 24px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #0f172a; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">Y</div></div>
+        <div id="lbl_stk_n" class="bychoi-component v4-text-shape" style="position: absolute; top: 204px; left: 422px; width: 24px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #b45309; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">N</div></div>
+        <div id="lbl_sold_proc" class="bychoi-component v4-text-shape" style="position: absolute; top: 114px; left: 494px; width: 96px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #475569; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">제외 후 진행</div></div>
+        <div id="lbl_zero_n" class="bychoi-component v4-text-shape" style="position: absolute; top: 264px; left: 774px; width: 24px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #475569; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">N</div></div>
+        <div id="lbl_zero_y" class="bychoi-component v4-text-shape" style="position: absolute; top: 114px; left: 975px; width: 240px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #047857; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">Y (전액 마일리지 사용 · PG 생략)</div></div>
+        <div id="lbl_pg_n" class="bychoi-component v4-text-shape" style="position: absolute; top: 360px; left: 1032px; width: 24px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #dc2626; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">N</div></div>
+        <div id="lbl_retry" class="bychoi-component v4-text-shape" style="position: absolute; top: 434px; left: 690px; width: 160px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #dc2626; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">재결제 (주문서 복귀)</div></div>
+        <div id="lbl_ok_comp" class="bychoi-component v4-text-shape" style="position: absolute; top: 264px; left: 1116px; width: 214px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #0f172a; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">Y · 즉시결제 (카드 · 간편 · 계좌)</div></div>
+        <div id="lbl_ok_va" class="bychoi-component v4-text-shape" style="position: absolute; top: 360px; left: 1118px; width: 56px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #334155; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">무통장</div></div>
+        <div id="lbl_va_y" class="bychoi-component v4-text-shape" style="position: absolute; top: 356px; left: 1352px; width: 78px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #047857; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">Y (입금확인)</div></div>
+        <div id="lbl_va_n" class="bychoi-component v4-text-shape" style="position: absolute; top: 434px; left: 1404px; width: 24px; height: 22px; z-index: 130; white-space: nowrap !important;"><div contenteditable="true" class="v4-editable-cell" style="outline: none; color: #dc2626; background: transparent; border-radius: 4px; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; padding: 2px 4px; width: 100%; height: 100%; white-space: nowrap !important;">N</div></div>
 
-        <!-- Diamond: 로그인 회원? -->
-        <div id="d1_member" class="bychoi-component" style="position: absolute; top: 150px; left: 360px; width: 150px; height: 90px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,2 98,50 50,98 2,50" style="fill: #eff6ff; stroke: #2563eb; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
-                </svg>
-                <div class="v4-shape-text-content" style="width: 72%; z-index: 2; padding: 0 !important;">
-                    <div contenteditable="true" class="v4-editable-cell" style="color: #1e3a8a; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25;">로그인 회원?</div>
-                </div>
-            </div>
-        </div>
-        <div id="lbl_y1" class="bychoi-component" style="position: absolute; top: 160px; left: 500px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #2563eb; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 13px; font-weight: 800; text-align: center;">Y</div>
-            </div>
-        </div>
-        <div id="arr_2" class="bychoi-component" style="position: absolute; top: 180px; left: 510px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
-        <div id="lbl_n1" class="bychoi-component" style="position: absolute; top: 240px; left: 410px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fffbeb; border: 1.6px solid #d97706; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #b45309; font-size: 13px; font-weight: 800; text-align: center;">N</div>
-            </div>
-        </div>
-        <div id="arr_1_down" class="bychoi-component" style="position: absolute; top: 250px; left: 420px; width: 30px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="12" y1="2" x2="12" y2="20"></line>
-                <polyline points="6 14 12 20 18 14"></polyline>
-            </svg>
-        </div>
-
-        <!-- Non-member Login Redirect Node (Stage 1 bottom) -->
-        <div id="n1_login_bg" class="bychoi-component" style="position: absolute; top: 280px; left: 340px; width: 170px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fffbeb; border: 1.6px solid #f59e0b; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n1_login_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 290px; left: 350px; width: 150px; height: 20px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #b45309; font-size: 13px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">로그인 이동 · 장바구니 병합</div>
-        </div>
-        <div id="n1_login_desc" class="bychoi-component" style="position: absolute; top: 320px; left: 350px; width: 150px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #78350f; font-size: 13px; text-align: center; line-height: 1.3;">비회원 주문 불가 (#15)</div>
-                </div>
-            </div>
-        </div>
-        <div id="arr_login_s2" class="bychoi-component" style="position: absolute; top: 310px; left: 510px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
-
-        <!-- Stage 1 Left Arrow from RT Sold Check to Cart -->
-        <div id="n1_sold_link_note" class="bychoi-component" style="position: absolute; top: 280px; left: 190px; width: 130px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 10px !important; display: flex; align-items: center;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; text-align: center; line-height: 1.35;">주문 시점 재고체크<br>(LANE 02 선행)</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stage 2 : 배송 정보 세팅 -> 할인·마일리지 적용 -> 결제수단 & 동의 -->
-        <div id="n2_ship_bg" class="bychoi-component" style="position: absolute; top: 150px; left: 530px; width: 160px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #6366f1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n2_ship_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 160px; left: 540px; width: 140px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #4338ca; font-size: 14px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">배송 정보 세팅</div>
-        </div>
-        <div id="n2_ship_desc" class="bychoi-component" style="position: absolute; top: 190px; left: 540px; width: 140px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: center; line-height: 1.3;">기본배송지 / 신규폼</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="arr_s2_mid" class="bychoi-component" style="position: absolute; top: 180px; left: 690px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
-
-        <div id="n2_disc_bg" class="bychoi-component" style="position: absolute; top: 150px; left: 710px; width: 160px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #6366f1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n2_disc_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 160px; left: 720px; width: 140px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #4338ca; font-size: 14px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">할인 · 마일리지 적용</div>
-        </div>
-        <div id="n2_disc_desc" class="bychoi-component" style="position: absolute; top: 190px; left: 720px; width: 140px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: center; line-height: 1.3;">쿠폰 · 보유/구매M</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="arr_s2_down" class="bychoi-component" style="position: absolute; top: 240px; left: 770px; width: 30px; height: 40px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="12" y1="2" x2="12" y2="20"></line>
-                <polyline points="6 14 12 20 18 14"></polyline>
-            </svg>
-        </div>
-
-        <div id="n2_submit_bg" class="bychoi-component" style="position: absolute; top: 280px; left: 530px; width: 340px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eef2ff; border: 1.6px solid #4f46e5; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n2_submit_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 290px; left: 540px; width: 320px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #3730a3; font-size: 14px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">결제수단 선택 &amp; 약관 동의 후 [결제하기]</div>
-        </div>
-        <div id="n2_submit_desc" class="bychoi-component" style="position: absolute; top: 320px; left: 540px; width: 320px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #4338ca; font-size: 13px; text-align: center; line-height: 1.35;">필수 배송지 (이름→주소→연락처) · 구매동의 미체크 검증</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="arr_s2_s3" class="bychoi-component" style="position: absolute; top: 180px; left: 870px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
-
-        <!-- Stage 3 : Diamond 결제금액 0원? -> Y (직행 완료) / N (PG 호출) + 사용자 취소 -->
-        <div id="d3_zero" class="bychoi-component" style="position: absolute; top: 150px; left: 890px; width: 150px; height: 90px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,2 98,50 50,98 2,50" style="fill: #ecfdf5; stroke: #059669; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
-                </svg>
-                <div class="v4-shape-text-content" style="width: 74%; z-index: 2; padding: 0 !important;">
-                    <div contenteditable="true" class="v4-editable-cell" style="color: #065f46; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25;">결제금액 0원?</div>
-                </div>
-            </div>
-        </div>
-        <div id="lbl_y3" class="bychoi-component" style="position: absolute; top: 160px; left: 1040px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #059669; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #047857; font-size: 13px; font-weight: 800; text-align: center;">Y</div>
-            </div>
-        </div>
-        <div id="zero_pay_note" class="bychoi-component" style="position: absolute; top: 150px; left: 1070px; width: 160px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #6ee7b7; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 10px !important; display: flex; align-items: center;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #065f46; font-size: 13px; font-weight: 700; text-align: center; line-height: 1.35;">전액 마일리지 결제<br>PG 생략 · 즉시 완료</div>
-                </div>
-            </div>
-        </div>
-        <div id="arr_zero_s4" class="bychoi-component" style="position: absolute; top: 180px; left: 1230px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
-        <div id="lbl_n3" class="bychoi-component" style="position: absolute; top: 240px; left: 950px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; font-weight: 800; text-align: center;">N</div>
-            </div>
-        </div>
-        <div id="n3_cancel_bg" class="bychoi-component" style="position: absolute; top: 280px; left: 1060px; width: 170px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fb7185; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n3_cancel_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 290px; left: 1070px; width: 150px; height: 20px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">PG창 사용자 취소</div>
-        </div>
-        <div id="n3_cancel_desc" class="bychoi-component" style="position: absolute; top: 320px; left: 1070px; width: 150px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #881337; font-size: 13px; text-align: center; line-height: 1.3;">주문서 유지 + Alert</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stage 4 : 주문완료 (#25) & 입금대기 (#26) -->
-        <div id="n4_comp_bg" class="bychoi-component" style="position: absolute; top: 150px; left: 1250px; width: 330px; height: 100px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #10b981; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n4_comp_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 160px; left: 1270px; width: 290px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #065f46; font-size: 15px; font-weight: 800; text-align: left; width: 100%; white-space: nowrap !important;">주문완료 (결제 확정 · #25)</div>
-        </div>
-        <div id="n4_comp_desc" class="bychoi-component" style="position: absolute; top: 190px; left: 1270px; width: 290px; height: 50px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #047857; font-size: 13px; text-align: left; line-height: 1.35;">출고 지시 전 [배송 정보 수정] 즉시 제공<br>할인·쿠폰·안분 마일리지 요약 &amp; 추천 상품</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="n4_va_bg" class="bychoi-component" style="position: absolute; top: 270px; left: 1250px; width: 330px; height: 100px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #3b82f6; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n4_va_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 280px; left: 1270px; width: 290px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 15px; font-weight: 800; text-align: left; width: 100%; white-space: nowrap !important;">주문완료 · 입금대기 (무통장 · #26)</div>
-        </div>
-        <div id="n4_va_desc" class="bychoi-component" style="position: absolute; top: 310px; left: 1270px; width: 290px; height: 50px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; text-align: left; line-height: 1.35;">가상계좌 발급 · 계좌번호 복사 제공<br>주문일 포함 +3일 23:59:59 입금 기한 안내</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- DOTTED DIVIDER 1 (Top: 390, Left: 20, Width: 1560)                  -->
-        <!-- =================================================================== -->
-        <div id="div_lane_1" class="bychoi-component" style="position: absolute; top: 390px; left: 20px; width: 1560px; height: 10px; z-index: 95;" data-resized="true">
-            <div class="v4-shape v4-shape-line" data-line-dir="horizontal" data-line-style="dotted" data-line-width="1.6" data-line-color="#94a3b8" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; overflow: visible;">
+        <!-- [4] DOTTED SECTION DIVIDER (Top: 535, Width: 1520) -->
+        <div id="div_table_sep" class="bychoi-component" style="position: absolute; top: 535px; left: 40px; width: 1520px; height: 10px; z-index: 95;" data-resized="true">
+            <div class="v4-shape v4-shape-line" data-line-dir="horizontal" data-line-style="dotted" data-line-width="1.6" data-line-color="#cbd5e1" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; overflow: visible;">
                 <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none;">
-                    <line class="v4-line-path" x1="0" y1="50" x2="100" y2="50" style="stroke: #94a3b8; stroke-width: 1.6; stroke-dasharray: 2 5; stroke-linecap: round; vector-effect: non-scaling-stroke;"></line>
+                    <line class="v4-line-path" x1="0" y1="50" x2="100" y2="50" style="stroke: #cbd5e1; stroke-width: 1.6; stroke-dasharray: 2 5; stroke-linecap: round; vector-effect: non-scaling-stroke;"></line>
                 </svg>
             </div>
         </div>
 
-        <!-- =================================================================== -->
-        <!-- [3] LANE 02 : 주문 API · KPN PG (Top: 410 ~ 620)                    -->
-        <!-- =================================================================== -->
-        <div id="lane2_card" class="bychoi-component" style="position: absolute; top: 410px; left: 20px; width: 150px; height: 210px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="lane2_badge" class="bychoi-component" style="position: absolute; top: 430px; left: 40px; width: 110px; height: 30px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0f172a; border: 1.6px solid #0f172a; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #38bdf8; font-size: 13px; font-weight: 800; text-align: center; width: 100%;">LANE 02</div>
-            </div>
-        </div>
-        <div id="lane2_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 480px; left: 30px; width: 130px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 15px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">주문 API · PG</div>
-        </div>
-        <div id="lane2_sub" class="bychoi-component" style="position: absolute; top: 520px; left: 30px; width: 130px; height: 60px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; text-align: center; line-height: 1.45;">실시간 재고검증<br>KPN 전자결제</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stage 1 API : Diamond 실시간 품절? -->
-        <div id="d1_rt_sold" class="bychoi-component" style="position: absolute; top: 420px; left: 190px; width: 150px; height: 90px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,2 98,50 50,98 2,50" style="fill: #fffbeb; stroke: #d97706; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
-                </svg>
-                <div class="v4-shape-text-content" style="width: 74%; z-index: 2; padding: 0 !important;">
-                    <div contenteditable="true" class="v4-editable-cell" style="color: #92400e; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25;">실시간 품절?</div>
-                </div>
-            </div>
-        </div>
-        <div id="lbl_y_sold1" class="bychoi-component" style="position: absolute; top: 430px; left: 330px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fffbeb; border: 1.6px solid #d97706; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #b45309; font-size: 13px; font-weight: 800; text-align: center;">Y</div>
-            </div>
-        </div>
-        <div id="arr_sold1" class="bychoi-component" style="position: absolute; top: 450px; left: 340px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
-        <div id="n1_sold_alert_bg" class="bychoi-component" style="position: absolute; top: 420px; left: 360px; width: 150px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fffbeb; border: 1.6px solid #f59e0b; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n1_sold_alert_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 430px; left: 370px; width: 130px; height: 20px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #b45309; font-size: 13px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">품절 제외 확인 (#17)</div>
-        </div>
-        <div id="n1_sold_alert_desc" class="bychoi-component" style="position: absolute; top: 460px; left: 370px; width: 130px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #78350f; font-size: 13px; text-align: center; line-height: 1.3;">확인 시 제외 후 진행</div>
-                </div>
-            </div>
-        </div>
-        <div id="lbl_n_sold1" class="bychoi-component" style="position: absolute; top: 530px; left: 190px; width: 320px; height: 70px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #f8fafc; border: 1.6px solid #cbd5e1; border-radius: 8px; padding: 10px; display: flex; align-items: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #334155; font-size: 13px; text-align: left; line-height: 1.35;"><strong>N (재고 정상)</strong> : 로그인 여부 검증 후 주문서 진입 (비회원 주문 불가 정책 적용)</div>
-            </div>
-        </div>
-
-        <!-- Stage 2 API : 승인 직전 품절? + KPN PG 플러그인 + 장바구니 복귀 -->
-        <div id="d2_pre_pg" class="bychoi-component" style="position: absolute; top: 420px; left: 530px; width: 160px; height: 90px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,2 98,50 50,98 2,50" style="fill: #fff1f2; stroke: #e11d48; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
-                </svg>
-                <div class="v4-shape-text-content" style="width: 74%; z-index: 2; padding: 0 !important;">
-                    <div contenteditable="true" class="v4-editable-cell" style="color: #9f1239; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25;">승인 직전 품절?</div>
-                </div>
-            </div>
-        </div>
-        <div id="lbl_n_prepg" class="bychoi-component" style="position: absolute; top: 430px; left: 680px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #059669; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #047857; font-size: 13px; font-weight: 800; text-align: center;">N</div>
-            </div>
-        </div>
-        <div id="arr_prepg_n" class="bychoi-component" style="position: absolute; top: 450px; left: 690px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
-        <div id="lbl_y_prepg" class="bychoi-component" style="position: absolute; top: 510px; left: 590px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #e11d48; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 800; text-align: center;">Y</div>
-            </div>
-        </div>
-
-        <div id="n2_return_cart" class="bychoi-component" style="position: absolute; top: 530px; left: 530px; width: 340px; height: 70px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fb7185; border-radius: 8px; padding: 10px; display: flex; align-items: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #9f1239; font-size: 13px; font-weight: 700; text-align: center; width: 100%; line-height: 1.35;">품절 안내 Alert 노출 → /cart/list 즉시 복귀 (#27)</div>
-            </div>
-        </div>
-
-        <div id="n2_kpn_bg" class="bychoi-component" style="position: absolute; top: 420px; left: 710px; width: 160px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #475569; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n2_kpn_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 430px; left: 720px; width: 140px; height: 20px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 13px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">KPN PG 플러그인</div>
-        </div>
-        <div id="n2_kpn_desc" class="bychoi-component" style="position: absolute; top: 460px; left: 720px; width: 140px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: center; line-height: 1.3;">인증 · 현금영수증</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="arr_kpn_pg" class="bychoi-component" style="position: absolute; top: 450px; left: 870px; width: 20px; height: 30px; z-index: 130;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="bychoi-icon" style="width: 100%; height: 100%; background-image: none !important;">
-                <line x1="2" y1="12" x2="20" y2="12"></line>
-                <polyline points="14 6 20 12 14 18"></polyline>
-            </svg>
-        </div>
-
-        <!-- Stage 3 API : PG 승인 결과 Diamond + 주문실패 -->
-        <div id="d3_pg_res" class="bychoi-component" style="position: absolute; top: 420px; left: 890px; width: 150px; height: 90px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,2 98,50 50,98 2,50" style="fill: #ecfdf5; stroke: #059669; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
-                </svg>
-                <div class="v4-shape-text-content" style="width: 74%; z-index: 2; padding: 0 !important;">
-                    <div contenteditable="true" class="v4-editable-cell" style="color: #065f46; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25;">PG 승인 결과</div>
-                </div>
-            </div>
-        </div>
-        <div id="lbl_n_pg" class="bychoi-component" style="position: absolute; top: 430px; left: 1030px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #e11d48; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 800; text-align: center;">N</div>
-            </div>
-        </div>
-        <div id="n3_fail_bg" class="bychoi-component" style="position: absolute; top: 420px; left: 1060px; width: 170px; height: 90px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #e11d48; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="n3_fail_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 430px; left: 1070px; width: 150px; height: 20px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">주문실패 / 재결제 (#27)</div>
-        </div>
-        <div id="n3_fail_desc" class="bychoi-component" style="position: absolute; top: 460px; left: 1070px; width: 150px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #881337; font-size: 13px; text-align: center; line-height: 1.3;">코드 매핑 · 다시결제</div>
-                </div>
-            </div>
-        </div>
-        <div id="lbl_y_pg_note" class="bychoi-component" style="position: absolute; top: 530px; left: 890px; width: 340px; height: 70px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #6ee7b7; border-radius: 8px; padding: 10px; display: flex; align-items: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #065f46; font-size: 13px; text-align: left; line-height: 1.35;"><strong>Y (승인 분기)</strong> : 카드/간편/계좌 → <strong>주문완료(#25)</strong><br>무통장(가상계좌 발급) → <strong>입금대기(#26)</strong></div>
-            </div>
-        </div>
-
-        <!-- Stage 4 API : +3일 내 입금? -->
-        <div id="d4_va_deadline" class="bychoi-component" style="position: absolute; top: 420px; left: 1250px; width: 160px; height: 90px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-diamond" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; position: relative;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;">
-                    <polygon points="50,2 98,50 50,98 2,50" style="fill: #eff6ff; stroke: #2563eb; stroke-width: 1.6; vector-effect: non-scaling-stroke;"></polygon>
-                </svg>
-                <div class="v4-shape-text-content" style="width: 74%; z-index: 2; padding: 0 !important;">
-                    <div contenteditable="true" class="v4-editable-cell" style="color: #1e3a8a; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.25;">+3일 내 입금?</div>
-                </div>
-            </div>
-        </div>
-        <div id="lbl_y_va" class="bychoi-component" style="position: absolute; top: 530px; left: 1250px; width: 160px; height: 70px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #93c5fd; border-radius: 8px; padding: 10px; display: flex; align-items: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1e40af; font-size: 13px; text-align: center; width: 100%; line-height: 1.35;"><strong>Y (금액 1원 일치)</strong><br>결제완료 전환 · 현금영수증</div>
-            </div>
-        </div>
-        <div id="lbl_n_va" class="bychoi-component" style="position: absolute; top: 430px; left: 1400px; width: 30px; height: 20px; z-index: 130;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #e11d48; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 800; text-align: center;">N</div>
-            </div>
-        </div>
-        <div id="n4_va_exp" class="bychoi-component" style="position: absolute; top: 420px; left: 1430px; width: 150px; height: 180px; z-index: 110;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #e11d48; border-radius: 10px; padding: 14px; display: flex; align-items: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #9f1239; font-size: 13px; font-weight: 700; text-align: center; width: 100%; line-height: 1.45;">주문일+3일<br>23:59:59 만료<br><span style="font-weight: 400; color: #881337;">미입금 주문<br>자동 취소 트리거</span></div>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- DOTTED DIVIDER 2 (Top: 640, Left: 20, Width: 1560)                  -->
-        <!-- =================================================================== -->
-        <div id="div_lane_2" class="bychoi-component" style="position: absolute; top: 640px; left: 20px; width: 1560px; height: 10px; z-index: 95;" data-resized="true">
-            <div class="v4-shape v4-shape-line" data-line-dir="horizontal" data-line-style="dotted" data-line-width="1.6" data-line-color="#94a3b8" style="width: 100%; height: 100%; background: transparent; border: none !important; display: flex; align-items: center; justify-content: center; overflow: visible;">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none;">
-                    <line class="v4-line-path" x1="0" y1="50" x2="100" y2="50" style="stroke: #94a3b8; stroke-width: 1.6; stroke-dasharray: 2 5; stroke-linecap: round; vector-effect: non-scaling-stroke;"></line>
-                </svg>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- [4] LANE 03 : 통합재고 · 혜택 원장 · 자동 복원 (Top: 660 ~ 870)       -->
-        <!-- =================================================================== -->
-        <div id="lane3_card" class="bychoi-component" style="position: absolute; top: 660px; left: 20px; width: 150px; height: 210px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="lane3_badge" class="bychoi-component" style="position: absolute; top: 680px; left: 40px; width: 110px; height: 30px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #0d9488; border: 1.6px solid #0d9488; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #ffffff; font-size: 13px; font-weight: 800; text-align: center; width: 100%;">LANE 03</div>
-            </div>
-        </div>
-        <div id="lane3_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 730px; left: 30px; width: 130px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 15px; font-weight: 800; text-align: center; width: 100%; white-space: nowrap !important;">재고 · 원장</div>
-        </div>
-        <div id="lane3_sub" class="bychoi-component" style="position: absolute; top: 770px; left: 30px; width: 130px; height: 60px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #64748b; font-size: 13px; text-align: center; line-height: 1.45;">OMS · 마일리지<br>알림 · 자동 배치</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Lane 3 Card 1 -->
-        <div id="l3_c1_bg" class="bychoi-component" style="position: absolute; top: 660px; left: 190px; width: 320px; height: 210px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="l3_c1_badge" class="bychoi-component" style="position: absolute; top: 680px; left: 210px; width: 110px; height: 30px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eff6ff; border: 1.6px solid #93c5fd; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #1d4ed8; font-size: 13px; font-weight: 800; text-align: center;">STOCK SYNC</div>
-            </div>
-        </div>
-        <div id="l3_c1_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 720px; left: 210px; width: 280px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 14px; font-weight: 800; text-align: left; width: 100%; white-space: nowrap !important;">온·오프라인 통합재고 · 보관 관리</div>
-        </div>
-        <div id="l3_c1_b1" class="bychoi-component" style="position: absolute; top: 760px; left: 210px; width: 280px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: left; line-height: 1.4;">• 장바구니 '품절임박' 통합재고 기준 산정 노출</div>
-                </div>
-            </div>
-        </div>
-        <div id="l3_c1_b2" class="bychoi-component" style="position: absolute; top: 810px; left: 210px; width: 280px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: left; line-height: 1.4;">• 장바구니 등록 30일 경과 상품 배치 일괄 삭제</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Lane 3 Card 2 -->
-        <div id="l3_c2_bg" class="bychoi-component" style="position: absolute; top: 660px; left: 530px; width: 340px; height: 210px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="l3_c2_badge" class="bychoi-component" style="position: absolute; top: 680px; left: 550px; width: 140px; height: 30px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #eef2ff; border: 1.6px solid #a5b4fc; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #4338ca; font-size: 13px; font-weight: 800; text-align: center;">BENEFIT GUARD</div>
-            </div>
-        </div>
-        <div id="l3_c2_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 720px; left: 550px; width: 300px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 14px; font-weight: 800; text-align: left; width: 100%; white-space: nowrap !important;">쿠폰 · 마일리지 선점 및 비활성화 제어</div>
-        </div>
-        <div id="l3_c2_b1" class="bychoi-component" style="position: absolute; top: 760px; left: 550px; width: 300px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: left; line-height: 1.4;">• PG 실패/사용자 취소 시 차감 없이 즉시 100% 원복</div>
-                </div>
-            </div>
-        </div>
-        <div id="l3_c2_b2" class="bychoi-component" style="position: absolute; top: 810px; left: 550px; width: 300px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: left; line-height: 1.4;">• 특가 쿠폰 등 적립 제외 시 구매 마일리지 라디오 비활성</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Lane 3 Card 3 -->
-        <div id="l3_c3_bg" class="bychoi-component" style="position: absolute; top: 660px; left: 890px; width: 340px; height: 210px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="l3_c3_badge" class="bychoi-component" style="position: absolute; top: 680px; left: 910px; width: 150px; height: 30px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ecfdf5; border: 1.6px solid #6ee7b7; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #047857; font-size: 13px; font-weight: 800; text-align: center;">COMMIT &amp; NOTIFY</div>
-            </div>
-        </div>
-        <div id="l3_c3_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 720px; left: 910px; width: 300px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 14px; font-weight: 800; text-align: left; width: 100%; white-space: nowrap !important;">승인 확정 차감 및 주문 · 가상계좌 알림</div>
-        </div>
-        <div id="l3_c3_b1" class="bychoi-component" style="position: absolute; top: 760px; left: 910px; width: 300px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: left; line-height: 1.4;">• 승인 즉시 실물 재고 차감 · 장바구니 주문 상품 삭제</div>
-                </div>
-            </div>
-        </div>
-        <div id="l3_c3_b2" class="bychoi-component" style="position: absolute; top: 810px; left: 910px; width: 300px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: left; line-height: 1.4;">• 주문/배송 및 입금계좌 정보 이메일 · 알림톡/SMS 발송</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Lane 3 Card 4 -->
-        <div id="l3_c4_bg" class="bychoi-component" style="position: absolute; top: 660px; left: 1250px; width: 330px; height: 210px; z-index: 100;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #fecdd3; border-radius: 10px;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%;"><p><br></p></div>
-            </div>
-        </div>
-        <div id="l3_c4_badge" class="bychoi-component" style="position: absolute; top: 680px; left: 1270px; width: 140px; height: 30px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: #fff1f2; border: 1.6px solid #fda4af; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                <div class="v4-editable-cell" contenteditable="true" style="color: #be123c; font-size: 13px; font-weight: 800; text-align: center;">AUTO ROLLBACK</div>
-            </div>
-        </div>
-        <div id="l3_c4_title" class="bychoi-component v4-text-shape" style="position: absolute; top: 720px; left: 1270px; width: 290px; height: 30px; z-index: 120; white-space: nowrap !important;">
-            <div class="v4-editable-cell" contenteditable="true" style="color: #0f172a; font-size: 14px; font-weight: 800; text-align: left; width: 100%; white-space: nowrap !important;">가상계좌 미입금 자동 취소 · 원복 배치</div>
-        </div>
-        <div id="l3_c4_b1" class="bychoi-component" style="position: absolute; top: 760px; left: 1270px; width: 290px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: left; line-height: 1.4;">• 입금액 1원 단위 일치 검증 · 미입금 자동취소 처리</div>
-                </div>
-            </div>
-        </div>
-        <div id="l3_c4_b2" class="bychoi-component" style="position: absolute; top: 810px; left: 1270px; width: 290px; height: 40px; z-index: 120;" data-resized="true">
-            <div class="v4-shape v4-shape-rect" style="width: 100%; height: 100%; background: transparent; border: 1.6px solid transparent;">
-                <div class="v4-shape-text-content" style="width: 100%; height: 100%; padding: 0 !important;">
-                    <div class="v4-editable-cell" contenteditable="true" style="color: #475569; font-size: 13px; text-align: left; line-height: 1.4;">• 점유 재고 · 적용 쿠폰 · 마일리지 즉시 100% 복원</div>
-                </div>
-            </div>
+        <!-- [5] BOTTOM EXCEPTION & SYSTEM SPEC TABLE (Top: 560, Width: 1520, Height: 300) -->
+        <div id="flow_spec_tbl" class="bychoi-component" style="position: absolute; top: 560px; left: 40px; width: 1520px; height: 300px; z-index: 110;" data-resized="true">
+            <table class="v4-premium-table" style="width: 100%; height: 100%; background: #ffffff; border: 1.6px solid #cbd5e1; color: #0f172a; font-family: inherit; table-layout: fixed; border-collapse: collapse; box-sizing: border-box;">
+                <colgroup>
+                    <col style="width: 210px;">
+                    <col style="width: 280px;">
+                    <col style="width: 500px;">
+                    <col style="width: 530px;">
+                </colgroup>
+                <thead>
+                    <tr style="height: 40px;">
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #334155; color: #ffffff; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">구분 (화면)</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #334155; color: #ffffff; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">발생 조건 · 분기 기준</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #334155; color: #ffffff; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">프론트 처리 (Front UI)</th>
+                        <th contenteditable="true" class="v4-editable-cell" style="background: #334155; color: #ffffff; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">시스템 · 재고 · 혜택 처리 (OMS / KPN PG)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="height: 52px;"><td contenteditable="true" class="v4-editable-cell" style="background: #f8fafc; color: #0f172a; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">비회원 주문 제한 (#15)</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">로그아웃 상태 [주문하기] · [바로구매]</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">로그인 안내 Alert 노출 후 로그인 이동 (returnUrl 유지)</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">로그인 즉시 비회원 장바구니 상품 자동 병합 (동일 옵션 수량 합산)</td></tr>
+                    <tr style="height: 52px;"><td contenteditable="true" class="v4-editable-cell" style="background: #f8fafc; color: #0f172a; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">실시간 품절 검증 (#17·#27)</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">주문서 진입 또는 PG 승인 직전 품절</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">진입 시 품절 제외 확인 Alert(#17) / 승인 직전 품절 시 장바구니 복귀(#27)</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">온·오프라인 통합재고 실시간 체크 · 미결제 상태 혜택 차감 없음</td></tr>
+                    <tr style="height: 52px;"><td contenteditable="true" class="v4-editable-cell" style="background: #f8fafc; color: #0f172a; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">복합 할인 · 0원 결제 (#18)</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">쿠폰 · 보유 마일리지(10M 단위) 전액 적용</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">실결제 0원 시 결제수단 비활성화 · [결제하기] 즉시 주문완료 진입</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">KPN PG 호출 생략 · 특가쿠폰 등 적립 제외 시 구매 마일리지 라디오 비활성</td></tr>
+                    <tr style="height: 52px;"><td contenteditable="true" class="v4-editable-cell" style="background: #f8fafc; color: #0f172a; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">PG 취소 · 승인 실패 (#27)</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">결제창 사용자 취소 또는 한도·오류 거절</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">사용자 취소 시 주문서 유지 Alert / 승인 거절 시 주문실패(#27) 안내</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">쿠폰 · 보유 마일리지 · 재고 차감 없이 100% 유지 ([다시 결제하기] 복귀)</td></tr>
+                    <tr style="height: 52px;"><td contenteditable="true" class="v4-editable-cell" style="background: #f8fafc; color: #0f172a; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 700; padding: 0 12px; text-align: center; vertical-align: middle; box-sizing: border-box;">무통장 입금대기 · 만료 (#26)</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">가상계좌 발급 후 +3일 23:59:59 도래</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">입금대기 완료(#26) 화면 내 가상계좌 복사 및 입금 기한 명시</td><td contenteditable="true" class="v4-editable-cell" style="background: #ffffff; color: #334155; border: 1.6px solid #cbd5e1; font-size: 13px; font-weight: 400; padding: 0 12px; text-align: left; vertical-align: middle; line-height: 1.35; box-sizing: border-box;">기한 내 1원 단위 입금 일치 시 결제확정 / 미입금 시 자동취소 및 재고·혜택 복원</td></tr>
+                </tbody>
+            </table>
         </div>
 
     </div>

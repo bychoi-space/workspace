@@ -684,5 +684,19 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/order_strategy_complete_curation.png',
             previewHtml: `<img src="assets/illustrations/order_strategy_complete_curation.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_strategy_complete_curation.png" alt="3D 주문완료 UI 개선 전략" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-sisun-keycolor-beige',
+            name: '[3D] 키컬러 전략',
+            title: '3D 시선닷컴 베이지 키컬러 & 브랜드 아이덴티티 (Brand Key Color)',
+            koName: '3d 시선닷컴 베이지 키컬러 브랜드 아이덴티티 포인트컬러 스와치 sisun beige key color brand',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '220px',
+            height: '260px',
+            thumb: 'assets/illustrations/sisun_brand_keycolor_beige.png',
+            previewHtml: `<img src="assets/illustrations/sisun_brand_keycolor_beige.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/sisun_brand_keycolor_beige.png" alt="시선닷컴 베이지 키컬러 전략" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
 ];

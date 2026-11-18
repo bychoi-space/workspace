@@ -1307,6 +1307,17 @@
       "version": 0.1,
       "defaultTab": "description",
       "screenDesc": ""
+    },
+    "04_Brand_KeyColor_Strategy.html": {
+      "title": "시선닷컴 키컬러(Beige) 도입 전략",
+      "type": "plan",
+      "updatedAt": "2026-11-18T01:37:59.062Z",
+      "template": "template_process.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "editor",
+      "screenDesc": "시선닷컴(SISUN.COM) 브랜드 정체성 확립을 위한 포인트 키컬러(Beige) 선정 배경 및 점진적 스며들기(Gradual Permeation) 3단계 적용 전략"
     }
   },
   "assignee": "최범열",
@@ -1323,6 +1334,7 @@
     "99_Blank_925.html",
     "99_Blank_926.html",
     "03_Order_UI_Improvement_Strategy.html",
+    "04_Brand_KeyColor_Strategy.html",
     "renewal_cart_2.html",
     "renewal_cart_4.html",
     "renewal_cart_6.html",
@@ -1333,7 +1345,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-18 10:06:47",
+  "updated": "2026-11-18 10:37:59",
   "version": 0.2,
   "category": "project"
 }

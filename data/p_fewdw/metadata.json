@@ -6,7 +6,9 @@
       "type": "cover",
       "updatedAt": "2026-11-17T05:07:53.889Z",
       "template": "template_cover.html",
-      "version": 0.1
+      "version": 0.1,
+      "description": [],
+      "connectors": []
     },
     "01_Project_Summary_365.html": {
       "description": [
@@ -63,7 +65,7 @@
         }
       ],
       "connectors": [],
-      "updatedAt": "2026-11-17T05:23:34.150Z",
+      "updatedAt": "2026-11-18T01:23:12.488Z",
       "version": 0.1
     },
     "09_Admin_PC_Scroll_406.html": {
@@ -255,6 +257,6 @@
   "themeIndex": 1,
   "category": "admin",
   "period": "",
-  "updated": "2026-11-17 14:30:21",
+  "updated": "2026-11-18 10:23:12",
   "version": 0.1
 }

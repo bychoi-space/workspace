@@ -810,7 +810,7 @@
     "renewal_cart_4.html": {
       "title": "장바구니 (To-Be) 옵션변경",
       "type": "ui",
-      "updatedAt": "2026-11-16T01:12:03.003Z",
+      "updatedAt": "2026-11-18T00:31:25.311Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -949,7 +949,7 @@
         }
       ],
       "connectors": [],
-      "version": 0.1,
+      "version": 0.2,
       "defaultTab": "description",
       "screenDesc": "[object Object],[object Object]"
     },
@@ -1333,7 +1333,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-17 17:28:28",
+  "updated": "2026-11-18 09:31:25",
   "version": 0.2,
   "category": "project"
 }

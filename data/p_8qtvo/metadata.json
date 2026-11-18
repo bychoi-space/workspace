@@ -10,6 +10,17 @@
       "description": [],
       "connectors": []
     },
+    "01_Project_Summary.html": {
+      "title": "과제 개요",
+      "type": "plan",
+      "updatedAt": "2026-11-18T04:56:34.865Z",
+      "template": "template_project_summary.html",
+      "description": [],
+      "connectors": [],
+      "version": 0.2,
+      "defaultTab": "editor",
+      "screenDesc": "시선닷컴(SISUN.COM) Front 주문(장바구니 · 주문서 · 주문완료) 리뉴얼 과제 목적, 작업 범위 및 마일스톤 일정 개요"
+    },
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
       "type": "ui",
@@ -2072,6 +2083,7 @@
   "themeIndex": 3,
   "screenOrder": [
     "00_Cover_234.html",
+    "01_Project_Summary.html",
     "01_Order_Policy_Overview.html",
     "02_Front_IA_Specification.html",
     "99_Blank_924.html",
@@ -2094,7 +2106,7 @@
     "renewal_payEnd_2.html",
     "renewal_payFail.html"
   ],
-  "updated": "2026-11-18 12:05:54",
+  "updated": "2026-11-18 13:56:34",
   "version": 0.2,
   "category": "project"
 }

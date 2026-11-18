@@ -13,7 +13,7 @@
     "01_Project_Summary.html": {
       "title": "과제 개요",
       "type": "plan",
-      "updatedAt": "2026-11-18T04:56:34.865Z",
+      "updatedAt": "2026-11-18T05:04:34.113Z",
       "template": "template_project_summary.html",
       "description": [],
       "connectors": [],
@@ -2106,7 +2106,7 @@
     "renewal_payEnd_2.html",
     "renewal_payFail.html"
   ],
-  "updated": "2026-11-18 13:56:34",
+  "updated": "2026-11-18 14:04:33",
   "version": 0.2,
   "category": "project"
 }

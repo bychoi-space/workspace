@@ -5529,9 +5529,9 @@ td.v4-editable-cell:focus {
     left: 0;
     top: 0;
     bottom: 0;
-    width: 3px;
+    width: 3.5px;
     background: #64748b;
-    opacity: 0.85;
+    opacity: 0.95;
 }
 
 #sidebar-left.collapsed .screen-collapsed-chip.badge-cover::before {
@@ -5547,7 +5547,7 @@ td.v4-editable-cell:focus {
 }
 
 #sidebar-left.collapsed .screen-collapsed-chip.badge-analysis::before {
-    background: #22d3ee;
+    background: #f43f5e;
 }
 
 #sidebar-left.collapsed .screen-collapsed-chip.badge-case-study::before {

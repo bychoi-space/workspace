@@ -779,6 +779,52 @@ body.editor-page #sidebar-left.collapsed .screen-item.active .screen-collapsed-c
     color: #ffffff !important;
 }
 
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip {
+    opacity: 0.9 !important;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip::before {
+    opacity: 1 !important;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-cover::before {
+    background: #6366f1;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-architecture::before {
+    background: #10b981;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-plan::before {
+    background: #f59e0b;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-analysis::before {
+    background: #e11d48;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-case-study::before {
+    background: #ea580c;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-ui::before {
+    background: #2563eb;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-responsive-ui::before {
+    background: #7c3aed;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-mobile-ui::before {
+    background: #9333ea;
+}
+
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-admin::before,
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-admin-nbos::before,
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .screen-item:not(.active) .screen-collapsed-chip.badge-admin-modern::before {
+    background: #64748b;
+}
+
 /* Left Sidebar Footer */
 body.editor-page .sidebar-footer,
 body.editor-page #sidebar-footer {

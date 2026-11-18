@@ -2005,13 +2005,13 @@
     "05_Order_Process_Flowchart.html": {
       "title": "주문 · 결제 프로세스 흐름도 (E2E)",
       "type": "analysis",
-      "updatedAt": "2026-11-18T07:43:44.384Z",
+      "updatedAt": "2026-11-18T08:42:00.000Z",
       "template": "template_process.html",
       "version": 0.1,
       "defaultTab": "editor",
       "description": [],
       "connectors": [],
-      "screenDesc": "시선닷컴 장바구니 · 주문서 · KPN PG 결제 · 주문완료/무통장 입금대기 · 주문실패 정상 및 예외 분기 통합 흐름도"
+      "screenDesc": "시선닷컴 장바구니 · 주문서 · KPN PG · 백엔드(Admin) 결제 확정 및 예외 분기 통합 흐름도"
     },
     "06_Discount_Allocation_Simulation.html": {
       "title": "[초안] 복합 할인 · 안분 정산 시뮬레이션",

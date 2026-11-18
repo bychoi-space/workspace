@@ -24,7 +24,7 @@
     "02_Front_IA_Specification.html": {
       "title": "시선닷컴 Front IA (계층구조 정의서)",
       "type": "ui",
-      "updatedAt": "2026-11-18T02:36:55.347Z",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -46,14 +46,14 @@
     "renewal_order_2.html": {
       "title": "주문서 (Te-Be)",
       "type": "ui",
-      "updatedAt": "2026-11-18T02:36:55.347Z",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "[배송 정보] 영역\n- 최상단 배송 정보 영역으로 배치 수정\n- 로그인 된 회원의 기본배송지 호출\n- 배송지 정보가 없을 경우 다음 스크린 참고\n\n\n※ 비회원 (로그아웃) 상태 진입 불가\n※ 비회원 주문 불가 정책",
-          "html": "[배송 정보] 영역<div>- 최상단 배송 정보 영역으로 배치 수정</div><div>- 로그인 된 회원의 기본배송지 호출</div><div>- 배송지 정보가 없을 경우 다음 스크린 참고</div><div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">※ 비회원 (로그아웃) 상태 진입 불가</span></div><div><span style=\"font-weight: bold;\"><span style=\"color: rgb(251, 191, 36);\">※ 비회원 주문 불가 정책</span> </span></div>",
+          "text": "[배송 정보] 영역\n- 최상단 배송 정보 영역으로 배치 수정\n- 로그인 된 회원의 기본배송지 호출\n- 배송지 정보가 없을 경우 다음 스크린 참고\n- [배송 요청사항] 셀렉트박스 5종 옵션 제공\n   : 부재 시 경비(관리)실에 맡겨주세요. / 문 앞에 놓아주세요. / 택배함에 보관해주세요. / 배송 전 연락 부탁드립니다. / 직접 입력\n   : '직접 입력' 선택 시 하단 텍스트박스 확장 노출 (최대 50자, 상세 UI는 '주문서 (To-Be) 무통장입금' 스크린 참고)\n\n\n※ 비회원 (로그아웃) 상태 진입 불가\n※ 비회원 주문 불가 정책",
+          "html": "[배송 정보] 영역<div>- 최상단 배송 정보 영역으로 배치 수정</div><div>- 로그인 된 회원의 기본배송지 호출</div><div>- 배송지 정보가 없을 경우 다음 스크린 참고</div><div>- [배송 요청사항] 셀렉트박스 5종 옵션 제공\n   : 부재 시 경비(관리)실에 맡겨주세요. / 문 앞에 놓아주세요. / 택배함에 보관해주세요. / 배송 전 연락 부탁드립니다. / 직접 입력\n   : '직접 입력' 선택 시 하단 텍스트박스 확장 노출 (최대 50자, 상세 UI는 '주문서 (To-Be) 무통장입금' 스크린 참고)</div><div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">※ 비회원 (로그아웃) 상태 진입 불가</span></div><div><span style=\"font-weight: bold;\"><span style=\"color: rgb(251, 191, 36);\">※ 비회원 주문 불가 정책</span> </span></div>",
           "x": 20,
           "y": 175,
           "pins": {
@@ -690,14 +690,14 @@
     "renewal_order_4.html": {
       "title": "주문서 (Te-Be) 배송지없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-18T02:36:55.347Z",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "[배송 정보] 영역\n- 로그인 된 회원의 등록된 배송지 정보가 없을 경우 입력 폼 즉시 노출\n- [기본배송지] 플래그 및 [배송지 변경] 버튼 미노출\n- 필수 입력 항목 : 이름, 주소, 연락처\n- 선택 입력 항목 : 배송 요청사항\n\n\n※ 필수 항목 미입력 상태에서 [결제하기] 클릭 시 입력 안내 얼럿 노출",
-          "html": "[배송 정보] 영역<div>- 로그인 된 회원의 등록된 배송지 정보가 없을 경우 입력 폼 즉시 노출</div><div>- [기본배송지] 플래그 및 [배송지 변경] 버튼 미노출</div><div>- 필수 입력 항목 : 이름, 주소, 연락처</div><div>- 선택 입력 항목 : 배송 요청사항</div><div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">※ 필수 항목 미입력 상태에서 [결제하기] 클릭 시 입력 안내 얼럿 노출</span></div>",
+          "text": "[배송 정보] 영역\n- 로그인 된 회원의 등록된 배송지 정보가 없을 경우 입력 폼 즉시 노출\n- [기본배송지] 플래그 및 [배송지 변경] 버튼 미노출\n- 필수 입력 항목 : 이름, 주소, 연락처\n- 선택 입력 항목 : 배송 요청사항\n   : [배송 요청사항] 5종 옵션 제공 및 '직접 입력' 선택 시 최대 50자 입력란 확장 노출 (공통)\n   : [배송 요청사항] 5종 옵션 제공 및 '직접 입력' 선택 시 최대 50자 입력란 확장 노출 (공통)\n\n\n※ 필수 항목 미입력 상태에서 [결제하기] 클릭 시 입력 안내 얼럿 노출",
+          "html": "[배송 정보] 영역<div>- 로그인 된 회원의 등록된 배송지 정보가 없을 경우 입력 폼 즉시 노출</div><div>- [기본배송지] 플래그 및 [배송지 변경] 버튼 미노출</div><div>- 필수 입력 항목 : 이름, 주소, 연락처</div><div>- 선택 입력 항목 : 배송 요청사항</div><div>   : [배송 요청사항] 5종 옵션 제공 및 '직접 입력' 선택 시 최대 50자 입력란 확장 노출 (공통)</div><div>   : [배송 요청사항] 5종 옵션 제공 및 '직접 입력' 선택 시 최대 50자 입력란 확장 노출 (공통)</div><div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">※ 필수 항목 미입력 상태에서 [결제하기] 클릭 시 입력 안내 얼럿 노출</span></div>",
           "x": 20,
           "y": 175,
           "pins": {
@@ -956,14 +956,14 @@
     "renewal_order_6.html": {
       "title": "주문서 (Te-Be) 배송지변경",
       "type": "ui",
-      "updatedAt": "2026-11-18T02:36:55.347Z",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
           "type": "pin",
           "target": "frame",
-          "text": "[배송지 변경] 팝업\n- 바닥 화면 '배송지 변경' 버튼 클릭 시 팝업 호출\n- [새로운 배송지] / [배송지 목록] 탭 구조로 구성\n- 팝업 최초 호출 시 Default 노출 탭 : [배송지 목록] 탭 활성화\n\n\n※ PC 화면은 탭별 UI 확인을 위해 팝업을 좌/우 병렬 배치하여 표현",
-          "html": "[배송지 변경] 팝업<div>- 바닥 화면 '배송지 변경' 버튼 클릭 시 팝업 호출</div><div>- [새로운 배송지] / [배송지 목록] 탭 구조로 구성</div><div>- 팝업 최초 호출 시 Default 노출 탭 : [배송지 목록] 탭 활성화</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ PC 화면은 탭별 UI 확인을 위해 팝업을 좌/우 병렬 배치하여 표현</span></div>",
+          "text": "[배송지 변경] 팝업\n- 바닥 화면 '배송지 변경' 버튼 클릭 시 팝업 호출\n- [새로운 배송지] / [배송지 목록] 탭 구조로 구성\n- 팝업 최초 호출 시 Default 노출 탭 : [배송지 목록] 탭 활성화\n\n\n※ PC 화면은 탭별 UI 확인을 위해 팝업을 좌/우 병렬 배치하여 표현\n※ Mobile 화면의 [배송지 목록] 탭 UI 및 동작 로직은 PC [배송지 목록] 탭과 동일하여 화면 설계서 내 중복 표현 생략",
+          "html": "[배송지 변경] 팝업<div>- 바닥 화면 '배송지 변경' 버튼 클릭 시 팝업 호출</div><div>- [새로운 배송지] / [배송지 목록] 탭 구조로 구성</div><div>- 팝업 최초 호출 시 Default 노출 탭 : [배송지 목록] 탭 활성화</div><div><br></div><div><span style=\"color: rgb(251, 191, 36);\">※ PC 화면은 탭별 UI 확인을 위해 팝업을 좌/우 병렬 배치하여 표현</span></div><div><span style=\"color: rgb(251, 191, 36);\">※ Mobile 화면의 [배송지 목록] 탭 UI 및 동작 로직은 PC [배송지 목록] 탭과 동일하여 화면 설계서 내 중복 표현 생략</span></div>",
           "x": 155,
           "y": 95,
           "pins": {
@@ -998,8 +998,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[새로운 배송지] 탭\n- 신규 배송지 정보 직접 입력 기능 제공\n   : 필수 입력 - 이름, 주소([주소찾기] 연동), 연락처\n   : 선택 입력 - 배송 요청사항\n- '기본배송지 등록' Check Box 제공 (Default 활성화)\n   : 활성화 시 회원 기본배송지로 저장 및 바닥 화면 배송 정보에 반영\n   : 비활성화 시 현재 주문서에만 일회성 배송지로 반영",
-          "html": "[새로운 배송지] 탭<div>- 신규 배송지 정보 직접 입력 기능 제공\n   : 필수 입력 - 이름, 주소([주소찾기] 연동), 연락처\n   : 선택 입력 - 배송 요청사항</div><div>- '기본배송지 등록' Check Box 제공 (Default 활성화)\n   : 활성화 시 회원 기본배송지로 저장 및 바닥 화면 배송 정보에 반영\n   : 비활성화 시 현재 주문서에만 일회성 배송지로 반영</div>",
+          "text": "[새로운 배송지] 탭\n- 신규 배송지 정보 직접 입력 기능 제공\n   : 필수 입력 - 이름, 주소([주소찾기] 연동), 연락처\n   : 선택 입력 - 배송 요청사항 (5종 옵션 및 '직접 입력' 최대 50자 정책 동일 적용)\n- '기본배송지 등록' Check Box 제공 (Default 활성화)\n   : 활성화 시 회원 기본배송지로 저장 및 바닥 화면 배송 정보에 반영\n   : 비활성화 시 현재 주문서에만 일회성 배송지로 반영",
+          "html": "[새로운 배송지] 탭<div>- 신규 배송지 정보 직접 입력 기능 제공\n   : 필수 입력 - 이름, 주소([주소찾기] 연동), 연락처\n   : 선택 입력 - 배송 요청사항 (5종 옵션 및 '직접 입력' 최대 50자 정책 동일 적용)</div><div>- '기본배송지 등록' Check Box 제공 (Default 활성화)\n   : 활성화 시 회원 기본배송지로 저장 및 바닥 화면 배송 정보에 반영\n   : 비활성화 시 현재 주문서에만 일회성 배송지로 반영</div>",
           "x": 175,
           "y": 155,
           "pins": {
@@ -1070,8 +1070,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "[배송지 목록] 탭\n- 회원 계정에 등록된 배송지 리스트 호출 ([기본배송지] 최상단 고정 노출)\n- 리스트 내 [적용] 버튼 클릭 시 선택한 배송지 정보를 바닥 화면에 반영 후 팝업 자동 닫힘 처리\n- 리스트 내 [수정] 버튼 클릭 시 선택한 배송지 정보가 세팅된 입력 폼으로 전환되어 수정 가능",
-          "html": "[배송지 목록] 탭<div>- 회원 계정에 등록된 배송지 리스트 호출 ([기본배송지] 최상단 고정 노출)</div><div>- 리스트 내 [적용] 버튼 클릭 시 선택한 배송지 정보를 바닥 화면에 반영 후 팝업 자동 닫힘 처리</div><div>- 리스트 내 [수정] 버튼 클릭 시 선택한 배송지 정보가 세팅된 입력 폼으로 전환되어 수정 가능</div>",
+          "text": "[배송지 목록] 탭\n- 회원 계정에 등록된 배송지 리스트 호출 ([기본배송지] 최상단 고정 노출)\n- 리스트 내 [적용] 버튼 클릭 시 선택한 배송지 정보를 바닥 화면에 반영 후 팝업 자동 닫힘 처리\n- 리스트 내 [수정] 버튼 클릭 시 선택한 배송지 정보가 세팅된 입력 폼으로 전환되어 수정 가능\n- 배송지 삭제 기능 미제공 : 주문서 내 오삭제 방지를 위해 본 팝업에서는 [적용] / [수정] 기능만 제공하며, 등록 배송지 삭제 관리는 마이페이지 > [배송지 관리] 화면에서 수행",
+          "html": "[배송지 목록] 탭<div>- 회원 계정에 등록된 배송지 리스트 호출 ([기본배송지] 최상단 고정 노출)</div><div>- 리스트 내 [적용] 버튼 클릭 시 선택한 배송지 정보를 바닥 화면에 반영 후 팝업 자동 닫힘 처리</div><div>- 리스트 내 [수정] 버튼 클릭 시 선택한 배송지 정보가 세팅된 입력 폼으로 전환되어 수정 가능</div><div>- 배송지 삭제 기능 미제공 : 주문서 내 오삭제 방지를 위해 본 팝업에서는 [적용] / [수정] 기능만 제공하며, 등록 배송지 삭제 관리는 마이페이지 > [배송지 관리] 화면에서 수행</div>",
           "x": 785,
           "y": 155,
           "pins": {
@@ -1112,7 +1112,7 @@
     "renewal_order_3.html": {
       "title": "주문서 (Te-Be) 결제약관보기",
       "type": "ui",
-      "updatedAt": "2026-11-18T02:36:55.347Z",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -1318,6 +1318,750 @@
       "version": 0.1,
       "defaultTab": "editor",
       "screenDesc": "시선닷컴(SISUN.COM) 브랜드 정체성 확립을 위한 포인트 키컬러(Beige) 선정 배경 및 점진적 스며들기(Gradual Permeation) 3단계 적용 전략"
+    },
+    "renewal_cart_7.html": {
+      "title": "장바구니 (To-Be) 품절상품",
+      "type": "ui",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[품절상품 삭제] 버튼\n- 장바구니 내 품절(Sold Out) 상태인 상품만 일괄 삭제 처리 (확인 얼럿 후 삭제)\n- 품절 상품이 0개인 경우 클릭 시 '품절된 상품이 없습니다.' 안내 얼럿 노출",
+          "html": "[품절상품 삭제] 버튼<div>- 장바구니 내 품절(Sold Out) 상태인 상품만 일괄 삭제 처리 (확인 얼럿 후 삭제)</div><div>- 품절 상품이 0개인 경우 클릭 시 '품절된 상품이 없습니다.' 안내 얼럿 노출</div>",
+          "x": 580,
+          "y": 242,
+          "pins": {
+            "pc": {
+              "x": 580,
+              "y": 242,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 185,
+              "y": 112,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 580,
+              "y": 242,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 185,
+              "y": 112,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "품절(Sold Out) 상품 표시 및 자동 제외 정책\n- 상품 체크박스 비활성화 및 [전체선택] 선택 대상에서 자동 제외 (결제 예정 금액 미합산)\n- 상품 썸네일 위 반투명 딤드 + 'SOLD OUT' 배지 및 [품절] 상태 플래그 노출",
+          "html": "품절(Sold Out) 상품 표시 및 자동 제외 정책<div>- 상품 체크박스 비활성화 및 [전체선택] 선택 대상에서 자동 제외 (결제 예정 금액 미합산)</div><div>- 상품 썸네일 위 반투명 딤드 + 'SOLD OUT' 배지 및 [품절] 상태 플래그 노출</div>",
+          "x": 20,
+          "y": 595,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 595,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 610,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 595,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 610,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "품절 상품 버튼 제어 ([옵션변경] 허용 / [품절] 비활성화)\n- [옵션변경] 버튼은 정상 활성화 유지하여 구매 가능한 타 컬러/사이즈로 옵션 변경 유도\n- 기존 [바로구매] 버튼은 비활성화 상태로 [품절] 표기 (클릭 불가)",
+          "html": "품절 상품 버튼 제어 ([옵션변경] 허용 / [품절] 비활성화)<div>- [옵션변경] 버튼은 정상 활성화 유지하여 구매 가능한 타 컬러/사이즈로 옵션 변경 유도</div><div>- 기존 [바로구매] 버튼은 비활성화 상태로 [품절] 표기 (클릭 불가)</div>",
+          "x": 620,
+          "y": 622,
+          "pins": {
+            "pc": {
+              "x": 620,
+              "y": 622,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 780,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 620,
+              "y": 622,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 780,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "장바구니 [주문하기] 시점 실시간 품절 감지 얼럿\n- 화면 진입 후 결제 진행 직전 실시간 품절로 전환된 상품이 선택 항목에 포함된 경우 확인 얼럿 노출\n- [확인] 시 품절 상품을 자동 제외하고 재고 정상 상품만 주문서로 이동 / [취소] 시 장바구니 유지",
+          "html": "장바구니 [주문하기] 시점 실시간 품절 감지 얼럿<div>- 화면 진입 후 결제 진행 직전 실시간 품절로 전환된 상품이 선택 항목에 포함된 경우 확인 얼럿 노출</div><div>- [확인] 시 품절 상품을 자동 제외하고 재고 정상 상품만 주문서로 이동 / [취소] 시 장바구니 유지</div>",
+          "x": 820,
+          "y": 530,
+          "pins": {
+            "pc": {
+              "x": 820,
+              "y": 530,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 10,
+              "y": 1155,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 820,
+              "y": 530,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 10,
+              "y": 1155,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
+    },
+    "renewal_order_7.html": {
+      "title": "주문서 (To-Be) 쿠폰선택",
+      "type": "ui",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "바닥 화면 [쿠폰 선택] 버튼 클릭 시 팝업 호출\n- 회원이 보유한 적용 가능 쿠폰 리스트 및 현재 적용 중인 쿠폰 선택 상태를 반영하여 팝업 호출\n- [최대 할인 적용] 토글 ON 상태인 경우 최적 조합이 선택된 상태로 열리며, 수동 변경 시 토글 OFF 전환",
+          "html": "바닥 화면 [쿠폰 선택] 버튼 클릭 시 팝업 호출<div>- 회원이 보유한 적용 가능 쿠폰 리스트 및 현재 적용 중인 쿠폰 선택 상태를 반영하여 팝업 호출</div><div>- [최대 할인 적용] 토글 ON 상태인 경우 최적 조합이 선택된 상태로 열리며, 수동 변경 시 토글 OFF 전환</div>",
+          "x": 660,
+          "y": 946,
+          "pins": {
+            "pc": {
+              "x": 660,
+              "y": 946,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 245,
+              "y": 948,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 660,
+              "y": 946,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 245,
+              "y": 948,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[상품 쿠폰] 선택 영역\n- 주문 상품별 적용 가능한 쿠폰만 셀렉트박스로 필터링 노출 (최소 주문금액/브랜드 조건 충족분)\n- 동일 단건 쿠폰을 타 상품에서 이미 선택한 경우 다른 상품 드롭다운에서 중복 선택 제한(비활성 또는 자동 해제)",
+          "html": "[상품 쿠폰] 선택 영역<div>- 주문 상품별 적용 가능한 쿠폰만 셀렉트박스로 필터링 노출 (최소 주문금액/브랜드 조건 충족분)</div><div>- 동일 단건 쿠폰을 타 상품에서 이미 선택한 경우 다른 상품 드롭다운에서 중복 선택 제한(비활성 또는 자동 해제)</div>",
+          "x": 350,
+          "y": 90,
+          "pins": {
+            "pc": {
+              "x": 350,
+              "y": 90,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 5,
+              "y": 80,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 350,
+              "y": 90,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 5,
+              "y": 80,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[장바구니 쿠폰] 순차 계산 및 특가 쿠폰 적립 제외 정책\n- 상품 쿠폰 선할인 적용 후 잔여 결제금액 기준으로 장바구니 쿠폰 할인액 산정\n- 일부 특가 쿠폰 적용 시 구매 마일리지 적립 대상에서 제외됨을 사전 안내하고 바닥 화면 예상 적립금 실시간 갱신",
+          "html": "[장바구니 쿠폰] 순차 계산 및 특가 쿠폰 적립 제외 정책<div>- 상품 쿠폰 선할인 적용 후 잔여 결제금액 기준으로 장바구니 쿠폰 할인액 산정</div><div>- 일부 특가 쿠폰 적용 시 구매 마일리지 적립 대상에서 제외됨을 사전 안내하고 바닥 화면 예상 적립금 실시간 갱신</div>",
+          "x": 350,
+          "y": 455,
+          "pins": {
+            "pc": {
+              "x": 350,
+              "y": 455,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 5,
+              "y": 445,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 350,
+              "y": 455,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 5,
+              "y": 445,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "총 쿠폰 할인 금액 요약 및 [쿠폰 적용하기] / [취소]\n- 선택한 [상품 쿠폰 + 장바구니 쿠폰] 합산 할인 금액을 주황색 강조 텍스트로 실시간 표시\n- [쿠폰 적용하기] 클릭 시 바닥 화면 [혜택 정보] 및 [최종 결제 금액] 즉시 재계산 후 팝업 닫힘 ([취소]/[×] 시 변경 미반영)",
+          "html": "총 쿠폰 할인 금액 요약 및 [쿠폰 적용하기] / [취소]<div>- 선택한 [상품 쿠폰 + 장바구니 쿠폰] 합산 할인 금액을 주황색 강조 텍스트로 실시간 표시</div><div>- [쿠폰 적용하기] 클릭 시 바닥 화면 [혜택 정보] 및 [최종 결제 금액] 즉시 재계산 후 팝업 닫힘 ([취소]/[×] 시 변경 미반영)</div>",
+          "x": 350,
+          "y": 720,
+          "pins": {
+            "pc": {
+              "x": 350,
+              "y": 720,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 5,
+              "y": 710,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 350,
+              "y": 720,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 5,
+              "y": 710,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
+    },
+    "renewal_order_8.html": {
+      "title": "주문서 (To-Be) 무통장입금",
+      "type": "ui",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[배송 요청사항] 셀렉트박스 5종 옵션 및 '직접 입력' 확장 UI\n- 5종 옵션 : 1) 부재 시 경비(관리)실에 맡겨주세요. 2) 문 앞에 놓아주세요. 3) 택배함에 보관해주세요. 4) 배송 전 연락 부탁드립니다. 5) 직접 입력\n- '직접 입력' 선택 시 하단 텍스트 입력란(최대 50자, 실시간 글자수 카운터 0/50) 동적 확장 / 타 기본 옵션 선택 시 입력란 숨김",
+          "html": "[배송 요청사항] 셀렉트박스 5종 옵션 및 '직접 입력' 확장 UI<div>- 5종 옵션 : 1) 부재 시 경비(관리)실에 맡겨주세요. 2) 문 앞에 놓아주세요. 3) 택배함에 보관해주세요. 4) 배송 전 연락 부탁드립니다. 5) 직접 입력</div><div>- '직접 입력' 선택 시 하단 텍스트 입력란(최대 50자, 실시간 글자수 카운터 0/50) 동적 확장 / 타 기본 옵션 선택 시 입력란 숨김</div>",
+          "x": 95,
+          "y": 445,
+          "pins": {
+            "pc": {
+              "x": 95,
+              "y": 445,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 305,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 95,
+              "y": 445,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 305,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[결제 수단] '무통장입금' 선택 상태 UI\n- 선택된 결제수단 버튼은 베이지 포인트 컬러 배경/테두리 및 라디오 활성 표시\n- 하단 안내 영역은 기존 카드사/간편결제 프로모션에서 무통장입금(가상계좌) 전용 안내 문구로 동적 전환",
+          "html": "[결제 수단] '무통장입금' 선택 상태 UI<div>- 선택된 결제수단 버튼은 베이지 포인트 컬러 배경/테두리 및 라디오 활성 표시</div><div>- 하단 안내 영역은 기존 카드사/간편결제 프로모션에서 무통장입금(가상계좌) 전용 안내 문구로 동적 전환</div>",
+          "x": 205,
+          "y": 1446,
+          "pins": {
+            "pc": {
+              "x": 205,
+              "y": 1446,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 5,
+              "y": 1845,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 205,
+              "y": 1446,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 5,
+              "y": 1845,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "무통장입금(가상계좌) PG 연동 및 입금기한 정책\n- 입금은행 선택 및 현금영수증 신청(소득공제/지출증빙)은 [결제하기] 클릭 시 호출되는 PG 결제창(KPN)에서 수행\n- 주문일 포함 3일 이내(3일차 23:59:59) 미입금 시 주문 자동 취소 및 사용 쿠폰·마일리지·재고 즉시 자동 복원\n\n\n※ 가상계좌 주문완료 상태 UI는 다음 스크린 '주문완료 (무통장입금 · 입금대기)' 참고",
+          "html": "무통장입금(가상계좌) PG 연동 및 입금기한 정책<div>- 입금은행 선택 및 현금영수증 신청(소득공제/지출증빙)은 [결제하기] 클릭 시 호출되는 PG 결제창(KPN)에서 수행</div><div>- 주문일 포함 3일 이내(3일차 23:59:59) 미입금 시 주문 자동 취소 및 사용 쿠폰·마일리지·재고 즉시 자동 복원</div><div><br></div><div><span style=\"color: rgb(251, 191, 36); font-weight: bold;\">※ 가상계좌 주문완료 상태 UI는 다음 스크린 '주문완료 (무통장입금 · 입금대기)' 참고</span></div>",
+          "x": 45,
+          "y": 1524,
+          "pins": {
+            "pc": {
+              "x": 45,
+              "y": 1524,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 5,
+              "y": 1919,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 45,
+              "y": 1524,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 5,
+              "y": 1919,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
+    },
+    "renewal_payEnd_2.html": {
+      "title": "주문완료 (무통장입금 · 입금대기)",
+      "type": "ui",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "무통장입금 주문 접수(입금대기) 타이틀 분기\n- 가상계좌 발급 완료 시 일반 결제 완료 타이틀('주문이 정상적으로 완료되었습니다.')을 '주문이 정상적으로 접수되었습니다. (입금대기)'로 분기 노출",
+          "html": "무통장입금 주문 접수(입금대기) 타이틀 분기<div>- 가상계좌 발급 완료 시 일반 결제 완료 타이틀('주문이 정상적으로 완료되었습니다.')을 '주문이 정상적으로 접수되었습니다. (입금대기)'로 분기 노출</div>",
+          "x": 365,
+          "y": 190,
+          "pins": {
+            "pc": {
+              "x": 365,
+              "y": 190,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 5,
+              "y": 145,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 365,
+              "y": 190,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 5,
+              "y": 145,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[배송 정보 수정] 버튼\n- 입금대기 상태 및 입금 확인 후 출고 지시 전 단계까지 마이페이지 이동 없이 [배송지 변경] 팝업을 통해 배송 정보 즉시 수정 가능",
+          "html": "[배송 정보 수정] 버튼<div>- 입금대기 상태 및 입금 확인 후 출고 지시 전 단계까지 마이페이지 이동 없이 [배송지 변경] 팝업을 통해 배송 정보 즉시 수정 가능</div>",
+          "x": 1000,
+          "y": 268,
+          "pins": {
+            "pc": {
+              "x": 1000,
+              "y": 268,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 240,
+              "y": 222,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 1000,
+              "y": 268,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 240,
+              "y": 222,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[결제 정보] 가상계좌 입금 안내 영역\n- 기존 4개 항목에서 가상계좌 필수 입금 정보 6개 항목으로 확장 노출 : 주문번호, 입금은행(예금주 포함), 가상계좌번호, 입금금액, 입금기한, 결제방식\n- '주문번호' 및 '가상계좌번호' 우측 [복사] 아이콘 클릭 시 클립보드 복사 및 토스트 안내 노출 (이메일/알림톡/SMS 동시 발송)",
+          "html": "[결제 정보] 가상계좌 입금 안내 영역<div>- 기존 4개 항목에서 가상계좌 필수 입금 정보 6개 항목으로 확장 노출 : 주문번호, 입금은행(예금주 포함), 가상계좌번호, 입금금액, 입금기한, 결제방식</div><div>- '주문번호' 및 '가상계좌번호' 우측 [복사] 아이콘 클릭 시 클립보드 복사 및 토스트 안내 노출 (이메일/알림톡/SMS 동시 발송)</div>",
+          "x": 20,
+          "y": 1045,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 1045,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 1068,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 1045,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 1068,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "가상계좌 입금기한 및 미입금 자동 취소 참고사항\n- 안내된 [입금금액]과 1원 단위까지 일치해야 정상 입금 확인 처리되며, [입금기한](주문일+3일 23:59:59) 경과 시 주문은 자동 취소됨\n- 취소/반품 환불은 마이페이지 등록 환불계좌로 진행되며, 현금영수증 정보는 입금 완료 시점 국세청 자동 전송",
+          "html": "가상계좌 입금기한 및 미입금 자동 취소 참고사항<div>- 안내된 [입금금액]과 1원 단위까지 일치해야 정상 입금 확인 처리되며, [입금기한](주문일+3일 23:59:59) 경과 시 주문은 자동 취소됨</div><div>- 취소/반품 환불은 마이페이지 등록 환불계좌로 진행되며, 현금영수증 정보는 입금 완료 시점 국세청 자동 전송</div>",
+          "x": 20,
+          "y": 1275,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 1275,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 1388,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 1275,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 1388,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
+    },
+    "renewal_payFail.html": {
+      "title": "주문실패 / 재결제 안내",
+      "type": "ui",
+      "updatedAt": "2026-11-18T03:05:54.604Z",
+      "template": "template_responsive_pc_mobile.html",
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "주문 실패 / 재결제 안내 화면 (IA 대응)\n- PG 결제 승인 단계에서 한도 초과, 카드 인증 오류, 통신 타임아웃 등 결제 실패 응답 수신 시 이동되는 전용 결과 페이지",
+          "html": "주문 실패 / 재결제 안내 화면 (IA 대응)<div>- PG 결제 승인 단계에서 한도 초과, 카드 인증 오류, 통신 타임아웃 등 결제 실패 응답 수신 시 이동되는 전용 결과 페이지</div>",
+          "x": 380,
+          "y": 175,
+          "pins": {
+            "pc": {
+              "x": 380,
+              "y": 175,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 10,
+              "y": 82,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 380,
+              "y": 175,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 10,
+              "y": 82,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[실패 사유 안내] 및 혜택(쿠폰 · 마일리지) 원복 보장\n- 시도 결제수단, 발생 일시, PG사 전달 실패 코드 및 사유를 사용자 친화적 문구로 매핑하여 명확히 노출\n- 주문 실패 시 주문서에서 임시 선점/적용했던 쿠폰 및 보유 마일리지는 절대 차감되지 않고 즉시 100% 원복 처리",
+          "html": "[실패 사유 안내] 및 혜택(쿠폰 · 마일리지) 원복 보장<div>- 시도 결제수단, 발생 일시, PG사 전달 실패 코드 및 사유를 사용자 친화적 문구로 매핑하여 명확히 노출</div><div>- 주문 실패 시 주문서에서 임시 선점/적용했던 쿠폰 및 보유 마일리지는 절대 차감되지 않고 즉시 100% 원복 처리</div>",
+          "x": 20,
+          "y": 295,
+          "pins": {
+            "pc": {
+              "x": 20,
+              "y": 295,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 220,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 20,
+              "y": 295,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 220,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[장바구니로 이동] / [다시 결제하기] 이동 동선\n- [장바구니로 이동] 클릭 시 선택한 상품 상태가 유지된 장바구니(/cart/list)로 복귀\n- [다시 결제하기] 클릭 시 직전 배송지·적용 혜택 입력 상태가 유지된 주문서(/order/payForm)로 복귀하여 다른 결제수단으로 재결제 진행",
+          "html": "[장바구니로 이동] / [다시 결제하기] 이동 동선<div>- [장바구니로 이동] 클릭 시 선택한 상품 상태가 유지된 장바구니(/cart/list)로 복귀</div><div>- [다시 결제하기] 클릭 시 직전 배송지·적용 혜택 입력 상태가 유지된 주문서(/order/payForm)로 복귀하여 다른 결제수단으로 재결제 진행</div>",
+          "x": 420,
+          "y": 582,
+          "pins": {
+            "pc": {
+              "x": 420,
+              "y": 582,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 0,
+              "y": 596,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 420,
+              "y": 582,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 0,
+              "y": 596,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "주문서 내 인라인 얼럿 예외 분기\n- PG 결제창 호출 후 사용자가 [취소]/[닫기]로 임의 종료한 경우 별도 실패 페이지로 이동하지 않고 주문서 위 Alert 노출 후 주문서 유지\n- 결제 버튼 클릭~PG 승인 직전 품절 발생 시 품절 안내 Alert 노출 후 [확인] 클릭 시 장바구니로 이동 처리",
+          "html": "주문서 내 인라인 얼럿 예외 분기<div>- PG 결제창 호출 후 사용자가 [취소]/[닫기]로 임의 종료한 경우 별도 실패 페이지로 이동하지 않고 주문서 위 Alert 노출 후 주문서 유지</div><div>- 결제 버튼 클릭~PG 승인 직전 품절 발생 시 품절 안내 Alert 노출 후 [확인] 클릭 시 장바구니로 이동 처리</div>",
+          "x": 245,
+          "y": 665,
+          "pins": {
+            "pc": {
+              "x": 245,
+              "y": 665,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 10,
+              "y": 670,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 245,
+              "y": 665,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 10,
+              "y": 670,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "version": 0.1,
+      "defaultTab": "description",
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",
@@ -1339,13 +2083,18 @@
     "renewal_cart_4.html",
     "renewal_cart_6.html",
     "renewal_cart_3.html",
+    "renewal_cart_7.html",
     "renewal_order_2.html",
     "renewal_order_4.html",
     "renewal_order_6.html",
+    "renewal_order_7.html",
+    "renewal_order_8.html",
     "renewal_order_3.html",
-    "renewal_payEnd.html"
+    "renewal_payEnd.html",
+    "renewal_payEnd_2.html",
+    "renewal_payFail.html"
   ],
-  "updated": "2026-11-18 11:36:55",
+  "updated": "2026-11-18 12:05:54",
   "version": 0.2,
   "category": "project"
 }

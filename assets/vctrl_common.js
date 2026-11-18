@@ -422,6 +422,8 @@ window.getCategoryData = function(type) {
         'architecture': { label: 'ARCH', code: 'AR', class: 'badge-architecture' },
         'plan': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
         'plan-delivery': { label: 'PLAN', code: 'PL', class: 'badge-plan' },
+        'analysis': { label: '분석', code: 'AN', class: 'badge-analysis' },
+        '분석': { label: '분석', code: 'AN', class: 'badge-analysis' },
         'case-study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
         'case_study': { label: 'CASE', code: 'CS', class: 'badge-case-study' },
         'ui': { label: 'UI', code: 'UI', class: 'badge-ui' },

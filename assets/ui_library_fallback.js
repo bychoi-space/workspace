@@ -2837,10 +2837,11 @@ window.VCTRL_UI_FALLBACK_MODALS = `
                             <option value="cover">1. Cover</option>
                             <option value="architecture">2. Architecture</option>
                             <option value="plan">3. Plan</option>
-                            <option value="case-study">4. Case Study</option>
-                            <option value="ui">5. Front UI</option>
-                            <option value="mobile-ui">6. Mobile UI 설계</option>
-                            <option value="admin">7. Admin</option>
+                            <option value="analysis">4. 분석 (Analysis)</option>
+                            <option value="case-study">5. Case Study</option>
+                            <option value="ui">6. Front UI</option>
+                            <option value="mobile-ui">7. Mobile UI 설계</option>
+                            <option value="admin">8. Admin</option>
                         </select>
                     </div>
                     <div class="form-group">

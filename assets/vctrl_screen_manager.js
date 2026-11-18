@@ -517,6 +517,10 @@ window.handleEditScreen = async function(fileName) {
     let screenType = meta.type || "default";
     if (screenType === 'admin-nbos' || screenType === 'admin-modern') {
         screenType = 'admin';
+    } else if (screenType === 'case_study') {
+        screenType = 'case-study';
+    } else if (screenType === '분석') {
+        screenType = 'analysis';
     }
     if (editType) editType.value = screenType;
     if (editDefaultTab) editDefaultTab.value = meta.defaultTab || "editor";

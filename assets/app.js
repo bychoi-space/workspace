@@ -885,6 +885,7 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
             else if (templateName.includes('project_summary') || templateName.includes('summary')) type = 'plan';
             else if (templateName.includes('plan_delivery')) type = 'plan-delivery';
             else if (templateName.includes('plan')) type = 'plan';
+            else if (templateName.includes('analysis')) type = 'analysis';
             else if (templateName.includes('case_study') || templateName.includes('case-study')) type = 'case-study';
             else if (templateName.includes('front_ui')) type = 'ui';
             else if (templateName.includes('responsive') || templateName.includes('pc_mobile')) type = 'responsive-ui';

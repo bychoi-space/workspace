@@ -12,8 +12,8 @@
     },
     "01_Project_Summary.html": {
       "title": "과제 개요",
-      "type": "plan",
-      "updatedAt": "2026-11-18T05:09:10.038Z",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T05:19:24.209Z",
       "template": "template_project_summary.html",
       "description": [],
       "connectors": [],
@@ -23,8 +23,8 @@
     },
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
-      "type": "ui",
-      "updatedAt": "2026-11-18T02:36:55.347Z",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T05:19:24.209Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -34,8 +34,8 @@
     },
     "02_Front_IA_Specification.html": {
       "title": "시선닷컴 Front IA (계층구조 정의서)",
-      "type": "ui",
-      "updatedAt": "2026-11-18T03:05:54.604Z",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T05:19:24.209Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -45,8 +45,8 @@
     },
     "03_Order_UI_Improvement_Strategy.html": {
       "title": "시선닷컴 주문 화면 UI 개선 전략",
-      "type": "plan",
-      "updatedAt": "2026-11-18T02:36:55.347Z",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T05:19:24.209Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -553,8 +553,8 @@
     },
     "99_Blank_924.html": {
       "title": "시선닷컴 문제점 분석 (장바구니)",
-      "type": "plan",
-      "updatedAt": "2026-11-11T07:54:55.465Z",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T05:19:24.209Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -564,8 +564,8 @@
     },
     "99_Blank_925.html": {
       "title": "시선닷컴 문제점 분석 (주문서)",
-      "type": "plan",
-      "updatedAt": "2026-11-11T08:05:28.698Z",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T05:19:24.209Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -575,8 +575,8 @@
     },
     "99_Blank_926.html": {
       "title": "시선닷컴 문제점 분석 (주문완료)",
-      "type": "plan",
-      "updatedAt": "2026-11-13T01:44:26.800Z",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T05:19:24.209Z",
       "template": "template_blank.html",
       "description": [],
       "connectors": [],
@@ -1321,8 +1321,8 @@
     },
     "04_Brand_KeyColor_Strategy.html": {
       "title": "시선닷컴 키컬러(Beige) 도입 전략",
-      "type": "plan",
-      "updatedAt": "2026-11-18T01:37:59.062Z",
+      "type": "analysis",
+      "updatedAt": "2026-11-18T05:19:24.209Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -2106,7 +2106,7 @@
     "renewal_payEnd_2.html",
     "renewal_payFail.html"
   ],
-  "updated": "2026-11-18 14:09:10",
+  "updated": "2026-11-18 14:19:24",
   "version": 0.2,
   "category": "project"
 }

@@ -690,7 +690,7 @@
     "renewal_order_4.html": {
       "title": "주문서 (Te-Be) 배송지없는경우",
       "type": "ui",
-      "updatedAt": "2026-11-18T00:33:34.015Z",
+      "updatedAt": "2026-11-17T07:56:52.289Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -956,7 +956,7 @@
     "renewal_order_6.html": {
       "title": "주문서 (Te-Be) 배송지변경",
       "type": "ui",
-      "updatedAt": "2026-11-17T07:56:52.289Z",
+      "updatedAt": "2026-11-18T00:41:58.089Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -1105,7 +1105,7 @@
         }
       ],
       "connectors": [],
-      "version": 0.1,
+      "version": 0.2,
       "defaultTab": "description",
       "screenDesc": ""
     },
@@ -1333,7 +1333,7 @@
     "renewal_order_3.html",
     "renewal_payEnd.html"
   ],
-  "updated": "2026-11-18 09:33:33",
+  "updated": "2026-11-18 09:41:58",
   "version": 0.2,
   "category": "project"
 }

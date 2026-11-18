@@ -205,11 +205,7 @@
         if (item.html && typeof item.html === 'string' && item.html.trim().length > 0 && !isLegacyDummyHtml) {
             return item.html;
         } else if (item.text && typeof item.text === 'string') {
-            return item.text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/\n/g, '<br>');
+            return window.escapeHtml(item.text).replace(/\n/g, '<br>');
         }
         return '';
     }

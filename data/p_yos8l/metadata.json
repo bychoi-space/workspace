@@ -74,7 +74,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "09_Admin_PC_Scroll_245.html": {
       "title": "09_Admin_PC_Scroll_245",
@@ -113,7 +113,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object]"
+      "screenDesc": ""
     },
     "09_Admin_PC_Scroll_246.html": {
       "title": "회원상세 - 악성고객",
@@ -179,7 +179,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "09_Admin_PC_Scroll_247.html": {
       "title": "회원상세 - 악성고객(활성화)",
@@ -289,7 +289,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object]"
+      "screenDesc": ""
     },
     "cart_block.html": {
       "title": "장바구니_주문제한",
@@ -365,7 +365,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "01_Project_Summary_828.html": {
       "title": "과제 개요",

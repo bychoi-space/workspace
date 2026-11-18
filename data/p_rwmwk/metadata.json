@@ -138,7 +138,7 @@
       ],
       "connectors": [],
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "99_Blank_14_copy.html": {
       "title": "Front UI (복사본)",
@@ -186,7 +186,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "04_Cart_Order_Benchmark_Analysis.html": {
       "title": "시선닷컴 장바구니 · 주문서 벤치마크 분석 및 개선 전략 2",

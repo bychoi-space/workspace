@@ -6,7 +6,7 @@ description: Use when editing V4 components, .bychoi-icon SVG atoms, premium but
 # Workspace Editor UI Components
 
 - **Screen Layout Layer Architecture**: 일반 캔버스 스크린에서는 모든 오브젝트가 iframe 내부의 `document.body` (또는 `.page`) 최상단 캔버스에 직접 위치하며, 반응형 스크린(PC & Mobile Frame)에서는 프레임 내부의 컨텐츠 캔버스인 `.pc-content-inner` 또는 `.mobile-content-inner` 내부의 절대좌표 레이어에 배치된다. 특정 템플릿 제약 없이 해당 캔버스 내부 어디서든 자유로운 배치, 이동, 스냅, 그룹화가 100% 보장된다.
-- **Common Object Protocol (공통 오브젝트 10원칙)**: 모든 객체(텍스트, 도형, 선, 아톰 등)는 예외 없이 다음 동작을 보장해야 한다.
+- **Common Object Protocol (공통 오브젝트 12원칙)**: 모든 객체(텍스트, 도형, 선, 아톰 등)는 예외 없이 다음 동작을 보장해야 한다.
   1. 드래그(Marquee) 및 Shift+Click을 통한 **다중 선택, 그룹화(Ctrl+G), 해제** 보장
   2. 선택 상태에서 **화살표 키(`ArrowUp` 등)를 이용한 픽셀 단위 그룹 이동** 보장
   3. `Delete` 또는 `Backspace` 키보드 입력을 통한 **즉각 삭제** 보장
@@ -47,6 +47,9 @@ description: Use when editing V4 components, .bychoi-icon SVG atoms, premium but
       - 드래그(Marquee) 또는 Shift+Click으로 동일한 아톰(버튼, 텍스트박스, 셀렉트박스 등)이나 도형을 다중 선택한 상태에서 프로퍼티 패널의 속성(크기, 활성/비활성, 텍스트, 색상 등)을 수정하면 선택된 모든 객체에 일괄 동기화되어야 한다.
       - `vctrl_properties.js`에서 다중 선택 시 타겟 ID 배열이 단일 요소로 축소되지 않도록 보존하고, `inspector_atoms.js`에서 IPC 메시지 전송 시 `id`와 `ids`를 동시에 전달하며, `vctrl_ui_atoms.js` 및 `vctrl_ui_atoms_inputs.js`에서 `_getTargetComponents(d)`를 통해 모든 대상을 순회 갱신한다.
       - 실행 취소(`Ctrl+Z`)는 단일 트랜잭션으로 원자적 롤백을 보장해야 한다.
+  12. **오브젝트 위치 잠금(`Ctrl + Shift + L`, `data-locked="true"`) 및 확장 컨텍스트 인스펙터 규격 보장**:
+      - 단축키 `Ctrl + Shift + L` 또는 플로팅 액션바 `#btn-lock-object-action` 토글을 통해 선택된 오브젝트(단일·다중·그룹, 커넥터 제외)의 `data-locked="true"` 상태를 전환하며, 잠금 상태에서는 드래그 이동·8방향 리사이즈 핸들·화살표 Nudge·`Delete`/`Backspace` 삭제가 차단되고 앰버 잠금 아도너(`.v4-locked-adorner-badge`)와 컨텍스트 헤더 `LOCKED` 뱃지가 노출되며 `Ctrl + Z` Undo를 보장한다.
+      - 단일 오브젝트(`.v4-prop-input[data-prop="left"]`, `.v4-prop-input[data-prop="top"]`) 및 단일 그룹(`#prop-left-group`, `#prop-top-group`)의 `X/Y` 좌표 제어, 도형 테두리 스타일(`solid`/`dashed`/`dotted`)·두께, 라인 시작/끝 화살촉 마커(`#line-marker-start`, `#line-marker-end`)의 인스펙터 양방향 동기화를 보장한다.
 
 - **Unified Marker Structure**: Text markers must include a `.bychoi-drag-handle` (drag handle), `.bychoi-delete-trigger` (delete), and `.v4-editable-cell` (content) inside their `.bychoi-component` wrapper. All markers are aligned to their **Top-Left** corner (0, 0) and use **px** units for consistent coordinate mapping with shapes and atoms.
 - **Zero-Drift Measurement**: 크기 측정(`offsetWidth/Height`) 시에는 반드시 UI 핸들(.bychoi-drag-handle 등)을 일시적으로 숨겨서, 핸들 여백이 논리적인 객체 크기를 왜곡하지 않도록 처리해야 한다.
@@ -60,6 +63,8 @@ description: Use when editing V4 components, .bychoi-icon SVG atoms, premium but
 - Use inline SVG for button icons to avoid font ligature issues.
 - Use `stroke-width="1.2"` for SVG atoms (library icons and canvas-inserted SVG atoms) unless existing context requires otherwise.
 - Add `background-image: none !important;` when `.bychoi-icon` is applied to new SVG/custom atoms to avoid sprite interference.
+- **Dual-Theme Icon Library Token Standard**: In `assets/ui_library/icon_cards.html`, sidebar preview SVGs and monochrome brand logos MUST use theme-adaptive `currentColor` or `var(--ed-lib-icon)` instead of hardcoded white (`#ffffff`) so icons remain clearly legible in both Dark and Light themes; after editing `assets/ui_library/icon_cards.html`, immediately run `powershell -ExecutionPolicy Bypass -File scripts/build_ui_fallback.ps1` to recompile `assets/ui_library_fallback.js`.
+- **Editor Shell Form Control Typography**: Inside `body.editor-page`, native shell controls (`<button>`, `<input>`, `<select>`, `<textarea>`, `.sidebar-tabs .tab-btn`) MUST inherit `font-family: inherit` (`Pretendard Variable`) so they never fall back to OS default UI fonts (`Malgun Gothic`/`Arial`).
 
 ## V4.2 신규 오브젝트 생성 기본값 통일 표준 (Unified Object Creation Defaults - `data-v4-std="2"`)
 - **기존 스크린 100% 무오염 원칙**: 기존에 저장된 스크린 HTML 객체들은 기존 스타일을 그대로 보존하며, `vctrl_iframe_inserter.js`를 통해 새로 생성되는 컴포넌트에만 `data-v4-std="2"` 속성을 부여하여 CSS 토큰(`vctrl_typography.js`, `vctrl_iframe_styles.js`) 및 동적 서브 렌더러(`isStdV2`)에서 격리 적용한다.
@@ -103,6 +108,7 @@ description: Use when editing V4 components, .bychoi-icon SVG atoms, premium but
 - **동적 높이 자동 피팅 및 무손실 동기화**: 항목 추가/삭제 및 트리 전환 시 아이템 개수와 행 높이에 맞춰 컨테이너 높이(`height`)가 자동 재계산되어 여백 틀어짐을 방지하며, 캔버스 인라인 텍스트 수정 시에도 부모 인스펙터로 즉시 반영된다. `V4UndoManager.saveState()`를 통해 `Ctrl+Z` Undo가 100% 보장된다.
 
 ## 웹 에디터 아톰(Web Editor Atom) 비주얼 및 인스펙터 표준 규격
+- **엔진 모듈 분리 SSOT**: 캔버스 내 `.v4-webeditor-container` 상태 동기화, 서식 툴바, 모드 탭 전환, 하단 높이 리사이저 및 `BYCHOI_UPDATE_PROP` 핸들러는 전용 iframe 모듈 `vctrl_ui_atoms_webeditor.js` (`window.v4UIAtomsWebEditorScript`)가 전담한다.
 - **구조 규격**: `.bychoi-component` ➔ `.v4-webeditor-container` (`border: 1.6px solid var(--v4-border-color); border-radius: 6px;`) ➔ `.v4-webeditor-toolbar` (상단 서식 도구) + `.v4-webeditor-body` (본문 작성부) + `.v4-webeditor-statusbar` (글자수 표시).
 - **인스펙터 전용 패널 (`#webeditor-inspector-section`)**:
   - 툴바 모드: `<select id="prop-webeditor-toolbar" class="v4-prop-select">` (`full` 전체, `minimal` 핵심, `none` 숨김).

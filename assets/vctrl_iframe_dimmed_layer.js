@@ -31,31 +31,18 @@ if (!window.v4IframeDimmedLayerScript) {
         return false;
     }
 
+    function _resolveDimmedHex(hex) {
+        return (window.normalizeHex && window.normalizeHex(hex)) || DEFAULT_COLOR;
+    }
+
     function hexToRgbaString(hex, opacityPct) {
-        var clean = String(hex || DEFAULT_COLOR).trim().replace('#', '');
-        if (clean.length === 3) {
-            clean = clean.charAt(0) + clean.charAt(0) + clean.charAt(1) + clean.charAt(1) + clean.charAt(2) + clean.charAt(2);
-        }
-        var num = parseInt(clean, 16);
-        if (isNaN(num)) num = 0;
-        var r = (num >> 16) & 255;
-        var g = (num >> 8) & 255;
-        var b = num & 255;
+        var normHex = _resolveDimmedHex(hex);
+        var rgb = (window.hexToRgb && window.hexToRgb(normHex)) || { r: 0, g: 0, b: 0 };
         var pct = parseInt(opacityPct, 10);
         if (isNaN(pct)) pct = DEFAULT_OPACITY;
         pct = Math.max(0, Math.min(95, pct));
         var alpha = Math.round(pct) / 100;
-        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
-    }
-
-    function normalizeHex(hex) {
-        var s = String(hex || DEFAULT_COLOR).trim().toLowerCase();
-        if (s.charAt(0) !== '#') s = '#' + s;
-        if (s.length === 4) {
-            s = '#' + s.charAt(1) + s.charAt(1) + s.charAt(2) + s.charAt(2) + s.charAt(3) + s.charAt(3);
-        }
-        if (!/^#[0-9a-f]{6}$/.test(s)) return DEFAULT_COLOR;
-        return s;
+        return 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', ' + alpha + ')';
     }
 
     function detectTemplateLayout() {
@@ -154,7 +141,7 @@ if (!window.v4IframeDimmedLayerScript) {
     function applyLayerVisualStyles(layerEl) {
         if (!layerEl) return;
         var enabled = layerEl.getAttribute('data-dimmed-enabled') === 'true';
-        var color = normalizeHex(layerEl.getAttribute('data-dimmed-color') || DEFAULT_COLOR);
+        var color = _resolveDimmedHex(layerEl.getAttribute('data-dimmed-color') || DEFAULT_COLOR);
         var opacity = parseInt(layerEl.getAttribute('data-dimmed-opacity'), 10);
         if (isNaN(opacity)) opacity = DEFAULT_OPACITY;
         opacity = Math.max(0, Math.min(95, opacity));
@@ -333,7 +320,7 @@ if (!window.v4IframeDimmedLayerScript) {
             var layer = getLayerForHost(f.host);
             var enabled = layer ? (layer.getAttribute('data-dimmed-enabled') === 'true') : false;
             var editMode = layer ? (layer.getAttribute('data-dimmed-edit-mode') || 'overlay') : 'overlay';
-            var color = layer ? normalizeHex(layer.getAttribute('data-dimmed-color') || DEFAULT_COLOR) : DEFAULT_COLOR;
+            var color = layer ? _resolveDimmedHex(layer.getAttribute('data-dimmed-color') || DEFAULT_COLOR) : DEFAULT_COLOR;
             var opacity = layer ? parseInt(layer.getAttribute('data-dimmed-opacity'), 10) : DEFAULT_OPACITY;
             if (isNaN(opacity)) opacity = DEFAULT_OPACITY;
             var objCount = layer ? countOverlayObjects(layer) : 0;
@@ -401,7 +388,7 @@ if (!window.v4IframeDimmedLayerScript) {
                 layer.setAttribute('data-dimmed-edit-mode', d.editMode);
             }
             if (d.color !== undefined) {
-                layer.setAttribute('data-dimmed-color', normalizeHex(d.color));
+                layer.setAttribute('data-dimmed-color', _resolveDimmedHex(d.color));
                 didMutatePersistent = true;
             }
             if (d.opacity !== undefined) {

@@ -3454,7 +3454,9 @@ body.fullscreen-mode .stage {
 }
 
 /* History Modal Dialog */
-.history-dialog-overlay {
+.history-dialog-overlay,
+.history-modal-overlay {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -3480,7 +3482,7 @@ body.fullscreen-mode .stage {
     text-align: left !important;
     background: rgba(23, 25, 34, 0.96);
     border: 1.6px solid var(--border-color);
-    border-radius: 16px;
+    border-radius: var(--radius-card, 10px);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
     padding: 24px 26px;
     box-sizing: border-box;
@@ -3505,10 +3507,14 @@ body.fullscreen-mode .stage {
     color: var(--accent);
 }
 
+.history-dialog-title-icon {
+    font-size: 22px;
+}
+
 .history-dialog-title {
     margin: 0;
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 600;
     color: var(--text-primary);
     letter-spacing: -0.2px;
 }
@@ -3542,7 +3548,8 @@ body.fullscreen-mode .stage {
     transform: translateY(-1px);
 }
 
-.history-dialog-close {
+.history-dialog-close,
+.history-close-btn {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -3557,7 +3564,13 @@ body.fullscreen-mode .stage {
     transition: all 0.2s;
 }
 
-.history-dialog-close:hover {
+.history-dialog-close .material-icons-outlined,
+.history-close-btn .material-icons-outlined {
+    font-size: 16px;
+}
+
+.history-dialog-close:hover,
+.history-close-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
 }

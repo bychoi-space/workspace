@@ -228,7 +228,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "renewal_cart_2.html": {
       "title": "장바구니 (To-Be)",
@@ -346,7 +346,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "renewal_payEnd.html": {
       "title": "주문완료",
@@ -685,7 +685,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "renewal_order_4.html": {
       "title": "주문서 (Te-Be) 배송지없는경우",
@@ -951,7 +951,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "renewal_order_6.html": {
       "title": "주문서 (Te-Be) 배송지변경",
@@ -1196,7 +1196,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "renewal_cart_6.html": {
       "title": "장바구니 (To-Be) 쿠폰받기",
@@ -1306,7 +1306,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

@@ -597,13 +597,7 @@ function ensureDayOfWeek(dateStr) {
 }
 
 
-function escapeHtmlAttr(str) {
-    return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-}
+const escapeHtmlAttr = window.escapeHtmlAttr;
 
 async function renderList(projectsToRender = getFilteredProjects()) {
     if (projectsToRender.length === 0) {

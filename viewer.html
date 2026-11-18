@@ -33,14 +33,14 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-    <link rel="stylesheet" href="assets/style.css?v=V432_VIEWER_DUAL_THEME">
+    <link rel="stylesheet" href="assets/style.css?v=V450_COMMON_SSOT">
     <link rel="stylesheet" href="assets/theme.css?v=V432_VIEWER_DUAL_THEME">
     <!-- Flatpickr (Date Picker) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <link rel="stylesheet" href="assets/viewer.css?v=V437_ALIGNMENT_POLISH">
-    <link rel="stylesheet" href="assets/ui_library.css?v=V439_INSPECTOR_PART_A">
+    <link rel="stylesheet" href="assets/viewer.css?v=V450_COMMON_SSOT">
+    <link rel="stylesheet" href="assets/ui_library.css?v=V450_COMMON_SSOT">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
         if (window.location.protocol.startsWith('http')) {
@@ -60,10 +60,11 @@
 
     <link rel="stylesheet" href="assets/responsive_workspace.css?v=V433_SHELL_CONTRAST">
     <link rel="stylesheet" href="assets/viewer_theme.css?v=V448_UNIFIED_TAB_FONT">
-    <!-- PDF Exporter Libraries (html2canvas & jsPDF) -->
+    <!-- Shared Utilities SSOT & PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="assets/vctrl_pdf_exporter.js?v=V444_PDF_TAINT_AND_DESC"></script>
+    <script src="assets/vctrl_common.js?v=V450_COMMON_SSOT"></script>
+    <script src="assets/vctrl_pdf_exporter.js?v=V450_COMMON_SSOT"></script>
     <script>
         // PWA & Direct-Entry Project Parameter Guard:
         // If viewer is launched without a valid project query parameter, immediately bounce to Dashboard index.html
@@ -1160,7 +1161,7 @@
     <script src="assets/vctrl_ui_library.js?v=V446_ICON_LIB_THEME"></script>
     <script src="assets/templates.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_clipboard.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/app.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/app.js?v=V450_COMMON_SSOT"></script>
 
     <!-- Modularized Engine -->
     <script src="assets/vctrl_undo.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1172,15 +1173,14 @@
     <script src="assets/vctrl_design_system_shapes_tables.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_design_system.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_clipboard_objects.js?v=V441_INSPECTOR_PART_C"></script>
-    <script src="assets/vctrl_format_painter.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_format_painter.js?v=V450_COMMON_SSOT"></script>
     <script src="assets/vctrl_shortcuts.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
-    <script src="assets/vctrl_common.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_object_shape.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_object_connector.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/responsive_frame.js?v=V435_CLEAN_INPUTS"></script>
     <script src="assets/vctrl_iframe_styles.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_style_extractor.js?v=V441_INSPECTOR_PART_C"></script>
-    <script src="assets/vctrl_iframe_dimmed_layer.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_iframe_dimmed_layer.js?v=V450_COMMON_SSOT"></script>
     <script src="assets/vctrl_iframe_layering.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_inserter.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_iframe_adorner.js?v=V441_INSPECTOR_PART_C"></script>
@@ -1192,7 +1192,7 @@
     <script src="assets/vctrl_iframe_drag.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_core.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
+    <script src="assets/vctrl_core.js?v=V450_COMMON_SSOT"></script>
     <script src="assets/vctrl_storage.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_autosave.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_core_router.js?v=V442_SCREEN_PAGE_NAV"></script>
@@ -1204,7 +1204,7 @@
     <script src="assets/vctrl_iframe_scroll_pin.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_pins.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_grouping.js?v=V441_INSPECTOR_PART_C"></script>
-    <script src="assets/vctrl_color_picker.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_color_picker.js?v=V450_COMMON_SSOT"></script>
     <script src="assets/vctrl_component_atoms_data.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_component_data.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_component_logos_templates.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1217,12 +1217,12 @@
     <script src="assets/inspector/inspector_scroll_pin.js?v=V439_INSPECTOR_PART_A"></script>
     <script src="assets/vctrl_inspector_actionbar.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_inspector_sync.js?v=V441_INSPECTOR_PART_C"></script>
-    <script src="assets/vctrl_inspector.js?v=V440_INSPECTOR_PART_B"></script>
-    <script src="assets/vctrl_screen_manager.js?v=V442_SCREEN_PAGE_NAV"></script>
-    <script src="assets/vctrl_revision_history.js?v=V447_LIGHT_CONTRAST_POLISH"></script>
-    <script src="assets/vctrl_annotation_pins.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_inspector.js?v=V450_COMMON_SSOT"></script>
+    <script src="assets/vctrl_screen_manager.js?v=V449_SCREENDESC_GUARD"></script>
+    <script src="assets/vctrl_revision_history.js?v=V450_COMMON_SSOT"></script>
+    <script src="assets/vctrl_annotation_pins.js?v=V450_COMMON_SSOT"></script>
     <script src="assets/vctrl_canvas_viewport.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
-    <script src="assets/vctrl_properties.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_properties.js?v=V450_COMMON_SSOT"></script>
     <script src="assets/vctrl_connectors.js?v=V441_INSPECTOR_PART_C"></script>
 
     <!-- V4 Premium Addons -->

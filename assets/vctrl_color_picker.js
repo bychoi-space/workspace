@@ -30,14 +30,7 @@
         grp.colors.forEach(function (hex) { _colorGroupLookup[hex.toLowerCase()] = grp.label; });
     });
 
-    function normalizeHex(input) {
-        if (!input || typeof input !== 'string') return null;
-        let hex = input.trim().replace(/^#/, '');
-        if (/^[0-9a-fA-F]{3}$/.test(hex)) {
-            hex = hex.split('').map(function (c) { return c + c; }).join('');
-        }
-        return /^[0-9a-fA-F]{6}$/.test(hex) ? ('#' + hex.toLowerCase()) : null;
-    }
+    const normalizeHex = window.normalizeHex;
 
     function _loadRecentColors() {
         try {

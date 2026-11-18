@@ -11,19 +11,9 @@
     let _editingHistoryIndex = null;
     let _isCreatingNewHistory = false;
 
-    function _escapeHtml(str) {
-        return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    function _escapeHtmlAttr(str) {
-        return String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    function _getFormattedKSTNow() {
-        return (typeof window.getFormattedKST === 'function') 
-            ? window.getFormattedKST() 
-            : new Date().toISOString().slice(0, 19).replace('T', ' ');
-    }
+    const _escapeHtml = window.escapeHtml;
+    const _escapeHtmlAttr = window.escapeHtmlAttr;
+    const _getFormattedKSTNow = window.getFormattedKST;
 
     window.renderHistoryPopup = function(history) {
         if (Array.isArray(history)) {

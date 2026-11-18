@@ -421,18 +421,6 @@ async function fetchProjectMetadata(project) {
     }
 }
 
-function getFormattedKST(dateObj) {
-    const now = dateObj ? new Date(dateObj) : new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    const hh = String(now.getHours()).padStart(2, '0');
-    const min = String(now.getMinutes()).padStart(2, '0');
-    const ss = String(now.getSeconds()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
-}
-window.getFormattedKST = getFormattedKST;
-
 async function saveProjectMetadata(project, metadata, statusCallback, customCommitMsg = null) {
     const content = JSON.stringify(metadata, null, 2);
     return await uploadToProject(project, 'metadata.json', content, statusCallback, false, customCommitMsg);
@@ -981,10 +969,11 @@ const Notification = {
         }
         
         if (hasInput) {
-            const escapedDefault = String(defaultValue || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const escapedHtml = window.escapeHtml(defaultValue || '');
+            const escapedAttr = window.escapeHtmlAttr(defaultValue || '');
             this.DOM.inputContainer.innerHTML = isTextarea
-                ? `<textarea id="notification-prompt-input" class="dialog-textarea" placeholder="상세 변경 사유를 입력하세요...">${escapedDefault}</textarea><div class="dialog-hint">Ctrl + Enter 로 즉시 저장 가능</div>`
-                : `<input type="text" id="notification-prompt-input" class="dialog-input" style="width:100%; box-sizing:border-box;" value="${escapedDefault}">`;
+                ? `<textarea id="notification-prompt-input" class="dialog-textarea" placeholder="상세 변경 사유를 입력하세요...">${escapedHtml}</textarea><div class="dialog-hint">Ctrl + Enter 로 즉시 저장 가능</div>`
+                : `<input type="text" id="notification-prompt-input" class="dialog-input" style="width:100%; box-sizing:border-box;" value="${escapedAttr}">`;
         } else {
             this.DOM.inputContainer.innerHTML = '';
         }
@@ -1158,32 +1147,7 @@ async function copyDeployUrlToClipboard(text, successMessage) {
 function showGlobalToast(message, type = 'success') {
     if (typeof window.showToast === 'function') {
         window.showToast(message, type);
-        return;
     }
-    let container = document.getElementById('v4-toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'v4-toast-container';
-        document.body.appendChild(container);
-    }
-    const toast = document.createElement('div');
-    toast.className = `v4-toast ${type}`;
-    let iconName = 'info';
-    if (type === 'success') iconName = 'check_circle';
-    else if (type === 'error') iconName = 'error';
-    else if (type === 'warning') iconName = 'warning';
-
-    toast.innerHTML = `
-        <span class="material-icons-outlined v4-toast-icon">${iconName}</span>
-        <span style="flex-grow: 1; word-break: break-all; line-height: 1.4;">${message}</span>
-    `;
-    container.appendChild(toast);
-    requestAnimationFrame(() => toast.classList.add('show'));
-    setTimeout(() => {
-        toast.classList.remove('show');
-        toast.classList.add('hide');
-        setTimeout(() => toast.remove(), 400);
-    }, 3500);
 }
 
 async function copyProjectShortUrl(projectName, options = {}) {

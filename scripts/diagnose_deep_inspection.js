@@ -332,25 +332,48 @@ const uiFallbackJsPath = path.join(assetsDir, 'ui_library_fallback.js');
 
 let tplStatus = 'UP TO DATE';
 if (fs.existsSync(templatesJsPath)) {
-    const statT = fs.statSync(templatesJsPath);
-    let latestMtime = 0;
-    for (const tf of fs.readdirSync(templatesDir)) {
-        const mt = fs.statSync(path.join(templatesDir, tf)).mtimeMs;
-        if (mt > latestMtime) latestMtime = mt;
+    try {
+        const tplSandbox = { window: {} };
+        vm.runInNewContext(fs.readFileSync(templatesJsPath, 'utf8'), tplSandbox);
+        const tplMap = tplSandbox.window.BYCHOI_TEMPLATES || {};
+        for (const tf of fs.readdirSync(templatesDir).filter(f => f.endsWith('.html'))) {
+            const diskNorm = fs.readFileSync(path.join(templatesDir, tf), 'utf8').replace(/\r\n/g, '\n').trim();
+            const bundledNorm = String(tplMap[tf] || '').replace(/\r\n/g, '\n').trim();
+            if (diskNorm !== bundledNorm) {
+                tplStatus = `OUTDATED (${tf} differs) - Needs scripts/build_templates.ps1`;
+                break;
+            }
+        }
+    } catch (e) {
+        tplStatus = `ERROR (${e.message}) - Needs scripts/build_templates.ps1`;
     }
-    if (latestMtime > statT.mtimeMs) tplStatus = 'OUTDATED - Needs scripts/build_templates.ps1';
 }
 console.log(`  * templates.js offline bundle: [${tplStatus}]`);
 
 let uiStatus = 'UP TO DATE';
 if (fs.existsSync(uiFallbackJsPath)) {
-    const statU = fs.statSync(uiFallbackJsPath);
-    let latestMtime = 0;
-    for (const uf of fs.readdirSync(uiLibDir)) {
-        const mt = fs.statSync(path.join(uiLibDir, uf)).mtimeMs;
-        if (mt > latestMtime) latestMtime = mt;
+    try {
+        const uiSandbox = { window: {} };
+        vm.runInNewContext(fs.readFileSync(uiFallbackJsPath, 'utf8'), uiSandbox);
+        const uiPairs = [
+            ['VCTRL_UI_FALLBACK_ATOMIC', 'atomic_cards.html'],
+            ['VCTRL_UI_FALLBACK_ICON', 'icon_cards.html'],
+            ['VCTRL_UI_FALLBACK_INSPECTOR', 'inspector_panels.html'],
+            ['VCTRL_UI_FALLBACK_MODALS', 'modals.html']
+        ];
+        for (const [varKey, uf] of uiPairs) {
+            const ufPath = path.join(uiLibDir, uf);
+            if (!fs.existsSync(ufPath)) continue;
+            const diskNorm = fs.readFileSync(ufPath, 'utf8').replace(/\r\n/g, '\n').trim();
+            const bundledNorm = String(uiSandbox.window[varKey] || '').replace(/\r\n/g, '\n').trim();
+            if (diskNorm !== bundledNorm) {
+                uiStatus = `OUTDATED (${uf} differs) - Needs scripts/build_ui_fallback.ps1`;
+                break;
+            }
+        }
+    } catch (e) {
+        uiStatus = `ERROR (${e.message}) - Needs scripts/build_ui_fallback.ps1`;
     }
-    if (latestMtime > statU.mtimeMs) uiStatus = 'OUTDATED - Needs scripts/build_ui_fallback.ps1';
 }
 console.log(`  * ui_library_fallback.js offline bundle: [${uiStatus}]`);
 

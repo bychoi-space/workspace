@@ -1548,14 +1548,15 @@ body {
 .screen-item {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 10px;
+    gap: 10px;
+    padding: 10px 12px;
     border-radius: 8px;
+    border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     color: var(--text-secondary);
     font-size: 13px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     position: relative;
     overflow: hidden;
 }
@@ -2899,29 +2900,6 @@ body.drag-active #drop-overlay {
     border-color: var(--accent) !important;
 }
 
-/* ----------------------------------------------------
-   10. Project & Screen Navigation Styles
-   ---------------------------------------------------- */
-.screen-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    margin-bottom: 4px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: var(--text-secondary);
-    font-size: 13px;
-    border: 1px solid transparent;
-}
-
-.screen-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    background: var(--accent) !important;
-    opacity: 1 !important;
-}
-
 .flatpickr-weekday { color: var(--text-secondary) !important; font-weight: 600 !important; }
 .flatpickr-day { color: var(--text-primary) !important; border-radius: 8px !important; }
 .flatpickr-day.today { border-color: var(--accent) !important; color: var(--accent) !important; }
@@ -3093,42 +3071,6 @@ body.drag-active #drop-overlay {
 .desc-row.highlight {
     background: rgba(0, 229, 255, 0.1) !important;
     border-color: var(--accent) !important;
-}
-
-/* ----------------------------------------------------
-   10. Project & Screen Navigation Styles
-   ---------------------------------------------------- */
-.screen-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    margin-bottom: 4px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: var(--text-secondary);
-    font-size: 13px;
-    border: 1px solid transparent;
-}
-
-.screen-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-}
-
-.screen-item.active {
-    background: rgba(0, 229, 255, 0.1);
-    color: var(--accent);
-    border-color: rgba(0, 229, 255, 0.2);
-    font-weight: 500;
-}
-
-.screen-name {
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* Removed: .project-info-bar has been merged into .toolbar for space optimization */

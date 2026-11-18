@@ -1,4 +1,4 @@
-param (
+﻿param (
     [string]$CommitMessage = "feat: synchronize system to dual remotes (GitHub and Sisun Git)"
 )
 
@@ -36,12 +36,12 @@ if ($status) {
 
 # Step 3. Pull rebase to ensure clean history
 Write-Host "`n[Step 3/4] Pulling latest changes from GitHub (rebase)..." -ForegroundColor Yellow
-try {
-    git pull --rebase origin main
-    Write-Host "✔ Rebase sync successful." -ForegroundColor Green
-} catch {
-    Write-Host "⚠ Warning during pull --rebase. Please check for merge conflicts." -ForegroundColor DarkYellow
+git pull --rebase https://github.com/bychoi-space/workspace.git main
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "[ERROR] Rebase failed or conflict detected. Resolve conflicts before pushing." -ForegroundColor Red
+    exit 1
 }
+Write-Host "✔ Rebase sync successful." -ForegroundColor Green
 
 # Step 4. Push to Dual Remotes
 Write-Host "`n[Step 4/4] Pushing to Dual Remotes (GitHub + Sisun Git)..." -ForegroundColor Yellow

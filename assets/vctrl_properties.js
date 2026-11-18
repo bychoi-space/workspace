@@ -561,10 +561,6 @@
         if (window.markAsDirty) window.markAsDirty();
     }
 
-    function hexToRgba(hex, opacity) {
-        return window.hexToRgba(hex, (opacity !== undefined ? opacity / 100 : 1));
-    }
-
     const SPECIAL_STYLE_CONFIGS = {
         'table-font-size': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: 'table', subSelector: 'td, th', subStyle: { fontSize: val + 'px' } }),
         'table-border-color': (val) => ({ type: 'BYCHOI_UPDATE_STYLE', selector: 'table', style: { borderColor: val }, subSelector: 'td, th', subStyle: { borderColor: val } }),

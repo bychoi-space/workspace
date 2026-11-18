@@ -6,14 +6,14 @@
 console.log("%c [VCTRL INSPECTOR] Initializing UI Controller... ", "background: #10b981; color: #fff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
 // 1. Central DOM Registry
-window.get = (id) => document.getElementById(id) || { style: {}, classList: { add:() => {}, remove:() => {}, toggle:() => {} }, innerText: '', innerHTML: '', onclick: null, oninput: null };
+window.get = (id) => document.getElementById(id) || { style: {}, classList: { add: () => { }, remove: () => { }, toggle: () => { } }, innerText: '', innerHTML: '', onclick: null, oninput: null };
 const highlightActive = (btn, isActive) => window.highlightActive(btn, isActive);
 
 
-window.rebindInspectorDOM = function() {
+window.rebindInspectorDOM = function () {
     console.log("[VCTRL INSPECTOR] Rebinding dynamic UI components selectors...");
-    const get = (id) => document.getElementById(id) || { style: {}, classList: { add:() => {}, remove:() => {}, toggle:() => {} }, innerText: '', innerHTML: '', onclick: null, oninput: null };
-    
+    const get = (id) => document.getElementById(id) || { style: {}, classList: { add: () => { }, remove: () => { }, toggle: () => { } }, innerText: '', innerHTML: '', onclick: null, oninput: null };
+
     DOM.textPropSection = get('text-editor-section');
     DOM.tablePropSection = get('table-inspector-section');
     DOM.shapePropSection = get('shape-inspector-section');
@@ -68,7 +68,7 @@ window.rebindInspectorDOM = function() {
     }
 };
 
-window.restorePropertiesSections = function(force) {
+window.restorePropertiesSections = function (force) {
     if (typeof window.closeV4ColorPalette === 'function') {
         window.closeV4ColorPalette();
     }
@@ -109,36 +109,36 @@ window.DOM = {
     zoomTxt: get('zoom-txt'),
     fileName: get('file-name-display'),
     btnBack: get('btn-back'),
-    
+
     // Panels
     metadataPanel: get('top-metadata-panel'),
     screensList: get('screens-list'),
     descriptionList: get('description-list'),
     sidebarLeft: get('sidebar-left'),
     sidebarRight: get('sidebar-right'),
-    
+
     // Bottom Bar
     // Bottom Bar
     pinsLayer: get('pins-layer'),
     guideLayer: get('guide-layer'),
-    
+
     // Buttons
     btnToggleLeft: get('btn-toggle-left'),
     btnToggleRight: get('btn-toggle-right'),
     btnGlobalSave: get('btn-global-save'),
     btnFullscreen: get('btn-fullscreen-toggle'),
     btnFullscreenExit: get('btn-fullscreen-exit'),
-    
+
     // Screen Management
     btnAddScreen: get('btn-add-screen'),
     addScreenModal: get('add-screen-modal'),
     btnCancelAdd: get('btn-add-screen-cancel'),
     btnSubmitAdd: get('btn-add-screen-submit'),
-    
+
     // Templates
     newScreenName: get('new-screen-name'),
     templateList: get('template-list'),
-    
+
     // Tabs
     tabBtns: document.querySelectorAll('.tab-btn'),
     tabPanes: document.querySelectorAll('.tab-pane'),
@@ -153,7 +153,7 @@ window.DOM = {
     editScreenFilename: get('edit-screen-filename'),
     btnCancelEdit: get('btn-edit-screen-cancel'),
     btnSubmitEdit: get('btn-edit-screen-submit'),
-    
+
     // Description
     btnAddDescription: get('btn-add-description'),
 
@@ -231,23 +231,23 @@ window.DOM = {
 };
 
 // --- 2. Sidebar & Tab Management (Unified & Clean) ---
-window.toggleSidebar = function(side, forceOpen = null) {
+window.toggleSidebar = function (side, forceOpen = null) {
     if (typeof window.hideScreenFlyout === 'function') window.hideScreenFlyout(0);
     console.log(`[Inspector] toggleSidebar(${side}, forceOpen: ${forceOpen})`);
     const sidebar = side === 'left' ? DOM.sidebarLeft : DOM.sidebarRight;
     if (!sidebar || !sidebar.classList) return;
-    
+
     const isCollapsed = sidebar.classList.contains('collapsed');
     const shouldOpen = forceOpen !== null ? forceOpen : isCollapsed;
-    
+
     // If state is already matching forceOpen, exit early to avoid redundant centerView calls
     if (forceOpen !== null && (!isCollapsed) === shouldOpen) {
         return;
     }
-    
+
     sidebar.classList.toggle('collapsed', !shouldOpen);
     console.log(`[Inspector] Sidebar ${side} is now ${shouldOpen ? 'OPEN' : 'COLLAPSED'}`);
-    
+
     const btn = side === 'left' ? DOM.btnToggleLeft : DOM.btnToggleRight;
     if (btn) {
         const icon = btn.querySelector('.material-icons-outlined, span');
@@ -267,7 +267,7 @@ window.toggleSidebar = function(side, forceOpen = null) {
 
 window._lastActiveSidebarTab = 'editor';
 
-window.setSidebarInspectorVisible = function(visible) {
+window.setSidebarInspectorVisible = function (visible) {
     const tabsBar = document.getElementById('sidebar-tabs-bar');
     const header = document.getElementById('sidebar-inspector-header');
     const inspectorPane = document.getElementById('tab-inspector');
@@ -299,7 +299,7 @@ window.setSidebarInspectorVisible = function(visible) {
     }
 };
 
-window.switchSidebarTab = function(tabName) {
+window.switchSidebarTab = function (tabName) {
     window._lastActiveSidebarTab = tabName;
     if (typeof window.setSidebarInspectorVisible === 'function') {
         window.setSidebarInspectorVisible(false);
@@ -307,7 +307,7 @@ window.switchSidebarTab = function(tabName) {
     const targetPane = document.getElementById(`tab-${tabName}`);
     const sidebarRight = document.getElementById('sidebar-right');
     const isSidebarOpen = sidebarRight && !sidebarRight.classList.contains('collapsed');
-    
+
     // If target tab is already active and sidebar is open, exit early to avoid reflow/focus interruption
     if (targetPane && targetPane.classList.contains('active') && isSidebarOpen) {
         if (tabName === 'description' && typeof window.autoResizeDescriptionInputs === 'function') {
@@ -319,7 +319,7 @@ window.switchSidebarTab = function(tabName) {
     console.log(`[Inspector] switchSidebarTab START: ${tabName}`);
     const btns = document.querySelectorAll('.tab-btn');
     const panes = document.querySelectorAll('.tab-pane');
-    
+
     if (btns.length === 0) console.warn("[Inspector] No .tab-btn elements found!");
     if (panes.length === 0) console.warn("[Inspector] No .tab-pane elements found!");
 
@@ -330,14 +330,14 @@ window.switchSidebarTab = function(tabName) {
         pane.style.setProperty('display', isActive ? 'flex' : 'none', 'important');
         if (isActive) console.log(`[Inspector] Pane activated: ${pane.id}`);
     });
-    
+
     // Ensure sidebar is open when switching tabs
     window.toggleSidebar('right', true);
-    
+
     if (tabName === 'description' && typeof window.autoResizeDescriptionInputs === 'function') {
         setTimeout(window.autoResizeDescriptionInputs, 50);
     }
-    
+
     console.log(`[Inspector] switchSidebarTab END: ${tabName}`);
 };
 
@@ -346,11 +346,7 @@ window.switchSidebarTab = function(tabName) {
 // 3.1 Project Metadata UI Manager (SSOT — Compact Popover + Persistent Inputs)
 const ProjectMetadataManager = {
     _escapeAttr(val) {
-        return String(val || '')
-            .replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
+        return window.escapeHtmlAttr(val);
     },
     _computeSummary(assignee, developer, period) {
         const parts = [];
@@ -741,8 +737,8 @@ function _syncQuillContent(compStyles, editingType) {
 
 // 3.10 Dynamically relocate active panels into Target Body (Docked or Floating)
 function _relocatePropertyPanels(isDocked) {
-    const targetBody = isDocked 
-        ? document.getElementById('sidebar-inspector-body') 
+    const targetBody = isDocked
+        ? document.getElementById('sidebar-inspector-body')
         : document.getElementById('floating-inspector-body');
 
     if (targetBody) {
@@ -810,7 +806,7 @@ function _handleNoSelection() {
 }
 
 // --- Master Property Coordinator & Dispatcher ---
-window.updateProperties = function(compStyles, isNewSelectionExplicit) {
+window.updateProperties = function (compStyles, isNewSelectionExplicit) {
     const activeEl = document.activeElement;
     const isBtn = activeEl && (activeEl.tagName === 'BUTTON' || !!activeEl.closest('button'));
     const isNewComp = (typeof isNewSelectionExplicit === 'boolean')
@@ -837,11 +833,11 @@ window.updateProperties = function(compStyles, isNewSelectionExplicit) {
         currentActiveEl.classList.contains('grid-col-name-input') ||
         currentActiveEl.classList.contains('accordion-sub-input')
     );
-    
+
     if (isTypingInInspector) {
         return;
     }
-    
+
     window.restorePropertiesSections(isNewComp);
     const pm = state.projectMetadata || {};
     if (!DOM.metadataPanel) return;
@@ -914,9 +910,9 @@ let currentFlyoutScreen = null;
 // --- 4. Library & Editor (Delegated to vctrl_component_library.js) ---
 // Global Color Palette delegated to vctrl_color_picker.js
 
-    if (typeof window.preserveConsecutiveSpaces !== 'function') {
-        window.preserveConsecutiveSpaces = (html) => (window.InspectorTextFormatter?.preserveConsecutiveSpaces ? window.InspectorTextFormatter.preserveConsecutiveSpaces(html) : html);
-    }
+if (typeof window.preserveConsecutiveSpaces !== 'function') {
+    window.preserveConsecutiveSpaces = (html) => (window.InspectorTextFormatter?.preserveConsecutiveSpaces ? window.InspectorTextFormatter.preserveConsecutiveSpaces(html) : html);
+}
 
 
 // --- 4. Library & Editor (Quill Rich Text Editor decoupled to assets/inspector/inspector_quill.js) ---
@@ -970,7 +966,7 @@ if (floatingInspectorCard) {
             const currentSide = state.floatingSide || 'right';
             const nextSide = (currentSide === 'right') ? 'left' : 'right';
             state.floatingSide = nextSide;
-            try { localStorage.setItem('bychoi_inspector_floating_side', nextSide); } catch (_) {}
+            try { localStorage.setItem('bychoi_inspector_floating_side', nextSide); } catch (_) { }
             if (nextSide === 'left') {
                 floatingInspectorCard.style.left = '24px';
                 floatingInspectorCard.style.right = 'auto';
@@ -985,7 +981,7 @@ if (floatingInspectorCard) {
         btnFloatingDock.onclick = (e) => {
             e.stopPropagation();
             state.inspectorMode = 'docked';
-            try { localStorage.setItem('bychoi_inspector_mode', 'docked'); } catch (_) {}
+            try { localStorage.setItem('bychoi_inspector_mode', 'docked'); } catch (_) { }
             window.restorePropertiesSections();
             floatingInspectorCard.style.setProperty('display', 'none', 'important');
             if (typeof window.updateProperties === 'function') {
@@ -999,7 +995,7 @@ if (btnSidebarPopout) {
     btnSidebarPopout.onclick = (e) => {
         e.stopPropagation();
         state.inspectorMode = 'floating';
-        try { localStorage.setItem('bychoi_inspector_mode', 'floating'); } catch (_) {}
+        try { localStorage.setItem('bychoi_inspector_mode', 'floating'); } catch (_) { }
         window.restorePropertiesSections();
         if (typeof window.setSidebarInspectorVisible === 'function') {
             window.setSidebarInspectorVisible(false);
@@ -1011,7 +1007,7 @@ if (btnSidebarPopout) {
 }
 
 // Central Single Source of Truth for Deselection (Object & Inspector)
-window.deselectAll = function() {
+window.deselectAll = function () {
     if (typeof window.closeV4ColorPalette === 'function') {
         window.closeV4ColorPalette();
     }
@@ -1037,12 +1033,12 @@ window.deselectAll = function() {
             window.GroupingManager.setSelectedIds([]);
         }
         if (typeof window.GroupingManager.updateSelectionUI === 'function') {
-            try { window.GroupingManager.updateSelectionUI(); } catch (_) {}
+            try { window.GroupingManager.updateSelectionUI(); } catch (_) { }
         }
     }
     // 5. Clear connectors selection
     if (window.ConnectorEngine && typeof window.ConnectorEngine.clearSelection === 'function') {
-        try { window.ConnectorEngine.clearSelection(); } catch (_) {}
+        try { window.ConnectorEngine.clearSelection(); } catch (_) { }
     }
     // 6. Clear global state
     if (window.state) {
@@ -1160,7 +1156,7 @@ console.log("[VCTRL INSPECTOR] UI Controller fully loaded and cleaned.");
 
 
 // Reset transparency badge when any color picker input changes
-document.addEventListener('input', function(e) {
+document.addEventListener('input', function (e) {
     if (!e.target) return;
     const colorIds = {
         'shape-bg-color': 'shape-bg-wrapper',
@@ -1180,7 +1176,7 @@ document.addEventListener('input', function(e) {
 });
 
 // Central inspector event re-binding and initialization (Unified SSOT)
-window.initAllInspectorEvents = function() {
+window.initAllInspectorEvents = function () {
     const safeRun = (fn, name) => {
         try { if (typeof fn === 'function') fn(); }
         catch (e) { console.warn("[VCTRL INSPECTOR] " + name + " failed:", e); }

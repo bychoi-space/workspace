@@ -9,6 +9,7 @@ if (-not (Test-Path $edge)) {
 # Create a test harness HTML that imports every JS file and reports errors
 $testHarnessPath = "c:\Users\sisun\ai_work\scripts\syntax_test.html"
 $jsFiles = @(
+    "assets/vctrl_common.js",
     "assets/vctrl_typography.js",
     "assets/ui_library_fallback.js",
     "assets/vctrl_ui_library.js",
@@ -19,6 +20,7 @@ $jsFiles = @(
     "assets/vctrl_text_measurer.js",
     "assets/vctrl_ui_atoms.js",
     "assets/vctrl_ui_atoms_inputs.js",
+    "assets/vctrl_ui_atoms_webeditor.js",
     "assets/vctrl_ui_atoms_cursor.js",
     "assets/vctrl_component_illustrations.js",
     "assets/vctrl_design_system_atoms.js",
@@ -27,12 +29,12 @@ $jsFiles = @(
     "assets/vctrl_clipboard_objects.js",
     "assets/vctrl_format_painter.js",
     "assets/vctrl_shortcuts.js",
-    "assets/vctrl_common.js",
     "assets/vctrl_object_shape.js",
     "assets/vctrl_object_connector.js",
     "assets/responsive_frame.js",
     "assets/vctrl_iframe_styles.js",
     "assets/vctrl_iframe_style_extractor.js",
+    "assets/vctrl_iframe_dimmed_layer.js",
     "assets/vctrl_iframe_layering.js",
     "assets/vctrl_iframe_inserter.js",
     "assets/vctrl_iframe_adorner.js",
@@ -69,6 +71,7 @@ $jsFiles = @(
     "assets/vctrl_component_library.js",
     "assets/vctrl_table.js",
     "assets/vctrl_component_inserter.js",
+    "assets/inspector/inspector_dimmed_layer.js",
     "assets/inspector/inspector_grid.js",
     "assets/inspector/inspector_accordion.js",
     "assets/inspector/inspector_tab.js",
@@ -88,6 +91,7 @@ $jsFiles = @(
     "assets/vctrl_component_icons_data.js",
     "assets/vctrl_core_router.js",
     "assets/vctrl_parent_shortcuts.js",
+    "assets/vctrl_pdf_storyboard.js",
     "assets/vctrl_pdf_exporter.js",
     "assets/vctrl_storage.js",
     "assets/vctrl_autosave.js",
@@ -124,12 +128,14 @@ $htmlContent = @"
     <script>
         // Check dynamically inlined template scripts for syntax errors
         const inlinedScripts = [
+            { name: 'v4CommonScript', code: window.v4CommonScript },
             { name: 'v4TypographyScript', code: window.v4TypographyScript },
             { name: 'v4UndoScript', code: window.v4UndoScript },
             { name: 'v4TableScript', code: window.v4TableScript },
             { name: 'v4TextMeasurerScript', code: window.v4TextMeasurerScript },
             { name: 'v4UIAtomsScript', code: window.v4UIAtomsScript },
             { name: 'v4UIAtomsInputsScript', code: window.v4UIAtomsInputsScript },
+            { name: 'v4UIAtomsWebEditorScript', code: window.v4UIAtomsWebEditorScript },
             { name: 'v4UIAtomsCursorScript', code: window.v4UIAtomsCursorScript },
             { name: 'v4DesignSystemAtomsScript', code: window.v4DesignSystemAtomsScript },
             { name: 'v4DesignSystemShapesTablesScript', code: window.v4DesignSystemShapesTablesScript },
@@ -137,7 +143,6 @@ $htmlContent = @"
             { name: 'v4ClipboardObjectsScript', code: window.v4ClipboardObjectsScript },
             { name: 'v4FormatPainterScript', code: window.v4FormatPainterScript },
             { name: 'v4ShortcutsScript', code: window.v4ShortcutsScript },
-            { name: 'v4CommonScript', code: window.v4CommonScript },
             { name: 'v4ObjectShapeScript', code: window.v4ObjectShapeScript },
             { name: 'v4ObjectConnectorScript', code: window.v4ObjectConnectorScript },
             { name: 'v4DragResizeScript', code: window.v4DragResizeScript },

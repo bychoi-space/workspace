@@ -52,7 +52,7 @@
       ],
       "connectors": [],
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "renewal_cart_2.html": {
       "title": "장바구니 - 배너 슬롯",
@@ -96,7 +96,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     },
     "renewal_order_3.html": {
       "title": "주문서 - 배너 슬롯",
@@ -140,7 +140,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object]"
+      "screenDesc": ""
     },
     "99_Blank_164.html": {
       "title": "배너 슬롯 규정",
@@ -195,7 +195,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object],[object Object]"
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

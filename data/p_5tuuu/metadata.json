@@ -52,7 +52,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object]"
+      "screenDesc": ""
     },
     "09_Admin_PC_Scroll_59.html": {
       "title": "기획전 상세 - 상품 그룹 정렬 기능",
@@ -118,7 +118,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object]"
+      "screenDesc": ""
     },
     "08_Responsive_PC_Mobile_501.html": {
       "title": "상품 그룹 UI 변경 2",
@@ -194,7 +194,7 @@
       "connectors": [],
       "version": 0.1,
       "defaultTab": "description",
-      "screenDesc": "[object Object]"
+      "screenDesc": ""
     }
   },
   "assignee": "최범열",

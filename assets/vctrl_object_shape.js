@@ -3,7 +3,7 @@ window.v4ObjectShapeScript = `
     console.log("[V4 Object Shape] Module initialized.");
     window.v4ObjectShape = window.v4ObjectShape || {};
 
-    window.v4ObjectShape.handleUpdateStyle = (d) => {
+    function _resolveShapeUpdateComponents(d) {
         let components = [];
         if (d && d.ids && Array.isArray(d.ids) && d.ids.length > 0) {
             components = d.ids.map(id => document.getElementById(id)).filter(Boolean);
@@ -12,483 +12,482 @@ window.v4ObjectShapeScript = `
             const single = (d && d.id ? document.getElementById(d.id) : null) || document.querySelector('.bychoi-component.selected');
             if (single) components = [single];
         }
-        if (components.length === 0) return false;
+        if (components.length === 0) return [];
+        return components.filter(c => c.querySelector('.v4-shape') || c.classList.contains('v4-shape'));
+    }
 
-        // Filter components that are shapes or contain shapes
-        const validComponents = components.filter(c => c.querySelector('.v4-shape') || c.classList.contains('v4-shape'));
-        if (validComponents.length === 0) {
-            return false;
+    function _resolveShapeUpdateTargets(s, shape, selector) {
+        if (!selector) return [shape];
+        const targets = [];
+        if (s.matches && s.matches(selector)) targets.push(s);
+        targets.push(...Array.from(s.querySelectorAll(selector)));
+        if (targets.length === 0 && shape) {
+            targets.push(shape);
         }
+        return targets;
+    }
+
+    function _applyShapeBoxAndHtml(s, t, style) {
+        if (style.width !== undefined || style.height !== undefined) {
+            s.setAttribute('data-resized', 'true');
+        }
+        if (style.html !== undefined) {
+            const targetCell = t.querySelector('.v4-shape-text-content') || t.querySelector('.v4-shape-text-overlay') || t.querySelector('.v4-editable-cell') || t;
+            if (targetCell !== t) {
+                targetCell.innerHTML = style.html;
+            } else {
+                t.innerHTML = style.html;
+            }
+        }
+        if (style.left !== undefined) {
+            s.style.left = typeof style.left === 'number' ? style.left + 'px' : style.left;
+            if (typeof window.updateAnchoredConnectorsLocal === 'function' && s.id) {
+                window.updateAnchoredConnectorsLocal(s.id);
+            }
+        }
+        if (style.top !== undefined) {
+            s.style.top = typeof style.top === 'number' ? style.top + 'px' : style.top;
+            const curFixed = s.getAttribute('data-scroll-fixed');
+            if (curFixed === 'custom' || curFixed === 'floating') {
+                s.setAttribute('data-scroll-target-y', String(Math.round(parseFloat(s.style.top) || 0)));
+            }
+            if (typeof window.updateAnchoredConnectorsLocal === 'function' && s.id) {
+                window.updateAnchoredConnectorsLocal(s.id);
+            }
+        }
+        if (style.width !== undefined) {
+            s.style.width = style.width;
+            if (t !== s) t.style.width = '100%';
+        }
+        if (style.height !== undefined) {
+            s.style.height = style.height;
+            if (t !== s) t.style.height = '100%';
+        }
+        if (style.patternType !== undefined && t.classList.contains('v4-shape-pattern-grid')) {
+            console.log("[ObjectShape] Received patternType:", style.patternType, "Updating element:", t);
+            t.setAttribute('data-pattern-type', style.patternType);
+        }
+    }
+
+    function _syncLineSvgCoordinates(lineSvg, lineEl, dirVal, hasMarkers) {
+        if (!lineEl || !lineSvg) return;
+        if (hasMarkers) {
+            lineSvg.removeAttribute('viewBox');
+            lineSvg.removeAttribute('preserveAspectRatio');
+            if (dirVal === 'vertical') {
+                lineEl.setAttribute('x1', '50%');
+                lineEl.setAttribute('y1', '0%');
+                lineEl.setAttribute('x2', '50%');
+                lineEl.setAttribute('y2', '100%');
+            } else {
+                lineEl.setAttribute('x1', '0%');
+                lineEl.setAttribute('y1', '50%');
+                lineEl.setAttribute('x2', '100%');
+                lineEl.setAttribute('y2', '50%');
+            }
+        } else {
+            lineSvg.setAttribute('viewBox', '0 0 100 100');
+            lineSvg.setAttribute('preserveAspectRatio', 'none');
+            if (dirVal === 'vertical') {
+                lineEl.setAttribute('x1', '50');
+                lineEl.setAttribute('y1', '0');
+                lineEl.setAttribute('x2', '50');
+                lineEl.setAttribute('y2', '100');
+            } else {
+                lineEl.setAttribute('x1', '0');
+                lineEl.setAttribute('y1', '50');
+                lineEl.setAttribute('x2', '100');
+                lineEl.setAttribute('y2', '50');
+            }
+        }
+    }
+
+    function _buildLineMarkerSvg(mId, mType, isStart, activeCol) {
+        if (!mType) return '';
+        const orientVal = isStart ? 'auto-start-reverse' : 'auto';
+        if (mType === 'dot') {
+            return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="' + orientVal + '"><circle cx="5" cy="5" r="3.8" fill="' + activeCol + '" /></marker>';
+        }
+        if (mType === 'open') {
+            return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="' + orientVal + '"><path d="M 1.5 1.5 L 8.5 5 L 1.5 8.5" fill="none" stroke="' + activeCol + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></marker>';
+        }
+        return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="' + orientVal + '"><path d="M 0 0 L 10 5 L 0 10 z" fill="' + activeCol + '" /></marker>';
+    }
+
+    function _applyLineShapeStyle(s, t, style) {
+        if (!t.classList.contains('v4-shape-line')) return;
+        const lineSvg = t.querySelector('svg');
+        const lineEl = t.querySelector('line');
+
+        if (style.lineDir !== undefined) {
+            t.setAttribute('data-line-dir', style.lineDir);
+            const curW = s.offsetWidth || parseFloat(s.style.width) || 200;
+            const curH = s.offsetHeight || parseFloat(s.style.height) || 2;
+            const curLen = Math.max(curW, curH, 10);
+            const th = parseFloat(t.getAttribute('data-line-width')) || 1.6;
+            if (style.lineDir === 'vertical') {
+                s.style.width = Math.max(th, 2) + 'px';
+                s.style.height = curLen + 'px';
+            } else {
+                s.style.width = curLen + 'px';
+                s.style.height = Math.max(th, 2) + 'px';
+            }
+            const curMs = t.getAttribute('data-marker-start') || '';
+            const curMe = t.getAttribute('data-marker-end') || '';
+            _syncLineSvgCoordinates(lineSvg, lineEl, style.lineDir, !!(curMs || curMe));
+        }
+
+        if (style.lineStyle !== undefined) {
+            t.setAttribute('data-line-style', style.lineStyle);
+            if (lineEl) {
+                if (style.lineStyle === 'dashed') {
+                    lineEl.style.strokeDasharray = '6 4';
+                    lineEl.setAttribute('stroke-dasharray', '6 4');
+                    lineEl.style.strokeLinecap = 'butt';
+                    lineEl.setAttribute('stroke-linecap', 'butt');
+                } else if (style.lineStyle === 'dotted') {
+                    lineEl.style.strokeDasharray = '1 5';
+                    lineEl.setAttribute('stroke-dasharray', '1 5');
+                    lineEl.style.strokeLinecap = 'round';
+                    lineEl.setAttribute('stroke-linecap', 'round');
+                } else {
+                    lineEl.style.strokeDasharray = 'none';
+                    lineEl.removeAttribute('stroke-dasharray');
+                    lineEl.style.strokeLinecap = 'butt';
+                    lineEl.setAttribute('stroke-linecap', 'butt');
+                }
+            }
+        }
+
+        if (style.lineThickness !== undefined) {
+            const th = parseFloat(style.lineThickness) || 1.6;
+            t.setAttribute('data-line-width', th);
+            if (lineEl) {
+                lineEl.style.strokeWidth = th;
+                lineEl.setAttribute('stroke-width', th);
+            }
+            const isVert = t.getAttribute('data-line-dir') === 'vertical';
+            if (isVert) s.style.width = Math.max(th, 2) + 'px';
+            else s.style.height = Math.max(th, 2) + 'px';
+        }
+
+        const colorVal = style.lineColor !== undefined ? style.lineColor : (style.stroke !== undefined ? style.stroke : style.borderColor);
+        if (colorVal !== undefined) {
+            t.setAttribute('data-line-color', colorVal);
+            if (lineEl) {
+                lineEl.style.stroke = colorVal;
+                lineEl.setAttribute('stroke', colorVal);
+            }
+        }
+
+        if (style.lineMarkerStart !== undefined) {
+            const ms = (style.lineMarkerStart && style.lineMarkerStart !== 'none') ? style.lineMarkerStart : '';
+            if (ms) t.setAttribute('data-marker-start', ms);
+            else t.removeAttribute('data-marker-start');
+        }
+        if (style.lineMarkerEnd !== undefined) {
+            const me = (style.lineMarkerEnd && style.lineMarkerEnd !== 'none') ? style.lineMarkerEnd : '';
+            if (me) t.setAttribute('data-marker-end', me);
+            else t.removeAttribute('data-marker-end');
+        }
+
+        if (lineSvg && lineEl && (style.lineMarkerStart !== undefined || style.lineMarkerEnd !== undefined || colorVal !== undefined || style.lineDir !== undefined)) {
+            const activeMs = t.getAttribute('data-marker-start') || '';
+            const activeMe = t.getAttribute('data-marker-end') || '';
+            const activeDir = t.getAttribute('data-line-dir') || 'horizontal';
+            const activeCol = t.getAttribute('data-line-color') || '#c8c8c8';
+            const safeId = (s.id || 'line').replace(/[^a-zA-Z0-9_-]/g, '_');
+            let defsEl = lineSvg.querySelector('defs');
+            if (activeMs || activeMe) {
+                _syncLineSvgCoordinates(lineSvg, lineEl, activeDir, true);
+                if (!defsEl) {
+                    defsEl = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                    lineSvg.insertBefore(defsEl, lineSvg.firstChild);
+                }
+                const startMarkerId = 'v4lm-s-' + safeId;
+                const endMarkerId = 'v4lm-e-' + safeId;
+                defsEl.innerHTML = _buildLineMarkerSvg(startMarkerId, activeMs, true, activeCol) + _buildLineMarkerSvg(endMarkerId, activeMe, false, activeCol);
+                if (activeMs) lineEl.setAttribute('marker-start', 'url(#' + startMarkerId + ')');
+                else lineEl.removeAttribute('marker-start');
+                if (activeMe) lineEl.setAttribute('marker-end', 'url(#' + endMarkerId + ')');
+                else lineEl.removeAttribute('marker-end');
+            } else {
+                if (defsEl) defsEl.remove();
+                lineEl.removeAttribute('marker-start');
+                lineEl.removeAttribute('marker-end');
+                _syncLineSvgCoordinates(lineSvg, lineEl, activeDir, false);
+            }
+        }
+    }
+
+    function _applyWaveShapeStyle(s, t, shape, style) {
+        if (!t.classList.contains('v4-shape-wave') && !(shape && shape.classList.contains('v4-shape-wave'))) return;
+        const waveEl = t.classList.contains('v4-shape-wave') ? t : shape;
+        if (style.waveDir === undefined) return;
+
+        waveEl.setAttribute('data-wave-dir', style.waveDir);
+        const svgEl = waveEl.querySelector('svg');
+        const polyEl = waveEl.querySelector('polygon');
+        const cellEl = waveEl.querySelector('.v4-editable-cell');
+        const curW = s.offsetWidth || parseFloat(s.style.width) || 360;
+        const curH = s.offsetHeight || parseFloat(s.style.height) || 20;
+
+        if (style.waveDir === 'vertical') {
+            if (curW > curH) {
+                s.style.width = Math.min(curH, 20) + 'px';
+                s.style.height = Math.max(curW, 100) + 'px';
+            } else if (parseFloat(s.style.width) > 40) {
+                s.style.width = '20px';
+            }
+            if (svgEl) svgEl.setAttribute('viewBox', '0 0 20 360');
+            if (polyEl) polyEl.setAttribute('points', '6,0 2,45 6,90 2,135 6,180 2,225 6,270 2,315 6,360 16,360 12,315 16,270 12,225 16,180 12,135 16,90 12,45 16,0');
+            if (cellEl) cellEl.style.padding = '5px 2px';
+        } else {
+            if (curH > curW) {
+                s.style.width = Math.max(curH, 100) + 'px';
+                s.style.height = Math.min(curW, 20) + 'px';
+            } else if (parseFloat(s.style.height) > 40) {
+                s.style.height = '20px';
+            }
+            if (svgEl) svgEl.setAttribute('viewBox', '0 0 360 20');
+            if (polyEl) polyEl.setAttribute('points', '0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16');
+            if (cellEl) cellEl.style.padding = '5px 10px';
+        }
+
+        if (typeof window.notifyParent === 'function') {
+            window.notifyParent({
+                type: 'BYCHOI_COMP_RESIZED',
+                id: s.id,
+                width: s.style.width,
+                height: s.style.height
+            });
+        }
+    }
+
+    function _applyShapeTextPadding(t, shape, style) {
+        if (style.padTop === undefined && style.paddingTop === undefined && style.padding === undefined) return;
+        const pt = style.padTop !== undefined ? parseInt(style.padTop) : (parseInt(style.paddingTop) || 0);
+        const pb = style.padBottom !== undefined ? parseInt(style.padBottom) : (parseInt(style.paddingBottom) || 0);
+        const pl = style.padLeft !== undefined ? parseInt(style.padLeft) : (parseInt(style.paddingLeft) || 0);
+        const pr = style.padRight !== undefined ? parseInt(style.padRight) : (parseInt(style.paddingRight) || 0);
+
+        const targetCells = [t];
+        if (!t.classList.contains('v4-editable-cell') && !t.classList.contains('v4-shape-text-content') && !t.classList.contains('v4-shape-text-overlay')) {
+            const subCells = t.querySelectorAll('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
+            if (subCells.length > 0) targetCells.push(...Array.from(subCells));
+        }
+
+        targetCells.forEach(cell => {
+            cell.style.setProperty('padding-top', pt + 'px', 'important');
+            cell.style.setProperty('padding-right', pr + 'px', 'important');
+            cell.style.setProperty('padding-bottom', pb + 'px', 'important');
+            cell.style.setProperty('padding-left', pl + 'px', 'important');
+            cell.style.setProperty('padding', pt + 'px ' + pr + 'px ' + pb + 'px ' + pl + 'px', 'important');
+            cell.style.setProperty('box-sizing', 'border-box', 'important');
+            cell.setAttribute('data-pad-top', pt);
+            cell.setAttribute('data-pad-bottom', pb);
+            cell.setAttribute('data-pad-left', pl);
+            cell.setAttribute('data-pad-right', pr);
+        });
+
+        if (shape) {
+            shape.setAttribute('data-pad-top', pt);
+            shape.setAttribute('data-pad-bottom', pb);
+            shape.setAttribute('data-pad-left', pl);
+            shape.setAttribute('data-pad-right', pr);
+            shape.style.setProperty('--v4-shape-pad-top', pt + 'px');
+            shape.style.setProperty('--v4-shape-pad-bottom', pb + 'px');
+            shape.style.setProperty('--v4-shape-pad-left', pl + 'px');
+            shape.style.setProperty('--v4-shape-pad-right', pr + 'px');
+        }
+    }
+
+    function _applyShapeAlignmentAndRadius(s, t, shape, key, val) {
+        const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : ((key === 'justifyContent' || key === 'vAlign') ? 'justify-content' : 'border-radius'));
+        let cssVal = val;
+        if (key === 'justifyContent' || key === 'vAlign') {
+            const normV = (val === 'flex-start' || val === 'top') ? 'top' : ((val === 'flex-end' || val === 'bottom') ? 'bottom' : 'middle');
+            cssVal = normV === 'top' ? 'flex-start' : (normV === 'bottom' ? 'flex-end' : 'center');
+            s.setAttribute('data-valign', normV);
+            t.setAttribute('data-valign', normV);
+            if (shape) shape.setAttribute('data-valign', normV);
+        } else if (key === 'textAlign') {
+            s.setAttribute('data-align', val);
+            t.setAttribute('data-align', val);
+            if (shape) shape.setAttribute('data-align', val);
+        }
+        t.style.setProperty(cssKey, cssVal, 'important');
+        if (key === 'borderRadius' && window.SelectionAdorner && document.querySelector('.v4-selection-adorner')) {
+            window.SelectionAdorner.update();
+        }
+        if (key !== 'textAlign' && key !== 'alignItems' && key !== 'justifyContent' && key !== 'vAlign') return;
+
+        const curPadTop = t.getAttribute('data-pad-top') || (shape ? shape.getAttribute('data-pad-top') : null) || (parseInt(t.style.paddingTop) || 5);
+        const curPadRight = t.getAttribute('data-pad-right') || (shape ? shape.getAttribute('data-pad-right') : null) || (parseInt(t.style.paddingRight) || 10);
+        const curPadBottom = t.getAttribute('data-pad-bottom') || (shape ? shape.getAttribute('data-pad-bottom') : null) || (parseInt(t.style.paddingBottom) || 5);
+        const curPadLeft = t.getAttribute('data-pad-left') || (shape ? shape.getAttribute('data-pad-left') : null) || (parseInt(t.style.paddingLeft) || 10);
+
+        const pt = (curPadTop !== null && curPadTop !== undefined && !isNaN(parseInt(curPadTop))) ? parseInt(curPadTop) : 5;
+        const pr = (curPadRight !== null && curPadRight !== undefined && !isNaN(parseInt(curPadRight))) ? parseInt(curPadRight) : 10;
+        const pb = (curPadBottom !== null && curPadBottom !== undefined && !isNaN(parseInt(curPadBottom))) ? parseInt(curPadBottom) : 5;
+        const pl = (curPadLeft !== null && curPadLeft !== undefined && !isNaN(parseInt(curPadLeft))) ? parseInt(curPadLeft) : 10;
+
+        t.style.setProperty('padding-top', pt + 'px', 'important');
+        t.style.setProperty('padding-right', pr + 'px', 'important');
+        t.style.setProperty('padding-bottom', pb + 'px', 'important');
+        t.style.setProperty('padding-left', pl + 'px', 'important');
+        t.style.setProperty('padding', pt + 'px ' + pr + 'px ' + pb + 'px ' + pl + 'px', 'important');
+        t.style.setProperty('box-sizing', 'border-box', 'important');
+
+        if (key === 'textAlign') {
+            t.querySelectorAll('p, span, .ql-editor, .ql-editor p').forEach(child => {
+                child.style.setProperty('text-align', val, 'important');
+                if (child.tagName === 'P' || child.classList?.contains('ql-editor')) {
+                    child.style.setProperty('width', '100%', 'important');
+                }
+                child.style.setProperty('padding', '0px', 'important');
+                child.style.setProperty('margin', '0px', 'important');
+            });
+        } else if (key === 'alignItems') {
+            t.querySelectorAll('p, span, .ql-editor, .ql-editor p, .v4-shape-text-content, .v4-editable-cell').forEach(child => {
+                child.style.setProperty('align-items', val, 'important');
+                if (child.tagName === 'P') {
+                    child.style.setProperty('width', '100%', 'important');
+                }
+                child.style.setProperty('padding', '0px', 'important');
+                child.style.setProperty('margin', '0px', 'important');
+            });
+        } else if (key === 'justifyContent' || key === 'vAlign') {
+            t.querySelectorAll('p, span, .ql-editor, .ql-editor p, .v4-shape-text-content, .v4-editable-cell').forEach(child => {
+                child.style.setProperty('justify-content', cssVal, 'important');
+            });
+        }
+    }
+
+    function _applyShapeGenericCssProperties(s, t, shape, style, isSvgContainer) {
+        const skipped = new Set(['left', 'top', 'width', 'height', 'html', 'patternType', 'lineMarkerStart', 'lineMarkerEnd', 'padTop', 'padBottom', 'padLeft', 'padRight', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'padding']);
+        for (const [key, val] of Object.entries(style)) {
+            if (skipped.has(key)) continue;
+            if (key === 'cornerDir') {
+                const normCornerDir = val || 'all';
+                t.setAttribute('data-corner-dir', normCornerDir);
+                if (shape) shape.setAttribute('data-corner-dir', normCornerDir);
+                continue;
+            }
+            if (key === 'borderStyle') {
+                const normBs = (val === 'dashed' || val === 'dotted') ? val : 'solid';
+                t.setAttribute('data-border-style', normBs);
+                if (shape) shape.setAttribute('data-border-style', normBs);
+                if (!isSvgContainer) t.style.setProperty('border-style', normBs, 'important');
+                continue;
+            }
+            if (key === 'borderWidth') {
+                const parsedBw = parseFloat(val);
+                const normBw = !isNaN(parsedBw) ? Math.max(0, parsedBw) : 1.6;
+                t.setAttribute('data-border-width', String(normBw));
+                if (shape) shape.setAttribute('data-border-width', String(normBw));
+                if (!isSvgContainer) t.style.setProperty('border-width', normBw + 'px', 'important');
+                continue;
+            }
+            if (key === 'background' || key === 'backgroundColor') {
+                if (isSvgContainer) {
+                    t.style.background = 'transparent';
+                    t.style.backgroundColor = 'transparent';
+                } else if (t.classList.contains('v4-shape-image')) {
+                    t.style.setProperty('background-color', val, 'important');
+                } else {
+                    t.style[key] = val;
+                }
+            } else if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'borderRadius' || key === 'vAlign') {
+                _applyShapeAlignmentAndRadius(s, t, shape, key, val);
+            } else {
+                t.style[key] = val;
+            }
+        }
+    }
+
+    function _syncSvgAndWebpageStrokeFill(t, shape, svgShape, isSvgContainer, style) {
+        if (svgShape) {
+            if (t.classList.contains('v4-shape-line')) {
+                const curLineWidth = t.getAttribute('data-line-width') || '1.6';
+                const lineStyleColor = style && (style.lineColor !== undefined ? style.lineColor : (style.stroke !== undefined ? style.stroke : style.borderColor));
+                const curLineColor = lineStyleColor !== undefined ? lineStyleColor : (t.getAttribute('data-line-color') || '#c8c8c8');
+                svgShape.style.strokeWidth = curLineWidth;
+                svgShape.setAttribute('stroke-width', curLineWidth);
+                svgShape.style.stroke = curLineColor;
+                svgShape.setAttribute('stroke', curLineColor);
+                svgShape.style.fill = 'none';
+                svgShape.setAttribute('fill', 'none');
+                svgShape.style.vectorEffect = 'non-scaling-stroke';
+            } else {
+                const targetFill = style.backgroundColor || style.background;
+                if (targetFill !== undefined) svgShape.style.fill = targetFill;
+                if (isSvgContainer) {
+                    t.style.background = 'transparent';
+                    t.style.backgroundColor = 'transparent';
+                }
+                if (style.borderColor) {
+                    svgShape.style.stroke = style.borderColor;
+                    svgShape.setAttribute('stroke', style.borderColor);
+                }
+                const savedBwAttr = (shape ? shape.getAttribute('data-border-width') : null) || t.getAttribute('data-border-width');
+                const activeSw = (style.borderWidth !== undefined)
+                    ? String(Math.max(0, parseFloat(style.borderWidth) || 0))
+                    : ((savedBwAttr !== null && savedBwAttr !== '') ? String(parseFloat(savedBwAttr)) : '1.6');
+                svgShape.style.strokeWidth = activeSw;
+                svgShape.setAttribute('stroke-width', activeSw);
+
+                const savedBsAttr = (style.borderStyle !== undefined ? style.borderStyle : ((shape ? shape.getAttribute('data-border-style') : null) || t.getAttribute('data-border-style'))) || 'solid';
+                if (savedBsAttr === 'dashed') {
+                    svgShape.style.strokeDasharray = '6 4';
+                    svgShape.setAttribute('stroke-dasharray', '6 4');
+                } else if (savedBsAttr === 'dotted') {
+                    svgShape.style.strokeDasharray = '2 4';
+                    svgShape.setAttribute('stroke-dasharray', '2 4');
+                } else if (style.borderStyle !== undefined) {
+                    svgShape.style.strokeDasharray = 'none';
+                    svgShape.removeAttribute('stroke-dasharray');
+                }
+                svgShape.style.vectorEffect = 'non-scaling-stroke';
+            }
+        }
+
+        if (t.classList.contains('v4-shape-webpage') || (shape && shape.classList.contains('v4-shape-webpage'))) {
+            const targetWebpage = t.classList.contains('v4-shape-webpage') ? t : shape;
+            const header = targetWebpage.querySelector('.v4-webpage-header');
+            if (header && style && style.borderColor !== undefined) {
+                header.style.borderBottomColor = style.borderColor;
+            }
+        }
+    }
+
+    window.v4ObjectShape.handleUpdateStyle = (d) => {
+        const validComponents = _resolveShapeUpdateComponents(d);
+        if (validComponents.length === 0) return false;
 
         if (window.V4UndoManager) window.V4UndoManager.saveState();
 
         validComponents.forEach(s => {
             const shape = s.querySelector('.v4-shape') || (s.classList.contains('v4-shape') ? s : null);
-            let targets = [];
-            if (d.selector) {
-                if (s.matches && s.matches(d.selector)) targets.push(s);
-                targets.push(...Array.from(s.querySelectorAll(d.selector)));
-                if (targets.length === 0 && shape) {
-                    targets.push(shape);
-                }
-            } else {
-                targets = [shape];
-            }
-            if (targets.length === 0) return;
+            const targets = _resolveShapeUpdateTargets(s, shape, d.selector);
+            if (targets.length === 0 || !d.style) return;
 
             targets.forEach(t => {
-                if (d.style) {
-                    if (d.style.width !== undefined || d.style.height !== undefined) {
-                        s.setAttribute('data-resized', 'true');
-                    }
-                    
-                    // Prevent structure destruction: Update innerHTML of shape-text-content/editable-cell instead of .v4-shape
-                    if (d.style.html !== undefined) {
-                        const targetCell = t.querySelector('.v4-shape-text-content') || t.querySelector('.v4-shape-text-overlay') || t.querySelector('.v4-editable-cell') || t;
-                        if (targetCell !== t) {
-                            targetCell.innerHTML = d.style.html;
-                        } else {
-                            t.innerHTML = d.style.html;
-                        }
-                    }
-                    
-                    if (d.style.left !== undefined) {
-                        s.style.left = typeof d.style.left === 'number' ? d.style.left + 'px' : d.style.left;
-                        if (typeof window.updateAnchoredConnectorsLocal === 'function' && s.id) {
-                            window.updateAnchoredConnectorsLocal(s.id);
-                        }
-                    }
-                    if (d.style.top !== undefined) {
-                        s.style.top = typeof d.style.top === 'number' ? d.style.top + 'px' : d.style.top;
-                        const curFixed = s.getAttribute('data-scroll-fixed');
-                        if (curFixed === 'custom' || curFixed === 'floating') {
-                            s.setAttribute('data-scroll-target-y', String(Math.round(parseFloat(s.style.top) || 0)));
-                        }
-                        if (typeof window.updateAnchoredConnectorsLocal === 'function' && s.id) {
-                            window.updateAnchoredConnectorsLocal(s.id);
-                        }
-                    }
-                    if (d.style.width !== undefined) {
-                        s.style.width = d.style.width;
-                        if (t !== s) t.style.width = '100%';
-                    }
-                    if (d.style.height !== undefined) {
-                        s.style.height = d.style.height;
-                        if (t !== s) t.style.height = '100%';
-                    }
+                _applyShapeBoxAndHtml(s, t, d.style);
+                _applyLineShapeStyle(s, t, d.style);
+                _applyWaveShapeStyle(s, t, shape, d.style);
 
-                    if (d.style.patternType !== undefined && t.classList.contains('v4-shape-pattern-grid')) {
-                        console.log("[ObjectShape] Received patternType:", d.style.patternType, "Updating element:", t);
-                        t.setAttribute('data-pattern-type', d.style.patternType);
-                    }
+                const isSvgContainer = t.classList.contains('v4-shape-diamond') || t.classList.contains('v4-shape-triangle') || t.classList.contains('v4-shape-wave') || t.classList.contains('v4-shape-arrow') || t.classList.contains('v4-shape-line');
+                const svgShape = t.classList.contains('v4-shape-line')
+                    ? t.querySelector('line')
+                    : (t.querySelector('svg > path, svg > polygon, svg > rect, svg > circle, path:not(marker path), polygon, rect, circle, line') || (t.closest && t.closest('.v4-shape') ? t.closest('.v4-shape').querySelector('svg > path, svg > polygon, svg > rect, svg > circle, line') : null));
 
-                    if (t.classList.contains('v4-shape-line')) {
-                        const lineSvg = t.querySelector('svg');
-                        const lineEl = t.querySelector('line');
-                        const syncLineCoords = (dirVal, hasMarkers) => {
-                            if (!lineEl || !lineSvg) return;
-                            if (hasMarkers) {
-                                lineSvg.removeAttribute('viewBox');
-                                lineSvg.removeAttribute('preserveAspectRatio');
-                                if (dirVal === 'vertical') {
-                                    lineEl.setAttribute('x1', '50%');
-                                    lineEl.setAttribute('y1', '0%');
-                                    lineEl.setAttribute('x2', '50%');
-                                    lineEl.setAttribute('y2', '100%');
-                                } else {
-                                    lineEl.setAttribute('x1', '0%');
-                                    lineEl.setAttribute('y1', '50%');
-                                    lineEl.setAttribute('x2', '100%');
-                                    lineEl.setAttribute('y2', '50%');
-                                }
-                            } else {
-                                lineSvg.setAttribute('viewBox', '0 0 100 100');
-                                lineSvg.setAttribute('preserveAspectRatio', 'none');
-                                if (dirVal === 'vertical') {
-                                    lineEl.setAttribute('x1', '50');
-                                    lineEl.setAttribute('y1', '0');
-                                    lineEl.setAttribute('x2', '50');
-                                    lineEl.setAttribute('y2', '100');
-                                } else {
-                                    lineEl.setAttribute('x1', '0');
-                                    lineEl.setAttribute('y1', '50');
-                                    lineEl.setAttribute('x2', '100');
-                                    lineEl.setAttribute('y2', '50');
-                                }
-                            }
-                        };
-
-                        if (d.style.lineDir !== undefined) {
-                            t.setAttribute('data-line-dir', d.style.lineDir);
-                            const curW = s.offsetWidth || parseFloat(s.style.width) || 200;
-                            const curH = s.offsetHeight || parseFloat(s.style.height) || 2;
-                            const curLen = Math.max(curW, curH, 10);
-                            const th = parseFloat(t.getAttribute('data-line-width')) || 1.6;
-                            if (d.style.lineDir === 'vertical') {
-                                s.style.width = Math.max(th, 2) + 'px';
-                                s.style.height = curLen + 'px';
-                            } else {
-                                s.style.width = curLen + 'px';
-                                s.style.height = Math.max(th, 2) + 'px';
-                            }
-                            const curMs = t.getAttribute('data-marker-start') || '';
-                            const curMe = t.getAttribute('data-marker-end') || '';
-                            syncLineCoords(d.style.lineDir, !!(curMs || curMe));
-                        }
-                        if (d.style.lineStyle !== undefined) {
-                            t.setAttribute('data-line-style', d.style.lineStyle);
-                            if (lineEl) {
-                                if (d.style.lineStyle === 'dashed') {
-                                    lineEl.style.strokeDasharray = '6 4';
-                                    lineEl.setAttribute('stroke-dasharray', '6 4');
-                                    lineEl.style.strokeLinecap = 'butt';
-                                    lineEl.setAttribute('stroke-linecap', 'butt');
-                                } else if (d.style.lineStyle === 'dotted') {
-                                    lineEl.style.strokeDasharray = '1 5';
-                                    lineEl.setAttribute('stroke-dasharray', '1 5');
-                                    lineEl.style.strokeLinecap = 'round';
-                                    lineEl.setAttribute('stroke-linecap', 'round');
-                                } else {
-                                    lineEl.style.strokeDasharray = 'none';
-                                    lineEl.removeAttribute('stroke-dasharray');
-                                    lineEl.style.strokeLinecap = 'butt';
-                                    lineEl.setAttribute('stroke-linecap', 'butt');
-                                }
-                            }
-                        }
-                        if (d.style.lineThickness !== undefined) {
-                            const th = parseFloat(d.style.lineThickness) || 1.6;
-                            t.setAttribute('data-line-width', th);
-                            if (lineEl) {
-                                lineEl.style.strokeWidth = th;
-                                lineEl.setAttribute('stroke-width', th);
-                            }
-                            const isVert = t.getAttribute('data-line-dir') === 'vertical';
-                            if (isVert) s.style.width = Math.max(th, 2) + 'px';
-                            else s.style.height = Math.max(th, 2) + 'px';
-                        }
-                        var colorVal = d.style.lineColor !== undefined ? d.style.lineColor : (d.style.stroke !== undefined ? d.style.stroke : d.style.borderColor);
-                        if (colorVal !== undefined) {
-                            t.setAttribute('data-line-color', colorVal);
-                            if (lineEl) {
-                                lineEl.style.stroke = colorVal;
-                                lineEl.setAttribute('stroke', colorVal);
-                            }
-                        }
-                        if (d.style.lineMarkerStart !== undefined) {
-                            const ms = (d.style.lineMarkerStart && d.style.lineMarkerStart !== 'none') ? d.style.lineMarkerStart : '';
-                            if (ms) t.setAttribute('data-marker-start', ms);
-                            else t.removeAttribute('data-marker-start');
-                        }
-                        if (d.style.lineMarkerEnd !== undefined) {
-                            const me = (d.style.lineMarkerEnd && d.style.lineMarkerEnd !== 'none') ? d.style.lineMarkerEnd : '';
-                            if (me) t.setAttribute('data-marker-end', me);
-                            else t.removeAttribute('data-marker-end');
-                        }
-                        if (lineSvg && lineEl && (d.style.lineMarkerStart !== undefined || d.style.lineMarkerEnd !== undefined || colorVal !== undefined || d.style.lineDir !== undefined)) {
-                            const activeMs = t.getAttribute('data-marker-start') || '';
-                            const activeMe = t.getAttribute('data-marker-end') || '';
-                            const activeDir = t.getAttribute('data-line-dir') || 'horizontal';
-                            const activeCol = t.getAttribute('data-line-color') || '#c8c8c8';
-                            const safeId = (s.id || 'line').replace(/[^a-zA-Z0-9_-]/g, '_');
-                            let defsEl = lineSvg.querySelector('defs');
-                            if (activeMs || activeMe) {
-                                syncLineCoords(activeDir, true);
-                                if (!defsEl) {
-                                    defsEl = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-                                    lineSvg.insertBefore(defsEl, lineSvg.firstChild);
-                                }
-                                const buildLineMarker = (mId, mType, isStart) => {
-                                    if (!mType) return '';
-                                    const orientVal = isStart ? 'auto-start-reverse' : 'auto';
-                                    if (mType === 'dot') {
-                                        return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="' + orientVal + '"><circle cx="5" cy="5" r="3.8" fill="' + activeCol + '" /></marker>';
-                                    }
-                                    if (mType === 'open') {
-                                        return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="' + orientVal + '"><path d="M 1.5 1.5 L 8.5 5 L 1.5 8.5" fill="none" stroke="' + activeCol + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></marker>';
-                                    }
-                                    return '<marker id="' + mId + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="' + orientVal + '"><path d="M 0 0 L 10 5 L 0 10 z" fill="' + activeCol + '" /></marker>';
-                                };
-                                const startMarkerId = 'v4lm-s-' + safeId;
-                                const endMarkerId = 'v4lm-e-' + safeId;
-                                defsEl.innerHTML = buildLineMarker(startMarkerId, activeMs, true) + buildLineMarker(endMarkerId, activeMe, false);
-                                if (activeMs) lineEl.setAttribute('marker-start', 'url(#' + startMarkerId + ')');
-                                else lineEl.removeAttribute('marker-start');
-                                if (activeMe) lineEl.setAttribute('marker-end', 'url(#' + endMarkerId + ')');
-                                else lineEl.removeAttribute('marker-end');
-                            } else {
-                                if (defsEl) defsEl.remove();
-                                lineEl.removeAttribute('marker-start');
-                                lineEl.removeAttribute('marker-end');
-                                syncLineCoords(activeDir, false);
-                            }
-                        }
-                    }
-
-                    if (t.classList.contains('v4-shape-wave') || (shape && shape.classList.contains('v4-shape-wave'))) {
-                        const waveEl = t.classList.contains('v4-shape-wave') ? t : shape;
-                        if (d.style.waveDir !== undefined) {
-                            waveEl.setAttribute('data-wave-dir', d.style.waveDir);
-                            const svgEl = waveEl.querySelector('svg');
-                            const polyEl = waveEl.querySelector('polygon');
-                            const cellEl = waveEl.querySelector('.v4-editable-cell');
-                            const curW = s.offsetWidth || parseFloat(s.style.width) || 360;
-                            const curH = s.offsetHeight || parseFloat(s.style.height) || 20;
-
-                            if (d.style.waveDir === 'vertical') {
-                                if (curW > curH) {
-                                    s.style.width = Math.min(curH, 20) + 'px';
-                                    s.style.height = Math.max(curW, 100) + 'px';
-                                } else if (parseFloat(s.style.width) > 40) {
-                                    s.style.width = '20px';
-                                }
-                                if (svgEl) {
-                                    svgEl.setAttribute('viewBox', '0 0 20 360');
-                                }
-                                if (polyEl) {
-                                    polyEl.setAttribute('points', '6,0 2,45 6,90 2,135 6,180 2,225 6,270 2,315 6,360 16,360 12,315 16,270 12,225 16,180 12,135 16,90 12,45 16,0');
-                                }
-                                if (cellEl) {
-                                    cellEl.style.padding = '5px 2px';
-                                }
-                            } else {
-                                if (curH > curW) {
-                                    s.style.width = Math.max(curH, 100) + 'px';
-                                    s.style.height = Math.min(curW, 20) + 'px';
-                                } else if (parseFloat(s.style.height) > 40) {
-                                    s.style.height = '20px';
-                                }
-                                if (svgEl) {
-                                    svgEl.setAttribute('viewBox', '0 0 360 20');
-                                }
-                                if (polyEl) {
-                                    polyEl.setAttribute('points', '0,6 45,2 90,6 135,2 180,6 225,2 270,6 315,2 360,6 360,16 315,12 270,16 225,12 180,16 135,12 90,16 45,12 0,16');
-                                }
-                                if (cellEl) {
-                                    cellEl.style.padding = '5px 10px';
-                                }
-                            }
-
-                            if (typeof window.notifyParent === 'function') {
-                                window.notifyParent({
-                                    type: 'BYCHOI_COMP_RESIZED',
-                                    id: s.id,
-                                    width: s.style.width,
-                                    height: s.style.height
-                                });
-                            }
-                        }
-                    }
-
-                    const isSvgContainer = t.classList.contains('v4-shape-diamond') || t.classList.contains('v4-shape-triangle') || t.classList.contains('v4-shape-wave') || t.classList.contains('v4-shape-arrow') || t.classList.contains('v4-shape-line');
-                    const svgShape = t.classList.contains('v4-shape-line')
-                        ? t.querySelector('line')
-                        : (t.querySelector('svg > path, svg > polygon, svg > rect, svg > circle, path:not(marker path), polygon, rect, circle, line') || (t.closest && t.closest('.v4-shape') ? t.closest('.v4-shape').querySelector('svg > path, svg > polygon, svg > rect, svg > circle, line') : null));
-
-                    // Dedicated Shape Text Padding Handler
-                    if (d.style.padTop !== undefined || d.style.paddingTop !== undefined || d.style.padding !== undefined) {
-                        const pt = d.style.padTop !== undefined ? parseInt(d.style.padTop) : (parseInt(d.style.paddingTop) || 0);
-                        const pb = d.style.padBottom !== undefined ? parseInt(d.style.padBottom) : (parseInt(d.style.paddingBottom) || 0);
-                        const pl = d.style.padLeft !== undefined ? parseInt(d.style.padLeft) : (parseInt(d.style.paddingLeft) || 0);
-                        const pr = d.style.padRight !== undefined ? parseInt(d.style.padRight) : (parseInt(d.style.paddingRight) || 0);
-
-                        const targetCells = [t];
-                        if (!t.classList.contains('v4-editable-cell') && !t.classList.contains('v4-shape-text-content') && !t.classList.contains('v4-shape-text-overlay')) {
-                            const subCells = t.querySelectorAll('.v4-editable-cell, .v4-shape-text-content, .v4-shape-text-overlay');
-                            if (subCells.length > 0) targetCells.push(...Array.from(subCells));
-                        }
-
-                        targetCells.forEach(cell => {
-                            cell.style.setProperty('padding-top', pt + 'px', 'important');
-                            cell.style.setProperty('padding-right', pr + 'px', 'important');
-                            cell.style.setProperty('padding-bottom', pb + 'px', 'important');
-                            cell.style.setProperty('padding-left', pl + 'px', 'important');
-                            cell.style.setProperty('padding', pt + 'px ' + pr + 'px ' + pb + 'px ' + pl + 'px', 'important');
-                            cell.style.setProperty('box-sizing', 'border-box', 'important');
-                            cell.setAttribute('data-pad-top', pt);
-                            cell.setAttribute('data-pad-bottom', pb);
-                            cell.setAttribute('data-pad-left', pl);
-                            cell.setAttribute('data-pad-right', pr);
-                        });
-
-                        if (shape) {
-                            shape.setAttribute('data-pad-top', pt);
-                            shape.setAttribute('data-pad-bottom', pb);
-                            shape.setAttribute('data-pad-left', pl);
-                            shape.setAttribute('data-pad-right', pr);
-                            shape.style.setProperty('--v4-shape-pad-top', pt + 'px');
-                            shape.style.setProperty('--v4-shape-pad-bottom', pb + 'px');
-                            shape.style.setProperty('--v4-shape-pad-left', pl + 'px');
-                            shape.style.setProperty('--v4-shape-pad-right', pr + 'px');
-                        }
-                    }
-
-                    // Assign styles with override for text alignment and background styling
-                    for (const [key, val] of Object.entries(d.style)) {
-                        if (key === 'left' || key === 'top' || key === 'width' || key === 'height' || key === 'html' || key === 'patternType' || key === 'lineMarkerStart' || key === 'lineMarkerEnd' || key === 'padTop' || key === 'padBottom' || key === 'padLeft' || key === 'padRight' || key === 'paddingTop' || key === 'paddingBottom' || key === 'paddingLeft' || key === 'paddingRight' || key === 'padding') continue;
-                        if (key === 'cornerDir') {
-                            const normCornerDir = val || 'all';
-                            t.setAttribute('data-corner-dir', normCornerDir);
-                            if (shape) shape.setAttribute('data-corner-dir', normCornerDir);
-                            continue;
-                        }
-                        if (key === 'borderStyle') {
-                            const normBs = (val === 'dashed' || val === 'dotted') ? val : 'solid';
-                            t.setAttribute('data-border-style', normBs);
-                            if (shape) shape.setAttribute('data-border-style', normBs);
-                            if (!isSvgContainer) {
-                                t.style.setProperty('border-style', normBs, 'important');
-                            }
-                            continue;
-                        }
-                        if (key === 'borderWidth') {
-                            const parsedBw = parseFloat(val);
-                            const normBw = !isNaN(parsedBw) ? Math.max(0, parsedBw) : 1.6;
-                            t.setAttribute('data-border-width', String(normBw));
-                            if (shape) shape.setAttribute('data-border-width', String(normBw));
-                            if (!isSvgContainer) {
-                                t.style.setProperty('border-width', normBw + 'px', 'important');
-                            }
-                            continue;
-                        }
-                        
-                        if (key === 'background' || key === 'backgroundColor') {
-                            if (isSvgContainer) {
-                                // SVG container shapes maintain a transparent container background so bounding box isn't rendered
-                                t.style.background = 'transparent';
-                                t.style.backgroundColor = 'transparent';
-                            } else if (t.classList.contains('v4-shape-image')) {
-                                // Preserve background-image, background-size, and background-position on Image SHAPE
-                                t.style.setProperty('background-color', val, 'important');
-                            } else {
-                                t.style[key] = val;
-                            }
-                        } else if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'borderRadius' || key === 'vAlign') {
-                            const cssKey = key === 'textAlign' ? 'text-align' : (key === 'alignItems' ? 'align-items' : ((key === 'justifyContent' || key === 'vAlign') ? 'justify-content' : 'border-radius'));
-                            let cssVal = val;
-                            if (key === 'justifyContent' || key === 'vAlign') {
-                                const normV = (val === 'flex-start' || val === 'top') ? 'top' : ((val === 'flex-end' || val === 'bottom') ? 'bottom' : 'middle');
-                                cssVal = normV === 'top' ? 'flex-start' : (normV === 'bottom' ? 'flex-end' : 'center');
-                                s.setAttribute('data-valign', normV);
-                                t.setAttribute('data-valign', normV);
-                                if (shape) shape.setAttribute('data-valign', normV);
-                            } else if (key === 'textAlign') {
-                                s.setAttribute('data-align', val);
-                                t.setAttribute('data-align', val);
-                                if (shape) shape.setAttribute('data-align', val);
-                            }
-                            t.style.setProperty(cssKey, cssVal, 'important');
-                            if (key === 'borderRadius' && window.SelectionAdorner && document.querySelector('.v4-selection-adorner')) {
-                                window.SelectionAdorner.update();
-                            }
-                            
-                            if (key === 'textAlign' || key === 'alignItems' || key === 'justifyContent' || key === 'vAlign') {
-                                // Preserve existing custom padding if present; only fallback to 5px 10px if not set
-                                const curPadTop = t.getAttribute('data-pad-top') || (shape ? shape.getAttribute('data-pad-top') : null) || (parseInt(t.style.paddingTop) || 5);
-                                const curPadRight = t.getAttribute('data-pad-right') || (shape ? shape.getAttribute('data-pad-right') : null) || (parseInt(t.style.paddingRight) || 10);
-                                const curPadBottom = t.getAttribute('data-pad-bottom') || (shape ? shape.getAttribute('data-pad-bottom') : null) || (parseInt(t.style.paddingBottom) || 5);
-                                const curPadLeft = t.getAttribute('data-pad-left') || (shape ? shape.getAttribute('data-pad-left') : null) || (parseInt(t.style.paddingLeft) || 10);
-
-                                const pt = (curPadTop !== null && curPadTop !== undefined && !isNaN(parseInt(curPadTop))) ? parseInt(curPadTop) : 5;
-                                const pr = (curPadRight !== null && curPadRight !== undefined && !isNaN(parseInt(curPadRight))) ? parseInt(curPadRight) : 10;
-                                const pb = (curPadBottom !== null && curPadBottom !== undefined && !isNaN(parseInt(curPadBottom))) ? parseInt(curPadBottom) : 5;
-                                const pl = (curPadLeft !== null && curPadLeft !== undefined && !isNaN(parseInt(curPadLeft))) ? parseInt(curPadLeft) : 10;
-
-                                t.style.setProperty('padding-top', pt + 'px', 'important');
-                                t.style.setProperty('padding-right', pr + 'px', 'important');
-                                t.style.setProperty('padding-bottom', pb + 'px', 'important');
-                                t.style.setProperty('padding-left', pl + 'px', 'important');
-                                t.style.setProperty('padding', pt + 'px ' + pr + 'px ' + pb + 'px ' + pl + 'px', 'important');
-                                t.style.setProperty('box-sizing', 'border-box', 'important');
-                                
-                                if (key === 'textAlign') {
-                                    // Propagate alignment to children while clearing duplicate padding/margin
-                                    t.querySelectorAll('p, span, .ql-editor, .ql-editor p').forEach(child => {
-                                        child.style.setProperty('text-align', val, 'important');
-                                        if (child.tagName === 'P' || child.classList?.contains('ql-editor')) {
-                                            child.style.setProperty('width', '100%', 'important');
-                                        }
-                                        child.style.setProperty('padding', '0px', 'important');
-                                        child.style.setProperty('margin', '0px', 'important');
-                                    });
-                                } else if (key === 'alignItems') {
-                                    t.querySelectorAll('p, span, .ql-editor, .ql-editor p, .v4-shape-text-content, .v4-editable-cell').forEach(child => {
-                                        child.style.setProperty('align-items', val, 'important');
-                                        if (child.tagName === 'P') {
-                                            child.style.setProperty('width', '100%', 'important');
-                                        }
-                                        child.style.setProperty('padding', '0px', 'important');
-                                        child.style.setProperty('margin', '0px', 'important');
-                                    });
-                                } else if (key === 'justifyContent' || key === 'vAlign') {
-                                    t.querySelectorAll('p, span, .ql-editor, .ql-editor p, .v4-shape-text-content, .v4-editable-cell').forEach(child => {
-                                        child.style.setProperty('justify-content', cssVal, 'important');
-                                    });
-                                }
-                            }
-                        } else {
-                            t.style[key] = val;
-                        }
-                    }
-                    
-                    if (svgShape) {
-                        if (t.classList.contains('v4-shape-line')) {
-                            const curLineWidth = t.getAttribute('data-line-width') || '1.6';
-                            const lineStyleColor = d.style && (d.style.lineColor !== undefined ? d.style.lineColor : (d.style.stroke !== undefined ? d.style.stroke : d.style.borderColor));
-                            const curLineColor = lineStyleColor !== undefined ? lineStyleColor : (t.getAttribute('data-line-color') || '#c8c8c8');
-                            svgShape.style.strokeWidth = curLineWidth;
-                            svgShape.setAttribute('stroke-width', curLineWidth);
-                            svgShape.style.stroke = curLineColor;
-                            svgShape.setAttribute('stroke', curLineColor);
-                            svgShape.style.fill = 'none';
-                            svgShape.setAttribute('fill', 'none');
-                            svgShape.style.vectorEffect = 'non-scaling-stroke';
-                        } else {
-                            const targetFill = d.style.backgroundColor || d.style.background;
-                            if (targetFill !== undefined) {
-                                svgShape.style.fill = targetFill;
-                            }
-                            if (isSvgContainer) {
-                                t.style.background = 'transparent';
-                                t.style.backgroundColor = 'transparent';
-                            }
-                            if (d.style.borderColor) {
-                                svgShape.style.stroke = d.style.borderColor;
-                                svgShape.setAttribute('stroke', d.style.borderColor);
-                            }
-                            const savedBwAttr = (shape ? shape.getAttribute('data-border-width') : null) || t.getAttribute('data-border-width');
-                            const activeSw = (d.style.borderWidth !== undefined)
-                                ? String(Math.max(0, parseFloat(d.style.borderWidth) || 0))
-                                : ((savedBwAttr !== null && savedBwAttr !== '') ? String(parseFloat(savedBwAttr)) : '1.6');
-                            svgShape.style.strokeWidth = activeSw;
-                            svgShape.setAttribute('stroke-width', activeSw);
-
-                            const savedBsAttr = (d.style.borderStyle !== undefined ? d.style.borderStyle : ((shape ? shape.getAttribute('data-border-style') : null) || t.getAttribute('data-border-style'))) || 'solid';
-                            if (savedBsAttr === 'dashed') {
-                                svgShape.style.strokeDasharray = '6 4';
-                                svgShape.setAttribute('stroke-dasharray', '6 4');
-                            } else if (savedBsAttr === 'dotted') {
-                                svgShape.style.strokeDasharray = '2 4';
-                                svgShape.setAttribute('stroke-dasharray', '2 4');
-                            } else if (d.style.borderStyle !== undefined) {
-                                svgShape.style.strokeDasharray = 'none';
-                                svgShape.removeAttribute('stroke-dasharray');
-                            }
-                            svgShape.style.vectorEffect = 'non-scaling-stroke';
-                        }
-                    }
-
-                    if (t.classList.contains('v4-shape-webpage') || (shape && shape.classList.contains('v4-shape-webpage'))) {
-                        const targetWebpage = t.classList.contains('v4-shape-webpage') ? t : shape;
-                        const header = targetWebpage.querySelector('.v4-webpage-header');
-                        if (header && d.style && d.style.borderColor !== undefined) {
-                            header.style.borderBottomColor = d.style.borderColor;
-                        }
-                    }
-                }
+                _applyShapeTextPadding(t, shape, d.style);
+                _applyShapeGenericCssProperties(s, t, shape, d.style, isSvgContainer);
+                _syncSvgAndWebpageStrokeFill(t, shape, svgShape, isSvgContainer, d.style);
             });
         });
-        
+
         if (validComponents[0] && typeof window.updateHandles === 'function') {
             window.updateHandles(validComponents[0]);
         }

@@ -59,25 +59,6 @@ window.notifyIframe = function(data) {
     }
 };
 
-// --- Universal Responsive Screen Detector (SSOT) ---
-window.isResponsiveDocument = function(targetDoc) {
-    try {
-        const doc = targetDoc || (window.DOM && window.DOM.iframe && window.DOM.iframe.contentDocument) || document;
-        return !!(doc && doc.querySelector && (
-            doc.querySelector('.pc-content-inner') || 
-            doc.querySelector('.mobile-content-inner') || 
-            doc.querySelector('.pc-browser-frame') ||
-            doc.querySelector('.pc-content-area') ||
-            doc.querySelector('.mobile-compare-page') ||
-            doc.querySelector('.frame-column') ||
-            doc.querySelector('.mobile-content-area')
-        ));
-    } catch (e) {
-        return false;
-    }
-};
-window.isResponsiveScreen = window.isResponsiveDocument;
-
 // --- Universal Responsive Frame & Container Manager (SSOT) ---
 window.ResponsiveFrameUtils = {
     isResponsive: function(targetDoc) {
@@ -403,10 +384,36 @@ window.isDarkColor = function(colorStr, threshold) {
     return lum < limit;
 };
 
+window.normalizeHex = function(input) {
+    if (!input || typeof input !== 'string') return null;
+    let hex = input.trim().replace(/^#/, '');
+    if (/^[0-9a-fA-F]{3}$/.test(hex)) {
+        hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+    }
+    return /^[0-9a-fA-F]{6}$/.test(hex) ? ('#' + hex.toLowerCase()) : null;
+};
+
+window.escapeHtml = function(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+};
+
+window.escapeHtmlAttr = function(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+};
+
 window.EditorBus.rgbToHex = window.rgbToHex;
 window.EditorBus.hexToRgb = window.hexToRgb;
 window.EditorBus.hexToRgba = window.hexToRgba;
 window.EditorBus.isDarkColor = window.isDarkColor;
+window.EditorBus.normalizeHex = window.normalizeHex;
 
 // Universal Screen Category Data SSOT
 window.getCategoryData = function(type) {
@@ -444,7 +451,7 @@ window.showToast = function(message, type = 'success') {
     else if (type === 'warning') iconName = 'warning';
 
     toast.innerHTML = '<span class="material-icons-outlined v4-toast-icon">' + iconName + '</span>' +
-                      '<span style="flex-grow: 1;">' + message + '</span>';
+                      '<span style="flex-grow: 1; word-break: break-word; line-height: 1.4;">' + message + '</span>';
 
     container.appendChild(toast);
 
@@ -598,16 +605,20 @@ window.calculatePathData = function(c, s, e) {
 
 // Universal Responsive Screen Discriminator (Parent Side SSOT)
 window.isResponsiveDocument = function(targetDoc) {
-    const doc = targetDoc || document;
-    return !!(doc && doc.querySelector && (
-        doc.querySelector('.pc-content-inner') || 
-        doc.querySelector('.mobile-content-inner') || 
-        doc.querySelector('.pc-browser-frame') ||
-        doc.querySelector('.pc-content-area') ||
-        doc.querySelector('.mobile-compare-page') ||
-        doc.querySelector('.frame-column') ||
-        doc.querySelector('.mobile-content-area')
-    ));
+    try {
+        const doc = targetDoc || document;
+        return !!(doc && doc.querySelector && (
+            doc.querySelector('.pc-content-inner') || 
+            doc.querySelector('.mobile-content-inner') || 
+            doc.querySelector('.pc-browser-frame') ||
+            doc.querySelector('.pc-content-area') ||
+            doc.querySelector('.mobile-compare-page') ||
+            doc.querySelector('.frame-column') ||
+            doc.querySelector('.mobile-content-area')
+        ));
+    } catch (e) {
+        return false;
+    }
 };
 window.isResponsiveScreen = window.isResponsiveDocument;
 
@@ -756,6 +767,32 @@ window.v4CommonScript = `
         var limit = (typeof threshold === 'number') ? threshold : (128 / 255);
         var lum = ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255;
         return lum < limit;
+    };
+
+    // Universal HEX Normalizer (Iframe SSOT)
+    window.normalizeHex = function(input) {
+        if (!input || typeof input !== 'string') return null;
+        var hex = input.trim().replace(/^#/, '');
+        if (/^[0-9a-fA-F]{3}$/.test(hex)) {
+            hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+        }
+        return /^[0-9a-fA-F]{6}$/.test(hex) ? ('#' + hex.toLowerCase()) : null;
+    };
+
+    // Universal HTML Escapers (Iframe SSOT)
+    window.escapeHtml = function(str) {
+        return String(str == null ? '' : str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    };
+    window.escapeHtmlAttr = function(str) {
+        return String(str == null ? '' : str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
     };
 
     // Universal Multi-Selection & Single Target Component Resolver (Iframe SSOT)

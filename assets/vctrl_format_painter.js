@@ -24,35 +24,6 @@ window.v4FormatPainterScript = `
     }
     const notifyParent = dispatchFormatToParent;
 
-    function _hexToRgba(hex, opacity) {
-        if (!hex || hex === 'transparent' || hex === 'none') return 'transparent';
-        if (opacity === 0) return 'transparent';
-        if (typeof hex === 'string' && hex.startsWith('rgba')) {
-            var lastComma = hex.lastIndexOf(',');
-            if (lastComma !== -1) {
-                return hex.substring(0, lastComma) + ', ' + opacity + ')';
-            }
-        }
-        if (typeof hex === 'string' && hex.startsWith('rgb')) {
-            var closeParen = hex.indexOf(')');
-            var baseRgb = closeParen !== -1 ? hex.substring(0, closeParen) : hex;
-            if (baseRgb.startsWith('rgb(')) {
-                return 'rgba(' + baseRgb.substring(4) + ', ' + opacity + ')';
-            }
-        }
-        var c = String(hex).replace('#', '');
-        if (c.length === 3) c = c.split('').map(function(x) { return x + x; }).join('');
-        var num = parseInt(c, 16);
-        if (isNaN(num)) return 'rgba(255, 255, 255, ' + opacity + ')';
-        var r = (num >> 16) & 255;
-        var g = (num >> 8) & 255;
-        var b = num & 255;
-        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
-    }
-    if (typeof window.hexToRgba !== 'function') {
-        window.hexToRgba = _hexToRgba;
-    }
-
     function _resolveFillColor(styleData) {
         if (!styleData || !styleData.fill) return '';
         var f = styleData.fill;
@@ -61,7 +32,7 @@ window.v4FormatPainterScript = `
         }
         if (f.bgOpacity !== undefined && f.bgOpacity < 100) {
             var alpha = f.bgOpacity > 1 ? (f.bgOpacity / 100) : f.bgOpacity;
-            return (typeof window.hexToRgba === 'function') ? window.hexToRgba(f.bg, alpha) : _hexToRgba(f.bg, alpha);
+            return window.hexToRgba(f.bg, alpha);
         }
         return f.bg;
     }

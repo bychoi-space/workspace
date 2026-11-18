@@ -471,6 +471,15 @@ function getCategoryBadge(type) {
 }
 
 
+function _normalizeScreenDescString(metaObj) {
+    if (!metaObj || typeof metaObj !== 'object') return '';
+    const raw = (typeof metaObj.screenDesc === 'string')
+        ? metaObj.screenDesc
+        : (typeof metaObj.description === 'string' ? metaObj.description : '');
+    if (/^\[object Object\](,\s*\[object Object\])*$/.test(raw.trim())) return '';
+    return raw;
+}
+
     // --- Screen Edit & Copy / Move Handlers ---
 window.handleEditScreen = async function(fileName) {
     const state = window.state || {};
@@ -511,7 +520,7 @@ window.handleEditScreen = async function(fileName) {
     }
     if (editType) editType.value = screenType;
     if (editDefaultTab) editDefaultTab.value = meta.defaultTab || "editor";
-    if (editDesc) editDesc.value = meta.screenDesc || meta.description || "";
+    if (editDesc) editDesc.value = _normalizeScreenDescString(meta);
     if (editModal) editModal.classList.add('active');
 
     if (btnCancel) {
@@ -525,7 +534,8 @@ window.handleEditScreen = async function(fileName) {
             const newTitle = editTitle ? editTitle.value.trim() : "";
             const newType = editType ? editType.value : "default";
             const newDefaultTab = editDefaultTab ? editDefaultTab.value : "editor";
-            const newDesc = editDesc ? editDesc.value.trim() : "";
+            const rawDesc = editDesc ? editDesc.value.trim() : "";
+            const newDesc = /^\[object Object\](,\s*\[object Object\])*$/.test(rawDesc) ? "" : rawDesc;
             
             btnSubmit.disabled = true;
             btnSubmit.innerText = "Saving...";
@@ -994,6 +1004,7 @@ window.executeCopyScreen = async function(opts) {
 
         const clonedScreenMeta = JSON.parse(JSON.stringify(sourceScreenMeta));
         clonedScreenMeta.title = newTitle;
+        clonedScreenMeta.screenDesc = _normalizeScreenDescString(clonedScreenMeta);
         clonedScreenMeta.updatedAt = new Date().toISOString();
 
         targetMeta.screens[newFilename] = clonedScreenMeta;

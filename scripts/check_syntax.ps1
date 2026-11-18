@@ -54,6 +54,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\ui_library_fallback.js",
     "c:\Users\sisun\ai_work\assets\vctrl_ui_library.js",
     "c:\Users\sisun\ai_work\assets\vctrl_presentation_pen.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_pdf_storyboard.js",
     "c:\Users\sisun\ai_work\assets\vctrl_pdf_exporter.js",
     "c:\Users\sisun\ai_work\assets\vctrl_design_system_atoms.js",
     "c:\Users\sisun\ai_work\assets\vctrl_design_system_shapes_tables.js",
@@ -65,6 +66,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\inspector\inspector_admin_settings.js",
     "c:\Users\sisun\ai_work\assets\vctrl_ui_atoms.js",
     "c:\Users\sisun\ai_work\assets\vctrl_ui_atoms_inputs.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_ui_atoms_webeditor.js",
     "c:\Users\sisun\ai_work\assets\vctrl_ui_atoms_cursor.js",
     "c:\Users\sisun\ai_work\assets\vctrl_grouping.js",
     "c:\Users\sisun\ai_work\assets\vctrl_table.js",
@@ -120,7 +122,7 @@ vm.createContext(context);
 
 const scriptsToLoad = [
     'vctrl_typography.js', 'vctrl_undo.js', 'vctrl_table.js', 'vctrl_text_measurer.js',
-    'vctrl_ui_atoms.js', 'vctrl_ui_atoms_inputs.js', 'vctrl_ui_atoms_cursor.js',
+    'vctrl_ui_atoms.js', 'vctrl_ui_atoms_inputs.js', 'vctrl_ui_atoms_webeditor.js', 'vctrl_ui_atoms_cursor.js',
     'vctrl_design_system_atoms.js', 'vctrl_design_system_shapes_tables.js', 'vctrl_design_system.js',
     'vctrl_clipboard_objects.js', 'vctrl_format_painter.js', 'vctrl_shortcuts.js', 'vctrl_common.js',
     'vctrl_object_shape.js', 'vctrl_object_connector.js', 'vctrl_iframe_drag.js',
@@ -139,7 +141,7 @@ scriptsToLoad.forEach(s => {
 
 const vars = [
     'v4TypographyScript', 'v4UndoScript', 'v4TableScript', 'v4TextMeasurerScript',
-    'v4UIAtomsScript', 'v4UIAtomsInputsScript', 'v4UIAtomsCursorScript',
+    'v4UIAtomsScript', 'v4UIAtomsInputsScript', 'v4UIAtomsWebEditorScript', 'v4UIAtomsCursorScript',
     'v4DesignSystemAtomsScript', 'v4DesignSystemShapesTablesScript', 'v4DesignSystemScript',
     'v4ClipboardObjectsScript', 'v4FormatPainterScript', 'v4ShortcutsScript', 'v4CommonScript',
     'v4ObjectShapeScript', 'v4ObjectConnectorScript', 'v4DragResizeScript',

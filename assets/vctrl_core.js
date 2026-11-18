@@ -37,12 +37,14 @@ window.invalidateEngineScriptCache = function() {
 
 // Structured Registry for Inlined Engine Scripts (Order & Dependency SSOT)
 const ENGINE_SCRIPT_REGISTRY = [
+    { name: 'Common', key: 'v4CommonScript' },
     { name: 'Typography', key: 'v4TypographyScript' },
     { name: 'Undo', key: 'v4UndoScript' },
     { name: 'Table', key: 'v4TableScript' },
     { name: 'TextMeasurer', key: 'v4TextMeasurerScript' },
     { name: 'UIAtoms', key: 'v4UIAtomsScript' },
     { name: 'UIAtomsInputs', key: 'v4UIAtomsInputsScript' },
+    { name: 'UIAtomsWebEditor', key: 'v4UIAtomsWebEditorScript' },
     { name: 'UIAtomsCursor', key: 'v4UIAtomsCursorScript' },
     { name: 'DesignSystemAtoms', key: 'v4DesignSystemAtomsScript' },
     { name: 'DesignSystemShapesTables', key: 'v4DesignSystemShapesTablesScript' },
@@ -50,7 +52,6 @@ const ENGINE_SCRIPT_REGISTRY = [
     { name: 'ClipboardObjects', key: 'v4ClipboardObjectsScript' },
     { name: 'FormatPainter', key: 'v4FormatPainterScript' },
     { name: 'Shortcuts', key: 'v4ShortcutsScript' },
-    { name: 'Common', key: 'v4CommonScript' },
     { name: 'ObjectShape', key: 'v4ObjectShapeScript' },
     { name: 'ObjectConnector', key: 'v4ObjectConnectorScript' },
     { name: 'DragResize', key: 'v4DragResizeScript' },

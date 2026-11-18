@@ -24,7 +24,7 @@
     "01_Order_Policy_Overview.html": {
       "title": "주문 정책 정의 (Overview)",
       "type": "analysis",
-      "updatedAt": "2026-11-18T06:56:17.035Z",
+      "updatedAt": "2026-11-18T09:15:00.000Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
@@ -46,13 +46,13 @@
     "03_Order_UI_Improvement_Strategy.html": {
       "title": "시선닷컴 주문 화면 UI 개선 전략",
       "type": "analysis",
-      "updatedAt": "2026-11-18T08:50:00.000Z",
+      "updatedAt": "2026-11-18T09:15:00.000Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
       "version": 0.1,
       "defaultTab": "editor",
-      "screenDesc": "시선닷컴 AS-IS 문제점 및 국내 동종업계 벤치마크 분석(#07~#09) 기반 PC·Mobile TO-BE 화면 설계(#12~#26) 연결 개선 전략"
+      "screenDesc": "시선닷컴 AS-IS 문제점 및 국내 동종업계 벤치마크 분석(#03~#05) 기반 PC·Mobile TO-BE 화면 설계(#12~#26) 연결 개선 전략"
     },
     "renewal_order_2.html": {
       "title": "주문서 (To-Be)",
@@ -1693,7 +1693,7 @@
     "renewal_payEnd_2.html": {
       "title": "주문완료 (무통장입금 · 입금대기)",
       "type": "ui",
-      "updatedAt": "2026-11-18T03:05:54.604Z",
+      "updatedAt": "2026-11-18T09:15:00.000Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -1807,8 +1807,8 @@
         {
           "type": "pin",
           "target": "frame",
-          "text": "가상계좌 입금기한 및 미입금 자동 취소 참고사항\n- 안내된 [입금금액]과 1원 단위까지 일치해야 정상 입금 확인 처리되며, [입금기한](주문일+3일 23:59:59) 경과 시 주문은 자동 취소됨\n- 취소/반품 환불은 마이페이지 등록 환불계좌로 진행되며, 현금영수증 정보는 입금 완료 시점 국세청 자동 전송",
-          "html": "가상계좌 입금기한 및 미입금 자동 취소 참고사항<div>- 안내된 [입금금액]과 1원 단위까지 일치해야 정상 입금 확인 처리되며, [입금기한](주문일+3일 23:59:59) 경과 시 주문은 자동 취소됨</div><div>- 취소/반품 환불은 마이페이지 등록 환불계좌로 진행되며, 현금영수증 정보는 입금 완료 시점 국세청 자동 전송</div>",
+          "text": "가상계좌 입금기한 및 미입금 자동 취소 참고사항\n- 안내된 [입금금액]과 1원 단위까지 일치해야 정상 입금 확인 처리되며, [입금기한](주문일시 기준 1일 · 24시간) 경과 시 주문은 자동 취소됨\n- 취소/반품 환불은 마이페이지 등록 환불계좌로 진행되며, 현금영수증 정보는 입금 완료 시점 국세청 자동 전송",
+          "html": "가상계좌 입금기한 및 미입금 자동 취소 참고사항<div>- 안내된 [입금금액]과 1원 단위까지 일치해야 정상 입금 확인 처리되며, [입금기한](주문일시 기준 1일 · 24시간) 경과 시 주문은 자동 취소됨</div><div>- 취소/반품 환불은 마이페이지 등록 환불계좌로 진행되며, 현금영수증 정보는 입금 완료 시점 국세청 자동 전송</div>",
           "x": 20,
           "y": 1275,
           "pins": {
@@ -1849,7 +1849,7 @@
     "05_Order_Process_Flowchart.html": {
       "title": "주문 · 결제 프로세스 흐름도 (E2E)",
       "type": "analysis",
-      "updatedAt": "2026-11-18T08:42:00.000Z",
+      "updatedAt": "2026-11-18T09:15:00.000Z",
       "template": "template_process.html",
       "version": 0.1,
       "defaultTab": "editor",
@@ -1858,15 +1858,15 @@
       "screenDesc": "시선닷컴 장바구니 · 주문서 · KPN PG · 백엔드(Admin) 결제 확정 및 예외 분기 통합 흐름도"
     },
     "06_Discount_Allocation_Simulation.html": {
-      "title": "[초안] 복합 할인 · 안분 정산 시뮬레이션",
+      "title": "[초안] 복합 할인 · 부분취소 결제 정책",
       "type": "analysis",
-      "updatedAt": "2026-11-18T07:43:44.384Z",
+      "updatedAt": "2026-11-18T09:15:00.000Z",
       "template": "template_process.html",
       "version": 0.1,
       "defaultTab": "editor",
       "description": [],
       "connectors": [],
-      "screenDesc": "상품 기본할인 → 상품쿠폰 → 장바구니쿠폰 → 보유 마일리지 → 구매 마일리지 즉시할인 5단계 차감 및 1원 단수 안분 시뮬레이션 초안"
+      "screenDesc": "상품쿠폰 선차감 후 장바구니쿠폰 · 마일리지 비율 배분, 1원 단수 처리 및 부분 취소 환불 기준 초안"
     },
     "renewal_cart_5.html": {
       "title": "장바구니 (To-Be) 비회원 상품담은경우",
@@ -2190,15 +2190,15 @@
   "screenOrder": [
     "00_Cover_234.html",
     "01_Project_Summary.html",
-    "01_Order_Policy_Overview.html",
-    "05_Order_Process_Flowchart.html",
-    "06_Discount_Allocation_Simulation.html",
-    "02_Front_IA_Specification.html",
     "99_Blank_924.html",
     "99_Blank_925.html",
     "99_Blank_926.html",
     "03_Order_UI_Improvement_Strategy.html",
     "04_Brand_KeyColor_Strategy.html",
+    "02_Front_IA_Specification.html",
+    "01_Order_Policy_Overview.html",
+    "05_Order_Process_Flowchart.html",
+    "06_Discount_Allocation_Simulation.html",
     "renewal_cart_2.html",
     "renewal_cart_4.html",
     "renewal_cart_6.html",

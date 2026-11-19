@@ -51,7 +51,7 @@
     "03_Join_Terms_Email_Naver.html": {
       "title": "03_Join_Terms_Email_Naver",
       "type": "responsive-ui",
-      "updatedAt": "2026-11-19T02:39:31.264Z",
+      "updatedAt": "2026-11-19T02:42:09.227Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -155,42 +155,6 @@
             "right": {
               "x": 4,
               "y": 412,
-              "active": true,
-              "scrollFixed": "none"
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "frame",
-          "text": "[가입하기 유효성 검사] - 필수 3개 중 하나라도 미체크 시 가입 진행 불가 + 알럿 \"필수 약관에 모두 동의해 주세요.\"  - 알럿 확인 후 첫 번째 미체크 필수 항목 위치로 스크롤 (권장)  - 선택 항목은 미체크여도 가입 가능  - 항목별 동의 여부 · 동의 일시는 기존과 동일하게 저장 ",
-          "html": "[가입하기 유효성 검사]<div>- 필수 3개 중 하나라도 미체크 시 가입 진행 불가 + 알럿 \"필수 약관에 모두 동의해 주세요.\"</div><div>- 알럿 확인 후 첫 번째 미체크 필수 항목 위치로 스크롤 (권장)</div><div>- 선택 항목은 미체크여도 가입 가능</div><div>- 항목별 동의 여부 · 동의 일시는 기존과 동일하게 저장</div>",
-          "x": 104,
-          "y": 880,
-          "pins": {
-            "pc": {
-              "x": 104,
-              "y": 880,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "mobile": {
-              "x": 4,
-              "y": 740,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "left": {
-              "x": 104,
-              "y": 880,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "right": {
-              "x": 4,
-              "y": 740,
               "active": true,
               "scrollFixed": "none"
             }
@@ -1335,6 +1299,6 @@
   "notionUrl": "https://app.notion.com/p/ISMS-41cf6986169c803c9770e4d7d74250c3?source=copy_link",
   "themeIndex": 0,
   "category": "front_ui",
-  "updated": "2026-11-19 11:39:31",
+  "updated": "2026-11-19 11:42:09",
   "version": 0.1
 }

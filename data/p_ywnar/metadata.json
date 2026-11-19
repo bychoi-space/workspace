@@ -721,10 +721,155 @@
       "version": 0.1
     },
     "06_Withdraw_Reason.html": {
-      "title": "06_Withdraw_Reason",
-      "type": "responsive-ui",
-      "updatedAt": "2026-11-19T01:44:50.623Z",
-      "template": "template_responsive_pc_mobile.html"
+      "description": [
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[화면 개요] 회원탈퇴 - 탈퇴사유 선택 입력 전환 (진단 13p, 1.6-02) - 근거: 다크패턴 방지 가이드라인 - 탈퇴 과정에서 설문 응답을 강제하면 취소 · 탈퇴 방해에 해당  - AS-IS: 탈퇴사유 미선택 시 '탈퇴사유를 선택해주세요.' 알럿 + 진행 차단  - TO-BE: 탈퇴사유는 선택 입력 / 미선택이어도 [회원 탈퇴] 진행 가능  - 진입 경로: 마이페이지 메인 [회원탈퇴] 바로가기(05 화면), 정보 관리 &gt; 회원 탈퇴 ",
+          "html": "[화면 개요] 회원탈퇴 - 탈퇴사유 선택 입력 전환 (진단 13p, 1.6-02)<div>- 근거: 다크패턴 방지 가이드라인 - 탈퇴 과정에서 설문 응답을 강제하면 취소 · 탈퇴 방해에 해당</div><div>- AS-IS: 탈퇴사유 미선택 시 '탈퇴사유를 선택해주세요.' 알럿 + 진행 차단</div><div>- TO-BE: 탈퇴사유는 선택 입력 / 미선택이어도 [회원 탈퇴] 진행 가능</div><div>- 진입 경로: 마이페이지 메인 [회원탈퇴] 바로가기(05 화면), 정보 관리 &gt; 회원 탈퇴</div>",
+          "x": 356,
+          "y": 130,
+          "pins": {
+            "pc": {
+              "x": 356,
+              "y": 130,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 110,
+              "y": 44,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 356,
+              "y": 130,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 110,
+              "y": 44,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[상단 안내 문구] 기존 유지 - 진행중 주문(구매확정 이전) 탈퇴 불가, 마일리지 · 쿠폰 · 기프트카드 소멸, 매장 선수금 보유 시 탈퇴 불가 안내 3줄 그대로 노출 ",
+          "html": "[상단 안내 문구] 기존 유지<div>- 진행중 주문(구매확정 이전) 탈퇴 불가, 마일리지 · 쿠폰 · 기프트카드 소멸, 매장 선수금 보유 시 탈퇴 불가 안내 3줄 그대로 노출</div>",
+          "x": 356,
+          "y": 236,
+          "pins": {
+            "pc": {
+              "x": 356,
+              "y": 236,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 4,
+              "y": 184,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 356,
+              "y": 236,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 4,
+              "y": 184,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[탈퇴사유 영역] 선택 입력으로 변경 - 제목 뒤 (선택) 표기 + 보조 문구 '더 나은 서비스를 위해 참고합니다. 선택하지 않아도 탈퇴할 수 있습니다.'  - 라디오 기본값: 미선택 / 사유 항목 · 순서는 현행 유지 (화면에는 일부만 표기)  - '기타' 선택 시 입력란 입력도 선택 (빈 값 허용, 최대 300자 유지)  - 미선택 탈퇴 시 탈퇴사유 '미선택'으로 저장 → BO 탈퇴회원관리 · 통계에서 구분 ",
+          "html": "[탈퇴사유 영역] 선택 입력으로 변경<div>- 제목 뒤 (선택) 표기 + 보조 문구 '더 나은 서비스를 위해 참고합니다. 선택하지 않아도 탈퇴할 수 있습니다.'</div><div>- 라디오 기본값: 미선택 / 사유 항목 · 순서는 현행 유지 (화면에는 일부만 표기)</div><div>- '기타' 선택 시 입력란 입력도 선택 (빈 값 허용, 최대 300자 유지)</div><div>- 미선택 탈퇴 시 탈퇴사유 '미선택'으로 저장 → BO 탈퇴회원관리 · 통계에서 구분</div>",
+          "x": 400,
+          "y": 372,
+          "pins": {
+            "pc": {
+              "x": 400,
+              "y": 372,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 4,
+              "y": 286,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 400,
+              "y": 372,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 4,
+              "y": 286,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        },
+        {
+          "type": "pin",
+          "target": "frame",
+          "text": "[회원 탈퇴 버튼 동작] - 사유 미선택 알럿('탈퇴사유를 선택해주세요.') 삭제  - 클릭 시 기존 탈퇴 확인 → 진행중 주문 · 매장 선수금 체크 → 탈퇴 처리 순서 유지  - [취소] 클릭 시 이전 화면 이동 (기존 유지)  - 앱(웹뷰)은 시스템 알럿 대신 동일 문구 팝업 사용 시 문구만 동일하게 유지 ",
+          "html": "[회원 탈퇴 버튼 동작]<div>- 사유 미선택 알럿('탈퇴사유를 선택해주세요.') 삭제</div><div>- 클릭 시 기존 탈퇴 확인 → 진행중 주문 · 매장 선수금 체크 → 탈퇴 처리 순서 유지</div><div>- [취소] 클릭 시 이전 화면 이동 (기존 유지)</div><div>- 앱(웹뷰)은 시스템 알럿 대신 동일 문구 팝업 사용 시 문구만 동일하게 유지</div>",
+          "x": 806,
+          "y": 236,
+          "pins": {
+            "pc": {
+              "x": 806,
+              "y": 236,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "mobile": {
+              "x": 4,
+              "y": 596,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "left": {
+              "x": 806,
+              "y": 236,
+              "active": true,
+              "scrollFixed": "none"
+            },
+            "right": {
+              "x": 4,
+              "y": 596,
+              "active": true,
+              "scrollFixed": "none"
+            }
+          },
+          "standardized": true,
+          "scrollFixed": "none"
+        }
+      ],
+      "connectors": [],
+      "updatedAt": "2026-11-19T01:46:16.857Z",
+      "version": 0.1
     }
   },
   "assignee": "고범곤",
@@ -734,6 +879,6 @@
   "notionUrl": "https://app.notion.com/p/ISMS-41cf6986169c803c9770e4d7d74250c3?source=copy_link",
   "themeIndex": 0,
   "category": "front_ui",
-  "updated": "2026-11-19 10:44:21",
+  "updated": "2026-11-19 10:46:16",
   "version": 0.1
 }

@@ -870,6 +870,12 @@
       "connectors": [],
       "updatedAt": "2026-11-19T01:46:16.857Z",
       "version": 0.1
+    },
+    "07_Privacy_Policy_Art2.html": {
+      "title": "07_Privacy_Policy_Art2",
+      "type": "responsive-ui",
+      "updatedAt": "2026-11-19T01:47:00.705Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "고범곤",

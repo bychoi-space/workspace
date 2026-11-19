@@ -6,6 +6,12 @@
       "connectors": [],
       "updatedAt": "2026-11-19T01:02:09.601Z",
       "version": 0.1
+    },
+    "01_Project_Summary.html": {
+      "title": "01_Project_Summary",
+      "type": "plan",
+      "updatedAt": "2026-11-19T01:26:32.473Z",
+      "template": "template_project_summary.html"
     }
   },
   "assignee": "고범곤",

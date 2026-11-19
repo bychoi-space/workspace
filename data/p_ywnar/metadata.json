@@ -1095,10 +1095,10 @@
       "version": 0.1
     },
     "08_Privacy_Notice_Version.html": {
-      "title": "08_Privacy_Notice_Version",
-      "type": "responsive-ui",
-      "updatedAt": "2026-11-19T01:50:11.929Z",
-      "template": "template_responsive_pc_mobile.html"
+      "description": [],
+      "connectors": [],
+      "updatedAt": "2026-11-19T01:51:19.230Z",
+      "version": 0.1
     }
   },
   "assignee": "고범곤",
@@ -1108,6 +1108,6 @@
   "notionUrl": "https://app.notion.com/p/ISMS-41cf6986169c803c9770e4d7d74250c3?source=copy_link",
   "themeIndex": 0,
   "category": "front_ui",
-  "updated": "2026-11-19 10:48:44",
+  "updated": "2026-11-19 10:51:19",
   "version": 0.1
 }

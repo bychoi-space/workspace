@@ -47,6 +47,12 @@
       "connectors": [],
       "updatedAt": "2026-11-19T01:32:29.995Z",
       "version": 0.1
+    },
+    "03_Join_Terms_Email_Naver.html": {
+      "title": "03_Join_Terms_Email_Naver",
+      "type": "responsive-ui",
+      "updatedAt": "2026-11-19T01:33:29.958Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "고범곤",

@@ -719,6 +719,12 @@
       "connectors": [],
       "updatedAt": "2026-11-19T01:44:22.116Z",
       "version": 0.1
+    },
+    "06_Withdraw_Reason.html": {
+      "title": "06_Withdraw_Reason",
+      "type": "responsive-ui",
+      "updatedAt": "2026-11-19T01:44:50.623Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "고범곤",

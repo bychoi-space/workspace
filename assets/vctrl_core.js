@@ -31,7 +31,7 @@ window.state = {
 // Streamlined Engine Script Assembler with In-Memory Caching
 let _cachedEngineScriptBlock = null;
 
-window.invalidateEngineScriptCache = function() {
+window.invalidateEngineScriptCache = function () {
     _cachedEngineScriptBlock = null;
 };
 
@@ -161,9 +161,9 @@ function _detectScreenResponsive(fileName, content) {
         cleanHtml.includes('mobile-content-inner') ||
         cleanHtml.includes('frame-column') ||
         (scType === 'responsive-ui' ||
-         scTpl === 'template_responsive_pc_mobile.html' ||
-         scTpl === 'template_admin_pc_scroll.html' ||
-         scTpl === 'template_responsive_mobile_compare.html')
+            scTpl === 'template_responsive_pc_mobile.html' ||
+            scTpl === 'template_admin_pc_scroll.html' ||
+            scTpl === 'template_responsive_mobile_compare.html')
     );
 }
 

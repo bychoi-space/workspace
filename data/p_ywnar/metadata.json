@@ -1246,10 +1246,10 @@
       "version": 0.1
     },
     "09_Marketing_Consent_Result.html": {
-      "title": "09_Marketing_Consent_Result",
-      "type": "responsive-ui",
-      "updatedAt": "2026-11-19T01:52:36.612Z",
-      "template": "template_responsive_pc_mobile.html"
+      "description": [],
+      "connectors": [],
+      "updatedAt": "2026-11-19T01:53:58.162Z",
+      "version": 0.1
     }
   },
   "assignee": "고범곤",
@@ -1259,6 +1259,6 @@
   "notionUrl": "https://app.notion.com/p/ISMS-41cf6986169c803c9770e4d7d74250c3?source=copy_link",
   "themeIndex": 0,
   "category": "front_ui",
-  "updated": "2026-11-19 10:52:05",
+  "updated": "2026-11-19 10:53:58",
   "version": 0.1
 }

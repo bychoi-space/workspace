@@ -2,10 +2,9 @@
   "title": "ISMS 법적 준거성 진단 결과 조치",
   "screens": {
     "00_Cover_435.html": {
-      "title": "00_Cover_435",
-      "type": "cover",
-      "updatedAt": "2026-11-19T01:02:02.338Z",
-      "template": "template_cover.html",
+      "description": [],
+      "connectors": [],
+      "updatedAt": "2026-11-19T01:02:09.601Z",
       "version": 0.1
     }
   },
@@ -15,5 +14,7 @@
   "figmaUrl": "",
   "notionUrl": "https://app.notion.com/p/ISMS-41cf6986169c803c9770e4d7d74250c3?source=copy_link",
   "themeIndex": 0,
-  "category": "front_ui"
+  "category": "front_ui",
+  "updated": "2026-11-19 10:02:09",
+  "version": 0.1
 }

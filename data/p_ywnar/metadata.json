@@ -1395,6 +1395,12 @@
       "connectors": [],
       "updatedAt": "2026-11-19T01:54:06.082Z",
       "version": 0.1
+    },
+    "10_App_Setting_Push_Result.html": {
+      "title": "10_App_Setting_Push_Result",
+      "type": "mobile-ui",
+      "updatedAt": "2026-11-19T01:54:29.923Z",
+      "template": "template_mobile_ui_2.html"
     }
   },
   "assignee": "고범곤",

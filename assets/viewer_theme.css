@@ -794,28 +794,39 @@ body.editor-page .sidebar-left .panel-title-txt {
     letter-spacing: 0.06em !important;
 }
 
-body.editor-page .btn-add-action {
-    color: var(--ed-accent) !important;
-}
-
-body.editor-page .btn-add-action:hover {
-    color: var(--ed-accent-hover) !important;
-    box-shadow: none !important;
-    transform: scale(1.06);
-}
-
+body.editor-page .btn-add-action,
 body.editor-page #sidebar-left.collapsed .btn-add-action,
 body.editor-page #sidebar-left.collapsed #btn-add-screen {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    border-radius: 6px !important;
     background: var(--ed-accent-subtle) !important;
-    border: 1px solid var(--ed-border) !important;
+    border: 1px solid rgba(139, 120, 230, 0.28) !important;
     color: var(--ed-accent) !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
+html[data-theme="light"] body.editor-page .btn-add-action,
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed .btn-add-action,
+html[data-theme="light"] body.editor-page #sidebar-left.collapsed #btn-add-screen {
+    border-color: rgba(91, 70, 198, 0.24) !important;
+}
+
+body.editor-page .btn-add-action span.material-icons-outlined {
+    font-size: 18px !important;
+    line-height: 1 !important;
+}
+
+body.editor-page .btn-add-action:hover,
 body.editor-page #sidebar-left.collapsed .btn-add-action:hover,
 body.editor-page #sidebar-left.collapsed #btn-add-screen:hover {
     background: var(--ed-accent-solid) !important;
     border-color: var(--ed-accent-solid) !important;
     color: #ffffff !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 /* Expanded Screen List Items */
@@ -823,9 +834,11 @@ body.editor-page #sidebar-left:not(.collapsed) .screen-item {
     background: var(--ed-surface-1) !important;
     border: 1px solid var(--ed-border-subtle) !important;
     border-radius: 8px !important;
+    padding: 7px 10px !important;
+    gap: 6px !important;
     color: var(--ed-text-2) !important;
     box-shadow: none !important;
-    transition: all 0.15s ease !important;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
 }
 
 body.editor-page #sidebar-left:not(.collapsed) .screen-item:hover {
@@ -846,11 +859,20 @@ body.editor-page #sidebar-left:not(.collapsed) .screen-item.active {
 
 body.editor-page #sidebar-left:not(.collapsed) .screen-item .screen-name {
     color: inherit !important;
+    font-size: 12.5px !important;
 }
 
-body.editor-page .screen-actions {
+/* Hide row action buttons by default so full screen titles remain readable; reveal on hover/focus */
+body.editor-page #sidebar-left:not(.collapsed) .screen-item .screen-actions {
+    display: none !important;
     gap: 2px !important;
     flex-shrink: 0;
+    margin-left: 2px;
+}
+
+body.editor-page #sidebar-left:not(.collapsed) .screen-item:hover .screen-actions,
+body.editor-page #sidebar-left:not(.collapsed) .screen-item:focus-within .screen-actions {
+    display: flex !important;
 }
 
 body.editor-page .screen-actions button,
@@ -863,16 +885,101 @@ body.editor-page .screen-delete-btn {
     border-radius: 5px !important;
     background: transparent !important;
     border: 1px solid transparent !important;
-    color: var(--ed-text-3) !important;
-    opacity: 0.72;
+    color: var(--ed-text-2) !important;
+    opacity: 0.9;
     box-shadow: none !important;
     transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease, opacity 0.14s ease !important;
 }
 
-body.editor-page .screen-item:hover .screen-actions button,
-body.editor-page .screen-item.active .screen-actions button {
+body.editor-page .screen-item:hover .screen-actions button {
     opacity: 1;
-    color: var(--ed-text-2) !important;
+}
+
+/* Light Mode Refined Pastel Category Badges (Scoped strictly to .screen-badge & .flyout-badge) */
+html[data-theme="light"] body.editor-page .screen-badge,
+html[data-theme="light"] body.editor-page .flyout-badge {
+    font-weight: 650 !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-cover,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-cover {
+    background: #eef2ff !important;
+    color: #4338ca !important;
+    border-color: #c7d2fe !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-architecture,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-architecture {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border-color: #a7f3d0 !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-plan,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-plan {
+    background: #fffbeb !important;
+    color: #b45309 !important;
+    border-color: #fde68a !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-analysis,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-analysis {
+    background: #fff1f2 !important;
+    color: #be123c !important;
+    border-color: #fecdd3 !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-case-study,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-case-study {
+    background: #fff7ed !important;
+    color: #c2410c !important;
+    border-color: #fed7aa !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-ui,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-ui {
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    border-color: #bfdbfe !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-responsive-ui,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-responsive-ui {
+    background: #f5f3ff !important;
+    color: #6d28d9 !important;
+    border-color: #ddd6fe !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-mobile-ui,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-mobile-ui {
+    background: #faf5ff !important;
+    color: #7e22ce !important;
+    border-color: #e9d5ff !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-admin,
+html[data-theme="light"] body.editor-page .screen-badge.badge-admin-nbos,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-admin,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-admin-nbos {
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    border-color: #cbd5e1 !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-admin-modern,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-admin-modern {
+    background: #fdf4ff !important;
+    color: #86198f !important;
+    border-color: #f5d0fe !important;
+}
+
+html[data-theme="light"] body.editor-page .screen-badge.badge-default,
+html[data-theme="light"] body.editor-page .flyout-badge.badge-default {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border-color: #cbd5e1 !important;
 }
 
 body.editor-page .screen-actions .screen-edit-btn:hover {
@@ -2694,6 +2801,21 @@ body.editor-page .dialog-card .btn-secondary:hover {
     color: var(--ed-text-1) !important;
 }
 
+body.editor-page .modal-card .btn-primary,
+body.editor-page .dialog-card .btn-primary {
+    background: var(--ed-accent-solid) !important;
+    border: 1px solid var(--ed-accent-solid) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px var(--ed-accent-subtle) !important;
+}
+
+body.editor-page .modal-card .btn-primary:hover,
+body.editor-page .dialog-card .btn-primary:hover {
+    background: var(--ed-accent-hover) !important;
+    border-color: var(--ed-accent-hover) !important;
+    color: #ffffff !important;
+}
+
 body.editor-page .modal-title,
 body.editor-page .dialog-title,
 body.editor-page .history-dialog-title,
@@ -2909,21 +3031,193 @@ body.editor-page .history-empty-sub {
     color: var(--ed-text-3) !important;
 }
 
-/* Add Screen Modal Template Cards in Light Mode */
-html[data-theme="light"] body.editor-page .template-card {
-    background: var(--ed-surface-1) !important;
-    border-color: var(--ed-border) !important;
-    color: var(--ed-text-1) !important;
+/* Add Screen Modal: 5-Column Vertical Grid & Dual-Theme Template Cards */
+body.editor-page #add-screen-modal .modal-card.modal-card-large {
+    width: min(980px, 94vw) !important;
+    max-width: 980px !important;
+    max-height: 88vh !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-html[data-theme="light"] body.editor-page .template-card h4,
-html[data-theme="light"] body.editor-page .template-title {
-    color: var(--ed-text-1) !important;
+body.editor-page #add-screen-modal .modal-body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
 }
 
-html[data-theme="light"] body.editor-page .template-card p,
-html[data-theme="light"] body.editor-page .template-desc {
+body.editor-page #add-screen-modal .modal-section-title {
     color: var(--ed-text-2) !important;
+    border-bottom-color: var(--ed-border) !important;
+}
+
+body.editor-page #add-screen-modal .template-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    grid-template-rows: none !important;
+    grid-auto-flow: row !important;
+    overflow: visible !important;
+    gap: 10px !important;
+    margin-top: 12px !important;
+    padding: 4px 2px 6px !important;
+    cursor: default !important;
+}
+
+@media (max-width: 900px) {
+    body.editor-page #add-screen-modal .template-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    body.editor-page #add-screen-modal .template-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+body.editor-page #add-screen-modal .template-card {
+    width: 100% !important;
+    padding: 10px !important;
+    border-radius: 10px !important;
+    background: var(--ed-surface-1) !important;
+    border: 1px solid var(--ed-border) !important;
+    color: var(--ed-text-1) !important;
+    box-shadow: var(--ed-card-shadow) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    transition: background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease !important;
+}
+
+body.editor-page #add-screen-modal .template-card:hover {
+    background: var(--ed-surface-2) !important;
+    border-color: var(--ed-accent) !important;
+    transform: translateY(-1px) !important;
+}
+
+body.editor-page #add-screen-modal .template-card.selected,
+body.editor-page #add-screen-modal .template-card.active {
+    background: var(--ed-accent-subtle) !important;
+    border-color: var(--ed-accent-solid) !important;
+    box-shadow: 0 0 0 1px var(--ed-accent-solid) !important;
+    transform: translateY(-1px) !important;
+}
+
+body.editor-page #add-screen-modal .template-thumb {
+    aspect-ratio: 16 / 9 !important;
+    background: #12151f !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 7px !important;
+    margin-bottom: 8px !important;
+}
+
+body.editor-page #add-screen-modal .template-thumb-icon {
+    font-size: 28px !important;
+    color: #94a3b8 !important;
+    opacity: 0.9 !important;
+    transition: color 0.16s ease, transform 0.16s ease !important;
+}
+
+body.editor-page #add-screen-modal .template-card:hover .template-thumb-icon,
+body.editor-page #add-screen-modal .template-card.selected .template-thumb-icon,
+body.editor-page #add-screen-modal .template-card.active .template-thumb-icon {
+    color: #c4b5fd !important;
+    opacity: 1 !important;
+    transform: scale(1.05);
+}
+
+body.editor-page #add-screen-modal .template-name,
+body.editor-page #add-screen-modal .template-card h4,
+body.editor-page #add-screen-modal .template-title {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    color: var(--ed-text-1) !important;
+    word-break: keep-all;
+}
+
+body.editor-page #add-screen-modal .template-card p,
+body.editor-page #add-screen-modal .template-desc {
+    color: var(--ed-text-2) !important;
+}
+
+body.editor-page #add-screen-modal .template-badge {
+    top: 15px !important;
+    right: 15px !important;
+    font-size: 9.5px !important;
+    font-weight: 650 !important;
+    padding: 2px 6px !important;
+    border-radius: 5px !important;
+    background: rgba(110, 86, 207, 0.24) !important;
+    border: 1px solid rgba(139, 120, 230, 0.38) !important;
+    color: #ddd6fe !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card {
+    background: #ffffff !important;
+    border-color: #dde3ee !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card:hover {
+    background: #f8fafc !important;
+    border-color: #9b8ce8 !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card.selected,
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card.active {
+    background: #f5f3ff !important;
+    border-color: var(--ed-accent-solid) !important;
+    box-shadow: 0 0 0 1.5px var(--ed-accent-solid), 0 4px 12px rgba(91, 70, 198, 0.1) !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-thumb {
+    background: linear-gradient(180deg, #f4f6fb 0%, #ebeef7 100%) !important;
+    border: 1px solid #dfe5f0 !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card.selected .template-thumb,
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card.active .template-thumb {
+    background: linear-gradient(180deg, #ede9fe 0%, #e4dffd 100%) !important;
+    border-color: rgba(91, 70, 198, 0.25) !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-thumb-icon {
+    color: #5b677d !important;
+    opacity: 0.92 !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card:hover .template-thumb-icon,
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card.selected .template-thumb-icon,
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card.active .template-thumb-icon {
+    color: var(--ed-accent-solid) !important;
+    opacity: 1 !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-badge {
+    background: #ffffff !important;
+    border: 1px solid #d5dceb !important;
+    color: #475569 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card.selected .template-badge,
+html[data-theme="light"] body.editor-page #add-screen-modal .template-card.active .template-badge {
+    background: var(--ed-accent-solid) !important;
+    border-color: var(--ed-accent-solid) !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-check {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border: 1.6px solid var(--ed-accent-solid) !important;
+    box-shadow: 0 4px 12px rgba(91, 70, 198, 0.22) !important;
+    width: 34px !important;
+    height: 34px !important;
+}
+
+html[data-theme="light"] body.editor-page #add-screen-modal .template-check svg {
+    stroke: var(--ed-accent-solid) !important;
 }
 
 html[data-theme="light"] body.editor-page .v4-toast {

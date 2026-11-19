@@ -872,10 +872,10 @@
       "version": 0.1
     },
     "07_Privacy_Policy_Art2.html": {
-      "title": "07_Privacy_Policy_Art2",
-      "type": "responsive-ui",
-      "updatedAt": "2026-11-19T01:47:00.705Z",
-      "template": "template_responsive_pc_mobile.html"
+      "description": [],
+      "connectors": [],
+      "updatedAt": "2026-11-19T01:48:18.544Z",
+      "version": 0.1
     }
   },
   "assignee": "고범곤",
@@ -885,6 +885,6 @@
   "notionUrl": "https://app.notion.com/p/ISMS-41cf6986169c803c9770e4d7d74250c3?source=copy_link",
   "themeIndex": 0,
   "category": "front_ui",
-  "updated": "2026-11-19 10:46:16",
+  "updated": "2026-11-19 10:48:18",
   "version": 0.1
 }

@@ -345,6 +345,12 @@
       ],
       "connectors": [],
       "version": 0.1
+    },
+    "04_Join_Terms_Kakao.html": {
+      "title": "04_Join_Terms_Kakao",
+      "type": "responsive-ui",
+      "updatedAt": "2026-11-19T01:39:21.592Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "고범곤",

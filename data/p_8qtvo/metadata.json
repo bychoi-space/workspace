@@ -35,11 +35,11 @@
     "02_Front_IA_Specification.html": {
       "title": "시선닷컴 Front IA (계층구조 정의서)",
       "type": "analysis",
-      "updatedAt": "2026-11-18T08:50:00.000Z",
+      "updatedAt": "2026-11-19T01:01:08.816Z",
       "template": "template_process.html",
       "description": [],
       "connectors": [],
-      "version": 0.1,
+      "version": 0.2,
       "defaultTab": "editor",
       "screenDesc": "시선닷컴(https://sisun.com/) 실제 스토어 분석 기반 1~5Depth 계층형 아코디언 Front IA 정의서"
     },
@@ -2215,7 +2215,7 @@
     "renewal_payEnd.html",
     "renewal_payEnd_2.html"
   ],
-  "updated": "2026-11-18 15:56:17",
+  "updated": "2026-11-19 10:01:08",
   "version": 0.2,
   "category": "project"
 }

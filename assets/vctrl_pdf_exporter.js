@@ -287,43 +287,24 @@ async function _resolveAssetToDataUrl(rawUrl, projectName) {
         }
     }
 
-    // 2. GitHub Raw & Contents API CORS Bridge (Essential when viewer.html/index.html runs on local file://)
-    if (!resolvedDataUrl) {
-        const owner = (window.ghConfig && window.ghConfig.owner) || 'bychoi-space';
-        const repo = (window.ghConfig && window.ghConfig.repo) || 'workspace';
-        const token = (window.ghConfig && window.ghConfig.token) || localStorage.getItem('gh_token') || '';
+    // 2. Supabase Storage Fallback (for project relative paths or file:// offline context)
+    if (!resolvedDataUrl && projectName) {
+        const sbBase = (window.WorkspaceSupabase && window.WorkspaceSupabase.url) || 'https://cxgvharfkzdqiiquroqz.supabase.co';
+        const sbBucket = (window.WorkspaceSupabase && window.WorkspaceSupabase.bucket) || 'workspace-assets';
         const repoPaths = _buildCandidateRepoPaths(cleanUrl, projectName);
 
         for (let i = 0; i < repoPaths.length && !resolvedDataUrl; i++) {
-            const safePath = repoPaths[i].split('/').map(seg => encodeURIComponent(seg)).join('/');
-
-            // 2-A. GitHub Raw CDN (Access-Control-Allow-Origin: *)
+            const relInsideProj = repoPaths[i].replace(new RegExp('^data/' + projectName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '/'), '');
+            const safeProjPath = relInsideProj.split('/').map(seg => encodeURIComponent(seg)).join('/');
+            const storageUrl = `${sbBase}/storage/v1/object/public/${sbBucket}/projects/${encodeURIComponent(projectName)}/${safeProjPath}`;
             try {
-                const rawGhUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${safePath}`;
-                const rawRes = await _fetchWithTimeout(rawGhUrl, { mode: 'cors', credentials: 'omit' }, 7000);
-                if (rawRes && rawRes.ok) {
-                    const blob = await rawRes.blob();
+                const stRes = await _fetchWithTimeout(storageUrl, { mode: 'cors', credentials: 'omit' }, 7000);
+                if (stRes && stRes.ok) {
+                    const blob = await stRes.blob();
                     resolvedDataUrl = await _blobToDataUrl(blob);
                     if (resolvedDataUrl) break;
                 }
-            } catch (rawErr) {}
-
-            // 2-B. GitHub Contents API Base64 payload fallback
-            try {
-                const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${safePath}`;
-                const headers = { 'Accept': 'application/vnd.github.v3+json' };
-                if (token) headers['Authorization'] = `token ${token}`;
-                const apiRes = await _fetchWithTimeout(apiUrl, { headers, mode: 'cors', credentials: 'omit' }, 7000);
-                if (apiRes && apiRes.ok) {
-                    const json = await apiRes.json();
-                    if (json && json.content) {
-                        const mime = _guessImageMimeType(repoPaths[i]);
-                        const b64 = String(json.content).replace(/\s+/g, '');
-                        resolvedDataUrl = `data:${mime};base64,${b64}`;
-                        break;
-                    }
-                }
-            } catch (apiErr) {}
+            } catch (_) {}
         }
     }
 

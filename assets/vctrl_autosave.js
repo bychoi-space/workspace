@@ -19,8 +19,8 @@
     var STORE_NAME = 'screen_drafts';
 
     var LOCAL_DRAFT_DEBOUNCE_MS = 1500;       // 1.5s idle -> save local IndexedDB draft (0 commits)
-    var CLOUD_IDLE_DEBOUNCE_MS = 25000;       // 25s idle -> silent GitHub sync
-    var CLOUD_MIN_INTERVAL_MS = 60000;        // Minimum 60s between consecutive auto-commits
+    var CLOUD_IDLE_DEBOUNCE_MS = 8000;        // 8s idle -> silent Supabase sync
+    var CLOUD_MIN_INTERVAL_MS = 15000;        // Minimum 15s between consecutive auto-syncs
     var INTERACTION_DEFER_MS = 4000;          // Defer 4s if user is dragging/cropping/composing
     var RECOVERED_SYNC_DELAY_MS = 6000;       // Sync recovered local draft after 6s idle
     var META_TIMESTAMP_THROTTLE_MS = 900000;  // 15m throttle for updatedAt-only metadata touches
@@ -307,15 +307,18 @@
 
         var st = window.state || {};
         var isRO = Boolean(st.isReadOnly || (window.ghConfig && window.ghConfig.isReadOnly));
-        if (isRO) {
-            badge.style.display = 'none';
-            return;
-        }
-        badge.style.display = '';
-        badge.setAttribute('data-state', _currentBadgeState);
-
         var iconSlot = badge.querySelector('.autosave-indicator');
         var textSlot = badge.querySelector('.autosave-text');
+        badge.style.display = '';
+        if (isRO) {
+            badge.setAttribute('data-state', 'readonly');
+            if (iconSlot) iconSlot.innerHTML = '<span class="autosave-dot"></span>';
+            if (textSlot) textSlot.textContent = '열람 전용 모드';
+            badge.title = '관리자 로그인 후 편집 및 저장이 가능합니다.';
+            return;
+        }
+        badge.setAttribute('data-state', _currentBadgeState);
+
         if (!iconSlot || !textSlot) return;
 
         if (_currentBadgeState === 'saving') {
@@ -769,7 +772,7 @@
         var st = window.state || {};
         _activeScreenKey = (project && fileName) ? (project + '/' + fileName) : '';
 
-        if (_activeScreenKey && !_remoteBaselineHtml.has(_activeScreenKey) && loadedContent && !recoveredDraft) {
+        if (_activeScreenKey && loadedContent && !recoveredDraft && !_pendingSnapshots.has(_activeScreenKey)) {
             _remoteBaselineHtml.set(_activeScreenKey, loadedContent);
         }
 

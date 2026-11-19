@@ -6,4 +6,5 @@ backups/
 logs/
 *.bak
 _archive/
+data/
 

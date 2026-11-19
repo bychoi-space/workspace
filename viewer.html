@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
-    <link rel="stylesheet" href="assets/viewer.css?v=V450_COMMON_SSOT">
+    <link rel="stylesheet" href="assets/viewer.css?v=V500_SUPABASE">
     <link rel="stylesheet" href="assets/ui_library.css?v=V450_COMMON_SSOT">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
@@ -58,13 +58,13 @@
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=V402_TRANSPARENT_FAVICON">
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
 
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V433_SHELL_CONTRAST">
-    <link rel="stylesheet" href="assets/viewer_theme.css?v=V448_UNIFIED_TAB_FONT">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V500_SUPABASE">
+    <link rel="stylesheet" href="assets/viewer_theme.css?v=V501_SELF_SIGNUP">
     <!-- Shared Utilities SSOT & PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="assets/vctrl_common.js?v=V450_COMMON_SSOT"></script>
-    <script src="assets/vctrl_pdf_exporter.js?v=V450_COMMON_SSOT"></script>
+    <script src="assets/vctrl_pdf_exporter.js?v=V500_SUPABASE"></script>
     <script>
         // PWA & Direct-Entry Project Parameter Guard:
         // If viewer is launched without a valid project query parameter, immediately bounce to Dashboard index.html
@@ -267,6 +267,13 @@
                 <span class="autosave-indicator"><span class="autosave-dot"></span></span>
                 <span class="autosave-text">자동 저장 활성</span>
             </div>
+            <button id="btn-viewer-auth" class="btn-secondary btn-viewer-auth" type="button" title="관리자 로그인">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span class="viewer-auth-label">로그인</span>
+            </button>
             <button id="btn-global-save" class="btn-accent btn-global-save">전체 저장</button>
             <div class="toolbar-divider action-divider"></div>
             <button class="panel-toggle-btn header-sidebar-toggle" id="btn-toggle-right"
@@ -1030,23 +1037,78 @@
         전체보기 취소
     </button>
 
-    <!-- Auth Modal -->
+    <!-- Auth Modal (ID/Password Login, Self-Signup & Account Management) -->
     <div id="auth-modal" class="modal-overlay">
         <div class="modal-card modal-card-narrow">
             <div class="modal-header">
-                <h3 class="modal-title">에디터 인증</h3>
-                <p class="modal-subtitle">관리 권한이 필요한 작업입니다.</p>
+                <h3 class="modal-title" id="auth-modal-title">계정 로그인</h3>
+                <p class="modal-subtitle" id="auth-modal-subtitle">편집 및 저장 권한을 사용하려면 로그인하세요.</p>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">GitHub Personal Access Token</label>
-                    <input type="password" id="modal-gh-token" class="form-input" placeholder="ghp_...">
-                    <p id="modal-auth-status" class="form-notice"></p>
+                <div id="auth-mode-tabs" class="auth-mode-tabs" role="tablist" aria-label="인증 방식 선택">
+                    <button type="button" id="tab-auth-login" class="auth-mode-tab active" role="tab" aria-selected="true">로그인</button>
+                    <button type="button" id="tab-auth-signup" class="auth-mode-tab" role="tab" aria-selected="false">간편 회원가입</button>
                 </div>
+                <div id="auth-login-section">
+                    <div class="form-group">
+                        <label class="form-label" for="modal-auth-id">아이디</label>
+                        <input type="text" id="modal-auth-id" class="form-input" placeholder="아이디 입력" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modal-auth-pw">비밀번호</label>
+                        <input type="password" id="modal-auth-pw" class="form-input" placeholder="비밀번호 입력" autocomplete="current-password">
+                    </div>
+                </div>
+                <div id="auth-signup-section" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label" for="modal-signup-id">아이디</label>
+                        <input type="text" id="modal-signup-id" class="form-input" placeholder="영문 소문자·숫자 2~32자 (예: hong)" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modal-signup-name">이름 / 닉네임 (선택)</label>
+                        <input type="text" id="modal-signup-name" class="form-input" placeholder="표시할 이름 입력 (미입력 시 아이디 사용)" autocomplete="nickname">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modal-signup-pw">비밀번호</label>
+                        <input type="password" id="modal-signup-pw" class="form-input" placeholder="4자 이상 입력" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modal-signup-pw-confirm">비밀번호 확인</label>
+                        <input type="password" id="modal-signup-pw-confirm" class="form-input" placeholder="비밀번호 재입력" autocomplete="new-password">
+                    </div>
+                    <p class="auth-signup-note">이메일 인증이나 별도 승인 없이 가입 즉시 모든 화면 편집이 가능합니다.</p>
+                </div>
+                <div id="auth-account-section" style="display: none;">
+                    <div class="auth-account-card">
+                        <div class="auth-account-info">
+                            <span class="auth-account-name" id="auth-account-username">bychoi</span>
+                            <span class="auth-account-meta">Supabase Workspace Connected</span>
+                        </div>
+                        <span class="auth-account-role-badge" id="auth-account-role">ADMIN</span>
+                    </div>
+                    <div class="auth-pw-toggle-row">
+                        <button type="button" id="btn-toggle-pw-change" class="btn-secondary btn-auth-pw-toggle">비밀번호 변경</button>
+                    </div>
+                    <div id="auth-pw-change-panel" class="auth-pw-change-panel" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label" for="modal-auth-cur-pw">현재 비밀번호</label>
+                            <input type="password" id="modal-auth-cur-pw" class="form-input" placeholder="현재 비밀번호 입력" autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="modal-auth-new-pw">새 비밀번호 (4자 이상)</label>
+                            <input type="password" id="modal-auth-new-pw" class="form-input" placeholder="새 비밀번호 입력" autocomplete="new-password">
+                        </div>
+                        <div class="auth-pw-save-row">
+                            <button type="button" id="btn-modal-pw-save" class="btn-primary btn-auth-pw-save">변경 저장</button>
+                        </div>
+                    </div>
+                </div>
+                <p id="modal-auth-status" class="form-notice"></p>
             </div>
             <div class="modal-footer">
-                <button id="btn-modal-auth-cancel" class="btn-secondary">닫기</button>
-                <button id="btn-modal-auth-submit" class="btn-primary">인증하기</button>
+                <button id="btn-modal-auth-cancel" class="btn-secondary" type="button">닫기</button>
+                <button id="btn-modal-auth-logout" class="btn-secondary btn-auth-logout" type="button" style="display: none;">로그아웃</button>
+                <button id="btn-modal-auth-submit" class="btn-primary" type="button">로그인</button>
             </div>
         </div>
     </div>
@@ -1161,7 +1223,8 @@
     <script src="assets/vctrl_ui_library.js?v=V446_ICON_LIB_THEME"></script>
     <script src="assets/templates.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_clipboard.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/app.js?v=V450_COMMON_SSOT"></script>
+    <script src="assets/vctrl_supabase.js?v=V501_SELF_SIGNUP"></script>
+    <script src="assets/app.js?v=V500_SUPABASE"></script>
 
     <!-- Modularized Engine -->
     <script src="assets/vctrl_undo.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1193,8 +1256,8 @@
     <script src="assets/vctrl_iframe_ports.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_core.js?v=V451_SIDEBAR_PERSIST"></script>
-    <script src="assets/vctrl_storage.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_autosave.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_storage.js?v=V500_SUPABASE"></script>
+    <script src="assets/vctrl_autosave.js?v=V500_SUPABASE"></script>
     <script src="assets/vctrl_core_router.js?v=V442_SCREEN_PAGE_NAV"></script>
     <script src="assets/vctrl_parent_shortcuts.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
     <script src="assets/vctrl_smartguide.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1212,7 +1275,7 @@
     <script src="assets/vctrl_component_illustrations.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_component_library.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/inspector/inspector_text_formatter.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_system_modals.js?v=V432_VIEWER_DUAL_THEME"></script>
+    <script src="assets/vctrl_system_modals.js?v=V500_SUPABASE"></script>
     <script src="assets/inspector/inspector_quill.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/inspector/inspector_scroll_pin.js?v=V439_INSPECTOR_PART_A"></script>
     <script src="assets/vctrl_inspector_actionbar.js?v=V441_INSPECTOR_PART_C"></script>

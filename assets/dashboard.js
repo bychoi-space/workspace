@@ -34,12 +34,6 @@ const DOM = {
     
     // Auth Modal DOM
     authModal: document.getElementById('auth-modal'),
-    btnAuthClose: document.getElementById('btn-modal-auth-cancel'),
-    btnAuthSubmit: document.getElementById('btn-modal-auth-submit'),
-    btnAuthTest: document.getElementById('btn-modal-auth-test'),
-    tokenInput: document.getElementById('modal-gh-token'),
-    ownerInput: document.getElementById('modal-gh-owner'),
-    repoInput: document.getElementById('modal-gh-repo'),
     authStatus: document.getElementById('modal-auth-status'),
 
     // Global Loader DOM
@@ -300,88 +294,16 @@ function renderCategoryFilterBar() {
 }
 
 
-// Initialize GitHub Status
+// Initialize Storage Status UI
 function updateStatusUI(text, color) {
-    const repoInfo = ` [${ghConfig.owner}/${ghConfig.repo}]`;
-    DOM.ghStatus.innerText = text + (text.includes('에러') || text.includes('실패') ? repoInfo : '');
+    if (!DOM.ghStatus) return;
+    DOM.ghStatus.innerText = text || '';
     if (color) DOM.ghStatus.style.color = color;
 }
 
 function checkEnvironment() {
-    if (window.location.protocol === 'file:') {
-        console.warn("[Env] Running on file:// protocol. This may cause CORS issues.");
-        
-        // Check dismissal for today
-        const today = new Date().toISOString().split('T')[0];
-        if (localStorage.getItem('hide_env_warning') === today) return;
-
-        const banner = document.createElement('div');
-        banner.className = 'env-banner';
-        banner.innerHTML = `
-            <span class="material-icons-outlined" style="color: #f87171;">warning</span>
-            <div class="env-banner-text">
-                <b>주의:</b> 브라우저 보안 정책으로 인해 로컬 파일 실행 시 프로젝트 생성이 제한될 수 있습니다. (Live Server 권장)
-            </div>
-            <button class="btn-close-banner">오늘 하루 보지 않기</button>
-        `;
-        if (document.body) {
-            document.body.appendChild(banner);
-            // Animate in
-            setTimeout(() => banner.classList.add('active'), 100);
-        }
-
-        banner.querySelector('.btn-close-banner').onclick = () => {
-            localStorage.setItem('hide_env_warning', today);
-            banner.classList.remove('active');
-            setTimeout(() => banner.remove(), 500);
-        };
-    }
-    console.log(`[Config] Target Repo: ${ghConfig.owner}/${ghConfig.repo}`);
+    console.log('[Config] Storage Engine: Supabase (workspace schema)');
 }
-
-// Project List Rendering
-async function refreshFileList() {
-    updateStatusUI('', ''); 
-    
-    try {
-        const rootItems = await listRepoRoot();
-        const systemFiles = ['index.html', 'viewer.html', 'stitch_ui_viewer.html'];
-        const legacies = (Array.isArray(rootItems) ? rootItems : []).filter(i => 
-            i.type === 'file' && 
-            (i.name.endsWith('.html') || i.name.endsWith('.htm')) &&
-            !systemFiles.includes(i.name.toLowerCase())
-        );
-        
-        const dataItems = await listContents('');
-        if (!Array.isArray(dataItems)) {
-            throw new Error("Could not fetch project list (invalid response)");
-        }
-        let folders = dataItems.filter(i => i.type === 'dir' && i.name !== 'assets');
-        folders = folders.filter(f => !state.deletedProjects.has(f.name));
-
-        if (legacies.length > 0) {
-            console.log("[Migration] Found legacy files in root. Moving to Default_Project...");
-            updateStatusUI('기존 파일 마이그레이션 중...', '#f59e0b');
-            
-            const defaultMeta = await fetchProjectMetadata('Default_Project');
-            for (const f of legacies) {
-                try {
-                    const content = await fetchFileContent(f.name, true);
-                    if (content) {
-                        defaultMeta.screens = defaultMeta.screens || {};
-                        defaultMeta.screens[f.name] = { updatedAt: new Date().toISOString() };
-                        await uploadToProject('Default_Project', f.name, content);
-                        await deleteFileFromGitHub(f.name, f.sha, true);
-                    }
-                } catch (e) { console.error("Migration failed for:", f.name, e); }
-            }
-            await saveProjectMetadata('Default_Project', defaultMeta);
-            if (!folders.find(fol => fol.name === 'Default_Project')) {
-                folders.push({ name: 'Default_Project', type: 'dir' });
-            }
-        }
-
-
 
 // Render modern Shimmer Glass Skeleton Cards while fetching (Compact Header A-Style)
 function renderSkeletons(count = 6) {
@@ -406,6 +328,11 @@ function renderSkeletons(count = 6) {
     DOM.list.innerHTML = html;
 }
 
+// Project List Rendering (Single-Query Supabase Summary)
+async function refreshFileList() {
+    updateStatusUI('', '');
+
+    try {
         renderCategoryFilterBar();
         renderSkeletons(8);
 
@@ -416,49 +343,50 @@ function renderSkeletons(count = 6) {
             } else {
                 DOM.globalLoader.classList.remove('mobile-nano-only');
             }
-            if (DOM.progressBar) DOM.progressBar.style.width = '0%';
-            if (DOM.nanoProgressLine) DOM.nanoProgressLine.style.width = '0%';
-            if (DOM.loaderStatus) DOM.loaderStatus.innerText = `프로젝트 정보를 불러오는 중... (0/${folders.length})`;
+            if (DOM.progressBar) DOM.progressBar.style.width = '30%';
+            if (DOM.nanoProgressLine) DOM.nanoProgressLine.style.width = '30%';
+            if (DOM.loaderStatus) DOM.loaderStatus.innerText = '프로젝트 목록을 불러오는 중...';
         }
 
-        let loadedCount = 0;
-        const projectData = await Promise.all(folders.map(async (folder) => {
-            try {
-                const meta = await fetchProjectMetadata(folder.name);
-                const screens = meta.screens || meta.files || {};
-                
-                loadedCount++;
-                const percent = Math.round((loadedCount / folders.length) * 100);
-                if (DOM.progressBar) {
-                    DOM.progressBar.style.width = percent + '%';
-                }
-                if (DOM.nanoProgressLine) {
-                    DOM.nanoProgressLine.style.width = percent + '%';
-                }
-                if (DOM.loaderStatus) {
-                    DOM.loaderStatus.innerText = `프로젝트 정보를 불러오는 중... (${loadedCount}/${folders.length})`;
-                }
+        let summaryList = [];
+        if (typeof window.fetchAllProjectsSummary === 'function') {
+            summaryList = await window.fetchAllProjectsSummary();
+        } else if (window.WorkspaceSupabase) {
+            summaryList = await window.WorkspaceSupabase.listDashboardProjects();
+        }
 
+        if (!Array.isArray(summaryList)) {
+            throw new Error("Could not fetch project list (invalid response)");
+        }
+
+        const projectData = summaryList
+            .filter(p => p && p.name && !state.deletedProjects.has(p.name))
+            .map(p => {
+                const meta = p.meta || { title: p.name, screens: {} };
+                const screensObj = meta.screens || meta.files || {};
+                const count = (typeof p.screensCount === 'number') ? p.screensCount : Object.keys(screensObj).length;
                 return {
-                    name: folder.name, meta: meta, screens: Object.keys(screens).length
+                    name: p.name,
+                    meta: meta,
+                    screens: count
                 };
-            } catch (e) {
-                loadedCount++;
-                return { name: folder.name, meta: {title: folder.name}, screens: 0 };
-            }
-        }));
+            });
 
-        state.projects = projectData.filter(p => !state.deletedProjects.has(p.name));
+        if (DOM.progressBar) DOM.progressBar.style.width = '100%';
+        if (DOM.nanoProgressLine) DOM.nanoProgressLine.style.width = '100%';
+        if (DOM.loaderStatus) DOM.loaderStatus.innerText = `프로젝트 불러오기 완료 (${projectData.length}건)`;
+
+        state.projects = projectData;
         renderCategoryFilterBar();
         renderList(getFilteredProjects());
-        
+
         setTimeout(() => {
             if (DOM.globalLoader) DOM.globalLoader.classList.remove('active', 'mobile-nano-only');
             if (DOM.nanoProgressLine) DOM.nanoProgressLine.style.width = '100%';
             setTimeout(() => {
                 if (DOM.nanoProgressLine) DOM.nanoProgressLine.style.width = '0%';
             }, 300);
-        }, 400);
+        }, 250);
         updateStatusUI('', '');
     } catch (err) {
         console.error("refreshFileList error:", err); if (DOM.globalLoader) DOM.globalLoader.classList.remove('active', 'mobile-nano-only');
@@ -492,47 +420,20 @@ function renderSkeletons(count = 6) {
     }
 }
 
-async function showAuthModal() {
-    if (DOM.ownerInput) DOM.ownerInput.value = ghConfig.owner;
-    if (DOM.repoInput) DOM.repoInput.value = ghConfig.repo;
-    if (DOM.tokenInput) DOM.tokenInput.value = ghConfig.token || '';
+function showAuthModal() {
+    if (window.WorkspaceSupabase && typeof window.WorkspaceSupabase.openAuthModal === 'function') {
+        window.WorkspaceSupabase.openAuthModal();
+        return;
+    }
     if (DOM.authModal) DOM.authModal.classList.add('active');
 }
 function hideAuthModal() {
+    if (window.WorkspaceSupabase && typeof window.WorkspaceSupabase.closeAuthModal === 'function') {
+        window.WorkspaceSupabase.closeAuthModal();
+        return;
+    }
     if (DOM.authModal) DOM.authModal.classList.remove('active');
     if (DOM.authStatus) DOM.authStatus.innerText = "";
-}
-async function handleAuthSubmit() {
-    const config = {
-        token: DOM.tokenInput.value.trim(),
-        owner: DOM.ownerInput.value.trim(),
-        repo: DOM.repoInput.value.trim()
-    };
-
-    const success = await verifyConnection(config, (msg, color) => {
-        DOM.authStatus.innerText = msg;
-        DOM.authStatus.style.color = color;
-    });
-
-    if (success) {
-        ghConfig.owner = config.owner;
-        ghConfig.repo = config.repo;
-        ghConfig.token = config.token;
-        setTimeout(() => {
-            hideAuthModal();
-            location.reload(); 
-        }, 1000);
-    }
-}
-
-async function handleAuthTest() {
-    const config = {
-        token: DOM.tokenInput.value.trim(), owner: DOM.ownerInput.value.trim(), repo: DOM.repoInput.value.trim()
-    };
-    await verifyConnection(config, (msg, color) => {
-        DOM.authStatus.innerText = msg;
-        DOM.authStatus.style.color = color;
-    });
 }
 
 // Compute the latest update date from a project's screens and metadata
@@ -1076,10 +977,6 @@ if (DOM.uploadTop) {
 }
 
 if (DOM.btnShowAuth) DOM.btnShowAuth.onclick = () => showAuthModal();
-if (DOM.btnAuthSubmit) DOM.btnAuthSubmit.onclick = handleAuthSubmit;
-if (DOM.btnAuthTest) DOM.btnAuthTest.onclick = handleAuthTest;
-if (DOM.btnAuthClose) DOM.btnAuthClose.onclick = hideAuthModal;
-if (DOM.tokenInput) DOM.tokenInput.onkeyup = (e) => { if(e.key==='Enter') handleAuthSubmit(); };
 
 window.addEventListener('dragover', (e) => {
     e.preventDefault(); if (ghConfig.isReadOnly) return;

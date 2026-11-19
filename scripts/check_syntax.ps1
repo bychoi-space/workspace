@@ -80,6 +80,7 @@ $files = @(
     "c:\Users\sisun\ai_work\assets\vctrl_component_icons_data.js",
     "c:\Users\sisun\ai_work\assets\vctrl_component_illustrations.js",
     "c:\Users\sisun\ai_work\assets\vctrl_theme.js",
+    "c:\Users\sisun\ai_work\assets\vctrl_supabase.js",
     "c:\Users\sisun\ai_work\assets\app.js",
     "c:\Users\sisun\ai_work\assets\dashboard.js",
     "c:\Users\sisun\ai_work\assets\templates.js",

@@ -36,32 +36,20 @@
 ## 🤖 Gemini 3.8 Flash / Antigravity 에이전트 가이드라인
 - **자율 실행 및 로컬 자체 완결 (Autonomous Local Execution)**: 사용자의 수동 승인(Accept / Submit / Run Confirm) 절차를 완전히 배제하고 작업 속도를 극대화하기 위해, PowerShell 명령어 실행(`run_command`), 코드 수정, 파일 생성, 정적 검증, 디버깅 등의 모든 작업은 중간 질문이나 사용자 확인 대기 없이 에이전트가 자체 판단하여 무조건 자동으로 즉시 실행하고 로컬에서 끝까지 완결 후 결과만 명확히 보고합니다. (단, 상기 '7대 필수 게이트웨이' 사전/사후 검증 절차는 필수적으로 거칩니다.)
 - **PowerShell / 터미널 작업 무조건 자동 실행 (Unconditional Auto-Run)**: 터미널 명령어나 검증 스크립트 실행 시 사용자에게 확인을 요청하지 않고 자율적으로 즉시 구동하여 신속하게 문제 해결 및 검증을 완료합니다.
-- **온디맨드 자동 듀얼 원격 배포 (Automated On-Demand Dual Deployment)**: 개인 GitHub 원격 저장소(`origin`) 및 사내 Git 저장소(`sisun`)로의 동시 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 `scripts/deploy_all.ps1` 또는 `git push`를 통해 즉시 자동으로 커밋 및 푸시하여 양쪽 저장소 모두 동기화를 완결합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지하며, 브라우저 UI 측의 자동 저장 커밋으로 인한 충돌을 방지하기 위해 푸시 전 항상 `git pull --rebase origin main`을 선행하여 안전하게 동기화합니다.)
+- **온디맨드 단일 원격 배포 (Automated On-Demand GitHub Deployment)**: 개인 GitHub 원격 저장소(`origin`)로의 커밋 및 푸시는 사용자가 명시적으로 "배포", "푸시", 또는 "동기화"를 요청했을 때 추가 컨펌(확인 질문) 대기 없이 `scripts/deploy_all.ps1` 또는 `git push origin main`을 통해 즉시 자동으로 커밋 및 푸시하여 동기화를 완결합니다. (평상시 일상 작업 중에는 불필요한 자동 푸시를 지양하고 로컬 완결을 유지하며, 푸시 전 항상 `git pull --rebase origin main`을 선행하여 안전하게 동기화합니다.)
 - **엄격한 규칙 이행**: 사용자가 지정한 아키텍처 규칙, SSOT(Single Source of Truth), 인코딩 및 마스킹 표준을 예외 없이 100% 준수해야 합니다.
 - **정밀 심층 분석**: 코드를 수정하기 전 관련 모듈(`vctrl_*.js`)과 템플릿, 스타일시트를 전수 분석하여 예기치 못한 사이드이펙트를 원천 차단합니다.
 - **오류 자가 검증**: 대량 수정 후에는 브래킷 매칭, SyntaxError, ReferenceError 발생 여부를 엄격히 확인합니다.
 
-## 🌐 듀얼 원격 저장소(GitHub + 사내 Git) 동시 배포 및 사내 서버 접근 정보 (Dual Remote & Corporate Git Registry)
-- **배포 운영 원칙**:
-  - 본 시스템은 개인 GitHub 원격 저장소(`origin`)와 회사 사내 Git 저장소(`sisun`) 양쪽에 100% 동일한 소스코드와 브랜치(`main`)로 동시 배포 및 이중화 백업 운영됩니다.
-  - 사용자가 "배포", "푸시", "동기화"를 요청하면 에이전트는 사전 구문 무결성 검증(`scripts/check_syntax.ps1`) 통과 후 양쪽 원격 저장소로 즉시 동시 푸시를 완료합니다.
-- **원격 저장소 구성 및 접근 정보 SSOT**:
-  1. **개인 GitHub 원격 저장소 (`origin`)**:
-     - 저장소 주소: `https://github.com/bychoi-space/workspace.git`
-     - 주 브랜치: `main`
-  2. **사내 Git 저장소 (`sisun`)**:
-     - 공식 도메인 주소: `https://git.sisun.com:3000/sisun/sisun.planning.git`
-     - 직접 통신 경로 (사내 DNS/사설망 방화벽 우회 공인 IP): `https://211.115.114.212:3000/sisun/sisun.planning.git`
-     - 계정 ID: `beomyeol.choi`
-     - 비밀번호: `sisun65@@` (URL 인코딩: `sisun65%40%40`)
-     - 인증 포함 원격 URL: `https://beomyeol.choi:sisun65%40%40@211.115.114.212:3000/sisun/sisun.planning.git`
-     - SSL 검증 옵션: IP 직접 접근 시 도메인 인증서 불일치 방지를 위해 `git config http.sslVerify false` 필수 적용
-     - 주 브랜치: `main` (필요시 사내 원격지의 `master`로도 미러링 지원)
-- **동시 배포 실행 명령어**:
-  - 통합 스크립트 실행: `powershell -ExecutionPolicy Bypass -File scripts/deploy_all.ps1 -CommitMessage "커밋 메시지"`
-  - 수동 Git 푸시:
-    - 듀얼 푸시 등록 시: `git push origin main` (GitHub + 사내 저장소 동시 푸시)
-    - 개별 푸시: `git push origin main` (GitHub) / `git push sisun main` (사내 서버)
+## 🌐 원격 저장소 배포 및 Supabase 백엔드 SSOT 아키텍처
+- **프론트엔드 코드 배포 (`origin`)**:
+  - 사내 Git 저장소(`sisun`) 듀얼 백업은 중단되었으며, 앱 엔진 코드(`index.html`, `viewer.html`, `assets/`, `scripts/`)는 개인 GitHub 원격 저장소(`origin`: `https://github.com/bychoi-space/workspace.git`, 주 브랜치 `main`)로만 배포합니다.
+  - 로컬 `data/` 폴더는 초기 마이그레이션 이전 백업본으로 로컬 디스크에만 보존되며 `.gitignore`에 의해 Git 추적에서 제외됩니다.
+  - 배포 실행 명령어: `powershell -ExecutionPolicy Bypass -File scripts/deploy_all.ps1 -CommitMessage "커밋 메시지"` (또는 `git push origin main`).
+- **주 데이터 저장소 SSOT (Supabase)**:
+  - 모든 프로젝트·화면·핀 어노테이션·커넥터·재개정 이력·공용 컴포넌트·미디어 이미지는 Supabase 프로젝트 `digital-service-planning` (`cxgvharfkzdqiiquroqz`)의 전용 `workspace` 스키마 및 `workspace-assets` Storage 버킷에서 배타적으로 관리됩니다 (`public` 스키마의 기존 타 서비스 테이블/버킷과는 완전 격리).
+  - 익명(비로그인) 접속 시 모든 조회는 허용되나 쓰기는 RLS로 차단(열람 전용 모드)되며, 관리자 계정(`bychoi`) 또는 간편 회원가입(`public.ws_register_editor` RPC → `workspace.authorized_editors`에 `editor` 역할로 즉시 등록, 별도 승인 없음)을 통해 로그인한 사용자에게 생성/편집/삭제 권한이 즉시 부여됩니다.
+  - 수파베이스 스냅샷 로컬 백업 스크립트: `node scripts/backup_supabase_to_local.js` (`C:\ai_work_backups\daily\`에 백업 생성).
 
 ## 🔍 시스템 전체 정밀 진단 6대 필수 기준 프로토콜 (System-wide Deep Inspection Protocol)
 > 사용자가 **"시스템 전체 정밀 진단"**을 요청했을 때는 모든 소스 파일(JS, CSS, HTML, 템플릿, 스크립트, 데이터 등)을 **전수 조사(Full-File Census)**하여 아래 6대 조치 필요 항목을 분석하고 정량적 결과 및 개선안을 도출해야 합니다.
@@ -77,15 +65,17 @@
 
 ## 🛠️ 기술 스택 및 아키텍처 (엄격한 규칙)
 - **Vanilla JS 전용**: 프레임워크(React, Vue 등)를 절대 사용하지 마세요. 코드는 가볍고 직관적으로 유지해야 합니다.
-- **단일 진실 공급원 (SSOT)**: 모든 프로젝트 상태(화면 목록, 설명, 핀 어노테이션, 그리고 화면의 실제 순서 배열인 `screenOrder` 등)는 각 개별 프로젝트 폴더의 `metadata.json`(예: `data/p_xxxx/metadata.json`)에서만 배타적으로 관리되어야 합니다. 화면 추가, 복제, 삭제, 순서 변경 시 `metadata.json`의 `screenOrder` 배열을 반드시 함께 갱신해야 합니다. (전역 공유 `data/metadata.json`은 사용하지 않습니다.)
+- **단일 진실 공급원 (SSOT)**: 모든 프로젝트 상태(화면 목록, 설명, 핀 어노테이션, 그리고 화면의 실제 순서 배열인 `screenOrder` 등)는 Supabase `digital-service-planning` 프로젝트의 `workspace` 스키마(`workspace.projects`, `workspace.screens`, `workspace.annotation_pins`, `workspace.revision_histories`, `workspace.global_components`)에서 배타적으로 관리됩니다. 화면 추가, 복제, 삭제, 순서 변경 시 `screen_order` 배열을 반드시 함께 갱신해야 합니다.
 - **모듈러 아키텍처 (Modular Architecture)**: 엔진 안정성과 확장성을 위해 역할을 엄격히 분리합니다.
+  - **`vctrl_supabase.js` (Supabase Persistence, Auth & Storage Engine - Parent Side)**:
+    - **역할**: Supabase Auth 아이디/비밀번호 로그인(`bychoi` -> `bychoi@workspace.local` 매핑), 세션 토큰 자동 갱신, `workspace` RPC/REST 호출, 인라인 래스터 Base64 이미지 SHA-256 중복 제거 후 `workspace-assets` 버킷 자동 업로드(`processHtmlAssetsBeforeSave`), 대시보드·뷰어 통합 인증 모달 UI 제어를 전담합니다 (`window.WorkspaceSupabase`).
   - **`vctrl_core.js` (Core Orchestrator - Parent Side)**:
     - **역할**: 시스템의 '심장'. 전역 상태(`state`) 관리, 스크린 로딩 파이프라인, 내비게이션 보호 및 중앙 생명주기 조율을 전담합니다.
     - **인라인 엔진 파이프라인 (`ENGINE_SCRIPT_REGISTRY`)**: 스크린 로드 시점에 분리된 34개 iframe 하위 스크립트 모듈들을 `ENGINE_SCRIPT_REGISTRY` 메타데이터 배열 파이프라인을 통해 결합/컴파일하고 iframe `srcdoc`에 안전하게 주입합니다.
   - **`vctrl_storage.js` (Storage Engine - Parent Side)**:
-    - **역할**: 스크린 직렬화(`getIframeHTML`, 백그라운드 무음 직렬화 `silent: true` 지원), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, 단일 비행(Single-Flight) 락 기반 무음 클라우드 저장(`performSilentSave`), 변경분(Zero-Diff) 중복 커밋 스킵 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
+    - **역할**: 스크린 직렬화(`getIframeHTML`, 백그라운드 무음 직렬화 `silent: true` 지원), `ScreenSanitizer.cleanDOM` 정제, 버전/리비전 자동 증가, 단일 비행(Single-Flight) 락 기반 무음 클라우드 저장(`performSilentSave`), 변경분(Zero-Diff) 중복 저장 스킵 및 저장 오버레이 UI 생명주기를 전담합니다 (`window.StorageEngine`).
   - **`vctrl_autosave.js` (2-Tier Hybrid Auto-Save Engine - Parent Side)**:
-    - **역할**: GitHub 커밋 과다 누적을 원천 차단하는 2계층 하이브리드 상시 자동 저장 엔진(`window.AutoSaveEngine`). Tier 1 브라우저 `IndexedDB`(`WorkspaceAutoSaveDB`) 1.5초 유휴 즉시 임시 보호(`baseSha`/`baseContentHash` 무결성 대조 기반 복구)와 Tier 2 25초 유휴 디바운스 + 최소 60초 간격 쿨다운 + Zero-Diff 중복 스킵 클라우드 자동 동기화, 화면 전환 시 네트워크 대기 없는 0ms 논블로킹 메모리 스냅샷 스테이징(`stageOutgoingScreenBeforeSwitch` + 백그라운드 큐 `_pendingSnapshots`), 헤더 상태 뱃지(`#autosave-status-badge`) 제어를 전담합니다.
+    - **역할**: 2계층 하이브리드 상시 자동 저장 엔진(`window.AutoSaveEngine`). Tier 1 브라우저 `IndexedDB`(`WorkspaceAutoSaveDB`) 1.5초 유휴 즉시 임시 보호(`baseSha`/`baseContentHash` 무결성 대조 기반 복구)와 Tier 2 8초 유휴 디바운스 + 최소 15초 간격 쿨다운 + Zero-Diff 중복 스킵 Supabase 클라우드 동기화, 화면 전환 시 네트워크 대기 없는 0ms 논블로킹 메모리 스냅샷 스테이징(`stageOutgoingScreenBeforeSwitch` + 백그라운드 큐 `_pendingSnapshots`), 헤더 상태 뱃지(`#autosave-status-badge`, 비로그인 시 `"열람 전용 모드"`) 제어를 전담합니다.
   - **`vctrl_core_router.js` (Core Message Router - Parent Side)**:
     - **역할**: 부모-Iframe 간 통신 조율자. 중앙 `MessageHub` 리스너 및 24개 부모 측 코어 핸들러 테이블(`v4ParentCoreHandlers`), 부모 포커스 시 이미지 붙여넣기(`paste`)를 전담 격리합니다 (`window.CoreRouter`).
     - **오브젝트 선택 라우팅 & 포커스 해제**: `BYCHOI_COMP_SELECTED` 수신 시 이전 선택 ID(`state.previousEditingIndex`)를 보존하여 신규 컴포넌트 선택 여부(`isNewSelection`)를 판별하고, 부모 창의 활성 인풋 포커스 잔류를 즉시 해제(`document.activeElement.blur()`)한 뒤 `window.updateProperties(data, isNewSelection)`로 명시적 플래그를 전달합니다.

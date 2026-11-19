@@ -162,7 +162,9 @@ body.res-narrow #dock-page-indicator {
     display: flex !important;
 }
 
-@media (max-width: 960px), (max-height: 600px) and (max-width: 1050px) {
+@media (max-width: 960px),
+(max-height: 600px) and (max-width: 1050px) {
+
     #dock-btn-prev,
     #dock-btn-next,
     #dock-page-indicator {
@@ -468,6 +470,7 @@ body.res-narrow #dock-page-indicator {
    4. Tier 2: Compact Desktop & Tablet Landscape (901px ~ 1200px)
    ========================================================================== */
 @media (max-width: 1200px) {
+
     /* Compact Toolbar */
     .toolbar {
         padding: 0 12px;
@@ -493,12 +496,14 @@ body.res-narrow #dock-page-indicator {
 
     /* Hide full text on secondary action buttons */
     .btn-copy-url-text,
-    .btn-export-pdf span:not(.material-icons-outlined) {
+    .btn-export-pdf span:not(.material-icons-outlined),
+    .viewer-auth-label {
         display: none;
     }
 
     .btn-copy-url,
-    .btn-export-pdf {
+    .btn-export-pdf,
+    .btn-viewer-auth {
         padding: 0 8px;
         min-width: 36px;
         justify-content: center;
@@ -523,9 +528,13 @@ body.res-narrow #dock-page-indicator {
 /* ==========================================================================
    5. Tier 3: Narrow Window & Mobile/Tablet Portrait & Mobile Landscape & Tablet Coarse Pointer
    ========================================================================== */
-@media (max-width: 960px), (max-height: 600px) and (max-width: 1050px), (pointer: coarse) and (max-width: 1366px) {
+@media (max-width: 960px),
+(max-height: 600px) and (max-width: 1050px),
+(pointer: coarse) and (max-width: 1366px) {
+
     /* Strict Viewport Lock: Zero outer page scrolling */
-    html, body {
+    html,
+    body {
         position: fixed !important;
         width: 100% !important;
         height: 100% !important;
@@ -661,6 +670,8 @@ body.res-narrow #dock-page-indicator {
     .toolbar .actions,
     .autosave-status-badge,
     #autosave-status-badge,
+    .btn-viewer-auth,
+    #btn-viewer-auth,
     .btn-global-save,
     #btn-global-save,
     .btn-toolbar-mobile-more,
@@ -881,6 +892,8 @@ body.res-narrow #sidebar-right,
 body.res-narrow #floating-inspector-card,
 body.res-narrow .autosave-status-badge,
 body.res-narrow #autosave-status-badge,
+body.res-narrow .btn-viewer-auth,
+body.res-narrow #btn-viewer-auth,
 body.res-narrow .btn-global-save,
 body.res-narrow #btn-global-save,
 body.res-narrow .btn-toolbar-mobile-more,
@@ -896,6 +909,8 @@ body.touch-capable:not(.res-wide) #sidebar-right,
 body.touch-capable:not(.res-wide) #floating-inspector-card,
 body.touch-capable:not(.res-wide) .autosave-status-badge,
 body.touch-capable:not(.res-wide) #autosave-status-badge,
+body.touch-capable:not(.res-wide) .btn-viewer-auth,
+body.touch-capable:not(.res-wide) #btn-viewer-auth,
 body.touch-capable:not(.res-wide) .btn-global-save,
 body.touch-capable:not(.res-wide) #btn-global-save,
 .v4-zen-toast {
@@ -914,7 +929,9 @@ body.fullscreen-mode #sidebar-right {
     display: none !important;
 }
 
-@media (pointer: coarse), (max-width: 1050px) {
+@media (pointer: coarse),
+(max-width: 1050px) {
+
     #presentation-pen-canvas,
     #presentation-pen-tooltip {
         display: none !important;
@@ -929,7 +946,8 @@ body.fullscreen-mode #sidebar-right {
    ========================================================================== */
 body.res-narrow .canvas,
 body.touch-capable .canvas {
-    touch-action: none; /* Prevent default browser rubber-band bounce */
+    touch-action: none;
+    /* Prevent default browser rubber-band bounce */
     -webkit-overflow-scrolling: touch;
 }
 
@@ -1310,6 +1328,7 @@ body.touch-capable #dock-btn-next {
         opacity: 0;
         transform: translateY(-50%) scale(0.65);
     }
+
     to {
         opacity: 1;
         transform: translateY(-50%) scale(1);
@@ -1326,6 +1345,7 @@ body.touch-capable #dock-page-indicator {
         opacity: 0;
         transform: translateX(-50%) translateY(22px);
     }
+
     to {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
@@ -1342,6 +1362,7 @@ body.touch-capable #v4-frame-switcher.is-available {
         opacity: 0;
         transform: translateY(-16px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1354,8 +1375,15 @@ body.res-compact.workspace-docked .toolbar {
 }
 
 @keyframes tabletToolbarDock {
-    from { opacity: 0; transform: translateY(-16px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 body.res-compact #dock-btn-prev,
@@ -1364,12 +1392,21 @@ body.res-compact #dock-btn-next {
 }
 
 @keyframes tabletEdgeBtnFade {
-    from { opacity: 0; transform: translateY(-50%) scale(0.85); }
-    to { opacity: 1; transform: translateY(-50%) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
 }
 
 /* Strict Mobile Guard: Presentation Pen Tooltip & Canvas 100% Suppressed */
-@media (pointer: coarse), (max-width: 900px) {
+@media (pointer: coarse),
+(max-width: 900px) {
+
     #presentation-pen-canvas,
     #presentation-pen-tooltip,
     .v4-zen-toast {

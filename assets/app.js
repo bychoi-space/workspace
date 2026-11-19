@@ -25,9 +25,7 @@ function slugify(text) {
     return slug;
 }
 
-const _INTERNAL_KEY = 'MXFpYngxZ3FENGp2MklETERBaTMyOHpmRldIQ2xtazZiNkdkX3BoZw=='; // Scancode Bypass Encoded (VERIFIED)
-
-// Robust UTF-8 Base64 Helpers for Large Payload & Multi-Byte Support (TextDecoder / TextEncoder)
+// UTF-8 Base64 Helpers for Large Payload & Multi-Byte Support (TextDecoder / TextEncoder)
 function utf8Base64Decode(base64Str) {
     if (!base64Str) return '';
     const clean = base64Str.replace(/\s/g, '');
@@ -73,220 +71,69 @@ window.utf8Base64Encode = utf8Base64Encode;
 
 
 const ghConfig = {
-    get owner() { return localStorage.getItem('gh_owner') || 'bychoi-space'; },
-    set owner(val) { localStorage.setItem('gh_owner', val); },
-    get repo() { return localStorage.getItem('gh_repo') || 'workspace'; },
-    set repo(val) { localStorage.setItem('gh_repo', val); },
-    dataDir: 'data/', 
-    get token() { 
-        const stored = localStorage.getItem('gh_token');
-        if (stored && stored.trim()) {
-            console.log("[Auth] Using token from LocalStorage");
-            return stored.trim();
-        }
-        // Default fallback with decode logic
-        try {
-            const fallback = atob(_INTERNAL_KEY).split('').reverse().join('');
-            console.log("[Auth] Using default Manager Mode token");
-            return fallback;
-        } catch(e) { return ''; }
+    owner: 'bychoi-space',
+    repo: 'workspace',
+    dataDir: 'data/',
+    get token() {
+        return (window.WorkspaceSupabase && window.WorkspaceSupabase.isAuthorized()) ? 'supabase_session' : '';
     },
-    set token(val) { localStorage.setItem('gh_token', (val || '').trim()); },
-    get isReadOnly() { return !this.token; },
-    clearToken() { localStorage.removeItem('gh_token'); location.reload(); }
+    set token(_val) {},
+    get isReadOnly() {
+        return !(window.WorkspaceSupabase && window.WorkspaceSupabase.isAuthorized());
+    },
+    clearToken() {
+        if (window.WorkspaceSupabase && typeof window.WorkspaceSupabase.signOut === 'function') {
+            window.WorkspaceSupabase.signOut().then(() => location.reload());
+        }
+    }
 };
 window.ghConfig = ghConfig;
 
-async function listContents(path) {
-    const safePath = (ghConfig.dataDir + path).split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16))).join('/');
-    const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}?t=${Date.now()}`;
-    
-    const token = ghConfig.token;
-    const headers = { 'Accept': 'application/vnd.github.v3+json' };
-    if (token) headers['Authorization'] = `token ${token}`;
-
-    console.log("[API] Requesting contents for:", path);
-    
-    const maxRetries = 2;
-    let attempt = 0;
-    
-    while (attempt <= maxRetries) {
-        attempt++;
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10-second timeout
-
+async function fetchAllProjectsSummary() {
+    if (window.WorkspaceSupabase && typeof window.WorkspaceSupabase.listDashboardProjects === 'function') {
         try {
-            let res = await fetch(url, { headers, credentials: 'omit', signal: controller.signal });
-            clearTimeout(timeoutId);
-            
-            if (!res.ok && (res.status === 401 || res.status === 403)) {
-                if (localStorage.getItem('gh_token')) {
-                    console.warn("[Auth] GitHub API token returned 401/403 on list request. Retrying anonymously.");
-                    localStorage.removeItem('gh_token');
-                    res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' }, credentials: 'omit' });
-                }
-            }
-            if (res.ok) {
-                const list = await res.json();
-                window.shaCache = window.shaCache || {};
-                if (Array.isArray(list)) {
-                    list.forEach(item => {
-                        if (item.type === 'file' && item.sha) {
-                            const relativePath = item.path.startsWith(ghConfig.dataDir)
-                                ? item.path.substring(ghConfig.dataDir.length)
-                                : item.path;
-                            window.shaCache[relativePath] = item.sha;
-                        }
-                    });
-                }
-                return list;
-            }
-            if ((res.status >= 500 && res.status <= 504) && attempt <= maxRetries) {
-                console.warn(`[API] listContents returned transient status ${res.status}. Retrying attempt ${attempt}...`);
-                await new Promise(resolve => setTimeout(resolve, 500));
-                continue;
-            }
-            return [];
-        } catch (e) {
-            clearTimeout(timeoutId);
-            console.warn(`[API] listContents for ${path} failed or timed out (attempt ${attempt}/${maxRetries + 1}):`, e.message);
-            if (attempt <= maxRetries) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-            } else {
-                return [];
-            }
+            return await window.WorkspaceSupabase.listDashboardProjects();
+        } catch (err) {
+            console.warn('[API] fetchAllProjectsSummary failed:', err);
         }
     }
-    return [];
+    if (window.location.protocol === 'file:' && window.PROJECT_METADATA_STORE) {
+        return Object.keys(window.PROJECT_METADATA_STORE).map(slug => {
+            const meta = window.PROJECT_METADATA_STORE[slug] || {};
+            const screensObj = meta.screens || meta.files || {};
+            return { name: slug, screensCount: Object.keys(screensObj).length, meta };
+        });
+    }
+    throw new Error('Supabase 프로젝트 목록을 불러오지 못했습니다.');
 }
+window.fetchAllProjectsSummary = fetchAllProjectsSummary;
 
-async function listRepoRoot() {
-    const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/?t=${Date.now()}`;
-    const token = ghConfig.token;
-    const headers = { 'Accept': 'application/vnd.github.v3+json' };
-    if (token) headers['Authorization'] = `token ${token}`;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
+async function listContents(path) {
+    if (!window.WorkspaceSupabase) return [];
     try {
-        let res = await fetch(url, { headers, credentials: 'omit', signal: controller.signal });
-        clearTimeout(timeoutId);
-        
-        if (!res.ok && (res.status === 401 || res.status === 403)) {
-            console.warn("[Auth] GitHub API token returned 401/403 on root request. Retrying anonymously.");
-            res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' }, credentials: 'omit' });
+        if (!path) {
+            const projects = await window.WorkspaceSupabase.listDashboardProjects();
+            return (Array.isArray(projects) ? projects : []).map(p => ({ name: p.name, type: 'dir' }));
         }
-        return res.ok ? await res.json() : [];
+        const projectSlug = String(path).replace(/^\/+|\/+$/g, '').split('/')[0];
+        const items = await window.WorkspaceSupabase.listProjectScreens(projectSlug);
+        window.shaCache = window.shaCache || {};
+        if (Array.isArray(items)) {
+            items.forEach(item => {
+                if (item && item.name && item.sha) {
+                    window.shaCache[`${projectSlug}/${item.name}`] = item.sha;
+                }
+            });
+        }
+        return Array.isArray(items) ? items : [];
     } catch (e) {
-        console.warn("[API] listRepoRoot failed or timed out:", e.message);
+        console.warn(`[API] listContents for ${path} failed:`, e.message);
         return [];
     }
 }
 
-async function _fetchGitHubRemoteContent(fullPath, path) {
-    const safePath = fullPath.split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16))).join('/');
-    const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}?t=${Date.now()}`;
-    
-    const token = ghConfig.token;
-    const headers = { 'Accept': 'application/vnd.github.v3+json' };
-    if (token) headers['Authorization'] = `token ${token}`;
-
-    const maxRetries = 2;
-    let attempt = 0;
-    
-    while (attempt <= maxRetries) {
-        attempt++;
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10-second timeout for stability
-
-        try {
-            let res = await fetch(url, { headers, credentials: 'omit', signal: controller.signal });
-            clearTimeout(timeoutId);
-
-            if (!res.ok && (res.status === 401 || res.status === 403)) {
-                console.warn("[Auth] GitHub API token returned 401/403 on file request. Retrying anonymously.");
-                res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' }, credentials: 'omit' });
-            }
-            
-            if (!res.ok) {
-                if (res.status === 404) return "__NOT_FOUND__";
-                if ((res.status >= 500 && res.status <= 504) && attempt <= maxRetries) {
-                    console.warn(`[API] GitHub API returned transient status ${res.status}. Retrying attempt ${attempt}...`);
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    continue;
-                }
-                break; // Fall through to offline fallback
-            }
-            const data = await res.json();
-            if (data) {
-                window.shaCache = window.shaCache || {};
-                if (data.sha) window.shaCache[path] = data.sha;
-                
-                // Case 1: Files <= 1MB returned with base64 content
-                if (data.content) {
-                    try {
-                        const decoded = utf8Base64Decode(data.content);
-                        if (decoded) {
-                            window.fileContentCache[path] = decoded;
-                            return decoded;
-                        }
-                    } catch(e) { 
-                        console.warn(`[API] Base64 decode failed for ${path}:`, e);
-                    }
-                }
-
-                // Case 2: Large files (> 1MB) - Fetch Git Blob API directly by immutable SHA
-                const blobUrl = data.git_url || (data.sha ? `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/git/blobs/${data.sha}` : null);
-                if (blobUrl) {
-                    try {
-                        let blobRes = await fetch(blobUrl, { headers, credentials: 'omit' });
-                        if (!blobRes.ok && (blobRes.status === 401 || blobRes.status === 403)) {
-                            blobRes = await fetch(blobUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' }, credentials: 'omit' });
-                        }
-                        if (blobRes.ok) {
-                            const blobData = await blobRes.json();
-                            if (blobData && blobData.content) {
-                                const decoded = utf8Base64Decode(blobData.content);
-                                if (decoded) {
-                                    window.fileContentCache[path] = decoded;
-                                    return decoded;
-                                }
-                            }
-                        }
-                    } catch(e) {
-                        console.warn(`[API] Git Blob API fetch failed for ${path}:`, e);
-                    }
-                }
-
-                // Case 3: Fallback to download_url
-                if (data.download_url) {
-                    try {
-                        const rawRes = await fetch(data.download_url + '?t=' + Date.now());
-                        if (rawRes.ok) {
-                            const rawText = await rawRes.text();
-                            if (rawText && rawText.trim().length > 0) {
-                                window.fileContentCache[path] = rawText;
-                                return rawText;
-                            }
-                        }
-                    } catch(e) {
-                        console.warn(`[API] download_url fetch failed for ${path}:`, e);
-                    }
-                }
-            }
-            break;
-        } catch (e) {
-            clearTimeout(timeoutId);
-            console.warn(`[API] fetchFileContent for ${path} failed or timed out (attempt ${attempt}/${maxRetries + 1}):`, e.message);
-            if (attempt <= maxRetries) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                continue;
-            }
-            break;
-        }
-    }
-    return null;
+async function listRepoRoot() {
+    return [];
 }
 
 function _fetchOfflineFallback(path) {
@@ -346,45 +193,48 @@ window.upgradeBychoiMarkupNamespace = function (raw) {
 
 async function _fetchFileContentRaw(path, isRoot = false) {
     window.fileContentCache = window.fileContentCache || {};
-    const fullPath = isRoot ? path : `${ghConfig.dataDir}${path}`;
-    
-    // 1. Return in-memory cache if available in current session
     if (window.fileContentCache[path]) {
         return window.fileContentCache[path];
     }
 
-    // 2. On http/https protocol, perform local server fetch
-    if (window.location.protocol !== 'file:') {
+    const cleanPath = String(path || '').replace(/^\/+/, '');
+    if (!isRoot && window.WorkspaceSupabase) {
         try {
-            const localRes = await fetch(fullPath + '?t=' + Date.now());
-            if (localRes.ok) {
-                const localText = await localRes.text();
-                if (localText && localText.trim().length > 0) {
-                    window.fileContentCache[path] = localText;
-                    return localText;
+            if (cleanPath === 'global_components.json') {
+                const comps = await window.WorkspaceSupabase.getGlobalComponents();
+                const jsonStr = JSON.stringify(comps || []);
+                window.fileContentCache[path] = jsonStr;
+                return jsonStr;
+            }
+            const slashIdx = cleanPath.indexOf('/');
+            if (slashIdx !== -1) {
+                const project = cleanPath.slice(0, slashIdx);
+                const filename = cleanPath.slice(slashIdx + 1);
+                if (filename === 'metadata.json') {
+                    const meta = await window.WorkspaceSupabase.getProjectMetadata(project);
+                    if (meta && meta.__not_found__) return "__NOT_FOUND__";
+                    const metaStr = JSON.stringify(meta);
+                    window.fileContentCache[path] = metaStr;
+                    return metaStr;
+                }
+                if (filename === 'history.json') {
+                    const hist = await window.WorkspaceSupabase.getProjectHistory(project);
+                    const histStr = JSON.stringify(hist || []);
+                    window.fileContentCache[path] = histStr;
+                    return histStr;
+                }
+                const html = await window.WorkspaceSupabase.getScreenHtml(project, filename);
+                if (html === "__NOT_FOUND__") return "__NOT_FOUND__";
+                if (typeof html === 'string' && html.length > 0) {
+                    window.fileContentCache[path] = html;
+                    return html;
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            console.warn(`[Supabase] Fetch failed for ${path}:`, e.message);
+        }
     }
 
-    // 3. GitHub API Remote Fetch - Single Source of Truth for all screens
-    const remoteResult = await _fetchGitHubRemoteContent(fullPath, path);
-    if (remoteResult) return remoteResult;
-
-    // 3.5. Direct Raw GitHub CDN Fetch (Fallback for large files or rate-limited API)
-    try {
-        const rawCdnUrl = `https://raw.githubusercontent.com/${ghConfig.owner}/${ghConfig.repo}/main/${fullPath}?t=${Date.now()}`;
-        const rawRes = await fetch(rawCdnUrl);
-        if (rawRes.ok) {
-            const rawText = await rawRes.text();
-            if (rawText && rawText.trim().length > 0) {
-                window.fileContentCache[path] = rawText;
-                return rawText;
-            }
-        }
-    } catch (e) {}
-
-    // 4. Offline Fallback (only when GitHub API / Network fails)
     return _fetchOfflineFallback(path);
 }
 
@@ -406,43 +256,87 @@ async function fetchProjectFileContent(project, filename) {
 }
 
 async function fetchProjectMetadata(project) {
+    if (window.WorkspaceSupabase) {
+        try {
+            const meta = await window.WorkspaceSupabase.getProjectMetadata(project);
+            if (meta && meta.__not_found__) {
+                return { title: project, screens: {} };
+            }
+            window.fileContentCache = window.fileContentCache || {};
+            window.fileContentCache[`${project}/metadata.json`] = JSON.stringify(meta);
+            return meta;
+        } catch (err) {
+            const offline = _fetchOfflineFallback(`${project}/metadata.json`);
+            if (offline) {
+                try { return JSON.parse(offline); } catch (_) {}
+            }
+            throw new Error("Supabase와 통신하는 중 오류가 발생했습니다. 메타데이터 유실 방지를 위해 저장이 차단됩니다: " + err.message);
+        }
+    }
     const content = await fetchFileContent(`${project}/metadata.json`);
     if (content === "__NOT_FOUND__") {
         return { title: project, screens: {} };
     }
     if (content === null) {
-        throw new Error("GitHub API와 통신하는 중 오류가 발생했거나 권한이 없습니다. 메타데이터 유실 방지를 위해 저장이 차단됩니다.");
+        throw new Error("데이터베이스와 통신하는 중 오류가 발생했거나 권한이 없습니다. 메타데이터 유실 방지를 위해 저장이 차단됩니다.");
     }
     try {
         return JSON.parse(content);
-    } catch(e) {
+    } catch (e) {
         console.error("[Metadata] JSON parse error:", e);
         throw new Error("메타데이터 파일이 손상되었습니다: " + e.message);
     }
 }
 
-async function saveProjectMetadata(project, metadata, statusCallback, customCommitMsg = null) {
-    const content = JSON.stringify(metadata, null, 2);
-    return await uploadToProject(project, 'metadata.json', content, statusCallback, false, customCommitMsg);
+async function saveProjectMetadata(project, metadata, statusCallback, _customCommitMsg = null) {
+    if (ghConfig.isReadOnly || !window.WorkspaceSupabase) return false;
+    try {
+        if (statusCallback) statusCallback('Saving...', '#facc15');
+        const ok = await window.WorkspaceSupabase.saveProjectMetadata(project, metadata);
+        if (ok) {
+            window.fileContentCache = window.fileContentCache || {};
+            window.fileContentCache[`${project}/metadata.json`] = JSON.stringify(metadata);
+            if (window.PROJECT_METADATA_STORE) {
+                try { window.PROJECT_METADATA_STORE[project] = JSON.parse(JSON.stringify(metadata)); } catch (_) {}
+            }
+            if (statusCallback) {
+                statusCallback('Success', '#4ade80');
+                setTimeout(() => statusCallback('Ready', '#4ade80'), 2000);
+            }
+            return true;
+        }
+        if (statusCallback) statusCallback('Error', '#f87171');
+        return false;
+    } catch (err) {
+        console.error("[Metadata] saveProjectMetadata error:", err);
+        if (statusCallback) statusCallback('Error', '#f87171');
+        return false;
+    }
 }
 window.saveProjectMetadata = saveProjectMetadata;
 
+function _getKstTimestampFallback() {
+    if (typeof window.getFormattedKST === 'function') return window.getFormattedKST();
+    const d = new Date(Date.now() + 9 * 3600000);
+    return d.toISOString().slice(0, 19).replace('T', ' ');
+}
+
 async function fetchProjectHistory(project) {
     if (!project) return [];
-    const content = await fetchFileContent(`${project}/history.json`);
     try {
-        if (content && content !== "__NOT_FOUND__") {
-            const list = JSON.parse(content);
+        if (window.WorkspaceSupabase) {
+            const list = await window.WorkspaceSupabase.getProjectHistory(project);
             if (Array.isArray(list) && list.length > 0) {
                 return list;
             }
         }
-    } catch(e) {}
+    } catch (e) {
+        console.warn("[History] Failed to fetch project history:", e);
+    }
 
-    // Auto-generate initial creation history entry if missing or empty
     try {
         const meta = await fetchProjectMetadata(project);
-        const createdDate = (meta && meta.updated) ? meta.updated : getFormattedKST();
+        const createdDate = (meta && meta.updated) ? meta.updated : _getKstTimestampFallback();
         const initialEntry = [{
             version: '0.1',
             date: createdDate,
@@ -452,7 +346,7 @@ async function fetchProjectHistory(project) {
             jira: (meta && meta.jira) ? meta.jira : '',
             file: 'metadata.json'
         }];
-        if (typeof saveProjectHistory === 'function') {
+        if (!ghConfig.isReadOnly && typeof saveProjectHistory === 'function') {
             await saveProjectHistory(project, initialEntry, null);
         }
         return initialEntry;
@@ -460,7 +354,7 @@ async function fetchProjectHistory(project) {
         console.warn("[History] Auto initialization of project history failed:", err);
         return [{
             version: '0.1',
-            date: getFormattedKST(),
+            date: _getKstTimestampFallback(),
             message: '프로젝트 최초 생성',
             file: 'metadata.json'
         }];
@@ -468,72 +362,66 @@ async function fetchProjectHistory(project) {
 }
 
 async function saveProjectHistory(project, history, statusCallback) {
-    const content = JSON.stringify(history, null, 2);
-    return await uploadToProject(project, 'history.json', content, statusCallback);
+    if (ghConfig.isReadOnly || !window.WorkspaceSupabase) return false;
+    try {
+        if (statusCallback) statusCallback('Saving...', '#facc15');
+        const ok = await window.WorkspaceSupabase.saveProjectHistory(project, history);
+        if (ok) {
+            window.fileContentCache = window.fileContentCache || {};
+            window.fileContentCache[`${project}/history.json`] = JSON.stringify(history || []);
+            if (statusCallback) {
+                statusCallback('Success', '#4ade80');
+                setTimeout(() => statusCallback('Ready', '#4ade80'), 2000);
+            }
+            return true;
+        }
+        if (statusCallback) statusCallback('Error', '#f87171');
+        return false;
+    } catch (err) {
+        console.error("[History] saveProjectHistory error:", err);
+        if (statusCallback) statusCallback('Error', '#f87171');
+        return false;
+    }
 }
 window.saveProjectHistory = saveProjectHistory;
 window.fetchProjectHistory = fetchProjectHistory;
 
 async function fetchGlobalComponents() {
-    const content = await fetchFileContent(`global_components.json`);
+    try {
+        if (window.WorkspaceSupabase) {
+            const list = await window.WorkspaceSupabase.getGlobalComponents();
+            if (Array.isArray(list)) {
+                window.fileContentCache = window.fileContentCache || {};
+                window.fileContentCache['global_components.json'] = JSON.stringify(list);
+                return list;
+            }
+        }
+    } catch (e) {
+        console.warn("[GlobalComponents] Fetch failed:", e);
+    }
+    const content = _fetchOfflineFallback('global_components.json');
     try {
         return content ? JSON.parse(content) : [];
-    } catch(e) {
+    } catch (e) {
         return [];
     }
 }
 
 async function saveGlobalComponents(components, statusCallback) {
-    if (ghConfig.isReadOnly) return false;
+    if (ghConfig.isReadOnly || !window.WorkspaceSupabase) return false;
     try {
-        const fullPath = `${ghConfig.dataDir}global_components.json`;
-        const safePath = fullPath.split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16))).join('/');
-        const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}`;
-        
-        const cacheKey = `global_components.json`;
-        window.shaCache = window.shaCache || {};
-        let sha = window.shaCache[cacheKey] || null;
-        
-        const token = ghConfig.token;
-        const headers = { 'Accept': 'application/vnd.github.v3+json' };
-        if (token) headers['Authorization'] = `token ${token}`;
-
-        if (!sha) {
-            try {
-                const res = await fetch(url + `?t=${Date.now()}`, { headers, credentials: 'omit' });
-                if (res.ok) { const json = await res.json(); sha = json.sha; window.shaCache[cacheKey] = sha; }
-            } catch(e) {}
-        }
-
-        const finalContent = utf8Base64Encode(JSON.stringify(components, null, 2));
-
         if (statusCallback) statusCallback('Saving components...', '#facc15');
-        const putRes = await fetch(url, {
-            method: 'PUT',
-            headers: { 
-                'Accept': 'application/vnd.github.v3+json',
-                'Authorization': `token ${ghConfig.token}`, 
-                'Content-Type': 'application/json' 
-            },
-            credentials: 'omit',
-            body: JSON.stringify({
-                message: `Update global_components.json`,
-                content: finalContent,
-                sha: sha
-            })
-        });
-        if (putRes.ok) {
-            const putData = await putRes.json().catch(() => null);
-            if (putData && putData.content && putData.content.sha) {
-                window.shaCache[cacheKey] = putData.content.sha;
-            }
+        const ok = await window.WorkspaceSupabase.saveGlobalComponents(components);
+        if (ok) {
+            window.fileContentCache = window.fileContentCache || {};
+            window.fileContentCache['global_components.json'] = JSON.stringify(components || []);
             if (statusCallback) {
                 statusCallback('Success', '#4ade80');
                 setTimeout(() => statusCallback('Ready', '#4ade80'), 2000);
             }
             return true;
         }
-        if (putRes.status === 401) localStorage.removeItem('gh_token');
+        if (statusCallback) statusCallback('Error', '#f87171');
         return false;
     } catch (err) {
         if (statusCallback) statusCallback('Error', '#f87171');
@@ -541,118 +429,39 @@ async function saveGlobalComponents(components, statusCallback) {
     }
 }
 
-async function uploadToProject(project, filename, content, statusCallback, isBinary = false, customCommitMsg = null) {
-    if (ghConfig.isReadOnly) return false;
+async function uploadToProject(project, filename, content, statusCallback, isBinary = false, _customCommitMsg = null) {
+    if (ghConfig.isReadOnly || !window.WorkspaceSupabase) return false;
     try {
-        const fullPath = `${ghConfig.dataDir}${project}/${filename}`;
-        const safePath = fullPath.split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16))).join('/');
-        const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}`;
-        
-        const cacheKey = `${project}/${filename}`;
-        window.shaCache = window.shaCache || {};
-        let sha = window.shaCache[cacheKey] || null;
-        
-        const token = ghConfig.token;
-        const headers = { 'Accept': 'application/vnd.github.v3+json' };
-        if (token) headers['Authorization'] = `token ${token}`;
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-        if (!sha) {
-            try {
-                const res = await fetch(url + `?t=${Date.now()}`, { headers, credentials: 'omit', signal: controller.signal });
-                clearTimeout(timeoutId);
-                
-                if (res.ok) { 
-                    const json = await res.json(); 
-                    sha = json.sha; 
-                    window.shaCache[cacheKey] = sha;
-                }
-            } catch(e) {
-                console.warn("[API] Failed to pre-fetch SHA for upload:", e.message);
-            }
+        if (filename === 'metadata.json' && !isBinary) {
+            const parsedMeta = typeof content === 'string' ? JSON.parse(content) : content;
+            return await saveProjectMetadata(project, parsedMeta, statusCallback);
         }
-
-        const finalContent = isBinary ? content : utf8Base64Encode(content);
+        if (filename === 'history.json' && !isBinary) {
+            const parsedHist = typeof content === 'string' ? JSON.parse(content) : content;
+            return await saveProjectHistory(project, parsedHist, statusCallback);
+        }
 
         if (statusCallback) statusCallback('Saving...', '#facc15');
-        
-        const writeController = new AbortController();
-        const writeTimeoutId = setTimeout(() => writeController.abort(), 8000); // Give upload slightly longer (8s)
+        const cacheKey = `${project}/${filename}`;
 
-        let putRes = await fetch(url, {
-            method: 'PUT',
-            headers: { 
-                'Accept': 'application/vnd.github.v3+json',
-                'Authorization': `token ${ghConfig.token}`, 
-                'Content-Type': 'application/json' 
-            },
-            credentials: 'omit',
-            signal: writeController.signal,
-            body: JSON.stringify({
-                message: customCommitMsg || `Update ${filename}`,
-                content: finalContent,
-                sha: sha
-            })
-        });
-        clearTimeout(writeTimeoutId);
-
-        // 409 Conflict Self-Healing & Retry Mechanism
-        if (putRes.status === 409) {
-            console.warn(`[API] 409 Conflict for ${filename}. Retrying with fresh SHA...`);
-            try {
-                const retryGetCtrl = new AbortController();
-                const retryGetTimeout = setTimeout(() => retryGetCtrl.abort(), 6000);
-                const res = await fetch(url + `?t=${Date.now()}`, { headers, credentials: 'omit', signal: retryGetCtrl.signal });
-                clearTimeout(retryGetTimeout);
-
-                if (res.ok) {
-                    const json = await res.json();
-                    sha = json.sha;
-                    window.shaCache[cacheKey] = sha;
-                    
-                    const retryPutCtrl = new AbortController();
-                    const retryPutTimeout = setTimeout(() => retryPutCtrl.abort(), 8000);
-                    putRes = await fetch(url, {
-                        method: 'PUT',
-                        headers: { 
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Authorization': `token ${ghConfig.token}`, 
-                            'Content-Type': 'application/json' 
-                        },
-                        credentials: 'omit',
-                        signal: retryPutCtrl.signal,
-                        body: JSON.stringify({
-                            message: `${customCommitMsg || `Update ${filename}`} (Retry)`,
-                            content: finalContent,
-                            sha: sha
-                        })
-                    });
-                    clearTimeout(retryPutTimeout);
-                }
-            } catch (e) {
-                console.error("[API] Self-healing retry failed:", e);
+        if (isBinary) {
+            await window.WorkspaceSupabase.uploadBinaryAsset(project, filename, content);
+            if (window.fileContentCache) delete window.fileContentCache[cacheKey];
+            if (statusCallback) {
+                statusCallback('Success', '#4ade80');
+                setTimeout(() => statusCallback('Ready', '#4ade80'), 2000);
             }
+            return true;
         }
 
-        if (putRes.ok) {
-            const putData = await putRes.json().catch(() => null);
-            if (putData && putData.content && putData.content.sha) {
-                window.shaCache[cacheKey] = putData.content.sha;
-            }
-            // Update the in-memory cache with the fresh content
+        const res = await window.WorkspaceSupabase.upsertScreenHtml(project, filename, content, {});
+        if (res && res.ok) {
+            const finalHtml = typeof res.html === 'string' ? res.html : content;
             window.fileContentCache = window.fileContentCache || {};
-            if (!isBinary) {
-                window.fileContentCache[cacheKey] = content;
-                if (window.PROJECT_SCREEN_STORE && filename.endsWith('.html')) {
-                    window.PROJECT_SCREEN_STORE[filename] = content;
-                }
-                if (window.PROJECT_METADATA_STORE && filename === 'metadata.json') {
-                    try { window.PROJECT_METADATA_STORE[project] = JSON.parse(content); } catch(e) {}
-                }
-            } else {
-                delete window.fileContentCache[cacheKey];
+            window.fileContentCache[cacheKey] = finalHtml;
+            if (window.shaCache) delete window.shaCache[cacheKey];
+            if (window.PROJECT_SCREEN_STORE && filename.endsWith('.html')) {
+                window.PROJECT_SCREEN_STORE[filename] = finalHtml;
             }
             if (statusCallback) {
                 statusCallback('Success', '#4ade80');
@@ -660,187 +469,91 @@ async function uploadToProject(project, filename, content, statusCallback, isBin
             }
             return true;
         }
-        if (putRes.status === 401) localStorage.removeItem('gh_token');
+        if (statusCallback) statusCallback('Error', '#f87171');
         return false;
     } catch (err) {
+        console.error("[Storage] uploadToProject failed:", err);
         if (statusCallback) statusCallback('Error', '#f87171');
         return false;
     }
 }
 
-async function deleteFileFromGitHub(path, sha, isRoot = false) {
-    if (ghConfig.isReadOnly) return false;
-    const fullPath = isRoot ? path : `${ghConfig.dataDir}${path}`;
-    const safePath = fullPath.split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16))).join('/');
-    const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${safePath}`;
-    
+async function deleteFileFromGitHub(path, _sha, _isRoot = false) {
+    if (ghConfig.isReadOnly || !window.WorkspaceSupabase) return false;
     try {
-        const token = ghConfig.token;
-        const headers = { 
-            'Authorization': `token ${token}`, 
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json' 
-        };
-
-        // If SHA is missing, attempt to pre-fetch current file SHA from GitHub
-        if (!sha) {
-            try {
-                const checkRes = await fetch(url + `?t=${Date.now()}`, { 
-                    headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': `token ${token}` },
-                    credentials: 'omit'
-                });
-                if (checkRes.status === 404) {
-                    // File already does not exist on GitHub (e.g. local-only file or already deleted)
-                    return true;
-                }
-                if (checkRes.ok) {
-                    const checkData = await checkRes.json();
-                    sha = checkData.sha;
-                }
-            } catch(fetchErr) {
-                console.warn("[API] Failed to pre-fetch SHA for delete:", fetchErr);
-            }
+        const cleanPath = String(path || '').replace(/^\/+/, '');
+        const slashIdx = cleanPath.indexOf('/');
+        if (slashIdx === -1) return false;
+        const project = cleanPath.slice(0, slashIdx);
+        const filename = cleanPath.slice(slashIdx + 1);
+        const ok = await window.WorkspaceSupabase.deleteScreen(project, filename);
+        if (ok && window.fileContentCache) {
+            delete window.fileContentCache[cleanPath];
         }
-
-        if (!sha) {
-            // If still no SHA, file is not found on remote; treat as already removed remotely
-            return true;
-        }
-
-        const res = await fetch(url, {
-            method: 'DELETE',
-            headers,
-            body: JSON.stringify({ message: `Delete ${path}`, sha: sha })
-        });
-        if (res.status === 401) localStorage.removeItem('gh_token');
-        if (res.status === 404) return true;
-        return res.ok;
+        return ok;
     } catch (e) {
-        console.error("[API] deleteFileFromGitHub failed:", e);
+        console.error("[Storage] deleteFileFromGitHub failed:", e);
         return false;
     }
 }
 
 async function deleteProjectWithContents(project, statusCallback) {
-    if (ghConfig.isReadOnly) return false;
-    
-    async function recursiveDelete(currentPath) {
-        console.log("[Delete] Listing items in:", currentPath);
-        const items = await listContents(currentPath);
-        if (!Array.isArray(items)) return true; // Already gone or empty
-
-        let allSuccess = true;
-        for (const item of items) {
-            const itemPath = currentPath ? `${currentPath}/${item.name}` : item.name;
-            if (item.type === 'dir') {
-                const subSuccess = await recursiveDelete(itemPath);
-                if (!subSuccess) allSuccess = false;
-            } else {
-                if (statusCallback) statusCallback(`Deleting ${item.name}...`, '#facc15');
-                const success = await deleteFileFromGitHub(itemPath, item.sha);
-                if (!success) {
-                    console.error("[Delete] Failed to delete file:", itemPath);
-                    allSuccess = false;
-                }
-            }
-        }
-        return allSuccess;
-    }
-
+    if (ghConfig.isReadOnly || !window.WorkspaceSupabase) return false;
     try {
-        if (statusCallback) statusCallback('Analyzing project structure...', '#facc15');
-        const finalSuccess = await recursiveDelete(project);
-        return finalSuccess;
+        if (statusCallback) statusCallback('프로젝트 데이터 정리 중...', '#facc15');
+        const ok = await window.WorkspaceSupabase.deleteProject(project);
+        if (ok && window.fileContentCache) {
+            const prefix = project + '/';
+            Object.keys(window.fileContentCache).forEach(k => {
+                if (k.startsWith(prefix)) delete window.fileContentCache[k];
+            });
+        }
+        return ok;
     } catch (err) {
         console.error("[Delete] Project deletion failed:", err);
         return false;
     }
 }
 
-async function verifyAndSaveToken(token, statusCb) {
-    const res = await fetch('https://api.github.com/user', { headers: { 'Authorization': `token ${token}` }});
-    if (res.ok) {
-        localStorage.setItem('gh_token', token);
-        if (statusCb) statusCb('Verified!', '#4ade80');
-        return true;
-    }
-    if (statusCb) statusCb('Invalid Token', '#f87171');
-    return false;
-}
-
 async function updateScreenMetadata(project, screenFilename, data, statusCallback) {
-    const metadata = data.existingMetadata ? JSON.parse(JSON.stringify(data.existingMetadata)) : await fetchProjectMetadata(project);
-    if (data.projectMeta) {
-        metadata.title = data.projectMeta.title || metadata.title;
-        metadata.assignee = data.projectMeta.assignee || metadata.assignee;
-        metadata.developer = data.projectMeta.developer !== undefined ? data.projectMeta.developer : (metadata.developer || '');
-        metadata.period = data.projectMeta.period || metadata.period;
-        metadata.jira = data.projectMeta.jira || metadata.jira;
-        metadata.figmaUrl = data.projectMeta.figmaUrl !== undefined ? data.projectMeta.figmaUrl : (metadata.figmaUrl || '');
-        metadata.notionUrl = data.projectMeta.notionUrl !== undefined ? data.projectMeta.notionUrl : (metadata.notionUrl || '');
-        metadata.pubUrl = data.projectMeta.pubUrl || metadata.pubUrl;
-        metadata.themeIndex = data.projectMeta.themeIndex !== undefined ? data.projectMeta.themeIndex : metadata.themeIndex;
-        if (data.projectMeta.category !== undefined) {
-            metadata.category = data.projectMeta.category;
-        }
-        metadata.updated = data.projectMeta.updated || metadata.updated;
-        if (data.projectMeta.version !== undefined) {
-            metadata.version = data.projectMeta.version;
-        }
-    }
-    if (data.version !== undefined) {
-        metadata.version = data.version;
-    }
-    if (screenFilename) {
-        metadata.screens = metadata.screens || {};
-        metadata.screens[screenFilename] = metadata.screens[screenFilename] || {};
-        metadata.screens[screenFilename].description = data.description;
-        if (data.connectors !== undefined) {
-            metadata.screens[screenFilename].connectors = data.connectors;
-        }
-        metadata.screens[screenFilename].updatedAt = new Date().toISOString();
-        if (data.version !== undefined) {
-            metadata.screens[screenFilename].version = data.version;
-        }
-    }
-    
-    if (statusCallback) statusCallback('Saving...', '#facc15');
-    
-    const commitPrefix = data.commitPrefix ? `${data.commitPrefix} ` : '';
-
-    // Save 1: Project Metadata (skipped when caller verified zero semantic metadata diff)
-    let res1 = true;
-    if (!data.skipMetadataCommit) {
-        res1 = await saveProjectMetadata(project, metadata, null, commitPrefix ? `${commitPrefix}Update metadata.json` : null);
-    }
-    
-    // Save 2: Screen Design HTML (skipped when caller verified zero HTML diff)
-    let res2 = true;
-    if (data.htmlContent && screenFilename && !data.skipHtmlCommit) {
-        res2 = await uploadToProject(project, screenFilename, data.htmlContent, null, false, commitPrefix ? `${commitPrefix}Update ${screenFilename}` : null);
-    }
-    
-    const success = res1 && res2;
-    
-    if (statusCallback) {
+    if (ghConfig.isReadOnly || !window.WorkspaceSupabase) return false;
+    try {
+        if (statusCallback) statusCallback('Saving...', '#facc15');
+        const res = await window.WorkspaceSupabase.saveScreenAtomic(project, screenFilename, data);
+        const success = Boolean(res && res.ok);
         if (success) {
-            statusCallback('Success', '#4ade80');
+            const cacheKey = screenFilename ? `${project}/${screenFilename}` : '';
+            if (cacheKey && res.htmlContent && !data.skipHtmlCommit) {
+                window.fileContentCache = window.fileContentCache || {};
+                window.fileContentCache[cacheKey] = res.htmlContent;
+                if (window.shaCache) delete window.shaCache[cacheKey];
+                if (window.PROJECT_SCREEN_STORE && screenFilename.endsWith('.html')) {
+                    window.PROJECT_SCREEN_STORE[screenFilename] = res.htmlContent;
+                }
+            }
+            if (window.fileContentCache) {
+                delete window.fileContentCache[`${project}/metadata.json`];
+            }
+            if (statusCallback) statusCallback('Success', '#4ade80');
         } else {
-            statusCallback('Error', '#f87171');
+            if (statusCallback) statusCallback('Error', '#f87171');
         }
+        return success;
+    } catch (err) {
+        console.error("[Metadata] updateScreenMetadata failed:", err);
+        if (statusCallback) statusCallback('Error', '#f87171');
+        return false;
     }
-    
-    return success;
 }
 
 async function createScreenFromTemplate(project, screenName, templateName, injectData = {}, statusCallback) {
     try {
         let content = null;
         if (window.BYCHOI_TEMPLATES) {
-            content = window.BYCHOI_TEMPLATES[templateName] || 
-                      window.BYCHOI_TEMPLATES[templateName.toLowerCase()] || 
-                      window.BYCHOI_TEMPLATES[`template_${templateName}.html`] || 
-                      window.BYCHOI_TEMPLATES[`template_${templateName}`] || 
+            content = window.BYCHOI_TEMPLATES[templateName] ||
+                      window.BYCHOI_TEMPLATES[templateName.toLowerCase()] ||
+                      window.BYCHOI_TEMPLATES[`template_${templateName}.html`] ||
+                      window.BYCHOI_TEMPLATES[`template_${templateName}`] ||
                       window.BYCHOI_TEMPLATES[templateName.replace(/^template_/, '').replace(/\.html$/, '')] ||
                       window.BYCHOI_TEMPLATES[templateName.replace(/\.html$/, '')];
         }
@@ -862,23 +575,21 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
             }
         }
         if (!content) throw new Error("Template not found: " + templateName);
-        
-        // Inject metadata
+
         if (injectData) {
             Object.keys(injectData).forEach(key => {
                 const regex = new RegExp(`{{${key}}}`, 'g');
                 content = content.replace(regex, injectData[key] || '');
             });
         }
-        
+
         const filename = screenName.endsWith('.html') ? screenName : `${screenName}.html`;
         const success = await uploadToProject(project, filename, content, statusCallback);
         if (success) {
             if (statusCallback) statusCallback('Updating Metadata...', '#facc15');
             const meta = await fetchProjectMetadata(project);
             meta.screens = meta.screens || {};
-            
-            // Map template to type
+
             let type = 'default';
             if (templateName.includes('cover')) type = 'cover';
             else if (templateName.includes('architecture')) type = 'architecture';
@@ -893,23 +604,21 @@ async function createScreenFromTemplate(project, screenName, templateName, injec
             else if (templateName.includes('nbos') || templateName.includes('admin_modern') || templateName.includes('admin')) type = 'admin';
             else if (templateName.includes('blank')) type = 'blank';
 
-            meta.screens[filename] = { 
+            meta.screens[filename] = {
                 title: injectData.SCREEN_NAME || filename,
                 type: type,
-                updatedAt: new Date().toISOString(), 
+                updatedAt: new Date().toISOString(),
                 template: templateName,
                 version: (type === 'cover') ? 0.1 : undefined
             };
-            
-            // Add to screenOrder if exists
-            if (meta.screenOrder) {
-                if (!meta.screenOrder.includes(filename)) {
-                    meta.screenOrder.push(filename);
-                }
+
+            if (!Array.isArray(meta.screenOrder)) {
+                meta.screenOrder = Object.keys(meta.screens);
+            } else if (!meta.screenOrder.includes(filename)) {
+                meta.screenOrder.push(filename);
             }
-            
-            const metaSuccess = await saveProjectMetadata(project, meta, statusCallback);
-            return metaSuccess; // Crucial: only return true if meta also saved
+
+            return await saveProjectMetadata(project, meta, statusCallback);
         }
         return false;
     } catch (err) {

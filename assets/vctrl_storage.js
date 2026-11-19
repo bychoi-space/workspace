@@ -645,7 +645,7 @@
                 await _persistRevisionHistory(state, activeFileName, nextVer, projectMeta, changeMsg, historyList, updatedTimeStr);
                 overlayCtrl.setSuccess();
             } else {
-                throw new Error("GitHub API 반영에 실패했습니다.");
+                throw new Error("데이터베이스 저장 반영에 실패했습니다.");
             }
         } catch (err) {
             console.error("[Save Error]", err);

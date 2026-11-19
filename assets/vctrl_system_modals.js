@@ -36,11 +36,19 @@
     };
 
     window.showAuthModal = () => { 
+        if (window.WorkspaceSupabase && typeof window.WorkspaceSupabase.openAuthModal === 'function') {
+            window.WorkspaceSupabase.openAuthModal();
+            return;
+        }
         const modal = get('auth-modal'); 
         if (modal) modal.classList.add('active'); 
     };
 
     window.hideAuthModal = () => { 
+        if (window.WorkspaceSupabase && typeof window.WorkspaceSupabase.closeAuthModal === 'function') {
+            window.WorkspaceSupabase.closeAuthModal();
+            return;
+        }
         const modal = get('auth-modal'); 
         if (modal) modal.classList.remove('active'); 
     };

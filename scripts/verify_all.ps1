@@ -15,6 +15,7 @@ $jsFiles = @(
     "assets/vctrl_ui_library.js",
     "assets/vctrl_theme.js",
     "assets/templates.js",
+    "assets/vctrl_supabase.js",
     "assets/app.js",
     "assets/vctrl_undo.js",
     "assets/vctrl_text_measurer.js",

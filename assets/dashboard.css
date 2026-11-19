@@ -327,6 +327,137 @@ body.dashboard-page .toolbar .actions {
     background: var(--dash-surface-3);
 }
 
+.toolbar-icon-btn.auth-header-btn {
+    width: auto;
+    padding: 0 10px;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 550;
+}
+
+.toolbar-icon-btn.auth-header-btn.is-authenticated {
+    border-color: rgba(52, 211, 153, 0.35);
+    color: var(--dash-text-1);
+}
+
+.toolbar-icon-btn.auth-header-btn.is-authenticated svg {
+    color: #10b981;
+}
+
+/* Auth Modal Account & Password Change Panel */
+body.dashboard-page .auth-account-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    background: var(--dash-surface-2);
+    border: 1px solid var(--dash-border);
+    margin-bottom: 12px;
+}
+
+body.dashboard-page .auth-account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+body.dashboard-page .auth-account-name {
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--dash-text-1);
+}
+
+body.dashboard-page .auth-account-meta {
+    font-size: 11.5px;
+    color: var(--dash-text-3);
+}
+
+body.dashboard-page .auth-mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 9px;
+    background: var(--dash-surface-2);
+    border: 1px solid var(--dash-border);
+    margin-bottom: 14px;
+}
+
+body.dashboard-page .auth-mode-tab {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--dash-text-2);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 7px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+body.dashboard-page .auth-mode-tab:hover {
+    color: var(--dash-text-1);
+}
+
+body.dashboard-page .auth-mode-tab.active {
+    background: var(--dash-seg-active-bg);
+    color: var(--dash-text-1);
+    box-shadow: var(--dash-seg-active-shadow);
+}
+
+body.dashboard-page .auth-signup-note {
+    margin: 4px 0 0;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--dash-text-3);
+}
+
+body.dashboard-page .auth-account-role-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #10b981;
+}
+
+body.dashboard-page .auth-account-role-badge[data-role="editor"] {
+    background: rgba(99, 102, 241, 0.14);
+    border-color: rgba(99, 102, 241, 0.35);
+    color: var(--dash-accent);
+}
+
+body.dashboard-page .auth-pw-toggle-row {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+body.dashboard-page .auth-pw-change-panel {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 9px;
+    background: var(--dash-surface-2);
+    border: 1px solid var(--dash-border);
+}
+
+body.dashboard-page .auth-pw-save-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+body.dashboard-page .form-notice {
+    margin-top: 8px;
+    font-size: 12px;
+    min-height: 16px;
+}
+
 /* PWA App Install Button (Header Toolbar) */
 .btn-install-app {
     display: inline-flex;

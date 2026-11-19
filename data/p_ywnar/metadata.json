@@ -1,6 +1,14 @@
 {
   "title": "ISMS 법적 준거성 진단 결과 조치",
-  "screens": {},
+  "screens": {
+    "00_Cover_435.html": {
+      "title": "00_Cover_435",
+      "type": "cover",
+      "updatedAt": "2026-11-19T01:02:02.338Z",
+      "template": "template_cover.html",
+      "version": 0.1
+    }
+  },
   "assignee": "고범곤",
   "developer": "",
   "period": "2026.11.19 ~ 2026.11.23",

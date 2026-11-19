@@ -1093,6 +1093,12 @@
       "connectors": [],
       "updatedAt": "2026-11-19T01:48:44.362Z",
       "version": 0.1
+    },
+    "08_Privacy_Notice_Version.html": {
+      "title": "08_Privacy_Notice_Version",
+      "type": "responsive-ui",
+      "updatedAt": "2026-11-19T01:50:11.929Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "고범곤",

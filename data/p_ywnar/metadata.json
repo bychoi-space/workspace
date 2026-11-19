@@ -3,9 +3,9 @@
   "screens": {},
   "assignee": "고범곤",
   "developer": "",
-  "period": "2026.11.19(목) ~ 2026.11.23(월)",
+  "period": "2026.11.19 ~ 2026.11.23",
   "figmaUrl": "",
-  "notionUrl": "",
-  "themeIndex": 1,
-  "category": "admin"
+  "notionUrl": "https://app.notion.com/p/ISMS-41cf6986169c803c9770e4d7d74250c3?source=copy_link",
+  "themeIndex": 0,
+  "category": "front_ui"
 }

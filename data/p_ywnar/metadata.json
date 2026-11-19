@@ -1244,6 +1244,12 @@
       "connectors": [],
       "updatedAt": "2026-11-19T01:52:05.608Z",
       "version": 0.1
+    },
+    "09_Marketing_Consent_Result.html": {
+      "title": "09_Marketing_Consent_Result",
+      "type": "responsive-ui",
+      "updatedAt": "2026-11-19T01:52:36.612Z",
+      "template": "template_responsive_pc_mobile.html"
     }
   },
   "assignee": "고범곤",

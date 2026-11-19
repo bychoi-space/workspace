@@ -51,7 +51,7 @@
     "03_Join_Terms_Email_Naver.html": {
       "title": "03_Join_Terms_Email_Naver",
       "type": "responsive-ui",
-      "updatedAt": "2026-11-19T02:43:24.535Z",
+      "updatedAt": "2026-11-19T02:45:40.164Z",
       "template": "template_responsive_pc_mobile.html",
       "description": [
         {
@@ -227,42 +227,6 @@
             "right": {
               "x": 300,
               "y": 334,
-              "active": true,
-              "scrollFixed": "none"
-            }
-          },
-          "standardized": true,
-          "scrollFixed": "none"
-        },
-        {
-          "type": "pin",
-          "target": "frame",
-          "text": "[MO · 앱 웹뷰] PC와 동일 기준 적용 - 전체동의 안내 문구 · 기본 미체크 · (필수) 표기 · 유효성 검사 알럿 모두 PC와 동일  - 네이버 간편가입(MO)도 동일 적용  - 안내 문구는 화면 폭에 따라 줄바꿈 (말줄임 없음) ",
-          "html": "[MO · 앱 웹뷰] PC와 동일 기준 적용<div>- 전체동의 안내 문구 · 기본 미체크 · 유효성 검사 알럿 모두 PC와 동일</div><div>- 안내 문구는 화면 폭에 따라 줄바꿈 (말줄임 없음)</div>",
-          "x": 810,
-          "y": 118,
-          "pins": {
-            "pc": {
-              "x": 810,
-              "y": 118,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "mobile": {
-              "x": 300,
-              "y": 228,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "left": {
-              "x": 810,
-              "y": 118,
-              "active": true,
-              "scrollFixed": "none"
-            },
-            "right": {
-              "x": 300,
-              "y": 228,
               "active": true,
               "scrollFixed": "none"
             }
@@ -1407,6 +1371,6 @@
   "notionUrl": "https://app.notion.com/p/ISMS-41cf6986169c803c9770e4d7d74250c3?source=copy_link",
   "themeIndex": 0,
   "category": "front_ui",
-  "updated": "2026-11-19 11:43:24",
+  "updated": "2026-11-19 11:45:40",
   "version": 0.1
 }

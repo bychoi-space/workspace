@@ -110,6 +110,24 @@ function _prepareScreenViewport(DOM, fileName) {
         window.closeActiveEditor(true);
     }
 
+    // Clear residual parent-side component selection from outgoing screen so updateProperties
+    // does not treat previous screen's selectedIds as active and force-open a collapsed right sidebar
+    if (window.GroupingManager && typeof window.GroupingManager.setSelectedIds === 'function') {
+        window.GroupingManager.setSelectedIds([]);
+    }
+    if (window.ConnectorEngine && typeof window.ConnectorEngine.clearSelection === 'function') {
+        try { window.ConnectorEngine.clearSelection(); } catch (_) { }
+    }
+    if (window.state) {
+        window.state.selectedIds = [];
+        window.state.isEditing = false;
+        window.state.editingIndex = -1;
+        window.state.previousEditingIndex = -1;
+        window.state._lastInspectorCompId = null;
+        window.state.selectedComponent = null;
+        window.state.selectedComponentStyles = null;
+    }
+
     if (typeof window.showLoading === 'function') window.showLoading("Loading: " + fileName);
     if (DOM.placeholder) DOM.placeholder.style.display = 'none';
 }
@@ -374,10 +392,9 @@ function _syncScreenStateAndMetadata(fileName, content, DOM) {
 
     if (typeof window.updateProperties === 'function') window.updateProperties();
 
-    if (scMeta.defaultTab === 'description') {
-        if (typeof window.switchSidebarTab === 'function') window.switchSidebarTab('description');
-    } else {
-        if (typeof window.switchSidebarTab === 'function') window.switchSidebarTab('editor');
+    const targetTab = (scMeta.defaultTab === 'description') ? 'description' : 'editor';
+    if (typeof window.switchSidebarTab === 'function') {
+        window.switchSidebarTab(targetTab, { autoOpen: false });
     }
 
     setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 150);
@@ -785,12 +802,20 @@ function _bindGlobalClickDelegates() {
  */
 function _bindCoreToolbarAndSidebarEvents(DOM) {
     if (DOM.btnToggleLeft) DOM.btnToggleLeft.onclick = () => {
+        if (typeof window.toggleSidebar === 'function') {
+            window.toggleSidebar('left');
+            return;
+        }
         const collapsed = DOM.sidebarLeft.classList.toggle('collapsed');
         const icon = DOM.btnToggleLeft.querySelector('span');
         if (icon) icon.innerText = collapsed ? 'menu_open' : 'chevron_left';
         setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 400);
     };
     if (DOM.btnToggleRight) DOM.btnToggleRight.onclick = () => {
+        if (typeof window.toggleSidebar === 'function') {
+            window.toggleSidebar('right');
+            return;
+        }
         const collapsed = DOM.sidebarRight.classList.toggle('collapsed');
         const icon = DOM.btnToggleRight.querySelector('span');
         if (icon) icon.innerText = collapsed ? 'chevron_left' : 'chevron_right';

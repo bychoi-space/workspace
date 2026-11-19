@@ -258,6 +258,10 @@ window.toggleSidebar = function (side, forceOpen = null) {
         btn.classList.toggle('active', shouldOpen);
     }
 
+    if (side === 'right' && shouldOpen && window._lastActiveSidebarTab === 'description' && typeof window.autoResizeDescriptionInputs === 'function') {
+        setTimeout(window.autoResizeDescriptionInputs, 60);
+    }
+
     setTimeout(() => {
         if (typeof window.centerView === 'function') window.centerView();
     }, 280);
@@ -299,7 +303,8 @@ window.setSidebarInspectorVisible = function (visible) {
     }
 };
 
-window.switchSidebarTab = function (tabName) {
+window.switchSidebarTab = function (tabName, options) {
+    const autoOpen = !(options && options.autoOpen === false);
     window._lastActiveSidebarTab = tabName;
     if (typeof window.setSidebarInspectorVisible === 'function') {
         window.setSidebarInspectorVisible(false);
@@ -308,15 +313,15 @@ window.switchSidebarTab = function (tabName) {
     const sidebarRight = document.getElementById('sidebar-right');
     const isSidebarOpen = sidebarRight && !sidebarRight.classList.contains('collapsed');
 
-    // If target tab is already active and sidebar is open, exit early to avoid reflow/focus interruption
-    if (targetPane && targetPane.classList.contains('active') && isSidebarOpen) {
-        if (tabName === 'description' && typeof window.autoResizeDescriptionInputs === 'function') {
+    // If target tab is already active and sidebar open state requires no change, exit early to avoid reflow/focus interruption
+    if (targetPane && targetPane.classList.contains('active') && (isSidebarOpen || !autoOpen)) {
+        if (tabName === 'description' && isSidebarOpen && typeof window.autoResizeDescriptionInputs === 'function') {
             setTimeout(window.autoResizeDescriptionInputs, 50);
         }
         return;
     }
 
-    console.log(`[Inspector] switchSidebarTab START: ${tabName}`);
+    console.log(`[Inspector] switchSidebarTab START: ${tabName} (autoOpen: ${autoOpen})`);
     const btns = document.querySelectorAll('.tab-btn');
     const panes = document.querySelectorAll('.tab-pane');
 
@@ -331,10 +336,12 @@ window.switchSidebarTab = function (tabName) {
         if (isActive) console.log(`[Inspector] Pane activated: ${pane.id}`);
     });
 
-    // Ensure sidebar is open when switching tabs
-    window.toggleSidebar('right', true);
+    // Open sidebar only on explicit user/inspector navigation, preserving collapsed state on screen switch & deselect
+    if (autoOpen) {
+        window.toggleSidebar('right', true);
+    }
 
-    if (tabName === 'description' && typeof window.autoResizeDescriptionInputs === 'function') {
+    if (tabName === 'description' && (isSidebarOpen || autoOpen) && typeof window.autoResizeDescriptionInputs === 'function') {
         setTimeout(window.autoResizeDescriptionInputs, 50);
     }
 
@@ -1015,12 +1022,12 @@ window.deselectAll = function () {
     if (typeof window.restorePropertiesSections === 'function') {
         window.restorePropertiesSections();
     }
-    // 2. Hide sidebar inspector header & return to Library tab
+    // 2. Hide sidebar inspector header & return to Library tab without force-opening collapsed sidebar
     if (typeof window.setSidebarInspectorVisible === 'function') {
         window.setSidebarInspectorVisible(false);
     }
     if (typeof window.switchSidebarTab === 'function') {
-        window.switchSidebarTab('editor');
+        window.switchSidebarTab('editor', { autoOpen: false });
     }
     // 3. Hide floating inspector card if displayed
     const floatingCard = document.getElementById('floating-inspector-card');

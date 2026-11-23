@@ -768,5 +768,47 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/report_3m_integrated_emd_sales.png',
             previewHtml: `<img src="assets/illustrations/report_3m_integrated_emd_sales.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/report_3m_integrated_emd_sales.png" alt="3D 통합 온라인 MD 및 메이저 기획전 세일즈 견인" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-wide-ai-team',
+            name: '[와이드] AI 올라운더 팀',
+            title: '3D 와이드 배너 - AI 프로페셔널 무경계 올라운더 팀 빌딩 (Wide 2:1)',
+            koName: '3d 와이드 배너 ai 프로페셔널 올라운더 팀빌딩 기획 디자인 퍼블리싱 wide banner',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '460px',
+            height: '230px',
+            thumb: 'assets/illustrations/report_3m_wide_ai_team.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_wide_ai_team.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px; pointer-events: auto;"><img src="assets/illustrations/report_3m_wide_ai_team.png" alt="3D 와이드 AI 올라운더 팀 빌딩" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-wide-platform',
+            name: '[와이드] 플랫폼 고도화',
+            title: '3D 와이드 배너 - Front UI/UX & Admin 사용성 지속 고도화 (Wide 2:1)',
+            koName: '3d 와이드 배너 시선닷컴 프론트 어드민 지속 고도화 연동 wide platform',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '460px',
+            height: '230px',
+            thumb: 'assets/illustrations/report_3m_wide_platform_2027.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_wide_platform_2027.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px; pointer-events: auto;"><img src="assets/illustrations/report_3m_wide_platform_2027.png" alt="3D 와이드 Front 및 Admin 고도화" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-wide-emd-sales',
+            name: '[와이드] 통합 세일즈·e편성',
+            title: '3D 와이드 배너 - 온라인 MD 통합 기획전 & 세일즈 성장 견인 (Wide 2:1)',
+            koName: '3d 와이드 배너 온라인md e편성 통합기획전 프로모션 매출견인 wide sales',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '460px',
+            height: '230px',
+            thumb: 'assets/illustrations/report_3m_wide_emd_sales.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_wide_emd_sales.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px; pointer-events: auto;"><img src="assets/illustrations/report_3m_wide_emd_sales.png" alt="3D 와이드 온라인 MD 통합 세일즈 견인" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; pointer-events: none; user-select: none;"></div>`
         }
 ];

@@ -810,5 +810,33 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/report_3m_wide_emd_sales.png',
             previewHtml: `<img src="assets/illustrations/report_3m_wide_emd_sales.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px; pointer-events: auto;"><img src="assets/illustrations/report_3m_wide_emd_sales.png" alt="3D 와이드 온라인 MD 통합 세일즈 견인" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-wide-systems-built',
+            name: '[와이드] 통합 기획·팀 포털',
+            title: '3D 와이드 배너 - 기획 통합 워크스페이스 & 팀 관리 포털 구축 (Wide)',
+            koName: '3d 와이드 배너 서비스기획 워크스페이스 팀관리포털 시스템구축 kpi dod wide portal',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '730px',
+            height: '200px',
+            thumb: 'assets/illustrations/report_3m_wide_systems_built.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_wide_systems_built.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px; pointer-events: auto;"><img src="assets/illustrations/report_3m_wide_systems_built.png" alt="3D 와이드 통합 기획 워크스페이스 및 팀 관리 포털" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-wide-sisun-diagnosis',
+            name: '[와이드] 현주소·레거시 진단',
+            title: '3D 와이드 배너 - 시선닷컴 운영 부족점 및 시스템 현주소 진단 (Wide)',
+            koName: '3d 와이드 배너 시선닷컴 현주소 진단 레거시 개선과제 산적 돋보기 wide diagnosis',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '730px',
+            height: '200px',
+            thumb: 'assets/illustrations/report_3m_wide_sisun_diagnosis.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_wide_sisun_diagnosis.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px; pointer-events: auto;"><img src="assets/illustrations/report_3m_wide_sisun_diagnosis.png" alt="3D 와이드 시선닷컴 운영 및 시스템 현주소 진단" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; pointer-events: none; user-select: none;"></div>`
         }
 ];

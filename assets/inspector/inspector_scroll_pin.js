@@ -1,20 +1,94 @@
 /**
  * assets/inspector/inspector_scroll_pin.js
  * Domain Inspector Module: Responsive Scroll Pinning & Smart HUD Interface Controller
- * Responsibility: Parent-side scroll fixed modes (Top, Bottom, Custom/Floating, Sticky, None),
- *                direction reactions, viewport offsets, and description pin anchoring.
+ * Responsibility: Parent-side scroll fixed modes (Top, Bottom, Custom/Floating, Sticky, Sticky-Bottom, None),
+ *                bounded sticky stop limit (STOP Y / data-scroll-sticky-max-y), direction reactions,
+ *                viewport offsets, and description pin anchoring.
+ * Gateway 7 Compliant: 100% MessageHub / EditorBus state-driven (zero direct iframe.contentDocument access).
  */
-(function() {
+(function () {
     console.log("[Inspector Scroll Pin] Domain module loaded.");
 
+    function _getActivePinSnapshot(explicitStyles) {
+        const st = window.state || {};
+        const compStyles = explicitStyles || st.selectedComponentStyles || st.selectedComponent || null;
+        let selIds = (Array.isArray(st.selectedIds) && st.selectedIds.length > 0) ? st.selectedIds : [];
+        if (selIds.length === 0 && compStyles && compStyles.id) {
+            selIds = [compStyles.id];
+        }
+        const primaryId = selIds[0] || (compStyles && compStyles.id) || '';
+        const isConnectorOnly = !!(
+            (compStyles && (compStyles.isConnector || (compStyles.id && String(compStyles.id).indexOf('conn_') === 0))) ||
+            (selIds.length > 0 && selIds.every(function (id) { return typeof id === 'string' && id.indexOf('conn_') === 0; }))
+        );
+        const isPin = !!(
+            (compStyles && (compStyles.isPinMarker || compStyles.isPin)) ||
+            (typeof primaryId === 'string' && primaryId.indexOf('v4-pin-') === 0)
+        );
+        return {
+            selIds: selIds,
+            primaryId: primaryId,
+            compStyles: compStyles,
+            isPin: isPin,
+            isConnectorOnly: isConnectorOnly
+        };
+    }
+
+    function _isActiveScreenResponsive(compStyles) {
+        if (compStyles && compStyles.isScrollPinnable) return true;
+        const st = window.state || {};
+        const af = st.activeFile;
+        if (af) {
+            const tpl = (af.meta && af.meta.template) ? String(af.meta.template) : '';
+            if (tpl.indexOf('responsive') !== -1 || tpl.indexOf('mobile') !== -1 || tpl.indexOf('pc_web') !== -1 || tpl.indexOf('dual') !== -1) {
+                return true;
+            }
+            const html = typeof af.html === 'string' ? af.html : '';
+            if (html && (
+                html.indexOf('pc-content-inner') !== -1 ||
+                html.indexOf('mobile-content-inner') !== -1 ||
+                html.indexOf('pc-content-area') !== -1 ||
+                html.indexOf('mobile-content') !== -1 ||
+                html.indexOf('pc-browser-frame') !== -1 ||
+                html.indexOf('mobile-frame') !== -1 ||
+                html.indexOf('responsive-compare-container') !== -1 ||
+                html.indexOf('dual-mobile-container') !== -1
+            )) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function _applySnapshotMutation(mode, payload) {
+        const targets = [
+            window.state && window.state.selectedComponent,
+            window.state && window.state.selectedComponentStyles
+        ];
+        targets.forEach(function (obj) {
+            if (!obj) return;
+            obj.scrollFixed = mode;
+            if (payload.effect !== undefined) obj.scrollEffect = payload.effect;
+            if (payload.divider !== undefined) obj.scrollDivider = payload.divider;
+            if (payload.targetY !== undefined) obj.scrollTargetY = payload.targetY;
+            if (payload.stickyTop !== undefined) obj.scrollStickyTop = payload.stickyTop;
+            if (payload.stickyBottom !== undefined) obj.scrollStickyBottom = payload.stickyBottom;
+            if (mode !== 'sticky') {
+                obj.scrollStickyMaxY = null;
+            } else if (payload.stickyMaxY !== undefined) {
+                obj.scrollStickyMaxY = (payload.stickyMaxY !== null && payload.stickyMaxY > 0) ? payload.stickyMaxY : null;
+            }
+        });
+    }
+
     function setScrollPin(mode, extraOptions) {
-        const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
+        const snap = _getActivePinSnapshot();
+        const selIds = snap.selIds;
         if (!selIds || selIds.length === 0) return;
 
-        const iframe = document.getElementById('main-iframe');
-        const iframeDoc = iframe?.contentDocument;
-        const el = iframeDoc?.getElementById(selIds[0]);
-        const isPin = el?.classList.contains('pin-marker') || el?.classList.contains('text-marker');
+        const isPin = snap.isPin;
+        const cs = snap.compStyles || {};
+        const opts = extraOptions || {};
 
         const payload = {
             ids: selIds,
@@ -22,60 +96,57 @@
             mode: mode
         };
 
-        if (!isPin && el) {
+        if (!isPin) {
+            const fallbackTop = (cs.y !== undefined && !isNaN(parseFloat(cs.y))) ? parseFloat(cs.y) : 0;
             if (mode === 'custom' || mode === 'floating') {
-                const domTop = parseFloat(el.style.top) || el.offsetTop || 0;
-                const targetY = (extraOptions && extraOptions.targetY !== undefined) ? extraOptions.targetY : domTop;
-                payload.targetY = targetY;
+                const prevTargetY = (cs.scrollTargetY !== undefined && !isNaN(parseFloat(cs.scrollTargetY))) ? parseFloat(cs.scrollTargetY) : fallbackTop;
+                payload.targetY = (opts.targetY !== undefined) ? opts.targetY : prevTargetY;
             } else if (mode === 'sticky') {
-                const stickyTop = (extraOptions && extraOptions.stickyTop !== undefined) ? extraOptions.stickyTop : 0;
-                payload.stickyTop = stickyTop;
+                const prevStickyTop = (cs.scrollStickyTop !== undefined && !isNaN(parseFloat(cs.scrollStickyTop))) ? parseFloat(cs.scrollStickyTop) : 0;
+                payload.stickyTop = (opts.stickyTop !== undefined) ? opts.stickyTop : prevStickyTop;
+
+                if (opts.stickyMaxY !== undefined) {
+                    const parsedMax = (opts.stickyMaxY === null || opts.stickyMaxY === '') ? null : parseFloat(opts.stickyMaxY);
+                    payload.stickyMaxY = (parsedMax !== null && !isNaN(parsedMax) && parsedMax > 0) ? Math.round(parsedMax) : null;
+                } else if (cs.scrollStickyMaxY !== undefined && cs.scrollStickyMaxY !== null && !isNaN(parseFloat(cs.scrollStickyMaxY)) && parseFloat(cs.scrollStickyMaxY) > 0) {
+                    payload.stickyMaxY = Math.round(parseFloat(cs.scrollStickyMaxY));
+                }
             } else if (mode === 'sticky-bottom') {
-                const stickyBottom = (extraOptions && extraOptions.stickyBottom !== undefined) ? extraOptions.stickyBottom : 0;
-                payload.stickyBottom = stickyBottom;
+                const prevStickyBottom = (cs.scrollStickyBottom !== undefined && !isNaN(parseFloat(cs.scrollStickyBottom))) ? parseFloat(cs.scrollStickyBottom) : 0;
+                payload.stickyBottom = (opts.stickyBottom !== undefined) ? opts.stickyBottom : prevStickyBottom;
             }
 
-            if (extraOptions && extraOptions.effect !== undefined) {
-                payload.effect = extraOptions.effect;
+            if (opts.effect !== undefined) {
+                payload.effect = opts.effect;
             } else if (mode === 'none') {
                 payload.effect = 'always';
             } else {
-                const curEffect = el.getAttribute('data-scroll-effect') || 'always';
-                payload.effect = curEffect;
+                payload.effect = cs.scrollEffect || 'always';
             }
 
-            if (extraOptions && extraOptions.divider !== undefined) {
-                payload.divider = !!extraOptions.divider;
+            if (opts.divider !== undefined) {
+                payload.divider = !!opts.divider;
             } else if (mode === 'none') {
                 payload.divider = false;
             } else {
-                const curDivider = el.hasAttribute('data-scroll-divider') && el.getAttribute('data-scroll-divider') !== 'false' && el.getAttribute('data-scroll-divider') !== 'none';
-                payload.divider = curDivider;
+                payload.divider = !!cs.scrollDivider;
             }
         }
 
         const messagePayload = Object.assign({ type: 'BYCHOI_SET_SCROLL_FIXED' }, payload);
+        const iframe = document.getElementById('main-iframe');
         if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
             window.EditorBus.sendToIframe(messagePayload);
         } else if (iframe && iframe.contentWindow && window.MessageHub) {
             window.MessageHub.send(iframe.contentWindow, 'BYCHOI_SET_SCROLL_FIXED', payload);
         }
 
-        if (window.state && window.state.selectedComponent) {
-            window.state.selectedComponent.scrollFixed = mode;
-            if (payload.effect) window.state.selectedComponent.scrollEffect = payload.effect;
-            if (payload.divider !== undefined) window.state.selectedComponent.scrollDivider = payload.divider;
-        }
-        if (window.state && window.state.selectedComponentStyles) {
-            window.state.selectedComponentStyles.scrollFixed = mode;
-            if (payload.effect) window.state.selectedComponentStyles.scrollEffect = payload.effect;
-            if (payload.divider !== undefined) window.state.selectedComponentStyles.scrollDivider = payload.divider;
-        }
+        _applySnapshotMutation(mode, payload);
 
-        if (isPin && el) {
-            let pIdx = parseInt(el.getAttribute('data-index'), 10);
+        if (isPin) {
+            let pIdx = (cs.index !== undefined && !isNaN(parseInt(cs.index, 10))) ? parseInt(cs.index, 10) : NaN;
             if (isNaN(pIdx)) {
-                pIdx = parseInt((el.id || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''), 10);
+                pIdx = parseInt(String(snap.primaryId || '').replace('v4-pin-pc-', '').replace('v4-pin-mobile-', '').replace('v4-pin-left-', '').replace('v4-pin-right-', '').replace('v4-pin-canvas-', '').replace('v4-pin-', ''), 10);
             }
             if (!isNaN(pIdx) && window.state && window.state.activeFile && window.state.activeFile.meta && window.state.activeFile.meta.description) {
                 const descItem = window.state.activeFile.meta.description[pIdx];
@@ -132,6 +203,8 @@
         const offsetBar = document.getElementById('scroll-pin-offset-bar');
         const offsetLabel = document.getElementById('scroll-pin-offset-label');
         const offsetInput = document.getElementById('scroll-pin-offset-input');
+        const limitBar = document.getElementById('scroll-pin-limit-bar');
+        const limitInput = document.getElementById('scroll-pin-limit-input');
         const effectBar = document.getElementById('scroll-pin-effect-bar');
         const effectSelect = document.getElementById('scroll-pin-effect-select');
         const dividerBar = document.getElementById('scroll-pin-divider-bar');
@@ -143,6 +216,7 @@
             if (objGroup) objGroup.style.display = 'none';
             if (markerGroup) markerGroup.style.display = 'flex';
             if (offsetBar) offsetBar.style.display = 'none';
+            if (limitBar) limitBar.style.display = 'none';
             if (effectBar) effectBar.style.display = 'none';
             if (dividerBar) dividerBar.style.display = 'none';
 
@@ -212,23 +286,46 @@
                 if (pinMode === 'custom' || pinMode === 'floating') {
                     offsetBar.style.display = 'flex';
                     offsetLabel.innerText = 'VIEWPORT Y';
-                    if (payload && payload.targetY !== undefined) {
+                    if (payload && payload.targetY !== undefined && document.activeElement !== offsetInput) {
                         offsetInput.value = Math.round(payload.targetY);
                     }
                 } else if (pinMode === 'sticky') {
                     offsetBar.style.display = 'flex';
                     offsetLabel.innerText = 'STICKY TOP';
-                    if (payload && payload.stickyTop !== undefined) {
+                    if (payload && payload.stickyTop !== undefined && document.activeElement !== offsetInput) {
                         offsetInput.value = Math.round(payload.stickyTop);
                     }
                 } else if (pinMode === 'sticky-bottom') {
                     offsetBar.style.display = 'flex';
                     offsetLabel.innerText = 'STICKY BOTTOM';
-                    if (payload && payload.stickyBottom !== undefined) {
+                    if (payload && payload.stickyBottom !== undefined && document.activeElement !== offsetInput) {
                         offsetInput.value = Math.round(payload.stickyBottom);
                     }
                 } else {
                     offsetBar.style.display = 'none';
+                }
+            }
+
+            const hasValidStickyMax = !!(
+                pinMode === 'sticky' &&
+                payload &&
+                payload.stickyMaxY !== undefined &&
+                payload.stickyMaxY !== null &&
+                !isNaN(parseFloat(payload.stickyMaxY)) &&
+                parseFloat(payload.stickyMaxY) > 0
+            );
+
+            if (limitBar && limitInput) {
+                if (pinMode === 'sticky') {
+                    limitBar.style.display = 'flex';
+                    if (document.activeElement !== limitInput) {
+                        limitInput.value = hasValidStickyMax ? Math.round(parseFloat(payload.stickyMaxY)) : '';
+                    }
+                } else {
+                    limitBar.style.display = 'none';
+                    if (document.activeElement !== limitInput) {
+                        limitInput.value = '';
+                    }
                 }
             }
 
@@ -247,7 +344,9 @@
                     badge.innerText = 'FLOATING' + effSuffix;
                     badge.classList.add('badge-custom');
                 } else if (pinMode === 'sticky') {
-                    badge.innerText = 'STICKY';
+                    badge.innerText = hasValidStickyMax
+                        ? ('STICKY (\u2264' + Math.round(parseFloat(payload.stickyMaxY)) + ')')
+                        : 'STICKY';
                     badge.classList.add('badge-sticky');
                 } else if (pinMode === 'sticky-bottom') {
                     badge.innerText = 'STICKY (하단)';
@@ -263,61 +362,30 @@
         const scrollPinBar = document.getElementById('selection-scroll-pin-bar');
         if (!scrollPinBar) return;
 
-        const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-        if (selIds.length === 0) {
+        const snap = _getActivePinSnapshot(compStyles);
+        if (snap.selIds.length === 0 || snap.isConnectorOnly) {
             scrollPinBar.style.setProperty('display', 'none', 'important');
             return;
         }
 
-        let isResponsiveScreen = false;
-        let isPin = false;
-        let currentFixed = (compStyles && compStyles.scrollFixed) || 'none';
-        let currentEffect = (compStyles && compStyles.scrollEffect) || 'always';
-        let targetY = undefined;
-        let stickyTop = undefined;
-        let stickyBottom = undefined;
-        let hasDivider = false;
+        const src = compStyles || snap.compStyles || {};
+        const isPin = !!(
+            src.isPinMarker ||
+            src.isPin ||
+            snap.isPin
+        );
+        const currentFixed = src.scrollFixed || 'none';
+        const currentEffect = src.scrollEffect || 'always';
+        const fallbackTop = (src.y !== undefined && !isNaN(parseFloat(src.y))) ? parseFloat(src.y) : 0;
+        const targetY = (src.scrollTargetY !== undefined && !isNaN(parseFloat(src.scrollTargetY))) ? parseFloat(src.scrollTargetY) : fallbackTop;
+        const stickyTop = (src.scrollStickyTop !== undefined && !isNaN(parseFloat(src.scrollStickyTop))) ? parseFloat(src.scrollStickyTop) : 0;
+        const stickyBottom = (src.scrollStickyBottom !== undefined && !isNaN(parseFloat(src.scrollStickyBottom))) ? parseFloat(src.scrollStickyBottom) : 0;
+        const stickyMaxY = (src.scrollStickyMaxY !== undefined && src.scrollStickyMaxY !== null && !isNaN(parseFloat(src.scrollStickyMaxY)) && parseFloat(src.scrollStickyMaxY) > 0)
+            ? parseFloat(src.scrollStickyMaxY)
+            : null;
+        const hasDivider = !!src.scrollDivider;
 
-        try {
-            const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-            if (iframeDoc) {
-                if (typeof window.isResponsiveDocument === 'function') {
-                    isResponsiveScreen = window.isResponsiveDocument(iframeDoc);
-                }
-                if (!isResponsiveScreen) {
-                    isResponsiveScreen = !!iframeDoc.querySelector('.pc-content-inner, .mobile-content-inner, .pc-content-area, .mobile-content, .pc-browser-frame, .mobile-frame, .responsive-compare-container, .dual-mobile-container');
-                }
-
-                const el = iframeDoc.getElementById(selIds[0]);
-                if (el) {
-                    isPin = el.classList.contains('pin-marker') || el.classList.contains('text-marker');
-                    currentFixed = el.getAttribute('data-scroll-fixed') || currentFixed || 'none';
-                    if (el.hasAttribute('data-scroll-effect')) {
-                        currentEffect = el.getAttribute('data-scroll-effect');
-                    }
-                    if (el.hasAttribute('data-scroll-target-y')) {
-                        targetY = parseFloat(el.getAttribute('data-scroll-target-y'));
-                    } else {
-                        targetY = parseFloat(el.style.top) || el.offsetTop || 0;
-                    }
-                    if (el.hasAttribute('data-scroll-sticky-top')) {
-                        stickyTop = parseFloat(el.getAttribute('data-scroll-sticky-top'));
-                    } else {
-                        stickyTop = 0;
-                    }
-                    if (el.hasAttribute('data-scroll-sticky-bottom')) {
-                        stickyBottom = parseFloat(el.getAttribute('data-scroll-sticky-bottom'));
-                    } else {
-                        stickyBottom = 0;
-                    }
-                    hasDivider = (compStyles && compStyles.scrollDivider !== undefined)
-                        ? !!compStyles.scrollDivider
-                        : (el.hasAttribute('data-scroll-divider') && el.getAttribute('data-scroll-divider') !== 'false' && el.getAttribute('data-scroll-divider') !== 'none');
-                }
-            }
-        } catch(e) {}
-
-        const shouldShow = isResponsiveScreen || (currentFixed !== 'none') || (compStyles && compStyles.isScrollPinnable);
+        const shouldShow = _isActiveScreenResponsive(src) || (currentFixed !== 'none') || !!src.isScrollPinnable;
 
         if (shouldShow) {
             scrollPinBar.style.setProperty('display', 'flex', 'important');
@@ -325,12 +393,37 @@
                 targetY: targetY,
                 stickyTop: stickyTop,
                 stickyBottom: stickyBottom,
+                stickyMaxY: stickyMaxY,
                 effect: currentEffect,
                 divider: hasDivider
             });
         } else {
             scrollPinBar.style.setProperty('display', 'none', 'important');
         }
+    }
+
+    function syncFromIframe(data) {
+        if (!data) return;
+        const capturedMaxY = (data.stickyMaxY !== undefined && data.stickyMaxY !== null && !isNaN(parseFloat(data.stickyMaxY)) && parseFloat(data.stickyMaxY) > 0)
+            ? Math.round(parseFloat(data.stickyMaxY))
+            : null;
+        const stickyTop = (data.stickyTop !== undefined && !isNaN(parseFloat(data.stickyTop)))
+            ? Math.round(parseFloat(data.stickyTop))
+            : 0;
+
+        _applySnapshotMutation('sticky', {
+            stickyTop: stickyTop,
+            stickyMaxY: capturedMaxY
+        });
+
+        const snap = _getActivePinSnapshot();
+        const src = snap.compStyles || {};
+        updateButtonsUI('sticky', false, {
+            stickyTop: (src.scrollStickyTop !== undefined) ? src.scrollStickyTop : stickyTop,
+            stickyMaxY: capturedMaxY,
+            effect: src.scrollEffect || 'always',
+            divider: !!src.scrollDivider
+        });
     }
 
     function bindEvents() {
@@ -344,6 +437,8 @@
         const btnPinContent = document.getElementById('btn-pin-pos-content');
         const btnPinFixed = document.getElementById('btn-pin-pos-fixed');
         const offsetInput = document.getElementById('scroll-pin-offset-input');
+        const limitInput = document.getElementById('scroll-pin-limit-input');
+        const captureLimitBtn = document.getElementById('btn-scroll-pin-capture-limit');
         const effectSelect = document.getElementById('scroll-pin-effect-select');
 
         if (btnNone) {
@@ -386,12 +481,9 @@
         if (effectSelect) {
             effectSelect.onchange = (e) => {
                 e.stopPropagation();
-                const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-                if (!selIds || selIds.length === 0) return;
-                const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-                const el = iframeDoc?.getElementById(selIds[0]);
-                if (!el) return;
-                const curMode = el.getAttribute('data-scroll-fixed') || 'none';
+                const snap = _getActivePinSnapshot();
+                if (!snap.selIds || snap.selIds.length === 0) return;
+                const curMode = (snap.compStyles && snap.compStyles.scrollFixed) || 'none';
                 if (curMode !== 'none') {
                     setScrollPin(curMode, { effect: effectSelect.value });
                 }
@@ -402,12 +494,9 @@
         if (dividerToggle) {
             dividerToggle.onchange = (e) => {
                 e.stopPropagation();
-                const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-                if (!selIds || selIds.length === 0) return;
-                const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-                const el = iframeDoc?.getElementById(selIds[0]);
-                if (!el) return;
-                const curMode = el.getAttribute('data-scroll-fixed') || 'none';
+                const snap = _getActivePinSnapshot();
+                if (!snap.selIds || snap.selIds.length === 0) return;
+                const curMode = (snap.compStyles && snap.compStyles.scrollFixed) || 'none';
                 if (curMode !== 'none') {
                     setScrollPin(curMode, { divider: dividerToggle.checked });
                 }
@@ -431,12 +520,9 @@
             const handleOffsetChange = () => {
                 const val = parseFloat(offsetInput.value);
                 if (isNaN(val)) return;
-                const selIds = (window.state && window.state.selectedIds) ? window.state.selectedIds : [];
-                if (!selIds || selIds.length === 0) return;
-                const iframeDoc = document.getElementById('main-iframe')?.contentDocument;
-                const el = iframeDoc?.getElementById(selIds[0]);
-                if (!el) return;
-                const curMode = el.getAttribute('data-scroll-fixed');
+                const snap = _getActivePinSnapshot();
+                if (!snap.selIds || snap.selIds.length === 0) return;
+                const curMode = (snap.compStyles && snap.compStyles.scrollFixed) || 'none';
                 if (curMode === 'custom' || curMode === 'floating') {
                     setScrollPin('custom', { targetY: val });
                 } else if (curMode === 'sticky') {
@@ -450,6 +536,59 @@
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     handleOffsetChange();
+                    offsetInput.blur();
+                }
+            };
+        }
+
+        if (limitInput) {
+            const handleLimitChange = () => {
+                const snap = _getActivePinSnapshot();
+                if (!snap.selIds || snap.selIds.length === 0) return;
+                const curMode = (snap.compStyles && snap.compStyles.scrollFixed) || 'none';
+                if (curMode !== 'sticky') return;
+
+                const raw = (limitInput.value || '').trim();
+                if (raw === '') {
+                    setScrollPin('sticky', { stickyMaxY: null });
+                    return;
+                }
+                const val = parseFloat(raw);
+                if (isNaN(val) || val <= 0) {
+                    limitInput.value = '';
+                    setScrollPin('sticky', { stickyMaxY: null });
+                    return;
+                }
+                setScrollPin('sticky', { stickyMaxY: Math.round(val) });
+            };
+            limitInput.onchange = handleLimitChange;
+            limitInput.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleLimitChange();
+                    limitInput.blur();
+                }
+            };
+        }
+
+        if (captureLimitBtn) {
+            captureLimitBtn.onclick = (e) => {
+                e.stopPropagation();
+                const snap = _getActivePinSnapshot();
+                if (!snap.selIds || snap.selIds.length === 0) return;
+                const msg = {
+                    type: 'BYCHOI_CAPTURE_STICKY_LIMIT',
+                    ids: snap.selIds,
+                    id: snap.selIds[0]
+                };
+                const iframe = document.getElementById('main-iframe');
+                if (window.EditorBus && typeof window.EditorBus.sendToIframe === 'function') {
+                    window.EditorBus.sendToIframe(msg);
+                } else if (iframe && iframe.contentWindow && window.MessageHub) {
+                    window.MessageHub.send(iframe.contentWindow, 'BYCHOI_CAPTURE_STICKY_LIMIT', {
+                        ids: snap.selIds,
+                        id: snap.selIds[0]
+                    });
                 }
             };
         }
@@ -460,6 +599,7 @@
         setScrollPin: setScrollPin,
         updateButtonsUI: updateButtonsUI,
         syncUI: syncUI,
+        syncFromIframe: syncFromIframe,
         bindEvents: bindEvents
     };
 

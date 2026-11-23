@@ -710,6 +710,7 @@ window.v4ResponsiveMultiselectScript = `
                             node.removeAttribute('data-scroll-target-y');
                             node.removeAttribute('data-scroll-sticky-top');
                             node.removeAttribute('data-scroll-sticky-bottom');
+                            node.removeAttribute('data-scroll-sticky-max-y');
                             node.removeAttribute('data-scroll-divider');
                             node.removeAttribute('data-scroll-divider-active');
                             node.removeAttribute('data-pre-fixed-z');
@@ -832,6 +833,7 @@ window.v4ResponsiveMultiselectScript = `
                             c.removeAttribute('data-scroll-target-y');
                             c.removeAttribute('data-scroll-sticky-top');
                             c.removeAttribute('data-scroll-sticky-bottom');
+                            c.removeAttribute('data-scroll-sticky-max-y');
                             c.removeAttribute('data-scroll-divider');
                             c.removeAttribute('data-scroll-divider-active');
                             c.removeAttribute('data-pre-fixed-z');

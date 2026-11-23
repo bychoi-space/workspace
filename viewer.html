@@ -519,6 +519,20 @@
                                         <span class="scroll-pin-offset-unit">px</span>
                                     </div>
                                 </div>
+                                <!-- Sticky Stop Limit Bar (Max Bottom Y Boundary) -->
+                                <div id="scroll-pin-limit-bar" class="scroll-pin-offset-bar scroll-pin-limit-bar"
+                                    style="display: none;">
+                                    <span class="scroll-pin-offset-label" id="scroll-pin-limit-label"
+                                        title="오브젝트 하단이 멈추는 본문 Y좌표 (0 또는 비우면 끝까지 고정)">STOP Y (하한선)</span>
+                                    <div class="scroll-pin-offset-input-wrap">
+                                        <button type="button" id="btn-scroll-pin-capture-limit"
+                                            class="scroll-pin-capture-btn"
+                                            title="현재 프레임 스크롤 위치의 오브젝트 하단 Y좌표로 하한선 자동 설정">현위치</button>
+                                        <input type="number" id="scroll-pin-limit-input"
+                                            class="scroll-pin-offset-input" placeholder="없음">
+                                        <span class="scroll-pin-offset-unit">px</span>
+                                    </div>
+                                </div>
                                 <!-- Border Divider Bar -->
                                 <div id="scroll-pin-divider-bar" class="scroll-pin-divider-bar" style="display: none;">
                                     <span class="scroll-pin-divider-label" id="scroll-pin-divider-label">경계 구분선</span>

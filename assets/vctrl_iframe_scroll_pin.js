@@ -184,6 +184,7 @@ window.v4ScrollPinScript = `
                         el.removeAttribute('data-scroll-target-y');
                         el.removeAttribute('data-scroll-sticky-top');
                         el.removeAttribute('data-scroll-sticky-bottom');
+                        el.removeAttribute('data-scroll-sticky-max-y');
                         el.removeAttribute('data-scroll-divider');
                         el.removeAttribute('data-scroll-divider-active');
                     }
@@ -243,6 +244,7 @@ window.v4ScrollPinScript = `
                     isActivelyFixed = (scrollTop > 0 || Math.abs(dy) > 2) && !isHidden;
                 } else if (mode === 'sticky') {
                     var domTop = parseFloat(el.style.top) || 0;
+                    var elH = el.offsetHeight || parseFloat(el.style.height) || 0;
                     var rawStickyTop = el.getAttribute('data-scroll-sticky-top');
                     var stickyThresholdY = (rawStickyTop !== null && rawStickyTop !== '') ? parseFloat(rawStickyTop) : 0;
                     if (isNaN(stickyThresholdY)) stickyThresholdY = 0;
@@ -252,7 +254,17 @@ window.v4ScrollPinScript = `
                     } else {
                         dy = 0;
                     }
-                    isActivelyFixed = (scrollTop > scrollDistanceToStick);
+                    var rawStickyMaxY = el.getAttribute('data-scroll-sticky-max-y');
+                    var stickyMaxY = (rawStickyMaxY !== null && rawStickyMaxY !== '') ? parseFloat(rawStickyMaxY) : 0;
+                    var isClampedAtMax = false;
+                    if (!isNaN(stickyMaxY) && stickyMaxY > 0) {
+                        var maxAllowedDy = Math.max(0, stickyMaxY - (domTop + elH));
+                        if (dy > maxAllowedDy) {
+                            dy = maxAllowedDy;
+                            isClampedAtMax = true;
+                        }
+                    }
+                    isActivelyFixed = (scrollTop > scrollDistanceToStick) && !isClampedAtMax;
                 } else if (mode === 'sticky-bottom') {
                     var viewportH = scrollArea.clientHeight || 810;
                     var domTop = parseFloat(el.style.top) || 0;
@@ -421,7 +433,7 @@ window.v4ScrollPinScript = `
                         needsRebind = true;
                         needsUpdate = true;
                         break;
-                    } else if (m.type === 'attributes' && m.attributeName === 'data-scroll-fixed') {
+                    } else if (m.type === 'attributes') {
                         needsUpdate = true;
                         break;
                     }
@@ -441,7 +453,7 @@ window.v4ScrollPinScript = `
                     childList: true,
                     subtree: true,
                     attributes: true,
-                    attributeFilter: ['data-scroll-fixed']
+                    attributeFilter: ['data-scroll-fixed', 'data-scroll-sticky-top', 'data-scroll-sticky-bottom', 'data-scroll-sticky-max-y', 'data-scroll-target-y']
                 });
             }
         },
@@ -456,6 +468,56 @@ window.v4ScrollPinScript = `
     };
 
     window.ScrollPinEngine = ScrollPinEngine;
+
+    function _dispatchParentMsg(payload) {
+        if (window.EditorBus && typeof window.EditorBus.sendToParent === 'function') {
+            window.EditorBus.sendToParent(payload);
+        } else if (typeof window.notifyParent === 'function') {
+            window.notifyParent(payload);
+        } else if (window.parent && window.parent !== window) {
+            window.parent.postMessage(payload, '*');
+        }
+    }
+
+    function _findTrailingLayerNode(parent) {
+        if (!parent || !parent.children) return null;
+        return Array.from(parent.children).find(function(c) {
+            return (c.classList && (c.classList.contains('v4-dimmed-overlay-layer') || c.classList.contains('v4-pin-layer') || c.classList.contains('v4-selection-adorner-layer') || c.classList.contains('v4-responsive-guide-layer'))) || (!c.classList.contains('bychoi-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
+        });
+    }
+
+    function _ensureStickyUnderViewportChrome(parent, stickyEl) {
+        if (!parent || !parent.children) return;
+        var chromeSiblings = [];
+        var maxChromeZ = 140000;
+        Array.from(parent.children).forEach(function(c) {
+            if (!c || c === stickyEl || !c.classList || !c.classList.contains('bychoi-component')) return;
+            if (c.classList.contains('pin-marker') || c.classList.contains('text-marker')) return;
+            var m = c.getAttribute('data-scroll-fixed');
+            if (m === 'top' || m === 'bottom' || m === 'custom' || m === 'floating' || m === 'smart') {
+                var z = parseInt(c.style.zIndex, 10) || 100000;
+                if (z >= 140000 && z <= 179900 && z > maxChromeZ) maxChromeZ = z;
+                chromeSiblings.push({ el: c, z: z });
+            }
+        });
+        if (chromeSiblings.length === 0) return;
+        chromeSiblings.sort(function(a, b) { return a.z - b.z; });
+        var nextChromeZ = maxChromeZ;
+        chromeSiblings.forEach(function(item) {
+            if (item.z < 140000) {
+                nextChromeZ = Math.min(179900, nextChromeZ + 10);
+                item.el.style.zIndex = String(nextChromeZ);
+            }
+        });
+        var firstChromeEl = chromeSiblings[0].el;
+        if (firstChromeEl && firstChromeEl.parentNode === parent && stickyEl && stickyEl.parentNode === parent) {
+            var pos = stickyEl.compareDocumentPosition ? stickyEl.compareDocumentPosition(firstChromeEl) : 0;
+            var precedingFlag = (typeof Node !== 'undefined' && Node.DOCUMENT_POSITION_PRECEDING) || 2;
+            if (pos & precedingFlag) {
+                parent.insertBefore(stickyEl, firstChromeEl);
+            }
+        }
+    }
 
     // Register Message Handler for Dynamic Toggle
     if (!window.v4MessageHandlers) window.v4MessageHandlers = {};
@@ -480,7 +542,8 @@ window.v4ScrollPinScript = `
         }
 
         var maxNormalZ = 1000;
-        var maxFixedZ = 100000;
+        var maxStickyZ = 100000;
+        var maxViewportHudZ = 140000;
         var allComps = document.querySelectorAll ? document.querySelectorAll('.bychoi-component') : [];
         allComps.forEach(function(c) {
             if (c.parentElement && c.parentElement.classList && c.parentElement.classList.contains('bychoi-group')) return;
@@ -493,7 +556,12 @@ window.v4ScrollPinScript = `
             }
             if (z >= 190000) return;
             if (c.hasAttribute('data-scroll-fixed')) {
-                if (z >= 100000 && z <= 179900 && z > maxFixedZ) maxFixedZ = z;
+                var fMode = c.getAttribute('data-scroll-fixed');
+                if (fMode === 'sticky' || fMode === 'sticky-bottom') {
+                    if (z >= 100000 && z <= 139900 && z > maxStickyZ) maxStickyZ = z;
+                } else {
+                    if (z >= 140000 && z <= 179900 && z > maxViewportHudZ) maxViewportHudZ = z;
+                }
             } else {
                 if (z < 69900 && z > maxNormalZ) maxNormalZ = z;
             }
@@ -518,8 +586,9 @@ window.v4ScrollPinScript = `
                 });
             } else if (isObjFixed) {
                 var effectiveMode = (d.mode === 'floating') ? 'custom' : d.mode;
+                var isStickySubTier = (effectiveMode === 'sticky' || effectiveMode === 'sticky-bottom');
 
-                // Backup current normal Z-index before elevating to Tier 2 (100,000+)
+                // Backup current normal Z-index before elevating to Tier 5 (100,000+)
                 var currentNormalZ = parseInt(el.style.zIndex, 10);
                 if (!isNaN(currentNormalZ) && currentNormalZ < 100000) {
                     el.setAttribute('data-pre-fixed-z', String(currentNormalZ));
@@ -530,31 +599,51 @@ window.v4ScrollPinScript = `
                     }
                 }
 
-                maxFixedZ = Math.min(179900, maxFixedZ + 10);
-                var targetZ = maxFixedZ;
+                var targetZ;
+                if (isStickySubTier) {
+                    maxStickyZ = Math.min(139900, maxStickyZ + 10);
+                    targetZ = maxStickyZ;
+                } else {
+                    maxViewportHudZ = Math.min(179900, maxViewportHudZ + 10);
+                    targetZ = maxViewportHudZ;
+                }
                 el.setAttribute('data-scroll-fixed', effectiveMode);
                 el.style.zIndex = String(targetZ);
                 el.style.willChange = 'transform';
 
                 if (effectiveMode === 'custom') {
-                    var targetY = (d.targetY !== undefined && d.targetY !== null) ? d.targetY : (parseFloat(el.style.top) || el.offsetTop || 0);
+                    var fallbackTargetY = el.hasAttribute('data-scroll-target-y') ? (parseFloat(el.getAttribute('data-scroll-target-y')) || 0) : (parseFloat(el.style.top) || el.offsetTop || 0);
+                    var targetY = (d.targetY !== undefined && d.targetY !== null) ? d.targetY : fallbackTargetY;
                     el.setAttribute('data-scroll-target-y', String(Math.round(targetY)));
                     el.removeAttribute('data-scroll-sticky-top');
                     el.removeAttribute('data-scroll-sticky-bottom');
+                    el.removeAttribute('data-scroll-sticky-max-y');
                 } else if (effectiveMode === 'sticky') {
-                    var stickyTop = (d.stickyTop !== undefined && d.stickyTop !== null) ? d.stickyTop : 0;
+                    var fallbackStickyTop = el.hasAttribute('data-scroll-sticky-top') ? (parseFloat(el.getAttribute('data-scroll-sticky-top')) || 0) : 0;
+                    var stickyTop = (d.stickyTop !== undefined && d.stickyTop !== null) ? d.stickyTop : fallbackStickyTop;
                     el.setAttribute('data-scroll-sticky-top', String(Math.round(stickyTop)));
+                    if (d.stickyMaxY !== undefined) {
+                        var parsedMaxY = (d.stickyMaxY === null || d.stickyMaxY === '') ? 0 : parseFloat(d.stickyMaxY);
+                        if (!isNaN(parsedMaxY) && parsedMaxY > 0) {
+                            el.setAttribute('data-scroll-sticky-max-y', String(Math.round(parsedMaxY)));
+                        } else {
+                            el.removeAttribute('data-scroll-sticky-max-y');
+                        }
+                    }
                     el.removeAttribute('data-scroll-target-y');
                     el.removeAttribute('data-scroll-sticky-bottom');
                 } else if (effectiveMode === 'sticky-bottom') {
-                    var stickyBottom = (d.stickyBottom !== undefined && d.stickyBottom !== null) ? d.stickyBottom : 0;
+                    var fallbackStickyBottom = el.hasAttribute('data-scroll-sticky-bottom') ? (parseFloat(el.getAttribute('data-scroll-sticky-bottom')) || 0) : 0;
+                    var stickyBottom = (d.stickyBottom !== undefined && d.stickyBottom !== null) ? d.stickyBottom : fallbackStickyBottom;
                     el.setAttribute('data-scroll-sticky-bottom', String(Math.round(stickyBottom)));
                     el.removeAttribute('data-scroll-target-y');
                     el.removeAttribute('data-scroll-sticky-top');
+                    el.removeAttribute('data-scroll-sticky-max-y');
                 } else {
                     el.removeAttribute('data-scroll-target-y');
                     el.removeAttribute('data-scroll-sticky-top');
                     el.removeAttribute('data-scroll-sticky-bottom');
+                    el.removeAttribute('data-scroll-sticky-max-y');
                 }
 
                 if (d.effect && (d.effect === 'hide-down' || d.effect === 'hide-up')) {
@@ -597,13 +686,14 @@ window.v4ScrollPinScript = `
                     // Elevate DOM hierarchy to topmost sibling to prevent any stacking context collisions
                     var parent = el.parentElement;
                     if (parent) {
-                        var trailingRef = Array.from(parent.children).find(function(c) {
-                            return (c.classList && c.classList.contains('v4-pin-layer')) || (!c.classList.contains('bychoi-component') && (c.tagName === 'SCRIPT' || c.id === 'v4-inlined-script'));
-                        });
+                        var trailingRef = _findTrailingLayerNode(parent);
                         if (trailingRef && trailingRef.parentNode === parent) {
                             parent.insertBefore(el, trailingRef);
                         } else {
                             parent.appendChild(el);
+                        }
+                        if (isStickySubTier) {
+                            _ensureStickyUnderViewportChrome(parent, el);
                         }
 
                         // Auto-sync any description pins sitting on this newly pinned host using bounding rect coordinates
@@ -672,6 +762,7 @@ window.v4ScrollPinScript = `
                     el.removeAttribute('data-scroll-target-y');
                     el.removeAttribute('data-scroll-sticky-top');
                     el.removeAttribute('data-scroll-sticky-bottom');
+                    el.removeAttribute('data-scroll-sticky-max-y');
                     el.removeAttribute('data-scroll-divider');
                     el.removeAttribute('data-scroll-divider-active');
                     el.style.removeProperty('transform');
@@ -686,6 +777,7 @@ window.v4ScrollPinScript = `
                             desc.removeAttribute('data-scroll-target-y');
                             desc.removeAttribute('data-scroll-sticky-top');
                             desc.removeAttribute('data-scroll-sticky-bottom');
+                            desc.removeAttribute('data-scroll-sticky-max-y');
                             desc.removeAttribute('data-scroll-divider');
                             desc.removeAttribute('data-scroll-divider-active');
                             desc.style.removeProperty('transform');
@@ -764,6 +856,74 @@ window.v4ScrollPinScript = `
 
         ScrollPinEngine.scheduleUpdate();
         if (typeof window.markDirty === 'function') window.markDirty();
+    };
+
+    window.v4MessageHandlers['BYCHOI_CAPTURE_STICKY_LIMIT'] = function(d) {
+        if (!d || typeof d !== 'object') return;
+        var ids = d.ids || (d.id ? [d.id] : []);
+        if (ids.length === 0) return;
+        var firstEl = document.getElementById(ids[0]);
+        if (!firstEl) return;
+
+        var scrollArea = (window.ResponsiveFrameUtils && typeof window.ResponsiveFrameUtils.getScrollArea === 'function')
+            ? window.ResponsiveFrameUtils.getScrollArea(firstEl)
+            : (firstEl.closest ? firstEl.closest('.mobile-content-area, .mobile-content, .pc-content-area, .pc-content') : null);
+        if (!scrollArea) {
+            scrollArea = document.scrollingElement || document.documentElement || document.body || window;
+        }
+
+        var scrollTop = scrollArea.scrollTop || 0;
+        var domTop = parseFloat(firstEl.style.top) || 0;
+        var elH = firstEl.offsetHeight || parseFloat(firstEl.style.height) || 0;
+        var rawStickyTop = firstEl.getAttribute('data-scroll-sticky-top');
+        var stickyTop = (rawStickyTop !== null && rawStickyTop !== '') ? parseFloat(rawStickyTop) : 0;
+        if (isNaN(stickyTop)) stickyTop = 0;
+
+        var scrollDistanceToStick = Math.max(0, domTop - stickyTop);
+        if (scrollTop <= scrollDistanceToStick) {
+            _dispatchParentMsg({
+                type: 'BYCHOI_SHOW_TOAST',
+                message: '프레임을 고정 정지시킬 위치까지 스크롤한 뒤 [현위치]를 눌러주세요.'
+            });
+            return;
+        }
+
+        var capturedMaxY = Math.round(scrollTop + stickyTop + elH);
+        if (window.V4UndoManager && typeof window.V4UndoManager.saveState === 'function') {
+            window.V4UndoManager.saveState();
+        }
+
+        ids.forEach(function(targetId) {
+            var el = document.getElementById(targetId);
+            if (!el || el.classList.contains('pin-marker') || el.classList.contains('text-marker')) return;
+            el.setAttribute('data-scroll-fixed', 'sticky');
+            if (!el.hasAttribute('data-scroll-sticky-top')) {
+                el.setAttribute('data-scroll-sticky-top', String(Math.round(stickyTop)));
+            }
+            el.setAttribute('data-scroll-sticky-max-y', String(capturedMaxY));
+            var curZ = parseInt(el.style.zIndex, 10);
+            if (isNaN(curZ) || curZ < 100000 || curZ >= 140000) {
+                el.style.zIndex = '100010';
+            }
+            if (el.parentElement) {
+                _ensureStickyUnderViewportChrome(el.parentElement, el);
+            }
+        });
+
+        ScrollPinEngine.updatePins();
+        if (typeof window.markDirty === 'function') window.markDirty();
+
+        _dispatchParentMsg({
+            type: 'BYCHOI_STICKY_LIMIT_CAPTURED',
+            id: firstEl.id,
+            ids: ids,
+            stickyMaxY: capturedMaxY,
+            stickyTop: Math.round(stickyTop)
+        });
+        _dispatchParentMsg({
+            type: 'BYCHOI_SHOW_TOAST',
+            message: '스티키 하단 정지선(STOP Y)이 ' + capturedMaxY + 'px 로 설정되었습니다.'
+        });
     };
 
     // Auto-bootstrap

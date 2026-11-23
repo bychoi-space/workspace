@@ -2326,7 +2326,8 @@ body.editor-page .v4-btn-tool-36,
 body.editor-page .v4-btn-accent-inactive-sm,
 body.editor-page .v4-btn-accent-inactive-md,
 body.editor-page .v4-cell-align-btn:not(.active),
-body.editor-page .scroll-pin-btn:not(.active) {
+body.editor-page .scroll-pin-btn:not(.active),
+body.editor-page .scroll-pin-capture-btn {
     background: var(--ed-toggle-idle-bg) !important;
     border: 1px solid var(--ed-toggle-idle-border) !important;
     color: var(--ed-toggle-idle-text) !important;
@@ -2346,7 +2347,8 @@ body.editor-page .v4-btn-tool-36:hover,
 body.editor-page .v4-btn-accent-inactive-sm:hover,
 body.editor-page .v4-btn-accent-inactive-md:hover,
 body.editor-page .v4-cell-align-btn:not(.active):hover,
-body.editor-page .scroll-pin-btn:not(.active):hover {
+body.editor-page .scroll-pin-btn:not(.active):hover,
+body.editor-page .scroll-pin-capture-btn:hover {
     background: var(--ed-surface-3) !important;
     border-color: var(--ed-border-hover) !important;
     color: var(--ed-text-1) !important;

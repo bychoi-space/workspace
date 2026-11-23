@@ -62,6 +62,9 @@ window.rebindInspectorDOM = function () {
     DOM.btnPinPosContent = get('btn-pin-pos-content');
     DOM.btnPinPosFixed = get('btn-pin-pos-fixed');
     DOM.scrollPinOffsetInput = get('scroll-pin-offset-input');
+    DOM.scrollPinLimitBar = get('scroll-pin-limit-bar');
+    DOM.scrollPinLimitInput = get('scroll-pin-limit-input');
+    DOM.btnScrollPinCaptureLimit = get('btn-scroll-pin-capture-limit');
 
     if (typeof window.initUnifiedLabels === 'function') {
         window.initUnifiedLabels();
@@ -218,6 +221,9 @@ window.DOM = {
     btnPinPosContent: get('btn-pin-pos-content'),
     btnPinPosFixed: get('btn-pin-pos-fixed'),
     scrollPinOffsetInput: get('scroll-pin-offset-input'),
+    scrollPinLimitBar: get('scroll-pin-limit-bar'),
+    scrollPinLimitInput: get('scroll-pin-limit-input'),
+    btnScrollPinCaptureLimit: get('btn-scroll-pin-capture-limit'),
     // Alignment
     alignBar: get('selection-align-bar'),
     btnAlignLeft: get('btn-align-left'),

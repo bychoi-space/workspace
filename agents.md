@@ -127,7 +127,7 @@
     - **오브젝트 프로퍼티 3중 판정 및 강제 동기화**: `window.updateProperties(compStyles, isNewSelectionExplicit)` 확장 인터페이스를 통해 신규 컴포넌트 선택 여부를 3중 판정(`isNewSelectionExplicit === true || compStyles.id !== state.previousEditingIndex || compStyles.id !== state._lastInspectorCompId`)하고, 타이핑 중 판정(`isTypingInInspector`) 오작동을 리셋하여 동일 쉐입(Rect ➔ Rect 등) 전환 시에도 가로/세로 크기(`DOM.propWidth`, `DOM.propHeight`)를 100% 즉시 갱신합니다.
     - **`inspector_atoms.js` / `inspector_atoms_inputs.js` / `inspector_atoms_advanced.js` (`window.InspectorAtoms`)**: 위젯형 컨트롤(스테퍼, 셀렉트박스, 파일업로드, 알림, 버튼, 토글 및 공통 헬퍼 `window.InspectorAtomsShared`), 폼 입력형 아톰(체크박스/라디오, 텍스트박스/텍스트에어리어, 서치바, 데이트피커), 고급 인터랙티브 아톰(마우스 커서, 웹 에디터)의 인스펙터 속성 동기화 및 이벤트를 3개 도메인 모듈로 분리 전담하는 SSOT입니다.
     - **`inspector_popup.js` (`window.InspectorPopup`)**: 팝업 윈도우 컴포넌트(`v4-atom-popup`)의 크기, 테두리, 배경색, 타이틀, 버튼 텍스트/스타일 등 인스펙터 속성 동기화 및 캔버스 양방향 이벤트 제어 전담 SSOT 모듈.
-    - **`inspector_scroll_pin.js` (`window.InspectorScrollPin`)**: 반응형 화면 및 캔버스 요소의 스크롤 핀(상단/하단/커스텀/스티키), 뷰포트 고정 모드 및 이펙트(`data-scroll-effect`) 인스펙터 바인딩과 UI 동기화 전담 SSOT 모듈.
+    - **`inspector_scroll_pin.js` (`window.InspectorScrollPin`)**: 반응형 화면 및 캔버스 요소의 스크롤 핀(상단/하단/커스텀/스티키 상·하), 상단 스티키 하단 정지선(`STOP Y` / `data-scroll-sticky-max-y` 및 `[현위치]` 캡처 `BYCHOI_CAPTURE_STICKY_LIMIT`), 뷰포트 고정 모드 및 이펙트(`data-scroll-effect`) 인스펙터 바인딩과 UI 동기화 전담 SSOT 모듈 (Gateway 7 무결성: `iframe.contentDocument` 직접 접근 없이 `MessageHub` 상태 기반으로 구동).
     - **`vctrl_inspector_actionbar.js` (`window.InspectorActionBar`)**: 다중 선택 액션 바(`#selection-actions-bar`), 그룹/그룹해제, 레이어 순서(앞/뒤), 정렬 및 균등 분배, 서식 복사/붙여넣기, 오브젝트 위치 잠금/해제 토글(`#btn-lock-object-action`, `Ctrl + Shift + L`), 그룹 위치·치수(`#prop-left-group`/`#prop-top-group`, `#group-dim-width`/`#group-dim-height`) 실시간 동기화 및 인스펙터 바디 재배치(`relocate`), 숨김(`hide`) 전담 SSOT 모듈.
     - **`vctrl_inspector_sync.js` (`window.InspectorPropertySync`)**: 컴포넌트 속성 동기화 디스패처 및 15개 컴포넌트 타입(Shape/Pin, Table, Line, Illustration, Icon, Atom, Popup, Accordion, Grid, Admin-Settings, Tab 등) 전용 프로퍼티 바인딩/추출 서브 동기화 전담 SSOT 모듈.
     - **`inspector_text_formatter.js` (`window.InspectorTextFormatter`)**: Quill 에디터와 캔버스 텍스트 셀 간 연속 공백 보존(`preserveConsecutiveSpaces`, 선행/다중 공백 NBSP 변환) 및 폰트 사이즈 인라인 정규화(`normalizeHtmlForQuill`)를 전담합니다.
@@ -239,14 +239,14 @@
   - **4. 인스펙터 UI/UX 아키텍처 (`#selection-scroll-pin-bar`)**:
     - **3+2 레이아웃 표준**: 좁은 사이드바 가로폭(270px 이하)에서 버튼 텍스트 말줄임 방지를 위해 1행 3버튼(`[일반]`, `[상단]`, `[하단]`) + 2행 2버튼(`[플로팅]`, `[스티키]`)으로 분리.
     - **동적 효과 바 (`#scroll-pin-effect-bar`)**: `[상단]` 또는 `[하단]` 선택 시 활성화되어 드롭다운으로 `상시 고정`, `스크롤 내릴 때 숨김`, `스크롤 올릴 때 숨김` 선택 제어.
-    - **동적 오프셋 바 (`#scroll-pin-offset-bar`)**: `[플로팅]` 또는 `[스티키]` 선택 시 뷰포트 $Y$ / 스티키 상단 여백 조절 입력창 노출.
-    - **상태 배지 (`#scroll-pin-status-badge`)**: 현재 설정된 고정 모드 및 방향 효과(예: `PIN TOP (↓숨김)`) 실시간 표시.
+    - **동적 오프셋 바 (`#scroll-pin-offset-bar`) 및 스티키 하한선 바 (`#scroll-pin-limit-bar`)**: `[플로팅]` 또는 `[스티키(상/하)]` 선택 시 뷰포트 $Y$ / 스티키 상·하단 여백 조절 입력창이 노출되며, `[스티키(상)]` 선택 시에는 오브젝트 하단이 지정된 본문 $Y$ 좌표 아래로 더 내려가지 않고 멈추어 본문과 함께 자연스럽게 스크롤 아웃되도록 제어하는 **`STOP Y (하한선)`** 입력창(`#scroll-pin-limit-input`, `data-scroll-sticky-max-y`, `0` 또는 공란 시 제한 해제)과 현재 프레임 스크롤 위치 기준 원클릭 자동 캡처 버튼(`[현위치]`, `#btn-scroll-pin-capture-limit`)이 함께 노출됨.
+    - **상태 배지 (`#scroll-pin-status-badge`)**: 현재 설정된 고정 모드, 스티키 하한선(`STICKY (≤770)`), 및 방향 효과(예: `PIN TOP (↓숨김)`) 실시간 표시.
   - **5. 엔진 무결성 및 성능 보장**:
     - `vctrl_iframe_scroll_pin.js`의 `ScrollPinEngine`:
       - `WeakMap` 기반 스크롤 컨테이너별 독립 상태(`lastScrollTop`, `direction`, `isHidden`) 안전 격리.
-      - `requestAnimationFrame` 단일 렌더 루프 및 GPU 가속(`translate3d`)을 통한 60fps 무지연 렌더링.
-      - Z-Index 4대 티어(Tier 2: 100,000~179,999, Tier 3: 200,050) 준수.
-      - In-Place Undo 및 스크린 저장/살균(`ScreenSanitizer.cleanDOM`) 시 런타임 transform만 정제하고 DOM 데이터 속성(`data-scroll-fixed`, `data-scroll-effect`, `data-scroll-target-y`, `data-scroll-sticky-top`)은 100% 영구 보존.
+      - `requestAnimationFrame` 단일 렌더 루프 및 GPU 가속(`translate3d`)을 통한 60fps 무지연 렌더링 (`sticky` 모드 하한선 설정 시 `maxAllowedDy = Math.max(0, stickyMaxY - (domTop + elH))` 클램핑 적용).
+      - Z-Index 계층 정합성: `FIXED_HUD`(`100,000~179,999`) 대역 내부에서 인플로우 스티키(`sticky`, `sticky-bottom`: `100,000~139,900`)를 뷰포트 상시 고정 크롬(`top`, `bottom`, `custom`: `140,000~179,900`) 아래 서브 티어로 배치하여, 하한선 도달 후 본문과 함께 위로 스크롤되는 스티키 박스가 상단 GNB(`top`) 밑으로 자연스럽게 통과하도록 보장.
+      - In-Place Undo 및 스크린 저장/살균(`ScreenSanitizer.cleanDOM`) 시 런타임 transform만 정제하고 DOM 데이터 속성(`data-scroll-fixed`, `data-scroll-effect`, `data-scroll-target-y`, `data-scroll-sticky-top`, `data-scroll-sticky-bottom`, `data-scroll-sticky-max-y`)은 100% 영구 보존.
 
 - **도형/오브젝트 서식 복사·붙여넣기 및 배경 투명도 파이프라인 (Format Painter & Fill Opacity SSOT)**:
   - **1. 클립보드 데이터 구조와 단일 진실 공급원 (`window.top.__bychoi_global_style_clipboard__`)**:

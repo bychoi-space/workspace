@@ -712,5 +712,61 @@ window.V4_COMPONENT_LIBRARY.illustrations = [
             thumb: 'assets/illustrations/order_discount_simulation_3d.png',
             previewHtml: `<img src="assets/illustrations/order_discount_simulation_3d.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
             html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/order_discount_simulation_3d.png" alt="3D 복합 할인 및 안분 정산 엔진" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-workspace-portal',
+            name: '[3D] 기획·팀관리 포털',
+            title: '3D 기획 통합 워크스페이스 & 팀 성과관리 포털 허브 (Workspace & Team Portal)',
+            koName: '3d 워크스페이스 팀관리 포털 기획서 kpi 체크리스트 대시보드 workspace team portal',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/report_3m_workspace_portal.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_workspace_portal.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/report_3m_workspace_portal.png" alt="3D 기획 통합 워크스페이스 및 팀 관리 포털" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-sisun-diagnosis',
+            name: '[3D] 커머스 현황진단',
+            title: '3D 온라인몰 운영 페인포인트 & 레거시 시스템 진단 (E-Commerce Diagnosis)',
+            koName: '3d 시선닷컴 현황 진단 레거시 개선과제 병목 돋보기 점검 diagnosis legacy ecommerce',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/report_3m_sisun_diagnosis.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_sisun_diagnosis.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/report_3m_sisun_diagnosis.png" alt="3D 이커머스 운영 현황 진단" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-ai-allrounder',
+            name: '[3D] AI 올라운더 팀',
+            title: '3D AI 프로페셔널 무경계 올라운더 팀 빌딩 (AI All-Rounder Team)',
+            koName: '3d ai 인공지능 프로페셔널 팀빌딩 기획 디자인 퍼블리싱 올라운더 협업 allrounder team',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/report_3m_ai_allrounder_team.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_ai_allrounder_team.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/report_3m_ai_allrounder_team.png" alt="3D AI 프로페셔널 올라운더 팀 빌딩" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
+        },
+        {
+            id: 'v4-ill-report-integrated-emd',
+            name: '[3D] 통합 e편성·세일즈',
+            title: '3D 온라인 MD 통합 e편성 & 메이저 프로모션 세일즈 견인 (Integrated e-MD)',
+            koName: '3d 온라인md e편성 통합프로모션 메이저기획전 세일즈 매출견인 큐레이션 online md sales',
+            group: '3d_admin',
+            groupTitle: '🏢 3D Admin 시스템',
+            category: 'Illustration',
+            width: '200px',
+            height: '200px',
+            thumb: 'assets/illustrations/report_3m_integrated_emd_sales.png',
+            previewHtml: `<img src="assets/illustrations/report_3m_integrated_emd_sales.png" style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px;">`,
+            html: `<div class="v4-illustration-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: auto;"><img src="assets/illustrations/report_3m_integrated_emd_sales.png" alt="3D 통합 온라인 MD 및 메이저 기획전 세일즈 견인" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none;"></div>`
         }
 ];

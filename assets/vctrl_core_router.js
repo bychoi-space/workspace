@@ -77,6 +77,11 @@
                 window.InspectorDimmedLayer.syncFromIframe(data);
             }
         },
+        'BYCHOI_STICKY_LIMIT_CAPTURED': function (data) {
+            if (window.InspectorScrollPin && typeof window.InspectorScrollPin.syncFromIframe === 'function') {
+                window.InspectorScrollPin.syncFromIframe(data);
+            }
+        },
         'BYCHOI_UPDATE_PIN_POS': function (data) {
             if (window.state && window.state.activeFile && window.state.activeFile.meta.description) {
                 const pin = window.state.activeFile.meta.description[data.index];

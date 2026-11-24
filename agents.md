@@ -540,12 +540,19 @@
 ## 📐 스크린 에이전트 직접 제작/빌드 시 9대 불변 대원칙 (Screen Authoring Standards)
 > AI가 사용자 요청으로 워크스페이스 에디터의 스크린(HTML)을 직접 그릴 때는 반드시 `workspace-editor-screen-authoring` 스킬과 아래 9대 원칙을 100% 준수해야 합니다.
 > - **참조 벤치마크 스크린 (SSOT Benchmark Screens)**:
+>   - **[경영진/임원 보고서 표준 (Executive Report Gold Standard — Supabase `project=three_month_review`)]**: `01_Three_Month_Review_900.html` (2단 회고·진단 표준) 및 `02_Future_Team_Roadmap_900.html` (3단 전략 로드맵 표준)
 >   1. [03_Admin_System_Development_Roadmap_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/03_Admin_System_Development_Roadmap_900.html): 어드민 시스템 로드맵 (100% 원자적 오브젝트 분리 + 3D 도메인 일러스트 결합)
 >   2. [04_Front_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/04_Front_System_Milestone_Timeline_900.html): 프론트 중장기 마일스톤 (상·하 교차 웨이브 인포그래픽 + `#canvas_bg_layer` 무간섭 배경 적용)
 >   3. [05_Admin_System_Milestone_Timeline_900.html](file:///c:/Users/sisun/ai_work/data/operation_process/05_Admin_System_Milestone_Timeline_900.html): 어드민 시스템 7단계 타임라인 인포그래픽
 >   4. [10_Product_Ranking_Rules_850.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/10_Product_Ranking_Rules_850.html): 상품 랭킹 산정 룰 프로세스 & 정책 다이어그램
 >   5. [11_Daily_Ranking_Batch_Percentile_851.html](file:///c:/Users/sisun/ai_work/data/p_lus0e/11_Daily_Ranking_Batch_Percentile_851.html): 일일 랭킹 배치 파이프라인 & 백분위수 정규화 시뮬레이션 테이블 (최소 13px 폰트 규격 엄수)
 >   6. [01_Benchmark_Report_382.html](file:///c:/Users/sisun/ai_work/data/p_bujl8/01_Benchmark_Report_382.html): 이커머스 주문서 최대 할인 벤치마크 리포트
+- **0. 경영진/임원 보고서(Executive Report) 5대 시각 표준 (`project=three_month_review` 계승 필수)**:
+  1. **장문 줄글 및 장식용 모션 전면 배제**: 불필요하게 긴 문단 서술을 배제하고 카드당 **핵심 헤드라인(`15px`, `800`) 1줄 + 보조 설명(`13.5px`, `500`) 1줄**로 압축하며, 화면을 산만하게 만드는 장식용 모션 그래픽(`Animated WebP` 스피너·프로그레스 바 등)을 보고서 장표에 임의 삽입하지 않는다.
+  2. **정사각형 여백 없는 풀와이드(`Wide Banner`) 3D 스튜디오 일러스트 표준**: 컬럼 내부에 작은 정사각형(`1:1`) 이미지를 놓아 좌우 빈 여백이나 배경 경계선이 남는 구성을 금지한다. 컬럼 내부 가로폭을 100% 채우는 **파스텔 스튜디오 와이드 3D 배너(`object-fit: cover`, `border-radius: 12px`, 이미지 내 글자 각인 0건)**를 제작·적용한다 (**3단 컬럼**: `460×230px` `2:1` / **2단 컬럼**: `730×200px` `3.65:1`, 2x Retina PNG 저장 및 `vctrl_component_illustrations.js` 등록).
+  3. **컬럼별 단일 시맨틱 컬러 공식 통일 & 특정 컬럼 다크 반전 금지**: 중앙 컬럼만 다크 네이비(`#0f172a`) 반전 배지로 처리하거나 한 컬럼 안에 여러 원색 배지를 섞는 행위를 금지한다. 모든 컬럼은 동일한 시각 공식(`솔리드 컬러 배지+백색 텍스트` ➔ `파스텔 와이드 3D 배너` ➔ `파스텔 요약 블록 + 순백색 KPI 서브카드` ➔ `#f8fafc 하단 액션 카드 2단`)으로 통일한다 (3단 표준: **Royal Blue `#2563eb` / Indigo `#4f46e5` / Emerald `#059669`** · 2단 회고/진단 표준: **Royal Blue `#2563eb` / Rose Coral `#e11d48`**).
+  4. **장표 간 수직 Y축 리듬 동기화**: 연속된 보고서 장표 전환 시 시선이 흔들리지 않도록 글로벌 헤더(`20~70px`), 와이드 배너 하단(`430px`), 중단 요약 블록(`450~600px`, 내부 화이트 서브카드 `500~580px`), 하단 상세 카드 2단(`620~730px`, `750~860px`), 외곽 컬럼 하단(`880px`) 기준선을 일치시킨다.
+  5. **사전 글자 폭 검증 및 뱃지 패딩 제어**: 모든 1줄 텍스트와 뱃지는 글자 수 기반 예상 픽셀 폭이 박스 `width` 내에 여유 있게 들어오도록 설계하여 1~2글자 줄바꿈 이탈을 원천 차단한다.
 - **1. 사실 기반 데이터 전용 (Fact-based Data Only)**: 무조건 사실 기반 데이터로만 스크린을 그린다. 거짓된 데이터나, AI가 상상하는 값을 수치화로 넣지 않는다. (환각 금지, 기획서/요청 데이터 100% 팩트 기반)
 - **2. LIBRARY 표준 오브젝트 100% 활용 (Native Library Objects Only)**: 스크린에 존재하는 모든 오브젝트는 LIBRARY에 존재하는 도형(`.v4-shape`), 아톰, 아이콘(`.bychoi-icon` SVG)을 활용한다. 비표준 임의 HTML 태그나 커스텀 스타일 클래스는 금지한다.
 - **3. 최소 단위 원자적 분리/파편화 (Atomic Granularity & Separation)**: 스크린을 구성하는 오브젝트는 최소 단위로 잘게 쪼개져서 파편화되어야 한다. 사용자가 캔버스 위에서 직접 내용을 클릭하여 수정하기 원활하게 하기 위함이다. 카드 1개를 구성하더라도 [배경 쉐입] + [독립 아이콘] + [독립 타이틀] + [독립 뱃지] + [독립 설명]으로 각각의 `.bychoi-component`로 완전 분리 배치해야 한다.

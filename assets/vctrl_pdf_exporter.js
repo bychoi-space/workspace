@@ -649,13 +649,13 @@ async function captureScreenCanvasForPdf(rawHtml, screenFileName, projectName, s
     if (isLongPage) {
         screenH = Math.round(dynamicContentH + 100);
     } else {
-        const sizeRegex = new RegExp("(?:\\.page|\\.artboard)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px[^\\u007D]*height:\\s*(\\d+)px", "i");
+        const sizeRegex = new RegExp("(?:\\.page|\\.artboard|\\.canvas)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px[^\\u007D]*height:\\s*(\\d+)px", "i");
         const sizeMatch = rawHtml.match(sizeRegex);
         if (sizeMatch) {
             screenW = parseInt(sizeMatch[1], 10) || 1600;
             screenH = parseInt(sizeMatch[2], 10) || 900;
         } else {
-            const wRegex = new RegExp("(?:\\.page|\\.artboard)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px", "i");
+            const wRegex = new RegExp("(?:\\.page|\\.artboard|\\.canvas)\\s*\\u007B[^\\u007D]*width:\\s*(\\d+)px", "i");
             const wMatch = rawHtml.match(wRegex);
             if (wMatch) screenW = parseInt(wMatch[1], 10) || 1600;
         }
@@ -694,7 +694,9 @@ async function captureScreenCanvasForPdf(rawHtml, screenFileName, projectName, s
         const targetEl = iframeDoc.documentElement || iframeDoc.body;
 
         // Reconcile numbered Pin Badges (1..N) onto screen DOM from metadata.json description SSOT
-        reconcilePinsInPdfDom(iframeDoc, descriptions, isResponsive);
+        if (typeof window.reconcilePinsInPdfDom === 'function') {
+            window.reconcilePinsInPdfDom(iframeDoc, descriptions, isResponsive);
+        }
 
         try {
             if (iframeDoc.fonts && typeof iframeDoc.fonts.ready?.then === 'function') {
@@ -789,14 +791,14 @@ async function captureScreenCanvasForPdf(rawHtml, screenFileName, projectName, s
         }
     }
 
-    if (descriptions.length > 0 && screenCanvas) {
-        const { descCanvas, descW, descH } = await renderDescriptionPanelCanvasForPdf(
+    if (descriptions.length > 0 && screenCanvas && typeof window.renderDescriptionPanelCanvasForPdf === 'function' && typeof window.compositeScreenAndDescriptionCanvas === 'function') {
+        const { descCanvas, descW, descH } = await window.renderDescriptionPanelCanvasForPdf(
             descriptions,
             screenContext,
             screenH,
             renderScale
         );
-        return compositeScreenAndDescriptionCanvas(
+        return window.compositeScreenAndDescriptionCanvas(
             screenCanvas,
             screenW,
             screenH,
@@ -866,7 +868,13 @@ async function exportProjectToPDF(projectName, projectMeta = null) {
             const screenFileName = screenFiles[i];
             const screenInfo = screensObj[screenFileName] || {};
             const screenTitle = screenInfo.title || screenFileName.replace('.html', '');
-            const descriptions = normalizeScreenDescriptions(screenInfo);
+            const descriptions = typeof window.normalizeScreenDescriptions === 'function'
+                ? window.normalizeScreenDescriptions(screenInfo)
+                : (Array.isArray(screenInfo.description)
+                    ? screenInfo.description
+                    : (typeof screenInfo.description === 'string' && screenInfo.description.trim()
+                        ? [{ type: 'pin', text: screenInfo.description.trim(), x: 50, y: 50 }]
+                        : []));
 
             const percent = Math.round(10 + ((i + 1) / screenFiles.length) * 85);
             const descStatusSuffix = descriptions.length > 0 ? ` + Description ${descriptions.length}건` : '';

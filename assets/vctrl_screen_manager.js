@@ -778,9 +778,11 @@ async function _syncCopyScreenTargetProject(opts) {
     if (moveGroup && isMoveCheck) {
         if (isSameProject) {
             isMoveCheck.checked = false;
-            moveGroup.style.opacity = '0.5';
+            moveGroup.classList.add('dim');
+            moveGroup.style.opacity = '0.55';
             isMoveCheck.disabled = true;
         } else {
+            moveGroup.classList.remove('dim');
             moveGroup.style.opacity = '1';
             isMoveCheck.disabled = false;
         }
@@ -792,7 +794,7 @@ async function _syncCopyScreenTargetProject(opts) {
         try {
             if (noticeEl) {
                 noticeEl.innerText = '대상 프로젝트 정보 확인 중...';
-                noticeEl.style.color = '#94a3b8';
+                noticeEl.style.color = 'var(--ed-text-3, #64748b)';
             }
             const targetMeta = typeof fetchProjectMetadata === 'function' ? await fetchProjectMetadata(targetProj) : null;
             targetFiles = targetMeta && targetMeta.screens ? Object.keys(targetMeta.screens) : [];
@@ -819,7 +821,7 @@ async function _syncCopyScreenTargetProject(opts) {
     }
     if (noticeEl) {
         noticeEl.innerText = `* 대상 프로젝트: [${targetProj}] (총 ${targetFiles.length}개 화면)`;
-        noticeEl.style.color = '#94a3b8';
+        noticeEl.style.color = 'var(--ed-text-3, #64748b)';
     }
 }
 
@@ -887,11 +889,11 @@ window.handleCopyScreen = async function(sourceFileName) {
             const targetFiles = projectScreensCache[targetProj] || [];
             if (noticeEl) {
                 if (targetFiles.includes(val)) {
-                    noticeEl.innerText = '⚠️ 이미 존재하는 파일명입니다. 덮어쓰지 않도록 다른 파일명을 권장합니다.';
-                    noticeEl.style.color = '#f87171';
+                    noticeEl.innerText = '* 이미 존재하는 파일명입니다. 덮어쓰지 않도록 다른 파일명을 권장합니다.';
+                    noticeEl.style.color = 'var(--ed-notice-danger, #dc2626)';
                 } else {
                     noticeEl.innerText = '* 사용 가능한 파일명입니다.';
-                    noticeEl.style.color = '#4ade80';
+                    noticeEl.style.color = 'var(--ed-notice-success, #059669)';
                 }
             }
         };

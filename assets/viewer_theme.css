@@ -44,6 +44,8 @@ html[data-theme="dark"] {
     --ed-toggle-idle-bg: #181b25;
     --ed-toggle-idle-border: rgba(255, 255, 255, 0.1);
     --ed-toggle-idle-text: #94a3b8;
+    --ed-notice-success: #34d399;
+    --ed-notice-danger: #f87171;
 }
 
 html[data-theme="light"] {
@@ -89,6 +91,8 @@ html[data-theme="light"] {
     --ed-toggle-idle-bg: #ffffff;
     --ed-toggle-idle-border: #d5dbe7;
     --ed-toggle-idle-text: #475569;
+    --ed-notice-success: #059669;
+    --ed-notice-danger: #dc2626;
 }
 
 body.editor-page {
@@ -2831,6 +2835,65 @@ body.editor-page .dialog-message,
 body.editor-page .bg-upload-sub,
 body.editor-page .bg-color-custom-label {
     color: var(--ed-text-2) !important;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-height: 1.45;
+}
+
+body.editor-page .modal-card .form-label {
+    color: var(--ed-text-2) !important;
+    font-weight: 600 !important;
+}
+
+body.editor-page .modal-checkbox-box {
+    background: var(--ed-surface-2) !important;
+    border: 1px solid var(--ed-border) !important;
+    border-radius: 8px !important;
+}
+
+html[data-theme="light"] body.editor-page .modal-checkbox-box {
+    background: #f8fafc !important;
+    border-color: #dde3ee !important;
+}
+
+body.editor-page .modal-checkbox-label {
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .modal-checkbox-label.dim {
+    color: var(--ed-text-3) !important;
+}
+
+body.editor-page .modal-checkbox-label input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--ed-accent-solid);
+    flex-shrink: 0;
+}
+
+html[data-theme="light"] body.editor-page .bg-current-preview-box {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+}
+
+html[data-theme="light"] body.editor-page .bg-section-sub-badge,
+html[data-theme="light"] body.editor-page .bg-status-badge {
+    color: #0369a1 !important;
+    background: #e0f2fe !important;
+    border-color: #bae6fd !important;
+}
+
+html[data-theme="light"] body.editor-page .btn-sm-ghost {
+    color: #475569 !important;
+    border-color: #cbd5e1 !important;
+    background: #ffffff !important;
+}
+
+html[data-theme="light"] body.editor-page .btn-sm-ghost:hover {
+    color: #0f172a !important;
+    border-color: #94a3b8 !important;
+    background: #f1f5f9 !important;
 }
 
 body.editor-page .form-input,

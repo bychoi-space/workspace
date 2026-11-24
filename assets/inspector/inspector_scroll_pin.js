@@ -389,6 +389,21 @@
 
         if (shouldShow) {
             scrollPinBar.style.setProperty('display', 'flex', 'important');
+            const isActivePinMode = isPin || (currentFixed && currentFixed !== 'none');
+            if (isActivePinMode) {
+                scrollPinBar.classList.remove('is-collapsed');
+            } else if (scrollPinBar.dataset.userExpanded !== 'true') {
+                scrollPinBar.classList.add('is-collapsed');
+            }
+            const toggleHeader = document.getElementById('scroll-pin-toggle-header');
+            if (toggleHeader && !toggleHeader.dataset.boundCollapse) {
+                toggleHeader.dataset.boundCollapse = '1';
+                toggleHeader.addEventListener('click', function (ev) {
+                    ev.stopPropagation();
+                    const nextCollapsed = scrollPinBar.classList.toggle('is-collapsed');
+                    scrollPinBar.dataset.userExpanded = nextCollapsed ? 'false' : 'true';
+                });
+            }
             updateButtonsUI(currentFixed, isPin, {
                 targetY: targetY,
                 stickyTop: stickyTop,

@@ -542,7 +542,7 @@ window.handleEditScreen = async function(fileName) {
             const newDesc = /^\[object Object\](,\s*\[object Object\])*$/.test(rawDesc) ? "" : rawDesc;
             
             btnSubmit.disabled = true;
-            btnSubmit.innerText = "Saving...";
+            btnSubmit.innerText = "저장 중...";
             
             if (!state.projectMetadata.screens) state.projectMetadata.screens = {};
             state.projectMetadata.screens[fileName] = {
@@ -557,18 +557,37 @@ window.handleEditScreen = async function(fileName) {
             const saveMetaFn = window.saveProjectMetadata || (typeof saveProjectMetadata === 'function' ? saveProjectMetadata : null);
             if (typeof saveMetaFn === 'function') {
                 const success = await saveMetaFn(state.currentProject, state.projectMetadata);
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "변경사항 저장";
                 if (success) {
                     if (editModal) editModal.classList.remove('active');
-                    location.reload(); 
+                    if (Array.isArray(state.screens)) {
+                        const targetItem = state.screens.find(s => s && s.name === fileName);
+                        if (targetItem) targetItem.title = newTitle || fileName;
+                    }
+                    if (state.activeFile && state.activeFile.name === fileName) {
+                        state.activeFile.meta = state.projectMetadata.screens[fileName];
+                    }
+                    if (typeof window.renderScreenList === 'function') {
+                        window.renderScreenList(state.screens, state.activeFile?.name);
+                    }
+                    if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
+                        window.ResolutionEngine.syncScreenList();
+                    }
+                    if (typeof window.showToast === 'function') {
+                        window.showToast("화면 속성이 저장되었습니다.", "success");
+                    }
                 } else {
-                    alert("Failed to save project metadata. Please check authentication token.");
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerText = "Save Changes";
+                    if (window.Notification && typeof window.Notification.alert === 'function') {
+                        window.Notification.alert("화면 속성 저장에 실패했습니다. 로그인 권한을 확인해주세요.", "저장 오류", "error");
+                    } else {
+                        alert("화면 속성 저장에 실패했습니다. 로그인 권한을 확인해주세요.");
+                    }
                 }
             } else {
                 console.error("[Inspector] saveProjectMetadata is not defined on window.");
                 btnSubmit.disabled = false;
-                btnSubmit.innerText = "Save Changes";
+                btnSubmit.innerText = "변경사항 저장";
             }
         };
     }
@@ -917,16 +936,24 @@ window.handleCopyScreen = async function(sourceFileName) {
             const openAfter = openAfterCheck ? openAfterCheck.checked : true;
             const isMove = isMoveCheck ? isMoveCheck.checked : false;
 
+            const notifyWarn = (msg) => {
+                if (window.Notification && typeof window.Notification.alert === 'function') {
+                    window.Notification.alert(msg, '알림', 'warning');
+                } else {
+                    alert(msg);
+                }
+            };
+
             if (!targetProject) {
-                alert('복사 대상 프로젝트를 선택해주세요.');
+                notifyWarn('복사 대상 프로젝트를 선택해주세요.');
                 return;
             }
             if (!newTitle) {
-                alert('화면 명칭을 입력해주세요.');
+                notifyWarn('화면 명칭을 입력해주세요.');
                 return;
             }
             if (!newFilename) {
-                alert('새 파일명을 입력해주세요.');
+                notifyWarn('새 파일명을 입력해주세요.');
                 return;
             }
             if (!newFilename.toLowerCase().endsWith('.html')) {
@@ -935,7 +962,16 @@ window.handleCopyScreen = async function(sourceFileName) {
 
             const targetFiles = projectScreensCache[targetProject] || [];
             if (targetFiles.includes(newFilename)) {
-                const confirmed = confirm(`대상 프로젝트에 '${newFilename}' 파일이 이미 존재합니다.\n덮어쓰시겠습니까?`);
+                let confirmed = false;
+                if (window.Notification && typeof window.Notification.confirm === 'function') {
+                    confirmed = await window.Notification.confirm(
+                        `대상 프로젝트에 '${newFilename}' 파일이 이미 존재합니다.\n덮어쓰시겠습니까?`,
+                        '덮어쓰기 확인',
+                        'warning'
+                    );
+                } else {
+                    confirmed = confirm(`대상 프로젝트에 '${newFilename}' 파일이 이미 존재합니다.\n덮어쓰시겠습니까?`);
+                }
                 if (!confirmed) return;
             }
 
@@ -1059,16 +1095,68 @@ window.executeCopyScreen = async function(opts) {
             }
         }
 
-        // 8. Cleanup and Navigation
+        // 8. Cleanup and In-Place State Synchronization (Zero Page Reload)
         if (modal) modal.classList.remove('active');
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = isMove ? '이동하기' : '복사하기';
+        }
         if (typeof window.hideLoading === 'function') window.hideLoading();
 
-        if (openAfter) {
-            window.location.href = `viewer.html?project=${encodeURIComponent(targetProject)}&file=${encodeURIComponent(newFilename)}`;
-        } else {
-            if (isSameProject) {
-                window.location.reload();
+        if (isSameProject) {
+            state.projectMetadata = targetMeta;
+            if (!Array.isArray(state.screens)) state.screens = [];
+            const existingEntry = state.screens.find(s => s && s.name === newFilename);
+            if (existingEntry) {
+                existingEntry.title = newTitle;
             } else {
+                const newEntry = { name: newFilename, type: 'file', sha: '', title: newTitle };
+                const orderIdx = Array.isArray(targetMeta.screenOrder) ? targetMeta.screenOrder.indexOf(newFilename) : -1;
+                if (orderIdx !== -1 && orderIdx <= state.screens.length) {
+                    state.screens.splice(orderIdx, 0, newEntry);
+                } else {
+                    state.screens.push(newEntry);
+                }
+            }
+
+            const nextActiveName = openAfter ? newFilename : state.activeFile?.name;
+            if (typeof window.renderScreenList === 'function') {
+                window.renderScreenList(state.screens, nextActiveName);
+            }
+            if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
+                window.ResolutionEngine.syncScreenList();
+            }
+
+            if (openAfter && typeof window.loadScreen === 'function') {
+                const nextUrl = `viewer.html?project=${encodeURIComponent(targetProject)}&file=${encodeURIComponent(newFilename)}`;
+                window.history.pushState(null, '', nextUrl);
+                await window.loadScreen(newFilename);
+            }
+            if (typeof window.showToast === 'function') {
+                window.showToast('화면이 복제되었습니다.', 'success');
+            }
+        } else {
+            if (isMove && Array.isArray(state.screens)) {
+                state.screens = state.screens.filter(s => s.name !== sourceFileName);
+            }
+            if (openAfter) {
+                window.location.href = `viewer.html?project=${encodeURIComponent(targetProject)}&file=${encodeURIComponent(newFilename)}`;
+            } else {
+                if (isMove) {
+                    if (state.activeFile && state.activeFile.name === sourceFileName) {
+                        if (state.screens.length > 0 && typeof window.loadScreen === 'function') {
+                            const fallbackScreen = state.screens[0].name;
+                            window.history.replaceState(null, '', `viewer.html?project=${encodeURIComponent(sourceProject)}&file=${encodeURIComponent(fallbackScreen)}`);
+                            window.renderScreenList?.(state.screens, fallbackScreen);
+                            await window.loadScreen(fallbackScreen);
+                        } else {
+                            window.location.href = `viewer.html?project=${encodeURIComponent(sourceProject)}`;
+                            return;
+                        }
+                    } else if (typeof window.renderScreenList === 'function') {
+                        window.renderScreenList(state.screens, state.activeFile?.name);
+                    }
+                }
                 if (window.Notification && typeof window.Notification.alert === 'function') {
                     window.Notification.alert(
                         `'${newFilename}' 화면이 [${targetProject}] 프로젝트로 성공적으로 ${isMove ? '이동' : '복사'}되었습니다.`,
@@ -1100,20 +1188,24 @@ window.handleDeleteScreen = async function (name, sha) {
     try {
         if (typeof state !== 'undefined' && state.isReadOnly) return window.showAuthModal?.();
 
+        const scTitle = state.projectMetadata?.screens?.[name]?.title || '';
+        const displayLabel = (scTitle && scTitle !== name) ? `'${scTitle}' (${name})` : `'${name}'`;
+        const confirmMsg = `${displayLabel} 화면을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`;
+
         let confirmed = false;
         const dialogUI = window.NotificationUI || window.AppDialog || (window.Notification && typeof window.Notification.confirm === 'function' ? window.Notification : null);
         if (dialogUI && typeof dialogUI.confirm === 'function') {
             confirmed = await dialogUI.confirm(
-                `'${name}' 스크린을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
-                "스크린 삭제",
+                confirmMsg,
+                "화면 삭제",
                 "warning"
             );
         } else {
-            confirmed = window.confirm(`'${name}' 스크린을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`);
+            confirmed = window.confirm(confirmMsg);
         }
         if (!confirmed) return;
 
-        if (typeof window.showLoading === 'function') window.showLoading("Deleting: " + name);
+        if (typeof window.showLoading === 'function') window.showLoading("화면 삭제 중...");
 
         const deleteFn = window.deleteFileFromGitHub || (typeof deleteFileFromGitHub === 'function' ? deleteFileFromGitHub : null);
         let success = deleteFn ? await deleteFn(`${state.currentProject}/${name}`, sha) : false;
@@ -1122,12 +1214,16 @@ window.handleDeleteScreen = async function (name, sha) {
         }
 
         if (success) {
-            state.screens = state.screens.filter(s => s.name !== name);
+            const deletedIdx = Array.isArray(state.screens) ? state.screens.findIndex(s => s && s.name === name) : -1;
+            state.screens = Array.isArray(state.screens) ? state.screens.filter(s => s.name !== name) : [];
             if (state.projectMetadata && state.projectMetadata.screens) {
                 delete state.projectMetadata.screens[name];
             }
             if (state.projectMetadata && state.projectMetadata.screenOrder) {
                 state.projectMetadata.screenOrder = state.projectMetadata.screenOrder.filter(n => n !== name);
+            }
+            if (window.AutoSaveEngine && typeof window.AutoSaveEngine.clearDraft === 'function') {
+                window.AutoSaveEngine.clearDraft(state.currentProject, name);
             }
             const saveMetaFn = window.saveProjectMetadata || (typeof saveProjectMetadata === 'function' ? saveProjectMetadata : null);
             if (saveMetaFn) {
@@ -1135,9 +1231,54 @@ window.handleDeleteScreen = async function (name, sha) {
             }
 
             if (state.activeFile && state.activeFile.name === name) {
-                location.href = `viewer.html?project=${state.currentProject}`;
+                if (state.screens.length > 0 && typeof window.loadScreen === 'function') {
+                    const nextIdx = Math.min(Math.max(0, deletedIdx), state.screens.length - 1);
+                    const nextScreen = state.screens[nextIdx];
+                    window.history.replaceState(null, '', `viewer.html?project=${encodeURIComponent(state.currentProject)}&file=${encodeURIComponent(nextScreen.name)}`);
+                    if (typeof window.renderScreenList === 'function') {
+                        window.renderScreenList(state.screens, nextScreen.name);
+                    }
+                    await window.loadScreen(nextScreen.name);
+                    if (typeof window.showToast === 'function') {
+                        window.showToast("화면이 삭제되었습니다.", "info");
+                    }
+                } else {
+                    state.activeFile = null;
+                    state.connectors = [];
+                    const iframe = document.getElementById('main-iframe');
+                    if (iframe) {
+                        iframe.style.display = 'none';
+                        iframe.srcdoc = '';
+                    }
+                    const placeholder = document.getElementById('placeholder');
+                    if (placeholder) placeholder.style.display = 'flex';
+                    const placeholderTxt = document.getElementById('placeholder-txt');
+                    if (placeholderTxt) placeholderTxt.innerText = "프로젝트 스크린을 추가해주세요.";
+                    const btnPlaceholderAdd = document.getElementById('btn-placeholder-add-screen');
+                    if (btnPlaceholderAdd) btnPlaceholderAdd.style.display = state.isReadOnly ? 'none' : '';
+
+                    window.history.replaceState(null, '', `viewer.html?project=${encodeURIComponent(state.currentProject)}`);
+                    if (typeof window.renderScreenList === 'function') window.renderScreenList([], '');
+                    if (typeof window.renderDescriptionList === 'function') window.renderDescriptionList();
+                    if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
+                        window.ResolutionEngine.syncScreenList();
+                    }
+                    if (typeof window.hideLoading === 'function') window.hideLoading();
+                    if (typeof window.showToast === 'function') {
+                        window.showToast("화면이 삭제되었습니다.", "info");
+                    }
+                }
             } else {
-                location.reload();
+                if (typeof window.hideLoading === 'function') window.hideLoading();
+                if (typeof window.renderScreenList === 'function') {
+                    window.renderScreenList(state.screens, state.activeFile?.name);
+                }
+                if (window.ResolutionEngine && typeof window.ResolutionEngine.syncScreenList === 'function') {
+                    window.ResolutionEngine.syncScreenList();
+                }
+                if (typeof window.showToast === 'function') {
+                    window.showToast("화면이 삭제되었습니다.", "success");
+                }
             }
         } else {
             if (typeof window.hideLoading === 'function') window.hideLoading();

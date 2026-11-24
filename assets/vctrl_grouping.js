@@ -65,8 +65,12 @@ window.GroupingManager = (function() {
                  const saveFn = window.saveGlobalComponents || (typeof saveGlobalComponents === 'function' ? saveGlobalComponents : null);
                  if (saveFn) {
                      const success = await saveFn(window.state.globalComponents);
-                     if (success && window.Notification && typeof window.Notification.alert === 'function') {
-                         window.Notification.alert(`'${mol.name}'이(가) 글로벌 라이브러리에 추가되었습니다.`, "저장 완료");
+                     if (success) {
+                         if (typeof window.showToast === 'function') {
+                             window.showToast(`'${mol.name}' 컴포넌트가 라이브러리에 등록되었습니다.`, 'success');
+                         } else if (window.Notification && typeof window.Notification.alert === 'function') {
+                             window.Notification.alert(`'${mol.name}' 컴포넌트가 라이브러리에 등록되었습니다.`, "등록 완료");
+                         }
                      }
                  }
              });
@@ -650,6 +654,7 @@ window.GroupingManager = (function() {
     };
 
     const addToMolecules = async () => {
+        if (window.state && window.state.isReadOnly) return window.showAuthModal?.();
         let activeIds = getEffectiveSelectedIds();
         if ((!activeIds || activeIds.length === 0) && window.state && window.state.selectedComponent && window.state.selectedComponent.id) {
             activeIds = [window.state.selectedComponent.id];
@@ -658,7 +663,12 @@ window.GroupingManager = (function() {
             activeIds = [window.activeCompId];
         }
         if (!activeIds || activeIds.length !== 1) return;
-        const name = prompt("새로운 Molecule 명칭을 입력하세요:", "Custom Molecule");
+
+        let rawName = null;
+        if (window.Notification && typeof window.Notification.prompt === 'function') {
+            rawName = await window.Notification.prompt("등록할 공용 컴포넌트 명칭을 입력하세요.", "Custom Component", "공용 컴포넌트 등록", false);
+        }
+        const name = rawName ? rawName.trim() : '';
         if (!name) return;
         
         const iframe = document.getElementById('main-iframe');
@@ -669,7 +679,19 @@ window.GroupingManager = (function() {
 
     const deleteMolecule = async (id, e) => {
         if (e) e.stopPropagation();
-        if (!confirm("이 컴포넌트를 삭제하시겠습니까?")) return;
+        if (window.state && window.state.isReadOnly) return window.showAuthModal?.();
+
+        const targetComp = (window.state?.globalComponents || []).find(m => m && m.id === id);
+        const compLabel = (targetComp && targetComp.name) ? `'${targetComp.name}'` : '선택한';
+        let confirmed = false;
+        if (window.Notification && typeof window.Notification.confirm === 'function') {
+            confirmed = await window.Notification.confirm(
+                `${compLabel} 공용 컴포넌트를 삭제하시겠습니까?\n삭제 후에는 라이브러리에서 제거됩니다.`,
+                "컴포넌트 삭제",
+                "warning"
+            );
+        }
+        if (!confirmed) return;
 
         if (window.state.globalComponents) {
             window.state.globalComponents = window.state.globalComponents.filter(m => m.id !== id);
@@ -682,19 +704,28 @@ window.GroupingManager = (function() {
             if (saveFn) {
                 await saveFn(window.state.globalComponents);
             }
+            if (typeof window.showToast === 'function') {
+                window.showToast('컴포넌트가 삭제되었습니다.', 'info');
+            }
         }
     };
 
     const renameMolecule = async (id, e) => {
         if (e) e.stopPropagation();
+        if (window.state && window.state.isReadOnly) return window.showAuthModal?.();
+
         const molecules = window.state.globalComponents || [];
         const mol = molecules.find(m => m.id === id);
         if (!mol) return;
 
-        const newName = prompt("새로운 컴포넌트 이름을 입력하세요:", mol.name);
-        if (newName && newName.trim() && newName !== mol.name) {
+        let newName = null;
+        if (window.Notification && typeof window.Notification.prompt === 'function') {
+            newName = await window.Notification.prompt("변경할 컴포넌트 이름을 입력하세요.", mol.name, "컴포넌트 이름 수정", false);
+        }
+        if (newName && newName.trim() && newName.trim() !== mol.name) {
             mol.name = newName.trim();
-            mol.previewHtml = `<div style="font-size: 10px; font-weight: 700; color: #6366f1;">${mol.name}</div>`;
+            const safeName = typeof window.escapeHtml === 'function' ? window.escapeHtml(mol.name) : mol.name;
+            mol.previewHtml = `<div style="font-size: 10px; font-weight: 700; color: #6366f1;">${safeName}</div>`;
             
             // Update UI
             if (window.renderAtomicLibrary) window.renderAtomicLibrary();
@@ -703,6 +734,9 @@ window.GroupingManager = (function() {
             const saveFn = window.saveGlobalComponents || (typeof saveGlobalComponents === 'function' ? saveGlobalComponents : null);
             if (saveFn) {
                 await saveFn(window.state.globalComponents);
+            }
+            if (typeof window.showToast === 'function') {
+                window.showToast('컴포넌트 이름이 수정되었습니다.', 'success');
             }
         }
     };

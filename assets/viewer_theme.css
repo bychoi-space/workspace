@@ -3292,6 +3292,75 @@ html[data-theme="light"] body.editor-page .v4-toast {
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12) !important;
 }
 
+/* Placeholder Add Screen CTA & Light-Mode Mobile Bottom Sheet Tabs / Pin Cards */
+body.editor-page .placeholder-add-btn {
+    margin-top: 14px;
+    height: 36px !important;
+    padding: 0 16px !important;
+    border-radius: 8px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+}
+
+body.res-narrow .placeholder-add-btn,
+body.touch-capable:not(.res-wide) .placeholder-add-btn {
+    display: none !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-tabs {
+    background: #eef1f6 !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-tab-btn {
+    color: #475569 !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-tab-btn.active {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.05) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-tab-badge {
+    background: rgba(15, 23, 42, 0.08) !important;
+    color: #334155 !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-tab-btn.active .v4-sheet-tab-badge {
+    background: rgba(91, 70, 198, 0.12) !important;
+    color: #5b46c6 !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-pin-card {
+    background: #f8fafc !important;
+    border-color: rgba(15, 23, 42, 0.09) !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-pin-label {
+    color: #0f172a !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-pin-body {
+    color: #334155 !important;
+}
+
+html[data-theme="light"] body.editor-page .v4-sheet-pin-mode-tag {
+    background: #e0f2fe !important;
+    border-color: #bae6fd !important;
+    color: #0369a1 !important;
+}
+
+html[data-theme="light"] body.editor-page .dock-ind-pin-chip {
+    background: rgba(91, 70, 198, 0.12) !important;
+    color: #5b46c6 !important;
+}
+
 /* Mobile Read-Only Bottom Sheet & Floating Controls in Light Mode */
 html[data-theme="light"] body.editor-page .v4-bottom-sheet {
     background: #ffffff !important;
@@ -3332,6 +3401,84 @@ html[data-theme="light"] body.editor-page #dock-page-indicator {
     box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12) !important;
 }
 
+/* ==========================================================================
+   Phase 2: Read-Only Viewer Clean Layout & Description Swatch Contrast
+   ========================================================================== */
+body.editor-page.is-readonly #btn-global-save,
+body.editor-page.is-readonly #save-split-group,
+body.editor-page.is-readonly #toolbar-author-tools,
+body.editor-page.is-readonly #btn-add-screen,
+body.editor-page.is-readonly #btn-placeholder-add-screen,
+body.editor-page.is-readonly .placeholder-subtitle,
+body.editor-page.is-readonly .screen-item .screen-actions,
+body.editor-page.is-readonly #screen-hover-flyout .flyout-actions,
+body.editor-page.is-readonly #sidebar-right .sidebar-tabs .tab-btn[data-tab="editor"],
+body.editor-page.is-readonly #tab-editor,
+body.editor-page.is-readonly #btn-add-description,
+body.editor-page.is-readonly #desc-toolbar,
+body.editor-page.is-readonly .desc-row .desc-actions,
+body.editor-page.is-readonly #floating-inspector-card,
+body.editor-page.is-readonly #sidebar-inspector-header,
+body.editor-page.is-readonly #history-modal #btn-add-history,
+body.editor-page.is-readonly #history-modal .history-card-actions {
+    display: none !important;
+}
+
+body.editor-page.is-readonly #sidebar-right .sidebar-tabs .tab-btn[data-tab="description"] {
+    flex: 1 1 100%;
+    cursor: default;
+}
+
+body.editor-page.is-readonly .project-meta-popover-card .project-meta-input {
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+body.editor-page .desc-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 40px 18px;
+    text-align: center;
+    color: var(--ed-text-3);
+}
+
+body.editor-page .desc-empty-state svg {
+    opacity: 0.45;
+    margin-bottom: 2px;
+}
+
+body.editor-page .desc-empty-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ed-text-2);
+}
+
+body.editor-page .desc-empty-sub {
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--ed-text-3);
+}
+
+html[data-theme="light"] body.editor-page .desc-color-swatch {
+    border: 1px solid rgba(15, 23, 42, 0.18) !important;
+}
+
+body.editor-page #add-screen-modal .form-row-2col {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 640px) {
+    body.editor-page #add-screen-modal .form-row-2col {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
 @media (max-width: 960px), (max-height: 600px) and (max-width: 1050px), (pointer: coarse) and (max-width: 1366px) {
     html[data-theme="light"] body.editor-page .toolbar {
         background: rgba(255, 255, 255, 0.92) !important;
@@ -3345,7 +3492,313 @@ html[data-theme="light"] body.editor-page #dock-page-indicator {
     }
 
     .viewer-theme-switcher,
-    body.editor-page .viewer-project-category-badge {
+    body.editor-page .viewer-project-category-badge,
+    body.editor-page #save-split-group,
+    body.editor-page #toolbar-cursor-tools,
+    body.editor-page #divider-cursor-tools,
+    body.editor-page #toolbar-author-tools,
+    body.editor-page #shortcut-help-anchor {
         display: none !important;
     }
+}
+
+/* ==========================================================================
+   Phase 3: Studio Toolbar, Shortcut Guide, Split Save & Compact Inspector Bar
+   ========================================================================== */
+body.editor-page .cursor-tool-group,
+body.editor-page .undo-redo-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+body.editor-page .cursor-tool-group .tool-btn.active {
+    background: var(--ed-seg-active-bg) !important;
+    color: var(--ed-accent-text, var(--ed-text-1)) !important;
+    box-shadow: var(--ed-seg-active-shadow) !important;
+}
+
+body.editor-page .shortcut-help-anchor {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+body.editor-page .shortcut-help-btn .shortcut-qmark {
+    font-family: 'Inter', inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+body.editor-page .shortcut-help-btn.active {
+    background: var(--ed-seg-active-bg) !important;
+    color: var(--ed-text-1) !important;
+}
+
+body.editor-page .shortcut-help-popover {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: -12px;
+    width: 470px;
+    padding: 14px 16px;
+    border-radius: 11px;
+    background: var(--ed-modal-bg);
+    border: 1px solid var(--ed-border-hover);
+    box-shadow: var(--ed-popover-shadow);
+    z-index: 20800;
+    box-sizing: border-box;
+}
+
+body.editor-page .shortcut-popover-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 9px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--ed-border-subtle);
+}
+
+body.editor-page .shortcut-popover-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ed-text-1);
+}
+
+body.editor-page .shortcut-popover-sub {
+    font-size: 11px;
+    color: var(--ed-text-3);
+}
+
+body.editor-page .shortcut-popover-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.08fr;
+    gap: 16px;
+}
+
+body.editor-page .shortcut-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+body.editor-page .shortcut-group-title {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--ed-accent-text, #818cf8);
+    margin-bottom: 3px;
+}
+
+body.editor-page .shortcut-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--ed-text-2);
+}
+
+body.editor-page .shortcut-row kbd,
+body.editor-page .save-dropdown-kbd {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 5.5px;
+    border-radius: 4px;
+    background: var(--ed-surface-2);
+    border: 1px solid var(--ed-border);
+    color: var(--ed-text-1);
+    font-family: 'Inter', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* Split Save Button & Calm Unsaved State */
+body.editor-page .save-split-group {
+    position: relative;
+    display: inline-flex;
+    align-items: stretch;
+    height: 28px;
+}
+
+body.editor-page .save-split-group .btn-global-save {
+    height: 28px !important;
+    padding: 0 11px !important;
+    border-radius: 6px 0 0 6px !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .save-split-group .btn-global-save.has-unsaved::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.75);
+}
+
+body.editor-page .save-split-group .btn-global-save-split {
+    height: 28px !important;
+    width: 22px !important;
+    padding: 0 !important;
+    border-radius: 0 6px 6px 0 !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.22) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+}
+
+body.editor-page .global-save-dropdown {
+    position: absolute;
+    top: calc(100% + 7px);
+    right: 0;
+    width: 256px;
+    padding: 5px;
+    border-radius: 9px;
+    background: var(--ed-modal-bg);
+    border: 1px solid var(--ed-border-hover);
+    box-shadow: var(--ed-popover-shadow);
+    z-index: 20600;
+}
+
+body.editor-page .save-dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 9px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ed-text-1);
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.14s ease;
+}
+
+body.editor-page .save-dropdown-item:hover {
+    background: var(--ed-surface-2);
+}
+
+body.editor-page .save-dropdown-txt {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+body.editor-page .save-dropdown-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ed-text-1);
+}
+
+body.editor-page .save-dropdown-sub {
+    font-size: 10.5px;
+    color: var(--ed-text-3);
+}
+
+/* History Footer Button Label */
+body.editor-page .btn-show-history {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    width: auto !important;
+    padding: 0 8px !important;
+    height: 24px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+}
+
+/* 1-Row Compact Quick Action Strip & Collapsible Scroll Pin */
+body.editor-page .floating-inspector-header.is-dragging {
+    cursor: grabbing !important;
+}
+
+body.editor-page .selection-group-cta-row:empty {
+    display: none;
+}
+
+body.editor-page .selection-quick-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+}
+
+body.editor-page .selection-inline-pair {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1 1 auto;
+}
+
+body.editor-page #selection-style-action-row {
+    flex: 2 1 0;
+}
+
+body.editor-page #selection-lock-action-row {
+    flex: 1 1 0;
+}
+
+body.editor-page .selection-quick-toolbar > .quick-icon-btn {
+    flex: 1 1 0;
+}
+
+body.editor-page .selection-inline-pair > .quick-icon-btn {
+    flex: 1 1 0;
+}
+
+body.editor-page .selection-quick-toolbar .quick-icon-btn {
+    height: 28px !important;
+    min-width: 0 !important;
+    padding: 0 5px !important;
+    gap: 3px !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+
+body.editor-page .selection-quick-toolbar .quick-icon-btn .bychoi-icon {
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0;
+}
+
+body.editor-page #selection-scroll-pin-bar .scroll-pin-header {
+    cursor: pointer;
+    user-select: none;
+}
+
+body.editor-page .scroll-pin-header-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+body.editor-page .scroll-pin-chevron {
+    font-size: 15px !important;
+    color: var(--ed-text-3);
+    transition: transform 0.16s ease;
+}
+
+body.editor-page #selection-scroll-pin-bar:not(.is-collapsed) .scroll-pin-chevron {
+    transform: rotate(180deg);
+}
+
+body.editor-page #selection-scroll-pin-bar.is-collapsed > :not(.scroll-pin-header) {
+    display: none !important;
+}
+
+body.editor-page #selection-scroll-pin-bar.is-collapsed {
+    padding-bottom: 8px !important;
 }

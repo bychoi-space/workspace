@@ -128,6 +128,8 @@ window.DOM = {
     // Buttons
     btnToggleLeft: get('btn-toggle-left'),
     btnToggleRight: get('btn-toggle-right'),
+    btnSelect: get('btn-tool-select'),
+    btnHand: get('btn-tool-hand'),
     btnGlobalSave: get('btn-global-save'),
     btnFullscreen: get('btn-fullscreen-toggle'),
     btnFullscreenExit: get('btn-fullscreen-exit'),
@@ -237,7 +239,7 @@ window.DOM = {
 };
 
 // --- 2. Sidebar & Tab Management (Unified & Clean) ---
-window.toggleSidebar = function (side, forceOpen = null) {
+window.toggleSidebar = function (side, forceOpen = null, skipPersist = false) {
     if (typeof window.hideScreenFlyout === 'function') window.hideScreenFlyout(0);
     console.log(`[Inspector] toggleSidebar(${side}, forceOpen: ${forceOpen})`);
     const sidebar = side === 'left' ? DOM.sidebarLeft : DOM.sidebarRight;
@@ -245,6 +247,10 @@ window.toggleSidebar = function (side, forceOpen = null) {
 
     const isCollapsed = sidebar.classList.contains('collapsed');
     const shouldOpen = forceOpen !== null ? forceOpen : isCollapsed;
+
+    if (side === 'left' && !skipPersist && !document.body.classList.contains('res-narrow')) {
+        try { localStorage.setItem('bychoi_left_sidebar_open', shouldOpen ? 'true' : 'false'); } catch (_) { }
+    }
 
     // If state is already matching forceOpen, exit early to avoid redundant centerView calls
     if (forceOpen !== null && (!isCollapsed) === shouldOpen) {
@@ -298,7 +304,7 @@ window.setSidebarInspectorVisible = function (visible) {
         if (header) header.style.display = 'none';
         if (inspectorPane) inspectorPane.style.setProperty('display', 'none', 'important');
 
-        const lastTab = window._lastActiveSidebarTab || 'editor';
+        const lastTab = (window.state && window.state.isReadOnly) ? 'description' : (window._lastActiveSidebarTab || 'editor');
         const activePane = document.getElementById(`tab-${lastTab}`);
         if (activePane) activePane.style.setProperty('display', 'flex', 'important');
         const btns = document.querySelectorAll('.tab-btn');
@@ -310,6 +316,9 @@ window.setSidebarInspectorVisible = function (visible) {
 };
 
 window.switchSidebarTab = function (tabName, options) {
+    if (window.state && window.state.isReadOnly && tabName === 'editor') {
+        tabName = 'description';
+    }
     const autoOpen = !(options && options.autoOpen === false);
     window._lastActiveSidebarTab = tabName;
     if (typeof window.setSidebarInspectorVisible === 'function') {
@@ -404,11 +413,16 @@ const ProjectMetadataManager = {
                 </a>`;
         }
 
+        const isRO = Boolean(window.state && window.state.isReadOnly);
+        const roAttr = isRO ? 'readonly tabindex="-1"' : '';
+        const triggerTitle = isRO ? '프로젝트 담당자·개발자·기간 확인' : '프로젝트 담당자·개발자·기간 확인 및 편집';
+        const popoverHint = isRO ? '열람 전용' : '자동 저장 연동';
+
         DOM.metadataPanel.innerHTML = `
             <div class="v4-meta-horizontal">
                 <input type="hidden" id="viewer-meta-title" value="${this._escapeAttr(safePm.title || '')}">
                 <div class="project-meta-popover-anchor" id="project-meta-popover-anchor">
-                    <button type="button" class="project-meta-trigger-btn" id="btn-project-meta-popover" aria-expanded="false" title="프로젝트 담당자·개발자·기간 확인 및 편집">
+                    <button type="button" class="project-meta-trigger-btn" id="btn-project-meta-popover" aria-expanded="false" title="${triggerTitle}">
                         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <circle cx="12" cy="12" r="9"></circle>
                             <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -422,21 +436,21 @@ const ProjectMetadataManager = {
                     <div class="project-meta-popover-card" id="project-meta-popover-card" role="dialog" aria-label="프로젝트 메타 정보">
                         <div class="project-meta-popover-head">
                             <span class="project-meta-popover-title">프로젝트 기본 정보</span>
-                            <span class="project-meta-popover-hint">자동 저장 연동</span>
+                            <span class="project-meta-popover-hint">${popoverHint}</span>
                         </div>
                         <div class="project-meta-popover-row-2">
                             <label class="project-meta-field">
                                 <span class="project-meta-field-label">담당 기획자</span>
-                                <input type="text" id="viewer-meta-assignee" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.assignee || '')}" placeholder="담당자 입력" autocomplete="off">
+                                <input type="text" id="viewer-meta-assignee" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.assignee || '')}" placeholder="${isRO ? '-' : '담당자 입력'}" autocomplete="off" ${roAttr}>
                             </label>
                             <label class="project-meta-field">
                                 <span class="project-meta-field-label">담당 개발자</span>
-                                <input type="text" id="viewer-meta-developer" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.developer || '')}" placeholder="개발자 입력" autocomplete="off">
+                                <input type="text" id="viewer-meta-developer" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.developer || '')}" placeholder="${isRO ? '-' : '개발자 입력'}" autocomplete="off" ${roAttr}>
                             </label>
                         </div>
                         <label class="project-meta-field">
                             <span class="project-meta-field-label">진행 기간</span>
-                            <input type="text" id="viewer-meta-period" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.period || '')}" placeholder="예: 2026.10.01 ~ 2026.12.31" autocomplete="off">
+                            <input type="text" id="viewer-meta-period" class="meta-chip-input project-meta-input" value="${this._escapeAttr(safePm.period || '')}" placeholder="${isRO ? '-' : '예: 2026.10.01 ~ 2026.12.31'}" autocomplete="off" ${roAttr}>
                         </label>
                     </div>
                 </div>
@@ -557,16 +571,28 @@ function _applyInspectorDockMode() {
         window.setSidebarInspectorVisible(false);
         if (floatingInspector) {
             floatingInspector.style.setProperty('display', 'flex', 'important');
-            floatingInspector.style.bottom = '24px';
-            floatingInspector.style.top = 'auto';
-
-            const side = state.floatingSide || 'right';
-            if (side === 'left') {
-                floatingInspector.style.left = '24px';
+            if (state.floatingCustomPos && typeof state.floatingCustomPos.left === 'number' && typeof state.floatingCustomPos.top === 'number') {
+                const canvasEl = document.getElementById('canvas');
+                const maxW = canvasEl ? canvasEl.clientWidth : window.innerWidth;
+                const maxH = canvasEl ? canvasEl.clientHeight : window.innerHeight;
+                const clampedL = Math.max(8, Math.min(state.floatingCustomPos.left, Math.max(8, maxW - 330)));
+                const clampedT = Math.max(8, Math.min(state.floatingCustomPos.top, Math.max(8, maxH - 60)));
+                floatingInspector.style.left = clampedL + 'px';
+                floatingInspector.style.top = clampedT + 'px';
                 floatingInspector.style.right = 'auto';
+                floatingInspector.style.bottom = 'auto';
             } else {
-                floatingInspector.style.right = '24px';
-                floatingInspector.style.left = 'auto';
+                floatingInspector.style.bottom = '24px';
+                floatingInspector.style.top = 'auto';
+
+                const side = state.floatingSide || 'right';
+                if (side === 'left') {
+                    floatingInspector.style.left = '24px';
+                    floatingInspector.style.right = 'auto';
+                } else {
+                    floatingInspector.style.right = '24px';
+                    floatingInspector.style.left = 'auto';
+                }
             }
         }
     }
@@ -797,10 +823,12 @@ function _handleNoSelection() {
     const floatingInspector = document.getElementById('floating-inspector-card');
     if (floatingInspector) {
         floatingInspector.style.setProperty('display', 'none', 'important');
-        floatingInspector.style.right = '24px';
-        floatingInspector.style.left = 'auto';
-        floatingInspector.style.bottom = '24px';
-        floatingInspector.style.top = 'auto';
+        if (!state.floatingCustomPos) {
+            floatingInspector.style.right = '24px';
+            floatingInspector.style.left = 'auto';
+            floatingInspector.style.bottom = '24px';
+            floatingInspector.style.top = 'auto';
+        }
     }
     state.isEditing = false;
     state.editingIndex = -1;
@@ -857,6 +885,12 @@ window.updateProperties = function (compStyles, isNewSelectionExplicit) {
 
     // 1. Update Top Metadata Bar & Footer
     _syncTopMetadataBar(pm);
+
+    // Keep Read-Only viewer clean: suppress authoring object inspectors on canvas click
+    if (window.state && window.state.isReadOnly) {
+        _handleNoSelection();
+        return;
+    }
 
     // 2. Update Sidebar Panels based on selected component
     const hasSelection = (window.state && window.state.selectedIds && window.state.selectedIds.length > 0);
@@ -961,6 +995,64 @@ if (floatingInspectorCard) {
         e.stopPropagation();
     }, { passive: true });
 
+    // Real Free Dragging for Floating Inspector Header (with Iframe Occlusion Protection)
+    const floatingHeader = floatingInspectorCard.querySelector('.floating-inspector-header');
+    if (floatingHeader) {
+        let _isDraggingCard = false;
+        let _dragOffsetX = 0;
+        let _dragOffsetY = 0;
+
+        floatingHeader.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            if (e.target.closest('button, .floating-inspector-header-btn')) return;
+            const canvasEl = document.getElementById('canvas');
+            if (!canvasEl) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+            const cardRect = floatingInspectorCard.getBoundingClientRect();
+            _isDraggingCard = true;
+            _dragOffsetX = e.clientX - cardRect.left;
+            _dragOffsetY = e.clientY - cardRect.top;
+            floatingHeader.classList.add('is-dragging');
+
+            const iframeEl = document.getElementById('main-iframe');
+            if (iframeEl) iframeEl.style.pointerEvents = 'none';
+
+            const onCardMove = (ev) => {
+                if (!_isDraggingCard) return;
+                const cRect = canvasEl.getBoundingClientRect();
+                const cardW = floatingInspectorCard.offsetWidth || 320;
+                const cardH = Math.min(floatingInspectorCard.offsetHeight || 120, 80);
+                let nextLeft = ev.clientX - cRect.left - _dragOffsetX;
+                let nextTop = ev.clientY - cRect.top - _dragOffsetY;
+                nextLeft = Math.max(8, Math.min(nextLeft, Math.max(8, cRect.width - cardW - 8)));
+                nextTop = Math.max(8, Math.min(nextTop, Math.max(8, cRect.height - cardH - 8)));
+
+                floatingInspectorCard.style.left = Math.round(nextLeft) + 'px';
+                floatingInspectorCard.style.top = Math.round(nextTop) + 'px';
+                floatingInspectorCard.style.right = 'auto';
+                floatingInspectorCard.style.bottom = 'auto';
+                state.floatingCustomPos = { left: Math.round(nextLeft), top: Math.round(nextTop) };
+            };
+
+            const onCardUp = () => {
+                if (!_isDraggingCard) return;
+                _isDraggingCard = false;
+                floatingHeader.classList.remove('is-dragging');
+                const iframeRestore = document.getElementById('main-iframe');
+                if (iframeRestore && state.tool !== 'hand' && !state.isHandMode && !document.body.classList.contains('res-narrow')) {
+                    iframeRestore.style.pointerEvents = 'auto';
+                }
+                window.removeEventListener('mousemove', onCardMove);
+                window.removeEventListener('mouseup', onCardUp);
+            };
+
+            window.addEventListener('mousemove', onCardMove);
+            window.addEventListener('mouseup', onCardUp);
+        });
+    }
+
     if (btnFloatingMinimize) {
         btnFloatingMinimize.onclick = (e) => {
             e.stopPropagation();
@@ -976,10 +1068,13 @@ if (floatingInspectorCard) {
     if (btnFloatingSwap) {
         btnFloatingSwap.onclick = (e) => {
             e.stopPropagation();
+            state.floatingCustomPos = null;
             const currentSide = state.floatingSide || 'right';
             const nextSide = (currentSide === 'right') ? 'left' : 'right';
             state.floatingSide = nextSide;
             try { localStorage.setItem('bychoi_inspector_floating_side', nextSide); } catch (_) { }
+            floatingInspectorCard.style.bottom = '24px';
+            floatingInspectorCard.style.top = 'auto';
             if (nextSide === 'left') {
                 floatingInspectorCard.style.left = '24px';
                 floatingInspectorCard.style.right = 'auto';

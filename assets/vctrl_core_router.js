@@ -485,6 +485,11 @@
                 window.toggleCrispView();
             }
         },
+        'BYCHOI_WORKSPACE_SHORTCUT': function (data) {
+            if (data && data.action && typeof window.executeWorkspaceShortcut === 'function') {
+                window.executeWorkspaceShortcut(data.action);
+            }
+        },
         'BYCHOI_NAVIGATE_SCREEN': function (data) {
             if (!data || (data.direction !== -1 && data.direction !== 1)) return;
             if (typeof window.navigateScreenByOffset === 'function') {

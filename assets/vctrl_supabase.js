@@ -720,6 +720,9 @@
 
     function syncAuthUI() {
         var authed = isAuthorized();
+        if (document.body) {
+            document.body.classList.toggle('is-readonly', !authed);
+        }
         var uname = (_session && (_session.display_name || _session.username)) || 'bychoi';
         var roleLower = (_session && _session.role ? String(_session.role).toLowerCase() : 'editor');
         var roleUpper = roleLower.toUpperCase();

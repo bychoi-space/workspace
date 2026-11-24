@@ -190,10 +190,10 @@
             },
             setError: function() {
                 if (!btn) return;
-                btn.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">error</span> 저장 실패';
+                btn.innerHTML = '<span class="material-icons-outlined" style="font-size:15px;">error</span> 실패';
                 btn.style.setProperty('background', '#ef4444', 'important');
                 setTimeout(function() {
-                    btn.innerHTML = '<span class="material-icons-outlined" style="font-size:13px;">save</span> 전체 저장';
+                    btn.innerHTML = originalHTML;
                     btn.style.removeProperty('background');
                     btn.style.position = '';
                     btn.style.overflow = '';
@@ -639,7 +639,10 @@
                 }
 
                 if (typeof window.showToast === 'function') {
-                    window.showToast("저장이 성공적으로 완료되었습니다.", "success");
+                    window.showToast(
+                        changeMsg ? `v${nextVer} 버전 이력과 함께 저장되었습니다.` : "저장이 완료되었습니다.",
+                        "success"
+                    );
                 }
 
                 await _persistRevisionHistory(state, activeFileName, nextVer, projectMeta, changeMsg, historyList, updatedTimeStr);

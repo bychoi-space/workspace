@@ -74,9 +74,12 @@
             if (btnLock) {
                 btnLock.classList.toggle('active', isLocked);
                 btnLock.classList.toggle('is-locked-active', isLocked);
+                btnLock.title = isLocked
+                    ? '위치 잠금 해제 (Ctrl + Shift + L)'
+                    : '오브젝트 위치·크기·삭제 잠금 토글 (Ctrl + Shift + L)';
             }
             if (txtLock) {
-                txtLock.textContent = isLocked ? '잠금 해제' : '위치 잠금';
+                txtLock.textContent = isLocked ? '해제' : '잠금';
             }
             if (iconLock) {
                 iconLock.innerHTML = isLocked

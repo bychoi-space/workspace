@@ -639,7 +639,11 @@
                     if (!container) return;
                     const cards = Array.from(container.querySelectorAll('.grid-col-card'));
                     if (cards.length >= 20) {
-                        alert('열은 최대 20개까지 추가할 수 있습니다.');
+                        if (window.Notification && typeof window.Notification.alert === 'function') {
+                            window.Notification.alert('열은 최대 20개까지 추가할 수 있습니다.', '열 개수 제한', 'warning');
+                        } else if (typeof window.showToast === 'function') {
+                            window.showToast('열은 최대 20개까지 추가할 수 있습니다.', 'warning');
+                        }
                         return;
                     }
                     

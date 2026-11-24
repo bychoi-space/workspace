@@ -93,7 +93,7 @@
         }
 
         // Try to load HTML blocks asynchronously
-        const uiVer = '?v=V446_ICON_LIB_THEME';
+        const uiVer = '?v=V505_PHASE1_UX';
         const res1 = await loadUIBlock('assets/ui_library/inspector_panels.html' + uiVer, 'inspector-panels-storage', false);
         const res2 = await loadUIBlock('assets/ui_library/atomic_cards.html' + uiVer, 'atomic-library-container', false);
         const res3 = await loadUIBlock('assets/ui_library/icon_cards.html' + uiVer, 'icon-library-container', false);
@@ -139,6 +139,8 @@
         window.DOM.btnCancelEdit = get('btn-edit-screen-cancel');
         window.DOM.btnSubmitEdit = get('btn-edit-screen-submit');
         window.DOM.addScreenModal = get('add-screen-modal');
+        window.DOM.newScreenTitle = get('new-screen-title');
+        window.DOM.newScreenName = get('new-screen-name');
         window.DOM.btnCancelAdd = get('btn-add-screen-cancel');
         window.DOM.btnSubmitAdd = get('btn-add-screen-submit');
         window.DOM.copyScreenModal = get('copy-screen-modal');

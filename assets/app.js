@@ -719,6 +719,13 @@ const Notification = {
                             inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
                         }
                         inputEl.onkeydown = (e) => {
+                            if (e.key === 'Escape') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                this.DOM.overlay.classList.remove('active');
+                                resolve(null);
+                                return;
+                            }
                             if (isTextarea) {
                                 if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                                     e.preventDefault();
@@ -740,7 +747,7 @@ const Notification = {
             }
         });
     },
-    alert(message, title = 'Alert', type = 'info') {
+    alert(message, title = '알림', type = 'info') {
         return this._show(type, title, message, [{ text: '확인', primary: true }]);
     },
     confirm(message, title = '이 작업을 진행할까요?', type = 'warning') {
@@ -749,10 +756,10 @@ const Notification = {
             { text: '네, 진행합니다', primary: true, value: true, danger: type === 'warning' }
         ]);
     },
-    prompt(message, defaultValue = '', title = 'Input', isTextarea = true) {
+    prompt(message, defaultValue = '', title = '입력', isTextarea = true) {
         return this._show('info', title, message, [
-            { text: 'Cancel', primary: false, value: null },
-            { text: 'OK', primary: true }
+            { text: '취소', primary: false, value: null },
+            { text: '확인', primary: true }
         ], true, defaultValue, isTextarea);
     }
 };

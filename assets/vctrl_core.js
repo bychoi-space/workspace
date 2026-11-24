@@ -390,11 +390,23 @@ function _syncScreenStateAndMetadata(fileName, content, DOM) {
 
     _updateViewerProjectHeader(DOM);
 
+    if (document.body) {
+        document.body.classList.toggle('is-readonly', Boolean(state.isReadOnly));
+    }
+
     if (typeof window.updateProperties === 'function') window.updateProperties();
 
-    const targetTab = (scMeta.defaultTab === 'description') ? 'description' : 'editor';
-    if (typeof window.switchSidebarTab === 'function') {
-        window.switchSidebarTab(targetTab, { autoOpen: false });
+    if (state.isReadOnly) {
+        const hasPins = Array.isArray(scMeta.description) && scMeta.description.length > 0;
+        const isWideDesktop = window.innerWidth > 960;
+        if (typeof window.switchSidebarTab === 'function') {
+            window.switchSidebarTab('description', { autoOpen: hasPins && isWideDesktop });
+        }
+    } else {
+        const targetTab = (scMeta.defaultTab === 'description') ? 'description' : 'editor';
+        if (typeof window.switchSidebarTab === 'function') {
+            window.switchSidebarTab(targetTab, { autoOpen: false });
+        }
     }
 
     setTimeout(() => { if (typeof window.centerView === 'function') window.centerView(); }, 150);
@@ -518,10 +530,58 @@ window.V4UndoManager = {
     },
     undo: function () {
         const iframe = document.getElementById('main-iframe');
-        if (iframe && iframe.contentWindow && window.MessageHub) {
-            MessageHub.send(iframe.contentWindow, 'BYCHOI_TRIGGER_UNDO');
+        if (iframe && iframe.contentWindow) {
+            if (window.MessageHub) MessageHub.send(iframe.contentWindow, 'BYCHOI_TRIGGER_UNDO');
+            else iframe.contentWindow.postMessage({ type: 'BYCHOI_TRIGGER_UNDO' }, '*');
+        }
+    },
+    redo: function () {
+        const iframe = document.getElementById('main-iframe');
+        if (iframe && iframe.contentWindow) {
+            if (window.MessageHub) MessageHub.send(iframe.contentWindow, 'BYCHOI_TRIGGER_REDO');
+            else iframe.contentWindow.postMessage({ type: 'BYCHOI_TRIGGER_REDO' }, '*');
         }
     }
+};
+
+window.handleVersionedSave = async function () {
+    if (state.isReadOnly) return window.showAuthModal?.();
+    if (!window.Notification || typeof window.Notification.prompt !== 'function') {
+        return window.handleGlobalSave();
+    }
+    const curVer = (state.projectMetadata && state.projectMetadata.version !== undefined)
+        ? (parseFloat(state.projectMetadata.version) || 0.1)
+        : 0.1;
+    const nextVerPreview = (curVer + 0.1).toFixed(1);
+    const reason = await window.Notification.prompt(
+        `새 버전(v${nextVerPreview})으로 기록할 주요 변경 사유를 입력해주세요.`,
+        '',
+        `버전 이력 남기며 저장 (v${curVer} → v${nextVerPreview})`,
+        true
+    );
+    if (reason === null) return;
+    const cleanReason = String(reason || '').trim();
+    if (!cleanReason) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('변경 사유를 입력해야 버전 이력이 함께 기록됩니다.', 'warning');
+        }
+        return;
+    }
+    await window.handleGlobalSave(cleanReason);
+};
+
+window.toggleShortcutHelpPopover = function (forceState) {
+    const popover = document.getElementById('shortcut-help-popover');
+    const btn = document.getElementById('btn-shortcut-help');
+    if (!popover) return false;
+    const currentlyOpen = popover.style.display === 'block';
+    const nextOpen = (typeof forceState === 'boolean') ? forceState : !currentlyOpen;
+    popover.style.display = nextOpen ? 'block' : 'none';
+    if (btn) {
+        btn.classList.toggle('active', nextOpen);
+        btn.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
+    }
+    return nextOpen;
 };
 
 // 3. Central Event Helpers
@@ -541,10 +601,10 @@ window.markAsDirty = function () {
     state.hasUnsavedChanges = true;
     console.log("[Status] Unsaved changes detected.");
 
-    // UI Feedback
+    // Calm UI Feedback (Harmonized with AutoSaveEngine badge)
     const btnSave = document.getElementById('btn-global-save');
     if (btnSave) {
-        btnSave.style.boxShadow = "0 0 20px rgba(0, 229, 255, 0.6)";
+        btnSave.classList.add('has-unsaved');
     }
 };
 
@@ -553,6 +613,7 @@ window.markAsClean = function () {
     state.hasUnsavedChanges = false;
     const btnSave = document.getElementById('btn-global-save');
     if (btnSave) {
+        btnSave.classList.remove('has-unsaved');
         btnSave.style.boxShadow = "";
     }
 };
@@ -697,18 +758,80 @@ function _bindGlobalClickDelegates() {
             if (currentProj) {
                 if (typeof exportProjectToPDF === 'function') {
                     exportProjectToPDF(currentProj, state.projectMetadata || null);
-                } else {
-                    alert("PDF 변환 모듈이 로드되지 않았습니다.");
+                } else if (window.Notification && typeof window.Notification.alert === 'function') {
+                    window.Notification.alert("PDF 변환 모듈이 로드되지 않았습니다.", "오류", "error");
                 }
-            } else {
-                alert("열려있는 프로젝트가 없습니다.");
+            } else if (window.Notification && typeof window.Notification.alert === 'function') {
+                window.Notification.alert("열려있는 프로젝트가 없습니다.", "알림", "warning");
             }
             return;
         }
 
-        // 1. Global Save Button
+        // Close floating toolbar popovers when clicking outside
+        const saveDropdown = document.getElementById('global-save-dropdown');
+        const saveSplitGroup = document.getElementById('save-split-group');
+        if (saveDropdown && saveDropdown.style.display === 'block' && (!saveSplitGroup || !saveSplitGroup.contains(e.target))) {
+            saveDropdown.style.display = 'none';
+            const splitBtn = document.getElementById('btn-global-save-menu');
+            if (splitBtn) splitBtn.setAttribute('aria-expanded', 'false');
+        }
+        const shortcutPopover = document.getElementById('shortcut-help-popover');
+        const shortcutAnchor = document.getElementById('shortcut-help-anchor');
+        if (shortcutPopover && shortcutPopover.style.display === 'block' && (!shortcutAnchor || !shortcutAnchor.contains(e.target))) {
+            window.toggleShortcutHelpPopover(false);
+        }
+
+        // 0-3. Toolbar Undo / Redo / Shortcut Guide
+        if (e.target && e.target.closest('#btn-toolbar-undo')) {
+            e.preventDefault();
+            if (!state.isReadOnly && window.V4UndoManager) window.V4UndoManager.undo();
+            return;
+        }
+        if (e.target && e.target.closest('#btn-toolbar-redo')) {
+            e.preventDefault();
+            if (!state.isReadOnly && window.V4UndoManager) window.V4UndoManager.redo();
+            return;
+        }
+        if (e.target && e.target.closest('#btn-shortcut-help')) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.toggleShortcutHelpPopover();
+            return;
+        }
+
+        // 1. Global Save Button & Split Save Menu
+        if (e.target && e.target.closest('#btn-global-save-menu')) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (saveDropdown) {
+                const nextOpen = saveDropdown.style.display !== 'block';
+                saveDropdown.style.display = nextOpen ? 'block' : 'none';
+                const splitBtn = document.getElementById('btn-global-save-menu');
+                if (splitBtn) splitBtn.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
+            }
+            return;
+        }
+        if (e.target && e.target.closest('#menu-save-quick')) {
+            e.preventDefault();
+            if (saveDropdown) saveDropdown.style.display = 'none';
+            handleGlobalSave();
+            return;
+        }
+        if (e.target && e.target.closest('#menu-save-with-version')) {
+            e.preventDefault();
+            if (saveDropdown) saveDropdown.style.display = 'none';
+            window.handleVersionedSave();
+            return;
+        }
         if (e.target && e.target.closest('#btn-global-save')) {
             handleGlobalSave();
+            return;
+        }
+
+        // 1b. Empty Placeholder Add Screen CTA
+        if (e.target && e.target.closest('#btn-placeholder-add-screen')) {
+            e.preventDefault();
+            _openAddScreenModalClean();
             return;
         }
 
@@ -723,21 +846,31 @@ function _bindGlobalClickDelegates() {
                 return;
             }
 
+            const inputTitle = document.getElementById('new-screen-title');
             const inputName = document.getElementById('new-screen-name');
-            const screenName = inputName?.value?.trim();
+            const displayTitle = inputTitle?.value?.trim() || '';
+            let screenName = inputName?.value?.trim() || '';
+
+            if (!screenName && selectedCard.dataset.defaultName) {
+                screenName = _generateCleanTemplateFilename(selectedCard.dataset.defaultName);
+                if (inputName) inputName.value = screenName;
+            }
+
             if (!screenName) {
-                window.Notification?.alert("화면 이름을 입력해주세요.", "알림", "warning");
+                window.Notification?.alert("화면 파일명을 입력해주세요.", "알림", "warning");
                 return;
             }
 
+            const finalDisplayTitle = displayTitle || screenName.replace(/\.html$/i, '');
+
             btnSubmit.disabled = true;
-            btnSubmit.innerText = "생성 중..";
+            btnSubmit.innerText = "생성 중...";
 
             const template = selectedCard.dataset.template;
             const success = await createScreenFromTemplate(state.currentProject, screenName, template, {
                 PROJECT_TITLE: state.projectMetadata.title || '',
                 PROJECT_NAME: state.projectMetadata.title || '',
-                SCREEN_NAME: screenName,
+                SCREEN_NAME: finalDisplayTitle,
                 VERSION: '0.1',
                 AUTHOR: state.projectMetadata.assignee || '-',
                 DATE: state.projectMetadata.period || new Date().toLocaleDateString('ko-KR')
@@ -747,8 +880,32 @@ function _bindGlobalClickDelegates() {
             });
 
             if (success) {
-                const targetFilename = screenName.endsWith('.html') ? screenName : `${screenName}.html`;
-                window.location.href = `viewer.html?project=${encodeURIComponent(state.currentProject)}&file=${encodeURIComponent(targetFilename)}`;
+                const targetFilename = screenName.toLowerCase().endsWith('.html') ? screenName : `${screenName}.html`;
+                if (typeof fetchProjectMetadata === 'function') {
+                    const refreshedMeta = await fetchProjectMetadata(state.currentProject);
+                    if (refreshedMeta) state.projectMetadata = refreshedMeta;
+                }
+                if (!Array.isArray(state.screens)) state.screens = [];
+                if (!state.screens.some(s => s && s.name === targetFilename)) {
+                    state.screens.push({ name: targetFilename, type: 'file', sha: '', title: finalDisplayTitle });
+                }
+
+                const addModal = document.getElementById('add-screen-modal');
+                if (addModal) addModal.classList.remove('active');
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "화면 생성하기";
+                if (window.DOM && window.DOM.btnAddScreen) {
+                    window.DOM.btnAddScreen.classList.remove('pulse-attention');
+                }
+
+                window.history.pushState(null, '', `viewer.html?project=${encodeURIComponent(state.currentProject)}&file=${encodeURIComponent(targetFilename)}`);
+                if (typeof window.renderScreenList === 'function') {
+                    window.renderScreenList(state.screens, targetFilename);
+                }
+                await window.loadScreen(targetFilename);
+                if (typeof window.showToast === 'function') {
+                    window.showToast("새 화면이 추가되었습니다.", "success");
+                }
             } else {
                 window.Notification?.alert("화면 생성에 실패했습니다.", "오류", "error");
                 btnSubmit.disabled = false;
@@ -768,9 +925,19 @@ function _bindGlobalClickDelegates() {
             card.classList.add('active');
 
             const inputName = document.getElementById('new-screen-name');
-            if (inputName) {
+            if (inputName && inputName.dataset.manualEdited !== 'true') {
                 const defaultName = card.dataset.defaultName || "new_screen";
-                inputName.value = defaultName + "_" + Math.floor(Math.random() * 1000);
+                inputName.value = _generateCleanTemplateFilename(defaultName);
+            }
+
+            const inputTitle = document.getElementById('new-screen-title');
+            if (inputTitle && (!inputTitle.value.trim() || inputTitle.dataset.autoFilled !== 'false')) {
+                const tplNameEl = card.querySelector('.template-name');
+                const tplLabel = tplNameEl ? tplNameEl.textContent.trim() : '';
+                if (tplLabel) {
+                    inputTitle.value = tplLabel;
+                    inputTitle.dataset.autoFilled = 'true';
+                }
             }
         }
 
@@ -795,6 +962,63 @@ function _bindGlobalClickDelegates() {
             if (copyModal) copyModal.classList.remove('active');
         }
     });
+}
+
+function _generateCleanTemplateFilename(defaultBase) {
+    const cleanBase = (defaultBase || 'new_screen').replace(/\.html$/i, '').trim() || 'new_screen';
+    const existingSet = new Set();
+    if (Array.isArray(state.screens)) {
+        state.screens.forEach(s => { if (s && s.name) existingSet.add(s.name.toLowerCase()); });
+    }
+    if (state.projectMetadata && state.projectMetadata.screens) {
+        Object.keys(state.projectMetadata.screens).forEach(k => existingSet.add(k.toLowerCase()));
+    }
+    if (!existingSet.has((cleanBase + '.html').toLowerCase())) {
+        return cleanBase;
+    }
+    for (let seq = 2; seq < 1000; seq++) {
+        const candidate = `${cleanBase}_${seq}`;
+        if (!existingSet.has((candidate + '.html').toLowerCase())) {
+            return candidate;
+        }
+    }
+    return `${cleanBase}_${Date.now() % 1000}`;
+}
+
+function _openAddScreenModalClean() {
+    if (state.isReadOnly) return window.showAuthModal?.();
+    const realModal = document.getElementById('add-screen-modal');
+    if (!realModal) return;
+
+    const inputTitle = document.getElementById('new-screen-title');
+    const inputName = document.getElementById('new-screen-name');
+    if (inputTitle) {
+        inputTitle.value = '';
+        inputTitle.dataset.autoFilled = 'true';
+        if (!inputTitle.dataset.boundAutoTrack) {
+            inputTitle.dataset.boundAutoTrack = '1';
+            inputTitle.addEventListener('input', () => {
+                inputTitle.dataset.autoFilled = inputTitle.value.trim() ? 'false' : 'true';
+            });
+        }
+    }
+    if (inputName) {
+        inputName.value = '';
+        inputName.dataset.manualEdited = 'false';
+        if (!inputName.dataset.boundManualTrack) {
+            inputName.dataset.boundManualTrack = '1';
+            inputName.addEventListener('input', () => {
+                inputName.dataset.manualEdited = inputName.value.trim() ? 'true' : 'false';
+            });
+        }
+    }
+    realModal.querySelectorAll('.template-card.selected, .template-card.active').forEach(c => {
+        c.classList.remove('selected');
+        c.classList.remove('active');
+    });
+
+    realModal.classList.add('active');
+    setTimeout(() => { if (inputTitle) inputTitle.focus(); }, 40);
 }
 
 /**
@@ -856,11 +1080,7 @@ function _bindCoreToolbarAndSidebarEvents(DOM) {
 
     // RESTORED: Add Screen Modal Logic
     if (DOM.btnAddScreen) {
-        DOM.btnAddScreen.onclick = () => {
-            if (state.isReadOnly) return window.showAuthModal?.();
-            const realModal = document.getElementById('add-screen-modal');
-            if (realModal) realModal.classList.add('active');
-        };
+        DOM.btnAddScreen.onclick = () => _openAddScreenModalClean();
     }
     if (DOM.btnCancelAdd) {
         DOM.btnCancelAdd.onclick = () => {
@@ -897,11 +1117,22 @@ window.init = async function () {
         const initResult = await _initProjectMetadataAndScreens(project, fileName);
         fileName = initResult.fileName;
 
+        if (document.body) {
+            document.body.classList.toggle('is-readonly', Boolean(state.isReadOnly));
+        }
+
+        const btnPlaceholderAdd = document.getElementById('btn-placeholder-add-screen');
+        if (btnPlaceholderAdd) {
+            btnPlaceholderAdd.style.display = state.isReadOnly ? 'none' : '';
+        }
+
         if (fileName) {
             await loadScreen(fileName);
         } else {
-            if (DOM.placeholderTxt) DOM.placeholderTxt.innerText = "프로젝트 스크린을 추가해주세요.";
-            if (DOM.btnAddScreen) DOM.btnAddScreen.classList.add('pulse-attention');
+            if (DOM.placeholderTxt) {
+                DOM.placeholderTxt.innerText = state.isReadOnly ? "등록된 화면이 없습니다." : "프로젝트 스크린을 추가해주세요.";
+            }
+            if (DOM.btnAddScreen && !state.isReadOnly) DOM.btnAddScreen.classList.add('pulse-attention');
         }
 
         // Asynchronously sync repository contents in background
@@ -911,6 +1142,14 @@ window.init = async function () {
         // Attach global listeners and UI controls
         _bindGlobalClickDelegates();
         _bindCoreToolbarAndSidebarEvents(DOM);
+
+        // Restore Desktop Left Sidebar State (Default expanded on wide >=1440px monitors unless user collapsed it)
+        if (!document.body.classList.contains('res-narrow') && window.innerWidth >= 1280 && typeof window.toggleSidebar === 'function') {
+            let savedLeftOpen = null;
+            try { savedLeftOpen = localStorage.getItem('bychoi_left_sidebar_open'); } catch (_) { }
+            const shouldOpenLeft = savedLeftOpen !== null ? (savedLeftOpen === 'true') : (window.innerWidth >= 1440);
+            window.toggleSidebar('left', shouldOpenLeft, true);
+        }
 
     } catch (err) {
         console.error("Initialization failed:", err);

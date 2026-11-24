@@ -148,7 +148,33 @@
             });
         }
 
-        // Swatch clicks
+        // Swatch clicks & Theme-Adaptive Preset Sync (Light vs Dark)
+        function syncSwatchesForTheme() {
+            if (!popover) return;
+            var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            var bodySwatch = popover.querySelector('.desc-color-swatch[data-swatch-role="default-body"]');
+            var strongSwatch = popover.querySelector('.desc-color-swatch[data-swatch-role="contrast-strong"]');
+            if (bodySwatch) {
+                var bodyHex = isLight ? '#334155' : '#cbd5e1';
+                bodySwatch.dataset.color = bodyHex;
+                bodySwatch.style.background = bodyHex;
+                bodySwatch.title = isLight ? '기본 본문 (#334155)' : '기본 본문 (#cbd5e1)';
+            }
+            if (strongSwatch) {
+                var strongHex = isLight ? '#0f172a' : '#ffffff';
+                strongSwatch.dataset.color = strongHex;
+                strongSwatch.style.background = strongHex;
+                strongSwatch.title = isLight ? '딥 블랙 (#0f172a)' : '화이트 (#ffffff)';
+            }
+            if (nativeColorInput && (!nativeColorInput.dataset.userPicked)) {
+                var defColor = isLight ? '#334155' : '#cbd5e1';
+                nativeColorInput.value = defColor;
+                if (colorBar) colorBar.style.background = defColor;
+            }
+        }
+        syncSwatchesForTheme();
+        window.addEventListener('bychoi:themechange', syncSwatchesForTheme);
+
         if (popover) {
             popover.querySelectorAll('.desc-color-swatch').forEach(function(swatch) {
                 swatch.addEventListener('mousedown', function(e) {
@@ -159,7 +185,10 @@
                     var color = this.dataset.color || '#cbd5e1';
                     executeFormatCommand('foreColor', color);
                     if (colorBar) colorBar.style.background = color;
-                    if (nativeColorInput) nativeColorInput.value = color;
+                    if (nativeColorInput) {
+                        nativeColorInput.value = color;
+                        nativeColorInput.dataset.userPicked = 'true';
+                    }
                     popover.classList.remove('active');
                 });
             });
@@ -169,6 +198,7 @@
         if (nativeColorInput) {
             nativeColorInput.addEventListener('input', function() {
                 var color = this.value;
+                this.dataset.userPicked = 'true';
                 executeFormatCommand('foreColor', color);
                 if (colorBar) colorBar.style.background = color;
             });
@@ -458,15 +488,33 @@
         DOM.descriptionList.innerHTML = '';
         DOM.pinsLayer.innerHTML = '';
 
-        list.forEach(function(item, index) {
-            var row = _buildPinListItem(item, index, state.isReadOnly);
-            _bindPinRowEvents(row, item, index, list);
-            DOM.descriptionList.appendChild(row);
-        });
+        if (!Array.isArray(list) || list.length === 0) {
+            var emptyTitle = state.isReadOnly ? '등록된 상세 설명(Pin)이 없습니다.' : '등록된 상세 설명이 없습니다.';
+            var emptySub = state.isReadOnly
+                ? '이 화면에는 별도의 번호 핀 주석이 작성되지 않았습니다.'
+                : '우측 상단 + 버튼을 눌러 화면에 번호 핀과 설명을 추가하세요.';
+            DOM.descriptionList.innerHTML =
+                '<div class="desc-empty-state">' +
+                    '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                        '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>' +
+                    '</svg>' +
+                    '<div class="desc-empty-title">' + emptyTitle + '</div>' +
+                    '<div class="desc-empty-sub">' + emptySub + '</div>' +
+                '</div>';
+        } else {
+            list.forEach(function(item, index) {
+                var row = _buildPinListItem(item, index, state.isReadOnly);
+                _bindPinRowEvents(row, item, index, list);
+                DOM.descriptionList.appendChild(row);
+            });
+        }
 
         setTimeout(function() {
             if (typeof window.autoResizeDescriptionInputs === 'function') {
                 window.autoResizeDescriptionInputs();
+            }
+            if (window.ResolutionEngine && typeof window.ResolutionEngine.syncPinList === 'function') {
+                window.ResolutionEngine.syncPinList();
             }
         }, 50);
     };

@@ -77,6 +77,63 @@ window.v4ShortcutsScript = `
             }
         }
 
+        // Canvas Zoom & Versioned Save Shortcuts forwarded to Parent
+        if ((e.ctrlKey || e.metaKey) && !e.altKey) {
+            if (e.shiftKey && (e.code === 'KeyS' || (e.key && e.key.toLowerCase() === 's'))) {
+                e.preventDefault();
+                notifyParent({
+                    type: 'BYCHOI_WORKSPACE_SHORTCUT',
+                    action: 'versioned_save'
+                });
+                return;
+            }
+            const isZoomOutKey = (e.code === 'Minus' || e.code === 'NumpadSubtract' || e.key === '-' || e.key === '_');
+            const isZoomInKey = (e.code === 'Equal' || e.code === 'NumpadAdd' || e.key === '+' || e.key === '=');
+            if (isZoomOutKey || isZoomInKey) {
+                e.preventDefault();
+                notifyParent({
+                    type: 'BYCHOI_WORKSPACE_SHORTCUT',
+                    action: isZoomOutKey ? 'zoom_out' : 'zoom_in'
+                });
+                return;
+            }
+        }
+
+        if (!inInputEarly && !e.isComposing && !e.ctrlKey && !e.metaKey && !e.altKey && (e.key === '?' || (e.shiftKey && e.code === 'Slash'))) {
+            e.preventDefault();
+            notifyParent({
+                type: 'BYCHOI_WORKSPACE_SHORTCUT',
+                action: 'toggle_shortcut_help'
+            });
+            return;
+        }
+
+        // Single-Key Workspace Shortcuts when Canvas Iframe has Focus (F, L, R, E, D, V, H, T)
+        if (!inInputEarly && !e.isComposing && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+            const isCroppingForSingle = !!(window.V4ImageCropEngine && typeof window.V4ImageCropEngine.isActive === 'function' && window.V4ImageCropEngine.isActive());
+            if (!isCroppingForSingle) {
+                const singleKeyMap = {
+                    'KeyF': 'toggle_fullscreen',
+                    'KeyL': 'toggle_left_sidebar',
+                    'KeyR': 'toggle_right_sidebar',
+                    'KeyE': 'tab_editor',
+                    'KeyD': 'tab_description',
+                    'KeyV': 'tool_select',
+                    'KeyH': 'tool_hand',
+                    'KeyT': 'tool_text'
+                };
+                const mappedWorkspaceAction = singleKeyMap[e.code] || null;
+                if (mappedWorkspaceAction) {
+                    e.preventDefault();
+                    notifyParent({
+                        type: 'BYCHOI_WORKSPACE_SHORTCUT',
+                        action: mappedWorkspaceAction
+                    });
+                    return;
+                }
+            }
+        }
+
         // 100% Crisp View / Fit View Toggle Shortcut (Backquote, Home, or Alt+Backquote)
         const isCrispToggleKey = (
             e.code === 'Backquote' || 
@@ -196,6 +253,10 @@ window.v4ShortcutsScript = `
                 notifyParent({ type: 'BYCHOI_DESELECT' });
                 return;
             }
+
+            // Tier 3: Nothing selected in iframe -> forward Escape to parent (exit fullscreen / dismiss open modals)
+            notifyParent({ type: 'BYCHOI_WORKSPACE_SHORTCUT', action: 'escape_fallback' });
+            return;
         }
 
         const isS = e.key === 's' || e.key === 'S' || e.code === 'KeyS';

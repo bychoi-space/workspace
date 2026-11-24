@@ -2846,7 +2846,7 @@ window.VCTRL_UI_FALLBACK_MODALS = `
             <div class="form-group">
                 <label class="form-label">우측 기본 탭 (Default Tab)</label>
                 <select id="edit-screen-default-tab" class="form-input">
-                    <option value="editor">에디터 (Editor) - 기본값</option>
+                    <option value="editor">라이브러리 (Library) - 기본값</option>
                     <option value="description">디스크립션 (Description)</option>
                 </select>
             </div>
@@ -2918,9 +2918,15 @@ window.VCTRL_UI_FALLBACK_MODALS = `
             <p class="modal-subtitle">프로젝트에 새로운 화면을 추가합니다.</p>
         </div>
         <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">화면 파일명 (영문)</label>
-                <input type="text" id="new-screen-name" class="form-input" placeholder="예: product_detail">
+            <div class="form-row-2col">
+                <div class="form-group">
+                    <label class="form-label">화면 명칭 (표시 제목)</label>
+                    <input type="text" id="new-screen-title" class="form-input" placeholder="예: 상품 상세 개편안">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">화면 파일명 (영문)</label>
+                    <input type="text" id="new-screen-name" class="form-input" placeholder="예: 01_Project_Summary">
+                </div>
             </div>
 
             <div class="modal-section-title">에셋 템플릿 선택</div>

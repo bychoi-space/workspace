@@ -240,6 +240,13 @@
         setTimeout(reCenterAfterFs, 360);
     };
 
+    function _syncToolbarCursorButtons(activeTool) {
+        var btnSel = document.getElementById('btn-tool-select');
+        var btnHand = document.getElementById('btn-tool-hand');
+        if (btnSel) btnSel.classList.toggle('active', activeTool !== 'hand');
+        if (btnHand) btnHand.classList.toggle('active', activeTool === 'hand');
+    }
+
     window.setTool = function(t) {
         var state = window.state, DOM = window.DOM;
         if (!state || !DOM) return;
@@ -248,6 +255,7 @@
         var isMobile = (document.body.classList.contains('res-narrow') || window.innerWidth <= 960 || (window.innerHeight <= 600 && window.innerWidth <= 1050));
         if (DOM.iframe) DOM.iframe.style.pointerEvents = isMobile ? 'none' : (t === 'hand' ? 'none' : 'auto');
         if (DOM.pinsLayer) DOM.pinsLayer.style.pointerEvents = 'none';
+        _syncToolbarCursorButtons(t);
     };
 
     // 6. Viewport Event Listeners
@@ -262,6 +270,7 @@
             var state = window.state;
             if (!state) return;
             if (e.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+            if (typeof window.isBlockingOverlayOpen === 'function' && window.isBlockingOverlayOpen()) return;
             
             if (e.code === 'Space') {
                 e.preventDefault();
@@ -269,13 +278,9 @@
                     if (DOM.canvas) DOM.canvas.classList.add('hand-active');
                     if (DOM.iframe) DOM.iframe.style.pointerEvents = 'none';
                     state.isHandMode = true;
+                    _syncToolbarCursorButtons('hand');
                 }
             }
-            const isCombo = !!e.ctrlKey || !!e.metaKey || !!e.altKey;
-            if (e.code === 'KeyV' && !isCombo) window.setTool('select');
-            if (e.code === 'KeyH' && !isCombo) window.setTool('hand');
-            if (e.code === 'KeyT' && !isCombo) { if (window.handleTextboxCreation) window.handleTextboxCreation(); }
-            if (e.code === 'KeyF' && !isCombo) window.toggleFullscreen();
         });
 
         window.addEventListener('keyup', function(e) {
@@ -286,6 +291,7 @@
                     if (DOM.canvas) DOM.canvas.classList.remove('hand-active');
                     if (DOM.iframe) DOM.iframe.style.pointerEvents = 'auto';
                     state.isHandMode = false;
+                    _syncToolbarCursorButtons(state.tool || 'select');
                 }
             }
         });

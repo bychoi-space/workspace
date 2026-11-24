@@ -6,6 +6,9 @@
 const state = {
     projects: [],
     activeCategory: 'all',
+    sortBy: (function() {
+        try { return localStorage.getItem('bychoi_dashboard_sort') || 'recent'; } catch (_) { return 'recent'; }
+    })(),
     deletedProjects: new Set() // Blacklist for zombie projects
 };
 
@@ -213,12 +216,12 @@ function renderThemePresets(selectedCategoryOrIndex) {
     });
 }
 
-// Compute filtered projects based on active category tab + search input
+// Compute filtered and sorted projects based on active category tab + search input + sort mode
 function getFilteredProjects() {
     const searchInputEl = document.getElementById('project-search-input');
     const query = searchInputEl ? searchInputEl.value.toLowerCase().trim() : '';
 
-    return state.projects.filter(p => {
+    const matched = state.projects.filter(p => {
         const cat = resolveProjectCategory(p.name, p.meta);
         if (state.activeCategory !== 'all' && cat.id !== state.activeCategory) {
             return false;
@@ -230,6 +233,27 @@ function getFilteredProjects() {
         const assigneeMatch = ((p.meta && p.meta.assignee) || '').toLowerCase().includes(query);
         return idMatch || titleMatch || catMatch || assigneeMatch;
     });
+
+    const sortMode = state.sortBy || 'recent';
+    if (sortMode === 'name') {
+        matched.sort((a, b) => {
+            const titleA = ((a.meta && a.meta.title) || a.name || '').trim();
+            const titleB = ((b.meta && b.meta.title) || b.name || '').trim();
+            return titleA.localeCompare(titleB, 'ko');
+        });
+    } else if (sortMode === 'screens') {
+        matched.sort((a, b) => (b.screens || 0) - (a.screens || 0));
+    } else {
+        matched.sort((a, b) => {
+            const dA = getLatestUpdateDate(a.meta || {});
+            const dB = getLatestUpdateDate(b.meta || {});
+            const tA = dA && !isNaN(dA.getTime()) ? dA.getTime() : 0;
+            const tB = dB && !isNaN(dB.getTime()) ? dB.getTime() : 0;
+            return tB - tA;
+        });
+    }
+
+    return matched;
 }
 
 // Render top Category Filter Bar
@@ -526,13 +550,17 @@ async function renderList(projectsToRender = getFilteredProjects()) {
     DOM.list.innerHTML = '';
     for (let i = 0; i < projectsToRender.length; i++) {
         const p = projectsToRender[i];
-        const card = document.createElement('a');
+        const card = document.createElement('article');
+        const targetUrl = `viewer.html?project=${encodeURIComponent(p.name)}`;
         card.className = 'file-card';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'link');
+        card.dataset.href = targetUrl;
         card.style.setProperty('--card-index', i);
-        card.href = `viewer.html?project=${encodeURIComponent(p.name)}`;
 
         const m = p.meta || {};
         const mainTitle = m.title || p.name;
+        card.setAttribute('aria-label', `${mainTitle} 프로젝트 열기`);
 
         // Resolve semantic project category
         const category = resolveProjectCategory(p.name, m);
@@ -593,13 +621,13 @@ async function renderList(projectsToRender = getFilteredProjects()) {
         }
         if (!hasMeta) {
             rightLinksHtml += `
-                <div class="meta-chip meta-chip-add-cta" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 정보 입력하기">
+                <button type="button" class="meta-chip meta-chip-add-cta" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 정보 입력하기">
                     <svg class="meta-chip-svg" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
                     <span>정보 입력</span>
-                </div>`;
+                </button>`;
         }
 
         card.innerHTML = `
@@ -619,32 +647,32 @@ async function renderList(projectsToRender = getFilteredProjects()) {
                         <span>${p.screens}</span>
                     </span>
                     <div class="card-action-group">
-                        <div class="copy-url-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 URL 복사">
+                        <button type="button" class="copy-url-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 URL 복사" aria-label="프로젝트 URL 복사">
                             <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                             </svg>
-                        </div>
-                        <div class="pdf-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="전체 화면 PDF 다운로드">
+                        </button>
+                        <button type="button" class="pdf-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="전체 화면 PDF 다운로드" aria-label="전체 화면 PDF 다운로드">
                             <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
                                 <path d="M12 18v-6"></path>
                                 <path d="M9.5 15.5L12 18l2.5-2.5"></path>
                             </svg>
-                        </div>
-                        <div class="edit-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 정보 수정">
+                        </button>
+                        <button type="button" class="edit-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 정보 수정" aria-label="프로젝트 정보 수정">
                             <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M12 20h9"></path>
                                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                             </svg>
-                        </div>
-                        <div class="delete-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 삭제">
+                        </button>
+                        <button type="button" class="delete-btn-card" data-project="${escapeHtmlAttr(p.name)}" title="프로젝트 삭제" aria-label="프로젝트 삭제">
                             <svg viewBox="0 0 24 24" width="13.5" height="13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             </svg>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -666,6 +694,27 @@ async function renderList(projectsToRender = getFilteredProjects()) {
                 </div>
             </div>
         `;
+                card.addEventListener('click', (ev) => {
+                    if (ev.target.closest('.card-action-group, .meta-chip-figma, .meta-chip-notion, .meta-chip-add-cta')) return;
+                    if (ev.ctrlKey || ev.metaKey) {
+                        window.open(targetUrl, '_blank', 'noopener');
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                });
+                card.addEventListener('auxclick', (ev) => {
+                    if (ev.button !== 1) return;
+                    if (ev.target.closest('.card-action-group, .meta-chip-figma, .meta-chip-notion, .meta-chip-add-cta')) return;
+                    ev.preventDefault();
+                    window.open(targetUrl, '_blank', 'noopener');
+                });
+                card.addEventListener('keydown', (ev) => {
+                    if (ev.target !== card) return;
+                    if (ev.key === 'Enter' || ev.key === ' ') {
+                        ev.preventDefault();
+                        window.location.href = targetUrl;
+                    }
+                });
         DOM.list.appendChild(card);
     }
 }
@@ -685,7 +734,7 @@ document.addEventListener('click', async (e) => {
         if (typeof copyProjectShortUrl === 'function') {
             copyProjectShortUrl(projName);
         } else {
-            alert("단축 URL 엔진이 로드되지 않았습니다.");
+            Notification.alert("단축 URL 엔진이 로드되지 않았습니다.", "오류", "error");
         }
         return;
     }
@@ -717,8 +766,12 @@ document.addEventListener('click', async (e) => {
         e.preventDefault(); e.stopPropagation();
         if (ghConfig.isReadOnly) return showAuthModal();
         const projectName = delBtn.dataset.project;
+        const targetProjObj = state.projects.find(p => p.name === projectName);
+        const projTitle = (targetProjObj && targetProjObj.meta && targetProjObj.meta.title) ? targetProjObj.meta.title.trim() : '';
+        const displayProjLabel = (projTitle && projTitle !== projectName) ? `'${projTitle}' (${projectName})` : `'${projectName}'`;
+        const shortProjLabel = projTitle || projectName;
         
-        const confirmed = await Notification.confirm(`'${projectName}' 프로젝트와 모든 관련 파일을 삭제하시겠습니까?\n이 작업은 절대 되돌릴 수 없습니다.`, "프로젝트 영구 삭제");
+        const confirmed = await Notification.confirm(`${displayProjLabel} 프로젝트와 모든 관련 화면을 삭제하시겠습니까?\n이 작업은 절대 되돌릴 수 없습니다.`, "프로젝트 영구 삭제", "warning");
         if (confirmed) {
             updateStatusUI('프로젝트 삭제 중...', '#f87171');
             
@@ -751,8 +804,8 @@ document.addEventListener('click', async (e) => {
                 renderList(getFilteredProjects());
                 
                 if (DOM.progressBar) DOM.progressBar.style.width = '100%';
-                updateStatusUI(`'${projectName}' 삭제 완료`, '#4ade80');
-                if (DOM.loaderStatus) DOM.loaderStatus.innerText = `'${projectName}' 삭제를 완료하였습니다.`;
+                updateStatusUI(`'${shortProjLabel}' 삭제 완료`, '#4ade80');
+                if (DOM.loaderStatus) DOM.loaderStatus.innerText = `'${shortProjLabel}' 삭제를 완료하였습니다.`;
                 
                 // 완료 후 로더 화면을 부드럽게 퇴장 처리
                 setTimeout(() => {
@@ -919,14 +972,19 @@ if (DOM.btnModalSave) {
                     saveProjectHistory(projectName, initialHistory, null).catch(e => console.warn("Failed to save initial history:", e));
                 }
 
+                const wasCreateMode = context.isCreateMode;
                 setTimeout(() => {
                     DOM.modal.classList.remove('active');
                     DOM.btnModalSave.innerText = originalText;
                     DOM.btnModalSave.disabled = false;
                     DOM.btnModalSave.style.opacity = '';
                     DOM.btnModalSave.style.background = '';
-                    refreshFileList();
-                }, context.isCreateMode ? 2000 : 1000);
+                    if (wasCreateMode) {
+                        window.location.href = `viewer.html?project=${encodeURIComponent(projectName)}`;
+                    } else {
+                        refreshFileList();
+                    }
+                }, 450);
             }
         });
         if (!success) {
@@ -1015,14 +1073,39 @@ window.addEventListener('drop', async (e) => {
     intro.addEventListener('click', dismiss);
 })();
 
-// Search and Auto-complete Logic (Integrated with Category Filter Bar)
+// Sort Select Initialization & Persistence
+const sortSelectEl = document.getElementById('project-sort-select');
+if (sortSelectEl) {
+    sortSelectEl.value = state.sortBy || 'recent';
+    sortSelectEl.addEventListener('change', () => {
+        state.sortBy = sortSelectEl.value || 'recent';
+        try { localStorage.setItem('bychoi_dashboard_sort', state.sortBy); } catch (_) {}
+        renderList(getFilteredProjects());
+    });
+}
+
+// Search and Auto-complete Logic (Integrated with Category Filter Bar & Keyboard Arrow Navigation)
 const searchInput = document.getElementById('project-search-input');
 const searchDropdown = document.getElementById('search-dropdown');
+let searchActiveIndex = -1;
+
+function syncSearchActiveHighlight() {
+    if (!searchDropdown) return;
+    const items = Array.from(searchDropdown.querySelectorAll('a.search-item'));
+    items.forEach((el, idx) => {
+        const isActive = idx === searchActiveIndex;
+        el.classList.toggle('is-focused', isActive);
+        if (isActive) {
+            el.scrollIntoView({ block: 'nearest' });
+        }
+    });
+}
 
 if (searchInput && searchDropdown) {
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
         const filtered = getFilteredProjects();
+        searchActiveIndex = -1;
         
         if (!query) {
             searchDropdown.classList.remove('active');
@@ -1053,6 +1136,28 @@ if (searchInput && searchDropdown) {
         } else {
             searchDropdown.innerHTML = `<div class="search-item" style="justify-content:center;"><span class="search-item-title" style="color:var(--dash-text-2, var(--text-secondary));">검색 결과가 없습니다.</span></div>`;
             searchDropdown.classList.add('active');
+        }
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (!searchDropdown.classList.contains('active')) return;
+        const items = Array.from(searchDropdown.querySelectorAll('a.search-item'));
+        if (items.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            searchActiveIndex = (searchActiveIndex + 1) % items.length;
+            syncSearchActiveHighlight();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            searchActiveIndex = searchActiveIndex <= 0 ? items.length - 1 : searchActiveIndex - 1;
+            syncSearchActiveHighlight();
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const targetItem = items[searchActiveIndex >= 0 ? searchActiveIndex : 0];
+            if (targetItem && targetItem.href) {
+                window.location.href = targetItem.href;
+            }
         }
     });
 

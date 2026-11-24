@@ -37,14 +37,15 @@
         const isS = keyChar === 's' || e.code === 'KeyS';
         if ((e.ctrlKey || e.metaKey) && isS) {
             e.preventDefault();
-            console.log("[VCTRL CORE] Global Ctrl+S caught in parent window. isInput:", isInput);
             if (isInput && document.activeElement && typeof document.activeElement.blur === 'function') {
                 try { document.activeElement.blur(); } catch (err) { }
             }
             if (typeof window.cleanupActiveEmptyTextShapeIfNeeded === 'function') {
                 window.cleanupActiveEmptyTextShapeIfNeeded();
             }
-            if (typeof window.handleGlobalSave === 'function') {
+            if (e.shiftKey && typeof window.handleVersionedSave === 'function') {
+                window.handleVersionedSave();
+            } else if (typeof window.handleGlobalSave === 'function') {
                 window.handleGlobalSave();
             }
             return true;
@@ -117,8 +118,19 @@
     function handleEscapeKey(e) {
         if (e.key !== 'Escape') return false;
 
-        if (document.body.classList.contains('fullscreen-mode')) {
+        if (document.body.classList.contains('fullscreen-mode') || document.body.classList.contains('zen-mode')) {
             if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen(true);
+            else if (window.ResolutionEngine && typeof window.ResolutionEngine.toggleZenMode === 'function') window.ResolutionEngine.toggleZenMode(false);
+            return true;
+        }
+
+        const bottomSheet = document.getElementById('v4-bottom-sheet');
+        if (bottomSheet && bottomSheet.classList.contains('is-open')) {
+            if (window.ResolutionEngine && typeof window.ResolutionEngine.closeBottomSheet === 'function') {
+                window.ResolutionEngine.closeBottomSheet();
+            } else {
+                bottomSheet.classList.remove('is-open');
+            }
             return true;
         }
 
@@ -138,6 +150,12 @@
             editModal.classList.remove('active');
             closedAnyModal = true;
         }
+        const canvasBgModal = document.getElementById('canvas-bg-modal');
+        if (canvasBgModal && (canvasBgModal.classList.contains('active') || canvasBgModal.style.display === 'flex' || canvasBgModal.style.display === 'block')) {
+            canvasBgModal.classList.remove('active');
+            canvasBgModal.style.display = 'none';
+            closedAnyModal = true;
+        }
         const historyModal = document.getElementById('history-modal');
         if (historyModal && historyModal.style.display === 'flex') {
             if (typeof window.closeHistoryPopup === 'function') {
@@ -153,6 +171,20 @@
                 window.hideAuthModal();
                 closedAnyModal = true;
             }
+        }
+        const shortcutPopover = document.getElementById('shortcut-help-popover');
+        if (shortcutPopover && shortcutPopover.style.display === 'block') {
+            if (typeof window.toggleShortcutHelpPopover === 'function') {
+                window.toggleShortcutHelpPopover(false);
+            } else {
+                shortcutPopover.style.display = 'none';
+            }
+            closedAnyModal = true;
+        }
+        const saveDropdown = document.getElementById('global-save-dropdown');
+        if (saveDropdown && saveDropdown.style.display === 'block') {
+            saveDropdown.style.display = 'none';
+            closedAnyModal = true;
         }
         if (closedAnyModal) return true;
 
@@ -301,6 +333,131 @@
         return true;
     }
 
+    function executeWorkspaceShortcut(action) {
+        const state = window.state || {};
+        if (typeof window.isBlockingOverlayOpen === 'function' && window.isBlockingOverlayOpen() && action !== 'escape_fallback') {
+            return false;
+        }
+        if (state && state.isImageCropping && action !== 'escape_fallback') {
+            return false;
+        }
+
+        const isNarrow = !!(document.body && document.body.classList.contains('res-narrow'));
+
+        switch (action) {
+            case 'zoom_in':
+                if (typeof window.adjustZoom === 'function') window.adjustZoom(0.1);
+                return true;
+            case 'zoom_out':
+                if (typeof window.adjustZoom === 'function') window.adjustZoom(-0.1);
+                return true;
+            case 'toggle_fullscreen':
+                if (typeof window.toggleFullscreen === 'function') window.toggleFullscreen();
+                return true;
+            case 'toggle_left_sidebar':
+                if (!isNarrow && typeof window.toggleSidebar === 'function') window.toggleSidebar('left');
+                return true;
+            case 'toggle_right_sidebar':
+                if (!isNarrow && typeof window.toggleSidebar === 'function') window.toggleSidebar('right');
+                return true;
+            case 'tab_editor':
+                if (!state.isReadOnly && !isNarrow && typeof window.switchSidebarTab === 'function') window.switchSidebarTab('editor');
+                return true;
+            case 'tab_description':
+                if (!isNarrow && typeof window.switchSidebarTab === 'function') window.switchSidebarTab('description');
+                return true;
+            case 'tool_select':
+                if (!state.isReadOnly && typeof window.setTool === 'function') window.setTool('select');
+                return true;
+            case 'tool_hand':
+                if (typeof window.setTool === 'function') window.setTool('hand');
+                return true;
+            case 'tool_text':
+                if (!state.isReadOnly && typeof window.handleTextboxCreation === 'function') window.handleTextboxCreation();
+                return true;
+            case 'toggle_shortcut_help':
+                if (typeof window.toggleShortcutHelpPopover === 'function') window.toggleShortcutHelpPopover();
+                return true;
+            case 'versioned_save':
+                if (!state.isReadOnly && typeof window.handleVersionedSave === 'function') window.handleVersionedSave();
+                return true;
+            case 'escape_fallback':
+                return handleEscapeKey({ key: 'Escape', code: 'Escape' });
+            default:
+                return false;
+        }
+    }
+    window.executeWorkspaceShortcut = executeWorkspaceShortcut;
+
+    function handleZoomShortcuts(e) {
+        if (!(e.ctrlKey || e.metaKey) || e.altKey) return false;
+        if (typeof window.isBlockingOverlayOpen === 'function' && window.isBlockingOverlayOpen()) return false;
+
+        const isZoomOut = (e.code === 'Minus' || e.code === 'NumpadSubtract' || e.key === '-' || e.key === '_');
+        const isZoomIn = (e.code === 'Equal' || e.code === 'NumpadAdd' || e.key === '+' || e.key === '=');
+        if (!isZoomOut && !isZoomIn) return false;
+
+        e.preventDefault();
+        executeWorkspaceShortcut(isZoomOut ? 'zoom_out' : 'zoom_in');
+        return true;
+    }
+
+    function handleSingleKeyWorkspaceShortcuts(e, isInput, state) {
+        if (isInput || e.isComposing) return false;
+        if (e.ctrlKey || e.metaKey || e.altKey) return false;
+        if (state && state.isImageCropping) return false;
+
+        // '?' (Shift + /) toggles Shortcut Help Popover in both Edit and Read-Only modes
+        if (e.key === '?' || (e.shiftKey && e.code === 'Slash')) {
+            if (typeof window.isBlockingOverlayOpen === 'function' && window.isBlockingOverlayOpen()) return false;
+            e.preventDefault();
+            return executeWorkspaceShortcut('toggle_shortcut_help');
+        }
+
+        if (e.shiftKey) return false;
+        if (typeof window.isBlockingOverlayOpen === 'function' && window.isBlockingOverlayOpen()) return false;
+
+        const code = e.code || '';
+        const keyLower = (e.key || '').toLowerCase();
+
+        if (code === 'KeyF' || keyLower === 'f') {
+            e.preventDefault();
+            return executeWorkspaceShortcut('toggle_fullscreen');
+        }
+        if (code === 'KeyL' || keyLower === 'l') {
+            e.preventDefault();
+            return executeWorkspaceShortcut('toggle_left_sidebar');
+        }
+        if (code === 'KeyR' || keyLower === 'r') {
+            e.preventDefault();
+            return executeWorkspaceShortcut('toggle_right_sidebar');
+        }
+        if (code === 'KeyD' || keyLower === 'd') {
+            e.preventDefault();
+            return executeWorkspaceShortcut('tab_description');
+        }
+        if (code === 'KeyH' || keyLower === 'h') {
+            e.preventDefault();
+            return executeWorkspaceShortcut('tool_hand');
+        }
+
+        if (state && state.isReadOnly) return false;
+
+        if (code === 'KeyE' || keyLower === 'e') {
+            e.preventDefault();
+            return executeWorkspaceShortcut('tab_editor');
+        }
+        if (code === 'KeyV' || keyLower === 'v') {
+            e.preventDefault();
+            return executeWorkspaceShortcut('tool_select');
+        }
+        if (code === 'KeyT' || keyLower === 't') {
+            e.preventDefault();
+            return executeWorkspaceShortcut('tool_text');
+        }
+        return false;
+    }
+
     function initParentShortcuts() {
         if (_initialized) return;
         _initialized = true;
@@ -313,7 +470,15 @@
             // 0. PageUp / PageDown Screen Navigation (Active in both Edit & Read-Only / Presentation Modes)
             if (handlePageScreenNavigation(e, isInput, state)) return;
 
-            if (state.isReadOnly) return;
+            // 0.5. Canvas Zoom Shortcuts (Ctrl + +/-, Active in both Edit & Read-Only Modes)
+            if (handleZoomShortcuts(e)) return;
+
+            // 0.8. Read-Only Escape & Viewer Navigation Shortcuts (Fullscreen Exit, Modal Dismiss, Sidebar L/R, Description D, Hand H)
+            if (state.isReadOnly) {
+                if (handleEscapeKey(e)) return;
+                handleSingleKeyWorkspaceShortcuts(e, isInput, state);
+                return;
+            }
 
             // 1. Global Save Shortcut (Ctrl+S / Cmd+S)
             if (handleSaveShortcut(e, isInput)) return;
@@ -321,8 +486,11 @@
             // 2. F2 Mode Switch
             if (handleF2ModeSwitch(e, isInput)) return;
 
-            // If user is typing in any input/textarea/editor, do NOT process parent shortcuts
-            if (isInput) return;
+            // If user is typing in any input/textarea/editor, do NOT process parent shortcuts (except Escape to blur/close modal)
+            if (isInput) {
+                if (e.key === 'Escape') handleEscapeKey(e);
+                return;
+            }
 
             // 3. Undo / Redo Global Shortcuts
             if (handleUndoRedo(e)) return;
@@ -348,6 +516,9 @@
 
             // 5. Escape Key Handling
             if (handleEscapeKey(e)) return;
+
+            // 5.5. Single-Key Workspace Shortcuts (F, L, R, E, D, V, H, T)
+            if (handleSingleKeyWorkspaceShortcuts(e, isInput, state)) return;
 
             // 6. Proxy Canvas Shortcuts to Iframe
             handleProxyCanvasShortcuts(e);

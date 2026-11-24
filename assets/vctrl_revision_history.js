@@ -22,12 +22,19 @@
         const listContainer = document.getElementById('history-popup-list');
         if (!listContainer) return;
 
+        const isRO = Boolean(typeof state !== 'undefined' && state && state.isReadOnly);
+        const btnAddHist = document.getElementById('btn-add-history');
+        if (btnAddHist) btnAddHist.style.display = isRO ? 'none' : '';
+
         if (!_currentHistoryList || _currentHistoryList.length === 0) {
+            const emptySubTxt = isRO
+                ? '현재 프로젝트에 등록된 재개정 이력이 없습니다.'
+                : "우측 상단의 '+ 이력 추가' 버튼을 눌러 새 이력을 등록할 수 있습니다.";
             listContainer.innerHTML = `
                 <div class="history-empty-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; text-align: center; color: var(--text-secondary); width: 100%;">
                     <span class="material-icons-outlined history-empty-icon" style="font-size: 40px; margin-bottom: 12px; opacity: 0.45;">history</span>
                     <div class="history-empty-title" style="font-size: 15px; font-weight: 600; margin-bottom: 6px;">기록된 재개정 이력이 없습니다.</div>
-                    <div class="history-empty-sub" style="font-size: 12.5px;">우측 상단의 '+ 이력 추가' 버튼을 눌러 새 이력을 등록할 수 있습니다.</div>
+                    <div class="history-empty-sub" style="font-size: 12.5px;">${emptySubTxt}</div>
                 </div>
             `;
         } else {
@@ -152,6 +159,7 @@
     };
 
     window.startHistoryEdit = function(index) {
+        if (typeof state !== 'undefined' && state && state.isReadOnly) return window.showAuthModal?.();
         _editingHistoryIndex = index;
         window.renderHistoryPopup();
         setTimeout(() => {
@@ -206,7 +214,9 @@
 
         const currentProj = (typeof state !== 'undefined' && state && state.currentProject) ? state.currentProject : null;
         if (!currentProj) {
-            alert("현재 열려 있는 프로젝트 정보를 찾을 수 없습니다.");
+            if (window.Notification && typeof window.Notification.alert === 'function') {
+                window.Notification.alert("현재 열려 있는 프로젝트 정보를 찾을 수 없습니다.", "오류", "error");
+            }
             return;
         }
 
@@ -273,6 +283,7 @@
     };
 
     window.deleteHistoryItem = async function(index) {
+        if (typeof state !== 'undefined' && state && state.isReadOnly) return window.showAuthModal?.();
         const item = _currentHistoryList[index];
         if (!item) return;
 
@@ -281,16 +292,16 @@
 
         let isConfirmed = false;
         if (window.Notification && typeof window.Notification.confirm === 'function') {
-            isConfirmed = await window.Notification.confirm(confirmMsg, "이력 삭제 확인");
-        } else {
-            isConfirmed = window.confirm(confirmMsg);
+            isConfirmed = await window.Notification.confirm(confirmMsg, "이력 삭제 확인", "warning");
         }
 
         if (!isConfirmed) return;
 
         const currentProj = (typeof state !== 'undefined' && state && state.currentProject) ? state.currentProject : null;
         if (!currentProj) {
-            alert("현재 프로젝트를 찾을 수 없습니다.");
+            if (window.Notification && typeof window.Notification.alert === 'function') {
+                window.Notification.alert("현재 프로젝트를 찾을 수 없습니다.", "오류", "error");
+            }
             return;
         }
 
@@ -351,6 +362,7 @@
     };
 
     window.addNewHistoryEntry = function() {
+        if (typeof state !== 'undefined' && state && state.isReadOnly) return window.showAuthModal?.();
         if (_editingHistoryIndex !== null) {
             window.cancelHistoryEdit(_editingHistoryIndex);
         }

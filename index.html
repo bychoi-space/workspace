@@ -29,7 +29,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css?v=V450_COMMON_SSOT">
     <link rel="stylesheet" href="assets/theme.css?v=V431_DUAL_THEME">
-    <link rel="stylesheet" href="assets/dashboard.css?v=V501_SELF_SIGNUP">
+    <link rel="stylesheet" href="assets/dashboard.css?v=V507_PHASE3_UX">
     <!-- PWA & Mobile Web App Meta Tags -->
     <script>
         if (window.location.protocol.startsWith('http')) {
@@ -186,9 +186,17 @@
             </div>
         </div>
 
-        <!-- Category Filter Bar (Option B Merge) -->
+        <!-- Category Filter Bar & Sort Controls -->
         <div class="category-filter-wrap">
             <div class="category-filter-bar" id="category-filter-bar" role="tablist" aria-label="프로젝트 분류 필터"></div>
+            <div class="dashboard-sort-wrap">
+                <label for="project-sort-select" class="sr-only">프로젝트 정렬 기준</label>
+                <select id="project-sort-select" class="dashboard-sort-select" aria-label="프로젝트 정렬 기준">
+                    <option value="recent">최근 업데이트순</option>
+                    <option value="name">과제명 가나다순</option>
+                    <option value="screens">화면 많은 순</option>
+                </select>
+            </div>
         </div>
 
         <div class="card-grid-scroll-wrap">
@@ -487,8 +495,8 @@
     <script src="assets/vctrl_theme.js?v=V431_DUAL_THEME"></script>
     <script src="assets/templates.js?v=V431_DUAL_THEME"></script>
     <script src="assets/vctrl_clipboard.js?v=V431_DUAL_THEME"></script>
-    <script src="assets/vctrl_supabase.js?v=V501_SELF_SIGNUP"></script>
-    <script src="assets/app.js?v=V500_SUPABASE"></script>
-    <script src="assets/dashboard.js?v=V500_SUPABASE"></script>
+    <script src="assets/vctrl_supabase.js?v=V506_PHASE2_UX"></script>
+    <script src="assets/app.js?v=V506_PHASE2_UX"></script>
+    <script src="assets/dashboard.js?v=V507_PHASE3_UX"></script>
 </body>
 </html>

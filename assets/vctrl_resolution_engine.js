@@ -14,7 +14,7 @@
  * - Safe optional chaining & zero runtime errors
  */
 
-(function() {
+(function () {
     console.log("%c [VCTRL RESOLUTION ENGINE] Initializing Resolution Engine... ", "background: #06b6d4; color: #fff; font-weight: bold; padding: 4px; border-radius: 4px;");
 
     var BREAKPOINTS = {
@@ -26,6 +26,7 @@
         currentTier: 'wide', // 'wide' | 'compact' | 'narrow'
         currentFocus: 'full', // 'mobile' | 'pc' | 'full'
         _userSelectedFocus: null, // 'mobile' | 'pc' | 'full' | null
+        activeSheetTab: 'screens', // 'screens' | 'pins'
         isTouchDevice: false,
         _initialized: false,
         _resizeTimer: null,
@@ -49,7 +50,7 @@
         },
 
         // --- 1. Initialization Pipeline ---
-        init: function() {
+        init: function () {
             if (this._initialized) return;
             this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
             if (this.isTouchDevice) {
@@ -67,15 +68,15 @@
 
             // Delayed sync guards for asynchronous metadata hydration & iframe load
             var self = this;
-            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 400);
-            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 1200);
-            setTimeout(function() { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 2500);
+            setTimeout(function () { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 400);
+            setTimeout(function () { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 1200);
+            setTimeout(function () { self.syncScreenList(); self.checkAndInitFrameSwitcher(); self.attachIframeTapListener(); }, 2500);
 
             console.log("[VCTRL RESOLUTION ENGINE] Initialized successfully. Current Tier:", this.currentTier);
         },
 
         // --- 2. DOM Injection (Bottom Dock & Bottom Sheet) ---
-        injectDOMElements: function() {
+        injectDOMElements: function () {
             // Inject Navigation Controls (Left Arrow, Right Arrow, Bottom Page Indicator) directly into body
             var btnPrev = document.getElementById('dock-btn-prev');
             if (!btnPrev) {
@@ -130,15 +131,15 @@
                 switcher.id = 'v4-frame-switcher';
                 switcher.className = 'v4-frame-switcher';
                 switcher.style.display = 'none';
-                switcher.innerHTML = 
+                switcher.innerHTML =
                     '<button type="button" class="v4-frame-switch-btn is-hidden" id="btn-focus-mobile" data-focus="mobile" title="모바일 핏 (세로형)" style="display: none !important;">' +
-                        '<span class="material-icons-outlined">smartphone</span>' +
+                    '<span class="material-icons-outlined">smartphone</span>' +
                     '</button>' +
                     '<button type="button" class="v4-frame-switch-btn is-hidden" id="btn-focus-pc" data-focus="pc" title="PC 핏 (가로형)" style="display: none !important;">' +
-                        '<span class="material-icons-outlined">desktop_windows</span>' +
+                    '<span class="material-icons-outlined">desktop_windows</span>' +
                     '</button>' +
                     '<button type="button" class="v4-frame-switch-btn active" id="btn-focus-full" data-focus="full" title="전체 화면 핏">' +
-                        '<span class="material-icons-outlined">aspect_ratio</span>' +
+                    '<span class="material-icons-outlined">aspect_ratio</span>' +
                     '</button>';
                 document.body.appendChild(switcher);
             }
@@ -168,36 +169,49 @@
                 sheet.id = 'v4-bottom-sheet';
                 sheet.className = 'v4-bottom-sheet';
                 sheet.setAttribute('aria-label', '프로젝트 화면 목록 및 메타데이터');
-                sheet.innerHTML = 
+                sheet.innerHTML =
                     '<div class="v4-sheet-handle-bar" id="v4-sheet-handle">' +
-                        '<div class="v4-sheet-handle-pill"></div>' +
+                    '<div class="v4-sheet-handle-pill"></div>' +
                     '</div>' +
                     '<div class="v4-sheet-header">' +
-                        '<div class="v4-sheet-title-group">' +
-                            '<span class="material-icons-outlined v4-sheet-title-icon">dashboard</span>' +
-                            '<span class="v4-sheet-title-text">프로젝트 스크린</span>' +
-                            '<span class="v4-sheet-screen-count" id="v4-sheet-screen-count">0</span>' +
-                        '</div>' +
-                        '<button type="button" class="v4-sheet-close-btn" id="v4-sheet-close" title="닫기">' +
-                            '<span class="material-icons-outlined">close</span>' +
-                        '</button>' +
+                    '<div class="v4-sheet-title-group">' +
+                    '<span class="material-icons-outlined v4-sheet-title-icon">dashboard</span>' +
+                    '<span class="v4-sheet-title-text">프로젝트 스크린</span>' +
+                    '<span class="v4-sheet-screen-count" id="v4-sheet-screen-count">0</span>' +
+                    '</div>' +
+                    '<button type="button" class="v4-sheet-close-btn" id="v4-sheet-close" title="닫기">' +
+                    '<span class="material-icons-outlined">close</span>' +
+                    '</button>' +
                     '</div>' +
                     '<div class="v4-sheet-meta-card">' +
-                        '<div class="v4-sheet-meta-info">' +
-                            '<span class="v4-sheet-meta-title" id="v4-sheet-meta-title">Project</span>' +
-                            '<span class="v4-sheet-meta-sub" id="v4-sheet-meta-updated">최종 수정: -</span>' +
-                        '</div>' +
-                        '<div class="v4-sheet-meta-actions">' +
-                            '<button type="button" id="v4-sheet-btn-history" class="v4-sheet-action-chip" title="재개정 이력">' +
-                                '<span class="material-icons-outlined" style="font-size:15px;">history</span> 이력' +
-                            '</button>' +
-                            '<button type="button" id="v4-sheet-btn-pdf" class="v4-sheet-action-chip" title="PDF 다운로드">' +
-                                '<span class="material-icons-outlined" style="font-size:15px;">picture_as_pdf</span> PDF' +
-                            '</button>' +
-                        '</div>' +
+                    '<div class="v4-sheet-meta-info">' +
+                    '<span class="v4-sheet-meta-title" id="v4-sheet-meta-title">Project</span>' +
+                    '<span class="v4-sheet-meta-sub" id="v4-sheet-meta-updated">최종 수정: -</span>' +
+                    '</div>' +
+                    '<div class="v4-sheet-meta-actions">' +
+                    '<button type="button" id="v4-sheet-btn-history" class="v4-sheet-action-chip" title="재개정 이력">' +
+                    '<span class="material-icons-outlined" style="font-size:15px;">history</span> 이력' +
+                    '</button>' +
+                    '<button type="button" id="v4-sheet-btn-pdf" class="v4-sheet-action-chip" title="PDF 다운로드">' +
+                    '<span class="material-icons-outlined" style="font-size:15px;">picture_as_pdf</span> PDF' +
+                    '</button>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="v4-sheet-tabs" id="v4-sheet-tabs" role="tablist" aria-label="모바일 시트 보기 전환">' +
+                    '<button type="button" class="v4-sheet-tab-btn active" id="v4-sheet-tab-screens" data-sheet-tab="screens" role="tab" aria-selected="true">' +
+                    '<span>화면 목록</span><span class="v4-sheet-tab-badge" id="v4-sheet-tab-screens-count">0</span>' +
+                    '</button>' +
+                    '<button type="button" class="v4-sheet-tab-btn" id="v4-sheet-tab-pins" data-sheet-tab="pins" role="tab" aria-selected="false">' +
+                    '<span>화면 설명 (Pin)</span><span class="v4-sheet-tab-badge" id="v4-sheet-tab-pins-count">0</span>' +
+                    '</button>' +
                     '</div>' +
                     '<div class="v4-sheet-body">' +
-                        '<ul class="v4-sheet-list" id="v4-sheet-list"></ul>' +
+                    '<div id="v4-sheet-pane-screens" class="v4-sheet-pane active">' +
+                    '<ul class="v4-sheet-list" id="v4-sheet-list"></ul>' +
+                    '</div>' +
+                    '<div id="v4-sheet-pane-pins" class="v4-sheet-pane" style="display:none;">' +
+                    '<div class="v4-sheet-pins-list" id="v4-sheet-pins-list"></div>' +
+                    '</div>' +
                     '</div>';
                 document.body.appendChild(sheet);
             }
@@ -205,7 +219,7 @@
 
         },
 
-        getResolutionTier: function() {
+        getResolutionTier: function () {
             var w = window.innerWidth;
             var h = window.innerHeight;
             var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
@@ -224,7 +238,7 @@
             return 'wide';
         },
 
-        updateBreakpoint: function(force) {
+        updateBreakpoint: function (force) {
             var newTier = this.getResolutionTier();
             if (!force && newTier === this.currentTier) return;
 
@@ -277,20 +291,20 @@
 
             // Refresh center view to expand canvas to full available width
             if (window.centerView && (force || oldTier !== newTier)) {
-                setTimeout(function() {
+                setTimeout(function () {
                     window.centerView(true);
                 }, 100);
             }
         },
 
         // --- 4. Event Wiring ---
-        initListeners: function() {
+        initListeners: function () {
             var self = this;
 
             // Debounced Window Resize & Orientation Change Auto-Fit
-            var onResizeOrOrientation = function() {
+            var onResizeOrOrientation = function () {
                 clearTimeout(self._resizeTimer);
-                self._resizeTimer = setTimeout(function() {
+                self._resizeTimer = setTimeout(function () {
                     self.updateBreakpoint(true);
                     if (self.currentFocus && self.currentFocus !== 'full') {
                         self.focusFrame(self.currentFocus);
@@ -298,7 +312,7 @@
                         window.centerView(true);
                     }
                 }, 80);
-                setTimeout(function() {
+                setTimeout(function () {
                     self.updateBreakpoint(true);
                     if (self.currentFocus && self.currentFocus !== 'full') {
                         self.focusFrame(self.currentFocus);
@@ -323,46 +337,46 @@
             var btnScreens = document.getElementById('dock-btn-screens');
             var btnZenExit = document.getElementById('v4-zen-exit-pill');
             if (btnZenExit) {
-                btnZenExit.addEventListener('click', function(e) {
+                btnZenExit.addEventListener('click', function (e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
                     self.toggleZenMode(false);
                 });
-                btnZenExit.addEventListener('touchend', function(e) {
+                btnZenExit.addEventListener('touchend', function (e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
                     self.toggleZenMode(false);
                 });
             }
 
             if (btnPrev) {
-                btnPrev.addEventListener('click', function(e) {
+                btnPrev.addEventListener('click', function (e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
                     self.navigateScreen(-1);
                 });
-                btnPrev.addEventListener('touchstart', function(e) {
+                btnPrev.addEventListener('touchstart', function (e) {
                     if (e) e.stopPropagation();
                 }, { passive: true });
             }
             if (btnNext) {
-                btnNext.addEventListener('click', function(e) {
+                btnNext.addEventListener('click', function (e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
                     self.navigateScreen(1);
                 });
-                btnNext.addEventListener('touchstart', function(e) {
+                btnNext.addEventListener('touchstart', function (e) {
                     if (e) e.stopPropagation();
                 }, { passive: true });
             }
-            if (btnFullscreen) btnFullscreen.addEventListener('click', function() { self.toggleFullscreen(); });
-            if (btnFit) btnFit.addEventListener('click', function() {
+            if (btnFullscreen) btnFullscreen.addEventListener('click', function () { self.toggleFullscreen(); });
+            if (btnFit) btnFit.addEventListener('click', function () {
                 if (window.state) window.state.viewMode = 'fit';
                 if (window.centerView) window.centerView(true);
                 self.syncDockZoom();
                 self.updateFocusButtonUI('full');
             });
-            if (btnCrisp) btnCrisp.addEventListener('click', function() {
+            if (btnCrisp) btnCrisp.addEventListener('click', function () {
                 if (window.toggleCrispView) window.toggleCrispView();
                 self.syncDockZoom();
             });
-            if (btnScreens) btnScreens.addEventListener('click', function() {
+            if (btnScreens) btnScreens.addEventListener('click', function () {
                 self.toggleBottomSheet();
             });
 
@@ -371,21 +385,21 @@
             var btnFocusPc = document.getElementById('btn-focus-pc');
             var btnFocusFull = document.getElementById('btn-focus-full');
             if (btnFocusMobile) {
-                btnFocusMobile.addEventListener('click', function(e) {
+                btnFocusMobile.addEventListener('click', function (e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
                     self._userSelectedFocus = 'mobile';
                     self.focusFrame('mobile');
                 });
             }
             if (btnFocusPc) {
-                btnFocusPc.addEventListener('click', function(e) {
+                btnFocusPc.addEventListener('click', function (e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
                     self._userSelectedFocus = 'pc';
                     self.focusFrame('pc');
                 });
             }
             if (btnFocusFull) {
-                btnFocusFull.addEventListener('click', function(e) {
+                btnFocusFull.addEventListener('click', function (e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
                     self._userSelectedFocus = 'full';
                     self.focusFrame('full');
@@ -395,7 +409,7 @@
             // Canvas mouse wheel vertical scroll handler when focused on frame
             var canvasEl = document.getElementById('canvas');
             if (canvasEl) {
-                canvasEl.addEventListener('wheel', function(e) {
+                canvasEl.addEventListener('wheel', function (e) {
                     if (e.ctrlKey || e.metaKey) return;
                     if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
                         var scrollEl = self.getActiveScrollContainer();
@@ -409,14 +423,14 @@
             }
 
             // Keyboard Escape for Zen Mode
-            window.addEventListener('keydown', function(e) {
+            window.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && document.body.classList.contains('zen-mode')) {
                     self.toggleZenMode(false);
                 }
             });
 
             // Native Fullscreen Change Listener
-            var onFsChange = function() {
+            var onFsChange = function () {
                 var isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
                 document.body.classList.toggle('fullscreen-mode', isFull);
                 document.body.classList.toggle('zen-mode', isFull);
@@ -429,7 +443,7 @@
                     var icon = btnFullscreen.querySelector('span');
                     if (icon) icon.innerText = isFull ? 'fullscreen_exit' : 'fullscreen';
                 }
-                var reCenterOnFs = function() {
+                var reCenterOnFs = function () {
                     if (self.currentFocus && self.currentFocus !== 'full') {
                         self.focusFrame(self.currentFocus);
                     } else if (window.centerView) {
@@ -448,38 +462,38 @@
             var sheetClose = document.getElementById('v4-sheet-close');
             var handleBar = document.getElementById('v4-sheet-handle');
 
-            if (backdrop) backdrop.addEventListener('click', function() { self.closeBottomSheet(); });
-            if (sheetClose) sheetClose.addEventListener('click', function() { self.closeBottomSheet(); });
-            if (handleBar) handleBar.addEventListener('click', function() { self.closeBottomSheet(); });
+            if (backdrop) backdrop.addEventListener('click', function () { self.closeBottomSheet(); });
+            if (sheetClose) sheetClose.addEventListener('click', function () { self.closeBottomSheet(); });
+            if (handleBar) handleBar.addEventListener('click', function () { self.closeBottomSheet(); });
 
             // Sheet Meta Actions Proxy
             var sheetHistory = document.getElementById('v4-sheet-btn-history');
             var sheetPdf = document.getElementById('v4-sheet-btn-pdf');
             var sheetCopyUrl = document.getElementById('v4-sheet-btn-copy-url');
             if (sheetHistory) {
-                sheetHistory.addEventListener('click', function() {
+                sheetHistory.addEventListener('click', function () {
                     self.closeBottomSheet();
                     var origBtn = document.getElementById('btn-show-history');
                     if (origBtn) origBtn.click();
                 });
             }
             if (sheetPdf) {
-                sheetPdf.addEventListener('click', function() {
+                sheetPdf.addEventListener('click', function () {
                     self.closeBottomSheet();
                     var origPdf = document.getElementById('btn-export-project-pdf');
                     if (origPdf) origPdf.click();
                 });
             }
             if (sheetCopyUrl) {
-                sheetCopyUrl.addEventListener('click', function() {
+                sheetCopyUrl.addEventListener('click', function () {
                     self.closeBottomSheet();
                     // Copy current screen or project URL
                     try {
-                        navigator.clipboard.writeText(window.location.href).then(function() {
+                        navigator.clipboard.writeText(window.location.href).then(function () {
                             if (typeof window.showToast === 'function') {
                                 window.showToast('화면 URL이 클립보드에 복사되었습니다.');
-                            } else {
-                                alert('화면 URL이 클립보드에 복사되었습니다.');
+                            } else if (window.Notification && typeof window.Notification.alert === 'function') {
+                                window.Notification.alert('화면 URL이 클립보드에 복사되었습니다.', '복사 완료', 'info');
                             }
                         });
                     } catch (_) {
@@ -492,30 +506,62 @@
             // Toolbar Mobile More Button
             var mobileMoreBtn = document.getElementById('btn-toolbar-mobile-more');
             if (mobileMoreBtn) {
-                mobileMoreBtn.addEventListener('click', function() {
+                mobileMoreBtn.addEventListener('click', function () {
                     self.toggleBottomSheet();
                 });
             }
 
-            // Toolbar File Name Click on Mobile opens Bottom Sheet
+            // Toolbar File Name / Brand Click on Mobile opens Bottom Sheet
+            var brandWrap = document.querySelector('.toolbar .brand');
             var fileNameDisplay = document.getElementById('file-name-display');
-            if (fileNameDisplay) {
-                fileNameDisplay.addEventListener('click', function() {
+            if (brandWrap) {
+                brandWrap.addEventListener('click', function (e) {
+                    if (e && e.target && e.target.closest && e.target.closest('#btn-back')) return;
                     if (self.currentTier === 'narrow') {
-                        self.toggleBottomSheet();
+                        if (e) { e.preventDefault(); e.stopPropagation(); }
+                        self.toggleBottomSheet('screens');
+                    }
+                });
+            } else if (fileNameDisplay) {
+                fileNameDisplay.addEventListener('click', function () {
+                    if (self.currentTier === 'narrow') {
+                        self.toggleBottomSheet('screens');
                     }
                 });
             }
 
+            // Bottom Page Indicator Pill Click opens Screen List or Pin Descriptions
+            var pageIndEl = document.getElementById('dock-page-indicator');
+            if (pageIndEl) {
+                pageIndEl.addEventListener('click', function (e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    var pinTarget = e && e.target && e.target.closest ? e.target.closest('[data-open-sheet-tab="pins"]') : null;
+                    self.toggleBottomSheet(pinTarget ? 'pins' : 'screens');
+                });
+                pageIndEl.addEventListener('touchstart', function (e) {
+                    if (e) e.stopPropagation();
+                }, { passive: true });
+            }
+
+            // Sheet Tab Buttons (Screens vs Pins)
+            var tabScreensBtn = document.getElementById('v4-sheet-tab-screens');
+            var tabPinsBtn = document.getElementById('v4-sheet-tab-pins');
+            if (tabScreensBtn) {
+                tabScreensBtn.addEventListener('click', function () { self.switchSheetTab('screens'); });
+            }
+            if (tabPinsBtn) {
+                tabPinsBtn.addEventListener('click', function () { self.switchSheetTab('pins'); });
+            }
+
             // Listen to screen load events to re-sync bottom sheet & smart focus
             if (window.MessageHub && typeof window.MessageHub.subscribe === 'function') {
-                window.MessageHub.subscribe('SCREEN_LOADED', function() {
+                window.MessageHub.subscribe('SCREEN_LOADED', function () {
                     self._userSelectedFocus = null;
                     self.syncScreenList();
                     self.checkAndInitFrameSwitcher();
                     self.attachIframeTapListener();
                 });
-                window.MessageHub.subscribe('SCREEN_CHANGED', function() {
+                window.MessageHub.subscribe('SCREEN_CHANGED', function () {
                     self._userSelectedFocus = null;
                     self.syncScreenList();
                     self.checkAndInitFrameSwitcher();
@@ -526,8 +572,8 @@
             // Fallback iframe load listener
             var DOM = window.DOM;
             if (DOM && DOM.iframe) {
-                DOM.iframe.addEventListener('load', function() {
-                    setTimeout(function() {
+                DOM.iframe.addEventListener('load', function () {
+                    setTimeout(function () {
                         self.checkAndInitFrameSwitcher();
                         self.attachIframeTapListener();
                     }, 150);
@@ -536,14 +582,14 @@
         },
 
         // --- 5. Touch Gestures Engine (Pinch-to-zoom, 1-Finger Pan, Single-Tap Zen, Double-Tap) ---
-        initTouchGestures: function() {
+        initTouchGestures: function () {
             var self = this;
             var canvas = document.getElementById('canvas');
             if (!canvas) return;
 
             var touchState = this._touchState;
 
-            canvas.addEventListener('touchstart', function(e) {
+            canvas.addEventListener('touchstart', function (e) {
                 // Ignore touch on interactive UI overlays
                 if (e.target.closest('#dock-btn-prev, #dock-btn-next, #dock-page-indicator, #v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card, .toolbar')) {
                     return;
@@ -604,7 +650,7 @@
                 }
             }, { passive: false });
 
-            canvas.addEventListener('touchmove', function(e) {
+            canvas.addEventListener('touchmove', function (e) {
                 if (!touchState.isTracking) return;
 
                 var state = window.state;
@@ -680,7 +726,7 @@
                 }
             }, { passive: false });
 
-            canvas.addEventListener('touchend', function(e) {
+            canvas.addEventListener('touchend', function (e) {
                 if (e.touches.length === 0) {
                     var elapsed = Date.now() - (touchState.tapStartTime || 0);
                     var t = (e.changedTouches && e.changedTouches[0]) || null;
@@ -710,7 +756,7 @@
             });
 
             // Fallback click listener for simulated mouse click in mobile device preview only
-            canvas.addEventListener('click', function(e) {
+            canvas.addEventListener('click', function (e) {
                 if (e.target.closest('#dock-btn-prev, #dock-btn-next, #dock-page-indicator, #v4-bottom-dock, #v4-bottom-sheet, #v4-frame-switcher, #v4-zen-exit-pill, #floating-inspector-card, .modal-overlay, .dialog-card, .toolbar')) {
                     return;
                 }
@@ -723,7 +769,7 @@
         },
 
         // --- 6. Screen Navigation Pipeline ---
-        getScreensList: function() {
+        getScreensList: function () {
             var state = window.state;
             if (state && state.screens && Array.isArray(state.screens) && state.screens.length > 0) {
                 return state.screens;
@@ -763,7 +809,7 @@
             return [];
         },
 
-        getActiveScreenIndex: function() {
+        getActiveScreenIndex: function () {
             var state = window.state;
             var screens = this.getScreensList();
             if (screens.length === 0) return -1;
@@ -773,7 +819,7 @@
                 try {
                     var params = new URLSearchParams(window.location.search);
                     activeName = params.get('file') || '';
-                } catch (_) {}
+                } catch (_) { }
             }
             if (!activeName) return 0;
 
@@ -787,18 +833,24 @@
             return -1;
         },
 
-        navigateScreen: function(direction) {
+        navigateScreen: function (direction) {
             var screens = this.getScreensList();
             if (screens.length === 0) return;
             var curIdx = this.getActiveScreenIndex();
             if (curIdx === -1) curIdx = 0;
 
             var nextIdx = curIdx + direction;
-            // Circular wrap-around: Last -> First, First -> Last
+            // Boundary stop with toast feedback (consistent with desktop PageUp/PageDown)
             if (nextIdx < 0) {
-                nextIdx = screens.length - 1;
+                if (typeof window.showToast === 'function') {
+                    window.showToast('첫 화면입니다.', 'info');
+                }
+                return;
             } else if (nextIdx >= screens.length) {
-                nextIdx = 0;
+                if (typeof window.showToast === 'function') {
+                    window.showToast('마지막 화면입니다.', 'info');
+                }
+                return;
             }
 
             var target = screens[nextIdx];
@@ -818,37 +870,151 @@
                 var url = new URL(window.location.href);
                 url.searchParams.set('file', targetFile);
                 window.history.replaceState(null, '', url.toString());
-            } catch (_) {}
+            } catch (_) { }
 
             this.syncScreenList();
         },
 
-        // --- 7. Bottom Sheet Screen Browser Control ---
-        openBottomSheet: function() {
+        // --- 7. Bottom Sheet Screen Browser & Pin Descriptions Control ---
+        switchSheetTab: function (tabName) {
+            var nextTab = (tabName === 'pins') ? 'pins' : 'screens';
+            this.activeSheetTab = nextTab;
+            var btnScreens = document.getElementById('v4-sheet-tab-screens');
+            var btnPins = document.getElementById('v4-sheet-tab-pins');
+            var paneScreens = document.getElementById('v4-sheet-pane-screens');
+            var panePins = document.getElementById('v4-sheet-pane-pins');
+            if (btnScreens) {
+                btnScreens.classList.toggle('active', nextTab === 'screens');
+                btnScreens.setAttribute('aria-selected', nextTab === 'screens' ? 'true' : 'false');
+            }
+            if (btnPins) {
+                btnPins.classList.toggle('active', nextTab === 'pins');
+                btnPins.setAttribute('aria-selected', nextTab === 'pins' ? 'true' : 'false');
+            }
+            if (paneScreens) paneScreens.style.display = (nextTab === 'screens') ? 'block' : 'none';
+            if (panePins) panePins.style.display = (nextTab === 'pins') ? 'block' : 'none';
+        },
+
+        openBottomSheet: function (preferredTab) {
             this.syncScreenList();
+            this.syncPinList();
+            if (preferredTab === 'pins' || preferredTab === 'screens') {
+                this.switchSheetTab(preferredTab);
+            } else {
+                this.switchSheetTab(this.activeSheetTab || 'screens');
+            }
             var sheet = document.getElementById('v4-bottom-sheet');
             var backdrop = document.getElementById('v4-bottom-sheet-backdrop');
             if (sheet) sheet.classList.add('is-open');
             if (backdrop) backdrop.classList.add('is-open');
         },
 
-        closeBottomSheet: function() {
+        closeBottomSheet: function () {
             var sheet = document.getElementById('v4-bottom-sheet');
             var backdrop = document.getElementById('v4-bottom-sheet-backdrop');
             if (sheet) sheet.classList.remove('is-open');
             if (backdrop) backdrop.classList.remove('is-open');
         },
 
-        toggleBottomSheet: function() {
+        toggleBottomSheet: function (preferredTab) {
             var sheet = document.getElementById('v4-bottom-sheet');
             if (sheet && sheet.classList.contains('is-open')) {
+                if (preferredTab && preferredTab !== this.activeSheetTab) {
+                    this.switchSheetTab(preferredTab);
+                    return;
+                }
                 this.closeBottomSheet();
             } else {
-                this.openBottomSheet();
+                this.openBottomSheet(preferredTab);
             }
         },
 
-        syncScreenList: function() {
+        _getActiveScreenPins: function () {
+            var st = window.state || {};
+            if (st.activeFile && st.activeFile.meta && Array.isArray(st.activeFile.meta.description)) {
+                return st.activeFile.meta.description;
+            }
+            var activeName = (st.activeFile && st.activeFile.name) || '';
+            if (activeName && st.projectMetadata && st.projectMetadata.screens && st.projectMetadata.screens[activeName] && Array.isArray(st.projectMetadata.screens[activeName].description)) {
+                return st.projectMetadata.screens[activeName].description;
+            }
+            return [];
+        },
+
+        _sanitizePinHtmlForSheet: function (item) {
+            var esc = typeof window.escapeHtml === 'function' ? window.escapeHtml : function (s) {
+                return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            };
+            if (!item) return '';
+            var isDummy = Boolean(
+                item.html && (
+                    item.html.indexOf('v4-editable-cell') !== -1 ||
+                    (item.html.indexOf('Edit Text') !== -1 && item.text && item.text !== 'Edit Text')
+                )
+            );
+            if (item.html && typeof item.html === 'string' && item.html.trim().length > 0 && !isDummy) {
+                var tmp = document.createElement('div');
+                tmp.innerHTML = item.html;
+                tmp.querySelectorAll('script, style, iframe, object, embed').forEach(function (n) { n.remove(); });
+                tmp.querySelectorAll('*').forEach(function (el) {
+                    Array.from(el.attributes).forEach(function (attr) {
+                        if (/^on/i.test(attr.name) || attr.name === 'contenteditable') {
+                            el.removeAttribute(attr.name);
+                        }
+                    });
+                });
+                var cleaned = tmp.innerHTML.trim();
+                if (cleaned) return cleaned;
+            }
+            if (item.text && typeof item.text === 'string' && item.text.trim()) {
+                return esc(item.text.trim()).replace(/\n/g, '<br>');
+            }
+            return '<span style="opacity:0.55;">작성된 설명이 없습니다.</span>';
+        },
+
+        syncPinList: function () {
+            var pins = this._getActiveScreenPins();
+            var pinCount = Array.isArray(pins) ? pins.length : 0;
+
+            var tabPinBadge = document.getElementById('v4-sheet-tab-pins-count');
+            if (tabPinBadge) tabPinBadge.innerText = String(pinCount);
+
+            var pinsContainer = document.getElementById('v4-sheet-pins-list');
+            if (pinsContainer) {
+                if (pinCount === 0) {
+                    pinsContainer.innerHTML =
+                        '<div class="v4-sheet-empty-pins">' +
+                        '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.55;" aria-hidden="true">' +
+                        '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>' +
+                        '</svg>' +
+                        '<span>현재 화면에 등록된 핀 상세 설명이 없습니다.</span>' +
+                        '</div>';
+                } else {
+                    var cardsHtml = '';
+                    for (var i = 0; i < pinCount; i++) {
+                        var pItem = pins[i] || {};
+                        var hasHost = Boolean(pItem.fixedHost || (pItem.pins && ((pItem.pins.pc && pItem.pins.pc.fixedHost) || (pItem.pins.mobile && pItem.pins.mobile.fixedHost))));
+                        var isFixed = (pItem.scrollFixed && pItem.scrollFixed !== 'none') || hasHost;
+                        var modeTag = isFixed ? ('<span class="v4-sheet-pin-mode-tag">' + (hasHost ? '오브젝트 고정' : '화면 고정') + '</span>') : '';
+                        var bodyHtml = this._sanitizePinHtmlForSheet(pItem);
+                        cardsHtml +=
+                            '<div class="v4-sheet-pin-card">' +
+                            '<div class="v4-sheet-pin-head">' +
+                            '<div class="v4-sheet-pin-badge-group">' +
+                            '<span class="v4-sheet-pin-num">' + (i + 1) + '</span>' +
+                            '<span class="v4-sheet-pin-label">Pin ' + (i + 1) + '</span>' +
+                            '</div>' +
+                            modeTag +
+                            '</div>' +
+                            '<div class="v4-sheet-pin-body">' + bodyHtml + '</div>' +
+                            '</div>';
+                    }
+                    pinsContainer.innerHTML = cardsHtml;
+                }
+            }
+        },
+
+        syncScreenList: function () {
             var self = this;
             var screens = this.getScreensList();
             var curIdx = this.getActiveScreenIndex();
@@ -856,6 +1022,12 @@
             // Update Screen Count
             var countEl = document.getElementById('v4-sheet-screen-count');
             if (countEl) countEl.innerText = String(screens.length);
+            var tabScreensCountEl = document.getElementById('v4-sheet-tab-screens-count');
+            if (tabScreensCountEl) tabScreensCountEl.innerText = String(screens.length);
+
+            var pins = this._getActiveScreenPins();
+            var pinCount = Array.isArray(pins) ? pins.length : 0;
+            this.syncPinList();
 
             // Update Metadata Info in Sheet
             var metaTitle = document.getElementById('v4-sheet-meta-title');
@@ -882,12 +1054,18 @@
             if (btnPrev) btnPrev.disabled = !hasMultiple;
             if (btnNext) btnNext.disabled = !hasMultiple;
 
-            // Update Page Indicator in Bottom Pill
+            // Update Page Indicator in Bottom Pill (Tappable: Screen List + Pin Badge)
             var pageIndicator = document.getElementById('dock-page-indicator');
             if (pageIndicator) {
                 var curNum = (curIdx >= 0) ? (curIdx + 1 < 10 ? '0' + (curIdx + 1) : (curIdx + 1)) : '01';
                 var totNum = (screens.length < 10 ? '0' + screens.length : screens.length);
-                pageIndicator.innerText = curNum + ' / ' + totNum;
+                var baseTxt = '<span>' + curNum + ' / ' + totNum + '</span>';
+                if (pinCount > 0) {
+                    pageIndicator.innerHTML = baseTxt + '<span class="dock-ind-sep" aria-hidden="true">·</span><span class="dock-ind-pin-chip" data-open-sheet-tab="pins" title="화면 설명 열기">Pin ' + pinCount + '</span>';
+                } else {
+                    pageIndicator.innerHTML = baseTxt;
+                }
+                pageIndicator.title = '탭하여 화면 목록 및 설명 열기';
             }
 
             // Render Sheet List Items
@@ -898,8 +1076,8 @@
             for (var i = 0; i < screens.length; i++) {
                 var s = screens[i];
                 var sName = typeof s === 'string' ? s : (s.name || s.file || ('Screen ' + (i + 1)));
-                var sMeta = (window.state && window.state.projectMetadata && window.state.projectMetadata.screens) 
-                    ? window.state.projectMetadata.screens[sName] 
+                var sMeta = (window.state && window.state.projectMetadata && window.state.projectMetadata.screens)
+                    ? window.state.projectMetadata.screens[sName]
                     : null;
                 var sTitle = (sMeta && sMeta.title) ? sMeta.title : ((typeof s === 'object' && s.title) ? s.title : sName.replace(/\.html$/i, ''));
                 var sDesc = (sMeta && sMeta.desc) ? sMeta.desc : ((typeof s === 'object' && s.desc) ? s.desc : '');
@@ -908,16 +1086,16 @@
                 var li = document.createElement('li');
                 li.className = 'v4-sheet-item' + (isActive ? ' active' : '');
                 li.setAttribute('data-screen-file', sName);
-                li.innerHTML = 
+                li.innerHTML =
                     '<span class="v4-sheet-item-num">' + (i + 1 < 10 ? '0' + (i + 1) : (i + 1)) + '</span>' +
                     '<div class="v4-sheet-item-content">' +
-                        '<div class="v4-sheet-item-title" title="' + sTitle + '">' + sTitle + '</div>' +
-                        (sDesc ? '<div class="v4-sheet-item-desc">' + sDesc + '</div>' : '') +
+                    '<div class="v4-sheet-item-title" title="' + sTitle + '">' + sTitle + '</div>' +
+                    (sDesc ? '<div class="v4-sheet-item-desc">' + sDesc + '</div>' : '') +
                     '</div>' +
                     (isActive ? '<span class="v4-sheet-item-badge">현재 화면</span>' : '');
 
-                (function(targetFile) {
-                    li.addEventListener('click', function() {
+                (function (targetFile) {
+                    li.addEventListener('click', function () {
                         self.closeBottomSheet();
                         self._userSelectedFocus = null;
                         if (typeof window.loadScreen === 'function') {
@@ -930,7 +1108,7 @@
                             var url = new URL(window.location.href);
                             url.searchParams.set('file', targetFile);
                             window.history.replaceState(null, '', url.toString());
-                        } catch (_) {}
+                        } catch (_) { }
                         self.syncScreenList();
                     });
                 })(sName);
@@ -942,7 +1120,7 @@
             this.attachIframeTapListener();
         },
 
-        syncDockZoom: function() {
+        syncDockZoom: function () {
             var txt = document.getElementById('dock-zoom-txt');
             var state = window.state;
             if (txt && state && state.transform) {
@@ -951,7 +1129,7 @@
         },
 
         // --- 8. Smart Frame Focus (Native 1:1 Mobile Frame Preview & PC Fit) ---
-        getFrameElements: function() {
+        getFrameElements: function () {
             var DOM = window.DOM;
             var iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe') || document.querySelector('iframe');
             if (!iframe) return { mobile: null, pc: null, hasMobile: false, hasPc: false, doc: null };
@@ -961,14 +1139,14 @@
 
                 // Exclusion: Multi-mobile comparison screens (e.g. Dual Mobile Compare: Maximum Case vs Minimum Case)
                 var allMobileFrames = doc.querySelectorAll('.mobile-frame, .mobile-browser-frame');
-                var pcEl = doc.querySelector('.frame-column.pc-column:not(.mobile-column)') || 
-                           doc.querySelector('.pc-column') || 
-                           doc.querySelector('.mobile-column-right') || 
-                           doc.querySelector('.pc-browser-frame') || 
-                           doc.querySelector('.pc-frame') || 
-                           doc.querySelector('.full-pc-page') || 
-                           doc.querySelector('.pc-content-inner') || 
-                           doc.querySelector('[data-frame="pc"]');
+                var pcEl = doc.querySelector('.frame-column.pc-column:not(.mobile-column)') ||
+                    doc.querySelector('.pc-column') ||
+                    doc.querySelector('.mobile-column-right') ||
+                    doc.querySelector('.pc-browser-frame') ||
+                    doc.querySelector('.pc-frame') ||
+                    doc.querySelector('.full-pc-page') ||
+                    doc.querySelector('.pc-content-inner') ||
+                    doc.querySelector('[data-frame="pc"]');
 
                 var isCompareScreen = !!(doc.querySelector('.mobile-compare-page, .dual-mobile-container, .mobile-compare-container') || (allMobileFrames.length > 1 && !pcEl));
                 if (isCompareScreen) {
@@ -976,13 +1154,13 @@
                 }
 
                 var mobileEl = (allMobileFrames.length === 1 || doc.querySelector('.frame-column.mobile-column'))
-                    ? (doc.querySelector('.frame-column.mobile-column:not(.pc-column)') || 
-                       doc.querySelector('.mobile-column') || 
-                       doc.querySelector('.mobile-column-left') || 
-                       doc.querySelector('.mobile-frame') || 
-                       doc.querySelector('.mobile-browser-frame') || 
-                       doc.querySelector('.mobile-content-inner') || 
-                       doc.querySelector('[data-frame="mobile"]'))
+                    ? (doc.querySelector('.frame-column.mobile-column:not(.pc-column)') ||
+                        doc.querySelector('.mobile-column') ||
+                        doc.querySelector('.mobile-column-left') ||
+                        doc.querySelector('.mobile-frame') ||
+                        doc.querySelector('.mobile-browser-frame') ||
+                        doc.querySelector('.mobile-content-inner') ||
+                        doc.querySelector('[data-frame="mobile"]'))
                     : null;
 
                 return {
@@ -997,27 +1175,27 @@
             }
         },
 
-        getActiveScrollContainer: function() {
+        getActiveScrollContainer: function () {
             var frames = this.getFrameElements();
             if (!frames.doc) return null;
             var doc = frames.doc;
 
             if (this.currentFocus === 'mobile') {
-                return doc.querySelector('.mobile-column .mobile-content') || 
-                       doc.querySelector('.mobile-frame .mobile-content') || 
-                       doc.querySelector('.mobile-content') || 
-                       doc.querySelector('.mobile-content-area');
+                return doc.querySelector('.mobile-column .mobile-content') ||
+                    doc.querySelector('.mobile-frame .mobile-content') ||
+                    doc.querySelector('.mobile-content') ||
+                    doc.querySelector('.mobile-content-area');
             } else if (this.currentFocus === 'pc') {
-                return doc.querySelector('.pc-column .pc-content-area') || 
-                       doc.querySelector('.pc-browser-frame .pc-content-area') || 
-                       doc.querySelector('.pc-content-area') || 
-                       doc.querySelector('.chrome-content-area') || 
-                       doc.querySelector('.pc-content');
+                return doc.querySelector('.pc-column .pc-content-area') ||
+                    doc.querySelector('.pc-browser-frame .pc-content-area') ||
+                    doc.querySelector('.pc-content-area') ||
+                    doc.querySelector('.chrome-content-area') ||
+                    doc.querySelector('.pc-content');
             }
             return null;
         },
 
-        checkAndInitFrameSwitcher: function() {
+        checkAndInitFrameSwitcher: function () {
             var switcher = document.getElementById('v4-frame-switcher');
             if (!switcher) return;
 
@@ -1036,9 +1214,9 @@
             var hasAny = frames.hasMobile || frames.hasPc;
 
             // Smart Frame Switcher is strictly designed for Mobile / Touch Read-Only viewports (Tier 3: narrow)
-            var isMobileMode = (this.currentTier === 'narrow') || 
-                               document.body.classList.contains('res-narrow') || 
-                               (this.isTouchDevice && !document.body.classList.contains('res-wide'));
+            var isMobileMode = (this.currentTier === 'narrow') ||
+                document.body.classList.contains('res-narrow') ||
+                (this.isTouchDevice && !document.body.classList.contains('res-wide'));
 
             if (!hasAny || !isMobileMode) {
                 switcher.classList.remove('is-available');
@@ -1078,7 +1256,7 @@
             this.focusFrame(chosenFocus);
         },
 
-        focusFrame: function(type) {
+        focusFrame: function (type) {
             this.currentFocus = type;
             this.updateFocusButtonUI(type);
 
@@ -1102,7 +1280,7 @@
                     if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
                         window.screen.orientation.unlock();
                     }
-                } catch (_) {}
+                } catch (_) { }
                 if (window.centerView) window.centerView(true);
                 this.syncDockZoom();
                 return;
@@ -1152,18 +1330,18 @@
             if (type === 'pc') {
                 try {
                     if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
-                        window.screen.orientation.lock('landscape').catch(function() {});
+                        window.screen.orientation.lock('landscape').catch(function () { });
                     }
-                } catch (_) {}
+                } catch (_) { }
                 if (ch > cw) {
                     this.showRotationToast('기기를 가로로 회전하면 PC 화면이 100% 꽉 차게 보입니다', 'screen_rotation');
                 }
             } else if (type === 'mobile') {
                 try {
                     if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
-                        window.screen.orientation.lock('portrait').catch(function() {});
+                        window.screen.orientation.lock('portrait').catch(function () { });
                     }
-                } catch (_) {}
+                } catch (_) { }
                 if (cw > ch && (cw <= 960 || (ch <= 600 && cw <= 1050))) {
                     this.showRotationToast('기기를 세로로 회전하면 모바일 화면이 100% 꽉 차게 보입니다', 'screen_rotation');
                 }
@@ -1219,26 +1397,26 @@
             console.log("[VCTRL RESOLUTION ENGINE] Frame Focused:", type, "Scale:", scale, "x:", x, "y:", y);
         },
 
-        updateFocusButtonUI: function(type) {
+        updateFocusButtonUI: function (type) {
             var buttons = document.querySelectorAll('.v4-frame-switch-btn');
-            buttons.forEach(function(b) {
+            buttons.forEach(function (b) {
                 b.classList.toggle('active', b.getAttribute('data-focus') === type);
             });
         },
 
-        checkAndApplyNativeFrameFocus: function() {
+        checkAndApplyNativeFrameFocus: function () {
             this.checkAndInitFrameSwitcher();
         },
 
         // --- 9. Fullscreen API & Tap-to-Hide Immersive Zen View ---
-        toggleFullscreen: function(forceState) {
+        toggleFullscreen: function (forceState) {
             var doc = document;
             var isFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
             var nextZen = (typeof forceState === 'boolean') ? forceState : !isFs;
             this.toggleZenMode(nextZen);
         },
 
-        toggleZenMode: function(forceState) {
+        toggleZenMode: function (forceState) {
             var doc = document;
             var docEl = doc.documentElement;
             var isFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
@@ -1252,7 +1430,7 @@
             try {
                 if (nextZen && !isFs) {
                     if (docEl.requestFullscreen) {
-                        docEl.requestFullscreen().catch(function() {});
+                        docEl.requestFullscreen().catch(function () { });
                     } else if (docEl.webkitRequestFullscreen) {
                         docEl.webkitRequestFullscreen();
                     } else if (docEl.msRequestFullscreen) {
@@ -1260,21 +1438,21 @@
                     }
                 } else if (!nextZen && isFs) {
                     if (doc.exitFullscreen) {
-                        doc.exitFullscreen().catch(function() {});
+                        doc.exitFullscreen().catch(function () { });
                     } else if (doc.webkitExitFullscreen) {
                         doc.webkitExitFullscreen();
                     } else if (doc.msExitFullscreen) {
                         doc.msExitFullscreen();
                     }
                 }
-            } catch (_) {}
+            } catch (_) { }
 
             if (typeof window.clearPresentationPen === 'function') {
                 window.clearPresentationPen();
             }
 
             var self = this;
-            setTimeout(function() {
+            setTimeout(function () {
                 if (self.currentFocus && self.currentFocus !== 'full') {
                     self.focusFrame(self.currentFocus);
                 } else if (window.centerView) {
@@ -1283,11 +1461,11 @@
             }, 200);
         },
 
-        showZenToast: function() {
+        showZenToast: function () {
             // Suppressed to keep fullscreen view completely clean without guidance messages
         },
 
-        showRotationToast: function(message, iconName) {
+        showRotationToast: function (message, iconName) {
             var toast = document.getElementById('v4-rotation-toast');
             if (!toast) {
                 toast = document.createElement('div');
@@ -1296,15 +1474,15 @@
                 document.body.appendChild(toast);
             }
             toast.innerHTML = '<span class="material-icons-outlined" style="font-size: 16px; color: #00e5ff;">' + (iconName || 'screen_rotation') + '</span>' +
-                              '<span>' + message + '</span>';
+                '<span>' + message + '</span>';
             clearTimeout(this._rotationToastTimer);
             toast.classList.add('show');
-            this._rotationToastTimer = setTimeout(function() {
+            this._rotationToastTimer = setTimeout(function () {
                 toast.classList.remove('show');
             }, 2600);
         },
 
-        handleSingleTap: function() {
+        handleSingleTap: function () {
             // Single tap toggles Zen Mode strictly in mobile/tablet read-only viewer mode ('narrow'),
             // never on Desktop PC ('wide' / 'compact') where clicks interact with canvas/iframe elements.
             if (this.currentTier === 'narrow') {
@@ -1312,7 +1490,7 @@
             }
         },
 
-        attachIframeTapListener: function() {
+        attachIframeTapListener: function () {
             var DOM = window.DOM;
             var iframe = (DOM && DOM.iframe) || document.getElementById('main-iframe') || document.querySelector('iframe');
             if (!iframe) return;
@@ -1338,7 +1516,7 @@
                 var ifTouch = { x: 0, y: 0, lastY: 0, time: 0, moved: false };
 
                 // Forward mouse wheel over iframe for smooth vertical scrolling
-                doc.addEventListener('wheel', function(e) {
+                doc.addEventListener('wheel', function (e) {
                     if (e.ctrlKey || e.metaKey) return;
                     if (self.currentFocus === 'mobile' || self.currentFocus === 'pc') {
                         var scrollEl = self.getActiveScrollContainer();
@@ -1350,7 +1528,7 @@
                     }
                 }, { passive: false });
 
-                doc.addEventListener('touchstart', function(e) {
+                doc.addEventListener('touchstart', function (e) {
                     if (e.touches.length === 1) {
                         ifTouch.x = e.touches[0].clientX;
                         ifTouch.y = e.touches[0].clientY;
@@ -1360,7 +1538,7 @@
                     }
                 }, { passive: false });
 
-                doc.addEventListener('touchmove', function(e) {
+                doc.addEventListener('touchmove', function (e) {
                     if (e.touches.length === 1) {
                         var t = e.touches[0];
                         var deltaY = ifTouch.lastY - t.clientY;
@@ -1380,7 +1558,7 @@
                     }
                 }, { passive: false });
 
-                doc.addEventListener('touchend', function(e) {
+                doc.addEventListener('touchend', function (e) {
                     var elapsed = Date.now() - ifTouch.time;
                     if (!ifTouch.moved && elapsed > 20 && elapsed < 400) {
                         // Stationary tap inside slide toggles Zen Mode
@@ -1388,7 +1566,7 @@
                     }
                 }, { passive: true });
 
-                doc.addEventListener('click', function(e) {
+                doc.addEventListener('click', function (e) {
                     if (self.currentTier === 'narrow') {
                         if (Date.now() - ifTouch.time > 350) {
                             self.handleSingleTap();
@@ -1397,7 +1575,7 @@
                 });
 
                 doc._zenTapWired = true;
-            } catch (_) {}
+            } catch (_) { }
         }
     };
 
@@ -1405,7 +1583,7 @@
 
     // Auto-initialize when DOM is ready
     if (document.readyState === 'loading') {
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             ResolutionEngine.init();
         });
     } else {

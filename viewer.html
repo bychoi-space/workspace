@@ -58,8 +58,8 @@
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=V402_TRANSPARENT_FAVICON">
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=V402_TRANSPARENT_FAVICON">
 
-    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V500_SUPABASE">
-    <link rel="stylesheet" href="assets/viewer_theme.css?v=V504_MODAL_CONTRAST_FIX">
+    <link rel="stylesheet" href="assets/responsive_workspace.css?v=V505_PHASE1_UX">
+    <link rel="stylesheet" href="assets/viewer_theme.css?v=V507_PHASE3_UX">
     <!-- Shared Utilities SSOT & PDF Exporter Libraries (html2canvas & jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -155,7 +155,7 @@
 
     <header class="toolbar">
         <div class="brand">
-            <a href="index.html" class="tool-btn" id="btn-back" title="목록으로 돌아가기 (Esc)">
+            <a href="index.html" class="tool-btn" id="btn-back" title="프로젝트 목록으로 돌아가기">
                 <span class="material-icons-outlined">arrow_back</span>
             </a>
             <div class="toolbar-divider"></div>
@@ -173,6 +173,32 @@
 
         <div class="actions">
             <div class="action-pill-group">
+                <!-- Cursor Mode Controls (Select / Hand) -->
+                <div class="cursor-tool-group" id="toolbar-cursor-tools">
+                    <button type="button" class="tool-btn active" id="btn-tool-select" title="선택 도구 (V)">
+                        <svg viewBox="0 0 24 24" width="14.5" height="14.5" fill="none" stroke="currentColor"
+                            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 3l7.2 17 2.6-6.3L20 11.1 4 3z"></path>
+                        </svg>
+                    </button>
+                    <button type="button" class="tool-btn" id="btn-tool-hand" title="손바닥 화면 이동 (H / Space 길게 누르기)">
+                        <span class="material-icons-outlined" style="font-size: 15px;">pan_tool</span>
+                    </button>
+                </div>
+
+                <div class="toolbar-divider action-divider" id="divider-cursor-tools"></div>
+
+                <!-- Undo / Redo Controls (Hidden in Read-Only) -->
+                <div class="undo-redo-group" id="toolbar-author-tools">
+                    <button type="button" class="tool-btn" id="btn-toolbar-undo" title="실행 취소 (Ctrl + Z)">
+                        <span class="material-icons-outlined" style="font-size: 16px;">undo</span>
+                    </button>
+                    <button type="button" class="tool-btn" id="btn-toolbar-redo" title="다시 실행 (Ctrl + Y / Ctrl + Shift + Z)">
+                        <span class="material-icons-outlined" style="font-size: 16px;">redo</span>
+                    </button>
+                    <div class="toolbar-divider action-divider"></div>
+                </div>
+
                 <!-- Zoom Controls -->
                 <div class="zoom-controls">
                     <button class="tool-btn" onclick="adjustZoom(-0.1)" title="축소 (Ctrl + -)">
@@ -191,13 +217,51 @@
                     title="화면 맞춤 / 100% 뷰 전환 (단축키: `, Home)">
                     <span class="material-icons-outlined" id="icon-crisp-toggle">fit_screen</span>
                 </button>
-                <button class="tool-btn" id="btn-fullscreen-toggle" title="전체보기 (F)">
+                <button class="tool-btn" id="btn-fullscreen-toggle" title="전체보기 발표 모드 (F)">
                     <span class="material-icons-outlined">fullscreen</span>
                 </button>
                 <button class="tool-btn" id="btn-toggle-responsive-grid" title="격자무늬 On/Off (Shift + G)"
                     style="display: none;">
                     <span class="material-icons-outlined" id="icon-responsive-grid">grid_on</span>
                 </button>
+
+                <div class="shortcut-help-anchor" id="shortcut-help-anchor">
+                    <button type="button" class="tool-btn shortcut-help-btn" id="btn-shortcut-help"
+                        title="단축키 가이드 (?)" aria-expanded="false" aria-label="단축키 가이드">
+                        <span class="shortcut-qmark">?</span>
+                    </button>
+                    <div id="shortcut-help-popover" class="shortcut-help-popover" role="dialog"
+                        aria-label="단축키 가이드" style="display: none;">
+                        <div class="shortcut-popover-head">
+                            <span class="shortcut-popover-title">키보드 단축키 가이드</span>
+                            <span class="shortcut-popover-sub">? 또는 Esc로 닫기</span>
+                        </div>
+                        <div class="shortcut-popover-grid">
+                            <div class="shortcut-group">
+                                <div class="shortcut-group-title">뷰포트 및 패널</div>
+                                <div class="shortcut-row"><span>이전 / 다음 화면</span><kbd>PgUp / PgDn</kbd></div>
+                                <div class="shortcut-row"><span>전체보기 발표</span><kbd>F</kbd></div>
+                                <div class="shortcut-row"><span>100% / 맞춤 전환</span><kbd>&#96;</kbd></div>
+                                <div class="shortcut-row"><span>캔버스 확대 / 축소</span><kbd>Ctrl + / -</kbd></div>
+                                <div class="shortcut-row"><span>선택 / 화면 이동</span><kbd>V / H · Space</kbd></div>
+                                <div class="shortcut-row"><span>좌·우 사이드바 토글</span><kbd>L / R</kbd></div>
+                                <div class="shortcut-row"><span>라이브러리 / 설명 탭</span><kbd>E / D</kbd></div>
+                            </div>
+                            <div class="shortcut-group">
+                                <div class="shortcut-group-title">오브젝트 편집 및 저장</div>
+                                <div class="shortcut-row"><span>도형 텍스트 추가</span><kbd>T</kbd></div>
+                                <div class="shortcut-row"><span>텍스트 편집 전환</span><kbd>F2</kbd></div>
+                                <div class="shortcut-row"><span>실행 취소 / 다시 실행</span><kbd>Ctrl Z / Y</kbd></div>
+                                <div class="shortcut-row"><span>그룹 / 그룹 해제</span><kbd>Ctrl G / ⇧G</kbd></div>
+                                <div class="shortcut-row"><span>정렬 (좌·중·우·상·중·하)</span><kbd>Ctrl 1 ~ 6</kbd></div>
+                                <div class="shortcut-row"><span>레이어 앞 / 뒤 이동</span><kbd>Ctrl ] / [</kbd></div>
+                                <div class="shortcut-row"><span>서식 복사 / 붙여넣기</span><kbd>Ctrl ⇧ C / V</kbd></div>
+                                <div class="shortcut-row"><span>오브젝트 위치 잠금</span><kbd>Ctrl ⇧ L</kbd></div>
+                                <div class="shortcut-row"><span>빠른 저장 / 버전 저장</span><kbd>Ctrl S / ⇧S</kbd></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Compact 3-Segment Theme Switcher (System / Light / Dark) -->
@@ -269,13 +333,37 @@
                 <span class="autosave-text">자동 저장 활성</span>
             </div>
             <button id="btn-viewer-auth" class="btn-secondary btn-viewer-auth" type="button" title="관리자 로그인">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.85"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
                 <span class="viewer-auth-label">로그인</span>
             </button>
-            <button id="btn-global-save" class="btn-accent btn-global-save">전체 저장</button>
+            <div class="save-split-group" id="save-split-group">
+                <button id="btn-global-save" class="btn-accent btn-global-save" title="현재 화면 및 메타데이터 즉시 저장 (Ctrl + S)">저장</button>
+                <button id="btn-global-save-menu" type="button" class="btn-accent btn-global-save-split"
+                    title="저장 옵션 (버전 이력 남기며 저장)" aria-expanded="false" aria-label="저장 옵션 메뉴">
+                    <span class="material-icons-outlined" style="font-size: 15px;">arrow_drop_down</span>
+                </button>
+                <div class="global-save-dropdown" id="global-save-dropdown" style="display: none;">
+                    <button type="button" class="save-dropdown-item" id="menu-save-quick">
+                        <div class="save-dropdown-txt">
+                            <span class="save-dropdown-title">빠른 저장</span>
+                            <span class="save-dropdown-sub">버전 유지 · 현재 변경사항 즉시 반영</span>
+                        </div>
+                        <kbd class="save-dropdown-kbd">Ctrl+S</kbd>
+                    </button>
+                    <div class="url-copy-menu-divider"></div>
+                    <button type="button" class="save-dropdown-item" id="menu-save-with-version">
+                        <div class="save-dropdown-txt">
+                            <span class="save-dropdown-title">버전 이력 남기며 저장 (v+0.1)</span>
+                            <span class="save-dropdown-sub">변경 사유 기록 및 프로젝트 버전 자동 증가</span>
+                        </div>
+                        <kbd class="save-dropdown-kbd">Ctrl+⇧+S</kbd>
+                    </button>
+                </div>
+            </div>
             <div class="toolbar-divider action-divider"></div>
             <button class="panel-toggle-btn header-sidebar-toggle" id="btn-toggle-right"
                 onclick="window.toggleSidebar('right')" title="우측 패널 접기/펼치기 (R)">
@@ -312,8 +400,9 @@
                         <span class="material-icons-outlined meta-history-icon">history</span>
                         <span id="meta-updated-txt" class="meta-updated-txt">최종 업데이트: -</span>
                     </div>
-                    <button id="btn-show-history" class="btn-secondary btn-show-history" title="재개정 이력 보기">
-                        <span class="material-icons-outlined meta-visibility-icon">visibility</span>
+                    <button id="btn-show-history" class="btn-secondary btn-show-history" title="프로젝트 재개정 이력 보기 및 관리">
+                        <span class="material-icons-outlined meta-visibility-icon">history_edu</span>
+                        <span class="btn-history-label">이력</span>
                     </button>
                 </div>
             </div>
@@ -337,7 +426,11 @@
                 <div class="placeholder-card" id="placeholder">
                     <span class="material-icons-outlined placeholder-icon">add_to_photos</span>
                     <h2 id="placeholder-txt" class="placeholder-title">프로젝트 스크린을 추가해주세요.</h2>
-                    <p class="placeholder-subtitle">왼쪽 프로젝트 스크린 패널에서 '+' 버튼을 눌러 시작하세요.</p>
+                    <p class="placeholder-subtitle">아래 버튼을 누르거나 왼쪽 패널의 '+' 버튼을 눌러 첫 화면을 시작하세요.</p>
+                    <button type="button" id="btn-placeholder-add-screen" class="btn-accent placeholder-add-btn">
+                        <span class="material-icons-outlined" style="font-size: 16px;">add</span>
+                        <span>첫 화면 추가하기</span>
+                    </button>
                 </div>
 
                 <!-- Floating Inspector Card (Option B) -->
@@ -345,8 +438,10 @@
                     <div class="floating-inspector-header">
                         <div class="floating-inspector-title-group">
                             <span class="material-icons-outlined floating-inspector-icon">tune</span>
-                            <span id="floating-inspector-title" class="floating-inspector-title">OBJECT PROPERTIES</span>
-                            <span id="floating-inspector-badge" class="inspector-context-badge" style="display: none;"></span>
+                            <span id="floating-inspector-title" class="floating-inspector-title">OBJECT
+                                PROPERTIES</span>
+                            <span id="floating-inspector-badge" class="inspector-context-badge"
+                                style="display: none;"></span>
                         </div>
                         <div class="floating-header-btn-group">
                             <button id="btn-floating-swap" title="좌/우 위치 전환" class="floating-inspector-header-btn">
@@ -382,16 +477,22 @@
                             <div id="group-dimension-bar" class="group-dimension-bar-stack" style="display: none;">
                                 <div class="v4-prop-grid-2 gap-8">
                                     <div class="prop-subgroup">
-                                        <label class="v4-unified-label v4-prop-label bold" data-prop="left">가로 위치 (X)</label>
+                                        <label class="v4-unified-label v4-prop-label bold" data-prop="left">가로 위치
+                                            (X)</label>
                                         <div class="v4-prop-input-wrap">
-                                            <input type="number" id="prop-left-group" class="v4-prop-input v4-prop-input-styled" data-prop="left" value="0" placeholder="0">
+                                            <input type="number" id="prop-left-group"
+                                                class="v4-prop-input v4-prop-input-styled" data-prop="left" value="0"
+                                                placeholder="0">
                                             <span class="v4-prop-unit">px</span>
                                         </div>
                                     </div>
                                     <div class="prop-subgroup">
-                                        <label class="v4-unified-label v4-prop-label bold" data-prop="top">세로 위치 (Y)</label>
+                                        <label class="v4-unified-label v4-prop-label bold" data-prop="top">세로 위치
+                                            (Y)</label>
                                         <div class="v4-prop-input-wrap">
-                                            <input type="number" id="prop-top-group" class="v4-prop-input v4-prop-input-styled" data-prop="top" value="0" placeholder="0">
+                                            <input type="number" id="prop-top-group"
+                                                class="v4-prop-input v4-prop-input-styled" data-prop="top" value="0"
+                                                placeholder="0">
                                             <span class="v4-prop-unit">px</span>
                                         </div>
                                     </div>
@@ -409,15 +510,18 @@
                                 </div>
                             </div>
                             <!-- Scroll Pin Navigation Bar (Responsive Sticky/Fixed Pin) -->
-                            <div id="selection-scroll-pin-bar" class="selection-scroll-pin-bar" style="display: none;">
-                                <div class="scroll-pin-header">
+                            <div id="selection-scroll-pin-bar" class="selection-scroll-pin-bar is-collapsed" style="display: none;">
+                                <div class="scroll-pin-header" id="scroll-pin-toggle-header" title="클릭하여 스크롤 고정 옵션 펼치기/접기">
                                     <div class="scroll-pin-title-wrap">
                                         <svg class="bychoi-icon scroll-pin-title-icon" viewBox="0 0 24 24">
                                             <path d="M12 2v20M17 5H7M15 19H9" />
                                         </svg>
                                         <span class="scroll-pin-title" id="scroll-pin-title-text">SCROLL PIN</span>
                                     </div>
-                                    <span class="scroll-pin-badge" id="scroll-pin-status-badge">SCROLL</span>
+                                    <div class="scroll-pin-header-right">
+                                        <span class="scroll-pin-badge" id="scroll-pin-status-badge">SCROLL</span>
+                                        <span class="material-icons-outlined scroll-pin-chevron">expand_more</span>
+                                    </div>
                                 </div>
                                 <!-- Object Pin Modes (Normal Components / Groups) -->
                                 <div id="scroll-pin-object-group"
@@ -529,8 +633,8 @@
                                         <button type="button" id="btn-scroll-pin-capture-limit"
                                             class="scroll-pin-capture-btn"
                                             title="현재 프레임 스크롤 위치의 오브젝트 하단 Y좌표로 하한선 자동 설정">현위치</button>
-                                        <input type="number" id="scroll-pin-limit-input"
-                                            class="scroll-pin-offset-input" placeholder="없음">
+                                        <input type="number" id="scroll-pin-limit-input" class="scroll-pin-offset-input"
+                                            placeholder="없음">
                                         <span class="scroll-pin-offset-unit">px</span>
                                     </div>
                                 </div>
@@ -544,9 +648,9 @@
                                 </div>
                             </div>
                             <div class="selection-btn-stack">
-                                <div class="selection-btn-row">
+                                <div class="selection-btn-row selection-group-cta-row">
                                     <button id="btn-group-action" class="v4-inspector-btn btn-accent"
-                                        style="display: none;">
+                                        style="display: none;" title="선택 오브젝트 그룹화 (Ctrl + G)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <rect x="3" y="3" width="7" height="7"></rect>
                                             <rect x="14" y="3" width="7" height="7"></rect>
@@ -556,62 +660,69 @@
                                         GROUP
                                     </button>
                                     <button id="btn-ungroup-action" class="v4-inspector-btn btn-secondary"
-                                        style="display: none;">
+                                        style="display: none;" title="그룹 해제 (Ctrl + Shift + G)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                                         </svg>
                                         UNGROUP
                                     </button>
                                 </div>
-                                <button id="btn-add-molecules-action" class="v4-inspector-btn btn-primary">
+                                <button id="btn-add-molecules-action" class="v4-inspector-btn btn-primary"
+                                    title="공용 컴포넌트로 등록">
                                     <svg class="bychoi-icon" viewBox="0 0 24 24">
                                         <path d="M12 5v14M5 12h14"></path>
                                     </svg>
-                                    ADD TO MOLECULES
+                                    ADD TO COMPONENTS
                                 </button>
-                                <div class="selection-btn-row">
-                                    <button id="btn-bring-front-action" class="v4-inspector-btn btn-secondary">
+                                <!-- 1-Row Compact Quick Action Strip (Layer, Format Painter, Lock) -->
+                                <div class="selection-quick-toolbar" id="selection-quick-toolbar">
+                                    <button id="btn-bring-front-action" class="v4-inspector-btn btn-secondary quick-icon-btn"
+                                        title="맨 앞으로 가져오기 (Ctrl + Shift + ])">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <polyline points="17 11 12 6 7 11"></polyline>
                                             <polyline points="17 18 12 13 7 18"></polyline>
                                         </svg>
-                                        앞으로 가져오기
+                                        <span class="quick-btn-txt">맨앞</span>
                                     </button>
-                                    <button id="btn-send-back-action" class="v4-inspector-btn btn-secondary">
+                                    <button id="btn-send-back-action" class="v4-inspector-btn btn-secondary quick-icon-btn"
+                                        title="맨 뒤로 보내기 (Ctrl + Shift + [)">
                                         <svg class="bychoi-icon" viewBox="0 0 24 24">
                                             <polyline points="17 13 12 18 7 13"></polyline>
                                             <polyline points="17 6 12 11 7 6"></polyline>
                                         </svg>
-                                        뒤로 보내기
+                                        <span class="quick-btn-txt">맨뒤</span>
                                     </button>
-                                </div>
-                                <div class="selection-btn-row" id="selection-style-action-row">
-                                    <button id="btn-copy-format-action" class="v4-inspector-btn btn-secondary"
-                                        title="도형 서식 복사 (Ctrl + Shift + C)">
-                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
-                                        </svg>
-                                        서식 복사
-                                    </button>
-                                    <button id="btn-paste-format-action" class="v4-inspector-btn btn-secondary"
-                                        title="도형 서식 붙여넣기 (Ctrl + Shift + V)">
-                                        <svg class="bychoi-icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M18 4V3c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V6h1v4H9v11c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-9h8V4h-3z" />
-                                        </svg>
-                                        서식 붙여넣기
-                                    </button>
-                                </div>
-                                <div class="selection-btn-row" id="selection-lock-action-row">
-                                    <button id="btn-lock-object-action" class="v4-inspector-btn btn-secondary v4-lock-toggle-btn"
-                                        title="오브젝트 위치·크기·삭제 잠금 토글 (Ctrl + Shift + L)">
-                                        <svg id="icon-lock-object-action" class="bychoi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                            <rect x="4" y="11" width="16" height="10" rx="2"></rect>
-                                            <path d="M8 11V7a4 4 0 0 1 7.8-1.2"></path>
-                                        </svg>
-                                        <span id="txt-lock-object-action">위치 잠금</span>
-                                    </button>
+                                    <div class="selection-inline-pair" id="selection-style-action-row">
+                                        <button id="btn-copy-format-action" class="v4-inspector-btn btn-secondary quick-icon-btn"
+                                            title="도형 서식 복사 (Ctrl + Shift + C)">
+                                            <svg class="bychoi-icon" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                                            </svg>
+                                            <span class="quick-btn-txt">서식복사</span>
+                                        </button>
+                                        <button id="btn-paste-format-action" class="v4-inspector-btn btn-secondary quick-icon-btn"
+                                            title="도형 서식 붙여넣기 (Ctrl + Shift + V)">
+                                            <svg class="bychoi-icon" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M18 4V3c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V6h1v4H9v11c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-9h8V4h-3z" />
+                                            </svg>
+                                            <span class="quick-btn-txt">적용</span>
+                                        </button>
+                                    </div>
+                                    <div class="selection-inline-pair" id="selection-lock-action-row">
+                                        <button id="btn-lock-object-action"
+                                            class="v4-inspector-btn btn-secondary v4-lock-toggle-btn quick-icon-btn"
+                                            title="오브젝트 위치·크기·삭제 잠금 토글 (Ctrl + Shift + L)">
+                                            <svg id="icon-lock-object-action" class="bychoi-icon" viewBox="0 0 24 24"
+                                                fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <rect x="4" y="11" width="16" height="10" rx="2"></rect>
+                                                <path d="M8 11V7a4 4 0 0 1 7.8-1.2"></path>
+                                            </svg>
+                                            <span id="txt-lock-object-action" class="quick-btn-txt">잠금</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -763,10 +874,10 @@
                         </button>
                         <div class="desc-color-popover" id="desc-color-popover">
                             <div class="desc-preset-grid">
-                                <button type="button" class="desc-color-swatch" data-color="#cbd5e1"
-                                    style="background:#cbd5e1;" title="기본 본문 (#cbd5e1)"></button>
-                                <button type="button" class="desc-color-swatch" data-color="#ffffff"
-                                    style="background:#ffffff;" title="화이트 (#ffffff)"></button>
+                                <button type="button" class="desc-color-swatch" data-swatch-role="default-body"
+                                    data-color="#cbd5e1" style="background:#cbd5e1;" title="기본 본문 (#cbd5e1)"></button>
+                                <button type="button" class="desc-color-swatch" data-swatch-role="contrast-strong"
+                                    data-color="#ffffff" style="background:#ffffff;" title="화이트 (#ffffff)"></button>
                                 <button type="button" class="desc-color-swatch" data-color="#ef4444"
                                     style="background:#ef4444;" title="포인트 레드 (#ef4444)"></button>
                                 <button type="button" class="desc-color-swatch" data-color="#38bdf8"
@@ -1061,35 +1172,43 @@
             </div>
             <div class="modal-body">
                 <div id="auth-mode-tabs" class="auth-mode-tabs" role="tablist" aria-label="인증 방식 선택">
-                    <button type="button" id="tab-auth-login" class="auth-mode-tab active" role="tab" aria-selected="true">로그인</button>
-                    <button type="button" id="tab-auth-signup" class="auth-mode-tab" role="tab" aria-selected="false">간편 회원가입</button>
+                    <button type="button" id="tab-auth-login" class="auth-mode-tab active" role="tab"
+                        aria-selected="true">로그인</button>
+                    <button type="button" id="tab-auth-signup" class="auth-mode-tab" role="tab" aria-selected="false">간편
+                        회원가입</button>
                 </div>
                 <div id="auth-login-section">
                     <div class="form-group">
                         <label class="form-label" for="modal-auth-id">아이디</label>
-                        <input type="text" id="modal-auth-id" class="form-input" placeholder="아이디 입력" autocomplete="username">
+                        <input type="text" id="modal-auth-id" class="form-input" placeholder="아이디 입력"
+                            autocomplete="username">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="modal-auth-pw">비밀번호</label>
-                        <input type="password" id="modal-auth-pw" class="form-input" placeholder="비밀번호 입력" autocomplete="current-password">
+                        <input type="password" id="modal-auth-pw" class="form-input" placeholder="비밀번호 입력"
+                            autocomplete="current-password">
                     </div>
                 </div>
                 <div id="auth-signup-section" style="display: none;">
                     <div class="form-group">
                         <label class="form-label" for="modal-signup-id">아이디</label>
-                        <input type="text" id="modal-signup-id" class="form-input" placeholder="영문 소문자·숫자 2~32자 (예: hong)" autocomplete="username">
+                        <input type="text" id="modal-signup-id" class="form-input"
+                            placeholder="영문 소문자·숫자 2~32자 (예: hong)" autocomplete="username">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="modal-signup-name">이름 / 닉네임 (선택)</label>
-                        <input type="text" id="modal-signup-name" class="form-input" placeholder="표시할 이름 입력 (미입력 시 아이디 사용)" autocomplete="nickname">
+                        <input type="text" id="modal-signup-name" class="form-input"
+                            placeholder="표시할 이름 입력 (미입력 시 아이디 사용)" autocomplete="nickname">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="modal-signup-pw">비밀번호</label>
-                        <input type="password" id="modal-signup-pw" class="form-input" placeholder="4자 이상 입력" autocomplete="new-password">
+                        <input type="password" id="modal-signup-pw" class="form-input" placeholder="4자 이상 입력"
+                            autocomplete="new-password">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="modal-signup-pw-confirm">비밀번호 확인</label>
-                        <input type="password" id="modal-signup-pw-confirm" class="form-input" placeholder="비밀번호 재입력" autocomplete="new-password">
+                        <input type="password" id="modal-signup-pw-confirm" class="form-input" placeholder="비밀번호 재입력"
+                            autocomplete="new-password">
                     </div>
                     <p class="auth-signup-note">이메일 인증이나 별도 승인 없이 가입 즉시 모든 화면 편집이 가능합니다.</p>
                 </div>
@@ -1102,19 +1221,23 @@
                         <span class="auth-account-role-badge" id="auth-account-role">ADMIN</span>
                     </div>
                     <div class="auth-pw-toggle-row">
-                        <button type="button" id="btn-toggle-pw-change" class="btn-secondary btn-auth-pw-toggle">비밀번호 변경</button>
+                        <button type="button" id="btn-toggle-pw-change" class="btn-secondary btn-auth-pw-toggle">비밀번호
+                            변경</button>
                     </div>
                     <div id="auth-pw-change-panel" class="auth-pw-change-panel" style="display: none;">
                         <div class="form-group">
                             <label class="form-label" for="modal-auth-cur-pw">현재 비밀번호</label>
-                            <input type="password" id="modal-auth-cur-pw" class="form-input" placeholder="현재 비밀번호 입력" autocomplete="current-password">
+                            <input type="password" id="modal-auth-cur-pw" class="form-input" placeholder="현재 비밀번호 입력"
+                                autocomplete="current-password">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="modal-auth-new-pw">새 비밀번호 (4자 이상)</label>
-                            <input type="password" id="modal-auth-new-pw" class="form-input" placeholder="새 비밀번호 입력" autocomplete="new-password">
+                            <input type="password" id="modal-auth-new-pw" class="form-input" placeholder="새 비밀번호 입력"
+                                autocomplete="new-password">
                         </div>
                         <div class="auth-pw-save-row">
-                            <button type="button" id="btn-modal-pw-save" class="btn-primary btn-auth-pw-save">변경 저장</button>
+                            <button type="button" id="btn-modal-pw-save" class="btn-primary btn-auth-pw-save">변경
+                                저장</button>
                         </div>
                     </div>
                 </div>
@@ -1122,7 +1245,8 @@
             </div>
             <div class="modal-footer">
                 <button id="btn-modal-auth-cancel" class="btn-secondary" type="button">닫기</button>
-                <button id="btn-modal-auth-logout" class="btn-secondary btn-auth-logout" type="button" style="display: none;">로그아웃</button>
+                <button id="btn-modal-auth-logout" class="btn-secondary btn-auth-logout" type="button"
+                    style="display: none;">로그아웃</button>
                 <button id="btn-modal-auth-submit" class="btn-primary" type="button">로그인</button>
             </div>
         </div>
@@ -1225,8 +1349,25 @@
                 </button>
             </div>
         </div>
+        <div class="v4-sheet-tabs" id="v4-sheet-tabs" role="tablist" aria-label="모바일 시트 보기 전환">
+            <button type="button" class="v4-sheet-tab-btn active" id="v4-sheet-tab-screens" data-sheet-tab="screens"
+                role="tab" aria-selected="true">
+                <span>화면 목록</span>
+                <span class="v4-sheet-tab-badge" id="v4-sheet-tab-screens-count">0</span>
+            </button>
+            <button type="button" class="v4-sheet-tab-btn" id="v4-sheet-tab-pins" data-sheet-tab="pins" role="tab"
+                aria-selected="false">
+                <span>화면 설명 (Pin)</span>
+                <span class="v4-sheet-tab-badge" id="v4-sheet-tab-pins-count">0</span>
+            </button>
+        </div>
         <div class="v4-sheet-body">
-            <ul class="v4-sheet-list" id="v4-sheet-list"></ul>
+            <div id="v4-sheet-pane-screens" class="v4-sheet-pane active">
+                <ul class="v4-sheet-list" id="v4-sheet-list"></ul>
+            </div>
+            <div id="v4-sheet-pane-pins" class="v4-sheet-pane" style="display: none;">
+                <div class="v4-sheet-pins-list" id="v4-sheet-pins-list"></div>
+            </div>
         </div>
     </aside>
 
@@ -1234,12 +1375,12 @@
     <script src="assets/vctrl_theme.js?v=V433_SHELL_CONTRAST"></script>
     <script src="assets/vctrl_typography.js?v=V432_VIEWER_DUAL_THEME"></script>
     <!-- Dynamic UI Library for Inspectors, Library Icons & Modals -->
-    <script src="assets/ui_library_fallback.js?v=V446_ICON_LIB_THEME"></script>
-    <script src="assets/vctrl_ui_library.js?v=V446_ICON_LIB_THEME"></script>
+    <script src="assets/ui_library_fallback.js?v=V505_PHASE1_UX"></script>
+    <script src="assets/vctrl_ui_library.js?v=V505_PHASE1_UX"></script>
     <script src="assets/templates.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_clipboard.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_supabase.js?v=V501_SELF_SIGNUP"></script>
-    <script src="assets/app.js?v=V500_SUPABASE"></script>
+    <script src="assets/vctrl_supabase.js?v=V506_PHASE2_UX"></script>
+    <script src="assets/app.js?v=V506_PHASE2_UX"></script>
 
     <!-- Modularized Engine -->
     <script src="assets/vctrl_undo.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1252,7 +1393,7 @@
     <script src="assets/vctrl_design_system.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_clipboard_objects.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_format_painter.js?v=V450_COMMON_SSOT"></script>
-    <script src="assets/vctrl_shortcuts.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
+    <script src="assets/vctrl_shortcuts.js?v=V507_PHASE3_UX"></script>
     <script src="assets/vctrl_object_shape.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_object_connector.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/responsive_frame.js?v=V435_CLEAN_INPUTS"></script>
@@ -1270,18 +1411,18 @@
     <script src="assets/vctrl_iframe_drag.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_iframe_ports.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_presentation_pen.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_core.js?v=V451_SIDEBAR_PERSIST"></script>
-    <script src="assets/vctrl_storage.js?v=V500_SUPABASE"></script>
+    <script src="assets/vctrl_core.js?v=V507_PHASE3_UX"></script>
+    <script src="assets/vctrl_storage.js?v=V507_PHASE3_UX"></script>
     <script src="assets/vctrl_autosave.js?v=V500_SUPABASE"></script>
-    <script src="assets/vctrl_core_router.js?v=V442_SCREEN_PAGE_NAV"></script>
-    <script src="assets/vctrl_parent_shortcuts.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
+    <script src="assets/vctrl_core_router.js?v=V505_PHASE1_UX"></script>
+    <script src="assets/vctrl_parent_shortcuts.js?v=V507_PHASE3_UX"></script>
     <script src="assets/vctrl_smartguide.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_smartguide_math.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_smartguide.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_multiselect.js?v=V441_INSPECTOR_PART_C"></script>
     <script src="assets/vctrl_iframe_scroll_pin.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_responsive_pins.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/vctrl_grouping.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/vctrl_grouping.js?v=V506_PHASE2_UX"></script>
     <script src="assets/vctrl_color_picker.js?v=V450_COMMON_SSOT"></script>
     <script src="assets/vctrl_component_atoms_data.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_component_data.js?v=V432_VIEWER_DUAL_THEME"></script>
@@ -1292,23 +1433,23 @@
     <script src="assets/inspector/inspector_text_formatter.js?v=V432_VIEWER_DUAL_THEME"></script>
     <script src="assets/vctrl_system_modals.js?v=V500_SUPABASE"></script>
     <script src="assets/inspector/inspector_quill.js?v=V432_VIEWER_DUAL_THEME"></script>
-    <script src="assets/inspector/inspector_scroll_pin.js?v=V439_INSPECTOR_PART_A"></script>
-    <script src="assets/vctrl_inspector_actionbar.js?v=V441_INSPECTOR_PART_C"></script>
+    <script src="assets/inspector/inspector_scroll_pin.js?v=V507_PHASE3_UX"></script>
+    <script src="assets/vctrl_inspector_actionbar.js?v=V507_PHASE3_UX"></script>
     <script src="assets/vctrl_inspector_sync.js?v=V441_INSPECTOR_PART_C"></script>
-    <script src="assets/vctrl_inspector.js?v=V451_SIDEBAR_PERSIST"></script>
-    <script src="assets/vctrl_screen_manager.js?v=V504_MODAL_CONTRAST_FIX"></script>
-    <script src="assets/vctrl_revision_history.js?v=V450_COMMON_SSOT"></script>
-    <script src="assets/vctrl_annotation_pins.js?v=V450_COMMON_SSOT"></script>
-    <script src="assets/vctrl_canvas_viewport.js?v=V443_FULLSCREEN_ARROW_NAV"></script>
+    <script src="assets/vctrl_inspector.js?v=V507_PHASE3_UX"></script>
+    <script src="assets/vctrl_screen_manager.js?v=V505_PHASE1_UX"></script>
+    <script src="assets/vctrl_revision_history.js?v=V506_PHASE2_UX"></script>
+    <script src="assets/vctrl_annotation_pins.js?v=V506_PHASE2_UX"></script>
+    <script src="assets/vctrl_canvas_viewport.js?v=V507_PHASE3_UX"></script>
     <script src="assets/vctrl_properties.js?v=V450_COMMON_SSOT"></script>
     <script src="assets/vctrl_connectors.js?v=V441_INSPECTOR_PART_C"></script>
 
     <!-- V4 Premium Addons -->
-    <script src="assets/vctrl_table.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_table.js?v=V506_PHASE2_UX"></script>
     <script src="assets/vctrl_component_inserter.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/vctrl_canvas_background.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/inspector/inspector_dimmed_layer.js?v=V429_BYCHOI_NAMESPACE"></script>
-    <script src="assets/inspector/inspector_grid.js?v=V439_INSPECTOR_PART_A"></script>
+    <script src="assets/inspector/inspector_grid.js?v=V506_PHASE2_UX"></script>
     <script src="assets/inspector/inspector_accordion.js?v=V439_INSPECTOR_PART_A"></script>
     <script src="assets/inspector/inspector_tab.js?v=V439_INSPECTOR_PART_A"></script>
     <script src="assets/inspector/inspector_shapes.js?v=V441_INSPECTOR_PART_C"></script>
@@ -1318,7 +1459,7 @@
     <script src="assets/inspector/inspector_admin_settings.js?v=V439_INSPECTOR_PART_A"></script>
     <script src="assets/inspector/inspector_table.js?v=V429_BYCHOI_NAMESPACE"></script>
     <script src="assets/inspector/inspector_popup.js?v=V440_INSPECTOR_PART_B"></script>
-    <script src="assets/vctrl_resolution_engine.js?v=V429_BYCHOI_NAMESPACE"></script>
+    <script src="assets/vctrl_resolution_engine.js?v=V506_PHASE2_UX"></script>
 </body>
 
 </html>

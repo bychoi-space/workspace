@@ -1059,7 +1059,11 @@ window.v4TableScript = `
                     currentCols.push({ name: '새 항목', type: 'text', width: '150px' });
                     if (window.renderGrid) window.renderGrid(gridContainer, currentCols, rowCount, pagination, rowHeight);
                 } else {
-                    alert('열은 최대 20개까지 추가할 수 있습니다.');
+                    if (window.notifyParent) {
+                        window.notifyParent({ type: 'BYCHOI_SHOW_TOAST', message: '열은 최대 20개까지 추가할 수 있습니다.', toastType: 'warning' });
+                    } else if (window.top && typeof window.top.showToast === 'function') {
+                        window.top.showToast('열은 최대 20개까지 추가할 수 있습니다.', 'warning');
+                    }
                 }
             } else if (act === 'del-col' || act === 'del_col') {
                 if (currentCols.length > 1 && window.renderGrid) {
